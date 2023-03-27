@@ -12,9 +12,16 @@ export const nodeStyles = css`
     min-width: 200px;
     padding: 12px;
     font-family: 'Roboto Mono', monospace;
-    transition-duration: 0.2s;
+    /* transition-duration: 0.2s; TODO */
     transition-timing-function: ease-out;
     transition-property: box-shadow, border-color;
+  }
+
+  .node.overlayNode {
+    border-color: #ff9900;
+    transition-duration: 0;
+    pointer-events: none;
+    box-shadow: 10px 10px 16px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 153, 0, 0.3);
   }
 
   .node:hover {
@@ -52,7 +59,7 @@ export const nodeStyles = css`
   .output-ports {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: stretch;
     gap: 8px;
   }
 
@@ -89,10 +96,6 @@ export const nodeStyles = css`
     height: 16px;
     width: 16px;
     transition: all 0.2s ease-in-out;
-  }
-
-  .input-ports .port {
-    flex-direction: row-reverse;
   }
 
   .input-port:hover,
