@@ -49,6 +49,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@storybook/testing-library", "npm:0.0.14-next.1"],\
             ["@svgr/webpack", "npm:5.5.0"],\
             ["@swc/core", "npm:1.3.42"],\
+            ["@types/lodash-es", "npm:4.17.7"],\
             ["@types/node", "npm:16.18.20"],\
             ["@types/react", "npm:18.0.29"],\
             ["@types/react-dom", "npm:18.0.11"],\
@@ -74,6 +75,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["html-webpack-plugin", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:5.5.0"],\
             ["identity-obj-proxy", "npm:3.0.0"],\
             ["immer", "npm:9.0.21"],\
+            ["lodash-es", "npm:4.17.21"],\
             ["mini-css-extract-plugin", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:2.7.5"],\
             ["nanoid", "npm:4.0.1"],\
             ["openai", "npm:3.2.1"],\
@@ -6878,6 +6880,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@types/lodash-es", [\
+        ["npm:4.17.7", {\
+          "packageLocation": "./.yarn/cache/@types-lodash-es-npm-4.17.7-7322f70ff2-4b1f39fd1d.zip/node_modules/@types/lodash-es/",\
+          "packageDependencies": [\
+            ["@types/lodash-es", "npm:4.17.7"],\
+            ["@types/lodash", "npm:4.14.191"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@types/mdx", [\
         ["npm:2.0.3", {\
           "packageLocation": "./.yarn/cache/@types-mdx-npm-2.0.3-0b710c028d-41deb51c29.zip/node_modules/@types/mdx/",\
@@ -7848,6 +7860,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@storybook/testing-library", "npm:0.0.14-next.1"],\
             ["@svgr/webpack", "npm:5.5.0"],\
             ["@swc/core", "npm:1.3.42"],\
+            ["@types/lodash-es", "npm:4.17.7"],\
             ["@types/node", "npm:16.18.20"],\
             ["@types/react", "npm:18.0.29"],\
             ["@types/react-dom", "npm:18.0.11"],\
@@ -7873,6 +7886,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["html-webpack-plugin", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:5.5.0"],\
             ["identity-obj-proxy", "npm:3.0.0"],\
             ["immer", "npm:9.0.21"],\
+            ["lodash-es", "npm:4.17.21"],\
             ["mini-css-extract-plugin", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:2.7.5"],\
             ["nanoid", "npm:4.0.1"],\
             ["openai", "npm:3.2.1"],\
@@ -14130,6 +14144,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/lodash-npm-4.17.21-6382451519-eb835a2e51.zip/node_modules/lodash/",\
           "packageDependencies": [\
             ["lodash", "npm:4.17.21"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["lodash-es", [\
+        ["npm:4.17.21", {\
+          "packageLocation": "./.yarn/cache/lodash-es-npm-4.17.21-b45832dfce-05cbffad6e.zip/node_modules/lodash-es/",\
+          "packageDependencies": [\
+            ["lodash-es", "npm:4.17.21"]\
           ],\
           "linkType": "HARD"\
         }]\

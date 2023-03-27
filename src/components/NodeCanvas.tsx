@@ -1,5 +1,5 @@
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, useDroppable } from '@dnd-kit/core';
-import { ChartNode } from '../model/NodeBase';
+import { ChartNode, NodeConnection, NodeId, NodeInputId, NodeOutputDefinition, NodeOutputId } from '../model/NodeBase';
 import { DraggableNode, ViewNode } from './DraggableNode';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles';
@@ -8,10 +8,16 @@ import { produce } from 'immer';
 import { ContextMenu } from './ContextMenu';
 import { CSSTransition } from 'react-transition-group';
 import { NodeType, nodeFactory } from '../model/Nodes';
+import { WireDef, WireLayer } from './WireLayer';
+import { useContextMenu } from '../hooks/useContextMenu';
+import { useDraggingNode } from '../hooks/useDraggingNode';
+import { useDraggingWire } from '../hooks/useDraggingWire';
 
 export interface NodeCanvasProps {
   nodes: ChartNode<string, unknown>[];
+  connections: NodeConnection[];
   onNodesChanged: (nodes: ChartNode<string, unknown>[]) => void;
+  onConnectionsChanged: (connections: NodeConnection[]) => void;
 }
 
 const styles = css`
@@ -23,6 +29,7 @@ const styles = css`
     linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
   background-size: 20px 20px;
   background-position: -1px -1px;
+  overflow: hidden;
 
   .context-menu {
     display: none;
@@ -50,60 +57,20 @@ const styles = css`
   ${nodeStyles}
 `;
 
-export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, onNodesChanged }) => {
-  const contextMenuRef = useRef<HTMLDivElement>(null);
-  const [showContextMenu, setShowContextMenu] = useState(false);
-  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
-  const [draggingNode, setDraggingNode] = useState<ChartNode<string, unknown> | null>(null);
+export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, connections, onNodesChanged, onConnectionsChanged }) => {
+  const { draggingNode, onNodeStartDrag, onNodeDragged } = useDraggingNode(nodes, onNodesChanged);
+  const { draggingWire, onWireStartDrag, onWireEndDrag } = useDraggingWire(nodes, connections, onConnectionsChanged);
 
-  const handleContextMenu = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setShowContextMenu(true);
-    setContextMenuPosition({ x: event.clientX, y: event.clientY });
-  }, []);
+  const {
+    contextMenuRef,
+    showContextMenu,
+    contextMenuPosition,
+    handleContextMenu,
+    setShowContextMenu,
+    setContextMenuPosition,
+  } = useContextMenu();
 
   const { setNodeRef } = useDroppable({ id: 'NodeCanvas' });
-
-  const onNodeStartDrag = useCallback(
-    (e: DragStartEvent) => {
-      const node = nodes.find((node) => node.id === e.active.id);
-      setDraggingNode(node!);
-    },
-    [nodes],
-  );
-
-  const onNodeDragged = useCallback(
-    ({ active, delta }: DragEndEvent) => {
-      const nodeId = active.id;
-
-      setDraggingNode(null);
-
-      onNodesChanged?.(
-        produce(nodes, (draft) => {
-          const node = draft.find((node) => node.id === nodeId);
-          if (node) {
-            node.visualData.x += delta.x;
-            node.visualData.y += delta.y;
-          }
-        }),
-      );
-    },
-    [nodes, onNodesChanged],
-  );
-
-  useEffect(() => {
-    const handleWindowClick = (event: MouseEvent) => {
-      // Close context menu if clicked outside of it
-      if (contextMenuRef.current && !contextMenuRef.current.contains(event.target as Node)) {
-        setShowContextMenu(false);
-      }
-    };
-
-    window.addEventListener('click', handleWindowClick);
-    return () => {
-      window.removeEventListener('click', handleWindowClick);
-    };
-  }, []);
 
   const onContextMenuItemSelected = useCallback(
     (menuItemId: string) => {
@@ -120,7 +87,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, onNodesChanged }) => {
         setShowContextMenu(false);
       }
     },
-    [contextMenuPosition.x, contextMenuPosition.y, nodes, onNodesChanged],
+    [contextMenuPosition.x, contextMenuPosition.y, nodes, onNodesChanged, setShowContextMenu],
   );
 
   return (
@@ -128,9 +95,10 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, onNodesChanged }) => {
       <div ref={setNodeRef} css={styles} onContextMenu={handleContextMenu}>
         <div className="nodes">
           {nodes.map((node) => (
-            <DraggableNode key={node.id} node={node} />
+            <DraggableNode key={node.id} node={node} onWireStartDrag={onWireStartDrag} onWireEndDrag={onWireEndDrag} />
           ))}
         </div>
+        <WireLayer nodes={nodes} connections={connections} draggingWire={draggingWire} />
         <DragOverlay dropAnimation={null}>
           {draggingNode ? <ViewNode node={draggingNode} isOverlay /> : null}
         </DragOverlay>
