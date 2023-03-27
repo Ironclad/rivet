@@ -1,11 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "target": "ESNext",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "types": ["vite/client"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -13,14 +10,18 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "jsxImportSource": "@emotion/react"
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"],
+  "ts-node": {
+    "swc": true,
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
 }
