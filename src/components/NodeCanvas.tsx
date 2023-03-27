@@ -6,6 +6,7 @@ import { nodeStyles } from './nodeStyles';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { produce } from 'immer';
 import { ContextMenu } from './ContextMenu';
+import { CSSTransition } from 'react-transition-group';
 
 export interface NodeCanvasProps {
   nodes: ChartNode<string, unknown>[];
@@ -22,16 +23,40 @@ const styles = css`
   background-size: 20px 20px;
   background-position: -1px -1px;
 
+  .context-menu {
+    display: none;
+  }
+
+  .context-menu-enter {
+    display: block;
+    opacity: 0;
+  }
+
+  .context-menu-enter-active {
+    opacity: 1;
+    transition: opacity 100ms ease-out;
+  }
+
+  .context-menu-exit {
+    opacity: 1;
+  }
+
+  .context-menu-exit-active {
+    opacity: 0;
+    transition: opacity 100ms ease-out;
+  }
+
   ${nodeStyles}
 `;
 
 export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, onNodesChanged }) => {
   const contextMenuRef = useRef<HTMLDivElement>(null);
-  const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | null>(null);
-  const [nodeToAdd, setNodeToAdd] = useState('');
+  const [showContextMenu, setShowContextMenu] = useState(false);
+  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
   const handleContextMenu = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
+    setShowContextMenu(true);
     setContextMenuPosition({ x: event.clientX, y: event.clientY });
   }, []);
 
@@ -58,7 +83,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, onNodesChanged }) => {
     const handleWindowClick = (event: MouseEvent) => {
       // Close context menu if clicked outside of it
       if (contextMenuRef.current && !contextMenuRef.current.contains(event.target as Node)) {
-        setContextMenuPosition(null);
+        setShowContextMenu(false);
       }
     };
 
@@ -76,18 +101,23 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, onNodesChanged }) => {
             <DraggableNode key={node.id} node={node} />
           ))}
         </div>
-        {contextMenuPosition && (
+        <CSSTransition
+          nodeRef={contextMenuRef}
+          in={showContextMenu}
+          timeout={200}
+          classNames="context-menu"
+          unmountOnExit
+          onExited={() => setContextMenuPosition({ x: 0, y: 0 })}
+        >
           <ContextMenu
             ref={contextMenuRef}
             x={contextMenuPosition.x}
             y={contextMenuPosition.y}
-            onClose={() => setContextMenuPosition(null)}
-            onNodeSelected={(nodeType: string) => {
-              setNodeToAdd(nodeType);
-              setContextMenuPosition(null);
+            onMenuItemSelected={(itemId: string) => {
+              setShowContextMenu(false);
             }}
           />
-        )}
+        </CSSTransition>
       </div>
     </DndContext>
   );
