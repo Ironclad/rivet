@@ -1,6 +1,6 @@
-import { DndContext, DragEndEvent, useDroppable } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, useDroppable } from '@dnd-kit/core';
 import { ChartNode } from '../model/NodeBase';
-import { DraggableNode } from './DraggableNode';
+import { DraggableNode, ViewNode } from './DraggableNode';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
@@ -54,6 +54,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, onNodesChanged }) => {
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+  const [draggingNode, setDraggingNode] = useState<ChartNode<string, unknown> | null>(null);
 
   const handleContextMenu = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -63,9 +64,19 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, onNodesChanged }) => {
 
   const { setNodeRef } = useDroppable({ id: 'NodeCanvas' });
 
+  const onNodeStartDrag = useCallback(
+    (e: DragStartEvent) => {
+      const node = nodes.find((node) => node.id === e.active.id);
+      setDraggingNode(node!);
+    },
+    [nodes],
+  );
+
   const onNodeDragged = useCallback(
     ({ active, delta }: DragEndEvent) => {
       const nodeId = active.id;
+
+      setDraggingNode(null);
 
       onNodesChanged?.(
         produce(nodes, (draft) => {
@@ -113,13 +124,16 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, onNodesChanged }) => {
   );
 
   return (
-    <DndContext onDragEnd={onNodeDragged}>
+    <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
       <div ref={setNodeRef} css={styles} onContextMenu={handleContextMenu}>
         <div className="nodes">
           {nodes.map((node) => (
             <DraggableNode key={node.id} node={node} />
           ))}
         </div>
+        <DragOverlay dropAnimation={null}>
+          {draggingNode ? <ViewNode node={draggingNode} isOverlay /> : null}
+        </DragOverlay>
         <CSSTransition
           nodeRef={contextMenuRef}
           in={showContextMenu}
