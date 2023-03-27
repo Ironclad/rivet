@@ -1,24 +1,20 @@
 import { NodeImpl } from '../NodeImpl';
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, NodeOutputId } from '../NodeBase';
 import { nanoid } from 'nanoid';
+import { DataType } from '../DataValue';
 
 export type UserInputNode = ChartNode<'userInput', UserInputNodeData>;
 
 export type UserInputNodeData = {
   prompt: string;
-  inputType: 'text' | 'number' | 'email' | 'date' | 'time';
 };
 
 export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
-  constructor(node: UserInputNode) {
-    super(node);
-  }
-
-  static create(prompt = '', inputType: UserInputNodeData['inputType'] = 'text'): UserInputNodeImpl {
+  static create(prompt = '', inputType: DataType = 'string'): UserInputNode {
     const inputDefinitions: NodeInputDefinition[] = [];
     const outputDefinitions: NodeOutputDefinition[] = [
       {
-        type: inputType,
+        dataType: inputType,
         id: 'output' as NodeOutputId,
         title: 'User Input',
       },
@@ -34,14 +30,12 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
       },
       data: {
         prompt,
-        inputType,
       },
       inputDefinitions,
       outputDefinitions,
-      connections: [],
     };
 
-    return new UserInputNodeImpl(chartNode);
+    return chartNode;
   }
 
   async getUserInput(): Promise<Record<string, any>> {

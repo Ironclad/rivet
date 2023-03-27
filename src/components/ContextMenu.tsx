@@ -1,7 +1,8 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { FC, ReactNode, forwardRef, useRef, useState } from 'react';
+import { FC, ReactNode, forwardRef, useCallback, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
+import { NodeType } from '../model/Nodes';
 
 interface ContextMenuProps {
   x: number;
@@ -154,11 +155,21 @@ const MenuItem: FC<MenuItemProps> = ({ label, onClick, children }) => {
 };
 
 export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(({ x, y, onMenuItemSelected }, ref) => {
+  const addNode = useCallback(
+    (nodeType: NodeType) => {
+      onMenuItemSelected?.(`Add:${nodeType}`);
+    },
+    [onMenuItemSelected],
+  );
+
   return (
     <div ref={ref} css={menuStyles} style={{ top: y + 4, left: x - 16 }} onClick={(e) => e.stopPropagation()}>
       <MenuItem label="Add" hasSubMenu={true}>
-        <MenuItem label="Chat" onClick={() => onMenuItemSelected?.('Add:ChatNode')} />
-        <MenuItem label="User Input" onClick={() => onMenuItemSelected?.('Add:UserInputNode')} />
+        <MenuItem label="User Input" onClick={() => addNode('branch')} />
+        <MenuItem label="Chat" onClick={() => addNode('chat')} />
+        <MenuItem label="Concat" onClick={() => addNode('concat')} />
+        <MenuItem label="Interpolate" onClick={() => addNode('interpolate')} />
+        <MenuItem label="User Input" onClick={() => addNode('userInput')} />
       </MenuItem>
     </div>
   );

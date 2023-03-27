@@ -10,13 +10,7 @@ type PromptItem = {
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 
-export type ChatNodeData = {
-  model?: string;
-  maxTokens?: number;
-  temperature?: number;
-  topP?: number;
-  messages: PromptItem[];
-};
+export type ChatNodeData = {};
 
 export class ChatNodeImpl extends NodeImpl<ChatNode> {
   #api: openai.OpenAIApi;
@@ -30,37 +24,28 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
     this.#api = new openai.OpenAIApi(config);
   }
-  static create(
-    model: string,
-    temperature = 1.0,
-    topP = 0.9,
-    messages: PromptItem[] = [{ role: 'user', content: '' }],
-  ): ChatNodeImpl {
+  static create(): ChatNode {
     const inputDefinitions: NodeInputDefinition[] = [
       {
         id: 'model' as NodeInputId,
         title: 'Model',
         dataType: 'string',
         required: false,
-        data: model,
       },
       {
         dataType: 'number',
         id: 'temperature' as NodeInputId,
         title: 'Temperature',
-        data: temperature,
       },
       {
         dataType: 'number',
         id: 'top_p' as NodeInputId,
         title: 'Top P',
-        data: topP,
       },
       {
         dataType: 'chat-messages',
         id: 'messages' as NodeInputId,
         title: 'Messages',
-        data: messages,
       },
     ];
 
@@ -80,17 +65,12 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         x: 0,
         y: 0,
       },
-      data: {
-        model,
-        temperature,
-        topP,
-        messages,
-      },
+      data: {},
       inputDefinitions,
       outputDefinitions,
     };
 
-    return new ChatNodeImpl(chartNode);
+    return chartNode;
   }
 
   async process(inputs: Record<string, any>): Promise<Record<string, any>> {

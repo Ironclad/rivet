@@ -10,7 +10,7 @@ export type InterpolateNodeData = {
 };
 
 export class InterpolateNodeImpl extends NodeImpl<InterpolateNode> {
-  static create(baseString: string = 'Hello {{name}}!', valueNames: string[] = ['name']): InterpolateNodeImpl {
+  static create(baseString: string = 'Hello {{name}}!', valueNames: string[] = ['name']): InterpolateNode {
     const inputDefinitions: NodeInputDefinition[] = valueNames.map((valueName) => {
       return {
         type: 'string',
@@ -45,7 +45,7 @@ export class InterpolateNodeImpl extends NodeImpl<InterpolateNode> {
       outputDefinitions: outputDefinitions,
     };
 
-    return new InterpolateNodeImpl(chartNode);
+    return chartNode;
   }
 
   interpolate(baseString: string, valueNames: string[], values: Record<string, any>): string {
