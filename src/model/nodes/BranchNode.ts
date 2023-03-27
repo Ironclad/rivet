@@ -9,20 +9,20 @@ type BranchNodeData = {
 export type BranchNode = ChartNode<'branch', BranchNodeData>;
 
 export class BranchNodeImpl extends NodeImpl<BranchNode> {
-  static create(): BranchNodeImpl {
+  static create(): BranchNode {
     const inputDefinitions: NodeInputDefinition[] = [
       {
-        type: 'string',
+        dataType: 'string',
         id: 'input_1' as NodeInputId,
         title: 'Condition',
       },
       {
-        type: 'string',
+        dataType: 'string',
         id: 'input_2' as NodeInputId,
         title: 'True',
       },
       {
-        type: 'string',
+        dataType: 'string',
         id: 'input_3' as NodeInputId,
         title: 'False',
       },
@@ -30,12 +30,12 @@ export class BranchNodeImpl extends NodeImpl<BranchNode> {
 
     const outputDefinitions: NodeOutputDefinition[] = [
       {
-        type: 'string',
+        dataType: 'string',
         id: 'output_true' as NodeOutputId,
         title: 'True',
       },
       {
-        type: 'string',
+        dataType: 'string',
         id: 'output_false' as NodeOutputId,
         title: 'False',
       },
@@ -54,10 +54,9 @@ export class BranchNodeImpl extends NodeImpl<BranchNode> {
       },
       inputDefinitions: inputDefinitions,
       outputDefinitions: outputDefinitions,
-      connections: [],
     };
 
-    return new BranchNodeImpl(chartNode);
+    return chartNode;
   }
 
   process(inputs: Record<string, any>): Record<string, any> {

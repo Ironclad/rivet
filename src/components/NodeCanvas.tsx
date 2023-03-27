@@ -7,6 +7,7 @@ import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { produce } from 'immer';
 import { ContextMenu } from './ContextMenu';
 import { CSSTransition } from 'react-transition-group';
+import { NodeType, nodeFactory } from '../model/Nodes';
 
 export interface NodeCanvasProps {
   nodes: ChartNode<string, unknown>[];
@@ -93,6 +94,24 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, onNodesChanged }) => {
     };
   }, []);
 
+  const onContextMenuItemSelected = useCallback(
+    (menuItemId: string) => {
+      if (menuItemId.startsWith('Add:')) {
+        const nodeType = menuItemId.substring(4) as NodeType;
+        const newNode = nodeFactory(nodeType);
+
+        newNode.visualData = {
+          x: contextMenuPosition.x,
+          y: contextMenuPosition.y,
+        };
+
+        onNodesChanged?.([...nodes, newNode]);
+        setShowContextMenu(false);
+      }
+    },
+    [contextMenuPosition.x, contextMenuPosition.y, nodes, onNodesChanged],
+  );
+
   return (
     <DndContext onDragEnd={onNodeDragged}>
       <div ref={setNodeRef} css={styles} onContextMenu={handleContextMenu}>
@@ -113,9 +132,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, onNodesChanged }) => {
             ref={contextMenuRef}
             x={contextMenuPosition.x}
             y={contextMenuPosition.y}
-            onMenuItemSelected={(itemId: string) => {
-              setShowContextMenu(false);
-            }}
+            onMenuItemSelected={onContextMenuItemSelected}
           />
         </CSSTransition>
       </div>
