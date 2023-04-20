@@ -13,8 +13,18 @@ export const useDraggingNode = (
     (e: DragStartEvent) => {
       const node = nodes.find((node) => node.id === e.active.id);
       setDraggingNode(node!);
+
+      // Update the zIndex of the dragged node
+      const maxZIndex = nodes.reduce(
+        (max, node) =>
+          Math.max(max, node.visualData.zIndex && !Number.isNaN(node.visualData.zIndex) ? node.visualData.zIndex : 0),
+        0,
+      );
+      onNodesChanged(
+        nodes.map((n) => (n.id === node!.id ? { ...n, visualData: { ...n.visualData, zIndex: maxZIndex + 1 } } : n)),
+      );
     },
-    [nodes],
+    [nodes, onNodesChanged],
   );
 
   const onNodeDragged = useCallback(

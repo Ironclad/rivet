@@ -10,6 +10,11 @@ import {
 import { CSSProperties, HTMLAttributes, forwardRef, useCallback, MouseEvent, FC, memo } from 'react';
 import clsx from 'clsx';
 import { Nodes, createNodeInstance, createUnknownNodeInstance } from '../model/Nodes';
+import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
+import { NodeImpl } from '../model/NodeImpl';
+import { match } from 'ts-pattern';
+import { PromptNodeBody } from './nodeBodies/PromptNodeBody';
+import { PromptNode } from '../model/nodes/PromptNode';
 
 interface DraggableNodeProps {
   node: ChartNode<string, unknown>;
@@ -43,7 +48,7 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
       handleAttributes={listeners}
       onWireEndDrag={onWireEndDrag}
       onWireStartDrag={onWireStartDrag}
-      onClick={() => {
+      onSelectNode={() => {
         onNodeSelected(node);
       }}
     />
@@ -60,7 +65,7 @@ export type ViewNodeProps = {
   isSelected?: boolean;
   onWireStartDrag?: (event: MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => void;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
-  onClick?: () => void;
+  onSelectNode?: () => void;
 
   nodeAttributes?: HTMLAttributes<HTMLDivElement>;
   handleAttributes?: HTMLAttributes<HTMLDivElement>;
@@ -81,13 +86,14 @@ export const ViewNode = memo(
         isSelected,
         onWireEndDrag,
         onWireStartDrag,
-        onClick,
+        onSelectNode,
       },
       ref,
     ) => {
       const style: CSSProperties = {
         opacity: isDragging ? '0' : '',
         transform: `translate(${node.visualData.x + xDelta}px, ${node.visualData.y + yDelta}px)`,
+        zIndex: node.visualData.zIndex ?? 0,
       };
 
       const handlePortMouseDown = useCallback(
@@ -108,7 +114,22 @@ export const ViewNode = memo(
         [onWireEndDrag, node.id],
       );
 
+      const handleEditClick = useCallback(
+        (event: MouseEvent<HTMLButtonElement>) => {
+          event.stopPropagation();
+          onSelectNode?.();
+        },
+        [onSelectNode],
+      );
+
+      const handleEditMouseDown = useCallback((event: MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        event.preventDefault();
+      }, []);
+
       const nodeImpl = createNodeInstance(node as Nodes);
+
+      const body = getNodeBody(node);
 
       return (
         <div
@@ -118,12 +139,17 @@ export const ViewNode = memo(
           {...nodeAttributes}
           data-node-id={node.id}
           data-contextmenutype={`node-${node.type}`}
-          onClick={onClick}
         >
-          <div className="node-title" {...handleAttributes}>
-            {node.title}
+          <div className="node-title">
+            <div className="title-text">{node.title}</div>
+            <div className="grab-area" {...handleAttributes} />
+            <div className="title-controls">
+              <button className="edit-button" onClick={handleEditClick} onMouseDown={handleEditMouseDown} title="Edit">
+                <SettingsCogIcon />
+              </button>
+            </div>
           </div>
-          <div className="node-body"></div>
+          <div className="node-body">{body}</div>
           <div className="node-ports">
             <div className="input-ports">
               {nodeImpl.getInputDefinitions().map((input) => {
@@ -196,4 +222,10 @@ export function getNodePortPosition(
     }
   }
   return { x: 0, y: 0 };
+}
+
+function getNodeBody(node: ChartNode<string, unknown>) {
+  return match(node)
+    .with({ type: 'prompt' }, (node) => <PromptNodeBody node={node as PromptNode} />)
+    .otherwise(() => <div>Unknown node type</div>);
 }

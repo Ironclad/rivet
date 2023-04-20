@@ -13,9 +13,35 @@ export const useDraggingWire = (
   const onWireStartDrag = useCallback(
     (event: React.MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => {
       event.stopPropagation();
-      setDraggingWire({ startNodeId, startPortId });
+
+      // Check if the starting port is an input port
+      const startNode = nodes.find((n) => n.id === startNodeId);
+      if (startNode) {
+        const startNodeImpl = createUnknownNodeInstance(startNode);
+        const isInputPort = startNodeImpl.getInputDefinitions().some((i) => i.id === startPortId);
+
+        if (isInputPort) {
+          // If the input port is already connected, remove the existing connection
+          const existingConnectionIndex = connections.findIndex(
+            (conn) => conn.inputNodeId === startNodeId && conn.inputId === startPortId,
+          );
+
+          if (existingConnectionIndex !== -1) {
+            const newConnections = [...connections];
+            newConnections.splice(existingConnectionIndex, 1);
+            onConnectionsChanged(newConnections);
+
+            setDraggingWire({
+              startNodeId: connections[existingConnectionIndex].outputNodeId,
+              startPortId: connections[existingConnectionIndex].outputId,
+            });
+          }
+        }
+      } else {
+        setDraggingWire({ startNodeId, startPortId });
+      }
     },
-    [],
+    [connections, nodes, onConnectionsChanged],
   );
 
   const onWireEndDrag = useCallback(
