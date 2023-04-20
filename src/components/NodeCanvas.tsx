@@ -5,19 +5,20 @@ import { nodeStyles } from './nodeStyles';
 import { FC, useCallback, useMemo } from 'react';
 import { ContextMenu } from './ContextMenu';
 import { CSSTransition } from 'react-transition-group';
-import { NodeType, nodeFactory } from '../model/Nodes';
 import { WireLayer } from './WireLayer';
-import { useContextMenu } from '../hooks/useContextMenu';
+import { ContextMenuData, useContextMenu } from '../hooks/useContextMenu';
 import { useDraggingNode } from '../hooks/useDraggingNode';
 import { useDraggingWire } from '../hooks/useDraggingWire';
-import { NodeGraph } from '../model/NodeGraph';
-import { ChartNode, NodeConnection, NodeId } from '../model/NodeBase';
+import { ChartNode, NodeConnection } from '../model/NodeBase';
 
 export interface NodeCanvasProps {
   nodes: ChartNode<string, unknown>[];
   connections: NodeConnection[];
+  selectedNode: ChartNode<string, unknown> | null;
   onNodesChanged: (nodes: ChartNode<string, unknown>[]) => void;
   onConnectionsChanged: (connections: NodeConnection[]) => void;
+  onNodeSelected: (node: ChartNode<string, unknown>) => void;
+  onContextMenuItemSelected?: (menuItemId: string, contextMenuData: ContextMenuData) => void;
 }
 
 const styles = css`
@@ -57,7 +58,15 @@ const styles = css`
   ${nodeStyles}
 `;
 
-export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, connections, onNodesChanged, onConnectionsChanged }) => {
+export const NodeCanvas: FC<NodeCanvasProps> = ({
+  nodes,
+  connections,
+  selectedNode,
+  onNodesChanged,
+  onConnectionsChanged,
+  onNodeSelected,
+  onContextMenuItemSelected,
+}) => {
   const { draggingNode, onNodeStartDrag, onNodeDragged } = useDraggingNode(nodes, onNodesChanged);
   const { draggingWire, onWireStartDrag, onWireEndDrag } = useDraggingWire(nodes, connections, onConnectionsChanged);
 
@@ -85,35 +94,12 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, connections, onNodesCha
       : [];
   }, [connections, draggingNode]);
 
-  const onContextMenuItemSelected = useCallback(
+  const contextMenuItemSelected = useCallback(
     (menuItemId: string) => {
-      if (menuItemId.startsWith('Add:')) {
-        const nodeType = menuItemId.substring(4) as NodeType;
-        const newNode = nodeFactory(nodeType);
-
-        newNode.visualData = {
-          x: contextMenuData.x,
-          y: contextMenuData.y,
-        };
-
-        onNodesChanged?.([...nodes, newNode]);
-        setShowContextMenu(false);
-        return;
-      }
-
-      if (menuItemId.startsWith('Delete:')) {
-        const nodeId = menuItemId.substring(7) as NodeId;
-        const nodeIndex = nodes.findIndex((n) => n.id === nodeId);
-        if (nodeIndex >= 0) {
-          const newNodes = [...nodes];
-          newNodes.splice(nodeIndex, 1);
-          onNodesChanged?.(newNodes);
-        }
-        setShowContextMenu(false);
-        return;
-      }
+      onContextMenuItemSelected?.(menuItemId, contextMenuData);
+      setShowContextMenu(false);
     },
-    [contextMenuData.x, contextMenuData.y, nodes, onNodesChanged, setShowContextMenu],
+    [contextMenuData, onContextMenuItemSelected, setShowContextMenu],
   );
 
   return (
@@ -125,8 +111,10 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, connections, onNodesCha
               key={node.id}
               node={node}
               connections={nodeConnections}
+              isSelected={selectedNode?.id === node.id}
               onWireStartDrag={onWireStartDrag}
               onWireEndDrag={onWireEndDrag}
+              onNodeSelected={onNodeSelected}
             />
           ))}
         </div>
@@ -147,7 +135,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, connections, onNodesCha
             x={contextMenuData.x}
             y={contextMenuData.y}
             data={contextMenuData.data}
-            onMenuItemSelected={onContextMenuItemSelected}
+            onMenuItemSelected={contextMenuItemSelected}
           />
         </CSSTransition>
       </div>

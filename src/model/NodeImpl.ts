@@ -27,13 +27,9 @@ export abstract class NodeImpl<T extends ChartNode<string, unknown>, Type extend
     return this.chartNode.data;
   }
 
-  get inputDefinitions(): NodeInputDefinition[] {
-    return this.chartNode.inputDefinitions;
-  }
+  abstract getInputDefinitions(): NodeInputDefinition[];
 
-  get outputDefinitions(): NodeOutputDefinition[] {
-    return this.chartNode.outputDefinitions;
-  }
+  abstract getOutputDefinitions(): NodeOutputDefinition[];
 
   abstract process(inputData: Record<string, any>): Record<string, any>;
 }

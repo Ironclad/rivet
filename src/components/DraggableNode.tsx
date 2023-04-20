@@ -9,20 +9,31 @@ import {
 } from '../model/NodeBase';
 import { CSSProperties, HTMLAttributes, forwardRef, useCallback, MouseEvent, FC, memo } from 'react';
 import clsx from 'clsx';
+import { Nodes, createNodeInstance, createUnknownNodeInstance } from '../model/Nodes';
 
 interface DraggableNodeProps {
   node: ChartNode<string, unknown>;
   connections?: NodeConnection[];
+  isSelected?: boolean;
   onWireStartDrag?: (event: MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => void;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
+  onNodeSelected: (node: ChartNode<string, unknown>) => void;
 }
 
-export const DraggableNode: FC<DraggableNodeProps> = ({ node, connections = [], onWireStartDrag, onWireEndDrag }) => {
+export const DraggableNode: FC<DraggableNodeProps> = ({
+  node,
+  connections = [],
+  isSelected = false,
+  onWireStartDrag,
+  onWireEndDrag,
+  onNodeSelected,
+}) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: node.id });
 
   return (
     <ViewNode
       ref={setNodeRef}
+      isSelected={isSelected}
       node={node}
       connections={connections}
       isDragging={isDragging}
@@ -32,6 +43,9 @@ export const DraggableNode: FC<DraggableNodeProps> = ({ node, connections = [], 
       handleAttributes={listeners}
       onWireEndDrag={onWireEndDrag}
       onWireStartDrag={onWireStartDrag}
+      onClick={() => {
+        onNodeSelected(node);
+      }}
     />
   );
 };
@@ -43,8 +57,10 @@ export type ViewNodeProps = {
   yDelta?: number;
   isDragging?: boolean;
   isOverlay?: boolean;
+  isSelected?: boolean;
   onWireStartDrag?: (event: MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => void;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
+  onClick?: () => void;
 
   nodeAttributes?: HTMLAttributes<HTMLDivElement>;
   handleAttributes?: HTMLAttributes<HTMLDivElement>;
@@ -62,8 +78,10 @@ export const ViewNode = memo(
         yDelta = 0,
         isDragging,
         isOverlay,
+        isSelected,
         onWireEndDrag,
         onWireStartDrag,
+        onClick,
       },
       ref,
     ) => {
@@ -90,14 +108,17 @@ export const ViewNode = memo(
         [onWireEndDrag, node.id],
       );
 
+      const nodeImpl = createNodeInstance(node as Nodes);
+
       return (
         <div
-          className={isOverlay ? 'node overlayNode' : 'node'}
+          className={clsx('node', { overlayNode: isOverlay, selected: isSelected })}
           ref={ref}
           style={style}
           {...nodeAttributes}
           data-node-id={node.id}
           data-contextmenutype={`node-${node.type}`}
+          onClick={onClick}
         >
           <div className="node-title" {...handleAttributes}>
             {node.title}
@@ -105,7 +126,7 @@ export const ViewNode = memo(
           <div className="node-body"></div>
           <div className="node-ports">
             <div className="input-ports">
-              {node.inputDefinitions.map((input) => {
+              {nodeImpl.getInputDefinitions().map((input) => {
                 const connected = connections.some((conn) => conn.inputNodeId === node.id && conn.inputId === input.id);
                 return (
                   <div key={input.id} className={clsx('port', { connected })}>
@@ -121,7 +142,7 @@ export const ViewNode = memo(
               })}
             </div>
             <div className="output-ports">
-              {node.outputDefinitions.map((output) => {
+              {nodeImpl.getOutputDefinitions().map((output) => {
                 const connected = connections.some(
                   (conn) => conn.outputNodeId === node.id && conn.outputId === output.id,
                 );
@@ -152,12 +173,13 @@ export function getNodePortPosition(
 ): { x: number; y: number } {
   const node = nodes.find((node) => node.id === nodeId);
   if (node && portId) {
+    const nodeImpl = createUnknownNodeInstance(node);
     let isInput = true;
-    const foundInput = node.inputDefinitions.find((input) => input.id === portId);
+    const foundInput = nodeImpl.getInputDefinitions().find((input) => input.id === portId);
     let foundPort: NodeInputDefinition | NodeOutputDefinition | undefined = foundInput;
     if (!foundPort) {
       isInput = false;
-      foundPort = node.outputDefinitions.find((output) => output.id === portId);
+      foundPort = nodeImpl.getOutputDefinitions().find((output) => output.id === portId);
     }
 
     if (foundPort) {

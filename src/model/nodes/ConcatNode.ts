@@ -10,24 +10,6 @@ export type ConcatNodeData = {
 
 export class ConcatNodeImpl extends NodeImpl<ConcatNode> {
   static create(inputStrings: string[] = ['a', 'b']): ConcatNode {
-    const inputDefinitions: NodeInputDefinition[] = inputStrings.map((inputString, index) => {
-      return {
-        type: 'string',
-        id: `input_${index}` as PortId,
-        title: `Input ${inputString.toUpperCase()}`,
-        dataType: 'string',
-        required: false,
-      };
-    });
-
-    const outputDefinitions: NodeOutputDefinition[] = [
-      {
-        id: 'output' as PortId,
-        title: 'Output',
-        dataType: 'string',
-      },
-    ];
-
     const chartNode: ConcatNode = {
       type: 'concat',
       title: 'Concat',
@@ -39,11 +21,31 @@ export class ConcatNodeImpl extends NodeImpl<ConcatNode> {
       data: {
         inputStrings: inputStrings,
       },
-      inputDefinitions: inputDefinitions,
-      outputDefinitions: outputDefinitions,
     };
 
     return chartNode;
+  }
+
+  getInputDefinitions(): NodeInputDefinition[] {
+    return this.chartNode.data.inputStrings.map((inputString, index) => {
+      return {
+        type: 'string',
+        id: `input_${index}` as PortId,
+        title: `Input ${inputString.toUpperCase()}`,
+        dataType: 'string',
+        required: false,
+      };
+    });
+  }
+
+  getOutputDefinitions(): NodeOutputDefinition[] {
+    return [
+      {
+        id: 'output' as PortId,
+        title: 'Output',
+        dataType: 'string',
+      },
+    ];
   }
 
   concatInputs(inputs: string[]): string {
@@ -51,7 +53,7 @@ export class ConcatNodeImpl extends NodeImpl<ConcatNode> {
   }
 
   process(inputs: Record<string, any>): Record<string, any> {
-    const inputStrings = this.inputDefinitions.map((input) => inputs[input.id]);
+    const inputStrings = this.getInputDefinitions().map((input) => inputs[input.id]);
     const outputValue = this.concatInputs(inputStrings);
     return {
       output: outputValue,

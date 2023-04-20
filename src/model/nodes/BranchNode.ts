@@ -10,7 +10,24 @@ export type BranchNode = ChartNode<'branch', BranchNodeData>;
 
 export class BranchNodeImpl extends NodeImpl<BranchNode> {
   static create(): BranchNode {
-    const inputDefinitions: NodeInputDefinition[] = [
+    const chartNode: BranchNode = {
+      type: 'branch',
+      title: 'Branch',
+      id: nanoid() as NodeId,
+      visualData: {
+        x: 0,
+        y: 0,
+      },
+      data: {
+        condition: '',
+      },
+    };
+
+    return chartNode;
+  }
+
+  getInputDefinitions(): NodeInputDefinition[] {
+    return [
       {
         dataType: 'string',
         id: 'input_1' as PortId,
@@ -27,8 +44,10 @@ export class BranchNodeImpl extends NodeImpl<BranchNode> {
         title: 'On False',
       },
     ];
+  }
 
-    const outputDefinitions: NodeOutputDefinition[] = [
+  getOutputDefinitions(): NodeOutputDefinition[] {
+    return [
       {
         dataType: 'string',
         id: 'output_true' as PortId,
@@ -40,23 +59,6 @@ export class BranchNodeImpl extends NodeImpl<BranchNode> {
         title: 'False',
       },
     ];
-
-    const chartNode: BranchNode = {
-      type: 'branch',
-      title: 'Branch',
-      id: nanoid() as NodeId,
-      visualData: {
-        x: 0,
-        y: 0,
-      },
-      data: {
-        condition: '',
-      },
-      inputDefinitions: inputDefinitions,
-      outputDefinitions: outputDefinitions,
-    };
-
-    return chartNode;
   }
 
   process(inputs: Record<string, any>): Record<string, any> {

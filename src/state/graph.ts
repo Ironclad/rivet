@@ -1,9 +1,11 @@
 import { NodeGraph, emptyNodeGraph } from '../model/NodeGraph';
 import { DefaultValue, atom, selector } from 'recoil';
+import { persistAtom } from './persist';
 
 export const graphState = atom<NodeGraph>({
   key: 'graphState',
   default: emptyNodeGraph(),
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const nodesSelector = selector({

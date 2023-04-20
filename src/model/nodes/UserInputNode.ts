@@ -11,15 +11,6 @@ export type UserInputNodeData = {
 
 export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
   static create(prompt = '', inputType: DataType = 'string'): UserInputNode {
-    const inputDefinitions: NodeInputDefinition[] = [];
-    const outputDefinitions: NodeOutputDefinition[] = [
-      {
-        dataType: inputType,
-        id: 'output' as PortId,
-        title: 'User Input',
-      },
-    ];
-
     const chartNode: UserInputNode = {
       type: 'userInput',
       title: 'User Input',
@@ -31,11 +22,23 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
       data: {
         prompt,
       },
-      inputDefinitions,
-      outputDefinitions,
     };
 
     return chartNode;
+  }
+
+  getInputDefinitions(): NodeInputDefinition[] {
+    return [];
+  }
+
+  getOutputDefinitions(): NodeOutputDefinition[] {
+    return [
+      {
+        dataType: 'string',
+        id: 'output' as PortId,
+        title: 'User Input',
+      },
+    ];
   }
 
   async getUserInput(): Promise<Record<string, any>> {

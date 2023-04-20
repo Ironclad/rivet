@@ -25,7 +25,22 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     this.#api = new openai.OpenAIApi(config);
   }
   static create(): ChatNode {
-    const inputDefinitions: NodeInputDefinition[] = [
+    const chartNode: ChatNode = {
+      type: 'chat',
+      title: 'Chat',
+      id: nanoid() as NodeId,
+      visualData: {
+        x: 0,
+        y: 0,
+      },
+      data: {},
+    };
+
+    return chartNode;
+  }
+
+  getInputDefinitions(): NodeInputDefinition[] {
+    return [
       {
         id: 'model' as PortId,
         title: 'Model',
@@ -48,29 +63,16 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         title: 'Messages',
       },
     ];
+  }
 
-    const outputDefinitions: NodeOutputDefinition[] = [
+  getOutputDefinitions(): NodeOutputDefinition[] {
+    return [
       {
         dataType: 'string',
         id: 'response' as PortId,
         title: 'Response',
       },
     ];
-
-    const chartNode: ChatNode = {
-      type: 'chat',
-      title: 'Chat',
-      id: nanoid() as NodeId,
-      visualData: {
-        x: 0,
-        y: 0,
-      },
-      data: {},
-      inputDefinitions,
-      outputDefinitions,
-    };
-
-    return chartNode;
   }
 
   async process(inputs: Record<string, any>): Promise<Record<string, any>> {
