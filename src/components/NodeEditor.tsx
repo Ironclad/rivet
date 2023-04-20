@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { selectedNodeState } from '../state/graphBuilder';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { nodesSelector } from '../state/graph';
@@ -150,6 +150,20 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
   const nodeEditor = match(selectedNode)
     .with({ type: 'prompt' }, (node) => <PromptNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .otherwise(() => <div>Unknown node type</div>);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setSelectedNodeId(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [setSelectedNodeId]);
 
   return (
     <Container>

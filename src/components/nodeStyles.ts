@@ -9,7 +9,7 @@ export const nodeStyles = css`
     display: flex;
     flex-direction: column;
     position: absolute;
-    min-width: 200px;
+    min-width: 300px;
     padding: 12px;
     font-family: 'Roboto Mono', monospace;
     /* transition-duration: 0.2s; TODO */
@@ -33,14 +33,45 @@ export const nodeStyles = css`
   .node-title {
     background-color: var(--grey-darkish);
     color: var(--foreground-bright);
-    font-weight: bold;
-    font-size: 14px;
     padding: 12px;
     margin: -12px -12px 8px -12px;
     border-radius: 8px 8px 0 0;
-    text-transform: uppercase;
     letter-spacing: 1px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .grab-area {
     cursor: move;
+    flex: 1;
+  }
+
+  .title-text {
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+
+  .title-controls {
+    button {
+      background-color: transparent;
+      border: none;
+      color: var(--grey-lighter);
+      cursor: pointer;
+      font-size: 18px;
+      margin-left: 8px;
+      transition: color 0.2s ease-out;
+      margin: -12px;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    button:hover {
+      color: var(--primary);
+    }
   }
 
   .node-body {

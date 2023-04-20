@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef } from 'react';
 import { ChartNode } from '../../model/NodeBase';
-import * as monaco from 'monaco-editor';
+import { monaco } from '../../utils/monaco';
 import styled from '@emotion/styled';
 import { PromptNode } from '../../model/nodes/PromptNode';
 import { useLatest } from 'ahooks';
@@ -25,23 +25,6 @@ const Container = styled.div`
     bottom: 0;
   }
 `;
-
-monaco.languages.register({ id: 'prompt-interpolation' });
-
-monaco.languages.setMonarchTokensProvider('prompt-interpolation', {
-  tokenizer: {
-    root: [[/\{\{[^}]+\}\}/, 'prompt-replacement']],
-  },
-});
-
-monaco.editor.defineTheme('prompt-interpolation', {
-  base: 'vs-dark',
-  inherit: true,
-  rules: [{ token: 'prompt-replacement', foreground: 'ff9900' }],
-  colors: {
-    'editor.background': '#282c34',
-  },
-});
 
 export const PromptNodeEditor: FC<PromptNodeEditorProps> = ({ node, onChange }) => {
   const editorContainer = useRef<HTMLDivElement>(null);
