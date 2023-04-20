@@ -25,9 +25,9 @@ const styles = css`
   width: 100vw;
   height: 100vh;
   position: relative;
-  background-color: #282c34;
-  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-color: var(--grey-darker);
+  background-image: linear-gradient(to right, var(--grey-subtle-accent) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grey-subtle-accent) 1px, transparent 1px);
   background-size: 20px 20px;
   background-position: -1px -1px;
   overflow: hidden;
