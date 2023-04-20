@@ -5,10 +5,7 @@ import { DataType } from './DataValue';
 export type NodeId = Opaque<string, 'NodeId'>;
 
 /** Unique within the inputs of a single node */
-export type NodeInputId = Opaque<string, 'NodeInputId'>;
-
-/** Unique within the outputs of a single node */
-export type NodeOutputId = Opaque<string, 'NodeOutputId'>;
+export type PortId = Opaque<string, 'PortId'>;
 
 /** Base interface for a node in a NodeGraph. All nodes will have this data.*/
 export interface NodeBase {
@@ -51,7 +48,7 @@ export type ChartNode<Type extends string, Data> = NodeBase & {
 /** Represents an input definition of a node. */
 export type NodeInputDefinition = {
   /** The unique identifier of the input. Unique within a single node only. */
-  id: NodeInputId;
+  id: PortId;
 
   /** The title of the input. Shows in the UI. */
   title: string;
@@ -72,7 +69,7 @@ export type NodeInputDefinition = {
 /** Represents an output definition of a node. */
 export type NodeOutputDefinition = {
   /** The unique identifier of the output. Unique within a single node. */
-  id: NodeOutputId;
+  id: PortId;
 
   /** The title of the output. Shown in the UI. */
   title: string;
@@ -96,10 +93,10 @@ export type NodeConnection = {
   inputNodeId: NodeId;
 
   /** The unique identifier of the output. */
-  outputId: NodeOutputId;
+  outputId: PortId;
 
   /** The unique identifier of the input. */
-  inputId: NodeInputId;
+  inputId: PortId;
 
   /** The data associated with the connection. */
   data?: unknown;

@@ -1,17 +1,17 @@
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, useDroppable } from '@dnd-kit/core';
-import { ChartNode, NodeConnection, NodeId, NodeInputId, NodeOutputDefinition, NodeOutputId } from '../model/NodeBase';
+import { DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
 import { DraggableNode, ViewNode } from './DraggableNode';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles';
-import { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { produce } from 'immer';
+import { FC, useCallback, useMemo } from 'react';
 import { ContextMenu } from './ContextMenu';
 import { CSSTransition } from 'react-transition-group';
 import { NodeType, nodeFactory } from '../model/Nodes';
-import { WireDef, WireLayer } from './WireLayer';
+import { WireLayer } from './WireLayer';
 import { useContextMenu } from '../hooks/useContextMenu';
 import { useDraggingNode } from '../hooks/useDraggingNode';
 import { useDraggingWire } from '../hooks/useDraggingWire';
+import { NodeGraph } from '../model/NodeGraph';
+import { ChartNode, NodeConnection } from '../model/NodeBase';
 
 export interface NodeCanvasProps {
   nodes: ChartNode<string, unknown>[];
@@ -72,6 +72,19 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, connections, onNodesCha
 
   const { setNodeRef } = useDroppable({ id: 'NodeCanvas' });
 
+  const nodesWithConnections = useMemo(() => {
+    return nodes.map((node) => {
+      const nodeConnections = connections.filter((c) => c.inputNodeId === node.id || c.outputNodeId === node.id);
+      return { node, nodeConnections };
+    });
+  }, [connections, nodes]);
+
+  const draggingNodeConnections = useMemo(() => {
+    return draggingNode
+      ? connections.filter((c) => c.inputNodeId === draggingNode.id || c.outputNodeId === draggingNode.id)
+      : [];
+  }, [connections, draggingNode]);
+
   const onContextMenuItemSelected = useCallback(
     (menuItemId: string) => {
       if (menuItemId.startsWith('Add:')) {
@@ -94,13 +107,19 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, connections, onNodesCha
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
       <div ref={setNodeRef} css={styles} onContextMenu={handleContextMenu}>
         <div className="nodes">
-          {nodes.map((node) => (
-            <DraggableNode key={node.id} node={node} onWireStartDrag={onWireStartDrag} onWireEndDrag={onWireEndDrag} />
+          {nodesWithConnections.map(({ node, nodeConnections }) => (
+            <DraggableNode
+              key={node.id}
+              node={node}
+              connections={nodeConnections}
+              onWireStartDrag={onWireStartDrag}
+              onWireEndDrag={onWireEndDrag}
+            />
           ))}
         </div>
         <WireLayer nodes={nodes} connections={connections} draggingWire={draggingWire} />
         <DragOverlay dropAnimation={null}>
-          {draggingNode ? <ViewNode node={draggingNode} isOverlay /> : null}
+          {draggingNode ? <ViewNode node={draggingNode} connections={draggingNodeConnections} isOverlay /> : null}
         </DragOverlay>
         <CSSTransition
           nodeRef={contextMenuRef}

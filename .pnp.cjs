@@ -63,6 +63,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["browserslist", "npm:4.21.5"],\
             ["camelcase", "npm:6.3.0"],\
             ["case-sensitive-paths-webpack-plugin", "npm:2.4.0"],\
+            ["clsx", "npm:1.2.1"],\
             ["css-loader", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:6.7.3"],\
             ["css-minimizer-webpack-plugin", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:3.4.1"],\
             ["dotenv", "npm:10.0.0"],\
@@ -7874,6 +7875,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["browserslist", "npm:4.21.5"],\
             ["camelcase", "npm:6.3.0"],\
             ["case-sensitive-paths-webpack-plugin", "npm:2.4.0"],\
+            ["clsx", "npm:1.2.1"],\
             ["css-loader", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:6.7.3"],\
             ["css-minimizer-webpack-plugin", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:3.4.1"],\
             ["dotenv", "npm:10.0.0"],\

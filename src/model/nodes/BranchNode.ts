@@ -1,5 +1,5 @@
 import { NodeImpl } from '../NodeImpl';
-import { ChartNode, NodeId, NodeInputDefinition, NodeInputId, NodeOutputDefinition, NodeOutputId } from '../NodeBase';
+import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
 
 type BranchNodeData = {
@@ -13,30 +13,30 @@ export class BranchNodeImpl extends NodeImpl<BranchNode> {
     const inputDefinitions: NodeInputDefinition[] = [
       {
         dataType: 'string',
-        id: 'input_1' as NodeInputId,
+        id: 'input_1' as PortId,
         title: 'Condition',
       },
       {
         dataType: 'string',
-        id: 'input_2' as NodeInputId,
-        title: 'True',
+        id: 'input_2' as PortId,
+        title: 'On True',
       },
       {
         dataType: 'string',
-        id: 'input_3' as NodeInputId,
-        title: 'False',
+        id: 'input_3' as PortId,
+        title: 'On False',
       },
     ];
 
     const outputDefinitions: NodeOutputDefinition[] = [
       {
         dataType: 'string',
-        id: 'output_true' as NodeOutputId,
+        id: 'output_true' as PortId,
         title: 'True',
       },
       {
         dataType: 'string',
-        id: 'output_false' as NodeOutputId,
+        id: 'output_false' as PortId,
         title: 'False',
       },
     ];

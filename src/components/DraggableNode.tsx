@@ -1,35 +1,35 @@
 import { useDraggable } from '@dnd-kit/core';
 import {
   ChartNode,
+  NodeConnection,
   NodeId,
   NodeInputDefinition,
-  NodeInputId,
   NodeOutputDefinition,
-  NodeOutputId,
+  PortId,
 } from '../model/NodeBase';
-import { CSSProperties, FC, HTMLAttributes, forwardRef, useCallback } from 'react';
+import { CSSProperties, HTMLAttributes, forwardRef, useCallback } from 'react';
+import clsx from 'clsx';
 
 interface DraggableNodeProps {
   node: ChartNode<string, unknown>;
-  onWireStartDrag?: (
-    event: React.MouseEvent<HTMLElement>,
-    startNodeId: NodeId,
-    startPortId: NodeInputId | NodeOutputId,
-  ) => void;
-  onWireEndDrag?: (
-    event: React.MouseEvent<HTMLElement>,
-    endNodeId: NodeId,
-    endPortId: NodeInputId | NodeOutputId,
-  ) => void;
+  connections?: NodeConnection[];
+  onWireStartDrag?: (event: React.MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => void;
+  onWireEndDrag?: (event: React.MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
 }
 
-export const DraggableNode: React.FC<DraggableNodeProps> = ({ node, onWireStartDrag, onWireEndDrag }) => {
+export const DraggableNode: React.FC<DraggableNodeProps> = ({
+  node,
+  connections = [],
+  onWireStartDrag,
+  onWireEndDrag,
+}) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: node.id });
 
   return (
     <ViewNode
       ref={setNodeRef}
       node={node}
+      connections={connections}
       isDragging={isDragging}
       xDelta={transform?.x}
       yDelta={transform?.y}
@@ -43,20 +43,13 @@ export const DraggableNode: React.FC<DraggableNodeProps> = ({ node, onWireStartD
 
 export type ViewNodeProps = {
   node: ChartNode<string, unknown>;
+  connections?: NodeConnection[];
   xDelta?: number;
   yDelta?: number;
   isDragging?: boolean;
   isOverlay?: boolean;
-  onWireStartDrag?: (
-    event: React.MouseEvent<HTMLElement>,
-    startNodeId: NodeId,
-    startPortId: NodeInputId | NodeOutputId,
-  ) => void;
-  onWireEndDrag?: (
-    event: React.MouseEvent<HTMLElement>,
-    endNodeId: NodeId,
-    endPortId: NodeInputId | NodeOutputId,
-  ) => void;
+  onWireStartDrag?: (event: React.MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => void;
+  onWireEndDrag?: (event: React.MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
 
   nodeAttributes?: HTMLAttributes<HTMLDivElement>;
   handleAttributes?: HTMLAttributes<HTMLDivElement>;
@@ -66,6 +59,7 @@ export const ViewNode = forwardRef<HTMLDivElement, ViewNodeProps>(
   (
     {
       node,
+      connections = [],
       handleAttributes,
       nodeAttributes,
       xDelta = 0,
@@ -83,7 +77,7 @@ export const ViewNode = forwardRef<HTMLDivElement, ViewNodeProps>(
     };
 
     const handlePortMouseDown = useCallback(
-      (event: React.MouseEvent<HTMLDivElement>, port: NodeInputId | NodeOutputId) => {
+      (event: React.MouseEvent<HTMLDivElement>, port: PortId) => {
         event.stopPropagation();
         event.preventDefault();
         onWireStartDrag?.(event, node.id, port);
@@ -92,7 +86,7 @@ export const ViewNode = forwardRef<HTMLDivElement, ViewNodeProps>(
     );
 
     const handlePortMouseUp = useCallback(
-      (event: React.MouseEvent<HTMLDivElement>, port: NodeInputId | NodeOutputId) => {
+      (event: React.MouseEvent<HTMLDivElement>, port: PortId) => {
         event.stopPropagation();
         event.preventDefault();
         onWireEndDrag?.(event, node.id, port);
@@ -114,30 +108,39 @@ export const ViewNode = forwardRef<HTMLDivElement, ViewNodeProps>(
         <div className="node-body"></div>
         <div className="node-ports">
           <div className="input-ports">
-            {node.inputDefinitions.map((input) => (
-              <div key={input.id} className="port">
-                <div
-                  className="port-circle input-port"
-                  onMouseDown={(e) => handlePortMouseDown(e, input.id)}
-                  onMouseUp={(e) => handlePortMouseUp(e, input.id)}
-                  data-port-id={input.id}
-                />
-                <div className="port-label">{input.title}</div>
-              </div>
-            ))}
+            {node.inputDefinitions.map((input) => {
+              const connected = connections.some((conn) => conn.inputNodeId === node.id && conn.inputId === input.id);
+              console.dir({ connected, input, connections });
+              return (
+                <div key={input.id} className={clsx('port', { connected })}>
+                  <div
+                    className="port-circle input-port"
+                    onMouseDown={(e) => handlePortMouseDown(e, input.id)}
+                    onMouseUp={(e) => handlePortMouseUp(e, input.id)}
+                    data-port-id={input.id}
+                  />
+                  <div className="port-label">{input.title}</div>
+                </div>
+              );
+            })}
           </div>
           <div className="output-ports">
-            {node.outputDefinitions.map((output) => (
-              <div key={output.id} className="port">
-                <div
-                  className="port-circle output-port"
-                  onMouseDown={(e) => handlePortMouseDown(e, output.id)}
-                  onMouseUp={(e) => handlePortMouseUp(e, output.id)}
-                  data-port-id={output.id}
-                />
-                <div className="port-label">{output.title}</div>
-              </div>
-            ))}
+            {node.outputDefinitions.map((output) => {
+              const connected = connections.some(
+                (conn) => conn.outputNodeId === node.id && conn.outputId === output.id,
+              );
+              return (
+                <div key={output.id} className={clsx('port', { connected })}>
+                  <div
+                    className="port-circle output-port"
+                    onMouseDown={(e) => handlePortMouseDown(e, output.id)}
+                    onMouseUp={(e) => handlePortMouseUp(e, output.id)}
+                    data-port-id={output.id}
+                  />
+                  <div className="port-label">{output.title}</div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -148,7 +151,7 @@ export const ViewNode = forwardRef<HTMLDivElement, ViewNodeProps>(
 export function getNodePortPosition(
   nodes: ChartNode<string, unknown>[],
   nodeId: NodeId,
-  portId: NodeInputId | NodeOutputId,
+  portId: PortId,
 ): { x: number; y: number } {
   const node = nodes.find((node) => node.id === nodeId);
   if (node && portId) {

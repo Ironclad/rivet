@@ -63,13 +63,19 @@ export const nodeStyles = css`
     gap: 8px;
   }
 
-  .output-ports .port {
+  .input-ports .port {
     flex-direction: row-reverse;
+    justify-content: flex-end;
+  }
+
+  .output-ports .port {
+    justify-content: flex-end;
   }
 
   .port {
     display: flex;
     align-items: center;
+    position: relative;
   }
 
   .port-label {
@@ -78,6 +84,15 @@ export const nodeStyles = css`
     text-transform: uppercase;
     letter-spacing: 1px;
     margin: 0 4px;
+    white-space: nowrap;
+    user-select: none;
+    opacity: 0.5;
+    transition: opacity 0.2s ease-out;
+  }
+
+  .node:hover .port-label,
+  .node.overlayNode .port-label {
+    opacity: 1;
   }
 
   .input-port {
@@ -104,7 +119,36 @@ export const nodeStyles = css`
     cursor: pointer;
   }
 
-  .output-ports .port-label {
+  .input-ports .port-label {
     text-align: right;
+    position: absolute;
+    right: calc(100% + 8px);
+  }
+
+  .output-ports .port-label {
+    text-align: left;
+    position: absolute;
+    left: calc(100% + 8px);
+  }
+
+  .port.connected .port-circle {
+    background-color: #ff9900;
+    border: 2px solid #cc6600;
+  }
+
+  .port.connected .port-label {
+    color: #ff9900;
+  }
+
+  .port.connected .port-label {
+    position: static;
+  }
+
+  .input-ports .port.connected {
+    flex-direction: row;
+  }
+
+  .output-ports .port.connected {
+    flex-direction: row-reverse;
   }
 `;

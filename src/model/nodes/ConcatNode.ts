@@ -1,5 +1,5 @@
 import { NodeImpl } from '../NodeImpl';
-import { ChartNode, NodeId, NodeInputDefinition, NodeInputId, NodeOutputDefinition, NodeOutputId } from '../NodeBase';
+import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
 
 export type ConcatNode = ChartNode<'concat', ConcatNodeData>;
@@ -13,7 +13,7 @@ export class ConcatNodeImpl extends NodeImpl<ConcatNode> {
     const inputDefinitions: NodeInputDefinition[] = inputStrings.map((inputString, index) => {
       return {
         type: 'string',
-        id: `input_${index}` as NodeInputId,
+        id: `input_${index}` as PortId,
         title: `Input ${inputString.toUpperCase()}`,
         dataType: 'string',
         required: false,
@@ -22,7 +22,7 @@ export class ConcatNodeImpl extends NodeImpl<ConcatNode> {
 
     const outputDefinitions: NodeOutputDefinition[] = [
       {
-        id: 'output' as NodeOutputId,
+        id: 'output' as PortId,
         title: 'Output',
         dataType: 'string',
       },

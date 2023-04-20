@@ -1,4 +1,4 @@
-import { ChartNode, NodeId, NodeInputDefinition, NodeInputId, NodeOutputDefinition, NodeOutputId } from '../NodeBase';
+import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
 
@@ -14,7 +14,7 @@ export class InterpolateNodeImpl extends NodeImpl<InterpolateNode> {
     const inputDefinitions: NodeInputDefinition[] = valueNames.map((valueName) => {
       return {
         type: 'string',
-        id: valueName as NodeInputId,
+        id: valueName as PortId,
         title: valueName,
         dataType: 'string',
         required: false,
@@ -23,7 +23,7 @@ export class InterpolateNodeImpl extends NodeImpl<InterpolateNode> {
 
     const outputDefinitions: NodeOutputDefinition[] = [
       {
-        id: 'output' as NodeOutputId,
+        id: 'output' as PortId,
         title: 'Output',
         dataType: 'string',
       },

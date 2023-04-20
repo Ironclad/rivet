@@ -50,7 +50,6 @@ const submenuStyles = css`
   margin-top: -4px;
   min-width: 150px;
   border: 2px solid #444;
-  border-left: none;
   border-radius: 4px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
   background-color: #1e1e1e;

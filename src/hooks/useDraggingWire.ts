@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { WireDef } from '../components/WireLayer';
-import { ChartNode, NodeConnection, NodeId, NodeInputId, NodeOutputId } from '../model/NodeBase';
+import { ChartNode, NodeConnection, NodeId, PortId } from '../model/NodeBase';
 
 export const useDraggingWire = (
   nodes: ChartNode<string, unknown>[],
@@ -10,7 +10,7 @@ export const useDraggingWire = (
   const [draggingWire, setDraggingWire] = useState<WireDef | undefined>();
 
   const onWireStartDrag = useCallback(
-    (event: React.MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: NodeInputId | NodeOutputId) => {
+    (event: React.MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => {
       event.stopPropagation();
       setDraggingWire({ startNodeId, startPortId });
     },
@@ -18,7 +18,7 @@ export const useDraggingWire = (
   );
 
   const onWireEndDrag = useCallback(
-    (event: React.MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: NodeInputId | NodeOutputId) => {
+    (event: React.MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => {
       event.stopPropagation();
       if (draggingWire) {
         let inputNode = nodes.find((n) => n.id === endNodeId);
