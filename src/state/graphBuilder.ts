@@ -6,7 +6,7 @@ export const selectedNodeState = atom<NodeId | null>({
   default: null,
 });
 
-export const canvasPositionState = atom<{ x: number; y: number }>({
+export const canvasPositionState = atom<{ x: number; y: number; zoom: number }>({
   key: 'canvasPosition',
-  default: { x: 0, y: 0 },
+  default: { x: 0, y: 0, zoom: 1 },
 });

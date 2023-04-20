@@ -178,9 +178,11 @@ export const nodeStyles = css`
 
   .input-ports .port.connected {
     flex-direction: row;
+    justify-content: flex-start;
   }
 
   .output-ports .port.connected {
     flex-direction: row-reverse;
+    justify-content: flex-end;
   }
 `;

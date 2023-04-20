@@ -7,16 +7,20 @@ export function useCanvasPositioning() {
 
   const canvasToClientPosition = useCallback(
     (x: number, y: number) => {
-      return { x: x + canvasPosition.x, y: y + canvasPosition.y };
+      const clientX = (x + canvasPosition.x) * canvasPosition.zoom;
+      const clientY = (y + canvasPosition.y) * canvasPosition.zoom;
+      return { x: clientX, y: clientY };
     },
-    [canvasPosition.x, canvasPosition.y],
+    [canvasPosition.x, canvasPosition.y, canvasPosition.zoom],
   );
 
   const clientToCanvasPosition = useCallback(
     (x: number, y: number) => {
-      return { x: x - canvasPosition.x, y: y - canvasPosition.y };
+      const canvasX = x / canvasPosition.zoom - canvasPosition.x;
+      const canvasY = y / canvasPosition.zoom - canvasPosition.y;
+      return { x: canvasX, y: canvasY };
     },
-    [canvasPosition.x, canvasPosition.y],
+    [canvasPosition.x, canvasPosition.y, canvasPosition.zoom],
   );
 
   return {

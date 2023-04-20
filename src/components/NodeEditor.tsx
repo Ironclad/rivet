@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 import { selectedNodeState } from '../state/graphBuilder';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { nodesSelector } from '../state/graph';
@@ -9,6 +9,7 @@ import { NodeType, nodeDisplayName } from '../model/Nodes';
 import { match } from 'ts-pattern';
 import { PromptNodeEditor } from './nodeEditors/PromptNodeEditor';
 import produce from 'immer';
+import { InlineEditableTextArea } from './InlineEditableTextArea';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -87,30 +88,23 @@ const Container = styled.div`
   }
 
   .node-name {
-    background-color: var(--grey-dark);
-    border: 2px solid var(--grey);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    color: var(--foreground);
-    font-size: 18px;
     padding: 5px 10px;
     resize: none;
     width: 100%;
   }
 
   .description-field {
-    background-color: var(--grey-dark);
-    border: 2px solid var(--grey);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    color: var(--foreground);
     min-height: 50px;
     padding: 10px;
-    resize: none;
     width: 100%;
   }
 
   .input-field {
     font-family: 'Roboto Mono', monospace;
     font-size: 14px;
+    background-color: var(--grey-dark);
+    border: 1px solid var(--grey);
+    color: var(--foreground);
   }
 
   .input-field:focus {
@@ -165,6 +159,10 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
     };
   }, [setSelectedNodeId]);
 
+  const nodeDescriptionChanged = useCallback((description: string) => {
+    updateNode({ ...selectedNode, description });
+  }, []);
+
   return (
     <Container>
       <button className="close-button" onClick={() => setSelectedNodeId(null)}>
@@ -180,10 +178,11 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
         />
       </div>
       <div className="section">
-        <textarea
-          className="description-field input-field"
+        <InlineEditableTextArea
+          value={selectedNode.description ?? ''}
+          onChange={nodeDescriptionChanged}
           placeholder="Enter any description or notes for this node..."
-        ></textarea>
+        ></InlineEditableTextArea>
       </div>
       <div className="section section-node">
         <h3 className="section-title">{nodeDisplayName[selectedNode.type as NodeType]}</h3>

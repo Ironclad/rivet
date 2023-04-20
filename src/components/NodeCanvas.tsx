@@ -2,7 +2,7 @@ import { DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
 import { DraggableNode, ViewNode } from './DraggableNode';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, MutableRefObject, useCallback, useMemo, useRef, useState } from 'react';
 import { ContextMenu } from './ContextMenu';
 import { CSSTransition } from 'react-transition-group';
 import { WireLayer } from './WireLayer';
@@ -12,6 +12,7 @@ import { useDraggingWire } from '../hooks/useDraggingWire';
 import { ChartNode, NodeConnection } from '../model/NodeBase';
 import { useRecoilState } from 'recoil';
 import { canvasPositionState } from '../state/graphBuilder';
+import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 
 export interface NodeCanvasProps {
   nodes: ChartNode<string, unknown>[];
@@ -33,6 +34,11 @@ const styles = css`
   background-size: 20px 20px;
   background-position: -1px -1px;
   overflow: hidden;
+
+  .nodes {
+    position: relative;
+    z-index: 0;
+  }
 
   .context-menu {
     display: none;
@@ -57,6 +63,32 @@ const styles = css`
     transition: opacity 100ms ease-out;
   }
 
+  .debug-overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--foreground);
+    box-shadow: 0 2px 4px var(--shadow);
+    z-index: 99999;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .canvas-contents {
+    transform-origin: top left;
+  }
+
+  .origin {
+    position: absolute;
+    left: -5px;
+    top: -5px;
+  }
+
   ${nodeStyles}
 `;
 
@@ -72,6 +104,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const [canvasPosition, setCanvasPosition] = useRecoilState(canvasPositionState);
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const { clientToCanvasPosition, canvasToClientPosition } = useCanvasPositioning();
+  const [lastMousePosition, setLastMousePosition] = useState({ x: 0, y: 0 });
 
   const { draggingNode, onNodeStartDrag, onNodeDragged } = useDraggingNode(nodes, onNodesChanged);
   const { draggingWire, onWireStartDrag, onWireEndDrag } = useDraggingWire(nodes, connections, onConnectionsChanged);
@@ -122,15 +156,43 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   };
 
   const canvasMouseMove = (e: React.MouseEvent) => {
+    setLastMousePosition({ x: e.clientX, y: e.clientY });
+
     if (!isDraggingCanvas) return;
 
-    const dx = e.clientX - dragStart.x;
-    const dy = e.clientY - dragStart.y;
-    setCanvasPosition((prevPos) => ({ x: prevPos.x + dx, y: prevPos.y + dy }));
+    const dx = (e.clientX - dragStart.x) * (1 / canvasPosition.zoom);
+    const dy = (e.clientY - dragStart.y) * (1 / canvasPosition.zoom);
+
+    setCanvasPosition((prevPos) => ({ x: prevPos.x + dx, y: prevPos.y + dy, zoom: prevPos.zoom }));
     setDragStart({ x: e.clientX, y: e.clientY });
   };
 
-  const canvasMouseUp = () => {
+  const handleZoom = (event: React.WheelEvent<HTMLDivElement>) => {
+    event.preventDefault();
+
+    const zoomSpeed = 0.01;
+
+    const zoomFactor = event.deltaY < 0 ? 1 + zoomSpeed : 1 - zoomSpeed;
+    const newZoom = canvasPosition.zoom * zoomFactor;
+
+    const currentMousePosCanvas = clientToCanvasPosition(event.clientX, event.clientY);
+    const newX = event.clientX / newZoom - canvasPosition.x;
+    const newY = event.clientY / newZoom - canvasPosition.y;
+
+    const diff = {
+      x: newX - currentMousePosCanvas.x,
+      y: newY - currentMousePosCanvas.y,
+    };
+
+    // Step 7: Update the canvas position and zoom value
+    setCanvasPosition((pos) => ({
+      x: pos.x + diff.x,
+      y: pos.y + diff.y,
+      zoom: newZoom,
+    }));
+  };
+
+  const canvasMouseUp = (e: React.MouseEvent) => {
     setIsDraggingCanvas(false);
   };
 
@@ -145,16 +207,31 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         onMouseMove={canvasMouseMove}
         onMouseUp={canvasMouseUp}
         onMouseLeave={canvasMouseUp}
+        onWheel={handleZoom}
         style={{
           backgroundPosition: `${(canvasPosition.x % 20) - 1}px ${(canvasPosition.y % 20) - 1}px`,
         }}
       >
+        <div className="debug-overlay">
+          <div>Translation: {`(${canvasPosition.x.toFixed(2)}, ${canvasPosition.y.toFixed(2)})`}</div>
+          <div>Scale: {canvasPosition.zoom.toFixed(2)}</div>
+          <div>Mouse Position: {`(${lastMousePosition.x.toFixed(2)}, ${lastMousePosition.y.toFixed(2)})`}</div>
+          <div>
+            Translated Mouse Position:{' '}
+            {`(${clientToCanvasPosition(lastMousePosition.x, lastMousePosition.y).x.toFixed(
+              2,
+            )}, ${clientToCanvasPosition(lastMousePosition.x, lastMousePosition.y).y.toFixed(2)})`}
+          </div>
+        </div>
         <div
           className="canvas-contents"
           style={{
-            transform: `translate(${canvasPosition.x}px, ${canvasPosition.y}px)`,
+            transform: `scale(${canvasPosition.zoom}) translate(${canvasPosition.x}px, ${canvasPosition.y}px)`,
           }}
         >
+          {/* <svg className="origin" width="10" height="10" viewBox="-5 -5 10 10">
+            <circle fill="white" r="5" cx="0" cy="0" />
+          </svg> */}
           <div className="nodes">
             {nodesWithConnections.map(({ node, nodeConnections }) => (
               <DraggableNode

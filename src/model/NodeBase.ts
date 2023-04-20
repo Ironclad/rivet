@@ -18,6 +18,9 @@ export interface NodeBase {
   /** The title of the node. Displayed in the graph. */
   title: string;
 
+  /** A user description/notes for the node */
+  description?: string;
+
   /** The visual data of the node, including its position. Visual data does not affect its processing. */
   visualData: {
     /** The x-coordinate of the node's position. */
