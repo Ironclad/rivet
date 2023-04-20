@@ -10,6 +10,7 @@ import { match } from 'ts-pattern';
 import { PromptNodeEditor } from './nodeEditors/PromptNodeEditor';
 import produce from 'immer';
 import { InlineEditableTextArea } from './InlineEditableTextArea';
+import { ChatNodeEditor } from './nodeEditors/ChatNodeEditor';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -28,7 +29,7 @@ type NodeEditorProps = { selectedNode: ChartNode<string, unknown> };
 
 const Container = styled.div`
   position: absolute;
-  top: 0;
+  top: 32px;
   right: 0;
   width: 45%;
   min-width: 500px;
@@ -124,6 +125,10 @@ const Container = styled.div`
     flex-grow: 1;
     position: relative;
   }
+
+  .unknown-node {
+    color: var(--primary);
+  }
 `;
 
 export const NodeEditor: FC<NodeEditorProps> = () => {
@@ -146,7 +151,8 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
 
   const nodeEditor = match(selectedNode)
     .with({ type: 'prompt' }, (node) => <PromptNodeEditor node={node} onChange={(node) => updateNode(node)} />)
-    .otherwise(() => <div>Unknown node type</div>);
+    .with({ type: 'chat' }, (node) => <ChatNodeEditor node={node} onChange={(node) => updateNode(node)} />)
+    .otherwise(() => <div className="unknown-node">Unknown node type</div>);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

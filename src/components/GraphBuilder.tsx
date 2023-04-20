@@ -9,6 +9,7 @@ import styled from '@emotion/styled';
 import { NodeType, nodeFactory } from '../model/Nodes';
 import { NodeId } from '../model/NodeBase';
 import { ContextMenuData } from '../hooks/useContextMenu';
+import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 
 const Container = styled.div`
   position: relative;
@@ -18,6 +19,7 @@ export const GraphBuilder: FC = () => {
   const [nodes, setNodes] = useRecoilState(nodesSelector);
   const [connections, setConnections] = useRecoilState(connectionsSelector);
   const [selectedNode, setSelectedNode] = useRecoilState(selectedNodeState);
+  const { clientToCanvasPosition } = useCanvasPositioning();
 
   const addNode = (nodeType: NodeType, position: { x: number; y: number }) => {
     const newNode = nodeFactory(nodeType);
@@ -43,7 +45,7 @@ export const GraphBuilder: FC = () => {
   const contextMenuItemSelected = (menuItemId: string, contextMenuData: ContextMenuData) => {
     if (menuItemId.startsWith('Add:')) {
       const nodeType = menuItemId.substring(4) as NodeType;
-      addNode(nodeType, { x: contextMenuData.x, y: contextMenuData.y });
+      addNode(nodeType, clientToCanvasPosition(contextMenuData.x, contextMenuData.y));
       return;
     }
 

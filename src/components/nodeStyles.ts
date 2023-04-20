@@ -39,6 +39,7 @@ export const nodeStyles = css`
     letter-spacing: 1px;
     display: flex;
     justify-content: space-between;
+    user-select: none;
   }
 
   .grab-area {

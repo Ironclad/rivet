@@ -28,6 +28,7 @@
     ]
   },
   "dependencies": {
+    "@atlaskit/toggle": "^12.5.8",
     "@babel/core": "^7.16.0",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",

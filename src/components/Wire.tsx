@@ -1,10 +1,12 @@
 import { FC } from 'react';
-import { ChartNode, NodeConnection, NodeId, PortId } from '../model/NodeBase';
+import { NodeConnection, NodeId, PortId } from '../model/NodeBase';
 import { getNodePortPosition } from './DraggableNode';
 import { createUnknownNodeInstance } from '../model/Nodes';
+import { useRecoilValue } from 'recoil';
+import { nodesSelector } from '../state/graph';
+import { useGetConnectionsForNode } from '../hooks/useGetConnectionsForNode';
 
 type WireProps = {
-  nodes: ChartNode<string, unknown>[];
   connection: NodeConnection | PartialConnection;
   selected: boolean;
 };
@@ -16,7 +18,10 @@ export type PartialConnection = {
   toY: number;
 };
 
-export const Wire: FC<WireProps> = ({ nodes, connection, selected }) => {
+export const Wire: FC<WireProps> = ({ connection, selected }) => {
+  const nodes = useRecoilValue(nodesSelector);
+  const getConnectionsForNode = useGetConnectionsForNode();
+
   let start: { x: number; y: number };
   let end: { x: number; y: number };
 
@@ -27,27 +32,28 @@ export const Wire: FC<WireProps> = ({ nodes, connection, selected }) => {
     if (node) {
       const nodeImpl = createUnknownNodeInstance(node);
       port =
-        nodeImpl.getOutputDefinitions().find((port) => port.id === connection.portId) ??
-        nodeImpl.getInputDefinitions().find((port) => port.id === connection.portId);
+        nodeImpl.getOutputDefinitions(getConnectionsForNode(node)).find((port) => port.id === connection.portId) ??
+        nodeImpl.getInputDefinitions(getConnectionsForNode(node)).find((port) => port.id === connection.portId);
     }
 
     if (!port) {
       return null;
     }
 
-    start = getNodePortPosition(nodes, connection.nodeId, connection.portId);
+    start = getNodePortPosition(nodes, connection.nodeId, connection.portId, getConnectionsForNode);
     end = { x: connection.toX, y: connection.toY };
   } else {
     const outputNode = nodes.find((node) => node.id === connection.outputNodeId);
+
     const outputPort = outputNode
       ? createUnknownNodeInstance(outputNode)
-          .getOutputDefinitions()
+          .getOutputDefinitions(getConnectionsForNode(outputNode))
           .find((port) => port.id === connection.outputId)
       : null;
     const inputNode = nodes.find((node) => node.id === connection.inputNodeId);
     const inputPort = inputNode
       ? createUnknownNodeInstance(inputNode)
-          .getInputDefinitions()
+          .getInputDefinitions(getConnectionsForNode(inputNode))
           .find((port) => port.id === connection.inputId)
       : null;
 
@@ -55,8 +61,8 @@ export const Wire: FC<WireProps> = ({ nodes, connection, selected }) => {
       return null;
     }
 
-    start = getNodePortPosition(nodes, connection.outputNodeId, connection.outputId);
-    end = getNodePortPosition(nodes, connection.inputNodeId, connection.inputId);
+    start = getNodePortPosition(nodes, connection.outputNodeId, connection.outputId, getConnectionsForNode);
+    end = getNodePortPosition(nodes, connection.inputNodeId, connection.inputId, getConnectionsForNode);
   }
 
   const deltaX = Math.abs(end.x - start.x);

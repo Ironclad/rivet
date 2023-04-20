@@ -2,7 +2,7 @@ import { DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
 import { DraggableNode, ViewNode } from './DraggableNode';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles';
-import { FC, MutableRefObject, useCallback, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { ContextMenu } from './ContextMenu';
 import { CSSTransition } from 'react-transition-group';
 import { WireLayer } from './WireLayer';
@@ -34,6 +34,7 @@ const styles = css`
   background-size: 20px 20px;
   background-position: -1px -1px;
   overflow: hidden;
+  z-index: 0;
 
   .nodes {
     position: relative;
@@ -104,8 +105,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const [canvasPosition, setCanvasPosition] = useRecoilState(canvasPositionState);
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const { clientToCanvasPosition, canvasToClientPosition } = useCanvasPositioning();
-  const [lastMousePosition, setLastMousePosition] = useState({ x: 0, y: 0 });
+  const { clientToCanvasPosition } = useCanvasPositioning();
+  const [, setLastMousePosition] = useState({ x: 0, y: 0 });
 
   const { draggingNode, onNodeStartDrag, onNodeDragged } = useDraggingNode(nodes, onNodesChanged);
   const { draggingWire, onWireStartDrag, onWireEndDrag } = useDraggingWire(nodes, connections, onConnectionsChanged);
@@ -209,7 +210,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         onMouseLeave={canvasMouseUp}
         onWheel={handleZoom}
         style={{
-          backgroundPosition: `${(canvasPosition.x % 20) - 1}px ${(canvasPosition.y % 20) - 1}px`,
+          backgroundPosition: `${canvasPosition.x - 1}px ${canvasPosition.y - 1}px`,
           backgroundSize: `${20 * canvasPosition.zoom}px ${20 * canvasPosition.zoom}px`,
         }}
       >
@@ -246,24 +247,23 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
               />
             ))}
           </div>
-
-          <CSSTransition
-            nodeRef={contextMenuRef}
-            in={showContextMenu}
-            timeout={200}
-            classNames="context-menu"
-            unmountOnExit
-            onExited={() => setContextMenuData({ x: 0, y: 0, data: null })}
-          >
-            <ContextMenu
-              ref={contextMenuRef}
-              x={contextMenuData.x}
-              y={contextMenuData.y}
-              data={contextMenuData.data}
-              onMenuItemSelected={contextMenuItemSelected}
-            />
-          </CSSTransition>
         </div>
+        <CSSTransition
+          nodeRef={contextMenuRef}
+          in={showContextMenu}
+          timeout={200}
+          classNames="context-menu"
+          unmountOnExit
+          onExited={() => setContextMenuData({ x: 0, y: 0, data: null })}
+        >
+          <ContextMenu
+            ref={contextMenuRef}
+            x={contextMenuData.x}
+            y={contextMenuData.y}
+            data={contextMenuData.data}
+            onMenuItemSelected={contextMenuItemSelected}
+          />
+        </CSSTransition>
         <WireLayer nodes={nodes} connections={connections} draggingWire={draggingWire} />
 
         <DragOverlay dropAnimation={null}>

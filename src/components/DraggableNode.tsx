@@ -11,10 +11,11 @@ import { CSSProperties, HTMLAttributes, forwardRef, useCallback, MouseEvent, FC,
 import clsx from 'clsx';
 import { Nodes, createNodeInstance, createUnknownNodeInstance } from '../model/Nodes';
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
-import { NodeImpl } from '../model/NodeImpl';
 import { match } from 'ts-pattern';
 import { PromptNodeBody } from './nodeBodies/PromptNodeBody';
 import { PromptNode } from '../model/nodes/PromptNode';
+import { ChatNode } from '../model/nodes/ChatNode';
+import { ChatNodeBody } from './nodeBodies/ChatNodeBody';
 
 interface DraggableNodeProps {
   node: ChartNode<string, unknown>;
@@ -152,7 +153,7 @@ export const ViewNode = memo(
           <div className="node-body">{body}</div>
           <div className="node-ports">
             <div className="input-ports">
-              {nodeImpl.getInputDefinitions().map((input) => {
+              {nodeImpl.getInputDefinitions(connections).map((input) => {
                 const connected = connections.some((conn) => conn.inputNodeId === node.id && conn.inputId === input.id);
                 return (
                   <div key={input.id} className={clsx('port', { connected })}>
@@ -168,7 +169,7 @@ export const ViewNode = memo(
               })}
             </div>
             <div className="output-ports">
-              {nodeImpl.getOutputDefinitions().map((output) => {
+              {nodeImpl.getOutputDefinitions(connections).map((output) => {
                 const connected = connections.some(
                   (conn) => conn.outputNodeId === node.id && conn.outputId === output.id,
                 );
@@ -196,16 +197,17 @@ export function getNodePortPosition(
   nodes: ChartNode<string, unknown>[],
   nodeId: NodeId,
   portId: PortId,
+  getConnectionsForNode: (node: ChartNode<string, unknown>) => NodeConnection[],
 ): { x: number; y: number } {
   const node = nodes.find((node) => node.id === nodeId);
   if (node && portId) {
     const nodeImpl = createUnknownNodeInstance(node);
     let isInput = true;
-    const foundInput = nodeImpl.getInputDefinitions().find((input) => input.id === portId);
+    const foundInput = nodeImpl.getInputDefinitions(getConnectionsForNode(node)).find((input) => input.id === portId);
     let foundPort: NodeInputDefinition | NodeOutputDefinition | undefined = foundInput;
     if (!foundPort) {
       isInput = false;
-      foundPort = nodeImpl.getOutputDefinitions().find((output) => output.id === portId);
+      foundPort = nodeImpl.getOutputDefinitions(getConnectionsForNode(node)).find((output) => output.id === portId);
     }
 
     if (foundPort) {
@@ -227,5 +229,6 @@ export function getNodePortPosition(
 function getNodeBody(node: ChartNode<string, unknown>) {
   return match(node)
     .with({ type: 'prompt' }, (node) => <PromptNodeBody node={node as PromptNode} />)
+    .with({ type: 'chat' }, (node) => <ChatNodeBody node={node as ChatNode} />)
     .otherwise(() => <div>Unknown node type</div>);
 }

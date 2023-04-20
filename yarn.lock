@@ -28,6 +28,122 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@atlaskit/analytics-next-stable-react-context@npm:1.0.1":
+  version: 1.0.1
+  resolution: "@atlaskit/analytics-next-stable-react-context@npm:1.0.1"
+  dependencies:
+    tslib: ^2.0.0
+  peerDependencies:
+    react: ^16.8.0
+  checksum: 2c8eef1ce2c772b9408fcc11a73c9bf0b1b2254fb258dc528bd8ed447d6fa4f371bb72d57c12e79d232b0c4484effef6bd9997cfc71103c919cde7b29f9361c4
+  languageName: node
+  linkType: hard
+
+"@atlaskit/analytics-next@npm:^9.0.0":
+  version: 9.0.1
+  resolution: "@atlaskit/analytics-next@npm:9.0.1"
+  dependencies:
+    "@atlaskit/analytics-next-stable-react-context": 1.0.1
+    "@babel/runtime": ^7.0.0
+    prop-types: ^15.5.10
+    use-memo-one: ^1.1.1
+  peerDependencies:
+    react: ^16.8.0
+  checksum: 5dd90da2af7b8725e71d238bf76c2015f177c2a8b05b0ce243f947432d6ddc4b7dedcdd4ece0889ba8ca21916d7b373e91bddeb8cfc85626c2706b01e119912f
+  languageName: node
+  linkType: hard
+
+"@atlaskit/codemod-utils@npm:^4.1.0":
+  version: 4.1.3
+  resolution: "@atlaskit/codemod-utils@npm:4.1.3"
+  dependencies:
+    "@babel/runtime": ^7.0.0
+  checksum: 2e1510039b2995cbd7ae6e4857fc1bb9304751c6ac12cd8be42f5b9770c80efa286e63ea41071a5bdd16202754246ee65a08d0987e49680be8d76b3fc92ba759
+  languageName: node
+  linkType: hard
+
+"@atlaskit/ds-lib@npm:^2.1.0":
+  version: 2.1.3
+  resolution: "@atlaskit/ds-lib@npm:2.1.3"
+  dependencies:
+    "@babel/runtime": ^7.0.0
+    bind-event-listener: ^2.1.1
+  peerDependencies:
+    react: ^16.8.0
+  checksum: 2ac41805cca08c51cfd16a4c3f2031fab5a20381ad87d441cc2dc03e6aea0ba51feb1a85bb8de950ad358a82de02383a49b58ba9449075e999d7181583f111f0
+  languageName: node
+  linkType: hard
+
+"@atlaskit/icon@npm:^21.11.0":
+  version: 21.11.5
+  resolution: "@atlaskit/icon@npm:21.11.5"
+  dependencies:
+    "@atlaskit/theme": ^12.2.0
+    "@atlaskit/tokens": ^1.0.0
+    "@babel/runtime": ^7.0.0
+    "@emotion/react": ^11.7.1
+  peerDependencies:
+    react: ^16.8.0
+  checksum: a62c1044c30e26093b25fca2ae5566c2954a599369f18faca1932b4ab35220113888076f2288c87d71e04cb8b9df77506a4c20d9878268ef84bf45c8d685d761
+  languageName: node
+  linkType: hard
+
+"@atlaskit/platform-feature-flags@npm:^0.1.0":
+  version: 0.1.2
+  resolution: "@atlaskit/platform-feature-flags@npm:0.1.2"
+  dependencies:
+    "@babel/runtime": ^7.0.0
+  checksum: fa8ddb65e25aab36f722fed9f55b6d466fbb100ab1d550e8f3c62972c1886f83dc4fe61a9619fbbad8b61f0b3679c8a07d536da268af51bb3abbaf8a19b91608
+  languageName: node
+  linkType: hard
+
+"@atlaskit/theme@npm:^12.2.0":
+  version: 12.4.0
+  resolution: "@atlaskit/theme@npm:12.4.0"
+  dependencies:
+    "@atlaskit/codemod-utils": ^4.1.0
+    "@atlaskit/ds-lib": ^2.1.0
+    "@atlaskit/tokens": ^1.2.0
+    "@babel/runtime": ^7.0.0
+  peerDependencies:
+    react: ^16.8.0
+  checksum: 354a6a602a71bd0d61156c85c9e483c3d232e09c5b2ff9992dc690e2ce932027f8d3f0e8eac88c9909e80eb90ad5f4fe15e15fece8d2936f52af08b498011f60
+  languageName: node
+  linkType: hard
+
+"@atlaskit/toggle@npm:^12.5.8":
+  version: 12.5.8
+  resolution: "@atlaskit/toggle@npm:12.5.8"
+  dependencies:
+    "@atlaskit/analytics-next": ^9.0.0
+    "@atlaskit/ds-lib": ^2.1.0
+    "@atlaskit/icon": ^21.11.0
+    "@atlaskit/theme": ^12.2.0
+    "@atlaskit/tokens": ^1.2.0
+    "@babel/runtime": ^7.0.0
+    "@emotion/react": ^11.7.1
+  peerDependencies:
+    react: ^16.8.0
+  checksum: 5ec7f879da9aa171ad6aa609b52100e8ef9ed2090503da1d2f923674e894c37e3e343638a499d7a389924303d142e0840851c49836b6784e1978af1e3b21fd79
+  languageName: node
+  linkType: hard
+
+"@atlaskit/tokens@npm:^1.0.0, @atlaskit/tokens@npm:^1.2.0":
+  version: 1.2.16
+  resolution: "@atlaskit/tokens@npm:1.2.16"
+  dependencies:
+    "@atlaskit/ds-lib": ^2.1.0
+    "@atlaskit/platform-feature-flags": ^0.1.0
+    "@babel/runtime": ^7.0.0
+    "@babel/traverse": ^7.15.0
+    "@babel/types": ^7.15.0
+    bind-event-listener: ^2.1.1
+  peerDependencies:
+    react: ^16.8.0
+  checksum: cd443c5dc735e292374fcf761c68f4603630459ebcd9c7fa9f2fbb5f0343b15428e47b9d349d7b5cf4040134a5fd62f054b7a426d69885ff65704964c320e705
+  languageName: node
+  linkType: hard
+
 "@aw-web-design/x-default-browser@npm:1.4.88":
   version: 1.4.88
   resolution: "@aw-web-design/x-default-browser@npm:1.4.88"
@@ -1567,7 +1683,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.7, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.7, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7, @babel/runtime@npm:^7.9.2":
   version: 7.21.0
   resolution: "@babel/runtime@npm:7.21.0"
   dependencies:
@@ -1605,7 +1721,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/traverse@npm:^7.21.4":
+"@babel/traverse@npm:^7.15.0, @babel/traverse@npm:^7.21.4":
   version: 7.21.4
   resolution: "@babel/traverse@npm:7.21.4"
   dependencies:
@@ -1634,7 +1750,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^7.21.4":
+"@babel/types@npm:^7.15.0, @babel/types@npm:^7.21.4":
   version: 7.21.4
   resolution: "@babel/types@npm:7.21.4"
   dependencies:
@@ -1971,7 +2087,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/react@npm:^11.10.6":
+"@emotion/react@npm:^11.10.6, @emotion/react@npm:^11.7.1":
   version: 11.10.6
   resolution: "@emotion/react@npm:11.10.6"
   dependencies:
@@ -5502,6 +5618,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "ai-storyboarding-tool@workspace:."
   dependencies:
+    "@atlaskit/toggle": ^12.5.8
     "@babel/core": ^7.16.0
     "@babel/preset-env": ^7.20.2
     "@babel/preset-react": ^7.18.6
@@ -6238,6 +6355,13 @@ __metadata:
   version: 2.2.0
   resolution: "binary-extensions@npm:2.2.0"
   checksum: ccd267956c58d2315f5d3ea6757cf09863c5fc703e50fbeb13a7dc849b812ef76e3cf9ca8f35a0c48498776a7478d7b4a0418e1e2b8cb9cb9731f2922aaad7f8
+  languageName: node
+  linkType: hard
+
+"bind-event-listener@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "bind-event-listener@npm:2.1.1"
+  checksum: 685776bacac205611f9fff8b76b61f270a7292195a7d03400acb0f91d52a82775bd00cc508b5b9042eb6d3ac762c43f552bb55a785200de5564a9e0126d6f88e
   languageName: node
   linkType: hard
 
@@ -13107,7 +13231,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
+"prop-types@npm:^15.5.10, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -15576,6 +15700,15 @@ __metadata:
   dependencies:
     punycode: "npm:^2.1.0"
   checksum: 7167432de6817fe8e9e0c9684f1d2de2bb688c94388f7569f7dbdb1587c9f4ca2a77962f134ec90be0cc4d004c939ff0d05acc9f34a0db39a3c797dada262633
+  languageName: node
+  linkType: hard
+
+"use-memo-one@npm:^1.1.1":
+  version: 1.1.3
+  resolution: "use-memo-one@npm:1.1.3"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 8f08eba26d69406b61bb4b8dacdd5a92bd6aef5b53d346dfe87954f7330ee10ecabc937cc7854635155d46053828e85c10b5a5aff7a04720e6a97b9f42999bac
   languageName: node
   linkType: hard
 
