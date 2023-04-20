@@ -1,8 +1,7 @@
-import { FC, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { FC, useLayoutEffect, useMemo, useRef } from 'react';
 import { PromptNode } from '../../model/nodes/PromptNode';
 import styled from '@emotion/styled';
 import { monaco } from '../../utils/monaco';
-import { useDebounceEffect } from 'ahooks';
 
 export type PromptNodeBodyProps = {
   node: PromptNode;
@@ -14,7 +13,6 @@ const Body = styled.div`
 
 export const PromptNodeBody: FC<PromptNodeBodyProps> = ({ node }) => {
   const bodyRef = useRef<HTMLDivElement>(null);
-  const isColorized = useRef(false);
 
   const truncated = useMemo(
     () =>

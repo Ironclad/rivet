@@ -1,5 +1,4 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
-import { useCanvasPositioning } from './useCanvasPositioning';
 
 export type ContextMenuData = {
   x: number;
@@ -14,25 +13,16 @@ export const useContextMenu = () => {
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [contextMenuData, setContextMenuData] = useState<ContextMenuData>({ x: 0, y: 0, data: null });
-  const { clientToCanvasPosition } = useCanvasPositioning();
 
-  const handleContextMenu = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      event.preventDefault();
+  const handleContextMenu = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
 
-      const data = getContextMenuDataFromTarget(event.target as HTMLElement);
+    const data = getContextMenuDataFromTarget(event.target as HTMLElement);
 
-      setShowContextMenu(true);
+    setShowContextMenu(true);
 
-      console.dir({
-        clientX: event.clientX,
-        clientY: event.clientY,
-        canvasPosition: clientToCanvasPosition(event.clientX, event.clientY),
-      });
-      setContextMenuData({ ...clientToCanvasPosition(event.clientX, event.clientY), data });
-    },
-    [clientToCanvasPosition],
-  );
+    setContextMenuData({ x: event.clientX, y: event.clientY, data });
+  }, []);
 
   useEffect(() => {
     const handleWindowClick = (event: MouseEvent) => {

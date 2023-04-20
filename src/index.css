@@ -37,6 +37,10 @@ code {
   --tertiary: #444;
   --tertiary-light: #4444446e;
 
+  --success: #00b74c;
+  --success-dark: #009624;
+  --success-light: #12cf61;
+
   /* Shadows */
   --shadow: rgba(0, 0, 0, 0.2);
   --shadow-dark: rgba(0, 0, 0, 0.4);

@@ -1,4 +1,4 @@
-import { ChartNode, NodeInputDefinition, NodeOutputDefinition } from './NodeBase';
+import { ChartNode, NodeConnection, NodeInputDefinition, NodeOutputDefinition } from './NodeBase';
 
 export abstract class NodeImpl<T extends ChartNode<string, unknown>, Type extends T['type'] = T['type']> {
   readonly chartNode: T;
@@ -27,9 +27,9 @@ export abstract class NodeImpl<T extends ChartNode<string, unknown>, Type extend
     return this.chartNode.data;
   }
 
-  abstract getInputDefinitions(): NodeInputDefinition[];
+  abstract getInputDefinitions(connections: NodeConnection[]): NodeInputDefinition[];
 
-  abstract getOutputDefinitions(): NodeOutputDefinition[];
+  abstract getOutputDefinitions(connections: NodeConnection[]): NodeOutputDefinition[];
 
   abstract process(inputData: Record<string, any>): Record<string, any>;
 }
