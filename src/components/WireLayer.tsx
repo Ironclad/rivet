@@ -2,6 +2,7 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import { NodeConnection, NodeId, PortId, ChartNode } from '../model/NodeBase';
 import { css } from '@emotion/react';
 import { Wire } from './Wire';
+import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 
 export type WireDef = {
   startNodeId: NodeId;
@@ -19,6 +20,7 @@ type WireLayerProps = {
 const wiresStyles = css`
   width: 100%;
   height: 100%;
+  pointer-events: none;
 
   path {
     stroke-width: 2;
