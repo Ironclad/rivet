@@ -5249,6 +5249,7 @@ __metadata:
     browserslist: ^4.18.1
     camelcase: ^6.2.1
     case-sensitive-paths-webpack-plugin: ^2.4.0
+    clsx: ^1.2.1
     css-loader: ^6.5.1
     css-minimizer-webpack-plugin: ^3.2.0
     dotenv: ^10.0.0
@@ -6406,7 +6407,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^1.1.1":
+"clsx@npm:^1.1.1, clsx@npm:^1.2.1":
   version: 1.2.1
   resolution: "clsx@npm:1.2.1"
   checksum: 30befca8019b2eb7dbad38cff6266cf543091dae2825c856a62a8ccf2c3ab9c2907c4d12b288b73101196767f66812365400a227581484a05f968b0307cfaf12

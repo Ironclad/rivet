@@ -1,14 +1,13 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import { ChartNode, NodeConnection, NodeId, NodeInputId, NodeOutputId } from '../model/NodeBase';
-import { getNodePortPosition } from './DraggableNode';
+import { NodeConnection, NodeId, PortId, ChartNode } from '../model/NodeBase';
 import { css } from '@emotion/react';
-import { partition } from 'lodash-es';
+import { Wire } from './Wire';
 
 export type WireDef = {
   startNodeId: NodeId;
-  startPortId: NodeInputId | NodeOutputId;
+  startPortId: PortId;
   endNodeId?: NodeId;
-  endPortId?: NodeInputId | NodeOutputId;
+  endPortId?: PortId;
 };
 
 type WireLayerProps = {
@@ -27,6 +26,10 @@ const wiresStyles = css`
     fill: none;
     stroke: gray;
   }
+
+  .selected {
+    stroke: blue;
+  }
 `;
 
 export const WireLayer: FC<WireLayerProps> = ({ nodes, connections, draggingWire }) => {
@@ -43,68 +46,28 @@ export const WireLayer: FC<WireLayerProps> = ({ nodes, connections, draggingWire
     };
   }, [handleMouseMove]);
 
-  const getOutputNode = useCallback(
-    (connection: NodeConnection) => nodes.find((node) => node.id === connection.outputNodeId),
-    [nodes],
-  );
-
-  const getOutputPort = useCallback(
-    (connection: NodeConnection) =>
-      getOutputNode(connection)?.outputDefinitions.find((port) => port.id === connection.outputId),
-    [getOutputNode],
-  );
-
-  const getInputNode = useCallback(
-    (connection: NodeConnection) => nodes.find((node) => node.id === connection.inputNodeId),
-    [nodes],
-  );
-
-  const getInputPort = useCallback(
-    (connection: NodeConnection) =>
-      getInputNode(connection)?.inputDefinitions.find((port) => port.id === connection.inputId),
-    [getInputNode],
-  );
-
   return (
     <svg css={wiresStyles}>
       {draggingWire && (
-        <path
-          className="wire"
-          d={calculateWirePath(
-            getNodePortPosition(nodes, draggingWire.startNodeId, draggingWire.startPortId),
-            draggingWire.endNodeId && draggingWire.endPortId
-              ? getNodePortPosition(nodes, draggingWire.endNodeId, draggingWire.endPortId)
-              : mousePosition,
-          )}
+        <Wire
+          nodes={nodes}
+          connection={{
+            nodeId: draggingWire.startNodeId,
+            portId: draggingWire.startPortId,
+            toX: mousePosition.x,
+            toY: mousePosition.y,
+          }}
+          selected={false}
         />
       )}
-      {connections.map((connection) => {
-        const outputPort = getOutputPort(connection);
-        const inputPort = getInputPort(connection);
-        if (outputPort && inputPort) {
-          return (
-            <path
-              key={`${connection.outputNodeId}-${connection.outputId}-${connection.inputNodeId}-${connection.inputId}`}
-              className="wire"
-              d={calculateWirePath(
-                getNodePortPosition(nodes, connection.outputNodeId, connection.outputId),
-                getNodePortPosition(nodes, connection.inputNodeId, connection.inputId),
-              )}
-            />
-          );
-        }
-        return null;
-      })}
+      {connections.map((connection) => (
+        <Wire
+          nodes={nodes}
+          connection={connection}
+          selected={false}
+          key={`wire-${connection.inputId}-${connection.inputNodeId}`}
+        />
+      ))}
     </svg>
   );
 };
-
-function calculateWirePath(start: { x: number; y: number }, end: { x: number; y: number }): string {
-  const deltaX = Math.abs(end.x - start.x);
-  const xDir = start.x < end.x ? 1 : -1;
-  const curveX1 = start.x + xDir * deltaX * 0.5;
-  const curveY1 = start.y;
-  const curveX2 = start.x + xDir * deltaX * 0.5;
-  const curveY2 = end.y;
-  return `M${start.x},${start.y} C${curveX1},${curveY1} ${curveX2},${curveY2} ${end.x},${end.y}`;
-}

@@ -1,4 +1,4 @@
-import { ChartNode, NodeId, NodeInputDefinition, NodeInputId, NodeOutputDefinition, NodeOutputId } from '../NodeBase';
+import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
 import * as openai from 'openai';
@@ -27,24 +27,24 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
   static create(): ChatNode {
     const inputDefinitions: NodeInputDefinition[] = [
       {
-        id: 'model' as NodeInputId,
+        id: 'model' as PortId,
         title: 'Model',
         dataType: 'string',
         required: false,
       },
       {
         dataType: 'number',
-        id: 'temperature' as NodeInputId,
+        id: 'temperature' as PortId,
         title: 'Temperature',
       },
       {
         dataType: 'number',
-        id: 'top_p' as NodeInputId,
+        id: 'top_p' as PortId,
         title: 'Top P',
       },
       {
         dataType: 'chat-messages',
-        id: 'messages' as NodeInputId,
+        id: 'messages' as PortId,
         title: 'Messages',
       },
     ];
@@ -52,7 +52,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     const outputDefinitions: NodeOutputDefinition[] = [
       {
         dataType: 'string',
-        id: 'response' as NodeOutputId,
+        id: 'response' as PortId,
         title: 'Response',
       },
     ];
