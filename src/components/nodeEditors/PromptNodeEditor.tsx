@@ -29,6 +29,7 @@ const Container = styled.div`
 export const PromptNodeEditor: FC<PromptNodeEditorProps> = ({ node, onChange }) => {
   const editorContainer = useRef<HTMLDivElement>(null);
   const promptNode = node as PromptNode;
+  const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
 
   const onChangeLatest = useLatest(onChange);
   const nodeLatest = useLatest(promptNode);
@@ -61,11 +62,20 @@ export const PromptNodeEditor: FC<PromptNodeEditorProps> = ({ node, onChange }) 
       });
     });
 
+    editorInstance.current = editor;
+
     return () => {
       editor.dispose();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (editorInstance.current) {
+      editorInstance.current.setValue(nodeLatest.current?.data.promptText);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [node.id]);
 
   return (
     <Container>
