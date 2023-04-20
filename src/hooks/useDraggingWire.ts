@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { WireDef } from '../components/WireLayer';
 import { ChartNode, NodeConnection, NodeId, PortId } from '../model/NodeBase';
+import { createUnknownNodeInstance } from '../model/Nodes';
 
 export const useDraggingWire = (
   nodes: ChartNode<string, unknown>[],
@@ -23,15 +24,34 @@ export const useDraggingWire = (
       if (draggingWire) {
         let inputNode = nodes.find((n) => n.id === endNodeId);
         let outputNode = nodes.find((n) => n.id === draggingWire.startNodeId);
-        let input = inputNode?.inputDefinitions.find((i) => i.id === endPortId);
-        let output = outputNode?.outputDefinitions.find((o) => o.id === draggingWire.startPortId);
+
+        let input = inputNode
+          ? createUnknownNodeInstance(inputNode)
+              .getInputDefinitions()
+              .find((i) => i.id === endPortId)
+          : null;
+
+        let output = outputNode
+          ? createUnknownNodeInstance(outputNode)
+              .getOutputDefinitions()
+              .find((o) => o.id === draggingWire.startPortId)
+          : null;
 
         if (!inputNode || !outputNode || !input || !output) {
           const tmp = inputNode;
           inputNode = outputNode;
           outputNode = tmp;
-          input = inputNode?.inputDefinitions.find((i) => i.id === endPortId);
-          output = outputNode?.outputDefinitions.find((o) => o.id === draggingWire.startPortId);
+
+          input = inputNode
+            ? createUnknownNodeInstance(inputNode)
+                .getInputDefinitions()
+                .find((i) => i.id === endPortId)
+            : null;
+          output = outputNode
+            ? createUnknownNodeInstance(outputNode)
+                .getOutputDefinitions()
+                .find((o) => o.id === draggingWire.startPortId)
+            : null;
 
           if (!inputNode || !outputNode || !input || !output) {
             setDraggingWire(undefined);

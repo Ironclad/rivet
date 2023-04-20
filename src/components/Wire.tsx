@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { ChartNode, NodeConnection, NodeId, PortId } from '../model/NodeBase';
 import { getNodePortPosition } from './DraggableNode';
-import { createNodeInstance, createUnknownNodeInstance } from '../model/Nodes';
+import { createUnknownNodeInstance } from '../model/Nodes';
 
 type WireProps = {
   nodes: ChartNode<string, unknown>[];
