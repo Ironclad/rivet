@@ -3,10 +3,13 @@ import styled from '@emotion/styled';
 import { FC, ReactNode, forwardRef, useCallback, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { NodeType } from '../model/Nodes';
+import { ContextMenuData } from '../hooks/useContextMenu';
+import { ReactComponent as DeleteIcon } from 'majesticons/line/delete-bin-line.svg';
 
 interface ContextMenuProps {
   x: number;
   y: number;
+  data: ContextMenuData['data'];
   onMenuItemSelected?: (nodeType: string) => void;
 }
 
@@ -33,6 +36,7 @@ const menuStyles = css`
     border-style: solid;
     border-width: 0 8px 8px 8px;
     border-color: transparent transparent #444 transparent;
+    pointer-events: none;
   }
 
   ul {
@@ -89,6 +93,13 @@ const MenuItemDiv = styled.div<{ hasSubmenu?: boolean }>`
   white-space: nowrap;
   transition: background-color 0.1s ease-out, color 0.1s ease-out;
 
+  .label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+  }
+
   &:hover {
     background-color: #4444446e;
     color: #ffa500;
@@ -113,7 +124,7 @@ const MenuItemDiv = styled.div<{ hasSubmenu?: boolean }>`
 `;
 
 interface MenuItemProps {
-  label: string;
+  label: string | ReactNode;
   onClick?: () => void;
   hasSubMenu?: boolean;
   children?: ReactNode;
@@ -143,7 +154,7 @@ const MenuItem: FC<MenuItemProps> = ({ label, onClick, children }) => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {label}
+      <div className="label">{label}</div>
       <CSSTransition nodeRef={submenuRef} in={isSubMenuVisible} timeout={100} classNames="submenu" unmountOnExit>
         <div ref={submenuRef} css={submenuStyles}>
           {children}
@@ -153,23 +164,59 @@ const MenuItem: FC<MenuItemProps> = ({ label, onClick, children }) => {
   );
 };
 
-export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(({ x, y, onMenuItemSelected }, ref) => {
+export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(({ x, y, data, onMenuItemSelected }, ref) => {
+  let menuContent: ReactNode = null;
+  if (!data) {
+    menuContent = <BlankAreaContextMenu data={data} onMenuItemSelected={onMenuItemSelected} />;
+  }
+
+  if (data?.type.startsWith('node')) {
+    menuContent = <NodeContextMenu data={data} onMenuItemSelected={onMenuItemSelected} />;
+  }
+
+  return (
+    <div ref={ref} css={menuStyles} style={{ top: y + 4, left: x - 16 }} onClick={(e) => e.stopPropagation()}>
+      {menuContent}
+    </div>
+  );
+});
+
+const BlankAreaContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSelected'>> = ({
+  data,
+  onMenuItemSelected,
+}) => {
   const addNode = useCallback(
     (nodeType: NodeType) => {
       onMenuItemSelected?.(`Add:${nodeType}`);
     },
     [onMenuItemSelected],
   );
+  return (
+    <MenuItem label="Add" hasSubMenu={true}>
+      <MenuItem label="User Input" onClick={() => addNode('branch')} />
+      <MenuItem label="Chat" onClick={() => addNode('chat')} />
+      <MenuItem label="Concat" onClick={() => addNode('concat')} />
+      <MenuItem label="Interpolate" onClick={() => addNode('interpolate')} />
+      <MenuItem label="User Input" onClick={() => addNode('userInput')} />
+    </MenuItem>
+  );
+};
+
+const NodeContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSelected'>> = ({ data, onMenuItemSelected }) => {
+  const nodeId = data?.element.dataset.nodeId;
+
+  const deleteNode = useCallback(() => {
+    onMenuItemSelected?.(`Delete:${nodeId}`);
+  }, [nodeId, onMenuItemSelected]);
 
   return (
-    <div ref={ref} css={menuStyles} style={{ top: y + 4, left: x - 16 }} onClick={(e) => e.stopPropagation()}>
-      <MenuItem label="Add" hasSubMenu={true}>
-        <MenuItem label="User Input" onClick={() => addNode('branch')} />
-        <MenuItem label="Chat" onClick={() => addNode('chat')} />
-        <MenuItem label="Concat" onClick={() => addNode('concat')} />
-        <MenuItem label="Interpolate" onClick={() => addNode('interpolate')} />
-        <MenuItem label="User Input" onClick={() => addNode('userInput')} />
-      </MenuItem>
-    </div>
+    <MenuItem
+      label={
+        <>
+          <DeleteIcon /> Delete
+        </>
+      }
+      onClick={deleteNode}
+    />
   );
-});
+};
