@@ -24,7 +24,8 @@ export const nodeStyles = css`
     box-shadow: 10px 10px 16px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 153, 0, 0.3);
   }
 
-  .node:hover {
+  .node:hover,
+  .node.selected {
     border-color: #ff9900;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 153, 0, 0.3);
   }

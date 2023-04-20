@@ -30,11 +30,11 @@ export interface NodeBase {
   /** The data associated with the node. Typed when using `Nodes` or a subtype. */
   data: unknown;
 
-  /** Definitions for the input ports of the node. */
-  inputDefinitions: NodeInputDefinition[];
+  // /** Definitions for the input ports of the node. */
+  // inputDefinitions: NodeInputDefinition[];
 
-  /** Definitions for the output ports of the node. */
-  outputDefinitions: NodeOutputDefinition[];
+  // /** Definitions for the output ports of the node. */
+  // outputDefinitions: NodeOutputDefinition[];
 }
 
 /** Base type for a typed node. */

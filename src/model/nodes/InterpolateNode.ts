@@ -11,24 +11,6 @@ export type InterpolateNodeData = {
 
 export class InterpolateNodeImpl extends NodeImpl<InterpolateNode> {
   static create(baseString: string = 'Hello {{name}}!', valueNames: string[] = ['name']): InterpolateNode {
-    const inputDefinitions: NodeInputDefinition[] = valueNames.map((valueName) => {
-      return {
-        type: 'string',
-        id: valueName as PortId,
-        title: valueName,
-        dataType: 'string',
-        required: false,
-      };
-    });
-
-    const outputDefinitions: NodeOutputDefinition[] = [
-      {
-        id: 'output' as PortId,
-        title: 'Output',
-        dataType: 'string',
-      },
-    ];
-
     const chartNode: InterpolateNode = {
       type: 'interpolate',
       title: 'Interpolate',
@@ -41,11 +23,31 @@ export class InterpolateNodeImpl extends NodeImpl<InterpolateNode> {
         baseString: baseString,
         valueNames: valueNames,
       },
-      inputDefinitions: inputDefinitions,
-      outputDefinitions: outputDefinitions,
     };
 
     return chartNode;
+  }
+
+  getInputDefinitions(): NodeInputDefinition[] {
+    return this.chartNode.data.valueNames.map((valueName) => {
+      return {
+        type: 'string',
+        id: valueName as PortId,
+        title: valueName,
+        dataType: 'string',
+        required: false,
+      };
+    });
+  }
+
+  getOutputDefinitions(): NodeOutputDefinition[] {
+    return [
+      {
+        id: 'output' as PortId,
+        title: 'Output',
+        dataType: 'string',
+      },
+    ];
   }
 
   interpolate(baseString: string, valueNames: string[], values: Record<string, any>): string {

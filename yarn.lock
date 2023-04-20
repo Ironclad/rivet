@@ -1567,7 +1567,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.7, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.7, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7, @babel/runtime@npm:^7.9.2":
   version: 7.21.0
   resolution: "@babel/runtime@npm:7.21.0"
   dependencies:
@@ -4738,6 +4738,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/js-cookie@npm:^2.x.x":
+  version: 2.2.7
+  resolution: "@types/js-cookie@npm:2.2.7"
+  checksum: 851f47e94ca1fc43661d8f51614d67a613e7810c91b876d0a3b311ce72f7df800107fd02a08cb6948184e12c120b4f058edca2f50424d8798bdcffd6627281e3
+  languageName: node
+  linkType: hard
+
 "@types/json-schema@npm:*, @types/json-schema@npm:^7.0.4, @types/json-schema@npm:^7.0.5, @types/json-schema@npm:^7.0.8, @types/json-schema@npm:^7.0.9":
   version: 7.0.11
   resolution: "@types/json-schema@npm:7.0.11"
@@ -5464,6 +5471,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ahooks-v3-count@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "ahooks-v3-count@npm:1.0.0"
+  checksum: 3974d94b7cbe0694e18811dee5cfe507a740ecc2875e4bca204d30dfcf0a637a2035d3c296a1b873fc25aa14c4134e805ecc64d4dc2f5d0fb645090bb826771d
+  languageName: node
+  linkType: hard
+
+"ahooks@npm:^3.7.6":
+  version: 3.7.6
+  resolution: "ahooks@npm:3.7.6"
+  dependencies:
+    "@babel/runtime": ^7.21.0
+    "@types/js-cookie": ^2.x.x
+    ahooks-v3-count: ^1.0.0
+    dayjs: ^1.9.1
+    intersection-observer: ^0.12.0
+    js-cookie: ^2.x.x
+    lodash: ^4.17.21
+    resize-observer-polyfill: ^1.5.1
+    screenfull: ^5.0.0
+    tslib: ^2.4.1
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 1fea39f3f4071b20d85b22b25e1464ad8b87c6c70ded58bb7ae5184b86542a0190523c2d9eca96900619cdcc923130570afa26c9b944421b3774bd1ddbe39f0c
+  languageName: node
+  linkType: hard
+
 "ai-storyboarding-tool@workspace:.":
   version: 0.0.0-use.local
   resolution: "ai-storyboarding-tool@workspace:."
@@ -5496,6 +5530,7 @@ __metadata:
     "@types/react-transition-group": ^4.4.5
     "@types/yargs": ^17
     "@vitejs/plugin-react": ^3.1.0
+    ahooks: ^3.7.6
     babel-loader: ^8.2.3
     babel-plugin-named-asset-import: ^0.3.8
     babel-preset-react-app: ^10.0.1
@@ -5519,6 +5554,7 @@ __metadata:
     lodash-es: ^4.17.21
     majesticons: ^2.1.2
     mini-css-extract-plugin: ^2.4.5
+    monaco-editor: ^0.37.1
     nanoid: ^4.0.1
     openai: ^3.2.1
     postcss: ^8.4.4
@@ -5538,6 +5574,7 @@ __metadata:
     react-refresh: ^0.11.0
     react-transition-group: ^4.4.5
     recoil: ^0.7.7
+    recoil-persist: ^4.2.0
     resolve: ^1.20.0
     resolve-url-loader: ^4.0.0
     sass-loader: ^12.3.0
@@ -5548,6 +5585,7 @@ __metadata:
     tailwindcss: ^3.0.2
     terser-webpack-plugin: ^5.2.5
     ts-node: ^10.9.1
+    ts-pattern: ^4.2.2
     type-fest: ^3.7.1
     typescript: ^5.0.2
     vite: ^4.2.1
@@ -7235,6 +7273,13 @@ __metadata:
   version: 1.0.8
   resolution: "damerau-levenshtein@npm:1.0.8"
   checksum: d240b7757544460ae0586a341a53110ab0a61126570ef2d8c731e3eab3f0cb6e488e2609e6a69b46727635de49be20b071688698744417ff1b6c1d7ccd03e0de
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:^1.9.1":
+  version: 1.11.7
+  resolution: "dayjs@npm:1.11.7"
+  checksum: 5003a7c1dd9ed51385beb658231c3548700b82d3548c0cfbe549d85f2d08e90e972510282b7506941452c58d32136d6362f009c77ca55381a09c704e9f177ebb
   languageName: node
   linkType: hard
 
@@ -9915,6 +9960,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"intersection-observer@npm:^0.12.0":
+  version: 0.12.2
+  resolution: "intersection-observer@npm:0.12.2"
+  checksum: d1fa9ebbb1e0baafe88ad95545bbb93f92bdcb8789912a2bd11b2463ab177ef185052c9c79c26187833d633f404acb077d4b1249353c5f6e2ca5cd64f50e216b
+  languageName: node
+  linkType: hard
+
 "ip@npm:^2.0.0":
   version: 2.0.0
   resolution: "ip@npm:2.0.0"
@@ -10479,6 +10531,13 @@ __metadata:
     merge-stream: ^2.0.0
     supports-color: ^8.0.0
   checksum: 1151a1ae3602b1ea7c42a8f1efe2b5a7bf927039deaa0827bf978880169899b705744e288f80a63603fb3fc2985e0071234986af7dc2c21c7a64333d8777c7c9
+  languageName: node
+  linkType: hard
+
+"js-cookie@npm:^2.x.x":
+  version: 2.2.1
+  resolution: "js-cookie@npm:2.2.1"
+  checksum: 9b1fb980a1c5e624fd4b28ea4867bb30c71e04c4484bb3a42766344c533faa684de9498e443425479ec68609e96e27b60614bfe354877c449c631529b6d932f2
   languageName: node
   linkType: hard
 
@@ -11293,6 +11352,13 @@ __metadata:
   bin:
     mkdirp: bin/cmd.js
   checksum: a96865108c6c3b1b8e1d5e9f11843de1e077e57737602de1b82030815f311be11f96f09cce59bd5b903d0b29834733e5313f9301e3ed6d6f6fba2eae0df4298f
+  languageName: node
+  linkType: hard
+
+"monaco-editor@npm:^0.37.1":
+  version: 0.37.1
+  resolution: "monaco-editor@npm:0.37.1"
+  checksum: f2ac123d3044a1386d36ba52bb617ad18fb1c745d515a63258858b41c91bb68b71b57c7e5aff3fc2b3226b22c12ca3ad5b14c117babc85eebcf80317cb10691b
   languageName: node
   linkType: hard
 
@@ -13562,6 +13628,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"recoil-persist@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "recoil-persist@npm:4.2.0"
+  peerDependencies:
+    recoil: ^0.7.2
+  checksum: 1c8a6be4bb914b383429603e910aba80734311d8657ddf9f94a39513da0eb41fd6a2b74439f93658daf465d2e66a2d890e9f6b2f8a047e4fb99dc5b31f301515
+  languageName: node
+  linkType: hard
+
 "recoil@npm:^0.7.7":
   version: 0.7.7
   resolution: "recoil@npm:0.7.7"
@@ -13733,6 +13808,13 @@ __metadata:
   version: 1.0.0
   resolution: "requires-port@npm:1.0.0"
   checksum: eee0e303adffb69be55d1a214e415cf42b7441ae858c76dfc5353148644f6fd6e698926fc4643f510d5c126d12a705e7c8ed7e38061113bdf37547ab356797ff
+  languageName: node
+  linkType: hard
+
+"resize-observer-polyfill@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "resize-observer-polyfill@npm:1.5.1"
+  checksum: 57e7f79489867b00ba43c9c051524a5c8f162a61d5547e99333549afc23e15c44fd43f2f318ea0261ea98c0eb3158cca261e6f48d66e1ed1cd1f340a43977094
   languageName: node
   linkType: hard
 
@@ -14071,6 +14153,13 @@ __metadata:
     ajv-formats: "npm:^2.1.1"
     ajv-keywords: "npm:^5.0.0"
   checksum: c843e92fdd1a5c145dbb6ffdae33e501867f9703afac67bdf35a685e49f85b1dcc10ea250033175a64bd9d31f0555bc6785b8359da0c90bcea30cf6dfbb55a8f
+  languageName: node
+  linkType: hard
+
+"screenfull@npm:^5.0.0":
+  version: 5.2.0
+  resolution: "screenfull@npm:5.2.0"
+  checksum: 21eae33b780eb4679ea0ea2d14734b11168cf35049c45a2bf24ddeb39c67a788e7a8fb46d8b61ca6d8367fd67ce9dd4fc8bfe476489249c7189c2a79cf83f51a
   languageName: node
   linkType: hard
 
@@ -15140,6 +15229,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ts-pattern@npm:^4.2.2":
+  version: 4.2.2
+  resolution: "ts-pattern@npm:4.2.2"
+  checksum: e9e818f0d4a1706930f81bb3e6fce69db998a584999b113ef0d0c73db5a810f0ead3a295393603f2fed4e17ba2cc90e6bf38223bea4f615a9e42deb514e91cc2
+  languageName: node
+  linkType: hard
+
 "tsconfck@npm:^2.0.1":
   version: 2.1.1
   resolution: "tsconfck@npm:2.1.1"
@@ -15173,7 +15269,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.4.0":
+"tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.4.0, tslib@npm:^2.4.1":
   version: 2.5.0
   resolution: "tslib@npm:2.5.0"
   checksum: ae3ed5f9ce29932d049908ebfdf21b3a003a85653a9a140d614da6b767a93ef94f460e52c3d787f0e4f383546981713f165037dc2274df212ea9f8a4541004e1
