@@ -132,14 +132,17 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
 
   const selectedNode = nodes.find((node) => node.id === selectedNodeId)!;
 
-  const updateNode = (node: ChartNode<string, unknown>) => {
-    setNodes((nodes) =>
-      produce(nodes, (draft) => {
-        const index = draft.findIndex((n) => n.id === node.id);
-        draft[index] = node;
-      }),
-    );
-  };
+  const updateNode = useCallback(
+    (node: ChartNode<string, unknown>) => {
+      setNodes((nodes) =>
+        produce(nodes, (draft) => {
+          const index = draft.findIndex((n) => n.id === node.id);
+          draft[index] = node;
+        }),
+      );
+    },
+    [setNodes],
+  );
 
   const nodeEditor = match(selectedNode)
     .with({ type: 'prompt' }, (node) => <PromptNodeEditor node={node} onChange={(node) => updateNode(node)} />)
@@ -159,9 +162,19 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
     };
   }, [setSelectedNodeId]);
 
-  const nodeDescriptionChanged = useCallback((description: string) => {
-    updateNode({ ...selectedNode, description });
-  }, []);
+  const nodeDescriptionChanged = useCallback(
+    (description: string) => {
+      updateNode({ ...selectedNode, description });
+    },
+    [selectedNode, updateNode],
+  );
+
+  const nodeTitleChanged = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      updateNode({ ...selectedNode, title: event.target.value });
+    },
+    [selectedNode, updateNode],
+  );
 
   return (
     <Container>
@@ -175,6 +188,7 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
           className="node-name input-field"
           placeholder="Enter a name for the node..."
           value={selectedNode.title}
+          onChange={nodeTitleChanged}
         />
       </div>
       <div className="section">

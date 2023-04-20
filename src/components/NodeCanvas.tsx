@@ -210,9 +210,10 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         onWheel={handleZoom}
         style={{
           backgroundPosition: `${(canvasPosition.x % 20) - 1}px ${(canvasPosition.y % 20) - 1}px`,
+          backgroundSize: `${20 * canvasPosition.zoom}px ${20 * canvasPosition.zoom}px`,
         }}
       >
-        <div className="debug-overlay">
+        {/* <div className="debug-overlay">
           <div>Translation: {`(${canvasPosition.x.toFixed(2)}, ${canvasPosition.y.toFixed(2)})`}</div>
           <div>Scale: {canvasPosition.zoom.toFixed(2)}</div>
           <div>Mouse Position: {`(${lastMousePosition.x.toFixed(2)}, ${lastMousePosition.y.toFixed(2)})`}</div>
@@ -222,7 +223,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
               2,
             )}, ${clientToCanvasPosition(lastMousePosition.x, lastMousePosition.y).y.toFixed(2)})`}
           </div>
-        </div>
+        </div> */}
         <div
           className="canvas-contents"
           style={{
