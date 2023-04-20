@@ -2,9 +2,9 @@ import { css } from '@emotion/react';
 
 export const nodeStyles = css`
   .node {
-    background-color: #2e2e2e;
+    background-color: var(--grey-dark);
     border-radius: 8px;
-    border: 2px solid #5a5a5a;
+    border: 2px solid var(--grey);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
@@ -18,21 +18,21 @@ export const nodeStyles = css`
   }
 
   .node.overlayNode {
-    border-color: #ff9900;
+    border-color: var(--primary);
     transition-duration: 0;
     pointer-events: none;
-    box-shadow: 10px 10px 16px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 153, 0, 0.3);
+    box-shadow: 10px 10px 16px rgba(0, 0, 0, 0.4), 0 0 10px var(--shadow-primary);
   }
 
   .node:hover,
   .node.selected {
-    border-color: #ff9900;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 153, 0, 0.3);
+    border-color: var(--primary);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 0 10px var(--shadow-primary);
   }
 
   .node-title {
-    background-color: #3d3d3d;
-    color: #ffffff;
+    background-color: var(--grey-darkish);
+    color: var(--foreground-bright);
     font-weight: bold;
     font-size: 14px;
     padding: 12px;
@@ -44,7 +44,7 @@ export const nodeStyles = css`
   }
 
   .node-body {
-    color: #bbbbbb;
+    color: var(--foreground);
     font-size: 12px;
     margin-bottom: 12px;
     line-height: 1.4;
@@ -80,7 +80,7 @@ export const nodeStyles = css`
   }
 
   .port-label {
-    color: #dddddd;
+    color: var(--grey-lighter);
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -106,8 +106,8 @@ export const nodeStyles = css`
 
   .input-port,
   .output-port {
-    background-color: #2e2e2e;
-    border: 2px solid #5a5a5a;
+    background-color: var(--grey-dark);
+    border: 2px solid var(--grey);
     border-radius: 50%;
     height: 16px;
     width: 16px;
@@ -116,7 +116,7 @@ export const nodeStyles = css`
 
   .input-port:hover,
   .output-port:hover {
-    border-color: #ff9900;
+    border-color: var(--primary);
     cursor: pointer;
   }
 
@@ -133,12 +133,12 @@ export const nodeStyles = css`
   }
 
   .port.connected .port-circle {
-    background-color: #ff9900;
-    border: 2px solid #cc6600;
+    background-color: var(--primary);
+    border: 2px solid var(--primary-dark);
   }
 
   .port.connected .port-label {
-    color: #ff9900;
+    color: var(--primary);
   }
 
   .port.connected .port-label {

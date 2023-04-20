@@ -15,12 +15,12 @@ interface ContextMenuProps {
 
 const menuStyles = css`
   position: absolute;
-  background-color: #1e1e1e;
-  border: 2px solid #444;
+  background-color: var(--grey-darkest);
+  border: 2px solid var(--grey-darkish);
   border-radius: 4px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 16px var(--shadow-dark);
   font-family: 'Roboto Mono', monospace;
-  color: #fff;
+  color: var(--foreground);
   font-size: 14px;
   padding: 8px;
   z-index: 1;
@@ -35,7 +35,7 @@ const menuStyles = css`
     height: 0;
     border-style: solid;
     border-width: 0 8px 8px 8px;
-    border-color: transparent transparent #444 transparent;
+    border-color: transparent transparent var(--grey-darkish) transparent;
     pointer-events: none;
   }
 
@@ -53,11 +53,11 @@ const submenuStyles = css`
   margin-left: 4px;
   margin-top: -4px;
   min-width: 150px;
-  border: 2px solid #444;
+  border: 2px solid var(--grey-darkish);
   border-radius: 4px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-  background-color: #1e1e1e;
-  color: #fff;
+  box-shadow: 0 8px 16px var(--shadow-dark);
+  background-color: var(--grey-darkest);
+  color: var(--foreground);
   z-index: 1;
   padding: 8px;
 
@@ -102,7 +102,7 @@ const MenuItemDiv = styled.div<{ hasSubmenu?: boolean }>`
 
   &:hover {
     background-color: #4444446e;
-    color: #ffa500;
+    color: var(--primary);
   }
 
   ${(props) =>
@@ -118,7 +118,7 @@ const MenuItemDiv = styled.div<{ hasSubmenu?: boolean }>`
         height: 0;
         border-style: solid;
         border-width: 7px 0 7px 7px;
-        border-color: transparent transparent transparent #444;
+        border-color: transparent transparent transparent var(--grey-darkish);
       }
     `}
 `;

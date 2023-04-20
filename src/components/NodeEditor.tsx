@@ -34,10 +34,9 @@ const Container = styled.div`
   max-width: 1000px;
   height: 100%;
   padding: 20px;
-  background-color: #282c34;
-  border-left: 2px solid #444;
-  box-shadow: 10px 10px 16px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 153, 0, 0.3);
-  color: #dddddd;
+  background-color: var(--grey-darker);
+  border-left: 2px solid var(--grey);
+  color: var(--body-text);
   font-family: 'Roboto Mono', monospace;
   display: flex;
   flex-direction: column;
@@ -64,13 +63,14 @@ const Container = styled.div`
     position: absolute;
     right: 20px;
     top: 20px;
-    background-color: #ff9900;
+    background-color: var(--primary);
     border: none;
-    color: #444;
+    color: var(--grey-dark);
     cursor: pointer;
     font-size: 20px;
     padding: 5px 10px;
-    border: 2px solid #444;
+    border: 2px solid var(--grey-dark);
+    font-size: 14px;
     border-radius: 50%;
     width: 25px;
     height: 25px;
@@ -81,16 +81,16 @@ const Container = styled.div`
   }
 
   .section-title {
-    color: #fff;
+    color: var(--foreground-bright);
     font-size: 20px;
     margin-bottom: 10px;
   }
 
   .node-name {
-    background-color: #2e2e2e;
-    border: 2px solid #5a5a5a;
+    background-color: var(--grey-dark);
+    border: 2px solid var(--grey);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    color: #fff;
+    color: var(--foreground);
     font-size: 18px;
     padding: 5px 10px;
     resize: none;
@@ -98,10 +98,10 @@ const Container = styled.div`
   }
 
   .description-field {
-    background-color: #2e2e2e;
-    border: 2px solid #5a5a5a;
+    background-color: var(--grey-dark);
+    border: 2px solid var(--grey);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    color: #fff;
+    color: var(--foreground);
     min-height: 50px;
     padding: 10px;
     resize: none;
@@ -115,7 +115,7 @@ const Container = styled.div`
 
   .input-field:focus {
     outline: none;
-    border-color: #ff9900;
+    border-color: var(--primary);
   }
 
   .section-node {
