@@ -11,7 +11,7 @@ import { useContextMenu } from '../hooks/useContextMenu';
 import { useDraggingNode } from '../hooks/useDraggingNode';
 import { useDraggingWire } from '../hooks/useDraggingWire';
 import { NodeGraph } from '../model/NodeGraph';
-import { ChartNode, NodeConnection } from '../model/NodeBase';
+import { ChartNode, NodeConnection, NodeId } from '../model/NodeBase';
 
 export interface NodeCanvasProps {
   nodes: ChartNode<string, unknown>[];
@@ -64,10 +64,10 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, connections, onNodesCha
   const {
     contextMenuRef,
     showContextMenu,
-    contextMenuPosition,
+    contextMenuData,
     handleContextMenu,
     setShowContextMenu,
-    setContextMenuPosition,
+    setContextMenuData,
   } = useContextMenu();
 
   const { setNodeRef } = useDroppable({ id: 'NodeCanvas' });
@@ -92,15 +92,28 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, connections, onNodesCha
         const newNode = nodeFactory(nodeType);
 
         newNode.visualData = {
-          x: contextMenuPosition.x,
-          y: contextMenuPosition.y,
+          x: contextMenuData.x,
+          y: contextMenuData.y,
         };
 
         onNodesChanged?.([...nodes, newNode]);
         setShowContextMenu(false);
+        return;
+      }
+
+      if (menuItemId.startsWith('Delete:')) {
+        const nodeId = menuItemId.substring(7) as NodeId;
+        const nodeIndex = nodes.findIndex((n) => n.id === nodeId);
+        if (nodeIndex >= 0) {
+          const newNodes = [...nodes];
+          newNodes.splice(nodeIndex, 1);
+          onNodesChanged?.(newNodes);
+        }
+        setShowContextMenu(false);
+        return;
       }
     },
-    [contextMenuPosition.x, contextMenuPosition.y, nodes, onNodesChanged, setShowContextMenu],
+    [contextMenuData.x, contextMenuData.y, nodes, onNodesChanged, setShowContextMenu],
   );
 
   return (
@@ -127,12 +140,13 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({ nodes, connections, onNodesCha
           timeout={200}
           classNames="context-menu"
           unmountOnExit
-          onExited={() => setContextMenuPosition({ x: 0, y: 0 })}
+          onExited={() => setContextMenuData({ x: 0, y: 0, data: null })}
         >
           <ContextMenu
             ref={contextMenuRef}
-            x={contextMenuPosition.x}
-            y={contextMenuPosition.y}
+            x={contextMenuData.x}
+            y={contextMenuData.y}
+            data={contextMenuData.data}
             onMenuItemSelected={onContextMenuItemSelected}
           />
         </CSSTransition>
