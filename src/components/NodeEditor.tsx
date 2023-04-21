@@ -11,6 +11,7 @@ import { PromptNodeEditor } from './nodeEditors/PromptNodeEditor';
 import produce from 'immer';
 import { InlineEditableTextArea } from './InlineEditableTextArea';
 import { ChatNodeEditor } from './nodeEditors/ChatNodeEditor';
+import { lastRunDataByNodeState } from '../state/dataFlow';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -31,10 +32,10 @@ const Container = styled.div`
   position: absolute;
   top: 32px;
   right: 0;
+  bottom: 0;
   width: 45%;
   min-width: 500px;
   max-width: 1000px;
-  height: 100%;
   padding: 20px;
   background-color: var(--grey-darker);
   border-left: 2px solid var(--grey);
@@ -43,6 +44,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  color: var(--foreground);
 
   .header {
     display: flex;
@@ -124,6 +126,7 @@ const Container = styled.div`
   .section-node-content {
     flex-grow: 1;
     position: relative;
+    display: flex;
   }
 
   .unknown-node {
@@ -134,8 +137,10 @@ const Container = styled.div`
 export const NodeEditor: FC<NodeEditorProps> = () => {
   const [nodes, setNodes] = useRecoilState(nodesSelector);
   const [selectedNodeId, setSelectedNodeId] = useRecoilState(selectedNodeState)!;
+  const allLastData = useRecoilValue(lastRunDataByNodeState);
 
   const selectedNode = nodes.find((node) => node.id === selectedNodeId)!;
+  const lastData = allLastData[selectedNode.id];
 
   const updateNode = useCallback(
     (node: ChartNode<string, unknown>) => {
@@ -152,7 +157,7 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
   const nodeEditor = match(selectedNode)
     .with({ type: 'prompt' }, (node) => <PromptNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .with({ type: 'chat' }, (node) => <ChatNodeEditor node={node} onChange={(node) => updateNode(node)} />)
-    .otherwise(() => <div className="unknown-node">Unknown node type</div>);
+    .otherwise(() => null);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -204,10 +209,49 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
           placeholder="Enter any description or notes for this node..."
         ></InlineEditableTextArea>
       </div>
-      <div className="section section-node">
-        <h3 className="section-title">{nodeDisplayName[selectedNode.type as NodeType]}</h3>
-        <div className="section-node-content">{nodeEditor}</div>
-      </div>
+      {nodeEditor && (
+        <div className="section section-node">
+          <h3 className="section-title">{nodeDisplayName[selectedNode.type as NodeType]}</h3>
+          <div className="section-node-content">{nodeEditor}</div>
+        </div>
+      )}
+      {lastData && (
+        <section className="section section-last-data">
+          <h3 className="section-title">Last Data</h3>
+          <div className="section-last-data-content">
+            {lastData?.inputData && (
+              <>
+                <h4>Inputs</h4>
+                <dl>
+                  {Object.entries(lastData?.inputData ?? {}).map(([key, value]) => {
+                    return (
+                      <>
+                        <dt>{key}</dt>
+                        <dd>{JSON.stringify(value, null, 2)}</dd>
+                      </>
+                    );
+                  })}
+                </dl>
+              </>
+            )}
+            {lastData?.outputData && (
+              <>
+                <h4>Outputs</h4>
+                <dl>
+                  {Object.entries(lastData?.outputData ?? {}).map(([key, value]) => {
+                    return (
+                      <>
+                        <dt>{key}</dt>
+                        <dd>{JSON.stringify(value, null, 2)}</dd>
+                      </>
+                    );
+                  })}
+                </dl>
+              </>
+            )}
+          </div>
+        </section>
+      )}
     </Container>
   );
 };

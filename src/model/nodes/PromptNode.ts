@@ -5,6 +5,8 @@ import { NodeImpl } from '../NodeImpl';
 export type PromptNode = ChartNode<'prompt', PromptNodeData>;
 
 export type PromptNodeData = {
+  type: 'system' | 'user' | 'ai';
+  useTypeInput: boolean;
   promptText: string;
 };
 
@@ -19,6 +21,8 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
         y: 0,
       },
       data: {
+        type: 'user',
+        useTypeInput: false,
         promptText,
       },
     };
@@ -54,9 +58,9 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
   }
 
   interpolate(baseString: string, values: Record<string, any>): string {
-    return baseString.replace(/\{\{([^}]+)\}\}/g, (match, p1) => {
+    return baseString.replace(/\{\{([^}]+)\}\}/g, (_m, p1) => {
       const value = values[p1.trim()];
-      return value !== undefined ? value.toString() : match;
+      return value !== undefined ? value.toString() : '';
     });
   }
 

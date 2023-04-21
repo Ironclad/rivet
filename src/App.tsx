@@ -1,14 +1,10 @@
 import { RecoilRoot } from 'recoil';
-import { GraphBuilder } from './components/GraphBuilder';
-import { MenuBar } from './components/MenuBar';
+import { NodaiApp } from './components/NodaiApp';
 
 function App() {
   return (
     <RecoilRoot>
-      <div className="app">
-        <MenuBar />
-        <GraphBuilder />
-      </div>
+      <NodaiApp />
     </RecoilRoot>
   );
 }

@@ -31,5 +31,5 @@ export abstract class NodeImpl<T extends ChartNode<string, unknown>, Type extend
 
   abstract getOutputDefinitions(connections: NodeConnection[]): NodeOutputDefinition[];
 
-  abstract process(inputData: Record<string, any>): Record<string, any>;
+  abstract process(inputData: Record<string, any>): Promise<Record<string, any>>;
 }

@@ -5,12 +5,11 @@ import { NodeImpl } from '../NodeImpl';
 export type InterpolateNode = ChartNode<'interpolate', InterpolateNodeData>;
 
 export type InterpolateNodeData = {
-  baseString: string;
-  valueNames: string[];
+  text: string;
 };
 
 export class InterpolateNodeImpl extends NodeImpl<InterpolateNode> {
-  static create(baseString: string = 'Hello {{name}}!', valueNames: string[] = ['name']): InterpolateNode {
+  static create(text: string = 'Hello {{name}}!'): InterpolateNode {
     const chartNode: InterpolateNode = {
       type: 'interpolate',
       title: 'Interpolate',
@@ -20,8 +19,7 @@ export class InterpolateNodeImpl extends NodeImpl<InterpolateNode> {
         y: 0,
       },
       data: {
-        baseString: baseString,
-        valueNames: valueNames,
+        text,
       },
     };
 
@@ -29,15 +27,20 @@ export class InterpolateNodeImpl extends NodeImpl<InterpolateNode> {
   }
 
   getInputDefinitions(): NodeInputDefinition[] {
-    return this.chartNode.data.valueNames.map((valueName) => {
-      return {
-        type: 'string',
-        id: valueName as PortId,
-        title: valueName,
-        dataType: 'string',
-        required: false,
-      };
-    });
+    // Extract inputs from text, everything like {{input}}
+    const inputNames = this.chartNode.data.text.match(/\{\{([^}]+)\}\}/g);
+    return (
+      inputNames?.map((inputName) => {
+        return {
+          type: 'string',
+          // id and title should not have the {{ and }}
+          id: inputName.slice(2, -2) as PortId,
+          title: inputName.slice(2, -2),
+          dataType: 'string',
+          required: false,
+        };
+      }) ?? []
+    );
   }
 
   getOutputDefinitions(): NodeOutputDefinition[] {
@@ -50,22 +53,21 @@ export class InterpolateNodeImpl extends NodeImpl<InterpolateNode> {
     ];
   }
 
-  interpolate(baseString: string, valueNames: string[], values: Record<string, any>): string {
-    return baseString.replace(/\{\{([^}]+)\}\}/g, (match, p1) => {
+  interpolate(baseString: string, values: Record<string, any>): string {
+    return baseString.replace(/\{\{([^}]+)\}\}/g, (_m, p1) => {
       const value = values[p1.trim()];
-      return value !== undefined ? value.toString() : match;
+      return value !== undefined ? value.toString() : '';
     });
   }
 
   process(inputs: Record<string, any>): Record<string, any> {
-    const baseString = this.chartNode.data.baseString;
-    const valueNames = this.chartNode.data.valueNames;
-    const values = valueNames.reduce((acc, valueName) => {
-      acc[valueName] = inputs[valueName];
+    const inputMap = Object.keys(inputs).reduce((acc, key) => {
+      acc[key] = inputs[key];
       return acc;
     }, {} as Record<string, any>);
 
-    const outputValue = this.interpolate(baseString, valueNames, values);
+    const outputValue = this.interpolate(this.chartNode.data.text, inputMap);
+
     return {
       output: outputValue,
     };

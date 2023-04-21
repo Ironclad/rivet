@@ -1,4 +1,4 @@
-import { ChartNode, NodeConnection, NodeId } from './NodeBase';
+import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition } from './NodeBase';
 import { NodeGraph } from './NodeGraph';
 import { NodeImpl } from './NodeImpl';
 import { Nodes, createNodeInstance } from './Nodes';
@@ -7,6 +7,7 @@ export class GraphProcessor {
   #graph: NodeGraph;
   #nodeInstances: Record<NodeId, NodeImpl<ChartNode<string, unknown>>>;
   #connections: Record<NodeId, NodeConnection[]>;
+  #definitions: Record<NodeId, { inputs: NodeInputDefinition[]; outputs: NodeOutputDefinition[] }>;
 
   constructor(graph: NodeGraph) {
     this.#graph = graph;
@@ -29,44 +30,72 @@ export class GraphProcessor {
       this.#connections[conn.inputNodeId].push(conn);
       this.#connections[conn.outputNodeId].push(conn);
     }
+
+    // Store input and output definitions in a lookup table
+    this.#definitions = {};
+    for (const node of this.#graph.nodes) {
+      this.#definitions[node.id] = {
+        inputs: this.#nodeInstances[node.id].getInputDefinitions(this.#connections[node.id]),
+        outputs: this.#nodeInstances[node.id].getOutputDefinitions(this.#connections[node.id]),
+      };
+    }
   }
 
-  processGraph(): Record<string, any> {
-    const inputNodes = this.#graph.nodes.filter((node) => node.inputDefinitions.length === 0);
-    const outputNodes = this.#graph.nodes.filter((node) => node.outputDefinitions.length === 0);
+  async processGraph(
+    events: {
+      onNodeStart?: (node: ChartNode<string, unknown>, inputs: Record<string, unknown>) => void;
+      onNodeFinish?: (node: ChartNode<string, unknown>, result: Record<string, unknown>) => void;
+      onNodeError?: (node: ChartNode<string, unknown>, error: Error) => void;
+    } = {},
+  ): Promise<Record<string, any>> {
+    const outputNodes = this.#graph.nodes.filter((node) => this.#definitions[node.id].outputs.length === 0);
 
     const nodeResults = new Map<string, any>();
 
-    // Initialize input nodes with their data
-    for (const node of inputNodes) {
-      nodeResults.set(node.id, this.#nodeInstances[node.id].process({}));
-    }
-
     // Process nodes in topological order
-    const nodesToProcess = this.#graph.nodes.filter((node) => !inputNodes.includes(node));
+    const nodesToProcess = [...this.#graph.nodes];
     const visitedNodes = new Set();
+
+    const pushBackCounter = new Map<string, number>();
 
     while (nodesToProcess.length > 0) {
       const node = nodesToProcess.shift()!;
 
       // Check if all inputs are available
-      const inputsAvailable = node.inputDefinitions.every((input) => {
+      const inputsAvailable = this.#definitions[node.id].inputs.every((input) => {
         const connections = this.#connections[node.id];
         if (!connections) {
           return false;
         }
+
         const connection = connections.find((conn) => conn.inputId === input.id);
-        return connection ? visitedNodes.has(connection.outputId) : false;
+
+        if (!input.required && !connection) {
+          return true;
+        }
+
+        return connection ? visitedNodes.has(connection.outputNodeId) : false;
       });
 
       if (!inputsAvailable) {
         // Put node back at the end of the queue and try again later
         nodesToProcess.push(node);
+
+        // Increment the push back counter for this node
+        pushBackCounter.set(node.id, (pushBackCounter.get(node.id) ?? 0) + 1);
+
+        // Check if the node has been pushed back too many times
+        if (pushBackCounter.get(node.id)! > nodesToProcess.length) {
+          throw new Error(
+            `Node ${node.id} (${node.title}) has been pushed back too many times. There might be a cycle in the graph or an issue with input dependencies.`,
+          );
+        }
+
         continue;
       }
 
       // Get input values for this node
-      const inputValues = node.inputDefinitions.reduce((values, input) => {
+      const inputValues = this.#definitions[node.id].inputs.reduce((values, input) => {
         const connections = this.#connections[node.id];
         if (!connections) {
           return values;
@@ -80,23 +109,11 @@ export class GraphProcessor {
       }, {} as Record<string, any>);
 
       // Process the node and save its output
-      const outputValues = this.#nodeInstances[node.id].process(inputValues);
+      events.onNodeStart?.(node, inputValues);
+      const outputValues = await this.#nodeInstances[node.id].process(inputValues);
       nodeResults.set(node.id, outputValues);
       visitedNodes.add(node.id);
-
-      // Add dependent nodes to the list of nodes to process
-      for (const output of node.outputDefinitions) {
-        const connections = this.#connections[node.id];
-        if (!connections) {
-          continue;
-        }
-        for (const connection of connections.filter((conn) => conn.outputId === output.id)) {
-          const dependentNode = this.#nodeInstances[connection.inputNodeId].chartNode;
-          if (!nodesToProcess.includes(dependentNode)) {
-            nodesToProcess.push(dependentNode);
-          }
-        }
-      }
+      events.onNodeFinish?.(node, outputValues);
     }
 
     // Collect output values
