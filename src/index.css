@@ -41,6 +41,11 @@ code {
   --success-dark: #009624;
   --success-light: #12cf61;
 
+  /* Error colors */
+  --error: #e74c3c;
+  --error-dark: #c0392b;
+  --error-light: rgba(231, 76, 60, 0.3);
+
   /* Shadows */
   --shadow: rgba(0, 0, 0, 0.2);
   --shadow-dark: rgba(0, 0, 0, 0.4);

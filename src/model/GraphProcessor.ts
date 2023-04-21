@@ -56,64 +56,63 @@ export class GraphProcessor {
     const nodesToProcess = [...this.#graph.nodes];
     const visitedNodes = new Set();
 
-    const pushBackCounter = new Map<string, number>();
-
     while (nodesToProcess.length > 0) {
-      const node = nodesToProcess.shift()!;
+      const readyNodes = nodesToProcess.filter((node) =>
+        this.#definitions[node.id].inputs.every((input) => {
+          const connections = this.#connections[node.id];
+          if (!connections) {
+            return false;
+          }
 
-      // Check if all inputs are available
-      const inputsAvailable = this.#definitions[node.id].inputs.every((input) => {
-        const connections = this.#connections[node.id];
-        if (!connections) {
-          return false;
-        }
+          const connectionToInput = connections.find(
+            (conn) => conn.inputId === input.id && conn.inputNodeId === node.id,
+          );
 
-        const connection = connections.find((conn) => conn.inputId === input.id);
+          if (!input.required && !connectionToInput) {
+            return true;
+          }
 
-        if (!input.required && !connection) {
-          return true;
-        }
+          return connectionToInput ? visitedNodes.has(connectionToInput.outputNodeId) : false;
+        }),
+      );
 
-        return connection ? visitedNodes.has(connection.outputNodeId) : false;
-      });
-
-      if (!inputsAvailable) {
-        // Put node back at the end of the queue and try again later
-        nodesToProcess.push(node);
-
-        // Increment the push back counter for this node
-        pushBackCounter.set(node.id, (pushBackCounter.get(node.id) ?? 0) + 1);
-
-        // Check if the node has been pushed back too many times
-        if (pushBackCounter.get(node.id)! > nodesToProcess.length) {
-          throw new Error(
-            `Node ${node.id} (${node.title}) has been pushed back too many times. There might be a cycle in the graph or an issue with input dependencies.`,
+      if (readyNodes.length === 0) {
+        for (const erroredNode of nodesToProcess) {
+          events.onNodeError?.(
+            erroredNode,
+            new Error('There might be a cycle in the graph or an issue with input dependencies.'),
           );
         }
-
-        continue;
+        throw new Error('There might be a cycle in the graph or an issue with input dependencies.');
       }
 
-      // Get input values for this node
-      const inputValues = this.#definitions[node.id].inputs.reduce((values, input) => {
-        const connections = this.#connections[node.id];
-        if (!connections) {
-          return values;
-        }
-        const connection = connections.find((conn) => conn.inputId === input.id);
-        if (connection) {
-          const outputNode = this.#nodeInstances[connection.outputNodeId].chartNode;
-          values[input.id] = nodeResults.get(outputNode.id)[connection.outputId];
-        }
-        return values;
-      }, {} as Record<string, any>);
+      await Promise.all(
+        readyNodes.map(async (node) => {
+          nodesToProcess.splice(nodesToProcess.indexOf(node), 1);
 
-      // Process the node and save its output
-      events.onNodeStart?.(node, inputValues);
-      const outputValues = await this.#nodeInstances[node.id].process(inputValues);
-      nodeResults.set(node.id, outputValues);
-      visitedNodes.add(node.id);
-      events.onNodeFinish?.(node, outputValues);
+          const connections = this.#connections[node.id];
+
+          // Get input values for this node
+          const inputValues = this.#definitions[node.id].inputs.reduce((values, input) => {
+            if (!connections) {
+              return values;
+            }
+            const connection = connections.find((conn) => conn.inputId === input.id && conn.inputNodeId === node.id);
+            if (connection) {
+              const outputNode = this.#nodeInstances[connection.outputNodeId].chartNode;
+              values[input.id] = nodeResults.get(outputNode.id)[connection.outputId];
+            }
+            return values;
+          }, {} as Record<string, any>);
+
+          // Process the node and save its output
+          events.onNodeStart?.(node, inputValues);
+          const outputValues = await this.#nodeInstances[node.id].process(inputValues);
+          nodeResults.set(node.id, outputValues);
+          visitedNodes.add(node.id);
+          events.onNodeFinish?.(node, outputValues);
+        }),
+      );
     }
 
     // Collect output values

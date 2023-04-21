@@ -60,7 +60,7 @@ export class InterpolateNodeImpl extends NodeImpl<InterpolateNode> {
     });
   }
 
-  process(inputs: Record<string, any>): Record<string, any> {
+  async process(inputs: Record<string, any>): Promise<Record<string, any>> {
     const inputMap = Object.keys(inputs).reduce((acc, key) => {
       acc[key] = inputs[key];
       return acc;

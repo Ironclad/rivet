@@ -19,6 +19,8 @@ import { ChatNode } from '../model/nodes/ChatNode';
 import { ChatNodeBody } from './nodeBodies/ChatNodeBody';
 import { lastRunDataByNodeState } from '../state/dataFlow';
 import { useRecoilValue } from 'recoil';
+import { InterpolateNode } from '../model/nodes/InterpolateNode';
+import { InterpolateNodeBody } from './nodeBodies/InterpolateNodeBody';
 
 interface DraggableNodeProps {
   node: ChartNode<string, unknown>;
@@ -152,10 +154,18 @@ export const ViewNode = memo(
             <div className="grab-area" {...handleAttributes} />
             <div className="title-controls">
               <div className="last-run-status">
-                {lastRunData ? (
+                {lastRunData?.status ? (
                   match(lastRunData.status)
-                    .with({ status: 'ok' }, () => <SendIcon className="success" />)
-                    .with({ status: 'error' }, () => <SendIcon className="error" />)
+                    .with({ status: 'ok' }, () => (
+                      <div className="success">
+                        <SendIcon />
+                      </div>
+                    ))
+                    .with({ status: 'error' }, () => (
+                      <div className="error">
+                        <SendIcon />
+                      </div>
+                    ))
                     .exhaustive()
                 ) : (
                   <></>
@@ -246,5 +256,6 @@ function getNodeBody(node: ChartNode<string, unknown>) {
   return match(node)
     .with({ type: 'prompt' }, (node) => <PromptNodeBody node={node as PromptNode} />)
     .with({ type: 'chat' }, (node) => <ChatNodeBody node={node as ChatNode} />)
+    .with({ type: 'interpolate' }, (node) => <InterpolateNodeBody node={node as InterpolateNode} />)
     .otherwise(() => <div>Unknown node type</div>);
 }
