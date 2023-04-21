@@ -44,14 +44,18 @@ const styles = css`
   }
 `;
 
-export const MenuBar: FC = () => {
+export type MenuBarProps = {
+  onRunGraph: () => void;
+};
+
+export const MenuBar: FC<MenuBarProps> = ({ onRunGraph }) => {
   return (
     <div css={styles}>
       <div className="dropdown-menu">
         <button className="dropdown-button">File</button>
       </div>
       <div className="run-button">
-        <button>
+        <button onClick={onRunGraph}>
           Run <ChevronRightIcon />
         </button>
       </div>

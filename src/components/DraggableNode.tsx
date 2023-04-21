@@ -11,11 +11,14 @@ import { CSSProperties, HTMLAttributes, forwardRef, useCallback, MouseEvent, FC,
 import clsx from 'clsx';
 import { Nodes, createNodeInstance, createUnknownNodeInstance } from '../model/Nodes';
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
+import { ReactComponent as SendIcon } from 'majesticons/solid/send.svg';
 import { match } from 'ts-pattern';
 import { PromptNodeBody } from './nodeBodies/PromptNodeBody';
 import { PromptNode } from '../model/nodes/PromptNode';
 import { ChatNode } from '../model/nodes/ChatNode';
 import { ChatNodeBody } from './nodeBodies/ChatNodeBody';
+import { lastRunDataByNodeState } from '../state/dataFlow';
+import { useRecoilValue } from 'recoil';
 
 interface DraggableNodeProps {
   node: ChartNode<string, unknown>;
@@ -91,6 +94,9 @@ export const ViewNode = memo(
       },
       ref,
     ) => {
+      const lastRunDataByNode = useRecoilValue(lastRunDataByNodeState);
+      const lastRunData = lastRunDataByNode[node.id];
+
       const style: CSSProperties = {
         opacity: isDragging ? '0' : '',
         transform: `translate(${node.visualData.x + xDelta}px, ${node.visualData.y + yDelta}px)`,
@@ -145,6 +151,16 @@ export const ViewNode = memo(
             <div className="title-text">{node.title}</div>
             <div className="grab-area" {...handleAttributes} />
             <div className="title-controls">
+              <div className="last-run-status">
+                {lastRunData ? (
+                  match(lastRunData.status)
+                    .with({ status: 'ok' }, () => <SendIcon className="success" />)
+                    .with({ status: 'error' }, () => <SendIcon className="error" />)
+                    .exhaustive()
+                ) : (
+                  <></>
+                )}
+              </div>
               <button className="edit-button" onClick={handleEditClick} onMouseDown={handleEditMouseDown} title="Edit">
                 <SettingsCogIcon />
               </button>

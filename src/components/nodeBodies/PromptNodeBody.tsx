@@ -1,5 +1,5 @@
 import { FC, useLayoutEffect, useMemo, useRef } from 'react';
-import { PromptNode } from '../../model/nodes/PromptNode';
+import { PromptNode, PromptNodeData } from '../../model/nodes/PromptNode';
 import styled from '@emotion/styled';
 import { monaco } from '../../utils/monaco';
 
@@ -41,8 +41,19 @@ export const PromptNodeBody: FC<PromptNodeBodyProps> = ({ node }) => {
   }, [truncated]);
 
   return (
-    <Body ref={bodyRef} data-lang="prompt-interpolation">
-      {truncated}
+    <Body>
+      <div>
+        <em>{typeDisplay[node.data.type]}:</em>
+      </div>
+      <div ref={bodyRef} data-lang="prompt-interpolation">
+        {truncated}
+      </div>
     </Body>
   );
+};
+
+const typeDisplay: Record<PromptNodeData['type'], string> = {
+  ai: 'AI',
+  system: 'System',
+  user: 'User',
 };
