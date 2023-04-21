@@ -6,13 +6,13 @@ export type RunDataByNodeId = {
 };
 
 export type NodeRunData = {
-  status: { status: 'ok' } | { status: 'error'; error: string };
+  status?: { status: 'ok' } | { status: 'error'; error: string };
 
-  inputData: {
+  inputData?: {
     [key: PortId]: unknown;
   };
 
-  outputData: {
+  outputData?: {
     [key: PortId]: unknown;
   };
 };

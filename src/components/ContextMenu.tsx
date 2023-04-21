@@ -197,7 +197,7 @@ const BlankAreaContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSelect
       {/* <MenuItem label="Branch" onClick={() => addNode('branch')} /> */}
       <MenuItem label="Chat" onClick={() => addNode('chat')} />
       {/* <MenuItem label="Concat" onClick={() => addNode('concat')} /> */}
-      {/* <MenuItem label="Interpolate" onClick={() => addNode('interpolate')} /> */}
+      <MenuItem label="Interpolate" onClick={() => addNode('interpolate')} />
       {/* <MenuItem label="User Input" onClick={() => addNode('userInput')} /> */}
     </MenuItem>
   );

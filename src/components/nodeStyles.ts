@@ -54,6 +54,27 @@ export const nodeStyles = css`
   }
 
   .title-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .success,
+    .error {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .success {
+      color: var(--success);
+    }
+
+    .error {
+      color: var(--error);
+    }
+
     button {
       background-color: transparent;
       border: none;

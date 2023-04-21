@@ -12,6 +12,7 @@ import produce from 'immer';
 import { InlineEditableTextArea } from './InlineEditableTextArea';
 import { ChatNodeEditor } from './nodeEditors/ChatNodeEditor';
 import { lastRunDataByNodeState } from '../state/dataFlow';
+import { InterpolateNodeEditor } from './nodeEditors/InterpolateNodeEditor';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -157,6 +158,9 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
   const nodeEditor = match(selectedNode)
     .with({ type: 'prompt' }, (node) => <PromptNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .with({ type: 'chat' }, (node) => <ChatNodeEditor node={node} onChange={(node) => updateNode(node)} />)
+    .with({ type: 'interpolate' }, (node) => (
+      <InterpolateNodeEditor node={node} onChange={(node) => updateNode(node)} />
+    ))
     .otherwise(() => null);
 
   useEffect(() => {
@@ -218,6 +222,13 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
       {lastData && (
         <section className="section section-last-data">
           <h3 className="section-title">Last Data</h3>
+
+          {lastData.status?.status === 'error' && (
+            <div className="section-last-data-content">
+              <h4>Error</h4>
+              <p>{lastData.status.error}</p>
+            </div>
+          )}
           <div className="section-last-data-content">
             {lastData?.inputData && (
               <>
