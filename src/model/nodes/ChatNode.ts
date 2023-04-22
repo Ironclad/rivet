@@ -2,6 +2,7 @@ import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefin
 import { nanoid } from 'nanoid';
 import { NodeImpl, ProcessContext } from '../NodeImpl';
 import * as openai from 'openai';
+import { DataValue, expectType, expectTypeOptional } from '../DataValue';
 
 type PromptItem = {
   role: 'user' | 'system';
@@ -125,7 +126,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     return maxMessageNumber + 1;
   }
 
-  async process(inputs: Record<string, any>, context: ProcessContext): Promise<Record<string, any>> {
+  async process(inputs: Record<string, DataValue>, context: ProcessContext): Promise<Record<string, DataValue>> {
     const config = new openai.Configuration({
       apiKey: context.settings.openAiKey,
       organization: context.settings.openAiOrganization,
@@ -133,16 +134,19 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
     const api = new openai.OpenAIApi(config);
 
-    const model = inputs['model'] || this.chartNode.data.model;
-    const temperature = inputs['temperature'] || this.chartNode.data.temperature;
-    const topP = inputs['top_p'] || this.chartNode.data.top_p;
-    const useTopP = inputs['useTopP'] || this.chartNode.data.useTopP;
+    const model = expectTypeOptional(inputs['model'], 'string') ?? this.chartNode.data.model;
+    const temperature = expectTypeOptional(inputs['temperature'], 'number') ?? this.chartNode.data.temperature;
+    const topP = expectTypeOptional(inputs['top_p'], 'number') ?? this.chartNode.data.top_p;
+    const useTopP = expectTypeOptional(inputs['useTopP'], 'boolean') ?? this.chartNode.data.useTopP;
     const messages: openai.ChatCompletionRequestMessage[] = [];
 
     for (const key in inputs) {
       if (key.startsWith('message')) {
-        const inputMessage = inputs[key];
-        messages.push({ role: inputMessage.type, content: inputMessage.text });
+        const inputMessage = expectTypeOptional(inputs[key], 'chat-message');
+
+        if (inputMessage) {
+          messages.push({ role: inputMessage.type, content: inputMessage.message });
+        }
       }
     }
 
@@ -160,7 +164,10 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       const aiResponse = data.choices[0].message?.content ?? '';
 
       return {
-        response: aiResponse,
+        response: {
+          type: 'string',
+          value: aiResponse,
+        },
       };
     } catch (error) {
       console.error('Error processing ChatNode:', error);

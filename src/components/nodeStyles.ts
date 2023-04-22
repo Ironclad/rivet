@@ -9,13 +9,15 @@ export const nodeStyles = css`
     display: flex;
     flex-direction: column;
     position: absolute;
-    min-width: 300px;
-    max-width: 500px;
+    /* min-width: 300px; */
+    /* max-width: 500px; */
+    width: 450px;
     padding: 12px;
     font-family: 'Roboto Mono', monospace;
     /* transition-duration: 0.2s; TODO */
     transition-timing-function: ease-out;
     transition-property: box-shadow, border-color;
+    transform-origin: top left;
   }
 
   .node.overlayNode {
@@ -207,5 +209,41 @@ export const nodeStyles = css`
   .output-ports .port.connected {
     flex-direction: row-reverse;
     justify-content: flex-end;
+  }
+
+  .node-output {
+    background-color: var(--grey-darker);
+    background-image: linear-gradient(to bottom, var(--grey-darker) 0%, var(--grey-darkest) 100%);
+    border-radius: 0 0 8px 8px;
+    border-top: 2px solid var(--success-light);
+    color: var(--foreground-bright);
+    font-size: 12px;
+    line-height: 1.4;
+    margin: -2px -12px -12px -12px;
+    padding: 12px;
+    position: relative;
+    transition: border-color 0.2s ease-out;
+    margin-top: 8px;
+  }
+
+  .node-output.errored {
+    border-top: 2px solid var(--error-light);
+  }
+
+  .node-output:before {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid var(--success-light);
+  }
+
+  .node-output.errored:before {
+    border-top: 8px solid var(--error-light);
   }
 `;

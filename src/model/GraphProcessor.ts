@@ -1,11 +1,12 @@
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition } from './NodeBase';
+import { DataValue } from './DataValue';
+import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { NodeGraph } from './NodeGraph';
 import { NodeImpl, ProcessContext } from './NodeImpl';
 import { Nodes, createNodeInstance } from './Nodes';
 
 export class GraphProcessor {
   #graph: NodeGraph;
-  #nodeInstances: Record<NodeId, NodeImpl<ChartNode<string, unknown>>>;
+  #nodeInstances: Record<NodeId, NodeImpl<ChartNode>>;
   #connections: Record<NodeId, NodeConnection[]>;
   #definitions: Record<NodeId, { inputs: NodeInputDefinition[]; outputs: NodeOutputDefinition[] }>;
 
@@ -44,14 +45,14 @@ export class GraphProcessor {
   async processGraph(
     context: ProcessContext,
     events: {
-      onNodeStart?: (node: ChartNode<string, unknown>, inputs: Record<string, unknown>) => void;
-      onNodeFinish?: (node: ChartNode<string, unknown>, result: Record<string, unknown>) => void;
-      onNodeError?: (node: ChartNode<string, unknown>, error: Error) => void;
+      onNodeStart?: (node: ChartNode, inputs: Record<string, DataValue>) => void;
+      onNodeFinish?: (node: ChartNode, result: Record<string, DataValue>) => void;
+      onNodeError?: (node: ChartNode, error: Error) => void;
     } = {},
   ): Promise<Record<string, any>> {
     const outputNodes = this.#graph.nodes.filter((node) => this.#definitions[node.id].outputs.length === 0);
 
-    const nodeResults = new Map<string, any>();
+    const nodeResults = new Map<string, Record<PortId, DataValue>>();
 
     // Process nodes in topological order
     const nodesToProcess = [...this.#graph.nodes];
@@ -97,7 +98,7 @@ export class GraphProcessor {
             const connection = connections.find((conn) => conn.inputId === input.id && conn.inputNodeId === node.id);
             if (connection) {
               const outputNode = this.#nodeInstances[connection.outputNodeId].chartNode;
-              values[input.id] = nodeResults.get(outputNode.id)[connection.outputId];
+              values[input.id] = nodeResults.get(outputNode.id)?.[connection.outputId];
             }
             return values;
           }, {} as Record<string, any>);

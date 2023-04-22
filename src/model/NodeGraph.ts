@@ -1,10 +1,10 @@
 import { ChartNode, NodeConnection, NodeId, PortId } from './NodeBase';
 
 export interface NodeGraph {
-  nodes: ChartNode<string, unknown>[];
+  nodes: ChartNode[];
   connections: NodeConnection[];
 
-  nodesById: Record<NodeId, ChartNode<string, unknown>>;
+  nodesById: Record<NodeId, ChartNode>;
   connectionsByNodeId: Record<NodeId, NodeConnection[]>;
   connectionsById: Record<`${NodeId}-${PortId}`, NodeConnection>;
 }
@@ -23,7 +23,7 @@ export function calculateCachesFor(graph: NodeGraph): void {
   graph.nodesById = graph.nodes.reduce((acc, node) => {
     acc[node.id] = node;
     return acc;
-  }, {} as Record<NodeId, ChartNode<string, unknown>>);
+  }, {} as Record<NodeId, ChartNode>);
 
   graph.connectionsByNodeId = graph.connections.reduce((acc, connection) => {
     if (!acc[connection.inputNodeId]) {

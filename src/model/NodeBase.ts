@@ -44,7 +44,7 @@ export interface NodeBase {
 }
 
 /** Base type for a typed node. */
-export type ChartNode<Type extends string, Data> = NodeBase & {
+export type ChartNode<Type extends string = string, Data = unknown> = NodeBase & {
   /** The type of the node. */
   type: Type;
   /** The data associated with the node. */

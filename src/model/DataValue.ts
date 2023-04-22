@@ -28,3 +28,26 @@ export type DataValue =
   | ChatMessageDataValue;
 
 export type DataType = DataValue['type'];
+
+export type GetDataValue<Type extends DataType> = Extract<DataValue, { type: Type }>;
+
+export function expectType<T extends DataType>(value: DataValue | undefined, type: T): GetDataValue<T>['value'] {
+  if (value?.type !== type) {
+    throw new Error(`Expected value of type ${type} but got ${value?.type}`);
+  }
+  return value.value as GetDataValue<T>['value'];
+}
+
+export function expectTypeOptional<T extends DataType>(
+  value: DataValue | undefined,
+  type: T,
+): GetDataValue<T>['value'] | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (value.type !== type) {
+    throw new Error(`Expected value of type ${type} but got ${value?.type}`);
+  }
+  return value.value as GetDataValue<T>['value'] | undefined;
+}

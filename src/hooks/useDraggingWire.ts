@@ -5,7 +5,7 @@ import { createUnknownNodeInstance } from '../model/Nodes';
 import { useGetConnectionsForNode } from './useGetConnectionsForNode';
 
 export const useDraggingWire = (
-  nodes: ChartNode<string, unknown>[],
+  nodes: ChartNode[],
   connections: NodeConnection[],
   onConnectionsChanged: (connections: NodeConnection[]) => void,
 ) => {

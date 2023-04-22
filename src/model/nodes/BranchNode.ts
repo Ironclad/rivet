@@ -1,6 +1,7 @@
 import { NodeImpl } from '../NodeImpl';
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
+import { DataValue } from '../DataValue';
 
 type BranchNodeData = {
   condition: string;
@@ -61,12 +62,16 @@ export class BranchNodeImpl extends NodeImpl<BranchNode> {
     ];
   }
 
-  process(inputs: Record<string, any>): Record<string, any> {
+  async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
     const condition = inputs['input_1'];
     const trueOutput = inputs['input_2'];
     const falseOutput = inputs['input_3'];
 
-    const conditionResult = eval(condition);
+    if (condition.type !== 'string') {
+      throw new Error('Condition must be a string');
+    }
+
+    const conditionResult = eval(condition.value);
 
     if (conditionResult) {
       return {

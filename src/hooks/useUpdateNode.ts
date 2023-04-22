@@ -7,7 +7,7 @@ export function useUpdateNode() {
   const setNodes = useSetRecoilState(nodesSelector);
 
   return useCallback(
-    (node: ChartNode<string, unknown>) => {
+    (node: ChartNode) => {
       setNodes((nodes) => {
         const nodeIndex = nodes.findIndex((n) => n.id === node.id);
         if (nodeIndex === -1) {

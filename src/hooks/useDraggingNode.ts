@@ -3,11 +3,8 @@ import produce from 'immer';
 import { useState, useCallback } from 'react';
 import { ChartNode } from '../model/NodeBase';
 
-export const useDraggingNode = (
-  nodes: ChartNode<string, unknown>[],
-  onNodesChanged: (nodes: ChartNode<string, unknown>[]) => void,
-) => {
-  const [draggingNode, setDraggingNode] = useState<ChartNode<string, unknown> | undefined>();
+export const useDraggingNode = (nodes: ChartNode[], onNodesChanged: (nodes: ChartNode[]) => void) => {
+  const [draggingNode, setDraggingNode] = useState<ChartNode | undefined>();
 
   const onNodeStartDrag = useCallback(
     (e: DragStartEvent) => {

@@ -1,11 +1,11 @@
-import { FC, ChangeEvent } from 'react';
+import { FC } from 'react';
 import { ChartNode } from '../../model/NodeBase';
 import { ChatNode, ChatNodeData } from '../../model/nodes/ChatNode';
 import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
 
 export type ChatNodeEditorProps = {
-  node: ChartNode<string, unknown>;
+  node: ChartNode;
   onChange?: (node: ChartNode<'chat', ChatNodeData>) => void;
 };
 
@@ -72,19 +72,6 @@ const container = css`
   }
 `;
 
-const handleInputChange =
-  (key: keyof ChatNodeData, node: ChatNode, onChange?: (node: ChartNode<'chat', ChatNodeData>) => void) =>
-  (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
-    onChange?.({
-      ...node,
-      data: {
-        ...node.data,
-        [key]: value,
-      },
-    });
-  };
-
 export const ChatNodeEditor: FC<ChatNodeEditorProps> = ({ node, onChange }) => {
   const chatNode = node as ChatNode;
 
@@ -98,7 +85,7 @@ export const ChatNodeEditor: FC<ChatNodeEditorProps> = ({ node, onChange }) => {
           id="model"
           className="select"
           value={chatNode.data.model}
-          onChange={handleInputChange('model', chatNode, onChange)}
+          onChange={(e) => onChange?.({ ...chatNode, data: { ...chatNode.data, model: e.target.value } })}
         >
           {/* Add your model options here */}
           <option value="gpt-3.5-turbo">GPT-3.5-Turbo</option>
@@ -108,7 +95,7 @@ export const ChatNodeEditor: FC<ChatNodeEditorProps> = ({ node, onChange }) => {
         <Toggle
           id="useModelInput"
           isChecked={chatNode.data.useModelInput}
-          onChange={handleInputChange('useModelInput', chatNode, onChange)}
+          onChange={(e) => onChange?.({ ...chatNode, data: { ...chatNode.data, useModelInput: e.target.checked } })}
         />
       </div>
       <div className="row">
@@ -123,13 +110,15 @@ export const ChatNodeEditor: FC<ChatNodeEditorProps> = ({ node, onChange }) => {
           min="0"
           max="2"
           value={chatNode.data.temperature}
-          onChange={handleInputChange('temperature', chatNode, onChange)}
+          onChange={(e) => onChange?.({ ...chatNode, data: { ...chatNode.data, temperature: e.target.valueAsNumber } })}
           disabled={chatNode.data.useTemperatureInput || chatNode.data.useTopP}
         />
         <Toggle
           id="useTemperatureInput"
           isChecked={chatNode.data.useTemperatureInput}
-          onChange={handleInputChange('useTemperatureInput', chatNode, onChange)}
+          onChange={(e) =>
+            onChange?.({ ...chatNode, data: { ...chatNode.data, useTemperatureInput: e.target.checked } })
+          }
         />
       </div>
       <div className="row">
@@ -144,13 +133,13 @@ export const ChatNodeEditor: FC<ChatNodeEditorProps> = ({ node, onChange }) => {
           min="0"
           max="1"
           value={chatNode.data.top_p}
-          onChange={handleInputChange('top_p', chatNode, onChange)}
+          onChange={(e) => onChange?.({ ...chatNode, data: { ...chatNode.data, top_p: e.target.valueAsNumber } })}
           disabled={chatNode.data.useTopPInput || !chatNode.data.useTopP}
         />
         <Toggle
           id="useTopPInput"
           isChecked={chatNode.data.useTopPInput}
-          onChange={handleInputChange('useTopPInput', chatNode, onChange)}
+          onChange={(e) => onChange?.({ ...chatNode, data: { ...chatNode.data, useTopPInput: e.target.checked } })}
         />
       </div>
       <div className="row">
@@ -160,7 +149,7 @@ export const ChatNodeEditor: FC<ChatNodeEditorProps> = ({ node, onChange }) => {
         <Toggle
           id="useTopP"
           isChecked={chatNode.data.useTopP}
-          onChange={handleInputChange('useTopP', chatNode, onChange)}
+          onChange={(e) => onChange?.({ ...chatNode, data: { ...chatNode.data, useTopP: e.target.checked } })}
         />
         <div />
       </div>
@@ -176,13 +165,13 @@ export const ChatNodeEditor: FC<ChatNodeEditorProps> = ({ node, onChange }) => {
           min="0"
           max="32768"
           value={chatNode.data.maxTokens}
-          onChange={handleInputChange('maxTokens', chatNode, onChange)}
+          onChange={(e) => onChange?.({ ...chatNode, data: { ...chatNode.data, maxTokens: e.target.valueAsNumber } })}
           disabled={chatNode.data.useMaxTokensInput}
         />
         <Toggle
           id="useMaxTokensInput"
           isChecked={chatNode.data.useMaxTokensInput}
-          onChange={handleInputChange('useMaxTokensInput', chatNode, onChange)}
+          onChange={(e) => onChange?.({ ...chatNode, data: { ...chatNode.data, useMaxTokensInput: e.target.checked } })}
         />
       </div>
     </div>
