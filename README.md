@@ -1,46 +1,33 @@
-# Getting Started with Create React App
+# AI Storyboarding Tool
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is an internal project for creating an AI storyboarding tool that allows users to create a series of prompts for a language model in a choose-your-own-adventure format. The tool is inspired by node-based editors, like the one found in Blender, and provides a user-friendly interface for crafting interactive stories with an AI language model.
 
-## Available Scripts
+## Getting Started
 
-In the project directory, you can run:
+To get started with the project, follow these steps:
 
-### `yarn start`
+1. Clone the repository to your local machine.
+2. Install the required dependencies by running `yarn` in the project directory.
+3. Start the development server by running `yarn start`. This will open the app in your default web browser.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Project Structure
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+The project is organized into several folders:
 
-### `yarn test`
+- `components`: Contains all the React components used in the application, such as node bodies, node editors, and other UI elements.
+- `hooks`: Contains custom hooks for handling various aspects of the application, like canvas positioning, dragging nodes, and updating nodes.
+- `model`: Contains the core logic for the node graph, data values, and node implementations.
+- `state`: Contains the state management logic for the application, with data flow, graph state, and settings.
+- `utils`: Contains utility functions and configurations, like the Monaco editor configuration.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Editing Nodes
 
-### `yarn build`
+Each node has a corresponding NodeBody and NodeEditor component. NodeBody components define how the node appears on the canvas, while NodeEditor components define the editing interface for the node. To edit a node, click on the wrench icon within the node to open the NodeEditor component.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Settings
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+To use the application, you will need to enter your OpenAI API key and the Ironclad Org ID. To do this, open the settings modal by clicking Settings on the top me (and for now, then drag any node)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Running the Graph
 
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+To run the graph, click the green "Run" button in the top right corner of the application. This will execute the graph using the provided settings and display the results.
