@@ -2,6 +2,10 @@ import { FC, useLayoutEffect, useMemo, useRef } from 'react';
 import { InterpolateNode } from '../../model/nodes/InterpolateNode';
 import styled from '@emotion/styled';
 import { monaco } from '../../utils/monaco';
+import { lastRunData } from '../../state/dataFlow';
+import { useRecoilValue } from 'recoil';
+import { PortId } from '../../model/NodeBase';
+import { RenderDataValue } from '../RenderDataValue';
 
 export type InterpolateNodeBodyProps = {
   node: InterpolateNode;
@@ -46,5 +50,28 @@ export const InterpolateNodeBody: FC<InterpolateNodeBodyProps> = ({ node }) => {
         {truncated}
       </div>
     </Body>
+  );
+};
+
+export const InterpolateNodeOutput: FC<InterpolateNodeBodyProps> = ({ node }) => {
+  const output = useRecoilValue(lastRunData(node.id));
+
+  if (!output) {
+    return null;
+  }
+
+  if (output.status?.status === 'error') {
+    return <div>Error: {output.status.error}</div>;
+  }
+
+  if (!output.outputData) {
+    return null;
+  }
+
+  const outputText = output.outputData['output' as PortId];
+  return (
+    <pre>
+      <RenderDataValue value={outputText} />
+    </pre>
   );
 };

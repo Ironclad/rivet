@@ -7,7 +7,7 @@ export function useGetConnectionsForNode() {
   const connections = useRecoilValue(connectionsSelector);
 
   return useCallback(
-    (node: ChartNode<string, unknown>) => {
+    (node: ChartNode) => {
       return connections.filter((connection) => {
         return connection.inputNodeId === node.id || connection.outputNodeId === node.id;
       });

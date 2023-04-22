@@ -7,8 +7,8 @@ import { useLatest } from 'ahooks';
 import Toggle from '@atlaskit/toggle';
 
 export type PromptNodeEditorProps = {
-  node: ChartNode<string, unknown>;
-  onChange?: (node: ChartNode<string, unknown>) => void;
+  node: ChartNode;
+  onChange?: (node: ChartNode) => void;
 };
 
 const Container = styled.div`
@@ -19,6 +19,7 @@ const Container = styled.div`
 
   .editor-container {
     flex: 1;
+    min-height: 200px;
   }
 
   .options {
@@ -123,6 +124,7 @@ export const PromptNodeEditor: FC<PromptNodeEditorProps> = ({ node, onChange }) 
         enabled: false,
       },
       value: nodeLatest.current?.data.promptText,
+      wordWrap: 'on',
     });
     editor.onDidChangeModelContent(() => {
       onChangeLatest.current?.({

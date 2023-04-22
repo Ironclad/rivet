@@ -6,8 +6,8 @@ import { InterpolateNode } from '../../model/nodes/InterpolateNode';
 import { useLatest } from 'ahooks';
 
 export type InterpolateNodeEditorProps = {
-  node: ChartNode<string, unknown>;
-  onChange?: (node: ChartNode<string, unknown>) => void;
+  node: ChartNode;
+  onChange?: (node: ChartNode) => void;
 };
 
 const Container = styled.div`
@@ -18,6 +18,7 @@ const Container = styled.div`
 
   .editor-container {
     flex: 1;
+    min-height: 200px;
   }
 
   .options {

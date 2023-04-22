@@ -44,7 +44,7 @@ code {
   /* Error colors */
   --error: #e74c3c;
   --error-dark: #c0392b;
-  --error-light: rgba(231, 76, 60, 0.3);
+  --error-light: #fa5846;
 
   /* Shadows */
   --shadow: rgba(0, 0, 0, 0.2);
@@ -53,4 +53,8 @@ code {
 
   /* Gradient */
   --grey-subtle-accent: rgba(255, 255, 255, 0.02);
+}
+
+.pre-wrap {
+  white-space: pre-wrap;
 }

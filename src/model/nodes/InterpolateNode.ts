@@ -1,6 +1,8 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
+import { DataValue } from '../DataValue';
+import { match } from 'ts-pattern';
 
 export type InterpolateNode = ChartNode<'interpolate', InterpolateNodeData>;
 
@@ -60,16 +62,25 @@ export class InterpolateNodeImpl extends NodeImpl<InterpolateNode> {
     });
   }
 
-  async process(inputs: Record<string, any>): Promise<Record<string, any>> {
+  async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
     const inputMap = Object.keys(inputs).reduce((acc, key) => {
-      acc[key] = inputs[key];
+      const stringValue = match(inputs[key])
+        .with({ type: 'boolean' }, (v) => v.value.toString())
+        .with({ type: 'number' }, (v) => v.value.toString())
+        .with({ type: 'string' }, (v) => v.value)
+        .otherwise(() => '');
+
+      acc[key] = stringValue;
       return acc;
-    }, {} as Record<string, any>);
+    }, {} as Record<string, string>);
 
     const outputValue = this.interpolate(this.chartNode.data.text, inputMap);
 
     return {
-      output: outputValue,
+      output: {
+        type: 'string',
+        value: outputValue,
+      },
     };
   }
 }

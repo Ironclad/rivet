@@ -2,6 +2,11 @@ import { FC, useLayoutEffect, useMemo, useRef } from 'react';
 import { PromptNode, PromptNodeData } from '../../model/nodes/PromptNode';
 import styled from '@emotion/styled';
 import { monaco } from '../../utils/monaco';
+import { useRecoilValue } from 'recoil';
+import { lastRunData } from '../../state/dataFlow';
+import { PortId } from '../../model/NodeBase';
+import { GetDataValue } from '../../model/DataValue';
+import { RenderDataValue } from '../RenderDataValue';
 
 export type PromptNodeBodyProps = {
   node: PromptNode;
@@ -59,7 +64,36 @@ export const PromptNodeBody: FC<PromptNodeBodyProps> = ({ node }) => {
 };
 
 const typeDisplay: Record<PromptNodeData['type'], string> = {
-  ai: 'AI',
+  assistant: 'AI',
   system: 'System',
   user: 'User',
+};
+
+export const PromptNodeOutput: FC<PromptNodeBodyProps> = ({ node }) => {
+  const output = useRecoilValue(lastRunData(node.id));
+
+  if (!output) {
+    return null;
+  }
+
+  if (output.status?.status === 'error') {
+    return <div>Error: {output.status.error}</div>;
+  }
+
+  const message = output.outputData?.['output' as PortId] as GetDataValue<'chat-message'> | undefined;
+
+  if (message == null) {
+    return null;
+  }
+
+  if (message.type !== 'chat-message') {
+    return <RenderDataValue value={message} />;
+  }
+
+  return (
+    <div>
+      <em>{typeDisplay[message.value.type]}:</em>
+      <div className="pre-wrap">{message.value.message}</div>
+    </div>
+  );
 };

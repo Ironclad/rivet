@@ -1,11 +1,13 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
+import { DataValue } from '../DataValue';
+import { match } from 'ts-pattern';
 
 export type PromptNode = ChartNode<'prompt', PromptNodeData>;
 
 export type PromptNodeData = {
-  type: 'system' | 'user' | 'ai';
+  type: 'system' | 'user' | 'assistant';
   useTypeInput: boolean;
   promptText: string;
 };
@@ -57,16 +59,22 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
     ];
   }
 
-  interpolate(baseString: string, values: Record<string, any>): string {
+  interpolate(baseString: string, values: Record<string, string>): string {
     return baseString.replace(/\{\{([^}]+)\}\}/g, (_m, p1) => {
       const value = values[p1.trim()];
-      return value !== undefined ? value.toString() : '';
+      return value !== undefined ? value : '';
     });
   }
 
-  async process(inputs: Record<string, any>): Promise<Record<string, any>> {
+  async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
     const inputMap = Object.keys(inputs).reduce((acc, key) => {
-      acc[key] = inputs[key];
+      const stringValue = match(inputs[key])
+        .with({ type: 'boolean' }, (v) => v.value.toString())
+        .with({ type: 'number' }, (v) => v.value.toString())
+        .with({ type: 'string' }, (v) => v.value)
+        .otherwise(() => '');
+
+      acc[key] = stringValue;
       return acc;
     }, {} as Record<string, any>);
 
@@ -74,8 +82,11 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
 
     return {
       output: {
-        type: this.chartNode.data.type,
-        text: outputValue,
+        type: 'chat-message',
+        value: {
+          type: this.chartNode.data.type,
+          message: outputValue,
+        },
       },
     };
   }

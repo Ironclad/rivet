@@ -12,7 +12,7 @@ export type WireDef = {
 };
 
 type WireLayerProps = {
-  nodes: ChartNode<string, unknown>[];
+  nodes: ChartNode[];
   connections: NodeConnection[];
   draggingWire?: WireDef;
 };
@@ -52,7 +52,6 @@ export const WireLayer: FC<WireLayerProps> = ({ nodes, connections, draggingWire
     <svg css={wiresStyles}>
       {draggingWire && (
         <Wire
-          nodes={nodes}
           connection={{
             nodeId: draggingWire.startNodeId,
             portId: draggingWire.startPortId,
@@ -63,12 +62,7 @@ export const WireLayer: FC<WireLayerProps> = ({ nodes, connections, draggingWire
         />
       )}
       {connections.map((connection) => (
-        <Wire
-          nodes={nodes}
-          connection={connection}
-          selected={false}
-          key={`wire-${connection.inputId}-${connection.inputNodeId}`}
-        />
+        <Wire connection={connection} selected={false} key={`wire-${connection.inputId}-${connection.inputNodeId}`} />
       ))}
     </svg>
   );

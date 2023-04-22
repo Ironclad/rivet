@@ -15,12 +15,12 @@ import { canvasPositionState } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 
 export interface NodeCanvasProps {
-  nodes: ChartNode<string, unknown>[];
+  nodes: ChartNode[];
   connections: NodeConnection[];
-  selectedNode: ChartNode<string, unknown> | null;
-  onNodesChanged: (nodes: ChartNode<string, unknown>[]) => void;
+  selectedNode: ChartNode | null;
+  onNodesChanged: (nodes: ChartNode[]) => void;
   onConnectionsChanged: (connections: NodeConnection[]) => void;
-  onNodeSelected: (node: ChartNode<string, unknown>) => void;
+  onNodeSelected: (node: ChartNode) => void;
   onContextMenuItemSelected?: (menuItemId: string, contextMenuData: ContextMenuData) => void;
 }
 
@@ -267,7 +267,9 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         <WireLayer nodes={nodes} connections={connections} draggingWire={draggingWire} />
 
         <DragOverlay dropAnimation={null}>
-          {draggingNode ? <ViewNode node={draggingNode} connections={draggingNodeConnections} isOverlay /> : null}
+          {draggingNode ? (
+            <ViewNode node={draggingNode} connections={draggingNodeConnections} isOverlay scale={canvasPosition.zoom} />
+          ) : null}
         </DragOverlay>
       </div>
     </DndContext>

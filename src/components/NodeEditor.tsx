@@ -27,7 +27,7 @@ export const NodeEditorRenderer: FC = () => {
   return <NodeEditor selectedNode={selectedNode} />;
 };
 
-type NodeEditorProps = { selectedNode: ChartNode<string, unknown> };
+type NodeEditorProps = { selectedNode: ChartNode };
 
 const Container = styled.div`
   position: absolute;
@@ -46,6 +46,7 @@ const Container = styled.div`
   flex-direction: column;
   gap: 20px;
   color: var(--foreground);
+  overflow: auto;
 
   .header {
     display: flex;
@@ -144,7 +145,7 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
   const lastData = allLastData[selectedNode.id];
 
   const updateNode = useCallback(
-    (node: ChartNode<string, unknown>) => {
+    (node: ChartNode) => {
       setNodes((nodes) =>
         produce(nodes, (draft) => {
           const index = draft.findIndex((n) => n.id === node.id);
