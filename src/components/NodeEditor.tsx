@@ -246,8 +246,8 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
                   {Object.entries(lastData?.inputData ?? {}).map(([key, value]) => {
                     return (
                       <>
-                        <dt>{key}</dt>
-                        <dd>{JSON.stringify(value, null, 2)}</dd>
+                        <dt key={`${key}-key`}>{key}</dt>
+                        <dd key={`${key}-value`}>{JSON.stringify(value, null, 2)}</dd>
                       </>
                     );
                   })}

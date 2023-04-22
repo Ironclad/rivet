@@ -8,6 +8,7 @@ import { lastRunData } from '../../state/dataFlow';
 import { useRecoilValue } from 'recoil';
 import { PortId } from '../../model/NodeBase';
 import { RenderDataValue } from '../RenderDataValue';
+import { expectType } from '../../model/DataValue';
 
 export type UserInputNodeEditorProps = {
   node: ChartNode;
@@ -123,6 +124,16 @@ export const UserInputNodeBody: FC<UserInputNodeBodyProps> = ({ node }) => {
   return <Body>{node.data.prompt}</Body>;
 };
 
+const questionsAndAnswersStyles = css`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  pre {
+    white-space: pre-wrap;
+  }
+`;
+
 export const UserInputNodeOutput: FC<UserInputNodeBodyProps> = ({ node }) => {
   const output = useRecoilValue(lastRunData(node.id));
 
@@ -138,21 +149,15 @@ export const UserInputNodeOutput: FC<UserInputNodeBodyProps> = ({ node }) => {
     return null;
   }
 
-  const outputKeys = Object.keys(output.outputData).filter((key) => key.startsWith('output'));
+  const questionsAndAnswers = expectType(output.outputData?.['questionsAndAnswers' as PortId], 'string[]');
 
   return (
-    <div>
-      {outputKeys.map((key) => {
-        const outputText = output.outputData![key as PortId];
-        return (
-          <div key={key}>
-            <strong>{key}:</strong>
-            <pre>
-              <RenderDataValue value={outputText} />
-            </pre>
-          </div>
-        );
-      })}
+    <div css={questionsAndAnswersStyles}>
+      {questionsAndAnswers.map((value, i) => (
+        <div key={`qa-${i}`}>
+          <pre>{value}</pre>
+        </div>
+      ))}
     </div>
   );
 };

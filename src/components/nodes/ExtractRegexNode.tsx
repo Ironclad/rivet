@@ -60,7 +60,7 @@ export const ExtractRegexNodeOutput: FC<ExtractRegexNodeBodyProps> = ({ node }) 
         return (
           <div key={key}>
             <strong>{key}:</strong>
-            <pre>
+            <pre style={{ whiteSpace: 'pre-wrap' }}>
               <RenderDataValue value={outputText} />
             </pre>
           </div>

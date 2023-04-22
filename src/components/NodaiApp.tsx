@@ -2,7 +2,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { GraphBuilder } from './GraphBuilder';
 import { MenuBar } from './MenuBar';
 import { graphState } from '../state/graph';
-import { GraphProcessor } from '../model/GraphProcessor';
+import { GraphProcessor, NodeResults } from '../model/GraphProcessor';
 import { calculateCachesFor } from '../model/NodeGraph';
 import { FC, useState } from 'react';
 import produce from 'immer';
@@ -15,7 +15,8 @@ import { settingsState } from '../state/settings';
 import { userInputModalOpenState, userInputModalQuestionsState } from '../state/userInput';
 import { UserInputNode } from '../model/nodes/UserInputNode';
 import { UserInputModal } from './UserInputModal';
-import { StringArrayDataValue, expectType } from '../model/DataValue';
+import { DataValue, StringArrayDataValue, expectType } from '../model/DataValue';
+import { zip } from 'lodash-es';
 
 const styles = css`
   overflow: hidden;
@@ -50,22 +51,26 @@ export const NodaiApp: FC = () => {
     submit: () => {},
   });
 
-  const handleUserInput = async (userInputNodes: UserInputNode[]): Promise<StringArrayDataValue[]> => {
-    const questions = userInputNodes.map((node) => {
-      if (node.data.useInput) {
-        return expectType(lastRunData[node.id]?.inputData?.['questions' as PortId], 'string[]') ?? [];
-      } else {
-        return [node.data.prompt];
-      }
-    });
-
-    setUserInputQuestions(questions);
-    setUserInputOpen(true);
-
+  const handleUserInput = async (
+    userInputNodes: UserInputNode[],
+    inputs: Record<PortId, DataValue>[],
+  ): Promise<StringArrayDataValue[]> => {
     return new Promise((resolve) => {
+      const questions = zip(userInputNodes, inputs).map(([node, inputs]) => {
+        if (node!.data.useInput) {
+          return expectType(inputs?.['questions' as PortId], 'string[]') ?? [];
+        } else {
+          return [node!.data.prompt];
+        }
+      });
+
+      setUserInputQuestions(questions);
+      setUserInputOpen(true);
+
       const handleModalSubmit = (answers: StringArrayDataValue[]) => {
         setUserInputOpen(false);
         resolve(answers);
+        console.dir({ answers });
       };
       setUserInputModalSubmit({ submit: handleModalSubmit });
     });

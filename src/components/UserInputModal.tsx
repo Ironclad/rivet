@@ -50,15 +50,16 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questionGroups, 
         {questionGroups.map((group, groupIndex) => (
           <div key={`group-${groupIndex}`} className="question-group">
             {group.map((question, index) => (
-              <TextField
-                key={question}
-                label={question}
-                value={answers[index] ?? ''}
-                onChange={(e) => handleChange(groupIndex, index, e.target.value)}
-                fullWidth
-                margin="normal"
-                autoFocus={groupIndex === 0 && index === 0}
-              />
+              <div className="question" key={`question-${groupIndex}-${index}`}>
+                <label htmlFor="">{question}</label>
+                <TextField
+                  value={answers?.[groupIndex]?.[index] ?? ''}
+                  onChange={(e) => handleChange(groupIndex, index, e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  autoFocus={groupIndex === 0 && index === 0}
+                />
+              </div>
             ))}
           </div>
         ))}

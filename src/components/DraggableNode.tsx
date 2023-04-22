@@ -293,5 +293,13 @@ const NodeOutput: FC<{ node: ChartNode }> = ({ node }) => {
     return null;
   }
 
-  return <div className={clsx('node-output', { errored: nodeOutput.status?.status === 'error' })}>{outputBody}</div>;
+  const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    e.stopPropagation();
+  };
+
+  return (
+    <div onScroll={handleScroll} className={clsx('node-output', { errored: nodeOutput.status?.status === 'error' })}>
+      {outputBody}
+    </div>
+  );
 };

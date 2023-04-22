@@ -3,9 +3,11 @@ import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefin
 import { NodeGraph } from './NodeGraph';
 import { NodeImpl, ProcessContext } from './NodeImpl';
 import { Nodes, createNodeInstance } from './Nodes';
-import { UserInputNode } from './nodes/UserInputNode';
+import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode';
 
 const ControlFlowExcludedSymbol = Symbol('ControlFlowExcluded');
+
+export type NodeResults = Map<string, Record<PortId, DataValue>>;
 
 export class GraphProcessor {
   #graph: NodeGraph;
@@ -52,12 +54,15 @@ export class GraphProcessor {
       onNodeFinish?: (node: ChartNode, result: Record<string, DataValue>) => void;
       onNodeError?: (node: ChartNode, error: Error) => void;
       onNodeExcluded?: (node: ChartNode) => void;
-      onUserInput?: (userInputNodes: UserInputNode[]) => Promise<StringArrayDataValue[]>;
+      onUserInput?: (
+        userInputNodes: UserInputNode[],
+        inputs: Record<PortId, DataValue>[],
+      ) => Promise<StringArrayDataValue[]>;
     } = {},
   ): Promise<Record<string, any>> {
     const outputNodes = this.#graph.nodes.filter((node) => this.#definitions[node.id].outputs.length === 0);
 
-    const nodeResults = new Map<string, Record<PortId, DataValue>>();
+    const nodeResults: NodeResults = new Map();
 
     // Process nodes in topological order
     const nodesToProcess = [...this.#graph.nodes];
@@ -91,51 +96,48 @@ export class GraphProcessor {
 
       const userInputNodes = readyNodes.filter((node) => node.type === 'userInput') as UserInputNode[];
       if (userInputNodes.length > 0 && events.onUserInput) {
-        const userInputResults = await events.onUserInput(userInputNodes);
-        userInputResults.forEach((result, index) => {
-          nodeResults.set(userInputNodes[index].id, { ['output' as PortId]: result });
-          visitedNodes.add(userInputNodes[index].id);
-          nodesToProcess.splice(nodesToProcess.indexOf(userInputNodes[index]), 1);
-        });
-        continue;
+        try {
+          const validUserInputNodes: UserInputNode[] = [];
+          const userInputInputValues: Record<PortId, DataValue>[] = [];
+
+          for (const node of userInputNodes) {
+            const inputValues = this.#getInputValuesForNode(node, nodeResults, events);
+            if (this.#excludedDueToControlFlow(node, nodeResults, inputValues, events, visitedNodes)) {
+              continue;
+            }
+            validUserInputNodes.push(node);
+            userInputInputValues.push(inputValues);
+            events.onNodeStart?.(node, inputValues);
+          }
+
+          const userInputResults = await events.onUserInput(validUserInputNodes, userInputInputValues);
+          userInputResults.forEach((result, index) => {
+            const node = validUserInputNodes[index];
+            const outputValues = (this.#nodeInstances[node.id] as UserInputNodeImpl).getOutputValuesFromUserInput(
+              userInputInputValues[index],
+              result,
+            );
+            nodeResults.set(node.id, outputValues);
+            visitedNodes.add(node.id);
+            nodesToProcess.splice(nodesToProcess.indexOf(node), 1);
+            events.onNodeFinish?.(node, outputValues);
+          });
+          continue;
+        } catch (error) {
+          for (const node of userInputNodes) {
+            events.onNodeError?.(node, error as Error);
+          }
+          throw error;
+        }
       }
 
       await Promise.allSettled(
         readyNodes.map(async (node) => {
           nodesToProcess.splice(nodesToProcess.indexOf(node), 1);
 
-          const connections = this.#connections[node.id];
+          const inputValues = this.#getInputValuesForNode(node, nodeResults, events);
 
-          // Get input values for this node
-          const inputValues = this.#definitions[node.id].inputs.reduce((values, input) => {
-            if (!connections) {
-              return values;
-            }
-            const connection = connections.find((conn) => conn.inputId === input.id && conn.inputNodeId === node.id);
-            if (connection) {
-              const outputNode = this.#nodeInstances[connection.outputNodeId].chartNode;
-              const outputResult = nodeResults.get(outputNode.id)?.[connection.outputId];
-
-              if (outputResult?.type === 'control-flow-excluded') {
-                events.onNodeExcluded?.(node);
-                return values;
-              }
-
-              values[input.id] = outputResult;
-            }
-            return values;
-          }, {} as Record<string, any>);
-
-          // Check if the node is excluded due to control flow
-          if (
-            Object.values(inputValues).some((value) => value?.type === 'control-flow-excluded') ||
-            nodeResults.get(node.id)?.[ControlFlowExcludedSymbol as unknown as PortId]
-          ) {
-            events.onNodeExcluded?.(node);
-            visitedNodes.add(node.id);
-            nodeResults.set(node.id, {
-              [ControlFlowExcludedSymbol as unknown as PortId]: { type: 'control-flow-excluded', value: undefined },
-            });
+          if (this.#excludedDueToControlFlow(node, nodeResults, inputValues, events, visitedNodes)) {
             return;
           }
 
@@ -163,5 +165,54 @@ export class GraphProcessor {
     }, {} as Record<string, any>);
 
     return outputValues;
+  }
+
+  #excludedDueToControlFlow(
+    node: ChartNode,
+    nodeResults: NodeResults,
+    inputValues: Record<PortId, DataValue>,
+    { onNodeExcluded }: { onNodeExcluded?: (node: ChartNode) => void },
+    visitedNodes: Set<unknown>,
+  ) {
+    // Check if the node is excluded due to control flow
+    if (
+      Object.values(inputValues).some((value) => value?.type === 'control-flow-excluded') ||
+      nodeResults.get(node.id)?.[ControlFlowExcludedSymbol as unknown as PortId]
+    ) {
+      onNodeExcluded?.(node);
+      visitedNodes.add(node.id);
+      nodeResults.set(node.id, {
+        [ControlFlowExcludedSymbol as unknown as PortId]: { type: 'control-flow-excluded', value: undefined },
+      });
+      return true;
+    }
+
+    return false;
+  }
+
+  #getInputValuesForNode(
+    node: ChartNode,
+    nodeResults: NodeResults,
+    { onNodeExcluded }: { onNodeExcluded?: (node: ChartNode) => void },
+  ): Record<PortId, DataValue> {
+    const connections = this.#connections[node.id];
+    return this.#definitions[node.id].inputs.reduce((values, input) => {
+      if (!connections) {
+        return values;
+      }
+      const connection = connections.find((conn) => conn.inputId === input.id && conn.inputNodeId === node.id);
+      if (connection) {
+        const outputNode = this.#nodeInstances[connection.outputNodeId].chartNode;
+        const outputResult = nodeResults.get(outputNode.id)?.[connection.outputId];
+
+        if (outputResult?.type === 'control-flow-excluded') {
+          onNodeExcluded?.(node);
+          return values;
+        }
+
+        values[input.id] = outputResult;
+      }
+      return values;
+    }, {} as Record<string, any>);
   }
 }
