@@ -57,7 +57,7 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
   getOutputDefinitions(): NodeOutputDefinition[] {
     const regex = this.chartNode.data.regex;
     try {
-      const regExp = new RegExp(regex);
+      const regExp = new RegExp(regex, 'g');
       const captureGroupCount = countCaptureGroups(regExp);
 
       const outputs: NodeOutputDefinition[] = [];
@@ -69,6 +69,12 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
           dataType: 'string',
         });
       }
+
+      outputs.push({
+        id: 'matches' as PortId,
+        title: 'Matches',
+        dataType: 'string[]',
+      });
 
       outputs.push(
         {
@@ -89,44 +95,65 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
     }
   }
 
-  async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
-    const inputString = expectType(inputs.input, 'string');
-    const regex = expectTypeOptional(inputs['regex'], 'string') ?? this.chartNode.data.regex;
+  async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {
+    const inputString = expectType(inputs['input' as PortId], 'string');
+    const regex = expectTypeOptional(inputs['regex' as PortId], 'string') ?? this.chartNode.data.regex;
 
-    const regExp = new RegExp(regex);
-    const match = regExp.exec(inputString);
+    const regExp = new RegExp(regex, 'g');
 
-    if (!match) {
+    const matches = [];
+    let match;
+    let firstMatch;
+
+    while ((match = regExp.exec(inputString)) !== null) {
+      if (!firstMatch) {
+        firstMatch = match;
+      }
+      matches.push(match[1]);
+    }
+
+    if (matches.length === 0 && this.chartNode.data.errorOnFailed) {
+      throw new Error(`No match found for regex ${regex}`);
+    }
+
+    const outputArray: DataValue = {
+      type: 'string[]',
+      value: matches,
+    };
+
+    if (!firstMatch) {
       if (this.chartNode.data.errorOnFailed) {
         throw new Error(`No match found for regex ${regex}`);
       }
       return {
-        succeeded: {
+        ['succeeded' as PortId]: {
           type: 'boolean',
           value: false,
         },
-        failed: {
+        ['failed' as PortId]: {
           type: 'boolean',
           value: true,
         },
       };
     }
 
-    const output: Record<string, DataValue> = {
-      succeeded: {
+    const output: Record<PortId, DataValue> = {
+      ['succeeded' as PortId]: {
         type: 'boolean',
         value: true,
       },
-      failed: {
+      ['failed' as PortId]: {
         type: 'boolean',
         value: false,
       },
     };
 
-    for (let i = 1; i < match.length; i++) {
-      output[`output${i}`] = {
+    output['matches' as PortId] = outputArray;
+
+    for (let i = 1; i < firstMatch.length; i++) {
+      output[`output${i}` as PortId] = {
         type: 'string',
-        value: match[i],
+        value: firstMatch[i],
       };
     }
 

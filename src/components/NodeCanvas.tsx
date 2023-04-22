@@ -169,10 +169,11 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   };
 
   const isScrollable = (element: HTMLElement): boolean => {
-    return (
-      (element.scrollHeight > element.clientHeight && window.getComputedStyle(element).overflowY === 'auto') ||
-      (element.scrollWidth > element.clientWidth && window.getComputedStyle(element).overflowX === 'auto')
-    );
+    const style = window.getComputedStyle(element);
+    const isVerticalScrollable = element.scrollHeight > element.clientHeight && style.overflowY === 'auto';
+    const isHorizontalScrollable = element.scrollWidth > element.clientWidth && style.overflowX === 'auto';
+
+    return isVerticalScrollable || isHorizontalScrollable;
   };
 
   const isAnyParentScrollable = (element: HTMLElement): boolean => {
