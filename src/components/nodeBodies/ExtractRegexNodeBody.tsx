@@ -48,10 +48,21 @@ export const ExtractRegexNodeOutput: FC<ExtractRegexNodeBodyProps> = ({ node }) 
     return null;
   }
 
-  const outputText = output.outputData['output' as PortId];
+  const outputKeys = Object.keys(output.outputData).filter((key) => key.startsWith('output'));
+
   return (
-    <pre>
-      <RenderDataValue value={outputText} />
-    </pre>
+    <div>
+      {outputKeys.map((key) => {
+        const outputText = output.outputData![key as PortId];
+        return (
+          <div key={key}>
+            <strong>{key}:</strong>
+            <pre>
+              <RenderDataValue value={outputText} />
+            </pre>
+          </div>
+        );
+      })}
+    </div>
   );
 };

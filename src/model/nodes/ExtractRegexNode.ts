@@ -12,7 +12,7 @@ export type ExtractRegexNodeData = {
 };
 
 export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
-  static create(regex: string = '/([a-zA-Z]+)/'): ExtractRegexNode {
+  static create(regex: string = '([a-zA-Z]+)'): ExtractRegexNode {
     const chartNode: ExtractRegexNode = {
       type: 'extractRegex',
       title: 'Extract Regex',
@@ -20,6 +20,7 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
       visualData: {
         x: 0,
         y: 0,
+        width: 250,
       },
       data: {
         regex,
@@ -54,23 +55,38 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
   }
 
   getOutputDefinitions(): NodeOutputDefinition[] {
-    return [
-      {
-        id: 'output' as PortId,
-        title: 'Output',
-        dataType: 'string',
-      },
-      {
-        id: 'succeeded' as PortId,
-        title: 'Succeeded',
-        dataType: 'boolean',
-      },
-      {
-        id: 'failed' as PortId,
-        title: 'Failed',
-        dataType: 'boolean',
-      },
-    ];
+    const regex = this.chartNode.data.regex;
+    try {
+      const regExp = new RegExp(regex);
+      const captureGroupCount = countCaptureGroups(regExp);
+
+      const outputs: NodeOutputDefinition[] = [];
+
+      for (let i = 0; i < captureGroupCount; i++) {
+        outputs.push({
+          id: `output${i + 1}` as PortId,
+          title: `Output ${i + 1}`,
+          dataType: 'string',
+        });
+      }
+
+      outputs.push(
+        {
+          id: 'succeeded' as PortId,
+          title: 'Succeeded',
+          dataType: 'boolean',
+        },
+        {
+          id: 'failed' as PortId,
+          title: 'Failed',
+          dataType: 'boolean',
+        },
+      );
+
+      return outputs;
+    } catch (err) {
+      return [];
+    }
   }
 
   async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
@@ -85,10 +101,6 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
         throw new Error(`No match found for regex ${regex}`);
       }
       return {
-        output: {
-          type: 'string',
-          value: '',
-        },
         succeeded: {
           type: 'boolean',
           value: false,
@@ -100,11 +112,7 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
       };
     }
 
-    return {
-      output: {
-        type: 'string',
-        value: match[0],
-      },
+    const output: Record<string, DataValue> = {
       succeeded: {
         type: 'boolean',
         value: true,
@@ -114,5 +122,37 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
         value: false,
       },
     };
+
+    for (let i = 1; i < match.length; i++) {
+      output[`output${i}`] = {
+        type: 'string',
+        value: match[i],
+      };
+    }
+
+    return output;
   }
+}
+
+function countCaptureGroups(regex: RegExp): number {
+  const regexSource = regex.source;
+  let count = 0;
+  let inCharacterClass = false;
+
+  for (let i = 0; i < regexSource.length; i++) {
+    const currentChar = regexSource[i];
+    const prevChar = i > 0 ? regexSource[i - 1] : null;
+
+    if (currentChar === '[' && prevChar !== '\\') {
+      inCharacterClass = true;
+    } else if (currentChar === ']' && prevChar !== '\\') {
+      inCharacterClass = false;
+    } else if (currentChar === '(' && prevChar !== '\\' && !inCharacterClass) {
+      if (regexSource[i + 1] !== '?' || regexSource[i + 2] === ':') {
+        count++;
+      }
+    }
+  }
+
+  return count;
 }

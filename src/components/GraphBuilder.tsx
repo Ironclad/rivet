@@ -24,7 +24,8 @@ export const GraphBuilder: FC = () => {
   const addNode = (nodeType: NodeType, position: { x: number; y: number }) => {
     const newNode = nodeFactory(nodeType);
 
-    newNode.visualData = position;
+    newNode.visualData.x = position.x;
+    newNode.visualData.y = position.y;
 
     setNodes?.([...nodes, newNode]);
   };

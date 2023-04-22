@@ -110,6 +110,7 @@ export const InterpolateNodeEditor: FC<InterpolateNodeEditorProps> = ({ node, on
         enabled: false,
       },
       value: nodeLatest.current?.data.text,
+      wordWrap: 'on',
     });
     editor.onDidChangeModelContent(() => {
       onChangeLatest.current?.({

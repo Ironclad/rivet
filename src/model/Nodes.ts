@@ -8,8 +8,17 @@ import { PromptNode, PromptNodeImpl } from './nodes/PromptNode';
 import { match } from 'ts-pattern';
 import { ExtractRegexNode, ExtractRegexNodeImpl } from './nodes/ExtractRegexNode';
 import { CodeNode, CodeNodeImpl } from './nodes/CodeNode';
+import { MatchNode, MatchNodeImpl } from './nodes/MatchNode';
 
-export type Nodes = UserInputNode | BranchNode | InterpolateNode | ChatNode | PromptNode | ExtractRegexNode | CodeNode;
+export type Nodes =
+  | UserInputNode
+  | BranchNode
+  | InterpolateNode
+  | ChatNode
+  | PromptNode
+  | ExtractRegexNode
+  | CodeNode
+  | MatchNode;
 
 export type NodeType = Nodes['type'];
 
@@ -22,6 +31,7 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
     .with({ type: 'prompt' }, (node) => new PromptNodeImpl(node))
     .with({ type: 'extractRegex' }, (node) => new ExtractRegexNodeImpl(node))
     .with({ type: 'code' }, (node) => new CodeNodeImpl(node))
+    .with({ type: 'match' }, (node) => new MatchNodeImpl(node))
     .exhaustive();
 };
 
@@ -38,6 +48,7 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('prompt', () => PromptNodeImpl.create())
     .with('extractRegex', () => ExtractRegexNodeImpl.create())
     .with('code', () => CodeNodeImpl.create())
+    .with('match', () => MatchNodeImpl.create())
     .exhaustive();
 }
 
@@ -49,4 +60,5 @@ export const nodeDisplayName: Record<NodeType, string> = {
   prompt: 'Prompt',
   extractRegex: 'Extract With Regex',
   code: 'Code',
+  match: 'Match',
 };

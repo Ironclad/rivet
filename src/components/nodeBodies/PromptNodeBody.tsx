@@ -14,25 +14,19 @@ export type PromptNodeBodyProps = {
 
 const Body = styled.div`
   font-size: 12px;
+
+  pre {
+    white-space: pre-wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `;
 
 export const PromptNodeBody: FC<PromptNodeBodyProps> = ({ node }) => {
-  const bodyRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLPreElement>(null);
 
   const truncated = useMemo(
-    () =>
-      node.data.promptText
-        .split('\n')
-        .slice(0, 15)
-        .map((line) => {
-          const words = line.split(' ');
-          if (words.length > 50) {
-            return words.slice(0, 50).join(' ') + '...';
-          }
-          return line;
-        })
-        .join('\n')
-        .trim(),
+    () => node.data.promptText.split('\n').slice(0, 15).join('\n').trim(),
     [node.data.promptText],
   );
 
@@ -47,9 +41,9 @@ export const PromptNodeBody: FC<PromptNodeBodyProps> = ({ node }) => {
       <div>
         <em>{typeDisplay[node.data.type]}:</em>
       </div>
-      <div ref={bodyRef} data-lang="prompt-interpolation">
+      <pre ref={bodyRef} data-lang="prompt-interpolation">
         {truncated}
-      </div>
+      </pre>
     </Body>
   );
 };

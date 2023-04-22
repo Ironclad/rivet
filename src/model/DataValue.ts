@@ -17,6 +17,8 @@ export type DateDataValue = DataValueDef<'date', string>;
 export type TimeDataValue = DataValueDef<'time', string>;
 export type DateTimeDataValue = DataValueDef<'datetime', string>;
 
+export type ControlFlowExcludedDataValue = DataValueDef<'control-flow-excluded', undefined>;
+
 export type DataValue =
   | StringDataValue
   | NumberDataValue
@@ -25,7 +27,8 @@ export type DataValue =
   | TimeDataValue
   | DateTimeDataValue
   | BoolDataValue
-  | ChatMessageDataValue;
+  | ChatMessageDataValue
+  | ControlFlowExcludedDataValue;
 
 export type DataType = DataValue['type'];
 

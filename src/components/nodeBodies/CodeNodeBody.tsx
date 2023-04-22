@@ -22,13 +22,7 @@ export const CodeNodeBody: FC<CodeNodeBodyProps> = ({ node }) => {
       node.data.code
         .split('\n')
         .slice(0, 15)
-        .map((line) => {
-          const words = line.split(' ');
-          if (words.length > 50) {
-            return words.slice(0, 50).join(' ') + '...';
-          }
-          return line;
-        })
+        .map((line) => (line.length > 50 ? line.slice(0, 50) + '...' : line))
         .join('\n')
         .trim(),
     [node.data.code],

@@ -13,27 +13,18 @@ export type InterpolateNodeBodyProps = {
 
 const Body = styled.div`
   font-size: 12px;
+
+  pre {
+    white-space: pre-wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `;
 
 export const InterpolateNodeBody: FC<InterpolateNodeBodyProps> = ({ node }) => {
-  const bodyRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLPreElement>(null);
 
-  const truncated = useMemo(
-    () =>
-      node.data.text
-        .split('\n')
-        .slice(0, 15)
-        .map((line) => {
-          const words = line.split(' ');
-          if (words.length > 50) {
-            return words.slice(0, 50).join(' ') + '...';
-          }
-          return line;
-        })
-        .join('\n')
-        .trim(),
-    [node.data.text],
-  );
+  const truncated = useMemo(() => node.data.text.split('\n').slice(0, 15).join('\n').trim(), [node.data.text]);
 
   useLayoutEffect(() => {
     monaco.editor.colorizeElement(bodyRef.current!, {
@@ -43,9 +34,9 @@ export const InterpolateNodeBody: FC<InterpolateNodeBodyProps> = ({ node }) => {
 
   return (
     <Body>
-      <div ref={bodyRef} data-lang="prompt-interpolation">
+      <pre ref={bodyRef} data-lang="prompt-interpolation">
         {truncated}
-      </div>
+      </pre>
     </Body>
   );
 };

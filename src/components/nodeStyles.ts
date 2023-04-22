@@ -224,6 +224,8 @@ export const nodeStyles = css`
     position: relative;
     transition: border-color 0.2s ease-out;
     margin-top: 8px;
+    max-height: 500px;
+    overflow: auto;
   }
 
   .node-output.errored {
