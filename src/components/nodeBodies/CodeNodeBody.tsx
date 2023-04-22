@@ -1,26 +1,25 @@
 import { FC, useLayoutEffect, useMemo, useRef } from 'react';
-import { InterpolateNode } from '../../model/nodes/InterpolateNode';
+import { CodeNode } from '../../model/nodes/CodeNode';
 import styled from '@emotion/styled';
 import { monaco } from '../../utils/monaco';
-import { lastRunData } from '../../state/dataFlow';
-import { useRecoilValue } from 'recoil';
-import { PortId } from '../../model/NodeBase';
 import { RenderDataValue } from '../RenderDataValue';
+import { useRecoilValue } from 'recoil';
+import { lastRunData } from '../../state/dataFlow';
 
-export type InterpolateNodeBodyProps = {
-  node: InterpolateNode;
+export type CodeNodeBodyProps = {
+  node: CodeNode;
 };
 
 const Body = styled.div`
   font-size: 12px;
 `;
 
-export const InterpolateNodeBody: FC<InterpolateNodeBodyProps> = ({ node }) => {
-  const bodyRef = useRef<HTMLDivElement>(null);
+export const CodeNodeBody: FC<CodeNodeBodyProps> = ({ node }) => {
+  const bodyRef = useRef<HTMLPreElement>(null);
 
   const truncated = useMemo(
     () =>
-      node.data.text
+      node.data.code
         .split('\n')
         .slice(0, 15)
         .map((line) => {
@@ -32,25 +31,29 @@ export const InterpolateNodeBody: FC<InterpolateNodeBodyProps> = ({ node }) => {
         })
         .join('\n')
         .trim(),
-    [node.data.text],
+    [node.data.code],
   );
 
   useLayoutEffect(() => {
     monaco.editor.colorizeElement(bodyRef.current!, {
-      theme: 'prompt-interpolation',
+      theme: 'vs-dark',
     });
   }, [truncated]);
 
   return (
     <Body>
-      <div ref={bodyRef} data-lang="prompt-interpolation">
+      <pre ref={bodyRef} data-lang="javascript">
         {truncated}
-      </div>
+      </pre>
     </Body>
   );
 };
 
-export const InterpolateNodeOutput: FC<InterpolateNodeBodyProps> = ({ node }) => {
+export type CodeNodeOutputProps = {
+  node: CodeNode;
+};
+
+export const CodeNodeOutput: FC<CodeNodeOutputProps> = ({ node }) => {
   const output = useRecoilValue(lastRunData(node.id));
 
   if (!output) {
@@ -65,10 +68,11 @@ export const InterpolateNodeOutput: FC<InterpolateNodeBodyProps> = ({ node }) =>
     return null;
   }
 
-  const outputText = output.outputData['output' as PortId];
-  return (
-    <pre>
-      <RenderDataValue value={outputText} />
-    </pre>
-  );
+  const outputValues = Object.entries(output.outputData).map(([key, value]) => (
+    <div key={key}>
+      {key}: <RenderDataValue value={value} />
+    </div>
+  ));
+
+  return <pre>{outputValues}</pre>;
 };

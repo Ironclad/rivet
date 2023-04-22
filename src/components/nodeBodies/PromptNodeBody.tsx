@@ -22,21 +22,12 @@ export const PromptNodeBody: FC<PromptNodeBodyProps> = ({ node }) => {
   const truncated = useMemo(
     () =>
       node.data.promptText
-        .split(' ')
-        .reduce((acc, word) => {
-          if (acc.length >= 100) {
-            return acc;
-          }
-          if (acc.length + word.length >= 100) {
-            return acc + '...';
-          }
-          return acc + ' ' + word;
-        }, '')
         .split('\n')
-        .slice(0, 8)
+        .slice(0, 15)
         .map((line) => {
-          if (line.length >= 50) {
-            return line.slice(0, 50) + '...';
+          const words = line.split(' ');
+          if (words.length > 50) {
+            return words.slice(0, 50).join(' ') + '...';
           }
           return line;
         })

@@ -21,6 +21,10 @@ import { lastRunData } from '../state/dataFlow';
 import { useRecoilValue } from 'recoil';
 import { InterpolateNode } from '../model/nodes/InterpolateNode';
 import { InterpolateNodeBody, InterpolateNodeOutput } from './nodeBodies/InterpolateNodeBody';
+import { ExtractRegexNodeBody, ExtractRegexNodeOutput } from './nodeBodies/ExtractRegexNodeBody';
+import { ExtractRegexNode } from '../model/nodes/ExtractRegexNode';
+import { CodeNodeBody, CodeNodeOutput } from './nodeBodies/CodeNodeBody';
+import { CodeNode } from '../model/nodes/CodeNode';
 
 interface DraggableNodeProps {
   node: ChartNode;
@@ -257,6 +261,8 @@ const NodeBody: FC<{ node: ChartNode }> = ({ node }) => {
     .with({ type: 'prompt' }, (node) => <PromptNodeBody node={node as PromptNode} />)
     .with({ type: 'chat' }, (node) => <ChatNodeBody node={node as ChatNode} />)
     .with({ type: 'interpolate' }, (node) => <InterpolateNodeBody node={node as InterpolateNode} />)
+    .with({ type: 'extractRegex' }, (node) => <ExtractRegexNodeBody node={node as ExtractRegexNode} />)
+    .with({ type: 'code' }, (node) => <CodeNodeBody node={node as CodeNode} />)
     .otherwise(() => <div>Unknown node type</div>);
 
   return <div className="node-body">{body}</div>;
@@ -269,6 +275,8 @@ const NodeOutput: FC<{ node: ChartNode }> = ({ node }) => {
     .with({ type: 'prompt' }, (node) => <PromptNodeOutput node={node as PromptNode} />)
     .with({ type: 'chat' }, (node) => <ChatNodeOutput node={node as ChatNode} />)
     .with({ type: 'interpolate' }, (node) => <InterpolateNodeOutput node={node as InterpolateNode} />)
+    .with({ type: 'extractRegex' }, (node) => <ExtractRegexNodeOutput node={node as ExtractRegexNode} />)
+    .with({ type: 'code' }, (node) => <CodeNodeOutput node={node as CodeNode} />)
     .otherwise(() => null);
 
   if (!nodeOutput?.status) {

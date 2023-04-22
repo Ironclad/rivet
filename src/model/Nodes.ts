@@ -6,8 +6,10 @@ import { InterpolateNode, InterpolateNodeImpl } from './nodes/InterpolateNode';
 import { ChatNode, ChatNodeImpl } from './nodes/ChatNode';
 import { PromptNode, PromptNodeImpl } from './nodes/PromptNode';
 import { match } from 'ts-pattern';
+import { ExtractRegexNode, ExtractRegexNodeImpl } from './nodes/ExtractRegexNode';
+import { CodeNode, CodeNodeImpl } from './nodes/CodeNode';
 
-export type Nodes = UserInputNode | BranchNode | InterpolateNode | ChatNode | PromptNode;
+export type Nodes = UserInputNode | BranchNode | InterpolateNode | ChatNode | PromptNode | ExtractRegexNode | CodeNode;
 
 export type NodeType = Nodes['type'];
 
@@ -18,6 +20,8 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
     .with({ type: 'interpolate' }, (node) => new InterpolateNodeImpl(node))
     .with({ type: 'chat' }, (node) => new ChatNodeImpl(node))
     .with({ type: 'prompt' }, (node) => new PromptNodeImpl(node))
+    .with({ type: 'extractRegex' }, (node) => new ExtractRegexNodeImpl(node))
+    .with({ type: 'code' }, (node) => new CodeNodeImpl(node))
     .exhaustive();
 };
 
@@ -32,6 +36,8 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('interpolate', () => InterpolateNodeImpl.create())
     .with('chat', () => ChatNodeImpl.create())
     .with('prompt', () => PromptNodeImpl.create())
+    .with('extractRegex', () => ExtractRegexNodeImpl.create())
+    .with('code', () => CodeNodeImpl.create())
     .exhaustive();
 }
 
@@ -41,4 +47,6 @@ export const nodeDisplayName: Record<NodeType, string> = {
   interpolate: 'Interpolate',
   chat: 'Chat',
   prompt: 'Prompt',
+  extractRegex: 'Extract With Regex',
+  code: 'Code',
 };
