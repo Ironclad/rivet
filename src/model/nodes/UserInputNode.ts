@@ -1,16 +1,17 @@
 import { NodeImpl } from '../NodeImpl';
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { DataType } from '../DataValue';
+import { DataType, DataValue } from '../DataValue';
 
 export type UserInputNode = ChartNode<'userInput', UserInputNodeData>;
 
 export type UserInputNodeData = {
   prompt: string;
+  useInput: boolean;
 };
 
 export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
-  static create(prompt = '', inputType: DataType = 'string'): UserInputNode {
+  static create(prompt = ''): UserInputNode {
     const chartNode: UserInputNode = {
       type: 'userInput',
       title: 'User Input',
@@ -21,6 +22,7 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
       },
       data: {
         prompt,
+        useInput: false,
       },
     };
 
@@ -28,6 +30,15 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
   }
 
   getInputDefinitions(): NodeInputDefinition[] {
+    if (this.chartNode.data.useInput) {
+      return [
+        {
+          dataType: 'string[]',
+          id: 'questions' as PortId,
+          title: 'Questions',
+        },
+      ];
+    }
     return [];
   }
 
@@ -41,14 +52,14 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
     ];
   }
 
-  async getUserInput(): Promise<Record<string, any>> {
-    const input = prompt(this.chartNode.data.prompt);
-    return {
-      output: input,
-    };
-  }
-
   async process(inputs: Record<string, any>): Promise<Record<string, any>> {
-    return this.getUserInput();
+    if (this.chartNode.data.useInput) {
+      return {
+        output: inputs.questions,
+      };
+    }
+    return {
+      output: null,
+    };
   }
 }

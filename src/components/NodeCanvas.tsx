@@ -168,8 +168,34 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     setDragStart({ x: e.clientX, y: e.clientY });
   };
 
+  const isScrollable = (element: HTMLElement): boolean => {
+    return (
+      (element.scrollHeight > element.clientHeight && window.getComputedStyle(element).overflowY === 'auto') ||
+      (element.scrollWidth > element.clientWidth && window.getComputedStyle(element).overflowX === 'auto')
+    );
+  };
+
+  const isAnyParentScrollable = (element: HTMLElement): boolean => {
+    let currentNode = element.parentElement;
+
+    while (currentNode) {
+      if (isScrollable(currentNode)) {
+        return true;
+      }
+      currentNode = currentNode.parentElement;
+    }
+
+    return false;
+  };
+
   const handleZoom = (event: React.WheelEvent<HTMLDivElement>) => {
     event.preventDefault();
+
+    const target = event.target as HTMLElement;
+
+    if (isAnyParentScrollable(target)) {
+      return;
+    }
 
     const zoomSpeed = 0.01;
 

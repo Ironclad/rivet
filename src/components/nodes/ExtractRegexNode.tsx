@@ -1,8 +1,74 @@
-import { FC } from 'react';
+import { FC, useRef } from 'react';
+import styled from '@emotion/styled';
+import { lastRunData } from '../../state/dataFlow';
+import { useRecoilValue } from 'recoil';
+import { PortId } from '../../model/NodeBase';
+import { RenderDataValue } from '../RenderDataValue';
 import { ChartNode } from '../../model/NodeBase';
 import { ExtractRegexNode, ExtractRegexNodeData } from '../../model/nodes/ExtractRegexNode';
 import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
+
+export type ExtractRegexNodeBodyProps = {
+  node: ExtractRegexNode;
+};
+
+const Body = styled.div`
+  font-size: 12px;
+`;
+
+export const ExtractRegexNodeBody: FC<ExtractRegexNodeBodyProps> = ({ node }) => {
+  const bodyRef = useRef<HTMLDivElement>(null);
+
+  const regex = node.data.regex;
+
+  // TODO regex highlight?
+  // useLayoutEffect(() => {
+  //   monaco.editor.colorizeElement(bodyRef.current!, {
+  //     theme: 'prompt-interpolation',
+  //   });
+  // }, [truncated]);
+
+  if (node.data.useRegexInput) {
+    return <Body>(Using regex input)</Body>;
+  }
+
+  return <Body>{node.data.regex}</Body>;
+};
+
+export const ExtractRegexNodeOutput: FC<ExtractRegexNodeBodyProps> = ({ node }) => {
+  const output = useRecoilValue(lastRunData(node.id));
+
+  if (!output) {
+    return null;
+  }
+
+  if (output.status?.status === 'error') {
+    return <div>Error: {output.status.error}</div>;
+  }
+
+  if (!output.outputData) {
+    return null;
+  }
+
+  const outputKeys = Object.keys(output.outputData).filter((key) => key.startsWith('output'));
+
+  return (
+    <div>
+      {outputKeys.map((key) => {
+        const outputText = output.outputData![key as PortId];
+        return (
+          <div key={key}>
+            <strong>{key}:</strong>
+            <pre>
+              <RenderDataValue value={outputText} />
+            </pre>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 export type ExtractRegexNodeEditorProps = {
   node: ChartNode;

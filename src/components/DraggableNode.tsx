@@ -13,20 +13,22 @@ import { Nodes, createNodeInstance, createUnknownNodeInstance } from '../model/N
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
 import { ReactComponent as SendIcon } from 'majesticons/solid/send.svg';
 import { match } from 'ts-pattern';
-import { PromptNodeBody, PromptNodeOutput } from './nodeBodies/PromptNodeBody';
+import { PromptNodeBody, PromptNodeOutput } from './nodes/PromptNode';
 import { PromptNode } from '../model/nodes/PromptNode';
 import { ChatNode } from '../model/nodes/ChatNode';
-import { ChatNodeBody, ChatNodeOutput } from './nodeBodies/ChatNodeBody';
+import { ChatNodeBody, ChatNodeOutput } from './nodes/ChatNode';
 import { lastRunData } from '../state/dataFlow';
 import { useRecoilValue } from 'recoil';
-import { InterpolateNode } from '../model/nodes/InterpolateNode';
-import { InterpolateNodeBody, InterpolateNodeOutput } from './nodeBodies/InterpolateNodeBody';
-import { ExtractRegexNodeBody, ExtractRegexNodeOutput } from './nodeBodies/ExtractRegexNodeBody';
+import { TextNode } from '../model/nodes/TextNode';
+import { TextNodeBody, TextNodeOutput } from './nodes/TextNode';
+import { ExtractRegexNodeBody, ExtractRegexNodeOutput } from './nodes/ExtractRegexNode';
 import { ExtractRegexNode } from '../model/nodes/ExtractRegexNode';
-import { CodeNodeBody, CodeNodeOutput } from './nodeBodies/CodeNodeBody';
+import { CodeNodeBody, CodeNodeOutput } from './nodes/CodeNode';
 import { CodeNode } from '../model/nodes/CodeNode';
-import { MatchNodeBody, MatchNodeOutput } from './nodeBodies/MatchNodeBody';
+import { MatchNodeBody, MatchNodeOutput } from './nodes/MatchNode';
 import { MatchNode } from '../model/nodes/MatchNode';
+import { UserInputNode } from '../model/nodes/UserInputNode';
+import { UserInputNodeBody, UserInputNodeOutput } from './nodes/UserInputNode';
 
 interface DraggableNodeProps {
   node: ChartNode;
@@ -156,8 +158,9 @@ export const ViewNode = memo(
           data-contextmenutype={`node-${node.type}`}
         >
           <div className="node-title">
-            <div className="title-text">{node.title}</div>
-            <div className="grab-area" {...handleAttributes} />
+            <div className="grab-area" {...handleAttributes}>
+              <div className="title-text">{node.title}</div>
+            </div>
             <div className="title-controls">
               <div className="last-run-status">
                 {lastRun?.status ? (
@@ -263,10 +266,11 @@ const NodeBody: FC<{ node: ChartNode }> = ({ node }) => {
   const body = match(node)
     .with({ type: 'prompt' }, (node) => <PromptNodeBody node={node as PromptNode} />)
     .with({ type: 'chat' }, (node) => <ChatNodeBody node={node as ChatNode} />)
-    .with({ type: 'interpolate' }, (node) => <InterpolateNodeBody node={node as InterpolateNode} />)
+    .with({ type: 'text' }, (node) => <TextNodeBody node={node as TextNode} />)
     .with({ type: 'extractRegex' }, (node) => <ExtractRegexNodeBody node={node as ExtractRegexNode} />)
     .with({ type: 'code' }, (node) => <CodeNodeBody node={node as CodeNode} />)
     .with({ type: 'match' }, (node) => <MatchNodeBody node={node as MatchNode} />)
+    .with({ type: 'userInput' }, (node) => <UserInputNodeBody node={node as UserInputNode} />)
     .otherwise(() => <div>Unknown node type</div>);
 
   return <div className="node-body">{body}</div>;
@@ -278,10 +282,11 @@ const NodeOutput: FC<{ node: ChartNode }> = ({ node }) => {
   const outputBody = match(node)
     .with({ type: 'prompt' }, (node) => <PromptNodeOutput node={node as PromptNode} />)
     .with({ type: 'chat' }, (node) => <ChatNodeOutput node={node as ChatNode} />)
-    .with({ type: 'interpolate' }, (node) => <InterpolateNodeOutput node={node as InterpolateNode} />)
+    .with({ type: 'text' }, (node) => <TextNodeOutput node={node as TextNode} />)
     .with({ type: 'extractRegex' }, (node) => <ExtractRegexNodeOutput node={node as ExtractRegexNode} />)
     .with({ type: 'code' }, (node) => <CodeNodeOutput node={node as CodeNode} />)
     .with({ type: 'match' }, (node) => <MatchNodeOutput node={node as MatchNode} />)
+    .with({ type: 'userInput' }, (node) => <UserInputNodeOutput node={node as UserInputNode} />)
     .otherwise(() => null);
 
   if (!nodeOutput?.status) {

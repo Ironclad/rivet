@@ -7,15 +7,16 @@ import styled from '@emotion/styled';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
 import { NodeType, nodeDisplayName } from '../model/Nodes';
 import { match } from 'ts-pattern';
-import { PromptNodeEditor } from './nodeEditors/PromptNodeEditor';
+import { PromptNodeEditor } from './nodes/PromptNode';
 import produce from 'immer';
 import { InlineEditableTextArea } from './InlineEditableTextArea';
-import { ChatNodeEditor } from './nodeEditors/ChatNodeEditor';
+import { ChatNodeEditor } from './nodes/ChatNode';
 import { lastRunDataByNodeState } from '../state/dataFlow';
-import { InterpolateNodeEditor } from './nodeEditors/InterpolateNodeEditor';
-import { ExtractRegexNodeEditor } from './nodeEditors/ExtractRegexNodeEditor';
-import { CodeNodeEditor } from './nodeEditors/CodeNodeEditor';
-import { MatchNodeEditor } from './nodeEditors/MatchNodeEditor';
+import { TextNodeEditor } from './nodes/TextNode';
+import { ExtractRegexNodeEditor } from './nodes/ExtractRegexNode';
+import { CodeNodeEditor } from './nodes/CodeNode';
+import { MatchNodeEditor } from './nodes/MatchNode';
+import { UserInputNodeEditor } from './nodes/UserInputNode';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -162,14 +163,13 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
   const nodeEditor = match(selectedNode)
     .with({ type: 'prompt' }, (node) => <PromptNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .with({ type: 'chat' }, (node) => <ChatNodeEditor node={node} onChange={(node) => updateNode(node)} />)
-    .with({ type: 'interpolate' }, (node) => (
-      <InterpolateNodeEditor node={node} onChange={(node) => updateNode(node)} />
-    ))
+    .with({ type: 'text' }, (node) => <TextNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .with({ type: 'extractRegex' }, (node) => (
       <ExtractRegexNodeEditor node={node} onChange={(node) => updateNode(node)} />
     ))
     .with({ type: 'code' }, (node) => <CodeNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .with({ type: 'match' }, (node) => <MatchNodeEditor node={node} onChange={(node) => updateNode(node)} />)
+    .with({ type: 'userInput' }, (node) => <UserInputNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .otherwise(() => null);
 
   useEffect(() => {
