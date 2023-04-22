@@ -13,6 +13,8 @@ import { InlineEditableTextArea } from './InlineEditableTextArea';
 import { ChatNodeEditor } from './nodeEditors/ChatNodeEditor';
 import { lastRunDataByNodeState } from '../state/dataFlow';
 import { InterpolateNodeEditor } from './nodeEditors/InterpolateNodeEditor';
+import { ExtractRegexNodeEditor } from './nodeEditors/ExtractRegexNodeEditor';
+import { CodeNodeEditor } from './nodeEditors/CodeNodeEditor';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -162,6 +164,10 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
     .with({ type: 'interpolate' }, (node) => (
       <InterpolateNodeEditor node={node} onChange={(node) => updateNode(node)} />
     ))
+    .with({ type: 'extractRegex' }, (node) => (
+      <ExtractRegexNodeEditor node={node} onChange={(node) => updateNode(node)} />
+    ))
+    .with({ type: 'code' }, (node) => <CodeNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .otherwise(() => null);
 
   useEffect(() => {

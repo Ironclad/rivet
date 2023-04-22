@@ -2,9 +2,12 @@ import { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
 import produce from 'immer';
 import { useState, useCallback } from 'react';
 import { ChartNode } from '../model/NodeBase';
+import { useRecoilValue } from 'recoil';
+import { canvasPositionState } from '../state/graphBuilder';
 
 export const useDraggingNode = (nodes: ChartNode[], onNodesChanged: (nodes: ChartNode[]) => void) => {
   const [draggingNode, setDraggingNode] = useState<ChartNode | undefined>();
+  const canvasPosition = useRecoilValue(canvasPositionState);
 
   const onNodeStartDrag = useCallback(
     (e: DragStartEvent) => {
@@ -28,19 +31,24 @@ export const useDraggingNode = (nodes: ChartNode[], onNodesChanged: (nodes: Char
     ({ active, delta }: DragEndEvent) => {
       const nodeId = active.id;
 
+      const actualDelta = {
+        x: delta.x / canvasPosition.zoom,
+        y: delta.y / canvasPosition.zoom,
+      };
+
       setDraggingNode(undefined);
 
       onNodesChanged?.(
         produce(nodes, (draft) => {
           const node = draft.find((node) => node.id === nodeId);
           if (node) {
-            node.visualData.x += delta.x;
-            node.visualData.y += delta.y;
+            node.visualData.x += actualDelta.x;
+            node.visualData.y += actualDelta.y;
           }
         }),
       );
     },
-    [nodes, onNodesChanged],
+    [nodes, onNodesChanged, canvasPosition.zoom],
   );
 
   return {
