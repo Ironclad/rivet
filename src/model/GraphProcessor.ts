@@ -4,6 +4,8 @@ import { NodeGraph } from './NodeGraph';
 import { NodeImpl, ProcessContext } from './NodeImpl';
 import { Nodes, createNodeInstance } from './Nodes';
 
+const ControlFlowExcludedSymbol = Symbol('ControlFlowExcluded');
+
 export class GraphProcessor {
   #graph: NodeGraph;
   #nodeInstances: Record<NodeId, NodeImpl<ChartNode>>;
@@ -48,6 +50,7 @@ export class GraphProcessor {
       onNodeStart?: (node: ChartNode, inputs: Record<string, DataValue>) => void;
       onNodeFinish?: (node: ChartNode, result: Record<string, DataValue>) => void;
       onNodeError?: (node: ChartNode, error: Error) => void;
+      onNodeExcluded?: (node: ChartNode) => void;
     } = {},
   ): Promise<Record<string, any>> {
     const outputNodes = this.#graph.nodes.filter((node) => this.#definitions[node.id].outputs.length === 0);
@@ -98,10 +101,30 @@ export class GraphProcessor {
             const connection = connections.find((conn) => conn.inputId === input.id && conn.inputNodeId === node.id);
             if (connection) {
               const outputNode = this.#nodeInstances[connection.outputNodeId].chartNode;
-              values[input.id] = nodeResults.get(outputNode.id)?.[connection.outputId];
+              const outputResult = nodeResults.get(outputNode.id)?.[connection.outputId];
+
+              if (outputResult?.type === 'control-flow-excluded') {
+                events.onNodeExcluded?.(node);
+                return values;
+              }
+
+              values[input.id] = outputResult;
             }
             return values;
           }, {} as Record<string, any>);
+
+          // Check if the node is excluded due to control flow
+          if (
+            Object.values(inputValues).some((value) => value?.type === 'control-flow-excluded') ||
+            nodeResults.get(node.id)?.[ControlFlowExcludedSymbol as unknown as PortId]
+          ) {
+            events.onNodeExcluded?.(node);
+            visitedNodes.add(node.id);
+            nodeResults.set(node.id, {
+              [ControlFlowExcludedSymbol as unknown as PortId]: { type: 'control-flow-excluded', value: undefined },
+            });
+            return;
+          }
 
           // Process the node and save its output
           events.onNodeStart?.(node, inputValues);

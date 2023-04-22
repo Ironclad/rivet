@@ -25,6 +25,8 @@ import { ExtractRegexNodeBody, ExtractRegexNodeOutput } from './nodeBodies/Extra
 import { ExtractRegexNode } from '../model/nodes/ExtractRegexNode';
 import { CodeNodeBody, CodeNodeOutput } from './nodeBodies/CodeNodeBody';
 import { CodeNode } from '../model/nodes/CodeNode';
+import { MatchNodeBody, MatchNodeOutput } from './nodeBodies/MatchNodeBody';
+import { MatchNode } from '../model/nodes/MatchNode';
 
 interface DraggableNodeProps {
   node: ChartNode;
@@ -108,6 +110,7 @@ export const ViewNode = memo(
         opacity: isDragging ? '0' : '',
         transform: `translate(${node.visualData.x + xDelta}px, ${node.visualData.y + yDelta}px) scale(${scale ?? 1})`,
         zIndex: node.visualData.zIndex ?? 0,
+        width: node.visualData.width,
       };
 
       const handlePortMouseDown = useCallback(
@@ -263,6 +266,7 @@ const NodeBody: FC<{ node: ChartNode }> = ({ node }) => {
     .with({ type: 'interpolate' }, (node) => <InterpolateNodeBody node={node as InterpolateNode} />)
     .with({ type: 'extractRegex' }, (node) => <ExtractRegexNodeBody node={node as ExtractRegexNode} />)
     .with({ type: 'code' }, (node) => <CodeNodeBody node={node as CodeNode} />)
+    .with({ type: 'match' }, (node) => <MatchNodeBody node={node as MatchNode} />)
     .otherwise(() => <div>Unknown node type</div>);
 
   return <div className="node-body">{body}</div>;
@@ -277,6 +281,7 @@ const NodeOutput: FC<{ node: ChartNode }> = ({ node }) => {
     .with({ type: 'interpolate' }, (node) => <InterpolateNodeOutput node={node as InterpolateNode} />)
     .with({ type: 'extractRegex' }, (node) => <ExtractRegexNodeOutput node={node as ExtractRegexNode} />)
     .with({ type: 'code' }, (node) => <CodeNodeOutput node={node as CodeNode} />)
+    .with({ type: 'match' }, (node) => <MatchNodeOutput node={node as MatchNode} />)
     .otherwise(() => null);
 
   if (!nodeOutput?.status) {

@@ -12,6 +12,7 @@ export const RenderDataValue: FC<{ value: DataValue | undefined }> = ({ value })
     .with({ type: 'date' }, (value) => <>{value.value}</>)
     .with({ type: 'time' }, (value) => <>{value.value}</>)
     .with({ type: 'datetime' }, (value) => <>{value.value}</>)
+    .with({ type: 'control-flow-excluded' }, (value) => <>Not ran</>)
     .with(undefined, () => <>undefined</>)
     .exhaustive();
 };

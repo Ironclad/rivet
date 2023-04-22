@@ -29,6 +29,8 @@ export interface NodeBase {
     /** The y-coordinate of the node's position. */
     y: number;
 
+    width?: number;
+
     /** The z-index, the last grabbed node is on top of all others. */
     zIndex?: number;
   };

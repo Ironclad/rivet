@@ -1,5 +1,4 @@
-// components/nodeBodies/ChatNodeBody.tsx
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { ChatNode } from '../../model/nodes/ChatNode';
 import { css } from '@emotion/react';
 import { lastRunData } from '../../state/dataFlow';

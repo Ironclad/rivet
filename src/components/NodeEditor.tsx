@@ -15,6 +15,7 @@ import { lastRunDataByNodeState } from '../state/dataFlow';
 import { InterpolateNodeEditor } from './nodeEditors/InterpolateNodeEditor';
 import { ExtractRegexNodeEditor } from './nodeEditors/ExtractRegexNodeEditor';
 import { CodeNodeEditor } from './nodeEditors/CodeNodeEditor';
+import { MatchNodeEditor } from './nodeEditors/MatchNodeEditor';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -168,6 +169,7 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
       <ExtractRegexNodeEditor node={node} onChange={(node) => updateNode(node)} />
     ))
     .with({ type: 'code' }, (node) => <CodeNodeEditor node={node} onChange={(node) => updateNode(node)} />)
+    .with({ type: 'match' }, (node) => <MatchNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .otherwise(() => null);
 
   useEffect(() => {

@@ -37,6 +37,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       visualData: {
         x: 0,
         y: 0,
+        width: 200,
       },
       data: {
         model: 'gpt-3.5-turbo',
