@@ -10,8 +10,8 @@ import { ContextMenuData, useContextMenu } from '../hooks/useContextMenu';
 import { useDraggingNode } from '../hooks/useDraggingNode';
 import { useDraggingWire } from '../hooks/useDraggingWire';
 import { ChartNode, NodeConnection } from '../model/NodeBase';
-import { useRecoilState } from 'recoil';
-import { canvasPositionState } from '../state/graphBuilder';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { canvasPositionState, lastMousePositionState } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 
 export interface NodeCanvasProps {
@@ -106,7 +106,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const { clientToCanvasPosition } = useCanvasPositioning();
-  const [, setLastMousePosition] = useState({ x: 0, y: 0 });
+  const setLastMousePosition = useSetRecoilState(lastMousePositionState);
 
   const { draggingNode, onNodeStartDrag, onNodeDragged } = useDraggingNode(nodes, onNodesChanged);
   const { draggingWire, onWireStartDrag, onWireEndDrag } = useDraggingWire(nodes, connections, onConnectionsChanged);
@@ -240,26 +240,13 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           backgroundSize: `${20 * canvasPosition.zoom}px ${20 * canvasPosition.zoom}px`,
         }}
       >
-        {/* <div className="debug-overlay">
-          <div>Translation: {`(${canvasPosition.x.toFixed(2)}, ${canvasPosition.y.toFixed(2)})`}</div>
-          <div>Scale: {canvasPosition.zoom.toFixed(2)}</div>
-          <div>Mouse Position: {`(${lastMousePosition.x.toFixed(2)}, ${lastMousePosition.y.toFixed(2)})`}</div>
-          <div>
-            Translated Mouse Position:{' '}
-            {`(${clientToCanvasPosition(lastMousePosition.x, lastMousePosition.y).x.toFixed(
-              2,
-            )}, ${clientToCanvasPosition(lastMousePosition.x, lastMousePosition.y).y.toFixed(2)})`}
-          </div>
-        </div> */}
+        <DebugOverlay enabled={false} />
         <div
           className="canvas-contents"
           style={{
             transform: `scale(${canvasPosition.zoom}) translate(${canvasPosition.x}px, ${canvasPosition.y}px)`,
           }}
         >
-          {/* <svg className="origin" width="10" height="10" viewBox="-5 -5 10 10">
-            <circle fill="white" r="5" cx="0" cy="0" />
-          </svg> */}
           <div className="nodes">
             {nodesWithConnections.map(({ node, nodeConnections }) => (
               <DraggableNode
@@ -299,5 +286,32 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         </DragOverlay>
       </div>
     </DndContext>
+  );
+};
+
+const DebugOverlay: FC<{ enabled: boolean }> = ({ enabled }) => {
+  const canvasPosition = useRecoilValue(canvasPositionState);
+
+  const lastMousePosition = useRecoilValue(lastMousePositionState);
+
+  const { clientToCanvasPosition } = useCanvasPositioning();
+
+  if (!enabled) {
+    return null;
+  }
+
+  return (
+    <div className="debug-overlay">
+      <div>Translation: {`(${canvasPosition.x.toFixed(2)}, ${canvasPosition.y.toFixed(2)})`}</div>
+      <div>Scale: {canvasPosition.zoom.toFixed(2)}</div>
+      <div>Mouse Position: {`(${lastMousePosition.x.toFixed(2)}, ${lastMousePosition.y.toFixed(2)})`}</div>
+      <div>
+        Translated Mouse Position:{' '}
+        {`(${clientToCanvasPosition(lastMousePosition.x, lastMousePosition.y).x.toFixed(2)}, ${clientToCanvasPosition(
+          lastMousePosition.x,
+          lastMousePosition.y,
+        ).y.toFixed(2)})`}
+      </div>
+    </div>
   );
 };

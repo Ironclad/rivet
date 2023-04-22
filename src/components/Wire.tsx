@@ -5,6 +5,8 @@ import { createUnknownNodeInstance } from '../model/Nodes';
 import { useRecoilValue } from 'recoil';
 import { nodesSelector } from '../state/graph';
 import { useGetConnectionsForNode } from '../hooks/useGetConnectionsForNode';
+import { canvasPositionState } from '../state/graphBuilder';
+import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 
 type WireProps = {
   connection: NodeConnection | PartialConnection;
@@ -21,6 +23,7 @@ export type PartialConnection = {
 export const Wire: FC<WireProps> = ({ connection, selected }) => {
   const nodes = useRecoilValue(nodesSelector);
   const getConnectionsForNode = useGetConnectionsForNode();
+  const { clientToCanvasPosition } = useCanvasPositioning();
 
   let start: { x: number; y: number };
   let end: { x: number; y: number };
@@ -40,7 +43,13 @@ export const Wire: FC<WireProps> = ({ connection, selected }) => {
       return null;
     }
 
-    start = getNodePortPosition(nodes, connection.nodeId, connection.portId, getConnectionsForNode);
+    start = getNodePortPosition(
+      nodes,
+      connection.nodeId,
+      connection.portId,
+      clientToCanvasPosition,
+      getConnectionsForNode,
+    );
     end = { x: connection.toX, y: connection.toY };
   } else {
     const outputNode = nodes.find((node) => node.id === connection.outputNodeId);
@@ -61,8 +70,20 @@ export const Wire: FC<WireProps> = ({ connection, selected }) => {
       return null;
     }
 
-    start = getNodePortPosition(nodes, connection.outputNodeId, connection.outputId, getConnectionsForNode);
-    end = getNodePortPosition(nodes, connection.inputNodeId, connection.inputId, getConnectionsForNode);
+    start = getNodePortPosition(
+      nodes,
+      connection.outputNodeId,
+      connection.outputId,
+      clientToCanvasPosition,
+      getConnectionsForNode,
+    );
+    end = getNodePortPosition(
+      nodes,
+      connection.inputNodeId,
+      connection.inputId,
+      clientToCanvasPosition,
+      getConnectionsForNode,
+    );
   }
 
   const deltaX = Math.abs(end.x - start.x);

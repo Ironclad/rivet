@@ -29,6 +29,7 @@ import { MatchNodeBody, MatchNodeOutput } from './nodes/MatchNode';
 import { MatchNode } from '../model/nodes/MatchNode';
 import { UserInputNode } from '../model/nodes/UserInputNode';
 import { UserInputNodeBody, UserInputNodeOutput } from './nodes/UserInputNode';
+import { canvasPositionState } from '../state/graphBuilder';
 
 interface DraggableNodeProps {
   node: ChartNode;
@@ -48,6 +49,7 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
   onNodeSelected,
 }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: node.id });
+  const { zoom } = useRecoilValue(canvasPositionState);
 
   return (
     <ViewNode
@@ -56,8 +58,8 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
       node={node}
       connections={connections}
       isDragging={isDragging}
-      xDelta={transform?.x}
-      yDelta={transform?.y}
+      xDelta={transform ? transform.x / zoom : 0}
+      yDelta={transform ? transform.y / zoom : 0}
       nodeAttributes={attributes}
       handleAttributes={listeners}
       onWireEndDrag={onWireEndDrag}
@@ -233,6 +235,7 @@ export function getNodePortPosition(
   nodes: ChartNode[],
   nodeId: NodeId,
   portId: PortId,
+  clientToCanvasPosition: (clientX: number, clientY: number) => { x: number; y: number },
   getConnectionsForNode: (node: ChartNode) => NodeConnection[],
 ): { x: number; y: number } {
   const node = nodes.find((node) => node.id === nodeId);
@@ -252,10 +255,7 @@ export function getNodePortPosition(
       );
       if (portElement) {
         const rect = portElement.getBoundingClientRect();
-        return {
-          x: rect.left + rect.width / 2,
-          y: rect.top + rect.height / 2,
-        };
+        return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
       }
     }
   }
