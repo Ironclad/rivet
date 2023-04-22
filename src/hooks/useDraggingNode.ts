@@ -1,12 +1,12 @@
 import { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
 import produce from 'immer';
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { ChartNode } from '../model/NodeBase';
-import { useRecoilValue } from 'recoil';
-import { canvasPositionState } from '../state/graphBuilder';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { canvasPositionState, draggingNodeState } from '../state/graphBuilder';
 
 export const useDraggingNode = (nodes: ChartNode[], onNodesChanged: (nodes: ChartNode[]) => void) => {
-  const [draggingNode, setDraggingNode] = useState<ChartNode | undefined>();
+  const [draggingNode, setDraggingNode] = useRecoilState(draggingNodeState);
   const canvasPosition = useRecoilValue(canvasPositionState);
 
   const onNodeStartDrag = useCallback(
@@ -24,7 +24,7 @@ export const useDraggingNode = (nodes: ChartNode[], onNodesChanged: (nodes: Char
         nodes.map((n) => (n.id === node!.id ? { ...n, visualData: { ...n.visualData, zIndex: maxZIndex + 1 } } : n)),
       );
     },
-    [nodes, onNodesChanged],
+    [nodes, onNodesChanged, setDraggingNode],
   );
 
   const onNodeDragged = useCallback(
@@ -36,7 +36,7 @@ export const useDraggingNode = (nodes: ChartNode[], onNodesChanged: (nodes: Char
         y: delta.y / canvasPosition.zoom,
       };
 
-      setDraggingNode(undefined);
+      setDraggingNode(null);
 
       onNodesChanged?.(
         produce(nodes, (draft) => {
@@ -48,7 +48,7 @@ export const useDraggingNode = (nodes: ChartNode[], onNodesChanged: (nodes: Char
         }),
       );
     },
-    [nodes, onNodesChanged, canvasPosition.zoom],
+    [nodes, onNodesChanged, canvasPosition.zoom, setDraggingNode],
   );
 
   return {
