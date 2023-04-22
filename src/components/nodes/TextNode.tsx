@@ -50,7 +50,7 @@ export const TextNodeOutput: FC<TextNodeBodyProps> = ({ node }) => {
     return null;
   }
 
-  if (output.status?.status === 'error') {
+  if (output.status?.type === 'error') {
     return <div>Error: {output.status.error}</div>;
   }
 

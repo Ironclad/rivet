@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useLayoutEffect, useRef } from 'react';
 import { css } from '@emotion/react';
 import { lastRunData } from '../../state/dataFlow';
 import { useRecoilValue } from 'recoil';
@@ -7,6 +7,8 @@ import { RenderDataValue } from '../RenderDataValue';
 import { ChartNode } from '../../model/NodeBase';
 import { ChatNode, ChatNodeData } from '../../model/nodes/ChatNode';
 import Toggle from '@atlaskit/toggle';
+import * as monaco from 'monaco-editor';
+import { expectType } from '../../model/DataValue';
 
 type ChatNodeBodyProps = {
   node: ChatNode;
@@ -37,7 +39,7 @@ export const ChatNodeOutput: FC<ChatNodeBodyProps> = ({ node }) => {
     return null;
   }
 
-  if (output.status?.status === 'error') {
+  if (output.status?.type === 'error') {
     return <div>Error: {output.status.error}</div>;
   }
 
@@ -50,6 +52,39 @@ export const ChatNodeOutput: FC<ChatNodeBodyProps> = ({ node }) => {
     <div className="pre-wrap">
       <RenderDataValue value={outputText} />
     </div>
+  );
+};
+
+export const FullscreenChatNodeOutput: FC<ChatNodeBodyProps> = ({ node }) => {
+  const outputRef = useRef<HTMLPreElement>(null);
+  const output = useRecoilValue(lastRunData(node.id));
+
+  useLayoutEffect(() => {
+    if (outputRef.current) {
+      monaco.editor.colorizeElement(outputRef.current!, {
+        theme: 'vs-dark',
+      });
+    }
+  }, [output]);
+
+  if (!output) {
+    return null;
+  }
+
+  if (output.status?.type === 'error') {
+    return <div>Error: {output.status.error}</div>;
+  }
+
+  if (!output.outputData) {
+    return null;
+  }
+
+  const outputText = expectType(output.outputData['response' as PortId], 'string');
+
+  return (
+    <pre ref={outputRef} className="pre-wrap" data-language="markdown">
+      {outputText}
+    </pre>
   );
 };
 

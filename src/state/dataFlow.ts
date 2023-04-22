@@ -7,7 +7,7 @@ export type RunDataByNodeId = {
 };
 
 export type NodeRunData = {
-  status?: { status: 'ok' } | { status: 'error'; error: string };
+  status?: { type: 'ok' } | { type: 'error'; error: string } | { type: 'running' };
 
   inputData?: {
     [key: PortId]: DataValue;

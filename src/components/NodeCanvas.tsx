@@ -1,5 +1,5 @@
 import { DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
-import { DraggableNode, ViewNode } from './DraggableNode';
+import { DraggableNode } from './DraggableNode';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles';
 import { FC, useCallback, useMemo, useState } from 'react';
@@ -13,6 +13,7 @@ import { ChartNode, NodeConnection } from '../model/NodeBase';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { canvasPositionState, lastMousePositionState, selectedNodeState } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
+import { ViewNode } from './ViewNode';
 
 export interface NodeCanvasProps {
   nodes: ChartNode[];

@@ -143,10 +143,8 @@ const Container = styled.div`
 export const NodeEditor: FC<NodeEditorProps> = () => {
   const [nodes, setNodes] = useRecoilState(nodesSelector);
   const [selectedNodeId, setSelectedNodeId] = useRecoilState(selectedNodeState)!;
-  const allLastData = useRecoilValue(lastRunDataByNodeState);
 
   const selectedNode = nodes.find((node) => node.id === selectedNodeId)!;
-  const lastData = allLastData[selectedNode.id];
 
   const updateNode = useCallback(
     (node: ChartNode) => {
@@ -227,50 +225,6 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
           <h3 className="section-title">{nodeDisplayName[selectedNode.type as NodeType]}</h3>
           <div className="section-node-content">{nodeEditor}</div>
         </div>
-      )}
-      {lastData && (
-        <section className="section section-last-data">
-          <h3 className="section-title">Last Data</h3>
-
-          {lastData.status?.status === 'error' && (
-            <div className="section-last-data-content">
-              <h4>Error</h4>
-              <p>{lastData.status.error}</p>
-            </div>
-          )}
-          <div className="section-last-data-content">
-            {lastData?.inputData && (
-              <>
-                <h4>Inputs</h4>
-                <dl>
-                  {Object.entries(lastData?.inputData ?? {}).map(([key, value]) => {
-                    return (
-                      <>
-                        <dt key={`${key}-key`}>{key}</dt>
-                        <dd key={`${key}-value`}>{JSON.stringify(value, null, 2)}</dd>
-                      </>
-                    );
-                  })}
-                </dl>
-              </>
-            )}
-            {lastData?.outputData && (
-              <>
-                <h4>Outputs</h4>
-                <dl>
-                  {Object.entries(lastData?.outputData ?? {}).map(([key, value]) => {
-                    return (
-                      <>
-                        <dt>{key}</dt>
-                        <dd>{JSON.stringify(value, null, 2)}</dd>
-                      </>
-                    );
-                  })}
-                </dl>
-              </>
-            )}
-          </div>
-        </section>
       )}
     </Container>
   );

@@ -38,7 +38,8 @@ const container = css`
   }
 
   .select,
-  .number-input {
+  .number-input,
+  .text-input {
     padding: 6px 12px;
     background-color: var(--grey-darkish);
     border: 1px solid var(--grey);
@@ -56,6 +57,11 @@ const container = css`
       border-color: var(--grey);
       color: var(--foreground-dark);
     }
+  }
+
+  .text-input {
+    width: 100%;
+    min-height: 100px;
   }
 
   .select {
@@ -88,10 +94,9 @@ export const UserInputNodeEditor: FC<UserInputNodeEditorProps> = ({ node, onChan
         <label className="label" htmlFor="prompt">
           Prompt
         </label>
-        <input
+        <textarea
           id="prompt"
-          className="select"
-          type="text"
+          className="text-input"
           value={userInputNode.data.prompt}
           onChange={(e) => onChange?.({ ...userInputNode, data: { ...userInputNode.data, prompt: e.target.value } })}
           disabled={userInputNode.data.useInput}
@@ -141,7 +146,7 @@ export const UserInputNodeOutput: FC<UserInputNodeBodyProps> = ({ node }) => {
     return null;
   }
 
-  if (output.status?.status === 'error') {
+  if (output.status?.type === 'error') {
     return <div>Error: {output.status.error}</div>;
   }
 
