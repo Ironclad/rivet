@@ -49,7 +49,7 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
       {
         dataType: 'string[]',
         id: 'output' as PortId,
-        title: 'User Input',
+        title: 'Answers Only',
       },
       {
         dataType: 'string[]',

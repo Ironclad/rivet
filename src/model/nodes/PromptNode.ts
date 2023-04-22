@@ -72,7 +72,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
         .with({ type: 'boolean' }, (v) => v.value.toString())
         .with({ type: 'number' }, (v) => v.value.toString())
         .with({ type: 'string' }, (v) => v.value)
-        .with({ type: 'string[]' }, (v) => v.value.join(', ')) // TODO \n? customizable?
+        .with({ type: 'string[]' }, (v) => v.value.join('\n')) // TODO customizable?
         .otherwise(() => '');
 
       acc[key] = stringValue;

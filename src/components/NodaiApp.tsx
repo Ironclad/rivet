@@ -91,17 +91,18 @@ export const NodaiApp: FC = () => {
           onNodeStart: (node, inputs) => {
             setDataForNode(node.id, {
               inputData: inputs,
+              status: { type: 'running' },
             });
           },
           onNodeFinish: (node, outputs) => {
             setDataForNode(node.id, {
               outputData: outputs,
-              status: { status: 'ok' },
+              status: { type: 'ok' },
             });
           },
           onNodeError: (node, error) => {
             setDataForNode(node.id, {
-              status: { status: 'error', error: error.message },
+              status: { type: 'error', error: error.message },
             });
           },
           onUserInput: handleUserInput,

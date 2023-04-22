@@ -1,7 +1,8 @@
 import { FC, useEffect, useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button } from '@mui/material';
-import { atom, useRecoilState } from 'recoil';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, css } from '@mui/material';
+import { useRecoilState } from 'recoil';
 import { StringArrayDataValue } from '../model/DataValue';
+import { lastAnswersState } from '../state/userInput';
 
 type UserInputModalProps = {
   open: boolean;
@@ -9,10 +10,32 @@ type UserInputModalProps = {
   onSubmit: (answers: StringArrayDataValue[]) => void;
 };
 
-const lastAnswersState = atom<Record<string, string>>({
-  key: 'lastAnswers',
-  default: {},
-});
+const textareaCss = css`
+  padding: 6px 12px;
+  background-color: var(--grey-darkish);
+  border: 1px solid var(--grey);
+  border-radius: 4px;
+  color: var(--foreground);
+  outline: none;
+  transition: border-color 0.3s;
+  min-height: 50px;
+  width: 100%;
+
+  &:hover {
+    border-color: var(--primary);
+  }
+
+  &:disabled {
+    background-color: var(--grey-dark);
+    border-color: var(--grey);
+    color: var(--foreground-dark);
+  }
+`;
+
+const labelCss = css`
+  display: block;
+  font-weight: 500;
+`;
 
 export const UserInputModal: FC<UserInputModalProps> = ({ open, questionGroups, onSubmit }) => {
   const [answers, setAnswers] = useState<string[][]>([]);
@@ -51,12 +74,13 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questionGroups, 
           <div key={`group-${groupIndex}`} className="question-group">
             {group.map((question, index) => (
               <div className="question" key={`question-${groupIndex}-${index}`}>
-                <label htmlFor="">{question}</label>
-                <TextField
+                <label css={labelCss} htmlFor="">
+                  {question}
+                </label>
+                <textarea
+                  css={textareaCss}
                   value={answers?.[groupIndex]?.[index] ?? ''}
                   onChange={(e) => handleChange(groupIndex, index, e.target.value)}
-                  fullWidth
-                  margin="normal"
                   autoFocus={groupIndex === 0 && index === 0}
                 />
               </div>

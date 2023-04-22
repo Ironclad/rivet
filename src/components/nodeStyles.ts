@@ -219,6 +219,10 @@ export const nodeStyles = css`
   }
 
   .node-output {
+    position: relative;
+  }
+
+  .node-output-inner {
     background-color: var(--grey-darker);
     background-image: linear-gradient(to bottom, var(--grey-darker) 0%, var(--grey-darkest) 100%);
     border-radius: 0 0 8px 8px;
@@ -236,8 +240,8 @@ export const nodeStyles = css`
     overflow: auto;
   }
 
-  .node:hover .node-output,
-  .node.selected .node-output {
+  .node:hover .node-output-inner,
+  .node.selected .node-output-inner {
     max-height: 500px;
   }
 
@@ -248,8 +252,9 @@ export const nodeStyles = css`
   .node-output:before {
     content: '';
     position: absolute;
-    top: 0px;
+    top: 10px;
     left: 50%;
+    z-index: 2;
     transform: translateX(-50%);
     width: 0;
     height: 0;
@@ -260,5 +265,54 @@ export const nodeStyles = css`
 
   .node-output.errored:before {
     border-top: 8px solid var(--error-light);
+  }
+
+  .overlay-buttons {
+    position: absolute;
+    top: 16px;
+    right: 4px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .copy-button,
+  .expand-button {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+    opacity: 0;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    z-index: 1;
+  }
+
+  .node:hover .copy-button,
+  .node:hover .expand-button {
+    opacity: 0.2;
+  }
+
+  .node .copy-button:hover,
+  .node .expand-button:hover {
+    opacity: 1;
+  }
+
+  .node .running {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .node .running svg {
+    color: var(--primary);
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 `;

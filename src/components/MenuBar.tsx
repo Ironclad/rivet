@@ -1,8 +1,10 @@
 import { css } from '@emotion/react';
 import { FC } from 'react';
 import { ReactComponent as ChevronRightIcon } from 'majesticons/line/chevron-right-line.svg';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { settingsModalOpenState } from './SettingsModal';
+import { loadGraphData, saveGraphData } from '../utils/fileIO';
+import { graphState } from '../state/graph';
 
 const styles = css`
   display: flex;
@@ -70,6 +72,7 @@ export type MenuBarProps = {
 
 export const MenuBar: FC<MenuBarProps> = ({ onRunGraph }) => {
   const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
+  const [graphData, setGraphData] = useRecoilState(graphState);
 
   return (
     <div css={styles}>
@@ -79,6 +82,12 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph }) => {
         </div>
         <div className="menu-item settings-button">
           <button onClick={() => setSettingsOpen(true)}>Settings</button>
+        </div>
+        <div className="menu-item save-button">
+          <button onClick={() => saveGraphData(graphData)}>Save</button>
+        </div>
+        <div className="menu-item load-button">
+          <button onClick={() => loadGraphData((data) => setGraphData(data))}>Load</button>
         </div>
       </div>
       <div className="run-button">

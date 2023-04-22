@@ -68,7 +68,7 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
         .with({ type: 'boolean' }, (v) => v.value.toString())
         .with({ type: 'number' }, (v) => v.value.toString())
         .with({ type: 'string' }, (v) => v.value)
-        .with({ type: 'string[]' }, (v) => v.value.join(', ')) // TODO \n? configurable?
+        .with({ type: 'string[]' }, (v) => v.value.join('\n')) // TODO configurable?
         .otherwise(() => '');
 
       acc[key] = stringValue;
