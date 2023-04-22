@@ -1,4 +1,4 @@
-import { atom } from 'recoil';
+import { atomFamily } from 'recoil';
 import { NodeId, PortId } from '../model/NodeBase';
 
 export type RunDataByNodeId = {
@@ -17,7 +17,7 @@ export type NodeRunData = {
   };
 };
 
-export const lastRunDataByNodeState = atom<RunDataByNodeId>({
-  key: 'lastData',
-  default: {},
+export const lastRunData = atomFamily<NodeRunData | undefined, NodeId>({
+  key: 'lastRunData',
+  default: undefined,
 });

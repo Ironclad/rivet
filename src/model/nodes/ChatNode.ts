@@ -1,6 +1,6 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, ProcessContext } from '../NodeImpl';
 import * as openai from 'openai';
 
 type PromptItem = {
@@ -28,18 +28,6 @@ export type ChatNodeData = {
 };
 
 export class ChatNodeImpl extends NodeImpl<ChatNode> {
-  #api: openai.OpenAIApi;
-
-  constructor(chartNode: ChatNode) {
-    super(chartNode);
-
-    const config = new openai.Configuration({
-      accessToken: 'TODO',
-    });
-
-    this.#api = new openai.OpenAIApi(config);
-  }
-
   static create(): ChatNode {
     const chartNode: ChatNode = {
       type: 'chat',
@@ -137,22 +125,46 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     return maxMessageNumber + 1;
   }
 
-  async process(inputs: Record<string, any>): Promise<Record<string, any>> {
-    const model = inputs['model'];
-    const temperature = inputs['temperature'];
-    const topP = inputs['top_p'];
-    const messages: PromptItem[] = inputs['messages'];
+  async process(inputs: Record<string, any>, context: ProcessContext): Promise<Record<string, any>> {
+    const config = new openai.Configuration({
+      apiKey: context.settings.openAiKey,
+      organization: context.settings.openAiOrganization,
+    });
+
+    const api = new openai.OpenAIApi(config);
+
+    const model = inputs['model'] || this.chartNode.data.model;
+    const temperature = inputs['temperature'] || this.chartNode.data.temperature;
+    const topP = inputs['top_p'] || this.chartNode.data.top_p;
+    const useTopP = inputs['useTopP'] || this.chartNode.data.useTopP;
+    const messages: openai.ChatCompletionRequestMessage[] = [];
+
+    for (const key in inputs) {
+      if (key.startsWith('message')) {
+        const inputMessage = inputs[key];
+        messages.push({ role: inputMessage.type, content: inputMessage.text });
+      }
+    }
 
     const chatCompletionRequest: openai.CreateChatCompletionRequest = {
       model,
-      temperature,
-      top_p: topP,
+      temperature: useTopP ? undefined : temperature,
+      top_p: useTopP ? topP : undefined,
       messages,
-      stream: false,
+      max_tokens: this.chartNode.data.maxTokens,
+      n: 1,
     };
 
-    await this.#api.createChatCompletion(chatCompletionRequest);
+    try {
+      const { data } = await api.createChatCompletion(chatCompletionRequest);
+      const aiResponse = data.choices[0].message?.content ?? '';
 
-    throw new Error('Not implemented yet');
+      return {
+        response: aiResponse,
+      };
+    } catch (error) {
+      console.error('Error processing ChatNode:', error);
+      throw new Error('Error processing ChatNode');
+    }
   }
 }

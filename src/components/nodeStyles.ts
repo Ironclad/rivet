@@ -10,6 +10,7 @@ export const nodeStyles = css`
     flex-direction: column;
     position: absolute;
     min-width: 300px;
+    max-width: 500px;
     padding: 12px;
     font-family: 'Roboto Mono', monospace;
     /* transition-duration: 0.2s; TODO */
