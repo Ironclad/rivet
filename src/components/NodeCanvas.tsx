@@ -11,7 +11,7 @@ import { useDraggingNode } from '../hooks/useDraggingNode';
 import { useDraggingWire } from '../hooks/useDraggingWire';
 import { ChartNode, NodeConnection } from '../model/NodeBase';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { canvasPositionState, lastMousePositionState } from '../state/graphBuilder';
+import { canvasPositionState, lastMousePositionState, selectedNodeState } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 
 export interface NodeCanvasProps {
@@ -104,9 +104,10 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 }) => {
   const [canvasPosition, setCanvasPosition] = useRecoilState(canvasPositionState);
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0, canvasStartX: 0, canvasStartY: 0 });
   const { clientToCanvasPosition } = useCanvasPositioning();
   const setLastMousePosition = useSetRecoilState(lastMousePositionState);
+  const setSelectedNode = useSetRecoilState(selectedNodeState);
 
   const { draggingNode, onNodeStartDrag, onNodeDragged } = useDraggingNode(nodes, onNodesChanged);
   const { draggingWire, onWireStartDrag, onWireEndDrag } = useDraggingWire(nodes, connections, onConnectionsChanged);
@@ -153,7 +154,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     }
 
     setIsDraggingCanvas(true);
-    setDragStart({ x: e.clientX, y: e.clientY });
+    setDragStart({ x: e.clientX, y: e.clientY, canvasStartX: canvasPosition.x, canvasStartY: canvasPosition.y });
   };
 
   const canvasMouseMove = (e: React.MouseEvent) => {
@@ -164,8 +165,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     const dx = (e.clientX - dragStart.x) * (1 / canvasPosition.zoom);
     const dy = (e.clientY - dragStart.y) * (1 / canvasPosition.zoom);
 
-    setCanvasPosition((prevPos) => ({ x: prevPos.x + dx, y: prevPos.y + dy, zoom: prevPos.zoom }));
-    setDragStart({ x: e.clientX, y: e.clientY });
+    setCanvasPosition({ x: dragStart.canvasStartX + dx, y: dragStart.canvasStartY + dy, zoom: canvasPosition.zoom });
   };
 
   const isScrollable = (element: HTMLElement): boolean => {
@@ -220,7 +220,22 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   };
 
   const canvasMouseUp = (e: React.MouseEvent) => {
+    if (!isDraggingCanvas) {
+      return;
+    }
+
     setIsDraggingCanvas(false);
+
+    const clientDelta = {
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y,
+    };
+
+    // If use hasn't moved mouse much, consider it a "click"
+    const distance = Math.sqrt(clientDelta.x * clientDelta.x + clientDelta.y * clientDelta.y);
+    if (distance < 5) {
+      setSelectedNode(null);
+    }
   };
 
   return (
