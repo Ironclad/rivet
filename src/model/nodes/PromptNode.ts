@@ -73,7 +73,10 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
     const outputValue = this.interpolate(this.chartNode.data.promptText, inputMap);
 
     return {
-      output: outputValue,
+      output: {
+        type: this.chartNode.data.type,
+        text: outputValue,
+      },
     };
   }
 }

@@ -17,7 +17,7 @@ import { PromptNodeBody } from './nodeBodies/PromptNodeBody';
 import { PromptNode } from '../model/nodes/PromptNode';
 import { ChatNode } from '../model/nodes/ChatNode';
 import { ChatNodeBody } from './nodeBodies/ChatNodeBody';
-import { lastRunDataByNodeState } from '../state/dataFlow';
+import { lastRunData } from '../state/dataFlow';
 import { useRecoilValue } from 'recoil';
 import { InterpolateNode } from '../model/nodes/InterpolateNode';
 import { InterpolateNodeBody } from './nodeBodies/InterpolateNodeBody';
@@ -96,8 +96,7 @@ export const ViewNode = memo(
       },
       ref,
     ) => {
-      const lastRunDataByNode = useRecoilValue(lastRunDataByNodeState);
-      const lastRunData = lastRunDataByNode[node.id];
+      const lastRun = useRecoilValue(lastRunData(node.id));
 
       const style: CSSProperties = {
         opacity: isDragging ? '0' : '',

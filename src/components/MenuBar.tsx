@@ -1,6 +1,8 @@
 import { css } from '@emotion/react';
 import { FC } from 'react';
 import { ReactComponent as ChevronRightIcon } from 'majesticons/line/chevron-right-line.svg';
+import { useSetRecoilState } from 'recoil';
+import { settingsModalOpenState } from './SettingsModal';
 
 const styles = css`
   display: flex;
@@ -15,6 +17,24 @@ const styles = css`
   left: 0;
   right: 0;
   height: 32px;
+
+  .left-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .menu-item > button {
+    background-color: transparent;
+    color: #ffffff;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--grey);
+    }
+  }
 
   .dropdown-menu .dropdown-button {
     background-color: transparent;
@@ -49,10 +69,17 @@ export type MenuBarProps = {
 };
 
 export const MenuBar: FC<MenuBarProps> = ({ onRunGraph }) => {
+  const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
+
   return (
     <div css={styles}>
-      <div className="dropdown-menu">
-        <button className="dropdown-button">File</button>
+      <div className="left-menu">
+        <div className="menu-item dropdown-menu">
+          <button className="dropdown-button">File</button>
+        </div>
+        <div className="menu-item settings-button">
+          <button onClick={() => setSettingsOpen(true)}>Settings</button>
+        </div>
       </div>
       <div className="run-button">
         <button onClick={onRunGraph}>

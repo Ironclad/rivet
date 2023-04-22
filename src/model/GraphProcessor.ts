@@ -1,6 +1,6 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition } from './NodeBase';
 import { NodeGraph } from './NodeGraph';
-import { NodeImpl } from './NodeImpl';
+import { NodeImpl, ProcessContext } from './NodeImpl';
 import { Nodes, createNodeInstance } from './Nodes';
 
 export class GraphProcessor {
@@ -42,6 +42,7 @@ export class GraphProcessor {
   }
 
   async processGraph(
+    context: ProcessContext,
     events: {
       onNodeStart?: (node: ChartNode<string, unknown>, inputs: Record<string, unknown>) => void;
       onNodeFinish?: (node: ChartNode<string, unknown>, result: Record<string, unknown>) => void;
@@ -57,14 +58,10 @@ export class GraphProcessor {
     const visitedNodes = new Set();
 
     while (nodesToProcess.length > 0) {
-      const readyNodes = nodesToProcess.filter((node) =>
-        this.#definitions[node.id].inputs.every((input) => {
-          const connections = this.#connections[node.id];
-          if (!connections) {
-            return false;
-          }
-
-          const connectionToInput = connections.find(
+      const readyNodes = nodesToProcess.filter((node) => {
+        const connections = this.#connections[node.id];
+        return this.#definitions[node.id].inputs.every((input) => {
+          const connectionToInput = connections?.find(
             (conn) => conn.inputId === input.id && conn.inputNodeId === node.id,
           );
 
@@ -73,8 +70,8 @@ export class GraphProcessor {
           }
 
           return connectionToInput ? visitedNodes.has(connectionToInput.outputNodeId) : false;
-        }),
-      );
+        });
+      });
 
       if (readyNodes.length === 0) {
         for (const erroredNode of nodesToProcess) {
@@ -86,7 +83,7 @@ export class GraphProcessor {
         throw new Error('There might be a cycle in the graph or an issue with input dependencies.');
       }
 
-      await Promise.all(
+      await Promise.allSettled(
         readyNodes.map(async (node) => {
           nodesToProcess.splice(nodesToProcess.indexOf(node), 1);
 
@@ -107,10 +104,17 @@ export class GraphProcessor {
 
           // Process the node and save its output
           events.onNodeStart?.(node, inputValues);
-          const outputValues = await this.#nodeInstances[node.id].process(inputValues);
-          nodeResults.set(node.id, outputValues);
-          visitedNodes.add(node.id);
-          events.onNodeFinish?.(node, outputValues);
+
+          try {
+            const outputValues = await this.#nodeInstances[node.id].process(inputValues, context);
+
+            nodeResults.set(node.id, outputValues);
+            visitedNodes.add(node.id);
+            events.onNodeFinish?.(node, outputValues);
+          } catch (error) {
+            events.onNodeError?.(node, error as Error);
+            throw error;
+          }
         }),
       );
     }

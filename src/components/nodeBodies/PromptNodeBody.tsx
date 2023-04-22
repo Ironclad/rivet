@@ -29,6 +29,12 @@ export const PromptNodeBody: FC<PromptNodeBodyProps> = ({ node }) => {
         }, '')
         .split('\n')
         .slice(0, 8)
+        .map((line) => {
+          if (line.length >= 50) {
+            return line.slice(0, 50) + '...';
+          }
+          return line;
+        })
         .join('\n')
         .trim(),
     [node.data.promptText],

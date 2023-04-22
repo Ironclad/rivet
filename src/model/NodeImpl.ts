@@ -1,3 +1,4 @@
+import { Settings } from '../state/settings';
 import { ChartNode, NodeConnection, NodeInputDefinition, NodeOutputDefinition } from './NodeBase';
 
 export abstract class NodeImpl<T extends ChartNode<string, unknown>, Type extends T['type'] = T['type']> {
@@ -31,5 +32,9 @@ export abstract class NodeImpl<T extends ChartNode<string, unknown>, Type extend
 
   abstract getOutputDefinitions(connections: NodeConnection[]): NodeOutputDefinition[];
 
-  abstract process(inputData: Record<string, any>): Promise<Record<string, any>>;
+  abstract process(inputData: Record<string, any>, context: ProcessContext): Promise<Record<string, any>>;
 }
+
+export type ProcessContext = {
+  settings: Settings;
+};
