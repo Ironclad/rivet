@@ -2,7 +2,7 @@ import { ChartNode } from './NodeBase';
 import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode';
 import { NodeImpl } from './NodeImpl';
 import { BranchNode, BranchNodeImpl } from './nodes/BranchNode';
-import { InterpolateNode, InterpolateNodeImpl } from './nodes/InterpolateNode';
+import { TextNode, TextNodeImpl } from './nodes/TextNode';
 import { ChatNode, ChatNodeImpl } from './nodes/ChatNode';
 import { PromptNode, PromptNodeImpl } from './nodes/PromptNode';
 import { match } from 'ts-pattern';
@@ -13,7 +13,7 @@ import { MatchNode, MatchNodeImpl } from './nodes/MatchNode';
 export type Nodes =
   | UserInputNode
   | BranchNode
-  | InterpolateNode
+  | TextNode
   | ChatNode
   | PromptNode
   | ExtractRegexNode
@@ -26,7 +26,7 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
   return match(node as Nodes)
     .with({ type: 'userInput' }, (node) => new UserInputNodeImpl(node))
     .with({ type: 'branch' }, (node) => new BranchNodeImpl(node))
-    .with({ type: 'interpolate' }, (node) => new InterpolateNodeImpl(node))
+    .with({ type: 'text' }, (node) => new TextNodeImpl(node))
     .with({ type: 'chat' }, (node) => new ChatNodeImpl(node))
     .with({ type: 'prompt' }, (node) => new PromptNodeImpl(node))
     .with({ type: 'extractRegex' }, (node) => new ExtractRegexNodeImpl(node))
@@ -43,7 +43,7 @@ export function nodeFactory(type: NodeType): Nodes {
   return match(type)
     .with('userInput', () => UserInputNodeImpl.create())
     .with('branch', () => BranchNodeImpl.create())
-    .with('interpolate', () => InterpolateNodeImpl.create())
+    .with('text', () => TextNodeImpl.create())
     .with('chat', () => ChatNodeImpl.create())
     .with('prompt', () => PromptNodeImpl.create())
     .with('extractRegex', () => ExtractRegexNodeImpl.create())
@@ -55,7 +55,7 @@ export function nodeFactory(type: NodeType): Nodes {
 export const nodeDisplayName: Record<NodeType, string> = {
   userInput: 'User Input',
   branch: 'Branch',
-  interpolate: 'Interpolate',
+  text: 'Text',
   chat: 'Chat',
   prompt: 'Prompt',
   extractRegex: 'Extract With Regex',

@@ -89,6 +89,19 @@ export const useDraggingWire = (
           }
         }
 
+        // Check if there's an existing connection to the input port
+        const existingConnectionIndex = connections.findIndex(
+          (c) => inputNode != null && input != null && c.inputNodeId === inputNode.id && c.inputId === input.id,
+        );
+
+        let newConnections = [...connections];
+
+        // If there's an existing connection, remove it
+        if (existingConnectionIndex !== -1) {
+          newConnections.splice(existingConnectionIndex, 1);
+        }
+
+        // Add the new connection
         const connection: NodeConnection = {
           inputNodeId: inputNode.id,
           inputId: input.id,
@@ -96,7 +109,8 @@ export const useDraggingWire = (
           outputId: output.id,
         };
 
-        onConnectionsChanged?.([...connections, connection]);
+        onConnectionsChanged?.([...newConnections, connection]);
+
         setDraggingWire(undefined);
       }
     },

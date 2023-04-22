@@ -1,8 +1,9 @@
-import { DataValue } from './DataValue';
+import { DataValue, StringArrayDataValue, StringDataValue } from './DataValue';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { NodeGraph } from './NodeGraph';
 import { NodeImpl, ProcessContext } from './NodeImpl';
 import { Nodes, createNodeInstance } from './Nodes';
+import { UserInputNode } from './nodes/UserInputNode';
 
 const ControlFlowExcludedSymbol = Symbol('ControlFlowExcluded');
 
@@ -51,6 +52,7 @@ export class GraphProcessor {
       onNodeFinish?: (node: ChartNode, result: Record<string, DataValue>) => void;
       onNodeError?: (node: ChartNode, error: Error) => void;
       onNodeExcluded?: (node: ChartNode) => void;
+      onUserInput?: (userInputNodes: UserInputNode[]) => Promise<StringArrayDataValue[]>;
     } = {},
   ): Promise<Record<string, any>> {
     const outputNodes = this.#graph.nodes.filter((node) => this.#definitions[node.id].outputs.length === 0);
@@ -85,6 +87,17 @@ export class GraphProcessor {
           );
         }
         throw new Error('There might be a cycle in the graph or an issue with input dependencies.');
+      }
+
+      const userInputNodes = readyNodes.filter((node) => node.type === 'userInput') as UserInputNode[];
+      if (userInputNodes.length > 0 && events.onUserInput) {
+        const userInputResults = await events.onUserInput(userInputNodes);
+        userInputResults.forEach((result, index) => {
+          nodeResults.set(userInputNodes[index].id, { ['output' as PortId]: result });
+          visitedNodes.add(userInputNodes[index].id);
+          nodesToProcess.splice(nodesToProcess.indexOf(userInputNodes[index]), 1);
+        });
+        continue;
       }
 
       await Promise.allSettled(

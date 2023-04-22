@@ -4,17 +4,17 @@ import { NodeImpl } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { match } from 'ts-pattern';
 
-export type InterpolateNode = ChartNode<'interpolate', InterpolateNodeData>;
+export type TextNode = ChartNode<'text', TextNodeData>;
 
-export type InterpolateNodeData = {
+export type TextNodeData = {
   text: string;
 };
 
-export class InterpolateNodeImpl extends NodeImpl<InterpolateNode> {
-  static create(text: string = 'Hello {{name}}!'): InterpolateNode {
-    const chartNode: InterpolateNode = {
-      type: 'interpolate',
-      title: 'Interpolate',
+export class TextNodeImpl extends NodeImpl<TextNode> {
+  static create(text: string = 'Hello {{name}}!'): TextNode {
+    const chartNode: TextNode = {
+      type: 'text',
+      title: 'Text',
       id: nanoid() as NodeId,
       visualData: {
         x: 0,
@@ -68,6 +68,7 @@ export class InterpolateNodeImpl extends NodeImpl<InterpolateNode> {
         .with({ type: 'boolean' }, (v) => v.value.toString())
         .with({ type: 'number' }, (v) => v.value.toString())
         .with({ type: 'string' }, (v) => v.value)
+        .with({ type: 'string[]' }, (v) => v.value.join(', ')) // TODO \n? configurable?
         .otherwise(() => '');
 
       acc[key] = stringValue;

@@ -31,6 +31,7 @@ export const nodeStyles = css`
   .node.selected {
     border-color: var(--primary);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 0 10px var(--shadow-primary);
+    z-index: 1000 !important;
   }
 
   .node-title {
@@ -48,6 +49,12 @@ export const nodeStyles = css`
   .grab-area {
     cursor: move;
     flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: -12px;
+    margin-bottom: -12px;
+    padding: 12px 0;
   }
 
   .title-text {
@@ -224,8 +231,14 @@ export const nodeStyles = css`
     position: relative;
     transition: border-color 0.2s ease-out;
     margin-top: 8px;
-    max-height: 500px;
+    max-height: 50px;
+    transition: max-height 0.2s ease-out;
     overflow: auto;
+  }
+
+  .node:hover .node-output,
+  .node.selected .node-output {
+    max-height: 500px;
   }
 
   .node-output.errored {

@@ -1,12 +1,72 @@
-import { ChangeEvent, FC, useEffect, useRef } from 'react';
+import { FC, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { TextNode } from '../../model/nodes/TextNode';
+import { lastRunData } from '../../state/dataFlow';
+import { useRecoilValue } from 'recoil';
+import { PortId } from '../../model/NodeBase';
+import { RenderDataValue } from '../RenderDataValue';
 import { ChartNode } from '../../model/NodeBase';
 import { monaco } from '../../utils/monaco';
 import styled from '@emotion/styled';
-import { PromptNode, PromptNodeData } from '../../model/nodes/PromptNode';
 import { useLatest } from 'ahooks';
-import Toggle from '@atlaskit/toggle';
 
-export type PromptNodeEditorProps = {
+export type TextNodeBodyProps = {
+  node: TextNode;
+};
+
+const Body = styled.div`
+  font-size: 12px;
+
+  pre {
+    white-space: pre-wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`;
+
+export const TextNodeBody: FC<TextNodeBodyProps> = ({ node }) => {
+  const bodyRef = useRef<HTMLPreElement>(null);
+
+  const truncated = useMemo(() => node.data.text.split('\n').slice(0, 15).join('\n').trim(), [node.data.text]);
+
+  useLayoutEffect(() => {
+    monaco.editor.colorizeElement(bodyRef.current!, {
+      theme: 'prompt-interpolation',
+    });
+  }, [truncated]);
+
+  return (
+    <Body>
+      <pre ref={bodyRef} data-lang="prompt-interpolation">
+        {truncated}
+      </pre>
+    </Body>
+  );
+};
+
+export const TextNodeOutput: FC<TextNodeBodyProps> = ({ node }) => {
+  const output = useRecoilValue(lastRunData(node.id));
+
+  if (!output) {
+    return null;
+  }
+
+  if (output.status?.status === 'error') {
+    return <div>Error: {output.status.error}</div>;
+  }
+
+  if (!output.outputData) {
+    return null;
+  }
+
+  const outputText = output.outputData['output' as PortId];
+  return (
+    <pre>
+      <RenderDataValue value={outputText} />
+    </pre>
+  );
+};
+
+export type TextNodeEditorProps = {
   node: ChartNode;
   onChange?: (node: ChartNode) => void;
 };
@@ -86,26 +146,13 @@ const Container = styled.div`
   }
 `;
 
-const handleInputChange =
-  (key: keyof PromptNodeData, node: PromptNode, onChange?: (node: ChartNode<'prompt', PromptNodeData>) => void) =>
-  (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
-    onChange?.({
-      ...node,
-      data: {
-        ...node.data,
-        [key]: value,
-      },
-    });
-  };
-
-export const PromptNodeEditor: FC<PromptNodeEditorProps> = ({ node, onChange }) => {
+export const TextNodeEditor: FC<TextNodeEditorProps> = ({ node, onChange }) => {
   const editorContainer = useRef<HTMLDivElement>(null);
-  const promptNode = node as PromptNode;
+  const TextNode = node as TextNode;
   const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
 
   const onChangeLatest = useLatest(onChange);
-  const nodeLatest = useLatest(promptNode);
+  const nodeLatest = useLatest(TextNode);
 
   useEffect(() => {
     if (!editorContainer.current) {
@@ -123,7 +170,7 @@ export const PromptNodeEditor: FC<PromptNodeEditorProps> = ({ node, onChange }) 
       minimap: {
         enabled: false,
       },
-      value: nodeLatest.current?.data.promptText,
+      value: nodeLatest.current?.data.text,
       wordWrap: 'on',
     });
     editor.onDidChangeModelContent(() => {
@@ -131,7 +178,7 @@ export const PromptNodeEditor: FC<PromptNodeEditorProps> = ({ node, onChange }) 
         ...nodeLatest.current,
         data: {
           ...nodeLatest.current?.data,
-          promptText: editor.getValue(),
+          text: editor.getValue(),
         },
       });
     });
@@ -146,36 +193,13 @@ export const PromptNodeEditor: FC<PromptNodeEditorProps> = ({ node, onChange }) 
 
   useEffect(() => {
     if (editorInstance.current) {
-      editorInstance.current.setValue(nodeLatest.current?.data.promptText);
+      editorInstance.current.setValue(nodeLatest.current?.data.text);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [node.id]);
 
   return (
     <Container>
-      <div className="options">
-        <div className="row">
-          <label className="label" htmlFor="model">
-            Type
-          </label>
-          <select
-            id="model"
-            className="select"
-            value={promptNode.data.type}
-            onChange={handleInputChange('type', promptNode, onChange)}
-          >
-            <option value="user">User</option>
-            <option value="system">System</option>
-            <option value="ai">AI</option>
-          </select>
-          <Toggle
-            id="useModelInput"
-            isChecked={promptNode.data.useTypeInput}
-            onChange={handleInputChange('useTypeInput', promptNode, onChange)}
-          />
-        </div>
-      </div>
-
       <div ref={editorContainer} className="editor-container" />
     </Container>
   );

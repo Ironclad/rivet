@@ -4,6 +4,7 @@ export type DataValueDef<Type extends string, RuntimeType> = {
 };
 
 export type StringDataValue = DataValueDef<'string', string>;
+export type StringArrayDataValue = DataValueDef<'string[]', string[]>;
 export type NumberDataValue = DataValueDef<'number', number>;
 export type BoolDataValue = DataValueDef<'boolean', boolean>;
 
@@ -28,13 +29,18 @@ export type DataValue =
   | DateTimeDataValue
   | BoolDataValue
   | ChatMessageDataValue
-  | ControlFlowExcludedDataValue;
+  | ControlFlowExcludedDataValue
+  | StringArrayDataValue;
 
 export type DataType = DataValue['type'];
 
 export type GetDataValue<Type extends DataType> = Extract<DataValue, { type: Type }>;
 
 export function expectType<T extends DataType>(value: DataValue | undefined, type: T): GetDataValue<T>['value'] {
+  if (type.endsWith('[]') && value?.type === 'string') {
+    return [value.value] as GetDataValue<T>['value'];
+  }
+
   if (value?.type !== type) {
     throw new Error(`Expected value of type ${type} but got ${value?.type}`);
   }
