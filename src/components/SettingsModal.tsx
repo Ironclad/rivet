@@ -30,6 +30,7 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
             <Field name="api-key" label="OpenAI API Key">
               {() => (
                 <TextField
+                  type="password"
                   value={settings.openAiKey}
                   onChange={(e) => setSettings((s) => ({ ...s, openAiKey: (e.target as HTMLInputElement).value }))}
                 />
