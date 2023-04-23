@@ -1,4 +1,4 @@
-import { DataValue, StringArrayDataValue, StringDataValue } from './DataValue';
+import { DataValue, StringArrayDataValue } from './DataValue';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { NodeGraph } from './NodeGraph';
 import { NodeImpl, ProcessContext } from './NodeImpl';
@@ -101,7 +101,7 @@ export class GraphProcessor {
           const userInputInputValues: Record<PortId, DataValue>[] = [];
 
           for (const node of userInputNodes) {
-            const inputValues = this.#getInputValuesForNode(node, nodeResults, events);
+            const inputValues = this.#getInputValuesForNode(node, nodeResults);
             if (this.#excludedDueToControlFlow(node, nodeResults, inputValues, events, visitedNodes)) {
               continue;
             }
@@ -110,19 +110,21 @@ export class GraphProcessor {
             events.onNodeStart?.(node, inputValues);
           }
 
-          const userInputResults = await events.onUserInput(validUserInputNodes, userInputInputValues);
-          userInputResults.forEach((result, index) => {
-            const node = validUserInputNodes[index];
-            const outputValues = (this.#nodeInstances[node.id] as UserInputNodeImpl).getOutputValuesFromUserInput(
-              userInputInputValues[index],
-              result,
-            );
-            nodeResults.set(node.id, outputValues);
-            visitedNodes.add(node.id);
-            nodesToProcess.splice(nodesToProcess.indexOf(node), 1);
-            events.onNodeFinish?.(node, outputValues);
-          });
-          continue;
+          if (validUserInputNodes.length > 0) {
+            const userInputResults = await events.onUserInput(validUserInputNodes, userInputInputValues);
+            userInputResults.forEach((result, index) => {
+              const node = validUserInputNodes[index];
+              const outputValues = (this.#nodeInstances[node.id] as UserInputNodeImpl).getOutputValuesFromUserInput(
+                userInputInputValues[index],
+                result,
+              );
+              nodeResults.set(node.id, outputValues);
+              visitedNodes.add(node.id);
+              nodesToProcess.splice(nodesToProcess.indexOf(node), 1);
+              events.onNodeFinish?.(node, outputValues);
+            });
+            continue;
+          }
         } catch (error) {
           for (const node of userInputNodes) {
             events.onNodeError?.(node, error as Error);
@@ -135,7 +137,7 @@ export class GraphProcessor {
         readyNodes.map(async (node) => {
           nodesToProcess.splice(nodesToProcess.indexOf(node), 1);
 
-          const inputValues = this.#getInputValuesForNode(node, nodeResults, events);
+          const inputValues = this.#getInputValuesForNode(node, nodeResults);
 
           if (this.#excludedDueToControlFlow(node, nodeResults, inputValues, events, visitedNodes)) {
             return;
@@ -201,11 +203,7 @@ export class GraphProcessor {
     return false;
   }
 
-  #getInputValuesForNode(
-    node: ChartNode,
-    nodeResults: NodeResults,
-    { onNodeExcluded }: { onNodeExcluded?: (node: ChartNode) => void },
-  ): Record<PortId, DataValue> {
+  #getInputValuesForNode(node: ChartNode, nodeResults: NodeResults): Record<PortId, DataValue> {
     const connections = this.#connections[node.id];
     return this.#definitions[node.id].inputs.reduce((values, input) => {
       if (!connections) {
@@ -215,11 +213,6 @@ export class GraphProcessor {
       if (connection) {
         const outputNode = this.#nodeInstances[connection.outputNodeId].chartNode;
         const outputResult = nodeResults.get(outputNode.id)?.[connection.outputId];
-
-        if (outputResult?.type === 'control-flow-excluded') {
-          onNodeExcluded?.(node);
-          return values;
-        }
 
         values[input.id] = outputResult;
       }

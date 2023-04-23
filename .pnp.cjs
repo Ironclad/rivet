@@ -57,6 +57,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@storybook/testing-library", "npm:0.0.14-next.1"],\
             ["@svgr/webpack", "npm:5.5.0"],\
             ["@swc/core", "npm:1.3.42"],\
+            ["@tauri-apps/api", "npm:1.2.0"],\
             ["@tauri-apps/cli", "npm:1.2.3"],\
             ["@types/lodash-es", "npm:4.17.7"],\
             ["@types/node", "npm:16.18.20"],\
@@ -124,6 +125,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["type-fest", "npm:3.7.1"],\
             ["typescript", "patch:typescript@npm%3A5.0.2#~builtin<compat/typescript>::version=5.0.2&hash=85af82"],\
             ["vite", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:4.2.1"],\
+            ["vite-plugin-monaco-editor", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:1.1.0"],\
             ["vite-plugin-svgr", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:2.4.0"],\
             ["vite-tsconfig-paths", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:4.0.7"],\
             ["web-vitals", "npm:2.1.4"],\
@@ -7833,6 +7835,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@tauri-apps/api", [\
+        ["npm:1.2.0", {\
+          "packageLocation": "./.yarn/cache/@tauri-apps-api-npm-1.2.0-71fff21a2b-15b0b805d9.zip/node_modules/@tauri-apps/api/",\
+          "packageDependencies": [\
+            ["@tauri-apps/api", "npm:1.2.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@tauri-apps/cli", [\
         ["npm:1.2.3", {\
           "packageLocation": "./.yarn/cache/@tauri-apps-cli-npm-1.2.3-22b0275a01-1df8404183.zip/node_modules/@tauri-apps/cli/",\
@@ -9397,6 +9408,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@storybook/testing-library", "npm:0.0.14-next.1"],\
             ["@svgr/webpack", "npm:5.5.0"],\
             ["@swc/core", "npm:1.3.42"],\
+            ["@tauri-apps/api", "npm:1.2.0"],\
             ["@tauri-apps/cli", "npm:1.2.3"],\
             ["@types/lodash-es", "npm:4.17.7"],\
             ["@types/node", "npm:16.18.20"],\
@@ -9464,6 +9476,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["type-fest", "npm:3.7.1"],\
             ["typescript", "patch:typescript@npm%3A5.0.2#~builtin<compat/typescript>::version=5.0.2&hash=85af82"],\
             ["vite", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:4.2.1"],\
+            ["vite-plugin-monaco-editor", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:1.1.0"],\
             ["vite-plugin-svgr", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:2.4.0"],\
             ["vite-tsconfig-paths", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:4.0.7"],\
             ["web-vitals", "npm:2.1.4"],\
@@ -22537,6 +22550,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "stylus",\
             "sugarss",\
             "terser"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["vite-plugin-monaco-editor", [\
+        ["npm:1.1.0", {\
+          "packageLocation": "./.yarn/cache/vite-plugin-monaco-editor-npm-1.1.0-658baab5bb-9b3d3010d2.zip/node_modules/vite-plugin-monaco-editor/",\
+          "packageDependencies": [\
+            ["vite-plugin-monaco-editor", "npm:1.1.0"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:1.1.0", {\
+          "packageLocation": "./.yarn/__virtual__/vite-plugin-monaco-editor-virtual-c561fc97b0/0/cache/vite-plugin-monaco-editor-npm-1.1.0-658baab5bb-9b3d3010d2.zip/node_modules/vite-plugin-monaco-editor/",\
+          "packageDependencies": [\
+            ["vite-plugin-monaco-editor", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:1.1.0"],\
+            ["@types/monaco-editor", null],\
+            ["monaco-editor", "npm:0.37.1"]\
+          ],\
+          "packagePeers": [\
+            "@types/monaco-editor",\
+            "monaco-editor"\
           ],\
           "linkType": "HARD"\
         }]\
