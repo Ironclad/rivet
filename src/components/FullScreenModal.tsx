@@ -1,6 +1,6 @@
 import { FC, ReactNode } from 'react';
 import { css } from '@emotion/react';
-import { Portal } from '@mui/material';
+import Portal from '@atlaskit/portal';
 
 interface FullScreenModalProps {
   isOpen: boolean;

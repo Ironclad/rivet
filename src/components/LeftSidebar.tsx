@@ -1,6 +1,5 @@
 import { css } from '@emotion/react';
 import { FC, useState } from 'react';
-import { InlineEditableTextArea } from './InlineEditableTextArea';
 import { useRecoilState } from 'recoil';
 import { graphState } from '../state/graph';
 import { savedGraphsState } from '../state/savedGraphs';
@@ -13,6 +12,7 @@ import Button from '@atlaskit/button';
 import { ReactComponent as MoreIcon } from 'majesticons/line/more-menu-vertical-line.svg';
 import { ReactComponent as ExpandLeftIcon } from 'majesticons/line/menu-expand-left-line.svg';
 import { ReactComponent as ExpandRightIcon } from 'majesticons/line/menu-expand-right-line.svg';
+import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 
 const styles = css`
   position: fixed;
@@ -118,18 +118,20 @@ export const LeftSidebar: FC = () => {
         {isSidebarVisible ? <ExpandLeftIcon /> : <ExpandRightIcon />}
       </div>
       <div className="graph-info-section">
-        <label>Graph Name</label>
-        <InlineEditableTextArea
+        <InlineEditableTextfield
+          label="Graph Name"
           placeholder="Graph Name"
-          value={graph.metadata?.name ?? 'Untitled Graph'}
-          onChange={(newValue) => setGraph({ ...graph, metadata: { ...graph.metadata, name: newValue } })}
+          onConfirm={(newValue) => setGraph({ ...graph, metadata: { ...graph.metadata, name: newValue } })}
+          defaultValue={graph.metadata?.name ?? 'Untitled Graph'}
+          readViewFitContainerWidth
         />
 
-        <label>Description</label>
-        <InlineEditableTextArea
+        <InlineEditableTextfield
+          label="Description"
           placeholder="Graph Description"
-          value={graph.metadata?.description ?? ''}
-          onChange={(newValue) => setGraph({ ...graph, metadata: { ...graph.metadata, description: newValue } })}
+          defaultValue={graph.metadata?.description ?? ''}
+          onConfirm={(newValue) => setGraph({ ...graph, metadata: { ...graph.metadata, description: newValue } })}
+          readViewFitContainerWidth
         />
       </div>
       <div className="graphs-section">
