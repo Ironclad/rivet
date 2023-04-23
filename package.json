@@ -125,6 +125,7 @@
     "@storybook/react-vite": "^7.0.0-rc.8",
     "@storybook/react-webpack5": "^7.0.0-rc.8",
     "@storybook/testing-library": "^0.0.14-next.1",
+    "@tauri-apps/cli": "^1.2.3",
     "@types/lodash-es": "^4",
     "@types/yargs": "^17",
     "@vitejs/plugin-react": "^3.1.0",
