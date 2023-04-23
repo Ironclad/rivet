@@ -1,4 +1,4 @@
-# AI Storyboarding Tool
+# Nodai
 
 This is an internal project for creating an AI storyboarding tool that allows users to create a series of prompts for a language model in a choose-your-own-adventure format. The tool is inspired by node-based editors, like the one found in Blender, and provides a user-friendly interface for crafting interactive stories with an AI language model.
 
