@@ -11,7 +11,7 @@ import { MouseEvent, FC } from 'react';
 import { createUnknownNodeInstance } from '../model/Nodes';
 import { useRecoilValue } from 'recoil';
 import { canvasPositionState } from '../state/graphBuilder';
-import { ViewNode } from './ViewNode';
+import { VisualNode } from './VisualNode';
 import { useStableCallback } from '../hooks/useStableCallback';
 
 interface DraggableNodeProps {
@@ -35,7 +35,7 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
   const { zoom } = useRecoilValue(canvasPositionState);
 
   return (
-    <ViewNode
+    <VisualNode
       ref={setNodeRef}
       isSelected={isSelected}
       node={node}

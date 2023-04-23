@@ -2,7 +2,7 @@ import { DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
 import { DraggableNode } from './DraggableNode';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { ContextMenu } from './ContextMenu';
 import { CSSTransition } from 'react-transition-group';
 import { WireLayer } from './WireLayer';
@@ -13,9 +13,9 @@ import { ChartNode, NodeConnection } from '../model/NodeBase';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { canvasPositionState, lastMousePositionState, selectedNodeState } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
-import { ViewNode } from './ViewNode';
+import { VisualNode } from './VisualNode';
 import { useStableCallback } from '../hooks/useStableCallback';
-import { useDebounceFn, useThrottleFn } from 'ahooks';
+import { useThrottleFn } from 'ahooks';
 
 export interface NodeCanvasProps {
   nodes: ChartNode[];
@@ -304,7 +304,12 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
         <DragOverlay dropAnimation={null}>
           {draggingNode ? (
-            <ViewNode node={draggingNode} connections={draggingNodeConnections} isOverlay scale={canvasPosition.zoom} />
+            <VisualNode
+              node={draggingNode}
+              connections={draggingNodeConnections}
+              isOverlay
+              scale={canvasPosition.zoom}
+            />
           ) : null}
         </DragOverlay>
       </div>

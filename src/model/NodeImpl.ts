@@ -1,6 +1,6 @@
 import { Settings } from '../state/settings';
 import { DataValue } from './DataValue';
-import { ChartNode, NodeConnection, NodeInputDefinition, NodeOutputDefinition } from './NodeBase';
+import { ChartNode, NodeConnection, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { NativeApi } from './native/NativeApi';
 
 export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['type']> {
@@ -34,7 +34,11 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
 
   abstract getOutputDefinitions(connections: NodeConnection[]): NodeOutputDefinition[];
 
-  abstract process(inputData: Record<string, DataValue>, context: ProcessContext): Promise<Record<string, DataValue>>;
+  abstract process(
+    inputData: Record<PortId, DataValue>,
+    context: ProcessContext,
+    onPartialOutputs?: (outputs: Record<PortId, DataValue>) => void,
+  ): Promise<Record<PortId, DataValue>>;
 }
 
 export type ProcessContext = {

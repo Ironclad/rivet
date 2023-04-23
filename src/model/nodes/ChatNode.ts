@@ -1,13 +1,16 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { NodeImpl, ProcessContext } from '../NodeImpl';
-import * as openai from 'openai';
-import { DataValue, expectType, expectTypeOptional } from '../DataValue';
-
-type PromptItem = {
-  role: 'user' | 'system';
-  content: string;
-};
+import { DataValue, expectTypeOptional } from '../DataValue';
+import { AxiosError } from 'axios';
+import {
+  assertValidModel,
+  getTokenCountForMessages,
+  modelMaxTokens,
+  modelToTiktokenModel,
+} from '../../utils/tokenizer';
+import { addWarning } from '../../utils/outputs';
+import { ChatCompletionRequestMessage, streamChatCompletions } from '../../utils/openai';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 
@@ -127,23 +130,26 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     return maxMessageNumber + 1;
   }
 
-  async process(inputs: Record<string, DataValue>, context: ProcessContext): Promise<Record<string, DataValue>> {
-    const config = new openai.Configuration({
-      apiKey: context.settings.openAiKey,
-      organization: context.settings.openAiOrganization,
-    });
+  async process(
+    inputs: Record<PortId, DataValue>,
+    context: ProcessContext,
+    onPartialOutputs: (outputs: Record<PortId, DataValue>) => void,
+  ): Promise<Record<PortId, DataValue>> {
+    const output: Record<PortId, DataValue> = {};
 
-    const api = new openai.OpenAIApi(config);
+    const model = expectTypeOptional(inputs['model' as PortId], 'string') ?? this.chartNode.data.model;
+    assertValidModel(model);
 
-    const model = expectTypeOptional(inputs['model'], 'string') ?? this.chartNode.data.model;
-    const temperature = expectTypeOptional(inputs['temperature'], 'number') ?? this.chartNode.data.temperature;
-    const topP = expectTypeOptional(inputs['top_p'], 'number') ?? this.chartNode.data.top_p;
-    const useTopP = expectTypeOptional(inputs['useTopP'], 'boolean') ?? this.chartNode.data.useTopP;
-    const messages: openai.ChatCompletionRequestMessage[] = [];
+    const temperature =
+      expectTypeOptional(inputs['temperature' as PortId], 'number') ?? this.chartNode.data.temperature;
+    const topP = expectTypeOptional(inputs['top_p' as PortId], 'number') ?? this.chartNode.data.top_p;
+    const useTopP = expectTypeOptional(inputs['useTopP' as PortId], 'boolean') ?? this.chartNode.data.useTopP;
+    const messages: ChatCompletionRequestMessage[] = [];
+    let { maxTokens } = this.chartNode.data;
 
     for (const key in inputs) {
       if (key.startsWith('message')) {
-        const inputMessage = expectTypeOptional(inputs[key], 'chat-message');
+        const inputMessage = expectTypeOptional(inputs[key as PortId], 'chat-message');
 
         if (inputMessage) {
           messages.push({ role: inputMessage.type, content: inputMessage.message });
@@ -151,28 +157,61 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       }
     }
 
-    const chatCompletionRequest: openai.CreateChatCompletionRequest = {
-      model,
-      temperature: useTopP ? undefined : temperature,
-      top_p: useTopP ? topP : undefined,
-      messages,
-      max_tokens: this.chartNode.data.maxTokens,
-      n: 1,
-    };
+    const tokenCount = getTokenCountForMessages(messages, modelToTiktokenModel[model]);
+
+    if (tokenCount >= modelMaxTokens[model]) {
+      throw new Error(
+        `The model ${model} can only handle ${modelMaxTokens[model]} tokens, but ${tokenCount} were provided in the prompts alone.`,
+      );
+    }
+
+    if (tokenCount + maxTokens > modelMaxTokens[model]) {
+      const message = `The model can only handle a maximum of ${
+        modelMaxTokens[model]
+      } tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${
+        modelMaxTokens[model] - tokenCount
+      }.`;
+      addWarning(output, message);
+      maxTokens = Math.floor((modelMaxTokens[model] - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
+    }
 
     try {
-      const { data } = await api.createChatCompletion(chatCompletionRequest);
-      const aiResponse = data.choices[0].message?.content ?? '';
-
-      return {
-        response: {
-          type: 'string',
-          value: aiResponse,
+      const chunks = streamChatCompletions({
+        auth: {
+          apiKey: context.settings.openAiKey,
+          organization: context.settings.openAiOrganization,
         },
-      };
+        messages,
+        model,
+        temperature: useTopP ? undefined : temperature,
+        top_p: useTopP ? topP : undefined,
+        max_tokens: maxTokens,
+        n: 1,
+      });
+
+      let responseParts: string[] = [];
+
+      for await (const chunk of chunks) {
+        responseParts.push(chunk);
+
+        output['response' as PortId] = {
+          type: 'string',
+          value: responseParts.join(''),
+        };
+
+        onPartialOutputs?.(output);
+      }
+
+      return output;
     } catch (error) {
-      console.error('Error processing ChatNode:', error);
-      throw new Error('Error processing ChatNode');
+      const axiosError = error as AxiosError;
+      if (axiosError.isAxiosError) {
+        console.error('Error processing ChatNode:', axiosError.response);
+        throw new Error(`Error processing ChatNode: ${JSON.stringify(axiosError.response)}`);
+      } else {
+        console.error('Error processing ChatNode:', error);
+        throw new Error(`Error processing ChatNode: ${(error as Error).message}`);
+      }
     }
   }
 }
