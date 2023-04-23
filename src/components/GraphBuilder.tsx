@@ -1,4 +1,4 @@
-import { FC, useCallback } from 'react';
+import { FC } from 'react';
 import { NodeCanvas } from './NodeCanvas';
 import { useRecoilState } from 'recoil';
 import { connectionsSelector } from '../state/graph';
@@ -54,6 +54,12 @@ export const GraphBuilder: FC = () => {
     if (menuItemId.startsWith('Delete:')) {
       const nodeId = menuItemId.substring(7) as NodeId;
       removeNode(nodeId);
+      return;
+    }
+
+    if (menuItemId.startsWith('Edit:')) {
+      const nodeId = menuItemId.substring(5) as NodeId;
+      setSelectedNode(nodeId);
       return;
     }
   });

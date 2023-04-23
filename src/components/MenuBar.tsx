@@ -1,14 +1,11 @@
 import { css } from '@emotion/react';
 import { FC } from 'react';
 import { ReactComponent as ChevronRightIcon } from 'majesticons/line/chevron-right-line.svg';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { settingsModalOpenState } from './SettingsModal';
 import { loadGraphData, saveGraphData } from '../utils/fileIO';
 import { graphState } from '../state/graph';
-import { savedGraphsState } from '../state/savedGraphs';
-import { GraphId, emptyNodeGraph } from '../model/NodeGraph';
-import { nanoid } from 'nanoid';
-import produce from 'immer';
+import { emptyNodeGraph } from '../model/NodeGraph';
 import { useSaveCurrentGraph } from '../hooks/useSaveCurrentGraph';
 
 const styles = css`

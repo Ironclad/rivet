@@ -53,6 +53,12 @@ code {
   --error-dark: #c0392b;
   --error-light: #fa5846;
 
+  /* Warning colors */
+  --warning: #f1c40f;
+  --warning-dark: #c29d0b;
+  --warning-light: #f5d76e;
+  --warning-lighter: rgba(241, 196, 15, 0.3);
+
   /* Shadows */
   --shadow: rgba(0, 0, 0, 0.2);
   --shadow-dark: rgba(0, 0, 0, 0.4);

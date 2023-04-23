@@ -11,7 +11,7 @@ import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog
 import { ReactComponent as SendIcon } from 'majesticons/solid/send.svg';
 import { ReactComponent as PinwheelIcon } from 'majesticons/line/pinwheel-line.svg';
 
-export type ViewNodeProps = {
+export type VisualNodeProps = {
   node: ChartNode;
   connections?: NodeConnection[];
   xDelta?: number;
@@ -28,8 +28,8 @@ export type ViewNodeProps = {
   handleAttributes?: HTMLAttributes<HTMLDivElement>;
 };
 
-export const ViewNode = memo(
-  forwardRef<HTMLDivElement, ViewNodeProps>(
+export const VisualNode = memo(
+  forwardRef<HTMLDivElement, VisualNodeProps>(
     (
       {
         node,

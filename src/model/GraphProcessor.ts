@@ -1,11 +1,10 @@
+import { ControlFlowExcluded } from '../utils/symbols';
 import { DataValue, StringArrayDataValue } from './DataValue';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { NodeGraph } from './NodeGraph';
 import { NodeImpl, ProcessContext } from './NodeImpl';
 import { Nodes, createNodeInstance } from './Nodes';
 import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode';
-
-const ControlFlowExcludedSymbol = Symbol('ControlFlowExcluded');
 
 export type NodeResults = Map<string, Record<PortId, DataValue>>;
 
@@ -50,14 +49,15 @@ export class GraphProcessor {
   async processGraph(
     context: ProcessContext,
     events: {
-      onNodeStart?: (node: ChartNode, inputs: Record<string, DataValue>) => void;
-      onNodeFinish?: (node: ChartNode, result: Record<string, DataValue>) => void;
+      onNodeStart?: (node: ChartNode, inputs: Record<PortId, DataValue>) => void;
+      onNodeFinish?: (node: ChartNode, result: Record<PortId, DataValue>) => void;
       onNodeError?: (node: ChartNode, error: Error) => void;
       onNodeExcluded?: (node: ChartNode) => void;
       onUserInput?: (
         userInputNodes: UserInputNode[],
         inputs: Record<PortId, DataValue>[],
       ) => Promise<StringArrayDataValue[]>;
+      onPartialOutputs?: (node: ChartNode, outputs: Record<PortId, DataValue>) => void;
     } = {},
   ): Promise<Record<string, any>> {
     const outputNodes = this.#graph.nodes.filter((node) => this.#definitions[node.id].outputs.length === 0);
@@ -147,7 +147,9 @@ export class GraphProcessor {
           events.onNodeStart?.(node, inputValues);
 
           try {
-            const outputValues = await this.#nodeInstances[node.id].process(inputValues, context);
+            const outputValues = await this.#nodeInstances[node.id].process(inputValues, context, (partialOutputs) =>
+              events.onPartialOutputs?.(node, partialOutputs),
+            );
 
             nodeResults.set(node.id, outputValues);
             visitedNodes.add(node.id);
@@ -185,7 +187,7 @@ export class GraphProcessor {
 
     const anyOutputIsExcludedValue = outputNodes.some((outputNode) => {
       const outputValues = nodeResults.get(outputNode.id) ?? {};
-      if (outputValues[ControlFlowExcludedSymbol as unknown as PortId]) {
+      if (outputValues[ControlFlowExcluded as unknown as PortId]) {
         return true;
       }
       return false;
@@ -195,7 +197,7 @@ export class GraphProcessor {
       onNodeExcluded?.(node);
       visitedNodes.add(node.id);
       nodeResults.set(node.id, {
-        [ControlFlowExcludedSymbol as unknown as PortId]: { type: 'control-flow-excluded', value: undefined },
+        [ControlFlowExcluded as unknown as PortId]: { type: 'control-flow-excluded', value: undefined },
       });
       return true;
     }

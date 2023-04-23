@@ -23,6 +23,8 @@ import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-line.svg'
 import { ReactComponent as ExpandIcon } from 'majesticons/line/maximize-line.svg';
 import { FullScreenModal } from './FullScreenModal';
 import { css } from '@emotion/react';
+import { WarningsPort } from '../utils/symbols';
+import { getWarnings } from '../utils/outputs';
 
 const fullscreenOutputButtonsCss = css`
   position: absolute;
@@ -50,6 +52,10 @@ export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   const nodeOutput = useRecoilValue(lastRunData(node.id));
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  if (!nodeOutput?.status) {
+    return null;
+  }
+
   const outputBody = match(node)
     .with({ type: 'prompt' }, (node) => <PromptNodeOutput node={node as PromptNode} />)
     .with({ type: 'chat' }, (node) => <ChatNodeOutput node={node as ChatNode} />)
@@ -59,10 +65,6 @@ export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
     .with({ type: 'match' }, (node) => <MatchNodeOutput node={node as MatchNode} />)
     .with({ type: 'userInput' }, (node) => <UserInputNodeOutput node={node as UserInputNode} />)
     .otherwise(() => null);
-
-  if (!nodeOutput?.status) {
-    return null;
-  }
 
   const fullscreenOutputBody = match(node)
     .with({ type: 'chat' }, (node) => <FullscreenChatNodeOutput node={node as ChatNode} />)
@@ -121,6 +123,15 @@ export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
       >
         {outputBody}
       </div>
+      {getWarnings(nodeOutput?.outputData) && (
+        <div className="node-output-warnings">
+          {getWarnings(nodeOutput?.outputData)!.map((warning) => (
+            <div className="node-output-warning" key={warning}>
+              {warning}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 });

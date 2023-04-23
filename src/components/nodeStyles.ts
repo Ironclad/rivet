@@ -240,6 +240,29 @@ export const nodeStyles = css`
     overflow: hidden;
   }
 
+  .node-output-warnings {
+    background-color: var(--grey-darker);
+    background-image: linear-gradient(to bottom, var(--grey-darker) 0%, var(--grey-darkest) 100%);
+    border-radius: 0 0 8px 8px;
+    border-top: 2px solid var(--warning-light);
+    color: var(--foreground-bright);
+    font-size: 12px;
+    line-height: 1.4;
+    margin: -2px -12px -12px -12px;
+    padding: 12px;
+    position: relative;
+    transition: border-color 0.2s ease-out;
+    margin-top: 8px;
+    max-height: 50px;
+    transition: max-height 0.2s ease-out;
+    overflow: hidden;
+  }
+
+  .node-output-warnings:hover {
+    max-height: 500px;
+    overflow: auto;
+  }
+
   .node.error .node-output-inner {
     border-top-color: var(--error-light);
   }

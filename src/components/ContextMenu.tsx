@@ -5,6 +5,7 @@ import { CSSTransition } from 'react-transition-group';
 import { NodeType } from '../model/Nodes';
 import { ContextMenuData } from '../hooks/useContextMenu';
 import { ReactComponent as DeleteIcon } from 'majesticons/line/delete-bin-line.svg';
+import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
 
 interface ContextMenuProps {
   x: number;
@@ -211,18 +212,32 @@ const BlankAreaContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSelect
 const NodeContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSelected'>> = ({ data, onMenuItemSelected }) => {
   const nodeId = data?.element.dataset.nodeId;
 
+  const editNode = useCallback(() => {
+    onMenuItemSelected?.(`Edit:${nodeId}`);
+  }, [nodeId, onMenuItemSelected]);
+
   const deleteNode = useCallback(() => {
     onMenuItemSelected?.(`Delete:${nodeId}`);
   }, [nodeId, onMenuItemSelected]);
 
   return (
-    <MenuItem
-      label={
-        <>
-          <DeleteIcon /> Delete
-        </>
-      }
-      onClick={deleteNode}
-    />
+    <>
+      <MenuItem
+        label={
+          <>
+            <SettingsCogIcon /> Edit
+          </>
+        }
+        onClick={editNode}
+      />
+      <MenuItem
+        label={
+          <>
+            <DeleteIcon /> Delete
+          </>
+        }
+        onClick={deleteNode}
+      />
+    </>
   );
 };
