@@ -14,6 +14,8 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { canvasPositionState, lastMousePositionState, selectedNodeState } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { ViewNode } from './ViewNode';
+import { useStableCallback } from '../hooks/useStableCallback';
+import { useDebounceFn, useThrottleFn } from 'ahooks';
 
 export interface NodeCanvasProps {
   nodes: ChartNode[];
@@ -137,15 +139,12 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
       : [];
   }, [connections, draggingNode]);
 
-  const contextMenuItemSelected = useCallback(
-    (menuItemId: string) => {
-      onContextMenuItemSelected?.(menuItemId, contextMenuData);
-      setShowContextMenu(false);
-    },
-    [contextMenuData, onContextMenuItemSelected, setShowContextMenu],
-  );
+  const contextMenuItemSelected = useStableCallback((menuItemId: string) => {
+    onContextMenuItemSelected?.(menuItemId, contextMenuData);
+    setShowContextMenu(false);
+  });
 
-  const canvasMouseDown = (e: React.MouseEvent) => {
+  const canvasMouseDown = useStableCallback((e: React.MouseEvent) => {
     if (e.button !== 0) {
       return;
     }
@@ -156,9 +155,9 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
     setIsDraggingCanvas(true);
     setDragStart({ x: e.clientX, y: e.clientY, canvasStartX: canvasPosition.x, canvasStartY: canvasPosition.y });
-  };
+  });
 
-  const canvasMouseMove = (e: React.MouseEvent) => {
+  const canvasMouseMove = useStableCallback((e: React.MouseEvent) => {
     setLastMousePosition({ x: e.clientX, y: e.clientY });
 
     if (!isDraggingCanvas) return;
@@ -167,7 +166,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     const dy = (e.clientY - dragStart.y) * (1 / canvasPosition.zoom);
 
     setCanvasPosition({ x: dragStart.canvasStartX + dx, y: dragStart.canvasStartY + dy, zoom: canvasPosition.zoom });
-  };
+  });
 
   const isScrollable = (element: HTMLElement): boolean => {
     const style = window.getComputedStyle(element);
@@ -190,36 +189,43 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     return false;
   };
 
-  const handleZoom = (event: React.WheelEvent<HTMLDivElement>) => {
-    event.preventDefault();
+  // I think safari deals with wheel events differently, so we need to throttle the zooming
+  // because otherwise it lags like CRAZY
+  const zoomDebounced = useThrottleFn(
+    (target: HTMLElement, wheelDelta: number, clientX: number, clientY: number) => {
+      if (isAnyParentScrollable(target)) {
+        return;
+      }
 
+      const zoomSpeed = 0.025;
+
+      const zoomFactor = wheelDelta < 0 ? 1 + zoomSpeed : 1 - zoomSpeed;
+      const newZoom = canvasPosition.zoom * zoomFactor;
+
+      const currentMousePosCanvas = clientToCanvasPosition(clientX, clientY);
+      const newX = clientX / newZoom - canvasPosition.x;
+      const newY = clientY / newZoom - canvasPosition.y;
+
+      const diff = {
+        x: newX - currentMousePosCanvas.x,
+        y: newY - currentMousePosCanvas.y,
+      };
+
+      // Step 7: Update the canvas position and zoom value
+      setCanvasPosition((pos) => ({
+        x: pos.x + diff.x,
+        y: pos.y + diff.y,
+        zoom: newZoom,
+      }));
+    },
+    { wait: 25 },
+  );
+
+  const handleZoom = useStableCallback((event: React.WheelEvent<HTMLDivElement>) => {
     const target = event.target as HTMLElement;
 
-    if (isAnyParentScrollable(target)) {
-      return;
-    }
-
-    const zoomSpeed = 0.01;
-
-    const zoomFactor = event.deltaY < 0 ? 1 + zoomSpeed : 1 - zoomSpeed;
-    const newZoom = canvasPosition.zoom * zoomFactor;
-
-    const currentMousePosCanvas = clientToCanvasPosition(event.clientX, event.clientY);
-    const newX = event.clientX / newZoom - canvasPosition.x;
-    const newY = event.clientY / newZoom - canvasPosition.y;
-
-    const diff = {
-      x: newX - currentMousePosCanvas.x,
-      y: newY - currentMousePosCanvas.y,
-    };
-
-    // Step 7: Update the canvas position and zoom value
-    setCanvasPosition((pos) => ({
-      x: pos.x + diff.x,
-      y: pos.y + diff.y,
-      zoom: newZoom,
-    }));
-  };
+    zoomDebounced.run(target, event.deltaY, event.clientX, event.clientY);
+  });
 
   const canvasMouseUp = (e: React.MouseEvent) => {
     if (!isDraggingCanvas) {
@@ -252,16 +258,16 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         onMouseUp={canvasMouseUp}
         onMouseLeave={canvasMouseUp}
         onWheel={handleZoom}
-        style={{
-          backgroundPosition: `${canvasPosition.x - 1}px ${canvasPosition.y - 1}px`,
-          backgroundSize: `${20 * canvasPosition.zoom}px ${20 * canvasPosition.zoom}px`,
-        }}
+        // style={{
+        //   backgroundPosition: `${canvasPosition.x - 1}px ${canvasPosition.y - 1}px`,
+        //   backgroundSize: `${20 * canvasPosition.zoom}px ${20 * canvasPosition.zoom}px`,
+        // }}
       >
         <DebugOverlay enabled={false} />
         <div
           className="canvas-contents"
           style={{
-            transform: `scale3d(${canvasPosition.zoom}, ${canvasPosition.zoom}, 1) translate3d(${canvasPosition.x}px, ${canvasPosition.y}px, 0)`,
+            transform: `scale(${canvasPosition.zoom}, ${canvasPosition.zoom}) translate(${canvasPosition.x}px, ${canvasPosition.y}px) translateZ(-1px)`,
           }}
         >
           <div className="nodes">

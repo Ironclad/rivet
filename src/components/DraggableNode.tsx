@@ -12,6 +12,7 @@ import { createUnknownNodeInstance } from '../model/Nodes';
 import { useRecoilValue } from 'recoil';
 import { canvasPositionState } from '../state/graphBuilder';
 import { ViewNode } from './ViewNode';
+import { useStableCallback } from '../hooks/useStableCallback';
 
 interface DraggableNodeProps {
   node: ChartNode;
@@ -46,9 +47,9 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
       handleAttributes={listeners}
       onWireEndDrag={onWireEndDrag}
       onWireStartDrag={onWireStartDrag}
-      onSelectNode={() => {
+      onSelectNode={useStableCallback(() => {
         onNodeSelected(node);
-      }}
+      })}
     />
   );
 };

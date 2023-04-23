@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import { NodeCanvas } from './NodeCanvas';
 import { useRecoilState } from 'recoil';
 import { connectionsSelector } from '../state/graph';
@@ -7,9 +7,10 @@ import { selectedNodeState } from '../state/graphBuilder';
 import { NodeEditorRenderer } from './NodeEditor';
 import styled from '@emotion/styled';
 import { NodeType, nodeFactory } from '../model/Nodes';
-import { NodeId } from '../model/NodeBase';
+import { ChartNode, NodeId } from '../model/NodeBase';
 import { ContextMenuData } from '../hooks/useContextMenu';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
+import { useStableCallback } from '../hooks/useStableCallback';
 
 const Container = styled.div`
   position: relative;
@@ -21,16 +22,16 @@ export const GraphBuilder: FC = () => {
   const [selectedNode, setSelectedNode] = useRecoilState(selectedNodeState);
   const { clientToCanvasPosition } = useCanvasPositioning();
 
-  const addNode = (nodeType: NodeType, position: { x: number; y: number }) => {
+  const addNode = useStableCallback((nodeType: NodeType, position: { x: number; y: number }) => {
     const newNode = nodeFactory(nodeType);
 
     newNode.visualData.x = position.x;
     newNode.visualData.y = position.y;
 
     setNodes?.([...nodes, newNode]);
-  };
+  });
 
-  const removeNode = (nodeId: NodeId) => {
+  const removeNode = useStableCallback((nodeId: NodeId) => {
     const nodeIndex = nodes.findIndex((n) => n.id === nodeId);
     if (nodeIndex >= 0) {
       const newNodes = [...nodes];
@@ -41,9 +42,9 @@ export const GraphBuilder: FC = () => {
     // Remove all connections associated with the node
     const newConnections = connections.filter((c) => c.inputNodeId !== nodeId && c.outputNodeId !== nodeId);
     setConnections?.(newConnections);
-  };
+  });
 
-  const contextMenuItemSelected = (menuItemId: string, contextMenuData: ContextMenuData) => {
+  const contextMenuItemSelected = useStableCallback((menuItemId: string, contextMenuData: ContextMenuData) => {
     if (menuItemId.startsWith('Add:')) {
       const nodeType = menuItemId.substring(4) as NodeType;
       addNode(nodeType, clientToCanvasPosition(contextMenuData.x, contextMenuData.y));
@@ -55,7 +56,11 @@ export const GraphBuilder: FC = () => {
       removeNode(nodeId);
       return;
     }
-  };
+  });
+
+  const nodeSelected = useStableCallback((node: ChartNode) => {
+    setSelectedNode?.(node.id);
+  });
 
   return (
     <Container>
@@ -64,7 +69,7 @@ export const GraphBuilder: FC = () => {
         connections={connections}
         onNodesChanged={setNodes}
         onConnectionsChanged={setConnections}
-        onNodeSelected={(node) => setSelectedNode(node?.id)}
+        onNodeSelected={nodeSelected}
         selectedNode={nodes.find((node) => node.id === selectedNode) ?? null}
         onContextMenuItemSelected={contextMenuItemSelected}
       />
