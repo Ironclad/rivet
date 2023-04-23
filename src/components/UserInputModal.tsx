@@ -67,7 +67,7 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questionGroups, 
   };
 
   return (
-    <Dialog open={open} maxWidth="sm" fullWidth>
+    <Dialog open={open} maxWidth="sm" fullWidth onClose={handleSubmit}>
       <DialogTitle>User Input</DialogTitle>
       <DialogContent>
         {questionGroups.map((group, groupIndex) => (
