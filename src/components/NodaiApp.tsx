@@ -19,7 +19,6 @@ import { DataValue, StringArrayDataValue, expectType } from '../model/DataValue'
 import { cloneDeep, zip } from 'lodash-es';
 import { LeftSidebar } from './LeftSidebar';
 import { TauriNativeApi } from '../model/native/TauriNativeApi';
-import { useThrottleFn } from 'ahooks';
 
 const styles = css`
   overflow: hidden;
@@ -34,20 +33,16 @@ export const NodaiApp: FC = () => {
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
   const settings = useRecoilValue(settingsState);
 
-  const setDataForNode = useThrottleFn(
-    (nodeId: NodeId, data: Partial<NodeRunData>) => {
-      setLastRunData((prev) =>
-        produce(prev, (draft) => {
-          draft[nodeId] = {
-            ...prev[nodeId],
-            ...cloneDeep(data),
-          };
-        }),
-      );
-    },
-    { wait: 100, trailing: true },
-  );
-
+  const setDataForNode = (nodeId: NodeId, data: Partial<NodeRunData>) => {
+    setLastRunData((prev) =>
+      produce(prev, (draft) => {
+        draft[nodeId] = {
+          ...draft[nodeId],
+          ...cloneDeep(data),
+        };
+      }),
+    );
+  };
   const [userInputModalOpen, setUserInputOpen] = useRecoilState(userInputModalOpenState);
   const [userInputQuestions, setUserInputQuestions] = useRecoilState(userInputModalQuestionsState);
 
@@ -94,25 +89,25 @@ export const NodaiApp: FC = () => {
         { settings, nativeApi: new TauriNativeApi() },
         {
           onNodeStart: (node, inputs) => {
-            setDataForNode.run(node.id, {
+            setDataForNode(node.id, {
               inputData: inputs,
               status: { type: 'running' },
             });
           },
           onNodeFinish: (node, outputs) => {
-            setDataForNode.run(node.id, {
+            setDataForNode(node.id, {
               outputData: outputs,
               status: { type: 'ok' },
             });
           },
           onNodeError: (node, error) => {
-            setDataForNode.run(node.id, {
+            setDataForNode(node.id, {
               status: { type: 'error', error: error.message },
             });
           },
           onUserInput: handleUserInput,
           onPartialOutputs: (node, outputs) => {
-            setDataForNode.run(node.id, {
+            setDataForNode(node.id, {
               outputData: outputs,
             });
           },

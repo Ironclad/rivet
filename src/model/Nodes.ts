@@ -10,6 +10,7 @@ import { ExtractRegexNode, ExtractRegexNodeImpl } from './nodes/ExtractRegexNode
 import { CodeNode, CodeNodeImpl } from './nodes/CodeNode';
 import { MatchNode, MatchNodeImpl } from './nodes/MatchNode';
 import { IfNode, IfNodeImpl } from './nodes/IfNode';
+import { ReadDirectoryNode, ReadDirectoryNodeImpl } from './nodes/ReadDirectoryNode';
 
 export type Nodes =
   | UserInputNode
@@ -20,7 +21,8 @@ export type Nodes =
   | ExtractRegexNode
   | CodeNode
   | MatchNode
-  | IfNode;
+  | IfNode
+  | ReadDirectoryNode;
 
 export type NodeType = Nodes['type'];
 
@@ -35,6 +37,7 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
     .with({ type: 'code' }, (node) => new CodeNodeImpl(node))
     .with({ type: 'match' }, (node) => new MatchNodeImpl(node))
     .with({ type: 'if' }, (node) => new IfNodeImpl(node))
+    .with({ type: 'readDirectory' }, (node) => new ReadDirectoryNodeImpl(node))
     .exhaustive();
 };
 
@@ -53,6 +56,7 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('code', () => CodeNodeImpl.create())
     .with('match', () => MatchNodeImpl.create())
     .with('if', () => IfNodeImpl.create())
+    .with('readDirectory', () => ReadDirectoryNodeImpl.create())
     .exhaustive();
 }
 
@@ -66,4 +70,5 @@ export const nodeDisplayName: Record<NodeType, string> = {
   code: 'Code',
   match: 'Match',
   if: 'If',
+  readDirectory: 'Read Directory',
 };
