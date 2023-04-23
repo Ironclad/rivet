@@ -8,7 +8,7 @@ To get started with the project, follow these steps:
 
 1. Clone the repository to your local machine.
 2. Install the required dependencies by running `yarn` in the project directory.
-3. Start the development server by running `yarn start`. This will open the app in your default web browser.
+3. Start the app in development mode by running `yarn dev`
 
 ## Project Structure
 

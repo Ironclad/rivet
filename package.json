@@ -3,12 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "dev": "tauri dev",
     "start": "vite",
     "build": "tsc && vite build",
-    "serve": "vite preview",
-    "context": "echo \"$(cat context.txt && ts-node tree.ts)\" | pbcopy && echo \"Copied to clipboard\"",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-standalong": "tauri build",
+    "context": "echo \"$(cat context.txt && ts-node tree.ts)\" | pbcopy && echo \"Copied to clipboard\""
   },
   "eslintConfig": {
     "extends": [
