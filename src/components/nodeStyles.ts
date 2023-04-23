@@ -240,6 +240,10 @@ export const nodeStyles = css`
     overflow: hidden;
   }
 
+  .node.error .node-output-inner {
+    border-top-color: var(--error-light);
+  }
+
   .node:hover .node-output-inner,
   .node.selected .node-output-inner {
     max-height: 500px;
@@ -262,6 +266,14 @@ export const nodeStyles = css`
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
     border-top: 8px solid var(--success-light);
+  }
+
+  .node.success .node-output:before {
+    border-top-color: var(--success-light);
+  }
+
+  .node.error .node-output:before {
+    border-top-color: var(--error-light);
   }
 
   .node-output.errored:before {

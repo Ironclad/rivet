@@ -18,6 +18,7 @@ import { UserInputModal } from './UserInputModal';
 import { DataValue, StringArrayDataValue, expectType } from '../model/DataValue';
 import { zip } from 'lodash-es';
 import { LeftSidebar } from './LeftSidebar';
+import { TauriNativeApi } from '../model/native/TauriNativeApi';
 
 const styles = css`
   overflow: hidden;
@@ -87,7 +88,7 @@ export const NodaiApp: FC = () => {
 
       const processor = new GraphProcessor(finalGraph);
       const results = await processor.processGraph(
-        { settings },
+        { settings, nativeApi: new TauriNativeApi() },
         {
           onNodeStart: (node, inputs) => {
             setDataForNode(node.id, {
