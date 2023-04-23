@@ -28,6 +28,8 @@
     ]
   },
   "dependencies": {
+    "@atlaskit/button": "^16.6.0",
+    "@atlaskit/dropdown-menu": "^11.7.3",
     "@atlaskit/modal-dialog": "^12.4.11",
     "@atlaskit/toggle": "^12.5.8",
     "@babel/core": "^7.16.0",

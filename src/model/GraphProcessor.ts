@@ -174,11 +174,22 @@ export class GraphProcessor {
     { onNodeExcluded }: { onNodeExcluded?: (node: ChartNode) => void },
     visitedNodes: Set<unknown>,
   ) {
-    // Check if the node is excluded due to control flow
-    if (
-      Object.values(inputValues).some((value) => value?.type === 'control-flow-excluded') ||
-      nodeResults.get(node.id)?.[ControlFlowExcludedSymbol as unknown as PortId]
-    ) {
+    const inputIsExcludedValue = Object.values(inputValues).some((value) => value?.type === 'control-flow-excluded');
+
+    const inputConnections = this.#connections[node.id].filter((conn) => conn.inputNodeId === node.id);
+    const outputNodes = inputConnections
+      .map((conn) => this.#graph.nodes.find((n) => n.id === conn.outputNodeId))
+      .filter((n) => n) as ChartNode[];
+
+    const anyOutputIsExcludedValue = outputNodes.some((outputNode) => {
+      const outputValues = nodeResults.get(outputNode.id) ?? {};
+      if (outputValues[ControlFlowExcludedSymbol as unknown as PortId]) {
+        return true;
+      }
+      return false;
+    });
+
+    if (inputIsExcludedValue || anyOutputIsExcludedValue) {
       onNodeExcluded?.(node);
       visitedNodes.add(node.id);
       nodeResults.set(node.id, {

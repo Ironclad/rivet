@@ -5,6 +5,11 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { settingsModalOpenState } from './SettingsModal';
 import { loadGraphData, saveGraphData } from '../utils/fileIO';
 import { graphState } from '../state/graph';
+import { savedGraphsState } from '../state/savedGraphs';
+import { GraphId, emptyNodeGraph } from '../model/NodeGraph';
+import { nanoid } from 'nanoid';
+import produce from 'immer';
+import { useSaveCurrentGraph } from '../hooks/useSaveCurrentGraph';
 
 const styles = css`
   display: flex;
@@ -74,20 +79,31 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph }) => {
   const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
   const [graphData, setGraphData] = useRecoilState(graphState);
 
+  const saveGraph = useSaveCurrentGraph();
+
+  function handleNew() {
+    setGraphData(emptyNodeGraph());
+  }
+
   return (
     <div css={styles}>
       <div className="left-menu">
         <div className="menu-item dropdown-menu">
-          <button className="dropdown-button">File</button>
+          <button className="dropdown-button" onClick={handleNew}>
+            New
+          </button>
         </div>
         <div className="menu-item settings-button">
           <button onClick={() => setSettingsOpen(true)}>Settings</button>
         </div>
         <div className="menu-item save-button">
-          <button onClick={() => saveGraphData(graphData)}>Save</button>
+          <button onClick={saveGraph}>Save</button>
         </div>
-        <div className="menu-item load-button">
-          <button onClick={() => loadGraphData((data) => setGraphData(data))}>Load</button>
+        <div className="menu-item export-button">
+          <button onClick={() => saveGraphData(graphData)}>Export</button>
+        </div>
+        <div className="menu-item import-button">
+          <button onClick={() => loadGraphData((data) => setGraphData(data))}>Import</button>
         </div>
       </div>
       <div className="run-button">

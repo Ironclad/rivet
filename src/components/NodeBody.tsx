@@ -1,6 +1,6 @@
 import { match } from 'ts-pattern';
 import { ChartNode } from '../model/NodeBase';
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import { ChatNode } from '../model/nodes/ChatNode';
 import { CodeNode } from '../model/nodes/CodeNode';
 import { ExtractRegexNode } from '../model/nodes/ExtractRegexNode';
@@ -15,8 +15,9 @@ import { MatchNodeBody } from './nodes/MatchNode';
 import { PromptNodeBody } from './nodes/PromptNode';
 import { TextNodeBody } from './nodes/TextNode';
 import { UserInputNodeBody } from './nodes/UserInputNode';
+import { IfNodeBody } from './nodes/ItNode';
 
-export const NodeBody: FC<{ node: ChartNode }> = ({ node }) => {
+export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
   const body = match(node)
     .with({ type: 'prompt' }, (node) => <PromptNodeBody node={node as PromptNode} />)
     .with({ type: 'chat' }, (node) => <ChatNodeBody node={node as ChatNode} />)
@@ -25,7 +26,8 @@ export const NodeBody: FC<{ node: ChartNode }> = ({ node }) => {
     .with({ type: 'code' }, (node) => <CodeNodeBody node={node as CodeNode} />)
     .with({ type: 'match' }, (node) => <MatchNodeBody node={node as MatchNode} />)
     .with({ type: 'userInput' }, (node) => <UserInputNodeBody node={node as UserInputNode} />)
+    .with({ type: 'if' }, () => <IfNodeBody />)
     .otherwise(() => <div>Unknown node type</div>);
 
   return <div className="node-body">{body}</div>;
-};
+});

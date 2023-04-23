@@ -27,6 +27,7 @@ code {
   --grey-lightest: #fff;
   --foreground: #f0f0f0;
   --foreground-bright: #fff;
+  --foreground-muted: #8d8d8d;
 
   /* Primary colors */
   --primary: #ff9900;

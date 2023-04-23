@@ -1,8 +1,27 @@
-import { NodeImpl, ProcessContext } from '../NodeImpl';
-import { ChartNode, NodeConnection, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
+import { NodeImpl } from '../NodeImpl';
+import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { DataValue, ControlFlowExcludedDataValue } from '../DataValue';
+import { nanoid } from 'nanoid';
 
-export class IfNode extends NodeImpl<ChartNode> {
+export type IfNode = ChartNode<'if', IfNodeData>;
+
+export type IfNodeData = {};
+
+export class IfNodeImpl extends NodeImpl<ChartNode> {
+  static create = (): IfNode => {
+    const chartNode: IfNode = {
+      type: 'if',
+      title: 'If',
+      id: nanoid() as NodeId,
+      data: {},
+      visualData: {
+        x: 0,
+        y: 0,
+        width: 100,
+      },
+    };
+    return chartNode;
+  };
   getInputDefinitions(connections: NodeConnection[]): NodeInputDefinition[] {
     return [
       {

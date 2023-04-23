@@ -237,12 +237,13 @@ export const nodeStyles = css`
     margin-top: 8px;
     max-height: 50px;
     transition: max-height 0.2s ease-out;
-    overflow: auto;
+    overflow: hidden;
   }
 
   .node:hover .node-output-inner,
   .node.selected .node-output-inner {
     max-height: 500px;
+    overflow: auto;
   }
 
   .node-output.errored {
