@@ -17,6 +17,7 @@ import { UserInputNode } from '../model/nodes/UserInputNode';
 import { UserInputModal } from './UserInputModal';
 import { DataValue, StringArrayDataValue, expectType } from '../model/DataValue';
 import { zip } from 'lodash-es';
+import { LeftSidebar } from './LeftSidebar';
 
 const styles = css`
   overflow: hidden;
@@ -118,6 +119,7 @@ export const NodaiApp: FC = () => {
   return (
     <div className="app" css={styles}>
       <MenuBar onRunGraph={tryRunGraph} />
+      <LeftSidebar />
       <GraphBuilder />
       <SettingsModal />
       <UserInputModal

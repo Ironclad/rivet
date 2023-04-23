@@ -261,7 +261,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         <div
           className="canvas-contents"
           style={{
-            transform: `scale(${canvasPosition.zoom}) translate(${canvasPosition.x}px, ${canvasPosition.y}px)`,
+            transform: `scale3d(${canvasPosition.zoom}, ${canvasPosition.zoom}, 1) translate3d(${canvasPosition.x}px, ${canvasPosition.y}px, 0)`,
           }}
         >
           <div className="nodes">

@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../state/dataFlow';
 import { match } from 'ts-pattern';
-import { FC, useState } from 'react';
+import { FC, memo, useState } from 'react';
 import clsx from 'clsx';
 import { ChartNode, PortId } from '../model/NodeBase';
 import { ChatNode } from '../model/nodes/ChatNode';
@@ -46,7 +46,7 @@ const fullscreenOutputButtonsCss = css`
   }
 `;
 
-export const NodeOutput: FC<{ node: ChartNode }> = ({ node }) => {
+export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   const nodeOutput = useRecoilValue(lastRunData(node.id));
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -123,4 +123,4 @@ export const NodeOutput: FC<{ node: ChartNode }> = ({ node }) => {
       </div>
     </div>
   );
-};
+});

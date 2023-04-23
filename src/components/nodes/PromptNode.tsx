@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { ChangeEvent, FC, memo, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { ChartNode } from '../../model/NodeBase';
 import { monaco } from '../../utils/monaco';
 import styled from '@emotion/styled';
@@ -200,7 +200,7 @@ const Body = styled.div`
   }
 `;
 
-export const PromptNodeBody: FC<PromptNodeBodyProps> = ({ node }) => {
+export const PromptNodeBody: FC<PromptNodeBodyProps> = memo(({ node }) => {
   const bodyRef = useRef<HTMLPreElement>(null);
 
   const truncated = useMemo(
@@ -224,7 +224,7 @@ export const PromptNodeBody: FC<PromptNodeBodyProps> = ({ node }) => {
       </pre>
     </Body>
   );
-};
+});
 
 const typeDisplay: Record<PromptNodeData['type'], string> = {
   assistant: 'AI',
@@ -232,7 +232,7 @@ const typeDisplay: Record<PromptNodeData['type'], string> = {
   user: 'User',
 };
 
-export const PromptNodeOutput: FC<PromptNodeBodyProps> = ({ node }) => {
+export const PromptNodeOutput: FC<PromptNodeBodyProps> = memo(({ node }) => {
   const output = useRecoilValue(lastRunData(node.id));
 
   if (!output) {
@@ -259,4 +259,4 @@ export const PromptNodeOutput: FC<PromptNodeBodyProps> = ({ node }) => {
       <div className="pre-wrap">{message.value.message}</div>
     </div>
   );
-};
+});

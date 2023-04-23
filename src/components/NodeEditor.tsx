@@ -17,6 +17,7 @@ import { ExtractRegexNodeEditor } from './nodes/ExtractRegexNode';
 import { CodeNodeEditor } from './nodes/CodeNode';
 import { MatchNodeEditor } from './nodes/MatchNode';
 import { UserInputNodeEditor } from './nodes/UserInputNode';
+import { IfNodeEditor } from './nodes/ItNode';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -168,6 +169,7 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
     .with({ type: 'code' }, (node) => <CodeNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .with({ type: 'match' }, (node) => <MatchNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .with({ type: 'userInput' }, (node) => <UserInputNodeEditor node={node} onChange={(node) => updateNode(node)} />)
+    .with({ type: 'if' }, (node) => <IfNodeEditor />)
     .otherwise(() => null);
 
   useEffect(() => {
