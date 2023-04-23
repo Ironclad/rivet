@@ -1,41 +1,17 @@
 import { FC, useEffect, useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, css } from '@mui/material';
 import { useRecoilState } from 'recoil';
 import { StringArrayDataValue } from '../model/DataValue';
 import { lastAnswersState } from '../state/userInput';
+import Modal, { ModalBody, ModalFooter, ModalHeader, ModalTitle, ModalTransition } from '@atlaskit/modal-dialog';
+import Button from '@atlaskit/button';
+import TextArea from '@atlaskit/textarea';
+import { Field } from '@atlaskit/form';
 
 type UserInputModalProps = {
   open: boolean;
   questionGroups: string[][];
   onSubmit: (answers: StringArrayDataValue[]) => void;
 };
-
-const textareaCss = css`
-  padding: 6px 12px;
-  background-color: var(--grey-darkish);
-  border: 1px solid var(--grey);
-  border-radius: 4px;
-  color: var(--foreground);
-  outline: none;
-  transition: border-color 0.3s;
-  min-height: 50px;
-  width: 100%;
-
-  &:hover {
-    border-color: var(--primary);
-  }
-
-  &:disabled {
-    background-color: var(--grey-dark);
-    border-color: var(--grey);
-    color: var(--foreground-dark);
-  }
-`;
-
-const labelCss = css`
-  display: block;
-  font-weight: 500;
-`;
 
 export const UserInputModal: FC<UserInputModalProps> = ({ open, questionGroups, onSubmit }) => {
   const [answers, setAnswers] = useState<string[][]>([]);
@@ -67,32 +43,40 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questionGroups, 
   };
 
   return (
-    <Dialog open={open} maxWidth="sm" fullWidth onClose={handleSubmit}>
-      <DialogTitle>User Input</DialogTitle>
-      <DialogContent>
-        {questionGroups.map((group, groupIndex) => (
-          <div key={`group-${groupIndex}`} className="question-group">
-            {group.map((question, index) => (
-              <div className="question" key={`question-${groupIndex}-${index}`}>
-                <label css={labelCss} htmlFor="">
-                  {question}
-                </label>
-                <textarea
-                  css={textareaCss}
-                  value={answers?.[groupIndex]?.[index] ?? ''}
-                  onChange={(e) => handleChange(groupIndex, index, e.target.value)}
-                  autoFocus={groupIndex === 0 && index === 0}
-                />
+    <ModalTransition>
+      {open && (
+        <Modal width="large" onClose={handleSubmit}>
+          <ModalHeader>
+            <ModalTitle>User Input</ModalTitle>
+          </ModalHeader>
+          <ModalBody>
+            {questionGroups.map((group, groupIndex) => (
+              <div key={`group-${groupIndex}`} className="question-group">
+                {group.map((question, index) => (
+                  <Field
+                    name={`question-${groupIndex}-${index}`}
+                    label={question}
+                    key={`question-${groupIndex}-${index}`}
+                  >
+                    {() => (
+                      <TextArea
+                        value={answers?.[groupIndex]?.[index] ?? ''}
+                        onChange={(e) => handleChange(groupIndex, index, e.target.value)}
+                        autoFocus={groupIndex === 0 && index === 0}
+                        resize="vertical"
+                        minimumRows={4}
+                      />
+                    )}
+                  </Field>
+                ))}
               </div>
             ))}
-          </div>
-        ))}
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSubmit} color="primary">
-          Submit
-        </Button>
-      </DialogActions>
-    </Dialog>
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={handleSubmit}>Submit</Button>
+          </ModalFooter>
+        </Modal>
+      )}
+    </ModalTransition>
   );
 };

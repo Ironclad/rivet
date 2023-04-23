@@ -9,15 +9,14 @@ import { NodeType, nodeDisplayName } from '../model/Nodes';
 import { match } from 'ts-pattern';
 import { PromptNodeEditor } from './nodes/PromptNode';
 import produce from 'immer';
-import { InlineEditableTextArea } from './InlineEditableTextArea';
 import { ChatNodeEditor } from './nodes/ChatNode';
-import { lastRunDataByNodeState } from '../state/dataFlow';
 import { TextNodeEditor } from './nodes/TextNode';
 import { ExtractRegexNodeEditor } from './nodes/ExtractRegexNode';
 import { CodeNodeEditor } from './nodes/CodeNode';
 import { MatchNodeEditor } from './nodes/MatchNode';
 import { UserInputNodeEditor } from './nodes/UserInputNode';
 import { IfNodeEditor } from './nodes/ItNode';
+import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -216,11 +215,11 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
         />
       </div>
       <div className="section">
-        <InlineEditableTextArea
-          value={selectedNode.description ?? ''}
-          onChange={nodeDescriptionChanged}
+        <InlineEditableTextfield
+          defaultValue={selectedNode.description ?? ''}
+          onConfirm={nodeDescriptionChanged}
           placeholder="Enter any description or notes for this node..."
-        ></InlineEditableTextArea>
+        ></InlineEditableTextfield>
       </div>
       {nodeEditor && (
         <div className="section section-node">
