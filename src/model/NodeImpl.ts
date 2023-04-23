@@ -1,6 +1,7 @@
 import { Settings } from '../state/settings';
 import { DataValue } from './DataValue';
 import { ChartNode, NodeConnection, NodeInputDefinition, NodeOutputDefinition } from './NodeBase';
+import { NativeApi } from './native/NativeApi';
 
 export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['type']> {
   readonly chartNode: T;
@@ -38,4 +39,5 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
 
 export type ProcessContext = {
   settings: Settings;
+  nativeApi: NativeApi;
 };

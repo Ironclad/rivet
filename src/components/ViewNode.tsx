@@ -92,7 +92,12 @@ export const ViewNode = memo(
 
       return (
         <div
-          className={clsx('node', { overlayNode: isOverlay, selected: isSelected })}
+          className={clsx('node', {
+            overlayNode: isOverlay,
+            selected: isSelected,
+            success: lastRun?.status?.type === 'ok',
+            error: lastRun?.status?.type === 'error',
+          })}
           ref={ref}
           style={style}
           {...nodeAttributes}

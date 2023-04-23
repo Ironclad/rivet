@@ -1,4 +1,5 @@
-import { BaseDir, NativeApi } from './NativeApi';
+import { BaseDir } from './BaseDir';
+import { NativeApi } from './NativeApi';
 
 export class BrowserNativeApi implements NativeApi {
   readdir(_path: string, _baseDir: BaseDir): Promise<string[]> {
