@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { CSSProperties, HTMLAttributes, MouseEvent, forwardRef, memo, useCallback } from 'react';
+import { CSSProperties, HTMLAttributes, MouseEvent, forwardRef, memo, useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { match } from 'ts-pattern';
 import { ChartNode, NodeConnection, NodeId, PortId } from '../model/NodeBase';
@@ -11,6 +11,9 @@ import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog
 import { ReactComponent as SendIcon } from 'majesticons/solid/send.svg';
 import { ReactComponent as PinwheelIcon } from 'majesticons/line/pinwheel-line.svg';
 import { ReactComponent as GitForkLine } from 'majesticons/line/git-fork-line.svg';
+import { ResizeHandle } from './ResizeHandle';
+import { canvasPositionState } from '../state/graphBuilder';
+import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 
 export type VisualNodeProps = {
   node: ChartNode;
@@ -24,6 +27,7 @@ export type VisualNodeProps = {
   onWireStartDrag?: (event: MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => void;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
   onSelectNode?: () => void;
+  onNodeWidthChanged?: (newWidth: number) => void;
 
   nodeAttributes?: HTMLAttributes<HTMLDivElement>;
   handleAttributes?: HTMLAttributes<HTMLDivElement>;
@@ -46,6 +50,7 @@ export const VisualNode = memo(
         onWireEndDrag,
         onWireStartDrag,
         onSelectNode,
+        onNodeWidthChanged,
       },
       ref,
     ) => {
@@ -88,6 +93,48 @@ export const VisualNode = memo(
         event.stopPropagation();
         event.preventDefault();
       }, []);
+
+      const [resizing, setResizing] = useState(false);
+      const [initialWidth, setInitialWidth] = useState<number | undefined>();
+      const [initialMouseX, setInitialMouseX] = useState(0);
+      const { clientToCanvasPosition } = useCanvasPositioning();
+      const canvasPosition = useRecoilValue(canvasPositionState);
+
+      const getNodeCurrentWidth = (elementOrChild: HTMLElement): number => {
+        const nodeElement = elementOrChild.closest('.node');
+        if (!nodeElement) {
+          return 100;
+        }
+        const cssWidth = window.getComputedStyle(nodeElement).width;
+        return parseInt(cssWidth, 10);
+      };
+
+      const handleResizeStart = (event: MouseEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        setResizing(true);
+        setInitialWidth(getNodeCurrentWidth(event.target as HTMLElement));
+        setInitialMouseX(event.clientX);
+      };
+
+      const handleResizeMove = (event: MouseEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const initialMousePositionCanvas = clientToCanvasPosition(initialMouseX, 0);
+        const newMousePositionCanvas = clientToCanvasPosition(event.clientX, 0);
+
+        const delta = newMousePositionCanvas.x - initialMousePositionCanvas.x;
+        if (initialWidth) {
+          const newWidth = initialWidth + delta;
+          onNodeWidthChanged?.(newWidth);
+        }
+      };
+
+      const handleResizeEnd = (event: MouseEvent) => {
+        setResizing(false);
+      };
 
       const nodeImpl = createNodeInstance(node as Nodes);
 
@@ -177,6 +224,13 @@ export const VisualNode = memo(
             </div>
           </div>
           <NodeOutput node={node} />
+          <div className="node-resize">
+            <ResizeHandle
+              onResizeStart={handleResizeStart}
+              onResizeMove={handleResizeMove}
+              onResizeEnd={handleResizeEnd}
+            />
+          </div>
         </div>
       );
     },

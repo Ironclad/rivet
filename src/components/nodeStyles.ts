@@ -351,4 +351,17 @@ export const nodeStyles = css`
       transform: rotate(360deg);
     }
   }
+
+  .resize-handle {
+    width: 10px;
+    height: 100%;
+    height: 10px;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.25);
+    cursor: ew-resize;
+    position: absolute;
+    right: 0;
+    border-top-left-radius: 100px;
+    border-bottom-right-radius: 50px;
+  }
 `;
