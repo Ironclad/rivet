@@ -94,11 +94,9 @@ export const VisualNode = memo(
         event.preventDefault();
       }, []);
 
-      const [resizing, setResizing] = useState(false);
       const [initialWidth, setInitialWidth] = useState<number | undefined>();
       const [initialMouseX, setInitialMouseX] = useState(0);
       const { clientToCanvasPosition } = useCanvasPositioning();
-      const canvasPosition = useRecoilValue(canvasPositionState);
 
       const getNodeCurrentWidth = (elementOrChild: HTMLElement): number => {
         const nodeElement = elementOrChild.closest('.node');
@@ -113,7 +111,6 @@ export const VisualNode = memo(
         event.preventDefault();
         event.stopPropagation();
 
-        setResizing(true);
         setInitialWidth(getNodeCurrentWidth(event.target as HTMLElement));
         setInitialMouseX(event.clientX);
       };
@@ -126,14 +123,11 @@ export const VisualNode = memo(
         const newMousePositionCanvas = clientToCanvasPosition(event.clientX, 0);
 
         const delta = newMousePositionCanvas.x - initialMousePositionCanvas.x;
+
         if (initialWidth) {
           const newWidth = initialWidth + delta;
           onNodeWidthChanged?.(newWidth);
         }
-      };
-
-      const handleResizeEnd = (event: MouseEvent) => {
-        setResizing(false);
       };
 
       const nodeImpl = createNodeInstance(node as Nodes);
@@ -145,6 +139,7 @@ export const VisualNode = memo(
             selected: isSelected,
             success: lastRun?.status?.type === 'ok',
             error: lastRun?.status?.type === 'error',
+            running: lastRun?.status?.type === 'running',
           })}
           ref={ref}
           style={style}
@@ -225,11 +220,7 @@ export const VisualNode = memo(
           </div>
           <NodeOutput node={node} />
           <div className="node-resize">
-            <ResizeHandle
-              onResizeStart={handleResizeStart}
-              onResizeMove={handleResizeMove}
-              onResizeEnd={handleResizeEnd}
-            />
+            <ResizeHandle onResizeStart={handleResizeStart} onResizeMove={handleResizeMove} />
           </div>
         </div>
       );

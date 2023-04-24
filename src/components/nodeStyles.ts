@@ -364,4 +364,8 @@ export const nodeStyles = css`
     border-top-left-radius: 100px;
     border-bottom-right-radius: 50px;
   }
+
+  .node.running {
+    box-shadow: 0 0 16px var(--shadow-orange), 0 8px 16px rgba(0, 0, 0, 0.4);
+  }
 `;
