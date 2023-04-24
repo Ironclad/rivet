@@ -16,6 +16,7 @@ import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { VisualNode } from './VisualNode';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { useThrottleFn } from 'ahooks';
+import produce from 'immer';
 
 export interface NodeCanvasProps {
   nodes: ChartNode[];
@@ -246,6 +247,18 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     }
   };
 
+  const onNodeWidthChanged = useStableCallback((node: ChartNode, width: number) => {
+    console.dir({ node, width });
+    onNodesChanged(
+      produce(nodes, (draft) => {
+        const foundNode = draft.find((n) => n.id === node.id);
+        if (foundNode) {
+          foundNode.visualData.width = width;
+        }
+      }),
+    );
+  });
+
   return (
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
       <div
@@ -258,10 +271,10 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         onMouseUp={canvasMouseUp}
         onMouseLeave={canvasMouseUp}
         onWheel={handleZoom}
-        // style={{
-        //   backgroundPosition: `${canvasPosition.x - 1}px ${canvasPosition.y - 1}px`,
-        //   backgroundSize: `${20 * canvasPosition.zoom}px ${20 * canvasPosition.zoom}px`,
-        // }}
+        style={{
+          backgroundPosition: `${canvasPosition.x - 1}px ${canvasPosition.y - 1}px`,
+          backgroundSize: `${20 * canvasPosition.zoom}px ${20 * canvasPosition.zoom}px`,
+        }}
       >
         <DebugOverlay enabled={false} />
         <div
@@ -280,6 +293,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
                 onWireStartDrag={onWireStartDrag}
                 onWireEndDrag={onWireEndDrag}
                 onNodeSelected={onNodeSelected}
+                onNodeWidthChanged={onNodeWidthChanged}
               />
             ))}
           </div>
