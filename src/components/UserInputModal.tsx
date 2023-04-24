@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { StringArrayDataValue } from '../model/DataValue';
+import { ArrayDataValue, StringDataValue } from '../model/DataValue';
 import { lastAnswersState } from '../state/userInput';
 import Modal, { ModalBody, ModalFooter, ModalHeader, ModalTitle, ModalTransition } from '@atlaskit/modal-dialog';
 import Button from '@atlaskit/button';
@@ -10,7 +10,7 @@ import { Field } from '@atlaskit/form';
 type UserInputModalProps = {
   open: boolean;
   questionGroups: string[][];
-  onSubmit: (answers: StringArrayDataValue[]) => void;
+  onSubmit: (answers: ArrayDataValue<StringDataValue>[]) => void;
 };
 
 export const UserInputModal: FC<UserInputModalProps> = ({ open, questionGroups, onSubmit }) => {
@@ -38,7 +38,7 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questionGroups, 
     });
     setLastAnswers(newLastAnswers);
 
-    const results = answers.map<StringArrayDataValue>((group) => ({ type: 'string[]', value: group }));
+    const results = answers.map<ArrayDataValue<StringDataValue>>((group) => ({ type: 'string[]', value: group }));
     onSubmit(results);
   };
 

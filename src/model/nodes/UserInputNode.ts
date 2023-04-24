@@ -1,7 +1,7 @@
 import { NodeImpl } from '../NodeImpl';
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { DataType, DataValue, StringArrayDataValue, expectType } from '../DataValue';
+import { DataValue, ArrayDataValue, StringDataValue, expectType } from '../DataValue';
 import { zip } from 'lodash-es';
 
 export type UserInputNode = ChartNode<'userInput', UserInputNodeData>;
@@ -68,7 +68,7 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
 
   getOutputValuesFromUserInput(
     questions: Record<PortId, DataValue>,
-    answers: StringArrayDataValue,
+    answers: ArrayDataValue<StringDataValue>,
   ): Record<PortId, DataValue> {
     const questionsList = this.data.useInput
       ? expectType(questions['questions' as PortId], 'string[]')

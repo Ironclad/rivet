@@ -19,6 +19,7 @@ import { IfNodeEditor } from './nodes/ItNode';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { ReadDirectoryNodeEditor } from './nodes/ReadDirectoryNode';
 import { ReadFileNodeEditor } from './nodes/ReadFileNode';
+import { SplitRunNodeEditor } from './nodes/SplitRunNode';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -175,6 +176,7 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
       <ReadDirectoryNodeEditor node={node} onChange={(node) => updateNode(node)} />
     ))
     .with({ type: 'readFile' }, (node) => <ReadFileNodeEditor node={node} onChange={(node) => updateNode(node)} />)
+    .with({ type: 'splitRun' }, (node) => <SplitRunNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .otherwise(() => null);
 
   useEffect(() => {

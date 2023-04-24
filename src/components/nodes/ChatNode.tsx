@@ -18,6 +18,12 @@ const styles = css`
   display: flex;
   flex-direction: column;
   gap: 4px;
+
+  &.multi-message {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 `;
 
 export const ChatNodeBody: FC<ChatNodeBodyProps> = ({ node }) => {
@@ -48,6 +54,19 @@ export const ChatNodeOutput: FC<ChatNodeBodyProps> = ({ node }) => {
   }
 
   const outputText = output.outputData['response' as PortId];
+
+  if (outputText?.type === 'string[]') {
+    return (
+      <div className="multi-message" css={styles}>
+        {outputText.value.map((text, index) => (
+          <div className="pre-wrap" key={index}>
+            {text}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="pre-wrap">
       <RenderDataValue value={outputText} />

@@ -15,7 +15,7 @@ import { settingsState } from '../state/settings';
 import { userInputModalOpenState, userInputModalQuestionsState } from '../state/userInput';
 import { UserInputNode } from '../model/nodes/UserInputNode';
 import { UserInputModal } from './UserInputModal';
-import { DataValue, StringArrayDataValue, expectType } from '../model/DataValue';
+import { DataValue, ArrayDataValue, StringDataValue, expectType } from '../model/DataValue';
 import { cloneDeep, zip } from 'lodash-es';
 import { LeftSidebar } from './LeftSidebar';
 import { TauriNativeApi } from '../model/native/TauriNativeApi';
@@ -47,7 +47,7 @@ export const NodaiApp: FC = () => {
   const [userInputQuestions, setUserInputQuestions] = useRecoilState(userInputModalQuestionsState);
 
   const [userInputModalSubmit, setUserInputModalSubmit] = useState<{
-    submit: (answers: StringArrayDataValue[]) => void;
+    submit: (answers: ArrayDataValue<StringDataValue>[]) => void;
   }>({
     submit: () => {},
   });
@@ -55,7 +55,7 @@ export const NodaiApp: FC = () => {
   const handleUserInput = async (
     userInputNodes: UserInputNode[],
     inputs: Record<PortId, DataValue>[],
-  ): Promise<StringArrayDataValue[]> => {
+  ): Promise<ArrayDataValue<StringDataValue>[]> => {
     return new Promise((resolve) => {
       const questions = zip(userInputNodes, inputs).map(([node, inputs]) => {
         if (node!.data.useInput) {
@@ -68,7 +68,7 @@ export const NodaiApp: FC = () => {
       setUserInputQuestions(questions);
       setUserInputOpen(true);
 
-      const handleModalSubmit = (answers: StringArrayDataValue[]) => {
+      const handleModalSubmit = (answers: ArrayDataValue<StringDataValue>[]) => {
         setUserInputOpen(false);
         resolve(answers);
       };
