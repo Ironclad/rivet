@@ -150,10 +150,11 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
     for (const key in inputs) {
       if (key.startsWith('message')) {
-        const inputMessage = expectTypeOptional(inputs[key as PortId], 'chat-message');
-
-        if (inputMessage) {
-          messages.push({ role: inputMessage.type, content: inputMessage.message });
+        const inputMessage = inputs[key as PortId];
+        if (inputMessage?.type === 'chat-message') {
+          messages.push({ role: inputMessage.value.type, content: inputMessage.value.message });
+        } else if (inputMessage?.type === 'string') {
+          messages.push({ role: 'user', content: inputMessage.value });
         }
       }
     }

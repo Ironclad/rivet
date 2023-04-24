@@ -18,7 +18,7 @@ export type ProcessEvents = {
     userInputNodes: UserInputNode[],
     inputs: Record<PortId, DataValue>[],
   ) => Promise<ArrayDataValue<StringDataValue>[]>;
-  onPartialOutputs?: (node: ChartNode, outputs: Record<PortId, DataValue>) => void;
+  onPartialOutputs?: (node: ChartNode, outputs: Record<PortId, DataValue>, index: number) => void;
 };
 
 export class GraphProcessor {
@@ -187,6 +187,10 @@ export class GraphProcessor {
   ) {
     const inputValues = this.#getInputValuesForNode(node, nodeResults);
 
+    if (this.#excludedDueToControlFlow(node, nodeResults, inputValues, events, visitedNodes)) {
+      return;
+    }
+
     const splittingAmount = Math.min(
       max(Object.values(inputValues).map((value) => (Array.isArray(value.value) ? value.value.length : 1))) ?? 1,
       node.splitRunMax ?? 10,
@@ -212,7 +216,7 @@ export class GraphProcessor {
           );
 
           try {
-            const output = await this.#processNodeWithInputData(node, context, inputs);
+            const output = await this.#processNodeWithInputData(node, context, inputs, i, events.onPartialOutputs);
             results.push(output);
           } catch (error) {
             const errorInstance =
@@ -266,7 +270,7 @@ export class GraphProcessor {
     events.onNodeStart?.(node, inputValues);
 
     try {
-      const outputValues = await this.#processNodeWithInputData(node, context, inputValues, events.onPartialOutputs);
+      const outputValues = await this.#processNodeWithInputData(node, context, inputValues, 0, events.onPartialOutputs);
 
       nodeResults.set(node.id, outputValues);
       visitedNodes.add(node.id);
@@ -285,10 +289,11 @@ export class GraphProcessor {
     node: ChartNode,
     context: ProcessContext,
     inputValues: Record<PortId, DataValue>,
-    onPartialOutputs?: (node: ChartNode, partialOutputs: Record<PortId, DataValue>) => void,
+    index: number,
+    onPartialOutputs?: (node: ChartNode, partialOutputs: Record<PortId, DataValue>, index: number) => void,
   ) {
     return await this.#nodeInstances[node.id]!.process(inputValues, context, (partialOutputs) =>
-      onPartialOutputs?.(node, partialOutputs),
+      onPartialOutputs?.(node, partialOutputs, index),
     );
   }
 
@@ -318,7 +323,9 @@ export class GraphProcessor {
         return false;
       });
 
-    if (inputIsExcludedValue || anyOutputIsExcludedValue) {
+    const allowedToConsumedExcludedValue = node.type === 'if' || node.type === 'ifElse';
+
+    if ((inputIsExcludedValue || anyOutputIsExcludedValue) && !allowedToConsumedExcludedValue) {
       onNodeExcluded?.(node);
       visitedNodes.add(node.id);
       nodeResults.set(node.id, {

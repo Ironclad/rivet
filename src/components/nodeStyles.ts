@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 
 export const nodeStyles = css`
   .node {
-    background-color: var(--grey-dark);
+    background-color: var(--grey-dark-seethrough);
     border-radius: 8px;
     border: 2px solid var(--grey);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

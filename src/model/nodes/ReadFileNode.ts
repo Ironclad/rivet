@@ -21,7 +21,7 @@ export class ReadFileNodeImpl extends NodeImpl<ReadFileNode> {
       id: nanoid() as NodeId,
       type: 'readFile',
       title: 'Read File',
-      visualData: { x: 0, y: 0 },
+      visualData: { x: 0, y: 0, width: 250 },
       data: {
         baseDirectory: baseDirs.document,
         useBaseDirectoryInput: false,

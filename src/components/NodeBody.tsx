@@ -8,10 +8,11 @@ import { MatchNodeBody } from './nodes/MatchNode';
 import { PromptNodeBody } from './nodes/PromptNode';
 import { TextNodeBody } from './nodes/TextNode';
 import { UserInputNodeBody } from './nodes/UserInputNode';
-import { IfNodeBody } from './nodes/ItNode';
+import { IfNodeBody } from './nodes/IfNode';
 import { Nodes } from '../model/Nodes';
 import { ReadDirectoryNodeBody } from './nodes/ReadDirectoryNode';
 import { ReadFileNodeBody } from './nodes/ReadFileNode';
+import { IfElseNodeBody } from './nodes/IfElseNode';
 
 export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
   const body = match(node as Nodes)
@@ -23,6 +24,7 @@ export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
     .with({ type: 'match' }, (node) => <MatchNodeBody node={node} />)
     .with({ type: 'userInput' }, (node) => <UserInputNodeBody node={node} />)
     .with({ type: 'if' }, () => <IfNodeBody />)
+    .with({ type: 'ifElse' }, (node) => <IfElseNodeBody node={node} />)
     .with({ type: 'readDirectory' }, (node) => <ReadDirectoryNodeBody node={node} />)
     .with({ type: 'readFile' }, (node) => <ReadFileNodeBody node={node} />)
     .otherwise(() => <div>Unknown node type</div>);

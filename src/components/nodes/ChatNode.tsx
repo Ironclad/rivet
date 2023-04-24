@@ -49,6 +49,21 @@ export const ChatNodeOutput: FC<ChatNodeBodyProps> = ({ node }) => {
     return <div>Error: {output.status.error}</div>;
   }
 
+  // if (output.splitOutputData) {
+  //   return (
+  //     <div className="multi-message" css={styles}>
+  //       {Object.values(output.splitOutputData).map((text, index) => (
+  //         <div className="pre-wrap" key={index}>
+  //           {text.value}
+  //         </div>
+  //       ))}
+  //     </div>
+  //   );
+  //   return Object.values(output.splitOutputData).map((outputData, index) => {
+  //     const outputText = outputData['response' as PortId] as string;
+  //   });
+  // }
+
   if (!output.outputData) {
     return null;
   }
