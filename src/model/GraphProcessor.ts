@@ -1,11 +1,10 @@
-import { uniqBy } from 'lodash-es';
+import { max, range, uniqBy } from 'lodash-es';
 import { ControlFlowExcluded } from '../utils/symbols';
 import { DataValue, ArrayDataValue, AnyDataValue, StringDataValue, expectType, ScalarDataValue } from './DataValue';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { NodeGraph } from './NodeGraph';
 import { NodeImpl, ProcessContext } from './NodeImpl';
 import { Nodes, createNodeInstance } from './Nodes';
-import { SplitRunNode } from './nodes/SplitRunNode';
 import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode';
 
 export type NodeResults = Map<string, Record<PortId, DataValue>>;
@@ -61,37 +60,7 @@ export class GraphProcessor {
   }
 
   #nodeIsReady(node: ChartNode, visitedNodes: Set<unknown>, depth = 0): boolean {
-    if (depth > 100) {
-      throw new Error('Maximum recursion depth exceeded');
-    }
-
-    if ((node as Nodes).type === 'splitRun') {
-      const nextNodes = this.#getSplitRunNextNodes(node as SplitRunNode);
-      return (
-        nextNodes.length === 0 || nextNodes.every((nextNode) => this.#nodeIsReady(nextNode, visitedNodes, depth + 1))
-      );
-    }
     return this.#allInputsVisited(node, visitedNodes);
-  }
-
-  #canRunNormally(node: ChartNode): boolean {
-    const connections = this.#connections[node.id];
-    const inputs = this.#definitions[node.id]!.inputs;
-    return (
-      inputs.length === 0 ||
-      inputs.every((input) => {
-        const connectionToInput = connections?.find(
-          (conn) => conn.inputId === input.id && conn.inputNodeId === node.id,
-        );
-
-        if (!connectionToInput) {
-          return true;
-        }
-
-        const outputNode = this.#graph.nodes.find((n) => n.id === connectionToInput?.outputNodeId);
-        return outputNode?.type !== 'splitRun';
-      })
-    );
   }
 
   #allInputsVisited(node: ChartNode, visitedNodes: Set<unknown>, depth = 0): boolean {
@@ -104,11 +73,6 @@ export class GraphProcessor {
 
         if (!input.required && !connectionToInput) {
           return true;
-        }
-
-        const outputNode = this.#graph.nodes.find((n) => n.id === connectionToInput?.outputNodeId);
-        if (outputNode?.type === 'splitRun') {
-          return this.#allInputsVisited(outputNode, visitedNodes, depth + 1);
         }
 
         if (!connectionToInput) {
@@ -130,9 +94,7 @@ export class GraphProcessor {
     const visitedNodes = new Set();
 
     while (nodesToProcess.length > 0) {
-      const readyNodes = nodesToProcess
-        .filter((node) => this.#nodeIsReady(node, visitedNodes))
-        .filter((node) => this.#canRunNormally(node));
+      const readyNodes = nodesToProcess.filter((node) => this.#nodeIsReady(node, visitedNodes));
 
       if (readyNodes.length === 0) {
         for (const erroredNode of nodesToProcess) {
@@ -209,103 +171,74 @@ export class GraphProcessor {
   ) {
     nodesToProcess.splice(nodesToProcess.indexOf(node), 1);
 
-    if (node.type === 'splitRun') {
-      await this.#processSplitRunNode(node, nodeResults, context, events, visitedNodes, nodesToProcess);
+    if (node.isSplitRun) {
+      await this.#processSplitRunNode(node, nodeResults, context, events, visitedNodes);
     } else {
       await this.#processNormalNode(node, nodeResults, context, events, visitedNodes);
     }
   }
 
   async #processSplitRunNode(
-    node: SplitRunNode,
+    node: ChartNode,
     nodeResults: NodeResults,
     context: ProcessContext,
     events: ProcessEvents,
     visitedNodes: Set<unknown>,
-    nodesToProcess: ChartNode[],
   ) {
-    const inputDataType = this.#getInputValuesForNode(node, nodeResults)['input' as PortId]!
-      .type as ArrayDataValue<ScalarDataValue>['type'];
-    const inputData = expectType(this.#getInputValuesForNode(node, nodeResults)['input' as PortId], 'any[]').slice(
-      0,
-      node.data.max ?? 10,
+    const inputValues = this.#getInputValuesForNode(node, nodeResults);
+
+    const splittingAmount = Math.min(
+      max(Object.values(inputValues).map((value) => (Array.isArray(value.value) ? value.value.length : 1))) ?? 1,
+      node.splitRunMax ?? 10,
     );
 
-    if (inputData.length <= 0) {
-      throw new Error('Input data for SplitRunNode must be a non-empty array');
-    }
-
-    const nextNodes = this.#getSplitRunNextNodes(node);
+    events.onNodeStart?.(node, inputValues);
 
     try {
-      const parallelResults = await Promise.all(
-        nextNodes.map(async (nextNode) => {
-          nodesToProcess.splice(nodesToProcess.indexOf(nextNode), 1);
-          const results: Record<NodeId, Record<PortId, DataValue>[]> = {};
+      const results: Record<PortId, DataValue>[] = [];
 
-          const connectionToNextNode = this.#connections[node.id]?.find((conn) => conn.inputNodeId === nextNode.id);
-          if (!connectionToNextNode) {
-            throw new Error('SplitRunNode must have a connection to all of its next nodes');
-          }
-          const inputPort = connectionToNextNode.inputId;
-
-          await Promise.all(
-            inputData.map(async (inputValue) => {
-              // Update the input data for the next node with the current input value from the array
-              const nextNodeInputData: Record<PortId, DataValue> = {
-                ...this.#getInputValuesForNode(nextNode, nodeResults),
-                [inputPort]: {
-                  type: inputDataType.slice(0, -2),
-                  value: inputValue,
-                },
-              };
-
-              try {
-                const nextNodeOutput = await this.#processNodeWithInputData(nextNode, context, nextNodeInputData);
-                results[nextNode.id] ??= [];
-                results[nextNode.id]!.push(nextNodeOutput);
-              } catch (error) {
-                const errorInstance =
-                  typeof error === 'object' && error instanceof Error
-                    ? error
-                    : new Error(error != null ? error.toString() : 'Unknown error');
-                events.onNodeError?.(nextNode, errorInstance);
-                throw error;
+      await Promise.all(
+        range(0, splittingAmount).map(async (i) => {
+          const inputs: Record<PortId, DataValue> = Object.fromEntries(
+            Object.entries(inputValues).map(([port, value]): [PortId, DataValue] => {
+              if (value.type.endsWith('[]')) {
+                const newType = value.type.slice(0, -2) as DataValue['type'];
+                const newValue: unknown = (value.value as unknown[])[i] ?? undefined;
+                return [port as PortId, { type: newType, value: newValue as any }];
+              } else {
+                return [port as PortId, value];
               }
             }),
           );
-          return results;
+
+          try {
+            const output = await this.#processNodeWithInputData(node, context, inputs);
+            results.push(output);
+          } catch (error) {
+            const errorInstance =
+              typeof error === 'object' && error instanceof Error
+                ? error
+                : new Error(error != null ? error.toString() : 'Unknown error');
+            events.onNodeError?.(node, errorInstance);
+            throw error;
+          }
         }),
       );
 
-      const mergedResults = parallelResults.reduce((acc, result) => {
-        return {
-          ...acc,
-          ...result,
-        };
-      }, {} as Record<NodeId, Record<PortId, DataValue>[]>);
-
       // Combine the parallel results into the final output
-      for (const [nodeId, allResults] of Object.entries(mergedResults)) {
-        const node = this.#graph.nodes.find((node) => node.id === nodeId)!;
 
-        // Turn a Record<PortId, DataValue[]> into a Record<PortId, AnyArrayDataValue>
-        const aggregateResults = allResults.reduce((acc, result) => {
-          for (const [portId, value] of Object.entries(result)) {
-            acc[portId as PortId] ??= { type: (value.type + '[]') as DataValue['type'], value: [] } as DataValue;
-            (acc[portId as PortId] as ArrayDataValue<AnyDataValue>).value.push(value.value);
-          }
-          return acc;
-        }, {} as Record<PortId, DataValue>);
+      // Turn a Record<PortId, DataValue[]> into a Record<PortId, AnyArrayDataValue>
+      const aggregateResults = results.reduce((acc, result) => {
+        for (const [portId, value] of Object.entries(result)) {
+          acc[portId as PortId] ??= { type: (value.type + '[]') as DataValue['type'], value: [] } as DataValue;
+          (acc[portId as PortId] as ArrayDataValue<AnyDataValue>).value.push(value.value);
+        }
+        return acc;
+      }, {} as Record<PortId, DataValue>);
 
-        nodeResults.set(node.id, aggregateResults);
-        visitedNodes.add(node.id);
-        events.onNodeFinish?.(node, aggregateResults);
-      }
-
-      nodeResults.set(node.id, {} as Record<PortId, DataValue>);
+      nodeResults.set(node.id, aggregateResults);
       visitedNodes.add(node.id);
-      events.onNodeFinish?.(node, {} as Record<PortId, DataValue>);
+      events.onNodeFinish?.(node, aggregateResults);
     } catch (error) {
       const errorInstance =
         typeof error === 'object' && error instanceof Error
@@ -315,15 +248,6 @@ export class GraphProcessor {
       console.error(error);
       throw error;
     }
-  }
-
-  #getSplitRunNextNodes(node: SplitRunNode) {
-    const outputConnections = this.#connections[node.id]!.filter((conn) => conn.outputNodeId === node.id);
-    const nextNodes = uniqBy(
-      outputConnections.map((conn) => this.#graph.nodes.find((node) => node.id === conn.inputNodeId)!),
-      (n) => n.id,
-    );
-    return nextNodes;
   }
 
   async #processNormalNode(
@@ -339,7 +263,6 @@ export class GraphProcessor {
       return;
     }
 
-    // Process the node and save its output
     events.onNodeStart?.(node, inputValues);
 
     try {

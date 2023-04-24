@@ -19,7 +19,7 @@ import { IfNodeEditor } from './nodes/ItNode';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { ReadDirectoryNodeEditor } from './nodes/ReadDirectoryNode';
 import { ReadFileNodeEditor } from './nodes/ReadFileNode';
-import { SplitRunNodeEditor } from './nodes/SplitRunNode';
+import Toggle from '@atlaskit/toggle';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -176,7 +176,6 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
       <ReadDirectoryNodeEditor node={node} onChange={(node) => updateNode(node)} />
     ))
     .with({ type: 'readFile' }, (node) => <ReadFileNodeEditor node={node} onChange={(node) => updateNode(node)} />)
-    .with({ type: 'splitRun' }, (node) => <SplitRunNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .otherwise(() => null);
 
   useEffect(() => {
@@ -229,6 +228,21 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
           placeholder="Enter any description or notes for this node..."
         ></InlineEditableTextfield>
       </div>
+      <section>
+        <h3 className="section-title">Split</h3>
+        <Toggle
+          isChecked={selectedNode.isSplitRun}
+          onChange={(isSplitRun) => updateNode({ ...selectedNode, isSplitRun: isSplitRun.target.checked })}
+          label="Split"
+        />
+        <input
+          type="number"
+          className="input-field split-max"
+          placeholder="Max"
+          value={selectedNode.splitRunMax ?? 10}
+          onChange={(event) => updateNode({ ...selectedNode, splitRunMax: event.target.valueAsNumber })}
+        />
+      </section>
       {nodeEditor && (
         <div className="section section-node">
           <h3 className="section-title">{nodeDisplayName[selectedNode.type as NodeType]}</h3>

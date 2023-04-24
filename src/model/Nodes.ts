@@ -11,7 +11,6 @@ import { MatchNode, MatchNodeImpl } from './nodes/MatchNode';
 import { IfNode, IfNodeImpl } from './nodes/IfNode';
 import { ReadDirectoryNode, ReadDirectoryNodeImpl } from './nodes/ReadDirectoryNode';
 import { ReadFileNode, ReadFileNodeImpl } from './nodes/ReadFileNode';
-import { SplitRunNode, SplitRunNodeImpl } from './nodes/SplitRunNode';
 
 export type Nodes =
   | UserInputNode
@@ -23,8 +22,7 @@ export type Nodes =
   | MatchNode
   | IfNode
   | ReadDirectoryNode
-  | ReadFileNode
-  | SplitRunNode;
+  | ReadFileNode;
 
 export type NodeType = Nodes['type'];
 
@@ -40,7 +38,6 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
     .with({ type: 'if' }, (node) => new IfNodeImpl(node))
     .with({ type: 'readDirectory' }, (node) => new ReadDirectoryNodeImpl(node))
     .with({ type: 'readFile' }, (node) => new ReadFileNodeImpl(node))
-    .with({ type: 'splitRun' }, (node) => new SplitRunNodeImpl(node))
     .exhaustive();
 };
 
@@ -60,7 +57,6 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('if', () => IfNodeImpl.create())
     .with('readDirectory', () => ReadDirectoryNodeImpl.create())
     .with('readFile', () => ReadFileNodeImpl.create())
-    .with('splitRun', () => SplitRunNodeImpl.create())
     .exhaustive();
 }
 
@@ -75,5 +71,4 @@ export const nodeDisplayName: Record<NodeType, string> = {
   if: 'If',
   readDirectory: 'Read Directory',
   readFile: 'Read File',
-  splitRun: 'Split Run',
 };
