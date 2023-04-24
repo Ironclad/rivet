@@ -106,7 +106,20 @@ export const NodaiApp: FC = () => {
             });
           },
           onUserInput: handleUserInput,
-          onPartialOutputs: (node, outputs) => {
+          onPartialOutputs: (node, outputs, index) => {
+            if (node.isSplitRun) {
+              setLastRunData((prev) =>
+                produce(prev, (draft) => {
+                  draft[node.id] = {
+                    ...draft[node.id],
+                    splitOutputData: {
+                      ...draft[node.id]?.splitOutputData,
+                      [index]: cloneDeep(outputs),
+                    },
+                  };
+                }),
+              );
+            }
             setDataForNode(node.id, {
               outputData: outputs,
             });

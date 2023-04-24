@@ -15,11 +15,12 @@ import { ExtractRegexNodeEditor } from './nodes/ExtractRegexNode';
 import { CodeNodeEditor } from './nodes/CodeNode';
 import { MatchNodeEditor } from './nodes/MatchNode';
 import { UserInputNodeEditor } from './nodes/UserInputNode';
-import { IfNodeEditor } from './nodes/ItNode';
+import { IfNodeEditor } from './nodes/IfNode';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { ReadDirectoryNodeEditor } from './nodes/ReadDirectoryNode';
 import { ReadFileNodeEditor } from './nodes/ReadFileNode';
 import Toggle from '@atlaskit/toggle';
+import { IfElseNodeEditor } from './nodes/IfElseNode';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -172,6 +173,7 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
     .with({ type: 'match' }, (node) => <MatchNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .with({ type: 'userInput' }, (node) => <UserInputNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .with({ type: 'if' }, (node) => <IfNodeEditor />)
+    .with({ type: 'ifElse' }, (node) => <IfElseNodeEditor node={node} />)
     .with({ type: 'readDirectory' }, (node) => (
       <ReadDirectoryNodeEditor node={node} onChange={(node) => updateNode(node)} />
     ))

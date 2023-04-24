@@ -195,15 +195,14 @@ const BlankAreaContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSelect
   return (
     <MenuItem label="Add" hasSubMenu={true}>
       <MenuItem label="Prompt" onClick={() => addNode('prompt')} />
-      {/* <MenuItem label="Branch" onClick={() => addNode('branch')} /> */}
       <MenuItem label="Chat" onClick={() => addNode('chat')} />
-      {/* <MenuItem label="Concat" onClick={() => addNode('concat')} /> */}
       <MenuItem label="Text" onClick={() => addNode('text')} />
       <MenuItem label="User Input" onClick={() => addNode('userInput')} />
       <MenuItem label="Extract With Regex" onClick={() => addNode('extractRegex')} />
       <MenuItem label="Code" onClick={() => addNode('code')} />
       <MenuItem label="Match" onClick={() => addNode('match')} />
       <MenuItem label="If" onClick={() => addNode('if')} />
+      <MenuItem label="If/Else" onClick={() => addNode('ifElse')} />
       <MenuItem label="Read Directory" onClick={() => addNode('readDirectory')} />
       <MenuItem label="Read File" onClick={() => addNode('readFile')} />
     </MenuItem>

@@ -16,6 +16,12 @@ export type NodeRunData = {
   outputData?: {
     [key: PortId]: DataValue;
   };
+
+  splitOutputData?: {
+    [index: number]: {
+      [key: PortId]: DataValue;
+    };
+  };
 };
 
 export const lastRunDataByNodeState = atom<RunDataByNodeId>({

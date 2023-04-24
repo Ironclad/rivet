@@ -19,6 +19,7 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
       visualData: {
         x: 0,
         y: 0,
+        width: 300,
       },
       data: {
         text,
@@ -69,6 +70,7 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
         .with({ type: 'number' }, (v) => v.value.toString())
         .with({ type: 'string' }, (v) => v.value)
         .with({ type: 'string[]' }, (v) => v.value.join('\n')) // TODO configurable?
+        .with({ type: 'chat-message' }, (v) => v.value.message)
         .otherwise(() => '');
 
       acc[key] = stringValue;
