@@ -12,6 +12,7 @@ import { IfNodeBody } from './nodes/ItNode';
 import { Nodes } from '../model/Nodes';
 import { ReadDirectoryNodeBody } from './nodes/ReadDirectoryNode';
 import { ReadFileNodeBody } from './nodes/ReadFileNode';
+import { SplitRunNodeBody } from './nodes/SplitRunNode';
 
 export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
   const body = match(node as Nodes)
@@ -25,6 +26,7 @@ export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
     .with({ type: 'if' }, () => <IfNodeBody />)
     .with({ type: 'readDirectory' }, (node) => <ReadDirectoryNodeBody node={node} />)
     .with({ type: 'readFile' }, (node) => <ReadFileNodeBody node={node} />)
+    .with({ type: 'splitRun' }, (node) => <SplitRunNodeBody node={node} />)
     .otherwise(() => <div>Unknown node type</div>);
 
   return <div className="node-body">{body}</div>;
