@@ -67,6 +67,8 @@ code {
 
   /* Gradient */
   --grey-subtle-accent: rgba(255, 255, 255, 0.02);
+
+  --shadow-orange: rgba(255, 140, 0, 0.8);
 }
 
 .pre-wrap {

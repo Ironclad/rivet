@@ -2,9 +2,9 @@ import { useLatest } from 'ahooks';
 import { MouseEvent, FC, useRef } from 'react';
 
 interface ResizeHandleProps {
-  onResizeStart: (event: MouseEvent) => void;
-  onResizeMove: (event: MouseEvent) => void;
-  onResizeEnd: (event: MouseEvent) => void;
+  onResizeStart?: (event: MouseEvent) => void;
+  onResizeMove?: (event: MouseEvent) => void;
+  onResizeEnd?: (event: MouseEvent) => void;
 }
 
 export const ResizeHandle: FC<ResizeHandleProps> = ({ onResizeStart, onResizeMove, onResizeEnd }) => {
@@ -17,9 +17,9 @@ export const ResizeHandle: FC<ResizeHandleProps> = ({ onResizeStart, onResizeMov
 
   const handleMouseDown = (event: MouseEvent) => {
     event.stopPropagation();
-    onResizeStartLatest.current(event);
+    onResizeStartLatest.current?.(event);
 
-    onResizeMoveRef.current = (e) => onResizeMoveLatest.current(e);
+    onResizeMoveRef.current = (e) => onResizeMoveLatest.current?.(e);
     handleMouseUpRef.current = (e) => handleMouseUp(e);
 
     window.addEventListener('mousemove', onResizeMoveRef.current as any, {
@@ -33,7 +33,7 @@ export const ResizeHandle: FC<ResizeHandleProps> = ({ onResizeStart, onResizeMov
 
   const handleMouseUp = (event: MouseEvent) => {
     event.stopPropagation();
-    onResizeEndLatest.current(event);
+    onResizeEndLatest.current?.(event);
     window.removeEventListener('mousemove', onResizeMoveRef.current as any, {
       capture: true,
     });
