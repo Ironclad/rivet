@@ -1,28 +1,46 @@
 import { NodeGraph } from '../model/NodeGraph';
+import { save, open } from '@tauri-apps/api/dialog';
+import { writeFile, readTextFile } from '@tauri-apps/api/fs';
 
-export function saveGraphData(graphData: NodeGraph) {
-  const blob = new Blob([JSON.stringify(graphData)], { type: 'application/json' });
-  const anchor = document.createElement('a');
-  anchor.download = 'graph-data.json';
-  anchor.href = URL.createObjectURL(blob);
-  anchor.click();
-  URL.revokeObjectURL(anchor.href);
+export async function saveGraphData(graphData: NodeGraph) {
+  const filePath = await save({
+    filters: [
+      {
+        name: 'JSON',
+        extensions: ['json'],
+      },
+    ],
+    title: 'Save graph',
+    defaultPath: `${graphData.metadata?.name ?? 'graph'}.json`,
+  });
+
+  const data = JSON.stringify(graphData);
+
+  if (filePath) {
+    await writeFile({
+      contents: data,
+      path: filePath,
+    });
+  }
 }
 
-export function loadGraphData(callback: (graphData: NodeGraph) => void) {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.json';
-  input.onchange = (event: Event) => {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (!file) return;
+export async function loadGraphData(callback: (graphData: NodeGraph) => void) {
+  const path = await open({
+    filters: [
+      {
+        name: 'JSON',
+        extensions: ['json'],
+      },
+    ],
+    multiple: false,
+    directory: false,
+    recursive: false,
+    title: 'Open graph',
+  });
 
-    const reader = new FileReader();
-    reader.onload = (e: ProgressEvent<FileReader>) => {
-      const graphData = JSON.parse(e.target?.result as string);
-      callback(graphData);
-    };
-    reader.readAsText(file);
-  };
-  input.click();
+  if (path) {
+    const data = await readTextFile(path as string);
+    const graphData = JSON.parse(data);
+    callback(graphData);
+  }
 }

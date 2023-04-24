@@ -15,6 +15,9 @@
       "fs": {
         "all": true,
         "scope": ["$DOCUMENT/**", "$HOME/**", "$TEMP/**", "$DESKTOP/**", "$DOWNLOAD/**"]
+      },
+      "dialog": {
+        "all": true
       }
     },
     "bundle": {
