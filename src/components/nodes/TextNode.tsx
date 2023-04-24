@@ -8,6 +8,7 @@ import { ChartNode } from '../../model/NodeBase';
 import { monaco } from '../../utils/monaco';
 import styled from '@emotion/styled';
 import { useLatest } from 'ahooks';
+import { css } from '@emotion/react';
 
 export type TextNodeBodyProps = {
   node: TextNode;
@@ -43,6 +44,12 @@ export const TextNodeBody: FC<TextNodeBodyProps> = ({ node }) => {
   );
 };
 
+const multiOutput = css`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
 export const TextNodeOutput: FC<TextNodeBodyProps> = ({ node }) => {
   const output = useRecoilValue(lastRunData(node.id));
 
@@ -59,8 +66,21 @@ export const TextNodeOutput: FC<TextNodeBodyProps> = ({ node }) => {
   }
 
   const outputText = output.outputData['output' as PortId];
+
+  if (outputText?.type === 'string[]') {
+    return (
+      <div css={multiOutput}>
+        {outputText.value.map((s, i) => (
+          <pre key={i} className="pre-wrap">
+            {s}
+          </pre>
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <pre>
+    <pre className="pre-wrap">
       <RenderDataValue value={outputText} />
     </pre>
   );

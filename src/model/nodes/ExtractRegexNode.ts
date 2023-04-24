@@ -101,7 +101,7 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
 
     const regExp = new RegExp(regex, 'g');
 
-    const matches = [];
+    let matches = [];
     let match;
     let firstMatch;
 
@@ -111,6 +111,8 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
       }
       matches.push(match[1]!);
     }
+
+    matches = matches.filter((m) => m);
 
     if (matches.length === 0 && this.chartNode.data.errorOnFailed) {
       throw new Error(`No match found for regex ${regex}`);

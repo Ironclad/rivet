@@ -135,6 +135,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     context: ProcessContext,
     onPartialOutputs: (outputs: Record<PortId, DataValue>) => void,
   ): Promise<Record<PortId, DataValue>> {
+    console.dir({ inputs });
     const output: Record<PortId, DataValue> = {};
 
     const model = expectTypeOptional(inputs['model' as PortId], 'string') ?? this.chartNode.data.model;

@@ -74,6 +74,26 @@ export class GraphProcessor {
     return this.#allInputsVisited(node, visitedNodes);
   }
 
+  #canRunNormally(node: ChartNode): boolean {
+    const connections = this.#connections[node.id];
+    const inputs = this.#definitions[node.id]!.inputs;
+    return (
+      inputs.length === 0 ||
+      inputs.every((input) => {
+        const connectionToInput = connections?.find(
+          (conn) => conn.inputId === input.id && conn.inputNodeId === node.id,
+        );
+
+        if (!connectionToInput) {
+          return true;
+        }
+
+        const outputNode = this.#graph.nodes.find((n) => n.id === connectionToInput?.outputNodeId);
+        return outputNode?.type !== 'splitRun';
+      })
+    );
+  }
+
   #allInputsVisited(node: ChartNode, visitedNodes: Set<unknown>, depth = 0): boolean {
     const connections = this.#connections[node.id];
     return (
@@ -110,7 +130,9 @@ export class GraphProcessor {
     const visitedNodes = new Set();
 
     while (nodesToProcess.length > 0) {
-      const readyNodes = nodesToProcess.filter((node) => this.#nodeIsReady(node, visitedNodes));
+      const readyNodes = nodesToProcess
+        .filter((node) => this.#nodeIsReady(node, visitedNodes))
+        .filter((node) => this.#canRunNormally(node));
 
       if (readyNodes.length === 0) {
         for (const erroredNode of nodesToProcess) {
@@ -188,7 +210,7 @@ export class GraphProcessor {
     nodesToProcess.splice(nodesToProcess.indexOf(node), 1);
 
     if (node.type === 'splitRun') {
-      await this.#processSplitRunNode(node, nodeResults, context, events, visitedNodes);
+      await this.#processSplitRunNode(node, nodeResults, context, events, visitedNodes, nodesToProcess);
     } else {
       await this.#processNormalNode(node, nodeResults, context, events, visitedNodes);
     }
@@ -200,6 +222,7 @@ export class GraphProcessor {
     context: ProcessContext,
     events: ProcessEvents,
     visitedNodes: Set<unknown>,
+    nodesToProcess: ChartNode[],
   ) {
     const inputDataType = this.#getInputValuesForNode(node, nodeResults)['input' as PortId]!
       .type as ArrayDataValue<ScalarDataValue>['type'];
@@ -217,6 +240,7 @@ export class GraphProcessor {
     try {
       const parallelResults = await Promise.all(
         nextNodes.map(async (nextNode) => {
+          nodesToProcess.splice(nodesToProcess.indexOf(nextNode), 1);
           const results: Record<NodeId, Record<PortId, DataValue>[]> = {};
 
           const connectionToNextNode = this.#connections[node.id]?.find((conn) => conn.inputNodeId === nextNode.id);
@@ -245,7 +269,7 @@ export class GraphProcessor {
                   typeof error === 'object' && error instanceof Error
                     ? error
                     : new Error(error != null ? error.toString() : 'Unknown error');
-                events.onNodeError?.(node, errorInstance);
+                events.onNodeError?.(nextNode, errorInstance);
                 throw error;
               }
             }),
