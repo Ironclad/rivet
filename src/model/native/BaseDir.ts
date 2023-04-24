@@ -27,3 +27,9 @@ export const baseDirs = {
 } as const;
 
 export type BaseDir = (typeof baseDirs)[keyof typeof baseDirs];
+
+export function assertBaseDir(baseDir: string): asserts baseDir is BaseDir {
+  if (!(baseDir in baseDirs)) {
+    throw new Error(`Invalid base directory: ${baseDir}`);
+  }
+}

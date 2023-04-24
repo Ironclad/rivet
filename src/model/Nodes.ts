@@ -1,7 +1,6 @@
 import { ChartNode } from './NodeBase';
 import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode';
 import { NodeImpl } from './NodeImpl';
-import { BranchNode, BranchNodeImpl } from './nodes/BranchNode';
 import { TextNode, TextNodeImpl } from './nodes/TextNode';
 import { ChatNode, ChatNodeImpl } from './nodes/ChatNode';
 import { PromptNode, PromptNodeImpl } from './nodes/PromptNode';
@@ -11,10 +10,10 @@ import { CodeNode, CodeNodeImpl } from './nodes/CodeNode';
 import { MatchNode, MatchNodeImpl } from './nodes/MatchNode';
 import { IfNode, IfNodeImpl } from './nodes/IfNode';
 import { ReadDirectoryNode, ReadDirectoryNodeImpl } from './nodes/ReadDirectoryNode';
+import { ReadFileNode, ReadFileNodeImpl } from './nodes/ReadFileNode';
 
 export type Nodes =
   | UserInputNode
-  | BranchNode
   | TextNode
   | ChatNode
   | PromptNode
@@ -22,14 +21,14 @@ export type Nodes =
   | CodeNode
   | MatchNode
   | IfNode
-  | ReadDirectoryNode;
+  | ReadDirectoryNode
+  | ReadFileNode;
 
 export type NodeType = Nodes['type'];
 
 export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode> => {
   return match(node as Nodes)
     .with({ type: 'userInput' }, (node) => new UserInputNodeImpl(node))
-    .with({ type: 'branch' }, (node) => new BranchNodeImpl(node))
     .with({ type: 'text' }, (node) => new TextNodeImpl(node))
     .with({ type: 'chat' }, (node) => new ChatNodeImpl(node))
     .with({ type: 'prompt' }, (node) => new PromptNodeImpl(node))
@@ -38,6 +37,7 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
     .with({ type: 'match' }, (node) => new MatchNodeImpl(node))
     .with({ type: 'if' }, (node) => new IfNodeImpl(node))
     .with({ type: 'readDirectory' }, (node) => new ReadDirectoryNodeImpl(node))
+    .with({ type: 'readFile' }, (node) => new ReadFileNodeImpl(node))
     .exhaustive();
 };
 
@@ -48,7 +48,6 @@ export function createUnknownNodeInstance(node: ChartNode): NodeImpl<ChartNode> 
 export function nodeFactory(type: NodeType): Nodes {
   return match(type)
     .with('userInput', () => UserInputNodeImpl.create())
-    .with('branch', () => BranchNodeImpl.create())
     .with('text', () => TextNodeImpl.create())
     .with('chat', () => ChatNodeImpl.create())
     .with('prompt', () => PromptNodeImpl.create())
@@ -57,12 +56,12 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('match', () => MatchNodeImpl.create())
     .with('if', () => IfNodeImpl.create())
     .with('readDirectory', () => ReadDirectoryNodeImpl.create())
+    .with('readFile', () => ReadFileNodeImpl.create())
     .exhaustive();
 }
 
 export const nodeDisplayName: Record<NodeType, string> = {
   userInput: 'User Input',
-  branch: 'Branch',
   text: 'Text',
   chat: 'Chat',
   prompt: 'Prompt',
@@ -71,4 +70,5 @@ export const nodeDisplayName: Record<NodeType, string> = {
   match: 'Match',
   if: 'If',
   readDirectory: 'Read Directory',
+  readFile: 'Read File',
 };

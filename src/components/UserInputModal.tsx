@@ -25,7 +25,7 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questionGroups, 
   const handleChange = (groupIndex: number, index: number, value: string) => {
     const newAnswers = [...answers];
     newAnswers[groupIndex] ??= [];
-    newAnswers[groupIndex][index] = value;
+    newAnswers[groupIndex]![index]! = value;
     setAnswers(newAnswers);
   };
 
@@ -33,7 +33,7 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questionGroups, 
     const newLastAnswers = { ...lastAnswers };
     questionGroups.forEach((group, groupIndex) => {
       group.forEach((question, index) => {
-        newLastAnswers[question] = answers[groupIndex][index];
+        newLastAnswers[question] = answers[groupIndex]![index]!;
       });
     });
     setLastAnswers(newLastAnswers);
@@ -45,7 +45,7 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questionGroups, 
   return (
     <ModalTransition>
       {open && (
-        <Modal width="large" onClose={handleSubmit}>
+        <Modal width="large">
           <ModalHeader>
             <ModalTitle>User Input</ModalTitle>
           </ModalHeader>

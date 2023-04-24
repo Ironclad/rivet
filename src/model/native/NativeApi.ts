@@ -1,7 +1,14 @@
 import { BaseDir } from './BaseDir';
 
+export type ReadDirOptions = {
+  recursive?: boolean;
+  includeDirectories?: boolean;
+  filterGlobs?: string[];
+  relative?: boolean;
+};
+
 export interface NativeApi {
-  readdir(path: string, baseDir: BaseDir): Promise<string[]>;
+  readdir(path: string, baseDir: BaseDir, options?: ReadDirOptions): Promise<string[]>;
 
   readTextFile(path: string, baseDir: BaseDir): Promise<string>;
 
