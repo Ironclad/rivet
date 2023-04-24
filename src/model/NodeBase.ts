@@ -21,6 +21,10 @@ export interface NodeBase {
   /** A user description/notes for the node */
   description?: string;
 
+  isSplitRun?: boolean;
+
+  splitRunMax?: number;
+
   /** The visual data of the node, including its position. Visual data does not affect its processing. */
   visualData: {
     /** The x-coordinate of the node's position. */

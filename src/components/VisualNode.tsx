@@ -10,6 +10,7 @@ import { NodeOutput } from './NodeOutput';
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
 import { ReactComponent as SendIcon } from 'majesticons/solid/send.svg';
 import { ReactComponent as PinwheelIcon } from 'majesticons/line/pinwheel-line.svg';
+import { ReactComponent as GitForkLine } from 'majesticons/line/git-fork-line.svg';
 
 export type VisualNodeProps = {
   node: ChartNode;
@@ -106,6 +107,7 @@ export const VisualNode = memo(
         >
           <div className="node-title">
             <div className="grab-area" {...handleAttributes}>
+              {node.isSplitRun ? <GitForkLine /> : <></>}
               <div className="title-text">{node.title}</div>
             </div>
             <div className="title-controls">
