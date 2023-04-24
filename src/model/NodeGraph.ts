@@ -44,7 +44,7 @@ export function calculateCachesFor(graph: NodeGraph): void {
     if (!acc[connection.inputNodeId]) {
       acc[connection.inputNodeId] = [];
     }
-    acc[connection.inputNodeId].push(connection);
+    acc[connection.inputNodeId]!.push(connection);
     return acc;
   }, {} as Record<NodeId, NodeConnection[]>);
 

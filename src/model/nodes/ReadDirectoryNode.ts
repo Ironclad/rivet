@@ -1,7 +1,7 @@
 import { ChartNode, NodeId, PortId } from '../NodeBase';
-import { BaseDir, baseDirs } from '../native/BaseDir';
-import { NodeConnection, NodeInputDefinition, NodeOutputDefinition } from '../NodeBase';
-import { DataValue } from '../DataValue';
+import { BaseDir, assertBaseDir, baseDirs } from '../native/BaseDir';
+import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase';
+import { DataValue, expectType } from '../DataValue';
 import { NodeImpl, ProcessContext } from '../NodeImpl';
 import { nanoid } from 'nanoid';
 
@@ -9,8 +9,22 @@ export type ReadDirectoryNode = ChartNode<'readDirectory', ReadDirectoryNodeData
 
 type ReadDirectoryNodeData = {
   baseDirectory: BaseDir;
+  useBaseDirectoryInput: boolean;
+
   path: string;
+  usePathInput: boolean;
+
   recursive: boolean;
+  useRecursiveInput: boolean;
+
+  includeDirectories: boolean;
+  useIncludeDirectoriesInput: boolean;
+
+  filterGlobs: string[];
+  useFilterGlobsInput: boolean;
+
+  relative: boolean;
+  useRelativeInput: boolean;
 };
 
 export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
@@ -22,17 +36,82 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
       visualData: { x: 0, y: 0 },
       data: {
         baseDirectory: baseDirs.document,
-        path: '',
+        path: 'examples',
         recursive: false,
+        useBaseDirectoryInput: false,
+        usePathInput: false,
+        useRecursiveInput: false,
+        includeDirectories: false,
+        useIncludeDirectoriesInput: false,
+        filterGlobs: [],
+        useFilterGlobsInput: false,
+        relative: false,
+        useRelativeInput: false,
       },
     };
   }
 
-  getInputDefinitions(_connections: NodeConnection[]): NodeInputDefinition[] {
-    return [];
+  getInputDefinitions(): NodeInputDefinition[] {
+    const inputDefinitions: NodeInputDefinition[] = [];
+
+    if (this.chartNode.data.useBaseDirectoryInput) {
+      inputDefinitions.push({
+        id: 'baseDirectory' as PortId,
+        title: 'Base Directory',
+        dataType: 'string',
+        required: true,
+      });
+    }
+
+    if (this.chartNode.data.usePathInput) {
+      inputDefinitions.push({
+        id: 'path' as PortId,
+        title: 'Path',
+        dataType: 'string',
+        required: true,
+      });
+    }
+
+    if (this.chartNode.data.useRecursiveInput) {
+      inputDefinitions.push({
+        id: 'recursive' as PortId,
+        title: 'Recursive',
+        dataType: 'boolean',
+        required: true,
+      });
+    }
+
+    if (this.chartNode.data.useIncludeDirectoriesInput) {
+      inputDefinitions.push({
+        id: 'includeDirectories' as PortId,
+        title: 'Include Directories',
+        dataType: 'boolean',
+        required: true,
+      });
+    }
+
+    if (this.chartNode.data.useFilterGlobsInput) {
+      inputDefinitions.push({
+        id: 'filterGlobs' as PortId,
+        title: 'Filter Globs',
+        dataType: 'string[]',
+        required: true,
+      });
+    }
+
+    if (this.chartNode.data.useRelativeInput) {
+      inputDefinitions.push({
+        id: 'relative' as PortId,
+        title: 'Relative',
+        dataType: 'boolean',
+        required: true,
+      });
+    }
+
+    return inputDefinitions;
   }
 
-  getOutputDefinitions(_connections: NodeConnection[]): NodeOutputDefinition[] {
+  getOutputDefinitions(): NodeOutputDefinition[] {
     return [
       {
         id: 'paths' as PortId,
@@ -42,8 +121,40 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
     ];
   }
 
-  async process(_inputData: Record<string, DataValue>, context: ProcessContext): Promise<Record<string, DataValue>> {
-    const files = await context.nativeApi.readdir(this.chartNode.data.path, this.chartNode.data.baseDirectory);
+  async process(inputData: Record<PortId, DataValue>, context: ProcessContext): Promise<Record<PortId, DataValue>> {
+    const baseDirectory = this.chartNode.data.useBaseDirectoryInput
+      ? expectType(inputData['baseDirectory' as PortId], 'string')
+      : this.chartNode.data.baseDirectory;
+
+    assertBaseDir(baseDirectory);
+
+    const path = this.chartNode.data.usePathInput
+      ? expectType(inputData['path' as PortId], 'string')
+      : this.chartNode.data.path;
+
+    const recursive = this.chartNode.data.useRecursiveInput
+      ? expectType(inputData['recursive' as PortId], 'boolean')
+      : this.chartNode.data.recursive;
+
+    const includeDirectories = this.chartNode.data.useIncludeDirectoriesInput
+      ? expectType(inputData['includeDirectories' as PortId], 'boolean')
+      : this.chartNode.data.includeDirectories;
+
+    const filterGlobs = this.chartNode.data.useFilterGlobsInput
+      ? expectType(inputData['filterGlobs' as PortId], 'string[]')
+      : this.chartNode.data.filterGlobs;
+
+    const relative = this.chartNode.data.useRelativeInput
+      ? expectType(inputData['relative' as PortId], 'boolean')
+      : this.chartNode.data.relative;
+
+    const files = await context.nativeApi.readdir(path, baseDirectory, {
+      recursive,
+      includeDirectories,
+      filterGlobs,
+      relative,
+    });
+
     return {
       ['paths' as PortId]: { type: 'string[]', value: files },
     };

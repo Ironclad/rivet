@@ -36,8 +36,8 @@ export const useDraggingWire = (
             onConnectionsChanged(newConnections);
 
             setDraggingWire({
-              startNodeId: connections[existingConnectionIndex].outputNodeId,
-              startPortId: connections[existingConnectionIndex].outputId,
+              startNodeId: connections[existingConnectionIndex]!.outputNodeId,
+              startPortId: connections[existingConnectionIndex]!.outputId,
             });
             return;
           }

@@ -22,7 +22,7 @@ const menuStyles = css`
   box-shadow: 0 8px 16px var(--shadow-dark);
   font-family: 'Roboto Mono', monospace;
   color: var(--foreground);
-  font-size: 14px;
+  font-size: 13px;
   padding: 8px;
   z-index: 1;
   min-width: 150px;
@@ -87,10 +87,9 @@ const MenuItemDiv = styled.div<{ hasSubmenu?: boolean }>`
   align-items: center;
   justify-content: space-between;
   padding: 4px 8px;
-  margin: 4px 0;
   border-radius: 4px;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 2px 4px;
   border-radius: 4px;
   white-space: nowrap;
   transition: background-color 0.1s ease-out, color 0.1s ease-out;
@@ -205,6 +204,8 @@ const BlankAreaContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSelect
       <MenuItem label="Code" onClick={() => addNode('code')} />
       <MenuItem label="Match" onClick={() => addNode('match')} />
       <MenuItem label="If" onClick={() => addNode('if')} />
+      <MenuItem label="Read Directory" onClick={() => addNode('readDirectory')} />
+      <MenuItem label="Read File" onClick={() => addNode('readFile')} />
     </MenuItem>
   );
 };

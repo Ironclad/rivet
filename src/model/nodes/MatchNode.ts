@@ -70,7 +70,7 @@ export class MatchNodeImpl extends NodeImpl<MatchNode> {
     const output: Record<string, DataValue> = {};
 
     for (let i = 0; i < cases.length; i++) {
-      const regExp = new RegExp(cases[i]);
+      const regExp = new RegExp(cases[i]!);
       const match = regExp.test(inputString);
 
       if (match) {

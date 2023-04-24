@@ -6478,6 +6478,7 @@ __metadata:
     lodash-es: ^4.17.21
     majesticons: ^2.1.2
     mini-css-extract-plugin: ^2.4.5
+    minimatch: ^9.0.0
     monaco-editor: ^0.37.1
     nanoid: ^4.0.1
     openai: ^3.2.1
@@ -12345,6 +12346,15 @@ __metadata:
   dependencies:
     brace-expansion: "npm:^2.0.1"
   checksum: 7564208ef81d7065a370f788d337cd80a689e981042cb9a1d0e6580b6c6a8c9279eba80010516e258835a988363f99f54a6f711a315089b8b42694f5da9d0d77
+  languageName: node
+  linkType: hard
+
+"minimatch@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "minimatch@npm:9.0.0"
+  dependencies:
+    brace-expansion: ^2.0.1
+  checksum: 7bd57899edd1d1b0560f50b5b2d1ea4ad2a366c5a2c8e0a943372cf2f200b64c256bae45a87a80915adbce27fa36526264296ace0da57b600481fe5ea3e372e5
   languageName: node
   linkType: hard
 

@@ -109,7 +109,7 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
       if (!firstMatch) {
         firstMatch = match;
       }
-      matches.push(match[1]);
+      matches.push(match[1]!);
     }
 
     if (matches.length === 0 && this.chartNode.data.errorOnFailed) {
@@ -153,7 +153,7 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
     for (let i = 1; i < firstMatch.length; i++) {
       output[`output${i}` as PortId] = {
         type: 'string',
-        value: firstMatch[i],
+        value: firstMatch[i]!,
       };
     }
 

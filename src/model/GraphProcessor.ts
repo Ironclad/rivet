@@ -32,16 +32,16 @@ export class GraphProcessor {
       if (!this.#connections[conn.outputNodeId]) {
         this.#connections[conn.outputNodeId] = [];
       }
-      this.#connections[conn.inputNodeId].push(conn);
-      this.#connections[conn.outputNodeId].push(conn);
+      this.#connections[conn.inputNodeId]!.push(conn);
+      this.#connections[conn.outputNodeId]!.push(conn);
     }
 
     // Store input and output definitions in a lookup table
     this.#definitions = {};
     for (const node of this.#graph.nodes) {
       this.#definitions[node.id] = {
-        inputs: this.#nodeInstances[node.id].getInputDefinitions(this.#connections[node.id]),
-        outputs: this.#nodeInstances[node.id].getOutputDefinitions(this.#connections[node.id]),
+        inputs: this.#nodeInstances[node.id]!.getInputDefinitions(this.#connections[node.id]!),
+        outputs: this.#nodeInstances[node.id]!.getOutputDefinitions(this.#connections[node.id]!),
       };
     }
   }
@@ -59,8 +59,8 @@ export class GraphProcessor {
       ) => Promise<StringArrayDataValue[]>;
       onPartialOutputs?: (node: ChartNode, outputs: Record<PortId, DataValue>) => void;
     } = {},
-  ): Promise<Record<string, any>> {
-    const outputNodes = this.#graph.nodes.filter((node) => this.#definitions[node.id].outputs.length === 0);
+  ): Promise<Record<string, DataValue>> {
+    const outputNodes = this.#graph.nodes.filter((node) => this.#definitions[node.id]!.outputs.length === 0);
 
     const nodeResults: NodeResults = new Map();
 
@@ -71,17 +71,19 @@ export class GraphProcessor {
     while (nodesToProcess.length > 0) {
       const readyNodes = nodesToProcess.filter((node) => {
         const connections = this.#connections[node.id];
-        return this.#definitions[node.id].inputs.every((input) => {
-          const connectionToInput = connections?.find(
-            (conn) => conn.inputId === input.id && conn.inputNodeId === node.id,
-          );
+        return (
+          this.#definitions[node.id]!.inputs.every((input) => {
+            const connectionToInput = connections?.find(
+              (conn) => conn.inputId === input.id && conn.inputNodeId === node.id,
+            );
 
-          if (!input.required && !connectionToInput) {
-            return true;
-          }
+            if (!input.required && !connectionToInput) {
+              return true;
+            }
 
-          return connectionToInput ? visitedNodes.has(connectionToInput.outputNodeId) : false;
-        });
+            return connectionToInput ? visitedNodes.has(connectionToInput.outputNodeId) : false;
+          }) || this.#definitions[node.id]!.inputs.length === 0
+        );
       });
 
       if (readyNodes.length === 0) {
@@ -113,9 +115,9 @@ export class GraphProcessor {
           if (validUserInputNodes.length > 0) {
             const userInputResults = await events.onUserInput(validUserInputNodes, userInputInputValues);
             userInputResults.forEach((result, index) => {
-              const node = validUserInputNodes[index];
+              const node = validUserInputNodes[index]!;
               const outputValues = (this.#nodeInstances[node.id] as UserInputNodeImpl).getOutputValuesFromUserInput(
-                userInputInputValues[index],
+                userInputInputValues[index]!,
                 result,
               );
               nodeResults.set(node.id, outputValues);
@@ -147,7 +149,7 @@ export class GraphProcessor {
           events.onNodeStart?.(node, inputValues);
 
           try {
-            const outputValues = await this.#nodeInstances[node.id].process(inputValues, context, (partialOutputs) =>
+            const outputValues = await this.#nodeInstances[node.id]!.process(inputValues, context, (partialOutputs) =>
               events.onPartialOutputs?.(node, partialOutputs),
             );
 
@@ -155,7 +157,11 @@ export class GraphProcessor {
             visitedNodes.add(node.id);
             events.onNodeFinish?.(node, outputValues);
           } catch (error) {
-            events.onNodeError?.(node, error as Error);
+            const errorInstance =
+              typeof error === 'object' && error instanceof Error
+                ? error
+                : new Error(error != null ? error.toString() : 'Unknown error');
+            events.onNodeError?.(node, errorInstance);
             throw error;
           }
         }),
@@ -178,20 +184,24 @@ export class GraphProcessor {
     { onNodeExcluded }: { onNodeExcluded?: (node: ChartNode) => void },
     visitedNodes: Set<unknown>,
   ) {
-    const inputIsExcludedValue = Object.values(inputValues).some((value) => value?.type === 'control-flow-excluded');
+    const inputValuesList = Object.values(inputValues);
+    const inputIsExcludedValue =
+      inputValuesList.length > 0 && inputValuesList.some((value) => value?.type === 'control-flow-excluded');
 
-    const inputConnections = this.#connections[node.id].filter((conn) => conn.inputNodeId === node.id);
+    const inputConnections = this.#connections[node.id]?.filter((conn) => conn.inputNodeId === node.id) ?? [];
     const outputNodes = inputConnections
       .map((conn) => this.#graph.nodes.find((n) => n.id === conn.outputNodeId))
       .filter((n) => n) as ChartNode[];
 
-    const anyOutputIsExcludedValue = outputNodes.some((outputNode) => {
-      const outputValues = nodeResults.get(outputNode.id) ?? {};
-      if (outputValues[ControlFlowExcluded as unknown as PortId]) {
-        return true;
-      }
-      return false;
-    });
+    const anyOutputIsExcludedValue =
+      outputNodes.length > 0 &&
+      outputNodes.some((outputNode) => {
+        const outputValues = nodeResults.get(outputNode.id) ?? {};
+        if (outputValues[ControlFlowExcluded as unknown as PortId]) {
+          return true;
+        }
+        return false;
+      });
 
     if (inputIsExcludedValue || anyOutputIsExcludedValue) {
       onNodeExcluded?.(node);
@@ -207,13 +217,13 @@ export class GraphProcessor {
 
   #getInputValuesForNode(node: ChartNode, nodeResults: NodeResults): Record<PortId, DataValue> {
     const connections = this.#connections[node.id];
-    return this.#definitions[node.id].inputs.reduce((values, input) => {
+    return this.#definitions[node.id]!.inputs.reduce((values, input) => {
       if (!connections) {
         return values;
       }
       const connection = connections.find((conn) => conn.inputId === input.id && conn.inputNodeId === node.id);
       if (connection) {
-        const outputNode = this.#nodeInstances[connection.outputNodeId].chartNode;
+        const outputNode = this.#nodeInstances[connection.outputNodeId]!.chartNode;
         const outputResult = nodeResults.get(outputNode.id)?.[connection.outputId];
 
         values[input.id] = outputResult;

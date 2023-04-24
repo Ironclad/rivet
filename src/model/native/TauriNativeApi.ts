@@ -1,6 +1,7 @@
-import { readDir, BaseDirectory, readTextFile, readBinaryFile, writeFile } from '@tauri-apps/api/fs';
-import { NativeApi } from './NativeApi';
+import { readDir, BaseDirectory, readTextFile, readBinaryFile, writeFile, FileEntry } from '@tauri-apps/api/fs';
+import { NativeApi, ReadDirOptions } from './NativeApi';
 import { BaseDir } from './BaseDir';
+import { minimatch } from 'minimatch';
 
 const baseDirToBaseDirectory: Record<BaseDir, BaseDirectory> = {
   app: BaseDirectory.App,
@@ -31,11 +32,31 @@ const baseDirToBaseDirectory: Record<BaseDir, BaseDirectory> = {
 };
 
 export class TauriNativeApi implements NativeApi {
-  async readdir(path: string, baseDir: BaseDir): Promise<string[]> {
-    const baseDirectory = baseDirToBaseDirectory[baseDir];
-    const results = await readDir(path, { dir: baseDirectory, recursive: false });
+  async readdir(path: string, baseDir: BaseDir, options: ReadDirOptions = {}): Promise<string[]> {
+    const { recursive = false, includeDirectories = false, filterGlobs = [], relative = false } = options;
 
-    return results.map((result) => result.path);
+    const baseDirectory = baseDirToBaseDirectory[baseDir];
+    const results = await readDir(path, { dir: baseDirectory, recursive });
+
+    const flattenResults: (r: FileEntry[]) => FileEntry[] = (r) =>
+      r.flatMap((result) => (result.children ? [result, ...flattenResults(result.children)] : [result]));
+
+    let filteredResults = flattenResults(results)
+      .filter((result) => (includeDirectories ? true : result.children == null))
+      .map((result) => result.path);
+
+    if (filterGlobs.length > 0) {
+      for (const glob of filterGlobs) {
+        filteredResults = filteredResults.filter((result) => minimatch(result, glob, { dot: true }));
+      }
+    }
+
+    // TODO approximate, will fail on ironclad/ironclad for example
+    filteredResults = filteredResults.map((result) =>
+      relative ? result.slice(result.indexOf(path) + path.length + 1) : result,
+    );
+
+    return filteredResults;
   }
 
   async readTextFile(path: string, baseDir: BaseDir): Promise<string> {

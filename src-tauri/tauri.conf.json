@@ -13,7 +13,8 @@
     "allowlist": {
       "all": false,
       "fs": {
-        "all": true
+        "all": true,
+        "scope": ["$DOCUMENT/**", "$HOME/**", "$TEMP/**", "$DESKTOP/**", "$DOWNLOAD/**"]
       }
     },
     "bundle": {

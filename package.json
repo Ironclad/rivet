@@ -73,6 +73,7 @@
     "lodash-es": "^4.17.21",
     "majesticons": "^2.1.2",
     "mini-css-extract-plugin": "^2.4.5",
+    "minimatch": "^9.0.0",
     "monaco-editor": "^0.37.1",
     "nanoid": "^4.0.1",
     "openai": "^3.2.1",

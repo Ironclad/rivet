@@ -5,7 +5,7 @@ import { nodesSelector } from '../state/graph';
 import { ChartNode } from '../model/NodeBase';
 import styled from '@emotion/styled';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
-import { NodeType, nodeDisplayName } from '../model/Nodes';
+import { NodeType, Nodes, nodeDisplayName } from '../model/Nodes';
 import { match } from 'ts-pattern';
 import { PromptNodeEditor } from './nodes/PromptNode';
 import produce from 'immer';
@@ -17,6 +17,8 @@ import { MatchNodeEditor } from './nodes/MatchNode';
 import { UserInputNodeEditor } from './nodes/UserInputNode';
 import { IfNodeEditor } from './nodes/ItNode';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
+import { ReadDirectoryNodeEditor } from './nodes/ReadDirectoryNode';
+import { ReadFileNodeEditor } from './nodes/ReadFileNode';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -158,7 +160,7 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
     [setNodes],
   );
 
-  const nodeEditor = match(selectedNode)
+  const nodeEditor = match(selectedNode as Nodes)
     .with({ type: 'prompt' }, (node) => <PromptNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .with({ type: 'chat' }, (node) => <ChatNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .with({ type: 'text' }, (node) => <TextNodeEditor node={node} onChange={(node) => updateNode(node)} />)
@@ -169,6 +171,10 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
     .with({ type: 'match' }, (node) => <MatchNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .with({ type: 'userInput' }, (node) => <UserInputNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .with({ type: 'if' }, (node) => <IfNodeEditor />)
+    .with({ type: 'readDirectory' }, (node) => (
+      <ReadDirectoryNodeEditor node={node} onChange={(node) => updateNode(node)} />
+    ))
+    .with({ type: 'readFile' }, (node) => <ReadFileNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .otherwise(() => null);
 
   useEffect(() => {
