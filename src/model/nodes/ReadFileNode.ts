@@ -13,6 +13,8 @@ type ReadFileNodeData = {
 
   path: string;
   usePathInput: boolean;
+
+  errorOnMissingFile?: boolean;
 };
 
 export class ReadFileNodeImpl extends NodeImpl<ReadFileNode> {
@@ -27,6 +29,7 @@ export class ReadFileNodeImpl extends NodeImpl<ReadFileNode> {
         useBaseDirectoryInput: false,
         path: '',
         usePathInput: true,
+        errorOnMissingFile: false,
       },
     };
   }
@@ -74,10 +77,19 @@ export class ReadFileNodeImpl extends NodeImpl<ReadFileNode> {
       ? expectType(inputData['path' as PortId], 'string')
       : this.chartNode.data.path;
 
-    const content = await context.nativeApi.readTextFile(path, this.chartNode.data.baseDirectory);
-
-    return {
-      ['content' as PortId]: { type: 'string', value: content },
-    };
+    try {
+      const content = await context.nativeApi.readTextFile(path, this.chartNode.data.baseDirectory);
+      return {
+        ['content' as PortId]: { type: 'string', value: content },
+      };
+    } catch (err) {
+      if (this.chartNode.data.errorOnMissingFile) {
+        throw err;
+      } else {
+        return {
+          ['content' as PortId]: { type: 'string', value: '(no such file)' },
+        };
+      }
+    }
   }
 }

@@ -205,6 +205,7 @@ const BlankAreaContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSelect
       <MenuItem label="If/Else" onClick={() => addNode('ifElse')} />
       <MenuItem label="Read Directory" onClick={() => addNode('readDirectory')} />
       <MenuItem label="Read File" onClick={() => addNode('readFile')} />
+      <MenuItem label="Chunk" onClick={() => addNode('chunk')} />
     </MenuItem>
   );
 };

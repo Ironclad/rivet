@@ -22,6 +22,7 @@ import { Nodes } from '../model/Nodes';
 import { ReadDirectoryNodeOutput } from './nodes/ReadDirectoryNode';
 import { ReadFileNodeOutput } from './nodes/ReadFileNode';
 import { IfElseNodeOutput } from './nodes/IfElseNode';
+import { ChunkNodeOutput } from './nodes/ChunkNode';
 
 const fullscreenOutputButtonsCss = css`
   position: absolute;
@@ -64,6 +65,7 @@ export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
     .with({ type: 'readDirectory' }, (node) => <ReadDirectoryNodeOutput node={node} />)
     .with({ type: 'readFile' }, (node) => <ReadFileNodeOutput node={node} />)
     .with({ type: 'ifElse' }, (node) => <IfElseNodeOutput node={node} />)
+    .with({ type: 'chunk' }, (node) => <ChunkNodeOutput node={node} />)
     .otherwise(() => null);
 
   const fullscreenOutputBody = match(node as Nodes)

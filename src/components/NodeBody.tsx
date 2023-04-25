@@ -13,6 +13,7 @@ import { Nodes } from '../model/Nodes';
 import { ReadDirectoryNodeBody } from './nodes/ReadDirectoryNode';
 import { ReadFileNodeBody } from './nodes/ReadFileNode';
 import { IfElseNodeBody } from './nodes/IfElseNode';
+import { ChunkNodeBody } from './nodes/ChunkNode';
 
 export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
   const body = match(node as Nodes)
@@ -27,6 +28,7 @@ export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
     .with({ type: 'ifElse' }, (node) => <IfElseNodeBody node={node} />)
     .with({ type: 'readDirectory' }, (node) => <ReadDirectoryNodeBody node={node} />)
     .with({ type: 'readFile' }, (node) => <ReadFileNodeBody node={node} />)
+    .with({ type: 'chunk' }, (node) => <ChunkNodeBody node={node} />)
     .otherwise(() => <div>Unknown node type</div>);
 
   return <div className="node-body">{body}</div>;

@@ -113,11 +113,23 @@ export const FullscreenChatNodeOutput: FC<ChatNodeBodyProps> = ({ node }) => {
     return null;
   }
 
-  const outputText = expectType(output.outputData['response' as PortId], 'string');
+  const outputText = output.outputData['response' as PortId];
+
+  if (outputText?.type === 'string[]') {
+    return (
+      <div className="multi-message" css={styles}>
+        {outputText.value.map((text, index) => (
+          <div className="pre-wrap" key={index}>
+            {text}
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <pre ref={outputRef} className="pre-wrap" data-language="markdown">
-      {outputText}
+      <RenderDataValue value={outputText} />
     </pre>
   );
 };
