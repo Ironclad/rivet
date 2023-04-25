@@ -154,20 +154,25 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
       return;
     }
 
+    e.preventDefault();
+
     setIsDraggingCanvas(true);
     setDragStart({ x: e.clientX, y: e.clientY, canvasStartX: canvasPosition.x, canvasStartY: canvasPosition.y });
   });
 
-  const canvasMouseMove = useStableCallback((e: React.MouseEvent) => {
-    setLastMousePosition({ x: e.clientX, y: e.clientY });
+  const canvasMouseMove = useThrottleFn(
+    (e: React.MouseEvent) => {
+      setLastMousePosition({ x: e.clientX, y: e.clientY });
 
-    if (!isDraggingCanvas) return;
+      if (!isDraggingCanvas) return;
 
-    const dx = (e.clientX - dragStart.x) * (1 / canvasPosition.zoom);
-    const dy = (e.clientY - dragStart.y) * (1 / canvasPosition.zoom);
+      const dx = (e.clientX - dragStart.x) * (1 / canvasPosition.zoom);
+      const dy = (e.clientY - dragStart.y) * (1 / canvasPosition.zoom);
 
-    setCanvasPosition({ x: dragStart.canvasStartX + dx, y: dragStart.canvasStartY + dy, zoom: canvasPosition.zoom });
-  });
+      setCanvasPosition({ x: dragStart.canvasStartX + dx, y: dragStart.canvasStartY + dy, zoom: canvasPosition.zoom });
+    },
+    { wait: 10 },
+  );
 
   const isScrollable = (element: HTMLElement): boolean => {
     const style = window.getComputedStyle(element);
@@ -267,7 +272,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         css={styles}
         onContextMenu={handleContextMenu}
         onMouseDown={canvasMouseDown}
-        onMouseMove={canvasMouseMove}
+        onMouseMove={canvasMouseMove.run}
         onMouseUp={canvasMouseUp}
         onMouseLeave={canvasMouseUp}
         onWheel={handleZoom}

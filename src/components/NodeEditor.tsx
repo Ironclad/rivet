@@ -21,6 +21,7 @@ import { ReadDirectoryNodeEditor } from './nodes/ReadDirectoryNode';
 import { ReadFileNodeEditor } from './nodes/ReadFileNode';
 import Toggle from '@atlaskit/toggle';
 import { IfElseNodeEditor } from './nodes/IfElseNode';
+import { ChunkNodeEditor } from './nodes/ChunkNode';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -178,6 +179,7 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
       <ReadDirectoryNodeEditor node={node} onChange={(node) => updateNode(node)} />
     ))
     .with({ type: 'readFile' }, (node) => <ReadFileNodeEditor node={node} onChange={(node) => updateNode(node)} />)
+    .with({ type: 'chunk' }, (node) => <ChunkNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .otherwise(() => null);
 
   useEffect(() => {

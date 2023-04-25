@@ -17,7 +17,7 @@ export const ReadFileNodeBody: FC<ReadFileNodeBodyProps> = ({ node }) => {
   return (
     <div>
       <div>Base Directory: {node.data.baseDirectory}</div>
-      <div>Path: {node.data.path}</div>
+      {!node.data.usePathInput && <div>Path: {node.data.path}</div>}
     </div>
   );
 };
