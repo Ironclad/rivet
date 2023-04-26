@@ -199,9 +199,7 @@ export class GraphProcessor {
     events.onNodeStart?.(node, inputValues);
 
     try {
-      const results: Record<PortId, DataValue>[] = [];
-
-      await Promise.all(
+      const results = await Promise.all(
         range(0, splittingAmount).map(async (i) => {
           const inputs: Record<PortId, DataValue> = Object.fromEntries(
             Object.entries(inputValues).map(([port, value]): [PortId, DataValue] => {
@@ -217,7 +215,7 @@ export class GraphProcessor {
 
           try {
             const output = await this.#processNodeWithInputData(node, context, inputs, i, events.onPartialOutputs);
-            results.push(output);
+            return output;
           } catch (error) {
             const errorInstance =
               typeof error === 'object' && error instanceof Error

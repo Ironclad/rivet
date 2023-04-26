@@ -14,6 +14,7 @@ export const ChunkNodeBody: FC<ChunkNodeBodyProps> = ({ node }) => {
     <div>
       <div>Model: {node.data.model}</div>
       <div>Token Count: {node.data.numTokensPerChunk}</div>
+      {node.data.overlap && <div>Overlap %: {node.data.overlap}</div>}
     </div>
   );
 };
@@ -136,6 +137,21 @@ export const ChunkNodeEditor: FC<ChunkNodeEditorProps> = ({ node, onChange }) =>
           onChange={(e) =>
             onChange?.({ ...chunkNode, data: { ...chunkNode.data, numTokensPerChunk: e.target.valueAsNumber } })
           }
+        />
+      </div>
+      <div className="row">
+        <label className="label" htmlFor="overlap">
+          Overlap %
+        </label>
+        <input
+          id="overlap"
+          className="number-input"
+          type="number"
+          step="1"
+          min="0"
+          max="100"
+          value={chunkNode.data.overlap}
+          onChange={(e) => onChange?.({ ...chunkNode, data: { ...chunkNode.data, overlap: e.target.valueAsNumber } })}
         />
       </div>
     </div>

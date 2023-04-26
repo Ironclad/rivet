@@ -119,10 +119,11 @@ export const NodaiApp: FC = () => {
                   };
                 }),
               );
+            } else {
+              setDataForNode(node.id, {
+                outputData: outputs,
+              });
             }
-            setDataForNode(node.id, {
-              outputData: outputs,
-            });
           },
         },
       );

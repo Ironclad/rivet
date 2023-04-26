@@ -10,6 +10,8 @@ export type ChunkNodeData = {
 
   model: string;
   useModelInput: boolean;
+
+  overlap: number;
 };
 
 export type ChunkNode = ChartNode<'chunk', ChunkNodeData>;
@@ -29,6 +31,7 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
         model: 'gpt-3.5-turbo',
         useModelInput: false,
         numTokensPerChunk: 1024,
+        overlap: 0,
       },
     };
 
@@ -68,10 +71,13 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
   async process(inputs: Record<PortId, DataValue>, context: ProcessContext): Promise<Record<PortId, DataValue>> {
     const input = expectType(inputs['input' as PortId], 'string');
 
+    const overlapPercent = this.chartNode.data.overlap / 100;
+
     const chunked = chunkStringByTokenCount(
       input,
       this.chartNode.data.numTokensPerChunk,
       modelToTiktokenModel[this.chartNode.data.model as SupportedModels],
+      overlapPercent,
     );
     return {
       ['chunks' as PortId]: {

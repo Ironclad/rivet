@@ -77,6 +77,7 @@
     "monaco-editor": "^0.37.1",
     "nanoid": "^4.0.1",
     "openai": "^3.2.1",
+    "p-retry": "^5.1.2",
     "postcss": "^8.4.4",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-loader": "^6.2.1",
