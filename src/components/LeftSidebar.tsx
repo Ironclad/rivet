@@ -1,18 +1,18 @@
 import { css } from '@emotion/react';
 import { FC, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { graphState } from '../state/graph';
 import { savedGraphsState } from '../state/savedGraphs';
 import { orderBy } from 'lodash-es';
 import { nanoid } from 'nanoid';
-import { NodeGraph, emptyNodeGraph } from '../model/NodeGraph';
-import { useSaveCurrentGraph } from '../hooks/useSaveCurrentGraph';
 import DropdownMenu, { DropdownItem } from '@atlaskit/dropdown-menu';
 import Button from '@atlaskit/button';
 import { ReactComponent as MoreIcon } from 'majesticons/line/more-menu-vertical-line.svg';
 import { ReactComponent as ExpandLeftIcon } from 'majesticons/line/menu-expand-left-line.svg';
 import { ReactComponent as ExpandRightIcon } from 'majesticons/line/menu-expand-right-line.svg';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
+import { useDeleteGraph } from '../hooks/useDeleteGraph';
+import { useLoadGraph } from '../hooks/useLoadGraph';
 
 const styles = css`
   position: fixed;
@@ -87,27 +87,13 @@ const moreDropdownCss = css`
 
 export const LeftSidebar: FC = () => {
   const [graph, setGraph] = useRecoilState(graphState);
-  const [savedGraphs, setSavedGraphs] = useRecoilState(savedGraphsState);
-  const saveCurrentGraph = useSaveCurrentGraph();
+  const savedGraphs = useRecoilValue(savedGraphsState);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
   const sortedGraphs = orderBy(savedGraphs, ['metadata.name'], ['asc']);
 
-  function handleGraphItemClick(savedGraph: NodeGraph) {
-    if (graph.nodes.length > 0 || graph.metadata?.name !== emptyNodeGraph().metadata!.name) {
-      saveCurrentGraph();
-    }
-
-    setGraph(savedGraph);
-  }
-
-  function handleDeleteGraph(savedGraph: NodeGraph) {
-    if (savedGraph.metadata?.id) {
-      const newSavedGraphs = savedGraphs.filter((g) => g.metadata?.id !== savedGraph.metadata?.id);
-      setGraph(emptyNodeGraph());
-      setSavedGraphs(newSavedGraphs);
-    }
-  }
+  const deleteGraph = useDeleteGraph();
+  const loadGraph = useLoadGraph();
 
   return (
     <div
@@ -139,7 +125,7 @@ export const LeftSidebar: FC = () => {
         <div className="graph-list">
           {sortedGraphs.map((savedGraph) => (
             <div key={savedGraph.metadata?.id ?? nanoid()} className="graph-item">
-              <div className="graph-item-select" onClick={() => handleGraphItemClick(savedGraph)}>
+              <div className="graph-item-select" onClick={() => loadGraph(savedGraph)}>
                 {savedGraph.metadata?.name ?? 'Untitled Graph'}
               </div>
               <DropdownMenu
@@ -147,7 +133,7 @@ export const LeftSidebar: FC = () => {
                   <Button css={moreDropdownCss} {...props} iconBefore={<MoreIcon />} ref={triggerRef} />
                 )}
               >
-                <DropdownItem onClick={() => handleDeleteGraph(savedGraph)}>Delete</DropdownItem>
+                <DropdownItem onClick={() => deleteGraph(savedGraph)}>Delete</DropdownItem>
               </DropdownMenu>
             </div>
           ))}

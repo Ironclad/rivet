@@ -5,12 +5,16 @@ import { DataValue, expectTypeOptional } from '../DataValue';
 import { AxiosError } from 'axios';
 import {
   assertValidModel,
+  getCostForPrompt,
+  getCostForTokens,
   getTokenCountForMessages,
+  getTokenCountForString,
   modelMaxTokens,
   modelToTiktokenModel,
 } from '../../utils/tokenizer';
 import { addWarning } from '../../utils/outputs';
 import { ChatCompletionRequestMessage, streamChatCompletions } from '../../utils/openai';
+import retry from 'p-retry';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 
@@ -29,7 +33,23 @@ export type ChatNodeData = {
 
   maxTokens: number;
   useMaxTokensInput: boolean;
+
+  useStop: boolean;
+  stop: string;
+  useStopInput: boolean;
+
+  presencePenalty: number;
+  usePresencePenaltyInput: boolean;
+
+  frequencyPenalty: number;
+  useFrequencyPenaltyInput: boolean;
+
+  /** Given the same set of inputs, return the same output without hitting GPT */
+  cache: boolean;
 };
+
+// Temporary
+const cache = new Map<string, Record<PortId, DataValue>>();
 
 export class ChatNodeImpl extends NodeImpl<ChatNode> {
   static create(): ChatNode {
@@ -57,6 +77,18 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
         maxTokens: 1024,
         useMaxTokensInput: false,
+
+        useStop: false,
+        stop: '',
+        useStopInput: false,
+
+        presencePenalty: 0,
+        usePresencePenaltyInput: false,
+
+        frequencyPenalty: 0,
+        useFrequencyPenaltyInput: false,
+
+        cache: false,
       },
     };
 
@@ -89,6 +121,47 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataType: 'number',
         id: 'top_p' as PortId,
         title: 'Top P',
+      });
+    }
+
+    if (this.chartNode.data.useUseTopPInput) {
+      inputs.push({
+        dataType: 'boolean',
+        id: 'useTopP' as PortId,
+        title: 'Use Top P',
+      });
+    }
+
+    if (this.chartNode.data.useMaxTokensInput) {
+      inputs.push({
+        dataType: 'number',
+        id: 'maxTokens' as PortId,
+        title: 'Max Tokens',
+      });
+    }
+
+    if (this.chartNode.data.useStopInput) {
+      inputs.push({
+        dataType: 'string',
+        id: 'stop' as PortId,
+        title: 'Stop',
+      });
+    }
+
+    if (this.chartNode.data.usePresencePenaltyInput) {
+      inputs.push({
+        dataType: 'number',
+
+        id: 'presencePenalty' as PortId,
+        title: 'Presence Penalty',
+      });
+    }
+
+    if (this.chartNode.data.useFrequencyPenaltyInput) {
+      inputs.push({
+        dataType: 'number',
+        id: 'frequencyPenalty' as PortId,
+        title: 'Frequency Penalty',
       });
     }
 
@@ -145,6 +218,14 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       expectTypeOptional(inputs['temperature' as PortId], 'number') ?? this.chartNode.data.temperature;
     const topP = expectTypeOptional(inputs['top_p' as PortId], 'number') ?? this.chartNode.data.top_p;
     const useTopP = expectTypeOptional(inputs['useTopP' as PortId], 'boolean') ?? this.chartNode.data.useTopP;
+    const stop = this.data.useStop
+      ? expectTypeOptional(inputs['stop' as PortId], 'string') ?? this.chartNode.data.stop
+      : undefined;
+    const presencePenalty =
+      expectTypeOptional(inputs['presencePenalty' as PortId], 'number') ?? this.chartNode.data.presencePenalty;
+    const frequencyPenalty =
+      expectTypeOptional(inputs['frequencyPenalty' as PortId], 'number') ?? this.chartNode.data.frequencyPenalty;
+
     const messages: ChatCompletionRequestMessage[] = [];
     let { maxTokens } = this.chartNode.data;
 
@@ -178,33 +259,72 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     }
 
     try {
-      const chunks = streamChatCompletions({
-        auth: {
-          apiKey: context.settings.openAiKey,
-          organization: context.settings.openAiOrganization,
+      return await retry(
+        async () => {
+          const cacheKey = JSON.stringify({
+            messages,
+            model,
+            temperature: useTopP ? undefined : temperature,
+            topP: useTopP ? topP : undefined,
+            maxTokens,
+            frequencyPenalty,
+            presencePenalty,
+            stop,
+          });
+
+          if (this.data.cache) {
+            const cached = cache.get(cacheKey);
+            if (cached) {
+              return cached;
+            }
+          }
+
+          const chunks = streamChatCompletions({
+            auth: {
+              apiKey: context.settings.openAiKey,
+              organization: context.settings.openAiOrganization,
+            },
+            messages,
+            model,
+            temperature: useTopP ? undefined : temperature,
+            top_p: useTopP ? topP : undefined,
+            max_tokens: maxTokens,
+            n: 1,
+            frequency_penalty: frequencyPenalty,
+            presence_penalty: presencePenalty,
+            stop,
+          });
+
+          let responseParts: string[] = [];
+
+          for await (const chunk of chunks) {
+            responseParts.push(chunk);
+
+            output['response' as PortId] = {
+              type: 'string',
+              value: responseParts.join(''),
+            };
+
+            onPartialOutputs?.(output);
+          }
+
+          const requestTokenCount = getTokenCountForMessages(messages, model);
+          output['requestTokens' as PortId] = { type: 'number', value: requestTokenCount };
+
+          const responseTokenCount = getTokenCountForString(responseParts.join(), model);
+          output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
+
+          const cost = getCostForPrompt(messages, model) + getCostForTokens(responseTokenCount, 'completion', model);
+
+          output['cost' as PortId] = { type: 'number', value: cost };
+
+          Object.freeze(output);
+          cache.set(cacheKey, output);
+
+          return output;
         },
-        messages,
-        model,
-        temperature: useTopP ? undefined : temperature,
-        top_p: useTopP ? topP : undefined,
-        max_tokens: maxTokens,
-        n: 1,
-      });
-
-      let responseParts: string[] = [];
-
-      for await (const chunk of chunks) {
-        responseParts.push(chunk);
-
-        output['response' as PortId] = {
-          type: 'string',
-          value: responseParts.join(''),
-        };
-
-        onPartialOutputs?.(output);
-      }
-
-      return output;
+        { retries: 4 },
+      );
     } catch (error) {
       const axiosError = error as AxiosError;
       if (axiosError.isAxiosError) {
