@@ -38,6 +38,7 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
     inputData: Record<PortId, DataValue>,
     context: ProcessContext,
     onPartialOutputs?: (outputs: Record<PortId, DataValue>) => void,
+    abortSignal?: AbortSignal,
   ): Promise<Record<PortId, DataValue>>;
 }
 

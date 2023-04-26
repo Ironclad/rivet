@@ -100,6 +100,11 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
   getOutputDefinitions(): NodeOutputDefinition[] {
     return [
       {
+        id: 'rootPath' as PortId,
+        title: 'Root Path',
+        dataType: 'string',
+      },
+      {
         id: 'paths' as PortId,
         title: 'Paths',
         dataType: 'string[]',
@@ -137,6 +142,7 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
 
     return {
       ['paths' as PortId]: { type: 'string[]', value: files },
+      ['rootPath' as PortId]: { type: 'string', value: path },
     };
   }
 }

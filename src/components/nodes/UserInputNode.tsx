@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { ChartNode } from '../../model/NodeBase';
 import { UserInputNode, UserInputNodeData } from '../../model/nodes/UserInputNode';
 import { css } from '@emotion/react';
@@ -8,7 +8,10 @@ import { lastRunData } from '../../state/dataFlow';
 import { useRecoilValue } from 'recoil';
 import { PortId } from '../../model/NodeBase';
 import { RenderDataValue } from '../RenderDataValue';
-import { expectType } from '../../model/DataValue';
+import { ArrayDataValue, StringDataValue, expectType } from '../../model/DataValue';
+import Button from '@atlaskit/button';
+import { UserInputModal } from '../UserInputModal';
+import { userInputModalQuestionsState, userInputModalSubmitState } from '../../state/userInput';
 
 export type UserInputNodeEditorProps = {
   node: ChartNode;
@@ -122,11 +125,48 @@ const Body = styled.div`
 `;
 
 export const UserInputNodeBody: FC<UserInputNodeBodyProps> = ({ node }) => {
-  if (node.data.useInput) {
-    return <Body>(Using input)</Body>;
-  }
+  const allCurrentQuestions = useRecoilValue(userInputModalQuestionsState);
+  const thisNodeQuestions = allCurrentQuestions[node.id];
+  const userInputModalSubmit = useRecoilValue(userInputModalSubmitState);
 
-  return <Body>{node.data.prompt}</Body>;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSubmit = (answers: ArrayDataValue<StringDataValue>) => {
+    // Handle the submission of the user input
+    setIsModalOpen(false);
+    userInputModalSubmit.submit(node.id, answers);
+  };
+
+  useEffect(() => {
+    if (thisNodeQuestions && thisNodeQuestions.length > 0) {
+      setIsModalOpen(true);
+    }
+  }, [thisNodeQuestions]);
+
+  return (
+    <>
+      <Body>
+        {node.data.useInput ? <span>(Using input)</span> : <span>{node.data.prompt}</span>}
+        <div>
+          {thisNodeQuestions && thisNodeQuestions.length > 0 && <Button onClick={handleOpenModal}>Open Modal</Button>}
+        </div>
+      </Body>
+      <UserInputModal
+        open={isModalOpen}
+        questions={thisNodeQuestions ?? []}
+        onSubmit={handleSubmit}
+        onClose={handleCloseModal}
+      />
+    </>
+  );
 };
 
 const questionsAndAnswersStyles = css`

@@ -7,12 +7,12 @@ import { calculateCachesFor } from '../model/NodeGraph';
 import { FC, useState } from 'react';
 import produce from 'immer';
 import { NodeRunData, lastRunDataByNodeState } from '../state/dataFlow';
-import { NodeId, PortId } from '../model/NodeBase';
+import { ChartNode, NodeId, PortId } from '../model/NodeBase';
 import { css } from '@emotion/react';
 import { SettingsModal } from './SettingsModal';
 import { setGlobalTheme } from '@atlaskit/tokens';
 import { settingsState } from '../state/settings';
-import { userInputModalOpenState, userInputModalQuestionsState } from '../state/userInput';
+import { userInputModalOpenState, userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
 import { UserInputNode } from '../model/nodes/UserInputNode';
 import { UserInputModal } from './UserInputModal';
 import { DataValue, ArrayDataValue, StringDataValue, expectType } from '../model/DataValue';
@@ -43,34 +43,33 @@ export const NodaiApp: FC = () => {
       }),
     );
   };
-  const [userInputModalOpen, setUserInputOpen] = useRecoilState(userInputModalOpenState);
-  const [userInputQuestions, setUserInputQuestions] = useRecoilState(userInputModalQuestionsState);
+  const setUserInputQuestions = useSetRecoilState(userInputModalQuestionsState);
 
-  const [userInputModalSubmit, setUserInputModalSubmit] = useState<{
-    submit: (answers: ArrayDataValue<StringDataValue>[]) => void;
-  }>({
-    submit: () => {},
-  });
+  const setUserInputModalSubmit = useSetRecoilState(userInputModalSubmitState);
 
   const handleUserInput = async (
-    userInputNodes: UserInputNode[],
-    inputs: Record<PortId, DataValue>[],
-  ): Promise<ArrayDataValue<StringDataValue>[]> => {
+    needsInput: Record<NodeId, Record<PortId, DataValue>>,
+    nodes: Record<NodeId, UserInputNode>,
+  ): Promise<Record<NodeId, ArrayDataValue<StringDataValue>>> => {
     return new Promise((resolve) => {
-      const questions = zip(userInputNodes, inputs).map(([node, inputs]) => {
-        if (node!.data.useInput) {
-          return expectType(inputs?.['questions' as PortId], 'string[]') ?? [];
-        } else {
-          return [node!.data.prompt];
-        }
-      });
+      const questionsPerNode: Record<NodeId, string[]> = Object.fromEntries(
+        Object.entries(needsInput).map(([nodeId, inputs]) => {
+          const node = nodes[nodeId as NodeId]!;
+          const questions = node.data.useInput
+            ? expectType(inputs?.['questions' as PortId], 'string[]') ?? []
+            : [node.data.prompt];
+          return [nodeId, questions];
+        }),
+      );
 
-      setUserInputQuestions(questions);
-      setUserInputOpen(true);
+      setUserInputQuestions(questionsPerNode);
 
-      const handleModalSubmit = (answers: ArrayDataValue<StringDataValue>[]) => {
-        setUserInputOpen(false);
-        resolve(answers);
+      const handleModalSubmit = (nodeId: NodeId, answers: ArrayDataValue<StringDataValue>) => {
+        console.dir({ nodeId, answers });
+        const resolveData: Record<NodeId, ArrayDataValue<StringDataValue>> = {
+          [nodeId]: answers,
+        };
+        resolve(resolveData);
       };
       setUserInputModalSubmit({ submit: handleModalSubmit });
     });
@@ -140,11 +139,6 @@ export const NodaiApp: FC = () => {
       <LeftSidebar />
       <GraphBuilder />
       <SettingsModal />
-      <UserInputModal
-        onSubmit={userInputModalSubmit.submit}
-        questionGroups={userInputQuestions}
-        open={userInputModalOpen}
-      />
     </div>
   );
 };

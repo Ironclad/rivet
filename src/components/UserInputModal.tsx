@@ -9,67 +9,57 @@ import { Field } from '@atlaskit/form';
 
 type UserInputModalProps = {
   open: boolean;
-  questionGroups: string[][];
-  onSubmit: (answers: ArrayDataValue<StringDataValue>[]) => void;
+  questions: string[];
+  onSubmit: (answers: ArrayDataValue<StringDataValue>) => void;
+  onClose?: () => void;
 };
 
-export const UserInputModal: FC<UserInputModalProps> = ({ open, questionGroups, onSubmit }) => {
-  const [answers, setAnswers] = useState<string[][]>([]);
+export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, onSubmit, onClose }) => {
+  const [answers, setAnswers] = useState<string[]>([]);
   const [lastAnswers, setLastAnswers] = useRecoilState(lastAnswersState);
 
   useEffect(() => {
-    setAnswers(questionGroups.map((group) => group.map((question) => lastAnswers[question] ?? '')));
+    setAnswers(questions.map((question) => lastAnswers[question] ?? ''));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  const handleChange = (groupIndex: number, index: number, value: string) => {
+  const handleChange = (index: number, value: string) => {
     const newAnswers = [...answers];
-    newAnswers[groupIndex] ??= [];
-    newAnswers[groupIndex]![index]! = value;
+    newAnswers[index] = value;
     setAnswers(newAnswers);
   };
 
   const handleSubmit = () => {
     const newLastAnswers = { ...lastAnswers };
-    questionGroups.forEach((group, groupIndex) => {
-      group.forEach((question, index) => {
-        newLastAnswers[question] = answers[groupIndex]![index]!;
-      });
+    questions.forEach((question, index) => {
+      newLastAnswers[question] = answers[index]!;
     });
     setLastAnswers(newLastAnswers);
 
-    const results = answers.map<ArrayDataValue<StringDataValue>>((group) => ({ type: 'string[]', value: group }));
+    const results: ArrayDataValue<StringDataValue> = { type: 'string[]', value: answers };
     onSubmit(results);
   };
 
   return (
     <ModalTransition>
       {open && (
-        <Modal width="large">
+        <Modal width="large" onClose={onClose}>
           <ModalHeader>
             <ModalTitle>User Input</ModalTitle>
           </ModalHeader>
           <ModalBody>
-            {questionGroups.map((group, groupIndex) => (
-              <div key={`group-${groupIndex}`} className="question-group">
-                {group.map((question, index) => (
-                  <Field
-                    name={`question-${groupIndex}-${index}`}
-                    label={question}
-                    key={`question-${groupIndex}-${index}`}
-                  >
-                    {() => (
-                      <TextArea
-                        value={answers?.[groupIndex]?.[index] ?? ''}
-                        onChange={(e) => handleChange(groupIndex, index, e.target.value)}
-                        autoFocus={groupIndex === 0 && index === 0}
-                        resize="vertical"
-                        minimumRows={4}
-                      />
-                    )}
-                  </Field>
-                ))}
-              </div>
+            {questions.map((question, index) => (
+              <Field name={`question-${index}`} label={question} key={`question-${index}`}>
+                {() => (
+                  <TextArea
+                    value={answers?.[index] ?? ''}
+                    onChange={(e) => handleChange(index, e.target.value)}
+                    autoFocus={index === 0}
+                    resize="vertical"
+                    minimumRows={4}
+                  />
+                )}
+              </Field>
             ))}
           </ModalBody>
           <ModalFooter>

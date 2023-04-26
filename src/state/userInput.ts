@@ -1,19 +1,23 @@
 import { atom } from 'recoil';
 import { persistAtom } from './persist';
+import { NodeId } from '../model/NodeBase';
+import { ArrayDataValue, StringDataValue } from '../model/DataValue';
 
 export const userInputModalOpenState = atom({
   key: 'userInputModalOpenState',
   default: false,
 });
 
-export const userInputModalQuestionsState = atom<string[][]>({
+export const userInputModalQuestionsState = atom<Record<NodeId, string[]>>({
   key: 'usetInputModalQuestionsState',
-  default: [],
+  default: {},
 });
 
-export const userInputModalSubmitState = atom<(answers: string[][]) => void>({
+export const userInputModalSubmitState = atom<{
+  submit: (nodeId: NodeId, answers: ArrayDataValue<StringDataValue>) => void;
+}>({
   key: 'userInputModalSubmitState',
-  default: () => {},
+  default: { submit: () => {} },
 });
 
 export const lastAnswersState = atom<Record<string, string>>({
