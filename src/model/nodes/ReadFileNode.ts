@@ -8,9 +8,6 @@ import { nanoid } from 'nanoid';
 export type ReadFileNode = ChartNode<'readFile', ReadFileNodeData>;
 
 type ReadFileNodeData = {
-  baseDirectory: BaseDir;
-  useBaseDirectoryInput: boolean;
-
   path: string;
   usePathInput: boolean;
 
@@ -25,8 +22,6 @@ export class ReadFileNodeImpl extends NodeImpl<ReadFileNode> {
       title: 'Read File',
       visualData: { x: 0, y: 0, width: 250 },
       data: {
-        baseDirectory: baseDirs.document,
-        useBaseDirectoryInput: false,
         path: '',
         usePathInput: true,
         errorOnMissingFile: false,
@@ -36,14 +31,6 @@ export class ReadFileNodeImpl extends NodeImpl<ReadFileNode> {
 
   getInputDefinitions(): NodeInputDefinition[] {
     const inputDefinitions: NodeInputDefinition[] = [];
-
-    if (this.chartNode.data.useBaseDirectoryInput) {
-      inputDefinitions.push({
-        id: 'baseDirectory' as PortId,
-        title: 'Base Directory',
-        dataType: 'string',
-      });
-    }
 
     if (this.chartNode.data.usePathInput) {
       inputDefinitions.push({
@@ -67,18 +54,12 @@ export class ReadFileNodeImpl extends NodeImpl<ReadFileNode> {
   }
 
   async process(inputData: Record<PortId, DataValue>, context: ProcessContext): Promise<Record<PortId, DataValue>> {
-    const baseDirectory = this.chartNode.data.useBaseDirectoryInput
-      ? expectType(inputData['baseDirectory' as PortId], 'string')
-      : this.chartNode.data.baseDirectory;
-
-    assertBaseDir(baseDirectory);
-
     const path = this.chartNode.data.usePathInput
       ? expectType(inputData['path' as PortId], 'string')
       : this.chartNode.data.path;
 
     try {
-      const content = await context.nativeApi.readTextFile(path, this.chartNode.data.baseDirectory);
+      const content = await context.nativeApi.readTextFile(path, undefined);
       return {
         ['content' as PortId]: { type: 'string', value: content },
       };

@@ -9,6 +9,8 @@ import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
 import { assertBaseDir } from '../../model/native/BaseDir';
 import { expectType } from '../../model/DataValue';
+import { openDirectory } from '../../utils/fileIO';
+import Button from '@atlaskit/button';
 
 type ReadDirectoryNodeBodyProps = {
   node: ReadDirectoryNode;
@@ -17,7 +19,6 @@ type ReadDirectoryNodeBodyProps = {
 export const ReadDirectoryNodeBody: FC<ReadDirectoryNodeBodyProps> = ({ node }) => {
   return (
     <div>
-      <div>Base Directory: {node.data.useBaseDirectoryInput ? '(Input)' : node.data.baseDirectory}</div>
       <div>Path: {node.data.usePathInput ? '(Input)' : node.data.path}</div>
       <div>Recursive: {node.data.useRecursiveInput ? '(Input)' : node.data.recursive ? 'Yes' : 'No'}</div>
       <div>
@@ -114,64 +115,29 @@ const container = css`
 `;
 
 export type ReadDirectoryNodeEditorProps = {
-  node: ChartNode;
+  node: ReadDirectoryNode;
   onChange?: (node: ChartNode<'readDirectory', ReadDirectoryNode['data']>) => void;
 };
 
 export const ReadDirectoryNodeEditor: FC<ReadDirectoryNodeEditorProps> = ({ node, onChange }) => {
-  const readDirectoryNode = node as ReadDirectoryNode;
+  const handleBrowseClick = async () => {
+    const directory = await openDirectory();
+    if (directory) {
+      onChange?.({
+        ...node,
+        data: { ...node.data, path: directory as string },
+      });
+    }
+  };
 
   return (
     <div css={container}>
       <div className="row">
         <label className="label" htmlFor="baseDirectory">
-          Base Directory
+          Pick Directory
         </label>
-        <input
-          id="baseDirectory"
-          className="input"
-          type="text"
-          value={readDirectoryNode.data.baseDirectory}
-          onChange={(e) => {
-            const baseDir = e.target.value;
-            assertBaseDir(baseDir);
-            onChange?.({ ...readDirectoryNode, data: { ...readDirectoryNode.data, baseDirectory: baseDir } });
-          }}
-        />
-        <Toggle
-          id="useBaseDirectoryInput"
-          isChecked={readDirectoryNode.data.useBaseDirectoryInput}
-          onChange={(e) =>
-            onChange?.({
-              ...readDirectoryNode,
-              data: { ...readDirectoryNode.data, useBaseDirectoryInput: e.target.checked },
-            })
-          }
-        />
-      </div>
-      <div className="row">
-        <label className="label" htmlFor="path">
-          Path
-        </label>
-        <input
-          id="path"
-          className="input"
-          type="text"
-          value={readDirectoryNode.data.path}
-          onChange={(e) =>
-            onChange?.({ ...readDirectoryNode, data: { ...readDirectoryNode.data, path: e.target.value } })
-          }
-        />
-        <Toggle
-          id="usePathInput"
-          isChecked={readDirectoryNode.data.usePathInput}
-          onChange={(e) =>
-            onChange?.({
-              ...readDirectoryNode,
-              data: { ...readDirectoryNode.data, usePathInput: e.target.checked },
-            })
-          }
-        />
+        <Button onClick={handleBrowseClick}>Browse...</Button>
+        <div>Current Directory: {node.data.path}</div>
       </div>
       <div className="row">
         <label className="label" htmlFor="recursive">
@@ -179,18 +145,16 @@ export const ReadDirectoryNodeEditor: FC<ReadDirectoryNodeEditorProps> = ({ node
         </label>
         <Toggle
           id="recursive"
-          isChecked={readDirectoryNode.data.recursive}
-          onChange={(e) =>
-            onChange?.({ ...readDirectoryNode, data: { ...readDirectoryNode.data, recursive: e.target.checked } })
-          }
+          isChecked={node.data.recursive}
+          onChange={(e) => onChange?.({ ...node, data: { ...node.data, recursive: e.target.checked } })}
         />
         <Toggle
           id="useRecursiveInput"
-          isChecked={readDirectoryNode.data.useRecursiveInput}
+          isChecked={node.data.useRecursiveInput}
           onChange={(e) =>
             onChange?.({
-              ...readDirectoryNode,
-              data: { ...readDirectoryNode.data, useRecursiveInput: e.target.checked },
+              ...node,
+              data: { ...node.data, useRecursiveInput: e.target.checked },
             })
           }
         />
@@ -201,21 +165,21 @@ export const ReadDirectoryNodeEditor: FC<ReadDirectoryNodeEditorProps> = ({ node
         </label>
         <Toggle
           id="includeDirectories"
-          isChecked={readDirectoryNode.data.includeDirectories}
+          isChecked={node.data.includeDirectories}
           onChange={(e) =>
             onChange?.({
-              ...readDirectoryNode,
-              data: { ...readDirectoryNode.data, includeDirectories: e.target.checked },
+              ...node,
+              data: { ...node.data, includeDirectories: e.target.checked },
             })
           }
         />
         <Toggle
           id="useIncludeDirectoriesInput"
-          isChecked={readDirectoryNode.data.useIncludeDirectoriesInput}
+          isChecked={node.data.useIncludeDirectoriesInput}
           onChange={(e) =>
             onChange?.({
-              ...readDirectoryNode,
-              data: { ...readDirectoryNode.data, useIncludeDirectoriesInput: e.target.checked },
+              ...node,
+              data: { ...node.data, useIncludeDirectoriesInput: e.target.checked },
             })
           }
         />
@@ -226,21 +190,21 @@ export const ReadDirectoryNodeEditor: FC<ReadDirectoryNodeEditorProps> = ({ node
         </label>
         <Toggle
           id="relative"
-          isChecked={readDirectoryNode.data.relative}
+          isChecked={node.data.relative}
           onChange={(e) =>
             onChange?.({
-              ...readDirectoryNode,
-              data: { ...readDirectoryNode.data, relative: e.target.checked },
+              ...node,
+              data: { ...node.data, relative: e.target.checked },
             })
           }
         />
         <Toggle
           id="useRelativeInput"
-          isChecked={readDirectoryNode.data.useRelativeInput}
+          isChecked={node.data.useRelativeInput}
           onChange={(e) =>
             onChange?.({
-              ...readDirectoryNode,
-              data: { ...readDirectoryNode.data, useRelativeInput: e.target.checked },
+              ...node,
+              data: { ...node.data, useRelativeInput: e.target.checked },
             })
           }
         />
@@ -253,21 +217,21 @@ export const ReadDirectoryNodeEditor: FC<ReadDirectoryNodeEditorProps> = ({ node
           id="filterGlobs"
           className="input"
           type="text"
-          value={readDirectoryNode.data.filterGlobs.join(', ')}
+          value={node.data.filterGlobs.join(', ')}
           onChange={(e) =>
             onChange?.({
-              ...readDirectoryNode,
-              data: { ...readDirectoryNode.data, filterGlobs: e.target.value.split(',').map((s) => s.trim()) },
+              ...node,
+              data: { ...node.data, filterGlobs: e.target.value.split(',').map((s) => s.trim()) },
             })
           }
         />
         <Toggle
           id="useFilterGlobsInput"
-          isChecked={readDirectoryNode.data.useFilterGlobsInput}
+          isChecked={node.data.useFilterGlobsInput}
           onChange={(e) =>
             onChange?.({
-              ...readDirectoryNode,
-              data: { ...readDirectoryNode.data, useFilterGlobsInput: e.target.checked },
+              ...node,
+              data: { ...node.data, useFilterGlobsInput: e.target.checked },
             })
           }
         />

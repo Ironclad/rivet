@@ -44,3 +44,27 @@ export async function loadGraphData(callback: (graphData: NodeGraph) => void) {
     callback(graphData);
   }
 }
+
+export async function openDirectory() {
+  const path = await open({
+    filters: [],
+    multiple: false,
+    directory: true,
+    recursive: true,
+    title: 'Choose Directory',
+  });
+
+  return path;
+}
+
+export async function openFile() {
+  const path = await open({
+    filters: [],
+    multiple: false,
+    directory: false,
+    recursive: false,
+    title: 'Choose File',
+  });
+
+  return path;
+}
