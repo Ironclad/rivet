@@ -5,19 +5,31 @@ import { RenderDataValue } from '../RenderDataValue';
 import { PortId } from '../../model/NodeBase';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
-import { assertBaseDir } from '../../model/native/BaseDir';
 import Toggle from '@atlaskit/toggle';
 import { css } from '@emotion/react';
+import { openFile } from '../../utils/fileIO';
+import Button from '@atlaskit/button';
 
 type ReadFileNodeBodyProps = {
   node: ReadFileNode;
 };
 
+const currentPathCss = css`
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: 'Roboto mono', monospace;
+  color: var(--primary);
+`;
+
 export const ReadFileNodeBody: FC<ReadFileNodeBodyProps> = ({ node }) => {
   return (
     <div>
-      <div>Base Directory: {node.data.baseDirectory}</div>
-      {!node.data.usePathInput && <div>Path: {node.data.path}</div>}
+      {!node.data.usePathInput && (
+        <>
+          Path:
+          <span css={currentPathCss}>{node.data.path}</span>
+        </>
+      )}
     </div>
   );
 };
@@ -46,7 +58,7 @@ export const ReadFileNodeOutput: FC<ReadFileNodeBodyProps> = ({ node }) => {
 };
 
 export type ReadFileNodeEditorProps = {
-  node: ChartNode;
+  node: ReadFileNode;
   onChange?: (node: ChartNode<'readFile', ReadFileNode['data']>) => void;
 };
 
@@ -96,57 +108,44 @@ const container = css`
 `;
 
 export const ReadFileNodeEditor: FC<ReadFileNodeEditorProps> = ({ node, onChange }) => {
-  const readFileNode = node as ReadFileNode;
+  const handleBrowseClick = async () => {
+    const path = await openFile();
+    if (path) {
+      onChange?.({
+        ...node,
+        data: { ...node.data, path: path as string },
+      });
+    }
+  };
 
   return (
     <div css={container}>
       <div className="row">
-        <label className="label" htmlFor="baseDirectory">
-          Base Directory
-        </label>
-        <input
-          id="baseDirectory"
-          className="input"
-          type="text"
-          value={readFileNode.data.baseDirectory}
-          onChange={(e) => {
-            const baseDir = e.target.value;
-            assertBaseDir(baseDir);
-            onChange?.({ ...readFileNode, data: { ...readFileNode.data, baseDirectory: baseDir } });
-          }}
-        />
+        {node.data.usePathInput ? (
+          <></>
+        ) : (
+          <>
+            <label className="label" htmlFor="baseDirectory">
+              Pick File
+            </label>
+            <Button onClick={handleBrowseClick}>Browse...</Button>
+          </>
+        )}
         <Toggle
-          id="useBaseDirectoryInput"
-          isChecked={readFileNode.data.useBaseDirectoryInput}
+          id="usePathInput"
+          isChecked={node.data.usePathInput}
           onChange={(e) =>
             onChange?.({
-              ...readFileNode,
-              data: { ...readFileNode.data, useBaseDirectoryInput: e.target.checked },
+              ...node,
+              data: { ...node.data, usePathInput: e.target.checked },
             })
           }
         />
       </div>
       <div className="row">
-        <label className="label" htmlFor="path">
-          Path
-        </label>
-        <input
-          id="path"
-          className="input"
-          type="text"
-          value={readFileNode.data.path}
-          onChange={(e) => onChange?.({ ...readFileNode, data: { ...readFileNode.data, path: e.target.value } })}
-        />
-        <Toggle
-          id="usePathInput"
-          isChecked={readFileNode.data.usePathInput}
-          onChange={(e) =>
-            onChange?.({
-              ...readFileNode,
-              data: { ...readFileNode.data, usePathInput: e.target.checked },
-            })
-          }
-        />
+        <div>
+          Current Path: <span css={currentPathCss}>{node.data.usePathInput ? '(Using Input)' : node.data.path}</span>
+        </div>
       </div>
     </div>
   );

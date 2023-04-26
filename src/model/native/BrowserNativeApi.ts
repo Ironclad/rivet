@@ -11,7 +11,7 @@ export class BrowserNativeApi implements NativeApi {
   readBinaryFile(_path: string, _baseDir: BaseDir): Promise<Blob> {
     throw new Error('Method not implemented.');
   }
-  writeTextFile(_path: string, _baseDir: BaseDir, _data: string): Promise<void> {
+  writeTextFile(_path: string, _data: string, _baseDir?: BaseDir): Promise<void> {
     throw new Error('Method not implemented.');
   }
 }

@@ -3,7 +3,7 @@ import { NativeApi, ReadDirOptions } from './NativeApi';
 import { BaseDir } from './BaseDir';
 import { minimatch } from 'minimatch';
 
-const baseDirToBaseDirectory: Record<BaseDir, BaseDirectory> = {
+const baseDirToBaseDirectoryMap: Record<BaseDir, BaseDirectory> = {
   app: BaseDirectory.App,
   appCache: BaseDirectory.AppCache,
   appConfig: BaseDirectory.AppConfig,
@@ -30,12 +30,14 @@ const baseDirToBaseDirectory: Record<BaseDir, BaseDirectory> = {
   template: BaseDirectory.Template,
   video: BaseDirectory.Video,
 };
+const baseDirToBaseDirectory = (baseDir?: string): BaseDirectory | undefined =>
+  baseDir ? baseDirToBaseDirectoryMap[baseDir as BaseDir] : undefined;
 
 export class TauriNativeApi implements NativeApi {
-  async readdir(path: string, baseDir: BaseDir, options: ReadDirOptions = {}): Promise<string[]> {
+  async readdir(path: string, baseDir?: BaseDir, options: ReadDirOptions = {}): Promise<string[]> {
     const { recursive = false, includeDirectories = false, filterGlobs = [], relative = false } = options;
 
-    const baseDirectory = baseDirToBaseDirectory[baseDir];
+    const baseDirectory = baseDirToBaseDirectory(baseDir);
     const results = await readDir(path, { dir: baseDirectory, recursive });
 
     const flattenResults: (r: FileEntry[]) => FileEntry[] = (r) =>
@@ -59,20 +61,20 @@ export class TauriNativeApi implements NativeApi {
     return filteredResults;
   }
 
-  async readTextFile(path: string, baseDir: BaseDir): Promise<string> {
-    const baseDirectory = baseDirToBaseDirectory[baseDir];
+  async readTextFile(path: string, baseDir?: BaseDir): Promise<string> {
+    const baseDirectory = baseDirToBaseDirectory(baseDir);
     const result = await readTextFile(path, { dir: baseDirectory });
     return result;
   }
 
-  async readBinaryFile(path: string, baseDir: BaseDir): Promise<Blob> {
-    const baseDirectory = baseDirToBaseDirectory[baseDir];
+  async readBinaryFile(path: string, baseDir?: BaseDir): Promise<Blob> {
+    const baseDirectory = baseDirToBaseDirectory(baseDir);
     const result = await readBinaryFile(path, { dir: baseDirectory });
     return new Blob([result]);
   }
 
-  async writeTextFile(path: string, baseDir: BaseDir, data: string): Promise<void> {
-    const baseDirectory = baseDirToBaseDirectory[baseDir];
+  async writeTextFile(path: string, data: string, baseDir?: BaseDir): Promise<void> {
+    const baseDirectory = baseDirToBaseDirectory(baseDir);
     await writeFile(path, data, { dir: baseDirectory });
   }
 }
