@@ -66,6 +66,7 @@ export const TextNodeOutput: FC<TextNodeBodyProps> = ({ node }) => {
   }
 
   const outputText = output.outputData['output' as PortId];
+  console.dir({ outputText });
 
   if (outputText?.type === 'string[]') {
     return (

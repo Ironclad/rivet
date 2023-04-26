@@ -15,14 +15,15 @@ export type ProcessEvents = {
   onNodeError?: (node: ChartNode, error: Error) => void;
   onNodeExcluded?: (node: ChartNode) => void;
   onUserInput?: (
-    userInputNodes: UserInputNode[],
-    inputs: Record<PortId, DataValue>[],
-  ) => Promise<ArrayDataValue<StringDataValue>[]>;
+    needsInput: Record<NodeId, Record<PortId, DataValue>>,
+    nodes: Record<NodeId, UserInputNode>,
+  ) => Promise<Record<NodeId, ArrayDataValue<StringDataValue>>>;
   onPartialOutputs?: (node: ChartNode, outputs: Record<PortId, DataValue>, index: number) => void;
 };
 
 export class GraphProcessor {
   #graph: NodeGraph;
+  #nodesById: Record<NodeId, ChartNode>;
   #nodeInstances: Record<NodeId, NodeImpl<ChartNode>>;
   #connections: Record<NodeId, NodeConnection[]>;
   #definitions: Record<NodeId, { inputs: NodeInputDefinition[]; outputs: NodeOutputDefinition[] }>;
@@ -31,10 +32,12 @@ export class GraphProcessor {
     this.#graph = graph;
     this.#nodeInstances = {};
     this.#connections = {};
+    this.#nodesById = {};
 
     // Create node instances and store them in a lookup table
     for (const node of this.#graph.nodes) {
       this.#nodeInstances[node.id] = createNodeInstance(node as Nodes);
+      this.#nodesById[node.id] = node;
     }
 
     // Store connections in a lookup table
@@ -109,32 +112,36 @@ export class GraphProcessor {
       const userInputNodes = readyNodes.filter((node) => node.type === 'userInput') as UserInputNode[];
       if (userInputNodes.length > 0 && events.onUserInput) {
         try {
-          const validUserInputNodes: UserInputNode[] = [];
-          const userInputInputValues: Record<PortId, DataValue>[] = [];
+          const needsInput: Record<NodeId, Record<PortId, DataValue>> = {};
 
           for (const node of userInputNodes) {
             const inputValues = this.#getInputValuesForNode(node, nodeResults);
             if (this.#excludedDueToControlFlow(node, nodeResults, inputValues, events, visitedNodes)) {
               continue;
             }
-            validUserInputNodes.push(node);
-            userInputInputValues.push(inputValues);
+            needsInput[node.id] = inputValues;
             events.onNodeStart?.(node, inputValues);
           }
 
-          if (validUserInputNodes.length > 0) {
-            const userInputResults = await events.onUserInput(validUserInputNodes, userInputInputValues);
-            userInputResults.forEach((result, index) => {
-              const node = validUserInputNodes[index]!;
-              const outputValues = (this.#nodeInstances[node.id] as UserInputNodeImpl).getOutputValuesFromUserInput(
-                userInputInputValues[index]!,
-                result,
-              );
-              nodeResults.set(node.id, outputValues);
-              visitedNodes.add(node.id);
-              nodesToProcess.splice(nodesToProcess.indexOf(node), 1);
-              events.onNodeFinish?.(node, outputValues);
-            });
+          if (Object.keys(needsInput).length > 0) {
+            const nodesMap = Object.fromEntries(
+              Object.keys(needsInput).map((nodeId) => [nodeId, this.#nodesById[nodeId as NodeId]! as UserInputNode]),
+            );
+            const userInputResults = await events.onUserInput(needsInput, nodesMap);
+
+            if (userInputResults != null && Object.keys(userInputResults).length > 0) {
+              for (const [nodeId, results] of Object.entries(userInputResults)) {
+                const node = this.#nodesById[nodeId as NodeId]!;
+                const outputValues = (this.#nodeInstances[node.id] as UserInputNodeImpl).getOutputValuesFromUserInput(
+                  needsInput[node.id]!,
+                  results,
+                );
+                nodeResults.set(node.id, outputValues);
+                visitedNodes.add(node.id);
+                nodesToProcess.splice(nodesToProcess.indexOf(node), 1);
+                events.onNodeFinish?.(node, outputValues);
+              }
+            }
             continue;
           }
         } catch (error) {
