@@ -68,7 +68,7 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
     ];
   }
 
-  async process(inputs: Record<PortId, DataValue>, context: ProcessContext): Promise<Record<PortId, DataValue>> {
+  async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {
     const input = expectType(inputs['input' as PortId], 'string');
 
     const overlapPercent = this.chartNode.data.overlap / 100;

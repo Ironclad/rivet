@@ -85,6 +85,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["css-minimizer-webpack-plugin", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:3.4.1"],\
             ["dotenv", "npm:10.0.0"],\
             ["dotenv-expand", "npm:5.1.0"],\
+            ["emittery", "npm:1.0.1"],\
             ["esbuild", "npm:0.17.18"],\
             ["eslint", "npm:8.36.0"],\
             ["eslint-config-react-app", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:7.0.1"],\
@@ -101,6 +102,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["monaco-editor", "npm:0.37.1"],\
             ["nanoid", "npm:4.0.1"],\
             ["openai", "npm:3.2.1"],\
+            ["p-queue", "npm:7.3.4"],\
             ["p-retry", "npm:5.1.2"],\
             ["postcss", "npm:8.4.21"],\
             ["postcss-flexbugs-fixes", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:5.0.2"],\
@@ -9635,6 +9637,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["css-minimizer-webpack-plugin", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:3.4.1"],\
             ["dotenv", "npm:10.0.0"],\
             ["dotenv-expand", "npm:5.1.0"],\
+            ["emittery", "npm:1.0.1"],\
             ["esbuild", "npm:0.17.18"],\
             ["eslint", "npm:8.36.0"],\
             ["eslint-config-react-app", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:7.0.1"],\
@@ -9651,6 +9654,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["monaco-editor", "npm:0.37.1"],\
             ["nanoid", "npm:4.0.1"],\
             ["openai", "npm:3.2.1"],\
+            ["p-queue", "npm:7.3.4"],\
             ["p-retry", "npm:5.1.2"],\
             ["postcss", "npm:8.4.21"],\
             ["postcss-flexbugs-fixes", "virtual:3085d7a1710f7c0be7c4952d5c01e013fc7e0f75dc9f9ea9901bbdea31814fe81777f6d9eec5129d2efbca0e07c1021270c798baf78dc82936fee08454d6af46#npm:5.0.2"],\
@@ -12418,6 +12422,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/electron-to-chromium-npm-1.4.340-accc68e032-b7ffa64814.zip/node_modules/electron-to-chromium/",\
           "packageDependencies": [\
             ["electron-to-chromium", "npm:1.4.340"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["emittery", [\
+        ["npm:1.0.1", {\
+          "packageLocation": "./.yarn/cache/emittery-npm-1.0.1-3e4e6ba9b5-d95faee6ff.zip/node_modules/emittery/",\
+          "packageDependencies": [\
+            ["emittery", "npm:1.0.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -17304,6 +17317,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["p-queue", [\
+        ["npm:7.3.4", {\
+          "packageLocation": "./.yarn/cache/p-queue-npm-7.3.4-c746a7f1ae-a21b8a4dd7.zip/node_modules/p-queue/",\
+          "packageDependencies": [\
+            ["p-queue", "npm:7.3.4"],\
+            ["eventemitter3", "npm:4.0.7"],\
+            ["p-timeout", "npm:5.1.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["p-retry", [\
         ["npm:4.6.2", {\
           "packageLocation": "./.yarn/cache/p-retry-npm-4.6.2-9f871cfc9b-45c270bfdd.zip/node_modules/p-retry/",\
@@ -17320,6 +17344,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-retry", "npm:5.1.2"],\
             ["@types/retry", "npm:0.12.1"],\
             ["retry", "npm:0.13.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["p-timeout", [\
+        ["npm:5.1.0", {\
+          "packageLocation": "./.yarn/cache/p-timeout-npm-5.1.0-11ca554b60-f5cd4e1730.zip/node_modules/p-timeout/",\
+          "packageDependencies": [\
+            ["p-timeout", "npm:5.1.0"]\
           ],\
           "linkType": "HARD"\
         }]\

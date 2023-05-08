@@ -37,3 +37,8 @@ export const lastRunData = selectorFamily<NodeRunData | undefined, NodeId>({
       return get(lastRunDataByNodeState)[nodeId];
     },
 });
+
+export const graphRunningState = atom<boolean>({
+  key: 'graphRunning',
+  default: false,
+});
