@@ -22,13 +22,19 @@ export const GraphBuilder: FC = () => {
   const [selectedNode, setSelectedNode] = useRecoilState(selectedNodeState);
   const { clientToCanvasPosition } = useCanvasPositioning();
 
+  const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {
+    setNodes?.(newNodes);
+  });
+
   const addNode = useStableCallback((nodeType: NodeType, position: { x: number; y: number }) => {
     const newNode = nodeFactory(nodeType);
 
     newNode.visualData.x = position.x;
     newNode.visualData.y = position.y;
 
-    setNodes?.([...nodes, newNode]);
+    nodesChanged?.([...nodes, newNode]);
+
+    setSelectedNode(newNode.id);
   });
 
   const removeNode = useStableCallback((nodeId: NodeId) => {
@@ -36,7 +42,7 @@ export const GraphBuilder: FC = () => {
     if (nodeIndex >= 0) {
       const newNodes = [...nodes];
       newNodes.splice(nodeIndex, 1);
-      setNodes?.(newNodes);
+      nodesChanged?.(newNodes);
     }
 
     // Remove all connections associated with the node
@@ -73,7 +79,7 @@ export const GraphBuilder: FC = () => {
       <NodeCanvas
         nodes={nodes}
         connections={connections}
-        onNodesChanged={setNodes}
+        onNodesChanged={nodesChanged}
         onConnectionsChanged={setConnections}
         onNodeSelected={nodeSelected}
         selectedNode={nodes.find((node) => node.id === selectedNode) ?? null}
