@@ -1,10 +1,10 @@
 import { FC } from 'react';
-import { DataValue, ScalarDataValue } from '../model/DataValue';
+import { DataValue, ScalarDataValue, isArrayDataValue } from '../model/DataValue';
 import { match } from 'ts-pattern';
 
 export const RenderDataValue: FC<{ value: DataValue | undefined }> = ({ value }) => {
-  if (value?.type.endsWith('[]')) {
-    const items = (value.value as unknown[]).map(
+  if (isArrayDataValue(value)) {
+    const items = value.value.map(
       (v) =>
         ({
           type: value.type.slice(0, -2) as ScalarDataValue['type'],
@@ -22,7 +22,7 @@ export const RenderDataValue: FC<{ value: DataValue | undefined }> = ({ value })
     );
   }
 
-  return match(value as ScalarDataValue | undefined)
+  return match(value)
     .with({ type: 'boolean' }, (value) => <>{value.value ? 'true' : 'false'}</>)
     .with({ type: 'number' }, (value) => <>{value.value}</>)
     .with({ type: 'string' }, (value) => <>{value.value}</>)

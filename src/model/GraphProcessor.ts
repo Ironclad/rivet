@@ -1,38 +1,88 @@
-import { max, range, uniqBy } from 'lodash-es';
+import { max, range } from 'lodash-es';
 import { ControlFlowExcluded } from '../utils/symbols';
-import { DataValue, ArrayDataValue, AnyDataValue, StringDataValue, expectType, ScalarDataValue } from './DataValue';
+import { DataValue, ArrayDataValue, AnyDataValue, StringArrayDataValue } from './DataValue';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { NodeGraph } from './NodeGraph';
 import { NodeImpl, ProcessContext } from './NodeImpl';
 import { Nodes, createNodeInstance } from './Nodes';
 import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode';
-
-export type NodeResults = Map<string, Record<PortId, DataValue>>;
+import PQueue from 'p-queue';
+import { getError } from '../utils/errors';
+import Emittery from 'emittery';
+import { entries, fromEntries, values } from '../utils/typeSafety';
+import { isNotNull } from '../utils/genericUtilFunctions';
 
 export type ProcessEvents = {
-  onNodeStart?: (node: ChartNode, inputs: Record<PortId, DataValue>) => void;
-  onNodeFinish?: (node: ChartNode, result: Record<PortId, DataValue>) => void;
-  onNodeError?: (node: ChartNode, error: Error) => void;
-  onNodeExcluded?: (node: ChartNode) => void;
-  onUserInput?: (
-    needsInput: Record<NodeId, Record<PortId, DataValue>>,
-    nodes: Record<NodeId, UserInputNode>,
-  ) => Promise<Record<NodeId, ArrayDataValue<StringDataValue>>>;
-  onPartialOutputs?: (node: ChartNode, outputs: Record<PortId, DataValue>, index: number) => void;
+  /** Called when processing has started. */
+  start: void;
+
+  /** Called when a node has started processing, with the input values for the node. */
+  nodeStart: { node: ChartNode; inputs: Inputs };
+
+  /** Called when a node has finished processing, with the output values for the node. */
+  nodeFinish: { node: ChartNode; outputs: Outputs };
+
+  /** Called when a node has errored during processing. */
+  nodeError: { node: ChartNode; error: Error };
+
+  /** Called when a node has been excluded from processing. */
+  nodeExcluded: { node: ChartNode };
+
+  /** Called when a user input node requires user input. Call the callback when finished, or call userInput() on the GraphProcessor with the results. */
+  userInput: { node: UserInputNode; inputs: Inputs; callback: (values: StringArrayDataValue) => void };
+
+  /** Called when a node has partially processed, with the current partial output values for the node. */
+  partialOutput: { node: ChartNode; outputs: Outputs; index: number };
+
+  /** Called when processing has completed. */
+  done: { results: GraphResults };
+
+  /** Called when processing has been aborted. */
+  abort: void;
 };
 
+export type GraphResults = Record<NodeId, Outputs | undefined>;
+export type NodeResults = Map<NodeId, Outputs>;
+export type Inputs = Record<PortId, DataValue>;
+export type Outputs = Record<PortId, DataValue>;
+
 export class GraphProcessor {
+  // Per-instance state
   #graph: NodeGraph;
   #nodesById: Record<NodeId, ChartNode>;
   #nodeInstances: Record<NodeId, NodeImpl<ChartNode>>;
   #connections: Record<NodeId, NodeConnection[]>;
   #definitions: Record<NodeId, { inputs: NodeInputDefinition[]; outputs: NodeOutputDefinition[] }>;
+  #emitter: Emittery<ProcessEvents> = new Emittery();
+  #running = false;
+
+  // Per-process state
+  #erroredNodes: Set<NodeId> = undefined!;
+  #remainingNodes: Set<NodeId> = undefined!;
+  #visitedNodes: Set<NodeId> = undefined!;
+  #currentlyProcessing: Set<NodeId> = undefined!;
+  #context: ProcessContext = undefined!;
+  #nodeResults: NodeResults = undefined!;
+  #abortController: AbortController = undefined!;
+  #processingQueue: PQueue = undefined!;
+
+  /** User input nodes that are pending user input. */
+  #pendingUserInputs: Record<
+    NodeId,
+    { resolve: (values: StringArrayDataValue) => void; reject: (error: unknown) => void }
+  > = undefined!;
+
+  get isRunning() {
+    return this.#running;
+  }
 
   constructor(graph: NodeGraph) {
     this.#graph = graph;
     this.#nodeInstances = {};
     this.#connections = {};
     this.#nodesById = {};
+
+    this.#emitter.bindMethods(this as any, ['on', 'off', 'once']);
 
     // Create node instances and store them in a lookup table
     for (const node of this.#graph.nodes) {
@@ -62,11 +112,21 @@ export class GraphProcessor {
     }
   }
 
-  #nodeIsReady(node: ChartNode, visitedNodes: Set<unknown>, depth = 0): boolean {
-    return this.#allInputsVisited(node, visitedNodes);
-  }
+  on = undefined! as Emittery<ProcessEvents>['on'];
+  off = undefined! as Emittery<ProcessEvents>['off'];
+  once = undefined! as Emittery<ProcessEvents>['once'];
 
-  #allInputsVisited(node: ChartNode, visitedNodes: Set<unknown>, depth = 0): boolean {
+  #nodeIsReady(node: ChartNode): boolean {
+    if (this.#erroredNodes.has(node.id) || this.#currentlyProcessing.has(node.id)) {
+      return false;
+    }
+
+    for (const inputNode of this.#inputNodesTo(node)) {
+      if (this.#erroredNodes.has(inputNode.id)) {
+        return false;
+      }
+    }
+
     const connections = this.#connections[node.id];
     return (
       this.#definitions[node.id]!.inputs.every((input) => {
@@ -82,134 +142,207 @@ export class GraphProcessor {
           return false;
         }
 
-        return visitedNodes.has(connectionToInput.outputNodeId);
+        return this.#visitedNodes.has(connectionToInput.outputNodeId);
       }) || this.#definitions[node.id]!.inputs.length === 0
     );
   }
 
-  async processGraph(context: ProcessContext, events: ProcessEvents = {}): Promise<Record<string, DataValue>> {
-    const outputNodes = this.#graph.nodes.filter((node) => this.#definitions[node.id]!.outputs.length === 0);
+  userInput(nodeId: NodeId, values: StringArrayDataValue): void {
+    const pending = this.#pendingUserInputs[nodeId];
+    if (pending) {
+      pending.resolve(values as StringArrayDataValue);
+      delete this.#pendingUserInputs[nodeId];
+    }
+  }
 
-    const nodeResults: NodeResults = new Map();
+  async abort(): Promise<void> {
+    if (!this.#running) {
+      return Promise.resolve();
+    }
 
-    // Process nodes in topological order
-    const nodesToProcess = [...this.#graph.nodes];
-    const visitedNodes = new Set();
+    this.#abortController.abort();
+    this.#emitter.emit('abort', void 0);
 
-    while (nodesToProcess.length > 0) {
-      const readyNodes = nodesToProcess.filter((node) => this.#nodeIsReady(node, visitedNodes));
+    await this.#processingQueue.onIdle();
+  }
 
-      if (readyNodes.length === 0) {
-        for (const erroredNode of nodesToProcess) {
-          events.onNodeError?.(
-            erroredNode,
-            new Error('There might be a cycle in the graph or an issue with input dependencies.'),
-          );
+  /** Gets the nodes that are inputting to the given node. */
+  #inputNodesTo(node: ChartNode): ChartNode[] {
+    const connections = this.#connections[node.id];
+    if (!connections) {
+      return [];
+    }
+
+    return connections
+      .filter((conn) => conn.outputNodeId === node.id)
+      .map((conn) => this.#nodesById[conn.inputNodeId])
+      .filter(isNotNull);
+  }
+
+  /** Gets the nodes that the given node it outputting to. */
+  #outputNodesFrom(node: ChartNode): ChartNode[] {
+    const connections = this.#connections[node.id];
+    if (!connections) {
+      return [];
+    }
+
+    return connections
+      .filter((conn) => conn.inputNodeId === node.id)
+      .map((conn) => this.#nodesById[conn.outputNodeId])
+      .filter(isNotNull);
+  }
+
+  async processGraph(context: ProcessContext): Promise<GraphResults> {
+    if (this.#running) {
+      throw new Error('Cannot process graph while already processing');
+    }
+
+    this.#running = true;
+    this.#context = context;
+    this.#nodeResults = new Map();
+    this.#erroredNodes = new Set();
+    this.#visitedNodes = new Set();
+    this.#currentlyProcessing = new Set();
+    this.#remainingNodes = new Set(this.#graph.nodes.map((n) => n.id));
+    this.#pendingUserInputs = {};
+    this.#abortController = new AbortController();
+    this.#processingQueue = new PQueue({ concurrency: Infinity });
+
+    const processNextNodes = async () => {
+      const nodesToProcess = this.#graph.nodes.filter((node) => !this.#visitedNodes.has(node.id));
+
+      for (const currentNode of nodesToProcess) {
+        if (this.#nodeIsReady(currentNode)) {
+          this.#currentlyProcessing.add(currentNode.id);
+          this.#processingQueue.add(async () => {
+            await this.#processNode(currentNode as Nodes);
+
+            this.#remainingNodes.delete(currentNode.id);
+            this.#currentlyProcessing.delete(currentNode.id);
+
+            processNextNodes();
+          });
         }
-        throw new Error('There might be a cycle in the graph or an issue with input dependencies.');
       }
+    };
 
-      const userInputNodes = readyNodes.filter((node) => node.type === 'userInput') as UserInputNode[];
-      if (userInputNodes.length > 0 && events.onUserInput) {
-        try {
-          const needsInput: Record<NodeId, Record<PortId, DataValue>> = {};
+    this.#emitter.emit('start', void 0);
 
-          for (const node of userInputNodes) {
-            const inputValues = this.#getInputValuesForNode(node, nodeResults);
-            if (this.#excludedDueToControlFlow(node, nodeResults, inputValues, events, visitedNodes)) {
-              continue;
-            }
-            needsInput[node.id] = inputValues;
-            events.onNodeStart?.(node, inputValues);
-          }
+    processNextNodes();
+    await this.#processingQueue.onIdle();
 
-          if (Object.keys(needsInput).length > 0) {
-            const nodesMap = Object.fromEntries(
-              Object.keys(needsInput).map((nodeId) => [nodeId, this.#nodesById[nodeId as NodeId]! as UserInputNode]),
-            );
-            const userInputResults = await events.onUserInput(needsInput, nodesMap);
-
-            if (userInputResults != null && Object.keys(userInputResults).length > 0) {
-              for (const [nodeId, results] of Object.entries(userInputResults)) {
-                const node = this.#nodesById[nodeId as NodeId]!;
-                const outputValues = (this.#nodeInstances[node.id] as UserInputNodeImpl).getOutputValuesFromUserInput(
-                  needsInput[node.id]!,
-                  results,
-                );
-                nodeResults.set(node.id, outputValues);
-                visitedNodes.add(node.id);
-                nodesToProcess.splice(nodesToProcess.indexOf(node), 1);
-                events.onNodeFinish?.(node, outputValues);
-              }
-            }
-            continue;
-          }
-        } catch (error) {
-          for (const node of userInputNodes) {
-            events.onNodeError?.(node, error as Error);
-          }
-          throw error;
-        }
-      }
-
-      await Promise.allSettled(
-        readyNodes.map(async (node) => {
-          await this.#processNode(node as Nodes, nodeResults, context, events, visitedNodes, nodesToProcess);
-        }),
-      );
+    if (this.#remainingNodes.size > 0) {
+      throw new Error('There might be a cycle in the graph or an issue with input dependencies.');
     }
 
     // Collect output values
+    const outputNodes = this.#graph.nodes.filter((node) => this.#definitions[node.id]!.outputs.length === 0);
     const outputValues = outputNodes.reduce((values, node) => {
-      values[node.id] = nodeResults.get(node.id);
+      values[node.id] = this.#nodeResults.get(node.id);
       return values;
-    }, {} as Record<string, any>);
+    }, {} as GraphResults);
+
+    this.#running = false;
+
+    this.#emitter.emit('done', { results: outputValues });
 
     return outputValues;
   }
 
-  async #processNode(
-    node: Nodes,
-    nodeResults: NodeResults,
-    context: ProcessContext,
-    events: ProcessEvents,
-    visitedNodes: Set<unknown>,
-    nodesToProcess: ChartNode[],
-  ) {
-    nodesToProcess.splice(nodesToProcess.indexOf(node), 1);
+  async #processNode(node: Nodes) {
+    if (this.#abortController.signal.aborted) {
+      this.#nodeErrored(node, new Error('Processing aborted'));
+    }
 
-    if (node.isSplitRun) {
-      await this.#processSplitRunNode(node, nodeResults, context, events, visitedNodes);
+    const inputNodes = this.#inputNodesTo(node);
+    const erroredInputNodes = inputNodes.filter((inputNode) => this.#erroredNodes.has(inputNode.id));
+    if (erroredInputNodes.length > 0) {
+      const error = new Error(
+        `Cannot process node ${node.id} because it depends on errored nodes: ${erroredInputNodes
+          .map((n) => `${n.title} (${n.id})`)
+          .join(', ')}`,
+      );
+      this.#nodeErrored(node, error);
+      return;
+    }
+
+    if (this.#isNodeOfType('userInput', node)) {
+      await this.#processUserInputNode(node);
+    } else if (node.isSplitRun) {
+      await this.#processSplitRunNode(node);
     } else {
-      await this.#processNormalNode(node, nodeResults, context, events, visitedNodes);
+      await this.#processNormalNode(node);
     }
   }
 
-  async #processSplitRunNode(
-    node: ChartNode,
-    nodeResults: NodeResults,
-    context: ProcessContext,
-    events: ProcessEvents,
-    visitedNodes: Set<unknown>,
-  ) {
-    const inputValues = this.#getInputValuesForNode(node, nodeResults);
+  #isNodeOfType<T extends Nodes['type']>(type: T, node: ChartNode): node is Extract<ChartNode, { type: T }> {
+    return node.type === type;
+  }
 
-    if (this.#excludedDueToControlFlow(node, nodeResults, inputValues, events, visitedNodes)) {
+  async #processUserInputNode(node: UserInputNode) {
+    try {
+      const inputValues = this.#getInputValuesForNode(node);
+      if (this.#excludedDueToControlFlow(node, inputValues)) {
+        return;
+      }
+
+      this.#emitter.emit('nodeStart', { node, inputs: inputValues });
+
+      const results = await new Promise<StringArrayDataValue>((resolve, reject) => {
+        this.#pendingUserInputs[node.id] = {
+          resolve,
+          reject,
+        };
+
+        this.#abortController.signal.addEventListener('abort', () => {
+          delete this.#pendingUserInputs[node.id];
+          reject(new Error('Processing aborted'));
+        });
+
+        this.#emitter.emit('userInput', {
+          node,
+          inputs: inputValues,
+          callback: (results) => {
+            resolve(results);
+
+            delete this.#pendingUserInputs[node.id];
+          },
+        });
+      });
+
+      const outputValues = (this.#nodeInstances[node.id] as UserInputNodeImpl).getOutputValuesFromUserInput(
+        inputValues,
+        results,
+      );
+
+      this.#nodeResults.set(node.id, outputValues);
+      this.#visitedNodes.add(node.id);
+
+      this.#emitter.emit('nodeFinish', { node, outputs: outputValues });
+    } catch (e) {
+      this.#nodeErrored(node, e);
+    }
+  }
+
+  async #processSplitRunNode(node: ChartNode) {
+    const inputValues = this.#getInputValuesForNode(node);
+
+    if (this.#excludedDueToControlFlow(node, inputValues)) {
       return;
     }
 
     const splittingAmount = Math.min(
-      max(Object.values(inputValues).map((value) => (Array.isArray(value.value) ? value.value.length : 1))) ?? 1,
+      max(values(inputValues).map((value) => (Array.isArray(value.value) ? value.value.length : 1))) ?? 1,
       node.splitRunMax ?? 10,
     );
 
-    events.onNodeStart?.(node, inputValues);
+    this.#emitter.emit('nodeStart', { node, inputs: inputValues });
 
     try {
       const results = await Promise.all(
         range(0, splittingAmount).map(async (i) => {
-          const inputs: Record<PortId, DataValue> = Object.fromEntries(
-            Object.entries(inputValues).map(([port, value]): [PortId, DataValue] => {
+          const inputs = fromEntries(
+            entries(inputValues).map(([port, value]): [PortId, DataValue] => {
               if (value.type.endsWith('[]')) {
                 const newType = value.type.slice(0, -2) as DataValue['type'];
                 const newValue: unknown = (value.value as unknown[])[i] ?? undefined;
@@ -221,95 +354,95 @@ export class GraphProcessor {
           );
 
           try {
-            const output = await this.#processNodeWithInputData(node, context, inputs, i, events.onPartialOutputs);
-            return output;
+            const output = await this.#processNodeWithInputData(
+              node,
+              inputs as Inputs,
+              i,
+              (node, partialOutputs, index) =>
+                this.#emitter.emit('partialOutput', { node, outputs: partialOutputs, index }),
+            );
+            return { type: 'output', output };
           } catch (error) {
-            const errorInstance =
-              typeof error === 'object' && error instanceof Error
-                ? error
-                : new Error(error != null ? error.toString() : 'Unknown error');
-            events.onNodeError?.(node, errorInstance);
-            throw error;
+            return { type: 'error', error: getError(error) };
           }
         }),
       );
+
+      const errors = results.filter((r) => r.type === 'error').map((r) => r.error!);
+      if (errors.length === 1) {
+        const e = errors[0]!;
+        throw e;
+      } else if (errors.length > 0) {
+        throw new Error(errors.join('\n'));
+      }
 
       // Combine the parallel results into the final output
 
       // Turn a Record<PortId, DataValue[]> into a Record<PortId, AnyArrayDataValue>
       const aggregateResults = results.reduce((acc, result) => {
-        for (const [portId, value] of Object.entries(result)) {
+        for (const [portId, value] of entries(result.output!)) {
           acc[portId as PortId] ??= { type: (value.type + '[]') as DataValue['type'], value: [] } as DataValue;
           (acc[portId as PortId] as ArrayDataValue<AnyDataValue>).value.push(value.value);
         }
         return acc;
-      }, {} as Record<PortId, DataValue>);
+      }, {} as Outputs);
 
-      nodeResults.set(node.id, aggregateResults);
-      visitedNodes.add(node.id);
-      events.onNodeFinish?.(node, aggregateResults);
+      this.#nodeResults.set(node.id, aggregateResults);
+      this.#visitedNodes.add(node.id);
+      this.#emitter.emit('nodeFinish', { node, outputs: aggregateResults });
     } catch (error) {
-      const errorInstance =
-        typeof error === 'object' && error instanceof Error
-          ? error
-          : new Error(error != null ? error.toString() : 'Unknown error');
-      events.onNodeError?.(node, errorInstance);
-      console.error(error);
-      throw error;
+      this.#nodeErrored(node, error);
     }
   }
 
-  async #processNormalNode(
-    node: ChartNode,
-    nodeResults: NodeResults,
-    context: ProcessContext,
-    events: ProcessEvents,
-    visitedNodes: Set<unknown>,
-  ) {
-    const inputValues = this.#getInputValuesForNode(node, nodeResults);
+  async #processNormalNode(node: ChartNode) {
+    const inputValues = this.#getInputValuesForNode(node);
 
-    if (this.#excludedDueToControlFlow(node, nodeResults, inputValues, events, visitedNodes)) {
+    if (this.#excludedDueToControlFlow(node, inputValues)) {
       return;
     }
 
-    events.onNodeStart?.(node, inputValues);
+    this.#emitter.emit('nodeStart', { node, inputs: inputValues });
 
     try {
-      const outputValues = await this.#processNodeWithInputData(node, context, inputValues, 0, events.onPartialOutputs);
+      const outputValues = await this.#processNodeWithInputData(node, inputValues, 0, (node, partialOutputs, index) =>
+        this.#emitter.emit('partialOutput', { node, outputs: partialOutputs, index }),
+      );
 
-      nodeResults.set(node.id, outputValues);
-      visitedNodes.add(node.id);
-      events.onNodeFinish?.(node, outputValues);
+      this.#nodeResults.set(node.id, outputValues);
+      this.#visitedNodes.add(node.id);
+      this.#emitter.emit('nodeFinish', { node, outputs: outputValues });
     } catch (error) {
-      const errorInstance =
-        typeof error === 'object' && error instanceof Error
-          ? error
-          : new Error(error != null ? error.toString() : 'Unknown error');
-      events.onNodeError?.(node, errorInstance);
-      throw error;
+      this.#nodeErrored(node, error);
     }
+  }
+
+  #nodeErrored(node: ChartNode, e: unknown) {
+    const error = getError(e);
+    this.#emitter.emit('nodeError', { node, error });
+    console.error(error);
+    this.#erroredNodes.add(node.id);
   }
 
   async #processNodeWithInputData(
     node: ChartNode,
-    context: ProcessContext,
-    inputValues: Record<PortId, DataValue>,
+    inputValues: Inputs,
     index: number,
-    onPartialOutputs?: (node: ChartNode, partialOutputs: Record<PortId, DataValue>, index: number) => void,
+    partialOutput?: (node: ChartNode, partialOutputs: Outputs, index: number) => void,
   ) {
-    return await this.#nodeInstances[node.id]!.process(inputValues, context, (partialOutputs) =>
-      onPartialOutputs?.(node, partialOutputs, index),
+    const instance = this.#nodeInstances[node.id]!;
+
+    const results = await instance.process(inputValues, this.#context, this.#abortController.signal, (partialOutputs) =>
+      partialOutput?.(node, partialOutputs, index),
     );
+    if (this.#abortController.signal.aborted) {
+      throw new Error('Aborted');
+    }
+    return results;
   }
 
-  #excludedDueToControlFlow(
-    node: ChartNode,
-    nodeResults: NodeResults,
-    inputValues: Record<PortId, DataValue>,
-    { onNodeExcluded }: { onNodeExcluded?: (node: ChartNode) => void },
-    visitedNodes: Set<unknown>,
-  ) {
-    const inputValuesList = Object.values(inputValues);
+  #excludedDueToControlFlow(node: ChartNode, inputValues: Inputs) {
+    const inputValuesList = values(inputValues);
     const inputIsExcludedValue =
       inputValuesList.length > 0 && inputValuesList.some((value) => value?.type === 'control-flow-excluded');
 
@@ -321,7 +454,7 @@ export class GraphProcessor {
     const anyOutputIsExcludedValue =
       outputNodes.length > 0 &&
       outputNodes.some((outputNode) => {
-        const outputValues = nodeResults.get(outputNode.id) ?? {};
+        const outputValues = this.#nodeResults.get(outputNode.id) ?? {};
         if (outputValues[ControlFlowExcluded as unknown as PortId]) {
           return true;
         }
@@ -331,9 +464,9 @@ export class GraphProcessor {
     const allowedToConsumedExcludedValue = node.type === 'if' || node.type === 'ifElse';
 
     if ((inputIsExcludedValue || anyOutputIsExcludedValue) && !allowedToConsumedExcludedValue) {
-      onNodeExcluded?.(node);
-      visitedNodes.add(node.id);
-      nodeResults.set(node.id, {
+      this.#emitter.emit('nodeExcluded', { node });
+      this.#visitedNodes.add(node.id);
+      this.#nodeResults.set(node.id, {
         [ControlFlowExcluded as unknown as PortId]: { type: 'control-flow-excluded', value: undefined },
       });
       return true;
@@ -342,7 +475,7 @@ export class GraphProcessor {
     return false;
   }
 
-  #getInputValuesForNode(node: ChartNode, nodeResults: NodeResults): Record<PortId, DataValue> {
+  #getInputValuesForNode(node: ChartNode): Record<PortId, DataValue> {
     const connections = this.#connections[node.id];
     return this.#definitions[node.id]!.inputs.reduce((values, input) => {
       if (!connections) {
@@ -351,7 +484,7 @@ export class GraphProcessor {
       const connection = connections.find((conn) => conn.inputId === input.id && conn.inputNodeId === node.id);
       if (connection) {
         const outputNode = this.#nodeInstances[connection.outputNodeId]!.chartNode;
-        const outputResult = nodeResults.get(outputNode.id)?.[connection.outputId];
+        const outputResult = this.#nodeResults.get(outputNode.id)?.[connection.outputId];
 
         values[input.id] = outputResult;
       }

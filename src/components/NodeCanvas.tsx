@@ -253,7 +253,6 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   };
 
   const onNodeWidthChanged = useStableCallback((node: ChartNode, width: number) => {
-    console.dir({ node, width });
     onNodesChanged(
       produce(nodes, (draft) => {
         const foundNode = draft.find((n) => n.id === node.id);

@@ -34,11 +34,13 @@ export type ScalarDataValue =
 
 export type ArrayDataValue<T extends ScalarDataValue> = DataValueDef<`${T['type']}[]`, T['value'][]>;
 
-export type DataValue =
-  | ScalarDataValue
-  | {
-      [P in ScalarDataValue['type']]: ArrayDataValue<Extract<ScalarDataValue, { type: P }>>;
-    }[ScalarDataValue['type']];
+export type StringArrayDataValue = ArrayDataValue<StringDataValue>;
+
+export type ArrayDataValues = {
+  [P in ScalarDataValue['type']]: ArrayDataValue<Extract<ScalarDataValue, { type: P }>>;
+}[ScalarDataValue['type']];
+
+export type DataValue = ScalarDataValue | ArrayDataValues;
 
 export type DataType = DataValue['type'];
 
@@ -75,4 +77,8 @@ export function expectTypeOptional<T extends DataType>(
     throw new Error(`Expected value of type ${type} but got ${value?.type}`);
   }
   return value.value as GetDataValue<T>['value'] | undefined;
+}
+
+export function isArrayDataValue(value: DataValue | undefined): value is ArrayDataValues {
+  return value?.type.endsWith('[]') ?? false;
 }

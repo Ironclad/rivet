@@ -71,10 +71,6 @@ export async function* streamChatCompletions({
     signal: signal ?? defaultSignal,
   });
 
-  if (!response.ok) {
-    throw new OpenAIError(response.status, await response.json());
-  }
-
   for await (const chunk of response.events()) {
     if (chunk === '[DONE]') {
       return;

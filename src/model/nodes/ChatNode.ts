@@ -2,7 +2,6 @@ import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefin
 import { nanoid } from 'nanoid';
 import { NodeImpl, ProcessContext } from '../NodeImpl';
 import { DataValue, expectTypeOptional } from '../DataValue';
-import { AxiosError } from 'axios';
 import {
   assertValidModel,
   getCostForPrompt,
@@ -206,9 +205,9 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
   async process(
     inputs: Record<PortId, DataValue>,
     context: ProcessContext,
+    signal: AbortSignal,
     onPartialOutputs: (outputs: Record<PortId, DataValue>) => void,
   ): Promise<Record<PortId, DataValue>> {
-    console.dir({ inputs });
     const output: Record<PortId, DataValue> = {};
 
     const model = expectTypeOptional(inputs['model' as PortId], 'string') ?? this.chartNode.data.model;
@@ -293,6 +292,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             frequency_penalty: frequencyPenalty,
             presence_penalty: presencePenalty,
             stop,
+            signal,
           });
 
           let responseParts: string[] = [];
@@ -323,17 +323,17 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
           return output;
         },
-        { retries: 4 },
+        {
+          retries: 4,
+          signal,
+          onFailedAttempt(error) {
+            console.log(error);
+          },
+        },
       );
     } catch (error) {
-      const axiosError = error as AxiosError;
-      if (axiosError.isAxiosError) {
-        console.error('Error processing ChatNode:', axiosError.response);
-        throw new Error(`Error processing ChatNode: ${JSON.stringify(axiosError.response)}`);
-      } else {
-        console.error('Error processing ChatNode:', error);
-        throw new Error(`Error processing ChatNode: ${(error as Error).message}`);
-      }
+      console.error('Error processing ChatNode:', error);
+      throw new Error(`Error processing ChatNode: ${(error as Error).message}`);
     }
   }
 }

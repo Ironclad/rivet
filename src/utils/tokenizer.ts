@@ -67,7 +67,6 @@ export function chunkStringByTokenCount(
   while (remaining.length > 0) {
     chunks.push(remaining.slice(0, guess));
     remaining = remaining.slice(guess - Math.floor(guess * overlapPercent));
-    console.dir(remaining.length);
   }
 
   return chunks;

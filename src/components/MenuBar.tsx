@@ -1,12 +1,15 @@
 import { css } from '@emotion/react';
 import { FC } from 'react';
 import { ReactComponent as ChevronRightIcon } from 'majesticons/line/chevron-right-line.svg';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { settingsModalOpenState } from './SettingsModal';
 import { loadGraphData, saveGraphData } from '../utils/fileIO';
 import { graphState } from '../state/graph';
 import { emptyNodeGraph } from '../model/NodeGraph';
 import { useSaveCurrentGraph } from '../hooks/useSaveCurrentGraph';
+import { graphRunningState } from '../state/dataFlow';
+import clsx from 'clsx';
 
 const styles = css`
   display: flex;
@@ -66,17 +69,23 @@ const styles = css`
       background-color: var(--success-dark);
     }
   }
+
+  .run-button.running button {
+    background-color: var(--error);
+  }
 `;
 
 export type MenuBarProps = {
-  onRunGraph: () => void;
+  onRunGraph?: () => void;
+  onAbortGraph?: () => void;
 };
 
-export const MenuBar: FC<MenuBarProps> = ({ onRunGraph }) => {
+export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph }) => {
   const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
   const [graphData, setGraphData] = useRecoilState(graphState);
 
   const saveGraph = useSaveCurrentGraph();
+  const graphRunning = useRecoilValue(graphRunningState);
 
   function handleNew() {
     setGraphData(emptyNodeGraph());
@@ -103,9 +112,17 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph }) => {
           <button onClick={() => loadGraphData((data) => setGraphData(data))}>Import</button>
         </div>
       </div>
-      <div className="run-button">
-        <button onClick={onRunGraph}>
-          Run <ChevronRightIcon />
+      <div className={clsx('run-button', { running: graphRunning })}>
+        <button onClick={graphRunning ? onAbortGraph : onRunGraph}>
+          {graphRunning ? (
+            <>
+              Abort <MultiplyIcon />
+            </>
+          ) : (
+            <>
+              Run <ChevronRightIcon />
+            </>
+          )}
         </button>
       </div>
     </div>

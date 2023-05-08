@@ -258,6 +258,14 @@ export const nodeStyles = css`
     overflow: hidden;
   }
 
+  .node.running .node-output-inner {
+    border-top-color: var(--primary);
+  }
+
+  .node.running .node-output:before {
+    border-top-color: var(--primary);
+  }
+
   .node-output-warnings:hover {
     max-height: 500px;
     overflow: auto;
