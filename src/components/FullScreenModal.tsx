@@ -36,7 +36,7 @@ export const FullScreenModal: FC<FullScreenModalProps> = ({ isOpen, onClose, chi
   if (!isOpen) return null;
 
   return (
-    <Portal>
+    <Portal zIndex={500}>
       <div css={styles} className="full-screen-modal" onClick={onClose}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
           {children}
