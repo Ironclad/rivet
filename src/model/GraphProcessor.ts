@@ -208,66 +208,70 @@ export class GraphProcessor {
   }
 
   async processGraph(context: ProcessContext, inputs: Record<string, DataValue> = {}): Promise<GraphOutputs> {
-    if (this.#running) {
-      throw new Error('Cannot process graph while already processing');
-    }
+    try {
+      if (this.#running) {
+        throw new Error('Cannot process graph while already processing');
+      }
 
-    this.#running = true;
-    this.#context = context;
-    this.#nodeResults = new Map();
-    this.#erroredNodes = new Set();
-    this.#visitedNodes = new Set();
-    this.#currentlyProcessing = new Set();
-    this.#remainingNodes = new Set(this.#graph.nodes.map((n) => n.id));
-    this.#pendingUserInputs = {};
-    this.#abortController = new AbortController();
-    this.#processingQueue = new PQueue({ concurrency: Infinity });
-    this.#graphInputs = inputs;
-    this.#graphOutputs = {};
+      this.#running = true;
+      this.#context = context;
+      this.#nodeResults = new Map();
+      this.#erroredNodes = new Set();
+      this.#visitedNodes = new Set();
+      this.#currentlyProcessing = new Set();
+      this.#remainingNodes = new Set(this.#graph.nodes.map((n) => n.id));
+      this.#pendingUserInputs = {};
+      this.#abortController = new AbortController();
+      this.#processingQueue = new PQueue({ concurrency: Infinity });
+      this.#graphInputs = inputs;
+      this.#graphOutputs = {};
 
-    const processNextNodes = async () => {
-      const nodesToProcess = this.#graph.nodes.filter((node) => !this.#visitedNodes.has(node.id));
+      const processNextNodes = async () => {
+        const nodesToProcess = this.#graph.nodes.filter((node) => !this.#visitedNodes.has(node.id));
 
-      for (const currentNode of nodesToProcess) {
-        if (this.#nodeIsReady(currentNode)) {
-          this.#currentlyProcessing.add(currentNode.id);
-          this.#processingQueue.add(async () => {
-            await this.#processNode(currentNode as Nodes);
+        for (const currentNode of nodesToProcess) {
+          if (this.#nodeIsReady(currentNode)) {
+            this.#currentlyProcessing.add(currentNode.id);
+            this.#processingQueue.add(async () => {
+              await this.#processNode(currentNode as Nodes);
 
-            this.#remainingNodes.delete(currentNode.id);
-            this.#currentlyProcessing.delete(currentNode.id);
+              this.#remainingNodes.delete(currentNode.id);
+              this.#currentlyProcessing.delete(currentNode.id);
 
-            processNextNodes();
-          });
+              processNextNodes();
+            });
+          }
         }
+      };
+
+      this.#emitter.emit('start', void 0);
+
+      processNextNodes();
+      await this.#processingQueue.onIdle();
+
+      if (this.#remainingNodes.size > 0) {
+        throw new Error('There might be a cycle in the graph or an issue with input dependencies.');
       }
-    };
 
-    this.#emitter.emit('start', void 0);
+      const outputNodes = this.#graph.nodes.filter((node): node is GraphOutputNode =>
+        this.#isNodeOfType('graphOutput', node),
+      );
+      const outputValues = outputNodes.reduce((values, node) => {
+        const results = this.#nodeResults.get(node.id);
+        if (results) {
+          values[node.data.id] = results['value' as PortId]!;
+        }
+        return values;
+      }, {} as GraphOutputs);
 
-    processNextNodes();
-    await this.#processingQueue.onIdle();
+      this.#running = false;
 
-    if (this.#remainingNodes.size > 0) {
-      throw new Error('There might be a cycle in the graph or an issue with input dependencies.');
+      this.#emitter.emit('done', { results: outputValues });
+
+      return outputValues;
+    } finally {
+      this.#running = false;
     }
-
-    const outputNodes = this.#graph.nodes.filter((node): node is GraphOutputNode =>
-      this.#isNodeOfType('graphOutput', node),
-    );
-    const outputValues = outputNodes.reduce((values, node) => {
-      const results = this.#nodeResults.get(node.id);
-      if (results) {
-        values[node.data.id] = results['value' as PortId]!;
-      }
-      return values;
-    }, {} as GraphOutputs);
-
-    this.#running = false;
-
-    this.#emitter.emit('done', { results: outputValues });
-
-    return outputValues;
   }
 
   async #processNode(node: Nodes) {
@@ -489,6 +493,12 @@ export class GraphProcessor {
       project: this.#project,
       onPartialOutputs: (partialOutputs) => partialOutput?.(node, partialOutputs, index),
       signal: this.#abortController.signal,
+      createSubProcessor: (subGraphId: GraphId) => {
+        const processor = new GraphProcessor(this.#project, subGraphId);
+        processor.#emitter = this.#emitter;
+
+        return processor;
+      },
     };
 
     const results = await instance.process(inputValues, context);

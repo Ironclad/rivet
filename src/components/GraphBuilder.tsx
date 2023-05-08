@@ -6,7 +6,7 @@ import { nodesSelector } from '../state/graph';
 import { selectedNodeState } from '../state/graphBuilder';
 import { NodeEditorRenderer } from './NodeEditor';
 import styled from '@emotion/styled';
-import { NodeType, nodeFactory } from '../model/Nodes';
+import { NodeType, Nodes, nodeFactory } from '../model/Nodes';
 import { ChartNode, NodeId } from '../model/NodeBase';
 import { ContextMenuData } from '../hooks/useContextMenu';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
@@ -67,6 +67,22 @@ export const GraphBuilder: FC = () => {
       const nodeId = menuItemId.substring(5) as NodeId;
       setSelectedNode(nodeId);
       return;
+    }
+
+    if (menuItemId.startsWith('Duplicate:')) {
+      const nodeId = menuItemId.substring(10) as NodeId;
+      const node = nodes.find((n) => n.id === nodeId) as Nodes;
+      if (node) {
+        const newNode = nodeFactory(node.type);
+        newNode.data = { ...node.data };
+        newNode.visualData = {
+          ...node.visualData,
+          x: node.visualData.x + 20,
+          y: node.visualData.y + 20,
+        };
+        nodesChanged?.([...nodes, newNode]);
+        setSelectedNode(newNode.id);
+      }
     }
   });
 

@@ -204,6 +204,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+    console.dir({ inputs });
     const output: Outputs = {};
 
     const model = expectTypeOptional(inputs['model' as PortId], 'string') ?? this.chartNode.data.model;

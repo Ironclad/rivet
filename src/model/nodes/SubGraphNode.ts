@@ -40,7 +40,7 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
       throw new Error('SubGraphNode requires a project to be set in the context.');
     }
 
-    const subGraphProcessor = new GraphProcessor(project, this.data.graphId);
+    const subGraphProcessor = context.createSubProcessor(this.data.graphId);
     const subGraphOutputs = await subGraphProcessor.processGraph(context, inputs);
 
     // Get the outputs for the SubGraphNode.

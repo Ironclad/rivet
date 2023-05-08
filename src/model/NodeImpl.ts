@@ -1,6 +1,8 @@
 import { Settings } from '../state/settings';
 import { DataValue } from './DataValue';
+import { GraphProcessor } from './GraphProcessor';
 import { ChartNode, NodeConnection, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
+import { GraphId } from './NodeGraph';
 import { Project } from './Project';
 import { NativeApi } from './native/NativeApi';
 
@@ -50,4 +52,5 @@ export type InternalProcessContext = ProcessContext & {
   project: Project;
   signal: AbortSignal;
   onPartialOutputs?: (outputs: Record<PortId, DataValue>) => void;
+  createSubProcessor: (subGraphId: GraphId) => GraphProcessor;
 };
