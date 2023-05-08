@@ -6799,9 +6799,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ai-storyboarding-tool@workspace:.":
+"ai-storyboarding-tool@workspace:packages/app":
   version: 0.0.0-use.local
-  resolution: "ai-storyboarding-tool@workspace:."
+  resolution: "ai-storyboarding-tool@workspace:packages/app"
   dependencies:
     "@atlaskit/button": ^16.6.0
     "@atlaskit/checkbox": ^12.4.6
@@ -12991,6 +12991,15 @@ __metadata:
   checksum: 0b2ebc113dfcf737d48dde49cfebf3ad2d82a8c3188e7100c6f375e30eafbef9e9124aadc3becef237b042fd5eb0aad2fd78669c20972d045bbe7fea8ba0be5c
   languageName: node
   linkType: hard
+
+"nodai@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "nodai@workspace:."
+  dependencies:
+    esbuild: ^0.17.18
+    rollup: ^3.21.0
+  languageName: unknown
+  linkType: soft
 
 "node-abort-controller@npm:^3.0.1":
   version: 3.1.1
