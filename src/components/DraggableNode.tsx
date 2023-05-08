@@ -8,7 +8,6 @@ import {
   PortId,
 } from '../model/NodeBase';
 import { MouseEvent, FC } from 'react';
-import { createUnknownNodeInstance } from '../model/Nodes';
 import { useRecoilValue } from 'recoil';
 import { canvasPositionState } from '../state/graphBuilder';
 import { VisualNode } from './VisualNode';
@@ -62,17 +61,16 @@ export function getNodePortPosition(
   nodeId: NodeId,
   portId: PortId,
   clientToCanvasPosition: (clientX: number, clientY: number) => { x: number; y: number },
-  getConnectionsForNode: (node: ChartNode) => NodeConnection[],
+  getIO: (node: ChartNode) => { inputDefinitions: NodeInputDefinition[]; outputDefinitions: NodeOutputDefinition[] },
 ): { x: number; y: number } {
   const node = nodes.find((node) => node.id === nodeId);
   if (node && portId) {
-    const nodeImpl = createUnknownNodeInstance(node);
     let isInput = true;
-    const foundInput = nodeImpl.getInputDefinitions(getConnectionsForNode(node)).find((input) => input.id === portId);
+    const foundInput = getIO(node).inputDefinitions.find((input) => input.id === portId);
     let foundPort: NodeInputDefinition | NodeOutputDefinition | undefined = foundInput;
     if (!foundPort) {
       isInput = false;
-      foundPort = nodeImpl.getOutputDefinitions(getConnectionsForNode(node)).find((output) => output.id === portId);
+      foundPort = getIO(node).outputDefinitions.find((output) => output.id === portId);
     }
 
     if (foundPort) {

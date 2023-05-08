@@ -2,8 +2,8 @@ import { max, range } from 'lodash-es';
 import { ControlFlowExcluded } from '../utils/symbols';
 import { DataValue, ArrayDataValue, AnyDataValue, StringArrayDataValue } from './DataValue';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
-import { NodeGraph } from './NodeGraph';
-import { NodeImpl, ProcessContext } from './NodeImpl';
+import { GraphId, NodeGraph } from './NodeGraph';
+import { InternalProcessContext, NodeImpl, ProcessContext } from './NodeImpl';
 import { Nodes, createNodeInstance } from './Nodes';
 import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode';
 import PQueue from 'p-queue';
@@ -13,6 +13,7 @@ import { entries, fromEntries, values } from '../utils/typeSafety';
 import { isNotNull } from '../utils/genericUtilFunctions';
 import { GraphOutputNode } from './nodes/GraphOutputNode';
 import { GraphInputNode } from './nodes/GraphInputNode';
+import { Project } from './Project';
 
 export type ProcessEvents = {
   /** Called when processing has started. */
@@ -53,6 +54,7 @@ export type Outputs = Record<PortId, DataValue>;
 export class GraphProcessor {
   // Per-instance state
   #graph: NodeGraph;
+  #project: Project;
   #nodesById: Record<NodeId, ChartNode>;
   #nodeInstances: Record<NodeId, NodeImpl<ChartNode>>;
   #connections: Record<NodeId, NodeConnection[]>;
@@ -82,8 +84,15 @@ export class GraphProcessor {
     return this.#running;
   }
 
-  constructor(graph: NodeGraph) {
+  constructor(project: Project, graphId: GraphId) {
+    this.#project = project;
+    const graph = project.graphs[graphId];
+
+    if (!graph) {
+      throw new Error(`Graph ${graphId} not found in project`);
+    }
     this.#graph = graph;
+
     this.#nodeInstances = {};
     this.#connections = {};
     this.#nodesById = {};
@@ -112,8 +121,8 @@ export class GraphProcessor {
     this.#definitions = {};
     for (const node of this.#graph.nodes) {
       this.#definitions[node.id] = {
-        inputs: this.#nodeInstances[node.id]!.getInputDefinitions(this.#connections[node.id]!),
-        outputs: this.#nodeInstances[node.id]!.getOutputDefinitions(this.#connections[node.id]!),
+        inputs: this.#nodeInstances[node.id]!.getInputDefinitions(this.#connections[node.id] ?? [], this.#project),
+        outputs: this.#nodeInstances[node.id]!.getOutputDefinitions(this.#connections[node.id] ?? [], this.#project),
       };
     }
   }
@@ -475,9 +484,14 @@ export class GraphProcessor {
   ) {
     const instance = this.#nodeInstances[node.id]!;
 
-    const results = await instance.process(inputValues, this.#context, this.#abortController.signal, (partialOutputs) =>
-      partialOutput?.(node, partialOutputs, index),
-    );
+    const context: InternalProcessContext = {
+      ...this.#context,
+      project: this.#project,
+      onPartialOutputs: (partialOutputs) => partialOutput?.(node, partialOutputs, index),
+      signal: this.#abortController.signal,
+    };
+
+    const results = await instance.process(inputValues, context);
     if (this.#abortController.signal.aborted) {
       throw new Error('Aborted');
     }

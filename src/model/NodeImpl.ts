@@ -1,6 +1,7 @@
 import { Settings } from '../state/settings';
 import { DataValue } from './DataValue';
 import { ChartNode, NodeConnection, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
+import { Project } from './Project';
 import { NativeApi } from './native/NativeApi';
 
 export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['type']> {
@@ -30,19 +31,23 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
     return this.chartNode.data;
   }
 
-  abstract getInputDefinitions(connections: NodeConnection[]): NodeInputDefinition[];
+  abstract getInputDefinitions(connections: NodeConnection[], project: Project): NodeInputDefinition[];
 
-  abstract getOutputDefinitions(connections: NodeConnection[]): NodeOutputDefinition[];
+  abstract getOutputDefinitions(connections: NodeConnection[], project: Project): NodeOutputDefinition[];
 
   abstract process(
     inputData: Record<PortId, DataValue>,
-    context: ProcessContext,
-    abortSignal: AbortSignal,
-    onPartialOutputs?: (outputs: Record<PortId, DataValue>) => void,
+    context: InternalProcessContext,
   ): Promise<Record<PortId, DataValue>>;
 }
 
 export type ProcessContext = {
   settings: Settings;
   nativeApi: NativeApi;
+};
+
+export type InternalProcessContext = ProcessContext & {
+  project: Project;
+  signal: AbortSignal;
+  onPartialOutputs?: (outputs: Record<PortId, DataValue>) => void;
 };

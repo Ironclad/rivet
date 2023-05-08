@@ -7,6 +7,7 @@ import { nodesSelector } from '../state/graph';
 import { useGetConnectionsForNode } from '../hooks/useGetConnectionsForNode';
 import { canvasPositionState } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
+import { useGetNodeIO } from '../hooks/useGetNodeIO';
 
 type WireProps = {
   connection: NodeConnection | PartialConnection;
@@ -22,7 +23,7 @@ export type PartialConnection = {
 
 export const Wire: FC<WireProps> = ({ connection, selected }) => {
   const nodes = useRecoilValue(nodesSelector);
-  const getConnectionsForNode = useGetConnectionsForNode();
+  const getIO = useGetNodeIO();
   const { clientToCanvasPosition } = useCanvasPositioning();
 
   let start: { x: number; y: number };
@@ -33,57 +34,35 @@ export const Wire: FC<WireProps> = ({ connection, selected }) => {
 
     let port = null;
     if (node) {
-      const nodeImpl = createUnknownNodeInstance(node);
+      const { inputDefinitions, outputDefinitions } = getIO(node);
       port =
-        nodeImpl.getOutputDefinitions(getConnectionsForNode(node)).find((port) => port.id === connection.portId) ??
-        nodeImpl.getInputDefinitions(getConnectionsForNode(node)).find((port) => port.id === connection.portId);
+        outputDefinitions.find((port) => port.id === connection.portId) ??
+        inputDefinitions.find((port) => port.id === connection.portId);
     }
 
     if (!port) {
       return null;
     }
 
-    start = getNodePortPosition(
-      nodes,
-      connection.nodeId,
-      connection.portId,
-      clientToCanvasPosition,
-      getConnectionsForNode,
-    );
+    start = getNodePortPosition(nodes, connection.nodeId, connection.portId, clientToCanvasPosition, getIO);
     end = { x: connection.toX, y: connection.toY };
   } else {
     const outputNode = nodes.find((node) => node.id === connection.outputNodeId);
 
     const outputPort = outputNode
-      ? createUnknownNodeInstance(outputNode)
-          .getOutputDefinitions(getConnectionsForNode(outputNode))
-          .find((port) => port.id === connection.outputId)
+      ? getIO(outputNode).outputDefinitions.find((port) => port.id === connection.outputId)
       : null;
     const inputNode = nodes.find((node) => node.id === connection.inputNodeId);
     const inputPort = inputNode
-      ? createUnknownNodeInstance(inputNode)
-          .getInputDefinitions(getConnectionsForNode(inputNode))
-          .find((port) => port.id === connection.inputId)
+      ? getIO(inputNode).inputDefinitions.find((port) => port.id === connection.inputId)
       : null;
 
     if (!outputPort || !inputPort) {
       return null;
     }
 
-    start = getNodePortPosition(
-      nodes,
-      connection.outputNodeId,
-      connection.outputId,
-      clientToCanvasPosition,
-      getConnectionsForNode,
-    );
-    end = getNodePortPosition(
-      nodes,
-      connection.inputNodeId,
-      connection.inputId,
-      clientToCanvasPosition,
-      getConnectionsForNode,
-    );
+    start = getNodePortPosition(nodes, connection.outputNodeId, connection.outputId, clientToCanvasPosition, getIO);
+    end = getNodePortPosition(nodes, connection.inputNodeId, connection.inputId, clientToCanvasPosition, getIO);
   }
 
   const deltaX = Math.abs(end.x - start.x);

@@ -3,9 +3,8 @@ import { GraphBuilder } from './GraphBuilder';
 import { MenuBar } from './MenuBar';
 import { graphState } from '../state/graph';
 import { GraphProcessor } from '../model/GraphProcessor';
-import { calculateCachesFor } from '../model/NodeGraph';
 import { FC, useRef } from 'react';
-import produce, { current } from 'immer';
+import produce from 'immer';
 import { NodeRunData, graphRunningState, lastRunDataByNodeState } from '../state/dataFlow';
 import { NodeId, PortId } from '../model/NodeBase';
 import { css } from '@emotion/react';
@@ -17,6 +16,8 @@ import { expectType, StringArrayDataValue } from '../model/DataValue';
 import { cloneDeep } from 'lodash-es';
 import { LeftSidebar } from './LeftSidebar';
 import { TauriNativeApi } from '../model/native/TauriNativeApi';
+import { projectState } from '../state/savedGraphs';
+import { useSaveCurrentGraph } from '../hooks/useSaveCurrentGraph';
 
 const styles = css`
   overflow: hidden;
@@ -30,6 +31,7 @@ export const NodaiApp: FC = () => {
   const graph = useRecoilValue(graphState);
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
   const settings = useRecoilValue(settingsState);
+  const saveGraph = useSaveCurrentGraph();
 
   const setDataForNode = (nodeId: NodeId, data: Partial<NodeRunData>) => {
     setLastRunData((prev) =>
@@ -46,20 +48,27 @@ export const NodaiApp: FC = () => {
   const setUserInputModalSubmit = useSetRecoilState(userInputModalSubmitState);
   const setGraphRunning = useSetRecoilState(graphRunningState);
   const currentProcessor = useRef<GraphProcessor | null>(null);
+  const project = useRecoilValue(projectState);
 
   const tryRunGraph = async () => {
     try {
+      saveGraph();
+
       if (currentProcessor.current?.isRunning) {
         return;
       }
 
       setLastRunData({});
 
-      const finalGraph = produce(graph, (draft) => {
-        calculateCachesFor(draft);
-      });
+      const tempProject = {
+        ...project,
+        graphs: {
+          ...project.graphs,
+          [graph.metadata!.id!]: graph,
+        },
+      };
 
-      const processor = new GraphProcessor(finalGraph);
+      const processor = new GraphProcessor(tempProject, graph.metadata!.id!);
 
       processor.on('nodeStart', ({ node, inputs }) => {
         setDataForNode(node.id, {

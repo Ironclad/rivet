@@ -10,6 +10,7 @@ import { emptyNodeGraph } from '../model/NodeGraph';
 import { useSaveCurrentGraph } from '../hooks/useSaveCurrentGraph';
 import { graphRunningState } from '../state/dataFlow';
 import clsx from 'clsx';
+import { useLoadGraph } from '../hooks/useLoadGraph';
 
 const styles = css`
   display: flex;
@@ -86,9 +87,10 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph }) => {
 
   const saveGraph = useSaveCurrentGraph();
   const graphRunning = useRecoilValue(graphRunningState);
+  const loadGraph = useLoadGraph();
 
   function handleNew() {
-    setGraphData(emptyNodeGraph());
+    loadGraph(emptyNodeGraph());
   }
 
   return (

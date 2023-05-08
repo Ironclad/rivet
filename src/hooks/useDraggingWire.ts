@@ -1,8 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { WireDef } from '../components/WireLayer';
 import { ChartNode, NodeConnection, NodeId, PortId } from '../model/NodeBase';
-import { createUnknownNodeInstance } from '../model/Nodes';
-import { useGetConnectionsForNode } from './useGetConnectionsForNode';
+import { useGetNodeIO } from './useGetNodeIO';
 
 export const useDraggingWire = (
   nodes: ChartNode[],
@@ -10,7 +9,7 @@ export const useDraggingWire = (
   onConnectionsChanged: (connections: NodeConnection[]) => void,
 ) => {
   const [draggingWire, setDraggingWire] = useState<WireDef | undefined>();
-  const getConnectionsForNode = useGetConnectionsForNode();
+  const getIO = useGetNodeIO();
 
   const onWireStartDrag = useCallback(
     (event: React.MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => {
@@ -19,10 +18,8 @@ export const useDraggingWire = (
       // Check if the starting port is an input port
       const startNode = nodes.find((n) => n.id === startNodeId);
       if (startNode) {
-        const startNodeImpl = createUnknownNodeInstance(startNode);
-        const isInputPort = startNodeImpl
-          .getInputDefinitions(getConnectionsForNode(startNode))
-          .some((i) => i.id === startPortId);
+        const { inputDefinitions } = getIO(startNode);
+        const isInputPort = inputDefinitions.some((i) => i.id === startPortId);
 
         if (isInputPort) {
           // If the input port is already connected, remove the existing connection
@@ -45,7 +42,7 @@ export const useDraggingWire = (
       }
       setDraggingWire({ startNodeId, startPortId });
     },
-    [connections, nodes, onConnectionsChanged, getConnectionsForNode],
+    [connections, nodes, onConnectionsChanged, getIO],
   );
 
   const onWireEndDrag = useCallback(
@@ -55,33 +52,22 @@ export const useDraggingWire = (
         let inputNode = nodes.find((n) => n.id === endNodeId);
         let outputNode = nodes.find((n) => n.id === draggingWire.startNodeId);
 
-        let input = inputNode
-          ? createUnknownNodeInstance(inputNode)
-              .getInputDefinitions(getConnectionsForNode(inputNode))
-              .find((i) => i.id === endPortId)
-          : null;
+        let inputNodeIO = inputNode ? getIO(inputNode) : null;
+        let outputNodeIO = outputNode ? getIO(outputNode) : null;
 
-        let output = outputNode
-          ? createUnknownNodeInstance(outputNode)
-              .getOutputDefinitions(getConnectionsForNode(outputNode))
-              .find((o) => o.id === draggingWire.startPortId)
-          : null;
+        let input = inputNode ? inputNodeIO?.inputDefinitions.find((i) => i.id === endPortId) : null;
+        let output = outputNode ? outputNodeIO?.outputDefinitions.find((o) => o.id === draggingWire.startPortId) : null;
 
         if (!inputNode || !outputNode || !input || !output) {
           const tmp = inputNode;
           inputNode = outputNode;
           outputNode = tmp;
 
-          input = inputNode
-            ? createUnknownNodeInstance(inputNode)
-                .getInputDefinitions(getConnectionsForNode(inputNode))
-                .find((i) => i.id === endPortId)
-            : null;
-          output = outputNode
-            ? createUnknownNodeInstance(outputNode)
-                .getOutputDefinitions(getConnectionsForNode(outputNode))
-                .find((o) => o.id === draggingWire.startPortId)
-            : null;
+          inputNodeIO = inputNode ? getIO(inputNode) : null;
+          outputNodeIO = outputNode ? getIO(outputNode) : null;
+
+          input = inputNode ? inputNodeIO?.inputDefinitions.find((i) => i.id === endPortId) : null;
+          output = outputNode ? outputNodeIO?.outputDefinitions.find((o) => o.id === draggingWire.startPortId) : null;
 
           if (!inputNode || !outputNode || !input || !output) {
             setDraggingWire(undefined);
@@ -114,7 +100,7 @@ export const useDraggingWire = (
         setDraggingWire(undefined);
       }
     },
-    [draggingWire, connections, nodes, onConnectionsChanged, getConnectionsForNode],
+    [draggingWire, connections, nodes, onConnectionsChanged, getIO],
   );
 
   useEffect(() => {

@@ -16,6 +16,7 @@ import { IfElseNodeBody } from './nodes/IfElseNode';
 import { ChunkNodeBody } from './nodes/ChunkNode';
 import { GraphInputNodeBody } from './nodes/GraphInputNode';
 import { GraphOutputNodeBody } from './nodes/GraphOutputNode';
+import { SubGraphNodeBody } from './nodes/SubGraphNode';
 
 export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
   const body = match(node as Nodes)
@@ -33,6 +34,7 @@ export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
     .with({ type: 'chunk' }, (node) => <ChunkNodeBody node={node} />)
     .with({ type: 'graphInput' }, (node) => <GraphInputNodeBody node={node} />)
     .with({ type: 'graphOutput' }, (node) => <GraphOutputNodeBody node={node} />)
+    .with({ type: 'subGraph' }, (node) => <SubGraphNodeBody node={node} />)
     .otherwise(() => <div>Unknown node type</div>);
 
   return <div className="node-body">{body}</div>;

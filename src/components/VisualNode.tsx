@@ -14,6 +14,7 @@ import { ReactComponent as GitForkLine } from 'majesticons/line/git-fork-line.sv
 import { ResizeHandle } from './ResizeHandle';
 import { canvasPositionState } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
+import { useGetNodeIO } from '../hooks/useGetNodeIO';
 
 export type VisualNodeProps = {
   node: ChartNode;
@@ -130,7 +131,8 @@ export const VisualNode = memo(
         }
       };
 
-      const nodeImpl = createNodeInstance(node as Nodes);
+      const getIO = useGetNodeIO();
+      const { inputDefinitions, outputDefinitions } = getIO(node);
 
       return (
         <div
@@ -184,7 +186,7 @@ export const VisualNode = memo(
           <NodeBody node={node} />
           <div className="node-ports">
             <div className="input-ports">
-              {nodeImpl.getInputDefinitions(connections).map((input) => {
+              {inputDefinitions.map((input) => {
                 const connected = connections.some((conn) => conn.inputNodeId === node.id && conn.inputId === input.id);
                 return (
                   <div key={input.id} className={clsx('port', { connected })}>
@@ -200,7 +202,7 @@ export const VisualNode = memo(
               })}
             </div>
             <div className="output-ports">
-              {nodeImpl.getOutputDefinitions(connections).map((output) => {
+              {outputDefinitions.map((output) => {
                 const connected = connections.some(
                   (conn) => conn.outputNodeId === node.id && conn.outputId === output.id,
                 );
