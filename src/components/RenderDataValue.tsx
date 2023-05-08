@@ -1,8 +1,27 @@
 import { FC } from 'react';
 import { DataValue, ScalarDataValue, isArrayDataValue } from '../model/DataValue';
 import { match } from 'ts-pattern';
+import { css } from '@emotion/react';
+
+const multiOutput = css`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
 
 export const RenderDataValue: FC<{ value: DataValue | undefined }> = ({ value }) => {
+  if (value?.type === 'string[]') {
+    return (
+      <div css={multiOutput}>
+        {value.value.map((s, i) => (
+          <pre key={i} className="pre-wrap">
+            {s}
+          </pre>
+        ))}
+      </div>
+    );
+  }
+
   if (isArrayDataValue(value)) {
     const items = value.value.map(
       (v) =>
@@ -27,7 +46,6 @@ export const RenderDataValue: FC<{ value: DataValue | undefined }> = ({ value })
     .with({ type: 'number' }, (value) => <>{value.value}</>)
     .with({ type: 'string' }, (value) => <>{value.value}</>)
     .with({ type: 'chat-message' }, (value) => <>{value.value.message}</>)
-    .with({ type: 'chat-messages' }, (value) => <>{value.value.length}</>)
     .with({ type: 'date' }, (value) => <>{value.value}</>)
     .with({ type: 'time' }, (value) => <>{value.value}</>)
     .with({ type: 'datetime' }, (value) => <>{value.value}</>)

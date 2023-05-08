@@ -3,17 +3,17 @@ import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
 import { DataType, DataValue } from '../DataValue';
 
-export type GraphOutputNode = ChartNode<'graph-output', GraphOutputNodeData>;
+export type GraphOutputNode = ChartNode<'graphOutput', GraphOutputNodeData>;
 
 export type GraphOutputNodeData = {
   id: string;
-  dataType: string;
+  dataType: DataType;
 };
 
 export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
-  static create(id: string, dataType: string): GraphOutputNode {
+  static create(id: string = 'output', dataType: DataType = 'string'): GraphOutputNode {
     const chartNode: GraphOutputNode = {
-      type: 'graph-output',
+      type: 'graphOutput',
       title: 'Graph Output',
       id: nanoid() as NodeId,
       visualData: {
@@ -33,8 +33,8 @@ export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
   getInputDefinitions(): NodeInputDefinition[] {
     return [
       {
-        id: 'input' as PortId,
-        title: 'Input',
+        id: 'value' as PortId,
+        title: this.data.id,
         dataType: this.chartNode.data.dataType as DataType,
       },
     ];
