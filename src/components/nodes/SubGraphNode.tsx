@@ -67,6 +67,7 @@ export const SubGraphNodeEditor: FC<SubGraphNodeEditorProps> = ({ node, onChange
             onChange={(selected) =>
               onChange?.({
                 ...node,
+                title: selected?.label ?? 'Unknown Graph',
                 data: {
                   ...node.data,
                   graphId: selected?.value ?? ('' as GraphId),

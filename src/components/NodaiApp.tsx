@@ -142,6 +142,7 @@ export const NodaiApp: FC = () => {
 
       console.log(results);
     } catch (e) {
+      setGraphRunning(false);
       console.log(e);
     }
   };

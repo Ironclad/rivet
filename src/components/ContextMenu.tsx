@@ -6,6 +6,7 @@ import { NodeType } from '../model/Nodes';
 import { ContextMenuData } from '../hooks/useContextMenu';
 import { ReactComponent as DeleteIcon } from 'majesticons/line/delete-bin-line.svg';
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
+import { ReactComponent as DuplicateIcon } from 'majesticons/line/image-multiple-line.svg';
 
 interface ContextMenuProps {
   x: number;
@@ -224,6 +225,10 @@ const NodeContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSelected'>>
     onMenuItemSelected?.(`Delete:${nodeId}`);
   }, [nodeId, onMenuItemSelected]);
 
+  const duplicateNode = useCallback(() => {
+    onMenuItemSelected?.(`Duplicate:${nodeId}`);
+  }, [nodeId, onMenuItemSelected]);
+
   return (
     <>
       <MenuItem
@@ -241,6 +246,14 @@ const NodeContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSelected'>>
           </>
         }
         onClick={deleteNode}
+      />
+      <MenuItem
+        label={
+          <>
+            <DuplicateIcon /> Duplicate
+          </>
+        }
+        onClick={duplicateNode}
       />
     </>
   );
