@@ -1,6 +1,6 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl, ProcessContext } from '../NodeImpl';
+import { InternalProcessContext, NodeImpl, ProcessContext } from '../NodeImpl';
 import { DataValue, expectTypeOptional } from '../DataValue';
 import {
   assertValidModel,
@@ -14,6 +14,7 @@ import {
 import { addWarning } from '../../utils/outputs';
 import { ChatCompletionRequestMessage, streamChatCompletions } from '../../utils/openai';
 import retry from 'p-retry';
+import { Inputs, Outputs } from '../GraphProcessor';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 
@@ -202,13 +203,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     return maxMessageNumber + 1;
   }
 
-  async process(
-    inputs: Record<PortId, DataValue>,
-    context: ProcessContext,
-    signal: AbortSignal,
-    onPartialOutputs: (outputs: Record<PortId, DataValue>) => void,
-  ): Promise<Record<PortId, DataValue>> {
-    const output: Record<PortId, DataValue> = {};
+  async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+    const output: Outputs = {};
 
     const model = expectTypeOptional(inputs['model' as PortId], 'string') ?? this.chartNode.data.model;
     assertValidModel(model);
@@ -292,7 +288,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             frequency_penalty: frequencyPenalty,
             presence_penalty: presencePenalty,
             stop,
-            signal,
+            signal: context.signal,
           });
 
           let responseParts: string[] = [];
@@ -305,7 +301,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               value: responseParts.join(''),
             };
 
-            onPartialOutputs?.(output);
+            context.onPartialOutputs?.(output);
           }
 
           const requestTokenCount = getTokenCountForMessages(messages, model);
@@ -325,7 +321,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         },
         {
           retries: 4,
-          signal,
+          signal: context.signal,
           onFailedAttempt(error) {
             console.log(error);
           },

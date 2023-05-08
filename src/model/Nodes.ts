@@ -15,6 +15,7 @@ import { IfElseNode, IfElseNodeImpl } from './nodes/IfElseNode';
 import { ChunkNode, ChunkNodeImpl } from './nodes/ChunkNode';
 import { GraphInputNode, GraphInputNodeImpl } from './nodes/GraphInputNode';
 import { GraphOutputNode, GraphOutputNodeImpl } from './nodes/GraphOutputNode';
+import { SubGraphNode, SubGraphNodeImpl } from './nodes/SubGraphNode';
 
 export type Nodes =
   | UserInputNode
@@ -30,7 +31,8 @@ export type Nodes =
   | IfElseNode
   | ChunkNode
   | GraphInputNode
-  | GraphOutputNode;
+  | GraphOutputNode
+  | SubGraphNode;
 
 export type NodeType = Nodes['type'];
 
@@ -50,6 +52,7 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
     .with({ type: 'chunk' }, (node) => new ChunkNodeImpl(node))
     .with({ type: 'graphInput' }, (node) => new GraphInputNodeImpl(node))
     .with({ type: 'graphOutput' }, (node) => new GraphOutputNodeImpl(node))
+    .with({ type: 'subGraph' }, (node) => new SubGraphNodeImpl(node))
     .exhaustive();
 };
 
@@ -73,6 +76,7 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('chunk', () => ChunkNodeImpl.create())
     .with('graphInput', () => GraphInputNodeImpl.create())
     .with('graphOutput', () => GraphOutputNodeImpl.create())
+    .with('subGraph', () => SubGraphNodeImpl.create())
     .exhaustive();
 }
 
@@ -91,4 +95,5 @@ export const nodeDisplayName: Record<NodeType, string> = {
   chunk: 'Chunk',
   graphInput: 'Graph Input',
   graphOutput: 'Graph Output',
+  subGraph: 'Subgraph',
 };

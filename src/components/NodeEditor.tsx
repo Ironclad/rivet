@@ -24,6 +24,7 @@ import { IfElseNodeEditor } from './nodes/IfElseNode';
 import { ChunkNodeEditor } from './nodes/ChunkNode';
 import { GraphInputNodeEditor } from './nodes/GraphInputNode';
 import { GraphOutputNodeEditor } from './nodes/GraphOutputNode';
+import { SubGraphNodeEditor } from './nodes/SubGraphNode';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -186,6 +187,7 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
     .with({ type: 'graphOutput' }, (node) => (
       <GraphOutputNodeEditor node={node} onChange={(node) => updateNode(node)} />
     ))
+    .with({ type: 'subGraph' }, (node) => <SubGraphNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .otherwise(() => null);
 
   useEffect(() => {
