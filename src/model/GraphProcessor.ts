@@ -11,6 +11,8 @@ import { getError } from '../utils/errors';
 import Emittery from 'emittery';
 import { entries, fromEntries, values } from '../utils/typeSafety';
 import { isNotNull } from '../utils/genericUtilFunctions';
+import { GraphOutputNode } from './nodes/GraphOutputNode';
+import { GraphInputNode } from './nodes/GraphInputNode';
 
 export type ProcessEvents = {
   /** Called when processing has started. */
@@ -35,13 +37,15 @@ export type ProcessEvents = {
   partialOutput: { node: ChartNode; outputs: Outputs; index: number };
 
   /** Called when processing has completed. */
-  done: { results: GraphResults };
+  done: { results: GraphOutputs };
 
   /** Called when processing has been aborted. */
   abort: void;
 };
 
-export type GraphResults = Record<NodeId, Outputs | undefined>;
+export type GraphOutputs = Record<string, DataValue>;
+export type GraphInputs = Record<string, DataValue>;
+
 export type NodeResults = Map<NodeId, Outputs>;
 export type Inputs = Record<PortId, DataValue>;
 export type Outputs = Record<PortId, DataValue>;
@@ -65,6 +69,8 @@ export class GraphProcessor {
   #nodeResults: NodeResults = undefined!;
   #abortController: AbortController = undefined!;
   #processingQueue: PQueue = undefined!;
+  #graphInputs: GraphInputs = undefined!;
+  #graphOutputs: GraphOutputs = undefined!;
 
   /** User input nodes that are pending user input. */
   #pendingUserInputs: Record<
@@ -192,7 +198,7 @@ export class GraphProcessor {
       .filter(isNotNull);
   }
 
-  async processGraph(context: ProcessContext): Promise<GraphResults> {
+  async processGraph(context: ProcessContext, inputs: Record<string, DataValue> = {}): Promise<GraphOutputs> {
     if (this.#running) {
       throw new Error('Cannot process graph while already processing');
     }
@@ -207,6 +213,8 @@ export class GraphProcessor {
     this.#pendingUserInputs = {};
     this.#abortController = new AbortController();
     this.#processingQueue = new PQueue({ concurrency: Infinity });
+    this.#graphInputs = inputs;
+    this.#graphOutputs = {};
 
     const processNextNodes = async () => {
       const nodesToProcess = this.#graph.nodes.filter((node) => !this.#visitedNodes.has(node.id));
@@ -235,12 +243,16 @@ export class GraphProcessor {
       throw new Error('There might be a cycle in the graph or an issue with input dependencies.');
     }
 
-    // Collect output values
-    const outputNodes = this.#graph.nodes.filter((node) => this.#definitions[node.id]!.outputs.length === 0);
+    const outputNodes = this.#graph.nodes.filter((node): node is GraphOutputNode =>
+      this.#isNodeOfType('graphOutput', node),
+    );
     const outputValues = outputNodes.reduce((values, node) => {
-      values[node.id] = this.#nodeResults.get(node.id);
+      const results = this.#nodeResults.get(node.id);
+      if (results) {
+        values[node.data.id] = results['value' as PortId]!;
+      }
       return values;
-    }, {} as GraphResults);
+    }, {} as GraphOutputs);
 
     this.#running = false;
 
@@ -268,6 +280,10 @@ export class GraphProcessor {
 
     if (this.#isNodeOfType('userInput', node)) {
       await this.#processUserInputNode(node);
+    } else if (this.#isNodeOfType('graphInput', node)) {
+      this.#processGraphInputNode(node);
+    } else if (this.#isNodeOfType('graphOutput', node)) {
+      this.#processGraphOutputNode(node);
     } else if (node.isSplitRun) {
       await this.#processSplitRunNode(node);
     } else {
@@ -275,7 +291,7 @@ export class GraphProcessor {
     }
   }
 
-  #isNodeOfType<T extends Nodes['type']>(type: T, node: ChartNode): node is Extract<ChartNode, { type: T }> {
+  #isNodeOfType<T extends Nodes['type']>(type: T, node: ChartNode): node is Extract<Nodes, { type: T }> {
     return node.type === type;
   }
 
@@ -415,6 +431,33 @@ export class GraphProcessor {
     } catch (error) {
       this.#nodeErrored(node, error);
     }
+  }
+
+  #processGraphInputNode(node: GraphInputNode) {
+    let inputValue = this.#graphInputs[node.data.id];
+    if (inputValue == null) {
+      inputValue = { type: node.data.dataType, value: node.data.defaultValue } as DataValue;
+    }
+
+    const outputValues = { ['data' as PortId]: inputValue } as Outputs;
+
+    this.#nodeResults.set(node.id, outputValues);
+    this.#visitedNodes.add(node.id);
+    this.#emitter.emit('nodeFinish', { node, outputs: outputValues });
+  }
+
+  #processGraphOutputNode(node: GraphOutputNode) {
+    const inputValues = this.#getInputValuesForNode(node);
+
+    if (this.#excludedDueToControlFlow(node, inputValues)) {
+      return;
+    }
+
+    const outputValues = inputValues as Outputs;
+
+    this.#nodeResults.set(node.id, outputValues);
+    this.#visitedNodes.add(node.id);
+    this.#emitter.emit('nodeFinish', { node, outputs: outputValues });
   }
 
   #nodeErrored(node: ChartNode, e: unknown) {

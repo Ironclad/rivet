@@ -13,6 +13,8 @@ import { ReadDirectoryNode, ReadDirectoryNodeImpl } from './nodes/ReadDirectoryN
 import { ReadFileNode, ReadFileNodeImpl } from './nodes/ReadFileNode';
 import { IfElseNode, IfElseNodeImpl } from './nodes/IfElseNode';
 import { ChunkNode, ChunkNodeImpl } from './nodes/ChunkNode';
+import { GraphInputNode, GraphInputNodeImpl } from './nodes/GraphInputNode';
+import { GraphOutputNode, GraphOutputNodeImpl } from './nodes/GraphOutputNode';
 
 export type Nodes =
   | UserInputNode
@@ -26,7 +28,9 @@ export type Nodes =
   | ReadDirectoryNode
   | ReadFileNode
   | IfElseNode
-  | ChunkNode;
+  | ChunkNode
+  | GraphInputNode
+  | GraphOutputNode;
 
 export type NodeType = Nodes['type'];
 
@@ -44,6 +48,8 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
     .with({ type: 'readFile' }, (node) => new ReadFileNodeImpl(node))
     .with({ type: 'ifElse' }, (node) => new IfElseNodeImpl(node))
     .with({ type: 'chunk' }, (node) => new ChunkNodeImpl(node))
+    .with({ type: 'graphInput' }, (node) => new GraphInputNodeImpl(node))
+    .with({ type: 'graphOutput' }, (node) => new GraphOutputNodeImpl(node))
     .exhaustive();
 };
 
@@ -65,6 +71,8 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('readFile', () => ReadFileNodeImpl.create())
     .with('ifElse', () => IfElseNodeImpl.create())
     .with('chunk', () => ChunkNodeImpl.create())
+    .with('graphInput', () => GraphInputNodeImpl.create())
+    .with('graphOutput', () => GraphOutputNodeImpl.create())
     .exhaustive();
 }
 
@@ -81,4 +89,6 @@ export const nodeDisplayName: Record<NodeType, string> = {
   readDirectory: 'Read Directory',
   readFile: 'Read File',
   chunk: 'Chunk',
+  graphInput: 'Graph Input',
+  graphOutput: 'Graph Output',
 };

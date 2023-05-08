@@ -22,6 +22,8 @@ import { ReadFileNodeEditor } from './nodes/ReadFileNode';
 import Toggle from '@atlaskit/toggle';
 import { IfElseNodeEditor } from './nodes/IfElseNode';
 import { ChunkNodeEditor } from './nodes/ChunkNode';
+import { GraphInputNodeEditor } from './nodes/GraphInputNode';
+import { GraphOutputNodeEditor } from './nodes/GraphOutputNode';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -180,6 +182,10 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
     ))
     .with({ type: 'readFile' }, (node) => <ReadFileNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .with({ type: 'chunk' }, (node) => <ChunkNodeEditor node={node} onChange={(node) => updateNode(node)} />)
+    .with({ type: 'graphInput' }, (node) => <GraphInputNodeEditor node={node} onChange={(node) => updateNode(node)} />)
+    .with({ type: 'graphOutput' }, (node) => (
+      <GraphOutputNodeEditor node={node} onChange={(node) => updateNode(node)} />
+    ))
     .otherwise(() => null);
 
   useEffect(() => {

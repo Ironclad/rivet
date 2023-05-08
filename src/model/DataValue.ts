@@ -1,3 +1,5 @@
+import { exhaustiveTuple } from '../utils/genericUtilFunctions';
+
 export type DataValueDef<Type extends string, RuntimeType> = {
   type: Type;
   value: RuntimeType;
@@ -8,10 +10,8 @@ export type NumberDataValue = DataValueDef<'number', number>;
 export type BoolDataValue = DataValueDef<'boolean', boolean>;
 
 export type ChatMessage = { type: 'system' | 'user' | 'assistant'; message: string };
-export type ChatMessagesData = ChatMessage[];
 
 export type ChatMessageDataValue = DataValueDef<'chat-message', ChatMessage>;
-export type ChatMessagesDataValue = DataValueDef<'chat-messages', ChatMessagesData>;
 
 export type DateDataValue = DataValueDef<'date', string>;
 export type TimeDataValue = DataValueDef<'time', string>;
@@ -23,7 +23,6 @@ export type ControlFlowExcludedDataValue = DataValueDef<'control-flow-excluded',
 export type ScalarDataValue =
   | StringDataValue
   | NumberDataValue
-  | ChatMessagesDataValue
   | DateDataValue
   | TimeDataValue
   | DateTimeDataValue
@@ -31,6 +30,8 @@ export type ScalarDataValue =
   | ChatMessageDataValue
   | ControlFlowExcludedDataValue
   | AnyDataValue;
+
+export type ScalarType = ScalarDataValue['type'];
 
 export type ArrayDataValue<T extends ScalarDataValue> = DataValueDef<`${T['type']}[]`, T['value'][]>;
 
@@ -82,3 +83,57 @@ export function expectTypeOptional<T extends DataType>(
 export function isArrayDataValue(value: DataValue | undefined): value is ArrayDataValues {
   return value?.type.endsWith('[]') ?? false;
 }
+
+export const dataTypes = exhaustiveTuple<DataType>()(
+  'any',
+  'any[]',
+  'boolean',
+  'boolean[]',
+  'string',
+  'string[]',
+  'number',
+  'number[]',
+  'date',
+  'date[]',
+  'time',
+  'time[]',
+  'datetime',
+  'datetime[]',
+  'chat-message',
+  'chat-message[]',
+  'control-flow-excluded',
+  'control-flow-excluded[]',
+);
+
+export const scalarTypes = exhaustiveTuple<ScalarType>()(
+  'any',
+  'boolean',
+  'string',
+  'number',
+  'date',
+  'time',
+  'datetime',
+  'chat-message',
+  'control-flow-excluded',
+);
+
+export const dataTypeDisplayNames: Record<DataType, string> = {
+  any: 'Any',
+  'any[]': 'Any Array',
+  boolean: 'Boolean',
+  'boolean[]': 'Boolean Array',
+  string: 'String',
+  'string[]': 'String Array',
+  number: 'Number',
+  'number[]': 'Number Array',
+  date: 'Date',
+  'date[]': 'Date Array',
+  time: 'Time',
+  'time[]': 'Time Array',
+  datetime: 'DateTime',
+  'datetime[]': 'DateTime Array',
+  'chat-message': 'ChatMessage',
+  'chat-message[]': 'ChatMessage Array',
+  'control-flow-excluded': 'ControlFlowExcluded',
+  'control-flow-excluded[]': 'ControlFlowExcluded Array',
+};
