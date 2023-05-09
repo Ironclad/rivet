@@ -1,4 +1,4 @@
-import { PortId } from '../model/NodeBase';
+import { PortId } from '@ironclad/nodai-core';
 
 export const ControlFlowExcluded = Symbol('ControlFlowExcluded');
 export const ControlFlowExcludedPort = ControlFlowExcluded as unknown as PortId;

@@ -1,6 +1,6 @@
 import { readDir, BaseDirectory, readTextFile, readBinaryFile, writeFile, FileEntry } from '@tauri-apps/api/fs';
-import { NativeApi, ReadDirOptions } from './NativeApi';
-import { BaseDir } from './BaseDir';
+import { BaseDir, NativeApi, ReadDirOptions } from '@ironclad/nodai-core';
+
 import { minimatch } from 'minimatch';
 
 const baseDirToBaseDirectoryMap: Record<BaseDir, BaseDirectory> = {

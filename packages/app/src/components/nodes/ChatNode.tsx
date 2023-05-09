@@ -2,13 +2,11 @@ import { FC, useLayoutEffect, useRef } from 'react';
 import { css } from '@emotion/react';
 import { lastRunData } from '../../state/dataFlow';
 import { useRecoilValue } from 'recoil';
-import { PortId } from '../../model/NodeBase';
 import { RenderDataValue } from '../RenderDataValue';
-import { ChartNode } from '../../model/NodeBase';
-import { ChatNode, ChatNodeData } from '../../model/nodes/ChatNode';
 import Toggle from '@atlaskit/toggle';
 import * as monaco from 'monaco-editor';
-import { expectType, expectTypeOptional } from '../../model/DataValue';
+import { ChartNode, ChatNode, ChatNodeData, PortId, expectType, expectTypeOptional } from '@ironclad/nodai-core';
+import { values } from '../../utils/typeSafety';
 
 type ChatNodeBodyProps = {
   node: ChatNode;
@@ -55,7 +53,7 @@ export const ChatNodeOutput: FC<ChatNodeBodyProps> = ({ node }) => {
   if (output.splitOutputData && !output.outputData) {
     return (
       <div className="multi-message" css={styles}>
-        {Object.values(output.splitOutputData).map((outputs, index) => {
+        {values(output.splitOutputData).map((outputs, index) => {
           const outputPart = expectType(outputs['response' as PortId], 'string');
           return (
             <div className="pre-wrap" key={index}>

@@ -1,5 +1,5 @@
 import { useSetRecoilState } from 'recoil';
-import { NodeGraph, emptyNodeGraph } from '../model/NodeGraph';
+import { NodeGraph, emptyNodeGraph } from '@ironclad/nodai-core';
 import { graphState } from '../state/graph';
 import { savedGraphsState } from '../state/savedGraphs';
 import { useCallback } from 'react';

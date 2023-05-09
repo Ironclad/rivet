@@ -2,22 +2,20 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { GraphBuilder } from './GraphBuilder';
 import { MenuBar } from './MenuBar';
 import { graphState } from '../state/graph';
-import { GraphProcessor } from '../model/GraphProcessor';
 import { FC, useRef } from 'react';
 import produce from 'immer';
 import { NodeRunData, graphRunningState, lastRunDataByNodeState } from '../state/dataFlow';
-import { NodeId, PortId } from '../model/NodeBase';
 import { css } from '@emotion/react';
 import { SettingsModal } from './SettingsModal';
 import { setGlobalTheme } from '@atlaskit/tokens';
 import { settingsState } from '../state/settings';
 import { userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
-import { expectType, StringArrayDataValue } from '../model/DataValue';
 import { cloneDeep } from 'lodash-es';
 import { LeftSidebar } from './LeftSidebar';
-import { TauriNativeApi } from '../model/native/TauriNativeApi';
 import { projectState } from '../state/savedGraphs';
 import { useSaveCurrentGraph } from '../hooks/useSaveCurrentGraph';
+import { GraphProcessor, NodeId, PortId, StringArrayDataValue, expectType } from '@ironclad/nodai-core';
+import { TauriNativeApi } from '../model/native/TauriNativeApi';
 
 const styles = css`
   overflow: hidden;

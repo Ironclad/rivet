@@ -1,5 +1,5 @@
-import { DataValue, ArrayDataValue, StringDataValue, expectType } from '../model/DataValue';
-import { PortId } from '../model/NodeBase';
+import { ArrayDataValue, DataValue, PortId, StringDataValue, expectType } from '@ironclad/nodai-core';
+
 import { WarningsPort } from './symbols';
 
 export function addWarning(outputs: Record<PortId, DataValue>, warning: string): void {

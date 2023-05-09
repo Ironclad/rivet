@@ -1,14 +1,12 @@
 import { FC, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { TextNode } from '../../model/nodes/TextNode';
 import { lastRunData } from '../../state/dataFlow';
 import { useRecoilValue } from 'recoil';
-import { PortId } from '../../model/NodeBase';
 import { RenderDataValue } from '../RenderDataValue';
-import { ChartNode } from '../../model/NodeBase';
 import { monaco } from '../../utils/monaco';
 import styled from '@emotion/styled';
 import { useLatest } from 'ahooks';
 import { css } from '@emotion/react';
+import { ChartNode, PortId, TextNode } from '@ironclad/nodai-core';
 
 export type TextNodeBodyProps = {
   node: TextNode;

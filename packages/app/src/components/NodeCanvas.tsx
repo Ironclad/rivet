@@ -9,7 +9,7 @@ import { WireLayer } from './WireLayer';
 import { ContextMenuData, useContextMenu } from '../hooks/useContextMenu';
 import { useDraggingNode } from '../hooks/useDraggingNode';
 import { useDraggingWire } from '../hooks/useDraggingWire';
-import { ChartNode, NodeConnection } from '../model/NodeBase';
+import { ChartNode, NodeConnection } from '@ironclad/nodai-core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { canvasPositionState, lastMousePositionState, selectedNodeState } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';

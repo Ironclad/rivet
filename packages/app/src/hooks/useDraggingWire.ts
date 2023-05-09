@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { WireDef } from '../components/WireLayer';
-import { ChartNode, NodeConnection, NodeId, PortId } from '../model/NodeBase';
+import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/nodai-core';
 import { useGetNodeIO } from './useGetNodeIO';
 
 export const useDraggingWire = (

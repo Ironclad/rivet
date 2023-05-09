@@ -1,8 +1,6 @@
 import { FC } from 'react';
-import { ChartNode } from '../../model/NodeBase';
-import { MatchNode, MatchNodeData } from '../../model/nodes/MatchNode';
+import { ChartNode, MatchNode, MatchNodeData } from '@ironclad/nodai-core';
 import { css } from '@emotion/react';
-import Toggle from '@atlaskit/toggle';
 import { lastRunData } from '../../state/dataFlow';
 import { useRecoilValue } from 'recoil';
 import { RenderDataValue } from '../RenderDataValue';

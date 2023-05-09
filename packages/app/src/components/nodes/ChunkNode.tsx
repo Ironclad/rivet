@@ -1,8 +1,7 @@
 import { FC } from 'react';
-import { ChunkNode, ChunkNodeData } from '../../model/nodes/ChunkNode';
+import { ChartNode, ChunkNode, ChunkNodeData, PortId } from '@ironclad/nodai-core';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
-import { ChartNode, PortId } from '../../model/NodeBase';
 import { css } from '@emotion/react';
 
 export type ChunkNodeBodyProps = {

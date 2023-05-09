@@ -1,12 +1,16 @@
 {
-  "name": "nodai",
+  "name": "@ironclad/nodai",
   "packageManager": "yarn@3.5.0",
   "workspaces": [
     "packages/*"
   ],
+  "private": true,
   "devDependencies": {
+    "@types/eslint": "^8",
     "esbuild": "^0.17.18",
-    "rollup": "^3.21.0"
+    "eslint": "^8.40.0",
+    "rollup": "^3.21.0",
+    "typescript": "^5.0.4"
   },
   "resolutions": {
     "jest-mock": "^28.1.0"

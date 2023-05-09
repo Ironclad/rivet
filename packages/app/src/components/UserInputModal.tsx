@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { ArrayDataValue, StringDataValue } from '../model/DataValue';
+import { ArrayDataValue, StringDataValue } from '@ironclad/nodai-core';
 import { lastAnswersState } from '../state/userInput';
 import Modal, { ModalBody, ModalFooter, ModalHeader, ModalTitle, ModalTransition } from '@atlaskit/modal-dialog';
 import Button from '@atlaskit/button';

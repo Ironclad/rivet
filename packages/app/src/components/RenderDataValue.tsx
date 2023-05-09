@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { DataValue, ScalarDataValue, isArrayDataValue } from '../model/DataValue';
+import { DataValue, ScalarDataValue, isArrayDataValue } from '@ironclad/nodai-core';
 import { match } from 'ts-pattern';
 import { css } from '@emotion/react';
 

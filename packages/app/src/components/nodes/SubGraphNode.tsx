@@ -1,19 +1,14 @@
 import { FC } from 'react';
-import { SubGraphNode } from '../../model/nodes/SubGraphNode';
-import { DataType, ScalarType, dataTypeDisplayNames, scalarTypes } from '../../model/DataValue';
 import Select from '@atlaskit/select';
-import TextField from '@atlaskit/textfield';
 import { Field } from '@atlaskit/form';
 import { css } from '@emotion/react';
-import { Checkbox } from '@atlaskit/checkbox';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
-import { PortId } from '../../model/NodeBase';
 import { RenderDataValue } from '../RenderDataValue';
 import { projectState } from '../../state/savedGraphs';
 import { entries, values } from '../../utils/typeSafety';
 import { nanoid } from 'nanoid';
-import { GraphId } from '../../model/NodeGraph';
+import { GraphId, SubGraphNode } from '@ironclad/nodai-core';
 
 export type SubGraphNodeBodyProps = {
   node: SubGraphNode;

@@ -1,8 +1,7 @@
 import { useRecoilValue } from 'recoil';
 import { connectionsSelector } from '../state/graph';
 import { useStableCallback } from './useStableCallback';
-import { Nodes, createNodeInstance } from '../model/Nodes';
-import { ChartNode } from '../model/NodeBase';
+import { ChartNode, Nodes, createNodeInstance } from '@ironclad/nodai-core';
 import { projectState } from '../state/savedGraphs';
 
 export function useGetNodeIO() {

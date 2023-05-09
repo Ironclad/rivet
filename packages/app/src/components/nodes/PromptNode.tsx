@@ -1,15 +1,12 @@
 import { ChangeEvent, FC, memo, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { ChartNode } from '../../model/NodeBase';
 import { monaco } from '../../utils/monaco';
 import styled from '@emotion/styled';
-import { PromptNode, PromptNodeData } from '../../model/nodes/PromptNode';
 import { useLatest } from 'ahooks';
 import Toggle from '@atlaskit/toggle';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
-import { PortId } from '../../model/NodeBase';
-import { GetDataValue } from '../../model/DataValue';
 import { RenderDataValue } from '../RenderDataValue';
+import { ChartNode, GetDataValue, PortId, PromptNode, PromptNodeData } from '@ironclad/nodai-core';
 
 export type PromptNodeEditorProps = {
   node: ChartNode;

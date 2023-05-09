@@ -3,8 +3,7 @@ import { lastRunData } from '../state/dataFlow';
 import { match } from 'ts-pattern';
 import { FC, memo, useState } from 'react';
 import clsx from 'clsx';
-import { ChartNode, PortId } from '../model/NodeBase';
-import { ChatNode } from '../model/nodes/ChatNode';
+
 import { ChatNodeOutput, FullscreenChatNodeOutput } from './nodes/ChatNode';
 import { CodeNodeOutput } from './nodes/CodeNode';
 import { ExtractRegexNodeOutput } from './nodes/ExtractRegexNode';
@@ -18,7 +17,7 @@ import { ReactComponent as ExpandIcon } from 'majesticons/line/maximize-line.svg
 import { FullScreenModal } from './FullScreenModal';
 import { css } from '@emotion/react';
 import { getWarnings } from '../utils/outputs';
-import { Nodes } from '../model/Nodes';
+import { ChartNode, ChatNode, Nodes, PortId } from '@ironclad/nodai-core';
 import { ReadDirectoryNodeOutput } from './nodes/ReadDirectoryNode';
 import { ReadFileNodeOutput } from './nodes/ReadFileNode';
 import { IfElseNodeOutput } from './nodes/IfElseNode';

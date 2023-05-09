@@ -1,11 +1,8 @@
 import { FC } from 'react';
-import { NodeConnection, NodeId, PortId } from '../model/NodeBase';
+import { NodeConnection, NodeId, PortId } from '@ironclad/nodai-core';
 import { getNodePortPosition } from './DraggableNode';
-import { createUnknownNodeInstance } from '../model/Nodes';
 import { useRecoilValue } from 'recoil';
 import { nodesSelector } from '../state/graph';
-import { useGetConnectionsForNode } from '../hooks/useGetConnectionsForNode';
-import { canvasPositionState } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { useGetNodeIO } from '../hooks/useGetNodeIO';
 

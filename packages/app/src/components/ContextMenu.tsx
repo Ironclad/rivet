@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { FC, ReactNode, forwardRef, useCallback, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { NodeType } from '../model/Nodes';
+import { NodeType } from '@ironclad/nodai-core';
 import { ContextMenuData } from '../hooks/useContextMenu';
 import { ReactComponent as DeleteIcon } from 'majesticons/line/delete-bin-line.svg';
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
