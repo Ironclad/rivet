@@ -2,10 +2,19 @@ import { FC, useRef } from 'react';
 import styled from '@emotion/styled';
 import { lastRunData } from '../../state/dataFlow';
 import { useRecoilValue } from 'recoil';
-import { ChartNode, ExtractRegexNode, ExtractRegexNodeData, PortId } from '@ironclad/nodai-core';
+import {
+  ChartNode,
+  DataType,
+  ExtractRegexNode,
+  ExtractRegexNodeData,
+  PortId,
+  expectType,
+  expectTypeOptional,
+} from '@ironclad/nodai-core';
 import { RenderDataValue } from '../RenderDataValue';
 import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
+import { match } from 'assert';
 
 export type ExtractRegexNodeBodyProps = {
   node: ExtractRegexNode;
@@ -49,7 +58,12 @@ export const ExtractRegexNodeOutput: FC<ExtractRegexNodeBodyProps> = ({ node }) 
     return null;
   }
 
+  if (output.outputData['matches' as PortId]?.type === ('string[][]' as DataType)) {
+    return <div>{JSON.stringify(output.outputData['matches' as PortId])}</div>;
+  }
+
   const outputKeys = Object.keys(output.outputData).filter((key) => key.startsWith('output'));
+  const matches = expectTypeOptional(output.outputData['matches' as PortId], 'string[]');
 
   return (
     <div>
@@ -64,6 +78,10 @@ export const ExtractRegexNodeOutput: FC<ExtractRegexNodeBodyProps> = ({ node }) 
           </div>
         );
       })}
+      <strong>Matches:</strong>
+      {matches?.map((match) => (
+        <pre style={{ whiteSpace: 'pre-wrap' }}>{match}</pre>
+      ))}
     </div>
   );
 };

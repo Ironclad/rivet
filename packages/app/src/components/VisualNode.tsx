@@ -27,6 +27,8 @@ export type VisualNodeProps = {
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
   onSelectNode?: () => void;
   onNodeWidthChanged?: (newWidth: number) => void;
+  onMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId) => void;
+  onMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId) => void;
 
   nodeAttributes?: HTMLAttributes<HTMLDivElement>;
   handleAttributes?: HTMLAttributes<HTMLDivElement>;
@@ -50,6 +52,8 @@ export const VisualNode = memo(
         onWireStartDrag,
         onSelectNode,
         onNodeWidthChanged,
+        onMouseOver,
+        onMouseOut,
       },
       ref,
     ) => {
@@ -146,6 +150,8 @@ export const VisualNode = memo(
           {...nodeAttributes}
           data-node-id={node.id}
           data-contextmenutype={`node-${node.type}`}
+          onMouseOver={(event) => onMouseOver?.(event, node.id)}
+          onMouseOut={(event) => onMouseOut?.(event, node.id)}
         >
           <div className="node-title">
             <div className="grab-area" {...handleAttributes}>

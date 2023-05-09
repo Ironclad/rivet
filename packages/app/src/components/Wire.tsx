@@ -5,10 +5,12 @@ import { useRecoilValue } from 'recoil';
 import { nodesSelector } from '../state/graph';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { useGetNodeIO } from '../hooks/useGetNodeIO';
+import clsx from 'clsx';
 
 type WireProps = {
   connection: NodeConnection | PartialConnection;
   selected: boolean;
+  highlighted: boolean;
 };
 
 export type PartialConnection = {
@@ -18,7 +20,7 @@ export type PartialConnection = {
   toY: number;
 };
 
-export const Wire: FC<WireProps> = ({ connection, selected }) => {
+export const Wire: FC<WireProps> = ({ connection, selected, highlighted }) => {
   const nodes = useRecoilValue(nodesSelector);
   const getIO = useGetNodeIO();
   const { clientToCanvasPosition } = useCanvasPositioning();
@@ -71,5 +73,5 @@ export const Wire: FC<WireProps> = ({ connection, selected }) => {
 
   const wirePath = `M${start.x},${start.y} C${curveX1},${curveY1} ${curveX2},${curveY2} ${end.x},${end.y}`;
 
-  return <path className={`wire ${selected ? 'selected' : ''}`} d={wirePath} />;
+  return <path className={clsx('wire', { selected, highlighted })} d={wirePath} />;
 };
