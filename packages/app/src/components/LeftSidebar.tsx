@@ -13,6 +13,7 @@ import { ReactComponent as ExpandRightIcon } from 'majesticons/line/menu-expand-
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { useDeleteGraph } from '../hooks/useDeleteGraph';
 import { useLoadGraph } from '../hooks/useLoadGraph';
+import { emptyNodeGraph } from '../model/NodeGraph';
 
 const styles = css`
   position: fixed;
@@ -77,6 +78,25 @@ const styles = css`
   .toggle-tab:hover {
     background-color: var(--grey-darkish);
   }
+
+  .graphs-section-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    align-items: center;
+
+    button {
+      padding: 4px 8px;
+      border-radius: 4px;
+      background-color: var(--grey-dark);
+      border: 1px solid var(--grey);
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--grey-darkish);
+      }
+    }
+  }
 `;
 
 const moreDropdownCss = css`
@@ -94,6 +114,10 @@ export const LeftSidebar: FC = () => {
 
   const deleteGraph = useDeleteGraph();
   const loadGraph = useLoadGraph();
+
+  function handleNew() {
+    loadGraph(emptyNodeGraph());
+  }
 
   return (
     <div
@@ -121,7 +145,12 @@ export const LeftSidebar: FC = () => {
         />
       </div>
       <div className="graphs-section">
-        <label>Graphs</label>
+        <div className="graphs-section-header">
+          <label>Graphs</label>
+          <button className="new-graph" onClick={handleNew}>
+            New
+          </button>
+        </div>
         <div className="graph-list">
           {sortedGraphs.map((savedGraph) => (
             <div key={savedGraph.metadata?.id ?? nanoid()} className="graph-item">
