@@ -13,7 +13,7 @@ import { ReactComponent as ExpandRightIcon } from 'majesticons/line/menu-expand-
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { useDeleteGraph } from '../hooks/useDeleteGraph';
 import { useLoadGraph } from '../hooks/useLoadGraph';
-import { emptyNodeGraph } from '../model/NodeGraph';
+import { emptyNodeGraph } from '@ironclad/nodai-core';
 
 const styles = css`
   position: fixed;

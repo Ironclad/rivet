@@ -1,10 +1,6 @@
 import { atom } from 'recoil';
 import { persistAtom } from './persist';
-
-export interface Settings {
-  openAiKey: string;
-  openAiOrganization: string;
-}
+import { Settings } from '@ironclad/nodai-core';
 
 export const settingsState = atom<Settings>({
   key: 'settings',

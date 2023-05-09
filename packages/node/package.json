@@ -1,0 +1,10 @@
+{
+  "name": "@ironclad/nodai-node",
+  "dependencies": {
+    "@ironclad/nodai": "workspace:^",
+    "@ironclad/nodai-core": "workspace:^"
+  },
+  "devDependencies": {
+    "@types/node": "^20.1.1"
+  }
+}

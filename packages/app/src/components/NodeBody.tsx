@@ -1,5 +1,4 @@
 import { match } from 'ts-pattern';
-import { ChartNode } from '../model/NodeBase';
 import { FC, memo } from 'react';
 import { ChatNodeBody } from './nodes/ChatNode';
 import { CodeNodeBody } from './nodes/CodeNode';
@@ -9,7 +8,7 @@ import { PromptNodeBody } from './nodes/PromptNode';
 import { TextNodeBody } from './nodes/TextNode';
 import { UserInputNodeBody } from './nodes/UserInputNode';
 import { IfNodeBody } from './nodes/IfNode';
-import { Nodes } from '../model/Nodes';
+import { ChartNode, Nodes } from '@ironclad/nodai-core';
 import { ReadDirectoryNodeBody } from './nodes/ReadDirectoryNode';
 import { ReadFileNodeBody } from './nodes/ReadFileNode';
 import { IfElseNodeBody } from './nodes/IfElseNode';

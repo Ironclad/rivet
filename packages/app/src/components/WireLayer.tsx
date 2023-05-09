@@ -1,8 +1,7 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import { NodeConnection, NodeId, PortId, ChartNode } from '../model/NodeBase';
+import { NodeConnection, NodeId, PortId, ChartNode } from '@ironclad/nodai-core';
 import { css } from '@emotion/react';
 import { Wire } from './Wire';
-import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 
 export type WireDef = {
   startNodeId: NodeId;
@@ -24,7 +23,7 @@ const wiresStyles = css`
 
   path {
     stroke-width: 2;
-    stroke-lineap: butt;
+    stroke-linecap: butt;
     fill: none;
     stroke: gray;
   }

@@ -1,6 +1,6 @@
-import { NodeGraph, emptyNodeGraph } from '../model/NodeGraph';
 import { DefaultValue, atom, selector } from 'recoil';
 import { persistAtom } from './persist';
+import { NodeGraph, emptyNodeGraph } from '@ironclad/nodai-core';
 
 export const graphState = atom<NodeGraph>({
   key: 'graphState',

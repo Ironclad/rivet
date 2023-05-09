@@ -1,6 +1,5 @@
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { NodeGraph, emptyNodeGraph } from '../model/NodeGraph';
-import { useStableCallback } from './useStableCallback';
+import { NodeGraph, emptyNodeGraph } from '@ironclad/nodai-core';
 import { graphState } from '../state/graph';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph';
 import { canvasPositionState } from '../state/graphBuilder';

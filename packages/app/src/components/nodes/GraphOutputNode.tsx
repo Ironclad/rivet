@@ -1,15 +1,13 @@
 import { FC } from 'react';
-import { GraphOutputNode } from '../../model/nodes/GraphOutputNode';
 import { css } from '@emotion/react';
-import { DataType, ScalarType, dataTypeDisplayNames, scalarTypes } from '../../model/DataValue';
 import { Field } from '@atlaskit/form';
 import Select from '@atlaskit/select';
 import TextField from '@atlaskit/textfield';
 import Checkbox from '@atlaskit/checkbox';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
-import { PortId } from '../../model/NodeBase';
 import { RenderDataValue } from '../RenderDataValue';
+import { DataType, GraphOutputNode, PortId, ScalarType, dataTypeDisplayNames, scalarTypes } from '@ironclad/nodai-core';
 
 export type GraphOutputNodeBodyProps = {
   node: GraphOutputNode;

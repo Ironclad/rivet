@@ -1,6 +1,6 @@
 import produce from 'immer';
 import { nanoid } from 'nanoid';
-import { GraphId } from '../model/NodeGraph';
+import { GraphId } from '@ironclad/nodai-core';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { graphState } from '../state/graph';
 import { savedGraphsState } from '../state/savedGraphs';

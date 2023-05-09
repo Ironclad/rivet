@@ -1,0 +1,23 @@
+{
+  "name": "@ironclad/nodai-core",
+  "packageManager": "yarn@3.5.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@dqbd/tiktoken": "^1.0.7",
+    "@types/node": "^20.1.1",
+    "emittery": "^1.0.1",
+    "lodash-es": "^4.17.21",
+    "minimatch": "^9.0.0",
+    "nanoid": "^4.0.2",
+    "openai": "^3.2.1",
+    "p-queue": "^7.3.4",
+    "p-retry": "^5.1.2",
+    "ts-pattern": "^4.3.0",
+    "type-fest": "^3.10.0"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4",
+    "typescript": "^5.0.4"
+  }
+}

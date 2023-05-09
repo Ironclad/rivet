@@ -16,7 +16,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    "composite": true
   },
   "include": ["src"],
   "ts-node": {
@@ -24,5 +25,6 @@
     "compilerOptions": {
       "module": "CommonJS"
     }
-  }
+  },
+  "references": [{ "path": "../core" }]
 }

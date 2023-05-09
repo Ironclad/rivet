@@ -6,11 +6,10 @@ import { nodesSelector } from '../state/graph';
 import { selectedNodeState } from '../state/graphBuilder';
 import { NodeEditorRenderer } from './NodeEditor';
 import styled from '@emotion/styled';
-import { NodeType, Nodes, nodeFactory } from '../model/Nodes';
-import { ChartNode, NodeId } from '../model/NodeBase';
 import { ContextMenuData } from '../hooks/useContextMenu';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { useStableCallback } from '../hooks/useStableCallback';
+import { ChartNode, NodeId, NodeType, Nodes, nodeFactory } from '@ironclad/nodai-core';
 
 const Container = styled.div`
   position: relative;

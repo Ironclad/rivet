@@ -6,7 +6,7 @@ import {
   NodeInputDefinition,
   NodeOutputDefinition,
   PortId,
-} from '../model/NodeBase';
+} from '@ironclad/nodai-core';
 import { MouseEvent, FC } from 'react';
 import { useRecoilValue } from 'recoil';
 import { canvasPositionState } from '../state/graphBuilder';

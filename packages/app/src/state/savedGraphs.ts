@@ -1,10 +1,9 @@
 import { DefaultValue, atom, selector } from 'recoil';
-import { GraphId, NodeGraph } from '../model/NodeGraph';
 import { persistAtom } from './persist';
-import { Project, ProjectId } from '../model/Project';
 import { nanoid } from 'nanoid';
 import { values } from '../utils/typeSafety';
 import produce from 'immer';
+import { GraphId, NodeGraph, Project, ProjectId } from '@ironclad/nodai-core';
 
 export const savedGraphsState = selector<NodeGraph[]>({
   key: 'savedGraphsState',

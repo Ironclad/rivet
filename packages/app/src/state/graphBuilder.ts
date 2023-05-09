@@ -1,5 +1,5 @@
 import { atom } from 'recoil';
-import { ChartNode, NodeId } from '../model/NodeBase';
+import { ChartNode, NodeId } from '@ironclad/nodai-core';
 
 export const selectedNodeState = atom<NodeId | null>({
   key: 'selectedNodeState',

@@ -1,17 +1,21 @@
 import { FC, useEffect, useState } from 'react';
-import { ChartNode } from '../../model/NodeBase';
-import { UserInputNode, UserInputNodeData } from '../../model/nodes/UserInputNode';
 import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
 import styled from '@emotion/styled';
 import { lastRunData } from '../../state/dataFlow';
 import { useRecoilValue } from 'recoil';
-import { PortId } from '../../model/NodeBase';
-import { RenderDataValue } from '../RenderDataValue';
-import { ArrayDataValue, StringDataValue, expectType } from '../../model/DataValue';
 import Button from '@atlaskit/button';
 import { UserInputModal } from '../UserInputModal';
 import { userInputModalQuestionsState, userInputModalSubmitState } from '../../state/userInput';
+import {
+  ArrayDataValue,
+  ChartNode,
+  PortId,
+  StringDataValue,
+  UserInputNode,
+  UserInputNodeData,
+  expectType,
+} from '@ironclad/nodai-core';
 
 export type UserInputNodeEditorProps = {
   node: ChartNode;

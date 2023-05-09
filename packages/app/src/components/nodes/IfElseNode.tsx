@@ -1,9 +1,8 @@
 import { FC } from 'react';
-import { IfElseNode } from '../../model/nodes/IfElseNode';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
 import { RenderDataValue } from '../RenderDataValue';
-import { PortId } from '../../model/NodeBase';
+import { IfElseNode, PortId } from '@ironclad/nodai-core';
 
 export type IfElseNodeBodyProps = { node: IfElseNode };
 

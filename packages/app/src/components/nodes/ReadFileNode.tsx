@@ -1,14 +1,12 @@
 import { FC } from 'react';
-import { ReadFileNode } from '../../model/nodes/ReadFileNode';
-import { ChartNode } from '../../model/NodeBase';
 import { RenderDataValue } from '../RenderDataValue';
-import { PortId } from '../../model/NodeBase';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
 import Toggle from '@atlaskit/toggle';
 import { css } from '@emotion/react';
 import { openFile } from '../../utils/fileIO';
 import Button from '@atlaskit/button';
+import { ChartNode, PortId, ReadFileNode } from '@ironclad/nodai-core';
 
 type ReadFileNodeBodyProps = {
   node: ReadFileNode;

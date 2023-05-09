@@ -1,16 +1,11 @@
 import { FC } from 'react';
-import { ReadDirectoryNode } from '../../model/nodes/ReadDirectoryNode';
-import { ChartNode } from '../../model/NodeBase';
-import { RenderDataValue } from '../RenderDataValue';
-import { PortId } from '../../model/NodeBase';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
 import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
-import { assertBaseDir } from '../../model/native/BaseDir';
-import { expectType } from '../../model/DataValue';
 import { openDirectory } from '../../utils/fileIO';
 import Button from '@atlaskit/button';
+import { ChartNode, PortId, ReadDirectoryNode, expectType } from '@ironclad/nodai-core';
 
 type ReadDirectoryNodeBodyProps = {
   node: ReadDirectoryNode;

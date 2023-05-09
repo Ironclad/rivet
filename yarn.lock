@@ -2648,6 +2648,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dqbd/tiktoken@npm:^1.0.7":
+  version: 1.0.7
+  resolution: "@dqbd/tiktoken@npm:1.0.7"
+  checksum: 81049797dcffa101c57b68a78be19b11958edf6e6cfffab7ccd3ec2e5290e3b27bc25f1060a1c34e1cb94f22e0f46d9aafa925d383fb4559738b644aa01c0fb1
+  languageName: node
+  linkType: hard
+
 "@emotion/babel-plugin-jsx-pragmatic@npm:^0.2.0":
   version: 0.2.0
   resolution: "@emotion/babel-plugin-jsx-pragmatic@npm:0.2.0"
@@ -3433,10 +3440,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@eslint/eslintrc@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "@eslint/eslintrc@npm:2.0.3"
+  dependencies:
+    ajv: ^6.12.4
+    debug: ^4.3.2
+    espree: ^9.5.2
+    globals: ^13.19.0
+    ignore: ^5.2.0
+    import-fresh: ^3.2.1
+    js-yaml: ^4.1.0
+    minimatch: ^3.1.2
+    strip-json-comments: ^3.1.1
+  checksum: ddc51f25f8524d8231db9c9bf03177e503d941a332e8d5ce3b10b09241be4d5584a378a529a27a527586bfbccf3031ae539eb891352033c340b012b4d0c81d92
+  languageName: node
+  linkType: hard
+
 "@eslint/js@npm:8.36.0":
   version: 8.36.0
   resolution: "@eslint/js@npm:8.36.0"
   checksum: b7d6b84b823c8c7784be390741196617565527b1f7c0977fde9455bfb57fd88f81c074a03dd878757d2c33fa29f24291e9ecbc1425710f067917324b55e1bf3a
+  languageName: node
+  linkType: hard
+
+"@eslint/js@npm:8.40.0":
+  version: 8.40.0
+  resolution: "@eslint/js@npm:8.40.0"
+  checksum: e84936b8ebd1c8fd90e860182e95d1404006da4cbca722b14950b298aeeca102b080aa9b62c8e69f90824ec54e19f1ba79b239046223624d1414ee82e8e628ac
   languageName: node
   linkType: hard
 
@@ -3494,6 +3525,178 @@ __metadata:
   checksum: a824a1ec31591231e4bad5787641f59e9633827d0a2eaae131a288d33c9ef0290bd16fda8da6f7c0fcb014147865d12118df10db57f27f41e20da92369fcb3f1
   languageName: node
   linkType: hard
+
+"@ironclad/nodai-app@workspace:packages/app":
+  version: 0.0.0-use.local
+  resolution: "@ironclad/nodai-app@workspace:packages/app"
+  dependencies:
+    "@atlaskit/button": ^16.6.0
+    "@atlaskit/checkbox": ^12.4.6
+    "@atlaskit/css-reset": ^6.3.21
+    "@atlaskit/dropdown-menu": ^11.7.3
+    "@atlaskit/form": ^8.9.0
+    "@atlaskit/inline-edit": ^12.2.12
+    "@atlaskit/modal-dialog": ^12.4.11
+    "@atlaskit/portal": ^4.2.13
+    "@atlaskit/select": ^16.1.8
+    "@atlaskit/textarea": ^4.5.6
+    "@atlaskit/textfield": ^5.3.6
+    "@atlaskit/theme": ^12.4.0
+    "@atlaskit/toggle": ^12.5.8
+    "@atlaskit/tokens": ^1.2.17
+    "@babel/core": ^7.16.0
+    "@babel/preset-env": ^7.20.2
+    "@babel/preset-react": ^7.18.6
+    "@babel/preset-typescript": ^7.21.0
+    "@dnd-kit/core": ^6.0.8
+    "@dqbd/tiktoken": ^1.0.6
+    "@emotion/babel-preset-css-prop": ^11.10.0
+    "@emotion/react": ^11.10.6
+    "@emotion/styled": ^11.10.6
+    "@ironclad/nodai-core": "workspace:^"
+    "@mdx-js/react": ^1.6.22
+    "@pmmmwh/react-refresh-webpack-plugin": ^0.5.3
+    "@storybook/addon-essentials": ^7.0.0-rc.8
+    "@storybook/addon-interactions": ^7.0.0-rc.8
+    "@storybook/addon-links": ^7.0.0-rc.8
+    "@storybook/blocks": ^7.0.0-rc.8
+    "@storybook/builder-vite": ^7.0.0-rc.8
+    "@storybook/react": ^7.0.0-rc.8
+    "@storybook/react-vite": ^7.0.0-rc.8
+    "@storybook/react-webpack5": ^7.0.0-rc.8
+    "@storybook/testing-library": ^0.0.14-next.1
+    "@svgr/webpack": ^5.5.0
+    "@swc/core": ^1.3.42
+    "@tauri-apps/api": ^1.2.0
+    "@tauri-apps/cli": ^1.2.3
+    "@types/lodash-es": ^4
+    "@types/node": ^16.7.13
+    "@types/react": ^18.0.0
+    "@types/react-dom": ^18.0.0
+    "@types/react-transition-group": ^4.4.5
+    "@types/yargs": ^17
+    "@vitejs/plugin-react": ^3.1.0
+    ahooks: ^3.7.6
+    axios: ^1.3.6
+    babel-loader: ^8.2.3
+    babel-plugin-named-asset-import: ^0.3.8
+    babel-preset-react-app: ^10.0.1
+    bfj: ^7.0.2
+    browserslist: ^4.18.1
+    camelcase: ^6.2.1
+    case-sensitive-paths-webpack-plugin: ^2.4.0
+    clsx: ^1.2.1
+    css-loader: ^6.5.1
+    css-minimizer-webpack-plugin: ^3.2.0
+    dotenv: ^10.0.0
+    dotenv-expand: ^5.1.0
+    emittery: ^1.0.1
+    esbuild: ^0.17.18
+    eslint: ^8.3.0
+    eslint-config-react-app: ^7.0.1
+    eslint-webpack-plugin: ^3.1.1
+    file-loader: ^6.2.0
+    fs-extra: ^10.0.0
+    html-webpack-plugin: ^5.5.0
+    identity-obj-proxy: ^3.0.0
+    immer: ^9.0.21
+    lodash-es: ^4.17.21
+    majesticons: ^2.1.2
+    mini-css-extract-plugin: ^2.4.5
+    minimatch: ^9.0.0
+    monaco-editor: ^0.37.1
+    nanoid: ^4.0.1
+    openai: ^3.2.1
+    p-queue: ^7.3.4
+    p-retry: ^5.1.2
+    postcss: ^8.4.4
+    postcss-flexbugs-fixes: ^5.0.2
+    postcss-loader: ^6.2.1
+    postcss-normalize: ^10.0.1
+    postcss-preset-env: ^7.0.1
+    prettier: ^2.8.7
+    prompts: ^2.4.2
+    react: ^18.2.0
+    react-app-polyfill: ^3.0.0
+    react-dev-utils: ^12.0.1
+    react-dnd: ^16.0.1
+    react-dnd-html5-backend: ^16.0.1
+    react-dom: ^18.2.0
+    react-draggable: ^4.4.5
+    react-refresh: ^0.11.0
+    react-transition-group: ^4.4.5
+    recoil: ^0.7.7
+    recoil-persist: ^4.2.0
+    resolve: ^1.20.0
+    resolve-url-loader: ^4.0.0
+    rollup: ^3.21.0
+    sass-loader: ^12.3.0
+    semver: ^7.3.5
+    source-map-loader: ^3.0.0
+    storybook: ^7.0.0-rc.8
+    style-loader: ^3.3.1
+    tailwindcss: ^3.0.2
+    terser-webpack-plugin: ^5.2.5
+    ts-node: ^10.9.1
+    ts-pattern: ^4.2.2
+    type-fest: ^3.7.1
+    typescript: ^5.0.4
+    vite: ^4.2.1
+    vite-plugin-monaco-editor: ^1.1.0
+    vite-plugin-svgr: ^2.4.0
+    vite-plugin-top-level-await: ^1.3.0
+    vite-plugin-wasm: ^3.2.2
+    vite-tsconfig-paths: ^4.0.7
+    web-vitals: ^2.1.0
+    webpack: ^5.64.4
+    webpack-dev-server: ^4.6.0
+    webpack-manifest-plugin: ^4.0.2
+    workbox-webpack-plugin: ^6.4.1
+    yargs: ^17.7.1
+  languageName: unknown
+  linkType: soft
+
+"@ironclad/nodai-core@workspace:^, @ironclad/nodai-core@workspace:packages/core":
+  version: 0.0.0-use.local
+  resolution: "@ironclad/nodai-core@workspace:packages/core"
+  dependencies:
+    "@dqbd/tiktoken": ^1.0.7
+    "@types/lodash-es": ^4
+    "@types/node": ^20.1.1
+    emittery: ^1.0.1
+    lodash-es: ^4.17.21
+    minimatch: ^9.0.0
+    nanoid: ^4.0.2
+    openai: ^3.2.1
+    p-queue: ^7.3.4
+    p-retry: ^5.1.2
+    ts-pattern: ^4.3.0
+    type-fest: ^3.10.0
+    typescript: ^5.0.4
+  languageName: unknown
+  linkType: soft
+
+"@ironclad/nodai-node@workspace:packages/node":
+  version: 0.0.0-use.local
+  resolution: "@ironclad/nodai-node@workspace:packages/node"
+  dependencies:
+    "@ironclad/nodai": "workspace:^"
+    "@ironclad/nodai-core": "workspace:^"
+    "@types/node": ^20.1.1
+  languageName: unknown
+  linkType: soft
+
+"@ironclad/nodai@workspace:., @ironclad/nodai@workspace:^":
+  version: 0.0.0-use.local
+  resolution: "@ironclad/nodai@workspace:."
+  dependencies:
+    "@types/eslint": ^8
+    esbuild: ^0.17.18
+    eslint: ^8.40.0
+    rollup: ^3.21.0
+    typescript: ^5.0.4
+  languageName: unknown
+  linkType: soft
 
 "@istanbuljs/load-nyc-config@npm:^1.0.0":
   version: 1.1.0
@@ -5895,6 +6098,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/eslint@npm:^8":
+  version: 8.37.0
+  resolution: "@types/eslint@npm:8.37.0"
+  dependencies:
+    "@types/estree": "*"
+    "@types/json-schema": "*"
+  checksum: 06d3b3fba12004294591b5c7a52e3cec439472195da54e096076b1f2ddfbb8a445973b9681046dd530a6ac31eca502f635abc1e3ce37d03513089358e6f822ee
+  languageName: node
+  linkType: hard
+
 "@types/estree@npm:*":
   version: 1.0.0
   resolution: "@types/estree@npm:1.0.0"
@@ -6109,6 +6322,13 @@ __metadata:
   version: 16.18.20
   resolution: "@types/node@npm:16.18.20"
   checksum: 18ffcdfc59b090fc0e7b38624bbb3ff0029d759111014187a6d6619501dd157efaa18cce12a1e03fd686d99be91ba026e7b6cb58c47cbfe1368dc3d04e699cef
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.1.1":
+  version: 20.1.1
+  resolution: "@types/node@npm:20.1.1"
+  checksum: 47961ee23f873c14c3f6045422ff3059f3bfb10231ef3080a7a72d7215cc8c2623fa8cedb7b246305962fa9c1e0c9e381e04b12eb3e9ec5d076025c6231ac8da
   languageName: node
   linkType: hard
 
@@ -6798,135 +7018,6 @@ __metadata:
   checksum: 1fea39f3f4071b20d85b22b25e1464ad8b87c6c70ded58bb7ae5184b86542a0190523c2d9eca96900619cdcc923130570afa26c9b944421b3774bd1ddbe39f0c
   languageName: node
   linkType: hard
-
-"ai-storyboarding-tool@workspace:packages/app":
-  version: 0.0.0-use.local
-  resolution: "ai-storyboarding-tool@workspace:packages/app"
-  dependencies:
-    "@atlaskit/button": ^16.6.0
-    "@atlaskit/checkbox": ^12.4.6
-    "@atlaskit/css-reset": ^6.3.21
-    "@atlaskit/dropdown-menu": ^11.7.3
-    "@atlaskit/form": ^8.9.0
-    "@atlaskit/inline-edit": ^12.2.12
-    "@atlaskit/modal-dialog": ^12.4.11
-    "@atlaskit/portal": ^4.2.13
-    "@atlaskit/select": ^16.1.8
-    "@atlaskit/textarea": ^4.5.6
-    "@atlaskit/textfield": ^5.3.6
-    "@atlaskit/theme": ^12.4.0
-    "@atlaskit/toggle": ^12.5.8
-    "@atlaskit/tokens": ^1.2.17
-    "@babel/core": ^7.16.0
-    "@babel/preset-env": ^7.20.2
-    "@babel/preset-react": ^7.18.6
-    "@babel/preset-typescript": ^7.21.0
-    "@dnd-kit/core": ^6.0.8
-    "@dqbd/tiktoken": ^1.0.6
-    "@emotion/babel-preset-css-prop": ^11.10.0
-    "@emotion/react": ^11.10.6
-    "@emotion/styled": ^11.10.6
-    "@mdx-js/react": ^1.6.22
-    "@pmmmwh/react-refresh-webpack-plugin": ^0.5.3
-    "@storybook/addon-essentials": ^7.0.0-rc.8
-    "@storybook/addon-interactions": ^7.0.0-rc.8
-    "@storybook/addon-links": ^7.0.0-rc.8
-    "@storybook/blocks": ^7.0.0-rc.8
-    "@storybook/builder-vite": ^7.0.0-rc.8
-    "@storybook/react": ^7.0.0-rc.8
-    "@storybook/react-vite": ^7.0.0-rc.8
-    "@storybook/react-webpack5": ^7.0.0-rc.8
-    "@storybook/testing-library": ^0.0.14-next.1
-    "@svgr/webpack": ^5.5.0
-    "@swc/core": ^1.3.42
-    "@tauri-apps/api": ^1.2.0
-    "@tauri-apps/cli": ^1.2.3
-    "@types/lodash-es": ^4
-    "@types/node": ^16.7.13
-    "@types/react": ^18.0.0
-    "@types/react-dom": ^18.0.0
-    "@types/react-transition-group": ^4.4.5
-    "@types/yargs": ^17
-    "@vitejs/plugin-react": ^3.1.0
-    ahooks: ^3.7.6
-    axios: ^1.3.6
-    babel-loader: ^8.2.3
-    babel-plugin-named-asset-import: ^0.3.8
-    babel-preset-react-app: ^10.0.1
-    bfj: ^7.0.2
-    browserslist: ^4.18.1
-    camelcase: ^6.2.1
-    case-sensitive-paths-webpack-plugin: ^2.4.0
-    clsx: ^1.2.1
-    css-loader: ^6.5.1
-    css-minimizer-webpack-plugin: ^3.2.0
-    dotenv: ^10.0.0
-    dotenv-expand: ^5.1.0
-    emittery: ^1.0.1
-    esbuild: ^0.17.18
-    eslint: ^8.3.0
-    eslint-config-react-app: ^7.0.1
-    eslint-webpack-plugin: ^3.1.1
-    file-loader: ^6.2.0
-    fs-extra: ^10.0.0
-    html-webpack-plugin: ^5.5.0
-    identity-obj-proxy: ^3.0.0
-    immer: ^9.0.21
-    lodash-es: ^4.17.21
-    majesticons: ^2.1.2
-    mini-css-extract-plugin: ^2.4.5
-    minimatch: ^9.0.0
-    monaco-editor: ^0.37.1
-    nanoid: ^4.0.1
-    openai: ^3.2.1
-    p-queue: ^7.3.4
-    p-retry: ^5.1.2
-    postcss: ^8.4.4
-    postcss-flexbugs-fixes: ^5.0.2
-    postcss-loader: ^6.2.1
-    postcss-normalize: ^10.0.1
-    postcss-preset-env: ^7.0.1
-    prettier: ^2.8.7
-    prompts: ^2.4.2
-    react: ^18.2.0
-    react-app-polyfill: ^3.0.0
-    react-dev-utils: ^12.0.1
-    react-dnd: ^16.0.1
-    react-dnd-html5-backend: ^16.0.1
-    react-dom: ^18.2.0
-    react-draggable: ^4.4.5
-    react-refresh: ^0.11.0
-    react-transition-group: ^4.4.5
-    recoil: ^0.7.7
-    recoil-persist: ^4.2.0
-    resolve: ^1.20.0
-    resolve-url-loader: ^4.0.0
-    rollup: ^3.21.0
-    sass-loader: ^12.3.0
-    semver: ^7.3.5
-    source-map-loader: ^3.0.0
-    storybook: ^7.0.0-rc.8
-    style-loader: ^3.3.1
-    tailwindcss: ^3.0.2
-    terser-webpack-plugin: ^5.2.5
-    ts-node: ^10.9.1
-    ts-pattern: ^4.2.2
-    type-fest: ^3.7.1
-    typescript: ^5.0.2
-    vite: ^4.2.1
-    vite-plugin-monaco-editor: ^1.1.0
-    vite-plugin-svgr: ^2.4.0
-    vite-plugin-top-level-await: ^1.3.0
-    vite-plugin-wasm: ^3.2.2
-    vite-tsconfig-paths: ^4.0.7
-    web-vitals: ^2.1.0
-    webpack: ^5.64.4
-    webpack-dev-server: ^4.6.0
-    webpack-manifest-plugin: ^4.0.2
-    workbox-webpack-plugin: ^6.4.1
-    yargs: ^17.7.1
-  languageName: unknown
-  linkType: soft
 
 "ajv-formats@npm:^2.1.1":
   version: 2.1.1
@@ -9869,6 +9960,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-scope@npm:^7.2.0":
+  version: 7.2.0
+  resolution: "eslint-scope@npm:7.2.0"
+  dependencies:
+    esrecurse: ^4.3.0
+    estraverse: ^5.2.0
+  checksum: 64591a2d8b244ade9c690b59ef238a11d5c721a98bcee9e9f445454f442d03d3e04eda88e95a4daec558220a99fa384309d9faae3d459bd40e7a81b4063980ae
+  languageName: node
+  linkType: hard
+
 "eslint-visitor-keys@npm:^2.1.0":
   version: 2.1.0
   resolution: "eslint-visitor-keys@npm:2.1.0"
@@ -9880,6 +9981,13 @@ __metadata:
   version: 3.3.0
   resolution: "eslint-visitor-keys@npm:3.3.0"
   checksum: d59e68a7c5a6d0146526b0eec16ce87fbf97fe46b8281e0d41384224375c4e52f5ffb9e16d48f4ea50785cde93f766b0c898e31ab89978d88b0e1720fbfb7808
+  languageName: node
+  linkType: hard
+
+"eslint-visitor-keys@npm:^3.4.1":
+  version: 3.4.1
+  resolution: "eslint-visitor-keys@npm:3.4.1"
+  checksum: f05121d868202736b97de7d750847a328fcfa8593b031c95ea89425333db59676ac087fa905eba438d0a3c5769632f828187e0c1a0d271832a2153c1d3661c2c
   languageName: node
   linkType: hard
 
@@ -9949,6 +10057,56 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint@npm:^8.40.0":
+  version: 8.40.0
+  resolution: "eslint@npm:8.40.0"
+  dependencies:
+    "@eslint-community/eslint-utils": ^4.2.0
+    "@eslint-community/regexpp": ^4.4.0
+    "@eslint/eslintrc": ^2.0.3
+    "@eslint/js": 8.40.0
+    "@humanwhocodes/config-array": ^0.11.8
+    "@humanwhocodes/module-importer": ^1.0.1
+    "@nodelib/fs.walk": ^1.2.8
+    ajv: ^6.10.0
+    chalk: ^4.0.0
+    cross-spawn: ^7.0.2
+    debug: ^4.3.2
+    doctrine: ^3.0.0
+    escape-string-regexp: ^4.0.0
+    eslint-scope: ^7.2.0
+    eslint-visitor-keys: ^3.4.1
+    espree: ^9.5.2
+    esquery: ^1.4.2
+    esutils: ^2.0.2
+    fast-deep-equal: ^3.1.3
+    file-entry-cache: ^6.0.1
+    find-up: ^5.0.0
+    glob-parent: ^6.0.2
+    globals: ^13.19.0
+    grapheme-splitter: ^1.0.4
+    ignore: ^5.2.0
+    import-fresh: ^3.0.0
+    imurmurhash: ^0.1.4
+    is-glob: ^4.0.0
+    is-path-inside: ^3.0.3
+    js-sdsl: ^4.1.4
+    js-yaml: ^4.1.0
+    json-stable-stringify-without-jsonify: ^1.0.1
+    levn: ^0.4.1
+    lodash.merge: ^4.6.2
+    minimatch: ^3.1.2
+    natural-compare: ^1.4.0
+    optionator: ^0.9.1
+    strip-ansi: ^6.0.1
+    strip-json-comments: ^3.1.0
+    text-table: ^0.2.0
+  bin:
+    eslint: bin/eslint.js
+  checksum: b79eba37f52f517a420eec99a80ae9f284d2cbe73afc0d4d3d4d5ed1cce0b06f21badc0374bfb7ac239efd2d49a1fd7c6111d6c3d52888521f377ba33de77e61
+  languageName: node
+  linkType: hard
+
 "espree@npm:^9.5.0":
   version: 9.5.0
   resolution: "espree@npm:9.5.0"
@@ -9957,6 +10115,17 @@ __metadata:
     acorn-jsx: "npm:^5.3.2"
     eslint-visitor-keys: "npm:^3.3.0"
   checksum: a7f110aefb6407e0d3237aa635ab3cea87106ae63748dd23c67031afccc640d04c4209fca2daf16e2233c82efb505faead0fb84097478fd9cc6e8f8dd80bf99d
+  languageName: node
+  linkType: hard
+
+"espree@npm:^9.5.2":
+  version: 9.5.2
+  resolution: "espree@npm:9.5.2"
+  dependencies:
+    acorn: ^8.8.0
+    acorn-jsx: ^5.3.2
+    eslint-visitor-keys: ^3.4.1
+  checksum: 6506289d6eb26471c0b383ee24fee5c8ae9d61ad540be956b3127be5ce3bf687d2ba6538ee5a86769812c7c552a9d8239e8c4d150f9ea056c6d5cbe8399c03c1
   languageName: node
   linkType: hard
 
@@ -12954,6 +13123,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nanoid@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "nanoid@npm:4.0.2"
+  bin:
+    nanoid: bin/nanoid.js
+  checksum: 747c399cea4664dd0be1d0ec498ffd1ef8f1f5221676fc8b577e3f46f66d9afcddb9595d63d19a2e78d0bc6cc33984f65e66bf1682c850b9e26288883d96b53f
+  languageName: node
+  linkType: hard
+
 "natural-compare-lite@npm:^1.4.0":
   version: 1.4.0
   resolution: "natural-compare-lite@npm:1.4.0"
@@ -12991,15 +13169,6 @@ __metadata:
   checksum: 0b2ebc113dfcf737d48dde49cfebf3ad2d82a8c3188e7100c6f375e30eafbef9e9124aadc3becef237b042fd5eb0aad2fd78669c20972d045bbe7fea8ba0be5c
   languageName: node
   linkType: hard
-
-"nodai@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "nodai@workspace:."
-  dependencies:
-    esbuild: ^0.17.18
-    rollup: ^3.21.0
-  languageName: unknown
-  linkType: soft
 
 "node-abort-controller@npm:^3.0.1":
   version: 3.1.1
@@ -16983,6 +17152,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ts-pattern@npm:^4.3.0":
+  version: 4.3.0
+  resolution: "ts-pattern@npm:4.3.0"
+  checksum: f5167f6f721212c1e22f8590bb1fc21e27fd591d6fc5af0e467778f8e5b2dc1ae490cf5c633c83a3021a61283a671a53faf250b081c17c0f025e73eb775e5fe3
+  languageName: node
+  linkType: hard
+
 "tsconfck@npm:^2.0.1":
   version: 2.1.1
   resolution: "tsconfck@npm:2.1.1"
@@ -17087,6 +17263,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"type-fest@npm:^3.10.0":
+  version: 3.10.0
+  resolution: "type-fest@npm:3.10.0"
+  peerDependencies:
+    typescript: ">=4.7.0"
+  checksum: df3bd25809ea79ac7712da7c11648251118c23f65b226eba263797e42be60ba34085874ec492202b8ecf2e5a2273b27ddcbfe3be2c275dfcef3f0e2ee90ea179
+  languageName: node
+  linkType: hard
+
 "type-fest@npm:^3.7.1":
   version: 3.7.1
   resolution: "type-fest@npm:3.7.1"
@@ -17122,23 +17307,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.0.2":
-  version: 5.0.2
-  resolution: "typescript@npm:5.0.2"
+"typescript@npm:^5.0.4":
+  version: 5.0.4
+  resolution: "typescript@npm:5.0.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: bef1dcd166acfc6934b2ec4d72f93edb8961a5fab36b8dd2aaf6f4f4cd5c0210f2e0850aef4724f3b4913d5aef203a94a28ded731b370880c8bcff7e4ff91fc1
+  checksum: 82b94da3f4604a8946da585f7d6c3025fff8410779e5bde2855ab130d05e4fd08938b9e593b6ebed165bda6ad9292b230984f10952cf82f0a0ca07bbeaa08172
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^5.0.2#~builtin<compat/typescript>":
-  version: 5.0.2
-  resolution: "typescript@patch:typescript@npm%3A5.0.2#~builtin<compat/typescript>::version=5.0.2&hash=85af82"
+"typescript@patch:typescript@^5.0.4#~builtin<compat/typescript>":
+  version: 5.0.4
+  resolution: "typescript@patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: b63cb742fbb9aeb3085e002ad8f10d5fd963606aa4d6b3b65b4e76c396ff09739f03b5dbae08e1698c3bce9d5619d3f67aeb7ee470ed4016bd345b3cfe37b54a
+  checksum: bb309d320c59a26565fb3793dba550576ab861018ff3fd1b7fccabbe46ae4a35546bc45f342c0a0b6f265c801ccdf64ffd68f548f117ceb7f0eac4b805cd52a9
   languageName: node
   linkType: hard
 

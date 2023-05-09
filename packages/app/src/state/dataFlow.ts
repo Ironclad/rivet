@@ -1,6 +1,5 @@
 import { atom, selectorFamily } from 'recoil';
-import { NodeId, PortId } from '../model/NodeBase';
-import { DataValue } from '../model/DataValue';
+import { DataValue, NodeId, PortId } from '@ironclad/nodai-core';
 
 export type RunDataByNodeId = {
   [nodeId: NodeId]: NodeRunData;

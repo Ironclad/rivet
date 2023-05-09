@@ -2,10 +2,8 @@ import { FC, useRef } from 'react';
 import styled from '@emotion/styled';
 import { lastRunData } from '../../state/dataFlow';
 import { useRecoilValue } from 'recoil';
-import { PortId } from '../../model/NodeBase';
+import { ChartNode, ExtractRegexNode, ExtractRegexNodeData, PortId } from '@ironclad/nodai-core';
 import { RenderDataValue } from '../RenderDataValue';
-import { ChartNode } from '../../model/NodeBase';
-import { ExtractRegexNode, ExtractRegexNodeData } from '../../model/nodes/ExtractRegexNode';
 import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
 

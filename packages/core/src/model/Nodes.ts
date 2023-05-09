@@ -34,6 +34,22 @@ export type Nodes =
   | GraphOutputNode
   | SubGraphNode;
 
+export * from './nodes/UserInputNode';
+export * from './nodes/TextNode';
+export * from './nodes/ChatNode';
+export * from './nodes/PromptNode';
+export * from './nodes/ExtractRegexNode';
+export * from './nodes/CodeNode';
+export * from './nodes/MatchNode';
+export * from './nodes/IfNode';
+export * from './nodes/ReadDirectoryNode';
+export * from './nodes/ReadFileNode';
+export * from './nodes/IfElseNode';
+export * from './nodes/ChunkNode';
+export * from './nodes/GraphInputNode';
+export * from './nodes/GraphOutputNode';
+export * from './nodes/SubGraphNode';
+
 export type NodeType = Nodes['type'];
 
 export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode> => {

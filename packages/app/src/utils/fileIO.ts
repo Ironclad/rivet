@@ -1,7 +1,6 @@
-import { NodeGraph } from '../model/NodeGraph';
 import { save, open } from '@tauri-apps/api/dialog';
 import { writeFile, readTextFile } from '@tauri-apps/api/fs';
-import { Project } from '../model/Project';
+import { ChartNode, NodeGraph, Project } from '@ironclad/nodai-core';
 
 export async function saveGraphData(graphData: NodeGraph) {
   const filePath = await save({

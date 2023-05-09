@@ -6,15 +6,11 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { settingsModalOpenState } from './SettingsModal';
 import { loadGraphData, loadProjectData, saveGraphData, saveProjectData } from '../utils/fileIO';
 import { graphState } from '../state/graph';
-import { emptyNodeGraph } from '../model/NodeGraph';
-import { useSaveCurrentGraph } from '../hooks/useSaveCurrentGraph';
 import { graphRunningState } from '../state/dataFlow';
 import clsx from 'clsx';
-import { useLoadGraph } from '../hooks/useLoadGraph';
 import { projectState } from '../state/savedGraphs';
 import { nanoid } from 'nanoid';
-import { Project, ProjectId } from '../model/Project';
-import { set } from 'immer/dist/internal.js';
+import { ProjectId, emptyNodeGraph } from '@ironclad/nodai-core';
 
 const styles = css`
   display: flex;

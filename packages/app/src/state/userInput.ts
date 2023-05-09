@@ -1,7 +1,6 @@
 import { atom } from 'recoil';
 import { persistAtom } from './persist';
-import { NodeId } from '../model/NodeBase';
-import { ArrayDataValue, StringDataValue } from '../model/DataValue';
+import { ArrayDataValue, NodeId, StringDataValue } from '@ironclad/nodai-core';
 
 export const userInputModalOpenState = atom({
   key: 'userInputModalOpenState',
