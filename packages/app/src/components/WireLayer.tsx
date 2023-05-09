@@ -14,6 +14,7 @@ type WireLayerProps = {
   nodes: ChartNode[];
   connections: NodeConnection[];
   draggingWire?: WireDef;
+  highlightedNodes?: NodeId[];
 };
 
 const wiresStyles = css`
@@ -31,9 +32,14 @@ const wiresStyles = css`
   .selected {
     stroke: blue;
   }
+
+  .wire.highlighted {
+    stroke: var(--primary);
+    transition: stroke 0.2s ease-out;
+  }
 `;
 
-export const WireLayer: FC<WireLayerProps> = ({ nodes, connections, draggingWire }) => {
+export const WireLayer: FC<WireLayerProps> = ({ nodes, connections, draggingWire, highlightedNodes }) => {
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const handleMouseMove = useCallback((event: MouseEvent) => {
@@ -58,11 +64,21 @@ export const WireLayer: FC<WireLayerProps> = ({ nodes, connections, draggingWire
             toY: mousePosition.y,
           }}
           selected={false}
+          highlighted={false}
         />
       )}
-      {connections.map((connection) => (
-        <Wire connection={connection} selected={false} key={`wire-${connection.inputId}-${connection.inputNodeId}`} />
-      ))}
+      {connections.map((connection) => {
+        const highlighted =
+          highlightedNodes?.includes(connection.inputNodeId) || highlightedNodes?.includes(connection.outputNodeId);
+        return (
+          <Wire
+            connection={connection}
+            selected={false}
+            key={`wire-${connection.inputId}-${connection.inputNodeId}`}
+            highlighted={!!highlighted}
+          />
+        );
+      })}
     </svg>
   );
 };

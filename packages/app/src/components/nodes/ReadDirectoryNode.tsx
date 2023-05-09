@@ -233,7 +233,7 @@ export const ReadDirectoryNodeEditor: FC<ReadDirectoryNodeEditorProps> = ({ node
       </div>
       <div className="row">
         <label className="label" htmlFor="ignores">
-          Filter Glob
+          Excludes (comma separated)
         </label>
         <input
           id="ignores"

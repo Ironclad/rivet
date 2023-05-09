@@ -9,7 +9,7 @@ import { WireLayer } from './WireLayer';
 import { ContextMenuData, useContextMenu } from '../hooks/useContextMenu';
 import { useDraggingNode } from '../hooks/useDraggingNode';
 import { useDraggingWire } from '../hooks/useDraggingWire';
-import { ChartNode, NodeConnection } from '@ironclad/nodai-core';
+import { ChartNode, NodeConnection, NodeId } from '@ironclad/nodai-core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { canvasPositionState, lastMousePositionState, selectedNodeState } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
@@ -263,6 +263,27 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     );
   });
 
+  const [hoveringNode, setHoveringNode] = useState<NodeId | undefined>();
+
+  const onNodeMouseOver = useStableCallback((_e: any, nodeId: NodeId) => {
+    setHoveringNode(nodeId);
+  });
+
+  const onNodeMouseOut = useStableCallback(() => {
+    setHoveringNode(undefined);
+  });
+
+  const highlightedNodes = useMemo(() => {
+    const hNodes = [];
+    if (selectedNode) {
+      hNodes.push(selectedNode.id);
+    }
+    if (hoveringNode) {
+      hNodes.push(hoveringNode);
+    }
+    return hNodes;
+  }, [selectedNode, hoveringNode]);
+
   return (
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
       <div
@@ -298,6 +319,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
                 onWireEndDrag={onWireEndDrag}
                 onNodeSelected={onNodeSelected}
                 onNodeWidthChanged={onNodeWidthChanged}
+                onMouseOver={onNodeMouseOver}
+                onMouseOut={onNodeMouseOut}
               />
             ))}
           </div>
@@ -318,7 +341,12 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
             onMenuItemSelected={contextMenuItemSelected}
           />
         </CSSTransition>
-        <WireLayer nodes={nodes} connections={connections} draggingWire={draggingWire} />
+        <WireLayer
+          nodes={nodes}
+          connections={connections}
+          draggingWire={draggingWire}
+          highlightedNodes={highlightedNodes}
+        />
 
         <DragOverlay dropAnimation={null}>
           {draggingNode ? (

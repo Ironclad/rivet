@@ -68,7 +68,7 @@ export class ReadFileNodeImpl extends NodeImpl<ReadFileNode> {
         throw err;
       } else {
         return {
-          ['content' as PortId]: { type: 'string', value: '(no such file)' },
+          ['content' as PortId]: { type: 'string', value: '(file does not exist)' },
         };
       }
     }

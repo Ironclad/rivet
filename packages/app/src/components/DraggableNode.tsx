@@ -21,6 +21,8 @@ interface DraggableNodeProps {
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
   onNodeSelected: (node: ChartNode) => void;
   onNodeWidthChanged?: (node: ChartNode, newWidth: number) => void;
+  onMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId) => void;
+  onMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId) => void;
 }
 
 export const DraggableNode: FC<DraggableNodeProps> = ({
@@ -31,6 +33,8 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
   onWireEndDrag,
   onNodeSelected,
   onNodeWidthChanged,
+  onMouseOver,
+  onMouseOut,
 }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: node.id });
   const { zoom } = useRecoilValue(canvasPositionState);
@@ -52,6 +56,8 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
         onNodeSelected(node);
       })}
       onNodeWidthChanged={(width) => onNodeWidthChanged?.(node, width)}
+      onMouseOver={onMouseOver}
+      onMouseOut={onMouseOut}
     />
   );
 };
