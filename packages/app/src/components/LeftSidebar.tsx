@@ -13,7 +13,9 @@ import { ReactComponent as ExpandRightIcon } from 'majesticons/line/menu-expand-
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { useDeleteGraph } from '../hooks/useDeleteGraph';
 import { useLoadGraph } from '../hooks/useLoadGraph';
-import { emptyNodeGraph } from '@ironclad/nodai-core';
+import { GraphId, NodeGraph, emptyNodeGraph } from '@ironclad/nodai-core';
+import clsx from 'clsx';
+import { useSaveCurrentGraph } from '../hooks/useSaveCurrentGraph';
 
 const styles = css`
   position: fixed;
@@ -97,11 +99,44 @@ const styles = css`
       }
     }
   }
+
+  .selected {
+    background-color: var(--primary);
+    color: var(--grey-dark);
+
+    &:hover {
+      background-color: var(--primary-dark);
+    }
+  }
+
+  .save-graph {
+    position: absolute;
+    right: 16px;
+
+    padding: 4px 8px;
+    border-radius: 4px;
+    background-color: var(--grey-dark);
+    border: 1px solid var(--grey);
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--grey-darkish);
+    }
+  }
 `;
 
 const moreDropdownCss = css`
   span {
     font-size: 32px;
+  }
+
+  &.selected {
+    background-color: var(--primary-dark);
+    color: var(--grey-dark) !important;
+
+    &:hover {
+      background-color: var(--primary);
+    }
   }
 `;
 
@@ -114,6 +149,19 @@ export const LeftSidebar: FC = () => {
 
   const deleteGraph = useDeleteGraph();
   const loadGraph = useLoadGraph();
+  const saveGraph = useSaveCurrentGraph();
+
+  function handleDuplicate(savedGraph: NodeGraph) {
+    const duplicatedGraph: NodeGraph = {
+      ...savedGraph,
+      metadata: {
+        ...savedGraph.metadata,
+        id: nanoid() as GraphId,
+        name: `${savedGraph.metadata?.name} (Copy)`,
+      },
+    };
+    loadGraph(duplicatedGraph);
+  }
 
   function handleNew() {
     loadGraph(emptyNodeGraph());
@@ -128,6 +176,9 @@ export const LeftSidebar: FC = () => {
         {isSidebarVisible ? <ExpandLeftIcon /> : <ExpandRightIcon />}
       </div>
       <div className="graph-info-section">
+        <button className="save-graph" onClick={saveGraph}>
+          Save
+        </button>
         <InlineEditableTextfield
           label="Graph Name"
           placeholder="Graph Name"
@@ -153,16 +204,26 @@ export const LeftSidebar: FC = () => {
         </div>
         <div className="graph-list">
           {sortedGraphs.map((savedGraph) => (
-            <div key={savedGraph.metadata?.id ?? nanoid()} className="graph-item">
+            <div
+              key={savedGraph.metadata?.id ?? nanoid()}
+              className={clsx('graph-item', { selected: graph.metadata?.id === savedGraph.metadata?.id })}
+            >
               <div className="graph-item-select" onClick={() => loadGraph(savedGraph)}>
                 {savedGraph.metadata?.name ?? 'Untitled Graph'}
               </div>
               <DropdownMenu
                 trigger={({ triggerRef, ...props }) => (
-                  <Button css={moreDropdownCss} {...props} iconBefore={<MoreIcon />} ref={triggerRef} />
+                  <Button
+                    css={moreDropdownCss}
+                    className={clsx({ selected: graph.metadata?.id === savedGraph.metadata?.id })}
+                    {...props}
+                    iconBefore={<MoreIcon />}
+                    ref={triggerRef}
+                  />
                 )}
               >
                 <DropdownItem onClick={() => deleteGraph(savedGraph)}>Delete</DropdownItem>
+                <DropdownItem onClick={() => handleDuplicate(savedGraph)}>Duplicate</DropdownItem>
               </DropdownMenu>
             </div>
           ))}

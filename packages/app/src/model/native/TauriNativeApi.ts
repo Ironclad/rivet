@@ -35,7 +35,7 @@ const baseDirToBaseDirectory = (baseDir?: string): BaseDirectory | undefined =>
 
 export class TauriNativeApi implements NativeApi {
   async readdir(path: string, baseDir?: BaseDir, options: ReadDirOptions = {}): Promise<string[]> {
-    const { recursive = false, includeDirectories = false, filterGlobs = [], relative = false } = options;
+    const { recursive = false, includeDirectories = false, filterGlobs = [], relative = false, ignores = [] } = options;
 
     const baseDirectory = baseDirToBaseDirectory(baseDir);
     const results = await readDir(path, { dir: baseDirectory, recursive });
@@ -50,6 +50,12 @@ export class TauriNativeApi implements NativeApi {
     if (filterGlobs.length > 0) {
       for (const glob of filterGlobs) {
         filteredResults = filteredResults.filter((result) => minimatch(result, glob, { dot: true }));
+      }
+    }
+
+    if (ignores.length > 0) {
+      for (const ignore of ignores) {
+        filteredResults = filteredResults.filter((result) => !minimatch(result, ignore, { dot: true }));
       }
     }
 
