@@ -212,11 +212,11 @@ export const ReadDirectoryNodeEditor: FC<ReadDirectoryNodeEditorProps> = ({ node
           id="filterGlobs"
           className="input"
           type="text"
-          value={node.data.filterGlobs.join(', ')}
+          value={node.data.filterGlobs[0]}
           onChange={(e) =>
             onChange?.({
               ...node,
-              data: { ...node.data, filterGlobs: e.target.value.split(',').map((s) => s.trim()) },
+              data: { ...node.data, filterGlobs: [e.target.value] },
             })
           }
         />
@@ -227,6 +227,33 @@ export const ReadDirectoryNodeEditor: FC<ReadDirectoryNodeEditorProps> = ({ node
             onChange?.({
               ...node,
               data: { ...node.data, useFilterGlobsInput: e.target.checked },
+            })
+          }
+        />
+      </div>
+      <div className="row">
+        <label className="label" htmlFor="ignores">
+          Filter Glob
+        </label>
+        <input
+          id="ignores"
+          className="input"
+          type="text"
+          value={node.data.ignores?.join(',') ?? ''}
+          onChange={(e) =>
+            onChange?.({
+              ...node,
+              data: { ...node.data, ignores: e.target.value.split(',').map((s) => s.trim()) },
+            })
+          }
+        />
+        <Toggle
+          id="useIgnoresInput"
+          isChecked={node.data.useIgnoresInput}
+          onChange={(e) =>
+            onChange?.({
+              ...node,
+              data: { ...node.data, useIgnoresInput: e.target.checked },
             })
           }
         />

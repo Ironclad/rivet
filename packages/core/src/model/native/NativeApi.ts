@@ -5,6 +5,7 @@ export type ReadDirOptions = {
   includeDirectories?: boolean;
   filterGlobs?: string[];
   relative?: boolean;
+  ignores?: string[];
 };
 
 export interface NativeApi {

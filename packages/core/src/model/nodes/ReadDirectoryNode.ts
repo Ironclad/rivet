@@ -22,6 +22,9 @@ type ReadDirectoryNodeData = {
 
   relative: boolean;
   useRelativeInput: boolean;
+
+  ignores?: string[];
+  useIgnoresInput: boolean;
 };
 
 export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
@@ -42,6 +45,8 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
         useFilterGlobsInput: false,
         relative: false,
         useRelativeInput: false,
+        ignores: [],
+        useIgnoresInput: false,
       },
     };
   }
@@ -133,11 +138,16 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
       ? expectType(inputData['relative' as PortId], 'boolean')
       : this.chartNode.data.relative;
 
+    const ignores = this.chartNode.data.useIgnoresInput
+      ? expectType(inputData['ignores' as PortId], 'string[]')
+      : this.chartNode.data.ignores;
+
     const files = await context.nativeApi.readdir(path, undefined, {
       recursive,
       includeDirectories,
       filterGlobs,
       relative,
+      ignores,
     });
 
     return {
