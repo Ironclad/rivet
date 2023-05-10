@@ -16,6 +16,7 @@ import { ChunkNode, ChunkNodeImpl } from './nodes/ChunkNode';
 import { GraphInputNode, GraphInputNodeImpl } from './nodes/GraphInputNode';
 import { GraphOutputNode, GraphOutputNodeImpl } from './nodes/GraphOutputNode';
 import { SubGraphNode, SubGraphNodeImpl } from './nodes/SubGraphNode';
+import { ArrayNode, ArrayNodeImpl } from './nodes/ArrayNode';
 
 export type Nodes =
   | UserInputNode
@@ -32,7 +33,8 @@ export type Nodes =
   | ChunkNode
   | GraphInputNode
   | GraphOutputNode
-  | SubGraphNode;
+  | SubGraphNode
+  | ArrayNode;
 
 export * from './nodes/UserInputNode';
 export * from './nodes/TextNode';
@@ -49,6 +51,7 @@ export * from './nodes/ChunkNode';
 export * from './nodes/GraphInputNode';
 export * from './nodes/GraphOutputNode';
 export * from './nodes/SubGraphNode';
+export * from './nodes/ArrayNode';
 
 export type NodeType = Nodes['type'];
 
@@ -69,6 +72,7 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
     .with({ type: 'graphInput' }, (node) => new GraphInputNodeImpl(node))
     .with({ type: 'graphOutput' }, (node) => new GraphOutputNodeImpl(node))
     .with({ type: 'subGraph' }, (node) => new SubGraphNodeImpl(node))
+    .with({ type: 'array' }, (node) => new ArrayNodeImpl(node))
     .exhaustive();
 };
 
@@ -93,6 +97,7 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('graphInput', () => GraphInputNodeImpl.create())
     .with('graphOutput', () => GraphOutputNodeImpl.create())
     .with('subGraph', () => SubGraphNodeImpl.create())
+    .with('array', () => ArrayNodeImpl.create())
     .exhaustive();
 }
 
@@ -112,4 +117,5 @@ export const nodeDisplayName: Record<NodeType, string> = {
   graphInput: 'Graph Input',
   graphOutput: 'Graph Output',
   subGraph: 'Subgraph',
+  array: 'Array',
 };
