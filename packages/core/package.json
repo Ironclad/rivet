@@ -3,6 +3,9 @@
   "packageManager": "yarn@3.5.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",
     "@types/node": "^20.1.1",

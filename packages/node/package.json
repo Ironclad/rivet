@@ -3,6 +3,8 @@
   "main": "dist/bundle.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "build": "yarn compile && yarn bundle",
+    "compile": "tsc",
     "bundle": "esbuild src/index.ts --bundle --outfile=dist/bundle.js --platform=node"
   },
   "dependencies": {
