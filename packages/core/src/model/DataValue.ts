@@ -17,6 +17,7 @@ export type DateDataValue = DataValueDef<'date', string>;
 export type TimeDataValue = DataValueDef<'time', string>;
 export type DateTimeDataValue = DataValueDef<'datetime', string>;
 export type AnyDataValue = DataValueDef<'any', unknown>;
+export type ObjectDataValue = DataValueDef<'object', Record<string, unknown>>;
 
 export type ControlFlowExcludedDataValue = DataValueDef<'control-flow-excluded', undefined>;
 
@@ -29,7 +30,8 @@ export type ScalarDataValue =
   | BoolDataValue
   | ChatMessageDataValue
   | ControlFlowExcludedDataValue
-  | AnyDataValue;
+  | AnyDataValue
+  | ObjectDataValue;
 
 export type ScalarType = ScalarDataValue['type'];
 
@@ -103,6 +105,8 @@ export const dataTypes = exhaustiveTuple<DataType>()(
   'chat-message[]',
   'control-flow-excluded',
   'control-flow-excluded[]',
+  'object',
+  'object[]',
 );
 
 export const scalarTypes = exhaustiveTuple<ScalarType>()(
@@ -115,6 +119,7 @@ export const scalarTypes = exhaustiveTuple<ScalarType>()(
   'datetime',
   'chat-message',
   'control-flow-excluded',
+  'object',
 );
 
 export const dataTypeDisplayNames: Record<DataType, string> = {
@@ -136,4 +141,6 @@ export const dataTypeDisplayNames: Record<DataType, string> = {
   'chat-message[]': 'ChatMessage Array',
   'control-flow-excluded': 'ControlFlowExcluded',
   'control-flow-excluded[]': 'ControlFlowExcluded Array',
+  object: 'Object',
+  'object[]': 'Object Array',
 };

@@ -25,6 +25,7 @@ import { ChunkNodeOutput } from './nodes/ChunkNode';
 import { GraphInputNodeOutput } from './nodes/GraphInputNode';
 import { GraphOutputNodeOutput } from './nodes/GraphOutputNode';
 import { SubGraphNodeOutput } from './nodes/SubGraphNode';
+import { ExtractJsonNodeOutput } from './nodes/ExtractJsonNode';
 
 const fullscreenOutputButtonsCss = css`
   position: absolute;
@@ -71,6 +72,7 @@ export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
     .with({ type: 'graphInput' }, (node) => <GraphInputNodeOutput node={node} />)
     .with({ type: 'graphOutput' }, (node) => <GraphOutputNodeOutput node={node} />)
     .with({ type: 'subGraph' }, (node) => <SubGraphNodeOutput node={node} />)
+    .with({ type: 'extractJson' }, (node) => <ExtractJsonNodeOutput node={node} />)
     .otherwise(() => null);
 
   const fullscreenOutputBody = match(node as Nodes)

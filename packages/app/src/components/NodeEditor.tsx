@@ -25,6 +25,7 @@ import { GraphInputNodeEditor } from './nodes/GraphInputNode';
 import { GraphOutputNodeEditor } from './nodes/GraphOutputNode';
 import { SubGraphNodeEditor } from './nodes/SubGraphNode';
 import { ArrayNodeEditor } from './nodes/ArrayNode';
+import { ExtractJsonNodeEditor } from './nodes/ExtractJsonNode';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -189,6 +190,9 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
     ))
     .with({ type: 'subGraph' }, (node) => <SubGraphNodeEditor node={node} onChange={(node) => updateNode(node)} />)
     .with({ type: 'array' }, (node) => <ArrayNodeEditor node={node} onChange={(node) => updateNode(node)} />)
+    .with({ type: 'extractJson' }, (node) => (
+      <ExtractJsonNodeEditor node={node} onChange={(node) => updateNode(node)} />
+    ))
     .otherwise(() => null);
 
   useEffect(() => {
