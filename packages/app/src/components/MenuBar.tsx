@@ -8,10 +8,13 @@ import { loadGraphData, loadProjectData, saveGraphData, saveProjectData } from '
 import { graphState } from '../state/graph';
 import { graphRunningState } from '../state/dataFlow';
 import clsx from 'clsx';
-import { projectState } from '../state/savedGraphs';
+import { loadedProjectState, projectState } from '../state/savedGraphs';
 import { nanoid } from 'nanoid';
 import { ProjectId, emptyNodeGraph } from '@ironclad/nodai-core';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
+import { useLoadProject } from '../hooks/useLoadProject';
+import { useSaveProject } from '../hooks/useSaveProject';
+import { useNewProject } from '../hooks/useNewProject';
 
 const styles = css`
   display: flex;
@@ -149,34 +152,27 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph }) => {
   const [graphData, setGraphData] = useRecoilState(graphState);
   const [project, setProject] = useRecoilState(projectState);
   const [fileMenuOpen, setFileMenuOpen] = useState(false);
+  const loadProject = useLoadProject();
+  const { saveProject } = useSaveProject();
+  const newProject = useNewProject();
+  const setLoadedProject = useSetRecoilState(loadedProjectState);
 
   const graphRunning = useRecoilValue(graphRunningState);
 
   const { remoteDebugger, connect, disconnect } = useRemoteDebugger();
 
   function handleNewProject() {
-    setProject({
-      graphs: {},
-      metadata: {
-        id: nanoid() as ProjectId,
-        title: 'Untitled Project',
-        description: '',
-      },
-    });
-    setGraphData(emptyNodeGraph());
+    newProject();
     setFileMenuOpen(false);
   }
 
   function handleLoadProject() {
-    loadProjectData((project) => {
-      setProject(project);
-      setGraphData(emptyNodeGraph());
-    });
+    loadProject();
     setFileMenuOpen(false);
   }
 
   function handleSaveProject() {
-    saveProjectData(project);
+    saveProject();
     setFileMenuOpen(false);
   }
 

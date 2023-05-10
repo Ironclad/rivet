@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import { FC, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { graphState } from '../state/graph';
-import { savedGraphsState } from '../state/savedGraphs';
+import { loadedProjectState, projectState, savedGraphsState } from '../state/savedGraphs';
 import { orderBy } from 'lodash-es';
 import { nanoid } from 'nanoid';
 import DropdownMenu, { DropdownItem } from '@atlaskit/dropdown-menu';
@@ -16,6 +16,7 @@ import { useLoadGraph } from '../hooks/useLoadGraph';
 import { GraphId, NodeGraph, emptyNodeGraph } from '@ironclad/nodai-core';
 import clsx from 'clsx';
 import { useSaveCurrentGraph } from '../hooks/useSaveCurrentGraph';
+import { useSaveProject } from '../hooks/useSaveProject';
 
 const styles = css`
   position: fixed;
@@ -24,7 +25,7 @@ const styles = css`
   bottom: 0;
   width: 300px; // Adjust the width of the sidebar as needed
   background-color: var(--grey-dark);
-  padding: 1rem;
+  padding: 12px;
   z-index: 50;
   border-right: 1px solid var(--grey);
 
@@ -109,7 +110,8 @@ const styles = css`
     }
   }
 
-  .save-graph {
+  .save-graph,
+  .save-project {
     position: absolute;
     right: 16px;
 
@@ -122,6 +124,12 @@ const styles = css`
     &:hover {
       background-color: var(--grey-darkish);
     }
+  }
+
+  .project-info-section {
+    background-color: var(--grey-darker);
+    margin: -8px -12px 0 -12px;
+    padding: 8px 12px;
   }
 `;
 
@@ -142,6 +150,7 @@ const moreDropdownCss = css`
 
 export const LeftSidebar: FC = () => {
   const [graph, setGraph] = useRecoilState(graphState);
+  const [project, setProject] = useRecoilState(projectState);
   const savedGraphs = useRecoilValue(savedGraphsState);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
@@ -150,6 +159,9 @@ export const LeftSidebar: FC = () => {
   const deleteGraph = useDeleteGraph();
   const loadGraph = useLoadGraph();
   const saveGraph = useSaveCurrentGraph();
+  const { saveProject } = useSaveProject();
+
+  const loadedProject = useRecoilValue(loadedProjectState);
 
   function handleDuplicate(savedGraph: NodeGraph) {
     const duplicatedGraph: NodeGraph = {
@@ -174,6 +186,27 @@ export const LeftSidebar: FC = () => {
     >
       <div className="toggle-tab" onClick={() => setIsSidebarVisible(!isSidebarVisible)}>
         {isSidebarVisible ? <ExpandLeftIcon /> : <ExpandRightIcon />}
+      </div>
+      <div className="project-info-section">
+        <button className="save-project" onClick={saveProject}>
+          Save Project
+        </button>
+        {loadedProject.loaded && <div>Loaded: {loadedProject.path.split('/').pop()}</div>}
+        <InlineEditableTextfield
+          label="Project Name"
+          placeholder="Project Name"
+          readViewFitContainerWidth
+          defaultValue={project.metadata.title}
+          onConfirm={(newValue) => setProject({ ...project, metadata: { ...project.metadata, title: newValue } })}
+        />
+
+        <InlineEditableTextfield
+          label="Description"
+          placeholder="Project Description"
+          defaultValue={project.metadata?.description ?? ''}
+          onConfirm={(newValue) => setProject({ ...project, metadata: { ...project.metadata, description: newValue } })}
+          readViewFitContainerWidth
+        />
       </div>
       <div className="graph-info-section">
         <button className="save-graph" onClick={saveGraph}>

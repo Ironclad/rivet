@@ -1,6 +1,6 @@
 import { save, open } from '@tauri-apps/api/dialog';
 import { writeFile, readTextFile } from '@tauri-apps/api/fs';
-import { ChartNode, NodeGraph, Project } from '@ironclad/nodai-core';
+import { NodeGraph, Project } from '@ironclad/nodai-core';
 
 export async function saveGraphData(graphData: NodeGraph) {
   const filePath = await save({
@@ -14,7 +14,7 @@ export async function saveGraphData(graphData: NodeGraph) {
     defaultPath: `${graphData.metadata?.name ?? 'graph'}.json`,
   });
 
-  const data = JSON.stringify(graphData);
+  const data = JSON.stringify(graphData, null, 2);
 
   if (filePath) {
     await writeFile({
@@ -36,14 +36,27 @@ export async function saveProjectData(project: Project) {
     defaultPath: `${project.metadata?.title ?? 'project'}.json`,
   });
 
-  const data = JSON.stringify(project);
+  const data = JSON.stringify(project, null, 2);
 
   if (filePath) {
     await writeFile({
       contents: data,
       path: filePath,
     });
+
+    return filePath;
   }
+
+  return undefined;
+}
+
+export async function saveProjectDataNoPrompt(project: Project, path: string) {
+  const data = JSON.stringify(project, null, 2);
+
+  await writeFile({
+    contents: data,
+    path: path,
+  });
 }
 
 export async function loadGraphData(callback: (graphData: NodeGraph) => void) {
@@ -67,7 +80,7 @@ export async function loadGraphData(callback: (graphData: NodeGraph) => void) {
   }
 }
 
-export async function loadProjectData(callback: (project: Project) => void) {
+export async function loadProjectData(callback: (data: { project: Project; path: string }) => void) {
   const path = await open({
     filters: [
       {
@@ -83,8 +96,8 @@ export async function loadProjectData(callback: (project: Project) => void) {
 
   if (path) {
     const data = await readTextFile(path as string);
-    const projectData = JSON.parse(data);
-    callback(projectData);
+    const projectData = JSON.parse(data) as Project;
+    callback({ project: projectData, path: path as string });
   }
 }
 
