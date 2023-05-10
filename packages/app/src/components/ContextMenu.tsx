@@ -200,6 +200,7 @@ const BlankAreaContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSelect
       <MenuItem label="Text" onClick={() => addNode('text')} />
       <MenuItem label="User Input" onClick={() => addNode('userInput')} />
       <MenuItem label="Extract With Regex" onClick={() => addNode('extractRegex')} />
+      <MenuItem label="Extract JSON" onClick={() => addNode('extractJson')} />
       <MenuItem label="Code" onClick={() => addNode('code')} />
       <MenuItem label="Match" onClick={() => addNode('match')} />
       <MenuItem label="If" onClick={() => addNode('if')} />

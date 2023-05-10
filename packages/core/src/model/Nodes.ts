@@ -17,6 +17,7 @@ import { GraphInputNode, GraphInputNodeImpl } from './nodes/GraphInputNode';
 import { GraphOutputNode, GraphOutputNodeImpl } from './nodes/GraphOutputNode';
 import { SubGraphNode, SubGraphNodeImpl } from './nodes/SubGraphNode';
 import { ArrayNode, ArrayNodeImpl } from './nodes/ArrayNode';
+import { ExtractJsonNode, ExtractJsonNodeImpl } from './nodes/ExtractJsonNode';
 
 export type Nodes =
   | UserInputNode
@@ -34,7 +35,8 @@ export type Nodes =
   | GraphInputNode
   | GraphOutputNode
   | SubGraphNode
-  | ArrayNode;
+  | ArrayNode
+  | ExtractJsonNode;
 
 export * from './nodes/UserInputNode';
 export * from './nodes/TextNode';
@@ -52,6 +54,7 @@ export * from './nodes/GraphInputNode';
 export * from './nodes/GraphOutputNode';
 export * from './nodes/SubGraphNode';
 export * from './nodes/ArrayNode';
+export * from './nodes/ExtractJsonNode';
 
 export type NodeType = Nodes['type'];
 
@@ -73,6 +76,7 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
     .with({ type: 'graphOutput' }, (node) => new GraphOutputNodeImpl(node))
     .with({ type: 'subGraph' }, (node) => new SubGraphNodeImpl(node))
     .with({ type: 'array' }, (node) => new ArrayNodeImpl(node))
+    .with({ type: 'extractJson' }, (node) => new ExtractJsonNodeImpl(node))
     .exhaustive();
 };
 
@@ -98,6 +102,7 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('graphOutput', () => GraphOutputNodeImpl.create())
     .with('subGraph', () => SubGraphNodeImpl.create())
     .with('array', () => ArrayNodeImpl.create())
+    .with('extractJson', () => ExtractJsonNodeImpl.create())
     .exhaustive();
 }
 
@@ -107,6 +112,7 @@ export const nodeDisplayName: Record<NodeType, string> = {
   chat: 'Chat',
   prompt: 'Prompt',
   extractRegex: 'Extract With Regex',
+  extractJson: 'Extract JSON',
   code: 'Code',
   match: 'Match',
   if: 'If',
