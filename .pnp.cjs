@@ -5668,6 +5668,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:18.0.29"],\
             ["@types/react-dom", "npm:18.0.11"],\
             ["@types/react-transition-group", "npm:4.4.5"],\
+            ["@types/ws", "npm:8.5.4"],\
             ["@types/yargs", "npm:17.0.23"],\
             ["@vitejs/plugin-react", "virtual:00fbb42c49ce4b25b481dab0d35a8230d95989009bca1030797ae62f3c19e1cf968caffd5d8ca0b4ad7a3254eb4dbea43d2b2e6828a55f32e1eb00f4d13617e1#npm:3.1.0"],\
             ["ahooks", "virtual:00fbb42c49ce4b25b481dab0d35a8230d95989009bca1030797ae62f3c19e1cf968caffd5d8ca0b4ad7a3254eb4dbea43d2b2e6828a55f32e1eb00f4d13617e1#npm:3.7.6"],\
@@ -5699,9 +5700,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["mini-css-extract-plugin", "virtual:00fbb42c49ce4b25b481dab0d35a8230d95989009bca1030797ae62f3c19e1cf968caffd5d8ca0b4ad7a3254eb4dbea43d2b2e6828a55f32e1eb00f4d13617e1#npm:2.7.5"],\
             ["minimatch", "npm:9.0.0"],\
             ["monaco-editor", "npm:0.37.1"],\
-            ["nanoid", "npm:4.0.1"],\
+            ["nanoid", "npm:3.3.6"],\
             ["openai", "npm:3.2.1"],\
-            ["p-queue", "npm:7.3.4"],\
+            ["p-queue", "npm:6.6.2"],\
             ["p-retry", "npm:5.1.2"],\
             ["postcss", "npm:8.4.21"],\
             ["postcss-flexbugs-fixes", "virtual:00fbb42c49ce4b25b481dab0d35a8230d95989009bca1030797ae62f3c19e1cf968caffd5d8ca0b4ad7a3254eb4dbea43d2b2e6828a55f32e1eb00f4d13617e1#npm:5.0.2"],\
@@ -5746,6 +5747,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["webpack-dev-server", "virtual:00fbb42c49ce4b25b481dab0d35a8230d95989009bca1030797ae62f3c19e1cf968caffd5d8ca0b4ad7a3254eb4dbea43d2b2e6828a55f32e1eb00f4d13617e1#npm:4.13.1"],\
             ["webpack-manifest-plugin", "virtual:00fbb42c49ce4b25b481dab0d35a8230d95989009bca1030797ae62f3c19e1cf968caffd5d8ca0b4ad7a3254eb4dbea43d2b2e6828a55f32e1eb00f4d13617e1#npm:4.1.1"],\
             ["workbox-webpack-plugin", "virtual:00fbb42c49ce4b25b481dab0d35a8230d95989009bca1030797ae62f3c19e1cf968caffd5d8ca0b4ad7a3254eb4dbea43d2b2e6828a55f32e1eb00f4d13617e1#npm:6.5.4"],\
+            ["ws", "virtual:4a84fb1c4f64726288bd4dcc77ec2162f1ac9fe98e831b6393c0ca4ad078b2d87813b96307bde95ffed59f5018ebca203e17c78161a8dd22c125a246a9a3cd3c#npm:8.13.0"],\
             ["yargs", "npm:17.7.1"]\
           ],\
           "linkType": "SOFT"\
@@ -5762,9 +5764,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["emittery", "npm:1.0.1"],\
             ["lodash-es", "npm:4.17.21"],\
             ["minimatch", "npm:9.0.0"],\
-            ["nanoid", "npm:4.0.2"],\
+            ["nanoid", "npm:3.3.6"],\
             ["openai", "npm:3.2.1"],\
-            ["p-queue", "npm:7.3.4"],\
+            ["p-queue", "npm:6.6.2"],\
             ["p-retry", "npm:5.1.2"],\
             ["ts-pattern", "npm:4.3.0"],\
             ["type-fest", "virtual:ee53775331eeeecac063f8feb53102b3a1c4a9deb536f3dca087d0c61347a740d7ecde5e6b5d744e87c5eebfbe096912824a4162124776f5f1f671019378f54a#npm:3.10.0"],\
@@ -5778,9 +5780,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/node/",\
           "packageDependencies": [\
             ["@ironclad/nodai-node", "workspace:packages/node"],\
-            ["@ironclad/nodai", "workspace:."],\
             ["@ironclad/nodai-core", "workspace:packages/core"],\
-            ["@types/node", "npm:20.1.1"]\
+            ["@types/node", "npm:20.1.1"],\
+            ["@types/ws", "npm:8.5.4"],\
+            ["esbuild", "npm:0.17.18"],\
+            ["typescript", "patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"],\
+            ["ws", "virtual:4a84fb1c4f64726288bd4dcc77ec2162f1ac9fe98e831b6393c0ca4ad078b2d87813b96307bde95ffed59f5018ebca203e17c78161a8dd22c125a246a9a3cd3c#npm:8.13.0"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -17348,17 +17353,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["npm:4.0.1", {\
-          "packageLocation": "./.yarn/cache/nanoid-npm-4.0.1-d3abfa88f9-21022a7910.zip/node_modules/nanoid/",\
+        ["npm:3.3.6", {\
+          "packageLocation": "./.yarn/cache/nanoid-npm-3.3.6-e6d6ae7e71-7d0eda6570.zip/node_modules/nanoid/",\
           "packageDependencies": [\
-            ["nanoid", "npm:4.0.1"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["npm:4.0.2", {\
-          "packageLocation": "./.yarn/cache/nanoid-npm-4.0.2-ae010cad86-747c399cea.zip/node_modules/nanoid/",\
-          "packageDependencies": [\
-            ["nanoid", "npm:4.0.2"]\
+            ["nanoid", "npm:3.3.6"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -17867,6 +17865,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["p-finally", [\
+        ["npm:1.0.0", {\
+          "packageLocation": "./.yarn/cache/p-finally-npm-1.0.0-35fbaa57c6-93a654c53d.zip/node_modules/p-finally/",\
+          "packageDependencies": [\
+            ["p-finally", "npm:1.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["p-limit", [\
         ["npm:2.3.0", {\
           "packageLocation": "./.yarn/cache/p-limit-npm-2.3.0-94a0310039-84ff17f1a3.zip/node_modules/p-limit/",\
@@ -17922,12 +17929,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["p-queue", [\
-        ["npm:7.3.4", {\
-          "packageLocation": "./.yarn/cache/p-queue-npm-7.3.4-c746a7f1ae-a21b8a4dd7.zip/node_modules/p-queue/",\
+        ["npm:6.6.2", {\
+          "packageLocation": "./.yarn/cache/p-queue-npm-6.6.2-b173c5bfa8-832642fcc4.zip/node_modules/p-queue/",\
           "packageDependencies": [\
-            ["p-queue", "npm:7.3.4"],\
+            ["p-queue", "npm:6.6.2"],\
             ["eventemitter3", "npm:4.0.7"],\
-            ["p-timeout", "npm:5.1.0"]\
+            ["p-timeout", "npm:3.2.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -17953,10 +17960,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["p-timeout", [\
-        ["npm:5.1.0", {\
-          "packageLocation": "./.yarn/cache/p-timeout-npm-5.1.0-11ca554b60-f5cd4e1730.zip/node_modules/p-timeout/",\
+        ["npm:3.2.0", {\
+          "packageLocation": "./.yarn/cache/p-timeout-npm-3.2.0-7fdb33f733-3dd0eaa048.zip/node_modules/p-timeout/",\
           "packageDependencies": [\
-            ["p-timeout", "npm:5.1.0"]\
+            ["p-timeout", "npm:3.2.0"],\
+            ["p-finally", "npm:1.0.0"]\
           ],\
           "linkType": "HARD"\
         }]\

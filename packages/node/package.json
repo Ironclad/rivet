@@ -1,10 +1,18 @@
 {
   "name": "@ironclad/nodai-node",
+  "main": "dist/bundle.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "bundle": "esbuild src/index.ts --bundle --outfile=dist/bundle.js --platform=node"
+  },
   "dependencies": {
-    "@ironclad/nodai": "workspace:^",
-    "@ironclad/nodai-core": "workspace:^"
+    "@ironclad/nodai-core": "workspace:^",
+    "ws": "^8.13.0"
   },
   "devDependencies": {
-    "@types/node": "^20.1.1"
+    "@types/node": "^20.1.1",
+    "@types/ws": "^8.5.4",
+    "esbuild": "^0.17.18",
+    "typescript": "^5.0.4"
   }
 }

@@ -11,6 +11,7 @@ import clsx from 'clsx';
 import { projectState } from '../state/savedGraphs';
 import { nanoid } from 'nanoid';
 import { ProjectId, emptyNodeGraph } from '@ironclad/nodai-core';
+import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
 
 const styles = css`
   display: flex;
@@ -151,6 +152,8 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph }) => {
 
   const graphRunning = useRecoilValue(graphRunningState);
 
+  const { remoteDebugger, connect, disconnect } = useRemoteDebugger();
+
   function handleNewProject() {
     setProject({
       graphs: {},
@@ -198,6 +201,13 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph }) => {
         </div>
         <div className="menu-item import-button">
           <button onClick={() => loadGraphData((data) => setGraphData(data))}>Import</button>
+        </div>
+        <div className="menu-item remote-debugger-button">
+          {remoteDebugger.started ? (
+            <button onClick={() => disconnect()}>Disconnect Remote Debugger</button>
+          ) : (
+            <button onClick={() => connect()}>Remote Debugger</button>
+          )}
         </div>
       </div>
       <div className={clsx('run-button', { running: graphRunning })}>

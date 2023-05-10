@@ -16,6 +16,7 @@ import { ChunkNodeBody } from './nodes/ChunkNode';
 import { GraphInputNodeBody } from './nodes/GraphInputNode';
 import { GraphOutputNodeBody } from './nodes/GraphOutputNode';
 import { SubGraphNodeBody } from './nodes/SubGraphNode';
+import { ArrayNodeBody } from './nodes/ArrayNode';
 
 export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
   const body = match(node as Nodes)
@@ -34,6 +35,7 @@ export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
     .with({ type: 'graphInput' }, (node) => <GraphInputNodeBody node={node} />)
     .with({ type: 'graphOutput' }, (node) => <GraphOutputNodeBody node={node} />)
     .with({ type: 'subGraph' }, (node) => <SubGraphNodeBody node={node} />)
+    .with({ type: 'array' }, (node) => <ArrayNodeBody node={node} />)
     .otherwise(() => <div>Unknown node type</div>);
 
   return <div className="node-body">{body}</div>;

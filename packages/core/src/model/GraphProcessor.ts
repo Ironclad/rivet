@@ -495,7 +495,14 @@ export class GraphProcessor {
       signal: this.#abortController.signal,
       createSubProcessor: (subGraphId: GraphId) => {
         const processor = new GraphProcessor(this.#project, subGraphId);
-        processor.#emitter = this.#emitter;
+        processor.on('nodeError', (e) => this.#emitter.emit('nodeError', e));
+        processor.on('nodeFinish', (e) => this.#emitter.emit('nodeFinish', e));
+        processor.on('partialOutput', (e) => this.#emitter.emit('partialOutput', e));
+        processor.on('nodeExcluded', (e) => this.#emitter.emit('nodeExcluded', e));
+        processor.on('nodeStart', (e) => this.#emitter.emit('nodeStart', e));
+        processor.on('userInput', (e) => this.#emitter.emit('userInput', e)); // TODO!
+
+        this.on('abort', () => processor.abort());
 
         return processor;
       },

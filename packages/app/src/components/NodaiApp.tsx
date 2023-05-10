@@ -14,8 +14,9 @@ import { cloneDeep } from 'lodash-es';
 import { LeftSidebar } from './LeftSidebar';
 import { projectState } from '../state/savedGraphs';
 import { useSaveCurrentGraph } from '../hooks/useSaveCurrentGraph';
-import { GraphProcessor, NodeId, PortId, StringArrayDataValue, expectType } from '@ironclad/nodai-core';
+import { GraphProcessor, NodeId, PortId, ProcessEvents, StringArrayDataValue, expectType } from '@ironclad/nodai-core';
 import { TauriNativeApi } from '../model/native/TauriNativeApi';
+import { setCurrentDebuggerMessageHandler } from '../hooks/useRemoteDebugger';
 
 const styles = css`
   overflow: hidden;
@@ -48,6 +49,95 @@ export const NodaiApp: FC = () => {
   const currentProcessor = useRef<GraphProcessor | null>(null);
   const project = useRecoilValue(projectState);
 
+  const nodeStart = ({ node, inputs }: ProcessEvents['nodeStart']) => {
+    setDataForNode(node.id, {
+      inputData: inputs,
+      status: { type: 'running' },
+    });
+  };
+
+  const nodeFinish = ({ node, outputs }: ProcessEvents['nodeFinish']) => {
+    setDataForNode(node.id, {
+      outputData: outputs,
+      status: { type: 'ok' },
+    });
+  };
+
+  const nodeError = ({ node, error }: ProcessEvents['nodeError']) => {
+    setDataForNode(node.id, {
+      status: { type: 'error', error: error.message },
+    });
+  };
+
+  const userInput = ({ node, inputs }: ProcessEvents['userInput']) => {
+    const questions = node.data.useInput
+      ? expectType(inputs?.['questions' as PortId], 'string[]') ?? []
+      : [node.data.prompt];
+
+    setUserInputQuestions((q) => ({ ...q, [node.id]: questions }));
+  };
+
+  const start = () => {
+    setGraphRunning(true);
+  };
+
+  const done = () => {
+    setGraphRunning(false);
+  };
+
+  const abort = () => {
+    setGraphRunning(false);
+  };
+
+  const partialOutput = ({ node, outputs, index }: ProcessEvents['partialOutput']) => {
+    if (node.isSplitRun) {
+      setLastRunData((prev) =>
+        produce(prev, (draft) => {
+          draft[node.id] = {
+            ...draft[node.id],
+            splitOutputData: {
+              ...draft[node.id]?.splitOutputData,
+              [index]: cloneDeep(outputs),
+            },
+          };
+        }),
+      );
+    } else {
+      setDataForNode(node.id, {
+        outputData: outputs,
+      });
+    }
+  };
+
+  setCurrentDebuggerMessageHandler((message, data) => {
+    switch (message) {
+      case 'nodeStart':
+        nodeStart(data as ProcessEvents['nodeStart']);
+        break;
+      case 'nodeFinish':
+        nodeFinish(data as ProcessEvents['nodeFinish']);
+        break;
+      case 'nodeError':
+        nodeError(data as ProcessEvents['nodeError']);
+        break;
+      case 'userInput':
+        userInput(data as ProcessEvents['userInput']);
+        break;
+      case 'start':
+        start();
+        break;
+      case 'done':
+        done();
+        break;
+      case 'abort':
+        abort();
+        break;
+      case 'partialOutput':
+        partialOutput(data as ProcessEvents['partialOutput']);
+        break;
+    }
+  });
+
   const tryRunGraph = async () => {
     try {
       saveGraph();
@@ -68,25 +158,9 @@ export const NodaiApp: FC = () => {
 
       const processor = new GraphProcessor(tempProject, graph.metadata!.id!);
 
-      processor.on('nodeStart', ({ node, inputs }) => {
-        setDataForNode(node.id, {
-          inputData: inputs,
-          status: { type: 'running' },
-        });
-      });
-
-      processor.on('nodeFinish', ({ node, outputs }) => {
-        setDataForNode(node.id, {
-          outputData: outputs,
-          status: { type: 'ok' },
-        });
-      });
-
-      processor.on('nodeError', ({ node, error }) => {
-        setDataForNode(node.id, {
-          status: { type: 'error', error: error.message },
-        });
-      });
+      processor.on('nodeStart', nodeStart);
+      processor.on('nodeFinish', nodeFinish);
+      processor.on('nodeError', nodeError);
 
       setUserInputModalSubmit({
         submit: (nodeId: NodeId, answers: StringArrayDataValue) => {
@@ -94,45 +168,11 @@ export const NodaiApp: FC = () => {
         },
       });
 
-      processor.on('userInput', ({ node, inputs }) => {
-        const questions = node.data.useInput
-          ? expectType(inputs?.['questions' as PortId], 'string[]') ?? []
-          : [node.data.prompt];
-
-        setUserInputQuestions((q) => ({ ...q, [node.id]: questions }));
-      });
-
-      processor.on('start', () => {
-        setGraphRunning(true);
-      });
-
-      processor.on('done', () => {
-        setGraphRunning(false);
-      });
-
-      processor.on('abort', () => {
-        setGraphRunning(false);
-      });
-
-      processor.on('partialOutput', ({ node, outputs, index }) => {
-        if (node.isSplitRun) {
-          setLastRunData((prev) =>
-            produce(prev, (draft) => {
-              draft[node.id] = {
-                ...draft[node.id],
-                splitOutputData: {
-                  ...draft[node.id]?.splitOutputData,
-                  [index]: cloneDeep(outputs),
-                },
-              };
-            }),
-          );
-        } else {
-          setDataForNode(node.id, {
-            outputData: outputs,
-          });
-        }
-      });
+      processor.on('userInput', userInput);
+      processor.on('start', start);
+      processor.on('done', done);
+      processor.on('abort', abort);
+      processor.on('partialOutput', partialOutput);
 
       currentProcessor.current = processor;
 

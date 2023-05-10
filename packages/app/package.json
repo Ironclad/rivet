@@ -79,9 +79,9 @@
     "mini-css-extract-plugin": "^2.4.5",
     "minimatch": "^9.0.0",
     "monaco-editor": "^0.37.1",
-    "nanoid": "^4.0.1",
+    "nanoid": "^3.3.6",
     "openai": "^3.2.1",
-    "p-queue": "^7.3.4",
+    "p-queue": "^6.6.2",
     "p-retry": "^5.1.2",
     "postcss": "^8.4.4",
     "postcss-flexbugs-fixes": "^5.0.2",
@@ -117,7 +117,8 @@
     "webpack": "^5.64.4",
     "webpack-dev-server": "^4.6.0",
     "webpack-manifest-plugin": "^4.0.2",
-    "workbox-webpack-plugin": "^6.4.1"
+    "workbox-webpack-plugin": "^6.4.1",
+    "ws": "^8.13.0"
   },
   "devDependencies": {
     "@atlaskit/css-reset": "^6.3.21",
@@ -140,6 +141,7 @@
     "@storybook/testing-library": "^0.0.14-next.1",
     "@tauri-apps/cli": "^1.2.3",
     "@types/lodash-es": "^4",
+    "@types/ws": "^8.5.4",
     "@types/yargs": "^17",
     "@vitejs/plugin-react": "^3.1.0",
     "esbuild": "^0.17.18",
