@@ -5,6 +5,9 @@
     "packages/*"
   ],
   "private": true,
+  "scripts": {
+    "build-lib": "yarn workspace @ironclad/nodai-core run build && yarn workspace @ironclad/nodai-node run build"
+  },
   "devDependencies": {
     "@types/eslint": "^8",
     "esbuild": "^0.17.18",
