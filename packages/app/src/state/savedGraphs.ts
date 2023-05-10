@@ -5,6 +5,33 @@ import { values } from '../utils/typeSafety';
 import produce from 'immer';
 import { GraphId, NodeGraph, Project, ProjectId } from '@ironclad/nodai-core';
 
+// What's the data of the last loaded project?
+export const projectState = atom<Project>({
+  key: 'projectState',
+  default: {
+    metadata: {
+      id: nanoid() as ProjectId,
+      description: '',
+      title: 'Untitled Project',
+    },
+    graphs: {},
+  },
+  effects_UNSTABLE: [persistAtom],
+});
+
+// Which project file was loaded last and where is it?
+export const loadedProjectState = atom<{
+  path: string;
+  loaded: boolean;
+}>({
+  key: 'loadedProjectState',
+  default: {
+    path: '',
+    loaded: false,
+  },
+  effects_UNSTABLE: [persistAtom],
+});
+
 export const savedGraphsState = selector<NodeGraph[]>({
   key: 'savedGraphsState',
   get: ({ get }) => {
@@ -36,17 +63,4 @@ export const savedGraphsState = selector<NodeGraph[]>({
 
     set(projectState, newProject);
   },
-});
-
-export const projectState = atom<Project>({
-  key: 'projectState',
-  default: {
-    metadata: {
-      id: nanoid() as ProjectId,
-      description: '',
-      title: 'Untitled Project',
-    },
-    graphs: {},
-  },
-  effects_UNSTABLE: [persistAtom],
 });
