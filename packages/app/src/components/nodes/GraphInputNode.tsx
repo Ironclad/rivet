@@ -8,6 +8,7 @@ import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
 import { RenderDataValue } from '../RenderDataValue';
 import { DataType, GraphInputNode, PortId, ScalarType, dataTypeDisplayNames, scalarTypes } from '@ironclad/nodai-core';
+import Toggle from '@atlaskit/toggle';
 
 export type GraphInputNodeBodyProps = {
   node: GraphInputNode;
@@ -29,12 +30,16 @@ export type GraphInputNodeEditorProps = {
 
 const editorCss = css`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr auto;
   align-items: stretch;
   width: 100%;
   align-content: start;
   align-items: center;
   column-gap: 16px;
+
+  .use-input-toggle {
+    align-self: center;
+  }
 `;
 
 const checkboxCss = css`
@@ -108,8 +113,9 @@ export const GraphInputNodeEditor: FC<GraphInputNodeEditorProps> = ({ node, onCh
           )}
         </Field>
       </div>
+      <div />
 
-      <Field name="default-value" label="Default Value">
+      <Field name="default-value" label="Default Value" isDisabled={node.data.useDefaultValueInput}>
         {({ fieldProps }) => (
           <TextField
             {...fieldProps}
@@ -120,7 +126,12 @@ export const GraphInputNodeEditor: FC<GraphInputNodeEditorProps> = ({ node, onCh
           />
         )}
       </Field>
-      <div />
+      <div className="use-input-toggle">
+        <Toggle
+          isChecked={node.data.useDefaultValueInput}
+          onChange={(e) => onChange?.({ ...node, data: { ...node.data, useDefaultValueInput: e.target.checked } })}
+        />
+      </div>
     </div>
   );
 };

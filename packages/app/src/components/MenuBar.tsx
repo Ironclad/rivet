@@ -140,6 +140,10 @@ const styles = css`
   .file-dropdown.open {
     display: block;
   }
+
+  .remote-debugger-button.active button {
+    background-color: var(--error);
+  }
 `;
 
 export type MenuBarProps = {
@@ -198,7 +202,7 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph }) => {
         <div className="menu-item import-button">
           <button onClick={() => loadGraphData((data) => setGraphData(data))}>Import</button>
         </div>
-        <div className="menu-item remote-debugger-button">
+        <div className={clsx('menu-item remote-debugger-button', { active: remoteDebugger.started })}>
           {remoteDebugger.started ? (
             <button onClick={() => disconnect()}>Disconnect Remote Debugger</button>
           ) : (

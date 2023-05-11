@@ -78,6 +78,7 @@ export const NodaiApp: FC = () => {
   };
 
   const start = () => {
+    setLastRunData({});
     setGraphRunning(true);
   };
 
@@ -145,8 +146,6 @@ export const NodaiApp: FC = () => {
       if (currentProcessor.current?.isRunning) {
         return;
       }
-
-      setLastRunData({});
 
       const tempProject = {
         ...project,

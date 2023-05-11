@@ -12,7 +12,7 @@ import Emittery from 'emittery';
 import { entries, fromEntries, values } from '../utils/typeSafety';
 import { isNotNull } from '../utils/genericUtilFunctions';
 import { GraphOutputNode } from './nodes/GraphOutputNode';
-import { GraphInputNode } from './nodes/GraphInputNode';
+import { GraphInputNode, GraphInputNodeImpl } from './nodes/GraphInputNode';
 import { Project } from './Project';
 
 export type ProcessEvents = {
@@ -446,13 +446,17 @@ export class GraphProcessor {
     }
   }
 
-  #processGraphInputNode(node: GraphInputNode) {
-    let inputValue = this.#graphInputs[node.data.id];
-    if (inputValue == null) {
-      inputValue = { type: node.data.dataType, value: node.data.defaultValue } as DataValue;
+  async #processGraphInputNode(node: GraphInputNode) {
+    const inputValues = this.#getInputValuesForNode(node);
+
+    if (this.#excludedDueToControlFlow(node, inputValues)) {
+      return;
     }
 
-    const outputValues = { ['data' as PortId]: inputValue } as Outputs;
+    this.#emitter.emit('nodeStart', { node, inputs: inputValues });
+
+    const impl = this.#nodeInstances[node.id] as GraphInputNodeImpl;
+    const outputValues = await impl.getOutputValuesFromGraphInput(this.#graphInputs, inputValues);
 
     this.#nodeResults.set(node.id, outputValues);
     this.#visitedNodes.add(node.id);
