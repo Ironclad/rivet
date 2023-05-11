@@ -144,6 +144,11 @@ const styles = css`
   .remote-debugger-button.active button {
     background-color: var(--error);
   }
+
+  .remote-debugger-button.reconnecting button {
+    background-color: var(--warning);
+    color: var(--grey-dark);
+  }
 `;
 
 export type MenuBarProps = {
@@ -202,11 +207,18 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph }) => {
         <div className="menu-item import-button">
           <button onClick={() => loadGraphData((data) => setGraphData(data))}>Import</button>
         </div>
-        <div className={clsx('menu-item remote-debugger-button', { active: remoteDebugger.started })}>
+        <div
+          className={clsx('menu-item remote-debugger-button', {
+            active: remoteDebugger.started,
+            reconnecting: remoteDebugger.reconnecting,
+          })}
+        >
           {remoteDebugger.started ? (
             <button onClick={() => disconnect()}>Disconnect Remote Debugger</button>
           ) : (
-            <button onClick={() => connect()}>Remote Debugger</button>
+            <button onClick={() => connect()}>
+              {remoteDebugger.reconnecting ? 'Remote Debugger (Reconnecting...)' : 'Remote Debugger'}
+            </button>
           )}
         </div>
       </div>
