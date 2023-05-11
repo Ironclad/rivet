@@ -20,6 +20,19 @@ export const RenderDataValue: FC<{ value: DataValue | undefined }> = ({ value })
         ))}
       </div>
     );
+  } else if (value?.type === 'chat-message[]') {
+    return (
+      <div css={multiOutput}>
+        {value.value.map((m, i) => (
+          <div key={i}>
+            <div>
+              <em>{m.type}:</em>
+            </div>
+            <div>{m.message}</div>
+          </div>
+        ))}
+      </div>
+    );
   }
 
   if (isArrayDataValue(value)) {

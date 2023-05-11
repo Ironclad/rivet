@@ -1,7 +1,7 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { InternalProcessContext, NodeImpl, ProcessContext } from '../NodeImpl';
-import { DataValue, expectTypeOptional } from '../DataValue';
+import { ChatMessage, DataValue, expectTypeOptional } from '../DataValue';
 import {
   assertValidModel,
   getCostForPrompt,
@@ -15,6 +15,7 @@ import { addWarning } from '../../utils/outputs';
 import { ChatCompletionRequestMessage, streamChatCompletions } from '../../utils/openai';
 import retry from 'p-retry';
 import { Inputs, Outputs } from '../GraphProcessor';
+import { match } from 'ts-pattern';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 
@@ -97,7 +98,6 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
   getInputDefinitions(connections: NodeConnection[]): NodeInputDefinition[] {
     const inputs: NodeInputDefinition[] = [];
-    const messageCount = this.#getMessagePortCount(connections);
 
     if (this.chartNode.data.useModelInput) {
       inputs.push({
@@ -165,13 +165,11 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       });
     }
 
-    for (let i = 1; i <= messageCount; i++) {
-      inputs.push({
-        dataType: 'chat-message',
-        id: `message${i}` as PortId,
-        title: `Message ${i}`,
-      });
-    }
+    inputs.push({
+      dataType: ['chat-message', 'chat-message[]'] as const,
+      id: 'prompt' as PortId,
+      title: 'Prompt',
+    });
 
     return inputs;
   }
@@ -221,21 +219,29 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     const frequencyPenalty =
       expectTypeOptional(inputs['frequencyPenalty' as PortId], 'number') ?? this.chartNode.data.frequencyPenalty;
 
-    const messages: ChatCompletionRequestMessage[] = [];
-    let { maxTokens } = this.chartNode.data;
-
-    for (const key in inputs) {
-      if (key.startsWith('message')) {
-        const inputMessage = inputs[key as PortId];
-        if (inputMessage?.type === 'chat-message') {
-          messages.push({ role: inputMessage.value.type, content: inputMessage.value.message });
-        } else if (inputMessage?.type === 'string') {
-          messages.push({ role: 'user', content: inputMessage.value });
-        }
-      }
+    const prompt = inputs['prompt' as PortId];
+    if (!prompt) {
+      throw new Error('Prompt is required');
     }
 
-    const tokenCount = getTokenCountForMessages(messages, modelToTiktokenModel[model]);
+    const messages: ChatMessage[] = match(prompt)
+      .with({ type: 'chat-message' }, (p) => [p.value])
+      .with({ type: 'chat-message[]' }, (p) => p.value)
+      .with({ type: 'string' }, (p): ChatMessage[] => [{ type: 'user', message: p.value }])
+      .with({ type: 'string[]' }, (p): ChatMessage[] => p.value.map((v) => ({ type: 'user', message: v })))
+      .otherwise(() => {
+        throw new Error('Prompt must be a chat message or an array of chat messages');
+      });
+    const completionMessages = messages.map(
+      (message): ChatCompletionRequestMessage => ({
+        content: message.message,
+        role: message.type,
+      }),
+    );
+
+    let { maxTokens } = this.chartNode.data;
+
+    const tokenCount = getTokenCountForMessages(completionMessages, modelToTiktokenModel[model]);
 
     if (tokenCount >= modelMaxTokens[model]) {
       throw new Error(
@@ -279,7 +285,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               apiKey: context.settings.openAiKey,
               organization: context.settings.openAiOrganization,
             },
-            messages,
+            messages: completionMessages,
             model,
             temperature: useTopP ? undefined : temperature,
             top_p: useTopP ? topP : undefined,
@@ -304,13 +310,14 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             context.onPartialOutputs?.(output);
           }
 
-          const requestTokenCount = getTokenCountForMessages(messages, model);
+          const requestTokenCount = getTokenCountForMessages(completionMessages, model);
           output['requestTokens' as PortId] = { type: 'number', value: requestTokenCount };
 
           const responseTokenCount = getTokenCountForString(responseParts.join(), model);
           output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
 
-          const cost = getCostForPrompt(messages, model) + getCostForTokens(responseTokenCount, 'completion', model);
+          const cost =
+            getCostForPrompt(completionMessages, model) + getCostForTokens(responseTokenCount, 'completion', model);
 
           output['cost' as PortId] = { type: 'number', value: cost };
 

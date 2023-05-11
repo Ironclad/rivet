@@ -196,6 +196,7 @@ const BlankAreaContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSelect
   return (
     <MenuItem label="Add" hasSubMenu={true}>
       <MenuItem label="Prompt" onClick={() => addNode('prompt')} />
+      <MenuItem label="Assemble Prompt" onClick={() => addNode('assemblePrompt')} />
       <MenuItem label="Chat" onClick={() => addNode('chat')} />
       <MenuItem label="Text" onClick={() => addNode('text')} />
       <MenuItem label="User Input" onClick={() => addNode('userInput')} />
