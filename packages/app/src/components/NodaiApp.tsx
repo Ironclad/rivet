@@ -78,7 +78,6 @@ export const NodaiApp: FC = () => {
   };
 
   const start = () => {
-    setLastRunData({});
     setGraphRunning(true);
   };
 
@@ -88,6 +87,16 @@ export const NodaiApp: FC = () => {
 
   const abort = () => {
     setGraphRunning(false);
+  };
+
+  const graphStart = ({ graph }: ProcessEvents['graphStart']) => {
+    setLastRunData((data) => {
+      return produce(data, (draft) => {
+        for (const node of graph.nodes) {
+          delete draft[node.id];
+        }
+      });
+    });
   };
 
   const partialOutput = ({ node, outputs, index }: ProcessEvents['partialOutput']) => {
@@ -136,6 +145,11 @@ export const NodaiApp: FC = () => {
       case 'partialOutput':
         partialOutput(data as ProcessEvents['partialOutput']);
         break;
+      case 'graphStart':
+        graphStart(data as ProcessEvents['graphStart']);
+        break;
+      case 'graphFinish':
+        break;
     }
   });
 
@@ -172,6 +186,7 @@ export const NodaiApp: FC = () => {
       processor.on('done', done);
       processor.on('abort', abort);
       processor.on('partialOutput', partialOutput);
+      processor.on('graphStart', graphStart);
 
       currentProcessor.current = processor;
 

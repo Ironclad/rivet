@@ -5781,9 +5781,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@ironclad/nodai-node", "workspace:packages/node"],\
             ["@ironclad/nodai-core", "workspace:packages/core"],\
+            ["@types/lodash-es", "npm:4.17.7"],\
             ["@types/node", "npm:20.1.1"],\
             ["@types/ws", "npm:8.5.4"],\
             ["esbuild", "npm:0.17.18"],\
+            ["lodash-es", "npm:4.17.21"],\
+            ["type-fest", "virtual:ee53775331eeeecac063f8feb53102b3a1c4a9deb536f3dca087d0c61347a740d7ecde5e6b5d744e87c5eebfbe096912824a4162124776f5f1f671019378f54a#npm:3.10.0"],\
             ["typescript", "patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"],\
             ["ws", "virtual:4a84fb1c4f64726288bd4dcc77ec2162f1ac9fe98e831b6393c0ca4ad078b2d87813b96307bde95ffed59f5018ebca203e17c78161a8dd22c125a246a9a3cd3c#npm:8.13.0"]\
           ],\
