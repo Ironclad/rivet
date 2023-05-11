@@ -7,7 +7,7 @@ import { NativeApi } from './native/NativeApi';
 
 export interface Settings {
   openAiKey: string;
-  openAiOrganization: string;
+  openAiOrganization?: string;
 }
 
 export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['type']> {

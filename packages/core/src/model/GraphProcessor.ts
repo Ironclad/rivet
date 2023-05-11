@@ -19,6 +19,12 @@ export type ProcessEvents = {
   /** Called when processing has started. */
   start: void;
 
+  /** Called when a graph or subgraph has started. */
+  graphStart: { graph: NodeGraph; inputs: GraphInputs };
+
+  /** Called when a graph or a subgraph has finished. */
+  graphFinish: { graph: NodeGraph; outputs: GraphOutputs };
+
   /** Called when a node has started processing, with the input values for the node. */
   nodeStart: { node: ChartNode; inputs: Inputs };
 
@@ -61,6 +67,7 @@ export class GraphProcessor {
   #definitions: Record<NodeId, { inputs: NodeInputDefinition[]; outputs: NodeOutputDefinition[] }>;
   #emitter: Emittery<ProcessEvents> = new Emittery();
   #running = false;
+  #isSubProcessor = false;
 
   // Per-process state
   #erroredNodes: Set<NodeId> = undefined!;
@@ -244,7 +251,11 @@ export class GraphProcessor {
         }
       };
 
-      this.#emitter.emit('start', void 0);
+      if (!this.#isSubProcessor) {
+        this.#emitter.emit('start', void 0);
+      }
+
+      this.#emitter.emit('graphStart', { graph: this.#graph, inputs: this.#graphInputs });
 
       processNextNodes();
       await this.#processingQueue.onIdle();
@@ -266,7 +277,11 @@ export class GraphProcessor {
 
       this.#running = false;
 
-      this.#emitter.emit('done', { results: outputValues });
+      this.#emitter.emit('graphFinish', { graph: this.#graph, outputs: outputValues });
+
+      if (!this.#isSubProcessor) {
+        this.#emitter.emit('done', { results: outputValues });
+      }
 
       return outputValues;
     } finally {
@@ -499,12 +514,15 @@ export class GraphProcessor {
       signal: this.#abortController.signal,
       createSubProcessor: (subGraphId: GraphId) => {
         const processor = new GraphProcessor(this.#project, subGraphId);
+        processor.#isSubProcessor = true;
         processor.on('nodeError', (e) => this.#emitter.emit('nodeError', e));
         processor.on('nodeFinish', (e) => this.#emitter.emit('nodeFinish', e));
         processor.on('partialOutput', (e) => this.#emitter.emit('partialOutput', e));
         processor.on('nodeExcluded', (e) => this.#emitter.emit('nodeExcluded', e));
         processor.on('nodeStart', (e) => this.#emitter.emit('nodeStart', e));
         processor.on('userInput', (e) => this.#emitter.emit('userInput', e)); // TODO!
+        processor.on('graphStart', (e) => this.#emitter.emit('graphStart', e));
+        processor.on('graphFinish', (e) => this.#emitter.emit('graphFinish', e));
 
         this.on('abort', () => processor.abort());
 

@@ -3683,9 +3683,12 @@ __metadata:
   resolution: "@ironclad/nodai-node@workspace:packages/node"
   dependencies:
     "@ironclad/nodai-core": "workspace:^"
+    "@types/lodash-es": ^4
     "@types/node": ^20.1.1
     "@types/ws": ^8.5.4
     esbuild: ^0.17.18
+    lodash-es: ^4.17.21
+    type-fest: ^3.10.0
     typescript: ^5.0.4
     ws: ^8.13.0
   languageName: unknown
