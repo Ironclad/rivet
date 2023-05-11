@@ -69,7 +69,7 @@ export type NodeInputDefinition = {
   required?: boolean;
 
   /** The data type of the input. */
-  dataType: DataType;
+  dataType: DataType | Readonly<DataType[]>;
 
   /** Other data associated with the input. Typed in subtypes. */
   data?: unknown;
@@ -87,7 +87,7 @@ export type NodeOutputDefinition = {
   title: string;
 
   /** The data type of the output. */
-  dataType: DataType;
+  dataType: DataType | Readonly<DataType[]>;
 
   /** The data associated with the output. */
   data?: unknown;

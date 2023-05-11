@@ -18,6 +18,7 @@ import { GraphOutputNodeBody } from './nodes/GraphOutputNode';
 import { SubGraphNodeBody } from './nodes/SubGraphNode';
 import { ArrayNodeBody } from './nodes/ArrayNode';
 import { ExtractJsonNodeBody } from './nodes/ExtractJsonNode';
+import { AssemblePromptNodeBody } from './nodes/AssemblePromptNode';
 
 export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
   const body = match(node as Nodes)
@@ -38,6 +39,7 @@ export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
     .with({ type: 'subGraph' }, (node) => <SubGraphNodeBody node={node} />)
     .with({ type: 'array' }, (node) => <ArrayNodeBody node={node} />)
     .with({ type: 'extractJson' }, (node) => <ExtractJsonNodeBody node={node} />)
+    .with({ type: 'assemblePrompt' }, (node) => <AssemblePromptNodeBody node={node} />)
     .otherwise(() => <div>Unknown node type</div>);
 
   return <div className="node-body">{body}</div>;

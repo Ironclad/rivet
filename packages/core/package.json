@@ -2,7 +2,9 @@
   "name": "@ironclad/nodai-core",
   "packageManager": "yarn@3.5.0",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "src": "src/index.ts",
   "scripts": {
     "build": "tsc"
   },
