@@ -28,7 +28,7 @@ export const RenderDataValue: FC<{ value: DataValue | undefined }> = ({ value })
             <div>
               <em>{m.type}:</em>
             </div>
-            <div>{m.message}</div>
+            <pre class="pre-wrap">{m.message}</pre>
           </div>
         ))}
       </div>
