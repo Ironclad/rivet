@@ -19,7 +19,7 @@ export class EventSourceResponse extends Response {
     const reader = this.eventStream.getReader();
     try {
       while (true) {
-        const { done, value } = await reader.read();
+        const { done, value } = await this.raceWithTimeout(reader.read());
         if (done) {
           break;
         }
@@ -28,6 +28,23 @@ export class EventSourceResponse extends Response {
     } finally {
       reader.releaseLock();
     }
+  }
+
+  private async raceWithTimeout<T>(promise: Promise<T>, timeout = 5000): Promise<T> {
+    return new Promise(async (resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(new Error('Timeout: API response took too long.'));
+      }, timeout);
+
+      try {
+        const result = await promise;
+        clearTimeout(timer);
+        resolve(result);
+      } catch (error) {
+        clearTimeout(timer);
+        reject(error);
+      }
+    });
   }
 }
 
