@@ -51,7 +51,7 @@ export class IfNodeImpl extends NodeImpl<ChartNode> {
     const ifValue = inputData['if'];
     const value = inputData['value'];
 
-    if (!ifValue || !value) {
+    if (!ifValue) {
       return {
         output: {
           type: 'control-flow-excluded',
@@ -62,7 +62,7 @@ export class IfNodeImpl extends NodeImpl<ChartNode> {
 
     if (ifValue && ifValue.type !== 'control-flow-excluded') {
       return {
-        output: value,
+        output: value ? value : { type: 'any', value: undefined },
       };
     } else {
       return {

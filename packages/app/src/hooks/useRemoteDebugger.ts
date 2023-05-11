@@ -5,6 +5,8 @@ export const remoteDebuggerState = atom({
   default: {
     socket: null as WebSocket | null,
     started: false,
+    reconnecting: false,
+    manualDisconnect: false,
     port: 0,
   },
 });
@@ -18,32 +20,59 @@ export function setCurrentDebuggerMessageHandler(handler: (message: string, data
 export function useRemoteDebugger() {
   const [remoteDebugger, setRemoteDebuggerState] = useRecoilState(remoteDebuggerState);
 
+  const connect = (port: number = 21888) => {
+    const socket = new WebSocket(`ws://localhost:${port}`);
+
+    setRemoteDebuggerState((prevState) => ({
+      ...prevState,
+      socket,
+      started: true,
+      port,
+      manualDisconnect: false,
+    }));
+
+    socket.onopen = () => {
+      setRemoteDebuggerState((prevState) => ({
+        ...prevState,
+        reconnecting: false,
+      }));
+    };
+
+    socket.onclose = () => {
+      if (remoteDebugger.manualDisconnect) {
+        setRemoteDebuggerState((prevState) => ({
+          ...prevState,
+          started: false,
+          reconnecting: false,
+        }));
+      } else {
+        setRemoteDebuggerState((prevState) => ({
+          ...prevState,
+          started: false,
+          reconnecting: true,
+        }));
+
+        setTimeout(() => {
+          connect(port);
+        }, 2000);
+      }
+    };
+
+    socket.onmessage = (event) => {
+      const { message, data } = JSON.parse(event.data);
+      currentDebuggerMessageHandler?.(message, data);
+    };
+  };
+
   return {
     remoteDebugger,
-    connect: (port: number = 21888) => {
-      const socket = new WebSocket(`ws://localhost:${port}`);
-
-      setRemoteDebuggerState({
-        socket,
-        started: true,
-        port,
-      });
-
-      socket.onclose = () => {
-        setRemoteDebuggerState({
-          socket,
-          started: false,
-          port: 0,
-        });
-      };
-
-      socket.onmessage = (event) => {
-        const { message, data } = JSON.parse(event.data);
-        currentDebuggerMessageHandler?.(message, data);
-      };
-    },
+    connect,
     disconnect: () => {
       if (remoteDebugger.socket) {
+        setRemoteDebuggerState((prevState) => ({
+          ...prevState,
+          manualDisconnect: true,
+        }));
         remoteDebugger.socket.close();
       }
     },

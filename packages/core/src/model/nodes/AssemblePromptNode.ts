@@ -81,6 +81,10 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
     );
 
     for (const [, inputMessage] of inputMessages) {
+      if (!inputMessage || inputMessage.type === 'control-flow-excluded' || !inputMessage.value) {
+        continue;
+      }
+
       match(inputMessage)
         .with({ type: 'chat-message' }, (inputMessage) => messages.push(inputMessage.value))
         .with({ type: 'chat-message[]' }, (inputMessage) => {
