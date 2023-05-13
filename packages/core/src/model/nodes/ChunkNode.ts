@@ -1,7 +1,7 @@
 import { ChartNode, NodeId } from '../../model/NodeBase';
 import { NodeImpl, ProcessContext } from '../../model/NodeImpl';
 import { NodeInputDefinition, NodeOutputDefinition, PortId } from '../../model/NodeBase';
-import { DataValue, expectType } from '../../model/DataValue';
+import { DataValue, coerceType, expectType } from '../../model/DataValue';
 import { SupportedModels, chunkStringByTokenCount, modelToTiktokenModel } from '../../utils/tokenizer';
 import { nanoid } from 'nanoid';
 
@@ -69,7 +69,7 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
   }
 
   async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {
-    const input = expectType(inputs['input' as PortId], 'string');
+    const input = coerceType(inputs['input' as PortId], 'string');
 
     const overlapPercent = this.chartNode.data.overlap / 100;
 
@@ -79,6 +79,7 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
       modelToTiktokenModel[this.chartNode.data.model as SupportedModels],
       overlapPercent,
     );
+
     return {
       ['chunks' as PortId]: {
         type: 'string[]',

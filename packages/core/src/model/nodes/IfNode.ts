@@ -1,6 +1,6 @@
 import { NodeImpl } from '../NodeImpl';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
-import { DataValue, ControlFlowExcludedDataValue } from '../DataValue';
+import { DataValue, ControlFlowExcludedDataValue, ScalarDataValue, ArrayDataValue } from '../DataValue';
 import { nanoid } from 'nanoid';
 
 export type IfNode = ChartNode<'if', IfNodeData>;
@@ -49,28 +49,37 @@ export class IfNodeImpl extends NodeImpl<ChartNode> {
 
   async process(inputData: Record<string, DataValue>): Promise<Record<string, DataValue>> {
     const ifValue = inputData['if'];
-    const value = inputData['value'];
+    const value = inputData['value'] ?? { type: 'any', value: undefined };
+
+    const excluded = {
+      output: {
+        type: 'control-flow-excluded',
+        value: undefined,
+      } as ControlFlowExcludedDataValue,
+    };
 
     if (!ifValue) {
-      return {
-        output: {
-          type: 'control-flow-excluded',
-          value: undefined,
-        },
-      };
+      return excluded;
     }
 
-    if (ifValue && ifValue.type !== 'control-flow-excluded') {
-      return {
-        output: value ? value : { type: 'any', value: undefined },
-      };
-    } else {
-      return {
-        output: {
-          type: 'control-flow-excluded',
-          value: undefined,
-        } as ControlFlowExcludedDataValue,
-      };
+    if (ifValue.type === 'control-flow-excluded') {
+      return excluded;
     }
+
+    if (ifValue.type === 'string' && !ifValue.value) {
+      return excluded;
+    }
+
+    if (ifValue.type === 'boolean' && !ifValue.value) {
+      return excluded;
+    }
+
+    if (ifValue.type.endsWith('[]') && (ifValue as ArrayDataValue<ScalarDataValue>).value.length === 0) {
+      return excluded;
+    }
+
+    return {
+      output: value,
+    };
   }
 }

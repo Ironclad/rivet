@@ -19,6 +19,7 @@ import { SubGraphNode, SubGraphNodeImpl } from './nodes/SubGraphNode';
 import { ArrayNode, ArrayNodeImpl } from './nodes/ArrayNode';
 import { ExtractJsonNode, ExtractJsonNodeImpl } from './nodes/ExtractJsonNode';
 import { AssemblePromptNode, AssemblePromptNodeImpl } from './nodes/AssemblePromptNode';
+import { LoopControllerNode, LoopControllerNodeImpl } from './nodes/LoopControllerNode';
 
 export type Nodes =
   | UserInputNode
@@ -38,7 +39,8 @@ export type Nodes =
   | SubGraphNode
   | ArrayNode
   | ExtractJsonNode
-  | AssemblePromptNode;
+  | AssemblePromptNode
+  | LoopControllerNode;
 
 export * from './nodes/UserInputNode';
 export * from './nodes/TextNode';
@@ -58,6 +60,7 @@ export * from './nodes/SubGraphNode';
 export * from './nodes/ArrayNode';
 export * from './nodes/ExtractJsonNode';
 export * from './nodes/AssemblePromptNode';
+export * from './nodes/LoopControllerNode';
 
 export type NodeType = Nodes['type'];
 
@@ -81,6 +84,7 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
     .with({ type: 'array' }, (node) => new ArrayNodeImpl(node))
     .with({ type: 'extractJson' }, (node) => new ExtractJsonNodeImpl(node))
     .with({ type: 'assemblePrompt' }, (node) => new AssemblePromptNodeImpl(node))
+    .with({ type: 'loopController' }, (node) => new LoopControllerNodeImpl(node))
     .exhaustive();
 };
 
@@ -108,6 +112,7 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('array', () => ArrayNodeImpl.create())
     .with('extractJson', () => ExtractJsonNodeImpl.create())
     .with('assemblePrompt', () => AssemblePromptNodeImpl.create())
+    .with('loopController', () => LoopControllerNodeImpl.create())
     .exhaustive();
 }
 
@@ -123,6 +128,7 @@ export const nodeDisplayName: Record<NodeType, string> = {
   match: 'Match',
   if: 'If',
   ifElse: 'If/Else',
+  loopController: 'Loop Controller',
   readDirectory: 'Read Directory',
   readFile: 'Read File',
   chunk: 'Chunk',

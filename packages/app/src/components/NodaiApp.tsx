@@ -119,6 +119,14 @@ export const NodaiApp: FC = () => {
     }
   };
 
+  const nodeOutputsCleared = ({ node }: ProcessEvents['nodeOutputsCleared']) => {
+    setLastRunData((prev) =>
+      produce(prev, (draft) => {
+        delete draft[node.id];
+      }),
+    );
+  };
+
   setCurrentDebuggerMessageHandler((message, data) => {
     switch (message) {
       case 'nodeStart':
@@ -149,6 +157,9 @@ export const NodaiApp: FC = () => {
         graphStart(data as ProcessEvents['graphStart']);
         break;
       case 'graphFinish':
+        break;
+      case 'nodeOutputsCleared':
+        nodeOutputsCleared(data as ProcessEvents['nodeOutputsCleared']);
         break;
     }
   });
@@ -187,6 +198,7 @@ export const NodaiApp: FC = () => {
       processor.on('abort', abort);
       processor.on('partialOutput', partialOutput);
       processor.on('graphStart', graphStart);
+      processor.on('nodeOutputsCleared', nodeOutputsCleared);
 
       currentProcessor.current = processor;
 

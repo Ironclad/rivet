@@ -27,6 +27,7 @@ import { GraphOutputNodeOutput } from './nodes/GraphOutputNode';
 import { SubGraphNodeOutput } from './nodes/SubGraphNode';
 import { ExtractJsonNodeOutput } from './nodes/ExtractJsonNode';
 import { AssemblePromptNodeOutput } from './nodes/AssemblePromptNode';
+import { LoopControllerNodeOutput } from './nodes/LoopControllerNode';
 
 const fullscreenOutputButtonsCss = css`
   position: absolute;
@@ -75,6 +76,7 @@ export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
     .with({ type: 'subGraph' }, (node) => <SubGraphNodeOutput node={node} />)
     .with({ type: 'extractJson' }, (node) => <ExtractJsonNodeOutput node={node} />)
     .with({ type: 'assemblePrompt' }, (node) => <AssemblePromptNodeOutput node={node} />)
+    .with({ type: 'loopController' }, (node) => <LoopControllerNodeOutput node={node} />)
     .otherwise(() => null);
 
   const fullscreenOutputBody = match(node as Nodes)

@@ -168,7 +168,7 @@ export const PromptNodeEditor: FC<PromptNodeEditorProps> = ({ node, onChange }) 
           >
             <option value="user">User</option>
             <option value="system">System</option>
-            <option value="ai">AI</option>
+            <option value="assistant">AI</option>
           </select>
           <Toggle
             id="useModelInput"
@@ -216,7 +216,7 @@ export const PromptNodeBody: FC<PromptNodeBodyProps> = memo(({ node }) => {
       <div>
         <em>{typeDisplay[node.data.type]}:</em>
       </div>
-      <pre ref={bodyRef} data-lang="prompt-interpolation">
+      <pre ref={bodyRef} className="pre-wrap" data-lang="prompt-interpolation">
         {truncated}
       </pre>
     </Body>
