@@ -1,6 +1,6 @@
 import { NodeImpl } from '../NodeImpl';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
-import { DataValue } from '../DataValue';
+import { ArrayDataValue, DataValue, ScalarDataValue } from '../DataValue';
 import { nanoid } from 'nanoid';
 
 export type IfElseNode = ChartNode<'ifElse', IfElseNodeData>;
@@ -54,8 +54,8 @@ export class IfElseNodeImpl extends NodeImpl<ChartNode> {
 
   async process(inputData: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {
     const ifValue = inputData['if' as PortId];
-    const trueValue = inputData['true' as PortId];
-    const falseValue = inputData['false' as PortId];
+    const trueValue = inputData['true' as PortId] ?? { type: 'any', value: undefined };
+    const falseValue = inputData['false' as PortId] ?? { type: 'any', value: undefined };
 
     if (!ifValue || (!trueValue && !falseValue)) {
       return {
@@ -66,14 +66,38 @@ export class IfElseNodeImpl extends NodeImpl<ChartNode> {
       };
     }
 
-    if (ifValue && ifValue.type !== 'control-flow-excluded') {
+    if (ifValue && ifValue.type === 'control-flow-excluded') {
       return {
-        ['output' as PortId]: trueValue!,
-      };
-    } else {
-      return {
-        ['output' as PortId]: falseValue!,
+        ['output' as PortId]: falseValue,
       };
     }
+
+    if (ifValue.type && ifValue.type === 'boolean') {
+      return {
+        ['output' as PortId]: ifValue.value ? trueValue : falseValue,
+      };
+    }
+
+    if (ifValue?.type === 'string') {
+      return {
+        ['output' as PortId]: ifValue.value.length > 0 ? trueValue : falseValue,
+      };
+    }
+
+    if (ifValue?.type === 'chat-message') {
+      return {
+        ['output' as PortId]: ifValue.value.message.length > 0 ? trueValue : falseValue,
+      };
+    }
+
+    if (ifValue?.type.endsWith('[]')) {
+      return {
+        ['output' as PortId]: (ifValue as ArrayDataValue<ScalarDataValue>).value.length > 0 ? trueValue : falseValue,
+      };
+    }
+
+    return {
+      ['output' as PortId]: falseValue,
+    };
   }
 }

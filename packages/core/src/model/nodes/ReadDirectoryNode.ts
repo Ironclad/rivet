@@ -2,8 +2,9 @@ import { ChartNode, NodeId, PortId } from '../NodeBase';
 import { assertBaseDir } from '../native/BaseDir';
 import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase';
 import { DataValue, expectType } from '../DataValue';
-import { NodeImpl, ProcessContext } from '../NodeImpl';
+import { InternalProcessContext, NodeImpl, ProcessContext } from '../NodeImpl';
 import { nanoid } from 'nanoid';
+import { Outputs } from '../GraphProcessor';
 
 export type ReadDirectoryNode = ChartNode<'readDirectory', ReadDirectoryNodeData>;
 
@@ -117,7 +118,10 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
     ];
   }
 
-  async process(inputData: Record<PortId, DataValue>, context: ProcessContext): Promise<Record<PortId, DataValue>> {
+  async process(
+    inputData: Record<PortId, DataValue>,
+    context: InternalProcessContext,
+  ): Promise<Record<PortId, DataValue>> {
     const path = this.chartNode.data.usePathInput
       ? expectType(inputData['path' as PortId], 'string')
       : this.chartNode.data.path;
@@ -142,6 +146,15 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
       ? expectType(inputData['ignores' as PortId], 'string[]')
       : this.chartNode.data.ignores;
 
+    // Can be slow, assume a directory doesn't change during execution
+    // TODO once this is at auto-gpt level changing files, will need to rethink, but good enough
+    // for now
+    const cacheKey = `ReadDirectoryNode-${path}-${recursive}-${includeDirectories}-${filterGlobs.join()}-${relative}-${ignores?.join()}`;
+    const cached = context.executionCache.get(cacheKey);
+    if (cached) {
+      return cached as Outputs;
+    }
+
     const files = await context.nativeApi.readdir(path, undefined, {
       recursive,
       includeDirectories,
@@ -150,9 +163,13 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
       ignores,
     });
 
-    return {
+    const outputs: Outputs = {
       ['paths' as PortId]: { type: 'string[]', value: files },
       ['rootPath' as PortId]: { type: 'string', value: path },
     };
+
+    context.executionCache.set(cacheKey, outputs);
+
+    return outputs;
   }
 }

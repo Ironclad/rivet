@@ -55,6 +55,10 @@ export type ProcessContext = {
 export type InternalProcessContext = ProcessContext & {
   project: Project;
   signal: AbortSignal;
+
+  /** Global cache shared by all nodes, is present for the entire execution of a graph (and shared in subgraphs). */
+  executionCache: Map<string, unknown>;
+
   onPartialOutputs?: (outputs: Record<PortId, DataValue>) => void;
   createSubProcessor: (subGraphId: GraphId) => GraphProcessor;
 };

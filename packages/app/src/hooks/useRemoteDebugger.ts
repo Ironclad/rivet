@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { atom, useRecoilState } from 'recoil';
 
 export const remoteDebuggerState = atom({
@@ -6,7 +7,6 @@ export const remoteDebuggerState = atom({
     socket: null as WebSocket | null,
     started: false,
     reconnecting: false,
-    manualDisconnect: false,
     port: 0,
   },
 });
@@ -19,6 +19,7 @@ export function setCurrentDebuggerMessageHandler(handler: (message: string, data
 
 export function useRemoteDebugger() {
   const [remoteDebugger, setRemoteDebuggerState] = useRecoilState(remoteDebuggerState);
+  const manuallyDisconnecting = useRef(false);
 
   const connect = (port: number = 21888) => {
     const socket = new WebSocket(`ws://localhost:${port}`);
@@ -28,8 +29,8 @@ export function useRemoteDebugger() {
       socket,
       started: true,
       port,
-      manualDisconnect: false,
     }));
+    manuallyDisconnecting.current = false;
 
     socket.onopen = () => {
       setRemoteDebuggerState((prevState) => ({
@@ -39,7 +40,8 @@ export function useRemoteDebugger() {
     };
 
     socket.onclose = () => {
-      if (remoteDebugger.manualDisconnect) {
+      console.dir({ manualDisconnect: manuallyDisconnecting.current });
+      if (manuallyDisconnecting.current) {
         setRemoteDebuggerState((prevState) => ({
           ...prevState,
           started: false,
@@ -69,10 +71,7 @@ export function useRemoteDebugger() {
     connect,
     disconnect: () => {
       if (remoteDebugger.socket) {
-        setRemoteDebuggerState((prevState) => ({
-          ...prevState,
-          manualDisconnect: true,
-        }));
+        manuallyDisconnecting.current = true;
         remoteDebugger.socket.close();
       }
     },

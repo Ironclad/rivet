@@ -65,13 +65,20 @@ export const Wire: FC<WireProps> = ({ connection, selected, highlighted }) => {
   }
 
   const deltaX = Math.abs(end.x - start.x);
-  const xDir = start.x < end.x ? 1 : -1;
-  const curveX1 = start.x + xDir * deltaX * 0.5;
+  const handleDistance = start.x <= end.x ? deltaX * 0.5 : Math.abs(end.y - start.y) * 0.6;
+
+  const curveX1 = start.x + handleDistance;
   const curveY1 = start.y;
-  const curveX2 = start.x + xDir * deltaX * 0.5;
+  const curveX2 = end.x - handleDistance;
   const curveY2 = end.y;
 
-  const wirePath = `M${start.x},${start.y} C${curveX1},${curveY1} ${curveX2},${curveY2} ${end.x},${end.y}`;
+  const middleY = (start.y + end.y) / 2;
+
+  const wirePath =
+    start.x <= end.x
+      ? `M${start.x},${start.y} C${curveX1},${curveY1} ${curveX2},${curveY2} ${end.x},${end.y}`
+      : `M${start.x},${start.y} C${curveX1},${curveY1} ${curveX1},${middleY} ${start.x},${middleY} ` +
+        `L${end.x},${middleY} C${curveX2},${middleY} ${curveX2},${curveY2} ${end.x},${end.y}`;
 
   return <path className={clsx('wire', { selected, highlighted })} d={wirePath} />;
 };
