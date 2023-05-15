@@ -13,7 +13,6 @@ export type SupportedModels = (typeof supportedModels)[number];
 export function getTokenCountForString(input: string, model: TiktokenModel): number {
   const encoding = encoding_for_model(model);
   const encoded = encoding.encode(input);
-  console.dir({ encoding, encoded, input, model });
   encoding.free();
   return encoded.length;
 }

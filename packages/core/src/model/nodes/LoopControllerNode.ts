@@ -1,10 +1,8 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { InternalProcessContext, NodeImpl } from '../NodeImpl';
-import { ChatMessage, DataValue, coerceType } from '../DataValue';
+import { coerceType } from '../DataValue';
 import { Inputs, Outputs } from '../GraphProcessor';
-import { orderBy } from 'lodash-es';
-import { match } from 'ts-pattern';
 
 export type LoopControllerNode = ChartNode<'loopController', LoopControllerNodeData>;
 
@@ -27,7 +25,7 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
     return chartNode;
   }
 
-  getInputDefinitions(connections: NodeConnection[]): NodeInputDefinition[] {
+  getInputDefinitions(connections: NodeConnection[], nodes: Record<NodeId, ChartNode>): NodeInputDefinition[] {
     const inputs: NodeInputDefinition[] = [];
     const messageCount = this.#getInputPortCount(connections);
 
@@ -39,16 +37,29 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
 
     let i = 1;
     for (; i <= messageCount; i++) {
-      inputs.push({
+      const input: NodeInputDefinition = {
         dataType: 'any',
         id: `input${i}` as PortId,
         title: `Input ${i}`,
-      });
-      inputs.push({
+      };
+
+      const inputConnection = connections.find((connection) => connection.inputId === input.id);
+      if (inputConnection && nodes[inputConnection.outputNodeId]) {
+        input.title = nodes[inputConnection.outputNodeId]!.title;
+      }
+
+      const inputDefault: NodeInputDefinition = {
         dataType: 'any',
         id: `input${i}Default` as PortId,
         title: `Input ${i} Default`,
-      });
+      };
+      const inputDefaultConnection = connections.find((connection) => connection.inputId === inputDefault.id);
+      if (inputDefaultConnection && nodes[inputDefaultConnection.outputNodeId]) {
+        inputDefault.title = nodes[inputDefaultConnection.outputNodeId]!.title;
+      }
+
+      inputs.push(input);
+      inputs.push(inputDefault);
     }
 
     inputs.push({
@@ -60,7 +71,7 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
     return inputs;
   }
 
-  getOutputDefinitions(connections: NodeConnection[]): NodeOutputDefinition[] {
+  getOutputDefinitions(connections: NodeConnection[], nodes: Record<NodeId, ChartNode>): NodeOutputDefinition[] {
     const messageCount = this.#getInputPortCount(connections);
 
     const outputs: NodeOutputDefinition[] = [];
@@ -72,11 +83,18 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
     });
 
     for (let i = 1; i <= messageCount; i++) {
-      outputs.push({
+      const output: NodeOutputDefinition = {
         dataType: 'any',
         id: `output${i}` as PortId,
         title: `Output ${i}`,
-      });
+      };
+
+      const inputConnection = connections.find((connection) => connection.inputId === `input${i}`);
+      if (inputConnection && nodes[inputConnection.outputNodeId]) {
+        output.title = `${nodes[inputConnection.outputNodeId]!.title}?`;
+      }
+
+      outputs.push(output);
     }
 
     return outputs;
@@ -129,8 +147,6 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
         output[`output${i}` as PortId] = { type: 'control-flow-excluded', value: undefined };
       }
     }
-
-    console.dir({ continueValue, inputs, output });
 
     return output;
   }

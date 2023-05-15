@@ -2,6 +2,7 @@ import { NodeImpl } from '../NodeImpl';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { ArrayDataValue, DataValue, ScalarDataValue } from '../DataValue';
 import { nanoid } from 'nanoid';
+import { ControlFlowExcluded, ControlFlowExcludedPort } from '../../utils/symbols';
 
 export type IfElseNode = ChartNode<'ifElse', IfElseNodeData>;
 
@@ -57,7 +58,7 @@ export class IfElseNodeImpl extends NodeImpl<ChartNode> {
     const trueValue = inputData['true' as PortId] ?? { type: 'any', value: undefined };
     const falseValue = inputData['false' as PortId] ?? { type: 'any', value: undefined };
 
-    if (!ifValue || (!trueValue && !falseValue)) {
+    if (!(trueValue || falseValue)) {
       return {
         ['output' as PortId]: {
           type: 'control-flow-excluded',
@@ -66,13 +67,19 @@ export class IfElseNodeImpl extends NodeImpl<ChartNode> {
       };
     }
 
-    if (ifValue && ifValue.type === 'control-flow-excluded') {
+    if (ifValue?.type === 'control-flow-excluded') {
       return {
         ['output' as PortId]: falseValue,
       };
     }
 
-    if (ifValue.type && ifValue.type === 'boolean') {
+    if (inputData[ControlFlowExcludedPort]) {
+      return {
+        ['output' as PortId]: falseValue,
+      };
+    }
+
+    if (ifValue?.type && ifValue.type === 'boolean') {
       return {
         ['output' as PortId]: ifValue.value ? trueValue : falseValue,
       };

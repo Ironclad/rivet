@@ -11,8 +11,6 @@ async function printFolderTree(path: string, prefix = '', isLast = true) {
     const stemPrefix = prefix + stem;
     const stemIsLast = i === files.length - 1;
 
-    console.log(`${prefix}${corner}${file.name}`);
-
     if (file.isDirectory()) {
       await printFolderTree(`${path}/${file.name}`, stemPrefix, stemIsLast);
     }

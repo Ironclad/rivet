@@ -1,6 +1,12 @@
 import { max, range } from 'lodash-es';
 import { ControlFlowExcluded } from '../utils/symbols';
-import { DataValue, ArrayDataValue, AnyDataValue, StringArrayDataValue } from './DataValue';
+import {
+  DataValue,
+  ArrayDataValue,
+  AnyDataValue,
+  StringArrayDataValue,
+  ControlFlowExcludedDataValue,
+} from './DataValue';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { GraphId, NodeGraph } from './NodeGraph';
 import { InternalProcessContext, NodeImpl, ProcessContext } from './NodeImpl';
@@ -50,6 +56,8 @@ export type ProcessEvents = {
 
   /** Called when processing has been aborted. */
   abort: void;
+
+  trace: string;
 };
 
 export type GraphOutputs = Record<string, DataValue>;
@@ -135,8 +143,16 @@ export class GraphProcessor {
     this.#definitions = {};
     for (const node of this.#graph.nodes) {
       this.#definitions[node.id] = {
-        inputs: this.#nodeInstances[node.id]!.getInputDefinitions(this.#connections[node.id] ?? [], this.#project),
-        outputs: this.#nodeInstances[node.id]!.getOutputDefinitions(this.#connections[node.id] ?? [], this.#project),
+        inputs: this.#nodeInstances[node.id]!.getInputDefinitions(
+          this.#connections[node.id] ?? [],
+          this.#nodesById,
+          this.#project,
+        ),
+        outputs: this.#nodeInstances[node.id]!.getOutputDefinitions(
+          this.#connections[node.id] ?? [],
+          this.#nodesById,
+          this.#project,
+        ),
       };
     }
 
@@ -200,14 +216,17 @@ export class GraphProcessor {
     if (!inputsReady) {
       return;
     }
-    console.dir(`Node ${node.title} has required inputs nodes: ${inputNodes.map((n) => n.title).join(', ')}`);
+    this.#emitter.emit(
+      'trace',
+      `Node ${node.title} has required inputs nodes: ${inputNodes.map((n) => n.title).join(', ')}`,
+    );
 
     this.#queuedNodes.add(node.id);
 
     this.#processingQueue.addAll(
       inputNodes.map((inputNode) => {
         return async () => {
-          console.dir(`Fetching required data for node ${inputNode.title} (${inputNode.id})`);
+          this.#emitter.emit('trace', `Fetching required data for node ${inputNode.title} (${inputNode.id})`);
           await this.#fetchNodeDataAndProcessNode(inputNode as Nodes, cycleInfo);
         };
       }),
@@ -219,18 +238,18 @@ export class GraphProcessor {
   /** If all inputs are present, all conditions met, processes the node. */
   async #processNodeIfAllInputsAvailable(node: Nodes): Promise<void> {
     if (this.#currentlyProcessing.has(node.id)) {
-      console.dir(`Node ${node.title} is already being processed`);
+      this.#emitter.emit('trace', `Node ${node.title} is already being processed`);
       return;
     }
 
     // For a loop controller, it can run multiple times, otherwise we already processed this node so bail out
     if (this.#visitedNodes.has(node.id) && node.type !== 'loopController') {
-      console.dir(`Node ${node.title} has already been processed`);
+      this.#emitter.emit('trace', `Node ${node.title} has already been processed`);
       return;
     }
 
     if (this.#erroredNodes.has(node.id)) {
-      console.dir(`Node ${node.title} has already errored`);
+      this.#emitter.emit('trace', `Node ${node.title} has already errored`);
       return;
     }
 
@@ -239,7 +258,7 @@ export class GraphProcessor {
     // Check if all input nodes are free of errors
     for (const inputNode of inputNodes) {
       if (this.#erroredNodes.has(inputNode.id)) {
-        console.dir(`Node ${node.title} has errored input node ${inputNode.title}`);
+        this.#emitter.emit('trace', `Node ${node.title} has errored input node ${inputNode.title}`);
         return;
       }
     }
@@ -252,14 +271,20 @@ export class GraphProcessor {
     });
 
     if (!inputsReady) {
-      console.dir(`Node ${node.title} has required inputs nodes: ${inputNodes.map((n) => n.title).join(', ')}`);
+      this.#emitter.emit(
+        'trace',
+        `Node ${node.title} has required inputs nodes: ${inputNodes.map((n) => n.title).join(', ')}`,
+      );
       return;
     }
 
-    // Excluded because control flow, don't execute it (yet?)
+    // Excluded because control flow is still in a loop - difference between "will not execute" and "has not executed yet"
     const inputValues = this.#getInputValuesForNode(node);
-    if (this.#excludedDueToControlFlow(node, inputValues)) {
-      console.dir(`Node ${node.title} is excluded due to control flow`);
+    if (node.title === 'Graph Output') {
+      this.#emitter.emit('trace', `Node ${node.title} has input values ${JSON.stringify(inputValues)}`);
+    }
+    if (this.#excludedDueToControlFlow(node, inputValues, 'loop-not-broken')) {
+      this.#emitter.emit('trace', `Node ${node.title} is excluded due to control flow`);
       return;
     }
 
@@ -275,7 +300,7 @@ export class GraphProcessor {
       }
 
       if (this.#visitedNodes.has(inputNode.id) === false) {
-        console.dir(`Node ${node.title} is waiting for input node ${inputNode.title}`);
+        this.#emitter.emit('trace', `Node ${node.title} is waiting for input node ${inputNode.title}`);
         return;
       }
     }
@@ -285,7 +310,9 @@ export class GraphProcessor {
 
     await this.#processNode(node as Nodes);
 
-    console.dir(`Finished processing node ${node.title} (${node.id})`);
+    // await new Promise((resolve) => setTimeout(resolve, 500));
+
+    this.#emitter.emit('trace', `Finished processing node ${node.title} (${node.id})`);
     this.#visitedNodes.add(node.id);
     this.#currentlyProcessing.delete(node.id);
     this.#remainingNodes.delete(node.id);
@@ -295,15 +322,16 @@ export class GraphProcessor {
     // Aggressive - each iteration of the loop controller, we clear everything in the same cycle as the controller
     if (node.type === 'loopController') {
       const didBreak = this.#nodeResults.get(node.id)!['break' as PortId]?.type !== 'control-flow-excluded' ?? false;
+      this.#emitter.emit('trace', JSON.stringify(this.#nodeResults.get(node.id)));
 
       if (!didBreak) {
         const nodesInCycle = this.#scc.find((cycle) => cycle.find((n) => n.id === node.id));
         for (const cycleNode of nodesInCycle?.filter((n) => n.id !== node.id) ?? []) {
-          console.dir(`Clearing cycle node ${cycleNode.title} (${cycleNode.id})`);
+          this.#emitter.emit('trace', `Clearing cycle node ${cycleNode.title} (${cycleNode.id})`);
           this.#visitedNodes.delete(cycleNode.id);
           this.#currentlyProcessing.delete(cycleNode.id);
           this.#remainingNodes.add(cycleNode.id);
-          // this.#nodeResults.delete(cycleNode.id);
+          this.#nodeResults.delete(cycleNode.id);
           // this.#emitter.emit('nodeOutputsCleared', { node: cycleNode });
         }
       }
@@ -312,7 +340,10 @@ export class GraphProcessor {
     // Node is finished, check if we can run any more nodes that depend on this one
     this.#processingQueue.addAll(
       outputNodes.map((outputNode) => async () => {
-        console.dir(`Trying to run output node from ${node.title}: ${outputNode.title} (${outputNode.id})`);
+        this.#emitter.emit(
+          'trace',
+          `Trying to run output node from ${node.title}: ${outputNode.title} (${outputNode.id})`,
+        );
 
         await this.#processNodeIfAllInputsAvailable(outputNode as Nodes);
       }),
@@ -588,7 +619,6 @@ export class GraphProcessor {
   #nodeErrored(node: ChartNode, e: unknown) {
     const error = getError(e);
     this.#emitter.emit('nodeError', { node, error });
-    console.error(error);
     this.#erroredNodes.add(node.id);
   }
 
@@ -632,9 +662,15 @@ export class GraphProcessor {
     return results;
   }
 
-  #excludedDueToControlFlow(node: ChartNode, inputValues: Inputs) {
+  #excludedDueToControlFlow(
+    node: ChartNode,
+    inputValues: Inputs,
+    typeOfExclusion: ControlFlowExcludedDataValue['value'] = undefined,
+  ) {
     const inputValuesList = values(inputValues);
-    const controlFlowExcludedValues = inputValuesList.filter((value) => value?.type === 'control-flow-excluded');
+    const controlFlowExcludedValues = inputValuesList.filter(
+      (value) => value?.type === 'control-flow-excluded' && value.value === typeOfExclusion,
+    );
     const inputIsExcludedValue = inputValuesList.length > 0 && controlFlowExcludedValues.length > 0;
 
     const inputConnections = this.#connections[node.id]?.filter((conn) => conn.inputNodeId === node.id) ?? [];
@@ -646,11 +682,32 @@ export class GraphProcessor {
       outputNodes.length > 0 &&
       outputNodes.some((outputNode) => {
         const outputValues = this.#nodeResults.get(outputNode.id) ?? {};
-        if (outputValues[ControlFlowExcluded as unknown as PortId]) {
+        const outputControlFlowExcluded = outputValues[ControlFlowExcluded as unknown as PortId];
+        if (outputControlFlowExcluded && outputControlFlowExcluded.value === typeOfExclusion) {
           return true;
         }
         return false;
       });
+
+    // If a node in the same loop outputs control-flow-executed, the loop controller shouldn't be excluded because it'll just iterate again...
+    if (node.type === 'loopController') {
+      const outputNodesInSameLoop = outputNodes.filter((outputNode) =>
+        this.#nodesAreInSameCycle(node.id, outputNode.id),
+      );
+      const anyOutputNodeInSameLoopIsExcludedValue =
+        outputNodesInSameLoop.length > 0 &&
+        outputNodesInSameLoop.some((outputNode) => {
+          const outputValues = this.#nodeResults.get(outputNode.id) ?? {};
+          const outputControlFlowExcluded = outputValues[ControlFlowExcluded as unknown as PortId];
+          if (outputControlFlowExcluded && outputControlFlowExcluded.value === typeOfExclusion) {
+            return true;
+          }
+          return false;
+        });
+      if (anyOutputNodeInSameLoopIsExcludedValue) {
+        return false;
+      }
+    }
 
     const isWaitingForLoop = controlFlowExcludedValues.some((value) => value.value === 'loop-not-broken');
 
@@ -658,6 +715,8 @@ export class GraphProcessor {
 
     if ((inputIsExcludedValue || anyOutputIsExcludedValue) && !allowedToConsumedExcludedValue) {
       if (!isWaitingForLoop) {
+        this.#emitter.emit('trace', `Excluding node ${node.title} because of control flow.`);
+        this.#emitter.emit('trace', { inputValues });
         this.#emitter.emit('nodeExcluded', { node });
         this.#visitedNodes.add(node.id);
         this.#nodeResults.set(node.id, {
