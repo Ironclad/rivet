@@ -11,7 +11,7 @@ export type MatchNodeData = {
 };
 
 export class MatchNodeImpl extends NodeImpl<MatchNode> {
-  static create(caseCount: number = 1, cases: string[] = ['.+']): MatchNode {
+  static create(caseCount: number = 2, cases: string[] = ['YES', 'NO']): MatchNode {
     const chartNode: MatchNode = {
       type: 'match',
       title: 'Match',

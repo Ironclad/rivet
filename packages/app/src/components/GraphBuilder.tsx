@@ -32,8 +32,7 @@ export const GraphBuilder: FC = () => {
     newNode.visualData.y = position.y;
 
     nodesChanged?.([...nodes, newNode]);
-
-    setSelectedNode(newNode.id);
+    // setSelectedNode(newNode.id);
   });
 
   const removeNode = useStableCallback((nodeId: NodeId) => {
@@ -71,17 +70,27 @@ export const GraphBuilder: FC = () => {
     if (menuItemId.startsWith('Duplicate:')) {
       const nodeId = menuItemId.substring(10) as NodeId;
       const node = nodes.find((n) => n.id === nodeId) as Nodes;
-      if (node) {
-        const newNode = nodeFactory(node.type);
-        newNode.data = { ...node.data };
-        newNode.visualData = {
-          ...node.visualData,
-          x: node.visualData.x + 20,
-          y: node.visualData.y + 20,
-        };
-        nodesChanged?.([...nodes, newNode]);
-        setSelectedNode(newNode.id);
+
+      if (!node) {
+        return;
       }
+
+      const newNode = nodeFactory(node.type);
+      newNode.data = { ...node.data };
+      newNode.visualData = {
+        ...node.visualData,
+        x: node.visualData.x + 20,
+        y: node.visualData.y + 20,
+      };
+      nodesChanged?.([...nodes, newNode]);
+
+      // Copy the connections to the input ports
+      const oldNodeConnections = connections.filter((c) => c.outputNodeId === nodeId);
+      const newNodeConnections = oldNodeConnections.map((c) => ({
+        ...c,
+        outputNodeId: newNode.id,
+      }));
+      setConnections([...connections, ...newNodeConnections]);
     }
   });
 

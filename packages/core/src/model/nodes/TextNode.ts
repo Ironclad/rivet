@@ -1,7 +1,7 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
-import { DataValue } from '../DataValue';
+import { DataValue, coerceType, coerceTypeOptional } from '../DataValue';
 import { match } from 'ts-pattern';
 
 export type TextNode = ChartNode<'text', TextNodeData>;
@@ -11,7 +11,7 @@ export type TextNodeData = {
 };
 
 export class TextNodeImpl extends NodeImpl<TextNode> {
-  static create(text: string = 'Hello {{name}}!'): TextNode {
+  static create(text: string = '{{input}}'): TextNode {
     const chartNode: TextNode = {
       type: 'text',
       title: 'Text',
@@ -65,13 +65,7 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
 
   async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
     const inputMap = Object.keys(inputs).reduce((acc, key) => {
-      const stringValue = match(inputs[key])
-        .with({ type: 'boolean' }, (v) => v.value.toString())
-        .with({ type: 'number' }, (v) => v.value.toString())
-        .with({ type: 'string' }, (v) => v.value)
-        .with({ type: 'string[]' }, (v) => v.value.join('\n')) // TODO configurable?
-        .with({ type: 'chat-message' }, (v) => v.value.message)
-        .otherwise(() => '');
+      const stringValue = coerceTypeOptional(inputs[key], 'string') ?? '';
 
       acc[key] = stringValue;
       return acc;
