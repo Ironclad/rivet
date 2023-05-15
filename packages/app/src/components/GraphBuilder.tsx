@@ -85,10 +85,10 @@ export const GraphBuilder: FC = () => {
       nodesChanged?.([...nodes, newNode]);
 
       // Copy the connections to the input ports
-      const oldNodeConnections = connections.filter((c) => c.outputNodeId === nodeId);
+      const oldNodeConnections = connections.filter((c) => c.inputNodeId === nodeId);
       const newNodeConnections = oldNodeConnections.map((c) => ({
         ...c,
-        outputNodeId: newNode.id,
+        inputNodeId: newNode.id,
       }));
       setConnections([...connections, ...newNodeConnections]);
     }

@@ -49,7 +49,11 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
     return outputs;
   }
 
-  getInputDefinitions(_connections: NodeConnection[], project: Project): NodeInputDefinition[] {
+  getInputDefinitions(
+    _connections: NodeConnection[],
+    _nodes: Record<NodeId, ChartNode>,
+    project: Project,
+  ): NodeInputDefinition[] {
     const graph = project.graphs[this.data.graphId];
     if (!graph) {
       return [];
@@ -67,7 +71,11 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
     );
   }
 
-  getOutputDefinitions(_connections: NodeConnection[], project: Project): NodeOutputDefinition[] {
+  getOutputDefinitions(
+    _connections: NodeConnection[],
+    _nodes: Record<NodeId, ChartNode>,
+    project: Project,
+  ): NodeOutputDefinition[] {
     const graph = project.graphs[this.data.graphId];
     if (!graph) {
       return [];

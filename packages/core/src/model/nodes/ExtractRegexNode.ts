@@ -112,9 +112,6 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
       matches.push(match[1]!);
     }
 
-    console.log(inputString);
-    console.log(regExp);
-
     matches = matches.filter((m) => m);
 
     if (matches.length === 0 && this.chartNode.data.errorOnFailed) {

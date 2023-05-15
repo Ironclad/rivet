@@ -1,7 +1,7 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { InternalProcessContext, NodeImpl, ProcessContext } from '../NodeImpl';
-import { ChatMessage, DataValue, expectTypeOptional } from '../DataValue';
+import { ChatMessage, DataValue, coerceType, expectTypeOptional } from '../DataValue';
 import {
   assertValidModel,
   getCostForPrompt,
@@ -98,6 +98,13 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
   getInputDefinitions(connections: NodeConnection[]): NodeInputDefinition[] {
     const inputs: NodeInputDefinition[] = [];
+
+    inputs.push({
+      id: 'systemPrompt' as PortId,
+      title: 'System Prompt',
+      dataType: 'string',
+      required: false,
+    });
 
     if (this.chartNode.data.useModelInput) {
       inputs.push({
@@ -224,7 +231,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       throw new Error('Prompt is required');
     }
 
-    const messages: ChatMessage[] = match(prompt)
+    let messages: ChatMessage[] = match(prompt)
       .with({ type: 'chat-message' }, (p) => [p.value])
       .with({ type: 'chat-message[]' }, (p) => p.value)
       .with({ type: 'string' }, (p): ChatMessage[] => [{ type: 'user', message: p.value }])
@@ -232,6 +239,12 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       .otherwise(() => {
         throw new Error('Prompt must be a chat message or an array of chat messages');
       });
+
+    const systemPrompt = inputs['systemPrompt' as PortId];
+    if (systemPrompt) {
+      messages = [{ type: 'system', message: coerceType(systemPrompt, 'string') }, ...messages];
+    }
+
     const completionMessages = messages.map(
       (message): ChatCompletionRequestMessage => ({
         content: message.message,
@@ -330,12 +343,11 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           retries: 4,
           signal: context.signal,
           onFailedAttempt(error) {
-            console.log(error);
+            // console.log(error);
           },
         },
       );
     } catch (error) {
-      console.error('Error processing ChatNode:', error);
       throw new Error(`Error processing ChatNode: ${(error as Error).message}`);
     }
   }

@@ -215,7 +215,7 @@ export const nodeStyles = css`
 
   .output-ports .port.connected {
     flex-direction: row-reverse;
-    justify-content: flex-end;
+    justify-content: flex-start;
   }
 
   .node-output {

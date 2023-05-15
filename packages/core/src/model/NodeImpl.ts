@@ -1,6 +1,6 @@
 import { DataValue } from './DataValue';
 import { GraphProcessor } from './GraphProcessor';
-import { ChartNode, NodeConnection, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
+import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { GraphId } from './NodeGraph';
 import { Project } from './Project';
 import { NativeApi } from './native/NativeApi';
@@ -37,9 +37,17 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
     return this.chartNode.data;
   }
 
-  abstract getInputDefinitions(connections: NodeConnection[], project: Project): NodeInputDefinition[];
+  abstract getInputDefinitions(
+    connections: NodeConnection[],
+    nodes: Record<NodeId, ChartNode>,
+    project: Project,
+  ): NodeInputDefinition[];
 
-  abstract getOutputDefinitions(connections: NodeConnection[], project: Project): NodeOutputDefinition[];
+  abstract getOutputDefinitions(
+    connections: NodeConnection[],
+    nodes: Record<NodeId, ChartNode>,
+    project: Project,
+  ): NodeOutputDefinition[];
 
   abstract process(
     inputData: Record<PortId, DataValue>,
