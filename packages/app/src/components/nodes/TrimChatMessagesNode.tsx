@@ -120,11 +120,11 @@ export const TrimChatMessagesNodeEditor: FC<TrimChatMessagesNodeEditorProps> = (
   );
 };
 
-interface TrimChatMessagesOutputProps {
+export interface TrimChatMessagesNodeOutputProps {
   node: TrimChatMessagesNode;
 }
 
-const TrimChatMessagesOutput: FC<TrimChatMessagesOutputProps> = ({ node }) => {
+export const TrimChatMessagesNodeOutput: FC<TrimChatMessagesNodeOutputProps> = ({ node }) => {
   const output = useRecoilValue(lastRunData(node.id));
 
   if (!output) {
@@ -141,9 +141,7 @@ const TrimChatMessagesOutput: FC<TrimChatMessagesOutputProps> = ({ node }) => {
 
   return (
     <div>
-      <RenderDataValue value={output.outputData['trimmedChatMessages' as PortId]} />
+      <RenderDataValue value={output.outputData['trimmed' as PortId]} />
     </div>
   );
 };
-
-export default TrimChatMessagesOutput;
