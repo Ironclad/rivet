@@ -3,6 +3,8 @@ import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { match } from 'ts-pattern';
+import { coerceType } from '../..';
+import { mapValues } from 'lodash-es';
 
 export type PromptNode = ChartNode<'prompt', PromptNodeData>;
 
@@ -67,17 +69,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
   }
 
   async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
-    const inputMap = Object.keys(inputs).reduce((acc, key) => {
-      const stringValue = match(inputs[key])
-        .with({ type: 'boolean' }, (v) => v.value.toString())
-        .with({ type: 'number' }, (v) => v.value.toString())
-        .with({ type: 'string' }, (v) => v.value)
-        .with({ type: 'string[]' }, (v) => v.value.join('\n')) // TODO customizable?
-        .otherwise(() => '');
-
-      acc[key] = stringValue;
-      return acc;
-    }, {} as Record<string, any>);
+    const inputMap = mapValues(inputs, (input) => coerceType(input, 'string')) as Record<PortId, string>;
 
     const outputValue = this.interpolate(this.chartNode.data.promptText, inputMap);
 

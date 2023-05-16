@@ -1,9 +1,10 @@
 import { ChartNode, NodeId } from '../../model/NodeBase';
-import { NodeImpl, ProcessContext } from '../../model/NodeImpl';
+import { NodeImpl } from '../../model/NodeImpl';
 import { NodeInputDefinition, NodeOutputDefinition, PortId } from '../../model/NodeBase';
-import { DataValue, coerceType, expectType } from '../../model/DataValue';
+import { DataValue } from '../../model/DataValue';
 import { SupportedModels, chunkStringByTokenCount, modelToTiktokenModel } from '../../utils/tokenizer';
 import { nanoid } from 'nanoid';
+import { coerceType } from '../../utils/coerceType';
 
 export type ChunkNodeData = {
   numTokensPerChunk: number;

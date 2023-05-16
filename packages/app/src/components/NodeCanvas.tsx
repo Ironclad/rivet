@@ -3,7 +3,7 @@ import { DraggableNode } from './DraggableNode';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles';
 import { FC, useMemo, useState } from 'react';
-import { ContextMenu } from './ContextMenu';
+import { ContextMenu } from './ContextMenu/ContextMenu';
 import { CSSTransition } from 'react-transition-group';
 import { WireLayer } from './WireLayer';
 import { ContextMenuData, useContextMenu } from '../hooks/useContextMenu';

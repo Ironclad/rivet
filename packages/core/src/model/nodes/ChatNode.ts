@@ -1,7 +1,7 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { InternalProcessContext, NodeImpl, ProcessContext } from '../NodeImpl';
-import { ChatMessage, DataValue, coerceType, expectTypeOptional } from '../DataValue';
+import { InternalProcessContext, NodeImpl } from '../NodeImpl';
+import { ChatMessage, DataValue } from '../DataValue';
 import {
   assertValidModel,
   getCostForPrompt,
@@ -16,6 +16,8 @@ import { ChatCompletionRequestMessage, streamChatCompletions } from '../../utils
 import retry from 'p-retry';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { match } from 'ts-pattern';
+import { expectTypeOptional } from '../../utils/expectType';
+import { coerceType } from '../../utils/coerceType';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 

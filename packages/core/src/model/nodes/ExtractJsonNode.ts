@@ -1,7 +1,8 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
-import { DataValue, expectType } from '../DataValue';
+import { DataValue } from '../DataValue';
+import { expectType } from '../..';
 
 export type ExtractJsonNode = ChartNode<'extractJson', ExtractJsonNodeData>;
 

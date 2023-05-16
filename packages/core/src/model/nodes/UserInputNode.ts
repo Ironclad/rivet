@@ -1,8 +1,9 @@
 import { NodeImpl } from '../NodeImpl';
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { DataValue, ArrayDataValue, StringDataValue, expectType } from '../DataValue';
+import { DataValue, ArrayDataValue, StringDataValue } from '../DataValue';
 import { zip } from 'lodash-es';
+import { expectType } from '../..';
 
 export type UserInputNode = ChartNode<'userInput', UserInputNodeData>;
 

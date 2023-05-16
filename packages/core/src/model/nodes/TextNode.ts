@@ -1,8 +1,9 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
-import { DataValue, coerceType, coerceTypeOptional } from '../DataValue';
+import { DataValue } from '../DataValue';
 import { match } from 'ts-pattern';
+import { coerceTypeOptional } from '../..';
 
 export type TextNode = ChartNode<'text', TextNodeData>;
 

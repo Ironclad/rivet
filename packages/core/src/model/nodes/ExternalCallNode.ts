@@ -1,8 +1,9 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { InternalProcessContext, NodeImpl } from '../NodeImpl';
-import { AnyDataValue, ArrayDataValue, DataValue, coerceType } from '../DataValue';
+import { AnyDataValue, ArrayDataValue, DataValue } from '../DataValue';
 import { nanoid } from 'nanoid';
 import { Inputs } from '../GraphProcessor';
+import { coerceType } from '../../utils/coerceType';
 
 export type ExternalCallNode = ChartNode<'externalCall', ExternalCallNodeData>;
 

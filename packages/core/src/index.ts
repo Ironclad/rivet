@@ -9,3 +9,5 @@ export * from './model/Project';
 export * from './model/native/BaseDir';
 export * from './model/native/NativeApi';
 export * from './model/native/BrowserNativeApi';
+export * from './utils/coerceType';
+export * from './utils/expectType';

@@ -1,10 +1,10 @@
 import { ChartNode, NodeId, PortId } from '../NodeBase';
-import { assertBaseDir } from '../native/BaseDir';
 import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase';
-import { DataValue, expectType } from '../DataValue';
-import { InternalProcessContext, NodeImpl, ProcessContext } from '../NodeImpl';
+import { DataValue } from '../DataValue';
+import { InternalProcessContext, NodeImpl } from '../NodeImpl';
 import { nanoid } from 'nanoid';
 import { Outputs } from '../GraphProcessor';
+import { expectType } from '../..';
 
 export type ReadDirectoryNode = ChartNode<'readDirectory', ReadDirectoryNodeData>;
 
