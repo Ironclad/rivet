@@ -1,7 +1,8 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
-import { DataValue, expectType, expectTypeOptional } from '../DataValue';
+import { DataValue } from '../DataValue';
+import { expectType, expectTypeOptional } from '../../utils/expectType';
 
 export type ExtractRegexNode = ChartNode<'extractRegex', ExtractRegexNodeData>;
 

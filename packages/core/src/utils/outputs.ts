@@ -1,4 +1,5 @@
-import { DataValue, ArrayDataValue, StringDataValue, expectType } from '../model/DataValue';
+import { expectType } from '..';
+import { DataValue, ArrayDataValue, StringDataValue } from '../model/DataValue';
 import { PortId } from '../model/NodeBase';
 import { WarningsPort } from './symbols';
 

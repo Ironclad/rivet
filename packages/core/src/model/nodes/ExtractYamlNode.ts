@@ -1,9 +1,10 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
-import { DataValue, expectType } from '../DataValue';
+import { DataValue } from '../DataValue';
 // @ts-ignore
 import yaml from 'yaml';
+import { expectType } from '../../utils/expectType';
 
 export type ExtractYamlNode = ChartNode<'extractYaml', ExtractYamlNodeData>;
 

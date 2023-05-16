@@ -1,9 +1,9 @@
 import { ChartNode, NodeId, PortId } from '../NodeBase';
-import { BaseDir, assertBaseDir, baseDirs } from '../native/BaseDir';
 import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase';
-import { DataValue, expectType } from '../DataValue';
+import { DataValue } from '../DataValue';
 import { NodeImpl, ProcessContext } from '../NodeImpl';
 import { nanoid } from 'nanoid';
+import { expectType } from '../..';
 
 export type ReadFileNode = ChartNode<'readFile', ReadFileNodeData>;
 
