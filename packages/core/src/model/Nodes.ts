@@ -21,6 +21,7 @@ import { ExtractJsonNode, ExtractJsonNodeImpl } from './nodes/ExtractJsonNode';
 import { AssemblePromptNode, AssemblePromptNodeImpl } from './nodes/AssemblePromptNode';
 import { LoopControllerNode, LoopControllerNodeImpl } from './nodes/LoopControllerNode';
 import { TrimChatMessagesNode, TrimChatMessagesNodeImpl } from './nodes/TrimChatMessagesNode';
+import { ExtractYamlNode, ExtractYamlNodeImpl } from './nodes/ExtractYamlNode';
 
 export type Nodes =
   | UserInputNode
@@ -40,6 +41,7 @@ export type Nodes =
   | SubGraphNode
   | ArrayNode
   | ExtractJsonNode
+  | ExtractYamlNode
   | AssemblePromptNode
   | LoopControllerNode
   | TrimChatMessagesNode;
@@ -61,6 +63,7 @@ export * from './nodes/GraphOutputNode';
 export * from './nodes/SubGraphNode';
 export * from './nodes/ArrayNode';
 export * from './nodes/ExtractJsonNode';
+export * from './nodes/ExtractYamlNode';
 export * from './nodes/AssemblePromptNode';
 export * from './nodes/LoopControllerNode';
 export * from './nodes/TrimChatMessagesNode';
@@ -89,6 +92,7 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
     .with({ type: 'assemblePrompt' }, (node) => new AssemblePromptNodeImpl(node))
     .with({ type: 'loopController' }, (node) => new LoopControllerNodeImpl(node))
     .with({ type: 'trimChatMessages' }, (node) => new TrimChatMessagesNodeImpl(node))
+    .with({ type: 'extractYaml' }, (node) => new ExtractYamlNodeImpl(node))
     .exhaustive();
 };
 
@@ -118,6 +122,7 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('assemblePrompt', () => AssemblePromptNodeImpl.create())
     .with('loopController', () => LoopControllerNodeImpl.create())
     .with('trimChatMessages', () => TrimChatMessagesNodeImpl.create())
+    .with('extractYaml', () => ExtractYamlNodeImpl.create())
     .exhaustive();
 }
 
@@ -142,4 +147,5 @@ export const nodeDisplayName: Record<NodeType, string> = {
   subGraph: 'Subgraph',
   array: 'Array',
   trimChatMessages: 'Trim Chat Messages',
+  extractYaml: 'Extract YAML',
 };

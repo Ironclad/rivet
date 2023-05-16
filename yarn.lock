@@ -3665,6 +3665,7 @@ __metadata:
     "@dqbd/tiktoken": ^1.0.7
     "@types/lodash-es": ^4
     "@types/node": ^20.1.1
+    "@types/yaml": ^1.9.7
     emittery: ^1.0.1
     lodash-es: ^4.17.21
     minimatch: ^9.0.0
@@ -3675,6 +3676,7 @@ __metadata:
     ts-pattern: ^4.3.0
     type-fest: ^3.10.0
     typescript: ^5.0.4
+    yaml: ^2.2.2
   languageName: unknown
   linkType: soft
 
@@ -6519,6 +6521,15 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: fefbad20d211929bb996285c4e6f699b12192548afedbe4930ab4384f8a94577c9cd421acaad163cacd36b88649509970a05a0b8f20615b30c501ed5269038d1
+  languageName: node
+  linkType: hard
+
+"@types/yaml@npm:^1.9.7":
+  version: 1.9.7
+  resolution: "@types/yaml@npm:1.9.7"
+  dependencies:
+    yaml: "*"
+  checksum: 0cdbf1857d89ade9b7d00aa09f2e0a2a56b707870b1dc1387f5be5398cd60c3f92bb32a543471147d2eaf38919f921391e0ade34fc9e1e022c7d67fb1a0da73c
   languageName: node
   linkType: hard
 
@@ -18439,6 +18450,13 @@ __metadata:
   version: 4.0.0
   resolution: "yallist@npm:4.0.0"
   checksum: 343617202af32df2a15a3be36a5a8c0c8545208f3d3dfbc6bb7c3e3b7e8c6f8e7485432e4f3b88da3031a6e20afa7c711eded32ddfb122896ac5d914e75848d5
+  languageName: node
+  linkType: hard
+
+"yaml@npm:*, yaml@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "yaml@npm:2.2.2"
+  checksum: d90c235e099e30094dcff61ba3350437aef53325db4a6bcd04ca96e1bfe7e348b191f6a7a52b5211e2dbc4eeedb22a00b291527da030de7c189728ef3f2b4eb3
   languageName: node
   linkType: hard
 
