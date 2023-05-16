@@ -67,6 +67,8 @@ export type NodeResults = Map<NodeId, Outputs>;
 export type Inputs = Record<PortId, DataValue>;
 export type Outputs = Record<PortId, DataValue>;
 
+export type ExternalFunction = (...args: unknown[]) => Promise<DataValue>;
+
 export class GraphProcessor {
   // Per-instance state
   #graph: NodeGraph;
@@ -80,6 +82,7 @@ export class GraphProcessor {
   #isSubProcessor = false;
   #scc: ChartNode[][];
   #nodesNotInCycle: ChartNode[];
+  #externalFunctions: Record<string, ExternalFunction> = {};
 
   // Per-process state
   #erroredNodes: Set<NodeId> = undefined!;
@@ -159,6 +162,8 @@ export class GraphProcessor {
 
     this.#scc = this.#tarjanSCC();
     this.#nodesNotInCycle = this.#scc.filter((cycle) => cycle.length === 1).flat();
+
+    this.setExternalFunction('echo', async (value) => ({ type: 'any', value: value } satisfies DataValue));
   }
 
   on = undefined! as Emittery<ProcessEvents>['on'];
@@ -175,6 +180,10 @@ export class GraphProcessor {
     for (const processor of this.#subprocessors) {
       processor.userInput(nodeId, values);
     }
+  }
+
+  setExternalFunction(name: string, fn: ExternalFunction): void {
+    this.#externalFunctions[name] = fn;
   }
 
   async abort(): Promise<void> {
@@ -640,12 +649,14 @@ export class GraphProcessor {
       ...this.#context,
       project: this.#project,
       executionCache: this.#executionCache,
+      externalFunctions: { ...this.#externalFunctions },
       onPartialOutputs: (partialOutputs) => partialOutput?.(node, partialOutputs, index),
       signal: this.#abortController.signal,
       createSubProcessor: (subGraphId: GraphId) => {
         const processor = new GraphProcessor(this.#project, subGraphId);
         processor.#isSubProcessor = true;
         processor.#executionCache = this.#executionCache;
+        processor.#externalFunctions = this.#externalFunctions;
         processor.on('nodeError', (e) => this.#emitter.emit('nodeError', e));
         processor.on('nodeFinish', (e) => this.#emitter.emit('nodeFinish', e));
         processor.on('partialOutput', (e) => this.#emitter.emit('partialOutput', e));

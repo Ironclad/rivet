@@ -1,5 +1,5 @@
 import { DataValue } from './DataValue';
-import { GraphProcessor } from './GraphProcessor';
+import { ExternalFunction, GraphProcessor } from './GraphProcessor';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { GraphId } from './NodeGraph';
 import { Project } from './Project';
@@ -63,6 +63,7 @@ export type ProcessContext = {
 export type InternalProcessContext = ProcessContext & {
   project: Project;
   signal: AbortSignal;
+  externalFunctions: Record<string, ExternalFunction>;
 
   /** Global cache shared by all nodes, is present for the entire execution of a graph (and shared in subgraphs). */
   executionCache: Map<string, unknown>;
