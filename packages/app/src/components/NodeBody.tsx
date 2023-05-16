@@ -23,6 +23,7 @@ import { LoopControllerNodeBody } from './nodes/LoopControllerNode';
 import { TrimChatMessagesNodeBody } from './nodes/TrimChatMessagesNode';
 import { ExtractYamlNodeBody } from './nodes/ExtractYamlNode';
 import { ExternalCallNodeBody } from './nodes/ExternalCallNode';
+import { ExtractObjectPathNodeBody } from './nodes/ExtractObjectPathNode';
 
 export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
   const body = match(node as Nodes)
@@ -48,6 +49,7 @@ export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
     .with({ type: 'trimChatMessages' }, (node) => <TrimChatMessagesNodeBody node={node} />)
     .with({ type: 'extractYaml' }, (node) => <ExtractYamlNodeBody node={node} />)
     .with({ type: 'externalCall' }, (node) => <ExternalCallNodeBody node={node} />)
+    .with({ type: 'extractObjectPath' }, (node) => <ExtractObjectPathNodeBody node={node} />)
     .otherwise(() => <div>Unknown node type</div>);
 
   return <div className="node-body">{body}</div>;
