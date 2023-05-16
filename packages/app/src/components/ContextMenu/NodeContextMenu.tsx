@@ -36,18 +36,18 @@ export const NodeContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSele
       <ContextMenuItem
         label={
           <>
-            <DeleteIcon /> Delete
-          </>
-        }
-        onClick={deleteNode}
-      />
-      <ContextMenuItem
-        label={
-          <>
             <DuplicateIcon /> Duplicate
           </>
         }
         onClick={duplicateNode}
+      />
+      <ContextMenuItem
+        label={
+          <>
+            <DeleteIcon /> Delete
+          </>
+        }
+        onClick={deleteNode}
       />
     </>
   );

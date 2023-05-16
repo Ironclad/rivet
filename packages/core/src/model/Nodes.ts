@@ -25,6 +25,7 @@ import { ExtractYamlNode, ExtractYamlNodeImpl } from './nodes/ExtractYamlNode';
 import { ExternalCallNode, ExternalCallNodeImpl } from './nodes/ExternalCallNode';
 import { ExtractObjectPathNode, ExtractObjectPathNodeImpl } from './nodes/ExtractObjectPathNode';
 import { RaiseEventNode, RaiseEventNodeImpl } from './nodes/RaiseEventNode';
+import { ContextNode, ContextNodeImpl } from './nodes/ContextNode';
 
 export type Nodes =
   | UserInputNode
@@ -50,7 +51,8 @@ export type Nodes =
   | LoopControllerNode
   | TrimChatMessagesNode
   | ExternalCallNode
-  | RaiseEventNode;
+  | RaiseEventNode
+  | ContextNode;
 
 export * from './nodes/UserInputNode';
 export * from './nodes/TextNode';
@@ -76,6 +78,7 @@ export * from './nodes/TrimChatMessagesNode';
 export * from './nodes/ExternalCallNode';
 export * from './nodes/ExtractObjectPathNode';
 export * from './nodes/RaiseEventNode';
+export * from './nodes/ContextNode';
 
 export type NodeType = Nodes['type'];
 
@@ -105,6 +108,7 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
     .with({ type: 'externalCall' }, (node) => new ExternalCallNodeImpl(node))
     .with({ type: 'extractObjectPath' }, (node) => new ExtractObjectPathNodeImpl(node))
     .with({ type: 'raiseEvent' }, (node) => new RaiseEventNodeImpl(node))
+    .with({ type: 'context' }, (node) => new ContextNodeImpl(node))
     .exhaustive();
 };
 
@@ -138,6 +142,7 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('externalCall', () => ExternalCallNodeImpl.create())
     .with('extractObjectPath', () => ExtractObjectPathNodeImpl.create())
     .with('raiseEvent', () => RaiseEventNodeImpl.create())
+    .with('context', () => ContextNodeImpl.create())
     .exhaustive();
 }
 
@@ -166,6 +171,7 @@ export const nodeDisplayName: Record<NodeType, string> = {
   externalCall: 'External Call',
   extractObjectPath: 'Extract Object Path',
   raiseEvent: 'Raise Event',
+  context: 'Context',
 };
 
 export type NodeOfType<T extends NodeType> = Extract<Nodes, { type: T }>;

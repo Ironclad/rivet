@@ -59,6 +59,7 @@ export const addContextMenuGroups = [
       { label: 'Code', nodeType: 'code' },
       { label: 'Read Directory', nodeType: 'readDirectory' },
       { label: 'Read File', nodeType: 'readFile' },
+      { label: 'Context', nodeType: 'context' },
     ],
   },
 ] satisfies {

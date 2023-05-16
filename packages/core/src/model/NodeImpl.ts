@@ -64,6 +64,8 @@ export type InternalProcessContext = ProcessContext & {
   project: Project;
   signal: AbortSignal;
 
+  contextValues: Record<string, DataValue>;
+
   raiseEvent: (eventName: string, data: DataValue | undefined) => void;
   externalFunctions: Record<string, ExternalFunction>;
 
