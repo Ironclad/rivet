@@ -1,6 +1,5 @@
 import { FC } from 'react';
-import { css } from '@emotion/react';
-import { LoopControllerNode, PortId, expectType } from '@ironclad/nodai-core';
+import { LoopControllerNode, PortId } from '@ironclad/nodai-core';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
 import { RenderDataValue } from '../RenderDataValue';
@@ -8,12 +7,6 @@ import { RenderDataValue } from '../RenderDataValue';
 type LoopControllerNodeBodyProps = {
   node: LoopControllerNode;
 };
-
-const styles = css`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-`;
 
 export const LoopControllerNodeBody: FC<LoopControllerNodeBodyProps> = ({ node }) => {
   return null;

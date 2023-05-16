@@ -30,6 +30,7 @@ import { AssemblePromptNodeOutput } from './nodes/AssemblePromptNode';
 import { LoopControllerNodeOutput } from './nodes/LoopControllerNode';
 import { TrimChatMessagesNodeOutput } from './nodes/TrimChatMessagesNode';
 import { ExtractYamlNodeOutput } from './nodes/ExtractYamlNode';
+import { ExternalCallNodeOutput } from './nodes/ExternalCallNode';
 
 const fullscreenOutputButtonsCss = css`
   position: absolute;
@@ -81,6 +82,7 @@ export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
     .with({ type: 'loopController' }, (node) => <LoopControllerNodeOutput node={node} />)
     .with({ type: 'trimChatMessages' }, (node) => <TrimChatMessagesNodeOutput node={node} />)
     .with({ type: 'extractYaml' }, (node) => <ExtractYamlNodeOutput node={node} />)
+    .with({ type: 'externalCall' }, (node) => <ExternalCallNodeOutput node={node} />)
     .otherwise(() => null);
 
   const fullscreenOutputBody = match(node as Nodes)

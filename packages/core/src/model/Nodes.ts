@@ -22,6 +22,7 @@ import { AssemblePromptNode, AssemblePromptNodeImpl } from './nodes/AssembleProm
 import { LoopControllerNode, LoopControllerNodeImpl } from './nodes/LoopControllerNode';
 import { TrimChatMessagesNode, TrimChatMessagesNodeImpl } from './nodes/TrimChatMessagesNode';
 import { ExtractYamlNode, ExtractYamlNodeImpl } from './nodes/ExtractYamlNode';
+import { ExternalCallNode, ExternalCallNodeImpl } from './nodes/ExternalCallNode';
 
 export type Nodes =
   | UserInputNode
@@ -44,7 +45,8 @@ export type Nodes =
   | ExtractYamlNode
   | AssemblePromptNode
   | LoopControllerNode
-  | TrimChatMessagesNode;
+  | TrimChatMessagesNode
+  | ExternalCallNode;
 
 export * from './nodes/UserInputNode';
 export * from './nodes/TextNode';
@@ -67,6 +69,7 @@ export * from './nodes/ExtractYamlNode';
 export * from './nodes/AssemblePromptNode';
 export * from './nodes/LoopControllerNode';
 export * from './nodes/TrimChatMessagesNode';
+export * from './nodes/ExternalCallNode';
 
 export type NodeType = Nodes['type'];
 
@@ -93,6 +96,7 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
     .with({ type: 'loopController' }, (node) => new LoopControllerNodeImpl(node))
     .with({ type: 'trimChatMessages' }, (node) => new TrimChatMessagesNodeImpl(node))
     .with({ type: 'extractYaml' }, (node) => new ExtractYamlNodeImpl(node))
+    .with({ type: 'externalCall' }, (node) => new ExternalCallNodeImpl(node))
     .exhaustive();
 };
 
@@ -123,6 +127,7 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('loopController', () => LoopControllerNodeImpl.create())
     .with('trimChatMessages', () => TrimChatMessagesNodeImpl.create())
     .with('extractYaml', () => ExtractYamlNodeImpl.create())
+    .with('externalCall', () => ExternalCallNodeImpl.create())
     .exhaustive();
 }
 
@@ -148,4 +153,5 @@ export const nodeDisplayName: Record<NodeType, string> = {
   array: 'Array',
   trimChatMessages: 'Trim Chat Messages',
   extractYaml: 'Extract YAML',
+  externalCall: 'External Call',
 };
