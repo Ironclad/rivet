@@ -62,11 +62,14 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
     const model = 'gpt-3.5-turbo' as SupportedModels; // You can change this to a configurable model if needed
     const tiktokenModel = modelToTiktokenModel[model];
 
+    let trimmedMessages = [...input];
+
     let tokenCount = getTokenCountForMessages(
-      input.map((message): ChatCompletionRequestMessage => ({ content: message.message, role: message.type })),
+      trimmedMessages.map(
+        (message): ChatCompletionRequestMessage => ({ content: message.message, role: message.type }),
+      ),
       tiktokenModel,
     );
-    let trimmedMessages = [...input];
 
     while (tokenCount > maxTokenCount) {
       if (removeFromBeginning) {

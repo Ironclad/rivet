@@ -36,7 +36,7 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
     });
 
     let i = 1;
-    for (; i <= messageCount; i++) {
+    for (; i <= messageCount + 1; i++) {
       const input: NodeInputDefinition = {
         dataType: 'any',
         id: `input${i}` as PortId,
@@ -61,12 +61,6 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
       inputs.push(input);
       inputs.push(inputDefault);
     }
-
-    inputs.push({
-      dataType: 'any',
-      id: `input${i}` as PortId,
-      title: `Input ${i}`,
-    });
 
     return inputs;
   }
