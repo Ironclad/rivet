@@ -11,12 +11,19 @@ import { useDraggingNode } from '../hooks/useDraggingNode';
 import { useDraggingWire } from '../hooks/useDraggingWire';
 import { ChartNode, NodeConnection, NodeId } from '@ironclad/nodai-core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { canvasPositionState, lastMousePositionState, selectedNodeState } from '../state/graphBuilder';
+import {
+  CanvasPosition,
+  canvasPositionState,
+  lastCanvasPositionForGraphState,
+  lastMousePositionState,
+  selectedNodeState,
+} from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { VisualNode } from './VisualNode';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { useThrottleFn } from 'ahooks';
 import produce from 'immer';
+import { graphState } from '../state/graph';
 
 export interface NodeCanvasProps {
   nodes: ChartNode[];
@@ -107,6 +114,12 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   onContextMenuItemSelected,
 }) => {
   const [canvasPosition, setCanvasPosition] = useRecoilState(canvasPositionState);
+  const selectedGraph = useRecoilValue(graphState);
+
+  const setLastSavedCanvasPosition = useSetRecoilState(
+    lastCanvasPositionForGraphState(selectedGraph?.metadata?.id ?? nanoid()),
+  );
+
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, canvasStartX: 0, canvasStartY: 0 });
   const { clientToCanvasPosition } = useCanvasPositioning();
@@ -169,7 +182,13 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
       const dx = (e.clientX - dragStart.x) * (1 / canvasPosition.zoom);
       const dy = (e.clientY - dragStart.y) * (1 / canvasPosition.zoom);
 
-      setCanvasPosition({ x: dragStart.canvasStartX + dx, y: dragStart.canvasStartY + dy, zoom: canvasPosition.zoom });
+      const position: CanvasPosition = {
+        x: dragStart.canvasStartX + dx,
+        y: dragStart.canvasStartY + dy,
+        zoom: canvasPosition.zoom,
+      };
+      setCanvasPosition(position);
+      setLastSavedCanvasPosition(position);
     },
     { wait: 10 },
   );
@@ -389,3 +408,6 @@ const DebugOverlay: FC<{ enabled: boolean }> = ({ enabled }) => {
     </div>
   );
 };
+function nanoid(): import('@ironclad/nodai-core').GraphId {
+  throw new Error('Function not implemented.');
+}

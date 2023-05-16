@@ -13,6 +13,8 @@ import { ReactComponent as GitForkLine } from 'majesticons/line/git-fork-line.sv
 import { ResizeHandle } from './ResizeHandle';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { useGetNodeIO } from '../hooks/useGetNodeIO';
+import { useStableCallback } from '../hooks/useStableCallback';
+import { LoadingSpinner } from './LoadingSpinner';
 
 export type VisualNodeProps = {
   node: ChartNode;
@@ -66,36 +68,27 @@ export const VisualNode = memo(
         width: node.visualData.width,
       };
 
-      const handlePortMouseDown = useCallback(
-        (event: MouseEvent<HTMLDivElement>, port: PortId) => {
-          event.stopPropagation();
-          event.preventDefault();
-          onWireStartDrag?.(event, node.id, port);
-        },
-        [onWireStartDrag, node.id],
-      );
-
-      const handlePortMouseUp = useCallback(
-        (event: MouseEvent<HTMLDivElement>, port: PortId) => {
-          event.stopPropagation();
-          event.preventDefault();
-          onWireEndDrag?.(event, node.id, port);
-        },
-        [onWireEndDrag, node.id],
-      );
-
-      const handleEditClick = useCallback(
-        (event: MouseEvent<HTMLButtonElement>) => {
-          event.stopPropagation();
-          onSelectNode?.();
-        },
-        [onSelectNode],
-      );
-
-      const handleEditMouseDown = useCallback((event: MouseEvent<HTMLButtonElement>) => {
+      const handlePortMouseDown = useStableCallback((event: MouseEvent<HTMLDivElement>, port: PortId) => {
         event.stopPropagation();
         event.preventDefault();
-      }, []);
+        onWireStartDrag?.(event, node.id, port);
+      });
+
+      const handlePortMouseUp = useStableCallback((event: MouseEvent<HTMLDivElement>, port: PortId) => {
+        event.stopPropagation();
+        event.preventDefault();
+        onWireEndDrag?.(event, node.id, port);
+      });
+
+      const handleEditClick = useStableCallback((event: MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        onSelectNode?.();
+      });
+
+      const handleEditMouseDown = useStableCallback((event: MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        event.preventDefault();
+      });
 
       const [initialWidth, setInitialWidth] = useState<number | undefined>();
       const [initialMouseX, setInitialMouseX] = useState(0);
@@ -110,15 +103,15 @@ export const VisualNode = memo(
         return parseInt(cssWidth, 10);
       };
 
-      const handleResizeStart = (event: MouseEvent) => {
+      const handleResizeStart = useStableCallback((event: MouseEvent) => {
         event.preventDefault();
         event.stopPropagation();
 
         setInitialWidth(getNodeCurrentWidth(event.target as HTMLElement));
         setInitialMouseX(event.clientX);
-      };
+      });
 
-      const handleResizeMove = (event: MouseEvent) => {
+      const handleResizeMove = useStableCallback((event: MouseEvent) => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -131,7 +124,7 @@ export const VisualNode = memo(
           const newWidth = initialWidth + delta;
           onNodeWidthChanged?.(newWidth);
         }
-      };
+      });
 
       const getIO = useGetNodeIO();
       const { inputDefinitions, outputDefinitions } = getIO(node);
@@ -174,7 +167,7 @@ export const VisualNode = memo(
                     ))
                     .with({ type: 'running' }, () => (
                       <div className="running">
-                        <PinwheelIcon />
+                        <LoadingSpinner />
                       </div>
                     ))
                     .exhaustive()

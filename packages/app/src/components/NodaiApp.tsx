@@ -4,7 +4,7 @@ import { MenuBar } from './MenuBar';
 import { graphState } from '../state/graph';
 import { FC, useRef } from 'react';
 import produce from 'immer';
-import { NodeRunData, graphRunningState, lastRunDataByNodeState } from '../state/dataFlow';
+import { NodeRunData, graphRunningState, lastRunDataByNodeState, runningGraphsState } from '../state/dataFlow';
 import { css } from '@emotion/react';
 import { SettingsModal } from './SettingsModal';
 import { setGlobalTheme } from '@atlaskit/tokens';
@@ -14,9 +14,20 @@ import { cloneDeep } from 'lodash-es';
 import { LeftSidebar } from './LeftSidebar';
 import { projectState } from '../state/savedGraphs';
 import { useSaveCurrentGraph } from '../hooks/useSaveCurrentGraph';
-import { GraphProcessor, NodeId, PortId, ProcessEvents, StringArrayDataValue, expectType } from '@ironclad/nodai-core';
+import {
+  DataValue,
+  GraphProcessor,
+  NodeId,
+  PortId,
+  ProcessEvents,
+  StringArrayDataValue,
+  coerceTypeOptional,
+  expectType,
+} from '@ironclad/nodai-core';
 import { TauriNativeApi } from '../model/native/TauriNativeApi';
 import { setCurrentDebuggerMessageHandler } from '../hooks/useRemoteDebugger';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const styles = css`
   overflow: hidden;
@@ -31,6 +42,7 @@ export const NodaiApp: FC = () => {
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
   const settings = useRecoilValue(settingsState);
   const saveGraph = useSaveCurrentGraph();
+  const setRunningGraphsState = useSetRecoilState(runningGraphsState);
 
   const setDataForNode = (nodeId: NodeId, data: Partial<NodeRunData>) => {
     setLastRunData((prev) =>
@@ -83,6 +95,7 @@ export const NodaiApp: FC = () => {
 
   const done = () => {
     setGraphRunning(false);
+    setRunningGraphsState([]);
   };
 
   const abort = () => {
@@ -97,6 +110,23 @@ export const NodaiApp: FC = () => {
         }
       });
     });
+    if (graph.metadata?.id) {
+      setRunningGraphsState((running) => [...running, graph.metadata!.id!]);
+    }
+  };
+
+  const graphFinish = ({ graph }: ProcessEvents['graphFinish']) => {
+    if (graph.metadata?.id) {
+      setRunningGraphsState((running) => {
+        // Can have same graph multiple times, so just remove first one
+        const existing = [...running];
+        const graphIndex = existing.indexOf(graph.metadata!.id!);
+        if (graphIndex !== -1) {
+          existing.splice(graphIndex, 1);
+        }
+        return existing;
+      });
+    }
   };
 
   const partialOutput = ({ node, outputs, index }: ProcessEvents['partialOutput']) => {
@@ -157,6 +187,7 @@ export const NodaiApp: FC = () => {
         graphStart(data as ProcessEvents['graphStart']);
         break;
       case 'graphFinish':
+        graphFinish(data as ProcessEvents['graphFinish']);
         break;
       case 'nodeOutputsCleared':
         nodeOutputsCleared(data as ProcessEvents['nodeOutputsCleared']);
@@ -189,6 +220,13 @@ export const NodaiApp: FC = () => {
       setUserInputModalSubmit({
         submit: (nodeId: NodeId, answers: StringArrayDataValue) => {
           processor.userInput(nodeId, answers);
+
+          // Remove from pending questions
+          setUserInputQuestions((q) =>
+            produce(q, (draft) => {
+              delete draft[nodeId];
+            }),
+          );
         },
       });
 
@@ -198,7 +236,13 @@ export const NodaiApp: FC = () => {
       processor.on('abort', abort);
       processor.on('partialOutput', partialOutput);
       processor.on('graphStart', graphStart);
+      processor.on('graphFinish', graphFinish);
       processor.on('nodeOutputsCleared', nodeOutputsCleared);
+
+      processor.onUserEvent('toast', (data: DataValue | undefined) => {
+        const stringData = coerceTypeOptional(data, 'string');
+        toast(stringData ?? 'Toast called, but no message was provided');
+      });
 
       currentProcessor.current = processor;
 
@@ -221,6 +265,7 @@ export const NodaiApp: FC = () => {
       <LeftSidebar />
       <GraphBuilder />
       <SettingsModal />
+      <ToastContainer />
     </div>
   );
 };

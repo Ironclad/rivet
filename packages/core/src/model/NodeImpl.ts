@@ -63,6 +63,8 @@ export type ProcessContext = {
 export type InternalProcessContext = ProcessContext & {
   project: Project;
   signal: AbortSignal;
+
+  raiseEvent: (eventName: string, data: DataValue | undefined) => void;
   externalFunctions: Record<string, ExternalFunction>;
 
   /** Global cache shared by all nodes, is present for the entire execution of a graph (and shared in subgraphs). */

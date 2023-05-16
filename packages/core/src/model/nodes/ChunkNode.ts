@@ -57,6 +57,16 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
         dataType: 'string[]',
       },
       {
+        id: 'first' as PortId,
+        title: 'First',
+        dataType: 'string',
+      },
+      {
+        id: 'last' as PortId,
+        title: 'Last',
+        dataType: 'string',
+      },
+      {
         id: 'indexes' as PortId,
         title: 'Indexes',
         dataType: 'number[]',
@@ -85,6 +95,14 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
       ['chunks' as PortId]: {
         type: 'string[]',
         value: chunked,
+      },
+      ['first' as PortId]: {
+        type: 'string',
+        value: chunked[0]!,
+      },
+      ['last' as PortId]: {
+        type: 'string',
+        value: chunked.at(-1)!,
       },
       ['indexes' as PortId]: {
         type: 'number[]',

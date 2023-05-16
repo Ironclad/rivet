@@ -346,20 +346,6 @@ export const nodeStyles = css`
     justify-content: center;
   }
 
-  .node .running svg {
-    color: var(--primary);
-    animation: spin 1s linear infinite;
-  }
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-
   .resize-handle {
     width: 10px;
     height: 100%;

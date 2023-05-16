@@ -24,6 +24,7 @@ import { TrimChatMessagesNode, TrimChatMessagesNodeImpl } from './nodes/TrimChat
 import { ExtractYamlNode, ExtractYamlNodeImpl } from './nodes/ExtractYamlNode';
 import { ExternalCallNode, ExternalCallNodeImpl } from './nodes/ExternalCallNode';
 import { ExtractObjectPathNode, ExtractObjectPathNodeImpl } from './nodes/ExtractObjectPathNode';
+import { RaiseEventNode, RaiseEventNodeImpl } from './nodes/RaiseEventNode';
 
 export type Nodes =
   | UserInputNode
@@ -48,7 +49,8 @@ export type Nodes =
   | AssemblePromptNode
   | LoopControllerNode
   | TrimChatMessagesNode
-  | ExternalCallNode;
+  | ExternalCallNode
+  | RaiseEventNode;
 
 export * from './nodes/UserInputNode';
 export * from './nodes/TextNode';
@@ -73,6 +75,7 @@ export * from './nodes/LoopControllerNode';
 export * from './nodes/TrimChatMessagesNode';
 export * from './nodes/ExternalCallNode';
 export * from './nodes/ExtractObjectPathNode';
+export * from './nodes/RaiseEventNode';
 
 export type NodeType = Nodes['type'];
 
@@ -101,6 +104,7 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
     .with({ type: 'extractYaml' }, (node) => new ExtractYamlNodeImpl(node))
     .with({ type: 'externalCall' }, (node) => new ExternalCallNodeImpl(node))
     .with({ type: 'extractObjectPath' }, (node) => new ExtractObjectPathNodeImpl(node))
+    .with({ type: 'raiseEvent' }, (node) => new RaiseEventNodeImpl(node))
     .exhaustive();
 };
 
@@ -133,6 +137,7 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('extractYaml', () => ExtractYamlNodeImpl.create())
     .with('externalCall', () => ExternalCallNodeImpl.create())
     .with('extractObjectPath', () => ExtractObjectPathNodeImpl.create())
+    .with('raiseEvent', () => RaiseEventNodeImpl.create())
     .exhaustive();
 }
 
@@ -160,6 +165,7 @@ export const nodeDisplayName: Record<NodeType, string> = {
   extractYaml: 'Extract YAML',
   externalCall: 'External Call',
   extractObjectPath: 'Extract Object Path',
+  raiseEvent: 'Raise Event',
 };
 
 export type NodeOfType<T extends NodeType> = Extract<Nodes, { type: T }>;
