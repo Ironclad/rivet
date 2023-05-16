@@ -15,6 +15,7 @@ import { RenderDataValue } from '../RenderDataValue';
 import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
 import { match } from 'assert';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type ExtractRegexNodeBodyProps = {
   node: ExtractRegexNode;
@@ -196,3 +197,5 @@ export const ExtractRegexNodeEditor: FC<ExtractRegexNodeEditorProps> = ({ node, 
     </div>
   );
 };
+
+export const extractRegexNodeDescriptor: NodeComponentDescriptor<'extractRegex'> = {};

@@ -6,6 +6,7 @@ import Toggle from '@atlaskit/toggle';
 import { RenderDataValue } from '../RenderDataValue';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type TrimChatMessagesNodeBodyProps = {
   node: TrimChatMessagesNode;
@@ -27,7 +28,7 @@ export const TrimChatMessagesNodeBody: FC<TrimChatMessagesNodeBodyProps> = ({ no
 
 export type TrimChatMessagesNodeEditorProps = {
   node: TrimChatMessagesNode;
-  onChange?: (node: ChartNode<'trimChatMessages', TrimChatMessagesNodeData>) => void;
+  onChange?: (node: TrimChatMessagesNode) => void;
 };
 
 const container = css`
@@ -144,4 +145,10 @@ export const TrimChatMessagesNodeOutput: FC<TrimChatMessagesNodeOutputProps> = (
       <RenderDataValue value={output.outputData['trimmed' as PortId]} />
     </div>
   );
+};
+
+export const trimChatMessagesNodeDescriptor: NodeComponentDescriptor<'trimChatMessages'> = {
+  Body: TrimChatMessagesNodeBody,
+  Output: TrimChatMessagesNodeOutput,
+  Editor: TrimChatMessagesNodeEditor,
 };

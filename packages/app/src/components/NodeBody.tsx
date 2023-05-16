@@ -1,56 +1,15 @@
-import { match } from 'ts-pattern';
 import { FC, memo } from 'react';
-import { ChatNodeBody } from './nodes/ChatNode';
-import { CodeNodeBody } from './nodes/CodeNode';
-import { ExtractRegexNodeBody } from './nodes/ExtractRegexNode';
-import { MatchNodeBody } from './nodes/MatchNode';
-import { PromptNodeBody } from './nodes/PromptNode';
-import { TextNodeBody } from './nodes/TextNode';
-import { UserInputNodeBody } from './nodes/UserInputNode';
-import { IfNodeBody } from './nodes/IfNode';
-import { ChartNode, Nodes } from '@ironclad/nodai-core';
-import { ReadDirectoryNodeBody } from './nodes/ReadDirectoryNode';
-import { ReadFileNodeBody } from './nodes/ReadFileNode';
-import { IfElseNodeBody } from './nodes/IfElseNode';
-import { ChunkNodeBody } from './nodes/ChunkNode';
-import { GraphInputNodeBody } from './nodes/GraphInputNode';
-import { GraphOutputNodeBody } from './nodes/GraphOutputNode';
-import { SubGraphNodeBody } from './nodes/SubGraphNode';
-import { ArrayNodeBody } from './nodes/ArrayNode';
-import { ExtractJsonNodeBody } from './nodes/ExtractJsonNode';
-import { AssemblePromptNodeBody } from './nodes/AssemblePromptNode';
-import { LoopControllerNodeBody } from './nodes/LoopControllerNode';
-import { TrimChatMessagesNodeBody } from './nodes/TrimChatMessagesNode';
-import { ExtractYamlNodeBody } from './nodes/ExtractYamlNode';
-import { ExternalCallNodeBody } from './nodes/ExternalCallNode';
-import { ExtractObjectPathNodeBody } from './nodes/ExtractObjectPathNode';
+import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes';
+import { ChartNode } from '@ironclad/nodai-core';
+
+const UnknownNodeBody: FC<{ node: ChartNode }> = ({ node }) => {
+  return <div></div>;
+};
 
 export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
-  const body = match(node as Nodes)
-    .with({ type: 'prompt' }, (node) => <PromptNodeBody node={node} />)
-    .with({ type: 'chat' }, (node) => <ChatNodeBody node={node} />)
-    .with({ type: 'text' }, (node) => <TextNodeBody node={node} />)
-    .with({ type: 'extractRegex' }, (node) => <ExtractRegexNodeBody node={node} />)
-    .with({ type: 'code' }, (node) => <CodeNodeBody node={node} />)
-    .with({ type: 'match' }, (node) => <MatchNodeBody node={node} />)
-    .with({ type: 'userInput' }, (node) => <UserInputNodeBody node={node} />)
-    .with({ type: 'if' }, () => <IfNodeBody />)
-    .with({ type: 'ifElse' }, (node) => <IfElseNodeBody node={node} />)
-    .with({ type: 'readDirectory' }, (node) => <ReadDirectoryNodeBody node={node} />)
-    .with({ type: 'readFile' }, (node) => <ReadFileNodeBody node={node} />)
-    .with({ type: 'chunk' }, (node) => <ChunkNodeBody node={node} />)
-    .with({ type: 'graphInput' }, (node) => <GraphInputNodeBody node={node} />)
-    .with({ type: 'graphOutput' }, (node) => <GraphOutputNodeBody node={node} />)
-    .with({ type: 'subGraph' }, (node) => <SubGraphNodeBody node={node} />)
-    .with({ type: 'array' }, (node) => <ArrayNodeBody node={node} />)
-    .with({ type: 'extractJson' }, (node) => <ExtractJsonNodeBody node={node} />)
-    .with({ type: 'assemblePrompt' }, (node) => <AssemblePromptNodeBody node={node} />)
-    .with({ type: 'loopController' }, (node) => <LoopControllerNodeBody node={node} />)
-    .with({ type: 'trimChatMessages' }, (node) => <TrimChatMessagesNodeBody node={node} />)
-    .with({ type: 'extractYaml' }, (node) => <ExtractYamlNodeBody node={node} />)
-    .with({ type: 'externalCall' }, (node) => <ExternalCallNodeBody node={node} />)
-    .with({ type: 'extractObjectPath' }, (node) => <ExtractObjectPathNodeBody node={node} />)
-    .otherwise(() => <div>Unknown node type</div>);
+  const { Body } = useUnknownNodeComponentDescriptorFor(node);
+
+  const body = Body ? <Body node={node} /> : <UnknownNodeBody node={node} />;
 
   return <div className="node-body">{body}</div>;
 });

@@ -5,6 +5,7 @@ import TextField from '@atlaskit/textfield';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
 import { RenderDataValue } from '../RenderDataValue';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type ExternalCallNodeBodyProps = {
   node: ExternalCallNode;
@@ -79,4 +80,10 @@ export const ExternalCallNodeEditor: FC<ExternalCallNodeEditorProps> = ({ node, 
       </div>
     </div>
   );
+};
+
+export const externalCallNodeDescriptor: NodeComponentDescriptor<'externalCall'> = {
+  Body: ExternalCallNodeBody,
+  Output: ExternalCallNodeOutput,
+  Editor: ExternalCallNodeEditor,
 };

@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import { useLatest } from 'ahooks';
 import { css } from '@emotion/react';
 import { ChartNode, PortId, TextNode } from '@ironclad/nodai-core';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type TextNodeBodyProps = {
   node: TextNode;
@@ -85,8 +86,8 @@ export const TextNodeOutput: FC<TextNodeBodyProps> = ({ node }) => {
 };
 
 export type TextNodeEditorProps = {
-  node: ChartNode;
-  onChange?: (node: ChartNode) => void;
+  node: TextNode;
+  onChange?: (node: TextNode) => void;
 };
 
 const Container = styled.div`
@@ -221,4 +222,10 @@ export const TextNodeEditor: FC<TextNodeEditorProps> = ({ node, onChange }) => {
       <div ref={editorContainer} className="editor-container" />
     </Container>
   );
+};
+
+export const textNodeDescriptor: NodeComponentDescriptor<'text'> = {
+  Body: TextNodeBody,
+  Output: TextNodeOutput,
+  Editor: TextNodeEditor,
 };

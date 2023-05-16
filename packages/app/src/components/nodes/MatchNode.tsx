@@ -4,10 +4,11 @@ import { css } from '@emotion/react';
 import { lastRunData } from '../../state/dataFlow';
 import { useRecoilValue } from 'recoil';
 import { RenderDataValue } from '../RenderDataValue';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type MatchNodeEditorProps = {
-  node: ChartNode;
-  onChange?: (node: ChartNode<'match', MatchNodeData>) => void;
+  node: MatchNode;
+  onChange?: (node: MatchNode) => void;
 };
 
 const container = css`
@@ -178,4 +179,10 @@ export const MatchNodeOutput: FC<MatchNodeBodyProps> = ({ node }) => {
       ))}
     </div>
   );
+};
+
+export const matchNodeDescriptor: NodeComponentDescriptor<'match'> = {
+  Body: MatchNodeBody,
+  Output: MatchNodeOutput,
+  Editor: MatchNodeEditor,
 };

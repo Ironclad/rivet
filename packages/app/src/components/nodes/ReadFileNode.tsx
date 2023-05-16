@@ -7,6 +7,7 @@ import { css } from '@emotion/react';
 import { openFile } from '../../utils/fileIO';
 import Button from '@atlaskit/button';
 import { ChartNode, PortId, ReadFileNode } from '@ironclad/nodai-core';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 type ReadFileNodeBodyProps = {
   node: ReadFileNode;
@@ -147,4 +148,10 @@ export const ReadFileNodeEditor: FC<ReadFileNodeEditorProps> = ({ node, onChange
       </div>
     </div>
   );
+};
+
+export const readFileNodeDescriptor: NodeComponentDescriptor<'readFile'> = {
+  Body: ReadFileNodeBody,
+  Output: ReadFileNodeOutput,
+  Editor: ReadFileNodeEditor,
 };

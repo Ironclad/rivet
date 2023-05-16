@@ -3,6 +3,7 @@ import { ChartNode, ChunkNode, ChunkNodeData, PortId } from '@ironclad/nodai-cor
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
 import { css } from '@emotion/react';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type ChunkNodeBodyProps = {
   node: ChunkNode;
@@ -48,8 +49,8 @@ export const ChunkNodeOutput: FC<ChunkNodeBodyProps> = ({ node }) => {
 };
 
 type ChunkNodeEditorProps = {
-  node: ChartNode;
-  onChange?: (node: ChartNode<'chunk', ChunkNodeData>) => void;
+  node: ChunkNode;
+  onChange?: (node: ChunkNode) => void;
 };
 
 const container = css`
@@ -155,4 +156,10 @@ export const ChunkNodeEditor: FC<ChunkNodeEditorProps> = ({ node, onChange }) =>
       </div>
     </div>
   );
+};
+
+export const chunkNodeDescriptor: NodeComponentDescriptor<'chunk'> = {
+  Body: ChunkNodeBody,
+  Output: ChunkNodeOutput,
+  Editor: ChunkNodeEditor,
 };

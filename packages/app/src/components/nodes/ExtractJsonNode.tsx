@@ -3,6 +3,7 @@ import { ExtractJsonNode, PortId } from '@ironclad/nodai-core';
 import { RenderDataValue } from '../RenderDataValue';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type ExtractJsonNodeBodyProps = {
   node: ExtractJsonNode;
@@ -49,4 +50,10 @@ export const ExtractJsonNodeOutput = ({ node }: { node: ExtractJsonNode }) => {
       <RenderDataValue value={output.outputData['output' as PortId]} />
     </div>
   );
+};
+
+export const extractJsonNodeDescriptor: NodeComponentDescriptor<'extractJson'> = {
+  Body: ExtractJsonNodeBody,
+  Output: ExtractJsonNodeOutput,
+  Editor: ExtractJsonNodeEditor,
 };

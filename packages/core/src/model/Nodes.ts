@@ -161,3 +161,5 @@ export const nodeDisplayName: Record<NodeType, string> = {
   externalCall: 'External Call',
   extractObjectPath: 'Extract Object Path',
 };
+
+export type NodeOfType<T extends NodeType> = Extract<Nodes, { type: T }>;
