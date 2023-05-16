@@ -20,6 +20,7 @@ import { ArrayNode, ArrayNodeImpl } from './nodes/ArrayNode';
 import { ExtractJsonNode, ExtractJsonNodeImpl } from './nodes/ExtractJsonNode';
 import { AssemblePromptNode, AssemblePromptNodeImpl } from './nodes/AssemblePromptNode';
 import { LoopControllerNode, LoopControllerNodeImpl } from './nodes/LoopControllerNode';
+import { TrimChatMessagesNode, TrimChatMessagesNodeImpl } from './nodes/TrimChatMessagesNode';
 
 export type Nodes =
   | UserInputNode
@@ -40,7 +41,8 @@ export type Nodes =
   | ArrayNode
   | ExtractJsonNode
   | AssemblePromptNode
-  | LoopControllerNode;
+  | LoopControllerNode
+  | TrimChatMessagesNode;
 
 export * from './nodes/UserInputNode';
 export * from './nodes/TextNode';
@@ -61,6 +63,7 @@ export * from './nodes/ArrayNode';
 export * from './nodes/ExtractJsonNode';
 export * from './nodes/AssemblePromptNode';
 export * from './nodes/LoopControllerNode';
+export * from './nodes/TrimChatMessagesNode';
 
 export type NodeType = Nodes['type'];
 
@@ -85,6 +88,7 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
     .with({ type: 'extractJson' }, (node) => new ExtractJsonNodeImpl(node))
     .with({ type: 'assemblePrompt' }, (node) => new AssemblePromptNodeImpl(node))
     .with({ type: 'loopController' }, (node) => new LoopControllerNodeImpl(node))
+    .with({ type: 'trimChatMessages' }, (node) => new TrimChatMessagesNodeImpl(node))
     .exhaustive();
 };
 
@@ -113,6 +117,7 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('extractJson', () => ExtractJsonNodeImpl.create())
     .with('assemblePrompt', () => AssemblePromptNodeImpl.create())
     .with('loopController', () => LoopControllerNodeImpl.create())
+    .with('trimChatMessages', () => TrimChatMessagesNodeImpl.create())
     .exhaustive();
 }
 
@@ -136,4 +141,5 @@ export const nodeDisplayName: Record<NodeType, string> = {
   graphOutput: 'Graph Output',
   subGraph: 'Subgraph',
   array: 'Array',
+  trimChatMessages: 'Trim Chat Messages',
 };

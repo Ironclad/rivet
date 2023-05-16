@@ -95,6 +95,7 @@ export class GraphProcessor {
   #executionCache: Map<string, unknown> = undefined!;
   #queuedNodes: Set<NodeId> = undefined!;
   #loopControllersSeen: Set<NodeId> = undefined!;
+  #subprocessors: Set<GraphProcessor> = undefined!;
 
   /** User input nodes that are pending user input. */
   #pendingUserInputs: Record<
@@ -169,6 +170,10 @@ export class GraphProcessor {
     if (pending) {
       pending.resolve(values as StringArrayDataValue);
       delete this.#pendingUserInputs[nodeId];
+    }
+
+    for (const processor of this.#subprocessors) {
+      processor.userInput(nodeId, values);
     }
   }
 
@@ -371,6 +376,7 @@ export class GraphProcessor {
       this.#executionCache ??= new Map();
       this.#queuedNodes = new Set();
       this.#loopControllersSeen = new Set();
+      this.#subprocessors = new Set();
 
       if (!this.#isSubProcessor) {
         this.#emitter.emit('start', void 0);
@@ -649,6 +655,8 @@ export class GraphProcessor {
         processor.on('graphStart', (e) => this.#emitter.emit('graphStart', e));
         processor.on('graphFinish', (e) => this.#emitter.emit('graphFinish', e));
 
+        this.#subprocessors.add(processor);
+
         this.on('abort', () => processor.abort());
 
         return processor;
@@ -716,7 +724,6 @@ export class GraphProcessor {
     if ((inputIsExcludedValue || anyOutputIsExcludedValue) && !allowedToConsumedExcludedValue) {
       if (!isWaitingForLoop) {
         this.#emitter.emit('trace', `Excluding node ${node.title} because of control flow.`);
-        this.#emitter.emit('trace', { inputValues });
         this.#emitter.emit('nodeExcluded', { node });
         this.#visitedNodes.add(node.id);
         this.#nodeResults.set(node.id, {
