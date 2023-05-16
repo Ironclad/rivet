@@ -11,12 +11,12 @@ export type TrimChatMessagesNodeData = {
   model: SupportedModels;
 };
 
-export type TrimChatMessagesNode = ChartNode<'trim', TrimChatMessagesNodeData>;
+export type TrimChatMessagesNode = ChartNode<'trimChatMessages', TrimChatMessagesNodeData>;
 
 export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
   static create() {
     const chartNode: TrimChatMessagesNode = {
-      type: 'trim',
+      type: 'trimChatMessages',
       title: 'Trim Chat Messages',
       id: nanoid() as NodeId,
       visualData: {

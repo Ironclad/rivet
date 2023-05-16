@@ -20,6 +20,7 @@ import { ArrayNodeBody } from './nodes/ArrayNode';
 import { ExtractJsonNodeBody } from './nodes/ExtractJsonNode';
 import { AssemblePromptNodeBody } from './nodes/AssemblePromptNode';
 import { LoopControllerNodeBody } from './nodes/LoopControllerNode';
+import { TrimChatMessagesNodeBody } from './nodes/TrimChatMessagesNode';
 
 export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
   const body = match(node as Nodes)
@@ -42,6 +43,7 @@ export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
     .with({ type: 'extractJson' }, (node) => <ExtractJsonNodeBody node={node} />)
     .with({ type: 'assemblePrompt' }, (node) => <AssemblePromptNodeBody node={node} />)
     .with({ type: 'loopController' }, (node) => <LoopControllerNodeBody node={node} />)
+    .with({ type: 'trimChatMessages' }, (node) => <TrimChatMessagesNodeBody node={node} />)
     .otherwise(() => <div>Unknown node type</div>);
 
   return <div className="node-body">{body}</div>;
