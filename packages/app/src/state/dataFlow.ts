@@ -1,5 +1,5 @@
 import { atom, selectorFamily } from 'recoil';
-import { DataValue, NodeId, PortId } from '@ironclad/nodai-core';
+import { DataValue, GraphId, NodeId, PortId } from '@ironclad/nodai-core';
 
 export type RunDataByNodeId = {
   [nodeId: NodeId]: NodeRunData;
@@ -26,6 +26,11 @@ export type NodeRunData = {
 export const lastRunDataByNodeState = atom<RunDataByNodeId>({
   key: 'lastData',
   default: {},
+});
+
+export const runningGraphsState = atom<GraphId[]>({
+  key: 'runningGraphs',
+  default: [],
 });
 
 export const lastRunData = selectorFamily<NodeRunData | undefined, NodeId>({

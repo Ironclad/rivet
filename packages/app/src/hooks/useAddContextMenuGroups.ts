@@ -55,6 +55,7 @@ export const addContextMenuGroups = [
     items: [
       { label: 'Subgraph', nodeType: 'subGraph' },
       { label: 'External Call', nodeType: 'externalCall' },
+      { label: 'Raise Event', nodeType: 'raiseEvent' },
       { label: 'Code', nodeType: 'code' },
       { label: 'Read Directory', nodeType: 'readDirectory' },
       { label: 'Read File', nodeType: 'readFile' },

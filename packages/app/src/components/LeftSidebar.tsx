@@ -17,6 +17,8 @@ import { GraphId, NodeGraph, emptyNodeGraph } from '@ironclad/nodai-core';
 import clsx from 'clsx';
 import { useSaveCurrentGraph } from '../hooks/useSaveCurrentGraph';
 import { useSaveProject } from '../hooks/useSaveProject';
+import { LoadingSpinner } from './LoadingSpinner';
+import { runningGraphsState } from '../state/dataFlow';
 
 const styles = css`
   position: fixed;
@@ -25,7 +27,7 @@ const styles = css`
   bottom: 0;
   width: 300px; // Adjust the width of the sidebar as needed
   background-color: var(--grey-dark);
-  padding: 12px;
+  padding: 0;
   z-index: 50;
   border-right: 1px solid var(--grey);
 
@@ -87,6 +89,7 @@ const styles = css`
     justify-content: space-between;
     margin-bottom: 8px;
     align-items: center;
+    padding: 0 12px;
 
     button {
       padding: 4px 8px;
@@ -112,9 +115,6 @@ const styles = css`
 
   .save-graph,
   .save-project {
-    position: absolute;
-    right: 16px;
-
     padding: 4px 8px;
     border-radius: 4px;
     background-color: var(--grey-dark);
@@ -126,10 +126,28 @@ const styles = css`
     }
   }
 
+  .graph-info-section {
+    padding: 8px 12px;
+  }
+
   .project-info-section {
     background-color: var(--grey-darker);
-    margin: -8px -12px 0 -12px;
     padding: 8px 12px;
+  }
+
+  .spinner {
+    width: 16px;
+    padding-left: 4px;
+  }
+
+  .selected .spinner svg {
+    color: var(--grey-dark);
+  }
+
+  .loaded-project {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 `;
 
@@ -153,6 +171,7 @@ export const LeftSidebar: FC = () => {
   const [project, setProject] = useRecoilState(projectState);
   const savedGraphs = useRecoilValue(savedGraphsState);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const runningGraphs = useRecoilValue(runningGraphsState);
 
   const sortedGraphs = orderBy(savedGraphs, ['metadata.name'], ['asc']);
 
@@ -188,10 +207,12 @@ export const LeftSidebar: FC = () => {
         {isSidebarVisible ? <ExpandLeftIcon /> : <ExpandRightIcon />}
       </div>
       <div className="project-info-section">
-        <button className="save-project" onClick={saveProject}>
-          Save Project
-        </button>
-        {loadedProject.loaded && <div>Loaded: {loadedProject.path.split('/').pop()}</div>}
+        <div className="loaded-project">
+          {loadedProject.loaded && <div>Loaded: {loadedProject.path.split('/').pop()}</div>}
+          <button className="save-project" onClick={saveProject}>
+            Save Project
+          </button>
+        </div>
         <InlineEditableTextfield
           key={`name-${project.metadata.id}`}
           label="Project Name"
@@ -212,7 +233,7 @@ export const LeftSidebar: FC = () => {
       </div>
       <div className="graph-info-section">
         <button className="save-graph" onClick={saveGraph}>
-          Save
+          Save Graph
         </button>
         <InlineEditableTextfield
           key={`graph-name-${graph.metadata?.id}`}
@@ -222,7 +243,6 @@ export const LeftSidebar: FC = () => {
           defaultValue={graph.metadata?.name ?? 'Untitled Graph'}
           readViewFitContainerWidth
         />
-
         <InlineEditableTextfield
           key={`graph-description-${graph.metadata?.id}`}
           label="Description"
@@ -240,30 +260,34 @@ export const LeftSidebar: FC = () => {
           </button>
         </div>
         <div className="graph-list">
-          {sortedGraphs.map((savedGraph) => (
-            <div
-              key={savedGraph.metadata?.id ?? nanoid()}
-              className={clsx('graph-item', { selected: graph.metadata?.id === savedGraph.metadata?.id })}
-            >
-              <div className="graph-item-select" onClick={() => loadGraph(savedGraph)}>
-                {savedGraph.metadata?.name ?? 'Untitled Graph'}
-              </div>
-              <DropdownMenu
-                trigger={({ triggerRef, ...props }) => (
-                  <Button
-                    css={moreDropdownCss}
-                    className={clsx({ selected: graph.metadata?.id === savedGraph.metadata?.id })}
-                    {...props}
-                    iconBefore={<MoreIcon />}
-                    ref={triggerRef}
-                  />
-                )}
+          {sortedGraphs.map((savedGraph) => {
+            const graphIsRunning = runningGraphs.includes(savedGraph.metadata?.id ?? ('' as GraphId));
+            return (
+              <div
+                key={savedGraph.metadata?.id ?? nanoid()}
+                className={clsx('graph-item', { selected: graph.metadata?.id === savedGraph.metadata?.id })}
               >
-                <DropdownItem onClick={() => deleteGraph(savedGraph)}>Delete</DropdownItem>
-                <DropdownItem onClick={() => handleDuplicate(savedGraph)}>Duplicate</DropdownItem>
-              </DropdownMenu>
-            </div>
-          ))}
+                <div className="spinner">{graphIsRunning && <LoadingSpinner />}</div>
+                <div className="graph-item-select" onClick={() => loadGraph(savedGraph)}>
+                  {savedGraph.metadata?.name ?? 'Untitled Graph'}
+                </div>
+                <DropdownMenu
+                  trigger={({ triggerRef, ...props }) => (
+                    <Button
+                      css={moreDropdownCss}
+                      className={clsx({ selected: graph.metadata?.id === savedGraph.metadata?.id })}
+                      {...props}
+                      iconBefore={<MoreIcon />}
+                      ref={triggerRef}
+                    />
+                  )}
+                >
+                  <DropdownItem onClick={() => handleDuplicate(savedGraph)}>Duplicate</DropdownItem>
+                  <DropdownItem onClick={() => deleteGraph(savedGraph)}>Delete</DropdownItem>
+                </DropdownMenu>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

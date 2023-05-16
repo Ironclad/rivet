@@ -128,6 +128,8 @@ export const UserInputNodeBody: FC<UserInputNodeBodyProps> = ({ node }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  console.dir({ isModalOpen });
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };

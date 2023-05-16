@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { selectedNodeState } from '../state/graphBuilder';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { nodesSelector } from '../state/graph';

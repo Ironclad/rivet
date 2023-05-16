@@ -58,6 +58,8 @@ export type ProcessEvents = {
   abort: void;
 
   trace: string;
+} & {
+  [key: `userEvent:${string}`]: DataValue | undefined;
 };
 
 export type GraphOutputs = Record<string, DataValue>;
@@ -123,7 +125,7 @@ export class GraphProcessor {
     this.#connections = {};
     this.#nodesById = {};
 
-    this.#emitter.bindMethods(this as any, ['on', 'off', 'once']);
+    this.#emitter.bindMethods(this as any, ['on', 'off', 'once', 'onAny', 'offAny']);
 
     // Create node instances and store them in a lookup table
     for (const node of this.#graph.nodes) {
@@ -169,6 +171,26 @@ export class GraphProcessor {
   on = undefined! as Emittery<ProcessEvents>['on'];
   off = undefined! as Emittery<ProcessEvents>['off'];
   once = undefined! as Emittery<ProcessEvents>['once'];
+  onAny = undefined! as Emittery<ProcessEvents>['onAny'];
+  offAny = undefined! as Emittery<ProcessEvents>['offAny'];
+
+  #onUserEventHandlers: Map<(event: DataValue | undefined) => void, Function> = new Map();
+
+  onUserEvent(onEvent: string, listener: (event: DataValue | undefined) => void): void {
+    const handler = (event: string, value: unknown) => {
+      if (event === `userEvent:${onEvent}`) {
+        listener(value as DataValue | undefined);
+      }
+    };
+
+    this.#onUserEventHandlers.set(listener, handler);
+    this.#emitter.onAny(handler);
+  }
+
+  offUserEvent(listener: (data: DataValue | undefined) => void): void {
+    const internalHandler = this.#onUserEventHandlers.get(listener);
+    this.#emitter.offAny(internalHandler as any);
+  }
 
   userInput(nodeId: NodeId, values: StringArrayDataValue): void {
     const pending = this.#pendingUserInputs[nodeId];
@@ -649,6 +671,9 @@ export class GraphProcessor {
       ...this.#context,
       project: this.#project,
       executionCache: this.#executionCache,
+      raiseEvent: (event, data) => {
+        this.#emitter.emit(`userEvent:${event}`, data);
+      },
       externalFunctions: { ...this.#externalFunctions },
       onPartialOutputs: (partialOutputs) => partialOutput?.(node, partialOutputs, index),
       signal: this.#abortController.signal,
