@@ -12,6 +12,7 @@
     "@dqbd/tiktoken": "^1.0.7",
     "@types/node": "^20.1.1",
     "emittery": "^1.0.1",
+    "jsonpath": "^1.1.1",
     "lodash-es": "^4.17.21",
     "minimatch": "^9.0.0",
     "nanoid": "^3.3.6",
@@ -23,6 +24,7 @@
     "yaml": "^2.2.2"
   },
   "devDependencies": {
+    "@types/jsonpath": "^0.2.0",
     "@types/lodash-es": "^4",
     "@types/yaml": "^1.9.7",
     "typescript": "^5.0.4"

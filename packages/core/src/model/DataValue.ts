@@ -59,7 +59,7 @@ export function expectType<T extends DataType>(value: DataValue | undefined, typ
     return [value.value] as GetDataValue<T>['value'];
   }
 
-  if (type === 'any' || type === 'any[]') {
+  if (type === 'any' || type === 'any[]' || value?.type === 'any' || value?.type === 'any[]') {
     return value?.value as GetDataValue<T>['value'];
   }
 

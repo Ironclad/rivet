@@ -5759,10 +5759,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@ironclad/nodai-core", "workspace:packages/core"],\
             ["@dqbd/tiktoken", "npm:1.0.7"],\
+            ["@types/jsonpath", "npm:0.2.0"],\
             ["@types/lodash-es", "npm:4.17.7"],\
             ["@types/node", "npm:20.1.1"],\
             ["@types/yaml", "npm:1.9.7"],\
             ["emittery", "npm:1.0.1"],\
+            ["jsonpath", "npm:1.1.1"],\
             ["lodash-es", "npm:4.17.21"],\
             ["minimatch", "npm:9.0.0"],\
             ["nanoid", "npm:3.3.6"],\
@@ -9199,6 +9201,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-json5-npm-0.0.29-f63a7916bd-e60b153664.zip/node_modules/@types/json5/",\
           "packageDependencies": [\
             ["@types/json5", "npm:0.0.29"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@types/jsonpath", [\
+        ["npm:0.2.0", {\
+          "packageLocation": "./.yarn/cache/@types-jsonpath-npm-0.2.0-7e705d9978-c21b6bc016.zip/node_modules/@types/jsonpath/",\
+          "packageDependencies": [\
+            ["@types/jsonpath", "npm:0.2.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -13388,6 +13399,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["escodegen", [\
+        ["npm:1.14.3", {\
+          "packageLocation": "./.yarn/cache/escodegen-npm-1.14.3-a4dedc6eeb-381cdc4767.zip/node_modules/escodegen/",\
+          "packageDependencies": [\
+            ["escodegen", "npm:1.14.3"],\
+            ["esprima", "npm:4.0.1"],\
+            ["estraverse", "npm:4.3.0"],\
+            ["esutils", "npm:2.0.3"],\
+            ["optionator", "npm:0.8.3"],\
+            ["source-map", "npm:0.6.1"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["npm:2.0.0", {\
           "packageLocation": "./.yarn/cache/escodegen-npm-2.0.0-6450b02925-5aa6b2966f.zip/node_modules/escodegen/",\
           "packageDependencies": [\
@@ -13916,6 +13939,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["esprima", [\
+        ["npm:1.2.2", {\
+          "packageLocation": "./.yarn/cache/esprima-npm-1.2.2-506b351d14-4f10006f0e.zip/node_modules/esprima/",\
+          "packageDependencies": [\
+            ["esprima", "npm:1.2.2"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["npm:4.0.1", {\
           "packageLocation": "./.yarn/cache/esprima-npm-4.0.1-1084e98778-b45bc805a6.zip/node_modules/esprima/",\
           "packageDependencies": [\
@@ -16521,6 +16551,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jsonfile", "npm:6.1.0"],\
             ["graceful-fs", "npm:4.2.11"],\
             ["universalify", "npm:2.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["jsonpath", [\
+        ["npm:1.1.1", {\
+          "packageLocation": "./.yarn/cache/jsonpath-npm-1.1.1-d88994ce7e-5480d8e9e4.zip/node_modules/jsonpath/",\
+          "packageDependencies": [\
+            ["jsonpath", "npm:1.1.1"],\
+            ["esprima", "npm:1.2.2"],\
+            ["static-eval", "npm:2.0.2"],\
+            ["underscore", "npm:1.12.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -22125,6 +22167,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["static-eval", [\
+        ["npm:2.0.2", {\
+          "packageLocation": "./.yarn/cache/static-eval-npm-2.0.2-047eda8cb5-335a923c5c.zip/node_modules/static-eval/",\
+          "packageDependencies": [\
+            ["static-eval", "npm:2.0.2"],\
+            ["escodegen", "npm:1.14.3"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["statuses", [\
         ["npm:1.5.0", {\
           "packageLocation": "./.yarn/cache/statuses-npm-1.5.0-f88f91b2e9-c469b9519d.zip/node_modules/statuses/",\
@@ -23158,6 +23210,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["has-bigints", "npm:1.0.2"],\
             ["has-symbols", "npm:1.0.3"],\
             ["which-boxed-primitive", "npm:1.0.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["underscore", [\
+        ["npm:1.12.1", {\
+          "packageLocation": "./.yarn/cache/underscore-npm-1.12.1-f5ca0889f5-ec327603aa.zip/node_modules/underscore/",\
+          "packageDependencies": [\
+            ["underscore", "npm:1.12.1"]\
           ],\
           "linkType": "HARD"\
         }]\

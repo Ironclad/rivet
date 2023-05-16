@@ -29,6 +29,7 @@ import { ExtractJsonNodeEditor } from './nodes/ExtractJsonNode';
 import { TrimChatMessagesNodeEditor } from './nodes/TrimChatMessagesNode';
 import { ExtractYamlNodeEditor } from './nodes/ExtractYamlNode';
 import { ExternalCallNodeEditor } from './nodes/ExternalCallNode';
+import { ExtractObjectPathNodeEditor } from './nodes/ExtractObjectPathNode';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -204,6 +205,9 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
     ))
     .with({ type: 'externalCall' }, (node) => (
       <ExternalCallNodeEditor node={node} onChange={(node) => updateNode(node)} />
+    ))
+    .with({ type: 'extractObjectPath' }, (node) => (
+      <ExtractObjectPathNodeEditor node={node} onChange={(node) => updateNode(node)} />
     ))
     .otherwise(() => null);
 
