@@ -5761,6 +5761,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@dqbd/tiktoken", "npm:1.0.7"],\
             ["@types/lodash-es", "npm:4.17.7"],\
             ["@types/node", "npm:20.1.1"],\
+            ["@types/yaml", "npm:1.9.7"],\
             ["emittery", "npm:1.0.1"],\
             ["lodash-es", "npm:4.17.21"],\
             ["minimatch", "npm:9.0.0"],\
@@ -5770,7 +5771,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-retry", "npm:5.1.2"],\
             ["ts-pattern", "npm:4.3.0"],\
             ["type-fest", "virtual:ee53775331eeeecac063f8feb53102b3a1c4a9deb536f3dca087d0c61347a740d7ecde5e6b5d744e87c5eebfbe096912824a4162124776f5f1f671019378f54a#npm:3.10.0"],\
-            ["typescript", "patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"]\
+            ["typescript", "patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"],\
+            ["yaml", "npm:2.2.2"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -9501,6 +9503,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@types/ws", "npm:8.5.4"],\
             ["@types/node", "npm:18.15.8"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@types/yaml", [\
+        ["npm:1.9.7", {\
+          "packageLocation": "./.yarn/cache/@types-yaml-npm-1.9.7-a7e2bbc474-0cdbf1857d.zip/node_modules/@types/yaml/",\
+          "packageDependencies": [\
+            ["@types/yaml", "npm:1.9.7"],\
+            ["yaml", "npm:2.2.2"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -24535,6 +24547,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/yaml-npm-1.10.2-0e780aebdf-ce4ada136e.zip/node_modules/yaml/",\
           "packageDependencies": [\
             ["yaml", "npm:1.10.2"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:2.2.2", {\
+          "packageLocation": "./.yarn/cache/yaml-npm-2.2.2-6e3cddb343-d90c235e09.zip/node_modules/yaml/",\
+          "packageDependencies": [\
+            ["yaml", "npm:2.2.2"]\
           ],\
           "linkType": "HARD"\
         }]\

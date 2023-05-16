@@ -27,6 +27,7 @@ import { SubGraphNodeEditor } from './nodes/SubGraphNode';
 import { ArrayNodeEditor } from './nodes/ArrayNode';
 import { ExtractJsonNodeEditor } from './nodes/ExtractJsonNode';
 import { TrimChatMessagesNodeEditor } from './nodes/TrimChatMessagesNode';
+import { ExtractYamlNodeEditor } from './nodes/ExtractYamlNode';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -196,6 +197,9 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
     ))
     .with({ type: 'trimChatMessages' }, (node) => (
       <TrimChatMessagesNodeEditor node={node} onChange={(node) => updateNode(node)} />
+    ))
+    .with({ type: 'extractYaml' }, (node) => (
+      <ExtractYamlNodeEditor node={node} onChange={(node) => updateNode(node)} />
     ))
     .otherwise(() => null);
 

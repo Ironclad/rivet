@@ -19,10 +19,12 @@
     "p-queue": "^6.6.2",
     "p-retry": "^5.1.2",
     "ts-pattern": "^4.3.0",
-    "type-fest": "^3.10.0"
+    "type-fest": "^3.10.0",
+    "yaml": "^2.2.2"
   },
   "devDependencies": {
     "@types/lodash-es": "^4",
+    "@types/yaml": "^1.9.7",
     "typescript": "^5.0.4"
   }
 }
