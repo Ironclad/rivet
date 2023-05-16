@@ -5,6 +5,7 @@ import TextField from '@atlaskit/textfield';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
 import { RenderDataValue } from '../RenderDataValue';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type ExtractObjectPathNodeBodyProps = {
   node: ExtractObjectPathNode;
@@ -79,4 +80,10 @@ export const ExtractObjectPathNodeEditor: FC<ExtractObjectPathNodeEditorProps> =
       </div>
     </div>
   );
+};
+
+export const extractObjectPathNodeDescriptor: NodeComponentDescriptor<'extractObjectPath'> = {
+  Body: ExtractObjectPathNodeBody,
+  Output: ExtractObjectPathNodeOutput,
+  Editor: ExtractObjectPathNodeEditor,
 };

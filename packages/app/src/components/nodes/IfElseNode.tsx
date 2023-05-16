@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
 import { RenderDataValue } from '../RenderDataValue';
 import { IfElseNode, PortId } from '@ironclad/nodai-core';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type IfElseNodeBodyProps = { node: IfElseNode };
 
@@ -36,4 +37,10 @@ export const IfElseNodeOutput: FC<IfElseNodeBodyProps> = ({ node }) => {
       <RenderDataValue value={outputData} />
     </div>
   );
+};
+
+export const ifElseNodeDescriptor: NodeComponentDescriptor<'ifElse'> = {
+  Body: IfElseNodeBody,
+  Output: IfElseNodeOutput,
+  Editor: IfElseNodeEditor,
 };

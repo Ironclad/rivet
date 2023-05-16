@@ -9,6 +9,7 @@ import { projectState } from '../../state/savedGraphs';
 import { entries, values } from '../../utils/typeSafety';
 import { nanoid } from 'nanoid';
 import { GraphId, SubGraphNode } from '@ironclad/nodai-core';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type SubGraphNodeBodyProps = {
   node: SubGraphNode;
@@ -117,4 +118,10 @@ export const SubGraphNodeOutput: FC<SubGraphNodeOutputProps> = ({ node }) => {
       ))}
     </div>
   );
+};
+
+export const subgraphNodeDescriptor: NodeComponentDescriptor<'subGraph'> = {
+  Body: SubGraphNodeBody,
+  Output: SubGraphNodeOutput,
+  Editor: SubGraphNodeEditor,
 };

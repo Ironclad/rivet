@@ -3,6 +3,7 @@ import { LoopControllerNode, PortId } from '@ironclad/nodai-core';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
 import { RenderDataValue } from '../RenderDataValue';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 type LoopControllerNodeBodyProps = {
   node: LoopControllerNode;
@@ -46,4 +47,9 @@ export const LoopControllerNodeOutput: FC<{ node: LoopControllerNode }> = ({ nod
       ))}
     </div>
   );
+};
+export const loopControllerNodeDescriptor: NodeComponentDescriptor<'loopController'> = {
+  Body: LoopControllerNodeBody,
+  Output: LoopControllerNodeOutput,
+  Editor: undefined,
 };

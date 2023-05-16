@@ -193,6 +193,7 @@ export const LeftSidebar: FC = () => {
         </button>
         {loadedProject.loaded && <div>Loaded: {loadedProject.path.split('/').pop()}</div>}
         <InlineEditableTextfield
+          key={`name-${project.metadata.id}`}
           label="Project Name"
           placeholder="Project Name"
           readViewFitContainerWidth
@@ -201,6 +202,7 @@ export const LeftSidebar: FC = () => {
         />
 
         <InlineEditableTextfield
+          key={`description-${project.metadata.id}`}
           label="Description"
           placeholder="Project Description"
           defaultValue={project.metadata?.description ?? ''}
@@ -213,6 +215,7 @@ export const LeftSidebar: FC = () => {
           Save
         </button>
         <InlineEditableTextfield
+          key={`graph-name-${graph.metadata?.id}`}
           label="Graph Name"
           placeholder="Graph Name"
           onConfirm={(newValue) => setGraph({ ...graph, metadata: { ...graph.metadata, name: newValue } })}
@@ -221,6 +224,7 @@ export const LeftSidebar: FC = () => {
         />
 
         <InlineEditableTextfield
+          key={`graph-description-${graph.metadata?.id}`}
           label="Description"
           placeholder="Graph Description"
           defaultValue={graph.metadata?.description ?? ''}

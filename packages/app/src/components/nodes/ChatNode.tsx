@@ -7,6 +7,7 @@ import Toggle from '@atlaskit/toggle';
 import * as monaco from 'monaco-editor';
 import { ChartNode, ChatNode, ChatNodeData, PortId, expectType, expectTypeOptional } from '@ironclad/nodai-core';
 import { values } from '../../utils/typeSafety';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 type ChatNodeBodyProps = {
   node: ChatNode;
@@ -207,8 +208,8 @@ export const FullscreenChatNodeOutput: FC<ChatNodeBodyProps> = ({ node }) => {
 };
 
 export type ChatNodeEditorProps = {
-  node: ChartNode;
-  onChange?: (node: ChartNode<'chat', ChatNodeData>) => void;
+  node: ChatNode;
+  onChange?: (node: ChatNode) => void;
 };
 
 const container = css`
@@ -468,4 +469,11 @@ export const ChatNodeEditor: FC<ChatNodeEditorProps> = ({ node, onChange }) => {
       </div>
     </div>
   );
+};
+
+export const chatNodeDescriptor: NodeComponentDescriptor<'chat'> = {
+  Body: ChatNodeBody,
+  Output: ChatNodeOutput,
+  Editor: ChatNodeEditor,
+  FullscreenOutput: FullscreenChatNodeOutput,
 };

@@ -7,19 +7,12 @@ import { useRecoilValue } from 'recoil';
 import Button from '@atlaskit/button';
 import { UserInputModal } from '../UserInputModal';
 import { userInputModalQuestionsState, userInputModalSubmitState } from '../../state/userInput';
-import {
-  ArrayDataValue,
-  ChartNode,
-  PortId,
-  StringDataValue,
-  UserInputNode,
-  UserInputNodeData,
-  expectType,
-} from '@ironclad/nodai-core';
+import { ArrayDataValue, PortId, StringDataValue, UserInputNode, expectType } from '@ironclad/nodai-core';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type UserInputNodeEditorProps = {
-  node: ChartNode;
-  onChange?: (node: ChartNode<'userInput', UserInputNodeData>) => void;
+  node: UserInputNode;
+  onChange?: (node: UserInputNode) => void;
 };
 
 const container = css`
@@ -209,4 +202,10 @@ export const UserInputNodeOutput: FC<UserInputNodeBodyProps> = ({ node }) => {
       ))}
     </div>
   );
+};
+
+export const userInputNodeDescriptor: NodeComponentDescriptor<'userInput'> = {
+  Body: UserInputNodeBody,
+  Editor: UserInputNodeEditor,
+  Output: UserInputNodeOutput,
 };

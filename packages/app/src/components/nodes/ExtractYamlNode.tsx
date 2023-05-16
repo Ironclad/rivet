@@ -3,6 +3,7 @@ import { ExtractYamlNode, PortId } from '@ironclad/nodai-core';
 import { RenderDataValue } from '../RenderDataValue';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type ExtractYamlNodeBodyProps = {
   node: ExtractYamlNode;
@@ -49,4 +50,10 @@ export const ExtractYamlNodeOutput = ({ node }: { node: ExtractYamlNode }) => {
       <RenderDataValue value={output.outputData['output' as PortId]} />
     </div>
   );
+};
+
+export const extractYamlNodeDescriptor: NodeComponentDescriptor<'extractYaml'> = {
+  Body: ExtractYamlNodeBody,
+  Output: ExtractYamlNodeOutput,
+  Editor: ExtractYamlNodeEditor,
 };

@@ -4,32 +4,12 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { nodesSelector } from '../state/graph';
 import styled from '@emotion/styled';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
-import { NodeType, Nodes, nodeDisplayName, ChartNode } from '@ironclad/nodai-core';
-import { match } from 'ts-pattern';
-import { PromptNodeEditor } from './nodes/PromptNode';
+import { NodeType, nodeDisplayName, ChartNode } from '@ironclad/nodai-core';
+import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes';
 import produce from 'immer';
-import { ChatNodeEditor } from './nodes/ChatNode';
-import { TextNodeEditor } from './nodes/TextNode';
-import { ExtractRegexNodeEditor } from './nodes/ExtractRegexNode';
-import { CodeNodeEditor } from './nodes/CodeNode';
-import { MatchNodeEditor } from './nodes/MatchNode';
-import { UserInputNodeEditor } from './nodes/UserInputNode';
-import { IfNodeEditor } from './nodes/IfNode';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
-import { ReadDirectoryNodeEditor } from './nodes/ReadDirectoryNode';
-import { ReadFileNodeEditor } from './nodes/ReadFileNode';
 import Toggle from '@atlaskit/toggle';
-import { IfElseNodeEditor } from './nodes/IfElseNode';
-import { ChunkNodeEditor } from './nodes/ChunkNode';
-import { GraphInputNodeEditor } from './nodes/GraphInputNode';
-import { GraphOutputNodeEditor } from './nodes/GraphOutputNode';
-import { SubGraphNodeEditor } from './nodes/SubGraphNode';
-import { ArrayNodeEditor } from './nodes/ArrayNode';
-import { ExtractJsonNodeEditor } from './nodes/ExtractJsonNode';
-import { TrimChatMessagesNodeEditor } from './nodes/TrimChatMessagesNode';
-import { ExtractYamlNodeEditor } from './nodes/ExtractYamlNode';
-import { ExternalCallNodeEditor } from './nodes/ExternalCallNode';
-import { ExtractObjectPathNodeEditor } from './nodes/ExtractObjectPathNode';
+import { useStableCallback } from '../hooks/useStableCallback';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -159,57 +139,18 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
 
   const selectedNode = nodes.find((node) => node.id === selectedNodeId)!;
 
-  const updateNode = useCallback(
-    (node: ChartNode) => {
-      setNodes((nodes) =>
-        produce(nodes, (draft) => {
-          const index = draft.findIndex((n) => n.id === node.id);
-          draft[index] = node;
-        }),
-      );
-    },
-    [setNodes],
-  );
+  const updateNode = useStableCallback((node: ChartNode) => {
+    setNodes((nodes) =>
+      produce(nodes, (draft) => {
+        const index = draft.findIndex((n) => n.id === node.id);
+        draft[index] = node;
+      }),
+    );
+  });
 
-  const nodeEditor = match(selectedNode as Nodes)
-    .with({ type: 'prompt' }, (node) => <PromptNodeEditor node={node} onChange={(node) => updateNode(node)} />)
-    .with({ type: 'chat' }, (node) => <ChatNodeEditor node={node} onChange={(node) => updateNode(node)} />)
-    .with({ type: 'text' }, (node) => <TextNodeEditor node={node} onChange={(node) => updateNode(node)} />)
-    .with({ type: 'extractRegex' }, (node) => (
-      <ExtractRegexNodeEditor node={node} onChange={(node) => updateNode(node)} />
-    ))
-    .with({ type: 'code' }, (node) => <CodeNodeEditor node={node} onChange={(node) => updateNode(node)} />)
-    .with({ type: 'match' }, (node) => <MatchNodeEditor node={node} onChange={(node) => updateNode(node)} />)
-    .with({ type: 'userInput' }, (node) => <UserInputNodeEditor node={node} onChange={(node) => updateNode(node)} />)
-    .with({ type: 'if' }, (node) => <IfNodeEditor />)
-    .with({ type: 'ifElse' }, (node) => <IfElseNodeEditor node={node} />)
-    .with({ type: 'readDirectory' }, (node) => (
-      <ReadDirectoryNodeEditor node={node} onChange={(node) => updateNode(node)} />
-    ))
-    .with({ type: 'readFile' }, (node) => <ReadFileNodeEditor node={node} onChange={(node) => updateNode(node)} />)
-    .with({ type: 'chunk' }, (node) => <ChunkNodeEditor node={node} onChange={(node) => updateNode(node)} />)
-    .with({ type: 'graphInput' }, (node) => <GraphInputNodeEditor node={node} onChange={(node) => updateNode(node)} />)
-    .with({ type: 'graphOutput' }, (node) => (
-      <GraphOutputNodeEditor node={node} onChange={(node) => updateNode(node)} />
-    ))
-    .with({ type: 'subGraph' }, (node) => <SubGraphNodeEditor node={node} onChange={(node) => updateNode(node)} />)
-    .with({ type: 'array' }, (node) => <ArrayNodeEditor node={node} onChange={(node) => updateNode(node)} />)
-    .with({ type: 'extractJson' }, (node) => (
-      <ExtractJsonNodeEditor node={node} onChange={(node) => updateNode(node)} />
-    ))
-    .with({ type: 'trimChatMessages' }, (node) => (
-      <TrimChatMessagesNodeEditor node={node} onChange={(node) => updateNode(node)} />
-    ))
-    .with({ type: 'extractYaml' }, (node) => (
-      <ExtractYamlNodeEditor node={node} onChange={(node) => updateNode(node)} />
-    ))
-    .with({ type: 'externalCall' }, (node) => (
-      <ExternalCallNodeEditor node={node} onChange={(node) => updateNode(node)} />
-    ))
-    .with({ type: 'extractObjectPath' }, (node) => (
-      <ExtractObjectPathNodeEditor node={node} onChange={(node) => updateNode(node)} />
-    ))
-    .otherwise(() => null);
+  const { Editor } = useUnknownNodeComponentDescriptorFor(selectedNode);
+
+  const nodeEditor = Editor ? <Editor node={selectedNode} onChange={updateNode} /> : null;
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -225,19 +166,13 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
     };
   }, [setSelectedNodeId]);
 
-  const nodeDescriptionChanged = useCallback(
-    (description: string) => {
-      updateNode({ ...selectedNode, description });
-    },
-    [selectedNode, updateNode],
-  );
+  const nodeDescriptionChanged = useStableCallback((description: string) => {
+    updateNode({ ...selectedNode, description });
+  });
 
-  const nodeTitleChanged = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      updateNode({ ...selectedNode, title: event.target.value });
-    },
-    [selectedNode, updateNode],
-  );
+  const nodeTitleChanged = useStableCallback((title: string) => {
+    updateNode({ ...selectedNode, title });
+  });
 
   return (
     <Container>
@@ -245,20 +180,24 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
         <MultiplyIcon />
       </button>
       <div className="section">
-        <h3 className="section-title">Node Info</h3>
-        <input
-          type="text"
-          className="node-name input-field"
+        <h3 className="section-title">Edit {nodeDisplayName[selectedNode.type as NodeType]} Node</h3>
+        <InlineEditableTextfield
+          key={`node-title-${selectedNode.id}`}
+          label="Node Title"
           placeholder="Enter a name for the node..."
-          value={selectedNode.title}
-          onChange={nodeTitleChanged}
+          defaultValue={selectedNode.title}
+          onConfirm={nodeTitleChanged}
+          readViewFitContainerWidth
         />
       </div>
       <div className="section">
         <InlineEditableTextfield
+          key={`node-description-${selectedNode.id}`}
+          label="Node Description"
           defaultValue={selectedNode.description ?? ''}
           onConfirm={nodeDescriptionChanged}
           placeholder="Enter any description or notes for this node..."
+          readViewFitContainerWidth
         ></InlineEditableTextfield>
       </div>
       <section>

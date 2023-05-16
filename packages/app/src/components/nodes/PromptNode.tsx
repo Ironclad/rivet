@@ -7,10 +7,11 @@ import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
 import { RenderDataValue } from '../RenderDataValue';
 import { ChartNode, GetDataValue, PortId, PromptNode, PromptNodeData } from '@ironclad/nodai-core';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type PromptNodeEditorProps = {
-  node: ChartNode;
-  onChange?: (node: ChartNode) => void;
+  node: PromptNode;
+  onChange?: (node: PromptNode) => void;
 };
 
 const Container = styled.div`
@@ -257,3 +258,9 @@ export const PromptNodeOutput: FC<PromptNodeBodyProps> = memo(({ node }) => {
     </div>
   );
 });
+
+export const promptNodeDescriptor: NodeComponentDescriptor<'prompt'> = {
+  Body: PromptNodeBody,
+  Output: PromptNodeOutput,
+  Editor: PromptNodeEditor,
+};

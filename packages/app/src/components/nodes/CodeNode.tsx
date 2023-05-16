@@ -6,6 +6,7 @@ import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
 import styled from '@emotion/styled';
 import { useLatest } from 'ahooks';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type CodeNodeBodyProps = {
   node: CodeNode;
@@ -73,8 +74,8 @@ export const CodeNodeOutput: FC<CodeNodeOutputProps> = ({ node }) => {
 };
 
 export type CodeNodeEditorProps = {
-  node: ChartNode;
-  onChange?: (node: ChartNode) => void;
+  node: CodeNode;
+  onChange?: (node: CodeNode) => void;
 };
 
 const Container = styled.div`
@@ -144,4 +145,10 @@ export const CodeNodeEditor: FC<CodeNodeEditorProps> = ({ node, onChange }) => {
       <div ref={editorContainer} className="editor-container" />
     </Container>
   );
+};
+
+export const codeNodeDescriptor: NodeComponentDescriptor<'code'> = {
+  Body: CodeNodeBody,
+  Output: CodeNodeOutput,
+  Editor: CodeNodeEditor,
 };

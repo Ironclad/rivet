@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { css } from '@emotion/react';
 import { ArrayNode } from '@ironclad/nodai-core';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 type ArrayNodeBodyProps = {
   node: ArrayNode;
@@ -43,4 +44,10 @@ export const ArrayNodeEditor: FC<ArrayNodeEditorProps> = ({ node, onChange }) =>
       </div>
     </div>
   );
+};
+
+export const arrayNodeDescriptor: NodeComponentDescriptor<'array'> = {
+  Body: ArrayNodeBody,
+  Output: undefined,
+  Editor: ArrayNodeEditor,
 };

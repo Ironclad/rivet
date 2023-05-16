@@ -8,6 +8,7 @@ import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
 import { RenderDataValue } from '../RenderDataValue';
 import { DataType, GraphOutputNode, PortId, ScalarType, dataTypeDisplayNames, scalarTypes } from '@ironclad/nodai-core';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type GraphOutputNodeBodyProps = {
   node: GraphOutputNode;
@@ -137,4 +138,10 @@ export const GraphOutputNodeOutput: FC<GraphOutputNodeOutputProps> = ({ node }) 
       <RenderDataValue value={outputText} />
     </pre>
   );
+};
+
+export const graphOutputNodeDescriptor: NodeComponentDescriptor<'graphOutput'> = {
+  Body: GraphOutputNodeBody,
+  Output: GraphOutputNodeOutput,
+  Editor: GraphOutputNodeEditor,
 };

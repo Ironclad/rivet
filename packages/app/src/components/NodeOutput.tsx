@@ -1,37 +1,16 @@
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../state/dataFlow';
-import { match } from 'ts-pattern';
 import { FC, memo, useState } from 'react';
 import clsx from 'clsx';
-
-import { ChatNodeOutput, FullscreenChatNodeOutput } from './nodes/ChatNode';
-import { CodeNodeOutput } from './nodes/CodeNode';
-import { ExtractRegexNodeOutput } from './nodes/ExtractRegexNode';
-import { MatchNodeOutput } from './nodes/MatchNode';
-import { PromptNodeOutput } from './nodes/PromptNode';
-import { TextNodeOutput } from './nodes/TextNode';
-import { UserInputNodeOutput } from './nodes/UserInputNode';
+import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes';
+import { useStableCallback } from '../hooks/useStableCallback';
 import { copyToClipboard } from '../utils/copyToClipboard';
+import { ChartNode, PortId } from '@ironclad/nodai-core';
+import { css } from '@emotion/react';
 import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-line.svg';
 import { ReactComponent as ExpandIcon } from 'majesticons/line/maximize-line.svg';
 import { FullScreenModal } from './FullScreenModal';
-import { css } from '@emotion/react';
 import { getWarnings } from '../utils/outputs';
-import { ChartNode, ChatNode, Nodes, PortId } from '@ironclad/nodai-core';
-import { ReadDirectoryNodeOutput } from './nodes/ReadDirectoryNode';
-import { ReadFileNodeOutput } from './nodes/ReadFileNode';
-import { IfElseNodeOutput } from './nodes/IfElseNode';
-import { ChunkNodeOutput } from './nodes/ChunkNode';
-import { GraphInputNodeOutput } from './nodes/GraphInputNode';
-import { GraphOutputNodeOutput } from './nodes/GraphOutputNode';
-import { SubGraphNodeOutput } from './nodes/SubGraphNode';
-import { ExtractJsonNodeOutput } from './nodes/ExtractJsonNode';
-import { AssemblePromptNodeOutput } from './nodes/AssemblePromptNode';
-import { LoopControllerNodeOutput } from './nodes/LoopControllerNode';
-import { TrimChatMessagesNodeOutput } from './nodes/TrimChatMessagesNode';
-import { ExtractYamlNodeOutput } from './nodes/ExtractYamlNode';
-import { ExternalCallNodeOutput } from './nodes/ExternalCallNode';
-import { ExtractObjectPathNodeOutput } from './nodes/ExtractObjectPathNode';
 
 const fullscreenOutputButtonsCss = css`
   position: absolute;
@@ -59,43 +38,17 @@ export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   const nodeOutput = useRecoilValue(lastRunData(node.id));
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (!nodeOutput?.status) {
-    return null;
-  }
+  const { Output, FullscreenOutput } = useUnknownNodeComponentDescriptorFor(node);
 
-  const outputBody = match(node as Nodes)
-    .with({ type: 'prompt' }, (node) => <PromptNodeOutput node={node} />)
-    .with({ type: 'chat' }, (node) => <ChatNodeOutput node={node} />)
-    .with({ type: 'text' }, (node) => <TextNodeOutput node={node} />)
-    .with({ type: 'extractRegex' }, (node) => <ExtractRegexNodeOutput node={node} />)
-    .with({ type: 'code' }, (node) => <CodeNodeOutput node={node} />)
-    .with({ type: 'match' }, (node) => <MatchNodeOutput node={node} />)
-    .with({ type: 'userInput' }, (node) => <UserInputNodeOutput node={node} />)
-    .with({ type: 'readDirectory' }, (node) => <ReadDirectoryNodeOutput node={node} />)
-    .with({ type: 'readFile' }, (node) => <ReadFileNodeOutput node={node} />)
-    .with({ type: 'ifElse' }, (node) => <IfElseNodeOutput node={node} />)
-    .with({ type: 'chunk' }, (node) => <ChunkNodeOutput node={node} />)
-    .with({ type: 'graphInput' }, (node) => <GraphInputNodeOutput node={node} />)
-    .with({ type: 'graphOutput' }, (node) => <GraphOutputNodeOutput node={node} />)
-    .with({ type: 'subGraph' }, (node) => <SubGraphNodeOutput node={node} />)
-    .with({ type: 'extractJson' }, (node) => <ExtractJsonNodeOutput node={node} />)
-    .with({ type: 'assemblePrompt' }, (node) => <AssemblePromptNodeOutput node={node} />)
-    .with({ type: 'loopController' }, (node) => <LoopControllerNodeOutput node={node} />)
-    .with({ type: 'trimChatMessages' }, (node) => <TrimChatMessagesNodeOutput node={node} />)
-    .with({ type: 'extractYaml' }, (node) => <ExtractYamlNodeOutput node={node} />)
-    .with({ type: 'externalCall' }, (node) => <ExternalCallNodeOutput node={node} />)
-    .with({ type: 'extractObjectPath' }, (node) => <ExtractObjectPathNodeOutput node={node} />)
-    .otherwise(() => null);
-
-  const fullscreenOutputBody = match(node as Nodes)
-    .with({ type: 'chat' }, (node) => <FullscreenChatNodeOutput node={node as ChatNode} />)
-    .otherwise(() => null);
-
-  const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+  const handleScroll = useStableCallback((e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     e.stopPropagation();
-  };
+  });
 
-  const handleCopyToClipboard = () => {
+  const handleCopyToClipboard = useStableCallback(() => {
+    if (!nodeOutput) {
+      return;
+    }
+
     const keys = Object.keys(nodeOutput.outputData ?? {}) as PortId[];
 
     if (keys.length === 1) {
@@ -111,7 +64,15 @@ export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
     }
 
     copyToClipboard(JSON.stringify(nodeOutput.outputData, null, 2));
-  };
+  });
+
+  if (!nodeOutput?.status) {
+    return null;
+  }
+
+  const outputBody = Output ? <Output node={node} /> : null;
+
+  const fullscreenOutputBody = FullscreenOutput ? <FullscreenOutput node={node} /> : null;
 
   const renderCopyButton = () => (
     <div className="copy-button" onClick={handleCopyToClipboard}>

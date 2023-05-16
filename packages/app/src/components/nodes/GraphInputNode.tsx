@@ -9,6 +9,7 @@ import { lastRunData } from '../../state/dataFlow';
 import { RenderDataValue } from '../RenderDataValue';
 import { DataType, GraphInputNode, PortId, ScalarType, dataTypeDisplayNames, scalarTypes } from '@ironclad/nodai-core';
 import Toggle from '@atlaskit/toggle';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type GraphInputNodeBodyProps = {
   node: GraphInputNode;
@@ -162,4 +163,10 @@ export const GraphInputNodeOutput: FC<GraphInputNodeOutputProps> = ({ node }) =>
       <RenderDataValue value={outputText} />
     </pre>
   );
+};
+
+export const graphInputNodeDescriptor: NodeComponentDescriptor<'graphInput'> = {
+  Body: GraphInputNodeBody,
+  Output: GraphInputNodeOutput,
+  Editor: GraphInputNodeEditor,
 };

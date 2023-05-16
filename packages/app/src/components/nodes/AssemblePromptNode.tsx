@@ -40,3 +40,9 @@ export const AssemblePromptNodeOutput: FC<{ node: AssemblePromptNode }> = ({ nod
     </div>
   );
 };
+
+export const assemblePromptNodeDescriptor = {
+  Body: undefined,
+  Output: AssemblePromptNodeOutput,
+  Editor: undefined,
+};

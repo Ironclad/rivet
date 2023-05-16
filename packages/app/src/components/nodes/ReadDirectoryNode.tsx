@@ -6,6 +6,7 @@ import Toggle from '@atlaskit/toggle';
 import { openDirectory } from '../../utils/fileIO';
 import Button from '@atlaskit/button';
 import { ChartNode, PortId, ReadDirectoryNode, expectType } from '@ironclad/nodai-core';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 type ReadDirectoryNodeBodyProps = {
   node: ReadDirectoryNode;
@@ -260,4 +261,10 @@ export const ReadDirectoryNodeEditor: FC<ReadDirectoryNodeEditorProps> = ({ node
       </div>
     </div>
   );
+};
+
+export const readDirectoryNodeDescriptor: NodeComponentDescriptor<'readDirectory'> = {
+  Body: ReadDirectoryNodeBody,
+  Output: ReadDirectoryNodeOutput,
+  Editor: ReadDirectoryNodeEditor,
 };
