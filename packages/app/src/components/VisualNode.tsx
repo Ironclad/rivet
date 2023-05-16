@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { CSSProperties, HTMLAttributes, MouseEvent, forwardRef, memo, useCallback, useState } from 'react';
+import { CSSProperties, HTMLAttributes, MouseEvent, forwardRef, memo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { match } from 'ts-pattern';
 import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/nodai-core';
@@ -8,7 +8,6 @@ import { NodeBody } from './NodeBody';
 import { NodeOutput } from './NodeOutput';
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
 import { ReactComponent as SendIcon } from 'majesticons/solid/send.svg';
-import { ReactComponent as PinwheelIcon } from 'majesticons/line/pinwheel-line.svg';
 import { ReactComponent as GitForkLine } from 'majesticons/line/git-fork-line.svg';
 import { ResizeHandle } from './ResizeHandle';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';

@@ -25,6 +25,7 @@ import { trimChatMessagesNodeDescriptor } from '../components/nodes/TrimChatMess
 import { arrayNodeDescriptor } from '../components/nodes/ArrayNode';
 import { userInputNodeDescriptor } from '../components/nodes/UserInputNode';
 import { RaiseEventNodeDescriptor } from '../components/nodes/RaiseEventNode';
+import { contextNodeDescriptor } from '../components/nodes/ContextNode';
 
 export type UnknownNodeComponentDescriptor = {
   Body?: FC<{ node: ChartNode }>;
@@ -69,6 +70,7 @@ const descriptors: NodeComponentDescriptors = {
   trimChatMessages: trimChatMessagesNodeDescriptor,
   userInput: userInputNodeDescriptor,
   raiseEvent: RaiseEventNodeDescriptor,
+  context: contextNodeDescriptor,
 };
 
 export function useNodeTypes() {

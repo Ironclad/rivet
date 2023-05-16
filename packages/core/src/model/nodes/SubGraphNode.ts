@@ -41,7 +41,7 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
     }
 
     const subGraphProcessor = context.createSubProcessor(this.data.graphId);
-    const subGraphOutputs = await subGraphProcessor.processGraph(context, inputs);
+    const subGraphOutputs = await subGraphProcessor.processGraph(context, inputs, context.contextValues);
 
     // Get the outputs for the SubGraphNode.
     const outputs = this.getOutputValues(subGraphOutputs);

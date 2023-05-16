@@ -5,7 +5,7 @@
   "scripts": {
     "build": "yarn compile && yarn bundle",
     "compile": "tsc",
-    "bundle": "esbuild src/index.ts --bundle --outfile=dist/bundle.js --platform=node"
+    "bundle": "esbuild src/index.ts --bundle --outfile=dist/bundle.js --platform=node --external:esprima --external:jsonpath"
   },
   "dependencies": {
     "@ironclad/nodai-core": "workspace:^",

@@ -101,6 +101,7 @@ export class GraphProcessor {
   #queuedNodes: Set<NodeId> = undefined!;
   #loopControllersSeen: Set<NodeId> = undefined!;
   #subprocessors: Set<GraphProcessor> = undefined!;
+  #contextValues: Record<string, DataValue> = undefined!;
 
   /** User input nodes that are pending user input. */
   #pendingUserInputs: Record<
@@ -386,7 +387,17 @@ export class GraphProcessor {
     );
   }
 
-  async processGraph(context: ProcessContext, inputs: Record<string, DataValue> = {}): Promise<GraphOutputs> {
+  /** Main function for running a graph. Runs a graph and returns the outputs from the output nodes of the graph. */
+  async processGraph(
+    /** Required and optional context available to the nodes and all subgraphs. */
+    context: ProcessContext,
+
+    /** Inputs to the main graph. You should pass all inputs required by the GraphInputNodes of the graph. */
+    inputs: Record<string, DataValue> = {},
+
+    /** Contextual data available to all graphs and subgraphs. Kind of like react context, avoids drilling down data into subgraphs. Be careful when using it. */
+    contextValues: Record<string, DataValue> = {},
+  ): Promise<GraphOutputs> {
     try {
       if (this.#running) {
         throw new Error('Cannot process graph while already processing');
@@ -408,6 +419,10 @@ export class GraphProcessor {
       this.#queuedNodes = new Set();
       this.#loopControllersSeen = new Set();
       this.#subprocessors = new Set();
+
+      if (!this.#contextValues) {
+        this.#contextValues = contextValues;
+      }
 
       if (!this.#isSubProcessor) {
         this.#emitter.emit('start', void 0);
@@ -674,6 +689,7 @@ export class GraphProcessor {
       raiseEvent: (event, data) => {
         this.#emitter.emit(`userEvent:${event}`, data);
       },
+      contextValues: this.#contextValues,
       externalFunctions: { ...this.#externalFunctions },
       onPartialOutputs: (partialOutputs) => partialOutput?.(node, partialOutputs, index),
       signal: this.#abortController.signal,
@@ -682,6 +698,7 @@ export class GraphProcessor {
         processor.#isSubProcessor = true;
         processor.#executionCache = this.#executionCache;
         processor.#externalFunctions = this.#externalFunctions;
+        processor.#contextValues = this.#contextValues;
         processor.on('nodeError', (e) => this.#emitter.emit('nodeError', e));
         processor.on('nodeFinish', (e) => this.#emitter.emit('nodeFinish', e));
         processor.on('partialOutput', (e) => this.#emitter.emit('partialOutput', e));
