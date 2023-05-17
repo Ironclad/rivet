@@ -38,7 +38,7 @@ export type ProcessEvents = {
   nodeFinish: { node: ChartNode; outputs: Outputs };
 
   /** Called when a node has errored during processing. */
-  nodeError: { node: ChartNode; error: Error };
+  nodeError: { node: ChartNode; error: Error | string };
 
   /** Called when a node has been excluded from processing. */
   nodeExcluded: { node: ChartNode };
@@ -343,7 +343,10 @@ export class GraphProcessor {
     }
 
     this.#currentlyProcessing.add(node.id);
-    this.#loopControllersSeen.add(node.id);
+
+    if (node.type === 'loopController') {
+      this.#loopControllersSeen.add(node.id);
+    }
 
     await this.#processNode(node as Nodes);
 
@@ -440,8 +443,10 @@ export class GraphProcessor {
 
       await this.#processingQueue.onIdle();
 
-      const outputNodes = this.#graph.nodes.filter((node): node is GraphOutputNode =>
-        this.#isNodeOfType('graphOutput', node),
+      const outputNodes = this.#graph.nodes.filter(
+        (node): node is GraphOutputNode =>
+          this.#isNodeOfType('graphOutput', node) &&
+          !this.#excludedDueToControlFlow(node, this.#getInputValuesForNode(node)),
       );
       const outputValues = outputNodes.reduce((values, node) => {
         const results = this.#nodeResults.get(node.id);
@@ -671,6 +676,7 @@ export class GraphProcessor {
   #nodeErrored(node: ChartNode, e: unknown) {
     const error = getError(e);
     this.#emitter.emit('nodeError', { node, error });
+    this.#emitter.emit('trace', `Node ${node.title} (${node.id}) errored: ${error.stack}`);
     this.#erroredNodes.add(node.id);
   }
 
@@ -707,6 +713,11 @@ export class GraphProcessor {
         processor.on('userInput', (e) => this.#emitter.emit('userInput', e)); // TODO!
         processor.on('graphStart', (e) => this.#emitter.emit('graphStart', e));
         processor.on('graphFinish', (e) => this.#emitter.emit('graphFinish', e));
+        processor.onAny((event, data) => {
+          if (event.startsWith('userEvent:')) {
+            this.#emitter.emit(event, data);
+          }
+        });
 
         this.#subprocessors.add(processor);
 

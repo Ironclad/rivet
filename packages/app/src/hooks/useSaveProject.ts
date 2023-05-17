@@ -3,6 +3,7 @@ import { loadedProjectState, projectState } from '../state/savedGraphs';
 import { saveProjectData, saveProjectDataNoPrompt } from '../utils/fileIO';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph';
 import produce from 'immer';
+import { toast } from 'react-toastify';
 
 export function useSaveProject() {
   const saveGraph = useSaveCurrentGraph();
@@ -21,6 +22,7 @@ export function useSaveProject() {
     });
 
     await saveProjectDataNoPrompt(newProject, loadedProject.path);
+    toast.success('Project saved');
     setLoadedProject({
       loaded: true,
       path: loadedProject.path,
@@ -37,6 +39,7 @@ export function useSaveProject() {
     const filePath = await saveProjectData(newProject);
 
     if (filePath) {
+      toast.success('Project saved');
       setLoadedProject({
         loaded: true,
         path: filePath,

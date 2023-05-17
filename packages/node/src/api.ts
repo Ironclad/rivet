@@ -1,5 +1,6 @@
 import {
   DataValue,
+  ExternalFunction,
   GraphId,
   GraphProcessor,
   NativeApi,
@@ -34,13 +35,17 @@ export type LooseDataValue = DataValue | string | number | boolean;
 export type RunGraphOptions = {
   graph: string;
   inputs?: Record<string, LooseDataValue>;
+  context?: Record<string, LooseDataValue>;
   remoteDebugger?: NodaiDebuggerServer;
-  onStart?: () => void;
-  onNodeStart?: (nodeId: string) => void;
+  nativeApi?: NativeApi;
+  externalFunctions?: {
+    [key: string]: ExternalFunction;
+  };
+  onUserEvent?: {
+    [key: string]: (data: DataValue | undefined) => void;
+  };
 } & {
   [P in keyof ProcessEvents as `on${PascalCase<P>}`]?: (params: ProcessEvents[P]) => void;
-} & {
-  nativeApi?: NativeApi;
 } & Settings;
 
 export async function runGraphInFile(path: string, options: RunGraphOptions): Promise<Record<string, DataValue>> {
@@ -49,7 +54,7 @@ export async function runGraphInFile(path: string, options: RunGraphOptions): Pr
 }
 
 export async function runGraph(project: Project, options: RunGraphOptions): Promise<Record<string, DataValue>> {
-  const { graph, inputs = {} } = options;
+  const { graph, inputs = {}, context = {} } = options;
 
   const graphId =
     graph in project.graphs
@@ -62,47 +67,83 @@ export async function runGraph(project: Project, options: RunGraphOptions): Prom
 
   const processor = new GraphProcessor(project, graphId as GraphId);
 
-  if (options?.remoteDebugger) {
+  if (options.remoteDebugger) {
     options.remoteDebugger.attach(processor);
   }
 
-  if (options?.onStart) {
+  if (options.onStart) {
     processor.on('start', options.onStart);
   }
 
-  if (options?.onNodeStart) {
+  if (options.onNodeStart) {
     processor.on('nodeStart', options.onNodeStart);
   }
 
-  if (options?.onNodeFinish) {
+  if (options.onNodeFinish) {
     processor.on('nodeFinish', options.onNodeFinish);
   }
 
-  if (options?.onNodeError) {
+  if (options.onNodeError) {
     processor.on('nodeError', options.onNodeError);
   }
 
-  if (options?.onNodeExcluded) {
+  if (options.onNodeExcluded) {
     processor.on('nodeExcluded', options.onNodeExcluded);
   }
 
-  if (options?.onPartialOutput) {
+  if (options.onPartialOutput) {
     processor.on('partialOutput', options.onPartialOutput);
   }
 
-  if (options?.onUserInput) {
+  if (options.onUserInput) {
     processor.on('userInput', options.onUserInput);
   }
 
-  if (options?.onDone) {
+  if (options.onDone) {
     processor.on('done', options.onDone);
   }
 
-  if (options?.onAbort) {
+  if (options.onAbort) {
     processor.on('abort', options.onAbort);
   }
 
+  if (options.onTrace) {
+    processor.on('trace', options.onTrace);
+  }
+
+  if (options.onNodeOutputsCleared) {
+    processor.on('nodeOutputsCleared', options.onNodeOutputsCleared);
+  }
+
+  if (options.externalFunctions) {
+    for (const [name, fn] of Object.entries(options.externalFunctions)) {
+      processor.setExternalFunction(name, fn);
+    }
+  }
+
+  if (options.onUserEvent) {
+    for (const [name, fn] of Object.entries(options.onUserEvent)) {
+      processor.onUserEvent(name, fn);
+    }
+  }
+
   const resolvedInputs: Record<string, DataValue> = mapValues(inputs, (value): DataValue => {
+    if (typeof value === 'string') {
+      return { type: 'string', value };
+    }
+
+    if (typeof value === 'number') {
+      return { type: 'number', value };
+    }
+
+    if (typeof value === 'boolean') {
+      return { type: 'boolean', value };
+    }
+
+    return value;
+  });
+
+  const resolvedContextValues: Record<string, DataValue> = mapValues(context, (value): DataValue => {
     if (typeof value === 'string') {
       return { type: 'string', value };
     }
@@ -127,6 +168,7 @@ export async function runGraph(project: Project, options: RunGraphOptions): Prom
       },
     },
     resolvedInputs,
+    resolvedContextValues,
   );
 
   return outputs;

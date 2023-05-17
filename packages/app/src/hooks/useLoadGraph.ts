@@ -18,11 +18,11 @@ export function useLoadGraph() {
   const saveCurrentGraph = useSaveCurrentGraph();
 
   // Hacky... maybe last info shouldn't be in recoil because of this
-  useEffect(() => {
-    if (lastSavedCanvasPosition && position.x === 0 && position.y === 0 && position.zoom === 1 && !position.fromSaved) {
-      setPosition({ ...lastSavedCanvasPosition, fromSaved: true });
-    }
-  }, [graph, lastSavedCanvasPosition, position, setPosition]);
+  // useEffect(() => {
+  //   if (lastSavedCanvasPosition && position.x === 0 && position.y === 0 && position.zoom === 1 && !position.fromSaved) {
+  //     setPosition({ ...lastSavedCanvasPosition, fromSaved: true });
+  //   }
+  // }, [graph, lastSavedCanvasPosition, position, setPosition]);
 
   return useStableCallback((savedGraph: NodeGraph) => {
     if (graph.nodes.length > 0 || graph.metadata?.name !== emptyNodeGraph().metadata!.name) {

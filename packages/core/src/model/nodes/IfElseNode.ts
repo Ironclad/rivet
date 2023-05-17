@@ -103,6 +103,12 @@ export class IfElseNodeImpl extends NodeImpl<ChartNode> {
       };
     }
 
+    if (ifValue?.type === 'any' || ifValue?.type === 'object') {
+      return {
+        ['output' as PortId]: !!ifValue.value ? trueValue : falseValue,
+      };
+    }
+
     return {
       ['output' as PortId]: falseValue,
     };

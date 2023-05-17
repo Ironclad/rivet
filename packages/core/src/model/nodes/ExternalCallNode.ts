@@ -62,12 +62,20 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
       : this.chartNode.data.functionName;
 
     let args = inputs['arguments' as PortId];
+    let arrayArgs: ArrayDataValue<AnyDataValue> = {
+      type: 'any[]',
+      value: [],
+    };
 
-    if (args?.type.endsWith('[]') === false) {
-      args = {
-        type: 'any[]',
-        value: [args.value],
-      };
+    if (args) {
+      if (args.type.endsWith('[]') === false) {
+        arrayArgs = {
+          type: 'any[]',
+          value: [args.value],
+        };
+      } else {
+        arrayArgs = args as ArrayDataValue<AnyDataValue>;
+      }
     }
 
     const fn = context.externalFunctions[functionName];
@@ -76,12 +84,9 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
       throw new Error(`Function ${functionName} not was not defined using setExternalCall`);
     }
 
-    const result = await fn(...(args as ArrayDataValue<AnyDataValue>).value);
+    const result = await fn(...arrayArgs.value);
     return {
-      result: {
-        type: 'any',
-        value: result,
-      },
+      result,
     };
   }
 }

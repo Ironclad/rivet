@@ -82,6 +82,8 @@ export const GraphBuilder: FC = () => {
         x: node.visualData.x + 20,
         y: node.visualData.y + 20,
       };
+      newNode.title = node.title;
+      newNode.description = node.description;
       nodesChanged?.([...nodes, newNode]);
 
       // Copy the connections to the input ports
