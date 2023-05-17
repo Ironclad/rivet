@@ -46,6 +46,18 @@ export function startDebuggerServer(port: number = 21888): NodaiDebuggerServer {
       processor.on('abort', () => {
         this.broadcast('abort', null);
       });
+      processor.on('trace', (message) => {
+        this.broadcast('trace', message);
+      });
+      processor.on('nodeOutputsCleared', ({ node }) => {
+        this.broadcast('nodeOutputsCleared', { node });
+      });
+      processor.on('graphStart', ({ graph }) => {
+        this.broadcast('graphStart', { graph });
+      });
+      processor.on('graphFinish', ({ graph }) => {
+        this.broadcast('graphFinish', { graph });
+      });
     },
   };
 }

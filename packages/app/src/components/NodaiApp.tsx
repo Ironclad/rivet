@@ -77,7 +77,7 @@ export const NodaiApp: FC = () => {
 
   const nodeError = ({ node, error }: ProcessEvents['nodeError']) => {
     setDataForNode(node.id, {
-      status: { type: 'error', error: error.message },
+      status: { type: 'error', error: typeof error === 'string' ? error : error.message },
     });
   };
 
@@ -192,6 +192,9 @@ export const NodaiApp: FC = () => {
       case 'nodeOutputsCleared':
         nodeOutputsCleared(data as ProcessEvents['nodeOutputsCleared']);
         break;
+      case 'trace':
+        console.log(`remote: ${data}`);
+        break;
     }
   });
 
@@ -238,6 +241,7 @@ export const NodaiApp: FC = () => {
       processor.on('graphStart', graphStart);
       processor.on('graphFinish', graphFinish);
       processor.on('nodeOutputsCleared', nodeOutputsCleared);
+      processor.on('trace', (log) => console.log(log));
 
       processor.onUserEvent('toast', (data: DataValue | undefined) => {
         const stringData = coerceTypeOptional(data, 'string');
@@ -265,7 +269,7 @@ export const NodaiApp: FC = () => {
       <LeftSidebar />
       <GraphBuilder />
       <SettingsModal />
-      <ToastContainer />
+      <ToastContainer position="bottom-right" hideProgressBar newestOnTop />
     </div>
   );
 };
