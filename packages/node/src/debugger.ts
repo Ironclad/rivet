@@ -1,5 +1,7 @@
 import WebSocket, { WebSocketServer } from 'ws';
-import { GraphProcessor } from '../../core/src';
+import { GraphProcessor, getError } from '@ironclad/nodai-core';
+import { match } from 'ts-pattern';
+import Emittery from 'emittery';
 
 export interface NodaiDebuggerServer {
   webSocketServer: WebSocketServer;
@@ -9,8 +11,33 @@ export interface NodaiDebuggerServer {
   attach(processor: GraphProcessor): void;
 }
 
+export interface DebuggerEvents {
+  error: Error;
+}
+
 export function startDebuggerServer(port: number = 21888): NodaiDebuggerServer {
   const server = new WebSocketServer({ port });
+  const emitter = new Emittery<DebuggerEvents>();
+
+  let attachedProcessor: GraphProcessor | null = null;
+
+  server.on('connection', (socket) => {
+    socket.on('message', async (data) => {
+      try {
+        const message = JSON.parse(data.toString()) as { type: string; data: unknown };
+
+        await match(message)
+          .with({ type: 'abort' }, async () => {
+            await attachedProcessor?.abort();
+          })
+          .otherwise(async () => {
+            throw new Error(`Unknown message type: ${message.type}`);
+          });
+      } catch (err) {
+        emitter.emit('error', getError(err));
+      }
+    });
+  });
 
   return {
     webSocketServer: server,
@@ -22,6 +49,8 @@ export function startDebuggerServer(port: number = 21888): NodaiDebuggerServer {
       });
     },
     attach(processor: GraphProcessor) {
+      attachedProcessor = processor;
+
       processor.on('nodeStart', ({ node, inputs }) => {
         this.broadcast('nodeStart', { node, inputs });
       });

@@ -11,3 +11,4 @@ export * from './model/native/NativeApi';
 export * from './model/native/BrowserNativeApi';
 export * from './utils/coerceType';
 export * from './utils/expectType';
+export * from './utils/errors';

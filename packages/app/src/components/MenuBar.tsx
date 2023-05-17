@@ -168,7 +168,7 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph }) => {
 
   const graphRunning = useRecoilValue(graphRunningState);
 
-  const { remoteDebugger, connect, disconnect } = useRemoteDebugger();
+  const { remoteDebuggerState: remoteDebugger, connect, disconnect } = useRemoteDebugger();
 
   function handleNewProject() {
     newProject();

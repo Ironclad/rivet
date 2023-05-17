@@ -28,6 +28,8 @@ import { TauriNativeApi } from '../model/native/TauriNativeApi';
 import { setCurrentDebuggerMessageHandler } from '../hooks/useRemoteDebugger';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useStableCallback } from '../hooks/useStableCallback';
+import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
 
 const styles = css`
   overflow: hidden;
@@ -43,6 +45,7 @@ export const NodaiApp: FC = () => {
   const settings = useRecoilValue(settingsState);
   const saveGraph = useSaveCurrentGraph();
   const setRunningGraphsState = useSetRecoilState(runningGraphsState);
+  const remoteDebugger = useRemoteDebugger();
 
   const setDataForNode = (nodeId: NodeId, data: Partial<NodeRunData>) => {
     setLastRunData((prev) =>
@@ -198,7 +201,7 @@ export const NodaiApp: FC = () => {
     }
   });
 
-  const tryRunGraph = async () => {
+  const tryRunGraph = useStableCallback(async () => {
     try {
       saveGraph();
 
@@ -257,11 +260,19 @@ export const NodaiApp: FC = () => {
       setGraphRunning(false);
       console.log(e);
     }
-  };
+  });
 
-  const tryAbortGraph = () => {
-    currentProcessor.current?.abort();
-  };
+  const tryAbortGraph = useStableCallback(() => {
+    if (
+      remoteDebugger.remoteDebuggerState.started &&
+      remoteDebugger.remoteDebuggerState.socket?.readyState === WebSocket.OPEN
+    ) {
+      console.log('Aborting via remote debugger');
+      remoteDebugger.send('abort', undefined);
+    } else {
+      currentProcessor.current?.abort();
+    }
+  });
 
   return (
     <div className="app" css={styles}>
