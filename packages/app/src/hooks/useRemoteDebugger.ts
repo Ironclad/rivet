@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import { atom, useRecoilState } from 'recoil';
 
 export const remoteDebuggerState = atom({
@@ -17,9 +16,11 @@ export function setCurrentDebuggerMessageHandler(handler: (message: string, data
   currentDebuggerMessageHandler = handler;
 }
 
+// Hacky but whatev, shared between all useRemoteDebugger hooks
+let manuallyDisconnecting = false;
+
 export function useRemoteDebugger() {
   const [remoteDebugger, setRemoteDebuggerState] = useRecoilState(remoteDebuggerState);
-  const manuallyDisconnecting = useRef(false);
 
   const connect = (port: number = 21888) => {
     const socket = new WebSocket(`ws://localhost:${port}`);
@@ -30,7 +31,7 @@ export function useRemoteDebugger() {
       started: true,
       port,
     }));
-    manuallyDisconnecting.current = false;
+    manuallyDisconnecting = false;
 
     socket.onopen = () => {
       setRemoteDebuggerState((prevState) => ({
@@ -40,8 +41,7 @@ export function useRemoteDebugger() {
     };
 
     socket.onclose = () => {
-      console.dir({ manualDisconnect: manuallyDisconnecting.current });
-      if (manuallyDisconnecting.current) {
+      if (manuallyDisconnecting) {
         setRemoteDebuggerState((prevState) => ({
           ...prevState,
           started: false,
@@ -67,12 +67,17 @@ export function useRemoteDebugger() {
   };
 
   return {
-    remoteDebugger,
+    remoteDebuggerState: remoteDebugger,
     connect,
     disconnect: () => {
       if (remoteDebugger.socket) {
-        manuallyDisconnecting.current = true;
+        manuallyDisconnecting = true;
         remoteDebugger.socket.close();
+      }
+    },
+    send(type: string, data: unknown) {
+      if (remoteDebugger.socket?.readyState === WebSocket.OPEN) {
+        remoteDebugger.socket.send(JSON.stringify({ type, data }));
       }
     },
   };

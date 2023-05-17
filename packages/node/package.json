@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "@ironclad/nodai-core": "workspace:^",
+    "emittery": "^1.0.1",
     "lodash-es": "^4.17.21",
+    "ts-pattern": "^4.3.0",
     "type-fest": "^3.10.0",
     "ws": "^8.13.0"
   },
