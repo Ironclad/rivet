@@ -40,6 +40,8 @@ export const addContextMenuGroups = [
       { label: 'If', nodeType: 'if' },
       { label: 'If/Else', nodeType: 'ifElse' },
       { label: 'Loop Controller', nodeType: 'loopController' },
+      { label: 'Coalesce', nodeType: 'coalesce' },
+      { label: 'Passthrough', nodeType: 'passthrough' },
     ],
   },
   {

@@ -10,7 +10,7 @@ import {
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { GraphId, NodeGraph } from './NodeGraph';
 import { InternalProcessContext, NodeImpl, ProcessContext } from './NodeImpl';
-import { LoopControllerNode, Nodes, createNodeInstance } from './Nodes';
+import { LoopControllerNode, NodeType, Nodes, createNodeInstance } from './Nodes';
 import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode';
 import PQueue from 'p-queue';
 import { getError } from '../utils/errors';
@@ -273,7 +273,18 @@ export class GraphProcessor {
   }
 
   /** If all inputs are present, all conditions met, processes the node. */
-  async #processNodeIfAllInputsAvailable(node: Nodes): Promise<void> {
+  async #processNodeIfAllInputsAvailable(
+    node: Nodes,
+    loopInfo?: {
+      /** ID of the controller of the loop */
+      loopControllerId: NodeId;
+
+      /** Nodes add themselves to this as the loop processes */
+      nodes: Set<NodeId>;
+
+      iterationCount: number;
+    },
+  ): Promise<void> {
     if (this.#currentlyProcessing.has(node.id)) {
       this.#emitter.emit('trace', `Node ${node.title} is already being processed`);
       return;
@@ -348,6 +359,10 @@ export class GraphProcessor {
       this.#loopControllersSeen.add(node.id);
     }
 
+    if (loopInfo && loopInfo.loopControllerId !== node.id) {
+      loopInfo.nodes.add(node.id);
+    }
+
     await this.#processNode(node as Nodes);
 
     // await new Promise((resolve) => setTimeout(resolve, 500));
@@ -365,8 +380,8 @@ export class GraphProcessor {
       this.#emitter.emit('trace', JSON.stringify(this.#nodeResults.get(node.id)));
 
       if (!didBreak) {
-        const nodesInCycle = this.#scc.find((cycle) => cycle.find((n) => n.id === node.id));
-        for (const cycleNode of nodesInCycle?.filter((n) => n.id !== node.id) ?? []) {
+        for (const loopNodeId of loopInfo?.nodes ?? []) {
+          const cycleNode = this.#nodesById[loopNodeId]!;
           this.#emitter.emit('trace', `Clearing cycle node ${cycleNode.title} (${cycleNode.id})`);
           this.#visitedNodes.delete(cycleNode.id);
           this.#currentlyProcessing.delete(cycleNode.id);
@@ -377,6 +392,23 @@ export class GraphProcessor {
       }
     }
 
+    let childLoopInfo = loopInfo;
+    if (node.type === 'loopController') {
+      if (childLoopInfo != null && childLoopInfo.loopControllerId !== node.id) {
+        throw new Error('Nested loops are not supported');
+      }
+
+      childLoopInfo = {
+        loopControllerId: node.id,
+
+        // We want to be able to clear every node that _potentially_ could run in the loop
+        nodes: childLoopInfo?.nodes ?? new Set(),
+
+        // TODO loop controller max iterations
+        iterationCount: (childLoopInfo?.iterationCount ?? 0) + 1,
+      };
+    }
+
     // Node is finished, check if we can run any more nodes that depend on this one
     this.#processingQueue.addAll(
       outputNodes.map((outputNode) => async () => {
@@ -385,7 +417,7 @@ export class GraphProcessor {
           `Trying to run output node from ${node.title}: ${outputNode.title} (${outputNode.id})`,
         );
 
-        await this.#processNodeIfAllInputsAvailable(outputNode as Nodes);
+        await this.#processNodeIfAllInputsAvailable(outputNode as Nodes, childLoopInfo);
       }),
     );
   }
@@ -783,7 +815,10 @@ export class GraphProcessor {
 
     const isWaitingForLoop = controlFlowExcludedValues.some((value) => value.value === 'loop-not-broken');
 
-    const allowedToConsumedExcludedValue = (node.type === 'if' || node.type === 'ifElse') && !isWaitingForLoop;
+    const nodesAllowedToConsumeExcludedValue: NodeType[] = ['if', 'ifElse', 'coalesce'];
+
+    const allowedToConsumedExcludedValue =
+      nodesAllowedToConsumeExcludedValue.includes(node.type as NodeType) && !isWaitingForLoop;
 
     if ((inputIsExcludedValue || anyOutputIsExcludedValue) && !allowedToConsumedExcludedValue) {
       if (!isWaitingForLoop) {

@@ -26,6 +26,8 @@ import { ExternalCallNode, ExternalCallNodeImpl } from './nodes/ExternalCallNode
 import { ExtractObjectPathNode, ExtractObjectPathNodeImpl } from './nodes/ExtractObjectPathNode';
 import { RaiseEventNode, RaiseEventNodeImpl } from './nodes/RaiseEventNode';
 import { ContextNode, ContextNodeImpl } from './nodes/ContextNode';
+import { CoalesceNode, CoalesceNodeImpl } from './nodes/CoalesceNode';
+import { PassthroughNode, PassthroughNodeImpl } from './nodes/PassthroughNode';
 
 export type Nodes =
   | UserInputNode
@@ -52,7 +54,9 @@ export type Nodes =
   | TrimChatMessagesNode
   | ExternalCallNode
   | RaiseEventNode
-  | ContextNode;
+  | ContextNode
+  | CoalesceNode
+  | PassthroughNode;
 
 export * from './nodes/UserInputNode';
 export * from './nodes/TextNode';
@@ -79,6 +83,8 @@ export * from './nodes/ExternalCallNode';
 export * from './nodes/ExtractObjectPathNode';
 export * from './nodes/RaiseEventNode';
 export * from './nodes/ContextNode';
+export * from './nodes/CoalesceNode';
+export * from './nodes/PassthroughNode';
 
 export type NodeType = Nodes['type'];
 
@@ -109,6 +115,8 @@ export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode
     .with({ type: 'extractObjectPath' }, (node) => new ExtractObjectPathNodeImpl(node))
     .with({ type: 'raiseEvent' }, (node) => new RaiseEventNodeImpl(node))
     .with({ type: 'context' }, (node) => new ContextNodeImpl(node))
+    .with({ type: 'coalesce' }, (node) => new CoalesceNodeImpl(node))
+    .with({ type: 'passthrough' }, (node) => new PassthroughNodeImpl(node))
     .exhaustive();
 };
 
@@ -143,6 +151,8 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('extractObjectPath', () => ExtractObjectPathNodeImpl.create())
     .with('raiseEvent', () => RaiseEventNodeImpl.create())
     .with('context', () => ContextNodeImpl.create())
+    .with('coalesce', () => CoalesceNodeImpl.create())
+    .with('passthrough', () => PassthroughNodeImpl.create())
     .exhaustive();
 }
 
@@ -172,6 +182,8 @@ export const nodeDisplayName: Record<NodeType, string> = {
   extractObjectPath: 'Extract Object Path',
   raiseEvent: 'Raise Event',
   context: 'Context',
+  coalesce: 'Coalesce',
+  passthrough: 'Passthrough',
 };
 
 export type NodeOfType<T extends NodeType> = Extract<Nodes, { type: T }>;

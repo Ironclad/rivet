@@ -190,7 +190,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
       setCanvasPosition(position);
       setLastSavedCanvasPosition(position);
     },
-    { wait: 10 },
+    { wait: 50 },
   );
 
   const isScrollable = (element: HTMLElement): boolean => {
@@ -243,7 +243,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         zoom: newZoom,
       }));
     },
-    { wait: 25 },
+    { wait: 50 },
   );
 
   const handleZoom = useStableCallback((event: React.WheelEvent<HTMLDivElement>) => {

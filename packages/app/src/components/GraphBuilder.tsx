@@ -84,6 +84,8 @@ export const GraphBuilder: FC = () => {
       };
       newNode.title = node.title;
       newNode.description = node.description;
+      newNode.isSplitRun = node.isSplitRun;
+      newNode.splitRunMax = node.splitRunMax;
       nodesChanged?.([...nodes, newNode]);
 
       // Copy the connections to the input ports

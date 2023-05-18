@@ -26,6 +26,8 @@ import { arrayNodeDescriptor } from '../components/nodes/ArrayNode';
 import { userInputNodeDescriptor } from '../components/nodes/UserInputNode';
 import { RaiseEventNodeDescriptor } from '../components/nodes/RaiseEventNode';
 import { contextNodeDescriptor } from '../components/nodes/ContextNode';
+import { coalesceNodeDescriptor } from '../components/nodes/CoalesceNode';
+import { passthroughNodeDescriptor } from '../components/nodes/PassthroughNode';
 
 export type UnknownNodeComponentDescriptor = {
   Body?: FC<{ node: ChartNode }>;
@@ -71,6 +73,8 @@ const descriptors: NodeComponentDescriptors = {
   userInput: userInputNodeDescriptor,
   raiseEvent: RaiseEventNodeDescriptor,
   context: contextNodeDescriptor,
+  coalesce: coalesceNodeDescriptor,
+  passthrough: passthroughNodeDescriptor,
 };
 
 export function useNodeTypes() {

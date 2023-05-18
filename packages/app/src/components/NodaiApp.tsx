@@ -80,7 +80,7 @@ export const NodaiApp: FC = () => {
 
   const nodeError = ({ node, error }: ProcessEvents['nodeError']) => {
     setDataForNode(node.id, {
-      status: { type: 'error', error: typeof error === 'string' ? error : error.message },
+      status: { type: 'error', error: typeof error === 'string' ? error : error.toString() },
     });
   };
 

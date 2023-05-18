@@ -4,6 +4,9 @@ import { match } from 'ts-pattern';
 import Emittery from 'emittery';
 
 export interface NodaiDebuggerServer {
+  on: Emittery<DebuggerEvents>['on'];
+  off: Emittery<DebuggerEvents>['off'];
+
   webSocketServer: WebSocketServer;
 
   broadcast(message: string, data: unknown): void;
@@ -34,12 +37,19 @@ export function startDebuggerServer(port: number = 21888): NodaiDebuggerServer {
             throw new Error(`Unknown message type: ${message.type}`);
           });
       } catch (err) {
-        emitter.emit('error', getError(err));
+        try {
+          await emitter.emit('error', getError(err));
+        } catch (err) {
+          // noop, just prevent unhandled rejection
+        }
       }
     });
   });
 
   return {
+    on: emitter.on.bind(emitter),
+    off: emitter.off.bind(emitter),
+
     webSocketServer: server,
     broadcast(message: string, data: unknown) {
       server.clients.forEach((client) => {
@@ -58,7 +68,7 @@ export function startDebuggerServer(port: number = 21888): NodaiDebuggerServer {
         this.broadcast('nodeFinish', { node, outputs });
       });
       processor.on('nodeError', ({ node, error }) => {
-        this.broadcast('nodeError', { node, error });
+        this.broadcast('nodeError', { node, error: typeof error === 'string' ? error : error.toString() });
       });
       processor.on('nodeExcluded', (node) => {
         this.broadcast('nodeExcluded', node);
