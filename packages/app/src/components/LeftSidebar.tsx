@@ -13,12 +13,13 @@ import { ReactComponent as ExpandRightIcon } from 'majesticons/line/menu-expand-
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { useDeleteGraph } from '../hooks/useDeleteGraph';
 import { useLoadGraph } from '../hooks/useLoadGraph';
-import { GraphId, NodeGraph, emptyNodeGraph } from '@ironclad/nodai-core';
+import { GraphId, emptyNodeGraph } from '@ironclad/nodai-core';
 import clsx from 'clsx';
 import { useSaveCurrentGraph } from '../hooks/useSaveCurrentGraph';
 import { useSaveProject } from '../hooks/useSaveProject';
 import { LoadingSpinner } from './LoadingSpinner';
 import { runningGraphsState } from '../state/dataFlow';
+import { useDuplicateGraph } from '../hooks/useDuplicateGraph';
 
 const styles = css`
   position: fixed;
@@ -182,17 +183,7 @@ export const LeftSidebar: FC = () => {
 
   const loadedProject = useRecoilValue(loadedProjectState);
 
-  function handleDuplicate(savedGraph: NodeGraph) {
-    const duplicatedGraph: NodeGraph = {
-      ...savedGraph,
-      metadata: {
-        ...savedGraph.metadata,
-        id: nanoid() as GraphId,
-        name: `${savedGraph.metadata?.name} (Copy)`,
-      },
-    };
-    loadGraph(duplicatedGraph);
-  }
+  const duplicateGraph = useDuplicateGraph();
 
   function handleNew() {
     loadGraph(emptyNodeGraph());
@@ -282,7 +273,7 @@ export const LeftSidebar: FC = () => {
                     />
                   )}
                 >
-                  <DropdownItem onClick={() => handleDuplicate(savedGraph)}>Duplicate</DropdownItem>
+                  <DropdownItem onClick={() => duplicateGraph(savedGraph)}>Duplicate</DropdownItem>
                   <DropdownItem onClick={() => deleteGraph(savedGraph)}>Delete</DropdownItem>
                 </DropdownMenu>
               </div>
