@@ -24,6 +24,7 @@ import { useStableCallback } from '../hooks/useStableCallback';
 import { useThrottleFn } from 'ahooks';
 import produce from 'immer';
 import { graphState } from '../state/graph';
+import { useViewportBounds } from '../hooks/useViewportBounds';
 
 export interface NodeCanvasProps {
   nodes: ChartNode[];
@@ -190,7 +191,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
       setCanvasPosition(position);
       setLastSavedCanvasPosition(position);
     },
-    { wait: 50 },
+    { wait: 10 },
   );
 
   const isScrollable = (element: HTMLElement): boolean => {
@@ -243,7 +244,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         zoom: newZoom,
       }));
     },
-    { wait: 50 },
+    { wait: 25 },
   );
 
   const handleZoom = useStableCallback((event: React.WheelEvent<HTMLDivElement>) => {
@@ -303,6 +304,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     return hNodes;
   }, [selectedNode, hoveringNode]);
 
+  const viewportBounds = useViewportBounds();
+
   return (
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
       <div
@@ -328,20 +331,30 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           }}
         >
           <div className="nodes">
-            {nodesWithConnections.map(({ node, nodeConnections }) => (
-              <DraggableNode
-                key={node.id}
-                node={node}
-                connections={nodeConnections}
-                isSelected={selectedNode?.id === node.id}
-                onWireStartDrag={onWireStartDrag}
-                onWireEndDrag={onWireEndDrag}
-                onNodeSelected={onNodeSelected}
-                onNodeWidthChanged={onNodeWidthChanged}
-                onMouseOver={onNodeMouseOver}
-                onMouseOut={onNodeMouseOut}
-              />
-            ))}
+            {nodesWithConnections.map(({ node, nodeConnections }) => {
+              if (
+                node.visualData.x < viewportBounds.left - (node.visualData.width ?? 300) ||
+                node.visualData.x > viewportBounds.right + (node.visualData.width ?? 300) ||
+                node.visualData.y < viewportBounds.top - 500 ||
+                node.visualData.y > viewportBounds.bottom + 500
+              ) {
+                return null;
+              }
+              return (
+                <DraggableNode
+                  key={node.id}
+                  node={node}
+                  connections={nodeConnections}
+                  isSelected={selectedNode?.id === node.id}
+                  onWireStartDrag={onWireStartDrag}
+                  onWireEndDrag={onWireEndDrag}
+                  onNodeSelected={onNodeSelected}
+                  onNodeWidthChanged={onNodeWidthChanged}
+                  onMouseOver={onNodeMouseOver}
+                  onMouseOut={onNodeMouseOut}
+                />
+              );
+            })}
           </div>
         </div>
         <CSSTransition

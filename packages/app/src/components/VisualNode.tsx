@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { CSSProperties, HTMLAttributes, MouseEvent, forwardRef, memo, useState } from 'react';
+import { CSSProperties, HTMLAttributes, MouseEvent, forwardRef, memo, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { match } from 'ts-pattern';
 import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/nodai-core';
@@ -34,6 +34,12 @@ export type VisualNodeProps = {
   nodeAttributes?: HTMLAttributes<HTMLDivElement>;
   handleAttributes?: HTMLAttributes<HTMLDivElement>;
 };
+
+export const nodeElementCache: Record<NodeId, HTMLDivElement | null> = {};
+
+export const nodePortCache: Record<NodeId, Record<PortId, HTMLDivElement | null>> = {};
+
+export const nodePortPositionCache: Record<NodeId, Record<PortId, { x: number; y: number }>> = {};
 
 export const VisualNode = memo(
   forwardRef<HTMLDivElement, VisualNodeProps>(
@@ -128,6 +134,25 @@ export const VisualNode = memo(
       const getIO = useGetNodeIO();
       const { inputDefinitions, outputDefinitions } = getIO(node);
 
+      const nodeRef = (refValue: HTMLDivElement | null) => {
+        if (typeof ref === 'function') {
+          ref(refValue);
+        } else if (ref) {
+          ref.current = refValue;
+        }
+
+        nodeElementCache[node.id] = refValue!;
+      };
+
+      useEffect(() => {
+        const nodeId = node.id;
+
+        return () => {
+          nodeElementCache[nodeId] = null;
+          nodePortCache[nodeId] = {};
+        };
+      }, [node.id]);
+
       return (
         <div
           className={clsx('node', {
@@ -137,7 +162,7 @@ export const VisualNode = memo(
             error: lastRun?.status?.type === 'error',
             running: lastRun?.status?.type === 'running',
           })}
-          ref={ref}
+          ref={nodeRef}
           style={style}
           {...nodeAttributes}
           data-node-id={node.id}
@@ -187,6 +212,24 @@ export const VisualNode = memo(
                 return (
                   <div key={input.id} className={clsx('port', { connected })}>
                     <div
+                      ref={(elem) => {
+                        if (elem) {
+                          nodePortCache[node.id] ??= {};
+                          nodePortCache[node.id]![input.id] = elem;
+
+                          const rect = elem.getBoundingClientRect();
+                          const canvasPosition = clientToCanvasPosition(
+                            rect.x + rect.width / 2,
+                            rect.y + rect.height / 2,
+                          );
+
+                          nodePortPositionCache[node.id] ??= {};
+                          nodePortPositionCache[node.id]![input.id] = {
+                            x: canvasPosition.x,
+                            y: canvasPosition.y,
+                          };
+                        }
+                      }}
                       className="port-circle input-port"
                       onMouseDown={(e) => handlePortMouseDown(e, input.id)}
                       onMouseUp={(e) => handlePortMouseUp(e, input.id)}
@@ -205,6 +248,24 @@ export const VisualNode = memo(
                 return (
                   <div key={output.id} className={clsx('port', { connected })}>
                     <div
+                      ref={(elem) => {
+                        if (elem) {
+                          nodePortCache[node.id] ??= {};
+                          nodePortCache[node.id]![output.id] = elem;
+
+                          const rect = elem.getBoundingClientRect();
+                          const canvasPosition = clientToCanvasPosition(
+                            rect.x + rect.width / 2,
+                            rect.y + rect.height / 2,
+                          );
+
+                          nodePortPositionCache[node.id] ??= {};
+                          nodePortPositionCache[node.id]![output.id] = {
+                            x: canvasPosition.x,
+                            y: canvasPosition.y,
+                          };
+                        }
+                      }}
                       className="port-circle output-port"
                       onMouseDown={(e) => handlePortMouseDown(e, output.id)}
                       onMouseUp={(e) => handlePortMouseUp(e, output.id)}

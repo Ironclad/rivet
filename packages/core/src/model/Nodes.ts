@@ -88,36 +88,38 @@ export * from './nodes/PassthroughNode';
 
 export type NodeType = Nodes['type'];
 
+const nodeImpls: Record<NodeType, { new (node: any): NodeImpl<ChartNode> }> = {
+  userInput: UserInputNodeImpl,
+  text: TextNodeImpl,
+  chat: ChatNodeImpl,
+  prompt: PromptNodeImpl,
+  extractRegex: ExtractRegexNodeImpl,
+  code: CodeNodeImpl,
+  match: MatchNodeImpl,
+  if: IfNodeImpl,
+  readDirectory: ReadDirectoryNodeImpl,
+  readFile: ReadFileNodeImpl,
+  ifElse: IfElseNodeImpl,
+  chunk: ChunkNodeImpl,
+  graphInput: GraphInputNodeImpl,
+  graphOutput: GraphOutputNodeImpl,
+  subGraph: SubGraphNodeImpl,
+  array: ArrayNodeImpl,
+  extractJson: ExtractJsonNodeImpl,
+  extractYaml: ExtractYamlNodeImpl,
+  extractObjectPath: ExtractObjectPathNodeImpl,
+  assemblePrompt: AssemblePromptNodeImpl,
+  loopController: LoopControllerNodeImpl,
+  trimChatMessages: TrimChatMessagesNodeImpl,
+  externalCall: ExternalCallNodeImpl,
+  raiseEvent: RaiseEventNodeImpl,
+  context: ContextNodeImpl,
+  coalesce: CoalesceNodeImpl,
+  passthrough: PassthroughNodeImpl,
+};
+
 export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode> => {
-  return match(node as Nodes)
-    .with({ type: 'userInput' }, (node) => new UserInputNodeImpl(node))
-    .with({ type: 'text' }, (node) => new TextNodeImpl(node))
-    .with({ type: 'chat' }, (node) => new ChatNodeImpl(node))
-    .with({ type: 'prompt' }, (node) => new PromptNodeImpl(node))
-    .with({ type: 'extractRegex' }, (node) => new ExtractRegexNodeImpl(node))
-    .with({ type: 'code' }, (node) => new CodeNodeImpl(node))
-    .with({ type: 'match' }, (node) => new MatchNodeImpl(node))
-    .with({ type: 'if' }, (node) => new IfNodeImpl(node))
-    .with({ type: 'readDirectory' }, (node) => new ReadDirectoryNodeImpl(node))
-    .with({ type: 'readFile' }, (node) => new ReadFileNodeImpl(node))
-    .with({ type: 'ifElse' }, (node) => new IfElseNodeImpl(node))
-    .with({ type: 'chunk' }, (node) => new ChunkNodeImpl(node))
-    .with({ type: 'graphInput' }, (node) => new GraphInputNodeImpl(node))
-    .with({ type: 'graphOutput' }, (node) => new GraphOutputNodeImpl(node))
-    .with({ type: 'subGraph' }, (node) => new SubGraphNodeImpl(node))
-    .with({ type: 'array' }, (node) => new ArrayNodeImpl(node))
-    .with({ type: 'extractJson' }, (node) => new ExtractJsonNodeImpl(node))
-    .with({ type: 'assemblePrompt' }, (node) => new AssemblePromptNodeImpl(node))
-    .with({ type: 'loopController' }, (node) => new LoopControllerNodeImpl(node))
-    .with({ type: 'trimChatMessages' }, (node) => new TrimChatMessagesNodeImpl(node))
-    .with({ type: 'extractYaml' }, (node) => new ExtractYamlNodeImpl(node))
-    .with({ type: 'externalCall' }, (node) => new ExternalCallNodeImpl(node))
-    .with({ type: 'extractObjectPath' }, (node) => new ExtractObjectPathNodeImpl(node))
-    .with({ type: 'raiseEvent' }, (node) => new RaiseEventNodeImpl(node))
-    .with({ type: 'context' }, (node) => new ContextNodeImpl(node))
-    .with({ type: 'coalesce' }, (node) => new CoalesceNodeImpl(node))
-    .with({ type: 'passthrough' }, (node) => new PassthroughNodeImpl(node))
-    .exhaustive();
+  return new nodeImpls[node.type](node);
 };
 
 export function createUnknownNodeInstance(node: ChartNode): NodeImpl<ChartNode> {
