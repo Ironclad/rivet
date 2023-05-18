@@ -10,7 +10,7 @@ import {
 import { MouseEvent, FC } from 'react';
 import { useRecoilValue } from 'recoil';
 import { canvasPositionState } from '../state/graphBuilder';
-import { VisualNode } from './VisualNode';
+import { VisualNode, nodePortCache } from './VisualNode';
 import { useStableCallback } from '../hooks/useStableCallback';
 
 interface DraggableNodeProps {
@@ -61,33 +61,3 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
     />
   );
 };
-
-export function getNodePortPosition(
-  nodes: ChartNode[],
-  nodeId: NodeId,
-  portId: PortId,
-  clientToCanvasPosition: (clientX: number, clientY: number) => { x: number; y: number },
-  getIO: (node: ChartNode) => { inputDefinitions: NodeInputDefinition[]; outputDefinitions: NodeOutputDefinition[] },
-): { x: number; y: number } {
-  const node = nodes.find((node) => node.id === nodeId);
-  if (node && portId) {
-    let isInput = true;
-    const foundInput = getIO(node).inputDefinitions.find((input) => input.id === portId);
-    let foundPort: NodeInputDefinition | NodeOutputDefinition | undefined = foundInput;
-    if (!foundPort) {
-      isInput = false;
-      foundPort = getIO(node).outputDefinitions.find((output) => output.id === portId);
-    }
-
-    if (foundPort) {
-      const portElement = document.querySelector(
-        `.node[data-node-id="${node.id}"] .${isInput ? 'input-port' : 'output-port'}[data-port-id="${foundPort.id}"]`,
-      );
-      if (portElement) {
-        const rect = portElement.getBoundingClientRect();
-        return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-      }
-    }
-  }
-  return { x: 0, y: 0 };
-}
