@@ -3,7 +3,7 @@ import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase';
 import { DataValue } from '../DataValue';
 import { InternalProcessContext, NodeImpl } from '../NodeImpl';
 import { nanoid } from 'nanoid';
-import { Outputs } from '../GraphProcessor';
+import { Inputs, Outputs } from '../GraphProcessor';
 import { expectType } from '../..';
 
 export type ReadDirectoryNode = ChartNode<'readDirectory', ReadDirectoryNodeData>;
@@ -118,10 +118,7 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
     ];
   }
 
-  async process(
-    inputData: Record<PortId, DataValue>,
-    context: InternalProcessContext,
-  ): Promise<Record<PortId, DataValue>> {
+  async process(inputData: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const path = this.chartNode.data.usePathInput
       ? expectType(inputData['path' as PortId], 'string')
       : this.chartNode.data.path;

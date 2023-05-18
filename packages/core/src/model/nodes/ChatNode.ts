@@ -52,7 +52,7 @@ export type ChatNodeData = {
 };
 
 // Temporary
-const cache = new Map<string, Record<PortId, DataValue>>();
+const cache = new Map<string, Outputs>();
 
 export class ChatNodeImpl extends NodeImpl<ChatNode> {
   static create(): ChatNode {

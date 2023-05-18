@@ -1,5 +1,5 @@
 import { max, range } from 'lodash-es';
-import { ControlFlowExcluded } from '../utils/symbols';
+import { ControlFlowExcluded, ControlFlowExcludedPort } from '../utils/symbols';
 import {
   DataValue,
   ArrayDataValue,
@@ -66,8 +66,8 @@ export type GraphOutputs = Record<string, DataValue>;
 export type GraphInputs = Record<string, DataValue>;
 
 export type NodeResults = Map<NodeId, Outputs>;
-export type Inputs = Record<PortId, DataValue>;
-export type Outputs = Record<PortId, DataValue>;
+export type Inputs = Record<PortId, DataValue | undefined>;
+export type Outputs = Record<PortId, DataValue | undefined>;
 
 export type ExternalFunction = (...args: unknown[]) => Promise<DataValue>;
 
@@ -379,7 +379,13 @@ export class GraphProcessor {
 
     // Aggressive - each iteration of the loop controller, we clear everything in the same cycle as the controller
     if (node.type === 'loopController') {
-      const didBreak = this.#nodeResults.get(node.id)!['break' as PortId]?.type !== 'control-flow-excluded' ?? false;
+      const loopControllerResults = this.#nodeResults.get(node.id)!;
+
+      // If the loop controller is excluded, we have to "break" it or else it'll loop forever...
+      const didBreak =
+        loopControllerResults['break' as PortId]?.type !== 'control-flow-excluded' ??
+        this.#excludedDueToControlFlow(node, this.#getInputValuesForNode(node));
+
       this.#emitter.emit('trace', JSON.stringify(this.#nodeResults.get(node.id)));
 
       if (!didBreak) {
@@ -592,7 +598,7 @@ export class GraphProcessor {
     }
 
     const splittingAmount = Math.min(
-      max(values(inputValues).map((value) => (Array.isArray(value.value) ? value.value.length : 1))) ?? 1,
+      max(values(inputValues).map((value) => (Array.isArray(value?.value) ? value?.value.length : 1))) ?? 1,
       node.splitRunMax ?? 10,
     );
 
@@ -602,8 +608,8 @@ export class GraphProcessor {
       const results = await Promise.all(
         range(0, splittingAmount).map(async (i) => {
           const inputs = fromEntries(
-            entries(inputValues).map(([port, value]): [PortId, DataValue] => {
-              if (value.type.endsWith('[]')) {
+            entries(inputValues).map(([port, value]): [PortId, DataValue | undefined] => {
+              if (value?.type.endsWith('[]')) {
                 const newType = value.type.slice(0, -2) as DataValue['type'];
                 const newValue: unknown = (value.value as unknown[])[i] ?? undefined;
                 return [port as PortId, { type: newType, value: newValue as any }];
@@ -641,8 +647,8 @@ export class GraphProcessor {
       // Turn a Record<PortId, DataValue[]> into a Record<PortId, AnyArrayDataValue>
       const aggregateResults = results.reduce((acc, result) => {
         for (const [portId, value] of entries(result.output!)) {
-          acc[portId as PortId] ??= { type: (value.type + '[]') as DataValue['type'], value: [] } as DataValue;
-          (acc[portId as PortId] as ArrayDataValue<AnyDataValue>).value.push(value.value);
+          acc[portId as PortId] ??= { type: (value?.type + '[]') as DataValue['type'], value: [] } as DataValue;
+          (acc[portId as PortId] as ArrayDataValue<AnyDataValue>).value.push(value?.value);
         }
         return acc;
       }, {} as Outputs);
@@ -797,26 +803,41 @@ export class GraphProcessor {
       });
 
     // If a node in the same loop outputs control-flow-executed, the loop controller shouldn't be excluded because it'll just iterate again...
-    if (node.type === 'loopController') {
-      const outputNodesInSameLoop = outputNodes.filter((outputNode) =>
-        this.#nodesAreInSameCycle(node.id, outputNode.id),
-      );
-      const anyOutputNodeInSameLoopIsExcludedValue =
-        outputNodesInSameLoop.length > 0 &&
-        outputNodesInSameLoop.some((outputNode) => {
-          const outputValues = this.#nodeResults.get(outputNode.id) ?? {};
-          const outputControlFlowExcluded = outputValues[ControlFlowExcluded as unknown as PortId];
-          if (outputControlFlowExcluded && outputControlFlowExcluded.value === typeOfExclusion) {
-            return true;
-          }
-          return false;
-        });
-      if (anyOutputNodeInSameLoopIsExcludedValue) {
-        return false;
-      }
-    }
+    // if (node.type === 'loopController') {
+    //   const outputNodesInSameLoop = outputNodes.filter((outputNode) =>
+    //     this.#nodesAreInSameCycle(node.id, outputNode.id),
+    //   );
 
-    const isWaitingForLoop = controlFlowExcludedValues.some((value) => value.value === 'loop-not-broken');
+    //   const anyOutputNodeNotInSameLoopIsExcludedValue = outputNodes
+    //     .filter((outputNode) => !outputNodesInSameLoop.includes(outputNode))
+    //     .some((outputNode) => {
+    //       const outputValues = this.#nodeResults.get(outputNode.id) ?? {};
+    //       const outputControlFlowExcluded = outputValues[ControlFlowExcluded as unknown as PortId];
+    //       if (outputControlFlowExcluded && outputControlFlowExcluded.value === typeOfExclusion) {
+    //         return true;
+    //       }
+    //       return false;
+    //     });
+    //   if (anyOutputNodeNotInSameLoopIsExcludedValue) {
+    //     return true;
+    //   }
+
+    //   const anyOutputNodeInSameLoopIsExcludedValue =
+    //     outputNodesInSameLoop.length > 0 &&
+    //     outputNodesInSameLoop.some((outputNode) => {
+    //       const outputValues = this.#nodeResults.get(outputNode.id) ?? {};
+    //       const outputControlFlowExcluded = outputValues[ControlFlowExcluded as unknown as PortId];
+    //       if (outputControlFlowExcluded && outputControlFlowExcluded.value === typeOfExclusion) {
+    //         return true;
+    //       }
+    //       return false;
+    //     });
+    //   if (anyOutputNodeInSameLoopIsExcludedValue) {
+    //     return false;
+    //   }
+    // }
+
+    const isWaitingForLoop = controlFlowExcludedValues.some((value) => value?.value === 'loop-not-broken');
 
     const nodesAllowedToConsumeExcludedValue: NodeType[] = ['if', 'ifElse', 'coalesce'];
 
@@ -839,7 +860,7 @@ export class GraphProcessor {
     return false;
   }
 
-  #getInputValuesForNode(node: ChartNode): Record<PortId, DataValue> {
+  #getInputValuesForNode(node: ChartNode): Inputs {
     const connections = this.#connections[node.id];
     return this.#definitions[node.id]!.inputs.reduce((values, input) => {
       if (!connections) {

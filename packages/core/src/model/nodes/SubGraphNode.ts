@@ -6,6 +6,7 @@ import { nanoid } from 'nanoid';
 import { Project } from '../Project';
 import { GraphInputNode } from './GraphInputNode';
 import { GraphOutputNode } from './GraphOutputNode';
+import { DataValue } from '../DataValue';
 
 export type SubGraphNode = ChartNode & {
   type: 'subGraph';
@@ -41,7 +42,11 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
     }
 
     const subGraphProcessor = context.createSubProcessor(this.data.graphId);
-    const subGraphOutputs = await subGraphProcessor.processGraph(context, inputs, context.contextValues);
+    const subGraphOutputs = await subGraphProcessor.processGraph(
+      context,
+      inputs as Record<string, DataValue>,
+      context.contextValues,
+    );
 
     // Get the outputs for the SubGraphNode.
     const outputs = this.getOutputValues(subGraphOutputs);
