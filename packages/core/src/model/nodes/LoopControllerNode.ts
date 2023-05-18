@@ -116,8 +116,18 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
 
     // If the continue port is not connected (so undefined), or if it's undefined before it's
     // inside the loop itself (connection has not ran yet), then we should continue by default.
-    const continueValue =
-      inputs['continue' as PortId] === undefined ? true : coerceType(inputs['continue' as PortId], 'boolean');
+    let continueValue = false;
+
+    if (inputs['continue' as PortId] === undefined) {
+      continueValue = true;
+    } else {
+      let continueDataValue = inputs['continue' as PortId]!;
+      if (continueDataValue.type === 'control-flow-excluded') {
+        continueValue = false;
+      } else {
+        continueValue = coerceType(continueDataValue, 'boolean');
+      }
+    }
 
     if (continueValue) {
       output['break' as PortId] = { type: 'control-flow-excluded', value: 'loop-not-broken' };

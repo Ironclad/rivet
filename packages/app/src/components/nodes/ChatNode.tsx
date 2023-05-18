@@ -28,14 +28,27 @@ const styles = css`
 export const ChatNodeBody: FC<ChatNodeBodyProps> = ({ node }) => {
   return (
     <div css={styles}>
-      <div>{node.data.maxTokens} tokens</div>
-      <div>{node.data.model}</div>
+      <div>{node.data.useMaxTokensInput ? 'Max Tokens: (Using Input)' : node.data.maxTokens} tokens</div>
+      <div>{node.data.useModelInput ? 'Model: (Using Input)' : node.data.model}</div>
       <div>
-        {node.data.useTopP ? 'Top P' : 'Temperature'}: {node.data.useTopP ? node.data.top_p : node.data.temperature}
+        {node.data.useTopP ? 'Top P' : 'Temperature'}:{' '}
+        {node.data.useTopP
+          ? node.data.useTopPInput
+            ? '(Using Input)'
+            : node.data.top_p
+          : node.data.useTemperatureInput
+          ? '(Using Input)'
+          : node.data.temperature}
       </div>
-      {node.data.useStop && <div>Stop: {node.data.stop}</div>}
-      {(node.data.frequencyPenalty ?? 0) !== 0 && <div>Frequency Penalty: {node.data.frequencyPenalty}</div>}
-      {(node.data.presencePenalty ?? 0) !== 0 && <div>Presence Penalty: {node.data.presencePenalty}</div>}
+      {node.data.useStop && <div>Stop: {node.data.useStopInput ? '(Using Input)' : node.data.stop}</div>}
+      {(node.data.frequencyPenalty ?? 0) !== 0 && (
+        <div>
+          Frequency Penalty: {node.data.useFrequencyPenaltyInput ? '(Using Input)' : node.data.frequencyPenalty}
+        </div>
+      )}
+      {(node.data.presencePenalty ?? 0) !== 0 && (
+        <div>Presence Penalty: {node.data.usePresencePenaltyInput ? '(Using Input)' : node.data.presencePenalty}</div>
+      )}
     </div>
   );
 };

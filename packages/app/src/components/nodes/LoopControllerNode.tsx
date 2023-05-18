@@ -29,7 +29,8 @@ export const LoopControllerNodeOutput: FC<{ node: LoopControllerNode }> = ({ nod
   }
 
   const outputKeys = Object.keys(output.outputData).filter((key) => key.startsWith('output'));
-  const breakLoop = output.outputData['break' as PortId]!.type === 'control-flow-excluded';
+
+  const breakLoop = output.outputData['break' as PortId]!.type !== 'control-flow-excluded';
 
   return (
     <div>
