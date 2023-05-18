@@ -1,0 +1,5099 @@
+{
+  "metadata": {
+    "id": "KufOYoZj8bXSme0gx4W-e",
+    "description": "Project for Nodai itself",
+    "title": "Nodai"
+  },
+  "graphs": {
+    "tM4FGxXXLTDjeD0oYgQpB": {
+      "nodes": [
+        {
+          "type": "prompt",
+          "title": "Base Context",
+          "id": "zc7_qtAZEqumCFsUYVqt7",
+          "visualData": {
+            "x": 488.18714555541874,
+            "y": 79.37192821510313,
+            "zIndex": 241,
+            "width": 528
+          },
+          "data": {
+            "type": "user",
+            "useTypeInput": false,
+            "promptText": "I am working on developing an AI storyboarding tool that allows users to create a series of prompts for a language model in a choose-your-own-adventure format. The tool is inspired by node-based editors, like the one found in Blender, where users can create nodes on a page that have inputs and outputs that can be connected by wires to form a web of connections between the prompts and the AI. Each node can be edited, and when editing, a larger window pops up with a text editor where users can tweak various aspects of the prompt that will be fed to the AI. This tool will provide a user-friendly interface for crafting interactive stories with an AI language model. Here is a tree of my current files for context. If you would like the contents of any of these files, please ask. The app is dark-themed and the colors are available in index.css. I'm using Emotion for CSS.\n\nThe files in the project are:\n\n{{files}}\n"
+          }
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt Question List",
+          "id": "KbotaIf5SLrUkOubRve1x",
+          "visualData": {
+            "x": 844.6067442786002,
+            "y": 414.7926653937118,
+            "zIndex": 250,
+            "width": 485.03013745499055
+          },
+          "data": {
+            "type": "user",
+            "useTypeInput": false,
+            "promptText": "I have the following question or request:\n\n\"\"\"\n{{request}}\n\"\"\"\n\nYou are likely missing data to fully fulfill the request. If you were a developer tasked with doing this, what questions would you first ask the project manager or other developer to accomplish the task correctly? Examples are clarifying behavior, or styling, or interaction with the rest of the system, etc.\n\nPlease give a bulleted list of questions. You may ask anywhere from zero to five questions. Try to only ask a question if it is necessary for your fulfillment of the request.\n\nHere is an example of an answer:\n\nQuestions:\n* Question 1?\n* Question 2?\n* Question 3?\n\nAnother example (if you have enough context):\n\nQuestions: NONE"
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Get Question List",
+          "id": "AGmIpXCDl_sHyhLIjtXie",
+          "visualData": {
+            "x": 1423.3015918090061,
+            "y": 493.0368341889578,
+            "width": 233.53671241371717,
+            "zIndex": 199
+          },
+          "data": {
+            "model": "gpt-3.5-turbo",
+            "useModelInput": false,
+            "temperature": 0,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "cache": true
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Get File List",
+          "id": "vTR_eCURknJJ12OgLr7ML",
+          "visualData": {
+            "x": 1898.3994167640203,
+            "y": -43.45399924830028,
+            "width": 203,
+            "zIndex": 198
+          },
+          "data": {
+            "model": "gpt-4",
+            "useModelInput": false,
+            "temperature": 0.1,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "cache": false
+          }
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt File List With Explanations",
+          "id": "u24zXxe0GZT9-YFpog8Kc",
+          "visualData": {
+            "x": 1357.211813169883,
+            "y": -190.95664415076706,
+            "zIndex": 64
+          },
+          "data": {
+            "type": "user",
+            "useTypeInput": false,
+            "promptText": "I have the following question or request:\n\n\"\"\"\n{{request}}\n\"\"\"\n\nHere is some additional info:\n\n\"\"\"\n{{additionalInfo}}\n\"\"\"\n\nThere are files that are going to be relevant to your answer. The files you pick must provide you with all of:\n* Context on how the application works\n* Files that you will be editing in your answer\n* Examples for you to follow\n\nWhat file contents would you like to see to help give you context? Pick as many files as you would like. \n\nHere is an example of an answer:\n\nFiles:\n* File 1\n* path/File 2\n* path/subpath/File 3\n* File 4\n\nAnother example (if you have enough context):\n\nFiles: NONE"
+          }
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt File List Refinement",
+          "id": "75kewE6IIm7td8Kb-db26",
+          "visualData": {
+            "x": 2193.8639492325433,
+            "y": -231.2982515178233,
+            "zIndex": 62
+          },
+          "data": {
+            "type": "user",
+            "useTypeInput": false,
+            "promptText": "I have asked this question:\n\n\"\"\"\n{{question}}\n\"\"\"\n\nHere is some additional info:\n\n\"\"\"\n{{additionalInfo}}\n\"\"\"\n\nAn AI has responded with this list of files that may be relevant to the question. The provide any of:\n* Context on how the application works\n* Files that you will be editing in your answer\n* Examples for you to follow\n\n\n\"\"\"\n{{files}}\n\"\"\"\n\nWhich ones of these files do you think is most relevant? Try to pick only the most relevant files for the question, so that you can answer the question most effectively. If they are all relevant, then keep them all, but set a high standard for including files.\n\nExample answer:\n\n* File 1\n* path/File 2\n\nDo not give your reasoning this time. MAXIMUM OF 3."
+          }
+        },
+        {
+          "type": "chat",
+          "title": "File List Refinement",
+          "id": "cfMrNRNjlOgXkyAl50ZAk",
+          "visualData": {
+            "x": 2713.2955341869906,
+            "y": -69.65646623293839,
+            "width": 204,
+            "zIndex": 65
+          },
+          "data": {
+            "model": "gpt-4",
+            "useModelInput": false,
+            "temperature": 0,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "cache": true
+          }
+        },
+        {
+          "type": "userInput",
+          "title": "User Input",
+          "id": "1K582UsQEjPvjVRvtf4ag",
+          "visualData": {
+            "x": 329.2928879517281,
+            "y": 608.5754975551376,
+            "zIndex": 247,
+            "width": 378.6378084183709
+          },
+          "data": {
+            "prompt": "What is your question for the AI to answer?",
+            "useInput": false
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Get List",
+          "id": "5LmXrGo2RcUMcl1GWPZac",
+          "visualData": {
+            "x": 1756.0397961242952,
+            "y": 519.5979660198824,
+            "width": 173.0673697475986,
+            "zIndex": 245
+          },
+          "data": {
+            "regex": "\\* (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": true
+          }
+        },
+        {
+          "type": "userInput",
+          "title": "User Input",
+          "id": "9f2Us4WxeKYfvqMm1_XUZ",
+          "visualData": {
+            "x": 2247.715921686399,
+            "y": 511.34825357399234,
+            "width": 260.4079452318433,
+            "zIndex": 251
+          },
+          "data": {
+            "prompt": "This is an example question?",
+            "useInput": true
+          }
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt",
+          "id": "dAdCTHgtY0oqvfuct7ka8",
+          "visualData": {
+            "x": 5315.176216542515,
+            "y": 182.76356217200475,
+            "zIndex": 175
+          },
+          "data": {
+            "type": "user",
+            "useTypeInput": false,
+            "promptText": "I have asked this question:\n\n\"\"\"\n{{question}}\n\"\"\"\n\nHere are some additional notes:\n\n{{qanda}}\n\nDo you have any additional questions for me, before answering my question? YES or NO.\n\nExample:\n\nYES I have more questions:\n* Question 1\n* Question 2\n\nExample:\n\nNO I do not have any questions"
+          }
+        },
+        {
+          "type": "text",
+          "title": "Question",
+          "id": "P43dR9pClYPtOT7C2sXmx",
+          "visualData": {
+            "x": 4458.8742672961525,
+            "y": 301.06017117930253,
+            "zIndex": 203,
+            "width": 150.51226080315178
+          },
+          "data": {
+            "text": "{{input}}"
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "yYn8FeMz-hO7dPszDCdB3",
+          "visualData": {
+            "x": 6188.17351266483,
+            "y": -13.402564542049689,
+            "width": 200,
+            "zIndex": 190
+          },
+          "data": {
+            "model": "gpt-4",
+            "useModelInput": false,
+            "temperature": 0.5,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 4096,
+            "useMaxTokensInput": false
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Get List",
+          "id": "UkHf2h-9p1RVh2BTW_fzv",
+          "visualData": {
+            "x": 2986.482982344181,
+            "y": -82.11225604426792,
+            "width": 179.81496368518492,
+            "zIndex": 209
+          },
+          "data": {
+            "regex": "\\* (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": true
+          }
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt",
+          "id": "NZud7Z_erCJPCnlY7c96u",
+          "visualData": {
+            "x": 5363.0220042239525,
+            "y": -177.67271622122814,
+            "zIndex": 184,
+            "width": 305.41816766496504
+          },
+          "data": {
+            "type": "user",
+            "useTypeInput": false,
+            "promptText": "Here are the contents of these files:\n\n{{files}}\n\n{{files_2}}"
+          }
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt",
+          "id": "nfTmKKGqCF0jDmwQezIhy",
+          "visualData": {
+            "x": 3669.700900012378,
+            "y": -133.80513782356616,
+            "zIndex": 131
+          },
+          "data": {
+            "type": "user",
+            "useTypeInput": false,
+            "promptText": "I have asked this question or made this request:\n\n\"\"\"\n{{question}}\n\"\"\"\n\nHere are the contents of these files:\n\n{{file_contents}}\n\nAfter seeing these files, do you have enough information to craft a full answer, or not? Make sure you have all of the following:\n\n* Context on how the application works\n* If you are creating new files, examples\n* If you will change any files, the current contents of those files\n\nAre there more files that would be useful from these relevant files below?\n\n\"\"\"\n{{relevant_files}}\n\"\"\"\n\nYou MUST include YES or NO in your answer (upper-case)\n\n\nExample:\n\nYES I have enough information\n\nExample:\n\nNO, I would like to view these files too:\n\n* File 1\n* File 2\n"
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "e5C86vuBegWhJRJJ2kP3Z",
+          "visualData": {
+            "x": 4221.363340906682,
+            "y": -95.46869550636578,
+            "width": 200,
+            "zIndex": 77
+          },
+          "data": {
+            "model": "gpt-4",
+            "useModelInput": false,
+            "temperature": 0.2,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 100,
+            "useMaxTokensInput": false
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Get List",
+          "id": "QztzfsU7JuDVWKrCqkDVK",
+          "visualData": {
+            "x": 2636.439715881784,
+            "y": 261.6596481254786,
+            "width": 177.51816071364738,
+            "zIndex": 197
+          },
+          "data": {
+            "regex": "\\* (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Get List",
+          "id": "PXir5C5_aS_sKGNqbhmRb",
+          "visualData": {
+            "x": 4109.394261755683,
+            "y": -365.9245983571581,
+            "width": 149.8383306400192,
+            "zIndex": 240
+          },
+          "data": {
+            "regex": "\\* (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "match",
+          "title": "Match",
+          "id": "jqJiZN4H66thn9zYsoc8P",
+          "visualData": {
+            "x": 4569.859034358798,
+            "y": 23.40635359200577,
+            "width": 300,
+            "zIndex": 208
+          },
+          "data": {
+            "caseCount": 2,
+            "cases": [
+              "YES",
+              "NO"
+            ]
+          }
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt",
+          "id": "G0oIOTRRDZoYBls83ssB5",
+          "visualData": {
+            "x": 4434.811103453836,
+            "y": 565.2493122538758,
+            "zIndex": 164,
+            "width": 309.87270918312606
+          },
+          "data": {
+            "type": "user",
+            "useTypeInput": false,
+            "promptText": "Here are the contents of these files:\n\n{{file_contents}}\n"
+          }
+        },
+        {
+          "id": "yLWFijxaMBQu1yfRxxEHQ",
+          "type": "readDirectory",
+          "title": "Read Directory",
+          "visualData": {
+            "x": 113.62887024964405,
+            "y": 169.19587125555483,
+            "zIndex": 242,
+            "width": 273.4819575476621
+          },
+          "data": {
+            "baseDirectory": "document",
+            "path": "/Users/andy.brenneke/Documents/nodai/packages/app/src",
+            "recursive": true,
+            "useBaseDirectoryInput": false,
+            "usePathInput": false,
+            "useRecursiveInput": false,
+            "includeDirectories": false,
+            "useIncludeDirectoriesInput": false,
+            "filterGlobs": [],
+            "useFilterGlobsInput": false,
+            "relative": true,
+            "useRelativeInput": false
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "inGxwbeQwa8T8EYYxBWKP",
+          "visualData": {
+            "x": 2668.3953644105854,
+            "y": -307.537736604932,
+            "width": 300,
+            "zIndex": 140
+          },
+          "data": {
+            "text": "{{rootPath}}/{{file}}"
+          },
+          "isSplitRun": true,
+          "splitRunMax": 5
+        },
+        {
+          "id": "Gt0kZ9sY-6Z2ffU6JCkcF",
+          "type": "readFile",
+          "title": "Read File",
+          "visualData": {
+            "x": 3004.293244164083,
+            "y": -313.5535777754302,
+            "width": 250,
+            "zIndex": 182
+          },
+          "data": {
+            "baseDirectory": "document",
+            "useBaseDirectoryInput": false,
+            "path": "",
+            "usePathInput": true
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "g8PRCx32q_DavlGX_pKSU",
+          "visualData": {
+            "x": 3297.6633310307966,
+            "y": -205.70416808570056,
+            "width": 275.7147944590329,
+            "zIndex": 138
+          },
+          "data": {
+            "text": "```\n// {{file_name}}\n{{file_content}}\n```"
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "qI58gWoujdMp4KGTvKi06",
+          "visualData": {
+            "x": 4379.631842242542,
+            "y": -333.8156225176864,
+            "width": 189.36893401106227,
+            "zIndex": 281
+          },
+          "data": {
+            "text": "{{rootPath}}/{{file}}"
+          },
+          "isSplitRun": true
+        },
+        {
+          "id": "SSmwq9a_NnRnBg82QXR2X",
+          "type": "readFile",
+          "title": "Read File",
+          "visualData": {
+            "x": 4681.8845929540685,
+            "y": -284.1848308123896,
+            "width": 228.7087309612807,
+            "zIndex": 172
+          },
+          "data": {
+            "baseDirectory": "document",
+            "useBaseDirectoryInput": false,
+            "path": "",
+            "usePathInput": true
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "Zv8CFeNiZTrxjCN15dEFD",
+          "visualData": {
+            "x": 4971.491054426823,
+            "y": -171.35663473104836,
+            "width": 183.28936425967095,
+            "zIndex": 170
+          },
+          "data": {
+            "text": "```\n// {{file_path}}\n{{file_contents}}\n```"
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "text",
+          "title": "Context",
+          "id": "_9xEspbj9f37w6IB1Arzg",
+          "visualData": {
+            "x": 4996.141945436322,
+            "y": -441.29224823990603,
+            "width": 155.41816766496413,
+            "zIndex": 196
+          },
+          "data": {
+            "text": "{{input}}"
+          }
+        },
+        {
+          "type": "ifElse",
+          "title": "If/Else",
+          "id": "QxSeeFiiP-uh-OkMCNbJi",
+          "data": {},
+          "visualData": {
+            "x": 5853.878354264606,
+            "y": 56.236502528964344,
+            "width": 157.27439642216723,
+            "zIndex": 193
+          }
+        },
+        {
+          "type": "match",
+          "title": "Match",
+          "id": "sdh_YINwoIu5xoeDR8wQ4",
+          "visualData": {
+            "x": 6466.10701739142,
+            "y": -11.379636209446566,
+            "width": 300,
+            "zIndex": 211
+          },
+          "data": {
+            "caseCount": 2,
+            "cases": [
+              "YES|Yes|yes",
+              "NO|No|no"
+            ]
+          },
+          "isSplitRun": false
+        },
+        {
+          "type": "extractRegex",
+          "title": "Extract Regex",
+          "id": "hjrcpVizBUjQnuXg3Ih8p",
+          "visualData": {
+            "x": 6878.757477312437,
+            "y": -169.45138496951358,
+            "width": 250,
+            "zIndex": 213
+          },
+          "data": {
+            "regex": "\\* (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "userInput",
+          "title": "User Input",
+          "id": "JOdkpt_nTli-1bG8cKg4n",
+          "visualData": {
+            "x": 7224.851411439743,
+            "y": -169.4513849695136,
+            "width": 250,
+            "zIndex": 215
+          },
+          "data": {
+            "prompt": "This is an example question?",
+            "useInput": true
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "5FwczAvCE9grC-uO-rsJy",
+          "visualData": {
+            "x": 7536.003169525348,
+            "y": -169.45138496951364,
+            "width": 300,
+            "zIndex": 217
+          },
+          "data": {
+            "text": "Here are some additional questions you gave and my answers:\n\n{{qa}}"
+          }
+        },
+        {
+          "type": "ifElse",
+          "title": "If/Else",
+          "id": "e60pNdjmvjyLTCJ3jUN7h",
+          "data": {},
+          "visualData": {
+            "x": 7957.5782844952355,
+            "y": -39.320413200076246,
+            "width": 125,
+            "zIndex": 239
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "MSg5lbQ3E_Km87p0evSeh",
+          "visualData": {
+            "x": 7715.937153443355,
+            "y": -6.175106129059492,
+            "width": 140.88859934266657,
+            "zIndex": 238
+          },
+          "data": {
+            "text": ""
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "5VcOEvnLC56O64j2InRKX",
+          "visualData": {
+            "x": 8729.178423250145,
+            "y": 68.40488025953925,
+            "width": 200,
+            "zIndex": 237
+          },
+          "data": {
+            "model": "gpt-4",
+            "useModelInput": false,
+            "temperature": 0.3,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 512,
+            "useMaxTokensInput": false
+          }
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt",
+          "id": "YFPEXiTSWNawBUvgAF0_F",
+          "visualData": {
+            "x": 8135.9965526623455,
+            "y": 282.1998314192957,
+            "zIndex": 262
+          },
+          "data": {
+            "type": "user",
+            "useTypeInput": false,
+            "promptText": "I have asked this question:\n\n\"\"\"\n{{question}}\n\"\"\"\n\nHere are some additional notes:\n\n{{qanda}}\n{{qanda2}}\n\nPlease list the files that you will be changing. Only list the files.\n\nExample:\n\nI will be changing:\n* File1.ts\n* File2.ts"
+          }
+        },
+        {
+          "type": "subGraph",
+          "title": "Extract List Items",
+          "id": "189BdUHhFqXuPiOTRnu6G",
+          "visualData": {
+            "x": 8976.495734736855,
+            "y": 95.02241329525225,
+            "width": 191.83241906778676,
+            "zIndex": 264
+          },
+          "data": {
+            "graphId": "BCH2-JTaOfU7yrJ1GQRhL"
+          }
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt",
+          "id": "hNhXa1EZOBOgUa_h-E222",
+          "visualData": {
+            "x": 9262.676057048695,
+            "y": -413.3601478928669,
+            "zIndex": 279
+          },
+          "data": {
+            "type": "user",
+            "useTypeInput": false,
+            "promptText": "I have asked this question:\n\n\"\"\"\n{{question}}\n\"\"\"\n\nHere are some additional notes:\n\n{{qanda}}\n{{qanda2}}"
+          },
+          "isSplitRun": false
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "1ukc23HOrIcQFDtNM4QV8",
+          "visualData": {
+            "x": 9956.926868373535,
+            "y": -22.050184109943288,
+            "width": 200,
+            "zIndex": 278
+          },
+          "data": {
+            "model": "gpt-4",
+            "useModelInput": false,
+            "temperature": 0.2,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 2048,
+            "useMaxTokensInput": false,
+            "useStop": false,
+            "stop": "",
+            "useStopInput": false,
+            "presencePenalty": 0.1,
+            "usePresencePenaltyInput": false,
+            "frequencyPenalty": 0.1,
+            "useFrequencyPenaltyInput": false,
+            "cache": false
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt",
+          "id": "jS3liOffr3YO0xdhJ0god",
+          "visualData": {
+            "x": 9293.072191241985,
+            "y": 253.9587959411965,
+            "zIndex": 280
+          },
+          "data": {
+            "type": "user",
+            "useTypeInput": false,
+            "promptText": "Please tell me the changes I need to make to the {{file}} file to accomplish my question. Only give me the changes for this file. Do not give me changes for any other files. If there are no changes to make to this file, tell me there are no changes to make. If there are changes to make, please give me the changes to the file."
+          },
+          "isSplitRun": true
+        }
+      ],
+      "connections": [
+        {
+          "inputNodeId": "AGmIpXCDl_sHyhLIjtXie",
+          "inputId": "message1",
+          "outputNodeId": "zc7_qtAZEqumCFsUYVqt7",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "AGmIpXCDl_sHyhLIjtXie",
+          "inputId": "message2",
+          "outputNodeId": "KbotaIf5SLrUkOubRve1x",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "vTR_eCURknJJ12OgLr7ML",
+          "inputId": "message1",
+          "outputNodeId": "zc7_qtAZEqumCFsUYVqt7",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "vTR_eCURknJJ12OgLr7ML",
+          "inputId": "message2",
+          "outputNodeId": "u24zXxe0GZT9-YFpog8Kc",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "75kewE6IIm7td8Kb-db26",
+          "inputId": "files",
+          "outputNodeId": "vTR_eCURknJJ12OgLr7ML",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "cfMrNRNjlOgXkyAl50ZAk",
+          "inputId": "message1",
+          "outputNodeId": "zc7_qtAZEqumCFsUYVqt7",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "cfMrNRNjlOgXkyAl50ZAk",
+          "inputId": "message2",
+          "outputNodeId": "75kewE6IIm7td8Kb-db26",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "u24zXxe0GZT9-YFpog8Kc",
+          "inputId": "request",
+          "outputNodeId": "1K582UsQEjPvjVRvtf4ag",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "75kewE6IIm7td8Kb-db26",
+          "inputId": "question",
+          "outputNodeId": "1K582UsQEjPvjVRvtf4ag",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "KbotaIf5SLrUkOubRve1x",
+          "inputId": "request",
+          "outputNodeId": "1K582UsQEjPvjVRvtf4ag",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "5LmXrGo2RcUMcl1GWPZac",
+          "inputId": "input",
+          "outputNodeId": "AGmIpXCDl_sHyhLIjtXie",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "9f2Us4WxeKYfvqMm1_XUZ",
+          "inputId": "questions",
+          "outputNodeId": "5LmXrGo2RcUMcl1GWPZac",
+          "outputId": "matches"
+        },
+        {
+          "inputNodeId": "dAdCTHgtY0oqvfuct7ka8",
+          "inputId": "qanda",
+          "outputNodeId": "9f2Us4WxeKYfvqMm1_XUZ",
+          "outputId": "questionsAndAnswers"
+        },
+        {
+          "inputNodeId": "P43dR9pClYPtOT7C2sXmx",
+          "inputId": "name",
+          "outputNodeId": "1K582UsQEjPvjVRvtf4ag",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "P43dR9pClYPtOT7C2sXmx",
+          "inputId": "input",
+          "outputNodeId": "1K582UsQEjPvjVRvtf4ag",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "dAdCTHgtY0oqvfuct7ka8",
+          "inputId": "question",
+          "outputNodeId": "P43dR9pClYPtOT7C2sXmx",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "UkHf2h-9p1RVh2BTW_fzv",
+          "inputId": "input",
+          "outputNodeId": "cfMrNRNjlOgXkyAl50ZAk",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "yYn8FeMz-hO7dPszDCdB3",
+          "inputId": "message3",
+          "outputNodeId": "dAdCTHgtY0oqvfuct7ka8",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "u24zXxe0GZT9-YFpog8Kc",
+          "inputId": "additionalInfo",
+          "outputNodeId": "9f2Us4WxeKYfvqMm1_XUZ",
+          "outputId": "questionsAndAnswers"
+        },
+        {
+          "inputNodeId": "75kewE6IIm7td8Kb-db26",
+          "inputId": "additionalInfo",
+          "outputNodeId": "9f2Us4WxeKYfvqMm1_XUZ",
+          "outputId": "questionsAndAnswers"
+        },
+        {
+          "inputNodeId": "e5C86vuBegWhJRJJ2kP3Z",
+          "inputId": "message1",
+          "outputNodeId": "zc7_qtAZEqumCFsUYVqt7",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "QztzfsU7JuDVWKrCqkDVK",
+          "inputId": "input",
+          "outputNodeId": "vTR_eCURknJJ12OgLr7ML",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "nfTmKKGqCF0jDmwQezIhy",
+          "inputId": "relevant_files",
+          "outputNodeId": "QztzfsU7JuDVWKrCqkDVK",
+          "outputId": "matches"
+        },
+        {
+          "inputNodeId": "jqJiZN4H66thn9zYsoc8P",
+          "inputId": "input",
+          "outputNodeId": "e5C86vuBegWhJRJJ2kP3Z",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "PXir5C5_aS_sKGNqbhmRb",
+          "inputId": "input",
+          "outputNodeId": "jqJiZN4H66thn9zYsoc8P",
+          "outputId": "case2"
+        },
+        {
+          "inputNodeId": "e5C86vuBegWhJRJJ2kP3Z",
+          "inputId": "message2",
+          "outputNodeId": "nfTmKKGqCF0jDmwQezIhy",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "nfTmKKGqCF0jDmwQezIhy",
+          "inputId": "question",
+          "outputNodeId": "1K582UsQEjPvjVRvtf4ag",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "zc7_qtAZEqumCFsUYVqt7",
+          "inputId": "files",
+          "outputNodeId": "yLWFijxaMBQu1yfRxxEHQ",
+          "outputId": "paths"
+        },
+        {
+          "inputNodeId": "inGxwbeQwa8T8EYYxBWKP",
+          "inputId": "file",
+          "outputNodeId": "UkHf2h-9p1RVh2BTW_fzv",
+          "outputId": "matches"
+        },
+        {
+          "inputNodeId": "Gt0kZ9sY-6Z2ffU6JCkcF",
+          "inputId": "path",
+          "outputNodeId": "inGxwbeQwa8T8EYYxBWKP",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "g8PRCx32q_DavlGX_pKSU",
+          "inputId": "file_content",
+          "outputNodeId": "Gt0kZ9sY-6Z2ffU6JCkcF",
+          "outputId": "content"
+        },
+        {
+          "inputNodeId": "g8PRCx32q_DavlGX_pKSU",
+          "inputId": "file_name",
+          "outputNodeId": "UkHf2h-9p1RVh2BTW_fzv",
+          "outputId": "matches"
+        },
+        {
+          "inputNodeId": "nfTmKKGqCF0jDmwQezIhy",
+          "inputId": "file_contents",
+          "outputNodeId": "g8PRCx32q_DavlGX_pKSU",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "qI58gWoujdMp4KGTvKi06",
+          "inputId": "file",
+          "outputNodeId": "PXir5C5_aS_sKGNqbhmRb",
+          "outputId": "matches"
+        },
+        {
+          "inputNodeId": "SSmwq9a_NnRnBg82QXR2X",
+          "inputId": "path",
+          "outputNodeId": "qI58gWoujdMp4KGTvKi06",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "Zv8CFeNiZTrxjCN15dEFD",
+          "inputId": "file_contents",
+          "outputNodeId": "SSmwq9a_NnRnBg82QXR2X",
+          "outputId": "content"
+        },
+        {
+          "inputNodeId": "Zv8CFeNiZTrxjCN15dEFD",
+          "inputId": "file_path",
+          "outputNodeId": "PXir5C5_aS_sKGNqbhmRb",
+          "outputId": "matches"
+        },
+        {
+          "inputNodeId": "NZud7Z_erCJPCnlY7c96u",
+          "inputId": "files",
+          "outputNodeId": "Zv8CFeNiZTrxjCN15dEFD",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "_9xEspbj9f37w6IB1Arzg",
+          "inputId": "input",
+          "outputNodeId": "zc7_qtAZEqumCFsUYVqt7",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "yYn8FeMz-hO7dPszDCdB3",
+          "inputId": "message1",
+          "outputNodeId": "_9xEspbj9f37w6IB1Arzg",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "G0oIOTRRDZoYBls83ssB5",
+          "inputId": "file_contents",
+          "outputNodeId": "g8PRCx32q_DavlGX_pKSU",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "NZud7Z_erCJPCnlY7c96u",
+          "inputId": "files_2",
+          "outputNodeId": "g8PRCx32q_DavlGX_pKSU",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "yYn8FeMz-hO7dPszDCdB3",
+          "inputId": "message2",
+          "outputNodeId": "QxSeeFiiP-uh-OkMCNbJi",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "QxSeeFiiP-uh-OkMCNbJi",
+          "inputId": "if",
+          "outputNodeId": "jqJiZN4H66thn9zYsoc8P",
+          "outputId": "case1"
+        },
+        {
+          "inputNodeId": "QxSeeFiiP-uh-OkMCNbJi",
+          "inputId": "true",
+          "outputNodeId": "G0oIOTRRDZoYBls83ssB5",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "QxSeeFiiP-uh-OkMCNbJi",
+          "inputId": "false",
+          "outputNodeId": "NZud7Z_erCJPCnlY7c96u",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "sdh_YINwoIu5xoeDR8wQ4",
+          "inputId": "input",
+          "outputNodeId": "yYn8FeMz-hO7dPszDCdB3",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "hjrcpVizBUjQnuXg3Ih8p",
+          "inputId": "input",
+          "outputNodeId": "sdh_YINwoIu5xoeDR8wQ4",
+          "outputId": "case1"
+        },
+        {
+          "inputNodeId": "JOdkpt_nTli-1bG8cKg4n",
+          "inputId": "questions",
+          "outputNodeId": "hjrcpVizBUjQnuXg3Ih8p",
+          "outputId": "matches"
+        },
+        {
+          "inputNodeId": "5FwczAvCE9grC-uO-rsJy",
+          "inputId": "qa",
+          "outputNodeId": "JOdkpt_nTli-1bG8cKg4n",
+          "outputId": "questionsAndAnswers"
+        },
+        {
+          "inputNodeId": "e60pNdjmvjyLTCJ3jUN7h",
+          "inputId": "false",
+          "outputNodeId": "MSg5lbQ3E_Km87p0evSeh",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "e60pNdjmvjyLTCJ3jUN7h",
+          "inputId": "true",
+          "outputNodeId": "5FwczAvCE9grC-uO-rsJy",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "e60pNdjmvjyLTCJ3jUN7h",
+          "inputId": "if",
+          "outputNodeId": "sdh_YINwoIu5xoeDR8wQ4",
+          "outputId": "case1"
+        },
+        {
+          "inputNodeId": "5VcOEvnLC56O64j2InRKX",
+          "inputId": "message1",
+          "outputNodeId": "_9xEspbj9f37w6IB1Arzg",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "5VcOEvnLC56O64j2InRKX",
+          "inputId": "message2",
+          "outputNodeId": "QxSeeFiiP-uh-OkMCNbJi",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "inGxwbeQwa8T8EYYxBWKP",
+          "inputId": "rootPath",
+          "outputNodeId": "yLWFijxaMBQu1yfRxxEHQ",
+          "outputId": "rootPath"
+        },
+        {
+          "inputNodeId": "qI58gWoujdMp4KGTvKi06",
+          "inputId": "rootPath",
+          "outputNodeId": "yLWFijxaMBQu1yfRxxEHQ",
+          "outputId": "rootPath"
+        },
+        {
+          "inputNodeId": "YFPEXiTSWNawBUvgAF0_F",
+          "inputId": "qanda2",
+          "outputNodeId": "e60pNdjmvjyLTCJ3jUN7h",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "YFPEXiTSWNawBUvgAF0_F",
+          "inputId": "question",
+          "outputNodeId": "P43dR9pClYPtOT7C2sXmx",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "YFPEXiTSWNawBUvgAF0_F",
+          "inputId": "qanda",
+          "outputNodeId": "9f2Us4WxeKYfvqMm1_XUZ",
+          "outputId": "questionsAndAnswers"
+        },
+        {
+          "inputNodeId": "5VcOEvnLC56O64j2InRKX",
+          "inputId": "message3",
+          "outputNodeId": "YFPEXiTSWNawBUvgAF0_F",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "189BdUHhFqXuPiOTRnu6G",
+          "inputId": "text",
+          "outputNodeId": "5VcOEvnLC56O64j2InRKX",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "hNhXa1EZOBOgUa_h-E222",
+          "inputId": "qanda2",
+          "outputNodeId": "e60pNdjmvjyLTCJ3jUN7h",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "hNhXa1EZOBOgUa_h-E222",
+          "inputId": "question",
+          "outputNodeId": "P43dR9pClYPtOT7C2sXmx",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "hNhXa1EZOBOgUa_h-E222",
+          "inputId": "qanda",
+          "outputNodeId": "9f2Us4WxeKYfvqMm1_XUZ",
+          "outputId": "questionsAndAnswers"
+        },
+        {
+          "inputNodeId": "1ukc23HOrIcQFDtNM4QV8",
+          "inputId": "message1",
+          "outputNodeId": "_9xEspbj9f37w6IB1Arzg",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "1ukc23HOrIcQFDtNM4QV8",
+          "inputId": "message2",
+          "outputNodeId": "QxSeeFiiP-uh-OkMCNbJi",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "1ukc23HOrIcQFDtNM4QV8",
+          "inputId": "message3",
+          "outputNodeId": "hNhXa1EZOBOgUa_h-E222",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "jS3liOffr3YO0xdhJ0god",
+          "inputId": "file",
+          "outputNodeId": "189BdUHhFqXuPiOTRnu6G",
+          "outputId": "items"
+        },
+        {
+          "inputNodeId": "1ukc23HOrIcQFDtNM4QV8",
+          "inputId": "message4",
+          "outputNodeId": "jS3liOffr3YO0xdhJ0god",
+          "outputId": "output"
+        }
+      ],
+      "nodesById": {},
+      "connectionsByNodeId": {},
+      "connectionsById": {},
+      "metadata": {
+        "name": "**Nodai Helper",
+        "id": "tM4FGxXXLTDjeD0oYgQpB"
+      }
+    },
+    "LOt0W_XCiFbuqbRlbF1oM": {
+      "nodes": [
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "67RewDBJlQUInF8WV3-GB",
+          "visualData": {
+            "x": 437.4469649520634,
+            "y": 314.3452826722073,
+            "width": 300
+          },
+          "data": {
+            "text": "import { max, range, uniqBy } from 'lodash-es';\nimport { ControlFlowExcluded } from '../utils/symbols';\nimport { DataValue, ArrayDataValue, AnyDataValue, StringDataValue, expectType, ScalarDataValue } from './DataValue';\nimport { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';\nimport { NodeGraph } from './NodeGraph';\nimport { NodeImpl, ProcessContext } from './NodeImpl';\nimport { Nodes, createNodeInstance } from './Nodes';\nimport { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode';\n\nexport type NodeResults = Map<string, Record<PortId, DataValue>>;\n\nexport type ProcessEvents = {\n  onNodeStart?: (node: ChartNode, inputs: Record<PortId, DataValue>) => void;\n  onNodeFinish?: (node: ChartNode, result: Record<PortId, DataValue>) => void;\n  onNodeError?: (node: ChartNode, error: Error) => void;\n  onNodeExcluded?: (node: ChartNode) => void;\n  onUserInput?: (\n    userInputNodes: UserInputNode[],\n    inputs: Record<PortId, DataValue>[],\n  ) => Promise<ArrayDataValue<StringDataValue>[]>;\n  onPartialOutputs?: (node: ChartNode, outputs: Record<PortId, DataValue>, index: number) => void;\n};\n\nexport class GraphProcessor {\n  #graph: NodeGraph;\n  #nodeInstances: Record<NodeId, NodeImpl<ChartNode>>;\n  #connections: Record<NodeId, NodeConnection[]>;\n  #definitions: Record<NodeId, { inputs: NodeInputDefinition[]; outputs: NodeOutputDefinition[] }>;\n\n  constructor(graph: NodeGraph) {\n    this.#graph = graph;\n    this.#nodeInstances = {};\n    this.#connections = {};\n\n    // Create node instances and store them in a lookup table\n    for (const node of this.#graph.nodes) {\n      this.#nodeInstances[node.id] = createNodeInstance(node as Nodes);\n    }\n\n    // Store connections in a lookup table\n    for (const conn of this.#graph.connections) {\n      if (!this.#connections[conn.inputNodeId]) {\n        this.#connections[conn.inputNodeId] = [];\n      }\n      if (!this.#connections[conn.outputNodeId]) {\n        this.#connections[conn.outputNodeId] = [];\n      }\n      this.#connections[conn.inputNodeId]!.push(conn);\n      this.#connections[conn.outputNodeId]!.push(conn);\n    }\n\n    // Store input and output definitions in a lookup table\n    this.#definitions = {};\n    for (const node of this.#graph.nodes) {\n      this.#definitions[node.id] = {\n        inputs: this.#nodeInstances[node.id]!.getInputDefinitions(this.#connections[node.id]!),\n        outputs: this.#nodeInstances[node.id]!.getOutputDefinitions(this.#connections[node.id]!),\n      };\n    }\n  }\n\n  #nodeIsReady(node: ChartNode, visitedNodes: Set<unknown>, depth = 0): boolean {\n    return this.#allInputsVisited(node, visitedNodes);\n  }\n\n  #allInputsVisited(node: ChartNode, visitedNodes: Set<unknown>, depth = 0): boolean {\n    const connections = this.#connections[node.id];\n    return (\n      this.#definitions[node.id]!.inputs.every((input) => {\n        const connectionToInput = connections?.find(\n          (conn) => conn.inputId === input.id && conn.inputNodeId === node.id,\n        );\n\n        if (!input.required && !connectionToInput) {\n          return true;\n        }\n\n        if (!connectionToInput) {\n          return false;\n        }\n\n        return visitedNodes.has(connectionToInput.outputNodeId);\n      }) || this.#definitions[node.id]!.inputs.length === 0\n    );\n  }\n\n  async processGraph(context: ProcessContext, events: ProcessEvents = {}): Promise<Record<string, DataValue>> {\n    const outputNodes = this.#graph.nodes.filter((node) => this.#definitions[node.id]!.outputs.length === 0);\n\n    const nodeResults: NodeResults = new Map();\n\n    // Process nodes in topological order\n    const nodesToProcess = [...this.#graph.nodes];\n    const visitedNodes = new Set();\n\n    while (nodesToProcess.length > 0) {\n      const readyNodes = nodesToProcess.filter((node) => this.#nodeIsReady(node, visitedNodes));\n\n      if (readyNodes.length === 0) {\n        for (const erroredNode of nodesToProcess) {\n          events.onNodeError?.(\n            erroredNode,\n            new Error('There might be a cycle in the graph or an issue with input dependencies.'),\n          );\n        }\n        throw new Error('There might be a cycle in the graph or an issue with input dependencies.');\n      }\n\n      const userInputNodes = readyNodes.filter((node) => node.type === 'userInput') as UserInputNode[];\n      if (userInputNodes.length > 0 && events.onUserInput) {\n        try {\n          const validUserInputNodes: UserInputNode[] = [];\n          const userInputInputValues: Record<PortId, DataValue>[] = [];\n\n          for (const node of userInputNodes) {\n            const inputValues = this.#getInputValuesForNode(node, nodeResults);\n            if (this.#excludedDueToControlFlow(node, nodeResults, inputValues, events, visitedNodes)) {\n              continue;\n            }\n            validUserInputNodes.push(node);\n            userInputInputValues.push(inputValues);\n            events.onNodeStart?.(node, inputValues);\n          }\n\n          if (validUserInputNodes.length > 0) {\n            const userInputResults = await events.onUserInput(validUserInputNodes, userInputInputValues);\n            userInputResults.forEach((result, index) => {\n              const node = validUserInputNodes[index]!;\n              const outputValues = (this.#nodeInstances[node.id] as UserInputNodeImpl).getOutputValuesFromUserInput(\n                userInputInputValues[index]!,\n                result,\n              );\n              nodeResults.set(node.id, outputValues);\n              visitedNodes.add(node.id);\n              nodesToProcess.splice(nodesToProcess.indexOf(node), 1);\n              events.onNodeFinish?.(node, outputValues);\n            });\n            continue;\n          }\n        } catch (error) {\n          for (const node of userInputNodes) {\n            events.onNodeError?.(node, error as Error);\n          }\n          throw error;\n        }\n      }\n\n      await Promise.allSettled(\n        readyNodes.map(async (node) => {\n          await this.#processNode(node as Nodes, nodeResults, context, events, visitedNodes, nodesToProcess);\n        }),\n      );\n    }\n\n    // Collect output values\n    const outputValues = outputNodes.reduce((values, node) => {\n      values[node.id] = nodeResults.get(node.id);\n      return values;\n    }, {} as Record<string, any>);\n\n    return outputValues;\n  }\n\n  async #processNode(\n    node: Nodes,\n    nodeResults: NodeResults,\n    context: ProcessContext,\n    events: ProcessEvents,\n    visitedNodes: Set<unknown>,\n    nodesToProcess: ChartNode[],\n  ) {\n    nodesToProcess.splice(nodesToProcess.indexOf(node), 1);\n\n    if (node.isSplitRun) {\n      await this.#processSplitRunNode(node, nodeResults, context, events, visitedNodes);\n    } else {\n      await this.#processNormalNode(node, nodeResults, context, events, visitedNodes);\n    }\n  }\n\n  async #processSplitRunNode(\n    node: ChartNode,\n    nodeResults: NodeResults,\n    context: ProcessContext,\n    events: ProcessEvents,\n    visitedNodes: Set<unknown>,\n  ) {\n    const inputValues = this.#getInputValuesForNode(node, nodeResults);\n\n    if (this.#excludedDueToControlFlow(node, nodeResults, inputValues, events, visitedNodes)) {\n      return;\n    }\n\n    const splittingAmount = Math.min(\n      max(Object.values(inputValues).map((value) => (Array.isArray(value.value) ? value.value.length : 1))) ?? 1,\n      node.splitRunMax ?? 10,\n    );\n\n    events.onNodeStart?.(node, inputValues);\n\n    try {\n      const results: Record<PortId, DataValue>[] = [];\n\n      await Promise.all(\n        range(0, splittingAmount).map(async (i) => {\n          const inputs: Record<PortId, DataValue> = Object.fromEntries(\n            Object.entries(inputValues).map(([port, value]): [PortId, DataValue] => {\n              if (value.type.endsWith('[]')) {\n                const newType = value.type.slice(0, -2) as DataValue['type'];\n                const newValue: unknown = (value.value as unknown[])[i] ?? undefined;\n                return [port as PortId, { type: newType, value: newValue as any }];\n              } else {\n                return [port as PortId, value];\n              }\n            }),\n          );\n\n          try {\n            const output = await this.#processNodeWithInputData(node, context, inputs, i, events.onPartialOutputs);\n            results.push(output);\n          } catch (error) {\n            const errorInstance =\n              typeof error === 'object' && error instanceof Error\n                ? error\n                : new Error(error != null ? error.toString() : 'Unknown error');\n            events.onNodeError?.(node, errorInstance);\n            throw error;\n          }\n        }),\n      );\n\n      // Combine the parallel results into the final output\n\n      // Turn a Record<PortId, DataValue[]> into a Record<PortId, AnyArrayDataValue>\n      const aggregateResults = results.reduce((acc, result) => {\n        for (const [portId, value] of Object.entries(result)) {\n          acc[portId as PortId] ??= { type: (value.type + '[]') as DataValue['type'], value: [] } as DataValue;\n          (acc[portId as PortId] as ArrayDataValue<AnyDataValue>).value.push(value.value);\n        }\n        return acc;\n      }, {} as Record<PortId, DataValue>);\n\n      nodeResults.set(node.id, aggregateResults);\n      visitedNodes.add(node.id);\n      events.onNodeFinish?.(node, aggregateResults);\n    } catch (error) {\n      const errorInstance =\n        typeof error === 'object' && error instanceof Error\n          ? error\n          : new Error(error != null ? error.toString() : 'Unknown error');\n      events.onNodeError?.(node, errorInstance);\n      console.error(error);\n      throw error;\n    }\n  }\n\n  async #processNormalNode(\n    node: ChartNode,\n    nodeResults: NodeResults,\n    context: ProcessContext,\n    events: ProcessEvents,\n    visitedNodes: Set<unknown>,\n  ) {\n    const inputValues = this.#getInputValuesForNode(node, nodeResults);\n\n    if (this.#excludedDueToControlFlow(node, nodeResults, inputValues, events, visitedNodes)) {\n      return;\n    }\n\n    events.onNodeStart?.(node, inputValues);\n\n    try {\n      const outputValues = await this.#processNodeWithInputData(node, context, inputValues, 0, events.onPartialOutputs);\n\n      nodeResults.set(node.id, outputValues);\n      visitedNodes.add(node.id);\n      events.onNodeFinish?.(node, outputValues);\n    } catch (error) {\n      const errorInstance =\n        typeof error === 'object' && error instanceof Error\n          ? error\n          : new Error(error != null ? error.toString() : 'Unknown error');\n      events.onNodeError?.(node, errorInstance);\n      throw error;\n    }\n  }\n\n  async #processNodeWithInputData(\n    node: ChartNode,\n    context: ProcessContext,\n    inputValues: Record<PortId, DataValue>,\n    index: number,\n    onPartialOutputs?: (node: ChartNode, partialOutputs: Record<PortId, DataValue>, index: number) => void,\n  ) {\n    return await this.#nodeInstances[node.id]!.process(inputValues, context, (partialOutputs) =>\n      onPartialOutputs?.(node, partialOutputs, index),\n    );\n  }\n\n  #excludedDueToControlFlow(\n    node: ChartNode,\n    nodeResults: NodeResults,\n    inputValues: Record<PortId, DataValue>,\n    { onNodeExcluded }: { onNodeExcluded?: (node: ChartNode) => void },\n    visitedNodes: Set<unknown>,\n  ) {\n    const inputValuesList = Object.values(inputValues);\n    const inputIsExcludedValue =\n      inputValuesList.length > 0 && inputValuesList.some((value) => value?.type === 'control-flow-excluded');\n\n    const inputConnections = this.#connections[node.id]?.filter((conn) => conn.inputNodeId === node.id) ?? [];\n    const outputNodes = inputConnections\n      .map((conn) => this.#graph.nodes.find((n) => n.id === conn.outputNodeId))\n      .filter((n) => n) as ChartNode[];\n\n    const anyOutputIsExcludedValue =\n      outputNodes.length > 0 &&\n      outputNodes.some((outputNode) => {\n        const outputValues = nodeResults.get(outputNode.id) ?? {};\n        if (outputValues[ControlFlowExcluded as unknown as PortId]) {\n          return true;\n        }\n        return false;\n      });\n\n    const allowedToConsumedExcludedValue = node.type === 'if' || node.type === 'ifElse';\n\n    if ((inputIsExcludedValue || anyOutputIsExcludedValue) && !allowedToConsumedExcludedValue) {\n      onNodeExcluded?.(node);\n      visitedNodes.add(node.id);\n      nodeResults.set(node.id, {\n        [ControlFlowExcluded as unknown as PortId]: { type: 'control-flow-excluded', value: undefined },\n      });\n      return true;\n    }\n\n    return false;\n  }\n\n  #getInputValuesForNode(node: ChartNode, nodeResults: NodeResults): Record<PortId, DataValue> {\n    const connections = this.#connections[node.id];\n    return this.#definitions[node.id]!.inputs.reduce((values, input) => {\n      if (!connections) {\n        return values;\n      }\n      const connection = connections.find((conn) => conn.inputId === input.id && conn.inputNodeId === node.id);\n      if (connection) {\n        const outputNode = this.#nodeInstances[connection.outputNodeId]!.chartNode;\n        const outputResult = nodeResults.get(outputNode.id)?.[connection.outputId];\n\n        values[input.id] = outputResult;\n      }\n      return values;\n    }, {} as Record<string, any>);\n  }\n}\n"
+          }
+        },
+        {
+          "type": "chunk",
+          "title": "Chunk",
+          "id": "RtTfDTcXP3eigkIWeAhh-",
+          "visualData": {
+            "x": 840.3950226023861,
+            "y": 508.5530350479365,
+            "width": 550.1024107453622,
+            "zIndex": 1
+          },
+          "data": {
+            "model": "gpt-4",
+            "useModelInput": false,
+            "numTokensPerChunk": 512,
+            "overlap": 10
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "ZJiOQyn0wI8ifplV9LgQt",
+          "visualData": {
+            "x": 1486.823749346318,
+            "y": 511.12600971449524,
+            "width": 300,
+            "zIndex": 4
+          },
+          "data": {
+            "text": "This is chunk {{chunk}}/{{total}} of the GraphProcessor.ts file.\n\nPlease take notes about this part of the file. Things to mark down are libraries used, techniques used, variable and function names, algorithms, imports, exports especially, etc.\n\nBe extremely thorough and dense in your response. Do not use superfluous words.\n \n```\n{{data}}\n```"
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "I2obFLvUBKGtYx8arwMeA",
+          "visualData": {
+            "x": 1841.424761136081,
+            "y": 546.4923363640078,
+            "width": 200,
+            "zIndex": 13
+          },
+          "data": {
+            "model": "gpt-3.5-turbo",
+            "useModelInput": false,
+            "temperature": 0,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "presencePenalty": 0.5,
+            "frequencyPenalty": 0.5,
+            "cache": true
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "Gnh145qZDCCV2B23I5qZQ",
+          "visualData": {
+            "x": 2095.460140320323,
+            "y": 531.2883282385967,
+            "width": 300,
+            "zIndex": 14
+          },
+          "data": {
+            "text": "Chunk {{chunk}}/{{total}}:\n\n{{response}}"
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "wzOfI8FoCi4YPH7SMqzYv",
+          "visualData": {
+            "x": 2440.4366570143184,
+            "y": 529.7076073959739,
+            "width": 300,
+            "zIndex": 15
+          },
+          "data": {
+            "text": "Please remove any redundancies and superfluous data from this summary, including the chunk index, \"this section\", \"this chunk\", etc.\n\n{{summaries}}"
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "F_dKF3vDhO7Cr1c8mvaKP",
+          "visualData": {
+            "x": 2795.150414098868,
+            "y": 521.6459310985977,
+            "width": 200,
+            "zIndex": 16
+          },
+          "data": {
+            "model": "gpt-3.5-turbo",
+            "useModelInput": false,
+            "temperature": 0,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 4096,
+            "useMaxTokensInput": false,
+            "presencePenalty": 0,
+            "frequencyPenalty": 0,
+            "cache": true
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "rBQqW1q3Qp07IV6R66kMF",
+          "visualData": {
+            "x": 3045.751670546527,
+            "y": 529.0821793023815,
+            "width": 300,
+            "zIndex": 18
+          },
+          "data": {
+            "text": "Here is a summary of a TypeScript file called GraphProcessor.ts:\n\n\"\"\"\n{{summary}}\n\"\"\"\n\nCan you recreate this file to the best of your ability?"
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "_vXnvuuQa4FO01wqqD22k",
+          "visualData": {
+            "x": 3399.2982395184267,
+            "y": 530.0224627304983,
+            "width": 200,
+            "zIndex": 19
+          },
+          "data": {
+            "model": "gpt-4",
+            "useModelInput": false,
+            "temperature": 0.3,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "useStop": false,
+            "stop": "",
+            "useStopInput": false,
+            "presencePenalty": 0.5,
+            "usePresencePenaltyInput": false,
+            "frequencyPenalty": 0.5,
+            "useFrequencyPenaltyInput": false
+          }
+        }
+      ],
+      "connections": [
+        {
+          "inputNodeId": "RtTfDTcXP3eigkIWeAhh-",
+          "inputId": "input",
+          "outputNodeId": "67RewDBJlQUInF8WV3-GB",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "ZJiOQyn0wI8ifplV9LgQt",
+          "inputId": "chunk",
+          "outputNodeId": "RtTfDTcXP3eigkIWeAhh-",
+          "outputId": "indexes"
+        },
+        {
+          "inputNodeId": "ZJiOQyn0wI8ifplV9LgQt",
+          "inputId": "total",
+          "outputNodeId": "RtTfDTcXP3eigkIWeAhh-",
+          "outputId": "count"
+        },
+        {
+          "inputNodeId": "ZJiOQyn0wI8ifplV9LgQt",
+          "inputId": "data",
+          "outputNodeId": "RtTfDTcXP3eigkIWeAhh-",
+          "outputId": "chunks"
+        },
+        {
+          "inputNodeId": "I2obFLvUBKGtYx8arwMeA",
+          "inputId": "message1",
+          "outputNodeId": "ZJiOQyn0wI8ifplV9LgQt",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "Gnh145qZDCCV2B23I5qZQ",
+          "inputId": "response",
+          "outputNodeId": "I2obFLvUBKGtYx8arwMeA",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "Gnh145qZDCCV2B23I5qZQ",
+          "inputId": "total",
+          "outputNodeId": "RtTfDTcXP3eigkIWeAhh-",
+          "outputId": "count"
+        },
+        {
+          "inputNodeId": "Gnh145qZDCCV2B23I5qZQ",
+          "inputId": "chunk",
+          "outputNodeId": "RtTfDTcXP3eigkIWeAhh-",
+          "outputId": "indexes"
+        },
+        {
+          "inputNodeId": "wzOfI8FoCi4YPH7SMqzYv",
+          "inputId": "summaries",
+          "outputNodeId": "Gnh145qZDCCV2B23I5qZQ",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "F_dKF3vDhO7Cr1c8mvaKP",
+          "inputId": "message1",
+          "outputNodeId": "wzOfI8FoCi4YPH7SMqzYv",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "rBQqW1q3Qp07IV6R66kMF",
+          "inputId": "summaries",
+          "outputNodeId": "F_dKF3vDhO7Cr1c8mvaKP",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "_vXnvuuQa4FO01wqqD22k",
+          "inputId": "message1",
+          "outputNodeId": "rBQqW1q3Qp07IV6R66kMF",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "rBQqW1q3Qp07IV6R66kMF",
+          "inputId": "summary",
+          "outputNodeId": "F_dKF3vDhO7Cr1c8mvaKP",
+          "outputId": "response"
+        }
+      ],
+      "nodesById": {},
+      "connectionsByNodeId": {},
+      "connectionsById": {},
+      "metadata": {
+        "id": "LOt0W_XCiFbuqbRlbF1oM",
+        "name": "Split and summarize file",
+        "description": ""
+      }
+    },
+    "trryHWyYAN99_ADAMDalG": {
+      "nodes": [
+        {
+          "id": "0kYaxftKW7nshQnUHeleh",
+          "type": "readFile",
+          "title": "Read File",
+          "visualData": {
+            "x": 806,
+            "y": 161,
+            "width": 250,
+            "zIndex": 2
+          },
+          "data": {
+            "path": "/Users/Shared/ironclad/ironclad/harbor/packages/leaf-app-server/src/workflow/service/WorkflowServiceImpl.ts",
+            "usePathInput": false,
+            "errorOnMissingFile": false
+          }
+        },
+        {
+          "type": "chunk",
+          "title": "Chunk",
+          "id": "XOjUzZkbpGh1GYBqidg97",
+          "visualData": {
+            "x": 1139.5826201261716,
+            "y": 179.27978300634197,
+            "width": 200,
+            "zIndex": 4
+          },
+          "data": {
+            "model": "gpt-3.5-turbo",
+            "useModelInput": false,
+            "numTokensPerChunk": 2048,
+            "overlap": 10
+          }
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt",
+          "id": "wBNkA_KnnTKfE-ollR7ot",
+          "visualData": {
+            "x": 1408.4785853530072,
+            "y": 101.28831257258456,
+            "zIndex": 12
+          },
+          "data": {
+            "type": "user",
+            "useTypeInput": false,
+            "promptText": "Hi, this is chunk {{index}}/{{total}} for the file called WorkflowServiceImpl. Can you please summarize what this part of the file does? Try to include technical details mostly.\n\n```\n{{chunk}}\n```"
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "DZMA6R4Vz0t4qm8oS-2kI",
+          "visualData": {
+            "x": 1985.8482769223158,
+            "y": 25.624945733864607,
+            "width": 200,
+            "zIndex": 20
+          },
+          "data": {
+            "model": "gpt-3.5-turbo",
+            "useModelInput": false,
+            "temperature": 0.2,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "useStop": false,
+            "stop": "",
+            "useStopInput": false,
+            "presencePenalty": 0.5,
+            "usePresencePenaltyInput": false,
+            "frequencyPenalty": 0.5,
+            "useFrequencyPenaltyInput": false,
+            "cache": true
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt",
+          "id": "WLRmmhSopqgZ44Z3AFO-9",
+          "visualData": {
+            "x": 1409.6426371505256,
+            "y": -70.99135346019317,
+            "zIndex": 18
+          },
+          "data": {
+            "type": "system",
+            "useTypeInput": false,
+            "promptText": "You are a helpful code summarizer AI. You try to summarize code using technical details and avoid superfluous text."
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "VirQr-vQN4fmaLvpsAqau",
+          "visualData": {
+            "x": 2272.205019111933,
+            "y": 90.81184639491566,
+            "width": 300,
+            "zIndex": 23
+          },
+          "data": {
+            "text": "Hi, here's a summary of a file called WorkflowServiceImpl. Can you please explain to me the main algorithm used in this file?\n\n{{summary}}"
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "xwRypu9DS55_4C1_goBE_",
+          "visualData": {
+            "x": 2623.748661962601,
+            "y": 86.15563920484055,
+            "width": 200,
+            "zIndex": 25
+          },
+          "data": {
+            "model": "gpt-4",
+            "useModelInput": false,
+            "temperature": 0.3,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "useStop": false,
+            "stop": "",
+            "useStopInput": false,
+            "presencePenalty": 0,
+            "usePresencePenaltyInput": false,
+            "frequencyPenalty": 0,
+            "useFrequencyPenaltyInput": false,
+            "cache": false
+          }
+        }
+      ],
+      "connections": [
+        {
+          "inputNodeId": "XOjUzZkbpGh1GYBqidg97",
+          "inputId": "input",
+          "outputNodeId": "0kYaxftKW7nshQnUHeleh",
+          "outputId": "content"
+        },
+        {
+          "inputNodeId": "wBNkA_KnnTKfE-ollR7ot",
+          "inputId": "index",
+          "outputNodeId": "XOjUzZkbpGh1GYBqidg97",
+          "outputId": "indexes"
+        },
+        {
+          "inputNodeId": "wBNkA_KnnTKfE-ollR7ot",
+          "inputId": "chunk",
+          "outputNodeId": "XOjUzZkbpGh1GYBqidg97",
+          "outputId": "chunks"
+        },
+        {
+          "inputNodeId": "wBNkA_KnnTKfE-ollR7ot",
+          "inputId": "total",
+          "outputNodeId": "XOjUzZkbpGh1GYBqidg97",
+          "outputId": "count"
+        },
+        {
+          "inputNodeId": "DZMA6R4Vz0t4qm8oS-2kI",
+          "inputId": "message1",
+          "outputNodeId": "WLRmmhSopqgZ44Z3AFO-9",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "DZMA6R4Vz0t4qm8oS-2kI",
+          "inputId": "message2",
+          "outputNodeId": "wBNkA_KnnTKfE-ollR7ot",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "VirQr-vQN4fmaLvpsAqau",
+          "inputId": "summary",
+          "outputNodeId": "DZMA6R4Vz0t4qm8oS-2kI",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "xwRypu9DS55_4C1_goBE_",
+          "inputId": "message1",
+          "outputNodeId": "VirQr-vQN4fmaLvpsAqau",
+          "outputId": "output"
+        }
+      ],
+      "nodesById": {},
+      "connectionsByNodeId": {},
+      "connectionsById": {},
+      "metadata": {
+        "id": "trryHWyYAN99_ADAMDalG",
+        "name": "WorkflowServiceImpl Explanation",
+        "description": ""
+      }
+    },
+    "BCH2-JTaOfU7yrJ1GQRhL": {
+      "nodes": [
+        {
+          "type": "graphInput",
+          "title": "Graph Input",
+          "id": "JXxrnJnWCwYxJbnlgh_KM",
+          "visualData": {
+            "x": 288,
+            "y": 323,
+            "width": 300,
+            "zIndex": 8
+          },
+          "data": {
+            "id": "text",
+            "dataType": "string"
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Extract Regex",
+          "id": "uscIqNzkwiFK1zWdxydCj",
+          "visualData": {
+            "x": 1035,
+            "y": 383,
+            "width": 250,
+            "zIndex": 13
+          },
+          "data": {
+            "regex": "\\* (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": true
+          }
+        },
+        {
+          "type": "graphOutput",
+          "title": "Graph Output",
+          "id": "N-LYZkuLW9qvIFobDpRo5",
+          "visualData": {
+            "x": 1625,
+            "y": 402,
+            "width": 300,
+            "zIndex": 14
+          },
+          "data": {
+            "id": "items",
+            "dataType": "string[]"
+          }
+        },
+        {
+          "type": "match",
+          "title": "Match",
+          "id": "FClS4P3cvRs8mZHieN9VO",
+          "visualData": {
+            "x": 663,
+            "y": 451,
+            "width": 300,
+            "zIndex": 12
+          },
+          "data": {
+            "caseCount": 1,
+            "cases": [
+              "\\*"
+            ]
+          }
+        },
+        {
+          "type": "ifElse",
+          "title": "If/Else",
+          "id": "0ciq8PeUozuVOAQ8D6lQ_",
+          "data": {},
+          "visualData": {
+            "x": 1387,
+            "y": 387,
+            "width": 125,
+            "zIndex": 18
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "MGGvYxorqqDFpvGmFLWmw",
+          "visualData": {
+            "x": 688,
+            "y": 648,
+            "width": 154,
+            "zIndex": 16
+          },
+          "data": {
+            "text": ""
+          }
+        }
+      ],
+      "connections": [
+        {
+          "inputNodeId": "FClS4P3cvRs8mZHieN9VO",
+          "inputId": "input",
+          "outputNodeId": "JXxrnJnWCwYxJbnlgh_KM",
+          "outputId": "data"
+        },
+        {
+          "inputNodeId": "uscIqNzkwiFK1zWdxydCj",
+          "inputId": "input",
+          "outputNodeId": "FClS4P3cvRs8mZHieN9VO",
+          "outputId": "case1"
+        },
+        {
+          "inputNodeId": "0ciq8PeUozuVOAQ8D6lQ_",
+          "inputId": "if",
+          "outputNodeId": "FClS4P3cvRs8mZHieN9VO",
+          "outputId": "case1"
+        },
+        {
+          "inputNodeId": "0ciq8PeUozuVOAQ8D6lQ_",
+          "inputId": "true",
+          "outputNodeId": "uscIqNzkwiFK1zWdxydCj",
+          "outputId": "matches"
+        },
+        {
+          "inputNodeId": "0ciq8PeUozuVOAQ8D6lQ_",
+          "inputId": "false",
+          "outputNodeId": "MGGvYxorqqDFpvGmFLWmw",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "N-LYZkuLW9qvIFobDpRo5",
+          "inputId": "value",
+          "outputNodeId": "0ciq8PeUozuVOAQ8D6lQ_",
+          "outputId": "output"
+        }
+      ],
+      "metadata": {
+        "id": "BCH2-JTaOfU7yrJ1GQRhL",
+        "name": "Extract List Items",
+        "description": ""
+      }
+    },
+    "KVOCarbcccMX-wOaypQ7L": {
+      "nodes": [
+        {
+          "type": "subGraph",
+          "title": "Extract List Items",
+          "id": "XrdweoN7N1ectKzjP3WHS",
+          "visualData": {
+            "x": 597,
+            "y": 385,
+            "width": 300,
+            "zIndex": 3
+          },
+          "data": {
+            "graphId": "BCH2-JTaOfU7yrJ1GQRhL"
+          }
+        },
+        {
+          "type": "userInput",
+          "title": "User Input",
+          "id": "1Qj53m9VECmnmTWByVo_d",
+          "visualData": {
+            "x": 948,
+            "y": 385,
+            "width": 250,
+            "zIndex": 5
+          },
+          "data": {
+            "prompt": "This is an example question?",
+            "useInput": true
+          }
+        },
+        {
+          "type": "graphOutput",
+          "title": "Graph Output",
+          "id": "2QcutpULV4uH0CkPgA3ti",
+          "visualData": {
+            "x": 1634,
+            "y": 380,
+            "width": 300,
+            "zIndex": 8
+          },
+          "data": {
+            "id": "output",
+            "dataType": "string"
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "vpmf3hIf-86GRlg3Bg-Lu",
+          "visualData": {
+            "x": 1265,
+            "y": 407,
+            "width": 300,
+            "zIndex": 7
+          },
+          "data": {
+            "text": "{{qa}}"
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "G4wKhESWcRoSKT7DSsNdy",
+          "visualData": {
+            "x": 339.06620729836334,
+            "y": 457.8536805742646,
+            "width": 200,
+            "zIndex": 17
+          },
+          "data": {
+            "model": "gpt-3.5-turbo",
+            "useModelInput": false,
+            "temperature": 0.5,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "useStop": false,
+            "stop": "",
+            "useStopInput": false,
+            "presencePenalty": 0,
+            "usePresencePenaltyInput": false,
+            "frequencyPenalty": 0,
+            "useFrequencyPenaltyInput": false,
+            "cache": false
+          }
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt",
+          "id": "0EuQ8ONijZa5voMTZGTps",
+          "visualData": {
+            "x": -193.28978127029873,
+            "y": 304.7484539029439,
+            "zIndex": 16
+          },
+          "data": {
+            "type": "user",
+            "useTypeInput": false,
+            "promptText": "I have the following question or request:\n\n\"\"\"\n{{request}}\n\"\"\"\n\nPlease give a bulleted list of questions. You may ask anywhere from zero to five questions. Try to only ask a question if it is necessary for your fulfillment of the request.\n\nHere is an example of an answer:\n\nQuestions:\n* Question 1?\n* Question 2?\n* Question 3?\n\nAnother example (if you have enough context):\n\nQuestions: NONE"
+          }
+        },
+        {
+          "type": "graphInput",
+          "title": "Graph Input",
+          "id": "glCn_a3AsNTs25UyCMCiG",
+          "visualData": {
+            "x": -560.0248699650894,
+            "y": 345.73225810806554,
+            "width": 300,
+            "zIndex": 15
+          },
+          "data": {
+            "id": "AI Prompt",
+            "dataType": "string"
+          }
+        }
+      ],
+      "connections": [
+        {
+          "inputNodeId": "1Qj53m9VECmnmTWByVo_d",
+          "inputId": "questions",
+          "outputNodeId": "XrdweoN7N1ectKzjP3WHS",
+          "outputId": "items"
+        },
+        {
+          "inputNodeId": "vpmf3hIf-86GRlg3Bg-Lu",
+          "inputId": "qa",
+          "outputNodeId": "1Qj53m9VECmnmTWByVo_d",
+          "outputId": "questionsAndAnswers"
+        },
+        {
+          "inputNodeId": "2QcutpULV4uH0CkPgA3ti",
+          "inputId": "value",
+          "outputNodeId": "vpmf3hIf-86GRlg3Bg-Lu",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "G4wKhESWcRoSKT7DSsNdy",
+          "inputId": "message1",
+          "outputNodeId": "0EuQ8ONijZa5voMTZGTps",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "0EuQ8ONijZa5voMTZGTps",
+          "inputId": "request",
+          "outputNodeId": "glCn_a3AsNTs25UyCMCiG",
+          "outputId": "data"
+        },
+        {
+          "inputNodeId": "XrdweoN7N1ectKzjP3WHS",
+          "inputId": "text",
+          "outputNodeId": "G4wKhESWcRoSKT7DSsNdy",
+          "outputId": "response"
+        }
+      ],
+      "metadata": {
+        "id": "KVOCarbcccMX-wOaypQ7L",
+        "name": "Ask User Questions",
+        "description": ""
+      }
+    },
+    "HXjZhpWO0hluMiDY6pneE": {
+      "nodes": [
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "Dl9zJxgRRBk7hQ43xWhZv",
+          "visualData": {
+            "x": 1037.1953261535937,
+            "y": 389.80109239577234,
+            "width": 300,
+            "zIndex": 91
+          },
+          "data": {
+            "text": "\n\nPlease give me a a list of the top level exported names/functions/etc from this part of the file. Put the items in bullet points.\n\nExample:\n\n* type Foo\n* type Bar"
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "H7yY7sJF7zumxm1akfDD5",
+          "visualData": {
+            "x": 921.042358937134,
+            "y": 607.8022923490608,
+            "width": 300,
+            "zIndex": 50
+          },
+          "data": {
+            "text": "Here is part {{index}}/{{count}} of a file named {{fileName}}:\n\n```\n{{content}}\n```"
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "-c9ebiNnhmYedQN8Wo8hw",
+          "visualData": {
+            "x": 1785.4317276583695,
+            "y": 362.6631476479146,
+            "width": 200,
+            "zIndex": 52
+          },
+          "data": {
+            "model": "gpt-3.5-turbo",
+            "useModelInput": false,
+            "temperature": 0,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "useStop": false,
+            "stop": "",
+            "useStopInput": false,
+            "presencePenalty": 0,
+            "usePresencePenaltyInput": false,
+            "frequencyPenalty": 0,
+            "useFrequencyPenaltyInput": false,
+            "cache": true
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt",
+          "id": "ZghD25qGelXbZLU6VLwLm",
+          "visualData": {
+            "x": 331.1046122293854,
+            "y": 209.09150971792653,
+            "zIndex": 42
+          },
+          "data": {
+            "type": "system",
+            "useTypeInput": false,
+            "promptText": "You are a sophisticated AI tool for extracting and analyzing code for the purposes of summarizing/digesting a code file. Given a request, you give a direct response."
+          }
+        },
+        {
+          "type": "chunk",
+          "title": "Chunk",
+          "id": "SrMnr7J2d7Buwtd0vl8OF",
+          "visualData": {
+            "x": 513.6527622586358,
+            "y": 541.0860856359533,
+            "width": 200,
+            "zIndex": 49
+          },
+          "data": {
+            "model": "gpt-3.5-turbo",
+            "useModelInput": false,
+            "numTokensPerChunk": 2048,
+            "overlap": 0
+          }
+        },
+        {
+          "type": "subGraph",
+          "title": "Extract List Items",
+          "id": "CNa2GH7LRJIXnWGt366QH",
+          "visualData": {
+            "x": 2392.746502255515,
+            "y": 387.9603279891064,
+            "width": 300,
+            "zIndex": 59
+          },
+          "data": {
+            "graphId": "BCH2-JTaOfU7yrJ1GQRhL"
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "IYT_PxYTFx5P4zMzhOqn_",
+          "visualData": {
+            "x": 2045.0325311729325,
+            "y": 391.53579298738487,
+            "width": 300,
+            "zIndex": 57
+          },
+          "data": {
+            "text": "{{responses}}"
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "pZFkwyQ1DNAh158xMFaOr",
+          "visualData": {
+            "x": 985.2658327776197,
+            "y": 899.6643074227177,
+            "width": 300,
+            "zIndex": 92
+          },
+          "data": {
+            "text": "If there are any relative imports, please list the files that are being imported from. If there are no relative imports, say NO IMPORTS.\n\nExample:\n\n* ./File1.ts\n* ../File2.ts\n\nAnother example:\n\nNO IMPORTS"
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "jB5sIeojQRHXqNPoMQ3hD",
+          "visualData": {
+            "x": 1785.2088940836688,
+            "y": 871.453829230769,
+            "width": 200,
+            "zIndex": 62
+          },
+          "data": {
+            "model": "gpt-3.5-turbo",
+            "useModelInput": false,
+            "temperature": 0,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "useStop": false,
+            "stop": "",
+            "useStopInput": false,
+            "presencePenalty": 0,
+            "usePresencePenaltyInput": false,
+            "frequencyPenalty": 0,
+            "useFrequencyPenaltyInput": false,
+            "cache": true
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "MA5Uv_ITTzx9NQV08ugic",
+          "visualData": {
+            "x": 2011.055065642513,
+            "y": 922.81832877346,
+            "width": 300,
+            "zIndex": 80
+          },
+          "data": {
+            "text": "{{responses}}"
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "f6u3NUOg5S__5gSn8MXUF",
+          "visualData": {
+            "x": 3159.6649042897557,
+            "y": 663.832260816221,
+            "width": 300,
+            "zIndex": 90
+          },
+          "data": {
+            "text": "Here is a summary of {{fileName}}:\n\nExported Types:\n{{exportedTypes}}\n\nImports From:\n{{imports}}\n\nSummary:\n\n\"\"\"\n{{summary}}\n\"\""
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "cQlhtmjsV2OU-_F9vbLni",
+          "visualData": {
+            "x": 2237.7406238561566,
+            "y": 643.7676374637542,
+            "width": 141.47817312027655,
+            "zIndex": 68
+          },
+          "data": {
+            "text": "{{fileName}}"
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "_Gs7cTnnvcCHLxF8W5mFD",
+          "visualData": {
+            "x": 1787.0996057501923,
+            "y": 1218.8364162908351,
+            "width": 200,
+            "zIndex": 73
+          },
+          "data": {
+            "model": "gpt-3.5-turbo",
+            "useModelInput": false,
+            "temperature": 0,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "useStop": false,
+            "stop": "",
+            "useStopInput": false,
+            "presencePenalty": 0.2,
+            "usePresencePenaltyInput": false,
+            "frequencyPenalty": 0.2,
+            "useFrequencyPenaltyInput": false,
+            "cache": true
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "BykrT115qLE_8iVjmBCAp",
+          "visualData": {
+            "x": 971.7770959717168,
+            "y": 1315.8146243045526,
+            "width": 300,
+            "zIndex": 94
+          },
+          "data": {
+            "text": "Please tell me what the responsibility for this file is with respect to other files. Be extremely thorough in your response. Basically, if another person asked you \"what is the purpose of this file? What does it do?\", this would be your detailed response."
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "qP77T0iicnT05aOyXu4bl",
+          "visualData": {
+            "x": 2068.5571459636226,
+            "y": 1283.7209368325432,
+            "width": 300,
+            "zIndex": 74
+          },
+          "data": {
+            "text": "{{responses}}"
+          }
+        },
+        {
+          "type": "graphOutput",
+          "title": "Graph Output",
+          "id": "7VrEtnVAjfEeOfFVEBu_B",
+          "visualData": {
+            "x": 3540.1001678580496,
+            "y": 818.9951954575467,
+            "width": 300,
+            "zIndex": 96
+          },
+          "data": {
+            "id": "digest",
+            "dataType": "string"
+          }
+        },
+        {
+          "type": "graphInput",
+          "title": "Graph Input",
+          "id": "wGuXGa_VR2yGn5F3Gm-r7",
+          "visualData": {
+            "x": 141.6021328645315,
+            "y": 556.4574325729797,
+            "width": 300,
+            "zIndex": 78
+          },
+          "data": {
+            "id": "file_contents",
+            "dataType": "string",
+            "useDefaultValueInput": true
+          }
+        },
+        {
+          "type": "graphInput",
+          "title": "Graph Input",
+          "id": "pVOBgjtUCeoRf7O_aUK5z",
+          "visualData": {
+            "x": 467.8341151842628,
+            "y": 843.852274140362,
+            "width": 300,
+            "zIndex": 77
+          },
+          "data": {
+            "id": "file_name",
+            "dataType": "string",
+            "defaultValue": "Nodes.ts"
+          }
+        },
+        {
+          "type": "assemblePrompt",
+          "title": "Assemble Prompt",
+          "id": "piQXWR9MhnC5iwPAK7zOC",
+          "visualData": {
+            "x": 1470.2227735504423,
+            "y": 275.4371978896052,
+            "width": 250
+          },
+          "data": {},
+          "isSplitRun": true
+        },
+        {
+          "type": "assemblePrompt",
+          "title": "Assemble Prompt",
+          "id": "ZBqKPDo-QOpXD-Xo0XXpD",
+          "visualData": {
+            "x": 1434.5456573857782,
+            "y": 944.3831259770584,
+            "width": 250,
+            "zIndex": 93
+          },
+          "data": {},
+          "isSplitRun": true
+        },
+        {
+          "type": "assemblePrompt",
+          "title": "Assemble Prompt",
+          "id": "iNgsHuW1d-8xDv1A21bXK",
+          "visualData": {
+            "x": 1427.8561981049036,
+            "y": 1298.9244678634084,
+            "width": 250,
+            "zIndex": 95
+          },
+          "data": {},
+          "isSplitRun": true
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "yQD0z-eBeqo0Hmb0yhZ05",
+          "visualData": {
+            "x": -252.53117819207165,
+            "y": 401.97028781741056,
+            "width": 300,
+            "zIndex": 97
+          },
+          "data": {
+            "text": "import { ChartNode } from './NodeBase';\nimport { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode';\nimport { NodeImpl } from './NodeImpl';\nimport { TextNode, TextNodeImpl } from './nodes/TextNode';\nimport { ChatNode, ChatNodeImpl } from './nodes/ChatNode';\nimport { PromptNode, PromptNodeImpl } from './nodes/PromptNode';\nimport { match } from 'ts-pattern';\nimport { ExtractRegexNode, ExtractRegexNodeImpl } from './nodes/ExtractRegexNode';\nimport { CodeNode, CodeNodeImpl } from './nodes/CodeNode';\nimport { MatchNode, MatchNodeImpl } from './nodes/MatchNode';\nimport { IfNode, IfNodeImpl } from './nodes/IfNode';\nimport { ReadDirectoryNode, ReadDirectoryNodeImpl } from './nodes/ReadDirectoryNode';\nimport { ReadFileNode, ReadFileNodeImpl } from './nodes/ReadFileNode';\nimport { IfElseNode, IfElseNodeImpl } from './nodes/IfElseNode';\nimport { ChunkNode, ChunkNodeImpl } from './nodes/ChunkNode';\nimport { GraphInputNode, GraphInputNodeImpl } from './nodes/GraphInputNode';\nimport { GraphOutputNode, GraphOutputNodeImpl } from './nodes/GraphOutputNode';\nimport { SubGraphNode, SubGraphNodeImpl } from './nodes/SubGraphNode';\nimport { ArrayNode, ArrayNodeImpl } from './nodes/ArrayNode';\nimport { ExtractJsonNode, ExtractJsonNodeImpl } from './nodes/ExtractJsonNode';\nimport { AssemblePromptNode, AssemblePromptNodeImpl } from './nodes/AssemblePromptNode';\nimport { LoopControllerNode, LoopControllerNodeImpl } from './nodes/LoopControllerNode';\n\nexport type Nodes =\n  | UserInputNode\n  | TextNode\n  | ChatNode\n  | PromptNode\n  | ExtractRegexNode\n  | CodeNode\n  | MatchNode\n  | IfNode\n  | ReadDirectoryNode\n  | ReadFileNode\n  | IfElseNode\n  | ChunkNode\n  | GraphInputNode\n  | GraphOutputNode\n  | SubGraphNode\n  | ArrayNode\n  | ExtractJsonNode\n  | AssemblePromptNode\n  | LoopControllerNode;\n\nexport * from './nodes/UserInputNode';\nexport * from './nodes/TextNode';\nexport * from './nodes/ChatNode';\nexport * from './nodes/PromptNode';\nexport * from './nodes/ExtractRegexNode';\nexport * from './nodes/CodeNode';\nexport * from './nodes/MatchNode';\nexport * from './nodes/IfNode';\nexport * from './nodes/ReadDirectoryNode';\nexport * from './nodes/ReadFileNode';\nexport * from './nodes/IfElseNode';\nexport * from './nodes/ChunkNode';\nexport * from './nodes/GraphInputNode';\nexport * from './nodes/GraphOutputNode';\nexport * from './nodes/SubGraphNode';\nexport * from './nodes/ArrayNode';\nexport * from './nodes/ExtractJsonNode';\nexport * from './nodes/AssemblePromptNode';\nexport * from './nodes/LoopControllerNode';\n\nexport type NodeType = Nodes['type'];\n\nexport const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode> => {\n  return match(node as Nodes)\n    .with({ type: 'userInput' }, (node) => new UserInputNodeImpl(node))\n    .with({ type: 'text' }, (node) => new TextNodeImpl(node))\n    .with({ type: 'chat' }, (node) => new ChatNodeImpl(node))\n    .with({ type: 'prompt' }, (node) => new PromptNodeImpl(node))\n    .with({ type: 'extractRegex' }, (node) => new ExtractRegexNodeImpl(node))\n    .with({ type: 'code' }, (node) => new CodeNodeImpl(node))\n    .with({ type: 'match' }, (node) => new MatchNodeImpl(node))\n    .with({ type: 'if' }, (node) => new IfNodeImpl(node))\n    .with({ type: 'readDirectory' }, (node) => new ReadDirectoryNodeImpl(node))\n    .with({ type: 'readFile' }, (node) => new ReadFileNodeImpl(node))\n    .with({ type: 'ifElse' }, (node) => new IfElseNodeImpl(node))\n    .with({ type: 'chunk' }, (node) => new ChunkNodeImpl(node))\n    .with({ type: 'graphInput' }, (node) => new GraphInputNodeImpl(node))\n    .with({ type: 'graphOutput' }, (node) => new GraphOutputNodeImpl(node))\n    .with({ type: 'subGraph' }, (node) => new SubGraphNodeImpl(node))\n    .with({ type: 'array' }, (node) => new ArrayNodeImpl(node))\n    .with({ type: 'extractJson' }, (node) => new ExtractJsonNodeImpl(node))\n    .with({ type: 'assemblePrompt' }, (node) => new AssemblePromptNodeImpl(node))\n    .with({ type: 'loopController' }, (node) => new LoopControllerNodeImpl(node))\n    .exhaustive();\n};\n\nexport function createUnknownNodeInstance(node: ChartNode): NodeImpl<ChartNode> {\n  return createNodeInstance(node as Nodes);\n}\n\nexport function nodeFactory(type: NodeType): Nodes {\n  return match(type)\n    .with('userInput', () => UserInputNodeImpl.create())\n    .with('text', () => TextNodeImpl.create())\n    .with('chat', () => ChatNodeImpl.create())\n    .with('prompt', () => PromptNodeImpl.create())\n    .with('extractRegex', () => ExtractRegexNodeImpl.create())\n    .with('code', () => CodeNodeImpl.create())\n    .with('match', () => MatchNodeImpl.create())\n    .with('if', () => IfNodeImpl.create())\n    .with('readDirectory', () => ReadDirectoryNodeImpl.create())\n    .with('readFile', () => ReadFileNodeImpl.create())\n    .with('ifElse', () => IfElseNodeImpl.create())\n    .with('chunk', () => ChunkNodeImpl.create())\n    .with('graphInput', () => GraphInputNodeImpl.create())\n    .with('graphOutput', () => GraphOutputNodeImpl.create())\n    .with('subGraph', () => SubGraphNodeImpl.create())\n    .with('array', () => ArrayNodeImpl.create())\n    .with('extractJson', () => ExtractJsonNodeImpl.create())\n    .with('assemblePrompt', () => AssemblePromptNodeImpl.create())\n    .with('loopController', () => LoopControllerNodeImpl.create())\n    .exhaustive();\n}\n\nexport const nodeDisplayName: Record<NodeType, string> = {\n  userInput: 'User Input',\n  text: 'Text',\n  chat: 'Chat',\n  prompt: 'Prompt',\n  assemblePrompt: 'Assemble Prompt',\n  extractRegex: 'Extract With Regex',\n  extractJson: 'Extract JSON',\n  code: 'Code',\n  match: 'Match',\n  if: 'If',\n  ifElse: 'If/Else',\n  loopController: 'Loop Controller',\n  readDirectory: 'Read Directory',\n  readFile: 'Read File',\n  chunk: 'Chunk',\n  graphInput: 'Graph Input',\n  graphOutput: 'Graph Output',\n  subGraph: 'Subgraph',\n  array: 'Array',\n};\n"
+          }
+        }
+      ],
+      "connections": [
+        {
+          "inputNodeId": "-c9ebiNnhmYedQN8Wo8hw",
+          "inputId": "message1",
+          "outputNodeId": "ZghD25qGelXbZLU6VLwLm",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "-c9ebiNnhmYedQN8Wo8hw",
+          "inputId": "message3",
+          "outputNodeId": "Dl9zJxgRRBk7hQ43xWhZv",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "H7yY7sJF7zumxm1akfDD5",
+          "inputId": "content",
+          "outputNodeId": "SrMnr7J2d7Buwtd0vl8OF",
+          "outputId": "chunks"
+        },
+        {
+          "inputNodeId": "H7yY7sJF7zumxm1akfDD5",
+          "inputId": "index",
+          "outputNodeId": "SrMnr7J2d7Buwtd0vl8OF",
+          "outputId": "indexes"
+        },
+        {
+          "inputNodeId": "H7yY7sJF7zumxm1akfDD5",
+          "inputId": "count",
+          "outputNodeId": "SrMnr7J2d7Buwtd0vl8OF",
+          "outputId": "count"
+        },
+        {
+          "inputNodeId": "IYT_PxYTFx5P4zMzhOqn_",
+          "inputId": "name",
+          "outputNodeId": "-c9ebiNnhmYedQN8Wo8hw",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "IYT_PxYTFx5P4zMzhOqn_",
+          "inputId": "responses",
+          "outputNodeId": "-c9ebiNnhmYedQN8Wo8hw",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "CNa2GH7LRJIXnWGt366QH",
+          "inputId": "text",
+          "outputNodeId": "IYT_PxYTFx5P4zMzhOqn_",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "jB5sIeojQRHXqNPoMQ3hD",
+          "inputId": "message1",
+          "outputNodeId": "ZghD25qGelXbZLU6VLwLm",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "jB5sIeojQRHXqNPoMQ3hD",
+          "inputId": "message2",
+          "outputNodeId": "H7yY7sJF7zumxm1akfDD5",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "jB5sIeojQRHXqNPoMQ3hD",
+          "inputId": "message3",
+          "outputNodeId": "pZFkwyQ1DNAh158xMFaOr",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "-c9ebiNnhmYedQN8Wo8hw",
+          "inputId": "message2",
+          "outputNodeId": "H7yY7sJF7zumxm1akfDD5",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "MA5Uv_ITTzx9NQV08ugic",
+          "inputId": "responses",
+          "outputNodeId": "jB5sIeojQRHXqNPoMQ3hD",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "f6u3NUOg5S__5gSn8MXUF",
+          "inputId": "exportedTypes",
+          "outputNodeId": "CNa2GH7LRJIXnWGt366QH",
+          "outputId": "items"
+        },
+        {
+          "inputNodeId": "f6u3NUOg5S__5gSn8MXUF",
+          "inputId": "fileName",
+          "outputNodeId": "cQlhtmjsV2OU-_F9vbLni",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "_Gs7cTnnvcCHLxF8W5mFD",
+          "inputId": "message1",
+          "outputNodeId": "ZghD25qGelXbZLU6VLwLm",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "_Gs7cTnnvcCHLxF8W5mFD",
+          "inputId": "message2",
+          "outputNodeId": "H7yY7sJF7zumxm1akfDD5",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "_Gs7cTnnvcCHLxF8W5mFD",
+          "inputId": "message3",
+          "outputNodeId": "BykrT115qLE_8iVjmBCAp",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "qP77T0iicnT05aOyXu4bl",
+          "inputId": "responses",
+          "outputNodeId": "_Gs7cTnnvcCHLxF8W5mFD",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "f6u3NUOg5S__5gSn8MXUF",
+          "inputId": "summary",
+          "outputNodeId": "qP77T0iicnT05aOyXu4bl",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "7VrEtnVAjfEeOfFVEBu_B",
+          "inputId": "value",
+          "outputNodeId": "f6u3NUOg5S__5gSn8MXUF",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "H7yY7sJF7zumxm1akfDD5",
+          "inputId": "fileName",
+          "outputNodeId": "pVOBgjtUCeoRf7O_aUK5z",
+          "outputId": "data"
+        },
+        {
+          "inputNodeId": "SrMnr7J2d7Buwtd0vl8OF",
+          "inputId": "input",
+          "outputNodeId": "wGuXGa_VR2yGn5F3Gm-r7",
+          "outputId": "data"
+        },
+        {
+          "inputNodeId": "cQlhtmjsV2OU-_F9vbLni",
+          "inputId": "fileName",
+          "outputNodeId": "pVOBgjtUCeoRf7O_aUK5z",
+          "outputId": "data"
+        },
+        {
+          "inputNodeId": "f6u3NUOg5S__5gSn8MXUF",
+          "inputId": "imports",
+          "outputNodeId": "MA5Uv_ITTzx9NQV08ugic",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "piQXWR9MhnC5iwPAK7zOC",
+          "inputId": "message1",
+          "outputNodeId": "ZghD25qGelXbZLU6VLwLm",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "piQXWR9MhnC5iwPAK7zOC",
+          "inputId": "message2",
+          "outputNodeId": "H7yY7sJF7zumxm1akfDD5",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "piQXWR9MhnC5iwPAK7zOC",
+          "inputId": "message3",
+          "outputNodeId": "Dl9zJxgRRBk7hQ43xWhZv",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "-c9ebiNnhmYedQN8Wo8hw",
+          "inputId": "prompt",
+          "outputNodeId": "piQXWR9MhnC5iwPAK7zOC",
+          "outputId": "prompt"
+        },
+        {
+          "inputNodeId": "ZBqKPDo-QOpXD-Xo0XXpD",
+          "inputId": "message1",
+          "outputNodeId": "ZghD25qGelXbZLU6VLwLm",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "ZBqKPDo-QOpXD-Xo0XXpD",
+          "inputId": "message2",
+          "outputNodeId": "H7yY7sJF7zumxm1akfDD5",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "jB5sIeojQRHXqNPoMQ3hD",
+          "inputId": "prompt",
+          "outputNodeId": "ZBqKPDo-QOpXD-Xo0XXpD",
+          "outputId": "prompt"
+        },
+        {
+          "inputNodeId": "ZBqKPDo-QOpXD-Xo0XXpD",
+          "inputId": "message3",
+          "outputNodeId": "pZFkwyQ1DNAh158xMFaOr",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "_Gs7cTnnvcCHLxF8W5mFD",
+          "inputId": "prompt",
+          "outputNodeId": "iNgsHuW1d-8xDv1A21bXK",
+          "outputId": "prompt"
+        },
+        {
+          "inputNodeId": "iNgsHuW1d-8xDv1A21bXK",
+          "inputId": "message1",
+          "outputNodeId": "ZghD25qGelXbZLU6VLwLm",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "iNgsHuW1d-8xDv1A21bXK",
+          "inputId": "message3",
+          "outputNodeId": "BykrT115qLE_8iVjmBCAp",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "iNgsHuW1d-8xDv1A21bXK",
+          "inputId": "message2",
+          "outputNodeId": "H7yY7sJF7zumxm1akfDD5",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "wGuXGa_VR2yGn5F3Gm-r7",
+          "inputId": "default",
+          "outputNodeId": "yQD0z-eBeqo0Hmb0yhZ05",
+          "outputId": "output"
+        }
+      ],
+      "metadata": {
+        "id": "HXjZhpWO0hluMiDY6pneE",
+        "name": "Digest File",
+        "description": ""
+      }
+    },
+    "zdzAYsxAtpaIcWCfgFZpz": {
+      "nodes": [
+        {
+          "type": "subGraph",
+          "title": "Digest File",
+          "id": "LCcfd6Kcj2Rw0q1glhv6O",
+          "visualData": {
+            "x": 589,
+            "y": 377,
+            "width": 300,
+            "zIndex": 3
+          },
+          "data": {
+            "graphId": "HXjZhpWO0hluMiDY6pneE"
+          }
+        },
+        {
+          "type": "userInput",
+          "title": "User Input",
+          "id": "tNLFIIZaLhPiLXTzaSX4V",
+          "visualData": {
+            "x": 284,
+            "y": 377,
+            "width": 250,
+            "zIndex": 2
+          },
+          "data": {
+            "prompt": "File",
+            "useInput": false
+          }
+        }
+      ],
+      "connections": [
+        {
+          "inputNodeId": "LCcfd6Kcj2Rw0q1glhv6O",
+          "inputId": "fileMatch",
+          "outputNodeId": "tNLFIIZaLhPiLXTzaSX4V",
+          "outputId": "output"
+        }
+      ],
+      "metadata": {
+        "id": "zdzAYsxAtpaIcWCfgFZpz",
+        "name": "Test Digest",
+        "description": ""
+      }
+    },
+    "zYzI7xjOb0NOj9WPKJOrQ": {
+      "nodes": [
+        {
+          "type": "prompt",
+          "title": "Base Context",
+          "id": "zc7_qtAZEqumCFsUYVqt7",
+          "visualData": {
+            "x": -570.0587873108694,
+            "y": -231.95903682369936,
+            "zIndex": 469,
+            "width": 528
+          },
+          "data": {
+            "type": "user",
+            "useTypeInput": false,
+            "promptText": "I am working on developing an AI storyboarding tool that allows users to create a series of prompts for a language model in a choose-your-own-adventure format. The tool is inspired by node-based editors, like the one found in Blender, where users can create nodes on a page that have inputs and outputs that can be connected by wires to form a web of connections between the prompts and the AI. Each node can be edited, and when editing, a larger window pops up with a text editor where users can tweak various aspects of the prompt that will be fed to the AI. This tool will provide a user-friendly interface for crafting interactive stories with an AI language model. Here is a tree of my current files for context. If you would like the contents of any of these files, please ask. The app is dark-themed and the colors are available in index.css. I'm using Emotion for CSS.\n"
+          }
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt Question List",
+          "id": "KbotaIf5SLrUkOubRve1x",
+          "visualData": {
+            "x": 319.3642960113552,
+            "y": -70.88732991642229,
+            "zIndex": 478,
+            "width": 485.03013745499055
+          },
+          "data": {
+            "type": "user",
+            "useTypeInput": false,
+            "promptText": "{{context}}\n\nI have the following question or request:\n\n\"\"\"\n{{request}}\n\"\"\"\n\nYou are likely missing data to fully fulfill the request. If you were a developer tasked with doing this, what questions would you first ask the project manager or other developer to accomplish the task correctly? Examples are clarifying behavior, or styling, or interaction with the rest of the system, etc.\n\nPlease give a bulleted list of questions. You may ask anywhere from zero to five questions. Try to only ask a question if it is necessary for your fulfillment of the request.\n\nOnly ask a question if it's very necessary.\n\nHere is an example of an answer:\n\nQuestions:\n* Question 1?\n* Question 2?\n* Question 3?\n\nAnother example (if you have enough context):\n\nQuestions: NONE"
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Get Question List",
+          "id": "AGmIpXCDl_sHyhLIjtXie",
+          "visualData": {
+            "x": 920.6087698085366,
+            "y": 104.81478524997317,
+            "width": 233.53671241371717,
+            "zIndex": 479
+          },
+          "data": {
+            "model": "gpt-3.5-turbo",
+            "useModelInput": false,
+            "temperature": 0,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "cache": true
+          }
+        },
+        {
+          "type": "userInput",
+          "title": "Question",
+          "id": "1K582UsQEjPvjVRvtf4ag",
+          "visualData": {
+            "x": -419.06278428936815,
+            "y": 428.38203988644125,
+            "zIndex": 471,
+            "width": 378.6378084183709
+          },
+          "data": {
+            "prompt": "What is your question for the AI to answer?",
+            "useInput": false
+          }
+        },
+        {
+          "type": "userInput",
+          "title": "User Input",
+          "id": "9f2Us4WxeKYfvqMm1_XUZ",
+          "visualData": {
+            "x": 1583.2398856247316,
+            "y": 169.89956905438373,
+            "width": 260.4079452318433,
+            "zIndex": 481
+          },
+          "data": {
+            "prompt": "This is an example question?",
+            "useInput": true
+          }
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt",
+          "id": "YFPEXiTSWNawBUvgAF0_F",
+          "visualData": {
+            "x": 2291.4126905245603,
+            "y": -143.85009915440747,
+            "zIndex": 482
+          },
+          "data": {
+            "type": "user",
+            "useTypeInput": false,
+            "promptText": "{{context}}\n\nI have asked this question:\n\n\"\"\"\n{{question}}\n\"\"\"\n\nHere are some additional notes:\n\n{{qanda}}\n\n{{functions}}\n\nPlease give me a high level overview of the steps you will be taking to accomplish this task, in a list, please.\n\nThings you should do:\n\n* Gather context on what you are working with\n* Look at examples\n* Think out loud\n* Give high level tasks, don't provide the details\n* Only mention one other file per line, so that it's clear which file the step is working with.\n* Get examples before writing or creating files\n* Combine all parts of a file into one step\n\nReply in a YAML document like this:\n\n```yaml\nyamlDocument:\n  steps:\n    - step 1\n    - step 2\n    - step 3\n```"
+          }
+        },
+        {
+          "type": "subGraph",
+          "title": "Extract List Items",
+          "id": "60F98wIlGtDbBoIClfBah",
+          "visualData": {
+            "x": 1279.9058789648507,
+            "y": 156.57766520530834,
+            "width": 164.5679194277061,
+            "zIndex": 480
+          },
+          "data": {
+            "graphId": "BCH2-JTaOfU7yrJ1GQRhL"
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "wnITtjycZ2FJpLYSThTVo",
+          "visualData": {
+            "x": 2968.809787389497,
+            "y": 110.42991702158002,
+            "width": 200,
+            "zIndex": 494
+          },
+          "data": {
+            "model": "gpt-3.5-turbo",
+            "useModelInput": false,
+            "temperature": 0,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "useStop": false,
+            "stop": "",
+            "useStopInput": false,
+            "presencePenalty": 0.2,
+            "usePresencePenaltyInput": false,
+            "frequencyPenalty": 0.2,
+            "useFrequencyPenaltyInput": false,
+            "cache": true
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "CfsTEn_pniYVjsyJP-paR",
+          "visualData": {
+            "x": 3222.413744214857,
+            "y": -151.57418837232166,
+            "width": 300,
+            "zIndex": 506
+          },
+          "data": {
+            "text": "{{context}}"
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "gMe54j9zmTUGFU1t_1viB",
+          "visualData": {
+            "x": 1015.7932797918654,
+            "y": 430.6918959309671,
+            "width": 529,
+            "zIndex": 483
+          },
+          "data": {
+            "text": "You have system functions available to you to use. You may call one of these functions to get a response from the system:\n\nFUNCTIONS_START\n- command: READ_FILE\n  file: file_name.ts\n  description: Reads a file and returns with its contents. Only one file may be read.\n- command: DIGEST_FILE\n  file: file_name.ts\n  description: Reads a file and returns a short summary about the file. Only one file may be digested.\n- command: TAKE_NOTE_FOR_SELF\n  notes: Here is some text to reply with. This is useful for taking notes.\n  description: Outputs some text as the result of the command.\n- command: WRITE_FILE\n  file: file_name.ts\n  contents: |\n    contents of the file\n  description: Writes text to the specified file.\n- command: ASK_FOR_FEEDBACK\n  message: The message for the user\n  description: Asks the user questions or for feedback on what you are doing. This can help make sure your plan is good.\nFUNCTIONS_END"
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "VrlVJ3R4e5XeyDKqHmrjz",
+          "visualData": {
+            "x": 2898.6262865461335,
+            "y": 606.9868775676123,
+            "width": 300,
+            "zIndex": 493
+          },
+          "data": {
+            "text": "I'd like you to make these changes:\n\n* Combine steps that are talking about the same file\n* Add steps to look at examples before any steps that write files\n* Remove any steps talking about documentation or tests\n\nPlease again reply in this YAML format:\n\n```yaml\nyamlDocument:\n  steps:\n    - Step 1\n    - Step 2\n    - Step 3\n```"
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "B7bKOsVis46f2wZGjHok0",
+          "visualData": {
+            "x": 4044.303106669954,
+            "y": 49.77920243595834,
+            "width": 200,
+            "zIndex": 499
+          },
+          "data": {
+            "model": "gpt-4",
+            "useModelInput": false,
+            "temperature": 0,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "useStop": false,
+            "stop": "",
+            "useStopInput": false,
+            "presencePenalty": 0,
+            "usePresencePenaltyInput": false,
+            "frequencyPenalty": 0,
+            "useFrequencyPenaltyInput": false,
+            "cache": true
+          }
+        },
+        {
+          "type": "assemblePrompt",
+          "title": "Assemble Prompt",
+          "id": "H7i41CNQTM5fM5KcJDwfq",
+          "visualData": {
+            "x": 3684.2437383356196,
+            "y": 122.47533686954321,
+            "width": 250,
+            "zIndex": 498
+          },
+          "data": {}
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt",
+          "id": "mpzTKKufP2XKwIToZ6C4x",
+          "visualData": {
+            "x": 3304.5063730745283,
+            "y": 118.2992554539091,
+            "width": 132,
+            "zIndex": 488
+          },
+          "data": {
+            "type": "assistant",
+            "useTypeInput": false,
+            "promptText": "{{input}}"
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "koUO8WjYqJBw5m1DqUzgv",
+          "visualData": {
+            "x": 2443.721573950279,
+            "y": -334.4842019704394,
+            "width": 300,
+            "zIndex": 487
+          },
+          "data": {
+            "text": "You are an advanced AI for creating and updating task lists to accomplish programming tasks."
+          }
+        },
+        {
+          "type": "subGraph",
+          "title": "List Nodai Files",
+          "id": "2AsgAl-VGTQHHKgMYanRs",
+          "visualData": {
+            "x": -301.9939667362379,
+            "y": 104.40547850820195,
+            "width": 300,
+            "zIndex": 476
+          },
+          "data": {
+            "graphId": "d6Pgmz7n8qvXkaNF-2e9P"
+          }
+        },
+        {
+          "type": "extractYaml",
+          "title": "Extract YAML",
+          "id": "41OQXeM5D_KXd8nvMgD13",
+          "visualData": {
+            "x": 4333.771615922889,
+            "y": 91.67818425384428,
+            "width": 250,
+            "zIndex": 502
+          },
+          "data": {
+            "rootPropertyName": "yamlDocument"
+          }
+        },
+        {
+          "type": "extractObjectPath",
+          "title": "Extract Object Path",
+          "id": "3U9HvI45_2JdHtQTMg_iU",
+          "visualData": {
+            "x": 4629.871903201354,
+            "y": 70.16512091605014,
+            "width": 250,
+            "zIndex": 504
+          },
+          "data": {
+            "path": "$.yamlDocument.steps",
+            "usePathInput": false
+          }
+        },
+        {
+          "type": "subGraph",
+          "title": "Execute Task List",
+          "id": "yWAKuzopcX8M17WGEDi-6",
+          "visualData": {
+            "x": 5060.21535133116,
+            "y": -27.79252175898307,
+            "width": 300,
+            "zIndex": 507
+          },
+          "data": {
+            "graphId": "yoe9VPnjUULQacHSolgiL"
+          }
+        }
+      ],
+      "connections": [
+        {
+          "inputNodeId": "AGmIpXCDl_sHyhLIjtXie",
+          "inputId": "message1",
+          "outputNodeId": "zc7_qtAZEqumCFsUYVqt7",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "AGmIpXCDl_sHyhLIjtXie",
+          "inputId": "message2",
+          "outputNodeId": "KbotaIf5SLrUkOubRve1x",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "KbotaIf5SLrUkOubRve1x",
+          "inputId": "request",
+          "outputNodeId": "1K582UsQEjPvjVRvtf4ag",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "YFPEXiTSWNawBUvgAF0_F",
+          "inputId": "qanda",
+          "outputNodeId": "9f2Us4WxeKYfvqMm1_XUZ",
+          "outputId": "questionsAndAnswers"
+        },
+        {
+          "inputNodeId": "60F98wIlGtDbBoIClfBah",
+          "inputId": "text",
+          "outputNodeId": "AGmIpXCDl_sHyhLIjtXie",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "9f2Us4WxeKYfvqMm1_XUZ",
+          "inputId": "questions",
+          "outputNodeId": "60F98wIlGtDbBoIClfBah",
+          "outputId": "items"
+        },
+        {
+          "inputNodeId": "YFPEXiTSWNawBUvgAF0_F",
+          "inputId": "functions",
+          "outputNodeId": "gMe54j9zmTUGFU1t_1viB",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "VrlVJ3R4e5XeyDKqHmrjz",
+          "inputId": "steps",
+          "outputNodeId": "wnITtjycZ2FJpLYSThTVo",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "mpzTKKufP2XKwIToZ6C4x",
+          "inputId": "input",
+          "outputNodeId": "wnITtjycZ2FJpLYSThTVo",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "B7bKOsVis46f2wZGjHok0",
+          "inputId": "prompt",
+          "outputNodeId": "H7i41CNQTM5fM5KcJDwfq",
+          "outputId": "prompt"
+        },
+        {
+          "inputNodeId": "wnITtjycZ2FJpLYSThTVo",
+          "inputId": "systemPrompt",
+          "outputNodeId": "koUO8WjYqJBw5m1DqUzgv",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "B7bKOsVis46f2wZGjHok0",
+          "inputId": "systemPrompt",
+          "outputNodeId": "koUO8WjYqJBw5m1DqUzgv",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "wnITtjycZ2FJpLYSThTVo",
+          "inputId": "prompt",
+          "outputNodeId": "YFPEXiTSWNawBUvgAF0_F",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "CfsTEn_pniYVjsyJP-paR",
+          "inputId": "context",
+          "outputNodeId": "YFPEXiTSWNawBUvgAF0_F",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "YFPEXiTSWNawBUvgAF0_F",
+          "inputId": "question",
+          "outputNodeId": "1K582UsQEjPvjVRvtf4ag",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "KbotaIf5SLrUkOubRve1x",
+          "inputId": "context",
+          "outputNodeId": "zc7_qtAZEqumCFsUYVqt7",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "AGmIpXCDl_sHyhLIjtXie",
+          "inputId": "prompt",
+          "outputNodeId": "KbotaIf5SLrUkOubRve1x",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "H7i41CNQTM5fM5KcJDwfq",
+          "inputId": "message1",
+          "outputNodeId": "CfsTEn_pniYVjsyJP-paR",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "H7i41CNQTM5fM5KcJDwfq",
+          "inputId": "message2",
+          "outputNodeId": "mpzTKKufP2XKwIToZ6C4x",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "H7i41CNQTM5fM5KcJDwfq",
+          "inputId": "message3",
+          "outputNodeId": "VrlVJ3R4e5XeyDKqHmrjz",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "41OQXeM5D_KXd8nvMgD13",
+          "inputId": "input",
+          "outputNodeId": "B7bKOsVis46f2wZGjHok0",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "3U9HvI45_2JdHtQTMg_iU",
+          "inputId": "object",
+          "outputNodeId": "41OQXeM5D_KXd8nvMgD13",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "yWAKuzopcX8M17WGEDi-6",
+          "inputId": "task_list",
+          "outputNodeId": "3U9HvI45_2JdHtQTMg_iU",
+          "outputId": "match"
+        },
+        {
+          "inputNodeId": "yWAKuzopcX8M17WGEDi-6",
+          "inputId": "context",
+          "outputNodeId": "CfsTEn_pniYVjsyJP-paR",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "YFPEXiTSWNawBUvgAF0_F",
+          "inputId": "context",
+          "outputNodeId": "zc7_qtAZEqumCFsUYVqt7",
+          "outputId": "output"
+        }
+      ],
+      "nodesById": {},
+      "connectionsByNodeId": {},
+      "connectionsById": {},
+      "metadata": {
+        "name": "**Nodai Helper (Copy)",
+        "id": "zYzI7xjOb0NOj9WPKJOrQ"
+      }
+    },
+    "d6Pgmz7n8qvXkaNF-2e9P": {
+      "nodes": [
+        {
+          "id": "wNG3QGg-NzvkTyoaynBz_",
+          "type": "readDirectory",
+          "title": "Read Directory",
+          "visualData": {
+            "x": -1109.8933869703742,
+            "y": 414.52061856748116,
+            "zIndex": 23
+          },
+          "data": {
+            "path": "/Users/andy.brenneke/Documents/nodai/packages",
+            "recursive": true,
+            "usePathInput": false,
+            "useRecursiveInput": false,
+            "includeDirectories": false,
+            "useIncludeDirectoriesInput": false,
+            "filterGlobs": [
+              "**/*.{ts,tsx,css}"
+            ],
+            "useFilterGlobsInput": false,
+            "relative": true,
+            "useRelativeInput": false,
+            "ignores": [
+              "**/dist/**",
+              "**/src-tauri/**"
+            ]
+          }
+        },
+        {
+          "type": "graphOutput",
+          "title": "Graph Output",
+          "id": "FSHys4NrHcjHQvSE_Rv7-",
+          "visualData": {
+            "x": -553,
+            "y": 644,
+            "width": 300,
+            "zIndex": 24
+          },
+          "data": {
+            "id": "files",
+            "dataType": "string[]"
+          }
+        },
+        {
+          "type": "graphOutput",
+          "title": "Graph Output",
+          "id": "oz0gemjC0VdsTeemnG_Kp",
+          "visualData": {
+            "x": -556,
+            "y": 443,
+            "width": 300,
+            "zIndex": 25
+          },
+          "data": {
+            "id": "root_path",
+            "dataType": "string"
+          }
+        }
+      ],
+      "connections": [
+        {
+          "inputNodeId": "FSHys4NrHcjHQvSE_Rv7-",
+          "inputId": "value",
+          "outputNodeId": "wNG3QGg-NzvkTyoaynBz_",
+          "outputId": "paths"
+        },
+        {
+          "inputNodeId": "oz0gemjC0VdsTeemnG_Kp",
+          "inputId": "value",
+          "outputNodeId": "wNG3QGg-NzvkTyoaynBz_",
+          "outputId": "rootPath"
+        }
+      ],
+      "metadata": {
+        "id": "d6Pgmz7n8qvXkaNF-2e9P",
+        "name": "List Nodai Files",
+        "description": ""
+      }
+    },
+    "JcFUPKbbvOvBQYdvItenL": {
+      "nodes": [
+        {
+          "id": "XhzNj4pzQ2LB31xvUOa38",
+          "type": "readFile",
+          "title": "Read File",
+          "visualData": {
+            "x": 78.53696254114706,
+            "y": 589.5330651481295,
+            "width": 250,
+            "zIndex": 30
+          },
+          "data": {
+            "path": "",
+            "usePathInput": true,
+            "errorOnMissingFile": false
+          }
+        },
+        {
+          "type": "graphInput",
+          "title": "Graph Input",
+          "id": "pS3t0dhKo4pndES52TC25",
+          "visualData": {
+            "x": -973.2451596049881,
+            "y": 711.7486797972081,
+            "width": 300,
+            "zIndex": 24
+          },
+          "data": {
+            "id": "fileMatch",
+            "dataType": "string",
+            "defaultValue": "GraphProcessor.ts"
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Extract Regex",
+          "id": "3K-EbZswm_EjMm7YvDp-8",
+          "visualData": {
+            "x": -260.64747296379056,
+            "y": 576.2537087926187,
+            "width": 250,
+            "zIndex": 29
+          },
+          "data": {
+            "regex": "([a-zA-Z]+)",
+            "useRegexInput": true,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "o49i8FBO13BUTSJ9VVpUp",
+          "visualData": {
+            "x": -619.508171986833,
+            "y": 504.0287905543141,
+            "width": 300,
+            "zIndex": 28
+          },
+          "data": {
+            "text": "{{paths}}"
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "6AXzyyVMSyqo6LN36roAj",
+          "visualData": {
+            "x": -622.3074425333289,
+            "y": 708.7566296572189,
+            "width": 300,
+            "zIndex": 26
+          },
+          "data": {
+            "text": "(.*{{value}}.*)"
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Extract Regex",
+          "id": "dC9Q17Nml5jtpt-VrG2E6",
+          "visualData": {
+            "x": 75.95255224213457,
+            "y": 757.5597475716329,
+            "width": 250,
+            "zIndex": 34
+          },
+          "data": {
+            "regex": "([^/]+$)",
+            "useRegexInput": false,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "pL1gfs7YyNnriOtL8t129",
+          "visualData": {
+            "x": -91.24293197539083,
+            "y": 370.6588599708293,
+            "width": 300,
+            "zIndex": 78
+          },
+          "data": {
+            "text": "{{root}}/{{path}}"
+          },
+          "isSplitRun": false
+        },
+        {
+          "type": "subGraph",
+          "title": "List Nodai Files",
+          "id": "hnMBT-lVJPf62eBijBv23",
+          "visualData": {
+            "x": -974,
+            "y": 509,
+            "width": 300,
+            "zIndex": 80
+          },
+          "data": {
+            "graphId": "d6Pgmz7n8qvXkaNF-2e9P"
+          }
+        },
+        {
+          "type": "graphOutput",
+          "title": "Graph Output",
+          "id": "IJx_hhz0xYQMQ6LKp58Ut",
+          "visualData": {
+            "x": 518,
+            "y": 453,
+            "width": 300,
+            "zIndex": 82
+          },
+          "data": {
+            "id": "file_contents",
+            "dataType": "string"
+          }
+        },
+        {
+          "type": "graphOutput",
+          "title": "Graph Output",
+          "id": "8WYEygiw4rtsog1_vAhUN",
+          "visualData": {
+            "x": 510,
+            "y": 665,
+            "width": 300,
+            "zIndex": 84
+          },
+          "data": {
+            "id": "file_name",
+            "dataType": "string"
+          }
+        },
+        {
+          "type": "graphOutput",
+          "title": "Graph Output",
+          "id": "DPHvuC_nC6P9cHeMx6AfY",
+          "visualData": {
+            "x": 498,
+            "y": 257,
+            "width": 300,
+            "zIndex": 85
+          },
+          "data": {
+            "id": "abs_path",
+            "dataType": "string"
+          }
+        }
+      ],
+      "connections": [
+        {
+          "inputNodeId": "3K-EbZswm_EjMm7YvDp-8",
+          "inputId": "input",
+          "outputNodeId": "o49i8FBO13BUTSJ9VVpUp",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "6AXzyyVMSyqo6LN36roAj",
+          "inputId": "value",
+          "outputNodeId": "pS3t0dhKo4pndES52TC25",
+          "outputId": "data"
+        },
+        {
+          "inputNodeId": "3K-EbZswm_EjMm7YvDp-8",
+          "inputId": "regex",
+          "outputNodeId": "6AXzyyVMSyqo6LN36roAj",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "dC9Q17Nml5jtpt-VrG2E6",
+          "inputId": "input",
+          "outputNodeId": "3K-EbZswm_EjMm7YvDp-8",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "pL1gfs7YyNnriOtL8t129",
+          "inputId": "path",
+          "outputNodeId": "3K-EbZswm_EjMm7YvDp-8",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "XhzNj4pzQ2LB31xvUOa38",
+          "inputId": "path",
+          "outputNodeId": "pL1gfs7YyNnriOtL8t129",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "pL1gfs7YyNnriOtL8t129",
+          "inputId": "root",
+          "outputNodeId": "hnMBT-lVJPf62eBijBv23",
+          "outputId": "root_path"
+        },
+        {
+          "inputNodeId": "o49i8FBO13BUTSJ9VVpUp",
+          "inputId": "paths",
+          "outputNodeId": "hnMBT-lVJPf62eBijBv23",
+          "outputId": "files"
+        },
+        {
+          "inputNodeId": "IJx_hhz0xYQMQ6LKp58Ut",
+          "inputId": "value",
+          "outputNodeId": "XhzNj4pzQ2LB31xvUOa38",
+          "outputId": "content"
+        },
+        {
+          "inputNodeId": "8WYEygiw4rtsog1_vAhUN",
+          "inputId": "value",
+          "outputNodeId": "dC9Q17Nml5jtpt-VrG2E6",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "DPHvuC_nC6P9cHeMx6AfY",
+          "inputId": "value",
+          "outputNodeId": "pL1gfs7YyNnriOtL8t129",
+          "outputId": "output"
+        }
+      ],
+      "metadata": {
+        "id": "JcFUPKbbvOvBQYdvItenL",
+        "name": "Get Nodai File By File Name",
+        "description": ""
+      }
+    },
+    "zbg_gBTAuWckH0VQ_hTMb": {
+      "nodes": [
+        {
+          "type": "trimChatMessages",
+          "title": "Trim Chat Messages",
+          "id": "ur8kbx3l8kuNYovsK5OYL",
+          "visualData": {
+            "x": 786,
+            "y": 690,
+            "width": 200,
+            "zIndex": 16
+          },
+          "data": {
+            "maxTokenCount": 1024,
+            "removeFromBeginning": true,
+            "model": "gpt-3.5-turbo"
+          }
+        },
+        {
+          "type": "assemblePrompt",
+          "title": "Assemble Prompt",
+          "id": "ApW33SmfgIQcxEZz9aYQo",
+          "visualData": {
+            "x": 391,
+            "y": 760,
+            "width": 250,
+            "zIndex": 11
+          },
+          "data": {}
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "0G74tPilGW8YNgcJiXQLz",
+          "visualData": {
+            "x": 759.3152628212886,
+            "y": 473.7600118789283,
+            "width": 300,
+            "zIndex": 20
+          },
+          "data": {
+            "text": "You are a nonsense text generator. The user is testing message lengths, so needs a bunch of stuff that doesn't make sense."
+          }
+        },
+        {
+          "type": "loopController",
+          "title": "Loop Controller",
+          "id": "d9_44wwp_vNnfBXa6KOqL",
+          "visualData": {
+            "x": -1,
+            "y": 514,
+            "width": 250,
+            "zIndex": 6
+          },
+          "data": {}
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "GNAIB_ctKlUx7UNiOxxOX",
+          "visualData": {
+            "x": 1327.4502985058366,
+            "y": 682.2456434664496,
+            "width": 200,
+            "zIndex": 17
+          },
+          "data": {
+            "model": "gpt-3.5-turbo",
+            "useModelInput": false,
+            "temperature": 0.5,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "useStop": false,
+            "stop": "",
+            "useStopInput": false,
+            "presencePenalty": 0,
+            "usePresencePenaltyInput": false,
+            "frequencyPenalty": 0,
+            "useFrequencyPenaltyInput": false,
+            "cache": false
+          }
+        },
+        {
+          "type": "graphOutput",
+          "title": "Graph Output",
+          "id": "kkvZiHHgqJDb07PY_txkb",
+          "visualData": {
+            "x": 432,
+            "y": 363,
+            "width": 300,
+            "zIndex": 15
+          },
+          "data": {
+            "id": "output",
+            "dataType": "string"
+          }
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt",
+          "id": "cufCkdmxm8bHkgxn8h2TM",
+          "visualData": {
+            "x": 1614.8081371325602,
+            "y": 696.448398816932,
+            "zIndex": 21
+          },
+          "data": {
+            "type": "assistant",
+            "useTypeInput": false,
+            "promptText": "{{input}}"
+          }
+        }
+      ],
+      "connections": [
+        {
+          "inputNodeId": "ur8kbx3l8kuNYovsK5OYL",
+          "inputId": "input",
+          "outputNodeId": "ApW33SmfgIQcxEZz9aYQo",
+          "outputId": "prompt"
+        },
+        {
+          "inputNodeId": "ApW33SmfgIQcxEZz9aYQo",
+          "inputId": "message1",
+          "outputNodeId": "d9_44wwp_vNnfBXa6KOqL",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "d9_44wwp_vNnfBXa6KOqL",
+          "inputId": "input1",
+          "outputNodeId": "ApW33SmfgIQcxEZz9aYQo",
+          "outputId": "prompt"
+        },
+        {
+          "inputNodeId": "GNAIB_ctKlUx7UNiOxxOX",
+          "inputId": "prompt",
+          "outputNodeId": "ur8kbx3l8kuNYovsK5OYL",
+          "outputId": "trimmed"
+        },
+        {
+          "inputNodeId": "ApW33SmfgIQcxEZz9aYQo",
+          "inputId": "message2",
+          "outputNodeId": "d9_44wwp_vNnfBXa6KOqL",
+          "outputId": "output2"
+        },
+        {
+          "inputNodeId": "kkvZiHHgqJDb07PY_txkb",
+          "inputId": "value",
+          "outputNodeId": "d9_44wwp_vNnfBXa6KOqL",
+          "outputId": "break"
+        },
+        {
+          "inputNodeId": "GNAIB_ctKlUx7UNiOxxOX",
+          "inputId": "systemPrompt",
+          "outputNodeId": "0G74tPilGW8YNgcJiXQLz",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "cufCkdmxm8bHkgxn8h2TM",
+          "inputId": "input",
+          "outputNodeId": "GNAIB_ctKlUx7UNiOxxOX",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "d9_44wwp_vNnfBXa6KOqL",
+          "inputId": "input2",
+          "outputNodeId": "cufCkdmxm8bHkgxn8h2TM",
+          "outputId": "output"
+        }
+      ],
+      "metadata": {
+        "id": "zbg_gBTAuWckH0VQ_hTMb",
+        "name": "Untitled Graph",
+        "description": ""
+      }
+    },
+    "yoe9VPnjUULQacHSolgiL": {
+      "nodes": [
+        {
+          "type": "graphInput",
+          "title": "Graph Input",
+          "id": "Vudek72LbIFekPR5DVDsq",
+          "visualData": {
+            "x": 424,
+            "y": 642,
+            "width": 300,
+            "zIndex": 4
+          },
+          "data": {
+            "id": "task_list",
+            "dataType": "string[]",
+            "useDefaultValueInput": true
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "2duN-SQvGKbhGgvdS0U6n",
+          "visualData": {
+            "x": 779.0555310294967,
+            "y": 440.4303654785995,
+            "width": 300,
+            "zIndex": 39
+          },
+          "data": {
+            "text": "Here is a task list provided by another AI:\n\n\"\"\"\n{{task_list}}\n\"\"\"\n\nYour current task is: No task\n\nIf your current task is complete, what is your next task? Please reply with a short key or sentence describing your next task to execute. \n\nReply in this format:\n\nNext Task: A short description of what I will be doing next"
+          }
+        },
+        {
+          "type": "prompt",
+          "title": "Prompt",
+          "id": "cER_B2LLcZYy15z-KNJDK",
+          "visualData": {
+            "x": 553.1915381834611,
+            "y": -17.88559476470175,
+            "zIndex": 28
+          },
+          "data": {
+            "type": "system",
+            "useTypeInput": false,
+            "promptText": "You are a programming assistant that iteratively executes commands and thinks out loud to accomplish tasks."
+          }
+        },
+        {
+          "type": "assemblePrompt",
+          "title": "Assemble Prompt",
+          "id": "16UsT_tJlpYi717REkv6n",
+          "visualData": {
+            "x": 1158,
+            "y": 478,
+            "width": 250,
+            "zIndex": 11
+          },
+          "data": {}
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "MHz_Mr-O-KivwLl_Qbevp",
+          "visualData": {
+            "x": -870.9610414764056,
+            "y": 564.0734459241355,
+            "width": 300,
+            "zIndex": 274
+          },
+          "data": {
+            "text": "yamlDocument:\n  steps:\n    - First, I will review the requirements and specifications for the TrimChatMessagesNode component to ensure that I understand what is expected of me.\n    - Next, I will review the existing codebase to gain an understanding of how the system works and how the TrimChatMessagesNode component fits into it.\n    - I will examine the ExtractRegexNode.tsx file to see how a similar component is implemented and determine if there are any useful patterns or techniques that can be applied to the TrimChatMessagesNode component.\n    - I will create a new file called TrimChatMessagesNode.tsx and implement the components according to the specifications and examples provided."
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "8xAF_gsGq9anwwpehGo2Y",
+          "visualData": {
+            "x": 2432.601813980837,
+            "y": 872.2598561008039,
+            "width": 300,
+            "zIndex": 160
+          },
+          "data": {
+            "text": "You have system functions available to you to use. You may call one of these functions to get a response from the system:\n\n- command: READ_FILE\n  files:\n    - file_name.ts\n  description: Reads a file and returns with its contents. Files must be an array with one file per line.\n- command: TAKE_NOTE_FOR_SELF\n  notes: Here is some text to reply with. This is useful for taking notes.\n  description: Outputs some text as the result of the command.\n- command: WRITE_FILE\n  file: file_name.ts\n  contents: |\n    contents of the file\n  description: Writes text to the specified file. You must write the entire file contents at once. You must not comment out sections of the file - everything needs to be implemented.\n- command: ASK_FOR_FEEDBACK\n  message: The message for the user\n  description: Asks the user questions or for feedback on what you are doing. This can help make sure your plan is good."
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "F3cvl2CAcA0PAj6KEiF6q",
+          "visualData": {
+            "x": 1478,
+            "y": 413,
+            "width": 200,
+            "zIndex": 13
+          },
+          "data": {
+            "model": "gpt-3.5-turbo",
+            "useModelInput": false,
+            "temperature": 0.5,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "useStop": false,
+            "stop": "",
+            "useStopInput": false,
+            "presencePenalty": 0,
+            "usePresencePenaltyInput": false,
+            "frequencyPenalty": 0,
+            "useFrequencyPenaltyInput": false,
+            "cache": false
+          }
+        },
+        {
+          "type": "graphInput",
+          "title": "Graph Input",
+          "id": "18WP87xc4D7JXdSGTRlYD",
+          "visualData": {
+            "x": 1976.2408920171606,
+            "y": 173.37095721029897,
+            "width": 300,
+            "zIndex": 24
+          },
+          "data": {
+            "id": "context",
+            "dataType": "string",
+            "useDefaultValueInput": true
+          }
+        },
+        {
+          "type": "loopController",
+          "title": "Loop Controller",
+          "id": "cObRObIxgwrJablQHLGnw",
+          "visualData": {
+            "x": 2012.432896034012,
+            "y": 500.84246666707406,
+            "width": 439.1093458908531,
+            "zIndex": 133
+          },
+          "data": {}
+        },
+        {
+          "type": "extractRegex",
+          "title": "Extract Regex",
+          "id": "L8j7UVv6-Qc2Pnm9B4MRB",
+          "visualData": {
+            "x": 1734,
+            "y": 445,
+            "width": 145,
+            "zIndex": 22
+          },
+          "data": {
+            "regex": "Next Task: (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "graphOutput",
+          "title": "Graph Output",
+          "id": "xe4vk7BUOsT-mnIoEjOha",
+          "visualData": {
+            "x": 2652.651717877761,
+            "y": 223.07146808148678,
+            "width": 300,
+            "zIndex": 161
+          },
+          "data": {
+            "id": "output",
+            "dataType": "string"
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "aymg3sOX3k4VaMI8L7NUg",
+          "visualData": {
+            "x": 1596.3955567814364,
+            "y": -106.05238101849785,
+            "width": 300,
+            "zIndex": 35
+          },
+          "data": {
+            "text": "Here is additional context:\n\nI am working on developing an AI storyboarding tool that allows users to create a series of prompts for a language model in a choose-your-own-adventure format. The tool is inspired by node-based editors, like the one found in Blender, where users can create nodes on a page that have inputs and outputs that can be connected by wires to form a web of connections between the prompts and the AI. Each node can be edited, and when editing, a larger window pops up with a text editor where users can tweak various aspects of the prompt that will be fed to the AI. This tool will provide a user-friendly interface for crafting interactive stories with an AI language model. Here is a tree of my current files for context. If you would like the contents of any of these files, please ask. The app is dark-themed and the colors are available in index.css. I'm using Emotion for CSS.\n\nI have asked this question:\n\n\"\"\"\nI need to implement the TrimChatMessagesNode.tsx file for the TrimChatMessages.ts file.\n\"\"\"\n\nHere are some additional notes:\n\nCan you provide more information on the expected behavior of the TrimChatMessagesNode component?\nIt takes in an chat-message[] and cuts messages off the beginning or end until it reaches a specified token count.\nAre there any specific styling requirements for this component?\nNo\nHow does the TrimChatMessagesNode component interact with the rest of the system?\nSame as everything else \nAre there any existing tests for the TrimChatMessagesNode component that I should be aware of?\nNo\nIs there any documentation or examples available for similar components that I can reference while implementing this?\nA good example would be ExtractRegexNode.ts\n"
+          }
+        },
+        {
+          "type": "text",
+          "title": "Task List",
+          "id": "VIZaMd_lS9i-zMjpKl5wj",
+          "visualData": {
+            "x": 6371.142761841789,
+            "y": 953.6055634529666,
+            "width": 280.41157562862554,
+            "zIndex": 236
+          },
+          "data": {
+            "text": "{{input}}"
+          }
+        },
+        {
+          "type": "text",
+          "title": "System",
+          "id": "z1APvC5m5fW-AIfzoVeox",
+          "visualData": {
+            "x": 4239.993269495582,
+            "y": 67.55319093510519,
+            "width": 148.77673982924148,
+            "zIndex": 62
+          },
+          "data": {
+            "text": "{{input}}"
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Chat - Execute Current Task",
+          "id": "NlqmTc5SUrwdCFOOU26CP",
+          "visualData": {
+            "x": 4548.243695137348,
+            "y": 161.2280988982285,
+            "width": 421.94723529668863,
+            "zIndex": 162
+          },
+          "data": {
+            "model": "gpt-4",
+            "useModelInput": false,
+            "temperature": 0.2,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "useStop": false,
+            "stop": "",
+            "useStopInput": false,
+            "presencePenalty": 0,
+            "usePresencePenaltyInput": false,
+            "frequencyPenalty": 0,
+            "useFrequencyPenaltyInput": false,
+            "cache": false
+          }
+        },
+        {
+          "type": "text",
+          "title": "Task Output",
+          "id": "9vGdJIknzBzhvWcYPxdiD",
+          "visualData": {
+            "x": 7039.610210678069,
+            "y": 29.370254674666644,
+            "width": 300,
+            "zIndex": 164
+          },
+          "data": {
+            "text": "{{input}}{{completed_task}}{{completed_task_2}}{{completed_task_3}}{{completed_task_4}}{{completed_task_5}}{{completed_task_6}}{{completed_task_7}}"
+          }
+        },
+        {
+          "type": "match",
+          "title": "Match",
+          "id": "eKe_lJayfu9fVyZAD7ri_",
+          "visualData": {
+            "x": 5124.392931506813,
+            "y": -234.366343577227,
+            "width": 300,
+            "zIndex": 141
+          },
+          "data": {
+            "caseCount": 6,
+            "cases": [
+              "command: DIGEST_FILE",
+              "command: READ_FILE",
+              "command: TAKE_NOTE_FOR_SELF",
+              "command: ASK_FOR_FEEDBACK",
+              "command: CREATE_BLANK_FILE",
+              "command: WRITE_FILE"
+            ]
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Extract Regex",
+          "id": "Lt7FetK2fNHvp-zGpbyeb",
+          "visualData": {
+            "x": 5578.284565981844,
+            "y": 86.78078995676775,
+            "width": 250,
+            "zIndex": 151
+          },
+          "data": {
+            "regex": "arguments: (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "FyLqlQhLYBHb5SD8Bbjx5",
+          "visualData": {
+            "x": 5972.705884451865,
+            "y": 116.18017591666175,
+            "width": 300,
+            "zIndex": 105
+          },
+          "data": {
+            "text": "SYSTEM ERROR: NO SUCH FUNCTION\n\nINPUT: \n\n```yml\n{{input}}\n```"
+          }
+        },
+        {
+          "type": "ifElse",
+          "title": "If/Else",
+          "id": "FWoMYwSLilFCCDRsWAR5J",
+          "data": {},
+          "visualData": {
+            "x": 6348.488923019823,
+            "y": 421.6892086804104,
+            "width": 125,
+            "zIndex": 113
+          }
+        },
+        {
+          "type": "ifElse",
+          "title": "If/Else",
+          "id": "PcJv0abE6WDhleSi1B_Xb",
+          "data": {},
+          "visualData": {
+            "x": 6366.060946088059,
+            "y": 199.52863131771608,
+            "width": 125,
+            "zIndex": 114
+          }
+        },
+        {
+          "type": "subGraph",
+          "title": "Get Nodai File By File Name",
+          "id": "0xxgB-83ezLpsw0rLpo86",
+          "visualData": {
+            "x": 5887.468401346239,
+            "y": -209.5399625226982,
+            "width": 300,
+            "zIndex": 269
+          },
+          "data": {
+            "graphId": "JcFUPKbbvOvBQYdvItenL"
+          },
+          "isSplitRun": true,
+          "splitRunMax": 3
+        },
+        {
+          "type": "ifElse",
+          "title": "If/Else",
+          "id": "kr9XalMx4-rJLQNWVwIQK",
+          "data": {},
+          "visualData": {
+            "x": 6673.626222324951,
+            "y": -96.9160610943763,
+            "width": 125,
+            "zIndex": 271
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "i4cBHxWO1HLsnHg3Yh7qP",
+          "visualData": {
+            "x": 6300.416322248281,
+            "y": -178.5223306236974,
+            "width": 300,
+            "zIndex": 272
+          },
+          "data": {
+            "text": "```\n// {{file_name}}\n{{file_contents}}\n```"
+          },
+          "isSplitRun": true
+        },
+        {
+          "type": "subGraph",
+          "title": "Digest File",
+          "id": "cV8OdlEuJDaI2v05bTz5X",
+          "visualData": {
+            "x": 6325.94927766123,
+            "y": -439.4589639215074,
+            "width": 300,
+            "zIndex": 130
+          },
+          "data": {
+            "graphId": "HXjZhpWO0hluMiDY6pneE"
+          }
+        },
+        {
+          "type": "subGraph",
+          "title": "Get Nodai File By File Name",
+          "id": "SNQCA2ZXN7LQRbPd1M6Mx",
+          "visualData": {
+            "x": 5899.625587751349,
+            "y": -459.07944232089864,
+            "width": 300,
+            "zIndex": 267
+          },
+          "data": {
+            "graphId": "JcFUPKbbvOvBQYdvItenL"
+          },
+          "isSplitRun": false
+        },
+        {
+          "type": "ifElse",
+          "title": "If/Else",
+          "id": "0RKFgY-eQO6zKbBCKYq5B",
+          "data": {},
+          "visualData": {
+            "x": 6783.002594922681,
+            "y": -393.6611296827001,
+            "width": 125,
+            "zIndex": 132
+          }
+        },
+        {
+          "type": "if",
+          "title": "If",
+          "id": "H8XzMJqCQO0vFJHPtuO77",
+          "data": {},
+          "visualData": {
+            "x": 6353.055677348132,
+            "y": 606.6770436175566,
+            "width": 100,
+            "zIndex": 136
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Extract Regex",
+          "id": "eAIWo0XuNb-0A5z-D6yNQ",
+          "visualData": {
+            "x": 5577.452009566831,
+            "y": -529.6357219898775,
+            "width": 250,
+            "zIndex": 268
+          },
+          "data": {
+            "regex": "file: (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Extract Regex",
+          "id": "Rb7VwhHEC8mJOe-1zoVCY",
+          "visualData": {
+            "x": 5553.305595914529,
+            "y": -203.78197037577328,
+            "width": 250,
+            "zIndex": 195
+          },
+          "data": {
+            "regex": "- (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "text",
+          "title": "Execute Current Task Prompt",
+          "id": "KIFBcqmOa5G-MPklHfHVR",
+          "visualData": {
+            "x": 3827.4091396369313,
+            "y": 31.86885376256144,
+            "width": 300,
+            "zIndex": 215
+          },
+          "data": {
+            "text": "{{context}}\n\nHere are all files in the project:\n\nFILES_START\n{{files}}\nFILES_END\n\nHere are your remaining tasks:\n\nTASK_LIST_START\n{{task_list}}\nTASK_LIST_END\n\nHere is a history of your commands:\n\nHISTORY_START\n{{previously_executed}}\nHISTORY_END\n\nHere is your current task: \"{{current_task}}\"\n\nFUNCTIONS_START\n{{functions}}\nFUNCTIONS_END\n\nYou must now execute your current task. Please reply with a YAML block describing how you will execute the task. You may also first ask the user for feedback on your plan.\n\n```yaml\ncurrentTask: Restate your current task\nreasoning: Explain your reasoning the command below\ncommand: COMMAND_NAME\narguments: Some command arguments, comma separated\n```\n\nOnly reply with ONE YAML block to run ONE command. "
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "uEWXLi8XmKpaiGzzTFDme",
+          "visualData": {
+            "x": 7978.356470367281,
+            "y": -190.2384357061269,
+            "width": 300,
+            "zIndex": 241
+          },
+          "data": {
+            "text": "{{context}}\n\nHere are your remaining tasks:\n\nTASK_LIST_START\n{{task_list}}\nTASK_LIST_END\n\nHere is your current task: \"{{current_task}}\"\n\nFUNCTIONS_START\n{{functions}}\nFUNCTIONS_END\n\n{{command_info}}\n\nWhat is your next task? You may add new tasks if necessary based on the ran commands. Reply in this YAML format:\n\n```yaml\nreasoning: A short explanation of the reason for the next task\nnextTask: The next task I should execute\nnewTasks:\n  - A new task we need to do first\nremainingTasks:\n  - The next task remaining \n  - Another task remaining\n``` "
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Command",
+          "id": "G6xAcS6FpdFn1mXt1cw8f",
+          "visualData": {
+            "x": 5340.527686035527,
+            "y": 512.4134435908122,
+            "width": 230.71536699651278,
+            "zIndex": 167
+          },
+          "data": {
+            "regex": "command:: (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Arguments",
+          "id": "Y5c04fJsFBeyYOZBbKr0u",
+          "visualData": {
+            "x": 5331.600736530297,
+            "y": 732.9736268270755,
+            "width": 250,
+            "zIndex": 166
+          },
+          "data": {
+            "regex": "arguments: (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Reasoning",
+          "id": "95GVpZr_gnXd9me3iCL84",
+          "visualData": {
+            "x": 5338.285361665108,
+            "y": 943.3834873992645,
+            "width": 250,
+            "zIndex": 168
+          },
+          "data": {
+            "regex": "reasoning: (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "gHSSvkoWQ76ko-0EvUdZn",
+          "visualData": {
+            "x": 8769.249889250545,
+            "y": 120.04997549482556,
+            "width": 200,
+            "zIndex": 222
+          },
+          "data": {
+            "model": "gpt-4",
+            "useModelInput": false,
+            "temperature": 0,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "useStop": false,
+            "stop": "",
+            "useStopInput": false,
+            "presencePenalty": 0,
+            "usePresencePenaltyInput": false,
+            "frequencyPenalty": 0,
+            "useFrequencyPenaltyInput": false,
+            "cache": false
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "CGAZhTY_eFuZpMhTT_-XX",
+          "visualData": {
+            "x": 8418.951933690807,
+            "y": -145.72879779724013,
+            "width": 300,
+            "zIndex": 226
+          },
+          "data": {
+            "text": "You are a AI tool that analyzes another AI's message and determines the next task for it to run."
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Extract Regex",
+          "id": "RiNJdTXBSOVrqVnyLFWhW",
+          "visualData": {
+            "x": 9150.006372182106,
+            "y": 330.1512875404809,
+            "width": 250,
+            "zIndex": 223
+          },
+          "data": {
+            "regex": "nextTask: (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Extract Regex",
+          "id": "GJjxrheYn_y34JmufhNhI",
+          "visualData": {
+            "x": 5561.771187245226,
+            "y": -779.8195879678019,
+            "width": 250,
+            "zIndex": 247
+          },
+          "data": {
+            "regex": "message: (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "userInput",
+          "title": "User Input",
+          "id": "RIiW55iFfMEKP4fXdsETJ",
+          "visualData": {
+            "x": 5907.5865905173505,
+            "y": -741.4244278640571,
+            "width": 250,
+            "zIndex": 259
+          },
+          "data": {
+            "prompt": "This is an example question?",
+            "useInput": true
+          }
+        },
+        {
+          "type": "ifElse",
+          "title": "If/Else",
+          "id": "HCLsuZ0HbRbO1QnmKSF6a",
+          "data": {},
+          "visualData": {
+            "x": 6788.95894623122,
+            "y": -618.7227630907971,
+            "width": 125,
+            "zIndex": 199
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Extract Regex",
+          "id": "8AM9Ho1fo648WuOrBGDvX",
+          "visualData": {
+            "x": 9295.2287683039,
+            "y": 680.3585569226879,
+            "width": 250,
+            "zIndex": 225
+          },
+          "data": {
+            "regex": "- (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "oUXeuzH9rfmiEBbfTIysB",
+          "visualData": {
+            "x": 9698.312185936573,
+            "y": 741.3114862321534,
+            "width": 300,
+            "zIndex": 224
+          },
+          "data": {
+            "text": "{{input}}"
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "6P04DpTqBQMOYpBfJuurJ",
+          "visualData": {
+            "x": 7486.925742104204,
+            "y": -160.8828855686792,
+            "width": 300,
+            "zIndex": 229
+          },
+          "data": {
+            "text": "\nYou ran this command with this reasoning:\n\n```yaml\ncommand: {{command_name}}\narguments: {{arguments}}\nreasoning: {{reasoning}}\n```\n\nThe output of this command is:\n\nCOMMAND_OUTPUT_START\n{{command_output}}\nCOMMAND_OUTPUT_END"
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "JA8Lk0pXQTMaNfUhEphm2",
+          "visualData": {
+            "x": 8050.8922065871575,
+            "y": 438.51864186966856,
+            "width": 300,
+            "zIndex": 242
+          },
+          "data": {
+            "text": "{{prev_commands}}\n{{command}}"
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Extract Regex",
+          "id": "dIYOri87l40Dxg2VcvK16",
+          "visualData": {
+            "x": 5550.1210406838245,
+            "y": -1058.3859705303669,
+            "width": 250,
+            "zIndex": 246
+          },
+          "data": {
+            "regex": "file: (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "extractRegex",
+          "title": "Extract Regex",
+          "id": "Y-XfdVqvG3gqQYVMW8tOo",
+          "visualData": {
+            "x": 5532.1408648101415,
+            "y": -1291.587143021588,
+            "width": 250,
+            "zIndex": 248
+          },
+          "data": {
+            "regex": "file: (.+)",
+            "useRegexInput": false,
+            "errorOnFailed": false
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "Q2-bYh6LGkVm2WPb46tEz",
+          "visualData": {
+            "x": 5885.144058035461,
+            "y": -1031.3397979538224,
+            "width": 300,
+            "zIndex": 251
+          },
+          "data": {
+            "text": "Please create this file: {{file_path}}"
+          }
+        },
+        {
+          "type": "userInput",
+          "title": "User Input",
+          "id": "L27NwFvq6cJgke83F55ei",
+          "visualData": {
+            "x": 6271.2758460845735,
+            "y": -1025.009768641542,
+            "width": 250,
+            "zIndex": 254
+          },
+          "data": {
+            "prompt": "This is an example question?",
+            "useInput": true
+          }
+        },
+        {
+          "type": "ifElse",
+          "title": "If/Else",
+          "id": "r1AqIM_e223Gr_TP7x2vd",
+          "data": {},
+          "visualData": {
+            "x": 6691.167790465849,
+            "y": -1028.174783297682,
+            "width": 125,
+            "zIndex": 253
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "YMPhS3MhQdfMqPqj8Ss8k",
+          "visualData": {
+            "x": 5903.034048264701,
+            "y": -1281.4210486111251,
+            "width": 300,
+            "zIndex": 255
+          },
+          "data": {
+            "text": "Please write these contents to {{file_path}}:\n\n{{contents}}"
+          }
+        },
+        {
+          "type": "userInput",
+          "title": "User Input",
+          "id": "U0EcCqP66WFZahvpiGPFf",
+          "visualData": {
+            "x": 6281.8258949383735,
+            "y": -1270.8259069351022,
+            "width": 250,
+            "zIndex": 256
+          },
+          "data": {
+            "prompt": "This is an example question?",
+            "useInput": true
+          }
+        },
+        {
+          "type": "ifElse",
+          "title": "If/Else",
+          "id": "RpW2gkVxBqfF23yeOVUxl",
+          "data": {},
+          "visualData": {
+            "x": 6684.792668331347,
+            "y": -1267.7059851011838,
+            "width": 125,
+            "zIndex": 257
+          }
+        },
+        {
+          "type": "subGraph",
+          "title": "List Nodai Files",
+          "id": "4S1D75ofp0W1obD11VBqI",
+          "visualData": {
+            "x": 3119.481362252188,
+            "y": -57.27713878661959,
+            "width": 300,
+            "zIndex": 260
+          },
+          "data": {
+            "graphId": "d6Pgmz7n8qvXkaNF-2e9P"
+          }
+        },
+        {
+          "type": "extractYaml",
+          "title": "Extract YAML",
+          "id": "bjL5VE8Zzz84m3QFLJ7x7",
+          "visualData": {
+            "x": -511.4509344968344,
+            "y": 638.2666631869166,
+            "width": 250,
+            "zIndex": 275
+          },
+          "data": {
+            "rootPropertyName": "yamlDocument"
+          }
+        },
+        {
+          "type": "extractObjectPath",
+          "title": "Extract Object Path",
+          "id": "qt2AdWZptLCfvACUeDtea",
+          "visualData": {
+            "x": -33.58278249236042,
+            "y": 631.2095385792555,
+            "width": 250,
+            "zIndex": 277
+          },
+          "data": {
+            "path": "$.yamlDocument.steps",
+            "usePathInput": false
+          }
+        }
+      ],
+      "connections": [
+        {
+          "inputNodeId": "16UsT_tJlpYi717REkv6n",
+          "inputId": "message1",
+          "outputNodeId": "cER_B2LLcZYy15z-KNJDK",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "16UsT_tJlpYi717REkv6n",
+          "inputId": "message2",
+          "outputNodeId": "2duN-SQvGKbhGgvdS0U6n",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "2duN-SQvGKbhGgvdS0U6n",
+          "inputId": "task_list",
+          "outputNodeId": "Vudek72LbIFekPR5DVDsq",
+          "outputId": "data"
+        },
+        {
+          "inputNodeId": "F3cvl2CAcA0PAj6KEiF6q",
+          "inputId": "prompt",
+          "outputNodeId": "16UsT_tJlpYi717REkv6n",
+          "outputId": "prompt"
+        },
+        {
+          "inputNodeId": "L8j7UVv6-Qc2Pnm9B4MRB",
+          "inputId": "input",
+          "outputNodeId": "F3cvl2CAcA0PAj6KEiF6q",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "xe4vk7BUOsT-mnIoEjOha",
+          "inputId": "value",
+          "outputNodeId": "cObRObIxgwrJablQHLGnw",
+          "outputId": "break"
+        },
+        {
+          "inputNodeId": "18WP87xc4D7JXdSGTRlYD",
+          "inputId": "default",
+          "outputNodeId": "aymg3sOX3k4VaMI8L7NUg",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "z1APvC5m5fW-AIfzoVeox",
+          "inputId": "input",
+          "outputNodeId": "cER_B2LLcZYy15z-KNJDK",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "cObRObIxgwrJablQHLGnw",
+          "inputId": "input1Default",
+          "outputNodeId": "L8j7UVv6-Qc2Pnm9B4MRB",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "9vGdJIknzBzhvWcYPxdiD",
+          "inputId": "previous_completed_tasks",
+          "outputNodeId": "cObRObIxgwrJablQHLGnw",
+          "outputId": "output2"
+        },
+        {
+          "inputNodeId": "NlqmTc5SUrwdCFOOU26CP",
+          "inputId": "systemPrompt",
+          "outputNodeId": "z1APvC5m5fW-AIfzoVeox",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "eKe_lJayfu9fVyZAD7ri_",
+          "inputId": "input",
+          "outputNodeId": "NlqmTc5SUrwdCFOOU26CP",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "9vGdJIknzBzhvWcYPxdiD",
+          "inputId": "completed_task",
+          "outputNodeId": "FWoMYwSLilFCCDRsWAR5J",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "PcJv0abE6WDhleSi1B_Xb",
+          "inputId": "if",
+          "outputNodeId": "FyLqlQhLYBHb5SD8Bbjx5",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "PcJv0abE6WDhleSi1B_Xb",
+          "inputId": "true",
+          "outputNodeId": "FyLqlQhLYBHb5SD8Bbjx5",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "9vGdJIknzBzhvWcYPxdiD",
+          "inputId": "completed_task_2",
+          "outputNodeId": "PcJv0abE6WDhleSi1B_Xb",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "i4cBHxWO1HLsnHg3Yh7qP",
+          "inputId": "file_contents",
+          "outputNodeId": "0xxgB-83ezLpsw0rLpo86",
+          "outputId": "file_contents"
+        },
+        {
+          "inputNodeId": "kr9XalMx4-rJLQNWVwIQK",
+          "inputId": "if",
+          "outputNodeId": "i4cBHxWO1HLsnHg3Yh7qP",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "kr9XalMx4-rJLQNWVwIQK",
+          "inputId": "true",
+          "outputNodeId": "i4cBHxWO1HLsnHg3Yh7qP",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "cV8OdlEuJDaI2v05bTz5X",
+          "inputId": "file_contents",
+          "outputNodeId": "SNQCA2ZXN7LQRbPd1M6Mx",
+          "outputId": "file_contents"
+        },
+        {
+          "inputNodeId": "0RKFgY-eQO6zKbBCKYq5B",
+          "inputId": "if",
+          "outputNodeId": "cV8OdlEuJDaI2v05bTz5X",
+          "outputId": "digest"
+        },
+        {
+          "inputNodeId": "0RKFgY-eQO6zKbBCKYq5B",
+          "inputId": "true",
+          "outputNodeId": "cV8OdlEuJDaI2v05bTz5X",
+          "outputId": "digest"
+        },
+        {
+          "inputNodeId": "9vGdJIknzBzhvWcYPxdiD",
+          "inputId": "input",
+          "outputNodeId": "kr9XalMx4-rJLQNWVwIQK",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "9vGdJIknzBzhvWcYPxdiD",
+          "inputId": "completed_task_3",
+          "outputNodeId": "0RKFgY-eQO6zKbBCKYq5B",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "H8XzMJqCQO0vFJHPtuO77",
+          "inputId": "if",
+          "outputNodeId": "NlqmTc5SUrwdCFOOU26CP",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "9vGdJIknzBzhvWcYPxdiD",
+          "inputId": "completed_task_4",
+          "outputNodeId": "H8XzMJqCQO0vFJHPtuO77",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "Rb7VwhHEC8mJOe-1zoVCY",
+          "inputId": "input",
+          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
+          "outputId": "case2"
+        },
+        {
+          "inputNodeId": "eAIWo0XuNb-0A5z-D6yNQ",
+          "inputId": "input",
+          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
+          "outputId": "case1"
+        },
+        {
+          "inputNodeId": "FyLqlQhLYBHb5SD8Bbjx5",
+          "inputId": "input",
+          "outputNodeId": "Lt7FetK2fNHvp-zGpbyeb",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "cV8OdlEuJDaI2v05bTz5X",
+          "inputId": "file_name",
+          "outputNodeId": "eAIWo0XuNb-0A5z-D6yNQ",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "KIFBcqmOa5G-MPklHfHVR",
+          "inputId": "context",
+          "outputNodeId": "18WP87xc4D7JXdSGTRlYD",
+          "outputId": "data"
+        },
+        {
+          "inputNodeId": "KIFBcqmOa5G-MPklHfHVR",
+          "inputId": "functions",
+          "outputNodeId": "8xAF_gsGq9anwwpehGo2Y",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "NlqmTc5SUrwdCFOOU26CP",
+          "inputId": "prompt",
+          "outputNodeId": "KIFBcqmOa5G-MPklHfHVR",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "G6xAcS6FpdFn1mXt1cw8f",
+          "inputId": "input",
+          "outputNodeId": "NlqmTc5SUrwdCFOOU26CP",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "Y5c04fJsFBeyYOZBbKr0u",
+          "inputId": "input",
+          "outputNodeId": "NlqmTc5SUrwdCFOOU26CP",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "95GVpZr_gnXd9me3iCL84",
+          "inputId": "input",
+          "outputNodeId": "NlqmTc5SUrwdCFOOU26CP",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "uEWXLi8XmKpaiGzzTFDme",
+          "inputId": "command_name",
+          "outputNodeId": "G6xAcS6FpdFn1mXt1cw8f",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "uEWXLi8XmKpaiGzzTFDme",
+          "inputId": "arguments",
+          "outputNodeId": "Y5c04fJsFBeyYOZBbKr0u",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "uEWXLi8XmKpaiGzzTFDme",
+          "inputId": "reasoning",
+          "outputNodeId": "95GVpZr_gnXd9me3iCL84",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "uEWXLi8XmKpaiGzzTFDme",
+          "inputId": "command_output",
+          "outputNodeId": "9vGdJIknzBzhvWcYPxdiD",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "gHSSvkoWQ76ko-0EvUdZn",
+          "inputId": "systemPrompt",
+          "outputNodeId": "CGAZhTY_eFuZpMhTT_-XX",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "uEWXLi8XmKpaiGzzTFDme",
+          "inputId": "context",
+          "outputNodeId": "18WP87xc4D7JXdSGTRlYD",
+          "outputId": "data"
+        },
+        {
+          "inputNodeId": "uEWXLi8XmKpaiGzzTFDme",
+          "inputId": "task_list",
+          "outputNodeId": "VIZaMd_lS9i-zMjpKl5wj",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "uEWXLi8XmKpaiGzzTFDme",
+          "inputId": "functions",
+          "outputNodeId": "8xAF_gsGq9anwwpehGo2Y",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "gHSSvkoWQ76ko-0EvUdZn",
+          "inputId": "prompt",
+          "outputNodeId": "uEWXLi8XmKpaiGzzTFDme",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "KIFBcqmOa5G-MPklHfHVR",
+          "inputId": "current_task",
+          "outputNodeId": "cObRObIxgwrJablQHLGnw",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "RiNJdTXBSOVrqVnyLFWhW",
+          "inputId": "input",
+          "outputNodeId": "gHSSvkoWQ76ko-0EvUdZn",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "cObRObIxgwrJablQHLGnw",
+          "inputId": "input1",
+          "outputNodeId": "RiNJdTXBSOVrqVnyLFWhW",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "GJjxrheYn_y34JmufhNhI",
+          "inputId": "input",
+          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
+          "outputId": "case4"
+        },
+        {
+          "inputNodeId": "RIiW55iFfMEKP4fXdsETJ",
+          "inputId": "questions",
+          "outputNodeId": "GJjxrheYn_y34JmufhNhI",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "HCLsuZ0HbRbO1QnmKSF6a",
+          "inputId": "if",
+          "outputNodeId": "RIiW55iFfMEKP4fXdsETJ",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "HCLsuZ0HbRbO1QnmKSF6a",
+          "inputId": "true",
+          "outputNodeId": "RIiW55iFfMEKP4fXdsETJ",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "9vGdJIknzBzhvWcYPxdiD",
+          "inputId": "completed_task_5",
+          "outputNodeId": "HCLsuZ0HbRbO1QnmKSF6a",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "8AM9Ho1fo648WuOrBGDvX",
+          "inputId": "input",
+          "outputNodeId": "gHSSvkoWQ76ko-0EvUdZn",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "oUXeuzH9rfmiEBbfTIysB",
+          "inputId": "input",
+          "outputNodeId": "8AM9Ho1fo648WuOrBGDvX",
+          "outputId": "matches"
+        },
+        {
+          "inputNodeId": "cObRObIxgwrJablQHLGnw",
+          "inputId": "input2Default",
+          "outputNodeId": "Vudek72LbIFekPR5DVDsq",
+          "outputId": "data"
+        },
+        {
+          "inputNodeId": "cObRObIxgwrJablQHLGnw",
+          "inputId": "input2",
+          "outputNodeId": "oUXeuzH9rfmiEBbfTIysB",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "VIZaMd_lS9i-zMjpKl5wj",
+          "inputId": "input",
+          "outputNodeId": "cObRObIxgwrJablQHLGnw",
+          "outputId": "output2"
+        },
+        {
+          "inputNodeId": "KIFBcqmOa5G-MPklHfHVR",
+          "inputId": "task_list",
+          "outputNodeId": "cObRObIxgwrJablQHLGnw",
+          "outputId": "output2"
+        },
+        {
+          "inputNodeId": "uEWXLi8XmKpaiGzzTFDme",
+          "inputId": "command_info",
+          "outputNodeId": "6P04DpTqBQMOYpBfJuurJ",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "6P04DpTqBQMOYpBfJuurJ",
+          "inputId": "command_name",
+          "outputNodeId": "G6xAcS6FpdFn1mXt1cw8f",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "6P04DpTqBQMOYpBfJuurJ",
+          "inputId": "arguments",
+          "outputNodeId": "Y5c04fJsFBeyYOZBbKr0u",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "6P04DpTqBQMOYpBfJuurJ",
+          "inputId": "reasoning",
+          "outputNodeId": "95GVpZr_gnXd9me3iCL84",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "6P04DpTqBQMOYpBfJuurJ",
+          "inputId": "command_output",
+          "outputNodeId": "9vGdJIknzBzhvWcYPxdiD",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "JA8Lk0pXQTMaNfUhEphm2",
+          "inputId": "command",
+          "outputNodeId": "6P04DpTqBQMOYpBfJuurJ",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "cObRObIxgwrJablQHLGnw",
+          "inputId": "input3",
+          "outputNodeId": "JA8Lk0pXQTMaNfUhEphm2",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "JA8Lk0pXQTMaNfUhEphm2",
+          "inputId": "prev_commands",
+          "outputNodeId": "cObRObIxgwrJablQHLGnw",
+          "outputId": "output3"
+        },
+        {
+          "inputNodeId": "uEWXLi8XmKpaiGzzTFDme",
+          "inputId": "current_task",
+          "outputNodeId": "cObRObIxgwrJablQHLGnw",
+          "outputId": "output2"
+        },
+        {
+          "inputNodeId": "KIFBcqmOa5G-MPklHfHVR",
+          "inputId": "previously_executed",
+          "outputNodeId": "cObRObIxgwrJablQHLGnw",
+          "outputId": "output3"
+        },
+        {
+          "inputNodeId": "dIYOri87l40Dxg2VcvK16",
+          "inputId": "input",
+          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
+          "outputId": "case5"
+        },
+        {
+          "inputNodeId": "Y-XfdVqvG3gqQYVMW8tOo",
+          "inputId": "input",
+          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
+          "outputId": "case6"
+        },
+        {
+          "inputNodeId": "Q2-bYh6LGkVm2WPb46tEz",
+          "inputId": "file_path",
+          "outputNodeId": "dIYOri87l40Dxg2VcvK16",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "L27NwFvq6cJgke83F55ei",
+          "inputId": "questions",
+          "outputNodeId": "Q2-bYh6LGkVm2WPb46tEz",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "r1AqIM_e223Gr_TP7x2vd",
+          "inputId": "if",
+          "outputNodeId": "L27NwFvq6cJgke83F55ei",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "r1AqIM_e223Gr_TP7x2vd",
+          "inputId": "true",
+          "outputNodeId": "L27NwFvq6cJgke83F55ei",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "9vGdJIknzBzhvWcYPxdiD",
+          "inputId": "completed_task_6",
+          "outputNodeId": "r1AqIM_e223Gr_TP7x2vd",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "YMPhS3MhQdfMqPqj8Ss8k",
+          "inputId": "file_path",
+          "outputNodeId": "Y-XfdVqvG3gqQYVMW8tOo",
+          "outputId": "output1"
+        },
+        {
+          "inputNodeId": "YMPhS3MhQdfMqPqj8Ss8k",
+          "inputId": "contents",
+          "outputNodeId": "Y-XfdVqvG3gqQYVMW8tOo",
+          "outputId": "output2"
+        },
+        {
+          "inputNodeId": "U0EcCqP66WFZahvpiGPFf",
+          "inputId": "questions",
+          "outputNodeId": "YMPhS3MhQdfMqPqj8Ss8k",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "RpW2gkVxBqfF23yeOVUxl",
+          "inputId": "if",
+          "outputNodeId": "U0EcCqP66WFZahvpiGPFf",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "RpW2gkVxBqfF23yeOVUxl",
+          "inputId": "true",
+          "outputNodeId": "U0EcCqP66WFZahvpiGPFf",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "9vGdJIknzBzhvWcYPxdiD",
+          "inputId": "completed_task_7",
+          "outputNodeId": "RpW2gkVxBqfF23yeOVUxl",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "KIFBcqmOa5G-MPklHfHVR",
+          "inputId": "files",
+          "outputNodeId": "4S1D75ofp0W1obD11VBqI",
+          "outputId": "files"
+        },
+        {
+          "inputNodeId": "Lt7FetK2fNHvp-zGpbyeb",
+          "inputId": "input",
+          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
+          "outputId": "unmatched"
+        },
+        {
+          "inputNodeId": "FWoMYwSLilFCCDRsWAR5J",
+          "inputId": "if",
+          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
+          "outputId": "case3"
+        },
+        {
+          "inputNodeId": "FWoMYwSLilFCCDRsWAR5J",
+          "inputId": "true",
+          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
+          "outputId": "case3"
+        },
+        {
+          "inputNodeId": "SNQCA2ZXN7LQRbPd1M6Mx",
+          "inputId": "fileMatch",
+          "outputNodeId": "eAIWo0XuNb-0A5z-D6yNQ",
+          "outputId": "matches"
+        },
+        {
+          "inputNodeId": "0xxgB-83ezLpsw0rLpo86",
+          "inputId": "fileMatch",
+          "outputNodeId": "Rb7VwhHEC8mJOe-1zoVCY",
+          "outputId": "matches"
+        },
+        {
+          "inputNodeId": "i4cBHxWO1HLsnHg3Yh7qP",
+          "inputId": "file_name",
+          "outputNodeId": "Rb7VwhHEC8mJOe-1zoVCY",
+          "outputId": "matches"
+        },
+        {
+          "inputNodeId": "bjL5VE8Zzz84m3QFLJ7x7",
+          "inputId": "input",
+          "outputNodeId": "MHz_Mr-O-KivwLl_Qbevp",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "qt2AdWZptLCfvACUeDtea",
+          "inputId": "object",
+          "outputNodeId": "bjL5VE8Zzz84m3QFLJ7x7",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "Vudek72LbIFekPR5DVDsq",
+          "inputId": "default",
+          "outputNodeId": "qt2AdWZptLCfvACUeDtea",
+          "outputId": "match"
+        }
+      ],
+      "metadata": {
+        "id": "yoe9VPnjUULQacHSolgiL",
+        "name": "Execute Task List",
+        "description": ""
+      }
+    },
+    "X1x17cpmF8RFGb4TYdGF_": {
+      "nodes": [
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "GgxznpUbo4lmVXSmWBjtC",
+          "visualData": {
+            "x": 717,
+            "y": 547,
+            "width": 300,
+            "zIndex": 1
+          },
+          "data": {
+            "text": "Please give me some YAML about a user so that I can test extracting it from your message. The root property must be yamlDocument, like this:\n\nyamlDocument:\n  key: value"
+          }
+        },
+        {
+          "type": "chat",
+          "title": "Chat",
+          "id": "LT7zZ_80U7YMH4AJFNVrI",
+          "visualData": {
+            "x": 1067,
+            "y": 508,
+            "width": 200,
+            "zIndex": 2
+          },
+          "data": {
+            "model": "gpt-3.5-turbo",
+            "useModelInput": false,
+            "temperature": 0.5,
+            "useTemperatureInput": false,
+            "top_p": 1,
+            "useTopPInput": false,
+            "useTopP": false,
+            "useUseTopPInput": false,
+            "maxTokens": 1024,
+            "useMaxTokensInput": false,
+            "useStop": false,
+            "stop": "",
+            "useStopInput": false,
+            "presencePenalty": 0,
+            "usePresencePenaltyInput": false,
+            "frequencyPenalty": 0,
+            "useFrequencyPenaltyInput": false,
+            "cache": false
+          }
+        },
+        {
+          "type": "extractYaml",
+          "title": "Extract YAML",
+          "id": "WiAcAGKAgBc2Hh18D7z0k",
+          "visualData": {
+            "x": 1313,
+            "y": 524,
+            "width": 250,
+            "zIndex": 3
+          },
+          "data": {
+            "rootPropertyName": "yamlDocument"
+          }
+        },
+        {
+          "type": "extractObjectPath",
+          "title": "Extract Object Path",
+          "id": "2cl8uVa3thrtBhIHCuaK1",
+          "visualData": {
+            "x": 1634,
+            "y": 519,
+            "width": 250,
+            "zIndex": 10
+          },
+          "data": {
+            "path": "$.yamlDocument.name",
+            "usePathInput": false
+          }
+        }
+      ],
+      "connections": [
+        {
+          "inputNodeId": "LT7zZ_80U7YMH4AJFNVrI",
+          "inputId": "prompt",
+          "outputNodeId": "GgxznpUbo4lmVXSmWBjtC",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "WiAcAGKAgBc2Hh18D7z0k",
+          "inputId": "input",
+          "outputNodeId": "LT7zZ_80U7YMH4AJFNVrI",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "2cl8uVa3thrtBhIHCuaK1",
+          "inputId": "object",
+          "outputNodeId": "WiAcAGKAgBc2Hh18D7z0k",
+          "outputId": "output"
+        }
+      ],
+      "metadata": {
+        "id": "X1x17cpmF8RFGb4TYdGF_",
+        "name": "Untitled Graph",
+        "description": ""
+      }
+    }
+  }
+}

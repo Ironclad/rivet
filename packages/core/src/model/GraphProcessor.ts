@@ -85,6 +85,7 @@ export class GraphProcessor {
   #scc: ChartNode[][];
   #nodesNotInCycle: ChartNode[];
   #externalFunctions: Record<string, ExternalFunction> = {};
+  slowMode = true;
 
   // Per-process state
   #erroredNodes: Set<NodeId> = undefined!;
@@ -365,7 +366,9 @@ export class GraphProcessor {
 
     await this.#processNode(node as Nodes);
 
-    // await new Promise((resolve) => setTimeout(resolve, 500));
+    if (this.slowMode) {
+      await new Promise((resolve) => setTimeout(resolve, 250));
+    }
 
     this.#emitter.emit('trace', `Finished processing node ${node.title} (${node.id})`);
     this.#visitedNodes.add(node.id);
