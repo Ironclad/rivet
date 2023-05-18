@@ -72,7 +72,7 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
 
     for (const [key, input] of entries(inputs)) {
       if (key.startsWith('input')) {
-        outputArray.push(input.value);
+        outputArray.push(input?.value);
       }
     }
 

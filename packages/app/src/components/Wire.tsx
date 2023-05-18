@@ -12,8 +12,7 @@ import { nodesSelector } from '../state/graph';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { useGetNodeIO } from '../hooks/useGetNodeIO';
 import clsx from 'clsx';
-import { nodePortCache, nodePortPositionCache } from './VisualNode';
-import { useViewportBounds } from '../hooks/useViewportBounds';
+import { nodePortPositionCache } from './VisualNode';
 import { lineCrossesViewport } from '../utils/lineClipping';
 
 type WireProps = {
@@ -106,11 +105,12 @@ export function getNodePortPosition(
   const node = nodes.find((node) => node.id === nodeId);
   if (node && portId) {
     let isInput = true;
-    const foundInput = getIO(node).inputDefinitions.find((input) => input.id === portId);
+    const io = getIO(node);
+    const foundInput = io.inputDefinitions.find((input) => input.id === portId);
     let foundPort: NodeInputDefinition | NodeOutputDefinition | undefined = foundInput;
     if (!foundPort) {
       isInput = false;
-      foundPort = getIO(node).outputDefinitions.find((output) => output.id === portId);
+      foundPort = io.outputDefinitions.find((output) => output.id === portId);
     }
 
     if (foundPort) {

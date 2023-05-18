@@ -61,12 +61,15 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
     const inputString = expectType(inputs['input' as PortId], 'string');
 
     const rootPropertyStart = inputString.indexOf(this.data.rootPropertyName);
-    const allNextLinesThatAreIndented = inputString
-      .slice(rootPropertyStart + this.data.rootPropertyName.length)
-      .split('\n')
-      .filter((line) => line.startsWith(' '));
 
-    const potentialYaml = `${this.data.rootPropertyName}:\n${allNextLinesThatAreIndented.join('\n')}`;
+    const nextLines = inputString.slice(rootPropertyStart).split('\n');
+    const yamlLines = [nextLines.shift()]; // remove the first line, which is the root property name
+
+    while (nextLines[0]?.startsWith(' ') || nextLines[0]?.startsWith('\t') || nextLines[0] === '') {
+      yamlLines.push(nextLines.shift());
+    }
+
+    const potentialYaml = yamlLines.join('\n');
 
     let yamlObject: Record<string, unknown> | undefined = undefined;
     try {

@@ -3,7 +3,7 @@ import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } 
 import { nanoid } from 'nanoid';
 import { DataValue, ArrayDataValue, StringDataValue } from '../DataValue';
 import { zip } from 'lodash-es';
-import { expectType } from '../..';
+import { Outputs, Inputs, expectType } from '../..';
 
 export type UserInputNode = ChartNode<'userInput', UserInputNodeData>;
 
@@ -60,17 +60,14 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
     ];
   }
 
-  async process(): Promise<Record<PortId, DataValue>> {
+  async process(): Promise<Outputs> {
     return {
       ['output' as PortId]: undefined!,
       ['questionsAndAnswers' as PortId]: undefined!,
     };
   }
 
-  getOutputValuesFromUserInput(
-    questions: Record<PortId, DataValue>,
-    answers: ArrayDataValue<StringDataValue>,
-  ): Record<PortId, DataValue> {
+  getOutputValuesFromUserInput(questions: Inputs, answers: ArrayDataValue<StringDataValue>): Outputs {
     const questionsList = this.data.useInput
       ? expectType(questions['questions' as PortId], 'string[]')
       : [this.data.prompt];

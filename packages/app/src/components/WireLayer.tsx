@@ -2,7 +2,6 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import { NodeConnection, NodeId, PortId, ChartNode } from '@ironclad/nodai-core';
 import { css } from '@emotion/react';
 import { Wire } from './Wire';
-import { useViewportBounds } from '../hooks/useViewportBounds';
 
 export type WireDef = {
   startNodeId: NodeId;

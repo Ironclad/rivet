@@ -32,7 +32,7 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
 
   getInputDefinitions(): NodeInputDefinition[] {
     // Extract inputs from text, everything like {{input}}
-    const inputNames = this.chartNode.data.text.match(/\{\{([^}]+)\}\}/g);
+    const inputNames = [...new Set(this.chartNode.data.text.match(/\{\{([^}]+)\}\}/g))];
     return (
       inputNames?.map((inputName) => {
         return {

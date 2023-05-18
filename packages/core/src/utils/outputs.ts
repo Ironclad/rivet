@@ -1,9 +1,8 @@
-import { expectType } from '..';
-import { DataValue, ArrayDataValue, StringDataValue } from '../model/DataValue';
-import { PortId } from '../model/NodeBase';
+import { Outputs, expectType } from '..';
+import { ArrayDataValue, StringDataValue } from '../model/DataValue';
 import { WarningsPort } from './symbols';
 
-export function addWarning(outputs: Record<PortId, DataValue>, warning: string): void {
+export function addWarning(outputs: Outputs, warning: string): void {
   if (!outputs[WarningsPort]) {
     outputs[WarningsPort] = { type: 'string[]', value: [] };
   }
@@ -11,7 +10,7 @@ export function addWarning(outputs: Record<PortId, DataValue>, warning: string):
   (outputs[WarningsPort] as ArrayDataValue<StringDataValue>).value.push(warning);
 }
 
-export function getWarnings(outputs: Record<PortId, DataValue> | undefined): string[] | undefined {
+export function getWarnings(outputs: Outputs | undefined): string[] | undefined {
   if (!outputs?.[WarningsPort]) {
     return undefined;
   }

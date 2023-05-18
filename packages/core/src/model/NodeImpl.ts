@@ -1,5 +1,5 @@
 import { DataValue } from './DataValue';
-import { ExternalFunction, GraphProcessor } from './GraphProcessor';
+import { ExternalFunction, GraphProcessor, Inputs, Outputs } from './GraphProcessor';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { GraphId } from './NodeGraph';
 import { Project } from './Project';
@@ -49,10 +49,7 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
     project: Project,
   ): NodeOutputDefinition[];
 
-  abstract process(
-    inputData: Record<PortId, DataValue>,
-    context: InternalProcessContext,
-  ): Promise<Record<PortId, DataValue>>;
+  abstract process(inputData: Inputs, context: InternalProcessContext): Promise<Outputs>;
 }
 
 export type ProcessContext = {
@@ -72,6 +69,6 @@ export type InternalProcessContext = ProcessContext & {
   /** Global cache shared by all nodes, is present for the entire execution of a graph (and shared in subgraphs). */
   executionCache: Map<string, unknown>;
 
-  onPartialOutputs?: (outputs: Record<PortId, DataValue>) => void;
+  onPartialOutputs?: (outputs: Outputs) => void;
   createSubProcessor: (subGraphId: GraphId) => GraphProcessor;
 };
