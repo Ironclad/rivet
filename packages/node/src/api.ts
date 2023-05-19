@@ -44,6 +44,7 @@ export type RunGraphOptions = {
   onUserEvent?: {
     [key: string]: (data: DataValue | undefined) => void;
   };
+  abortSignal?: AbortSignal;
 } & {
   [P in keyof ProcessEvents as `on${PascalCase<P>}`]?: (params: ProcessEvents[P]) => void;
 } & Settings;
@@ -126,6 +127,10 @@ export async function runGraph(project: Project, options: RunGraphOptions): Prom
       processor.onUserEvent(name, fn);
     }
   }
+
+  options.abortSignal?.addEventListener('abort', () => {
+    processor.abort();
+  });
 
   const resolvedInputs: Record<string, DataValue> = mapValues(inputs, (value): DataValue => {
     if (typeof value === 'string') {

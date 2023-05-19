@@ -28,6 +28,7 @@ import { RaiseEventNodeDescriptor } from '../components/nodes/RaiseEventNode';
 import { contextNodeDescriptor } from '../components/nodes/ContextNode';
 import { coalesceNodeDescriptor } from '../components/nodes/CoalesceNode';
 import { passthroughNodeDescriptor } from '../components/nodes/PassthroughNode';
+import { popNodeDescriptor } from '../components/nodes/PopNode';
 
 export type UnknownNodeComponentDescriptor = {
   Body?: FC<{ node: ChartNode }>;
@@ -75,6 +76,7 @@ const descriptors: NodeComponentDescriptors = {
   context: contextNodeDescriptor,
   coalesce: coalesceNodeDescriptor,
   passthrough: passthroughNodeDescriptor,
+  pop: popNodeDescriptor,
 };
 
 export function useNodeTypes() {

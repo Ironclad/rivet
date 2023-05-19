@@ -78,7 +78,7 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
       return {
         ['noMatch' as PortId]: {
           type: 'string',
-          value: inputString,
+          value: potentialYaml,
         },
         ['output' as PortId]: {
           type: 'control-flow-excluded',
@@ -91,7 +91,7 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
       return {
         ['noMatch' as PortId]: {
           type: 'string',
-          value: inputString,
+          value: potentialYaml,
         },
         ['output' as PortId]: {
           type: 'control-flow-excluded',

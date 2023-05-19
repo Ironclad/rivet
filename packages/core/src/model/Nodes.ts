@@ -28,6 +28,7 @@ import { RaiseEventNode, RaiseEventNodeImpl } from './nodes/RaiseEventNode';
 import { ContextNode, ContextNodeImpl } from './nodes/ContextNode';
 import { CoalesceNode, CoalesceNodeImpl } from './nodes/CoalesceNode';
 import { PassthroughNode, PassthroughNodeImpl } from './nodes/PassthroughNode';
+import { PopNode, PopNodeImpl } from './nodes/PopNode';
 
 export type Nodes =
   | UserInputNode
@@ -56,7 +57,8 @@ export type Nodes =
   | RaiseEventNode
   | ContextNode
   | CoalesceNode
-  | PassthroughNode;
+  | PassthroughNode
+  | PopNode;
 
 export * from './nodes/UserInputNode';
 export * from './nodes/TextNode';
@@ -85,6 +87,7 @@ export * from './nodes/RaiseEventNode';
 export * from './nodes/ContextNode';
 export * from './nodes/CoalesceNode';
 export * from './nodes/PassthroughNode';
+export * from './nodes/PopNode';
 
 export type NodeType = Nodes['type'];
 
@@ -116,6 +119,7 @@ const nodeImpls: Record<NodeType, { new (node: any): NodeImpl<ChartNode> }> = {
   context: ContextNodeImpl,
   coalesce: CoalesceNodeImpl,
   passthrough: PassthroughNodeImpl,
+  pop: PopNodeImpl,
 };
 
 export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode> => {
@@ -155,6 +159,7 @@ export function nodeFactory(type: NodeType): Nodes {
     .with('context', () => ContextNodeImpl.create())
     .with('coalesce', () => CoalesceNodeImpl.create())
     .with('passthrough', () => PassthroughNodeImpl.create())
+    .with('pop', () => PopNodeImpl.create())
     .exhaustive();
 }
 
@@ -186,6 +191,7 @@ export const nodeDisplayName: Record<NodeType, string> = {
   context: 'Context',
   coalesce: 'Coalesce',
   passthrough: 'Passthrough',
+  pop: 'Pop',
 };
 
 export type NodeOfType<T extends NodeType> = Extract<Nodes, { type: T }>;
