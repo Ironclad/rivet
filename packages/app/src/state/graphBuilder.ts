@@ -29,3 +29,8 @@ export const lastMousePositionState = atom<{ x: number; y: number }>({
   key: 'lastMousePosition',
   default: { x: 0, y: 0 },
 });
+
+export const sidebarOpenState = atom<boolean>({
+  key: 'sidebarOpen',
+  default: true,
+});
