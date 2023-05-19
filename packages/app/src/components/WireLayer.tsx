@@ -23,7 +23,6 @@ const wiresStyles = css`
   pointer-events: none;
 
   path {
-    stroke-width: 2;
     stroke-linecap: butt;
     fill: none;
     stroke: gray;

@@ -31,7 +31,7 @@ export type PartialConnection = {
 export const Wire: FC<WireProps> = ({ connection, selected, highlighted }) => {
   const nodes = useRecoilValue(nodesSelector);
   const getIO = useGetNodeIO();
-  const { canvasToClientPosition } = useCanvasPositioning();
+  const { canvasPosition, canvasToClientPosition } = useCanvasPositioning();
 
   let start: { x: number; y: number };
   let end: { x: number; y: number };
@@ -92,7 +92,13 @@ export const Wire: FC<WireProps> = ({ connection, selected, highlighted }) => {
       : `M${start.x},${start.y} C${curveX1},${curveY1} ${curveX1},${middleY} ${start.x},${middleY} ` +
         `L${end.x},${middleY} C${curveX2},${middleY} ${curveX2},${curveY2} ${end.x},${end.y}`;
 
-  return <path className={clsx('wire', { selected, highlighted })} d={wirePath} />;
+  return (
+    <path
+      className={clsx('wire', { selected, highlighted })}
+      d={wirePath}
+      strokeWidth={Math.max(0.6, Math.min(canvasPosition.zoom * 2, 4))}
+    />
+  );
 };
 
 export function getNodePortPosition(
