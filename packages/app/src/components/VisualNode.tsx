@@ -95,7 +95,7 @@ export const VisualNode = memo(
         };
       }, [node.id]);
 
-      const isZoomedOut = zoom < 0.4;
+      const isZoomedOut = zoom < 0;
 
       return (
         <div
