@@ -322,7 +322,7 @@ const NodePorts: FC<{
   zoomedOut?: boolean;
   onWireStartDrag?: (event: MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => void;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
-}> = memo(({ node, connections, zoomedOut, onWireStartDrag, onWireEndDrag }) => {
+}> = ({ node, connections, zoomedOut, onWireStartDrag, onWireEndDrag }) => {
   const getIO = useGetNodeIO();
   const { inputDefinitions, outputDefinitions } = getIO(node);
   const { clientToCanvasPosition } = useCanvasPositioning();
@@ -405,4 +405,4 @@ const NodePorts: FC<{
       </div>
     </div>
   );
-});
+};
