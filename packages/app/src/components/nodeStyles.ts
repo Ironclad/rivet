@@ -20,6 +20,10 @@ export const nodeStyles = css`
     transform-origin: top left;
   }
 
+  .node.zoomedOut {
+    min-width: 200px;
+  }
+
   .node.overlayNode {
     border-color: var(--primary);
     transition-duration: 0;
@@ -44,6 +48,14 @@ export const nodeStyles = css`
     display: flex;
     justify-content: space-between;
     user-select: none;
+    overflow: hidden;
+    word-break: break-word;
+    hyphens: auto;
+  }
+
+  .node.zoomedOut .node-title {
+    padding: 24px;
+    line-height: 35px;
   }
 
   .grab-area {
@@ -61,6 +73,10 @@ export const nodeStyles = css`
     font-weight: bold;
     font-size: 14px;
     text-transform: uppercase;
+  }
+
+  .node.zoomedOut .title-text {
+    font-size: 25px;
   }
 
   .title-controls {
@@ -104,6 +120,12 @@ export const nodeStyles = css`
     button:hover {
       color: var(--primary);
     }
+  }
+
+  .node.zoomedOut .title-controls {
+    position: absolute;
+    right: 10px;
+    top: 10px;
   }
 
   .node-body {
@@ -154,9 +176,19 @@ export const nodeStyles = css`
     transition: opacity 0.2s ease-out;
   }
 
+  .node.zoomedOut .port-label {
+    display: none;
+  }
+
   .node:hover .port-label,
   .node.overlayNode .port-label {
     opacity: 1;
+  }
+
+  .node.zoomedOut .port:hover .port-label {
+    display: block;
+    font-size: 20px;
+    line-height: 12px;
   }
 
   .input-port {
