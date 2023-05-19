@@ -31,6 +31,7 @@ export const addContextMenuGroups = [
       { label: 'Extract YAML', nodeType: 'extractYaml' },
       { label: 'Extract Object Path', nodeType: 'extractObjectPath' },
       { label: 'Array', nodeType: 'array' },
+      { label: 'Pop', nodeType: 'pop' },
     ],
   },
   {
