@@ -20,6 +20,7 @@ import { useSaveProject } from '../hooks/useSaveProject';
 import { LoadingSpinner } from './LoadingSpinner';
 import { runningGraphsState } from '../state/dataFlow';
 import { useDuplicateGraph } from '../hooks/useDuplicateGraph';
+import { sidebarOpenState } from '../state/graphBuilder';
 
 const styles = css`
   position: fixed;
@@ -171,7 +172,7 @@ export const LeftSidebar: FC = () => {
   const [graph, setGraph] = useRecoilState(graphState);
   const [project, setProject] = useRecoilState(projectState);
   const savedGraphs = useRecoilValue(savedGraphsState);
-  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useRecoilState(sidebarOpenState);
   const runningGraphs = useRecoilValue(runningGraphsState);
 
   const sortedGraphs = orderBy(savedGraphs, ['metadata.name'], ['asc']);
@@ -192,10 +193,10 @@ export const LeftSidebar: FC = () => {
   return (
     <div
       css={styles}
-      style={{ transform: isSidebarVisible ? 'translateX(0)' : 'translateX(-100%)', transition: 'transform 0.3s ease' }}
+      style={{ transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)', transition: 'transform 0.3s ease' }}
     >
-      <div className="toggle-tab" onClick={() => setIsSidebarVisible(!isSidebarVisible)}>
-        {isSidebarVisible ? <ExpandLeftIcon /> : <ExpandRightIcon />}
+      <div className="toggle-tab" onClick={() => setSidebarOpen(!sidebarOpen)}>
+        {sidebarOpen ? <ExpandLeftIcon /> : <ExpandRightIcon />}
       </div>
       <div className="project-info-section">
         <div className="loaded-project">
