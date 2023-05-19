@@ -340,6 +340,10 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
               ) {
                 return null;
               }
+
+              if (draggingNode === node) {
+                return null;
+              }
               return (
                 <DraggableNode
                   key={node.id}
@@ -373,12 +377,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
             onMenuItemSelected={contextMenuItemSelected}
           />
         </CSSTransition>
-        <WireLayer
-          nodes={nodes}
-          connections={connections}
-          draggingWire={draggingWire}
-          highlightedNodes={highlightedNodes}
-        />
+        <WireLayer connections={connections} draggingWire={draggingWire} highlightedNodes={highlightedNodes} />
 
         <DragOverlay dropAnimation={null}>
           {draggingNode ? (

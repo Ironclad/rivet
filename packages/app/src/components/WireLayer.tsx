@@ -1,7 +1,8 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import { NodeConnection, NodeId, PortId, ChartNode } from '@ironclad/nodai-core';
 import { css } from '@emotion/react';
-import { Wire } from './Wire';
+import { ConditionallyRenderWire } from './Wire';
+import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 
 export type WireDef = {
   startNodeId: NodeId;
@@ -11,7 +12,6 @@ export type WireDef = {
 };
 
 type WireLayerProps = {
-  nodes: ChartNode[];
   connections: NodeConnection[];
   draggingWire?: WireDef;
   highlightedNodes?: NodeId[];
@@ -38,7 +38,7 @@ const wiresStyles = css`
   }
 `;
 
-export const WireLayer: FC<WireLayerProps> = ({ nodes, connections, draggingWire, highlightedNodes }) => {
+export const WireLayer: FC<WireLayerProps> = ({ connections, draggingWire, highlightedNodes }) => {
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const handleMouseMove = useCallback((event: MouseEvent) => {
@@ -52,32 +52,38 @@ export const WireLayer: FC<WireLayerProps> = ({ nodes, connections, draggingWire
     };
   }, [handleMouseMove]);
 
+  const { canvasPosition, clientToCanvasPosition } = useCanvasPositioning();
+  const mousePositionCanvas = clientToCanvasPosition(mousePosition.x, mousePosition.y);
+
   return (
     <svg css={wiresStyles}>
-      {draggingWire && (
-        <Wire
-          connection={{
-            nodeId: draggingWire.startNodeId,
-            portId: draggingWire.startPortId,
-            toX: mousePosition.x,
-            toY: mousePosition.y,
-          }}
-          selected={false}
-          highlighted={false}
-        />
-      )}
-      {connections.map((connection) => {
-        const highlighted =
-          highlightedNodes?.includes(connection.inputNodeId) || highlightedNodes?.includes(connection.outputNodeId);
-        return (
-          <Wire
-            connection={connection}
+      <g transform={`scale(${canvasPosition.zoom}) translate(${canvasPosition.x}, ${canvasPosition.y})`}>
+        {draggingWire && (
+          <ConditionallyRenderWire
+            connection={{
+              nodeId: draggingWire.startNodeId,
+              portId: draggingWire.startPortId,
+              toX: mousePositionCanvas.x,
+              toY: mousePositionCanvas.y,
+            }}
             selected={false}
-            key={`wire-${connection.inputId}-${connection.inputNodeId}`}
-            highlighted={!!highlighted}
+            highlighted={false}
+            key="wire-inprogress"
           />
-        );
-      })}
+        )}
+        {connections.map((connection) => {
+          const highlighted =
+            highlightedNodes?.includes(connection.inputNodeId) || highlightedNodes?.includes(connection.outputNodeId);
+          return (
+            <ConditionallyRenderWire
+              connection={connection}
+              selected={false}
+              key={`wire-${connection.inputId}-${connection.inputNodeId}`}
+              highlighted={!!highlighted}
+            />
+          );
+        })}
+      </g>
     </svg>
   );
 };
