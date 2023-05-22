@@ -2,7 +2,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { GraphBuilder } from './GraphBuilder';
 import { MenuBar } from './MenuBar';
 import { graphState } from '../state/graph';
-import { FC, useRef } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import produce from 'immer';
 import { NodeRunData, graphRunningState, lastRunDataByNodeState, runningGraphsState } from '../state/dataFlow';
 import { css } from '@emotion/react';
@@ -30,6 +30,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
+import { useSaveProject } from '../hooks/useSaveProject';
 
 const styles = css`
   overflow: hidden;
@@ -274,6 +275,22 @@ export const NodaiApp: FC = () => {
       currentProcessor.current?.abort();
     }
   });
+
+  const { saveProject } = useSaveProject();
+
+  useEffect(() => {
+    const listener = (e: KeyboardEvent) => {
+      if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        saveProject();
+      }
+    };
+    document.addEventListener('keydown', listener);
+
+    return () => {
+      document.removeEventListener('keydown', listener);
+    };
+  }, [saveProject]);
 
   return (
     <div className="app" css={styles}>
