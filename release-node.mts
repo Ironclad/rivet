@@ -5,6 +5,9 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { $ } from 'zx';
 
+// Store the current branch name
+const initialBranch = (await $`git branch --show-current`).stdout.trim();
+
 try {
   // Check if the working directory is clean
   const gitStatus = (await $`git status --porcelain`).stdout.trim();
@@ -35,7 +38,7 @@ try {
   // Get the latest tag
   let defaultVersion: string;
   try {
-    const latestTag = (await $`git tag --sort=-creatordate --list 'node-v*'`).stdout.trim().split('\n')[0];
+    const latestTag = (await $`git tag --sort=-v:refname --list 'node-v*'`).stdout.trim().split('\n')[0];
     if (!latestTag) {
       throw new Error();
     }
@@ -75,9 +78,6 @@ try {
 
   await writeFile('dist/node/package.json', JSON.stringify(newPackageJSON, null, 2));
 
-  // Store the current branch name
-  const currentBranch = (await $`git branch --show-current`).stdout.trim();
-
   // Create a temporary branch without any history
   const tempBranch = 'temp-' + argv.version;
   await $`git checkout --orphan ${tempBranch}`;
@@ -89,19 +89,24 @@ try {
   await $`git add -f packages/*/dist`;
 
   // Commit the changes
-  await $`git commit -m "Exported node ${argv.version}"`;
+  await $`git commit -m "Exported ${argv.version}"`;
 
   // Create a tag with the version name
   await $`git tag ${argv.version}`;
 
   // Switch back to the original branch
-  await $`git checkout --force ${currentBranch}`;
+  await $`git checkout --force ${initialBranch}`;
 
   // Delete the temporary branch
   await $`git branch -D ${tempBranch}`;
 
   console.log(`New tag '${argv.version}' created with the contents of the dist/node folder and packages directory.`);
 } catch (err) {
+  const rightNowBranch = (await $`git branch --show-current`).stdout.trim();
+  if (rightNowBranch !== initialBranch) {
+    await $`git checkout -f ${initialBranch}`;
+  }
+
   console.error(err instanceof Error ? err.message : err?.toString());
   process.exit(1);
 }
@@ -130,5 +135,5 @@ function incrementVersion(version: string, argv: any) {
     versionParts[1] = (parseInt(versionParts[1], 10) + 1).toString();
     versionParts[2] = '0';
   }
-  return versionParts.join('.');
+  return `node-v${versionParts.join('.')}`;
 }
