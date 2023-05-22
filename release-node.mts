@@ -60,7 +60,11 @@ try {
   // Combine all dependencies since we bundled the two packages
   const nodePackageJSON = JSON.parse(await readFile('packages/node/package.json', 'utf8'));
   const corePackageJSON = JSON.parse(await readFile('packages/core/package.json', 'utf8'));
-  const combinedDependencies = { ...nodePackageJSON.dependencies, ...corePackageJSON.dependencies };
+  const combinedDependencies = {
+    ...nodePackageJSON.dependencies,
+    ...corePackageJSON.dependencies,
+    '@ironclad/nodai-core': undefined,
+  };
 
   const newPackageJSON = {
     name: '@ironclad/nodai-node',
