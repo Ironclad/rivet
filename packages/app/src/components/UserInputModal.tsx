@@ -6,6 +6,14 @@ import Modal, { ModalBody, ModalFooter, ModalHeader, ModalTitle, ModalTransition
 import Button from '@atlaskit/button';
 import TextArea from '@atlaskit/textarea';
 import { Field } from '@atlaskit/form';
+import { css } from '@emotion/react';
+
+const styles = css`
+  .question {
+    margin-bottom: 8px;
+    font-family: 'Roboto', sans-serif;
+  }
+`;
 
 type UserInputModalProps = {
   open: boolean;
@@ -48,19 +56,24 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, onSub
             <ModalTitle>User Input</ModalTitle>
           </ModalHeader>
           <ModalBody>
-            {questions.map((question, index) => (
-              <Field name={`question-${index}`} label={question} key={`question-${index}`}>
-                {() => (
-                  <TextArea
-                    value={answers?.[index] ?? ''}
-                    onChange={(e) => handleChange(index, e.target.value)}
-                    autoFocus={index === 0}
-                    resize="vertical"
-                    minimumRows={4}
-                  />
-                )}
-              </Field>
-            ))}
+            <div css={styles}>
+              {questions.map((question, index) => (
+                <Field name={`question-${index}`} label={`Question ${index + 1}`} key={`question-${index}`}>
+                  {() => (
+                    <div>
+                      <pre className="question pre-wrap">{question}</pre>
+                      <TextArea
+                        value={answers?.[index] ?? ''}
+                        onChange={(e) => handleChange(index, e.target.value)}
+                        autoFocus={index === 0}
+                        resize="vertical"
+                        minimumRows={4}
+                      />
+                    </div>
+                  )}
+                </Field>
+              ))}
+            </div>
           </ModalBody>
           <ModalFooter>
             <Button onClick={handleSubmit}>Submit</Button>

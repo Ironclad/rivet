@@ -1,5 +1,5 @@
 import { atom, selectorFamily } from 'recoil';
-import { DataValue, GraphId, NodeId, PortId } from '@ironclad/nodai-core';
+import { DataValue, GraphId, Inputs, NodeId, Outputs, PortId } from '@ironclad/nodai-core';
 
 export type RunDataByNodeId = {
   [nodeId: NodeId]: NodeRunData;
@@ -8,17 +8,13 @@ export type RunDataByNodeId = {
 export type NodeRunData = {
   status?: { type: 'ok' } | { type: 'error'; error: string } | { type: 'running' };
 
-  inputData?: {
-    [key: PortId]: DataValue;
-  };
+  inputData?: Inputs;
 
-  outputData?: {
-    [key: PortId]: DataValue;
-  };
+  outputData?: Outputs;
 
   splitOutputData?: {
     [index: number]: {
-      [key: PortId]: DataValue;
+      [key: PortId]: DataValue | undefined;
     };
   };
 };

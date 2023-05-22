@@ -6,7 +6,9 @@ import { coerceType } from '../../utils/coerceType';
 
 export type LoopControllerNode = ChartNode<'loopController', LoopControllerNodeData>;
 
-export type LoopControllerNodeData = {};
+export type LoopControllerNodeData = {
+  maxIterations?: number;
+};
 
 export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
   static create(): LoopControllerNode {
@@ -19,7 +21,9 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
         y: 0,
         width: 250,
       },
-      data: {},
+      data: {
+        maxIterations: 100,
+      },
     };
 
     return chartNode;

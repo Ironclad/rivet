@@ -6,7 +6,7 @@ import { monaco } from '../../utils/monaco';
 import styled from '@emotion/styled';
 import { useLatest } from 'ahooks';
 import { css } from '@emotion/react';
-import { ChartNode, PortId, TextNode } from '@ironclad/nodai-core';
+import { ChartNode, PortId, TextNode, coerceType } from '@ironclad/nodai-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type TextNodeBodyProps = {
@@ -78,11 +78,7 @@ export const TextNodeOutput: FC<TextNodeBodyProps> = ({ node }) => {
     );
   }
 
-  return (
-    <pre className="pre-wrap">
-      <RenderDataValue value={outputText} />
-    </pre>
-  );
+  return <pre className="pre-wrap">{coerceType(outputText, 'string')}</pre>;
 };
 
 export type TextNodeEditorProps = {

@@ -1,6 +1,6 @@
-import { FC } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { NodeCanvas } from './NodeCanvas';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { connectionsSelector } from '../state/graph';
 import { nodesSelector } from '../state/graph';
 import { selectedNodeState } from '../state/graphBuilder';
@@ -9,10 +9,21 @@ import styled from '@emotion/styled';
 import { ContextMenuData } from '../hooks/useContextMenu';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { useStableCallback } from '../hooks/useStableCallback';
-import { ChartNode, NodeId, NodeType, Nodes, nodeFactory } from '@ironclad/nodai-core';
+import { ArrayDataValue, ChartNode, NodeId, NodeType, Nodes, StringDataValue, nodeFactory } from '@ironclad/nodai-core';
+import { userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
+import { entries } from '../utils/typeSafety';
+import { UserInputModal } from './UserInputModal';
+import Button from '@atlaskit/button';
 
 const Container = styled.div`
   position: relative;
+
+  .user-input-modal-open {
+    position: absolute;
+    top: 48px;
+    right: 0;
+    z-index: 100;
+  }
 `;
 
 export const GraphBuilder: FC = () => {
@@ -102,6 +113,32 @@ export const GraphBuilder: FC = () => {
     setSelectedNode?.(node.id);
   });
 
+  const allCurrentQuestions = useRecoilValue(userInputModalQuestionsState);
+  const userInputModalSubmit = useRecoilValue(userInputModalSubmitState);
+  const firstNodeQuestions = useMemo(() => entries(allCurrentQuestions)[0], [allCurrentQuestions]);
+
+  const [isUserInputModalOpen, setUserInputModalOpen] = useState(false);
+
+  const handleCloseUserInputModal = () => {
+    setUserInputModalOpen(false);
+  };
+
+  const handleOpenUserInputModal = () => {
+    setUserInputModalOpen(true);
+  };
+
+  const handleSubmitUserInputModal = (answers: ArrayDataValue<StringDataValue>) => {
+    // Handle the submission of the user input
+    setUserInputModalOpen(false);
+    userInputModalSubmit.submit(firstNodeQuestions![0], answers);
+  };
+
+  useEffect(() => {
+    if (firstNodeQuestions && firstNodeQuestions.length > 0) {
+      setUserInputModalOpen(true);
+    }
+  }, [firstNodeQuestions]);
+
   return (
     <Container>
       <NodeCanvas
@@ -114,6 +151,17 @@ export const GraphBuilder: FC = () => {
         onContextMenuItemSelected={contextMenuItemSelected}
       />
       <NodeEditorRenderer />
+      {firstNodeQuestions && firstNodeQuestions.length > 0 && (
+        <Button onClick={handleOpenUserInputModal} className="user-input-modal-open" appearance="primary">
+          User Input Needed
+        </Button>
+      )}
+      <UserInputModal
+        open={isUserInputModalOpen}
+        questions={firstNodeQuestions ? firstNodeQuestions[1] : []}
+        onSubmit={handleSubmitUserInputModal}
+        onClose={handleCloseUserInputModal}
+      />
     </Container>
   );
 };

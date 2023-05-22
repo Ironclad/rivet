@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { expectType } from '../../utils/expectType';
+import { coerceType } from '../..';
 
 export type MatchNode = ChartNode<'match', MatchNodeData>;
 
@@ -65,7 +66,7 @@ export class MatchNodeImpl extends NodeImpl<MatchNode> {
   }
 
   async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
-    const inputString = expectType(inputs.input, 'string');
+    const inputString = coerceType(inputs.input, 'string');
     const cases = this.chartNode.data.cases;
     let matched = false;
     const output: Record<string, DataValue> = {};
