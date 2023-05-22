@@ -58,6 +58,10 @@ export type ProcessEvents = {
   abort: void;
 
   trace: string;
+
+  pause: void;
+
+  resume: void;
 } & {
   [key: `userEvent:${string}`]: DataValue | undefined;
 };
@@ -86,6 +90,7 @@ export class GraphProcessor {
   #nodesNotInCycle: ChartNode[];
   #externalFunctions: Record<string, ExternalFunction> = {};
   slowMode = false;
+  #isPaused = false;
 
   // Per-process state
   #erroredNodes: Set<NodeId> = undefined!;
@@ -219,6 +224,32 @@ export class GraphProcessor {
     this.#emitter.emit('abort', void 0);
 
     await this.#processingQueue.onIdle();
+  }
+
+  pause(): void {
+    if (this.#isPaused === false) {
+      this.#isPaused = true;
+      this.#emitter.emit('pause', void 0);
+    }
+  }
+
+  resume(): void {
+    if (this.#isPaused) {
+      this.#isPaused = false;
+      this.#emitter.emit('resume', void 0);
+    }
+  }
+
+  setSlowMode(slowMode: boolean): void {
+    this.slowMode = slowMode;
+  }
+
+  async #waitUntilUnpaused(): Promise<void> {
+    if (!this.#isPaused) {
+      return;
+    }
+
+    await this.#emitter.once('resume');
   }
 
   async #fetchNodeDataAndProcessNode(
@@ -481,6 +512,8 @@ export class GraphProcessor {
       this.#emitter.emit('graphStart', { graph: this.#graph, inputs: this.#graphInputs });
 
       const nodesWithoutOutputs = this.#graph.nodes.filter((node) => this.#outputNodesFrom(node).length === 0);
+
+      await this.#waitUntilUnpaused();
 
       for (const nodeWithoutOutputs of nodesWithoutOutputs) {
         this.#processingQueue.add(async () => {
@@ -766,6 +799,17 @@ export class GraphProcessor {
         processor.on('userInput', (e) => this.#emitter.emit('userInput', e)); // TODO!
         processor.on('graphStart', (e) => this.#emitter.emit('graphStart', e));
         processor.on('graphFinish', (e) => this.#emitter.emit('graphFinish', e));
+        processor.on('pause', (e) => {
+          if (!this.#isPaused) {
+            this.pause();
+          }
+        });
+        processor.on('resume', (e) => {
+          if (this.#isPaused) {
+            this.resume();
+          }
+        });
+
         processor.onAny((event, data) => {
           if (event.startsWith('userEvent:')) {
             this.#emitter.emit(event, data);
@@ -775,11 +819,14 @@ export class GraphProcessor {
         this.#subprocessors.add(processor);
 
         this.on('abort', () => processor.abort());
+        this.on('pause', () => processor.pause());
+        this.on('resume', () => processor.resume());
 
         return processor;
       },
     };
 
+    await this.#waitUntilUnpaused();
     const results = await instance.process(inputValues, context);
     if (this.#abortController.signal.aborted) {
       throw new Error('Aborted');

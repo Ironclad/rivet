@@ -2,15 +2,14 @@ import { css } from '@emotion/react';
 import { FC, useState } from 'react';
 import { ReactComponent as ChevronRightIcon } from 'majesticons/line/chevron-right-line.svg';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
+import { ReactComponent as PauseIcon } from 'majesticons/line/pause-circle-line.svg';
+import { ReactComponent as PlayIcon } from 'majesticons/line/play-circle-line.svg';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { settingsModalOpenState } from './SettingsModal';
-import { loadGraphData, loadProjectData, saveGraphData, saveProjectData } from '../utils/fileIO';
+import { loadGraphData, saveGraphData } from '../utils/fileIO';
 import { graphState } from '../state/graph';
-import { graphRunningState } from '../state/dataFlow';
+import { graphRunningState, graphPausedState } from '../state/dataFlow';
 import clsx from 'clsx';
-import { loadedProjectState, projectState } from '../state/savedGraphs';
-import { nanoid } from 'nanoid';
-import { ProjectId, emptyNodeGraph } from '@ironclad/nodai-core';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
 import { useLoadProject } from '../hooks/useLoadProject';
 import { useSaveProject } from '../hooks/useSaveProject';
@@ -60,23 +59,48 @@ const styles = css`
     }
   }
 
-  .run-button button {
-    background-color: var(--success);
-    color: #ffffff;
+  .right-buttons {
+    display: flex;
+  }
+
+  .run-button button,
+  .pause-button button {
     border: none;
     padding: 0.5rem 1rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+  }
+
+  .run-button button {
+    background-color: var(--success);
+    color: #ffffff;
 
     &:hover {
       background-color: var(--success-dark);
     }
   }
 
+  .pause-button button {
+    background-color: rgba(255, 255, 255, 0.1);
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+
   .run-button.running button {
     background-color: var(--error);
+  }
+
+  .pause-button.paused button {
+    background-color: var(--warning);
+    color: var(--grey-dark);
+
+    &:hover {
+      background-color: var(--warning-dark);
+    }
   }
 
   .file-menu {
@@ -154,19 +178,20 @@ const styles = css`
 export type MenuBarProps = {
   onRunGraph?: () => void;
   onAbortGraph?: () => void;
+  onPauseGraph?: () => void;
+  onResumeGraph?: () => void;
 };
 
-export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph }) => {
+export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGraph, onResumeGraph }) => {
   const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
   const [graphData, setGraphData] = useRecoilState(graphState);
-  const [project, setProject] = useRecoilState(projectState);
   const [fileMenuOpen, setFileMenuOpen] = useState(false);
   const loadProject = useLoadProject();
   const { saveProject } = useSaveProject();
   const newProject = useNewProject();
-  const setLoadedProject = useSetRecoilState(loadedProjectState);
 
   const graphRunning = useRecoilValue(graphRunningState);
+  const graphPaused = useRecoilValue(graphPausedState);
 
   const { remoteDebuggerState: remoteDebugger, connect, disconnect } = useRemoteDebugger();
 
@@ -222,18 +247,35 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph }) => {
           )}
         </div>
       </div>
-      <div className={clsx('run-button', { running: graphRunning })}>
-        <button onClick={graphRunning ? onAbortGraph : onRunGraph}>
-          {graphRunning ? (
-            <>
-              Abort <MultiplyIcon />
-            </>
-          ) : (
-            <>
-              Run <ChevronRightIcon />
-            </>
-          )}
-        </button>
+      <div className="right-buttons">
+        {graphRunning && (
+          <div className={clsx('pause-button', { paused: graphPaused })}>
+            <button onClick={graphPaused ? onResumeGraph : onPauseGraph}>
+              {graphPaused ? (
+                <>
+                  Resume <PlayIcon />
+                </>
+              ) : (
+                <>
+                  Pause <PauseIcon />
+                </>
+              )}
+            </button>
+          </div>
+        )}
+        <div className={clsx('run-button', { running: graphRunning })}>
+          <button onClick={graphRunning ? onAbortGraph : onRunGraph}>
+            {graphRunning ? (
+              <>
+                Abort <MultiplyIcon />
+              </>
+            ) : (
+              <>
+                Run <ChevronRightIcon />
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
