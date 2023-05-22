@@ -4,7 +4,13 @@ import { MenuBar } from './MenuBar';
 import { graphState } from '../state/graph';
 import { FC, useEffect, useRef } from 'react';
 import produce from 'immer';
-import { NodeRunData, graphRunningState, lastRunDataByNodeState, runningGraphsState } from '../state/dataFlow';
+import {
+  NodeRunData,
+  graphPausedState,
+  graphRunningState,
+  lastRunDataByNodeState,
+  runningGraphsState,
+} from '../state/dataFlow';
 import { css } from '@emotion/react';
 import { SettingsModal } from './SettingsModal';
 import { setGlobalTheme } from '@atlaskit/tokens';
@@ -62,6 +68,7 @@ export const NodaiApp: FC = () => {
 
   const setUserInputModalSubmit = useSetRecoilState(userInputModalSubmitState);
   const setGraphRunning = useSetRecoilState(graphRunningState);
+  const setGraphPaused = useSetRecoilState(graphPausedState);
   const currentProcessor = useRef<GraphProcessor | null>(null);
   const project = useRecoilValue(projectState);
 
@@ -162,6 +169,14 @@ export const NodaiApp: FC = () => {
     );
   };
 
+  const pause = () => {
+    setGraphPaused(true);
+  };
+
+  const resume = () => {
+    setGraphPaused(false);
+  };
+
   setCurrentDebuggerMessageHandler((message, data) => {
     switch (message) {
       case 'nodeStart':
@@ -199,6 +214,12 @@ export const NodaiApp: FC = () => {
         break;
       case 'trace':
         console.log(`remote: ${data}`);
+        break;
+      case 'pause':
+        pause();
+        break;
+      case 'resume':
+        resume();
         break;
     }
   });
@@ -247,6 +268,8 @@ export const NodaiApp: FC = () => {
       processor.on('graphFinish', graphFinish);
       processor.on('nodeOutputsCleared', nodeOutputsCleared);
       processor.on('trace', (log) => console.log(log));
+      processor.on('pause', pause);
+      processor.on('resume', resume);
 
       processor.onUserEvent('toast', (data: DataValue | undefined) => {
         const stringData = coerceTypeOptional(data, 'string');
@@ -276,6 +299,30 @@ export const NodaiApp: FC = () => {
     }
   });
 
+  const tryPauseGraph = useStableCallback(() => {
+    if (
+      remoteDebugger.remoteDebuggerState.started &&
+      remoteDebugger.remoteDebuggerState.socket?.readyState === WebSocket.OPEN
+    ) {
+      console.log('Pausing via remote debugger');
+      remoteDebugger.send('pause', undefined);
+    } else {
+      currentProcessor.current?.pause();
+    }
+  });
+
+  const tryResumeGraph = useStableCallback(() => {
+    if (
+      remoteDebugger.remoteDebuggerState.started &&
+      remoteDebugger.remoteDebuggerState.socket?.readyState === WebSocket.OPEN
+    ) {
+      console.log('Resuming via remote debugger');
+      remoteDebugger.send('resume', undefined);
+    } else {
+      currentProcessor.current?.resume();
+    }
+  });
+
   const { saveProject } = useSaveProject();
 
   useEffect(() => {
@@ -294,7 +341,12 @@ export const NodaiApp: FC = () => {
 
   return (
     <div className="app" css={styles}>
-      <MenuBar onRunGraph={tryRunGraph} onAbortGraph={tryAbortGraph} />
+      <MenuBar
+        onRunGraph={tryRunGraph}
+        onAbortGraph={tryAbortGraph}
+        onPauseGraph={tryPauseGraph}
+        onResumeGraph={tryResumeGraph}
+      />
       <LeftSidebar />
       <GraphBuilder />
       <SettingsModal />

@@ -42,3 +42,8 @@ export const graphRunningState = atom<boolean>({
   key: 'graphRunning',
   default: false,
 });
+
+export const graphPausedState = atom<boolean>({
+  key: 'graphPaused',
+  default: false,
+});
