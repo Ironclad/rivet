@@ -1853,7 +1853,7 @@
           "data": {
             "type": "user",
             "useTypeInput": false,
-            "promptText": "{{context}}\n\nThese files are present in the Nodai application:\n\n{{files}}\n\nI have the following question or request:\n\n\"\"\"\n{{request}}\n\"\"\"\n\nYou asked these questions:\n\n{{questions}}\n\nHere are your answers:\n\n{{answers}}\n\nDo you have any additional questions? Or followup questions?"
+            "promptText": "{{context}}\n\nI have the following question or request:\n\n\"\"\"\n{{request}}\n\"\"\"\n\nYou asked these questions:\n\n{{questions}}\n\nHere are your answers:\n\n{{answers}}\n\nDo you have any additional questions? Or followup questions?"
           }
         },
         {
@@ -2143,7 +2143,7 @@
             "zIndex": 625
           },
           "data": {
-            "text": "Here are some answers given for some questions:\n\n\"\"\"\n{{answers}}\n\"\"\"\n\nHere is some required changes you need to make to these answers:\n\n\"\"\"\n{{feedback}}\n\"\"\"\n\nRewrite these answers with the changes."
+            "text": "Here are some answers given for some questions:\n\n\"\"\"\n{{answers}}\n\"\"\"\n\nHere is some required changes you need to make to these answers:\n\n\"\"\"\n{{feedback}}\n\"\"\"\n\nRewrite these answers with the changes. Additionally, rephrase the answers as statements instead of answers, as if they were found in a technical document for the project."
           }
         },
         {
@@ -2549,12 +2549,6 @@
         },
         {
           "inputNodeId": "eeqzpCkSxMDTin0sOghhU",
-          "inputId": "context",
-          "outputNodeId": "zc7_qtAZEqumCFsUYVqt7",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "eeqzpCkSxMDTin0sOghhU",
           "inputId": "files",
           "outputNodeId": "2AsgAl-VGTQHHKgMYanRs",
           "outputId": "files"
@@ -2833,6 +2827,12 @@
           "inputNodeId": "yWAKuzopcX8M17WGEDi-6",
           "inputId": "task_list",
           "outputNodeId": "41OQXeM5D_KXd8nvMgD13",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "eeqzpCkSxMDTin0sOghhU",
+          "inputId": "context",
+          "outputNodeId": "zc7_qtAZEqumCFsUYVqt7",
           "outputId": "output"
         }
       ],
@@ -3947,10 +3947,10 @@
           "title": "Extract Object Path",
           "id": "z5IaklOOBA20wwMI0aRkq",
           "visualData": {
-            "x": 4439.712546449494,
-            "y": 534.1510451724706,
+            "x": 4434.673893565094,
+            "y": 600.9131958907702,
             "width": 250,
-            "zIndex": 341
+            "zIndex": 385
           },
           "data": {
             "path": "$.arguments",

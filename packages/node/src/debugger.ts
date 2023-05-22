@@ -33,6 +33,12 @@ export function startDebuggerServer(port: number = 21888): NodaiDebuggerServer {
           .with({ type: 'abort' }, async () => {
             await attachedProcessor?.abort();
           })
+          .with({ type: 'pause' }, async () => {
+            attachedProcessor?.pause();
+          })
+          .with({ type: 'resume' }, async () => {
+            attachedProcessor?.resume();
+          })
           .otherwise(async () => {
             throw new Error(`Unknown message type: ${message.type}`);
           });
@@ -96,6 +102,12 @@ export function startDebuggerServer(port: number = 21888): NodaiDebuggerServer {
       });
       processor.on('graphFinish', ({ graph }) => {
         this.broadcast('graphFinish', { graph });
+      });
+      processor.on('pause', () => {
+        this.broadcast('pause', null);
+      });
+      processor.on('resume', () => {
+        this.broadcast('resume', null);
       });
     },
   };
