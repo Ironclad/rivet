@@ -20,11 +20,11 @@ const notExternalPlugin: esbuild.Plugin = {
   },
 };
 
-const inlineLodashPlugin: esbuild.Plugin = {
-  name: 'inline-lodash',
+const inlinePackagesPlugin: esbuild.Plugin = {
+  name: 'inline-packages',
   setup(build) {
-    build.onResolve({ filter: /^lodash-es$/ }, async (args) => {
-      return { path: require.resolve('lodash-es'), external: false };
+    build.onResolve({ filter: /^(lodash-es|p-retry|emittery)$/ }, async (args) => {
+      return { path: require.resolve(args.path), external: false };
     });
   },
 };
@@ -37,5 +37,5 @@ esbuild.build({
   format: 'cjs',
   target: 'node16',
   packages: 'external',
-  plugins: [notExternalPlugin, inlineLodashPlugin],
+  plugins: [notExternalPlugin, inlinePackagesPlugin],
 });
