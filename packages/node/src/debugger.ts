@@ -1,5 +1,5 @@
 import WebSocket, { WebSocketServer } from 'ws';
-import { GraphProcessor, getError } from '@ironclad/nodai-core';
+import { GraphProcessor, getError } from './core';
 import { match } from 'ts-pattern';
 import Emittery from 'emittery';
 
