@@ -1696,28 +1696,14 @@
           "title": "Extract YAML",
           "id": "41OQXeM5D_KXd8nvMgD13",
           "visualData": {
-            "x": 5064.956426420982,
-            "y": 208.71743893623977,
+            "x": 5077.347198549942,
+            "y": 142.63332091512157,
             "width": 179.6401800954518,
-            "zIndex": 657
+            "zIndex": 678
           },
           "data": {
-            "rootPropertyName": "yamlDocument"
-          }
-        },
-        {
-          "type": "extractObjectPath",
-          "title": "Extract Object Path",
-          "id": "3U9HvI45_2JdHtQTMg_iU",
-          "visualData": {
-            "x": 5285.802421782783,
-            "y": 202.31485405047908,
-            "width": 181.62214685332583,
-            "zIndex": 656
-          },
-          "data": {
-            "path": "$.yamlDocument.steps",
-            "usePathInput": false
+            "rootPropertyName": "yamlDocument",
+            "objectPath": "$.yamlDocument.steps"
           }
         },
         {
@@ -2107,10 +2093,10 @@
           "title": "Text",
           "id": "Y5dFBHDnIc0yTEcNA87W3",
           "visualData": {
-            "x": 984.7987358112983,
-            "y": -67.14393056218138,
-            "width": 107.45890377018463,
-            "zIndex": 620
+            "x": 976.8681178648283,
+            "y": -36.7432284340459,
+            "width": 128.14831452392036,
+            "zIndex": 680
           },
           "data": {
             "text": "{{input}}\n"
@@ -2209,10 +2195,10 @@
           "title": "Text",
           "id": "pqxbw_BaWOjpkd3G8WnRT",
           "visualData": {
-            "x": 1113.8354976808776,
-            "y": -16.45534386562565,
+            "x": 1141.592660493523,
+            "y": -32.3165797585659,
             "width": 109.04166402015858,
-            "zIndex": 633
+            "zIndex": 679
           },
           "data": {
             "text": "{{input}}"
@@ -2476,18 +2462,6 @@
           "inputId": "message3",
           "outputNodeId": "VrlVJ3R4e5XeyDKqHmrjz",
           "outputId": "output"
-        },
-        {
-          "inputNodeId": "3U9HvI45_2JdHtQTMg_iU",
-          "inputId": "object",
-          "outputNodeId": "41OQXeM5D_KXd8nvMgD13",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "yWAKuzopcX8M17WGEDi-6",
-          "inputId": "task_list",
-          "outputNodeId": "3U9HvI45_2JdHtQTMg_iU",
-          "outputId": "match"
         },
         {
           "inputNodeId": "yWAKuzopcX8M17WGEDi-6",
@@ -2853,6 +2827,12 @@
           "inputNodeId": "wnITtjycZ2FJpLYSThTVo",
           "inputId": "prompt",
           "outputNodeId": "7vNigNnYPyllzuKCncBQd",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "yWAKuzopcX8M17WGEDi-6",
+          "inputId": "task_list",
+          "outputNodeId": "41OQXeM5D_KXd8nvMgD13",
           "outputId": "output"
         }
       ],
@@ -3564,10 +3544,10 @@
           "title": "Task List",
           "id": "VIZaMd_lS9i-zMjpKl5wj",
           "visualData": {
-            "x": 6202.909603729259,
-            "y": 743.3141158123037,
+            "x": 5995.575145528108,
+            "y": 766.7859412690377,
             "width": 280.41157562862554,
-            "zIndex": 286
+            "zIndex": 384
           },
           "data": {
             "text": "{{input}}"
@@ -3726,7 +3706,7 @@
             "zIndex": 215
           },
           "data": {
-            "text": "{{context}}\n\nHere are all files in the project:\n\nFILES_START\n{{files}}\nFILES_END\n\n{{functions}}\n\nHere is a history of your commands:\n\nHISTORY_START\n{{previously_executed}}\nHISTORY_END\n\nHere are your remaining tasks:\n\n{{task_list}}\n\nReply with the Chat API function you will run next to further your task list, like this:\n\n```yaml\nyamlDocument:\n  command: COMMAND_NAME\n  arguments:\n    argumentName: value\n    argument2: value2\n```"
+            "text": "{{context}}\n\nHere are all files in the project:\n\nFILES_START\n{{files}}\nFILES_END\n\n{{functions}}\n\nHere is a history of your commands:\n\nHISTORY_START\n{{previously_executed}}\nHISTORY_END\n\nHere are your remaining tasks:\n\n- {{current_task}}\n{{task_list}}\n\nReply with the Chat API function you will run next to further your task list. Primarily, focus on executing the first task(s) in your list. Do not run commands that have already ran before.\n\n\nReply with a YAML document explaining your command, like this:\n\n```yaml\nyamlDocument:\n  currentTask: Restate your current task from the task list\n  reasonForCommand: Explain the reason for choosing the command and how it will help execute your task list.\n  command: COMMAND_NAME\n  arguments:\n    argumentName: value\n    argument2: value2\n```"
           }
         },
         {
@@ -3740,7 +3720,7 @@
             "zIndex": 381
           },
           "data": {
-            "text": "{{context}}\n\n{{functions}}\n\n{{command_info}}\n\nHere are your remaining tasks:\n\n{{task_list}}\n\nHere is your current task: \"{{current_task}}\"\n\nThe above command may have completed your current task. If so, you may remove the current task. Then, you may revise and change your task list if necessary based on what you now know. While revising your task list, ask yourself these questions:\n\n* If you need examples, do you have enough? Or would more be better?\n* If you have to guess about anything, would looking at any other files help?\n* Have you taken enough notes for yourself?\n\nYou may explain your reasoning for any changes you make or explain anything else. You must read file before writing them. You must look at all other relevant files for context and examples before writing anything.\n\nThen, tell me your next task, and then tell me all of your remaining tasks. \n"
+            "text": "{{context}}\n\n{{functions}}\n\nYour current task was \"{{current_task}}\" and you ran this command to fulfill it:\n\n{{command_info}}\n\nHere are your remaining tasks:\n\n{{task_list}}\n\nDoes your last command ran above finish your current task \"{{current_task}}\"? \n\nList the tasks that your last command completed.\n\nNext, imagine a scenario where you are an expert in the Nodai project, would they consider your current task completed? Would they consider the remaining tasks still applicable? Here are some examples of what an expert might ask:\n\n\"If you need examples, do you have enough? Or would more be better?\"\n\"If you have to guess about anything, would looking at any other files help?\"\n\"Have you taken enough notes for yourself?\"\n\"You could combine these steps\"\n\"This step sounds redundant\"\n\nWrite down what the expert would say or ask you about your current task list.\n\nNext, answer the expert's questions or reply to their thoughts.\n\nNext, revise your task list (remove your now completed tasks), explain your revisions, and write down your current task."
           }
         },
         {

@@ -88,6 +88,7 @@ try {
   await $`cp -r dist/node/* .`;
   await $`git add package.json bundle.js`;
   await $`git add -f packages/*/dist`;
+  await $`git add packages/core/package.json packages/node/package.json packages/core/tsconfig.json packages/node/tsconfig.json`;
 
   // Commit the changes
   await $`git commit -m "Exported ${argv.version}"`;
