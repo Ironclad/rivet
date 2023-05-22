@@ -1,4 +1,4 @@
-import { BaseDir, NativeApi } from '@ironclad/nodai-core';
+import { BaseDir, NativeApi } from '../core';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 
 // TODO baseDir is not used

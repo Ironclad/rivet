@@ -4,11 +4,10 @@ import {
   GraphId,
   GraphProcessor,
   NativeApi,
-  ProcessContext,
   ProcessEvents,
   Project,
   Settings,
-} from '@ironclad/nodai-core';
+} from './core';
 
 import { readFile } from 'node:fs/promises';
 import { NodaiDebuggerServer } from './debugger';
