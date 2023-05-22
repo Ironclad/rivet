@@ -32,19 +32,29 @@ const styles = css`
   padding: 0;
   z-index: 50;
   border-right: 1px solid var(--grey);
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 32px);
 
   label {
     font-size: 12px;
   }
 
   .graphs-section {
+    display: flex;
+    flex-direction: column;
     margin-top: 2rem;
+    flex-shrink: 1;
+    min-height: 0;
   }
 
   .graph-list {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    min-height: 0;
+    overflow: auto;
+    flex-shrink: 1;
   }
 
   .graph-item {
