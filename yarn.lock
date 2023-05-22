@@ -3666,7 +3666,6 @@ __metadata:
     "@dqbd/tiktoken": ^1.0.7
     "@types/jsonpath": ^0.2.0
     "@types/lodash-es": ^4
-    "@types/node": ^20.1.1
     "@types/yaml": ^1.9.7
     emittery: ^1.0.1
     jsonpath: ^1.1.1
@@ -3695,6 +3694,7 @@ __metadata:
     emittery: ^1.0.1
     esbuild: ^0.17.18
     lodash-es: ^4.17.21
+    p-retry: ^5.1.2
     ts-node: ^10.9.1
     ts-pattern: ^4.3.0
     type-fest: ^3.10.0
