@@ -85,7 +85,7 @@ export class GraphProcessor {
   #scc: ChartNode[][];
   #nodesNotInCycle: ChartNode[];
   #externalFunctions: Record<string, ExternalFunction> = {};
-  slowMode = true;
+  slowMode = false;
 
   // Per-process state
   #erroredNodes: Set<NodeId> = undefined!;
@@ -416,6 +416,12 @@ export class GraphProcessor {
         // TODO loop controller max iterations
         iterationCount: (childLoopInfo?.iterationCount ?? 0) + 1,
       };
+
+      if (childLoopInfo.iterationCount > (node.data.maxIterations ?? 100)) {
+        throw new Error(
+          `Loop controller ${node.title} has exceeded max iterations of ${node.data.maxIterations ?? 100}`,
+        );
+      }
     }
 
     // Node is finished, check if we can run any more nodes that depend on this one

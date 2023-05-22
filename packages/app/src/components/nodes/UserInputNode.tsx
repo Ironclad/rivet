@@ -122,48 +122,9 @@ const Body = styled.div`
 `;
 
 export const UserInputNodeBody: FC<UserInputNodeBodyProps> = ({ node }) => {
-  const allCurrentQuestions = useRecoilValue(userInputModalQuestionsState);
-  const thisNodeQuestions = allCurrentQuestions[node.id];
-  const userInputModalSubmit = useRecoilValue(userInputModalSubmitState);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  console.dir({ isModalOpen });
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleSubmit = (answers: ArrayDataValue<StringDataValue>) => {
-    // Handle the submission of the user input
-    setIsModalOpen(false);
-    userInputModalSubmit.submit(node.id, answers);
-  };
-
-  useEffect(() => {
-    if (thisNodeQuestions && thisNodeQuestions.length > 0) {
-      setIsModalOpen(true);
-    }
-  }, [thisNodeQuestions]);
-
   return (
     <>
-      <Body>
-        {node.data.useInput ? <span>(Using input)</span> : <span>{node.data.prompt}</span>}
-        <div>
-          {thisNodeQuestions && thisNodeQuestions.length > 0 && <Button onClick={handleOpenModal}>Open Modal</Button>}
-        </div>
-      </Body>
-      <UserInputModal
-        open={isModalOpen}
-        questions={thisNodeQuestions ?? []}
-        onSubmit={handleSubmit}
-        onClose={handleCloseModal}
-      />
+      <Body>{node.data.useInput ? <span>(Using input)</span> : <span>{node.data.prompt}</span>}</Body>
     </>
   );
 };

@@ -59,7 +59,7 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
 
   interpolate(baseString: string, values: Record<string, any>): string {
     return baseString.replace(/\{\{([^}]+)\}\}/g, (_m, p1) => {
-      const value = values[p1.trim()];
+      const value = values[p1];
       return value !== undefined ? value.toString() : '';
     });
   }

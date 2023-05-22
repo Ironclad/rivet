@@ -2,19 +2,10 @@ import { FC, useRef } from 'react';
 import styled from '@emotion/styled';
 import { lastRunData } from '../../state/dataFlow';
 import { useRecoilValue } from 'recoil';
-import {
-  ChartNode,
-  DataType,
-  ExtractRegexNode,
-  ExtractRegexNodeData,
-  PortId,
-  expectType,
-  expectTypeOptional,
-} from '@ironclad/nodai-core';
+import { DataType, ExtractRegexNode, PortId, expectTypeOptional } from '@ironclad/nodai-core';
 import { RenderDataValue } from '../RenderDataValue';
 import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
-import { match } from 'assert';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type ExtractRegexNodeBodyProps = {
@@ -88,8 +79,8 @@ export const ExtractRegexNodeOutput: FC<ExtractRegexNodeBodyProps> = ({ node }) 
 };
 
 export type ExtractRegexNodeEditorProps = {
-  node: ChartNode;
-  onChange?: (node: ChartNode<'extractRegex', ExtractRegexNodeData>) => void;
+  node: ExtractRegexNode;
+  onChange?: (node: ExtractRegexNode) => void;
 };
 
 const container = css`
@@ -198,4 +189,8 @@ export const ExtractRegexNodeEditor: FC<ExtractRegexNodeEditorProps> = ({ node, 
   );
 };
 
-export const extractRegexNodeDescriptor: NodeComponentDescriptor<'extractRegex'> = {};
+export const extractRegexNodeDescriptor: NodeComponentDescriptor<'extractRegex'> = {
+  Body: ExtractRegexNodeBody,
+  Output: ExtractRegexNodeOutput,
+  Editor: ExtractRegexNodeEditor,
+};

@@ -93,6 +93,7 @@ export const NodaiApp: FC = () => {
   };
 
   const start = () => {
+    setUserInputQuestions({});
     setGraphRunning(true);
   };
 
