@@ -4,22 +4,19 @@ import { RenderDataValue } from '../RenderDataValue';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import TextField from '@atlaskit/textfield';
 
 export type ExtractYamlNodeBodyProps = {
   node: ExtractYamlNode;
 };
 
-export const ExtractYamlNodeBody: FC<ExtractYamlNodeBodyProps> = () => {
-  return <div>Extract YAML</div>;
-};
-
-export type ExtractYamlNodeEditorProps = {
-  node: ExtractYamlNode;
-  onChange?: (node: ExtractYamlNode) => void;
-};
-
-export const ExtractYamlNodeEditor: FC<ExtractYamlNodeEditorProps> = () => {
-  return <div>No settings available for this node.</div>;
+export const ExtractYamlNodeBody: FC<ExtractYamlNodeBodyProps> = ({ node }) => {
+  return (
+    <div>
+      <div>Root: {node.data.rootPropertyName}</div>
+      {node.data.objectPath && <div>Path: {node.data.objectPath}</div>}
+    </div>
+  );
 };
 
 export const ExtractYamlNodeOutput = ({ node }: { node: ExtractYamlNode }) => {
@@ -48,6 +45,40 @@ export const ExtractYamlNodeOutput = ({ node }: { node: ExtractYamlNode }) => {
   return (
     <div>
       <RenderDataValue value={output.outputData['output' as PortId]} />
+    </div>
+  );
+};
+
+type ExtractYamlNodeEditorProps = {
+  node: ExtractYamlNode;
+  onChange?: (node: ExtractYamlNode) => void;
+};
+
+export const ExtractYamlNodeEditor: FC<ExtractYamlNodeEditorProps> = ({ node, onChange }) => {
+  const handleRootPropertyNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange?.({
+      ...node,
+      data: { ...node.data, rootPropertyName: e.target.value },
+    });
+  };
+
+  const handleFunctionNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange?.({
+      ...node,
+      data: { ...node.data, objectPath: e.target.value },
+    });
+  };
+
+  return (
+    <div>
+      <div>
+        <label htmlFor="rootProperty">Root Property:</label>
+        <TextField id="rootProperty" value={node.data.rootPropertyName} onChange={handleRootPropertyNameChange} />
+      </div>
+      <div>
+        <label htmlFor="path">Extract Path:</label>
+        <TextField id="path" value={node.data.objectPath ?? ''} onChange={handleFunctionNameChange} />
+      </div>
     </div>
   );
 };

@@ -615,9 +615,15 @@ export class GraphProcessor {
         range(0, splittingAmount).map(async (i) => {
           const inputs = fromEntries(
             entries(inputValues).map(([port, value]): [PortId, DataValue | undefined] => {
-              if (value?.type.endsWith('[]')) {
-                const newType = value.type.slice(0, -2) as DataValue['type'];
-                const newValue: unknown = (value.value as unknown[])[i] ?? undefined;
+              const isArray =
+                value?.type.endsWith('[]') ||
+                ((value?.type === 'any' || value?.type === 'object') && Array.isArray(value?.value));
+
+              if (isArray) {
+                const newType = value?.type.endsWith('[]')
+                  ? (value.type.slice(0, -2) as DataValue['type'])
+                  : value!.type;
+                const newValue: unknown = (value!.value as unknown[])[i] ?? undefined;
                 return [port as PortId, { type: newType, value: newValue as any }];
               } else {
                 return [port as PortId, value];

@@ -5,1161 +5,6 @@
     "title": "Nodai"
   },
   "graphs": {
-    "tM4FGxXXLTDjeD0oYgQpB": {
-      "nodes": [
-        {
-          "type": "prompt",
-          "title": "Base Context",
-          "id": "zc7_qtAZEqumCFsUYVqt7",
-          "visualData": {
-            "x": 488.18714555541874,
-            "y": 79.37192821510313,
-            "zIndex": 241,
-            "width": 528
-          },
-          "data": {
-            "type": "user",
-            "useTypeInput": false,
-            "promptText": "I am working on developing an AI storyboarding tool that allows users to create a series of prompts for a language model in a choose-your-own-adventure format. The tool is inspired by node-based editors, like the one found in Blender, where users can create nodes on a page that have inputs and outputs that can be connected by wires to form a web of connections between the prompts and the AI. Each node can be edited, and when editing, a larger window pops up with a text editor where users can tweak various aspects of the prompt that will be fed to the AI. This tool will provide a user-friendly interface for crafting interactive stories with an AI language model. Here is a tree of my current files for context. If you would like the contents of any of these files, please ask. The app is dark-themed and the colors are available in index.css. I'm using Emotion for CSS.\n\nThe files in the project are:\n\n{{files}}\n"
-          }
-        },
-        {
-          "type": "prompt",
-          "title": "Prompt Question List",
-          "id": "KbotaIf5SLrUkOubRve1x",
-          "visualData": {
-            "x": 844.6067442786002,
-            "y": 414.7926653937118,
-            "zIndex": 250,
-            "width": 485.03013745499055
-          },
-          "data": {
-            "type": "user",
-            "useTypeInput": false,
-            "promptText": "I have the following question or request:\n\n\"\"\"\n{{request}}\n\"\"\"\n\nYou are likely missing data to fully fulfill the request. If you were a developer tasked with doing this, what questions would you first ask the project manager or other developer to accomplish the task correctly? Examples are clarifying behavior, or styling, or interaction with the rest of the system, etc.\n\nPlease give a bulleted list of questions. You may ask anywhere from zero to five questions. Try to only ask a question if it is necessary for your fulfillment of the request.\n\nHere is an example of an answer:\n\nQuestions:\n* Question 1?\n* Question 2?\n* Question 3?\n\nAnother example (if you have enough context):\n\nQuestions: NONE"
-          }
-        },
-        {
-          "type": "chat",
-          "title": "Get Question List",
-          "id": "AGmIpXCDl_sHyhLIjtXie",
-          "visualData": {
-            "x": 1423.3015918090061,
-            "y": 493.0368341889578,
-            "width": 233.53671241371717,
-            "zIndex": 199
-          },
-          "data": {
-            "model": "gpt-3.5-turbo",
-            "useModelInput": false,
-            "temperature": 0,
-            "useTemperatureInput": false,
-            "top_p": 1,
-            "useTopPInput": false,
-            "useTopP": false,
-            "useUseTopPInput": false,
-            "maxTokens": 1024,
-            "useMaxTokensInput": false,
-            "cache": true
-          }
-        },
-        {
-          "type": "chat",
-          "title": "Get File List",
-          "id": "vTR_eCURknJJ12OgLr7ML",
-          "visualData": {
-            "x": 1898.3994167640203,
-            "y": -43.45399924830028,
-            "width": 203,
-            "zIndex": 198
-          },
-          "data": {
-            "model": "gpt-4",
-            "useModelInput": false,
-            "temperature": 0.1,
-            "useTemperatureInput": false,
-            "top_p": 1,
-            "useTopPInput": false,
-            "useTopP": false,
-            "useUseTopPInput": false,
-            "maxTokens": 1024,
-            "useMaxTokensInput": false,
-            "cache": false
-          }
-        },
-        {
-          "type": "prompt",
-          "title": "Prompt File List With Explanations",
-          "id": "u24zXxe0GZT9-YFpog8Kc",
-          "visualData": {
-            "x": 1357.211813169883,
-            "y": -190.95664415076706,
-            "zIndex": 64
-          },
-          "data": {
-            "type": "user",
-            "useTypeInput": false,
-            "promptText": "I have the following question or request:\n\n\"\"\"\n{{request}}\n\"\"\"\n\nHere is some additional info:\n\n\"\"\"\n{{additionalInfo}}\n\"\"\"\n\nThere are files that are going to be relevant to your answer. The files you pick must provide you with all of:\n* Context on how the application works\n* Files that you will be editing in your answer\n* Examples for you to follow\n\nWhat file contents would you like to see to help give you context? Pick as many files as you would like. \n\nHere is an example of an answer:\n\nFiles:\n* File 1\n* path/File 2\n* path/subpath/File 3\n* File 4\n\nAnother example (if you have enough context):\n\nFiles: NONE"
-          }
-        },
-        {
-          "type": "prompt",
-          "title": "Prompt File List Refinement",
-          "id": "75kewE6IIm7td8Kb-db26",
-          "visualData": {
-            "x": 2193.8639492325433,
-            "y": -231.2982515178233,
-            "zIndex": 62
-          },
-          "data": {
-            "type": "user",
-            "useTypeInput": false,
-            "promptText": "I have asked this question:\n\n\"\"\"\n{{question}}\n\"\"\"\n\nHere is some additional info:\n\n\"\"\"\n{{additionalInfo}}\n\"\"\"\n\nAn AI has responded with this list of files that may be relevant to the question. The provide any of:\n* Context on how the application works\n* Files that you will be editing in your answer\n* Examples for you to follow\n\n\n\"\"\"\n{{files}}\n\"\"\"\n\nWhich ones of these files do you think is most relevant? Try to pick only the most relevant files for the question, so that you can answer the question most effectively. If they are all relevant, then keep them all, but set a high standard for including files.\n\nExample answer:\n\n* File 1\n* path/File 2\n\nDo not give your reasoning this time. MAXIMUM OF 3."
-          }
-        },
-        {
-          "type": "chat",
-          "title": "File List Refinement",
-          "id": "cfMrNRNjlOgXkyAl50ZAk",
-          "visualData": {
-            "x": 2713.2955341869906,
-            "y": -69.65646623293839,
-            "width": 204,
-            "zIndex": 65
-          },
-          "data": {
-            "model": "gpt-4",
-            "useModelInput": false,
-            "temperature": 0,
-            "useTemperatureInput": false,
-            "top_p": 1,
-            "useTopPInput": false,
-            "useTopP": false,
-            "useUseTopPInput": false,
-            "maxTokens": 1024,
-            "useMaxTokensInput": false,
-            "cache": true
-          }
-        },
-        {
-          "type": "userInput",
-          "title": "User Input",
-          "id": "1K582UsQEjPvjVRvtf4ag",
-          "visualData": {
-            "x": 329.2928879517281,
-            "y": 608.5754975551376,
-            "zIndex": 247,
-            "width": 378.6378084183709
-          },
-          "data": {
-            "prompt": "What is your question for the AI to answer?",
-            "useInput": false
-          }
-        },
-        {
-          "type": "extractRegex",
-          "title": "Get List",
-          "id": "5LmXrGo2RcUMcl1GWPZac",
-          "visualData": {
-            "x": 1756.0397961242952,
-            "y": 519.5979660198824,
-            "width": 173.0673697475986,
-            "zIndex": 245
-          },
-          "data": {
-            "regex": "\\* (.+)",
-            "useRegexInput": false,
-            "errorOnFailed": true
-          }
-        },
-        {
-          "type": "userInput",
-          "title": "User Input",
-          "id": "9f2Us4WxeKYfvqMm1_XUZ",
-          "visualData": {
-            "x": 2247.715921686399,
-            "y": 511.34825357399234,
-            "width": 260.4079452318433,
-            "zIndex": 251
-          },
-          "data": {
-            "prompt": "This is an example question?",
-            "useInput": true
-          }
-        },
-        {
-          "type": "prompt",
-          "title": "Prompt",
-          "id": "dAdCTHgtY0oqvfuct7ka8",
-          "visualData": {
-            "x": 5315.176216542515,
-            "y": 182.76356217200475,
-            "zIndex": 175
-          },
-          "data": {
-            "type": "user",
-            "useTypeInput": false,
-            "promptText": "I have asked this question:\n\n\"\"\"\n{{question}}\n\"\"\"\n\nHere are some additional notes:\n\n{{qanda}}\n\nDo you have any additional questions for me, before answering my question? YES or NO.\n\nExample:\n\nYES I have more questions:\n* Question 1\n* Question 2\n\nExample:\n\nNO I do not have any questions"
-          }
-        },
-        {
-          "type": "text",
-          "title": "Question",
-          "id": "P43dR9pClYPtOT7C2sXmx",
-          "visualData": {
-            "x": 4458.8742672961525,
-            "y": 301.06017117930253,
-            "zIndex": 203,
-            "width": 150.51226080315178
-          },
-          "data": {
-            "text": "{{input}}"
-          }
-        },
-        {
-          "type": "chat",
-          "title": "Chat",
-          "id": "yYn8FeMz-hO7dPszDCdB3",
-          "visualData": {
-            "x": 6188.17351266483,
-            "y": -13.402564542049689,
-            "width": 200,
-            "zIndex": 190
-          },
-          "data": {
-            "model": "gpt-4",
-            "useModelInput": false,
-            "temperature": 0.5,
-            "useTemperatureInput": false,
-            "top_p": 1,
-            "useTopPInput": false,
-            "useTopP": false,
-            "useUseTopPInput": false,
-            "maxTokens": 4096,
-            "useMaxTokensInput": false
-          }
-        },
-        {
-          "type": "extractRegex",
-          "title": "Get List",
-          "id": "UkHf2h-9p1RVh2BTW_fzv",
-          "visualData": {
-            "x": 2986.482982344181,
-            "y": -82.11225604426792,
-            "width": 179.81496368518492,
-            "zIndex": 209
-          },
-          "data": {
-            "regex": "\\* (.+)",
-            "useRegexInput": false,
-            "errorOnFailed": true
-          }
-        },
-        {
-          "type": "prompt",
-          "title": "Prompt",
-          "id": "NZud7Z_erCJPCnlY7c96u",
-          "visualData": {
-            "x": 5363.0220042239525,
-            "y": -177.67271622122814,
-            "zIndex": 184,
-            "width": 305.41816766496504
-          },
-          "data": {
-            "type": "user",
-            "useTypeInput": false,
-            "promptText": "Here are the contents of these files:\n\n{{files}}\n\n{{files_2}}"
-          }
-        },
-        {
-          "type": "prompt",
-          "title": "Prompt",
-          "id": "nfTmKKGqCF0jDmwQezIhy",
-          "visualData": {
-            "x": 3669.700900012378,
-            "y": -133.80513782356616,
-            "zIndex": 131
-          },
-          "data": {
-            "type": "user",
-            "useTypeInput": false,
-            "promptText": "I have asked this question or made this request:\n\n\"\"\"\n{{question}}\n\"\"\"\n\nHere are the contents of these files:\n\n{{file_contents}}\n\nAfter seeing these files, do you have enough information to craft a full answer, or not? Make sure you have all of the following:\n\n* Context on how the application works\n* If you are creating new files, examples\n* If you will change any files, the current contents of those files\n\nAre there more files that would be useful from these relevant files below?\n\n\"\"\"\n{{relevant_files}}\n\"\"\"\n\nYou MUST include YES or NO in your answer (upper-case)\n\n\nExample:\n\nYES I have enough information\n\nExample:\n\nNO, I would like to view these files too:\n\n* File 1\n* File 2\n"
-          }
-        },
-        {
-          "type": "chat",
-          "title": "Chat",
-          "id": "e5C86vuBegWhJRJJ2kP3Z",
-          "visualData": {
-            "x": 4221.363340906682,
-            "y": -95.46869550636578,
-            "width": 200,
-            "zIndex": 77
-          },
-          "data": {
-            "model": "gpt-4",
-            "useModelInput": false,
-            "temperature": 0.2,
-            "useTemperatureInput": false,
-            "top_p": 1,
-            "useTopPInput": false,
-            "useTopP": false,
-            "useUseTopPInput": false,
-            "maxTokens": 100,
-            "useMaxTokensInput": false
-          }
-        },
-        {
-          "type": "extractRegex",
-          "title": "Get List",
-          "id": "QztzfsU7JuDVWKrCqkDVK",
-          "visualData": {
-            "x": 2636.439715881784,
-            "y": 261.6596481254786,
-            "width": 177.51816071364738,
-            "zIndex": 197
-          },
-          "data": {
-            "regex": "\\* (.+)",
-            "useRegexInput": false,
-            "errorOnFailed": false
-          }
-        },
-        {
-          "type": "extractRegex",
-          "title": "Get List",
-          "id": "PXir5C5_aS_sKGNqbhmRb",
-          "visualData": {
-            "x": 4109.394261755683,
-            "y": -365.9245983571581,
-            "width": 149.8383306400192,
-            "zIndex": 240
-          },
-          "data": {
-            "regex": "\\* (.+)",
-            "useRegexInput": false,
-            "errorOnFailed": false
-          }
-        },
-        {
-          "type": "match",
-          "title": "Match",
-          "id": "jqJiZN4H66thn9zYsoc8P",
-          "visualData": {
-            "x": 4569.859034358798,
-            "y": 23.40635359200577,
-            "width": 300,
-            "zIndex": 208
-          },
-          "data": {
-            "caseCount": 2,
-            "cases": [
-              "YES",
-              "NO"
-            ]
-          }
-        },
-        {
-          "type": "prompt",
-          "title": "Prompt",
-          "id": "G0oIOTRRDZoYBls83ssB5",
-          "visualData": {
-            "x": 4434.811103453836,
-            "y": 565.2493122538758,
-            "zIndex": 164,
-            "width": 309.87270918312606
-          },
-          "data": {
-            "type": "user",
-            "useTypeInput": false,
-            "promptText": "Here are the contents of these files:\n\n{{file_contents}}\n"
-          }
-        },
-        {
-          "id": "yLWFijxaMBQu1yfRxxEHQ",
-          "type": "readDirectory",
-          "title": "Read Directory",
-          "visualData": {
-            "x": 113.62887024964405,
-            "y": 169.19587125555483,
-            "zIndex": 242,
-            "width": 273.4819575476621
-          },
-          "data": {
-            "baseDirectory": "document",
-            "path": "/Users/andy.brenneke/Documents/nodai/packages/app/src",
-            "recursive": true,
-            "useBaseDirectoryInput": false,
-            "usePathInput": false,
-            "useRecursiveInput": false,
-            "includeDirectories": false,
-            "useIncludeDirectoriesInput": false,
-            "filterGlobs": [],
-            "useFilterGlobsInput": false,
-            "relative": true,
-            "useRelativeInput": false
-          }
-        },
-        {
-          "type": "text",
-          "title": "Text",
-          "id": "inGxwbeQwa8T8EYYxBWKP",
-          "visualData": {
-            "x": 2668.3953644105854,
-            "y": -307.537736604932,
-            "width": 300,
-            "zIndex": 140
-          },
-          "data": {
-            "text": "{{rootPath}}/{{file}}"
-          },
-          "isSplitRun": true,
-          "splitRunMax": 5
-        },
-        {
-          "id": "Gt0kZ9sY-6Z2ffU6JCkcF",
-          "type": "readFile",
-          "title": "Read File",
-          "visualData": {
-            "x": 3004.293244164083,
-            "y": -313.5535777754302,
-            "width": 250,
-            "zIndex": 182
-          },
-          "data": {
-            "baseDirectory": "document",
-            "useBaseDirectoryInput": false,
-            "path": "",
-            "usePathInput": true
-          },
-          "isSplitRun": true
-        },
-        {
-          "type": "text",
-          "title": "Text",
-          "id": "g8PRCx32q_DavlGX_pKSU",
-          "visualData": {
-            "x": 3297.6633310307966,
-            "y": -205.70416808570056,
-            "width": 275.7147944590329,
-            "zIndex": 138
-          },
-          "data": {
-            "text": "```\n// {{file_name}}\n{{file_content}}\n```"
-          },
-          "isSplitRun": true
-        },
-        {
-          "type": "text",
-          "title": "Text",
-          "id": "qI58gWoujdMp4KGTvKi06",
-          "visualData": {
-            "x": 4379.631842242542,
-            "y": -333.8156225176864,
-            "width": 189.36893401106227,
-            "zIndex": 281
-          },
-          "data": {
-            "text": "{{rootPath}}/{{file}}"
-          },
-          "isSplitRun": true
-        },
-        {
-          "id": "SSmwq9a_NnRnBg82QXR2X",
-          "type": "readFile",
-          "title": "Read File",
-          "visualData": {
-            "x": 4681.8845929540685,
-            "y": -284.1848308123896,
-            "width": 228.7087309612807,
-            "zIndex": 172
-          },
-          "data": {
-            "baseDirectory": "document",
-            "useBaseDirectoryInput": false,
-            "path": "",
-            "usePathInput": true
-          },
-          "isSplitRun": true
-        },
-        {
-          "type": "text",
-          "title": "Text",
-          "id": "Zv8CFeNiZTrxjCN15dEFD",
-          "visualData": {
-            "x": 4971.491054426823,
-            "y": -171.35663473104836,
-            "width": 183.28936425967095,
-            "zIndex": 170
-          },
-          "data": {
-            "text": "```\n// {{file_path}}\n{{file_contents}}\n```"
-          },
-          "isSplitRun": true
-        },
-        {
-          "type": "text",
-          "title": "Context",
-          "id": "_9xEspbj9f37w6IB1Arzg",
-          "visualData": {
-            "x": 4996.141945436322,
-            "y": -441.29224823990603,
-            "width": 155.41816766496413,
-            "zIndex": 196
-          },
-          "data": {
-            "text": "{{input}}"
-          }
-        },
-        {
-          "type": "ifElse",
-          "title": "If/Else",
-          "id": "QxSeeFiiP-uh-OkMCNbJi",
-          "data": {},
-          "visualData": {
-            "x": 5853.878354264606,
-            "y": 56.236502528964344,
-            "width": 157.27439642216723,
-            "zIndex": 193
-          }
-        },
-        {
-          "type": "match",
-          "title": "Match",
-          "id": "sdh_YINwoIu5xoeDR8wQ4",
-          "visualData": {
-            "x": 6466.10701739142,
-            "y": -11.379636209446566,
-            "width": 300,
-            "zIndex": 211
-          },
-          "data": {
-            "caseCount": 2,
-            "cases": [
-              "YES|Yes|yes",
-              "NO|No|no"
-            ]
-          },
-          "isSplitRun": false
-        },
-        {
-          "type": "extractRegex",
-          "title": "Extract Regex",
-          "id": "hjrcpVizBUjQnuXg3Ih8p",
-          "visualData": {
-            "x": 6878.757477312437,
-            "y": -169.45138496951358,
-            "width": 250,
-            "zIndex": 213
-          },
-          "data": {
-            "regex": "\\* (.+)",
-            "useRegexInput": false,
-            "errorOnFailed": false
-          }
-        },
-        {
-          "type": "userInput",
-          "title": "User Input",
-          "id": "JOdkpt_nTli-1bG8cKg4n",
-          "visualData": {
-            "x": 7224.851411439743,
-            "y": -169.4513849695136,
-            "width": 250,
-            "zIndex": 215
-          },
-          "data": {
-            "prompt": "This is an example question?",
-            "useInput": true
-          }
-        },
-        {
-          "type": "text",
-          "title": "Text",
-          "id": "5FwczAvCE9grC-uO-rsJy",
-          "visualData": {
-            "x": 7536.003169525348,
-            "y": -169.45138496951364,
-            "width": 300,
-            "zIndex": 217
-          },
-          "data": {
-            "text": "Here are some additional questions you gave and my answers:\n\n{{qa}}"
-          }
-        },
-        {
-          "type": "ifElse",
-          "title": "If/Else",
-          "id": "e60pNdjmvjyLTCJ3jUN7h",
-          "data": {},
-          "visualData": {
-            "x": 7957.5782844952355,
-            "y": -39.320413200076246,
-            "width": 125,
-            "zIndex": 239
-          }
-        },
-        {
-          "type": "text",
-          "title": "Text",
-          "id": "MSg5lbQ3E_Km87p0evSeh",
-          "visualData": {
-            "x": 7715.937153443355,
-            "y": -6.175106129059492,
-            "width": 140.88859934266657,
-            "zIndex": 238
-          },
-          "data": {
-            "text": ""
-          }
-        },
-        {
-          "type": "chat",
-          "title": "Chat",
-          "id": "5VcOEvnLC56O64j2InRKX",
-          "visualData": {
-            "x": 8729.178423250145,
-            "y": 68.40488025953925,
-            "width": 200,
-            "zIndex": 237
-          },
-          "data": {
-            "model": "gpt-4",
-            "useModelInput": false,
-            "temperature": 0.3,
-            "useTemperatureInput": false,
-            "top_p": 1,
-            "useTopPInput": false,
-            "useTopP": false,
-            "useUseTopPInput": false,
-            "maxTokens": 512,
-            "useMaxTokensInput": false
-          }
-        },
-        {
-          "type": "prompt",
-          "title": "Prompt",
-          "id": "YFPEXiTSWNawBUvgAF0_F",
-          "visualData": {
-            "x": 8135.9965526623455,
-            "y": 282.1998314192957,
-            "zIndex": 262
-          },
-          "data": {
-            "type": "user",
-            "useTypeInput": false,
-            "promptText": "I have asked this question:\n\n\"\"\"\n{{question}}\n\"\"\"\n\nHere are some additional notes:\n\n{{qanda}}\n{{qanda2}}\n\nPlease list the files that you will be changing. Only list the files.\n\nExample:\n\nI will be changing:\n* File1.ts\n* File2.ts"
-          }
-        },
-        {
-          "type": "subGraph",
-          "title": "Extract List Items",
-          "id": "189BdUHhFqXuPiOTRnu6G",
-          "visualData": {
-            "x": 8976.495734736855,
-            "y": 95.02241329525225,
-            "width": 191.83241906778676,
-            "zIndex": 264
-          },
-          "data": {
-            "graphId": "BCH2-JTaOfU7yrJ1GQRhL"
-          }
-        },
-        {
-          "type": "prompt",
-          "title": "Prompt",
-          "id": "hNhXa1EZOBOgUa_h-E222",
-          "visualData": {
-            "x": 9262.676057048695,
-            "y": -413.3601478928669,
-            "zIndex": 279
-          },
-          "data": {
-            "type": "user",
-            "useTypeInput": false,
-            "promptText": "I have asked this question:\n\n\"\"\"\n{{question}}\n\"\"\"\n\nHere are some additional notes:\n\n{{qanda}}\n{{qanda2}}"
-          },
-          "isSplitRun": false
-        },
-        {
-          "type": "chat",
-          "title": "Chat",
-          "id": "1ukc23HOrIcQFDtNM4QV8",
-          "visualData": {
-            "x": 9956.926868373535,
-            "y": -22.050184109943288,
-            "width": 200,
-            "zIndex": 278
-          },
-          "data": {
-            "model": "gpt-4",
-            "useModelInput": false,
-            "temperature": 0.2,
-            "useTemperatureInput": false,
-            "top_p": 1,
-            "useTopPInput": false,
-            "useTopP": false,
-            "useUseTopPInput": false,
-            "maxTokens": 2048,
-            "useMaxTokensInput": false,
-            "useStop": false,
-            "stop": "",
-            "useStopInput": false,
-            "presencePenalty": 0.1,
-            "usePresencePenaltyInput": false,
-            "frequencyPenalty": 0.1,
-            "useFrequencyPenaltyInput": false,
-            "cache": false
-          },
-          "isSplitRun": true
-        },
-        {
-          "type": "prompt",
-          "title": "Prompt",
-          "id": "jS3liOffr3YO0xdhJ0god",
-          "visualData": {
-            "x": 9293.072191241985,
-            "y": 253.9587959411965,
-            "zIndex": 280
-          },
-          "data": {
-            "type": "user",
-            "useTypeInput": false,
-            "promptText": "Please tell me the changes I need to make to the {{file}} file to accomplish my question. Only give me the changes for this file. Do not give me changes for any other files. If there are no changes to make to this file, tell me there are no changes to make. If there are changes to make, please give me the changes to the file."
-          },
-          "isSplitRun": true
-        }
-      ],
-      "connections": [
-        {
-          "inputNodeId": "AGmIpXCDl_sHyhLIjtXie",
-          "inputId": "message1",
-          "outputNodeId": "zc7_qtAZEqumCFsUYVqt7",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "AGmIpXCDl_sHyhLIjtXie",
-          "inputId": "message2",
-          "outputNodeId": "KbotaIf5SLrUkOubRve1x",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "vTR_eCURknJJ12OgLr7ML",
-          "inputId": "message1",
-          "outputNodeId": "zc7_qtAZEqumCFsUYVqt7",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "vTR_eCURknJJ12OgLr7ML",
-          "inputId": "message2",
-          "outputNodeId": "u24zXxe0GZT9-YFpog8Kc",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "75kewE6IIm7td8Kb-db26",
-          "inputId": "files",
-          "outputNodeId": "vTR_eCURknJJ12OgLr7ML",
-          "outputId": "response"
-        },
-        {
-          "inputNodeId": "cfMrNRNjlOgXkyAl50ZAk",
-          "inputId": "message1",
-          "outputNodeId": "zc7_qtAZEqumCFsUYVqt7",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "cfMrNRNjlOgXkyAl50ZAk",
-          "inputId": "message2",
-          "outputNodeId": "75kewE6IIm7td8Kb-db26",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "u24zXxe0GZT9-YFpog8Kc",
-          "inputId": "request",
-          "outputNodeId": "1K582UsQEjPvjVRvtf4ag",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "75kewE6IIm7td8Kb-db26",
-          "inputId": "question",
-          "outputNodeId": "1K582UsQEjPvjVRvtf4ag",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "KbotaIf5SLrUkOubRve1x",
-          "inputId": "request",
-          "outputNodeId": "1K582UsQEjPvjVRvtf4ag",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "5LmXrGo2RcUMcl1GWPZac",
-          "inputId": "input",
-          "outputNodeId": "AGmIpXCDl_sHyhLIjtXie",
-          "outputId": "response"
-        },
-        {
-          "inputNodeId": "9f2Us4WxeKYfvqMm1_XUZ",
-          "inputId": "questions",
-          "outputNodeId": "5LmXrGo2RcUMcl1GWPZac",
-          "outputId": "matches"
-        },
-        {
-          "inputNodeId": "dAdCTHgtY0oqvfuct7ka8",
-          "inputId": "qanda",
-          "outputNodeId": "9f2Us4WxeKYfvqMm1_XUZ",
-          "outputId": "questionsAndAnswers"
-        },
-        {
-          "inputNodeId": "P43dR9pClYPtOT7C2sXmx",
-          "inputId": "name",
-          "outputNodeId": "1K582UsQEjPvjVRvtf4ag",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "P43dR9pClYPtOT7C2sXmx",
-          "inputId": "input",
-          "outputNodeId": "1K582UsQEjPvjVRvtf4ag",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "dAdCTHgtY0oqvfuct7ka8",
-          "inputId": "question",
-          "outputNodeId": "P43dR9pClYPtOT7C2sXmx",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "UkHf2h-9p1RVh2BTW_fzv",
-          "inputId": "input",
-          "outputNodeId": "cfMrNRNjlOgXkyAl50ZAk",
-          "outputId": "response"
-        },
-        {
-          "inputNodeId": "yYn8FeMz-hO7dPszDCdB3",
-          "inputId": "message3",
-          "outputNodeId": "dAdCTHgtY0oqvfuct7ka8",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "u24zXxe0GZT9-YFpog8Kc",
-          "inputId": "additionalInfo",
-          "outputNodeId": "9f2Us4WxeKYfvqMm1_XUZ",
-          "outputId": "questionsAndAnswers"
-        },
-        {
-          "inputNodeId": "75kewE6IIm7td8Kb-db26",
-          "inputId": "additionalInfo",
-          "outputNodeId": "9f2Us4WxeKYfvqMm1_XUZ",
-          "outputId": "questionsAndAnswers"
-        },
-        {
-          "inputNodeId": "e5C86vuBegWhJRJJ2kP3Z",
-          "inputId": "message1",
-          "outputNodeId": "zc7_qtAZEqumCFsUYVqt7",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "QztzfsU7JuDVWKrCqkDVK",
-          "inputId": "input",
-          "outputNodeId": "vTR_eCURknJJ12OgLr7ML",
-          "outputId": "response"
-        },
-        {
-          "inputNodeId": "nfTmKKGqCF0jDmwQezIhy",
-          "inputId": "relevant_files",
-          "outputNodeId": "QztzfsU7JuDVWKrCqkDVK",
-          "outputId": "matches"
-        },
-        {
-          "inputNodeId": "jqJiZN4H66thn9zYsoc8P",
-          "inputId": "input",
-          "outputNodeId": "e5C86vuBegWhJRJJ2kP3Z",
-          "outputId": "response"
-        },
-        {
-          "inputNodeId": "PXir5C5_aS_sKGNqbhmRb",
-          "inputId": "input",
-          "outputNodeId": "jqJiZN4H66thn9zYsoc8P",
-          "outputId": "case2"
-        },
-        {
-          "inputNodeId": "e5C86vuBegWhJRJJ2kP3Z",
-          "inputId": "message2",
-          "outputNodeId": "nfTmKKGqCF0jDmwQezIhy",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "nfTmKKGqCF0jDmwQezIhy",
-          "inputId": "question",
-          "outputNodeId": "1K582UsQEjPvjVRvtf4ag",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "zc7_qtAZEqumCFsUYVqt7",
-          "inputId": "files",
-          "outputNodeId": "yLWFijxaMBQu1yfRxxEHQ",
-          "outputId": "paths"
-        },
-        {
-          "inputNodeId": "inGxwbeQwa8T8EYYxBWKP",
-          "inputId": "file",
-          "outputNodeId": "UkHf2h-9p1RVh2BTW_fzv",
-          "outputId": "matches"
-        },
-        {
-          "inputNodeId": "Gt0kZ9sY-6Z2ffU6JCkcF",
-          "inputId": "path",
-          "outputNodeId": "inGxwbeQwa8T8EYYxBWKP",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "g8PRCx32q_DavlGX_pKSU",
-          "inputId": "file_content",
-          "outputNodeId": "Gt0kZ9sY-6Z2ffU6JCkcF",
-          "outputId": "content"
-        },
-        {
-          "inputNodeId": "g8PRCx32q_DavlGX_pKSU",
-          "inputId": "file_name",
-          "outputNodeId": "UkHf2h-9p1RVh2BTW_fzv",
-          "outputId": "matches"
-        },
-        {
-          "inputNodeId": "nfTmKKGqCF0jDmwQezIhy",
-          "inputId": "file_contents",
-          "outputNodeId": "g8PRCx32q_DavlGX_pKSU",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "qI58gWoujdMp4KGTvKi06",
-          "inputId": "file",
-          "outputNodeId": "PXir5C5_aS_sKGNqbhmRb",
-          "outputId": "matches"
-        },
-        {
-          "inputNodeId": "SSmwq9a_NnRnBg82QXR2X",
-          "inputId": "path",
-          "outputNodeId": "qI58gWoujdMp4KGTvKi06",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "Zv8CFeNiZTrxjCN15dEFD",
-          "inputId": "file_contents",
-          "outputNodeId": "SSmwq9a_NnRnBg82QXR2X",
-          "outputId": "content"
-        },
-        {
-          "inputNodeId": "Zv8CFeNiZTrxjCN15dEFD",
-          "inputId": "file_path",
-          "outputNodeId": "PXir5C5_aS_sKGNqbhmRb",
-          "outputId": "matches"
-        },
-        {
-          "inputNodeId": "NZud7Z_erCJPCnlY7c96u",
-          "inputId": "files",
-          "outputNodeId": "Zv8CFeNiZTrxjCN15dEFD",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "_9xEspbj9f37w6IB1Arzg",
-          "inputId": "input",
-          "outputNodeId": "zc7_qtAZEqumCFsUYVqt7",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "yYn8FeMz-hO7dPszDCdB3",
-          "inputId": "message1",
-          "outputNodeId": "_9xEspbj9f37w6IB1Arzg",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "G0oIOTRRDZoYBls83ssB5",
-          "inputId": "file_contents",
-          "outputNodeId": "g8PRCx32q_DavlGX_pKSU",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "NZud7Z_erCJPCnlY7c96u",
-          "inputId": "files_2",
-          "outputNodeId": "g8PRCx32q_DavlGX_pKSU",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "yYn8FeMz-hO7dPszDCdB3",
-          "inputId": "message2",
-          "outputNodeId": "QxSeeFiiP-uh-OkMCNbJi",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "QxSeeFiiP-uh-OkMCNbJi",
-          "inputId": "if",
-          "outputNodeId": "jqJiZN4H66thn9zYsoc8P",
-          "outputId": "case1"
-        },
-        {
-          "inputNodeId": "QxSeeFiiP-uh-OkMCNbJi",
-          "inputId": "true",
-          "outputNodeId": "G0oIOTRRDZoYBls83ssB5",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "QxSeeFiiP-uh-OkMCNbJi",
-          "inputId": "false",
-          "outputNodeId": "NZud7Z_erCJPCnlY7c96u",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "sdh_YINwoIu5xoeDR8wQ4",
-          "inputId": "input",
-          "outputNodeId": "yYn8FeMz-hO7dPszDCdB3",
-          "outputId": "response"
-        },
-        {
-          "inputNodeId": "hjrcpVizBUjQnuXg3Ih8p",
-          "inputId": "input",
-          "outputNodeId": "sdh_YINwoIu5xoeDR8wQ4",
-          "outputId": "case1"
-        },
-        {
-          "inputNodeId": "JOdkpt_nTli-1bG8cKg4n",
-          "inputId": "questions",
-          "outputNodeId": "hjrcpVizBUjQnuXg3Ih8p",
-          "outputId": "matches"
-        },
-        {
-          "inputNodeId": "5FwczAvCE9grC-uO-rsJy",
-          "inputId": "qa",
-          "outputNodeId": "JOdkpt_nTli-1bG8cKg4n",
-          "outputId": "questionsAndAnswers"
-        },
-        {
-          "inputNodeId": "e60pNdjmvjyLTCJ3jUN7h",
-          "inputId": "false",
-          "outputNodeId": "MSg5lbQ3E_Km87p0evSeh",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "e60pNdjmvjyLTCJ3jUN7h",
-          "inputId": "true",
-          "outputNodeId": "5FwczAvCE9grC-uO-rsJy",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "e60pNdjmvjyLTCJ3jUN7h",
-          "inputId": "if",
-          "outputNodeId": "sdh_YINwoIu5xoeDR8wQ4",
-          "outputId": "case1"
-        },
-        {
-          "inputNodeId": "5VcOEvnLC56O64j2InRKX",
-          "inputId": "message1",
-          "outputNodeId": "_9xEspbj9f37w6IB1Arzg",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "5VcOEvnLC56O64j2InRKX",
-          "inputId": "message2",
-          "outputNodeId": "QxSeeFiiP-uh-OkMCNbJi",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "inGxwbeQwa8T8EYYxBWKP",
-          "inputId": "rootPath",
-          "outputNodeId": "yLWFijxaMBQu1yfRxxEHQ",
-          "outputId": "rootPath"
-        },
-        {
-          "inputNodeId": "qI58gWoujdMp4KGTvKi06",
-          "inputId": "rootPath",
-          "outputNodeId": "yLWFijxaMBQu1yfRxxEHQ",
-          "outputId": "rootPath"
-        },
-        {
-          "inputNodeId": "YFPEXiTSWNawBUvgAF0_F",
-          "inputId": "qanda2",
-          "outputNodeId": "e60pNdjmvjyLTCJ3jUN7h",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "YFPEXiTSWNawBUvgAF0_F",
-          "inputId": "question",
-          "outputNodeId": "P43dR9pClYPtOT7C2sXmx",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "YFPEXiTSWNawBUvgAF0_F",
-          "inputId": "qanda",
-          "outputNodeId": "9f2Us4WxeKYfvqMm1_XUZ",
-          "outputId": "questionsAndAnswers"
-        },
-        {
-          "inputNodeId": "5VcOEvnLC56O64j2InRKX",
-          "inputId": "message3",
-          "outputNodeId": "YFPEXiTSWNawBUvgAF0_F",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "189BdUHhFqXuPiOTRnu6G",
-          "inputId": "text",
-          "outputNodeId": "5VcOEvnLC56O64j2InRKX",
-          "outputId": "response"
-        },
-        {
-          "inputNodeId": "hNhXa1EZOBOgUa_h-E222",
-          "inputId": "qanda2",
-          "outputNodeId": "e60pNdjmvjyLTCJ3jUN7h",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "hNhXa1EZOBOgUa_h-E222",
-          "inputId": "question",
-          "outputNodeId": "P43dR9pClYPtOT7C2sXmx",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "hNhXa1EZOBOgUa_h-E222",
-          "inputId": "qanda",
-          "outputNodeId": "9f2Us4WxeKYfvqMm1_XUZ",
-          "outputId": "questionsAndAnswers"
-        },
-        {
-          "inputNodeId": "1ukc23HOrIcQFDtNM4QV8",
-          "inputId": "message1",
-          "outputNodeId": "_9xEspbj9f37w6IB1Arzg",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "1ukc23HOrIcQFDtNM4QV8",
-          "inputId": "message2",
-          "outputNodeId": "QxSeeFiiP-uh-OkMCNbJi",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "1ukc23HOrIcQFDtNM4QV8",
-          "inputId": "message3",
-          "outputNodeId": "hNhXa1EZOBOgUa_h-E222",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "jS3liOffr3YO0xdhJ0god",
-          "inputId": "file",
-          "outputNodeId": "189BdUHhFqXuPiOTRnu6G",
-          "outputId": "items"
-        },
-        {
-          "inputNodeId": "1ukc23HOrIcQFDtNM4QV8",
-          "inputId": "message4",
-          "outputNodeId": "jS3liOffr3YO0xdhJ0god",
-          "outputId": "output"
-        }
-      ],
-      "nodesById": {},
-      "connectionsByNodeId": {},
-      "connectionsById": {},
-      "metadata": {
-        "name": "**Nodai Helper",
-        "id": "tM4FGxXXLTDjeD0oYgQpB"
-      }
-    },
     "LOt0W_XCiFbuqbRlbF1oM": {
       "nodes": [
         {
@@ -2598,7 +1443,7 @@
           "data": {
             "type": "user",
             "useTypeInput": false,
-            "promptText": "I am working on developing an AI storyboarding tool that allows users to create a series of prompts for a language model in a choose-your-own-adventure format. The tool is inspired by node-based editors, like the one found in Blender, where users can create nodes on a page that have inputs and outputs that can be connected by wires to form a web of connections between the prompts and the AI. Each node can be edited, and when editing, a larger window pops up with a text editor where users can tweak various aspects of the prompt that will be fed to the AI. This tool will provide a user-friendly interface for crafting interactive stories with an AI language model. Here is a tree of my current files for context. If you would like the contents of any of these files, please ask. The app is dark-themed and the colors are available in index.css. I'm using Emotion for CSS.\n"
+            "promptText": "I am working on developing an AI storyboarding tool that allows users to create a series of prompts for a language model in a choose-your-own-adventure format. The tool is inspired by node-based editors, like the one found in Blender, where users can create nodes on a page that have inputs and outputs that can be connected by wires to form a web of connections between the prompts and the AI. Each node can be edited, and when editing, a larger window pops up with a text editor where users can tweak various aspects of the prompt that will be fed to the AI. This tool will provide a user-friendly interface for crafting interactive stories with an AI language model. Here is a tree of my current files for context. If you would like the contents of any of these files, please ask. The app is dark-themed and the colors are available in index.css. I'm using Emotion for CSS.\n\nEvery node is split into two files. The file in `core`, such as `core/src/model/nodes/TextNode.ts`, contains the main implementation of the node's functionality. The file in `app`, such as `app/src/components/nodes/TextNode.tsx`, contains three react UI components related to showing the node in the application. "
           }
         },
         {
@@ -2676,14 +1521,14 @@
           "title": "Prompt",
           "id": "YFPEXiTSWNawBUvgAF0_F",
           "visualData": {
-            "x": 2133.9317655965183,
-            "y": -139.04152129400924,
-            "zIndex": 634
+            "x": 1879.8025484562081,
+            "y": -164.03783773403975,
+            "zIndex": 674
           },
           "data": {
             "type": "user",
             "useTypeInput": false,
-            "promptText": "{{context}}\n\nI have asked this question:\n\n\"\"\"\n{{question}}\n\"\"\"\n\nHere are some additional notes:\n\n{{qanda}}\n\n{{functions}}\n\nPlease give me a high level overview of the steps you will be taking to accomplish this task, in a list, please.\n\nThings you should do:\n\n* Gather context on what you are working with\n* Look at examples\n* Think out loud\n* Give high level tasks, don't provide the details\n* Only mention one other file per line, so that it's clear which file the step is working with.\n* Get examples before writing or creating files\n* Combine all parts of a file into one step\n* Be extremely detailed in each step, explain the step as if you are new to the Nodai application."
+            "promptText": "{{context}}\n\nI have asked this question:\n\n\"\"\"\n{{question}}\n\"\"\"\n\nHere are some additional notes:\n\n{{qanda}}"
           }
         },
         {
@@ -2699,7 +1544,7 @@
           "data": {
             "model": "gpt-3.5-turbo",
             "useModelInput": false,
-            "temperature": 0.5,
+            "temperature": 0.2,
             "useTemperatureInput": false,
             "top_p": 1,
             "useTopPInput": false,
@@ -2714,7 +1559,7 @@
             "usePresencePenaltyInput": false,
             "frequencyPenalty": 0.2,
             "useFrequencyPenaltyInput": false,
-            "cache": false
+            "cache": true
           }
         },
         {
@@ -2736,13 +1581,13 @@
           "title": "Text",
           "id": "gMe54j9zmTUGFU1t_1viB",
           "visualData": {
-            "x": 1510.4511941551914,
-            "y": 810.0442142583113,
+            "x": 1027.1890763146014,
+            "y": 825.3197409716632,
             "width": 529,
-            "zIndex": 627
+            "zIndex": 675
           },
           "data": {
-            "text": "You have system functions available to you to use. You may call one of these functions to get a response from the system:\n\nFUNCTIONS_START\n- command: READ_FILE\n  file: file_name.ts\n  description: Reads a file and returns with its contents. Only one file may be read.\n- command: DIGEST_FILE\n  file: file_name.ts\n  description: Reads a file and returns a short summary about the file. Only one file may be digested.\n- command: TAKE_NOTE_FOR_SELF\n  notes: Here is some text to reply with. This is useful for taking notes.\n  description: Outputs some text as the result of the command.\n- command: WRITE_FILE\n  file: file_name.ts\n  contents: |\n    contents of the file\n  description: Writes text to the specified file.\n- command: ASK_FOR_FEEDBACK\n  message: The message for the user\n  description: Asks the user questions or for feedback on what you are doing. This can help make sure your plan is good.\nFUNCTIONS_END"
+            "text": "You have Chat API functions available to you to use. You may call one of these functions to get a response from the system:\n\n- command: READ_FILES\n  arguments:\n    files:\n      - file_name.ts\n  description: Reads a file and returns with its contents. Files must be an array with one file per line.\n- command: TAKE_NOTE_FOR_SELF\n  arguments:\n    notes: Here is some note to take for youself.\n- command: THINK_OUT_LOUD\n  arguments:\n    notes: Here is some text to remember for later.\n- command: WRITE_FILE\n  arguments:\n    file: file_name.ts\n  contents: |\n    contents of the file\n  description: Writes text to the specified file. You must write the entire file contents at once. You must not comment out sections of the file - everything needs to be implemented.\n- command: ASK_FOR_FEEDBACK\n  arguments:\n    message: The message for the user\n  description: Asks the user questions or for feedback on what you are doing. This can help make sure your plan is good."
           }
         },
         {
@@ -2756,7 +1601,7 @@
             "zIndex": 641
           },
           "data": {
-            "text": "I'd like you to make these changes:\n\n* Combine steps that are talking about the same file\n* Add steps to look at examples before any steps that write files\n* Remove any steps talking about documentation or tests"
+            "text": "Make these changes:\n\n* Combine steps that are talking about the same file\n* Add steps to look at examples before any steps that write files\n* Remove any steps talking about documentation\n* Remove any steps talking about testing or tests\n* Flatten any nested steps, there should only be one single list, no nested lists."
           }
         },
         {
@@ -2829,7 +1674,7 @@
             "zIndex": 618
           },
           "data": {
-            "text": "You are an advanced AI for creating and updating task lists to accomplish programming tasks."
+            "text": "You are an advanced AI for creating and updating task lists to accomplish programming tasks. You interact with the chat API to accomplish your tasks. You use the chat API to take notes for yourself and to think out loud about what you are doing. You are very detailed in your explanations and steps."
           }
         },
         {
@@ -2902,7 +1747,7 @@
           "data": {
             "type": "user",
             "useTypeInput": false,
-            "promptText": "{{context}}\n\nThese files are present in the Nodai application:\n\n{{files}}\n\nI have the following question or request:\n\n\"\"\"\n{{request}}\n\"\"\"\n\nYou provided me with these questions:\n\n\"\"\"\n{{questions}}\n\"\"\"\n\nImagine a scenario where you are the expert on the Nodai application, or a project manager on the project. What are your best answers to these questions? You may say that you do not have enough context to answer any given question. Also, phrase the answers in such a way to include the question in them."
+            "promptText": "{{context}}\n\nThese files are present in the Nodai application:\n\n{{files}}\n\nI have the following question or request:\n\n\"\"\"\n{{request}}\n\"\"\"\n\nYou provided me with these questions:\n\n\"\"\"\n{{questions}}\n\"\"\"\n\nImagine a scenario where you are the expert on the Nodai application, or a project manager on the project. What are your best answers to these questions? You may say that you do not have enough context to answer any given question. Also, phrase the answers in such a way to include the question in them. Directly answer the questions, as if this is documentation on the project."
           }
         },
         {
@@ -3312,7 +2157,7 @@
             "zIndex": 625
           },
           "data": {
-            "text": "Here are some answers given for some questions:\n\n\"\"\"\n{{answers}}\n\"\"\"\n\nHere is some feedback on those answers:\n\n\"\"\"\n{{feedback}}\n\"\"\"\n\nPlease write the answers again, while incorporating the feedback."
+            "text": "Here are some answers given for some questions:\n\n\"\"\"\n{{answers}}\n\"\"\"\n\nHere is some required changes you need to make to these answers:\n\n\"\"\"\n{{feedback}}\n\"\"\"\n\nRewrite these answers with the changes."
           }
         },
         {
@@ -3326,7 +2171,7 @@
             "zIndex": 628
           },
           "data": {
-            "model": "gpt-3.5-turbo",
+            "model": "gpt-4",
             "useModelInput": false,
             "temperature": 0,
             "useTemperatureInput": false,
@@ -3356,7 +2201,7 @@
             "width": 300
           },
           "data": {
-            "text": "You are an advanced AI that combines two pieces of text. You do not leave any details out."
+            "text": "You are an advanced AI that makes changes to text."
           }
         },
         {
@@ -3384,7 +2229,7 @@
             "zIndex": 660
           },
           "data": {
-            "text": "Here is a list of steps:\n\n\"\"\"\n{{steps}}\n\"\"\"\n\nConvert this list of steps into a YAML document with the following format:\n\n```yaml\nyamlDocument:\n  steps:\n    - Step 1\n    - Step 2\n```"
+            "text": "Here is a list of steps:\n\n\"\"\"\n{{steps}}\n\"\"\"\n\nConvert this list of steps into a YAML document with the following format:\n\n```yaml\nyamlDocument:\n  steps:\n    - Step 1\n    - Step 2\n```\n\nYou must include every single step. Every step MUST be a string, even if the list of steps contains YAML data. "
           }
         },
         {
@@ -3398,7 +2243,7 @@
             "zIndex": 659
           },
           "data": {
-            "text": "You are an advanced AI YAML generator tool that takes in inputs and produces valid YAML based on a question."
+            "text": "You are an advanced AI YAML generator tool that takes in inputs and produces valid YAML based on a question. You leave nothing out. Your conversion is verbatim."
           }
         },
         {
@@ -3414,7 +2259,7 @@
           "data": {
             "model": "gpt-3.5-turbo",
             "useModelInput": false,
-            "temperature": 0.5,
+            "temperature": 0,
             "useTemperatureInput": false,
             "top_p": 1,
             "useTopPInput": false,
@@ -3429,7 +2274,7 @@
             "usePresencePenaltyInput": false,
             "frequencyPenalty": 0,
             "useFrequencyPenaltyInput": false,
-            "cache": false
+            "cache": true
           }
         },
         {
@@ -3472,7 +2317,7 @@
             "zIndex": 669
           },
           "data": {
-            "text": "Here is a list of steps:\n\n\"\"\"\n{{steps}}\n\"\"\"\n\nHere is feedback on the steps:\n\n\"\"\"\n{{feedback}}\n\"\"\"\n\nPlease write the steps again, incorporating the feedback."
+            "text": "Here is a list of steps:\n\n\"\"\"\n{{steps}}\n\"\"\"\n\nHere are required changes to make to the steps:\n\n\"\"\"\n{{feedback}}\n\"\"\"\n\nPlease write the steps, with the required changes made. "
           }
         },
         {
@@ -3488,7 +2333,7 @@
           "data": {
             "model": "gpt-3.5-turbo",
             "useModelInput": false,
-            "temperature": 0.5,
+            "temperature": 0,
             "useTemperatureInput": false,
             "top_p": 1,
             "useTopPInput": false,
@@ -3503,7 +2348,7 @@
             "usePresencePenaltyInput": false,
             "frequencyPenalty": 0,
             "useFrequencyPenaltyInput": false,
-            "cache": false
+            "cache": true
           }
         },
         {
@@ -3518,6 +2363,20 @@
           },
           "data": {
             "text": "You are an advanced AI that combines two pieces of text. You do not leave any details out."
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "7vNigNnYPyllzuKCncBQd",
+          "visualData": {
+            "x": 2260.208598489028,
+            "y": 282.32332571050824,
+            "width": 300,
+            "zIndex": 677
+          },
+          "data": {
+            "text": "{{context}}\n\n{{functions}}\n\nGive me a detailed overview of the steps you will be taking to accomplish this task.\n\nMake sure you gather context on what you are working with, look at examples, think out loud, give high level tasks, get one or mote examples before creating new files, read files before writing them, and are very detailed.\n\nYou can only use the Chat API to do things like read files and think our loud. You are not working in a repository. There are no branches nor git. You are an AI that is interacting with the system functions only. However, do not include YAML in your response. Your response should be plain English, and may mention the Chat API functions in sentences.\n\nThere are no tests to read. There is no documentation to read. Do not write tests. Do not write documentation."
           }
         }
       ],
@@ -3574,12 +2433,6 @@
           "inputNodeId": "B7bKOsVis46f2wZGjHok0",
           "inputId": "systemPrompt",
           "outputNodeId": "koUO8WjYqJBw5m1DqUzgv",
-          "outputId": "output"
-        },
-        {
-          "inputNodeId": "wnITtjycZ2FJpLYSThTVo",
-          "inputId": "prompt",
-          "outputNodeId": "YFPEXiTSWNawBUvgAF0_F",
           "outputId": "output"
         },
         {
@@ -3983,13 +2836,31 @@
           "inputId": "steps",
           "outputNodeId": "eJ4oKMy5hG51V_63xGOf_",
           "outputId": "response"
+        },
+        {
+          "inputNodeId": "7vNigNnYPyllzuKCncBQd",
+          "inputId": "functions",
+          "outputNodeId": "gMe54j9zmTUGFU1t_1viB",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "7vNigNnYPyllzuKCncBQd",
+          "inputId": "context",
+          "outputNodeId": "YFPEXiTSWNawBUvgAF0_F",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "wnITtjycZ2FJpLYSThTVo",
+          "inputId": "prompt",
+          "outputNodeId": "7vNigNnYPyllzuKCncBQd",
+          "outputId": "output"
         }
       ],
       "nodesById": {},
       "connectionsByNodeId": {},
       "connectionsById": {},
       "metadata": {
-        "name": "**Nodai Helper (Copy)",
+        "name": "**Nodai Helper",
         "id": "zYzI7xjOb0NOj9WPKJOrQ"
       }
     },
@@ -4581,7 +3452,7 @@
             "zIndex": 160
           },
           "data": {
-            "text": "You have system functions available to you to use. You may call one of these functions to get a response from the system:\n\n- command: READ_FILE\n  files:\n    - file_name.ts\n  description: Reads a file and returns with its contents. Files must be an array with one file per line.\n- command: TAKE_NOTE_FOR_SELF\n  notes: Here is some text to reply with. This is useful for taking notes.\n  description: Outputs some text as the result of the command.\n- command: WRITE_FILE\n  file: file_name.ts\n  contents: |\n    contents of the file\n  description: Writes text to the specified file. You must write the entire file contents at once. You must not comment out sections of the file - everything needs to be implemented.\n- command: ASK_FOR_FEEDBACK\n  message: The message for the user\n  description: Asks the user questions or for feedback on what you are doing. This can help make sure your plan is good."
+            "text": "You have Chat API functions available to you to use. You may call one of these functions to get a response from the system:\n\n- command: READ_FILES\n  arguments:\n    files:\n      - file_name.ts\n  description: Reads a file and returns with its contents. Files must be an array with one file per line.\n- command: TAKE_NOTE_FOR_SELF\n  arguments:\n    notes: Here is some note to take for youself.\n- command: THINK_OUT_LOUD\n  arguments:\n    notes: Here is some text to remember for later.\n- command: WRITE_FILE\n  arguments:\n    file: file_name.ts\n  contents: |\n    contents of the file\n  description: Writes text to the specified file. You must write the entire file contents at once. You must not comment out sections of the file - everything needs to be implemented.\n- command: ASK_FOR_FEEDBACK\n  arguments:\n    message: The message for the user\n  description: Asks the user questions or for feedback on what you are doing. This can help make sure your plan is good.\n\nAn example is:\n\n```yaml\nyamlDocument:\n  command: THINK_OUT_LOUD\n  arguments:\n    notes: This is me thinking out loud\n```"
           }
         },
         {
@@ -4752,37 +3623,22 @@
           "title": "Match",
           "id": "eKe_lJayfu9fVyZAD7ri_",
           "visualData": {
-            "x": 5124.392931506813,
-            "y": -234.366343577227,
+            "x": 4151.319415255813,
+            "y": -535.8389204523792,
             "width": 300,
-            "zIndex": 141
+            "zIndex": 334
           },
           "data": {
-            "caseCount": 6,
+            "caseCount": 7,
             "cases": [
               "DIGEST_FILE",
-              "READ_FILE",
+              "READ_FILES",
               "TAKE_NOTE_FOR_SELF",
               "ASK_FOR_FEEDBACK",
               "CREATE_BLANK_FILE",
-              "WRITE_FILE"
+              "WRITE_FILE",
+              "THINK_OUT_LOUD"
             ]
-          }
-        },
-        {
-          "type": "extractRegex",
-          "title": "Extract Regex",
-          "id": "Lt7FetK2fNHvp-zGpbyeb",
-          "visualData": {
-            "x": 5578.284565981844,
-            "y": 86.78078995676775,
-            "width": 250,
-            "zIndex": 151
-          },
-          "data": {
-            "regex": "arguments: (.+)",
-            "useRegexInput": false,
-            "errorOnFailed": false
           }
         },
         {
@@ -4790,10 +3646,10 @@
           "title": "Text",
           "id": "FyLqlQhLYBHb5SD8Bbjx5",
           "visualData": {
-            "x": 5972.705884451865,
-            "y": 116.18017591666175,
+            "x": 6421.102213946726,
+            "y": 101.64363655647925,
             "width": 300,
-            "zIndex": 105
+            "zIndex": 374
           },
           "data": {
             "text": "SYSTEM ERROR: NO SUCH FUNCTION\n\nINPUT: \n\n```yml\n{{input}}\n```"
@@ -4860,38 +3716,6 @@
           "isSplitRun": false
         },
         {
-          "type": "extractRegex",
-          "title": "Extract Regex",
-          "id": "eAIWo0XuNb-0A5z-D6yNQ",
-          "visualData": {
-            "x": 5577.452009566831,
-            "y": -529.6357219898775,
-            "width": 250,
-            "zIndex": 268
-          },
-          "data": {
-            "regex": "file: (.+)",
-            "useRegexInput": false,
-            "errorOnFailed": false
-          }
-        },
-        {
-          "type": "extractRegex",
-          "title": "Extract Regex",
-          "id": "Rb7VwhHEC8mJOe-1zoVCY",
-          "visualData": {
-            "x": 5553.305595914529,
-            "y": -203.78197037577328,
-            "width": 250,
-            "zIndex": 195
-          },
-          "data": {
-            "regex": "- (.+)",
-            "useRegexInput": false,
-            "errorOnFailed": false
-          }
-        },
-        {
           "type": "text",
           "title": "Execute Current Task Prompt",
           "id": "KIFBcqmOa5G-MPklHfHVR",
@@ -4902,7 +3726,7 @@
             "zIndex": 215
           },
           "data": {
-            "text": "{{context}}\n\nHere are all files in the project:\n\nFILES_START\n{{files}}\nFILES_END\n\nHere are your remaining tasks:\n\nTASK_LIST_START\n{{task_list}}\nTASK_LIST_END\n\nHere is a history of your commands:\n\nHISTORY_START\n{{previously_executed}}\nHISTORY_END\n\nHere is your current task: \"{{current_task}}\"\n\nFUNCTIONS_START\n{{functions}}\nFUNCTIONS_END\n\nYou must now execute your current task. Please reply with a YAML block describing how you will execute the task. \n\n```yaml\nyamlDocument:\n  command: COMMAND_NAME\n  arguments: Some command arguments, comma separated\n```"
+            "text": "{{context}}\n\nHere are all files in the project:\n\nFILES_START\n{{files}}\nFILES_END\n\n{{functions}}\n\nHere is a history of your commands:\n\nHISTORY_START\n{{previously_executed}}\nHISTORY_END\n\nHere are your remaining tasks:\n\n{{task_list}}\n\nReply with the Chat API function you will run next to further your task list, like this:\n\n```yaml\nyamlDocument:\n  command: COMMAND_NAME\n  arguments:\n    argumentName: value\n    argument2: value2\n```"
           }
         },
         {
@@ -4910,13 +3734,13 @@
           "title": "Text",
           "id": "uEWXLi8XmKpaiGzzTFDme",
           "visualData": {
-            "x": 7852.35039275238,
-            "y": -293.81970289803724,
+            "x": 7875.686049522404,
+            "y": -255.33900115338668,
             "width": 300,
-            "zIndex": 287
+            "zIndex": 381
           },
           "data": {
-            "text": "{{context}}\n\nHere are your remaining tasks:\n\nTASK_LIST_START\n{{task_list}}\nTASK_LIST_END\n\nHere is your current task: \"{{current_task}}\"\n\nFUNCTIONS_START\n{{functions}}\nFUNCTIONS_END\n\n{{command_info}}\n\nRevise your task list if necessary based on what you now know. Tell me your next task, and then tell me all of your remaining tasks. You may explain your reasoning for any changes you make or explain anything else."
+            "text": "{{context}}\n\n{{functions}}\n\n{{command_info}}\n\nHere are your remaining tasks:\n\n{{task_list}}\n\nHere is your current task: \"{{current_task}}\"\n\nThe above command may have completed your current task. If so, you may remove the current task. Then, you may revise and change your task list if necessary based on what you now know. While revising your task list, ask yourself these questions:\n\n* If you need examples, do you have enough? Or would more be better?\n* If you have to guess about anything, would looking at any other files help?\n* Have you taken enough notes for yourself?\n\nYou may explain your reasoning for any changes you make or explain anything else. You must read file before writing them. You must look at all other relevant files for context and examples before writing anything.\n\nThen, tell me your next task, and then tell me all of your remaining tasks. \n"
           }
         },
         {
@@ -4932,7 +3756,7 @@
           "data": {
             "model": "gpt-4",
             "useModelInput": false,
-            "temperature": 0,
+            "temperature": 0.3,
             "useTemperatureInput": false,
             "top_p": 1,
             "useTopPInput": false,
@@ -4962,22 +3786,6 @@
           },
           "data": {
             "text": "You are a AI tool that analyzes another AI's message and determines the next task for it to run."
-          }
-        },
-        {
-          "type": "extractRegex",
-          "title": "Extract Regex",
-          "id": "GJjxrheYn_y34JmufhNhI",
-          "visualData": {
-            "x": 5561.771187245226,
-            "y": -779.8195879678019,
-            "width": 250,
-            "zIndex": 247
-          },
-          "data": {
-            "regex": "message: (.+)",
-            "useRegexInput": false,
-            "errorOnFailed": false
           }
         },
         {
@@ -5014,45 +3822,13 @@
           "title": "Command History",
           "id": "JA8Lk0pXQTMaNfUhEphm2",
           "visualData": {
-            "x": 7905.031133794821,
-            "y": 193.7915256947274,
+            "x": 7911.318384602866,
+            "y": 322.2310779162274,
             "width": 300,
-            "zIndex": 327
+            "zIndex": 382
           },
           "data": {
             "text": "{{prev_commands}}\n{{command}}"
-          }
-        },
-        {
-          "type": "extractRegex",
-          "title": "Extract Regex",
-          "id": "dIYOri87l40Dxg2VcvK16",
-          "visualData": {
-            "x": 5550.1210406838245,
-            "y": -1058.3859705303669,
-            "width": 250,
-            "zIndex": 246
-          },
-          "data": {
-            "regex": "file: (.+)",
-            "useRegexInput": false,
-            "errorOnFailed": false
-          }
-        },
-        {
-          "type": "extractRegex",
-          "title": "Extract Regex",
-          "id": "Y-XfdVqvG3gqQYVMW8tOo",
-          "visualData": {
-            "x": 5532.1408648101415,
-            "y": -1291.587143021588,
-            "width": 250,
-            "zIndex": 248
-          },
-          "data": {
-            "regex": "file: (.+)",
-            "useRegexInput": false,
-            "errorOnFailed": false
           }
         },
         {
@@ -5167,7 +3943,8 @@
             "zIndex": 281
           },
           "data": {
-            "rootPropertyName": "yamlDocument"
+            "rootPropertyName": "yamlDocument",
+            "objectPath": "$.yamlDocument"
           }
         },
         {
@@ -5175,13 +3952,13 @@
           "title": "Extract Object Path",
           "id": "TflHhIRIPHK_PlpMpMCtL",
           "visualData": {
-            "x": 4446.301481922362,
-            "y": 280.6433287714482,
+            "x": 4437.355919239172,
+            "y": 355.562416243158,
             "width": 250,
-            "zIndex": 282
+            "zIndex": 372
           },
           "data": {
-            "path": "$.yamlDocument.command",
+            "path": "$.command",
             "usePathInput": false
           }
         },
@@ -5190,13 +3967,13 @@
           "title": "Extract Object Path",
           "id": "z5IaklOOBA20wwMI0aRkq",
           "visualData": {
-            "x": 4431.820297839913,
-            "y": 465.9761857821645,
+            "x": 4439.712546449494,
+            "y": 534.1510451724706,
             "width": 250,
-            "zIndex": 283
+            "zIndex": 341
           },
           "data": {
-            "path": "$.yamlDocument.arguments",
+            "path": "$.arguments",
             "usePathInput": false
           }
         },
@@ -5218,10 +3995,10 @@
           "id": "TGIDciqmI5zMTLdVk2T2C",
           "data": {},
           "visualData": {
-            "x": 5899.469457833085,
-            "y": -25.760851160157927,
+            "x": 5396.161154674258,
+            "y": 9.417887736214652,
             "width": 100,
-            "zIndex": 284
+            "zIndex": 367
           }
         },
         {
@@ -5235,7 +4012,7 @@
             "zIndex": 290
           },
           "data": {
-            "text": "Here is some text about a task list:\n\n\"\"\"\n{{text}}\n\"\"\"\n\nConvert this text into a YAML document with the following format:\n\n```yaml\nyamlDocument:\n  nextTask: The next task I should execute\n  remainingTasks:\n    - The next task remaining \n    - Another task remaining\n``` "
+            "text": "Here is some text about a task list:\n\n\"\"\"\n{{text}}\n\"\"\"\n\nConvert this text into a YAML document with the following format:\n\n```yaml\nyamlDocument:\n  nextTask: The next task I should execute\n  remainingTasks:\n    - The next task remaining \n    - Another task remaining\n``` \nEvery task MUST be a string value, even if the step contains YAML data."
           }
         },
         {
@@ -5358,6 +4135,221 @@
           },
           "isSplitRun": false,
           "splitRunMax": 20
+        },
+        {
+          "type": "extractObjectPath",
+          "title": "Extract Object Path",
+          "id": "iAPKowmhorGhT6DKcjkb7",
+          "visualData": {
+            "x": 5557.238871649446,
+            "y": -193.98449142035096,
+            "width": 250,
+            "zIndex": 337
+          },
+          "data": {
+            "path": "$.files[*]",
+            "usePathInput": false
+          }
+        },
+        {
+          "type": "if",
+          "title": "If",
+          "id": "RNxCaWdA7mOcrJBVUKiqr",
+          "data": {},
+          "visualData": {
+            "x": 5389.610793391964,
+            "y": -187.54344359294475,
+            "width": 100,
+            "zIndex": 368
+          }
+        },
+        {
+          "type": "extractObjectPath",
+          "title": "Extract Object Path",
+          "id": "wq5E83vpWqQMlS7AHPnQe",
+          "visualData": {
+            "x": 5536.689177597142,
+            "y": -434.1124731488284,
+            "width": 250,
+            "zIndex": 345
+          },
+          "data": {
+            "path": "$.file",
+            "usePathInput": false
+          }
+        },
+        {
+          "type": "if",
+          "title": "If",
+          "id": "CWz3hh4xEp4FLbYV3Tw3v",
+          "data": {},
+          "visualData": {
+            "x": 5388.238498672117,
+            "y": -404.8323310274315,
+            "width": 100,
+            "zIndex": 346
+          }
+        },
+        {
+          "type": "if",
+          "title": "If",
+          "id": "Mvbq2URURhELcYZH2EUKw",
+          "data": {},
+          "visualData": {
+            "x": 5375.549822945474,
+            "y": -705.1813531485337,
+            "width": 100,
+            "zIndex": 351
+          }
+        },
+        {
+          "type": "extractObjectPath",
+          "title": "Extract Object Path",
+          "id": "3uXtY4n-rlV41w6joxUdE",
+          "visualData": {
+            "x": 5570.698610051417,
+            "y": -729.7916844518388,
+            "width": 250,
+            "zIndex": 355
+          },
+          "data": {
+            "path": "$.message",
+            "usePathInput": false
+          }
+        },
+        {
+          "type": "if",
+          "title": "If",
+          "id": "Rh5FbKt-FMnow6je0Hm4u",
+          "data": {},
+          "visualData": {
+            "x": 5391.813974291001,
+            "y": -998.058677960689,
+            "width": 100,
+            "zIndex": 358
+          }
+        },
+        {
+          "type": "extractObjectPath",
+          "title": "Extract Object Path",
+          "id": "u2sddIBdrSCM-8EkJ_qS4",
+          "visualData": {
+            "x": 5550.538237015827,
+            "y": -1026.4048579184675,
+            "width": 250,
+            "zIndex": 357
+          },
+          "data": {
+            "path": "$.file",
+            "usePathInput": false
+          }
+        },
+        {
+          "type": "if",
+          "title": "If",
+          "id": "dHDzOydr6Q5IFDBH6z6HU",
+          "data": {},
+          "visualData": {
+            "x": 5368.851714764555,
+            "y": -1237.700159446597,
+            "width": 100,
+            "zIndex": 359
+          }
+        },
+        {
+          "type": "extractObjectPath",
+          "title": "Extract Object Path",
+          "id": "_tOy610lqFqHX6iUfQZu1",
+          "visualData": {
+            "x": 5570.538237015827,
+            "y": -1264.1784150771389,
+            "width": 250,
+            "zIndex": 361
+          },
+          "data": {
+            "path": "$.file",
+            "usePathInput": false
+          }
+        },
+        {
+          "type": "if",
+          "title": "If",
+          "id": "4CgGTnsYZdZFKi12cKmiP",
+          "data": {},
+          "visualData": {
+            "x": 5752.306145236096,
+            "y": 217.18316729256162,
+            "width": 100,
+            "zIndex": 362
+          }
+        },
+        {
+          "type": "extractObjectPath",
+          "title": "Extract Object Path",
+          "id": "4JUAkBJxsbKfNAXOdmGS6",
+          "visualData": {
+            "x": 5874.8418618563355,
+            "y": 7.449881473971996,
+            "width": 250,
+            "zIndex": 377
+          },
+          "data": {
+            "path": "$.notes",
+            "usePathInput": false
+          }
+        },
+        {
+          "type": "text",
+          "title": "Text",
+          "id": "3bvstHODyToviHmuGwEl0",
+          "visualData": {
+            "x": 864.2677686086065,
+            "y": 869.4863033502647,
+            "width": 132.05028524130944
+          },
+          "data": {
+            "text": "- {{input}}"
+          },
+          "isSplitRun": true,
+          "splitRunMax": 21
+        },
+        {
+          "type": "text",
+          "title": "Task List",
+          "id": "tgcfyWHl6ut3-ivyZ8jEA",
+          "visualData": {
+            "x": 1045.9677524118683,
+            "y": 852.789548081857,
+            "width": 116.3356920475137,
+            "zIndex": 370
+          },
+          "data": {
+            "text": "{{input}}"
+          }
+        },
+        {
+          "type": "if",
+          "title": "If",
+          "id": "ItFByM3wvP_dPEoP5D6Mx",
+          "data": {},
+          "visualData": {
+            "x": 5380.482613085664,
+            "y": 157.3401052405825,
+            "width": 100,
+            "zIndex": 373
+          }
+        },
+        {
+          "type": "coalesce",
+          "title": "Coalesce",
+          "id": "YJDAqTtxqpNkKPX5FvtPt",
+          "data": {},
+          "visualData": {
+            "x": 5664.504228276922,
+            "y": 38.811399688325125,
+            "width": 150,
+            "zIndex": 376
+          }
         }
       ],
       "connections": [
@@ -5428,36 +4420,6 @@
           "outputId": "file_contents"
         },
         {
-          "inputNodeId": "cV8OdlEuJDaI2v05bTz5X",
-          "inputId": "file_contents",
-          "outputNodeId": "SNQCA2ZXN7LQRbPd1M6Mx",
-          "outputId": "file_contents"
-        },
-        {
-          "inputNodeId": "Rb7VwhHEC8mJOe-1zoVCY",
-          "inputId": "input",
-          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
-          "outputId": "case2"
-        },
-        {
-          "inputNodeId": "eAIWo0XuNb-0A5z-D6yNQ",
-          "inputId": "input",
-          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
-          "outputId": "case1"
-        },
-        {
-          "inputNodeId": "FyLqlQhLYBHb5SD8Bbjx5",
-          "inputId": "input",
-          "outputNodeId": "Lt7FetK2fNHvp-zGpbyeb",
-          "outputId": "output1"
-        },
-        {
-          "inputNodeId": "cV8OdlEuJDaI2v05bTz5X",
-          "inputId": "file_name",
-          "outputNodeId": "eAIWo0XuNb-0A5z-D6yNQ",
-          "outputId": "output1"
-        },
-        {
           "inputNodeId": "KIFBcqmOa5G-MPklHfHVR",
           "inputId": "context",
           "outputNodeId": "18WP87xc4D7JXdSGTRlYD",
@@ -5512,24 +4474,6 @@
           "outputId": "output1"
         },
         {
-          "inputNodeId": "GJjxrheYn_y34JmufhNhI",
-          "inputId": "input",
-          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
-          "outputId": "case4"
-        },
-        {
-          "inputNodeId": "RIiW55iFfMEKP4fXdsETJ",
-          "inputId": "questions",
-          "outputNodeId": "GJjxrheYn_y34JmufhNhI",
-          "outputId": "output1"
-        },
-        {
-          "inputNodeId": "cObRObIxgwrJablQHLGnw",
-          "inputId": "input2Default",
-          "outputNodeId": "Vudek72LbIFekPR5DVDsq",
-          "outputId": "data"
-        },
-        {
           "inputNodeId": "VIZaMd_lS9i-zMjpKl5wj",
           "inputId": "input",
           "outputNodeId": "cObRObIxgwrJablQHLGnw",
@@ -5566,52 +4510,16 @@
           "outputId": "output3"
         },
         {
-          "inputNodeId": "uEWXLi8XmKpaiGzzTFDme",
-          "inputId": "current_task",
-          "outputNodeId": "cObRObIxgwrJablQHLGnw",
-          "outputId": "output2"
-        },
-        {
           "inputNodeId": "KIFBcqmOa5G-MPklHfHVR",
           "inputId": "previously_executed",
           "outputNodeId": "cObRObIxgwrJablQHLGnw",
           "outputId": "output3"
         },
         {
-          "inputNodeId": "dIYOri87l40Dxg2VcvK16",
-          "inputId": "input",
-          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
-          "outputId": "case5"
-        },
-        {
-          "inputNodeId": "Y-XfdVqvG3gqQYVMW8tOo",
-          "inputId": "input",
-          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
-          "outputId": "case6"
-        },
-        {
-          "inputNodeId": "Q2-bYh6LGkVm2WPb46tEz",
-          "inputId": "file_path",
-          "outputNodeId": "dIYOri87l40Dxg2VcvK16",
-          "outputId": "output1"
-        },
-        {
           "inputNodeId": "L27NwFvq6cJgke83F55ei",
           "inputId": "questions",
           "outputNodeId": "Q2-bYh6LGkVm2WPb46tEz",
           "outputId": "output"
-        },
-        {
-          "inputNodeId": "YMPhS3MhQdfMqPqj8Ss8k",
-          "inputId": "file_path",
-          "outputNodeId": "Y-XfdVqvG3gqQYVMW8tOo",
-          "outputId": "output1"
-        },
-        {
-          "inputNodeId": "YMPhS3MhQdfMqPqj8Ss8k",
-          "inputId": "contents",
-          "outputNodeId": "Y-XfdVqvG3gqQYVMW8tOo",
-          "outputId": "output2"
         },
         {
           "inputNodeId": "U0EcCqP66WFZahvpiGPFf",
@@ -5624,30 +4532,6 @@
           "inputId": "files",
           "outputNodeId": "4S1D75ofp0W1obD11VBqI",
           "outputId": "files"
-        },
-        {
-          "inputNodeId": "Lt7FetK2fNHvp-zGpbyeb",
-          "inputId": "input",
-          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
-          "outputId": "unmatched"
-        },
-        {
-          "inputNodeId": "SNQCA2ZXN7LQRbPd1M6Mx",
-          "inputId": "fileMatch",
-          "outputNodeId": "eAIWo0XuNb-0A5z-D6yNQ",
-          "outputId": "matches"
-        },
-        {
-          "inputNodeId": "0xxgB-83ezLpsw0rLpo86",
-          "inputId": "fileMatch",
-          "outputNodeId": "Rb7VwhHEC8mJOe-1zoVCY",
-          "outputId": "matches"
-        },
-        {
-          "inputNodeId": "i4cBHxWO1HLsnHg3Yh7qP",
-          "inputId": "file_name",
-          "outputNodeId": "Rb7VwhHEC8mJOe-1zoVCY",
-          "outputId": "matches"
         },
         {
           "inputNodeId": "bjL5VE8Zzz84m3QFLJ7x7",
@@ -5740,12 +4624,6 @@
           "outputId": "match"
         },
         {
-          "inputNodeId": "SNJjOp-rPmQwnU52nE8kO",
-          "inputId": "input7",
-          "outputNodeId": "TGIDciqmI5zMTLdVk2T2C",
-          "outputId": "output"
-        },
-        {
           "inputNodeId": "6P04DpTqBQMOYpBfJuurJ",
           "inputId": "command_output",
           "outputNodeId": "SNJjOp-rPmQwnU52nE8kO",
@@ -5822,6 +4700,222 @@
           "inputId": "input2",
           "outputNodeId": "H4TGM34XgUZZOny6PfmFt",
           "outputId": "output"
+        },
+        {
+          "inputNodeId": "RNxCaWdA7mOcrJBVUKiqr",
+          "inputId": "if",
+          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
+          "outputId": "case2"
+        },
+        {
+          "inputNodeId": "iAPKowmhorGhT6DKcjkb7",
+          "inputId": "object",
+          "outputNodeId": "RNxCaWdA7mOcrJBVUKiqr",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "0xxgB-83ezLpsw0rLpo86",
+          "inputId": "fileMatch",
+          "outputNodeId": "iAPKowmhorGhT6DKcjkb7",
+          "outputId": "all_matches"
+        },
+        {
+          "inputNodeId": "i4cBHxWO1HLsnHg3Yh7qP",
+          "inputId": "file_name",
+          "outputNodeId": "iAPKowmhorGhT6DKcjkb7",
+          "outputId": "all_matches"
+        },
+        {
+          "inputNodeId": "RNxCaWdA7mOcrJBVUKiqr",
+          "inputId": "value",
+          "outputNodeId": "z5IaklOOBA20wwMI0aRkq",
+          "outputId": "match"
+        },
+        {
+          "inputNodeId": "CWz3hh4xEp4FLbYV3Tw3v",
+          "inputId": "value",
+          "outputNodeId": "z5IaklOOBA20wwMI0aRkq",
+          "outputId": "match"
+        },
+        {
+          "inputNodeId": "CWz3hh4xEp4FLbYV3Tw3v",
+          "inputId": "if",
+          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
+          "outputId": "case1"
+        },
+        {
+          "inputNodeId": "wq5E83vpWqQMlS7AHPnQe",
+          "inputId": "object",
+          "outputNodeId": "CWz3hh4xEp4FLbYV3Tw3v",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "SNQCA2ZXN7LQRbPd1M6Mx",
+          "inputId": "fileMatch",
+          "outputNodeId": "wq5E83vpWqQMlS7AHPnQe",
+          "outputId": "match"
+        },
+        {
+          "inputNodeId": "cV8OdlEuJDaI2v05bTz5X",
+          "inputId": "file_name",
+          "outputNodeId": "wq5E83vpWqQMlS7AHPnQe",
+          "outputId": "match"
+        },
+        {
+          "inputNodeId": "cV8OdlEuJDaI2v05bTz5X",
+          "inputId": "file_contents",
+          "outputNodeId": "SNQCA2ZXN7LQRbPd1M6Mx",
+          "outputId": "file_contents"
+        },
+        {
+          "inputNodeId": "Mvbq2URURhELcYZH2EUKw",
+          "inputId": "value",
+          "outputNodeId": "z5IaklOOBA20wwMI0aRkq",
+          "outputId": "match"
+        },
+        {
+          "inputNodeId": "Mvbq2URURhELcYZH2EUKw",
+          "inputId": "if",
+          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
+          "outputId": "case4"
+        },
+        {
+          "inputNodeId": "3uXtY4n-rlV41w6joxUdE",
+          "inputId": "object",
+          "outputNodeId": "Mvbq2URURhELcYZH2EUKw",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "RIiW55iFfMEKP4fXdsETJ",
+          "inputId": "questions",
+          "outputNodeId": "3uXtY4n-rlV41w6joxUdE",
+          "outputId": "match"
+        },
+        {
+          "inputNodeId": "Rh5FbKt-FMnow6je0Hm4u",
+          "inputId": "value",
+          "outputNodeId": "z5IaklOOBA20wwMI0aRkq",
+          "outputId": "match"
+        },
+        {
+          "inputNodeId": "Rh5FbKt-FMnow6je0Hm4u",
+          "inputId": "if",
+          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
+          "outputId": "case5"
+        },
+        {
+          "inputNodeId": "u2sddIBdrSCM-8EkJ_qS4",
+          "inputId": "object",
+          "outputNodeId": "Rh5FbKt-FMnow6je0Hm4u",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "Q2-bYh6LGkVm2WPb46tEz",
+          "inputId": "file_path",
+          "outputNodeId": "u2sddIBdrSCM-8EkJ_qS4",
+          "outputId": "match"
+        },
+        {
+          "inputNodeId": "dHDzOydr6Q5IFDBH6z6HU",
+          "inputId": "value",
+          "outputNodeId": "z5IaklOOBA20wwMI0aRkq",
+          "outputId": "match"
+        },
+        {
+          "inputNodeId": "dHDzOydr6Q5IFDBH6z6HU",
+          "inputId": "if",
+          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
+          "outputId": "case6"
+        },
+        {
+          "inputNodeId": "_tOy610lqFqHX6iUfQZu1",
+          "inputId": "object",
+          "outputNodeId": "dHDzOydr6Q5IFDBH6z6HU",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "YMPhS3MhQdfMqPqj8Ss8k",
+          "inputId": "file_path",
+          "outputNodeId": "_tOy610lqFqHX6iUfQZu1",
+          "outputId": "match"
+        },
+        {
+          "inputNodeId": "4CgGTnsYZdZFKi12cKmiP",
+          "inputId": "if",
+          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
+          "outputId": "unmatched"
+        },
+        {
+          "inputNodeId": "4CgGTnsYZdZFKi12cKmiP",
+          "inputId": "value",
+          "outputNodeId": "NlqmTc5SUrwdCFOOU26CP",
+          "outputId": "response"
+        },
+        {
+          "inputNodeId": "FyLqlQhLYBHb5SD8Bbjx5",
+          "inputId": "input",
+          "outputNodeId": "4CgGTnsYZdZFKi12cKmiP",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "SNJjOp-rPmQwnU52nE8kO",
+          "inputId": "input7",
+          "outputNodeId": "4JUAkBJxsbKfNAXOdmGS6",
+          "outputId": "match"
+        },
+        {
+          "inputNodeId": "3bvstHODyToviHmuGwEl0",
+          "inputId": "input",
+          "outputNodeId": "Vudek72LbIFekPR5DVDsq",
+          "outputId": "data"
+        },
+        {
+          "inputNodeId": "tgcfyWHl6ut3-ivyZ8jEA",
+          "inputId": "input",
+          "outputNodeId": "3bvstHODyToviHmuGwEl0",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "cObRObIxgwrJablQHLGnw",
+          "inputId": "input2Default",
+          "outputNodeId": "tgcfyWHl6ut3-ivyZ8jEA",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "ItFByM3wvP_dPEoP5D6Mx",
+          "inputId": "if",
+          "outputNodeId": "eKe_lJayfu9fVyZAD7ri_",
+          "outputId": "case7"
+        },
+        {
+          "inputNodeId": "ItFByM3wvP_dPEoP5D6Mx",
+          "inputId": "value",
+          "outputNodeId": "z5IaklOOBA20wwMI0aRkq",
+          "outputId": "match"
+        },
+        {
+          "inputNodeId": "YJDAqTtxqpNkKPX5FvtPt",
+          "inputId": "input1",
+          "outputNodeId": "TGIDciqmI5zMTLdVk2T2C",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "YJDAqTtxqpNkKPX5FvtPt",
+          "inputId": "input2",
+          "outputNodeId": "ItFByM3wvP_dPEoP5D6Mx",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "4JUAkBJxsbKfNAXOdmGS6",
+          "inputId": "object",
+          "outputNodeId": "YJDAqTtxqpNkKPX5FvtPt",
+          "outputId": "output"
+        },
+        {
+          "inputNodeId": "uEWXLi8XmKpaiGzzTFDme",
+          "inputId": "current_task",
+          "outputNodeId": "cObRObIxgwrJablQHLGnw",
+          "outputId": "output1"
         }
       ],
       "metadata": {
