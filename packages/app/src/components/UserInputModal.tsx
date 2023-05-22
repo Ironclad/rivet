@@ -48,6 +48,13 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, onSub
     onSubmit(results);
   };
 
+  const handleTextAreaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
   return (
     <ModalTransition>
       {open && (
@@ -68,6 +75,7 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, onSub
                         autoFocus={index === 0}
                         resize="vertical"
                         minimumRows={4}
+                        onKeyDown={handleTextAreaKeyDown}
                       />
                     </div>
                   )}
