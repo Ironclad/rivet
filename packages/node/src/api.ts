@@ -53,7 +53,7 @@ export async function runGraphInFile(path: string, options: RunGraphOptions): Pr
   return runGraph(project, options);
 }
 
-export async function runGraph(project: Project, options: RunGraphOptions): Promise<Record<string, DataValue>> {
+export function createProcessor(project: Project, options: RunGraphOptions) {
   const { graph, inputs = {}, context = {} } = options;
 
   const graphId =
@@ -163,17 +163,29 @@ export async function runGraph(project: Project, options: RunGraphOptions): Prom
     return value;
   });
 
-  const outputs = await processor.processGraph(
-    {
-      nativeApi: options.nativeApi ?? new NodeNativeApi(),
-      settings: {
-        openAiKey: options.openAiKey,
-        openAiOrganization: options.openAiOrganization,
-      },
-    },
-    resolvedInputs,
-    resolvedContextValues,
-  );
+  return {
+    processor,
+    inputs: resolvedInputs,
+    contextValues: resolvedContextValues,
+    async run() {
+      const outputs = await processor.processGraph(
+        {
+          nativeApi: options.nativeApi ?? new NodeNativeApi(),
+          settings: {
+            openAiKey: options.openAiKey,
+            openAiOrganization: options.openAiOrganization,
+          },
+        },
+        resolvedInputs,
+        resolvedContextValues,
+      );
 
-  return outputs;
+      return outputs;
+    },
+  };
+}
+
+export async function runGraph(project: Project, options: RunGraphOptions): Promise<Record<string, DataValue>> {
+  const processorInfo = createProcessor(project, options);
+  return processorInfo.run();
 }
