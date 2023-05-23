@@ -1,10 +1,10 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { InternalProcessContext, NodeImpl } from '../NodeImpl';
-import { ChatMessage, DataValue } from '../DataValue';
+import { NodeImpl } from '../NodeImpl';
+import { ArrayDataValue, ChatMessage, DataType, DataValue, ScalarDataValue } from '../DataValue';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { orderBy } from 'lodash-es';
-import { match } from 'ts-pattern';
+import { coerceType } from '../..';
 
 export type AssemblePromptNode = ChartNode<'assemblePrompt', AssemblePromptNodeData>;
 
@@ -69,7 +69,7 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
     return maxMessageNumber + 1;
   }
 
-  async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+  async process(inputs: Inputs): Promise<Outputs> {
     const output: Outputs = {};
 
     const messages: ChatMessage[] = [];
@@ -85,22 +85,22 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
         continue;
       }
 
-      match(inputMessage)
-        .with({ type: 'chat-message' }, (inputMessage) => messages.push(inputMessage.value))
-        .with({ type: 'chat-message[]' }, (inputMessage) => {
-          for (const message of inputMessage.value) {
-            messages.push(message);
+      if (inputMessage.type.endsWith('[]')) {
+        for (const value of (inputMessage as ArrayDataValue<ScalarDataValue>).value) {
+          const dataValue: DataValue = { type: inputMessage.type.replace('[]', '') as DataType, value: value as any };
+          const coerced = coerceType(dataValue, 'string');
+
+          if (coerced) {
+            messages.push({ type: 'user', message: coerced });
           }
-        })
-        .with({ type: 'string' }, (inputMessage) => messages.push({ type: 'user', message: inputMessage.value }))
-        .with({ type: 'string[]' }, (inputMessage) => {
-          for (const message of inputMessage.value) {
-            messages.push({ type: 'user', message });
-          }
-        })
-        .otherwise(() => {
-          throw new Error('Invalid input type');
-        });
+        }
+      } else {
+        const coerced = coerceType(inputMessage, 'string');
+
+        if (coerced) {
+          messages.push({ type: 'user', message: coerced });
+        }
+      }
     }
 
     output['prompt' as PortId] = {
