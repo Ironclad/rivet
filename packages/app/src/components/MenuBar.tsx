@@ -14,6 +14,7 @@ import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
 import { useLoadProject } from '../hooks/useLoadProject';
 import { useSaveProject } from '../hooks/useSaveProject';
 import { useNewProject } from '../hooks/useNewProject';
+import { DebuggerConnectPanel } from './DebuggerConnectPanel';
 
 const styles = css`
   display: flex;
@@ -165,6 +166,10 @@ const styles = css`
     display: block;
   }
 
+  .remote-debugger {
+    position: relative;
+  }
+
   .remote-debugger-button.active button {
     background-color: var(--error);
   }
@@ -189,6 +194,7 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
   const loadProject = useLoadProject();
   const { saveProject } = useSaveProject();
   const newProject = useNewProject();
+  const [debuggerPanelOpen, setDebuggerPanelOpen] = useState(false);
 
   const graphRunning = useRecoilValue(graphRunningState);
   const graphPaused = useRecoilValue(graphPausedState);
@@ -208,6 +214,11 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
   function handleSaveProject() {
     saveProject();
     setFileMenuOpen(false);
+  }
+
+  function handleConnectRemoteDebugger(url: string) {
+    setDebuggerPanelOpen(false);
+    connect(url);
   }
 
   return (
@@ -232,18 +243,26 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
         <div className="menu-item import-button">
           <button onClick={() => loadGraphData((data) => setGraphData(data))}>Import</button>
         </div>
-        <div
-          className={clsx('menu-item remote-debugger-button', {
-            active: remoteDebugger.started,
-            reconnecting: remoteDebugger.reconnecting,
-          })}
-        >
-          {remoteDebugger.started ? (
-            <button onClick={() => disconnect()}>Disconnect Remote Debugger</button>
-          ) : (
-            <button onClick={() => connect()}>
-              {remoteDebugger.reconnecting ? 'Remote Debugger (Reconnecting...)' : 'Remote Debugger'}
-            </button>
+        <div className="remote-debugger">
+          <div
+            className={clsx('menu-item remote-debugger-button', {
+              active: remoteDebugger.started,
+              reconnecting: remoteDebugger.reconnecting,
+            })}
+          >
+            {remoteDebugger.started ? (
+              <button onClick={() => disconnect()}>Disconnect Remote Debugger</button>
+            ) : (
+              <button onClick={() => (remoteDebugger.reconnecting ? disconnect() : setDebuggerPanelOpen(true))}>
+                {remoteDebugger.reconnecting ? 'Remote Debugger (Reconnecting...)' : 'Remote Debugger'}
+              </button>
+            )}
+          </div>
+          {debuggerPanelOpen && (
+            <DebuggerConnectPanel
+              onConnect={handleConnectRemoteDebugger}
+              onCancel={() => setDebuggerPanelOpen(false)}
+            />
           )}
         </div>
       </div>

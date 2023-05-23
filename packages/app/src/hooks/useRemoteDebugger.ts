@@ -7,7 +7,7 @@ export const remoteDebuggerState = atom({
     socket: null as WebSocket | null,
     started: false,
     reconnecting: false,
-    port: 0,
+    url: '',
   },
 });
 
@@ -25,17 +25,19 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
   const onConnectLatest = useLatest(options.onConnect ?? (() => {}));
   const onDisconnectLatest = useLatest(options.onDisconnect ?? (() => {}));
 
-  const connect = (port: number = 21888) => {
-    const socket = new WebSocket(`ws://localhost:${port}`);
+  const connect = (url: string) => {
+    if (!url) {
+      url = `ws://localhost:21888`;
+    }
+    const socket = new WebSocket(url);
     onConnectLatest.current?.();
 
     setRemoteDebuggerState((prevState) => ({
       ...prevState,
       socket,
       started: true,
-      port,
+      url,
     }));
-    manuallyDisconnecting = false;
 
     socket.onopen = () => {
       setRemoteDebuggerState((prevState) => ({
@@ -59,7 +61,7 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
         }));
 
         setTimeout(() => {
-          connect(port);
+          connect(url);
         }, 2000);
       }
     };
@@ -72,10 +74,18 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
 
   return {
     remoteDebuggerState: remoteDebugger,
-    connect,
+    connect: (url: string) => {
+      manuallyDisconnecting = false;
+      connect(url);
+    },
     disconnect: () => {
+      setRemoteDebuggerState((prevState) => ({
+        ...prevState,
+        reconnecting: false,
+      }));
+      manuallyDisconnecting = true;
+
       if (remoteDebugger.socket) {
-        manuallyDisconnecting = true;
         remoteDebugger.socket.close();
         onDisconnectLatest.current?.();
       }
