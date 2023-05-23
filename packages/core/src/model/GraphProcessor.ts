@@ -20,6 +20,7 @@ import { isNotNull } from '../utils/genericUtilFunctions';
 import { GraphOutputNode } from './nodes/GraphOutputNode';
 import { GraphInputNode, GraphInputNodeImpl } from './nodes/GraphInputNode';
 import { Project } from './Project';
+import { nanoid } from 'nanoid';
 
 export type ProcessEvents = {
   /** Called when processing has started. */
@@ -91,6 +92,8 @@ export class GraphProcessor {
   #externalFunctions: Record<string, ExternalFunction> = {};
   slowMode = false;
   #isPaused = false;
+  #parent: GraphProcessor | undefined;
+  id = nanoid();
 
   // Per-process state
   #erroredNodes: Set<NodeId> = undefined!;
@@ -766,6 +769,14 @@ export class GraphProcessor {
     this.#erroredNodes.add(node.id);
   }
 
+  getRootProcessor(): GraphProcessor {
+    let processor: GraphProcessor = this;
+    while (processor.#parent) {
+      processor = processor.#parent;
+    }
+    return processor;
+  }
+
   async #processNodeWithInputData(
     node: ChartNode,
     inputValues: Inputs,
@@ -791,6 +802,7 @@ export class GraphProcessor {
         processor.#executionCache = this.#executionCache;
         processor.#externalFunctions = this.#externalFunctions;
         processor.#contextValues = this.#contextValues;
+        processor.#parent = this;
         processor.on('nodeError', (e) => this.#emitter.emit('nodeError', e));
         processor.on('nodeFinish', (e) => this.#emitter.emit('nodeFinish', e));
         processor.on('partialOutput', (e) => this.#emitter.emit('partialOutput', e));

@@ -9,9 +9,10 @@ export interface NodaiDebuggerServer {
 
   webSocketServer: WebSocketServer;
 
-  broadcast(message: string, data: unknown): void;
+  broadcast(processor: GraphProcessor, message: string, data: unknown): void;
 
   attach(processor: GraphProcessor): void;
+  detach(processor: GraphProcessor): void;
 }
 
 export interface DebuggerEvents {
@@ -20,6 +21,8 @@ export interface DebuggerEvents {
 
 export function startDebuggerServer(
   options: {
+    getClientsForProcessor?: (processor: GraphProcessor, allClients: WebSocket[]) => WebSocket[];
+    getProcessorsForClient?: (client: WebSocket, allProcessors: GraphProcessor[]) => GraphProcessor[];
     server?: WebSocketServer;
     port?: number;
   } = {},
@@ -30,26 +33,30 @@ export function startDebuggerServer(
 
   const emitter = new Emittery<DebuggerEvents>();
 
-  let attachedProcessor: GraphProcessor | null = null;
+  const attachedProcessors: GraphProcessor[] = [];
 
   server.on('connection', (socket) => {
     socket.on('message', async (data) => {
       try {
         const message = JSON.parse(data.toString()) as { type: string; data: unknown };
 
-        await match(message)
-          .with({ type: 'abort' }, async () => {
-            await attachedProcessor?.abort();
-          })
-          .with({ type: 'pause' }, async () => {
-            attachedProcessor?.pause();
-          })
-          .with({ type: 'resume' }, async () => {
-            attachedProcessor?.resume();
-          })
-          .otherwise(async () => {
-            throw new Error(`Unknown message type: ${message.type}`);
-          });
+        const processors = options.getProcessorsForClient?.(socket, attachedProcessors) ?? attachedProcessors;
+
+        for (const processor of processors) {
+          await match(message)
+            .with({ type: 'abort' }, async () => {
+              await processor.abort();
+            })
+            .with({ type: 'pause' }, async () => {
+              processor.pause();
+            })
+            .with({ type: 'resume' }, async () => {
+              processor.resume();
+            })
+            .otherwise(async () => {
+              throw new Error(`Unknown message type: ${message.type}`);
+            });
+        }
       } catch (err) {
         try {
           await emitter.emit('error', getError(err));
@@ -65,58 +72,74 @@ export function startDebuggerServer(
     off: emitter.off.bind(emitter),
 
     webSocketServer: server,
-    broadcast(message: string, data: unknown) {
-      server.clients.forEach((client) => {
+
+    /** Given an event on a processor, sends that processor's events to the correct debugger clients (allows routing debugger). */
+    broadcast(procesor: GraphProcessor, message: string, data: unknown) {
+      const clients = options.getClientsForProcessor?.(procesor, [...server.clients]) ?? [...server.clients];
+
+      clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
           client.send(JSON.stringify({ message, data }));
         }
       });
     },
+
     attach(processor: GraphProcessor) {
-      attachedProcessor = processor;
+      if (attachedProcessors.find((p) => p.id === processor.id)) {
+        return;
+      }
+
+      attachedProcessors.push(processor);
 
       processor.on('nodeStart', ({ node, inputs }) => {
-        this.broadcast('nodeStart', { node, inputs });
+        this.broadcast(processor, 'nodeStart', { node, inputs });
       });
       processor.on('nodeFinish', ({ node, outputs }) => {
-        this.broadcast('nodeFinish', { node, outputs });
+        this.broadcast(processor, 'nodeFinish', { node, outputs });
       });
       processor.on('nodeError', ({ node, error }) => {
-        this.broadcast('nodeError', { node, error: typeof error === 'string' ? error : error.toString() });
+        this.broadcast(processor, 'nodeError', { node, error: typeof error === 'string' ? error : error.toString() });
       });
       processor.on('nodeExcluded', (node) => {
-        this.broadcast('nodeExcluded', node);
+        this.broadcast(processor, 'nodeExcluded', node);
       });
       processor.on('start', () => {
-        this.broadcast('start', null);
+        this.broadcast(processor, 'start', null);
       });
       processor.on('done', ({ results }) => {
-        this.broadcast('done', results);
+        this.broadcast(processor, 'done', results);
       });
       processor.on('partialOutput', ({ node, index, outputs }) => {
-        this.broadcast('partialOutput', { node, index, outputs });
+        this.broadcast(processor, 'partialOutput', { node, index, outputs });
       });
       processor.on('abort', () => {
-        this.broadcast('abort', null);
+        this.broadcast(processor, 'abort', null);
       });
       processor.on('trace', (message) => {
-        this.broadcast('trace', message);
+        this.broadcast(processor, 'trace', message);
       });
       processor.on('nodeOutputsCleared', ({ node }) => {
-        this.broadcast('nodeOutputsCleared', { node });
+        this.broadcast(processor, 'nodeOutputsCleared', { node });
       });
       processor.on('graphStart', ({ graph }) => {
-        this.broadcast('graphStart', { graph });
+        this.broadcast(processor, 'graphStart', { graph });
       });
       processor.on('graphFinish', ({ graph }) => {
-        this.broadcast('graphFinish', { graph });
+        this.broadcast(processor, 'graphFinish', { graph });
       });
       processor.on('pause', () => {
-        this.broadcast('pause', null);
+        this.broadcast(processor, 'pause', null);
       });
       processor.on('resume', () => {
-        this.broadcast('resume', null);
+        this.broadcast(processor, 'resume', null);
       });
+    },
+
+    detach(processor: GraphProcessor) {
+      const processorIndex = attachedProcessors.findIndex((p) => p.id === processor.id);
+      if (processorIndex !== -1) {
+        attachedProcessors.splice(processorIndex, 1);
+      }
     },
   };
 }
