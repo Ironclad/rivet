@@ -18,8 +18,16 @@ export interface DebuggerEvents {
   error: Error;
 }
 
-export function startDebuggerServer(port: number = 21888): NodaiDebuggerServer {
-  const server = new WebSocketServer({ port });
+export function startDebuggerServer(
+  options: {
+    server?: WebSocketServer;
+    port?: number;
+  } = {},
+): NodaiDebuggerServer {
+  const { port = 21888 } = options;
+
+  const server = options.server ?? new WebSocketServer({ port });
+
   const emitter = new Emittery<DebuggerEvents>();
 
   let attachedProcessor: GraphProcessor | null = null;
