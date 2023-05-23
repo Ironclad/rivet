@@ -1,3 +1,4 @@
+import { useLatest } from 'ahooks';
 import { atom, useRecoilState } from 'recoil';
 
 export const remoteDebuggerState = atom({
@@ -19,11 +20,14 @@ export function setCurrentDebuggerMessageHandler(handler: (message: string, data
 // Hacky but whatev, shared between all useRemoteDebugger hooks
 let manuallyDisconnecting = false;
 
-export function useRemoteDebugger() {
+export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnect?: () => void } = {}) {
   const [remoteDebugger, setRemoteDebuggerState] = useRecoilState(remoteDebuggerState);
+  const onConnectLatest = useLatest(options.onConnect ?? (() => {}));
+  const onDisconnectLatest = useLatest(options.onDisconnect ?? (() => {}));
 
   const connect = (port: number = 21888) => {
     const socket = new WebSocket(`ws://localhost:${port}`);
+    onConnectLatest.current?.();
 
     setRemoteDebuggerState((prevState) => ({
       ...prevState,
@@ -73,6 +77,7 @@ export function useRemoteDebugger() {
       if (remoteDebugger.socket) {
         manuallyDisconnecting = true;
         remoteDebugger.socket.close();
+        onDisconnectLatest.current?.();
       }
     },
     send(type: string, data: unknown) {
