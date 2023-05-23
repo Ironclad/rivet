@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { graphState } from '../state/graph';
 import { loadedProjectState, projectState, savedGraphsState } from '../state/savedGraphs';

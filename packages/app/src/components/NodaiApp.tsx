@@ -52,7 +52,6 @@ export const NodaiApp: FC = () => {
   const settings = useRecoilValue(settingsState);
   const saveGraph = useSaveCurrentGraph();
   const setRunningGraphsState = useSetRecoilState(runningGraphsState);
-  const remoteDebugger = useRemoteDebugger();
 
   const setDataForNode = (nodeId: NodeId, data: Partial<NodeRunData>) => {
     setLastRunData((prev) =>
@@ -71,6 +70,15 @@ export const NodaiApp: FC = () => {
   const setGraphPaused = useSetRecoilState(graphPausedState);
   const currentProcessor = useRef<GraphProcessor | null>(null);
   const project = useRecoilValue(projectState);
+
+  const remoteDebugger = useRemoteDebugger({
+    onDisconnect: () => {
+      setGraphRunning(false);
+      setGraphPaused(false);
+      setUserInputQuestions({});
+      setRunningGraphsState([]);
+    },
+  });
 
   const nodeStart = ({ node, inputs }: ProcessEvents['nodeStart']) => {
     setDataForNode(node.id, {
