@@ -238,7 +238,7 @@ export const PromptNodeOutput: FC<PromptNodeBodyProps> = memo(({ node }) => {
   }
 
   if (output.status?.type === 'error') {
-    return <div>Error: {output.status.error}</div>;
+    return <div>{output.status.error}</div>;
   }
 
   const message = output.outputData?.['output' as PortId] as GetDataValue<'chat-message'> | undefined;

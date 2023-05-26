@@ -89,7 +89,7 @@ export const SubGraphNodeOutput: FC<SubGraphNodeOutputProps> = ({ node }) => {
   }
 
   if (output.status?.type === 'error') {
-    return <div>Error: {output.status.error}</div>;
+    return <div>{output.status.error}</div>;
   }
 
   if (!output.outputData) {

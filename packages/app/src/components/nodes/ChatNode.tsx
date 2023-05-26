@@ -61,7 +61,7 @@ export const ChatNodeOutput: FC<ChatNodeBodyProps> = ({ node }) => {
   }
 
   if (output.status?.type === 'error') {
-    return <div>Error: {output.status.error}</div>;
+    return <div>{output.status.error}</div>;
   }
 
   if (output.splitOutputData && !output.outputData) {
@@ -177,7 +177,7 @@ export const FullscreenChatNodeOutput: FC<ChatNodeBodyProps> = ({ node }) => {
   }
 
   if (output.status?.type === 'error') {
-    return <div>Error: {output.status.error}</div>;
+    return <div>{output.status.error}</div>;
   }
 
   if (output.splitOutputData) {

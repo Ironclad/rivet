@@ -526,11 +526,22 @@ export class GraphProcessor {
 
       await this.#processingQueue.onIdle();
 
+      if (this.#erroredNodes.size > 0) {
+        throw new Error(
+          `Graph ${this.#graph.metadata!.name} (${
+            this.#graph.metadata!.id
+          }) failed to process due to errors in nodes: ${Array.from(this.#erroredNodes)
+            .map((nodeId) => `${this.#nodesById[nodeId]!.title} (${nodeId})`)
+            .join(', ')}`,
+        );
+      }
+
       const outputNodes = this.#graph.nodes.filter(
         (node): node is GraphOutputNode =>
           this.#isNodeOfType('graphOutput', node) &&
           !this.#excludedDueToControlFlow(node, this.#getInputValuesForNode(node)),
       );
+
       const outputValues = outputNodes.reduce((values, node) => {
         const results = this.#nodeResults.get(node.id);
         if (results) {
