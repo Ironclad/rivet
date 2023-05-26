@@ -14,11 +14,86 @@ import { RenderDataOutputs } from './RenderDataValue';
 import { entries } from '../utils/typeSafety';
 import { orderBy } from 'lodash-es';
 
+export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleScroll = useStableCallback((e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    e.stopPropagation();
+  });
+
+  return (
+    <div className="node-output-outer">
+      <FullScreenModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <NodeFullscreenOutput node={node} />
+      </FullScreenModal>
+      <div onScroll={handleScroll}>
+        <NodeOutputBase node={node} onOpenFullscreenModal={() => setIsModalOpen(true)} />
+      </div>
+    </div>
+  );
+});
+
+const fullscreenOutputCss = css`
+  position: relative;
+
+  .fullscreen-header {
+    position: sticky;
+    top: 0;
+  }
+
+  .picker {
+    position: sticky;
+    top: 0;
+    left: 0;
+    border: 1px solid var(--grey);
+    background: var(--grey-darker);
+    display: inline-flex;
+    gap: 0;
+    border-radius: 4px;
+    box-shadow: 4px 4px 8px var(--shadow-dark);
+    margin-bottom: 8px;
+
+    .picker-left,
+    .picker-right {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      cursor: pointer;
+      border: 0;
+      margin: 0;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    .picker-left {
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .picker-right {
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .picker-page {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+    }
+  }
+`;
+
 const fullscreenOutputButtonsCss = css`
   position: absolute;
-  top: 16px;
+  top: 0;
   right: 4px;
-  display: flex;
+  display: inline-flex;
   gap: 8px;
 
   .copy-button {
@@ -36,33 +111,129 @@ const fullscreenOutputButtonsCss = css`
   }
 `;
 
-export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
+  const output = useRecoilValue(lastRunData(node.id));
+  let [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
 
-  // const { FullscreenOutput } = useUnknownNodeComponentDescriptorFor(node);
+  const { FullscreenOutput, Output, OutputSimple } = useUnknownNodeComponentDescriptorFor(node);
 
-  const handleScroll = useStableCallback((e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    e.stopPropagation();
+  const data = useMemo(() => {
+    if (!output?.length) {
+      return null;
+    }
+
+    if (output.length === 1) {
+      return output[0]!.data;
+    } else {
+      return output[selectedPage === 'latest' ? output.length - 1 : selectedPage]?.data;
+    }
+  }, [output, selectedPage]);
+
+  const handleCopyToClipboard = useStableCallback(() => {
+    if (!data) {
+      return;
+    }
+    const keys = Object.keys(data.outputData ?? {}) as PortId[];
+
+    if (keys.length > 1) {
+      copyToClipboard(JSON.stringify(data.outputData, null, 2));
+      return;
+    }
+
+    const outputValue = data.outputData![keys[0]!]!;
+    if (outputValue.type === 'string') {
+      copyToClipboard(outputValue.value);
+    } else if (outputValue.type === 'chat-message') {
+      copyToClipboard(outputValue.value.message);
+    } else {
+      copyToClipboard(JSON.stringify(outputValue, null, 2));
+    }
   });
 
-  // const fullscreenOutputBody = FullscreenOutput ? <FullscreenOutput node={node} /> : null;
+  const prevPage = useStableCallback(() => {
+    if (!output) {
+      return;
+    }
+    setSelectedPage((page) => {
+      const pageNum = page === 'latest' ? output.length : page;
+      return pageNum > 0 ? pageNum - 1 : pageNum;
+    });
+  });
+
+  const nextPage = useStableCallback(() => {
+    if (!output) {
+      return;
+    }
+    setSelectedPage((page) => {
+      const pageNum = page === 'latest' ? output.length : page;
+      return pageNum < output.length - 1 ? pageNum + 1 : pageNum;
+    });
+  });
+
+  if (!output || !data) {
+    return null;
+  }
+
+  if (data.status?.type === 'error') {
+    return <div className="errored">{data.status.error}</div>;
+  }
+
+  if (!data.outputData) {
+    return null;
+  }
+
+  let body: ReactNode;
+
+  if (FullscreenOutput) {
+    body = <FullscreenOutput node={node} />;
+  } else if (Output) {
+    body = <Output node={node} />;
+  } else if (data.splitOutputData) {
+    const outputs = orderBy(
+      entries(data.splitOutputData).map(([key, value]) => ({ key, value })),
+      (x) => x.key,
+    );
+
+    body = (
+      <div className="split-output">
+        {outputs.map(({ key, value }) =>
+          OutputSimple ? (
+            <OutputSimple key={`outputs-${key}`} outputs={value} />
+          ) : (
+            <RenderDataOutputs key={`outputs-${key}`} outputs={value} />
+          ),
+        )}
+      </div>
+    );
+  } else {
+    body = OutputSimple ? <OutputSimple outputs={data.outputData} /> : <RenderDataOutputs outputs={data.outputData} />;
+  }
 
   return (
-    <div className="node-output-outer">
-      <FullScreenModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+    <div css={fullscreenOutputCss}>
+      <header className="fullscreen-header">
+        {output.length > 1 && (
+          <div className="picker">
+            <button className="picker-left" onClick={prevPage}>
+              {'<'}
+            </button>
+            <div className="picker-page">{selectedPage === 'latest' ? output.length : selectedPage + 1}</div>
+            <button className="picker-right" onClick={nextPage}>
+              {'>'}
+            </button>
+          </div>
+        )}
         <div css={fullscreenOutputButtonsCss}>
-          <div className="copy-button">
+          <div className="copy-button" onClick={handleCopyToClipboard}>
             <CopyIcon />
           </div>
         </div>
-        {/* {fullscreenOutputBody ? fullscreenOutputBody : outputBody} */}
-      </FullScreenModal>
-      <div onScroll={handleScroll}>
-        <NodeOutputBase node={node} />
-      </div>
+      </header>
+
+      <div className="fullscreen-output-body">{body}</div>
     </div>
   );
-});
+};
 
 const NodeOutputBase: FC<{ node: ChartNode; children?: ReactNode; onOpenFullscreenModal?: () => void }> = ({
   node,
@@ -84,7 +255,7 @@ const NodeOutputBase: FC<{ node: ChartNode; children?: ReactNode; onOpenFullscre
   } else {
     return (
       <div className="node-output multi">
-        <NodeOutputMultiProcess node={node} data={output} />
+        <NodeOutputMultiProcess node={node} data={output} onOpenFullscreenModal={onOpenFullscreenModal} />
       </div>
     );
   }
@@ -178,7 +349,11 @@ const NodeOutputSingleProcess: FC<{
   );
 };
 
-const NodeOutputMultiProcess: FC<{ node: ChartNode; data: ProcessDataForNode[] }> = ({ node, data }) => {
+const NodeOutputMultiProcess: FC<{
+  node: ChartNode;
+  data: ProcessDataForNode[];
+  onOpenFullscreenModal?: () => void;
+}> = ({ node, data, onOpenFullscreenModal }) => {
   let [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
 
   const prevPage = useStableCallback(() => {
@@ -213,7 +388,9 @@ const NodeOutputMultiProcess: FC<{ node: ChartNode; data: ProcessDataForNode[] }
           </button>
         </div>
       </div>
-      {selectedData && <NodeOutputSingleProcess data={selectedData.data} node={node} />}
+      {selectedData && (
+        <NodeOutputSingleProcess data={selectedData.data} node={node} onOpenFullscreenModal={onOpenFullscreenModal} />
+      )}
     </div>
   );
 };
