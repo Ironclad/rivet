@@ -1,7 +1,7 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { InternalProcessContext, NodeImpl } from '../NodeImpl';
-import { ChatMessage, DataValue } from '../DataValue';
+import { ChatMessage, DataValue, ScalarDataValue } from '../DataValue';
 import {
   assertValidModel,
   getCostForPrompt,
@@ -193,23 +193,6 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     ];
   }
 
-  #getMessagePortCount(connections: NodeConnection[]): number {
-    const inputNodeId = this.chartNode.id;
-    const messageConnections = connections.filter(
-      (connection) => connection.inputNodeId === inputNodeId && connection.inputId.startsWith('message'),
-    );
-
-    let maxMessageNumber = 0;
-    for (const connection of messageConnections) {
-      const messageNumber = parseInt(connection.inputId.replace('message', ''));
-      if (messageNumber > maxMessageNumber) {
-        maxMessageNumber = messageNumber;
-      }
-    }
-
-    return maxMessageNumber + 1;
-  }
-
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const output: Outputs = {};
 
@@ -238,8 +221,24 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       .with({ type: 'chat-message[]' }, (p) => p.value)
       .with({ type: 'string' }, (p): ChatMessage[] => [{ type: 'user', message: p.value }])
       .with({ type: 'string[]' }, (p): ChatMessage[] => p.value.map((v) => ({ type: 'user', message: v })))
-      .otherwise(() => {
-        throw new Error('Prompt must be a chat message or an array of chat messages');
+      .otherwise((p) => {
+        if (p.type.endsWith('[]') || ((p.type === 'any' || p.type === 'object') && Array.isArray(p.value))) {
+          const stringValues = (p.value as readonly unknown[]).map((v) =>
+            coerceType(
+              {
+                type: p.type.endsWith('[]') ? p.type.replace('[]', '') : p.type,
+                value: v,
+              } as ScalarDataValue,
+              'string',
+            ),
+          );
+
+          return stringValues.filter((v) => v != null).map((v) => ({ type: 'user', message: v }));
+        }
+
+        const coerced = coerceType(p, 'string');
+
+        return coerced != null ? [{ type: 'user', message: coerceType(p, 'string') }] : [];
       });
 
     const systemPrompt = inputs['systemPrompt' as PortId];
