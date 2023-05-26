@@ -29,6 +29,9 @@ export type ProcessEvents = {
   /** Called when a graph or subgraph has started. */
   graphStart: { graph: NodeGraph; inputs: GraphInputs };
 
+  /** Called when a graph or subgraph has errored. */
+  graphError: { graph: NodeGraph; error: Error | string };
+
   /** Called when a graph or a subgraph has finished. */
   graphFinish: { graph: NodeGraph; outputs: GraphOutputs };
 
@@ -57,6 +60,9 @@ export type ProcessEvents = {
 
   /** Called when the outputs of a node have been cleared entirely. If processId is present, only the one process() should be cleared. */
   nodeOutputsCleared: { node: ChartNode; processId?: ProcessId };
+
+  /** Called when the root graph has errored. The root graph will also throw. */
+  error: { error: Error | string };
 
   /** Called when processing has completed. */
   done: { results: GraphOutputs };
@@ -321,13 +327,21 @@ export class GraphProcessor {
       await this.#processingQueue.onIdle();
 
       if (this.#erroredNodes.size > 0) {
-        throw new Error(
+        const error = Error(
           `Graph ${this.#graph.metadata!.name} (${
             this.#graph.metadata!.id
           }) failed to process due to errors in nodes: ${Array.from(this.#erroredNodes)
             .map((nodeId) => `${this.#nodesById[nodeId]!.title} (${nodeId})`)
             .join(', ')}`,
         );
+
+        this.#emitter.emit('graphError', { graph: this.#graph, error });
+
+        if (!this.#isSubProcessor) {
+          this.#emitter.emit('error', { error });
+        }
+
+        throw error;
       }
 
       const outputNodes = this.#graph.nodes.filter(

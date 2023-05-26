@@ -104,6 +104,17 @@ export function startDebuggerServer(
           processId,
         });
       });
+      processor.on('error', ({ error }) => {
+        this.broadcast(processor, 'error', {
+          error: typeof error === 'string' ? error : error.toString(),
+        });
+      });
+      processor.on('graphError', ({ graph, error }) => {
+        this.broadcast(processor, 'graphError', {
+          graph,
+          error: typeof error === 'string' ? error : error.toString(),
+        });
+      });
       processor.on('nodeExcluded', (data) => {
         this.broadcast(processor, 'nodeExcluded', data);
       });
