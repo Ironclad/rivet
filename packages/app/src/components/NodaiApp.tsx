@@ -64,7 +64,10 @@ export const NodaiApp: FC = () => {
 
         const existingProcess = draft[nodeId]!.find((p) => p.processId === processId);
         if (existingProcess) {
-          existingProcess.data = cloneDeep(data);
+          existingProcess.data = {
+            ...existingProcess.data,
+            ...cloneDeep(data),
+          };
         } else {
           draft[nodeId]!.push({
             processId,

@@ -301,11 +301,6 @@ export const nodeStyles = css`
     border-top-color: var(--primary);
   }
 
-  .node.running .node-output:not(.multi) .node-output:before,
-  .node.running .multi-node-output:before {
-    border-top-color: var(--primary);
-  }
-
   .node-output.multi .node-output-inner.node-output-inner {
     border-top: 1px solid var(--grey-light);
   }
@@ -337,7 +332,7 @@ export const nodeStyles = css`
   .node-output:before {
     content: '';
     position: absolute;
-    top: 9px;
+    top: 1px;
     left: 50%;
     z-index: 2;
     transform: translateX(-50%);
@@ -348,18 +343,20 @@ export const nodeStyles = css`
     border-top: 8px solid var(--success-light);
   }
 
-  .node.success:not(.multi) .node-output:before,
-  .node.success .multi-node-output:before {
+  .node.success .node-output:before {
     border-top-color: var(--success-light);
   }
 
-  .node.error:not(.multi) .node-output:before,
-  .node.error .multi-node-output:before {
+  .node.error .node-output:before {
     border-top-color: var(--error-light);
   }
 
   .node-output.errored:before {
     border-top: 8px solid var(--error-light);
+  }
+
+  .node.running .node-output:before {
+    border-top-color: var(--primary);
   }
 
   .overlay-buttons {
