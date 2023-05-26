@@ -10,6 +10,7 @@ import {
   graphRunningState,
   lastRunDataByNodeState,
   runningGraphsState,
+  selectedProcessPageNodesState,
 } from '../state/dataFlow';
 import { css } from '@emotion/react';
 import { SettingsModal } from './SettingsModal';
@@ -26,6 +27,7 @@ import {
   NodeId,
   PortId,
   ProcessEvents,
+  ProcessId,
   StringArrayDataValue,
   coerceTypeOptional,
   expectType,
@@ -53,13 +55,22 @@ export const NodaiApp: FC = () => {
   const saveGraph = useSaveCurrentGraph();
   const setRunningGraphsState = useSetRecoilState(runningGraphsState);
 
-  const setDataForNode = (nodeId: NodeId, data: Partial<NodeRunData>) => {
+  const setDataForNode = (nodeId: NodeId, processId: ProcessId, data: Partial<NodeRunData>) => {
     setLastRunData((prev) =>
       produce(prev, (draft) => {
-        draft[nodeId] = {
-          ...draft[nodeId],
-          ...cloneDeep(data),
-        };
+        if (!draft[nodeId]) {
+          draft[nodeId] = [];
+        }
+
+        const existingProcess = draft[nodeId]!.find((p) => p.processId === processId);
+        if (existingProcess) {
+          existingProcess.data = cloneDeep(data);
+        } else {
+          draft[nodeId]!.push({
+            processId,
+            data: cloneDeep(data),
+          });
+        }
       }),
     );
   };
@@ -70,6 +81,7 @@ export const NodaiApp: FC = () => {
   const setGraphPaused = useSetRecoilState(graphPausedState);
   const currentProcessor = useRef<GraphProcessor | null>(null);
   const project = useRecoilValue(projectState);
+  const setSelectedPage = useSetRecoilState(selectedProcessPageNodesState);
 
   const remoteDebugger = useRemoteDebugger({
     onDisconnect: () => {
@@ -80,32 +92,44 @@ export const NodaiApp: FC = () => {
     },
   });
 
-  const nodeStart = ({ node, inputs }: ProcessEvents['nodeStart']) => {
-    setDataForNode(node.id, {
+  const setSelectedNodePageLatest = (nodeId: NodeId) => {
+    setSelectedPage((prev) => ({ ...prev, [nodeId]: 'latest' }));
+  };
+
+  const nodeStart = ({ node, inputs, processId }: ProcessEvents['nodeStart']) => {
+    setDataForNode(node.id, processId, {
       inputData: inputs,
       status: { type: 'running' },
     });
+
+    setSelectedNodePageLatest(node.id);
   };
 
-  const nodeFinish = ({ node, outputs }: ProcessEvents['nodeFinish']) => {
-    setDataForNode(node.id, {
+  const nodeFinish = ({ node, outputs, processId }: ProcessEvents['nodeFinish']) => {
+    setDataForNode(node.id, processId, {
       outputData: outputs,
       status: { type: 'ok' },
     });
+
+    setSelectedNodePageLatest(node.id);
   };
 
-  const nodeError = ({ node, error }: ProcessEvents['nodeError']) => {
-    setDataForNode(node.id, {
+  const nodeError = ({ node, error, processId }: ProcessEvents['nodeError']) => {
+    setDataForNode(node.id, processId, {
       status: { type: 'error', error: typeof error === 'string' ? error : error.toString() },
     });
+
+    setSelectedNodePageLatest(node.id);
   };
 
-  const userInput = ({ node, inputs }: ProcessEvents['userInput']) => {
+  const userInput = ({ node, inputs, processId }: ProcessEvents['userInput']) => {
     const questions = node.data.useInput
       ? expectType(inputs?.['questions' as PortId], 'string[]') ?? []
       : [node.data.prompt];
 
     setUserInputQuestions((q) => ({ ...q, [node.id]: questions }));
+
+    setSelectedNodePageLatest(node.id);
   };
 
   const start = () => {
@@ -120,6 +144,7 @@ export const NodaiApp: FC = () => {
 
   const abort = () => {
     setGraphRunning(false);
+    setRunningGraphsState([]);
   };
 
   const graphStart = ({ graph }: ProcessEvents['graphStart']) => {
@@ -149,32 +174,56 @@ export const NodaiApp: FC = () => {
     }
   };
 
-  const partialOutput = ({ node, outputs, index }: ProcessEvents['partialOutput']) => {
+  const partialOutput = ({ node, outputs, index, processId }: ProcessEvents['partialOutput']) => {
     if (node.isSplitRun) {
       setLastRunData((prev) =>
         produce(prev, (draft) => {
-          draft[node.id] = {
-            ...draft[node.id],
-            splitOutputData: {
-              ...draft[node.id]?.splitOutputData,
+          if (!draft[node.id]) {
+            draft[node.id] = [];
+          }
+
+          const existingProcess = draft[node.id]!.find((p) => p.processId === processId);
+          if (existingProcess) {
+            existingProcess.data.splitOutputData = {
+              ...existingProcess.data.splitOutputData,
               [index]: cloneDeep(outputs),
-            },
-          };
+            };
+          } else {
+            draft[node.id]!.push({
+              processId,
+              data: {
+                splitOutputData: {
+                  [index]: cloneDeep(outputs),
+                },
+              },
+            });
+          }
         }),
       );
     } else {
-      setDataForNode(node.id, {
+      setDataForNode(node.id, processId, {
         outputData: outputs,
       });
     }
+
+    setSelectedNodePageLatest(node.id);
   };
 
-  const nodeOutputsCleared = ({ node }: ProcessEvents['nodeOutputsCleared']) => {
+  const nodeOutputsCleared = ({ node, processId }: ProcessEvents['nodeOutputsCleared']) => {
     setLastRunData((prev) =>
       produce(prev, (draft) => {
-        delete draft[node.id];
+        if (processId) {
+          const index = draft[node.id]?.findIndex((p) => p.processId === processId);
+          if (index !== undefined && index !== -1) {
+            draft[node.id]!.splice(index, 1);
+          }
+        } else {
+          delete draft[node.id];
+        }
       }),
     );
+
+    setSelectedNodePageLatest(node.id);
   };
 
   const pause = () => {

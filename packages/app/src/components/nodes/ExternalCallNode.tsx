@@ -2,9 +2,6 @@ import { FC } from 'react';
 import { ChartNode, ExternalCallNode } from '@ironclad/nodai-core';
 import Toggle from '@atlaskit/toggle';
 import TextField from '@atlaskit/textfield';
-import { useRecoilValue } from 'recoil';
-import { lastRunData } from '../../state/dataFlow';
-import { RenderDataValue } from '../RenderDataValue';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type ExternalCallNodeBodyProps = {
@@ -13,34 +10,6 @@ export type ExternalCallNodeBodyProps = {
 
 export const ExternalCallNodeBody: FC<ExternalCallNodeBodyProps> = ({ node }) => {
   return <div>{node.data.useFunctionNameInput ? '(Using Input)' : node.data.functionName}</div>;
-};
-
-export type ExternalCallNodeOutputProps = {
-  node: ExternalCallNode;
-};
-
-export const ExternalCallNodeOutput: FC<ExternalCallNodeOutputProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  const outputValues = Object.entries(output.outputData).map(([key, value]) => (
-    <pre className="pre-wrap" key={key}>
-      {key}: <RenderDataValue value={value} />
-    </pre>
-  ));
-
-  return <pre>{outputValues}</pre>;
 };
 
 type ExternalCallNodeEditorProps = {
@@ -84,6 +53,6 @@ export const ExternalCallNodeEditor: FC<ExternalCallNodeEditorProps> = ({ node, 
 
 export const externalCallNodeDescriptor: NodeComponentDescriptor<'externalCall'> = {
   Body: ExternalCallNodeBody,
-  Output: ExternalCallNodeOutput,
+  Output: undefined,
   Editor: ExternalCallNodeEditor,
 };

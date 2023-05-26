@@ -7,7 +7,7 @@ import { useRecoilValue } from 'recoil';
 import Button from '@atlaskit/button';
 import { UserInputModal } from '../UserInputModal';
 import { userInputModalQuestionsState, userInputModalSubmitState } from '../../state/userInput';
-import { ArrayDataValue, PortId, StringDataValue, UserInputNode, expectType } from '@ironclad/nodai-core';
+import { ArrayDataValue, Outputs, PortId, StringDataValue, UserInputNode, expectType } from '@ironclad/nodai-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type UserInputNodeEditorProps = {
@@ -139,22 +139,8 @@ const questionsAndAnswersStyles = css`
   }
 `;
 
-export const UserInputNodeOutput: FC<UserInputNodeBodyProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  const questionsAndAnswers = expectType(output.outputData?.['questionsAndAnswers' as PortId], 'string[]');
+export const UserInputNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
+  const questionsAndAnswers = expectType(outputs['questionsAndAnswers' as PortId], 'string[]');
 
   return (
     <div css={questionsAndAnswersStyles}>
@@ -170,5 +156,5 @@ export const UserInputNodeOutput: FC<UserInputNodeBodyProps> = ({ node }) => {
 export const userInputNodeDescriptor: NodeComponentDescriptor<'userInput'> = {
   Body: UserInputNodeBody,
   Editor: UserInputNodeEditor,
-  Output: UserInputNodeOutput,
+  OutputSimple: UserInputNodeOutput,
 };

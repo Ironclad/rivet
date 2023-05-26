@@ -10,7 +10,7 @@ import { ContextMenuData } from '../hooks/useContextMenu';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { ArrayDataValue, ChartNode, NodeId, NodeType, Nodes, StringDataValue, nodeFactory } from '@ironclad/nodai-core';
-import { userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
+import { ProcessQuestions, userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
 import { entries } from '../utils/typeSafety';
 import { UserInputModal } from './UserInputModal';
 import Button from '@atlaskit/button';
@@ -139,6 +139,9 @@ export const GraphBuilder: FC = () => {
     }
   }, [firstNodeQuestions]);
 
+  const [, questions] = firstNodeQuestions ? firstNodeQuestions : [undefined, [] as ProcessQuestions[]];
+  const lastQuestions = questions.at(-1)?.questions ?? [];
+
   return (
     <Container>
       <NodeCanvas
@@ -158,7 +161,7 @@ export const GraphBuilder: FC = () => {
       )}
       <UserInputModal
         open={isUserInputModalOpen}
-        questions={firstNodeQuestions ? firstNodeQuestions[1] : []}
+        questions={lastQuestions}
         onSubmit={handleSubmitUserInputModal}
         onClose={handleCloseUserInputModal}
       />

@@ -2,9 +2,6 @@ import { FC } from 'react';
 import { RaiseEventNode } from '@ironclad/nodai-core';
 import Toggle from '@atlaskit/toggle';
 import TextField from '@atlaskit/textfield';
-import { useRecoilValue } from 'recoil';
-import { lastRunData } from '../../state/dataFlow';
-import { RenderDataValue } from '../RenderDataValue';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type RaiseEventNodeBodyProps = {
@@ -13,34 +10,6 @@ export type RaiseEventNodeBodyProps = {
 
 export const RaiseEventNodeBody: FC<RaiseEventNodeBodyProps> = ({ node }) => {
   return <div>{node.data.useEventNameInput ? '(Using Input)' : node.data.eventName}</div>;
-};
-
-export type RaiseEventNodeOutputProps = {
-  node: RaiseEventNode;
-};
-
-export const RaiseEventNodeOutput: FC<RaiseEventNodeOutputProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  const outputValues = Object.entries(output.outputData).map(([key, value]) => (
-    <pre className="pre-wrap" key={key}>
-      {key}: <RenderDataValue value={value} />
-    </pre>
-  ));
-
-  return <pre>{outputValues}</pre>;
 };
 
 type RaiseEventNodeEditorProps = {
@@ -84,6 +53,6 @@ export const RaiseEventNodeEditor: FC<RaiseEventNodeEditorProps> = ({ node, onCh
 
 export const RaiseEventNodeDescriptor: NodeComponentDescriptor<'raiseEvent'> = {
   Body: RaiseEventNodeBody,
-  Output: RaiseEventNodeOutput,
+  Output: undefined,
   Editor: RaiseEventNodeEditor,
 };

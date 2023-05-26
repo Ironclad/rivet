@@ -5,7 +5,7 @@ import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
 import { openDirectory } from '../../utils/fileIO';
 import Button from '@atlaskit/button';
-import { ChartNode, PortId, ReadDirectoryNode, expectType } from '@ironclad/nodai-core';
+import { ChartNode, Outputs, PortId, ReadDirectoryNode, expectType } from '@ironclad/nodai-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 type ReadDirectoryNodeBodyProps = {
@@ -34,22 +34,8 @@ export const ReadDirectoryNodeBody: FC<ReadDirectoryNodeBodyProps> = ({ node }) 
   );
 };
 
-export const ReadDirectoryNodeOutput: FC<ReadDirectoryNodeBodyProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  const outputPaths = expectType(output.outputData['paths' as PortId], 'string[]');
+export const ReadDirectoryNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
+  const outputPaths = expectType(outputs['paths' as PortId], 'string[]');
   return (
     <div>
       {outputPaths.length === 0 ? (
@@ -265,6 +251,6 @@ export const ReadDirectoryNodeEditor: FC<ReadDirectoryNodeEditorProps> = ({ node
 
 export const readDirectoryNodeDescriptor: NodeComponentDescriptor<'readDirectory'> = {
   Body: ReadDirectoryNodeBody,
-  Output: ReadDirectoryNodeOutput,
+  OutputSimple: ReadDirectoryNodeOutput,
   Editor: ReadDirectoryNodeEditor,
 };

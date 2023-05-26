@@ -91,26 +91,30 @@ export function startDebuggerServer(
 
       attachedProcessors.push(processor);
 
-      processor.on('nodeStart', ({ node, inputs }) => {
-        this.broadcast(processor, 'nodeStart', { node, inputs });
+      processor.on('nodeStart', (data) => {
+        this.broadcast(processor, 'nodeStart', data);
       });
-      processor.on('nodeFinish', ({ node, outputs }) => {
-        this.broadcast(processor, 'nodeFinish', { node, outputs });
+      processor.on('nodeFinish', (data) => {
+        this.broadcast(processor, 'nodeFinish', data);
       });
-      processor.on('nodeError', ({ node, error }) => {
-        this.broadcast(processor, 'nodeError', { node, error: typeof error === 'string' ? error : error.toString() });
+      processor.on('nodeError', ({ node, error, processId }) => {
+        this.broadcast(processor, 'nodeError', {
+          node,
+          error: typeof error === 'string' ? error : error.toString(),
+          processId,
+        });
       });
-      processor.on('nodeExcluded', (node) => {
-        this.broadcast(processor, 'nodeExcluded', node);
+      processor.on('nodeExcluded', (data) => {
+        this.broadcast(processor, 'nodeExcluded', data);
       });
       processor.on('start', () => {
         this.broadcast(processor, 'start', null);
       });
-      processor.on('done', ({ results }) => {
-        this.broadcast(processor, 'done', results);
+      processor.on('done', (data) => {
+        this.broadcast(processor, 'done', data);
       });
-      processor.on('partialOutput', ({ node, index, outputs }) => {
-        this.broadcast(processor, 'partialOutput', { node, index, outputs });
+      processor.on('partialOutput', (data) => {
+        this.broadcast(processor, 'partialOutput', data);
       });
       processor.on('abort', () => {
         this.broadcast(processor, 'abort', null);
@@ -118,14 +122,14 @@ export function startDebuggerServer(
       processor.on('trace', (message) => {
         this.broadcast(processor, 'trace', message);
       });
-      processor.on('nodeOutputsCleared', ({ node }) => {
-        this.broadcast(processor, 'nodeOutputsCleared', { node });
+      processor.on('nodeOutputsCleared', (data) => {
+        this.broadcast(processor, 'nodeOutputsCleared', data);
       });
-      processor.on('graphStart', ({ graph }) => {
-        this.broadcast(processor, 'graphStart', { graph });
+      processor.on('graphStart', (data) => {
+        this.broadcast(processor, 'graphStart', data);
       });
-      processor.on('graphFinish', ({ graph }) => {
-        this.broadcast(processor, 'graphFinish', { graph });
+      processor.on('graphFinish', (data) => {
+        this.broadcast(processor, 'graphFinish', data);
       });
       processor.on('pause', () => {
         this.broadcast(processor, 'pause', null);

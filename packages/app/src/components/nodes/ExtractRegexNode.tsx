@@ -1,9 +1,6 @@
 import { FC, useRef } from 'react';
 import styled from '@emotion/styled';
-import { lastRunData } from '../../state/dataFlow';
-import { useRecoilValue } from 'recoil';
-import { DataType, ExtractRegexNode, PortId, expectTypeOptional } from '@ironclad/nodai-core';
-import { RenderDataValue } from '../RenderDataValue';
+import { ExtractRegexNode } from '@ironclad/nodai-core';
 import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
@@ -33,49 +30,6 @@ export const ExtractRegexNodeBody: FC<ExtractRegexNodeBodyProps> = ({ node }) =>
   }
 
   return <Body>{node.data.regex}</Body>;
-};
-
-export const ExtractRegexNodeOutput: FC<ExtractRegexNodeBodyProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  if (output.outputData['matches' as PortId]?.type === ('string[][]' as DataType)) {
-    return <div>{JSON.stringify(output.outputData['matches' as PortId])}</div>;
-  }
-
-  const outputKeys = Object.keys(output.outputData).filter((key) => key.startsWith('output'));
-  const matches = expectTypeOptional(output.outputData['matches' as PortId], 'string[]');
-
-  return (
-    <div>
-      {outputKeys.map((key) => {
-        const outputText = output.outputData![key as PortId];
-        return (
-          <div key={key}>
-            <strong>{key}:</strong>
-            <pre style={{ whiteSpace: 'pre-wrap' }}>
-              <RenderDataValue value={outputText} />
-            </pre>
-          </div>
-        );
-      })}
-      <strong>Matches:</strong>
-      {matches?.map((match) => (
-        <pre style={{ whiteSpace: 'pre-wrap' }}>{match}</pre>
-      ))}
-    </div>
-  );
 };
 
 export type ExtractRegexNodeEditorProps = {
@@ -191,6 +145,6 @@ export const ExtractRegexNodeEditor: FC<ExtractRegexNodeEditorProps> = ({ node, 
 
 export const extractRegexNodeDescriptor: NodeComponentDescriptor<'extractRegex'> = {
   Body: ExtractRegexNodeBody,
-  Output: ExtractRegexNodeOutput,
+  Output: undefined,
   Editor: ExtractRegexNodeEditor,
 };

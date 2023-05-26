@@ -155,34 +155,8 @@ export const MatchNodeBody: FC<MatchNodeBodyProps> = ({ node }) => {
   );
 };
 
-export const MatchNodeOutput: FC<MatchNodeBodyProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  return (
-    <div>
-      {Object.entries(output.outputData).map(([key, value]) => (
-        <div key={key}>
-          {key}: <RenderDataValue value={value} />
-        </div>
-      ))}
-    </div>
-  );
-};
-
 export const matchNodeDescriptor: NodeComponentDescriptor<'match'> = {
   Body: MatchNodeBody,
-  Output: MatchNodeOutput,
+  Output: undefined,
   Editor: MatchNodeEditor,
 };

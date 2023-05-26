@@ -15,34 +15,6 @@ export const ExtractObjectPathNodeBody: FC<ExtractObjectPathNodeBodyProps> = ({ 
   return <div>{node.data.usePathInput ? '(Using Input)' : node.data.path}</div>;
 };
 
-export type ExtractObjectPathNodeOutputProps = {
-  node: ExtractObjectPathNode;
-};
-
-export const ExtractObjectPathNodeOutput: FC<ExtractObjectPathNodeOutputProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  const outputValues = Object.entries(output.outputData).map(([key, value]) => (
-    <pre className="pre-wrap" key={key}>
-      {key}: <RenderDataValue value={value} />
-    </pre>
-  ));
-
-  return <pre>{outputValues}</pre>;
-};
-
 type ExtractObjectPathNodeEditorProps = {
   node: ExtractObjectPathNode;
   onChange?: (node: ChartNode<'extractObjectPath', ExtractObjectPathNode['data']>) => void;
@@ -84,6 +56,6 @@ export const ExtractObjectPathNodeEditor: FC<ExtractObjectPathNodeEditorProps> =
 
 export const extractObjectPathNodeDescriptor: NodeComponentDescriptor<'extractObjectPath'> = {
   Body: ExtractObjectPathNodeBody,
-  Output: ExtractObjectPathNodeOutput,
+  Output: undefined,
   Editor: ExtractObjectPathNodeEditor,
 };

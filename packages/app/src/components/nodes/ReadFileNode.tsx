@@ -1,12 +1,9 @@
 import { FC } from 'react';
-import { RenderDataValue } from '../RenderDataValue';
-import { useRecoilValue } from 'recoil';
-import { lastRunData } from '../../state/dataFlow';
 import Toggle from '@atlaskit/toggle';
 import { css } from '@emotion/react';
 import { openFile } from '../../utils/fileIO';
 import Button from '@atlaskit/button';
-import { ChartNode, PortId, ReadFileNode } from '@ironclad/nodai-core';
+import { ChartNode, ReadFileNode } from '@ironclad/nodai-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 type ReadFileNodeBodyProps = {
@@ -30,29 +27,6 @@ export const ReadFileNodeBody: FC<ReadFileNodeBodyProps> = ({ node }) => {
         </>
       )}
     </div>
-  );
-};
-
-export const ReadFileNodeOutput: FC<ReadFileNodeBodyProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  const outputContent = output.outputData['content' as PortId];
-  return (
-    <pre style={{ whiteSpace: 'pre-wrap' }}>
-      <RenderDataValue value={outputContent} />
-    </pre>
   );
 };
 
@@ -152,6 +126,6 @@ export const ReadFileNodeEditor: FC<ReadFileNodeEditorProps> = ({ node, onChange
 
 export const readFileNodeDescriptor: NodeComponentDescriptor<'readFile'> = {
   Body: ReadFileNodeBody,
-  Output: ReadFileNodeOutput,
+  Output: undefined,
   Editor: ReadFileNodeEditor,
 };

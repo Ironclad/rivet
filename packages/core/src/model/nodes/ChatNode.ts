@@ -344,7 +344,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           retries: 4,
           signal: context.signal,
           onFailedAttempt(error) {
-            // console.log(error);
+            console.log(error);
           },
         },
       );

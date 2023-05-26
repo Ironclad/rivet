@@ -43,44 +43,6 @@ export const TextNodeBody: FC<TextNodeBodyProps> = ({ node }) => {
   );
 };
 
-const multiOutput = css`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-export const TextNodeOutput: FC<TextNodeBodyProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  const outputText = output.outputData['output' as PortId];
-
-  if (outputText?.type === 'string[]') {
-    return (
-      <div css={multiOutput}>
-        {outputText.value.map((s, i) => (
-          <pre key={i} className="pre-wrap">
-            {s}
-          </pre>
-        ))}
-      </div>
-    );
-  }
-
-  return <pre className="pre-wrap">{coerceType(outputText, 'string')}</pre>;
-};
-
 export type TextNodeEditorProps = {
   node: TextNode;
   onChange?: (node: TextNode) => void;
@@ -222,6 +184,6 @@ export const TextNodeEditor: FC<TextNodeEditorProps> = ({ node, onChange }) => {
 
 export const textNodeDescriptor: NodeComponentDescriptor<'text'> = {
   Body: TextNodeBody,
-  Output: TextNodeOutput,
+  Output: undefined,
   Editor: TextNodeEditor,
 };

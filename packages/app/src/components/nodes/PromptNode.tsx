@@ -6,7 +6,7 @@ import Toggle from '@atlaskit/toggle';
 import { useRecoilValue } from 'recoil';
 import { lastRunData } from '../../state/dataFlow';
 import { RenderDataValue } from '../RenderDataValue';
-import { ChartNode, GetDataValue, PortId, PromptNode, PromptNodeData } from '@ironclad/nodai-core';
+import { ChartNode, GetDataValue, Outputs, PortId, PromptNode, PromptNodeData } from '@ironclad/nodai-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type PromptNodeEditorProps = {
@@ -230,37 +230,8 @@ const typeDisplay: Record<PromptNodeData['type'], string> = {
   user: 'User',
 };
 
-export const PromptNodeOutput: FC<PromptNodeBodyProps> = memo(({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  const message = output.outputData?.['output' as PortId] as GetDataValue<'chat-message'> | undefined;
-
-  if (message == null) {
-    return null;
-  }
-
-  if (message.type !== 'chat-message') {
-    return <RenderDataValue value={message} />;
-  }
-
-  return (
-    <div>
-      <em>{typeDisplay[message.value.type]}:</em>
-      <div className="pre-wrap">{message.value.message}</div>
-    </div>
-  );
-});
-
 export const promptNodeDescriptor: NodeComponentDescriptor<'prompt'> = {
   Body: PromptNodeBody,
-  Output: PromptNodeOutput,
+  OutputSimple: undefined,
   Editor: PromptNodeEditor,
 };

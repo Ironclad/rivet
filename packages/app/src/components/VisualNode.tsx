@@ -3,7 +3,7 @@ import { CSSProperties, FC, HTMLAttributes, MouseEvent, forwardRef, memo, useEff
 import { useRecoilValue } from 'recoil';
 import { match } from 'ts-pattern';
 import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/nodai-core';
-import { lastRunData } from '../state/dataFlow';
+import { lastRunData, selectedProcessPage } from '../state/dataFlow';
 import { NodeBody } from './NodeBody';
 import { NodeOutput } from './NodeOutput';
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
@@ -65,6 +65,8 @@ export const VisualNode = memo(
       ref,
     ) => {
       const lastRun = useRecoilValue(lastRunData(node.id));
+      const processPage = useRecoilValue(selectedProcessPage(node.id));
+
       const {
         canvasPosition: { zoom },
       } = useCanvasPositioning();
@@ -97,14 +99,19 @@ export const VisualNode = memo(
 
       const isZoomedOut = zoom < 0.4;
 
+      const selectedProcessRun =
+        lastRun && lastRun.length > 0
+          ? lastRun?.at(processPage === 'latest' ? lastRun.length - 1 : processPage)?.data
+          : undefined;
+
       return (
         <div
           className={clsx('node', {
             overlayNode: isOverlay,
             selected: isSelected,
-            success: lastRun?.status?.type === 'ok',
-            error: lastRun?.status?.type === 'error',
-            running: lastRun?.status?.type === 'running',
+            success: selectedProcessRun?.status?.type === 'ok',
+            error: selectedProcessRun?.status?.type === 'error',
+            running: selectedProcessRun?.status?.type === 'running',
             zoomedOut: isZoomedOut,
           })}
           ref={nodeRef}
@@ -148,6 +155,7 @@ const ZoomedOutVisualNodeContent: FC<{
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
 }> = memo(({ node, connections = [], handleAttributes, onSelectNode, onWireStartDrag, onWireEndDrag }) => {
   const lastRun = useRecoilValue(lastRunData(node.id));
+  const processPage = useRecoilValue(selectedProcessPage(node.id));
 
   const handleEditClick = useStableCallback((event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -159,6 +167,11 @@ const ZoomedOutVisualNodeContent: FC<{
     event.preventDefault();
   });
 
+  const selectedProcessRun =
+    lastRun && lastRun.length > 0
+      ? lastRun?.at(processPage === 'latest' ? lastRun.length - 1 : processPage)?.data
+      : undefined;
+
   return (
     <>
       <div className="node-title">
@@ -168,8 +181,8 @@ const ZoomedOutVisualNodeContent: FC<{
         </div>
         <div className="title-controls">
           <div className="last-run-status">
-            {lastRun?.status ? (
-              match(lastRun.status)
+            {selectedProcessRun?.status ? (
+              match(selectedProcessRun.status)
                 .with({ type: 'ok' }, () => (
                   <div className="success">
                     <SendIcon />
@@ -217,6 +230,7 @@ const NormalVisualNodeContent: FC<{
 }> = memo(
   ({ node, connections = [], onWireStartDrag, onWireEndDrag, onSelectNode, onNodeWidthChanged, handleAttributes }) => {
     const lastRun = useRecoilValue(lastRunData(node.id));
+    const processPage = useRecoilValue(selectedProcessPage(node.id));
 
     const [initialWidth, setInitialWidth] = useState<number | undefined>();
     const [initialMouseX, setInitialMouseX] = useState(0);
@@ -264,6 +278,11 @@ const NormalVisualNodeContent: FC<{
       }
     });
 
+    const selectedProcessRun =
+      lastRun && lastRun.length > 0
+        ? lastRun?.at(processPage === 'latest' ? lastRun.length - 1 : processPage)?.data
+        : undefined;
+
     return (
       <>
         <div className="node-title">
@@ -273,8 +292,8 @@ const NormalVisualNodeContent: FC<{
           </div>
           <div className="title-controls">
             <div className="last-run-status">
-              {lastRun?.status ? (
-                match(lastRun.status)
+              {selectedProcessRun?.status ? (
+                match(selectedProcessRun.status)
                   .with({ type: 'ok' }, () => (
                     <div className="success">
                       <SendIcon />

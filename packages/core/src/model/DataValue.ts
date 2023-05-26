@@ -50,10 +50,6 @@ export type DataType = DataValue['type'];
 
 export type GetDataValue<Type extends DataType> = Extract<DataValue, { type: Type }>;
 
-export function isArrayDataValue(value: DataValue | undefined): value is ArrayDataValues {
-  return value?.type.endsWith('[]') ?? false;
-}
-
 export const dataTypes = exhaustiveTuple<DataType>()(
   'any',
   'any[]',
@@ -111,4 +107,33 @@ export const dataTypeDisplayNames: Record<DataType, string> = {
   'control-flow-excluded[]': 'ControlFlowExcluded Array',
   object: 'Object',
   'object[]': 'Object Array',
+};
+
+export function isArrayDataValue(value: DataValue | undefined): value is ArrayDataValues {
+  if (!value) {
+    return false;
+  }
+
+  return (
+    (value.type.endsWith('[]') || ((value?.type === 'any' || value.type === 'object') && Array.isArray(value.value))) ??
+    false
+  );
+}
+
+/**
+ * Turns a { type: 'string[]', value: string[] } into { type: 'string', value: string }[]
+ * or a { type: 'object', value: something[] } into { type: 'object', value: something }[]
+ * or a { type: 'any', value: something[] } into { type: 'any', value: something }[]
+ * or a { type: 'string', value: string } into [{ type: 'string', value: string }]
+ */
+export const arrayizeDataValue = (value: DataValue): ScalarDataValue[] => {
+  const isArray =
+    value.type.endsWith('[]') || ((value.type === 'any' || value.type === 'object') && Array.isArray(value.value));
+  if (!isArray) {
+    return [value as ScalarDataValue];
+  }
+
+  const unwrappedType = value.type.endsWith('[]') ? value.type.slice(0, -2) : value.type;
+
+  return (value.value as unknown[]).map((v) => ({ type: unwrappedType as ScalarType, value: v })) as ScalarDataValue[];
 };
