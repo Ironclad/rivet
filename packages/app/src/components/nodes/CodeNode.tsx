@@ -1,5 +1,5 @@
 import { FC, useLayoutEffect, useMemo, useEffect, useRef } from 'react';
-import { ChartNode, CodeNode } from '@ironclad/nodai-core';
+import { ChartNode, CodeNode, Outputs } from '@ironclad/nodai-core';
 import { monaco } from '../../utils/monaco';
 import { RenderDataValue } from '../RenderDataValue';
 import { useRecoilValue } from 'recoil';
@@ -46,25 +46,11 @@ export const CodeNodeBody: FC<CodeNodeBodyProps> = ({ node }) => {
 };
 
 export type CodeNodeOutputProps = {
-  node: CodeNode;
+  outputs: Outputs;
 };
 
-export const CodeNodeOutput: FC<CodeNodeOutputProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  const outputValues = Object.entries(output.outputData).map(([key, value]) => (
+export const CodeNodeOutput: FC<CodeNodeOutputProps> = ({ outputs }) => {
+  const outputValues = Object.entries(outputs).map(([key, value]) => (
     <div key={key}>
       {key}: <RenderDataValue value={value} />
     </div>
@@ -149,6 +135,6 @@ export const CodeNodeEditor: FC<CodeNodeEditorProps> = ({ node, onChange }) => {
 
 export const codeNodeDescriptor: NodeComponentDescriptor<'code'> = {
   Body: CodeNodeBody,
-  Output: CodeNodeOutput,
+  OutputSimple: CodeNodeOutput,
   Editor: CodeNodeEditor,
 };

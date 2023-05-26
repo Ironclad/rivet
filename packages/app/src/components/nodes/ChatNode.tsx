@@ -1,12 +1,8 @@
-import { FC, useLayoutEffect, useRef } from 'react';
+import { FC } from 'react';
 import { css } from '@emotion/react';
-import { lastRunData } from '../../state/dataFlow';
-import { useRecoilValue } from 'recoil';
 import { RenderDataValue } from '../RenderDataValue';
 import Toggle from '@atlaskit/toggle';
-import * as monaco from 'monaco-editor';
-import { ChartNode, ChatNode, ChatNodeData, PortId, expectType, expectTypeOptional } from '@ironclad/nodai-core';
-import { values } from '../../utils/typeSafety';
+import { ChatNode, Outputs, PortId, expectTypeOptional } from '@ironclad/nodai-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 type ChatNodeBodyProps = {
@@ -53,84 +49,12 @@ export const ChatNodeBody: FC<ChatNodeBodyProps> = ({ node }) => {
   );
 };
 
-export const ChatNodeOutput: FC<ChatNodeBodyProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
+export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
+  const outputText = outputs['response' as PortId];
 
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (output.splitOutputData && !output.outputData) {
-    return (
-      <div className="multi-message" css={styles}>
-        {values(output.splitOutputData).map((outputs, index) => {
-          const outputPart = expectType(outputs['response' as PortId], 'string');
-          return (
-            <div className="pre-wrap" key={index}>
-              {outputPart}
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  const outputText = output.outputData['response' as PortId];
-
-  if (outputText?.type === 'string[]') {
-    const requestTokensArray = expectTypeOptional(output.outputData!['requestTokens' as PortId], 'number[]');
-    const responseTokensArray = expectTypeOptional(output.outputData!['responseTokens' as PortId], 'number[]');
-    const costArray = expectTypeOptional(output.outputData!['cost' as PortId], 'number[]');
-
-    const totalRequestTokens = requestTokensArray?.reduce((a, b) => a + b, 0) ?? 0;
-    const totalResponseTokens = responseTokensArray?.reduce((a, b) => a + b, 0) ?? 0;
-    const totalCost = costArray?.reduce((a, b) => a + b, 0) ?? 0;
-
-    return (
-      <div>
-        {(totalResponseTokens > 0 || totalRequestTokens > 0 || totalCost > 0) && (
-          <div style={{ marginBottom: 8 }}>
-            {totalRequestTokens > 0 && (
-              <div>
-                <em>Request Tokens: {totalRequestTokens}</em>
-              </div>
-            )}
-            {totalResponseTokens > 0 && (
-              <div>
-                <em>Response Tokens: {totalResponseTokens}</em>
-              </div>
-            )}
-            {totalCost > 0 && (
-              <div>
-                <em>${totalCost.toFixed(3)}</em>
-              </div>
-            )}
-          </div>
-        )}
-        <div className="multi-message" css={styles}>
-          {outputText.value.map((text, index) => {
-            return (
-              <div className="pre-wrap" key={index}>
-                {text}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  }
-
-  const requestTokens = expectTypeOptional(output.outputData['requestTokens' as PortId], 'number');
-  const responseTokens = expectTypeOptional(output.outputData['responseTokens' as PortId], 'number');
-  const cost = expectTypeOptional(output.outputData['cost' as PortId], 'number');
+  const requestTokens = expectTypeOptional(outputs['requestTokens' as PortId], 'number');
+  const responseTokens = expectTypeOptional(outputs['responseTokens' as PortId], 'number');
+  const cost = expectTypeOptional(outputs['cost' as PortId], 'number');
 
   return (
     <div>
@@ -160,65 +84,66 @@ export const ChatNodeOutput: FC<ChatNodeBodyProps> = ({ node }) => {
   );
 };
 
-export const FullscreenChatNodeOutput: FC<ChatNodeBodyProps> = ({ node }) => {
-  const outputRef = useRef<HTMLPreElement>(null);
-  const output = useRecoilValue(lastRunData(node.id));
+// TODO
+// export const FullscreenChatNodeOutput: FC<ChatNodeBodyProps> = ({ node }) => {
+//   const outputRef = useRef<HTMLPreElement>(null);
+//   const output = useRecoilValue(lastRunData(node.id));
 
-  useLayoutEffect(() => {
-    if (outputRef.current) {
-      monaco.editor.colorizeElement(outputRef.current!, {
-        theme: 'vs-dark',
-      });
-    }
-  }, [output]);
+//   useLayoutEffect(() => {
+//     if (outputRef.current) {
+//       monaco.editor.colorizeElement(outputRef.current!, {
+//         theme: 'vs-dark',
+//       });
+//     }
+//   }, [output]);
 
-  if (!output) {
-    return null;
-  }
+//   if (!output) {
+//     return null;
+//   }
 
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
+//   if (output.status?.type === 'error') {
+//     return <div>{output.status.error}</div>;
+//   }
 
-  if (output.splitOutputData) {
-    return (
-      <div className="multi-message" css={styles}>
-        {Object.values(output.splitOutputData).map((outputs, index) => {
-          const outputPart = expectType(outputs['response' as PortId], 'string');
-          return (
-            <div className="pre-wrap" key={index}>
-              {outputPart}
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
+//   if (output.splitOutputData) {
+//     return (
+//       <div className="multi-message" css={styles}>
+//         {Object.values(output.splitOutputData).map((outputs, index) => {
+//           const outputPart = expectType(outputs['response' as PortId], 'string');
+//           return (
+//             <div className="pre-wrap" key={index}>
+//               {outputPart}
+//             </div>
+//           );
+//         })}
+//       </div>
+//     );
+//   }
 
-  if (!output.outputData) {
-    return null;
-  }
+//   if (!output.outputData) {
+//     return null;
+//   }
 
-  const outputText = output.outputData['response' as PortId];
+//   const outputText = output.outputData['response' as PortId];
 
-  if (outputText?.type === 'string[]') {
-    return (
-      <div className="multi-message" css={styles}>
-        {outputText.value.map((text, index) => (
-          <div className="pre-wrap" key={index}>
-            {text}
-          </div>
-        ))}
-      </div>
-    );
-  }
+//   if (outputText?.type === 'string[]') {
+//     return (
+//       <div className="multi-message" css={styles}>
+//         {outputText.value.map((text, index) => (
+//           <div className="pre-wrap" key={index}>
+//             {text}
+//           </div>
+//         ))}
+//       </div>
+//     );
+//   }
 
-  return (
-    <pre ref={outputRef} className="pre-wrap" data-language="markdown">
-      <RenderDataValue value={outputText} />
-    </pre>
-  );
-};
+//   return (
+//     <pre ref={outputRef} className="pre-wrap" data-language="markdown">
+//       <RenderDataValue value={outputText} />
+//     </pre>
+//   );
+// };
 
 export type ChatNodeEditorProps = {
   node: ChatNode;
@@ -486,7 +411,8 @@ export const ChatNodeEditor: FC<ChatNodeEditorProps> = ({ node, onChange }) => {
 
 export const chatNodeDescriptor: NodeComponentDescriptor<'chat'> = {
   Body: ChatNodeBody,
-  Output: ChatNodeOutput,
+  OutputSimple: ChatNodeOutput,
   Editor: ChatNodeEditor,
-  FullscreenOutput: FullscreenChatNodeOutput,
+  // FullscreenOutput: FullscreenChatNodeOutput,
+  FullscreenOutput: undefined,
 };

@@ -1,8 +1,8 @@
-import { ArrayDataValue, DataValue, PortId, StringDataValue, expectType } from '@ironclad/nodai-core';
+import { ArrayDataValue, Outputs, StringDataValue, expectType } from '@ironclad/nodai-core';
 
 import { WarningsPort } from './symbols';
 
-export function addWarning(outputs: Record<PortId, DataValue>, warning: string): void {
+export function addWarning(outputs: Outputs, warning: string): void {
   if (!outputs[WarningsPort]) {
     outputs[WarningsPort] = { type: 'string[]', value: [] };
   }
@@ -10,7 +10,7 @@ export function addWarning(outputs: Record<PortId, DataValue>, warning: string):
   (outputs[WarningsPort] as ArrayDataValue<StringDataValue>).value.push(warning);
 }
 
-export function getWarnings(outputs: Record<PortId, DataValue> | undefined): string[] | undefined {
+export function getWarnings(outputs: Outputs | undefined): string[] | undefined {
   if (!outputs?.[WarningsPort]) {
     return undefined;
   }

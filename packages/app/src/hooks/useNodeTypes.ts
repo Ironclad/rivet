@@ -1,4 +1,4 @@
-import { NodeOfType, NodeType } from '@ironclad/nodai-core';
+import { NodeOfType, NodeType, Outputs } from '@ironclad/nodai-core';
 import { FC } from 'react';
 import { ChartNode } from '@ironclad/nodai-core';
 import { assemblePromptNodeDescriptor } from '../components/nodes/AssemblePromptNode';
@@ -35,6 +35,7 @@ export type UnknownNodeComponentDescriptor = {
   Output?: FC<{ node: ChartNode }>;
   Editor?: FC<{ node: ChartNode; onChange?: (node: ChartNode) => void }>;
   FullscreenOutput?: FC<{ node: ChartNode }>;
+  OutputSimple?: FC<{ outputs: Outputs }>;
 };
 
 export type NodeComponentDescriptor<T extends NodeType> = {
@@ -42,6 +43,7 @@ export type NodeComponentDescriptor<T extends NodeType> = {
   Output?: FC<{ node: NodeOfType<T> }>;
   Editor?: FC<{ node: NodeOfType<T>; onChange?: (node: NodeOfType<T>) => void }>;
   FullscreenOutput?: FC<{ node: NodeOfType<T> }>;
+  OutputSimple?: FC<{ outputs: Outputs }>;
 };
 
 export type NodeComponentDescriptors = {

@@ -137,36 +137,8 @@ export const GraphInputNodeEditor: FC<GraphInputNodeEditorProps> = ({ node, onCh
   );
 };
 
-export type GraphInputNodeOutputProps = {
-  node: GraphInputNode;
-};
-
-export const GraphInputNodeOutput: FC<GraphInputNodeOutputProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  const outputText = output.outputData['data' as PortId];
-
-  return (
-    <pre className="pre-wrap">
-      <RenderDataValue value={outputText} />
-    </pre>
-  );
-};
-
 export const graphInputNodeDescriptor: NodeComponentDescriptor<'graphInput'> = {
   Body: GraphInputNodeBody,
-  Output: GraphInputNodeOutput,
+  Output: undefined,
   Editor: GraphInputNodeEditor,
 };

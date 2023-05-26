@@ -77,51 +77,8 @@ export const SubGraphNodeEditor: FC<SubGraphNodeEditorProps> = ({ node, onChange
   );
 };
 
-export type SubGraphNodeOutputProps = {
-  node: SubGraphNode;
-};
-
-export const SubGraphNodeOutput: FC<SubGraphNodeOutputProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  const outputs = entries(output.outputData);
-  if (outputs.length === 1) {
-    const outputValue = outputs[0]![1]!;
-    return (
-      <pre className="pre-wrap">
-        <RenderDataValue value={outputValue} />
-      </pre>
-    );
-  }
-
-  return (
-    <div>
-      {outputs.map(([portId, outputValue], index) => (
-        <div>
-          <div>{portId}:</div>
-          <pre key={index} className="pre-wrap">
-            <RenderDataValue value={outputValue} />
-          </pre>
-        </div>
-      ))}
-    </div>
-  );
-};
-
 export const subgraphNodeDescriptor: NodeComponentDescriptor<'subGraph'> = {
   Body: SubGraphNodeBody,
-  Output: SubGraphNodeOutput,
+  Output: undefined,
   Editor: SubGraphNodeEditor,
 };

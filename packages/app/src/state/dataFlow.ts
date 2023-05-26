@@ -1,8 +1,13 @@
 import { atom, selectorFamily } from 'recoil';
-import { DataValue, GraphId, Inputs, NodeId, Outputs, PortId } from '@ironclad/nodai-core';
+import { GraphId, Inputs, NodeId, Outputs, ProcessId } from '@ironclad/nodai-core';
+
+export type ProcessDataForNode = {
+  processId: ProcessId;
+  data: NodeRunData;
+};
 
 export type RunDataByNodeId = {
-  [nodeId: NodeId]: NodeRunData;
+  [nodeId: NodeId]: ProcessDataForNode[];
 };
 
 export type NodeRunData = {
@@ -13,9 +18,7 @@ export type NodeRunData = {
   outputData?: Outputs;
 
   splitOutputData?: {
-    [index: number]: {
-      [key: PortId]: DataValue | undefined;
-    };
+    [index: number]: Outputs;
   };
 };
 
@@ -29,7 +32,7 @@ export const runningGraphsState = atom<GraphId[]>({
   default: [],
 });
 
-export const lastRunData = selectorFamily<NodeRunData | undefined, NodeId>({
+export const lastRunData = selectorFamily<ProcessDataForNode[] | undefined, NodeId>({
   key: 'lastRunData',
   get:
     (nodeId: NodeId) =>
@@ -46,4 +49,28 @@ export const graphRunningState = atom<boolean>({
 export const graphPausedState = atom<boolean>({
   key: 'graphPaused',
   default: false,
+});
+
+export const selectedProcessPageNodesState = atom<Record<NodeId, number | 'latest'>>({
+  key: 'selectedProcessPage',
+  default: {},
+});
+
+export const selectedProcessPage = selectorFamily<number | 'latest', NodeId>({
+  key: 'selectedProcessPage',
+  get:
+    (nodeId: NodeId) =>
+    ({ get }) => {
+      return get(selectedProcessPageNodesState)[nodeId] ?? 0;
+    },
+  set:
+    (nodeId: NodeId) =>
+    ({ set }, newValue) => {
+      set(selectedProcessPageNodesState, (oldValue) => {
+        return {
+          ...oldValue,
+          [nodeId]: newValue,
+        };
+      });
+    },
 });

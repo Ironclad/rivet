@@ -3,24 +3,6 @@ import { css } from '@emotion/react';
 import { ArrayNode } from '@ironclad/nodai-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
-type ArrayNodeBodyProps = {
-  node: ArrayNode;
-};
-
-const styles = css`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-`;
-
-export const ArrayNodeBody: FC<ArrayNodeBodyProps> = ({ node }) => {
-  return (
-    <div css={styles}>
-      <div>Array Node</div>
-    </div>
-  );
-};
-
 export type ArrayNodeEditorProps = {
   node: ArrayNode;
   onChange?: (node: ArrayNode) => void;
@@ -47,7 +29,7 @@ export const ArrayNodeEditor: FC<ArrayNodeEditorProps> = ({ node, onChange }) =>
 };
 
 export const arrayNodeDescriptor: NodeComponentDescriptor<'array'> = {
-  Body: ArrayNodeBody,
+  Body: undefined,
   Output: undefined,
   Editor: ArrayNodeEditor,
 };

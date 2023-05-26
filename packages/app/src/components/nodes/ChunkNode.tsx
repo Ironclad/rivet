@@ -1,7 +1,5 @@
 import { FC } from 'react';
-import { ChartNode, ChunkNode, ChunkNodeData, PortId } from '@ironclad/nodai-core';
-import { useRecoilValue } from 'recoil';
-import { lastRunData } from '../../state/dataFlow';
+import { ChunkNode } from '@ironclad/nodai-core';
 import { css } from '@emotion/react';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
@@ -15,35 +13,6 @@ export const ChunkNodeBody: FC<ChunkNodeBodyProps> = ({ node }) => {
       <div>Model: {node.data.model}</div>
       <div>Token Count: {node.data.numTokensPerChunk}</div>
       {node.data.overlap && <div>Overlap %: {node.data.overlap}</div>}
-    </div>
-  );
-};
-
-export const ChunkNodeOutput: FC<ChunkNodeBodyProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  const outputChunks = output.outputData['chunks' as PortId];
-
-  return (
-    <div>
-      {outputChunks?.type === 'string[]' &&
-        outputChunks.value.map((chunk, index) => (
-          <pre key={index} className="pre-wrap">
-            {chunk}
-          </pre>
-        ))}
     </div>
   );
 };
@@ -160,6 +129,6 @@ export const ChunkNodeEditor: FC<ChunkNodeEditorProps> = ({ node, onChange }) =>
 
 export const chunkNodeDescriptor: NodeComponentDescriptor<'chunk'> = {
   Body: ChunkNodeBody,
-  Output: ChunkNodeOutput,
+  Output: undefined,
   Editor: ChunkNodeEditor,
 };

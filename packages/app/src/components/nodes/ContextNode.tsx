@@ -137,36 +137,8 @@ export const ContextNodeEditor: FC<ContextNodeEditorProps> = ({ node, onChange }
   );
 };
 
-export type ContextNodeOutputProps = {
-  node: ContextNode;
-};
-
-export const ContextNodeOutput: FC<ContextNodeOutputProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  const outputText = output.outputData['data' as PortId];
-
-  return (
-    <pre className="pre-wrap">
-      <RenderDataValue value={outputText} />
-    </pre>
-  );
-};
-
 export const contextNodeDescriptor: NodeComponentDescriptor<'context'> = {
   Body: ContextNodeBody,
-  Output: ContextNodeOutput,
+  Output: undefined,
   Editor: ContextNodeEditor,
 };

@@ -9,7 +9,7 @@ import {
 } from './DataValue';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { GraphId, NodeGraph } from './NodeGraph';
-import { InternalProcessContext, NodeImpl, ProcessContext } from './NodeImpl';
+import { InternalProcessContext, NodeImpl, ProcessContext, ProcessId } from './NodeImpl';
 import { LoopControllerNode, NodeType, Nodes, createNodeInstance } from './Nodes';
 import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode';
 import PQueue from 'p-queue';
@@ -33,24 +33,30 @@ export type ProcessEvents = {
   graphFinish: { graph: NodeGraph; outputs: GraphOutputs };
 
   /** Called when a node has started processing, with the input values for the node. */
-  nodeStart: { node: ChartNode; inputs: Inputs };
+  nodeStart: { node: ChartNode; inputs: Inputs; processId: ProcessId };
 
   /** Called when a node has finished processing, with the output values for the node. */
-  nodeFinish: { node: ChartNode; outputs: Outputs };
+  nodeFinish: { node: ChartNode; outputs: Outputs; processId: ProcessId };
 
   /** Called when a node has errored during processing. */
-  nodeError: { node: ChartNode; error: Error | string };
+  nodeError: { node: ChartNode; error: Error | string; processId: ProcessId };
 
   /** Called when a node has been excluded from processing. */
-  nodeExcluded: { node: ChartNode };
+  nodeExcluded: { node: ChartNode; processId: ProcessId };
 
   /** Called when a user input node requires user input. Call the callback when finished, or call userInput() on the GraphProcessor with the results. */
-  userInput: { node: UserInputNode; inputs: Inputs; callback: (values: StringArrayDataValue) => void };
+  userInput: {
+    node: UserInputNode;
+    inputs: Inputs;
+    callback: (values: StringArrayDataValue) => void;
+    processId: ProcessId;
+  };
 
   /** Called when a node has partially processed, with the current partial output values for the node. */
-  partialOutput: { node: ChartNode; outputs: Outputs; index: number };
+  partialOutput: { node: ChartNode; outputs: Outputs; index: number; processId: ProcessId };
 
-  nodeOutputsCleared: { node: ChartNode };
+  /** Called when the outputs of a node have been cleared entirely. If processId is present, only the one process() should be cleared. */
+  nodeOutputsCleared: { node: ChartNode; processId?: ProcessId };
 
   /** Called when processing has completed. */
   done: { results: GraphOutputs };
@@ -58,12 +64,16 @@ export type ProcessEvents = {
   /** Called when processing has been aborted. */
   abort: void;
 
+  /** Called for trace level logs. */
   trace: string;
 
+  /** Called when the graph has been paused. */
   pause: void;
 
+  /** Called when the graph has been resumed. */
   resume: void;
 } & {
+  /** Listen for any user event. */
   [key: `userEvent:${string}`]: DataValue | undefined;
 };
 
@@ -255,6 +265,99 @@ export class GraphProcessor {
     await this.#emitter.once('resume');
   }
 
+  /** Main function for running a graph. Runs a graph and returns the outputs from the output nodes of the graph. */
+  async processGraph(
+    /** Required and optional context available to the nodes and all subgraphs. */
+    context: ProcessContext,
+
+    /** Inputs to the main graph. You should pass all inputs required by the GraphInputNodes of the graph. */
+    inputs: Record<string, DataValue> = {},
+
+    /** Contextual data available to all graphs and subgraphs. Kind of like react context, avoids drilling down data into subgraphs. Be careful when using it. */
+    contextValues: Record<string, DataValue> = {},
+  ): Promise<GraphOutputs> {
+    try {
+      if (this.#running) {
+        throw new Error('Cannot process graph while already processing');
+      }
+
+      this.#running = true;
+      this.#context = context;
+      this.#nodeResults = new Map();
+      this.#erroredNodes = new Set();
+      this.#visitedNodes = new Set();
+      this.#currentlyProcessing = new Set();
+      this.#remainingNodes = new Set(this.#graph.nodes.map((n) => n.id));
+      this.#pendingUserInputs = {};
+      this.#abortController = new AbortController();
+      this.#processingQueue = new PQueue({ concurrency: Infinity });
+      this.#graphInputs = inputs;
+      this.#graphOutputs = {};
+      this.#executionCache ??= new Map();
+      this.#queuedNodes = new Set();
+      this.#loopControllersSeen = new Set();
+      this.#subprocessors = new Set();
+
+      if (!this.#contextValues) {
+        this.#contextValues = contextValues;
+      }
+
+      if (!this.#isSubProcessor) {
+        this.#emitter.emit('start', void 0);
+      }
+
+      this.#emitter.emit('graphStart', { graph: this.#graph, inputs: this.#graphInputs });
+
+      const nodesWithoutOutputs = this.#graph.nodes.filter((node) => this.#outputNodesFrom(node).length === 0);
+
+      await this.#waitUntilUnpaused();
+
+      for (const nodeWithoutOutputs of nodesWithoutOutputs) {
+        this.#processingQueue.add(async () => {
+          await this.#fetchNodeDataAndProcessNode(nodeWithoutOutputs as Nodes);
+        });
+      }
+
+      await this.#processingQueue.onIdle();
+
+      if (this.#erroredNodes.size > 0) {
+        throw new Error(
+          `Graph ${this.#graph.metadata!.name} (${
+            this.#graph.metadata!.id
+          }) failed to process due to errors in nodes: ${Array.from(this.#erroredNodes)
+            .map((nodeId) => `${this.#nodesById[nodeId]!.title} (${nodeId})`)
+            .join(', ')}`,
+        );
+      }
+
+      const outputNodes = this.#graph.nodes.filter(
+        (node): node is GraphOutputNode =>
+          this.#isNodeOfType('graphOutput', node) &&
+          !this.#excludedDueToControlFlow(node, this.#getInputValuesForNode(node), nanoid() as ProcessId),
+      );
+
+      const outputValues = outputNodes.reduce((values, node) => {
+        const results = this.#nodeResults.get(node.id);
+        if (results) {
+          values[node.data.id] = results['value' as PortId]!;
+        }
+        return values;
+      }, {} as GraphOutputs);
+
+      this.#running = false;
+
+      this.#emitter.emit('graphFinish', { graph: this.#graph, outputs: outputValues });
+
+      if (!this.#isSubProcessor) {
+        this.#emitter.emit('done', { results: outputValues });
+      }
+
+      return outputValues;
+    } finally {
+      this.#running = false;
+    }
+  }
+
   async #fetchNodeDataAndProcessNode(
     node: Nodes,
     cycleInfo?: { loopController: LoopControllerNode; nodes: Set<ChartNode> },
@@ -366,7 +469,7 @@ export class GraphProcessor {
     if (node.title === 'Graph Output') {
       this.#emitter.emit('trace', `Node ${node.title} has input values ${JSON.stringify(inputValues)}`);
     }
-    if (this.#excludedDueToControlFlow(node, inputValues, 'loop-not-broken')) {
+    if (this.#excludedDueToControlFlow(node, inputValues, nanoid() as ProcessId, 'loop-not-broken')) {
       this.#emitter.emit('trace', `Node ${node.title} is excluded due to control flow`);
       return;
     }
@@ -418,7 +521,7 @@ export class GraphProcessor {
       // If the loop controller is excluded, we have to "break" it or else it'll loop forever...
       const didBreak =
         loopControllerResults['break' as PortId]?.type !== 'control-flow-excluded' ??
-        this.#excludedDueToControlFlow(node, this.#getInputValuesForNode(node));
+        this.#excludedDueToControlFlow(node, this.#getInputValuesForNode(node), nanoid() as ProcessId);
 
       this.#emitter.emit('trace', JSON.stringify(this.#nodeResults.get(node.id)));
 
@@ -471,102 +574,11 @@ export class GraphProcessor {
     );
   }
 
-  /** Main function for running a graph. Runs a graph and returns the outputs from the output nodes of the graph. */
-  async processGraph(
-    /** Required and optional context available to the nodes and all subgraphs. */
-    context: ProcessContext,
-
-    /** Inputs to the main graph. You should pass all inputs required by the GraphInputNodes of the graph. */
-    inputs: Record<string, DataValue> = {},
-
-    /** Contextual data available to all graphs and subgraphs. Kind of like react context, avoids drilling down data into subgraphs. Be careful when using it. */
-    contextValues: Record<string, DataValue> = {},
-  ): Promise<GraphOutputs> {
-    try {
-      if (this.#running) {
-        throw new Error('Cannot process graph while already processing');
-      }
-
-      this.#running = true;
-      this.#context = context;
-      this.#nodeResults = new Map();
-      this.#erroredNodes = new Set();
-      this.#visitedNodes = new Set();
-      this.#currentlyProcessing = new Set();
-      this.#remainingNodes = new Set(this.#graph.nodes.map((n) => n.id));
-      this.#pendingUserInputs = {};
-      this.#abortController = new AbortController();
-      this.#processingQueue = new PQueue({ concurrency: Infinity });
-      this.#graphInputs = inputs;
-      this.#graphOutputs = {};
-      this.#executionCache ??= new Map();
-      this.#queuedNodes = new Set();
-      this.#loopControllersSeen = new Set();
-      this.#subprocessors = new Set();
-
-      if (!this.#contextValues) {
-        this.#contextValues = contextValues;
-      }
-
-      if (!this.#isSubProcessor) {
-        this.#emitter.emit('start', void 0);
-      }
-
-      this.#emitter.emit('graphStart', { graph: this.#graph, inputs: this.#graphInputs });
-
-      const nodesWithoutOutputs = this.#graph.nodes.filter((node) => this.#outputNodesFrom(node).length === 0);
-
-      await this.#waitUntilUnpaused();
-
-      for (const nodeWithoutOutputs of nodesWithoutOutputs) {
-        this.#processingQueue.add(async () => {
-          await this.#fetchNodeDataAndProcessNode(nodeWithoutOutputs as Nodes);
-        });
-      }
-
-      await this.#processingQueue.onIdle();
-
-      if (this.#erroredNodes.size > 0) {
-        throw new Error(
-          `Graph ${this.#graph.metadata!.name} (${
-            this.#graph.metadata!.id
-          }) failed to process due to errors in nodes: ${Array.from(this.#erroredNodes)
-            .map((nodeId) => `${this.#nodesById[nodeId]!.title} (${nodeId})`)
-            .join(', ')}`,
-        );
-      }
-
-      const outputNodes = this.#graph.nodes.filter(
-        (node): node is GraphOutputNode =>
-          this.#isNodeOfType('graphOutput', node) &&
-          !this.#excludedDueToControlFlow(node, this.#getInputValuesForNode(node)),
-      );
-
-      const outputValues = outputNodes.reduce((values, node) => {
-        const results = this.#nodeResults.get(node.id);
-        if (results) {
-          values[node.data.id] = results['value' as PortId]!;
-        }
-        return values;
-      }, {} as GraphOutputs);
-
-      this.#running = false;
-
-      this.#emitter.emit('graphFinish', { graph: this.#graph, outputs: outputValues });
-
-      if (!this.#isSubProcessor) {
-        this.#emitter.emit('done', { results: outputValues });
-      }
-
-      return outputValues;
-    } finally {
-      this.#running = false;
-    }
-  }
-
   async #processNode(node: Nodes) {
+    const processId = nanoid() as ProcessId;
+
     if (this.#abortController.signal.aborted) {
-      this.#nodeErrored(node, new Error('Processing aborted'));
+      this.#nodeErrored(node, new Error('Processing aborted'), processId);
     }
 
     const inputNodes = this.#inputNodesTo(node);
@@ -577,20 +589,20 @@ export class GraphProcessor {
           .map((n) => `${n.title} (${n.id})`)
           .join(', ')}`,
       );
-      this.#nodeErrored(node, error);
+      this.#nodeErrored(node, error, processId);
       return;
     }
 
     if (this.#isNodeOfType('userInput', node)) {
-      await this.#processUserInputNode(node);
+      await this.#processUserInputNode(node, processId);
     } else if (this.#isNodeOfType('graphInput', node)) {
-      this.#processGraphInputNode(node);
+      this.#processGraphInputNode(node, processId);
     } else if (this.#isNodeOfType('graphOutput', node)) {
-      this.#processGraphOutputNode(node);
+      this.#processGraphOutputNode(node, processId);
     } else if (node.isSplitRun) {
-      await this.#processSplitRunNode(node);
+      await this.#processSplitRunNode(node, processId);
     } else {
-      await this.#processNormalNode(node);
+      await this.#processNormalNode(node, processId);
     }
   }
 
@@ -598,14 +610,14 @@ export class GraphProcessor {
     return node.type === type;
   }
 
-  async #processUserInputNode(node: UserInputNode) {
+  async #processUserInputNode(node: UserInputNode, processId: ProcessId) {
     try {
       const inputValues = this.#getInputValuesForNode(node);
-      if (this.#excludedDueToControlFlow(node, inputValues)) {
+      if (this.#excludedDueToControlFlow(node, inputValues, processId)) {
         return;
       }
 
-      this.#emitter.emit('nodeStart', { node, inputs: inputValues });
+      this.#emitter.emit('nodeStart', { node, inputs: inputValues, processId });
 
       const results = await new Promise<StringArrayDataValue>((resolve, reject) => {
         this.#pendingUserInputs[node.id] = {
@@ -626,6 +638,7 @@ export class GraphProcessor {
 
             delete this.#pendingUserInputs[node.id];
           },
+          processId,
         });
       });
 
@@ -637,16 +650,16 @@ export class GraphProcessor {
       this.#nodeResults.set(node.id, outputValues);
       this.#visitedNodes.add(node.id);
 
-      this.#emitter.emit('nodeFinish', { node, outputs: outputValues });
+      this.#emitter.emit('nodeFinish', { node, outputs: outputValues, processId });
     } catch (e) {
-      this.#nodeErrored(node, e);
+      this.#nodeErrored(node, e, processId);
     }
   }
 
-  async #processSplitRunNode(node: ChartNode) {
+  async #processSplitRunNode(node: ChartNode, processId: ProcessId) {
     const inputValues = this.#getInputValuesForNode(node);
 
-    if (this.#excludedDueToControlFlow(node, inputValues)) {
+    if (this.#excludedDueToControlFlow(node, inputValues, processId)) {
       return;
     }
 
@@ -655,7 +668,7 @@ export class GraphProcessor {
       node.splitRunMax ?? 10,
     );
 
-    this.#emitter.emit('nodeStart', { node, inputs: inputValues });
+    this.#emitter.emit('nodeStart', { node, inputs: inputValues, processId });
 
     try {
       const results = await Promise.all(
@@ -683,8 +696,9 @@ export class GraphProcessor {
               node,
               inputs as Inputs,
               i,
+              processId,
               (node, partialOutputs, index) =>
-                this.#emitter.emit('partialOutput', { node, outputs: partialOutputs, index }),
+                this.#emitter.emit('partialOutput', { node, outputs: partialOutputs, index, processId }),
             );
             return { type: 'output', output };
           } catch (error) {
@@ -714,55 +728,60 @@ export class GraphProcessor {
 
       this.#nodeResults.set(node.id, aggregateResults);
       this.#visitedNodes.add(node.id);
-      this.#emitter.emit('nodeFinish', { node, outputs: aggregateResults });
+      this.#emitter.emit('nodeFinish', { node, outputs: aggregateResults, processId });
     } catch (error) {
-      this.#nodeErrored(node, error);
+      this.#nodeErrored(node, error, processId);
     }
   }
 
-  async #processNormalNode(node: ChartNode) {
+  async #processNormalNode(node: ChartNode, processId: ProcessId) {
     const inputValues = this.#getInputValuesForNode(node);
 
-    if (this.#excludedDueToControlFlow(node, inputValues)) {
+    if (this.#excludedDueToControlFlow(node, inputValues, processId)) {
       return;
     }
 
-    this.#emitter.emit('nodeStart', { node, inputs: inputValues });
+    this.#emitter.emit('nodeStart', { node, inputs: inputValues, processId });
 
     try {
-      const outputValues = await this.#processNodeWithInputData(node, inputValues, 0, (node, partialOutputs, index) =>
-        this.#emitter.emit('partialOutput', { node, outputs: partialOutputs, index }),
+      const outputValues = await this.#processNodeWithInputData(
+        node,
+        inputValues,
+        0,
+        processId,
+        (node, partialOutputs, index) =>
+          this.#emitter.emit('partialOutput', { node, outputs: partialOutputs, index, processId }),
       );
 
       this.#nodeResults.set(node.id, outputValues);
       this.#visitedNodes.add(node.id);
-      this.#emitter.emit('nodeFinish', { node, outputs: outputValues });
+      this.#emitter.emit('nodeFinish', { node, outputs: outputValues, processId });
     } catch (error) {
-      this.#nodeErrored(node, error);
+      this.#nodeErrored(node, error, processId);
     }
   }
 
-  async #processGraphInputNode(node: GraphInputNode) {
+  async #processGraphInputNode(node: GraphInputNode, processId: ProcessId) {
     const inputValues = this.#getInputValuesForNode(node);
 
-    if (this.#excludedDueToControlFlow(node, inputValues)) {
+    if (this.#excludedDueToControlFlow(node, inputValues, processId)) {
       return;
     }
 
-    this.#emitter.emit('nodeStart', { node, inputs: inputValues });
+    this.#emitter.emit('nodeStart', { node, inputs: inputValues, processId });
 
     const impl = this.#nodeInstances[node.id] as GraphInputNodeImpl;
     const outputValues = await impl.getOutputValuesFromGraphInput(this.#graphInputs, inputValues);
 
     this.#nodeResults.set(node.id, outputValues);
     this.#visitedNodes.add(node.id);
-    this.#emitter.emit('nodeFinish', { node, outputs: outputValues });
+    this.#emitter.emit('nodeFinish', { node, outputs: outputValues, processId });
   }
 
-  #processGraphOutputNode(node: GraphOutputNode) {
+  #processGraphOutputNode(node: GraphOutputNode, processId: ProcessId) {
     const inputValues = this.#getInputValuesForNode(node);
 
-    if (this.#excludedDueToControlFlow(node, inputValues)) {
+    if (this.#excludedDueToControlFlow(node, inputValues, processId)) {
       return;
     }
 
@@ -770,13 +789,13 @@ export class GraphProcessor {
 
     this.#nodeResults.set(node.id, outputValues);
     this.#visitedNodes.add(node.id);
-    this.#emitter.emit('nodeFinish', { node, outputs: outputValues });
+    this.#emitter.emit('nodeFinish', { node, outputs: outputValues, processId });
   }
 
-  #nodeErrored(node: ChartNode, e: unknown) {
+  #nodeErrored(node: ChartNode, e: unknown, processId: ProcessId) {
     const error = getError(e);
-    this.#emitter.emit('nodeError', { node, error });
-    this.#emitter.emit('trace', `Node ${node.title} (${node.id}) errored: ${error.stack}`);
+    this.#emitter.emit('nodeError', { node, error, processId });
+    this.#emitter.emit('trace', `Node ${node.title} (${node.id}-${processId}) errored: ${error.stack}`);
     this.#erroredNodes.add(node.id);
   }
 
@@ -792,6 +811,7 @@ export class GraphProcessor {
     node: ChartNode,
     inputValues: Inputs,
     index: number,
+    processId: ProcessId,
     partialOutput?: (node: ChartNode, partialOutputs: Outputs, index: number) => void,
   ) {
     const instance = this.#nodeInstances[node.id]!;
@@ -807,6 +827,7 @@ export class GraphProcessor {
       externalFunctions: { ...this.#externalFunctions },
       onPartialOutputs: (partialOutputs) => partialOutput?.(node, partialOutputs, index),
       signal: this.#abortController.signal,
+      processId,
       createSubProcessor: (subGraphId: GraphId) => {
         const processor = new GraphProcessor(this.#project, subGraphId);
         processor.#isSubProcessor = true;
@@ -860,6 +881,7 @@ export class GraphProcessor {
   #excludedDueToControlFlow(
     node: ChartNode,
     inputValues: Inputs,
+    processId: ProcessId,
     typeOfExclusion: ControlFlowExcludedDataValue['value'] = undefined,
   ) {
     const inputValuesList = values(inputValues);
@@ -929,7 +951,7 @@ export class GraphProcessor {
     if ((inputIsExcludedValue || anyOutputIsExcludedValue) && !allowedToConsumedExcludedValue) {
       if (!isWaitingForLoop) {
         this.#emitter.emit('trace', `Excluding node ${node.title} because of control flow.`);
-        this.#emitter.emit('nodeExcluded', { node });
+        this.#emitter.emit('nodeExcluded', { node, processId });
         this.#visitedNodes.add(node.id);
         this.#nodeResults.set(node.id, {
           [ControlFlowExcluded as unknown as PortId]: { type: 'control-flow-excluded', value: undefined },

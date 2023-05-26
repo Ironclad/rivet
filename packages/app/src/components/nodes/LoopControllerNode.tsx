@@ -1,7 +1,5 @@
 import { ChangeEvent, FC } from 'react';
-import { LoopControllerNode, PortId } from '@ironclad/nodai-core';
-import { useRecoilValue } from 'recoil';
-import { lastRunData } from '../../state/dataFlow';
+import { LoopControllerNode, Outputs, PortId } from '@ironclad/nodai-core';
 import { RenderDataValue } from '../RenderDataValue';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 import styled from '@emotion/styled';
@@ -14,24 +12,10 @@ export const LoopControllerNodeBody: FC<LoopControllerNodeBodyProps> = ({ node }
   return null;
 };
 
-export const LoopControllerNodeOutput: FC<{ node: LoopControllerNode }> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
+export const LoopControllerNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
+  const outputKeys = Object.keys(outputs).filter((key) => key.startsWith('output'));
 
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  const outputKeys = Object.keys(output.outputData).filter((key) => key.startsWith('output'));
-
-  const breakLoop = output.outputData['break' as PortId]!.type !== 'control-flow-excluded';
+  const breakLoop = outputs['break' as PortId]!.type !== 'control-flow-excluded';
 
   return (
     <div>
@@ -44,7 +28,7 @@ export const LoopControllerNodeOutput: FC<{ node: LoopControllerNode }> = ({ nod
           <div>
             <em>Output {i + 1}</em>
           </div>
-          <RenderDataValue key={key} value={output.outputData![key as PortId]} />
+          <RenderDataValue key={key} value={outputs[key as PortId]} />
         </div>
       ))}
     </div>
@@ -99,6 +83,6 @@ export const LoopControllerNodeEditor: FC<LoopControllerNodeEditorProps> = ({ no
 
 export const loopControllerNodeDescriptor: NodeComponentDescriptor<'loopController'> = {
   Body: LoopControllerNodeBody,
-  Output: LoopControllerNodeOutput,
+  OutputSimple: LoopControllerNodeOutput,
   Editor: LoopControllerNodeEditor,
 };

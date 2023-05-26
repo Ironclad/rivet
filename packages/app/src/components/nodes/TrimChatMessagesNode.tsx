@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import styled from '@emotion/styled';
-import { ChartNode, PortId, TrimChatMessagesNode, TrimChatMessagesNodeData } from '@ironclad/nodai-core';
+import { PortId, TrimChatMessagesNode } from '@ironclad/nodai-core';
 import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
 import { RenderDataValue } from '../RenderDataValue';
@@ -125,30 +125,8 @@ export interface TrimChatMessagesNodeOutputProps {
   node: TrimChatMessagesNode;
 }
 
-export const TrimChatMessagesNodeOutput: FC<TrimChatMessagesNodeOutputProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  return (
-    <div>
-      <RenderDataValue value={output.outputData['trimmed' as PortId]} />
-    </div>
-  );
-};
-
 export const trimChatMessagesNodeDescriptor: NodeComponentDescriptor<'trimChatMessages'> = {
   Body: TrimChatMessagesNodeBody,
-  Output: TrimChatMessagesNodeOutput,
+  Output: undefined,
   Editor: TrimChatMessagesNodeEditor,
 };

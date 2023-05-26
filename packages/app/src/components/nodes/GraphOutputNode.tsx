@@ -112,36 +112,9 @@ export const GraphOutputNodeEditor: FC<GraphOutputNodeEditorProps> = ({ node, on
     </div>
   );
 };
-export type GraphOutputNodeOutputProps = {
-  node: GraphOutputNode;
-};
-
-export const GraphOutputNodeOutput: FC<GraphOutputNodeOutputProps> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-
-  if (!output) {
-    return null;
-  }
-
-  if (output.status?.type === 'error') {
-    return <div>{output.status.error}</div>;
-  }
-
-  if (!output.outputData) {
-    return null;
-  }
-
-  const outputText = output.outputData?.['value' as PortId];
-
-  return (
-    <pre className="pre-wrap">
-      <RenderDataValue value={outputText} />
-    </pre>
-  );
-};
 
 export const graphOutputNodeDescriptor: NodeComponentDescriptor<'graphOutput'> = {
   Body: GraphOutputNodeBody,
-  Output: GraphOutputNodeOutput,
+  Output: undefined,
   Editor: GraphOutputNodeEditor,
 };
