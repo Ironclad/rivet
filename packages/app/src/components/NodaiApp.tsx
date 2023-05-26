@@ -31,6 +31,7 @@ import {
   StringArrayDataValue,
   coerceTypeOptional,
   expectType,
+  getError,
 } from '@ironclad/nodai-core';
 import { TauriNativeApi } from '../model/native/TauriNativeApi';
 import { setCurrentDebuggerMessageHandler } from '../hooks/useRemoteDebugger';
@@ -86,12 +87,16 @@ export const NodaiApp: FC = () => {
   const project = useRecoilValue(projectState);
   const setSelectedPage = useSetRecoilState(selectedProcessPageNodesState);
 
+  const stopAll = () => {
+    setGraphRunning(false);
+    setGraphPaused(false);
+    setUserInputQuestions({});
+    setRunningGraphsState([]);
+  };
+
   const remoteDebugger = useRemoteDebugger({
     onDisconnect: () => {
-      setGraphRunning(false);
-      setGraphPaused(false);
-      setUserInputQuestions({});
-      setRunningGraphsState([]);
+      stopAll();
     },
   });
 
@@ -141,13 +146,15 @@ export const NodaiApp: FC = () => {
   };
 
   const done = () => {
-    setGraphRunning(false);
-    setRunningGraphsState([]);
+    stopAll();
   };
 
   const abort = () => {
-    setGraphRunning(false);
-    setRunningGraphsState([]);
+    stopAll();
+  };
+
+  const onError = () => {
+    stopAll();
   };
 
   const graphStart = ({ graph }: ProcessEvents['graphStart']) => {
@@ -281,6 +288,9 @@ export const NodaiApp: FC = () => {
       case 'resume':
         resume();
         break;
+      case 'error':
+        onError();
+        break;
     }
   });
 
@@ -330,6 +340,7 @@ export const NodaiApp: FC = () => {
       processor.on('trace', (log) => console.log(log));
       processor.on('pause', pause);
       processor.on('resume', resume);
+      processor.on('error', onError);
 
       processor.onUserEvent('toast', (data: DataValue | undefined) => {
         const stringData = coerceTypeOptional(data, 'string');
@@ -342,7 +353,6 @@ export const NodaiApp: FC = () => {
 
       console.log(results);
     } catch (e) {
-      setGraphRunning(false);
       console.log(e);
     }
   });
