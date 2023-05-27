@@ -290,7 +290,7 @@ const NodeOutputSingleProcess: FC<{
     return <div className="node-output-inner errored">{data.status.error}</div>;
   }
 
-  if (!data.outputData) {
+  if (!data.outputData && !data.splitOutputData) {
     return null;
   }
 
@@ -316,7 +316,11 @@ const NodeOutputSingleProcess: FC<{
       </div>
     );
   } else {
-    body = OutputSimple ? <OutputSimple outputs={data.outputData} /> : <RenderDataOutputs outputs={data.outputData} />;
+    body = OutputSimple ? (
+      <OutputSimple outputs={data.outputData!} />
+    ) : (
+      <RenderDataOutputs outputs={data.outputData!} />
+    );
   }
 
   return (
