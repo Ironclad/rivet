@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { ChartNode, ExternalCallNode } from '@ironclad/nodai-core';
+import { ChartNode, ExternalCallNode, ExternalCallNodeData } from '@ironclad/nodai-core';
 import Toggle from '@atlaskit/toggle';
 import TextField from '@atlaskit/textfield';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
@@ -25,10 +25,10 @@ export const ExternalCallNodeEditor: FC<ExternalCallNodeEditorProps> = ({ node, 
     });
   };
 
-  const handleToggleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleToggleChange = (param: keyof ExternalCallNodeData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange?.({
       ...node,
-      data: { ...node.data, useFunctionNameInput: e.target.checked },
+      data: { ...node.data, [param]: e.target.checked },
     });
   };
 
@@ -45,7 +45,19 @@ export const ExternalCallNodeEditor: FC<ExternalCallNodeEditorProps> = ({ node, 
       </div>
       <div>
         <label htmlFor="useFunctionNameInput">Use Function Name Input:</label>
-        <Toggle id="useFunctionNameInput" isChecked={node.data.useFunctionNameInput} onChange={handleToggleChange} />
+        <Toggle
+          id="useFunctionNameInput"
+          isChecked={node.data.useFunctionNameInput}
+          onChange={handleToggleChange('useFunctionNameInput')}
+        />
+      </div>
+      <div>
+        <label htmlFor="useErrorOutput">Use Error Output:</label>
+        <Toggle
+          id="useErrorOutput"
+          isChecked={node.data.useErrorOutput}
+          onChange={handleToggleChange('useErrorOutput')}
+        />
       </div>
     </div>
   );
