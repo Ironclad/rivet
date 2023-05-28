@@ -1,0 +1,17 @@
+{
+  "name": "@ironclad/nodai-node",
+  "main": "bundle.js",
+  "types": "packages/node/dist/index.d.ts",
+  "dependencies": {
+    "ts-pattern": "^4.3.0",
+    "type-fest": "^3.10.0",
+    "ws": "^8.13.0",
+    "@dqbd/tiktoken": "^1.0.7",
+    "jsonpath": "^1.1.1",
+    "minimatch": "^9.0.0",
+    "nanoid": "^3.3.6",
+    "openai": "^3.2.1",
+    "p-queue": "^6.6.2",
+    "yaml": "^2.2.2"
+  }
+}
