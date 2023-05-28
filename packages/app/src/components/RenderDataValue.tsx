@@ -28,7 +28,7 @@ const scalarRenderers: {
   'chat-message': ({ value }) => (
     <div>
       <div>
-        <em>{value.type}:</em>
+        <em>{value.value.type}:</em>
       </div>
       <pre className="pre-wrap">{value.value.message}</pre>
     </div>

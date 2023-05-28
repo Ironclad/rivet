@@ -93,15 +93,15 @@ export class GetGlobalNodeImpl extends NodeImpl<GetGlobalNode> {
 
             const value = context.getGlobal(id);
             if (value) {
-              return value;
+              return value.value;
             }
 
             // Have some useful defaults before the value is set
             if (isArrayDataType(this.data.dataType)) {
-              return { type: this.data.dataType, value: [] };
+              return [];
             }
 
-            return { type: this.data.dataType, value: scalarDefaults[this.data.dataType] };
+            return scalarDefaults[this.data.dataType];
           },
         } as FunctionDataValues,
       };

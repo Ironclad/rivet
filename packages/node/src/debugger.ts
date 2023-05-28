@@ -1,5 +1,5 @@
 import WebSocket, { WebSocketServer } from 'ws';
-import { GraphProcessor, getError } from './core';
+import { GraphId, GraphProcessor, getError } from './core';
 import { match } from 'ts-pattern';
 import Emittery from 'emittery';
 
@@ -25,6 +25,7 @@ export function startDebuggerServer(
     getProcessorsForClient?: (client: WebSocket, allProcessors: GraphProcessor[]) => GraphProcessor[];
     server?: WebSocketServer;
     port?: number;
+    dynamicGraphRun?: (data: { client: WebSocket; graphId: GraphId }) => Promise<void>;
   } = {},
 ): NodaiDebuggerServer {
   const { port = 21888 } = options;
@@ -40,22 +41,28 @@ export function startDebuggerServer(
       try {
         const message = JSON.parse(data.toString()) as { type: string; data: unknown };
 
-        const processors = options.getProcessorsForClient?.(socket, attachedProcessors) ?? attachedProcessors;
+        if (message.type === 'run') {
+          const { graphId } = message.data as { graphId: GraphId };
 
-        for (const processor of processors) {
-          await match(message)
-            .with({ type: 'abort' }, async () => {
-              await processor.abort();
-            })
-            .with({ type: 'pause' }, async () => {
-              processor.pause();
-            })
-            .with({ type: 'resume' }, async () => {
-              processor.resume();
-            })
-            .otherwise(async () => {
-              throw new Error(`Unknown message type: ${message.type}`);
-            });
+          await options.dynamicGraphRun?.({ client: socket, graphId });
+        } else {
+          const processors = options.getProcessorsForClient?.(socket, attachedProcessors) ?? attachedProcessors;
+
+          for (const processor of processors) {
+            await match(message)
+              .with({ type: 'abort' }, async () => {
+                await processor.abort();
+              })
+              .with({ type: 'pause' }, async () => {
+                processor.pause();
+              })
+              .with({ type: 'resume' }, async () => {
+                processor.resume();
+              })
+              .otherwise(async () => {
+                throw new Error(`Unknown message type: ${message.type}`);
+              });
+          }
         }
       } catch (err) {
         try {
