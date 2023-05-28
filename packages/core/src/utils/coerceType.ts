@@ -52,6 +52,10 @@ export function coerceTypeOptional<T extends DataType>(
         return undefined;
       }
 
+      if (value.value === null) {
+        return undefined;
+      }
+
       // Don't know, so try to infer it from the type of the value
       if (value.type === 'any') {
         const inferred = inferType(value.value);
@@ -117,6 +121,10 @@ export function coerceType<T extends DataType>(value: DataValue | undefined, typ
 export function inferType(value: unknown): DataValue {
   if (value === undefined) {
     return { type: 'any', value: undefined };
+  }
+
+  if (value === null) {
+    return { type: 'any', value: null };
   }
 
   if (typeof value === 'function') {
