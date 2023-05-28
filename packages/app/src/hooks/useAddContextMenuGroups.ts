@@ -13,6 +13,7 @@ export const addContextMenuGroups = [
     items: [
       { label: 'Text', nodeType: 'text' },
       { label: 'Prompt', nodeType: 'prompt' },
+      { label: 'Chunk', nodeType: 'chunk' },
     ],
   },
   {
@@ -51,6 +52,8 @@ export const addContextMenuGroups = [
       { label: 'Graph Output', nodeType: 'graphOutput' },
       { label: 'Graph Input', nodeType: 'graphInput' },
       { label: 'User Input', nodeType: 'userInput' },
+      { label: 'Read Directory', nodeType: 'readDirectory' },
+      { label: 'Read File', nodeType: 'readFile' },
     ],
   },
   {
@@ -60,9 +63,9 @@ export const addContextMenuGroups = [
       { label: 'External Call', nodeType: 'externalCall' },
       { label: 'Raise Event', nodeType: 'raiseEvent' },
       { label: 'Code', nodeType: 'code' },
-      { label: 'Read Directory', nodeType: 'readDirectory' },
-      { label: 'Read File', nodeType: 'readFile' },
       { label: 'Context', nodeType: 'context' },
+      { label: 'Get Global', nodeType: 'getGlobal' },
+      { label: 'Set Global', nodeType: 'setGlobal' },
     ],
   },
 ] satisfies {

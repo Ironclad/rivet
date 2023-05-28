@@ -178,7 +178,7 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
     return <div className="errored">{data.status.error}</div>;
   }
 
-  if (!data.outputData) {
+  if (!data.outputData && !data.splitOutputData) {
     return null;
   }
 
@@ -206,7 +206,11 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
       </div>
     );
   } else {
-    body = OutputSimple ? <OutputSimple outputs={data.outputData} /> : <RenderDataOutputs outputs={data.outputData} />;
+    body = OutputSimple ? (
+      <OutputSimple outputs={data.outputData!} />
+    ) : (
+      <RenderDataOutputs outputs={data.outputData!} />
+    );
   }
 
   return (
