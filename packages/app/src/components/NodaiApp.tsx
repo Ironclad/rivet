@@ -296,6 +296,18 @@ export const NodaiApp: FC = () => {
   });
 
   const tryRunGraph = useStableCallback(async () => {
+    if (
+      remoteDebugger.remoteDebuggerState.started &&
+      remoteDebugger.remoteDebuggerState.socket?.readyState === WebSocket.OPEN
+    ) {
+      try {
+        remoteDebugger.send('run', { graphId: graph.metadata!.id! });
+      } catch (e) {
+        console.error(e);
+      }
+      return;
+    }
+
     try {
       saveGraph();
 

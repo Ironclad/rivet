@@ -241,6 +241,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         return coerced != null ? [{ type: 'user', message: coerceType(p, 'string') }] : [];
       });
 
+    console.dir(messages);
+
     const systemPrompt = inputs['systemPrompt' as PortId];
     if (systemPrompt) {
       messages = [{ type: 'system', message: coerceType(systemPrompt, 'string') }, ...messages];

@@ -95,10 +95,14 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
 
       const inMessages = arrayizeDataValue(unwrapDataValue(inputMessage));
       for (const message of inMessages) {
-        const coerced = coerceType(message, 'string');
+        if (message.type === 'chat-message') {
+          outMessages.push(message.value);
+        } else {
+          const coerced = coerceType(message, 'string');
 
-        if (coerced) {
-          outMessages.push({ type: 'user', message: coerced });
+          if (coerced) {
+            outMessages.push({ type: 'user', message: coerced });
+          }
         }
       }
     }

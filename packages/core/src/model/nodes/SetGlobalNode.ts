@@ -65,7 +65,7 @@ export class SetGlobalNodeImpl extends NodeImpl<SetGlobalNode> {
   getOutputDefinitions(): NodeOutputDefinition[] {
     return [
       {
-        id: 'value' as PortId,
+        id: 'saved-value' as PortId,
         title: 'Value',
         dataType: this.data.dataType,
       },
@@ -100,10 +100,8 @@ export class SetGlobalNodeImpl extends NodeImpl<SetGlobalNode> {
 
     context.setGlobal(id, value);
 
-    console.dir({ value, previousValue });
-
     return {
-      ['value' as PortId]: value,
+      ['saved-value' as PortId]: value,
       ['previous-value' as PortId]: previousValue,
     };
   }
