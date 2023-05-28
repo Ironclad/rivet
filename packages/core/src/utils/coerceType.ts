@@ -1,11 +1,13 @@
 import { match } from 'ts-pattern';
-import { DataType, DataValue, GetDataValue, isArrayDataValue } from '../model/DataValue';
+import { DataType, DataValue, GetDataValue, isArrayDataValue, unwrapDataValue } from '../model/DataValue';
 import { expectTypeOptional } from './expectType';
 
 export function coerceTypeOptional<T extends DataType>(
-  value: DataValue | undefined,
+  wrapped: DataValue | undefined,
   type: T,
 ): GetDataValue<T>['value'] | undefined {
+  const value = wrapped ? unwrapDataValue(wrapped) : undefined;
+
   const result = match(type as DataType)
     .with('string', (): string | undefined => {
       if (!value) {
@@ -115,6 +117,10 @@ export function coerceType<T extends DataType>(value: DataValue | undefined, typ
 export function inferType(value: unknown): DataValue {
   if (value === undefined) {
     return { type: 'any', value: undefined };
+  }
+
+  if (typeof value === 'function') {
+    return { type: 'fn<any>', value: value as () => unknown };
   }
 
   if (typeof value === 'string') {

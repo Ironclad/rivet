@@ -1,5 +1,5 @@
 import { Opaque } from 'type-fest';
-import { DataValue } from './DataValue';
+import { DataValue, ScalarOrArrayDataType, ScalarOrArrayDataValue } from './DataValue';
 import { ExternalFunction, GraphProcessor, Inputs, Outputs } from './GraphProcessor';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { GraphId } from './NodeGraph';
@@ -87,4 +87,12 @@ export type InternalProcessContext = ProcessContext & {
 
   /** Creates a subprocessor, for executing subgraphs. */
   createSubProcessor: (subGraphId: GraphId) => GraphProcessor;
+
+  /** Like context, but variables that are set during the run of the graph and can be read during the graph. Shared among all graphs and subgraphs. */
+  getGlobal: (id: string) => ScalarOrArrayDataValue | undefined;
+
+  /** Like context, but variables that are set during the run of the graph and can be read during the graph. Shared among all graphs and subgraphs. */
+  setGlobal: (id: string, value: ScalarOrArrayDataValue) => void;
+
+  waitForGlobal: (id: string) => Promise<ScalarOrArrayDataValue>;
 };

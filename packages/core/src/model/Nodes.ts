@@ -4,7 +4,6 @@ import { NodeImpl } from './NodeImpl';
 import { TextNode, TextNodeImpl } from './nodes/TextNode';
 import { ChatNode, ChatNodeImpl } from './nodes/ChatNode';
 import { PromptNode, PromptNodeImpl } from './nodes/PromptNode';
-import { match } from 'ts-pattern';
 import { ExtractRegexNode, ExtractRegexNodeImpl } from './nodes/ExtractRegexNode';
 import { CodeNode, CodeNodeImpl } from './nodes/CodeNode';
 import { MatchNode, MatchNodeImpl } from './nodes/MatchNode';
@@ -29,6 +28,8 @@ import { ContextNode, ContextNodeImpl } from './nodes/ContextNode';
 import { CoalesceNode, CoalesceNodeImpl } from './nodes/CoalesceNode';
 import { PassthroughNode, PassthroughNodeImpl } from './nodes/PassthroughNode';
 import { PopNode, PopNodeImpl } from './nodes/PopNode';
+import { SetGlobalNode, SetGlobalNodeImpl } from './nodes/SetGlobalNode';
+import { GetGlobalNode, GetGlobalNodeImpl } from './nodes/GetGlobalNode';
 
 export type Nodes =
   | UserInputNode
@@ -58,7 +59,9 @@ export type Nodes =
   | ContextNode
   | CoalesceNode
   | PassthroughNode
-  | PopNode;
+  | PopNode
+  | SetGlobalNode
+  | GetGlobalNode;
 
 export * from './nodes/UserInputNode';
 export * from './nodes/TextNode';
@@ -88,6 +91,8 @@ export * from './nodes/ContextNode';
 export * from './nodes/CoalesceNode';
 export * from './nodes/PassthroughNode';
 export * from './nodes/PopNode';
+export * from './nodes/SetGlobalNode';
+export * from './nodes/GetGlobalNode';
 
 export type NodeType = Nodes['type'];
 
@@ -120,6 +125,8 @@ const nodeImpls: Record<NodeType, { new (node: any): NodeImpl<ChartNode> }> = {
   coalesce: CoalesceNodeImpl,
   passthrough: PassthroughNodeImpl,
   pop: PopNodeImpl,
+  setGlobal: SetGlobalNodeImpl,
+  getGlobal: GetGlobalNodeImpl,
 };
 
 export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode> => {
@@ -130,37 +137,41 @@ export function createUnknownNodeInstance(node: ChartNode): NodeImpl<ChartNode> 
   return createNodeInstance(node as Nodes);
 }
 
+const nodeFactories: Record<NodeType, () => Nodes> = {
+  userInput: () => UserInputNodeImpl.create(),
+  text: () => TextNodeImpl.create(),
+  chat: () => ChatNodeImpl.create(),
+  prompt: () => PromptNodeImpl.create(),
+  extractRegex: () => ExtractRegexNodeImpl.create(),
+  code: () => CodeNodeImpl.create(),
+  match: () => MatchNodeImpl.create(),
+  if: () => IfNodeImpl.create(),
+  readDirectory: () => ReadDirectoryNodeImpl.create(),
+  readFile: () => ReadFileNodeImpl.create(),
+  ifElse: () => IfElseNodeImpl.create(),
+  chunk: () => ChunkNodeImpl.create(),
+  graphInput: () => GraphInputNodeImpl.create(),
+  graphOutput: () => GraphOutputNodeImpl.create(),
+  subGraph: () => SubGraphNodeImpl.create(),
+  array: () => ArrayNodeImpl.create(),
+  extractJson: () => ExtractJsonNodeImpl.create(),
+  extractYaml: () => ExtractYamlNodeImpl.create(),
+  extractObjectPath: () => ExtractObjectPathNodeImpl.create(),
+  assemblePrompt: () => AssemblePromptNodeImpl.create(),
+  loopController: () => LoopControllerNodeImpl.create(),
+  trimChatMessages: () => TrimChatMessagesNodeImpl.create(),
+  externalCall: () => ExternalCallNodeImpl.create(),
+  raiseEvent: () => RaiseEventNodeImpl.create(),
+  context: () => ContextNodeImpl.create(),
+  coalesce: () => CoalesceNodeImpl.create(),
+  passthrough: () => PassthroughNodeImpl.create(),
+  pop: () => PopNodeImpl.create(),
+  setGlobal: () => SetGlobalNodeImpl.create(),
+  getGlobal: () => GetGlobalNodeImpl.create(),
+};
+
 export function nodeFactory(type: NodeType): Nodes {
-  return match(type)
-    .with('userInput', () => UserInputNodeImpl.create())
-    .with('text', () => TextNodeImpl.create())
-    .with('chat', () => ChatNodeImpl.create())
-    .with('prompt', () => PromptNodeImpl.create())
-    .with('extractRegex', () => ExtractRegexNodeImpl.create())
-    .with('code', () => CodeNodeImpl.create())
-    .with('match', () => MatchNodeImpl.create())
-    .with('if', () => IfNodeImpl.create())
-    .with('readDirectory', () => ReadDirectoryNodeImpl.create())
-    .with('readFile', () => ReadFileNodeImpl.create())
-    .with('ifElse', () => IfElseNodeImpl.create())
-    .with('chunk', () => ChunkNodeImpl.create())
-    .with('graphInput', () => GraphInputNodeImpl.create())
-    .with('graphOutput', () => GraphOutputNodeImpl.create())
-    .with('subGraph', () => SubGraphNodeImpl.create())
-    .with('array', () => ArrayNodeImpl.create())
-    .with('extractJson', () => ExtractJsonNodeImpl.create())
-    .with('assemblePrompt', () => AssemblePromptNodeImpl.create())
-    .with('loopController', () => LoopControllerNodeImpl.create())
-    .with('trimChatMessages', () => TrimChatMessagesNodeImpl.create())
-    .with('extractYaml', () => ExtractYamlNodeImpl.create())
-    .with('externalCall', () => ExternalCallNodeImpl.create())
-    .with('extractObjectPath', () => ExtractObjectPathNodeImpl.create())
-    .with('raiseEvent', () => RaiseEventNodeImpl.create())
-    .with('context', () => ContextNodeImpl.create())
-    .with('coalesce', () => CoalesceNodeImpl.create())
-    .with('passthrough', () => PassthroughNodeImpl.create())
-    .with('pop', () => PopNodeImpl.create())
-    .exhaustive();
+  return nodeFactories[type]();
 }
 
 export const nodeDisplayName: Record<NodeType, string> = {
@@ -192,6 +203,8 @@ export const nodeDisplayName: Record<NodeType, string> = {
   coalesce: 'Coalesce',
   passthrough: 'Passthrough',
   pop: 'Pop',
+  setGlobal: 'Set Global',
+  getGlobal: 'Get Global',
 };
 
 export type NodeOfType<T extends NodeType> = Extract<Nodes, { type: T }>;

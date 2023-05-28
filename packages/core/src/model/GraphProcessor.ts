@@ -6,6 +6,11 @@ import {
   AnyDataValue,
   StringArrayDataValue,
   ControlFlowExcludedDataValue,
+  isArrayDataValue,
+  getScalarTypeOf,
+  arrayizeDataValue,
+  ScalarOrArrayDataType,
+  ScalarOrArrayDataValue,
 } from './DataValue';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { GraphId, NodeGraph } from './NodeGraph';
@@ -78,9 +83,14 @@ export type ProcessEvents = {
 
   /** Called when the graph has been resumed. */
   resume: void;
+
+  /** Called when a global variable has been set in a graph. */
+  globalSet: { id: string; value: ScalarOrArrayDataValue; processId: ProcessId };
 } & {
   /** Listen for any user event. */
   [key: `userEvent:${string}`]: DataValue | undefined;
+} & {
+  [key: `globalSet:${string}`]: ScalarOrArrayDataValue | undefined;
 };
 
 export type GraphOutputs = Record<string, DataValue>;
@@ -127,6 +137,7 @@ export class GraphProcessor {
   #loopControllersSeen: Set<NodeId> = undefined!;
   #subprocessors: Set<GraphProcessor> = undefined!;
   #contextValues: Record<string, DataValue> = undefined!;
+  #globals: Map<string, ScalarOrArrayDataValue> = undefined!;
 
   /** User input nodes that are pending user input. */
   #pendingUserInputs: Record<
@@ -192,6 +203,10 @@ export class GraphProcessor {
     this.#nodesNotInCycle = this.#scc.filter((cycle) => cycle.length === 1).flat();
 
     this.setExternalFunction('echo', async (value) => ({ type: 'any', value: value } satisfies DataValue));
+
+    this.#emitter.on('globalSet', ({ id, value }) => {
+      this.#emitter.emit(`globalSet:${id}`, value);
+    });
   }
 
   on = undefined! as Emittery<ProcessEvents>['on'];
@@ -304,9 +319,8 @@ export class GraphProcessor {
       this.#loopControllersSeen = new Set();
       this.#subprocessors = new Set();
 
-      if (!this.#contextValues) {
-        this.#contextValues = contextValues;
-      }
+      this.#globals ??= new Map();
+      this.#contextValues ??= contextValues;
 
       if (!this.#isSubProcessor) {
         this.#emitter.emit('start', void 0);
@@ -688,21 +702,10 @@ export class GraphProcessor {
       const results = await Promise.all(
         range(0, splittingAmount).map(async (i) => {
           const inputs = fromEntries(
-            entries(inputValues).map(([port, value]): [PortId, DataValue | undefined] => {
-              const isArray =
-                value?.type.endsWith('[]') ||
-                ((value?.type === 'any' || value?.type === 'object') && Array.isArray(value?.value));
-
-              if (isArray) {
-                const newType = value?.type.endsWith('[]')
-                  ? (value.type.slice(0, -2) as DataValue['type'])
-                  : value!.type;
-                const newValue: unknown = (value!.value as unknown[])[i] ?? undefined;
-                return [port as PortId, { type: newType, value: newValue as any }];
-              } else {
-                return [port as PortId, value];
-              }
-            }),
+            entries(inputValues).map(([port, value]) => [
+              port as PortId,
+              isArrayDataValue(value) ? arrayizeDataValue(value)[i] ?? undefined : value,
+            ]),
           );
 
           try {
@@ -842,6 +845,18 @@ export class GraphProcessor {
       onPartialOutputs: (partialOutputs) => partialOutput?.(node, partialOutputs, index),
       signal: this.#abortController.signal,
       processId,
+      getGlobal: (id) => this.#globals.get(id),
+      setGlobal: (id, value) => {
+        this.#globals.set(id, value);
+        this.#emitter.emit('globalSet', { id, value, processId });
+      },
+      waitForGlobal: async (id) => {
+        if (this.#globals.has(id)) {
+          return this.#globals.get(id)!;
+        }
+        await this.getRootProcessor().#emitter.once(`globalSet:${id}`);
+        return this.#globals.get(id)!;
+      },
       createSubProcessor: (subGraphId: GraphId) => {
         const processor = new GraphProcessor(this.#project, subGraphId);
         processor.#isSubProcessor = true;
@@ -849,6 +864,7 @@ export class GraphProcessor {
         processor.#externalFunctions = this.#externalFunctions;
         processor.#contextValues = this.#contextValues;
         processor.#parent = this;
+        processor.#globals = this.#globals;
         processor.on('nodeError', (e) => this.#emitter.emit('nodeError', e));
         processor.on('nodeFinish', (e) => this.#emitter.emit('nodeFinish', e));
         processor.on('partialOutput', (e) => this.#emitter.emit('partialOutput', e));
@@ -857,6 +873,7 @@ export class GraphProcessor {
         processor.on('userInput', (e) => this.#emitter.emit('userInput', e)); // TODO!
         processor.on('graphStart', (e) => this.#emitter.emit('graphStart', e));
         processor.on('graphFinish', (e) => this.#emitter.emit('graphFinish', e));
+        processor.on('globalSet', (e) => this.#emitter.emit('globalSet', e));
         processor.on('pause', (e) => {
           if (!this.#isPaused) {
             this.pause();
@@ -870,6 +887,8 @@ export class GraphProcessor {
 
         processor.onAny((event, data) => {
           if (event.startsWith('userEvent:')) {
+            this.#emitter.emit(event, data);
+          } else if (event.startsWith('globalSet:')) {
             this.#emitter.emit(event, data);
           }
         });

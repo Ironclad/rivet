@@ -1,7 +1,15 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
-import { ArrayDataValue, ChatMessage, DataType, DataValue, ScalarDataValue } from '../DataValue';
+import {
+  ArrayDataValue,
+  ChatMessage,
+  DataType,
+  DataValue,
+  ScalarDataValue,
+  arrayizeDataValue,
+  unwrapDataValue,
+} from '../DataValue';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { orderBy } from 'lodash-es';
 import { coerceType } from '../..';
@@ -72,7 +80,7 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
   async process(inputs: Inputs): Promise<Outputs> {
     const output: Outputs = {};
 
-    const messages: ChatMessage[] = [];
+    const outMessages: ChatMessage[] = [];
 
     const inputMessages = orderBy(
       Object.entries(inputs).filter(([key]) => key.startsWith('message')),
@@ -85,27 +93,19 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
         continue;
       }
 
-      if (inputMessage.type.endsWith('[]')) {
-        for (const value of (inputMessage as ArrayDataValue<ScalarDataValue>).value) {
-          const dataValue: DataValue = { type: inputMessage.type.replace('[]', '') as DataType, value: value as any };
-          const coerced = coerceType(dataValue, 'string');
-
-          if (coerced) {
-            messages.push({ type: 'user', message: coerced });
-          }
-        }
-      } else {
-        const coerced = coerceType(inputMessage, 'string');
+      const inMessages = arrayizeDataValue(unwrapDataValue(inputMessage));
+      for (const message of inMessages) {
+        const coerced = coerceType(message, 'string');
 
         if (coerced) {
-          messages.push({ type: 'user', message: coerced });
+          outMessages.push({ type: 'user', message: coerced });
         }
       }
     }
 
     output['prompt' as PortId] = {
       type: 'chat-message[]',
-      value: messages,
+      value: outMessages,
     };
 
     return output;
