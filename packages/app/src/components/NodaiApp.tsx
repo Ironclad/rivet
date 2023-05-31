@@ -159,16 +159,7 @@ export const NodaiApp: FC = () => {
   };
 
   const graphStart = ({ graph }: ProcessEvents['graphStart']) => {
-    setLastRunData((data) => {
-      return produce(data, (draft) => {
-        for (const node of graph.nodes) {
-          delete draft[node.id];
-        }
-      });
-    });
-    if (graph.metadata?.id) {
-      setRunningGraphsState((running) => [...running, graph.metadata!.id!]);
-    }
+    setRunningGraphsState((running) => [...running, graph.metadata!.id!]);
   };
 
   const graphFinish = ({ graph }: ProcessEvents['graphFinish']) => {
