@@ -13,3 +13,4 @@ export * from './model/ProcessContext';
 export * from './utils/coerceType';
 export * from './utils/expectType';
 export * from './utils/errors';
+export * from './utils/serialization';

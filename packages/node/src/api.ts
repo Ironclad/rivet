@@ -7,6 +7,7 @@ import {
   ProcessEvents,
   Project,
   Settings,
+  deserializeProject,
 } from './core';
 
 import { readFile } from 'node:fs/promises';
@@ -21,12 +22,7 @@ export async function loadProjectFromFile(path: string): Promise<Project> {
 }
 
 export function loadProjectFromString(content: string): Project {
-  const json = JSON.parse(content);
-  if ('metadata' in json && 'graphs' in json) {
-    return json as Project;
-  }
-
-  throw new Error('Invalid project file');
+  return deserializeProject(content);
 }
 
 export type LooseDataValue = DataValue | string | number | boolean;
