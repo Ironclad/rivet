@@ -1,5 +1,5 @@
 import { max, range } from 'lodash-es';
-import { ControlFlowExcluded } from '../utils/symbols';
+import { ControlFlowExcluded, ControlFlowExcludedPort } from '../utils/symbols';
 import {
   DataValue,
   ArrayDataValue,
@@ -928,9 +928,17 @@ export class GraphProcessor {
       const connection = connections.find((conn) => conn.inputId === input.id && conn.inputNodeId === node.id);
       if (connection) {
         const outputNode = this.#nodeInstances[connection.outputNodeId]!.chartNode;
-        const outputResult = this.#nodeResults.get(outputNode.id)?.[connection.outputId];
+        const outputNodeOutputs = this.#nodeResults.get(outputNode.id);
+        const outputResult = outputNodeOutputs?.[connection.outputId];
 
         values[input.id] = outputResult;
+
+        if (outputNodeOutputs?.[ControlFlowExcludedPort]) {
+          values[ControlFlowExcludedPort] = {
+            type: 'control-flow-excluded',
+            value: undefined,
+          };
+        }
       }
       return values;
     }, {} as Record<string, any>);
