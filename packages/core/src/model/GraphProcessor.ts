@@ -9,6 +9,7 @@ import {
   isArrayDataValue,
   arrayizeDataValue,
   ScalarOrArrayDataValue,
+  getScalarTypeOf,
 } from './DataValue';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { GraphId, NodeGraph } from './NodeGraph';
@@ -872,7 +873,10 @@ export class GraphProcessor {
   ) {
     const inputValuesList = values(inputValues);
     const controlFlowExcludedValues = inputValuesList.filter(
-      (value) => value?.type === 'control-flow-excluded' && (!typeOfExclusion || value.value === typeOfExclusion),
+      (value) =>
+        value &&
+        getScalarTypeOf(value.type) === 'control-flow-excluded' &&
+        (!typeOfExclusion || value.value === typeOfExclusion),
     );
     const inputIsExcludedValue = inputValuesList.length > 0 && controlFlowExcludedValues.length > 0;
 
