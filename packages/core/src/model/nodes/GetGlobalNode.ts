@@ -1,18 +1,18 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { InternalProcessContext, NodeImpl } from '../NodeImpl';
+import { NodeImpl } from '../NodeImpl';
 import {
   FunctionDataValues,
   ScalarDataType,
   ScalarDataValue,
   ScalarOrArrayDataType,
-  ScalarOrArrayDataValue,
   isArrayDataType,
   isScalarDataType,
   scalarDefaults,
 } from '../DataValue';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { coerceType } from '../../utils/coerceType';
+import { InternalProcessContext } from '../ProcessContext';
 
 export type GetGlobalNode = ChartNode<'getGlobal', GetGlobalNodeData>;
 

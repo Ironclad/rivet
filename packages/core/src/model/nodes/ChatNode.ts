@@ -1,6 +1,6 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { InternalProcessContext, NodeImpl } from '../NodeImpl';
+import { NodeImpl } from '../NodeImpl';
 import { ChatMessage, DataValue, ScalarDataValue } from '../DataValue';
 import {
   assertValidModel,
@@ -18,6 +18,7 @@ import { Inputs, Outputs } from '../GraphProcessor';
 import { match } from 'ts-pattern';
 import { expectTypeOptional } from '../../utils/expectType';
 import { coerceType } from '../../utils/coerceType';
+import { InternalProcessContext } from '../ProcessContext';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 

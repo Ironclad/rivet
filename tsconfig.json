@@ -7,5 +7,16 @@
   "include": ["./*.mts"],
   "ts-node": {
     "swc": true
-  }
+  },
+  "references": [
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/node"
+    }
+    // {
+    //   "path": "./packages/app"
+    // }
+  ]
 }

@@ -1,8 +1,9 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { InternalProcessContext, NodeImpl } from '../NodeImpl';
+import { NodeImpl } from '../NodeImpl';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { coerceType } from '../../utils/coerceType';
+import { InternalProcessContext } from '../ProcessContext';
 
 export type LoopControllerNode = ChartNode<'loopController', LoopControllerNodeData>;
 
