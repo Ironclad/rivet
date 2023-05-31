@@ -1,8 +1,9 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
-import { DataType, DataValue } from '../DataValue';
+import { DataType, DataValue, getDefaultValue, isArrayDataType } from '../DataValue';
 import { GraphInputs, Inputs, Outputs } from '../GraphProcessor';
+import { InternalProcessContext } from '../ProcessContext';
 
 export type GraphInputNode = ChartNode<'graphInput', GraphInputNodeData>;
 
@@ -59,29 +60,25 @@ export class GraphInputNodeImpl extends NodeImpl<GraphInputNode> {
     ];
   }
 
-  async process(): Promise<Record<string, DataValue>> {
-    // This node does not process any data, it just provides the input value
-    return {};
-  }
+  async process(inputs: Inputs, context: InternalProcessContext): Promise<Record<string, DataValue>> {
+    let inputValue = context.graphInputs[this.data.id];
 
-  async getOutputValuesFromGraphInput(graphInputs: GraphInputs, nodeInputs: Inputs): Promise<Outputs> {
-    let inputValue = graphInputs[this.data.id];
+    if (inputValue == null && this.data.useDefaultValueInput) {
+      inputValue = inputs['default' as PortId];
+    }
 
     if (inputValue == null) {
-      if (this.data.useDefaultValueInput) {
-        inputValue = nodeInputs['default' as PortId];
-      } else {
-        inputValue = { type: this.data.dataType, value: this.data.defaultValue } as DataValue;
-      }
+      inputValue = {
+        type: this.data.dataType,
+        value: this.data.defaultValue || getDefaultValue(this.data.dataType),
+      } as DataValue;
     }
 
     // Resolve undefined for array inputs to empty array
-    if ((inputValue == null || inputValue.value == null) && this.data.dataType.endsWith('[]')) {
+    if ((inputValue == null || inputValue.value == null) && isArrayDataType(this.data.dataType)) {
       inputValue = { type: this.data.dataType, value: [] } as DataValue;
     }
 
-    const outputValues = { ['data' as PortId]: inputValue } as Outputs;
-
-    return outputValues;
+    return { ['data' as PortId]: inputValue };
   }
 }

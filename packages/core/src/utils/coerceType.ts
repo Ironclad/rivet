@@ -147,7 +147,7 @@ export function inferType(value: unknown): DataValue {
     return { type: 'datetime', value: value.toISOString() };
   }
 
-  if (typeof value === 'object' && value !== null) {
+  if (typeof value === 'object') {
     return { type: 'object', value: value as Record<string, unknown> };
   }
 
