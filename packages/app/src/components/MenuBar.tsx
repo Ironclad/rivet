@@ -34,6 +34,7 @@ const styles = css`
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    user-select: none;
   }
 
   .menu-item > button {
@@ -123,7 +124,6 @@ const styles = css`
     padding: 8px;
     z-index: 1;
     min-width: 150px;
-    user-select: none;
   }
 
   .file-dropdown button {
@@ -192,7 +192,7 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
   const [graphData, setGraphData] = useRecoilState(graphState);
   const [fileMenuOpen, setFileMenuOpen] = useState(false);
   const loadProject = useLoadProject();
-  const { saveProject } = useSaveProject();
+  const { saveProject, saveProjectAs } = useSaveProject();
   const newProject = useNewProject();
   const [debuggerPanelOpen, setDebuggerPanelOpen] = useState(false);
 
@@ -216,6 +216,11 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
     setFileMenuOpen(false);
   }
 
+  function handleSaveProjectAs() {
+    saveProjectAs();
+    setFileMenuOpen(false);
+  }
+
   function handleConnectRemoteDebugger(url: string) {
     setDebuggerPanelOpen(false);
     connect(url);
@@ -225,13 +230,14 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
     <div css={styles}>
       <div className="left-menu">
         <div className="menu-item file-menu">
-          <button className="dropdown-button" onClick={() => setFileMenuOpen((open) => !open)}>
+          <button className="dropdown-button" onMouseDown={() => setFileMenuOpen((open) => !open)}>
             File
           </button>
           <div className={clsx('file-dropdown', { open: fileMenuOpen })}>
-            <button onClick={handleNewProject}>New Project</button>
-            <button onClick={handleLoadProject}>Open Project</button>
-            <button onClick={handleSaveProject}>Save Project</button>
+            <button onMouseUp={handleNewProject}>New Project</button>
+            <button onMouseUp={handleLoadProject}>Open Project...</button>
+            <button onMouseUp={handleSaveProject}>Save Project</button>
+            <button onMouseUp={handleSaveProjectAs}>Save Project As...</button>
           </div>
         </div>
         <div className="menu-item settings-button">

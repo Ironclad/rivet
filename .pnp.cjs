@@ -5783,6 +5783,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["openai", "npm:3.2.1"],\
             ["p-queue", "npm:6.6.2"],\
             ["p-retry", "npm:5.1.2"],\
+            ["safe-stable-stringify", "npm:2.4.3"],\
             ["ts-pattern", "npm:4.3.0"],\
             ["type-fest", "virtual:ee53775331eeeecac063f8feb53102b3a1c4a9deb536f3dca087d0c61347a740d7ecde5e6b5d744e87c5eebfbe096912824a4162124776f5f1f671019378f54a#npm:3.10.0"],\
             ["typescript", "patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"],\
@@ -21843,6 +21844,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["call-bind", "npm:1.0.2"],\
             ["get-intrinsic", "npm:1.2.0"],\
             ["is-regex", "npm:1.1.4"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["safe-stable-stringify", [\
+        ["npm:2.4.3", {\
+          "packageLocation": "./.yarn/cache/safe-stable-stringify-npm-2.4.3-d895741b40-3aeb644497.zip/node_modules/safe-stable-stringify/",\
+          "packageDependencies": [\
+            ["safe-stable-stringify", "npm:2.4.3"]\
           ],\
           "linkType": "HARD"\
         }]\

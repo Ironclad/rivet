@@ -18,6 +18,7 @@
     "openai": "^3.2.1",
     "p-queue": "^6.6.2",
     "p-retry": "^5.1.2",
+    "safe-stable-stringify": "^2.4.3",
     "ts-pattern": "^4.3.0",
     "type-fest": "^3.10.0",
     "yaml": "^2.2.2"

@@ -3675,6 +3675,7 @@ __metadata:
     openai: ^3.2.1
     p-queue: ^6.6.2
     p-retry: ^5.1.2
+    safe-stable-stringify: ^2.4.3
     ts-pattern: ^4.3.0
     type-fest: ^3.10.0
     typescript: ^5.0.4
@@ -16315,6 +16316,13 @@ __metadata:
     get-intrinsic: "npm:^1.1.3"
     is-regex: "npm:^1.1.4"
   checksum: bc566d8beb8b43c01b94e67de3f070fd2781685e835959bbbaaec91cc53381145ca91f69bd837ce6ec244817afa0a5e974fc4e40a2957f0aca68ac3add1ddd34
+  languageName: node
+  linkType: hard
+
+"safe-stable-stringify@npm:^2.4.3":
+  version: 2.4.3
+  resolution: "safe-stable-stringify@npm:2.4.3"
+  checksum: 3aeb64449706ee1f5ad2459fc99648b131d48e7a1fbb608d7c628020177512dc9d94108a5cb61bbc953985d313d0afea6566d243237743e02870490afef04b43
   languageName: node
   linkType: hard
 

@@ -6,7 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "Nodai",
+    "productName": "Rivet",
     "version": "0.1.0"
   },
   "tauri": {
@@ -29,7 +29,7 @@
       },
       "externalBin": [],
       "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
-      "identifier": "com.ironcladapp.nodai",
+      "identifier": "com.ironcladapp.rivet",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -56,10 +56,10 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "height": 1024,
         "resizable": true,
-        "title": "Nodai",
-        "width": 800
+        "title": "Rivet",
+        "width": 1200
       }
     ]
   }
