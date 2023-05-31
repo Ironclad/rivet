@@ -70,8 +70,8 @@ export async function loadGraphData(callback: (graphData: NodeGraph) => void) {
   const path = await open({
     filters: [
       {
-        name: 'JSON',
-        extensions: ['json'],
+        name: 'Rivet Graph',
+        extensions: ['rivet-graph'],
       },
     ],
     multiple: false,
@@ -91,8 +91,8 @@ export async function loadProjectData(callback: (data: { project: Project; path:
   const path = await open({
     filters: [
       {
-        name: 'JSON',
-        extensions: ['json'],
+        name: 'Rivet Project',
+        extensions: ['rivet-project'],
       },
     ],
     multiple: false,
