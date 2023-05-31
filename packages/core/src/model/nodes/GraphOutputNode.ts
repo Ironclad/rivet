@@ -5,6 +5,7 @@ import { DataType, DataValue } from '../DataValue';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { InternalProcessContext } from '../ProcessContext';
 import { ControlFlowExcludedPort } from '../../utils/symbols';
+import { entries } from '../../utils/typeSafety';
 
 export type GraphOutputNode = ChartNode<'graphOutput', GraphOutputNodeData>;
 
@@ -62,6 +63,15 @@ export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
       context.graphOutputs[this.data.id]?.type === 'control-flow-excluded'
     ) {
       context.graphOutputs[this.data.id] = value;
+    }
+
+    if (isExcluded) {
+      return {
+        ['value' as PortId]: {
+          type: 'control-flow-excluded',
+          value: undefined,
+        },
+      };
     }
 
     return inputs;
