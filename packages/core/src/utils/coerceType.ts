@@ -1,5 +1,13 @@
 import { match } from 'ts-pattern';
-import { ChatMessage, DataType, DataValue, GetDataValue, isArrayDataValue, unwrapDataValue } from '../model/DataValue';
+import {
+  ChatMessage,
+  DataType,
+  DataValue,
+  GetDataValue,
+  getScalarTypeOf,
+  isArrayDataValue,
+  unwrapDataValue,
+} from '../model/DataValue';
 import { expectTypeOptional } from './expectType';
 
 export function coerceTypeOptional<T extends DataType>(
@@ -183,7 +191,17 @@ export function coerceTypeOptional<T extends DataType>(
 
       return value.value; // Whatever, consider anything an object
     })
-    .otherwise(() => expectTypeOptional(value, type));
+    .otherwise(() => {
+      if (!value) {
+        return value;
+      }
+
+      if (getScalarTypeOf(value.type) === 'any' || getScalarTypeOf(type) === 'any') {
+        return value;
+      }
+
+      return expectTypeOptional(value, type);
+    });
 
   return result as GetDataValue<T>['value'] | undefined;
 }
