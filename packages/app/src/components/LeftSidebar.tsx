@@ -62,6 +62,7 @@ const styles = css`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    user-select: none;
 
     &:hover {
       background-color: var(--grey-darkish);
@@ -102,6 +103,7 @@ const styles = css`
     margin-bottom: 8px;
     align-items: center;
     padding: 0 12px;
+    user-select: none;
 
     button {
       padding: 4px 8px;
