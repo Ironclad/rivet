@@ -1,5 +1,5 @@
 import { match } from 'ts-pattern';
-import { DataType, DataValue, GetDataValue, isArrayDataValue, unwrapDataValue } from '../model/DataValue';
+import { ChatMessage, DataType, DataValue, GetDataValue, isArrayDataValue, unwrapDataValue } from '../model/DataValue';
 import { expectTypeOptional } from './expectType';
 
 export function coerceTypeOptional<T extends DataType>(
@@ -104,6 +104,84 @@ export function coerceTypeOptional<T extends DataType>(
       }
 
       return !!value.value;
+    })
+    .with('chat-message', (): ChatMessage | undefined => {
+      if (!value || value.value == null) {
+        return undefined;
+      }
+
+      if (value.type === 'chat-message') {
+        return value.value;
+      }
+
+      if (value.type === 'string') {
+        return { type: 'user', message: value.value };
+      }
+
+      if (value.type === 'object' && 'type' in value.value && 'message' in value.value) {
+        return value.value as ChatMessage;
+      }
+
+      if (value.type === 'any') {
+        const inferred = inferType(value.value);
+        return coerceTypeOptional(inferred, 'chat-message');
+      }
+    })
+    .with('number', (): number | undefined => {
+      if (!value || value.value == null) {
+        return undefined;
+      }
+
+      if (isArrayDataValue(value)) {
+        return undefined;
+      }
+
+      if (value.type === 'string') {
+        return parseFloat(value.value);
+      }
+
+      if (value.type === 'boolean') {
+        return value.value ? 1 : 0;
+      }
+
+      if (value.type === 'number') {
+        return value.value;
+      }
+
+      if (value.type === 'date') {
+        return new Date(value.value).valueOf();
+      }
+
+      if (value.type === 'time') {
+        return new Date(value.value).valueOf();
+      }
+
+      if (value.type === 'datetime') {
+        return new Date(value.value).valueOf();
+      }
+
+      if (value.type === 'chat-message') {
+        return parseFloat(value.value.message);
+      }
+
+      if (value.type === 'any') {
+        const inferred = inferType(value.value);
+        return coerceTypeOptional(inferred, 'number');
+      }
+
+      if (value.type === 'object') {
+        const inferred = inferType(value.value);
+        return coerceTypeOptional(inferred, 'number');
+      }
+
+      return undefined;
+    })
+    .with('object', (): unknown | undefined => {
+      if (!value || value.value == null) {
+        return undefined;
+      }
+
+      return value.value; // Whatever, consider anything an object
     })
     .otherwise(() => expectTypeOptional(value, type));
 

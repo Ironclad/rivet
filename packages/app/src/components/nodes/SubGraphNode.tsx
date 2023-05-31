@@ -10,6 +10,7 @@ import { entries, values } from '../../utils/typeSafety';
 import { nanoid } from 'nanoid';
 import { GraphId, SubGraphNode } from '@ironclad/nodai-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { orderBy } from 'lodash-es';
 
 export type SubGraphNodeBodyProps = {
   node: SubGraphNode;
@@ -45,10 +46,13 @@ const editorCss = css`
 export const SubGraphNodeEditor: FC<SubGraphNodeEditorProps> = ({ node, onChange }) => {
   const project = useRecoilValue(projectState);
 
-  const graphOptions = values(project.graphs).map((graph) => ({
-    label: graph.metadata?.name ?? graph.metadata?.id ?? 'Unknown Graph',
-    value: graph.metadata?.id ?? (nanoid() as GraphId),
-  }));
+  const graphOptions = orderBy(
+    values(project.graphs).map((graph) => ({
+      label: graph.metadata?.name ?? graph.metadata?.id ?? 'Unknown Graph',
+      value: graph.metadata?.id ?? (nanoid() as GraphId),
+    })),
+    'label',
+  );
 
   const selectedOption = graphOptions.find((option) => option.value === node.data.graphId);
 

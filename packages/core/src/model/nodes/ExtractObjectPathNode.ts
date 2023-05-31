@@ -4,6 +4,7 @@ import { NodeImpl } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import * as jp from 'jsonpath';
 import { expectType } from '../../utils/expectType';
+import { coerceTypeOptional } from '../..';
 
 export type ExtractObjectPathNode = ChartNode<'extractObjectPath', ExtractObjectPathNodeData>;
 
@@ -70,7 +71,7 @@ export class ExtractObjectPathNodeImpl extends NodeImpl<ExtractObjectPathNode> {
   }
 
   async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {
-    const inputObject = expectType(inputs['object' as PortId], 'object');
+    const inputObject = coerceTypeOptional(inputs['object' as PortId], 'object');
     const inputPath = this.chartNode.data.usePathInput
       ? expectType(inputs['path' as PortId], 'string')
       : this.chartNode.data.path;

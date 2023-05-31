@@ -4,6 +4,7 @@ import { NodeImpl } from '../NodeImpl';
 import { DataType, DataValue, getDefaultValue, isArrayDataType } from '../DataValue';
 import { GraphInputs, Inputs, Outputs } from '../GraphProcessor';
 import { InternalProcessContext } from '../ProcessContext';
+import { coerceTypeOptional, inferType } from '../..';
 
 export type GraphInputNode = ChartNode<'graphInput', GraphInputNodeData>;
 
@@ -61,24 +62,31 @@ export class GraphInputNodeImpl extends NodeImpl<GraphInputNode> {
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Record<string, DataValue>> {
-    let inputValue = context.graphInputs[this.data.id];
+    let inputValue =
+      context.graphInputs[this.data.id] == null
+        ? undefined
+        : coerceTypeOptional(context.graphInputs[this.data.id], this.data.dataType);
 
     if (inputValue == null && this.data.useDefaultValueInput) {
-      inputValue = inputs['default' as PortId];
+      inputValue = coerceTypeOptional(inputs['default' as PortId], this.data.dataType);
     }
 
     if (inputValue == null) {
-      inputValue = {
-        type: this.data.dataType,
-        value: this.data.defaultValue || getDefaultValue(this.data.dataType),
-      } as DataValue;
+      inputValue =
+        coerceTypeOptional(inferType(this.data.defaultValue), this.data.dataType) ||
+        getDefaultValue(this.data.dataType);
     }
 
     // Resolve undefined for array inputs to empty array
-    if ((inputValue == null || inputValue.value == null) && isArrayDataType(this.data.dataType)) {
+    if (inputValue == null && isArrayDataType(this.data.dataType)) {
       inputValue = { type: this.data.dataType, value: [] } as DataValue;
     }
 
-    return { ['data' as PortId]: inputValue };
+    const value = {
+      type: this.data.dataType,
+      value: inputValue,
+    } as DataValue;
+
+    return { ['data' as PortId]: value };
   }
 }
