@@ -1,7 +1,8 @@
 import { FC } from 'react';
 import { css } from '@emotion/react';
-import { ArrayNode } from '@ironclad/nodai-core';
+import { ArrayNode, ArrayNodeData } from '@ironclad/nodai-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import Toggle from '@atlaskit/toggle';
 
 export type ArrayNodeEditorProps = {
   node: ArrayNode;
@@ -19,10 +20,18 @@ const container = css`
 `;
 
 export const ArrayNodeEditor: FC<ArrayNodeEditorProps> = ({ node, onChange }) => {
+  const handleToggleChange = (param: keyof ArrayNodeData) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange?.({
+      ...node,
+      data: { ...node.data, [param]: e.target.checked },
+    });
+  };
+
   return (
     <div css={container}>
       <div className="row">
-        <label className="label">Array Node</label>
+        <label htmlFor="useFunctionNameInput">Flatten:</label>
+        <Toggle id="useFunctionNameInput" isChecked={node.data.flatten} onChange={handleToggleChange('flatten')} />
       </div>
     </div>
   );
