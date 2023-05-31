@@ -272,3 +272,15 @@ export const scalarDefaults: { [P in ScalarDataType]: (ScalarDataValue & { type:
   datetime: new Date(),
   object: {},
 };
+
+export function getDefaultValue<T extends DataType>(type: T): (DataValue & { type: T })['value'] {
+  if (isArrayDataType(type)) {
+    return [];
+  }
+
+  if (isFunctionDataType(type)) {
+    return () => scalarDefaults[getScalarTypeOf(type)];
+  }
+
+  return scalarDefaults[getScalarTypeOf(type)];
+}

@@ -2,6 +2,9 @@ import { ChartNode, NodeId, NodeOutputDefinition, PortId, NodeInputDefinition } 
 import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
 import { DataType, DataValue } from '../DataValue';
+import { Inputs, Outputs } from '../GraphProcessor';
+import { InternalProcessContext } from '../ProcessContext';
+import { ControlFlowExcludedPort } from '../../utils/symbols';
 
 export type GraphOutputNode = ChartNode<'graphOutput', GraphOutputNodeData>;
 
@@ -44,8 +47,23 @@ export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
     return [];
   }
 
-  async process(): Promise<Record<PortId, DataValue>> {
-    // This node does not process any data, it just provides the output value
-    return {};
+  async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+    const value = inputs['value' as PortId] ?? { type: 'any', value: undefined };
+
+    const isExcluded = value.type === 'control-flow-excluded' || inputs[ControlFlowExcludedPort] != null;
+
+    if (isExcluded && context.graphOutputs[this.data.id] == null) {
+      context.graphOutputs[this.data.id] = {
+        type: 'control-flow-excluded',
+        value: undefined,
+      };
+    } else if (
+      context.graphOutputs[this.data.id] == null ||
+      context.graphOutputs[this.data.id]?.type === 'control-flow-excluded'
+    ) {
+      context.graphOutputs[this.data.id] = value;
+    }
+
+    return inputs;
   }
 }

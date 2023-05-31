@@ -20,7 +20,7 @@ const multiOutput = css`
 `;
 
 const scalarRenderers: {
-  [P in ScalarDataType]: FC<{ value: ScalarDataValue & { type: P } }>;
+  [P in ScalarDataType]: FC<{ value: ScalarDataValue & { type: P }; depth?: number }>;
 } = {
   boolean: ({ value }) => <>{value.value ? 'true' : 'false'}</>,
   number: ({ value }) => <>{value.value}</>,
@@ -37,16 +37,26 @@ const scalarRenderers: {
   time: ({ value }) => <>{value.value}</>,
   datetime: ({ value }) => <>{value.value}</>,
   'control-flow-excluded': () => <>Not ran</>,
-  any: ({ value }) => {
+  any: ({ value, depth }) => {
     const inferred = inferType(value.value);
-    return <RenderDataValue value={inferred} />;
+    if (inferred.type === 'any') {
+      return <>{JSON.stringify(inferred.value)}</>;
+    }
+    return <RenderDataValue value={inferred} depth={(depth ?? 0) + 1} />;
   },
   object: ({ value }) => <>{JSON.stringify(value.value)}</>,
 };
 
-export const RenderDataValue: FC<{ value: DataValue | undefined }> = ({ value }) => {
+export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number }> = ({ value, depth }) => {
+  if ((depth ?? 0) > 100) {
+    return <>ERROR: FAILED TO RENDER {JSON.stringify(value)}</>;
+  }
   if (!value) {
     return <>undefined</>;
+  }
+
+  if ((value?.value as any)?.type && (value?.value as any)?.value) {
+    return <div>ERROR: INVALID VALUE: {JSON.stringify(value)}</div>;
   }
 
   if (isArrayDataValue(value)) {
@@ -55,7 +65,7 @@ export const RenderDataValue: FC<{ value: DataValue | undefined }> = ({ value })
       <div css={multiOutput}>
         {items.map((v, i) => (
           <div key={i}>
-            <RenderDataValue key={i} value={v} />
+            <RenderDataValue key={i} value={v} depth={(depth ?? 0) + 1} />
           </div>
         ))}
       </div>
@@ -71,9 +81,9 @@ export const RenderDataValue: FC<{ value: DataValue | undefined }> = ({ value })
     );
   }
 
-  const Renderer = scalarRenderers[value.type as ScalarDataType] as FC<{ value: ScalarDataValue }>;
+  const Renderer = scalarRenderers[value.type as ScalarDataType] as FC<{ value: ScalarDataValue; depth?: number }>;
 
-  return <Renderer value={value} />;
+  return <Renderer value={value} depth={(depth ?? 0) + 1} />;
 };
 
 export const RenderDataOutputs: FC<{ outputs: Outputs }> = ({ outputs }) => {

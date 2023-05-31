@@ -1,12 +1,14 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
-import { InternalProcessContext, NodeImpl } from '../NodeImpl';
-import { Inputs, Outputs, GraphProcessor } from '../GraphProcessor';
+import { NodeImpl } from '../NodeImpl';
+import { Inputs, Outputs } from '../GraphProcessor';
 import { GraphId } from '../NodeGraph';
 import { nanoid } from 'nanoid';
 import { Project } from '../Project';
 import { GraphInputNode } from './GraphInputNode';
 import { GraphOutputNode } from './GraphOutputNode';
 import { DataValue } from '../DataValue';
+import { InternalProcessContext } from '../ProcessContext';
+import { entries } from '../../utils/typeSafety';
 
 export type SubGraphNode = ChartNode & {
   type: 'subGraph';
@@ -32,26 +34,6 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
     };
 
     return chartNode;
-  }
-
-  async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
-    const { project } = context;
-
-    if (!project) {
-      throw new Error('SubGraphNode requires a project to be set in the context.');
-    }
-
-    const subGraphProcessor = context.createSubProcessor(this.data.graphId);
-    const subGraphOutputs = await subGraphProcessor.processGraph(
-      context,
-      inputs as Record<string, DataValue>,
-      context.contextValues,
-    );
-
-    // Get the outputs for the SubGraphNode.
-    const outputs = this.getOutputValues(subGraphOutputs);
-
-    return outputs;
   }
 
   getInputDefinitions(
@@ -98,15 +80,20 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
     );
   }
 
-  getInputValues(inputs: Inputs): Record<string, any> {
-    // Extract the input values for the subgraph from the inputs.
-    // This can be customized based on your requirements.
-    return inputs;
-  }
+  async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+    const { project } = context;
 
-  getOutputValues(subGraphOutputs: Record<string, any>): Outputs {
-    // Extract the output values for the SubGraphNode from the subGraphOutputs.
-    // This can be customized based on your requirements.
+    if (!project) {
+      throw new Error('SubGraphNode requires a project to be set in the context.');
+    }
+
+    const subGraphProcessor = context.createSubProcessor(this.data.graphId);
+    const subGraphOutputs = await subGraphProcessor.processGraph(
+      context,
+      inputs as Record<string, DataValue>,
+      context.contextValues,
+    );
+
     return subGraphOutputs;
   }
 }

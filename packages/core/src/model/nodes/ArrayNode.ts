@@ -6,7 +6,9 @@ import { entries } from '../../utils/typeSafety';
 
 export type ArrayNode = ChartNode<'array', ArrayNodeData>;
 
-export type ArrayNodeData = {};
+export type ArrayNodeData = {
+  flatten?: boolean;
+};
 
 export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
   static create(): ArrayNode {
@@ -19,7 +21,9 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
         y: 0,
         width: 200,
       },
-      data: {},
+      data: {
+        flatten: true,
+      },
     };
 
     return chartNode;
@@ -47,6 +51,11 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
         id: 'output' as PortId,
         title: 'Output',
       },
+      {
+        dataType: 'number[]',
+        id: 'indices' as PortId,
+        title: 'Indices',
+      },
     ];
   }
 
@@ -72,7 +81,17 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
 
     for (const [key, input] of entries(inputs)) {
       if (key.startsWith('input')) {
-        outputArray.push(input?.value);
+        if (this.data.flatten) {
+          if (Array.isArray(input?.value)) {
+            for (const value of input?.value ?? []) {
+              outputArray.push(value);
+            }
+          } else {
+            outputArray.push(input?.value);
+          }
+        } else {
+          outputArray.push(input?.value);
+        }
       }
     }
 
@@ -80,6 +99,10 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
       ['output' as PortId]: {
         type: 'any[]',
         value: outputArray,
+      },
+      ['indices' as PortId]: {
+        type: 'number[]',
+        value: outputArray.map((_, index) => index),
       },
     };
   }

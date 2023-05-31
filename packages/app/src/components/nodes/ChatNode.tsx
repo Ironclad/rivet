@@ -2,7 +2,15 @@ import { FC } from 'react';
 import { css } from '@emotion/react';
 import { RenderDataValue } from '../RenderDataValue';
 import Toggle from '@atlaskit/toggle';
-import { ChatNode, Outputs, PortId, expectTypeOptional } from '@ironclad/nodai-core';
+import {
+  ChatNode,
+  Outputs,
+  PortId,
+  coerceTypeOptional,
+  expectTypeOptional,
+  inferType,
+  isArrayDataValue,
+} from '@ironclad/nodai-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 type ChatNodeBodyProps = {
@@ -50,12 +58,56 @@ export const ChatNodeBody: FC<ChatNodeBodyProps> = ({ node }) => {
 };
 
 export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
-  const outputText = outputs['response' as PortId];
+  if (isArrayDataValue(outputs['response' as PortId]) || isArrayDataValue(outputs['requestTokens' as PortId])) {
+    const outputTextAll = coerceTypeOptional(outputs['response' as PortId], 'string[]') ?? [];
 
-  const requestTokens = expectTypeOptional(outputs['requestTokens' as PortId], 'number');
-  const responseTokens = expectTypeOptional(outputs['responseTokens' as PortId], 'number');
-  const cost = expectTypeOptional(outputs['cost' as PortId], 'number');
+    const requestTokensAll = coerceTypeOptional(outputs['requestTokens' as PortId], 'number[]') ?? [];
+    const responseTokensAll = coerceTypeOptional(outputs['responseTokens' as PortId], 'number[]') ?? [];
+    const costAll = coerceTypeOptional(outputs['cost' as PortId], 'number[]') ?? [];
 
+    return (
+      <div className="multi-message" css={styles}>
+        {outputTextAll.map((outputText, index) => {
+          const requestTokens = requestTokensAll?.[index];
+          const responseTokens = responseTokensAll?.[index];
+          const cost = costAll?.[index];
+
+          return (
+            <ChatNodeOutputSingle
+              key={index}
+              outputText={outputText}
+              requestTokens={requestTokens}
+              responseTokens={responseTokens}
+              cost={cost}
+            />
+          );
+        })}
+      </div>
+    );
+  } else {
+    const outputText = coerceTypeOptional(outputs['response' as PortId], 'string');
+
+    const requestTokens = coerceTypeOptional(outputs['requestTokens' as PortId], 'number');
+    const responseTokens = coerceTypeOptional(outputs['responseTokens' as PortId], 'number');
+    const cost = coerceTypeOptional(outputs['cost' as PortId], 'number');
+
+    return (
+      <ChatNodeOutputSingle
+        outputText={outputText}
+        requestTokens={requestTokens}
+        responseTokens={responseTokens}
+        cost={cost}
+      />
+    );
+  }
+};
+
+export const ChatNodeOutputSingle: FC<{
+  outputText: string | undefined;
+  requestTokens: number | undefined;
+  responseTokens: number | undefined;
+  cost: number | undefined;
+}> = ({ outputText, requestTokens, responseTokens, cost }) => {
   return (
     <div>
       {(responseTokens != null || requestTokens != null || cost != null) && (
@@ -78,7 +130,7 @@ export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
         </div>
       )}
       <div className="pre-wrap">
-        <RenderDataValue value={outputText} />
+        <RenderDataValue value={inferType(outputText)} />
       </div>
     </div>
   );

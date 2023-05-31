@@ -67,7 +67,8 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
   async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {
     const inputString = expectType(inputs['input' as PortId], 'string');
 
-    const rootPropertyStart = inputString.indexOf(this.data.rootPropertyName);
+    const match = new RegExp(`^${this.data.rootPropertyName}:`, 'm').exec(inputString);
+    const rootPropertyStart = match?.index ?? -1;
 
     const nextLines = inputString.slice(rootPropertyStart).split('\n');
     const yamlLines = [nextLines.shift()]; // remove the first line, which is the root property name
