@@ -1,8 +1,9 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { InternalProcessContext, NodeImpl } from '../NodeImpl';
+import { NodeImpl } from '../NodeImpl';
 import { DataType, DataValue } from '../DataValue';
-import { GraphInputs, Inputs, Outputs } from '../GraphProcessor';
+import { Inputs, Outputs } from '../GraphProcessor';
+import { InternalProcessContext } from '../ProcessContext';
 
 export type ContextNode = ChartNode<'context', ContextNodeData>;
 

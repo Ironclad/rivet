@@ -1,9 +1,10 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
-import { InternalProcessContext, NodeImpl } from '../NodeImpl';
+import { NodeImpl } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { nanoid } from 'nanoid';
 import { Inputs } from '../GraphProcessor';
 import { coerceType } from '../../utils/coerceType';
+import { InternalProcessContext } from '../ProcessContext';
 
 export type RaiseEventNode = ChartNode<'raiseEvent', RaiseEventNodeData>;
 

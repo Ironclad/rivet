@@ -1,8 +1,7 @@
 import { NodeImpl } from '../NodeImpl';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
-import { ArrayDataValue, DataValue, ScalarDataValue } from '../DataValue';
+import { DataValue } from '../DataValue';
 import { nanoid } from 'nanoid';
-import { ControlFlowExcluded, ControlFlowExcludedPort } from '../../utils/symbols';
 import { coerceType } from '../../utils/coerceType';
 import { Inputs, Outputs } from '../GraphProcessor';
 

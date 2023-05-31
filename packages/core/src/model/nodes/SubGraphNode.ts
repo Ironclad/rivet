@@ -8,7 +8,6 @@ import { GraphInputNode } from './GraphInputNode';
 import { GraphOutputNode } from './GraphOutputNode';
 import { DataValue } from '../DataValue';
 import { InternalProcessContext } from '../ProcessContext';
-import { entries } from '../../utils/typeSafety';
 
 export type SubGraphNode = ChartNode & {
   type: 'subGraph';
