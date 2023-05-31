@@ -1,10 +1,12 @@
 import { match } from 'ts-pattern';
 import {
+  ArrayDataValues,
   ChatMessage,
   DataType,
   DataValue,
   GetDataValue,
   getScalarTypeOf,
+  isArrayDataType,
   isArrayDataValue,
   unwrapDataValue,
 } from '../model/DataValue';
@@ -15,6 +17,15 @@ export function coerceTypeOptional<T extends DataType>(
   type: T,
 ): GetDataValue<T>['value'] | undefined {
   const value = wrapped ? unwrapDataValue(wrapped) : undefined;
+
+  if (isArrayDataType(type) && !isArrayDataValue(value)) {
+    const coerced = coerceTypeOptional(value, getScalarTypeOf(type));
+    if (coerced === undefined) {
+      return undefined;
+    }
+
+    return [coerced] as any;
+  }
 
   const result = match(type as DataType)
     .with('string', (): string | undefined => {
