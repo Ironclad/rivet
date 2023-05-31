@@ -1,7 +1,7 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
-import { ChatMessage, DataValue, ScalarDataValue } from '../DataValue';
+import { ChatMessage, DataValue, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue';
 import {
   assertValidModel,
   getCostForPrompt,
@@ -17,7 +17,7 @@ import retry from 'p-retry';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { match } from 'ts-pattern';
 import { expectTypeOptional } from '../../utils/expectType';
-import { coerceType } from '../../utils/coerceType';
+import { coerceType, coerceTypeOptional } from '../../utils/coerceType';
 import { InternalProcessContext } from '../ProcessContext';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
@@ -197,20 +197,37 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const output: Outputs = {};
 
-    const model = expectTypeOptional(inputs['model' as PortId], 'string') ?? this.chartNode.data.model;
+    const model = this.data.useModelInput
+      ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? this.chartNode.data.model
+      : this.chartNode.data.model;
+
     assertValidModel(model);
 
-    const temperature =
-      expectTypeOptional(inputs['temperature' as PortId], 'number') ?? this.chartNode.data.temperature;
-    const topP = expectTypeOptional(inputs['top_p' as PortId], 'number') ?? this.chartNode.data.top_p;
-    const useTopP = expectTypeOptional(inputs['useTopP' as PortId], 'boolean') ?? this.chartNode.data.useTopP;
-    const stop = this.data.useStop
-      ? expectTypeOptional(inputs['stop' as PortId], 'string') ?? this.chartNode.data.stop
-      : undefined;
-    const presencePenalty =
-      expectTypeOptional(inputs['presencePenalty' as PortId], 'number') ?? this.chartNode.data.presencePenalty;
-    const frequencyPenalty =
-      expectTypeOptional(inputs['frequencyPenalty' as PortId], 'number') ?? this.chartNode.data.frequencyPenalty;
+    const temperature = this.data.useTemperatureInput
+      ? coerceTypeOptional(inputs['temperature' as PortId], 'number') ?? this.chartNode.data.temperature
+      : this.chartNode.data.temperature;
+
+    const topP = this.data.useTopPInput
+      ? coerceTypeOptional(inputs['top_p' as PortId], 'number') ?? this.chartNode.data.top_p
+      : this.chartNode.data.top_p;
+
+    const useTopP = this.data.useUseTopPInput
+      ? coerceTypeOptional(inputs['useTopP' as PortId], 'boolean') ?? this.chartNode.data.useTopP
+      : this.chartNode.data.useTopP;
+
+    const stop = this.data.useStopInput
+      ? this.data.useStop
+        ? coerceTypeOptional(inputs['stop' as PortId], 'string') ?? this.chartNode.data.stop
+        : undefined
+      : this.chartNode.data.stop;
+
+    const presencePenalty = this.data.usePresencePenaltyInput
+      ? coerceTypeOptional(inputs['presencePenalty' as PortId], 'number') ?? this.chartNode.data.presencePenalty
+      : this.chartNode.data.presencePenalty;
+
+    const frequencyPenalty = this.data.useFrequencyPenaltyInput
+      ? coerceTypeOptional(inputs['frequencyPenalty' as PortId], 'number') ?? this.chartNode.data.frequencyPenalty
+      : this.chartNode.data.frequencyPenalty;
 
     const prompt = inputs['prompt' as PortId];
     if (!prompt) {
@@ -223,11 +240,11 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       .with({ type: 'string' }, (p): ChatMessage[] => [{ type: 'user', message: p.value }])
       .with({ type: 'string[]' }, (p): ChatMessage[] => p.value.map((v) => ({ type: 'user', message: v })))
       .otherwise((p) => {
-        if (p.type.endsWith('[]') || ((p.type === 'any' || p.type === 'object') && Array.isArray(p.value))) {
+        if (isArrayDataValue(p)) {
           const stringValues = (p.value as readonly unknown[]).map((v) =>
             coerceType(
               {
-                type: p.type.endsWith('[]') ? p.type.replace('[]', '') : p.type,
+                type: getScalarTypeOf(p.type),
                 value: v,
               } as ScalarDataValue,
               'string',
@@ -237,9 +254,13 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           return stringValues.filter((v) => v != null).map((v) => ({ type: 'user', message: v }));
         }
 
-        const coerced = coerceType(p, 'string');
+        const coercedMessage = coerceType(p, 'chat-message');
+        if (coercedMessage != null) {
+          return [coercedMessage];
+        }
 
-        return coerced != null ? [{ type: 'user', message: coerceType(p, 'string') }] : [];
+        const coercedString = coerceType(p, 'string');
+        return coercedString != null ? [{ type: 'user', message: coerceType(p, 'string') }] : [];
       });
 
     const systemPrompt = inputs['systemPrompt' as PortId];
@@ -323,6 +344,10 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             };
 
             context.onPartialOutputs?.(output);
+          }
+
+          if (responseParts.length === 0) {
+            throw new Error('No response from OpenAI');
           }
 
           const requestTokenCount = getTokenCountForMessages(completionMessages, model);
