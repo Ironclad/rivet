@@ -208,7 +208,7 @@ export function coerceTypeOptional<T extends DataType>(
       }
 
       if (getScalarTypeOf(value.type) === 'any' || getScalarTypeOf(type) === 'any') {
-        return value;
+        return value.value;
       }
 
       return expectTypeOptional(value, type);
