@@ -2,8 +2,13 @@ import { atom, atomFamily } from 'recoil';
 import { ChartNode, GraphId, NodeId } from '@ironclad/nodai-core';
 import { persistAtom } from './persist';
 
-export const selectedNodeState = atom<NodeId | null>({
+export const selectedNodesState = atom<NodeId[]>({
   key: 'selectedNodeState',
+  default: [],
+});
+
+export const editingNodeState = atom<NodeId | null>({
+  key: 'editingNodeState',
   default: null,
 });
 
@@ -20,9 +25,9 @@ export const lastCanvasPositionForGraphState = atomFamily<CanvasPosition | undef
   effects_UNSTABLE: [persistAtom],
 });
 
-export const draggingNodeState = atom<ChartNode | null>({
+export const draggingNodesState = atom<ChartNode[]>({
   key: 'draggingNode',
-  default: null,
+  default: [],
 });
 
 export const lastMousePositionState = atom<{ x: number; y: number }>({

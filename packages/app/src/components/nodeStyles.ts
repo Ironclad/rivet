@@ -59,7 +59,6 @@ export const nodeStyles = css`
   }
 
   .grab-area {
-    cursor: move;
     flex: 1;
     display: flex;
     align-items: center;
@@ -67,6 +66,11 @@ export const nodeStyles = css`
     margin-top: -12px;
     margin-bottom: -12px;
     padding: 12px 0;
+    cursor: pointer;
+
+    &.grabbable {
+      cursor: move;
+    }
   }
 
   .title-text {

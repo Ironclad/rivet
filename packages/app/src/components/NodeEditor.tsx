@@ -1,6 +1,6 @@
 import { FC, useEffect } from 'react';
-import { selectedNodeState } from '../state/graphBuilder';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { editingNodeState } from '../state/graphBuilder';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { nodesSelector } from '../state/graph';
 import styled from '@emotion/styled';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
@@ -13,18 +13,20 @@ import { useStableCallback } from '../hooks/useStableCallback';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
-  const selectedNodeId = useRecoilValue(selectedNodeState);
+  const [editingNodeId, setEditingNodeId] = useRecoilState(editingNodeState);
 
-  const selectedNode = nodes.find((node) => node.id === selectedNodeId);
+  const deselect = useStableCallback(() => {
+    setEditingNodeId(null);
+  });
 
-  if (!selectedNodeId || !selectedNode) {
+  const selectedNode = nodes.find((node) => node.id === editingNodeId);
+
+  if (!editingNodeId || !selectedNode) {
     return null;
   }
 
-  return <NodeEditor selectedNode={selectedNode} />;
+  return <NodeEditor selectedNode={selectedNode} onDeselect={deselect} />;
 };
-
-type NodeEditorProps = { selectedNode: ChartNode };
 
 const Container = styled.div`
   position: absolute;
@@ -133,11 +135,10 @@ const Container = styled.div`
   }
 `;
 
-export const NodeEditor: FC<NodeEditorProps> = () => {
-  const [nodes, setNodes] = useRecoilState(nodesSelector);
-  const [selectedNodeId, setSelectedNodeId] = useRecoilState(selectedNodeState)!;
+type NodeEditorProps = { selectedNode: ChartNode; onDeselect: () => void };
 
-  const selectedNode = nodes.find((node) => node.id === selectedNodeId)!;
+export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) => {
+  const setNodes = useSetRecoilState(nodesSelector);
 
   const updateNode = useStableCallback((node: ChartNode) => {
     setNodes((nodes) =>
@@ -155,7 +156,7 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setSelectedNodeId(null);
+        onDeselect?.();
       }
     };
 
@@ -164,7 +165,7 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [setSelectedNodeId]);
+  }, [onDeselect]);
 
   const nodeDescriptionChanged = useStableCallback((description: string) => {
     updateNode({ ...selectedNode, description });
@@ -176,7 +177,7 @@ export const NodeEditor: FC<NodeEditorProps> = () => {
 
   return (
     <Container>
-      <button className="close-button" onClick={() => setSelectedNodeId(null)}>
+      <button className="close-button" onClick={onDeselect}>
         <MultiplyIcon />
       </button>
       <div className="section">

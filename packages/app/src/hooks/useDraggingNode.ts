@@ -3,16 +3,21 @@ import produce from 'immer';
 import { useCallback } from 'react';
 import { ChartNode } from '@ironclad/nodai-core';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { canvasPositionState, draggingNodeState } from '../state/graphBuilder';
+import { canvasPositionState, draggingNodesState, selectedNodesState } from '../state/graphBuilder';
 
 export const useDraggingNode = (nodes: ChartNode[], onNodesChanged: (nodes: ChartNode[]) => void) => {
-  const [draggingNode, setDraggingNode] = useRecoilState(draggingNodeState);
+  const selectedNodeIds = useRecoilValue(selectedNodesState);
+  const [draggingNodes, setDraggingNodes] = useRecoilState(draggingNodesState);
   const canvasPosition = useRecoilValue(canvasPositionState);
 
   const onNodeStartDrag = useCallback(
     (e: DragStartEvent) => {
-      const node = nodes.find((node) => node.id === e.active.id);
-      setDraggingNode(node!);
+      const nodesToDrag =
+        selectedNodeIds.length > 0
+          ? selectedNodeIds.map((id) => nodes.find((n) => n.id === id)!)
+          : [nodes.find((n) => n.id === e.active.id)!];
+
+      setDraggingNodes(nodesToDrag);
 
       // Update the zIndex of the dragged node
       const maxZIndex = nodes.reduce(
@@ -21,38 +26,43 @@ export const useDraggingNode = (nodes: ChartNode[], onNodesChanged: (nodes: Char
         0,
       );
       onNodesChanged(
-        nodes.map((n) => (n.id === node!.id ? { ...n, visualData: { ...n.visualData, zIndex: maxZIndex + 1 } } : n)),
+        nodes.map((n) => {
+          const isDragging = nodesToDrag.some((node) => node.id === n.id);
+          return isDragging ? { ...n, visualData: { ...n.visualData, zIndex: maxZIndex + 1 } } : n;
+        }),
       );
     },
-    [nodes, onNodesChanged, setDraggingNode],
+    [nodes, onNodesChanged, setDraggingNodes, selectedNodeIds],
   );
 
   const onNodeDragged = useCallback(
-    ({ active, delta }: DragEndEvent) => {
-      const nodeId = active.id;
+    ({ delta }: DragEndEvent) => {
+      const nodeIds = draggingNodes.map((n) => n.id);
 
       const actualDelta = {
         x: delta.x / canvasPosition.zoom,
         y: delta.y / canvasPosition.zoom,
       };
 
-      setDraggingNode(null);
+      setDraggingNodes([]);
 
       onNodesChanged?.(
         produce(nodes, (draft) => {
-          const node = draft.find((node) => node.id === nodeId);
-          if (node) {
-            node.visualData.x += actualDelta.x;
-            node.visualData.y += actualDelta.y;
+          for (const nodeId of nodeIds) {
+            const node = draft.find((n) => n.id === nodeId);
+            if (node) {
+              node.visualData.x += actualDelta.x;
+              node.visualData.y += actualDelta.y;
+            }
           }
         }),
       );
     },
-    [nodes, onNodesChanged, canvasPosition.zoom, setDraggingNode],
+    [nodes, onNodesChanged, canvasPosition.zoom, setDraggingNodes, draggingNodes],
   );
 
   return {
-    draggingNode,
+    draggingNodes,
     onNodeStartDrag,
     onNodeDragged,
   };

@@ -16,7 +16,7 @@ import { css } from '@emotion/react';
 import { SettingsModal } from './SettingsModal';
 import { setGlobalTheme } from '@atlaskit/tokens';
 import { settingsState } from '../state/settings';
-import { userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
+import { ProcessQuestions, userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
 import { cloneDeep } from 'lodash-es';
 import { LeftSidebar } from './LeftSidebar';
 import { projectState } from '../state/savedGraphs';
@@ -131,11 +131,30 @@ export const NodaiApp: FC = () => {
   };
 
   const userInput = ({ node, inputs, processId }: ProcessEvents['userInput']) => {
-    const questions = node.data.useInput
-      ? expectType(inputs?.['questions' as PortId], 'string[]') ?? []
-      : [node.data.prompt];
+    let questions: ProcessQuestions;
 
-    setUserInputQuestions((q) => ({ ...q, [node.id]: questions }));
+    if (node.data.useInput) {
+      questions = {
+        nodeId: node.id,
+        processId,
+        questions: coerceTypeOptional(inputs?.['questions' as PortId], 'string[]') ?? [],
+      };
+    } else {
+      questions = {
+        nodeId: node.id,
+        processId,
+        questions: [node.data.prompt],
+      };
+    }
+
+    setUserInputQuestions((q) => {
+      const prevQuestions = q[node.id] ?? [];
+      // TODO weird not type checked here...
+      return {
+        ...q,
+        [node.id]: [...prevQuestions, questions],
+      };
+    });
 
     setSelectedNodePageLatest(node.id);
   };

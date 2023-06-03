@@ -1,9 +1,9 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { NodeCanvas } from './NodeCanvas';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { connectionsSelector } from '../state/graph';
 import { nodesSelector } from '../state/graph';
-import { selectedNodeState } from '../state/graphBuilder';
+import { editingNodeState, selectedNodesState } from '../state/graphBuilder';
 import { NodeEditorRenderer } from './NodeEditor';
 import styled from '@emotion/styled';
 import { ContextMenuData } from '../hooks/useContextMenu';
@@ -14,6 +14,7 @@ import { ProcessQuestions, userInputModalQuestionsState, userInputModalSubmitSta
 import { entries } from '../utils/typeSafety';
 import { UserInputModal } from './UserInputModal';
 import Button from '@atlaskit/button';
+import { isNotNull } from '../utils/genericUtilFunctions';
 
 const Container = styled.div`
   position: relative;
@@ -29,8 +30,9 @@ const Container = styled.div`
 export const GraphBuilder: FC = () => {
   const [nodes, setNodes] = useRecoilState(nodesSelector);
   const [connections, setConnections] = useRecoilState(connectionsSelector);
-  const [selectedNode, setSelectedNode] = useRecoilState(selectedNodeState);
+  const [selectedNodeIds, setSelectedNodeIds] = useRecoilState(selectedNodesState);
   const { clientToCanvasPosition } = useCanvasPositioning();
+  const setEditingNodeId = useSetRecoilState(editingNodeState);
 
   const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {
     setNodes?.(newNodes);
@@ -74,7 +76,7 @@ export const GraphBuilder: FC = () => {
 
     if (menuItemId.startsWith('Edit:')) {
       const nodeId = menuItemId.substring(5) as NodeId;
-      setSelectedNode(nodeId);
+      setSelectedNodeIds([nodeId]);
       return;
     }
 
@@ -109,8 +111,15 @@ export const GraphBuilder: FC = () => {
     }
   });
 
-  const nodeSelected = useStableCallback((node: ChartNode) => {
-    setSelectedNode?.(node.id);
+  const nodeSelected = useStableCallback((node: ChartNode, multi: boolean) => {
+    if (!multi) {
+      return; // Can only "select" a node if you're holding shift, for now
+    }
+    setSelectedNodeIds((nodeIds) => [...new Set([...nodeIds, node.id])]);
+  });
+
+  const nodeStartEditing = useStableCallback((node: ChartNode) => {
+    setEditingNodeId(node.id);
   });
 
   const allCurrentQuestions = useRecoilValue(userInputModalQuestionsState);
@@ -142,6 +151,13 @@ export const GraphBuilder: FC = () => {
   const [, questions] = firstNodeQuestions ? firstNodeQuestions : [undefined, [] as ProcessQuestions[]];
   const lastQuestions = questions.at(-1)?.questions ?? [];
 
+  const selectedNodes = useMemo(
+    () => selectedNodeIds.map((nodeId) => nodes.find((n) => n.id === nodeId)).filter(isNotNull),
+    [nodes, selectedNodeIds],
+  );
+
+  console.dir({ questions, lastQuestions, firstNodeQuestions, allCurrentQuestions });
+
   return (
     <Container>
       <NodeCanvas
@@ -150,7 +166,8 @@ export const GraphBuilder: FC = () => {
         onNodesChanged={nodesChanged}
         onConnectionsChanged={setConnections}
         onNodeSelected={nodeSelected}
-        selectedNode={nodes.find((node) => node.id === selectedNode) ?? null}
+        selectedNodes={selectedNodes}
+        onNodeStartEditing={nodeStartEditing}
         onContextMenuItemSelected={contextMenuItemSelected}
       />
       <NodeEditorRenderer />
