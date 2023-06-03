@@ -14,9 +14,10 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   CanvasPosition,
   canvasPositionState,
+  editingNodeState,
   lastCanvasPositionForGraphState,
   lastMousePositionState,
-  selectedNodeState,
+  selectedNodesState,
 } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { VisualNode } from './VisualNode';
@@ -25,16 +26,6 @@ import { useThrottleFn } from 'ahooks';
 import produce from 'immer';
 import { graphState } from '../state/graph';
 import { useViewportBounds } from '../hooks/useViewportBounds';
-
-export interface NodeCanvasProps {
-  nodes: ChartNode[];
-  connections: NodeConnection[];
-  selectedNode: ChartNode | null;
-  onNodesChanged: (nodes: ChartNode[]) => void;
-  onConnectionsChanged: (connections: NodeConnection[]) => void;
-  onNodeSelected: (node: ChartNode) => void;
-  onContextMenuItemSelected?: (menuItemId: string, contextMenuData: ContextMenuData) => void;
-}
 
 const styles = css`
   width: 100vw;
@@ -105,13 +96,24 @@ const styles = css`
   ${nodeStyles}
 `;
 
+export interface NodeCanvasProps {
+  nodes: ChartNode[];
+  connections: NodeConnection[];
+  selectedNodes: ChartNode[];
+  onNodesChanged: (nodes: ChartNode[]) => void;
+  onConnectionsChanged: (connections: NodeConnection[]) => void;
+  onNodeSelected: (node: ChartNode, multi: boolean) => void;
+  onNodeStartEditing?: (node: ChartNode) => void;
+  onContextMenuItemSelected?: (menuItemId: string, contextMenuData: ContextMenuData) => void;
+}
+
 export const NodeCanvas: FC<NodeCanvasProps> = ({
   nodes,
   connections,
-  selectedNode,
   onNodesChanged,
   onConnectionsChanged,
   onNodeSelected,
+  onNodeStartEditing,
   onContextMenuItemSelected,
 }) => {
   const [canvasPosition, setCanvasPosition] = useRecoilState(canvasPositionState);
@@ -125,9 +127,10 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, canvasStartX: 0, canvasStartY: 0 });
   const { clientToCanvasPosition } = useCanvasPositioning();
   const setLastMousePosition = useSetRecoilState(lastMousePositionState);
-  const setSelectedNode = useSetRecoilState(selectedNodeState);
+  const [editingNodeId, setEditingNodeId] = useRecoilState(editingNodeState);
+  const [selectedNodeIds, setSelectedNodeIds] = useRecoilState(selectedNodesState);
 
-  const { draggingNode, onNodeStartDrag, onNodeDragged } = useDraggingNode(nodes, onNodesChanged);
+  const { draggingNodes, onNodeStartDrag, onNodeDragged } = useDraggingNode(nodes, onNodesChanged);
   const { draggingWire, onWireStartDrag, onWireEndDrag } = useDraggingWire(nodes, connections, onConnectionsChanged);
 
   const {
@@ -149,10 +152,10 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   }, [connections, nodes]);
 
   const draggingNodeConnections = useMemo(() => {
-    return draggingNode
-      ? connections.filter((c) => c.inputNodeId === draggingNode.id || c.outputNodeId === draggingNode.id)
-      : [];
-  }, [connections, draggingNode]);
+    return draggingNodes.flatMap((draggingNode) =>
+      connections.filter((c) => c.inputNodeId === draggingNode.id || c.outputNodeId === draggingNode.id),
+    );
+  }, [connections, draggingNodes]);
 
   const contextMenuItemSelected = useStableCallback((menuItemId: string) => {
     onContextMenuItemSelected?.(menuItemId, contextMenuData);
@@ -268,7 +271,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     // If use hasn't moved mouse much, consider it a "click"
     const distance = Math.sqrt(clientDelta.x * clientDelta.x + clientDelta.y * clientDelta.y);
     if (distance < 5) {
-      setSelectedNode(null);
+      setEditingNodeId(null);
+      setSelectedNodeIds([]);
     }
   };
 
@@ -294,15 +298,25 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   });
 
   const highlightedNodes = useMemo(() => {
-    const hNodes = [];
-    if (selectedNode) {
-      hNodes.push(selectedNode.id);
+    const hNodes = new Set(selectedNodeIds);
+
+    if (editingNodeId) {
+      hNodes.add(editingNodeId);
     }
+
     if (hoveringNode) {
-      hNodes.push(hoveringNode);
+      hNodes.add(hoveringNode);
     }
-    return hNodes;
-  }, [selectedNode, hoveringNode]);
+    return [...hNodes];
+  }, [selectedNodeIds, hoveringNode, editingNodeId]);
+
+  const nodeSelected = useStableCallback((node: ChartNode, multi: boolean) => {
+    onNodeSelected?.(node, multi);
+  });
+
+  const nodeStartEditing = useStableCallback((node: ChartNode) => {
+    onNodeStartEditing?.(node);
+  });
 
   const viewportBounds = useViewportBounds();
 
@@ -341,7 +355,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
                 return null;
               }
 
-              if (draggingNode === node) {
+              if (draggingNodes.some((n) => n.id === node.id)) {
                 return null;
               }
               return (
@@ -349,10 +363,11 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
                   key={node.id}
                   node={node}
                   connections={nodeConnections}
-                  isSelected={selectedNode?.id === node.id}
+                  isSelected={highlightedNodes.includes(node.id)}
                   onWireStartDrag={onWireStartDrag}
                   onWireEndDrag={onWireEndDrag}
-                  onNodeSelected={onNodeSelected}
+                  onNodeSelected={nodeSelected}
+                  onNodeStartEditing={nodeStartEditing}
                   onNodeWidthChanged={onNodeWidthChanged}
                   onMouseOver={onNodeMouseOver}
                   onMouseOut={onNodeMouseOut}
@@ -360,6 +375,28 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
               );
             })}
           </div>
+          <DragOverlay
+            dropAnimation={null}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+            }}
+            modifiers={[
+              (args) => {
+                return {
+                  scaleX: 1,
+                  scaleY: 1,
+                  x: args.transform.x / canvasPosition.zoom,
+                  y: args.transform.y / canvasPosition.zoom,
+                };
+              },
+            ]}
+          >
+            {draggingNodes.map((node) => (
+              <VisualNode key={node.id} node={node} connections={draggingNodeConnections} isOverlay />
+            ))}
+          </DragOverlay>
         </div>
         <CSSTransition
           nodeRef={contextMenuRef}
@@ -378,17 +415,6 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           />
         </CSSTransition>
         <WireLayer connections={connections} draggingWire={draggingWire} highlightedNodes={highlightedNodes} />
-
-        <DragOverlay dropAnimation={null}>
-          {draggingNode ? (
-            <VisualNode
-              node={draggingNode}
-              connections={draggingNodeConnections}
-              isOverlay
-              scale={canvasPosition.zoom}
-            />
-          ) : null}
-        </DragOverlay>
       </div>
     </DndContext>
   );
