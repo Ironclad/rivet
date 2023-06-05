@@ -4,7 +4,15 @@ import TextField from '@atlaskit/textfield';
 import { Field } from '@atlaskit/form';
 import { css } from '@emotion/react';
 import { Checkbox } from '@atlaskit/checkbox';
-import { DataType, SetGlobalNode, ScalarType, dataTypeDisplayNames, scalarTypes } from '@ironclad/nodai-core';
+import {
+  DataType,
+  SetGlobalNode,
+  ScalarType,
+  dataTypeDisplayNames,
+  scalarTypes,
+  getScalarTypeOf,
+  isArrayDataType,
+} from '@ironclad/nodai-core';
 import Toggle from '@atlaskit/toggle';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
@@ -50,17 +58,15 @@ export const SetGlobalNodeEditor: FC<{
   node: SetGlobalNode;
   onChange?: (node: SetGlobalNode) => void;
 }> = ({ node, onChange }) => {
-  const SetGlobalNode = node as SetGlobalNode;
-
-  const scalarType = SetGlobalNode.data.dataType.replace('[]', '') as ScalarType;
-  const isArray = SetGlobalNode.data.dataType.endsWith('[]');
+  const scalarType = getScalarTypeOf(node.data.dataType);
+  const isArray = isArrayDataType(node.data.dataType);
 
   const dataTypeOptions = validTypes.map((type) => ({
-    label: dataTypeDisplayNames[type],
+    label: dataTypeDisplayNames[scalarType],
     value: type,
   }));
 
-  const selectedOption = dataTypeOptions.find((option) => option.value === SetGlobalNode.data.dataType);
+  const selectedOption = dataTypeOptions.find((option) => option.value === scalarType);
 
   return (
     <div css={editorCss}>
@@ -105,6 +111,7 @@ export const SetGlobalNodeEditor: FC<{
               {...fieldProps}
               label="Array"
               css={checkboxCss}
+              isChecked={isArray}
               onChange={(e) =>
                 onChange?.({
                   ...node,

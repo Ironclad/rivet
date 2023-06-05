@@ -15,7 +15,7 @@ export type PromptNodeData = {
 };
 
 export class PromptNodeImpl extends NodeImpl<PromptNode> {
-  static create(promptText: string = 'Hello {{name}}!'): PromptNode {
+  static create(promptText: string = '{{input}}'): PromptNode {
     const chartNode: PromptNode = {
       type: 'prompt',
       title: 'Prompt',
@@ -23,6 +23,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
       visualData: {
         x: 0,
         y: 0,
+        width: 250,
       },
       data: {
         type: 'user',

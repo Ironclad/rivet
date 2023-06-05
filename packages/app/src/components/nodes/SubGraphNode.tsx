@@ -11,6 +11,7 @@ import { nanoid } from 'nanoid';
 import { GraphId, SubGraphNode } from '@ironclad/nodai-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 import { orderBy } from 'lodash-es';
+import Toggle from '@atlaskit/toggle';
 
 export type SubGraphNodeBodyProps = {
   node: SubGraphNode;

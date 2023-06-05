@@ -796,6 +796,14 @@ export class GraphProcessor {
       executionCache: this.#executionCache,
       graphInputs: this.#graphInputs,
       graphOutputs: this.#graphOutputs,
+      waitEvent: async (event) => {
+        return new Promise((resolve, reject) => {
+          this.#emitter.once(`userEvent:${event}`).then(resolve).catch(reject);
+          this.#abortController.signal.addEventListener('abort', () => {
+            reject(new Error('Process aborted'));
+          });
+        });
+      },
       raiseEvent: (event, data) => {
         this.#emitter.emit(`userEvent:${event}`, data);
       },
