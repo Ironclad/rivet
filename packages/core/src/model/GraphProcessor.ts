@@ -101,6 +101,16 @@ export type Outputs = Record<PortId, DataValue | undefined>;
 
 export type ExternalFunction = (...args: unknown[]) => Promise<DataValue>;
 
+type LoopInfo = {
+  /** ID of the controller of the loop */
+  loopControllerId: NodeId;
+
+  /** Nodes add themselves to this as the loop processes */
+  nodes: Set<NodeId>;
+
+  iterationCount: number;
+};
+
 export class GraphProcessor {
   // Per-instance state
   #graph: NodeGraph;
@@ -137,6 +147,7 @@ export class GraphProcessor {
   #subprocessors: Set<GraphProcessor> = undefined!;
   #contextValues: Record<string, DataValue> = undefined!;
   #globals: Map<string, ScalarOrArrayDataValue> = undefined!;
+  #loopInfoForNode: Map<NodeId, LoopInfo> = undefined!;
 
   /** User input nodes that are pending user input. */
   #pendingUserInputs: Record<
@@ -317,6 +328,7 @@ export class GraphProcessor {
       this.#queuedNodes = new Set();
       this.#loopControllersSeen = new Set();
       this.#subprocessors = new Set();
+      this.#loopInfoForNode = new Map();
 
       this.#globals ??= new Map();
       this.#contextValues ??= contextValues;
@@ -373,10 +385,7 @@ export class GraphProcessor {
     }
   }
 
-  async #fetchNodeDataAndProcessNode(
-    node: Nodes,
-    cycleInfo?: { loopController: LoopControllerNode; nodes: Set<ChartNode> },
-  ): Promise<void> {
+  async #fetchNodeDataAndProcessNode(node: Nodes): Promise<void> {
     if (this.#currentlyProcessing.has(node.id) || this.#queuedNodes.has(node.id)) {
       return;
     }
@@ -384,8 +393,6 @@ export class GraphProcessor {
     if (this.#nodeResults.has(node.id) || this.#erroredNodes.has(node.id)) {
       return;
     }
-
-    cycleInfo?.nodes.add(node);
 
     const inputNodes = this.#inputNodesTo(node);
 
@@ -417,7 +424,7 @@ export class GraphProcessor {
       inputNodes.map((inputNode) => {
         return async () => {
           this.#emitter.emit('trace', `Fetching required data for node ${inputNode.title} (${inputNode.id})`);
-          await this.#fetchNodeDataAndProcessNode(inputNode as Nodes, cycleInfo);
+          await this.#fetchNodeDataAndProcessNode(inputNode as Nodes);
         };
       }),
     );
@@ -426,18 +433,7 @@ export class GraphProcessor {
   }
 
   /** If all inputs are present, all conditions met, processes the node. */
-  async #processNodeIfAllInputsAvailable(
-    node: Nodes,
-    loopInfo?: {
-      /** ID of the controller of the loop */
-      loopControllerId: NodeId;
-
-      /** Nodes add themselves to this as the loop processes */
-      nodes: Set<NodeId>;
-
-      iterationCount: number;
-    },
-  ): Promise<void> {
+  async #processNodeIfAllInputsAvailable(node: Nodes): Promise<void> {
     if (this.#currentlyProcessing.has(node.id)) {
       this.#emitter.emit('trace', `Node ${node.title} is already being processed`);
       return;
@@ -512,6 +508,8 @@ export class GraphProcessor {
       this.#loopControllersSeen.add(node.id);
     }
 
+    const loopInfo = this.#loopInfoForNode.get(node.id);
+
     if (loopInfo && loopInfo.loopControllerId !== node.id) {
       loopInfo.nodes.add(node.id);
     }
@@ -541,6 +539,7 @@ export class GraphProcessor {
       this.#emitter.emit('trace', JSON.stringify(this.#nodeResults.get(node.id)));
 
       if (!didBreak) {
+        this.#emitter.emit('trace', `Loop controller ${node.title} did not break, so we're looping again`);
         for (const loopNodeId of loopInfo?.nodes ?? []) {
           const cycleNode = this.#nodesById[loopNodeId]!;
           this.#emitter.emit('trace', `Clearing cycle node ${cycleNode.title} (${cycleNode.id})`);
@@ -576,6 +575,12 @@ export class GraphProcessor {
       }
     }
 
+    if (childLoopInfo) {
+      for (const outputNode of outputNodes) {
+        this.#loopInfoForNode.set(outputNode.id, childLoopInfo);
+      }
+    }
+
     // Node is finished, check if we can run any more nodes that depend on this one
     this.#processingQueue.addAll(
       outputNodes.map((outputNode) => async () => {
@@ -584,7 +589,7 @@ export class GraphProcessor {
           `Trying to run output node from ${node.title}: ${outputNode.title} (${outputNode.id})`,
         );
 
-        await this.#processNodeIfAllInputsAvailable(outputNode as Nodes, childLoopInfo);
+        await this.#processNodeIfAllInputsAvailable(outputNode as Nodes);
       }),
     );
   }
