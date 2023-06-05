@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import * as jp from 'jsonpath';
 import { expectType } from '../../utils/expectType';
@@ -112,3 +112,5 @@ export class ExtractObjectPathNodeImpl extends NodeImpl<ExtractObjectPathNode> {
     };
   }
 }
+
+export const extractObjectPathNode = nodeDefinition(ExtractObjectPathNodeImpl, 'Extract Object Path');

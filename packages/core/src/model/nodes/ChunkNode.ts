@@ -1,5 +1,5 @@
 import { ChartNode, NodeId } from '../../model/NodeBase';
-import { NodeImpl } from '../../model/NodeImpl';
+import { NodeImpl, nodeDefinition } from '../../model/NodeImpl';
 import { NodeInputDefinition, NodeOutputDefinition, PortId } from '../../model/NodeBase';
 import { DataValue } from '../../model/DataValue';
 import { SupportedModels, chunkStringByTokenCount, modelToTiktokenModel } from '../../utils/tokenizer';
@@ -115,3 +115,5 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
     };
   }
 }
+
+export const chunkNode = nodeDefinition(ChunkNodeImpl, 'Chunk');

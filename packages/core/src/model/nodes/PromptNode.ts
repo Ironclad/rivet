@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { match } from 'ts-pattern';
 import { Inputs, Outputs, coerceType } from '../..';
@@ -109,3 +109,5 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
     };
   }
 }
+
+export const promptNode = nodeDefinition(PromptNodeImpl, 'Prompt');

@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { Inputs, Outputs } from '../GraphProcessor';
 
 export type PopNode = ChartNode<'pop', {}>;
@@ -69,3 +69,5 @@ export class PopNodeImpl extends NodeImpl<PopNode> {
     };
   }
 }
+
+export const popNode = nodeDefinition(PopNodeImpl, 'Pop');

@@ -1,14 +1,14 @@
-import { NodeImpl } from '../NodeImpl';
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { ArrayDataValue, DataValue, ScalarDataValue } from '../DataValue';
 import { nanoid } from 'nanoid';
-import { ControlFlowExcluded, ControlFlowExcludedPort } from '../../utils/symbols';
+import { ControlFlowExcludedPort } from '../../utils/symbols';
 
 export type IfElseNode = ChartNode<'ifElse', IfElseNodeData>;
 
 export type IfElseNodeData = {};
 
-export class IfElseNodeImpl extends NodeImpl<ChartNode> {
+export class IfElseNodeImpl extends NodeImpl<IfElseNode> {
   static create = (): IfElseNode => {
     const chartNode: IfElseNode = {
       type: 'ifElse',
@@ -114,3 +114,5 @@ export class IfElseNodeImpl extends NodeImpl<ChartNode> {
     };
   }
 }
+
+export const ifElseNode = nodeDefinition(IfElseNodeImpl, 'If/Else');

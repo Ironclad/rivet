@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, PortId } from '../NodeBase';
 import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { expectType } from '../..';
@@ -170,3 +170,5 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
     return outputs;
   }
 }
+
+export const readDirectoryNode = nodeDefinition(ReadDirectoryNodeImpl, 'Read Directory');

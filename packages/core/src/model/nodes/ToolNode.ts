@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 
 export type ToolNode = ChartNode<'tool', ToolNodeData>;
@@ -66,3 +66,5 @@ export class ToolNodeImpl extends NodeImpl<ToolNode> {
     };
   }
 }
+
+export const toolNode = nodeDefinition(ToolNodeImpl, 'Tool');

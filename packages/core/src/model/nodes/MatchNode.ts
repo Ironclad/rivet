@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { expectType } from '../../utils/expectType';
 import { coerceType } from '../..';
@@ -104,3 +104,5 @@ export class MatchNodeImpl extends NodeImpl<MatchNode> {
     return output;
   }
 }
+
+export const matchNode = nodeDefinition(MatchNodeImpl, 'Match');

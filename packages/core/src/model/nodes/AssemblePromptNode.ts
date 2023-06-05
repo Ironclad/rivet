@@ -1,6 +1,6 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import {
   ArrayDataValue,
   ChatMessage,
@@ -115,3 +115,5 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
     return output;
   }
 }
+
+export const assemblePromptNode = nodeDefinition(AssemblePromptNodeImpl, 'Assemble Prompt');

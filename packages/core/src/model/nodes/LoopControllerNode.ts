@@ -1,6 +1,6 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { coerceType } from '../../utils/coerceType';
 import { InternalProcessContext } from '../ProcessContext';
@@ -160,3 +160,5 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
     return output;
   }
 }
+
+export const loopControllerNode = nodeDefinition(LoopControllerNodeImpl, 'Loop Controller');

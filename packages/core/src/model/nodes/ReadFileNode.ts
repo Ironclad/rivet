@@ -1,7 +1,7 @@
 import { ChartNode, NodeId, PortId } from '../NodeBase';
 import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase';
 import { DataValue } from '../DataValue';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { nanoid } from 'nanoid';
 import { expectType } from '../..';
 import { InternalProcessContext } from '../ProcessContext';
@@ -78,3 +78,5 @@ export class ReadFileNodeImpl extends NodeImpl<ReadFileNode> {
     }
   }
 }
+
+export const readFileNode = nodeDefinition(ReadFileNodeImpl, 'Read File');

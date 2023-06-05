@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { match } from 'ts-pattern';
 import { coerceTypeOptional } from '../..';
@@ -82,3 +82,5 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
     };
   }
 }
+
+export const textNode = nodeDefinition(TextNodeImpl, 'Text');

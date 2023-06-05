@@ -1,4 +1,4 @@
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor';
@@ -7,7 +7,7 @@ export type PassthroughNode = ChartNode<'passthrough', PassthroughNodeData>;
 
 export type PassthroughNodeData = {};
 
-export class PassthroughNodeImpl extends NodeImpl<ChartNode> {
+export class PassthroughNodeImpl extends NodeImpl<PassthroughNode> {
   static create = (): PassthroughNode => {
     const chartNode: PassthroughNode = {
       type: 'passthrough',
@@ -83,3 +83,5 @@ export class PassthroughNodeImpl extends NodeImpl<ChartNode> {
     return outputs;
   }
 }
+
+export const passthroughNode = nodeDefinition(PassthroughNodeImpl, 'Passthrough');
