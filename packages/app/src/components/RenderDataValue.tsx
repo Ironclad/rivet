@@ -20,7 +20,7 @@ const multiOutput = css`
 `;
 
 const scalarRenderers: {
-  [P in ScalarDataType]: FC<{ value: ScalarDataValue & { type: P }; depth?: number }>;
+  [P in ScalarDataType]: FC<{ value: Extract<ScalarDataValue, { type: P }>; depth?: number }>;
 } = {
   boolean: ({ value }) => <>{value.value ? 'true' : 'false'}</>,
   number: ({ value }) => <>{value.value}</>,
@@ -45,6 +45,11 @@ const scalarRenderers: {
     return <RenderDataValue value={inferred} depth={(depth ?? 0) + 1} />;
   },
   object: ({ value }) => <>{JSON.stringify(value.value)}</>,
+  'gpt-tool': ({ value }) => (
+    <>
+      GPT Tool: <em>{value.value.name}</em>
+    </>
+  ),
 };
 
 export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number }> = ({ value, depth }) => {

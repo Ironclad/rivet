@@ -1,9 +1,7 @@
 import { FC, useLayoutEffect, useMemo, useEffect, useRef } from 'react';
-import { ChartNode, CodeNode, Outputs } from '@ironclad/nodai-core';
+import { CodeNode, Outputs } from '@ironclad/nodai-core';
 import { monaco } from '../../utils/monaco';
 import { RenderDataValue } from '../RenderDataValue';
-import { useRecoilValue } from 'recoil';
-import { lastRunData } from '../../state/dataFlow';
 import styled from '@emotion/styled';
 import { useLatest } from 'ahooks';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';

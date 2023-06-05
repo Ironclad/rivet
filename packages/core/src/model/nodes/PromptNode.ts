@@ -3,15 +3,19 @@ import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { match } from 'ts-pattern';
-import { coerceType } from '../..';
+import { Inputs, Outputs, coerceType } from '../..';
 import { mapValues } from 'lodash-es';
 
 export type PromptNode = ChartNode<'prompt', PromptNodeData>;
 
 export type PromptNodeData = {
-  type: 'system' | 'user' | 'assistant';
+  type: 'system' | 'user' | 'assistant' | 'tool';
   useTypeInput: boolean;
+
   promptText: string;
+
+  name?: string;
+  useNameInput?: boolean;
 };
 
 export class PromptNodeImpl extends NodeImpl<PromptNode> {
@@ -36,20 +40,40 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
   }
 
   getInputDefinitions(): NodeInputDefinition[] {
+    let inputs: NodeInputDefinition[] = [];
+
+    if (this.data.useTypeInput) {
+      inputs.push({
+        id: 'type' as PortId,
+        title: 'Type',
+        dataType: 'string',
+      });
+    }
+
+    if (this.data.useNameInput) {
+      inputs.push({
+        id: 'name' as PortId,
+        title: 'Name',
+        dataType: 'string',
+      });
+    }
+
     // Extract inputs from promptText, everything like {{input}}
     const inputNames = this.chartNode.data.promptText.match(/\{\{([^}]+)\}\}/g);
-    return (
-      inputNames?.map((inputName) => {
+    inputs = [
+      ...inputs,
+      ...(inputNames?.map((inputName): NodeInputDefinition => {
         return {
-          type: 'string',
           // id and title should not have the {{ and }}
           id: inputName.slice(2, -2) as PortId,
           title: inputName.slice(2, -2),
           dataType: 'string',
           required: false,
         };
-      }) ?? []
-    );
+      }) ?? []),
+    ];
+
+    return inputs;
   }
 
   getOutputDefinitions(): NodeOutputDefinition[] {
@@ -69,13 +93,13 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
     });
   }
 
-  async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
+  async process(inputs: Inputs): Promise<Outputs> {
     const inputMap = mapValues(inputs, (input) => coerceType(input, 'string')) as Record<PortId, string>;
 
     const outputValue = this.interpolate(this.chartNode.data.promptText, inputMap);
 
     return {
-      output: {
+      ['output' as PortId]: {
         type: 'chat-message',
         value: {
           type: this.chartNode.data.type,

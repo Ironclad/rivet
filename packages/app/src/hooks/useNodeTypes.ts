@@ -32,6 +32,7 @@ import { popNodeDescriptor } from '../components/nodes/PopNode';
 import { getGlobalNodeDescriptor } from '../components/nodes/GetGlobalNode';
 import { setGlobalNodeDescriptor } from '../components/nodes/SetGlobalNode';
 import { waitForEventNodeDescriptor } from '../components/nodes/WaitForEventNode';
+import { toolNodeDescriptor } from '../components/nodes/ToolNode';
 
 export type UnknownNodeComponentDescriptor = {
   Body?: FC<{ node: ChartNode }>;
@@ -85,6 +86,7 @@ const descriptors: NodeComponentDescriptors = {
   getGlobal: getGlobalNodeDescriptor,
   setGlobal: setGlobalNodeDescriptor,
   waitForEvent: waitForEventNodeDescriptor,
+  tool: toolNodeDescriptor,
 };
 
 export function useNodeTypes() {

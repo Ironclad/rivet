@@ -4,7 +4,6 @@ import {
   GetDataValue,
   getScalarTypeOf,
   isArrayDataType,
-  isArrayDataValue,
   isFunctionDataType,
   isScalarDataValue,
   unwrapDataValue,
@@ -36,6 +35,11 @@ export function expectTypeOptional<T extends DataType>(
 ): GetDataValue<T>['value'] | undefined {
   if (value === undefined) {
     return undefined;
+  }
+
+  // Allow a string to be expected for a string[], just return an array of one element
+  if (isArrayDataType(type) && isScalarDataValue(value) && getScalarTypeOf(type) === value.type) {
+    return [value.value] as GetDataValue<T>['value'] | undefined;
   }
 
   // We allow a fn<string> to be expected for a string, so unwrap it on demand

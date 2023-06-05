@@ -1,7 +1,7 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { NodeImpl } from '../NodeImpl';
-import { ChatMessage, DataValue, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue';
+import { ChatMessage, GptTool, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue';
 import {
   assertValidModel,
   getCostForPrompt,
@@ -12,13 +12,20 @@ import {
   modelToTiktokenModel,
 } from '../../utils/tokenizer';
 import { addWarning } from '../../utils/outputs';
-import { ChatCompletionRequestMessage, streamChatCompletions } from '../../utils/openai';
+import {
+  ChatCompletionOptions,
+  ChatCompletionRequestMessage,
+  ChatCompletionToolNamespace,
+  OpenAIError,
+  streamChatCompletions,
+} from '../../utils/openai';
 import retry from 'p-retry';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { match } from 'ts-pattern';
-import { expectTypeOptional } from '../../utils/expectType';
 import { coerceType, coerceTypeOptional } from '../../utils/coerceType';
 import { InternalProcessContext } from '../ProcessContext';
+import { ChatCompletionToolMap } from '../../utils/openai';
+import { expectTypeOptional, getError } from '../..';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 
@@ -47,6 +54,11 @@ export type ChatNodeData = {
 
   frequencyPenalty: number;
   useFrequencyPenaltyInput: boolean;
+
+  enableToolUse?: boolean;
+
+  user?: string;
+  useUserInput?: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
@@ -92,6 +104,11 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         frequencyPenalty: 0,
         useFrequencyPenaltyInput: false,
 
+        user: undefined,
+        useUserInput: false,
+
+        enableToolUse: false,
+
         cache: false,
       },
     };
@@ -99,7 +116,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     return chartNode;
   }
 
-  getInputDefinitions(connections: NodeConnection[]): NodeInputDefinition[] {
+  getInputDefinitions(): NodeInputDefinition[] {
     const inputs: NodeInputDefinition[] = [];
 
     inputs.push({
@@ -109,7 +126,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       required: false,
     });
 
-    if (this.chartNode.data.useModelInput) {
+    if (this.data.useModelInput) {
       inputs.push({
         id: 'model' as PortId,
         title: 'Model',
@@ -118,7 +135,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       });
     }
 
-    if (this.chartNode.data.useTemperatureInput) {
+    if (this.data.useTemperatureInput) {
       inputs.push({
         dataType: 'number',
         id: 'temperature' as PortId,
@@ -126,7 +143,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       });
     }
 
-    if (this.chartNode.data.useTopPInput) {
+    if (this.data.useTopPInput) {
       inputs.push({
         dataType: 'number',
         id: 'top_p' as PortId,
@@ -134,7 +151,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       });
     }
 
-    if (this.chartNode.data.useUseTopPInput) {
+    if (this.data.useUseTopPInput) {
       inputs.push({
         dataType: 'boolean',
         id: 'useTopP' as PortId,
@@ -142,7 +159,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       });
     }
 
-    if (this.chartNode.data.useMaxTokensInput) {
+    if (this.data.useMaxTokensInput) {
       inputs.push({
         dataType: 'number',
         id: 'maxTokens' as PortId,
@@ -150,7 +167,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       });
     }
 
-    if (this.chartNode.data.useStopInput) {
+    if (this.data.useStopInput) {
       inputs.push({
         dataType: 'string',
         id: 'stop' as PortId,
@@ -158,7 +175,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       });
     }
 
-    if (this.chartNode.data.usePresencePenaltyInput) {
+    if (this.data.usePresencePenaltyInput) {
       inputs.push({
         dataType: 'number',
 
@@ -167,11 +184,19 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       });
     }
 
-    if (this.chartNode.data.useFrequencyPenaltyInput) {
+    if (this.data.useFrequencyPenaltyInput) {
       inputs.push({
         dataType: 'number',
         id: 'frequencyPenalty' as PortId,
         title: 'Frequency Penalty',
+      });
+    }
+
+    if (this.data.useUserInput) {
+      inputs.push({
+        dataType: 'string',
+        id: 'user' as PortId,
+        title: 'User',
       });
     }
 
@@ -181,58 +206,78 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       title: 'Prompt',
     });
 
+    if (this.data.enableToolUse) {
+      inputs.push({
+        dataType: ['gpt-tool', 'gpt-tool[]'] as const,
+        id: 'tools' as PortId,
+        title: 'Tools',
+      });
+    }
+
     return inputs;
   }
 
   getOutputDefinitions(): NodeOutputDefinition[] {
-    return [
-      {
-        dataType: 'string',
-        id: 'response' as PortId,
-        title: 'Response',
-      },
-    ];
+    const outputs: NodeOutputDefinition[] = [];
+
+    outputs.push({
+      dataType: 'string',
+      id: 'response' as PortId,
+      title: 'Response',
+    });
+
+    if (this.data.enableToolUse) {
+      outputs.push({
+        dataType: 'object',
+        id: 'tool-call' as PortId,
+        title: 'Tool Call',
+      });
+    }
+
+    return outputs;
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const output: Outputs = {};
 
     const model = this.data.useModelInput
-      ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? this.chartNode.data.model
-      : this.chartNode.data.model;
+      ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? this.data.model
+      : this.data.model;
 
     assertValidModel(model);
 
     const temperature = this.data.useTemperatureInput
-      ? coerceTypeOptional(inputs['temperature' as PortId], 'number') ?? this.chartNode.data.temperature
-      : this.chartNode.data.temperature;
+      ? coerceTypeOptional(inputs['temperature' as PortId], 'number') ?? this.data.temperature
+      : this.data.temperature;
 
     const topP = this.data.useTopPInput
-      ? coerceTypeOptional(inputs['top_p' as PortId], 'number') ?? this.chartNode.data.top_p
-      : this.chartNode.data.top_p;
+      ? coerceTypeOptional(inputs['top_p' as PortId], 'number') ?? this.data.top_p
+      : this.data.top_p;
 
     const useTopP = this.data.useUseTopPInput
-      ? coerceTypeOptional(inputs['useTopP' as PortId], 'boolean') ?? this.chartNode.data.useTopP
-      : this.chartNode.data.useTopP;
+      ? coerceTypeOptional(inputs['useTopP' as PortId], 'boolean') ?? this.data.useTopP
+      : this.data.useTopP;
 
     const stop = this.data.useStopInput
       ? this.data.useStop
-        ? coerceTypeOptional(inputs['stop' as PortId], 'string') ?? this.chartNode.data.stop
+        ? coerceTypeOptional(inputs['stop' as PortId], 'string') ?? this.data.stop
         : undefined
-      : this.chartNode.data.stop;
+      : this.data.stop;
 
     const presencePenalty = this.data.usePresencePenaltyInput
-      ? coerceTypeOptional(inputs['presencePenalty' as PortId], 'number') ?? this.chartNode.data.presencePenalty
-      : this.chartNode.data.presencePenalty;
+      ? coerceTypeOptional(inputs['presencePenalty' as PortId], 'number') ?? this.data.presencePenalty
+      : this.data.presencePenalty;
 
     const frequencyPenalty = this.data.useFrequencyPenaltyInput
-      ? coerceTypeOptional(inputs['frequencyPenalty' as PortId], 'number') ?? this.chartNode.data.frequencyPenalty
-      : this.chartNode.data.frequencyPenalty;
+      ? coerceTypeOptional(inputs['frequencyPenalty' as PortId], 'number') ?? this.data.frequencyPenalty
+      : this.data.frequencyPenalty;
 
     const prompt = inputs['prompt' as PortId];
     if (!prompt) {
       throw new Error('Prompt is required');
     }
+
+    const tools = expectTypeOptional(inputs['tools' as PortId], 'gpt-tool[]');
 
     let messages: ChatMessage[] = match(prompt)
       .with({ type: 'chat-message' }, (p) => [p.value])
@@ -268,6 +313,40 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       messages = [{ type: 'system', message: coerceType(systemPrompt, 'string') }, ...messages];
     }
 
+    const toolMap = (tools ?? []).reduce((acc, tool): ChatCompletionToolMap => {
+      if (tool.namespace) {
+        const existing = (acc[tool.namespace] as ChatCompletionToolNamespace) ?? {};
+        const namespace: ChatCompletionToolNamespace = {
+          ...existing,
+
+          // TODO
+          description: tool.namespace,
+          tools: {
+            ...existing.tools,
+            [tool.name]: {
+              type: 'tool',
+              description: tool.description,
+              schema: tool.schema,
+            },
+          },
+        };
+        return {
+          ...acc,
+          [tool.namespace]: namespace,
+        };
+      } else {
+        return {
+          ...acc,
+
+          [tool.name]: {
+            type: 'tool',
+            description: tool.description,
+            schema: tool.schema,
+          },
+        };
+      }
+    }, {} as ChatCompletionToolMap);
+
     const completionMessages = messages.map(
       (message): ChatCompletionRequestMessage => ({
         content: message.message,
@@ -275,7 +354,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       }),
     );
 
-    let { maxTokens } = this.chartNode.data;
+    let { maxTokens } = this.data;
 
     const tokenCount = getTokenCountForMessages(completionMessages, modelToTiktokenModel[model]);
 
@@ -295,19 +374,25 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       maxTokens = Math.floor((modelMaxTokens[model] - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
     }
 
+    console.dir('foo');
+
     try {
       return await retry(
         async () => {
-          const cacheKey = JSON.stringify({
-            messages,
+          const options: Omit<ChatCompletionOptions, 'auth' | 'signal'> = {
+            messages: completionMessages,
             model,
             temperature: useTopP ? undefined : temperature,
-            topP: useTopP ? topP : undefined,
-            maxTokens,
-            frequencyPenalty,
-            presencePenalty,
-            stop,
-          });
+            top_p: useTopP ? topP : undefined,
+            max_tokens: maxTokens,
+            n: 1,
+            frequency_penalty: frequencyPenalty,
+            presence_penalty: presencePenalty,
+            stop: stop || undefined,
+            tools: toolMap,
+            format: this.data.enableToolUse ? 'merged' : undefined,
+          };
+          const cacheKey = JSON.stringify(options);
 
           if (this.data.cache) {
             const cached = cache.get(cacheKey);
@@ -321,39 +406,45 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               apiKey: context.settings.openAiKey,
               organization: context.settings.openAiOrganization,
             },
-            messages: completionMessages,
-            model,
-            temperature: useTopP ? undefined : temperature,
-            top_p: useTopP ? topP : undefined,
-            max_tokens: maxTokens,
-            n: 1,
-            frequency_penalty: frequencyPenalty,
-            presence_penalty: presencePenalty,
-            stop,
             signal: context.signal,
+            ...options,
           });
 
           let responseParts: string[] = [];
+          let toolCallParts: string[] = [];
 
           for await (const chunk of chunks) {
-            responseParts.push(chunk);
+            const { delta } = chunk?.choices?.[0] ?? {};
+
+            if (delta?.content != null) {
+              responseParts.push(delta.content);
+            }
+
+            if (delta?.tool_call) {
+              toolCallParts.push(delta.tool_call);
+            }
 
             output['response' as PortId] = {
               type: 'string',
               value: responseParts.join(''),
             };
 
+            output['tool-call' as PortId] = {
+              type: 'string',
+              value: toolCallParts.join(''),
+            };
+
             context.onPartialOutputs?.(output);
           }
 
-          if (responseParts.length === 0) {
+          if (responseParts.length === 0 && toolCallParts.length === 0) {
             throw new Error('No response from OpenAI');
           }
 
-          const requestTokenCount = getTokenCountForMessages(completionMessages, model);
+          const requestTokenCount = getTokenCountForMessages(completionMessages, modelToTiktokenModel[model]);
           output['requestTokens' as PortId] = { type: 'number', value: requestTokenCount };
 
-          const responseTokenCount = getTokenCountForString(responseParts.join(), model);
+          const responseTokenCount = getTokenCountForString(responseParts.join(), modelToTiktokenModel[model]);
           output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
 
           const cost =
@@ -369,8 +460,15 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         {
           retries: 4,
           signal: context.signal,
-          onFailedAttempt(error) {
-            console.log(error);
+          onFailedAttempt(err) {
+            if (err instanceof OpenAIError) {
+              if (err.status === 500 || err.status === 400) {
+                console.error(err);
+                throw new Error(err.message);
+              }
+            } else {
+              console.error(err);
+            }
           },
         },
       );

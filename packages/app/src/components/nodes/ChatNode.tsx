@@ -2,16 +2,9 @@ import { FC } from 'react';
 import { css } from '@emotion/react';
 import { RenderDataValue } from '../RenderDataValue';
 import Toggle from '@atlaskit/toggle';
-import {
-  ChatNode,
-  Outputs,
-  PortId,
-  coerceTypeOptional,
-  expectTypeOptional,
-  inferType,
-  isArrayDataValue,
-} from '@ironclad/nodai-core';
+import { ChatNode, Outputs, PortId, coerceTypeOptional, inferType, isArrayDataValue } from '@ironclad/nodai-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import styled from '@emotion/styled';
 
 type ChatNodeBodyProps = {
   node: ChatNode;
@@ -64,6 +57,7 @@ export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
     const requestTokensAll = coerceTypeOptional(outputs['requestTokens' as PortId], 'number[]') ?? [];
     const responseTokensAll = coerceTypeOptional(outputs['responseTokens' as PortId], 'number[]') ?? [];
     const costAll = coerceTypeOptional(outputs['cost' as PortId], 'number[]') ?? [];
+    const toolCallAll = coerceTypeOptional(outputs['tool-call' as PortId], 'string[]') ?? [];
 
     return (
       <div className="multi-message" css={styles}>
@@ -71,6 +65,7 @@ export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
           const requestTokens = requestTokensAll?.[index];
           const responseTokens = responseTokensAll?.[index];
           const cost = costAll?.[index];
+          const toolCall = toolCallAll?.[index];
 
           return (
             <ChatNodeOutputSingle
@@ -79,6 +74,7 @@ export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
               requestTokens={requestTokens}
               responseTokens={responseTokens}
               cost={cost}
+              toolCall={toolCall}
             />
           );
         })}
@@ -90,6 +86,7 @@ export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
     const requestTokens = coerceTypeOptional(outputs['requestTokens' as PortId], 'number');
     const responseTokens = coerceTypeOptional(outputs['responseTokens' as PortId], 'number');
     const cost = coerceTypeOptional(outputs['cost' as PortId], 'number');
+    const toolCall = coerceTypeOptional(outputs['tool-call' as PortId], 'string');
 
     return (
       <ChatNodeOutputSingle
@@ -97,19 +94,32 @@ export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
         requestTokens={requestTokens}
         responseTokens={responseTokens}
         cost={cost}
+        toolCall={toolCall}
       />
     );
   }
 };
 
+const ChatNodeOutputContainer = styled.div`
+  .tool-call h4 {
+    margin-top: 0;
+    margin-bottom: 0;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: normal;
+    color: var(--primary);
+  }
+`;
+
 export const ChatNodeOutputSingle: FC<{
   outputText: string | undefined;
+  toolCall: string | undefined;
   requestTokens: number | undefined;
   responseTokens: number | undefined;
   cost: number | undefined;
-}> = ({ outputText, requestTokens, responseTokens, cost }) => {
+}> = ({ outputText, toolCall, requestTokens, responseTokens, cost }) => {
   return (
-    <div>
+    <ChatNodeOutputContainer>
       {(responseTokens != null || requestTokens != null || cost != null) && (
         <div style={{ marginBottom: 8 }}>
           {(requestTokens ?? 0) > 0 && (
@@ -132,7 +142,16 @@ export const ChatNodeOutputSingle: FC<{
       <div className="pre-wrap">
         <RenderDataValue value={inferType(outputText)} />
       </div>
-    </div>
+
+      {toolCall && (
+        <div className="tool-call">
+          <h4>Tool Call:</h4>
+          <div className="pre-wrap">
+            <RenderDataValue value={inferType(toolCall)} />
+          </div>
+        </div>
+      )}
+    </ChatNodeOutputContainer>
   );
 };
 
@@ -281,9 +300,11 @@ export const ChatNodeEditor: FC<ChatNodeEditorProps> = ({ node, onChange }) => {
           onChange={(e) => onChange?.({ ...chatNode, data: { ...chatNode.data, model: e.target.value } })}
         >
           {/* Add your model options here */}
-          <option value="gpt-3.5-turbo">GPT-3.5-Turbo</option>
+          <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+          <option value="gpt-3.5-turbo-tools">GPT-3.5 Turbo Tools</option>
           <option value="gpt-4">GPT-4</option>
           <option value="gpt-4-32k">GPT-4 32K</option>
+          <option value="gpt-4-tools">GPT-4 Tools</option>
         </select>
         <Toggle
           id="useModelInput"
@@ -445,6 +466,17 @@ export const ChatNodeEditor: FC<ChatNodeEditorProps> = ({ node, onChange }) => {
             onChange?.({ ...chatNode, data: { ...chatNode.data, useFrequencyPenaltyInput: e.target.checked } })
           }
         />
+      </div>
+      <div className="row">
+        <label className="label" htmlFor="enableToolUse">
+          Enable Tool Use
+        </label>
+        <Toggle
+          id="enableToolUse"
+          isChecked={chatNode.data.enableToolUse}
+          onChange={(e) => onChange?.({ ...chatNode, data: { ...chatNode.data, enableToolUse: e.target.checked } })}
+        />
+        <div />
       </div>
       <div className="row">
         <label className="label" htmlFor="cache">

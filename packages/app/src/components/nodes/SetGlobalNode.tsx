@@ -7,7 +7,6 @@ import { Checkbox } from '@atlaskit/checkbox';
 import {
   DataType,
   SetGlobalNode,
-  ScalarType,
   dataTypeDisplayNames,
   scalarTypes,
   getScalarTypeOf,

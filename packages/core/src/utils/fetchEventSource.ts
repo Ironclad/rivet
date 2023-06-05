@@ -1,25 +1,37 @@
 // https://github.com/openai/openai-node/issues/18#issuecomment-1518715285
 export class EventSourceResponse extends Response {
   name: string;
-  readonly eventStream: ReadableStream<string> | null;
+  readonly streams: {
+    eventStream: ReadableStream<string>;
+    textStream: ReadableStream<string>;
+  } | null;
 
   constructor(body: ReadableStream<Uint8Array> | null, init?: ResponseInit) {
-    const eventStream = createEventStream(body);
+    if (body == null) {
+      super(null, init);
+      this.name = 'EventSourceResponse';
+      this.streams = null;
+      return;
+    }
+
+    const [bodyForString, bodyForEvents] = body.tee();
+    const streams = createEventStream(bodyForEvents);
     // By passing our transformed stream into the Response constructor, we prevent anyone
     // from accidentally accessing the raw response.body stream.
-    super(eventStream, init);
+    super(bodyForString, init);
     this.name = 'EventSourceResponse';
-    this.eventStream = eventStream;
+    this.streams = streams;
   }
 
   async *events(): AsyncGenerator<string> {
-    if (this.eventStream == null) {
+    if (this.streams == null) {
       return;
     }
-    const reader = this.eventStream.getReader();
+    const reader = this.streams.eventStream.getReader();
+
     try {
       while (true) {
-        const { done, value } = await this.raceWithTimeout(reader.read());
+        const { done, value } = await reader.read();
         if (done) {
           break;
         }
@@ -84,7 +96,7 @@ const lineSplitter = new (class implements Transformer<string, string> {
   }
 })();
 
-function createEventStream(body: ReadableStream<Uint8Array> | null): ReadableStream<string> | null {
+function createEventStream(body: ReadableStream<Uint8Array> | null) {
   if (body == null) {
     return null;
   }
@@ -101,5 +113,5 @@ function createEventStream(body: ReadableStream<Uint8Array> | null): ReadableStr
       },
     }),
   );
-  return eventStream;
+  return { eventStream, textStream };
 }
