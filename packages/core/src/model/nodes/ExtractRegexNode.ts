@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { expectType, expectTypeOptional } from '../../utils/expectType';
 
@@ -94,6 +94,23 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
     } catch (err) {
       return [];
     }
+  }
+
+  getEditors(): EditorDefinition<ExtractRegexNode>[] {
+    return [
+      {
+        type: 'toggle',
+        label: 'Error on failed',
+        dataKey: 'errorOnFailed',
+      },
+      {
+        type: 'code',
+        label: 'Regex',
+        dataKey: 'regex',
+        useInputToggleDataKey: 'useRegexInput',
+        language: 'regex',
+      },
+    ];
   }
 
   async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {

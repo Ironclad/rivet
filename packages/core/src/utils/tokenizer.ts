@@ -94,3 +94,13 @@ export function getCostForPrompt(messages: ChatCompletionRequestMessage[], model
   const tokenCount = getTokenCountForMessages(messages, modelToTiktokenModel[model]);
   return getCostForTokens(tokenCount, 'prompt', model);
 }
+
+export const modelDisplayNames: Record<SupportedModels, string> = {
+  'gpt-4': 'GPT-4',
+  'gpt-4-32k': 'GPT-4 32k',
+  'gpt-4-tools': 'GPT-4 Tools',
+  'gpt-3.5-turbo': 'GPT-3.5 Turbo',
+  'gpt-3.5-turbo-tools': 'GPT-3.5 Turbo Tools',
+};
+
+export const modelOptions = Object.entries(modelDisplayNames).map(([value, label]) => ({ value, label }));

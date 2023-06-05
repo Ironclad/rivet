@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { match } from 'ts-pattern';
 import { Inputs, Outputs, coerceType } from '../..';
@@ -82,6 +82,36 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
         id: 'output' as PortId,
         title: 'Output',
         dataType: 'chat-message',
+      },
+    ];
+  }
+
+  getEditors(): EditorDefinition<PromptNode>[] {
+    return [
+      {
+        type: 'dropdown',
+        label: 'Type',
+        options: [
+          { value: 'system', label: 'System' },
+          { value: 'user', label: 'User' },
+          { value: 'assistant', label: 'Assistant' },
+          { value: 'tool', label: 'Tool' },
+        ],
+        dataKey: 'type',
+        useInputToggleDataKey: 'useTypeInput',
+      },
+      {
+        type: 'string',
+        label: 'Name',
+        dataKey: 'name',
+        useInputToggleDataKey: 'useNameInput',
+      },
+      {
+        type: 'code',
+        label: 'Prompt Text',
+        dataKey: 'promptText',
+        language: 'prompt-interpolation',
+        theme: 'prompt-interpolation',
       },
     ];
   }

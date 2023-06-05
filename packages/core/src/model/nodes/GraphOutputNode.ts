@@ -1,11 +1,10 @@
 import { ChartNode, NodeId, NodeOutputDefinition, PortId, NodeInputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataType, DataValue } from '../DataValue';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { InternalProcessContext } from '../ProcessContext';
 import { ControlFlowExcludedPort } from '../../utils/symbols';
-import { entries } from '../../utils/typeSafety';
 
 export type GraphOutputNode = ChartNode<'graphOutput', GraphOutputNodeData>;
 
@@ -46,6 +45,21 @@ export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
 
   getOutputDefinitions(): NodeOutputDefinition[] {
     return [];
+  }
+
+  getEditors(): EditorDefinition<GraphOutputNode>[] {
+    return [
+      {
+        type: 'string',
+        label: 'ID',
+        dataKey: 'id',
+      },
+      {
+        type: 'dataTypeSelector',
+        label: 'Data Type',
+        dataKey: 'dataType',
+      },
+    ];
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

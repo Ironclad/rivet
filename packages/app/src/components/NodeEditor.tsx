@@ -10,6 +10,7 @@ import produce from 'immer';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import Toggle from '@atlaskit/toggle';
 import { useStableCallback } from '../hooks/useStableCallback';
+import { DefaultNodeEditor } from './DefaultNodeEditor';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -151,7 +152,11 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
 
   const { Editor } = useUnknownNodeComponentDescriptorFor(selectedNode);
 
-  const nodeEditor = Editor ? <Editor node={selectedNode} onChange={updateNode} /> : null;
+  const nodeEditor = Editor ? (
+    <Editor node={selectedNode} onChange={updateNode} />
+  ) : (
+    <DefaultNodeEditor node={selectedNode} onChange={updateNode} />
+  );
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -216,12 +221,10 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
           onChange={(event) => updateNode({ ...selectedNode, splitRunMax: event.target.valueAsNumber })}
         />
       </section>
-      {nodeEditor && (
-        <div className="section section-node">
-          <h3 className="section-title">{getNodeDisplayName(selectedNode.type as NodeType)}</h3>
-          <div className="section-node-content">{nodeEditor}</div>
-        </div>
-      )}
+      <div className="section section-node">
+        <h3 className="section-title">{getNodeDisplayName(selectedNode.type as NodeType)}</h3>
+        <div className="section-node-content">{nodeEditor}</div>
+      </div>
     </Container>
   );
 };

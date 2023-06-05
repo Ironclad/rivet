@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 
 export type CodeNode = ChartNode<'code', CodeNodeData>;
@@ -59,6 +59,17 @@ return { output: inputs.input };`,
         dataType: 'string',
       };
     });
+  }
+
+  getEditors(): EditorDefinition<CodeNode>[] {
+    return [
+      {
+        type: 'code',
+        label: 'Code',
+        dataKey: 'code',
+        language: 'javascript',
+      },
+    ];
   }
 
   async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {

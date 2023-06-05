@@ -1,4 +1,4 @@
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { DataValue, ArrayDataValue, StringDataValue } from '../DataValue';
@@ -56,6 +56,18 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
         dataType: 'string[]',
         id: 'questionsAndAnswers' as PortId,
         title: 'Q & A',
+      },
+    ];
+  }
+
+  getEditors(): EditorDefinition<UserInputNode>[] {
+    return [
+      {
+        type: 'code',
+        label: 'Prompt',
+        dataKey: 'prompt',
+        useInputToggleDataKey: 'useInput',
+        language: 'plain-text',
       },
     ];
   }

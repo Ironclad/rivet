@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataType, DataValue, getDefaultValue, isArrayDataType } from '../DataValue';
 import { GraphInputs, Inputs, Outputs } from '../GraphProcessor';
 import { InternalProcessContext } from '../ProcessContext';
@@ -57,6 +57,27 @@ export class GraphInputNodeImpl extends NodeImpl<GraphInputNode> {
         id: 'data' as PortId,
         title: this.data.id,
         dataType: this.chartNode.data.dataType as DataType,
+      },
+    ];
+  }
+
+  getEditors(): EditorDefinition<GraphInputNode>[] {
+    return [
+      {
+        type: 'string',
+        label: 'ID',
+        dataKey: 'id',
+      },
+      {
+        type: 'dataTypeSelector',
+        label: 'Data Type',
+        dataKey: 'dataType',
+      },
+      {
+        type: 'anyData',
+        label: 'Default Value',
+        dataKey: 'defaultValue',
+        useInputToggleDataKey: 'useDefaultValueInput',
       },
     ];
   }

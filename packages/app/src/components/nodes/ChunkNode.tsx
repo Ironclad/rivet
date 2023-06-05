@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { ChunkNode } from '@ironclad/nodai-core';
-import { css } from '@emotion/react';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type ChunkNodeBodyProps = {
@@ -17,118 +16,6 @@ export const ChunkNodeBody: FC<ChunkNodeBodyProps> = ({ node }) => {
   );
 };
 
-type ChunkNodeEditorProps = {
-  node: ChunkNode;
-  onChange?: (node: ChunkNode) => void;
-};
-
-const container = css`
-  font-family: 'Roboto', sans-serif;
-  color: var(--foreground);
-  background-color: var(--grey-darker);
-
-  display: grid;
-  grid-template-columns: auto 1fr;
-  row-gap: 16px;
-  column-gap: 32px;
-  align-items: center;
-  grid-auto-rows: 40px;
-
-  .row {
-    display: contents;
-  }
-
-  .label {
-    font-weight: 500;
-    color: var(--foreground);
-  }
-
-  .select,
-  .number-input {
-    padding: 6px 12px;
-    background-color: var(--grey-darkish);
-    border: 1px solid var(--grey);
-    border-radius: 4px;
-    color: var(--foreground);
-    outline: none;
-    transition: border-color 0.3s;
-
-    &:hover {
-      border-color: var(--primary);
-    }
-  }
-
-  .select {
-    justify-self: start;
-    width: 150px;
-  }
-
-  .number-input {
-    justify-self: start;
-    min-width: 0;
-    width: 100px;
-  }
-`;
-
-export const ChunkNodeEditor: FC<ChunkNodeEditorProps> = ({ node, onChange }) => {
-  const chunkNode = node as ChunkNode;
-
-  return (
-    <div css={container}>
-      <div className="row">
-        <label className="label" htmlFor="model">
-          Model
-        </label>
-        <select
-          id="model"
-          className="select"
-          value={chunkNode.data.model}
-          onChange={(e) => onChange?.({ ...chunkNode, data: { ...chunkNode.data, model: e.target.value } })}
-        >
-          {/* Add your model options here */}
-          <option value="gpt-3.5-turbo">GPT-3.5-Turbo</option>
-          <option value="gpt-4">GPT-4</option>
-          <option value="gpt-4-32k">GPT-4 32K</option>
-        </select>
-      </div>
-      <div className="row">
-        <label className="label" htmlFor="numTokensPerChunk">
-          Token Count
-        </label>
-        <input
-          id="numTokensPerChunk"
-          className="number-input"
-          type="number"
-          step="1"
-          min="1"
-          max="32768"
-          value={chunkNode.data.numTokensPerChunk}
-          onChange={(e) =>
-            onChange?.({ ...chunkNode, data: { ...chunkNode.data, numTokensPerChunk: e.target.valueAsNumber } })
-          }
-        />
-      </div>
-      <div className="row">
-        <label className="label" htmlFor="overlap">
-          Overlap %
-        </label>
-        <input
-          id="overlap"
-          className="number-input"
-          type="number"
-          step="1"
-          min="0"
-          max="100"
-          value={chunkNode.data.overlap}
-          onChange={(e) => onChange?.({ ...chunkNode, data: { ...chunkNode.data, overlap: e.target.valueAsNumber } })}
-        />
-      </div>
-    </div>
-  );
-};
-
 export const chunkNodeDescriptor: NodeComponentDescriptor<'chunk'> = {
   Body: ChunkNodeBody,
-  Output: undefined,
-  Editor: ChunkNodeEditor,
 };

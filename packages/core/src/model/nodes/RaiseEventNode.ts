@@ -1,5 +1,5 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { nanoid } from 'nanoid';
 import { Inputs } from '../GraphProcessor';
@@ -53,6 +53,17 @@ export class RaiseEventNodeImpl extends NodeImpl<RaiseEventNode> {
         id: 'result' as PortId,
         title: 'Result',
         dataType: 'any',
+      },
+    ];
+  }
+
+  getEditors(): EditorDefinition<RaiseEventNode>[] {
+    return [
+      {
+        type: 'string',
+        label: 'Event Name',
+        dataKey: 'eventName',
+        useInputToggleDataKey: 'useEventNameInput',
       },
     ];
   }

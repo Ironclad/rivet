@@ -1,8 +1,8 @@
 import { ChartNode, NodeId } from '../../model/NodeBase';
-import { NodeImpl, nodeDefinition } from '../../model/NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../../model/NodeImpl';
 import { NodeInputDefinition, NodeOutputDefinition, PortId } from '../../model/NodeBase';
 import { DataValue } from '../../model/DataValue';
-import { SupportedModels, chunkStringByTokenCount, modelToTiktokenModel } from '../../utils/tokenizer';
+import { SupportedModels, chunkStringByTokenCount, modelOptions, modelToTiktokenModel } from '../../utils/tokenizer';
 import { nanoid } from 'nanoid';
 import { coerceType } from '../../utils/coerceType';
 
@@ -75,6 +75,34 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
         id: 'count' as PortId,
         title: 'Count',
         dataType: 'number',
+      },
+    ];
+  }
+
+  getEditors(): EditorDefinition<ChunkNode>[] {
+    return [
+      {
+        type: 'dropdown',
+        label: 'Model',
+        dataKey: 'model',
+        options: modelOptions,
+        useInputToggleDataKey: 'useModelInput',
+      },
+      {
+        type: 'number',
+        label: 'Number of tokens per chunk',
+        dataKey: 'numTokensPerChunk',
+        min: 1,
+        max: 32768,
+        step: 1,
+      },
+      {
+        type: 'number',
+        label: 'Overlap (in %)',
+        dataKey: 'overlap',
+        min: 0,
+        max: 100,
+        step: 1,
       },
     ];
   }

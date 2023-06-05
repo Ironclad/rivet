@@ -1,6 +1,6 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { coerceType } from '../../utils/coerceType';
 import { InternalProcessContext } from '../ProcessContext';
@@ -97,6 +97,16 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
     }
 
     return outputs;
+  }
+
+  getEditors(): EditorDefinition<LoopControllerNode>[] {
+    return [
+      {
+        type: 'number',
+        label: 'Max Iterations',
+        dataKey: 'maxIterations',
+      },
+    ];
   }
 
   #getInputPortCount(connections: NodeConnection[]): number {

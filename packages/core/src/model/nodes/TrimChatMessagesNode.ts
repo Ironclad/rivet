@@ -1,7 +1,7 @@
 import { ChartNode, NodeId, PortId, NodeInputDefinition, NodeOutputDefinition } from '../../model/NodeBase';
-import { NodeImpl, nodeDefinition } from '../../model/NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../../model/NodeImpl';
 import { DataValue } from '../../model/DataValue';
-import { SupportedModels, getTokenCountForMessages, modelToTiktokenModel } from '../../utils/tokenizer';
+import { SupportedModels, getTokenCountForMessages, modelOptions, modelToTiktokenModel } from '../../utils/tokenizer';
 import { nanoid } from 'nanoid';
 import { expectType } from '../..';
 import { ChatCompletionRequestMessage } from '../../utils/openai';
@@ -51,6 +51,27 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
         id: 'trimmed' as PortId,
         title: 'Trimmed',
         dataType: 'chat-message[]',
+      },
+    ];
+  }
+
+  getEditors(): EditorDefinition<TrimChatMessagesNode>[] {
+    return [
+      {
+        type: 'number',
+        label: 'Max Token Count',
+        dataKey: 'maxTokenCount',
+      },
+      {
+        type: 'toggle',
+        label: 'Remove From Beginning',
+        dataKey: 'removeFromBeginning',
+      },
+      {
+        type: 'dropdown',
+        label: 'Model',
+        dataKey: 'model',
+        options: modelOptions,
       },
     ];
   }

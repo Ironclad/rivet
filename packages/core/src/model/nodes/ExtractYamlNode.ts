@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 // @ts-ignore
 import yaml from 'yaml';
@@ -60,6 +60,22 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
         id: 'noMatch' as PortId,
         title: 'No Match',
         dataType: 'string',
+      },
+    ];
+  }
+
+  getEditors(): EditorDefinition<ExtractYamlNode>[] {
+    return [
+      {
+        type: 'string',
+        label: 'Root Property Name',
+        dataKey: 'rootPropertyName',
+      },
+      {
+        type: 'code',
+        label: 'Object Path',
+        dataKey: 'objectPath',
+        language: 'jsonpath',
       },
     ];
   }
