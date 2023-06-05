@@ -3,15 +3,12 @@ import Select from '@atlaskit/select';
 import { Field } from '@atlaskit/form';
 import { css } from '@emotion/react';
 import { useRecoilValue } from 'recoil';
-import { lastRunData } from '../../state/dataFlow';
-import { RenderDataValue } from '../RenderDataValue';
 import { projectState } from '../../state/savedGraphs';
-import { entries, values } from '../../utils/typeSafety';
+import { values } from '../../utils/typeSafety';
 import { nanoid } from 'nanoid';
 import { GraphId, SubGraphNode } from '@ironclad/nodai-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 import { orderBy } from 'lodash-es';
-import Toggle from '@atlaskit/toggle';
 
 export type SubGraphNodeBodyProps = {
   node: SubGraphNode;

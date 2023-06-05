@@ -3,11 +3,11 @@ import { monaco } from '../../utils/monaco';
 import styled from '@emotion/styled';
 import { useLatest } from 'ahooks';
 import Toggle from '@atlaskit/toggle';
-import { useRecoilValue } from 'recoil';
-import { lastRunData } from '../../state/dataFlow';
-import { RenderDataValue } from '../RenderDataValue';
-import { ChartNode, GetDataValue, Outputs, PortId, PromptNode, PromptNodeData } from '@ironclad/nodai-core';
+import { ChartNode, PromptNode, PromptNodeData } from '@ironclad/nodai-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { Field } from '@atlaskit/form';
+import Select from '@atlaskit/select';
+import TextField from '@atlaskit/textfield';
 
 export type PromptNodeEditorProps = {
   node: PromptNode;
@@ -31,11 +31,11 @@ const Container = styled.div`
     background-color: var(--grey-darker);
 
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 1fr auto;
     row-gap: 16px;
     column-gap: 32px;
     align-items: center;
-    grid-auto-rows: 40px;
+    margin-bottom: 16px;
 
     .row {
       display: contents;
@@ -44,32 +44,6 @@ const Container = styled.div`
     .label {
       font-weight: 500;
       color: var(--foreground);
-    }
-
-    .select,
-    .number-input {
-      padding: 6px 12px;
-      background-color: var(--grey-darkish);
-      border: 1px solid var(--grey);
-      border-radius: 4px;
-      color: var(--foreground);
-      outline: none;
-      transition: border-color 0.3s;
-
-      &:hover {
-        border-color: var(--primary);
-      }
-
-      &:disabled {
-        background-color: var(--grey-dark);
-        border-color: var(--grey);
-        color: var(--foreground-dark);
-      }
-    }
-
-    .select {
-      justify-self: start;
-      width: 150px;
     }
 
     .number-input {
@@ -104,11 +78,10 @@ const handleInputChange =
 
 export const PromptNodeEditor: FC<PromptNodeEditorProps> = ({ node, onChange }) => {
   const editorContainer = useRef<HTMLDivElement>(null);
-  const promptNode = node as PromptNode;
   const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
 
   const onChangeLatest = useLatest(onChange);
-  const nodeLatest = useLatest(promptNode);
+  const nodeLatest = useLatest(node);
 
   useEffect(() => {
     if (!editorContainer.current) {
@@ -154,29 +127,58 @@ export const PromptNodeEditor: FC<PromptNodeEditorProps> = ({ node, onChange }) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [node.id]);
 
+  const options = useMemo(
+    () =>
+      [
+        { label: 'User', value: 'user' },
+        { label: 'System', value: 'system' },
+        { label: 'Assistant', value: 'assistant' },
+        { label: 'Tool', value: 'tool' },
+      ] as const,
+    [],
+  );
+  const selectedOption = options.find((option) => option.value === node.data.type);
+
   return (
     <Container>
       <div className="options">
-        <div className="row">
-          <label className="label" htmlFor="model">
-            Type
-          </label>
-          <select
-            id="model"
-            className="select"
-            value={promptNode.data.type}
-            onChange={handleInputChange('type', promptNode, onChange)}
-          >
-            <option value="user">User</option>
-            <option value="system">System</option>
-            <option value="assistant">AI</option>
-          </select>
-          <Toggle
-            id="useModelInput"
-            isChecked={promptNode.data.useTypeInput}
-            onChange={handleInputChange('useTypeInput', promptNode, onChange)}
-          />
-        </div>
+        <Field name="type" label="Type">
+          {({ fieldProps }) => (
+            <Select
+              {...fieldProps}
+              id="model"
+              value={selectedOption}
+              onChange={(selected) => onChange?.({ ...node, data: { ...node.data, type: selected!.value } })}
+              options={options}
+            />
+          )}
+        </Field>
+
+        <Toggle
+          id="useModelInput"
+          isChecked={node.data.useTypeInput}
+          onChange={handleInputChange('useTypeInput', node, onChange)}
+        />
+        <Field name="name" label="Name">
+          {({ fieldProps }) => (
+            <TextField
+              {...fieldProps}
+              value={node.data.name ?? ''}
+              onChange={(e) => ({
+                ...node,
+                data: {
+                  ...node.data,
+                  name: (e.target as HTMLInputElement).value,
+                },
+              })}
+            />
+          )}
+        </Field>
+        <Toggle
+          id="useNameInput"
+          isChecked={node.data.useNameInput}
+          onChange={handleInputChange('useNameInput', node, onChange)}
+        />
       </div>
 
       <div ref={editorContainer} className="editor-container" />
@@ -225,9 +227,10 @@ export const PromptNodeBody: FC<PromptNodeBodyProps> = memo(({ node }) => {
 });
 
 const typeDisplay: Record<PromptNodeData['type'], string> = {
-  assistant: 'AI',
+  assistant: 'Assistant',
   system: 'System',
   user: 'User',
+  tool: 'Tool',
 };
 
 export const promptNodeDescriptor: NodeComponentDescriptor<'prompt'> = {

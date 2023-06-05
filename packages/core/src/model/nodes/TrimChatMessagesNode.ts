@@ -3,8 +3,8 @@ import { NodeImpl } from '../../model/NodeImpl';
 import { DataValue } from '../../model/DataValue';
 import { SupportedModels, getTokenCountForMessages, modelToTiktokenModel } from '../../utils/tokenizer';
 import { nanoid } from 'nanoid';
-import { ChatCompletionRequestMessage } from 'openai';
 import { expectType } from '../..';
+import { ChatCompletionRequestMessage } from '../../utils/openai';
 
 export type TrimChatMessagesNodeData = {
   maxTokenCount: number;

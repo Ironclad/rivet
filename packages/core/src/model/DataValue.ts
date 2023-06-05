@@ -1,4 +1,3 @@
-import { match } from 'ts-pattern';
 import { exhaustiveTuple } from '../utils/genericUtilFunctions';
 
 export type DataValueDef<Type extends string, RuntimeType> = {
@@ -10,7 +9,7 @@ export type StringDataValue = DataValueDef<'string', string>;
 export type NumberDataValue = DataValueDef<'number', number>;
 export type BoolDataValue = DataValueDef<'boolean', boolean>;
 
-export type ChatMessage = { type: 'system' | 'user' | 'assistant'; message: string };
+export type ChatMessage = { type: 'system' | 'user' | 'assistant' | 'tool'; message: string };
 
 export type ChatMessageDataValue = DataValueDef<'chat-message', ChatMessage>;
 
@@ -19,6 +18,16 @@ export type TimeDataValue = DataValueDef<'time', string>;
 export type DateTimeDataValue = DataValueDef<'datetime', string>;
 export type AnyDataValue = DataValueDef<'any', unknown>;
 export type ObjectDataValue = DataValueDef<'object', Record<string, unknown>>;
+
+/** GPT tool definition */
+export type GptTool = {
+  name: string;
+  namespace?: string;
+  description: string;
+  schema: object;
+};
+
+export type GptToolDataValue = DataValueDef<'gpt-tool', GptTool>;
 
 export type ControlFlowExcludedDataValue = DataValueDef<'control-flow-excluded', undefined | 'loop-not-broken'>;
 
@@ -32,7 +41,8 @@ export type ScalarDataValue =
   | ChatMessageDataValue
   | ControlFlowExcludedDataValue
   | AnyDataValue
-  | ObjectDataValue;
+  | ObjectDataValue
+  | GptToolDataValue;
 
 export type ScalarType = ScalarDataValue['type'];
 
@@ -103,6 +113,10 @@ export const dataTypes = exhaustiveTuple<DataType>()(
   'fn<object[]>',
   'fn<chat-message[]>',
   'fn<control-flow-excluded[]>',
+  'gpt-tool',
+  'gpt-tool[]',
+  'fn<gpt-tool[]>',
+  'fn<gpt-tool>',
 );
 
 export const scalarTypes = exhaustiveTuple<ScalarType>()(
@@ -116,6 +130,7 @@ export const scalarTypes = exhaustiveTuple<ScalarType>()(
   'chat-message',
   'control-flow-excluded',
   'object',
+  'gpt-tool',
 );
 
 export const dataTypeDisplayNames: Record<DataType, string> = {
@@ -139,6 +154,8 @@ export const dataTypeDisplayNames: Record<DataType, string> = {
   'control-flow-excluded[]': 'ControlFlowExcluded Array',
   object: 'Object',
   'object[]': 'Object Array',
+  'gpt-tool': 'GPT Tool',
+  'gpt-tool[]': 'GPT Tool Array',
   'fn<string>': 'Function<String>',
   'fn<number>': 'Function<Number>',
   'fn<boolean>': 'Function<Boolean>',
@@ -149,6 +166,7 @@ export const dataTypeDisplayNames: Record<DataType, string> = {
   'fn<object>': 'Function<Object>',
   'fn<chat-message>': 'Function<ChatMessage>',
   'fn<control-flow-excluded>': 'Function<ControlFlowExcluded>',
+  'fn<gpt-tool>': 'Function<GPT Tool>',
   'fn<string[]>': 'Function<String Array>',
   'fn<number[]>': 'Function<Number Array>',
   'fn<boolean[]>': 'Function<Boolean Array>',
@@ -159,6 +177,7 @@ export const dataTypeDisplayNames: Record<DataType, string> = {
   'fn<object[]>': 'Function<Object Array>',
   'fn<chat-message[]>': 'Function<ChatMessage Array>',
   'fn<control-flow-excluded[]>': 'Function<ControlFlowExcluded Array>',
+  'fn<gpt-tool[]>': 'Function<GPT Tool Array>',
 };
 
 export function isScalarDataValue(value: DataValue | undefined): value is ScalarDataValue {
@@ -254,23 +273,26 @@ export const arrayizeDataValue = (value: ScalarOrArrayDataValue): ScalarDataValu
   return (value.value as unknown[]).map((v) => ({ type: unwrappedType as ScalarType, value: v })) as ScalarDataValue[];
 };
 
-export const scalarDefaults: { [P in ScalarDataType]: (ScalarDataValue & { type: P })['value'] } = {
+export const scalarDefaults: { [P in ScalarDataType]: Extract<ScalarDataValue, { type: P }>['value'] } = {
   string: '',
   number: 0,
   boolean: false,
   any: undefined,
   'chat-message': {
-    type: 'chat-message',
-    value: '',
+    type: 'user',
+    message: '',
   },
-  'control-flow-excluded': {
-    type: 'control-flow-excluded',
-    value: undefined,
-  },
-  date: new Date(),
-  time: new Date(),
-  datetime: new Date(),
+  'control-flow-excluded': undefined,
+  date: new Date().toISOString(),
+  time: new Date().toISOString(),
+  datetime: new Date().toISOString(),
   object: {},
+  'gpt-tool': {
+    name: 'unknown',
+    description: '',
+    schema: {},
+    namespace: undefined,
+  },
 };
 
 export function getDefaultValue<T extends DataType>(type: T): (DataValue & { type: T })['value'] {
