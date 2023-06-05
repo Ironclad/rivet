@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeOutputDefinition, PortId, NodeInputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataType, DataValue } from '../DataValue';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { InternalProcessContext } from '../ProcessContext';
@@ -77,3 +77,5 @@ export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
     return inputs;
   }
 }
+
+export const graphOutputNode = nodeDefinition(GraphOutputNodeImpl, 'Graph Output');

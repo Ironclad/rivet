@@ -1,4 +1,4 @@
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { DataValue, ArrayDataValue, StringDataValue } from '../DataValue';
@@ -81,3 +81,5 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
     };
   }
 }
+
+export const userInputNode = nodeDefinition(UserInputNodeImpl, 'User Input');

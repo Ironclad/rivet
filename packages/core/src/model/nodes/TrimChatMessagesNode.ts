@@ -1,5 +1,5 @@
 import { ChartNode, NodeId, PortId, NodeInputDefinition, NodeOutputDefinition } from '../../model/NodeBase';
-import { NodeImpl } from '../../model/NodeImpl';
+import { NodeImpl, nodeDefinition } from '../../model/NodeImpl';
 import { DataValue } from '../../model/DataValue';
 import { SupportedModels, getTokenCountForMessages, modelToTiktokenModel } from '../../utils/tokenizer';
 import { nanoid } from 'nanoid';
@@ -94,3 +94,5 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
     };
   }
 }
+
+export const trimChatMessagesNode = nodeDefinition(TrimChatMessagesNodeImpl, 'Trim Chat Messages');

@@ -1,6 +1,6 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { ChatMessage, GptTool, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue';
 import {
   assertValidModel,
@@ -374,8 +374,6 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       maxTokens = Math.floor((modelMaxTokens[model] - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
     }
 
-    console.dir('foo');
-
     try {
       return await retry(
         async () => {
@@ -429,10 +427,18 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               value: responseParts.join(''),
             };
 
-            output['tool-call' as PortId] = {
-              type: 'string',
-              value: toolCallParts.join(''),
-            };
+            try {
+              const toolCallJson = JSON.parse(toolCallParts.join(''));
+              output['tool-call' as PortId] = {
+                type: 'object',
+                value: toolCallJson,
+              };
+            } catch (err) {
+              output['tool-call' as PortId] = {
+                type: 'string',
+                value: toolCallParts.join(''),
+              };
+            }
 
             context.onPartialOutputs?.(output);
           }
@@ -477,3 +483,5 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     }
   }
 }
+
+export const chatNode = nodeDefinition(ChatNodeImpl, 'Chat');

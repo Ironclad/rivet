@@ -33,6 +33,7 @@ import { getGlobalNodeDescriptor } from '../components/nodes/GetGlobalNode';
 import { setGlobalNodeDescriptor } from '../components/nodes/SetGlobalNode';
 import { waitForEventNodeDescriptor } from '../components/nodes/WaitForEventNode';
 import { toolNodeDescriptor } from '../components/nodes/ToolNode';
+import { toYamlNodeDescriptor } from '../components/nodes/ToYamlNode';
 
 export type UnknownNodeComponentDescriptor = {
   Body?: FC<{ node: ChartNode }>;
@@ -87,6 +88,7 @@ const descriptors: NodeComponentDescriptors = {
   setGlobal: setGlobalNodeDescriptor,
   waitForEvent: waitForEventNodeDescriptor,
   tool: toolNodeDescriptor,
+  toYaml: toYamlNodeDescriptor,
 };
 
 export function useNodeTypes() {

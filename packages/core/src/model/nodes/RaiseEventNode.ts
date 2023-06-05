@@ -1,5 +1,5 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { nanoid } from 'nanoid';
 import { Inputs } from '../GraphProcessor';
@@ -71,3 +71,5 @@ export class RaiseEventNodeImpl extends NodeImpl<RaiseEventNode> {
     };
   }
 }
+
+export const raiseEventNode = nodeDefinition(RaiseEventNodeImpl, 'Raise Event');

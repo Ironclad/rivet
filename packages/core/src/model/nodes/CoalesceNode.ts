@@ -1,4 +1,4 @@
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { DataValue } from '../DataValue';
 import { nanoid } from 'nanoid';
@@ -9,7 +9,7 @@ export type CoalesceNode = ChartNode<'coalesce', CoalesceNodeData>;
 
 export type CoalesceNodeData = {};
 
-export class CoalesceNodeImpl extends NodeImpl<ChartNode> {
+export class CoalesceNodeImpl extends NodeImpl<CoalesceNode> {
   static create = (): CoalesceNode => {
     const chartNode: CoalesceNode = {
       type: 'coalesce',
@@ -111,3 +111,5 @@ export class CoalesceNodeImpl extends NodeImpl<ChartNode> {
     };
   }
 }
+
+export const coalesceNode = nodeDefinition(CoalesceNodeImpl, 'Coalesce');

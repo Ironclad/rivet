@@ -49,3 +49,26 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
 
   abstract process(inputData: Inputs, context: InternalProcessContext): Promise<Outputs>;
 }
+
+export type NodeImplConstructor<T extends ChartNode> = {
+  new (chartNode: T): NodeImpl<T>;
+
+  create(): T;
+};
+
+export type NodeDefinition<T extends ChartNode> = {
+  impl: NodeImplConstructor<T>;
+  displayName: string;
+};
+
+export type UnknownNodeDefinition = NodeDefinition<ChartNode>;
+
+export function nodeDefinition<T extends ChartNode>(
+  impl: NodeImplConstructor<T>,
+  displayName: string,
+): NodeDefinition<T> {
+  return {
+    impl,
+    displayName,
+  };
+}

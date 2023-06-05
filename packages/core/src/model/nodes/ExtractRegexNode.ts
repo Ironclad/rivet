@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { expectType, expectTypeOptional } from '../../utils/expectType';
 
@@ -186,3 +186,5 @@ function countCaptureGroups(regex: RegExp): number {
 
   return count;
 }
+
+export const extractRegexNode = nodeDefinition(ExtractRegexNodeImpl, 'Extract Regex');

@@ -1,5 +1,5 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor';
@@ -75,3 +75,5 @@ export class WaitForEventNodeImpl extends NodeImpl<WaitForEventNode> {
     };
   }
 }
+
+export const waitForEventNode = nodeDefinition(WaitForEventNodeImpl, 'Wait For Event');

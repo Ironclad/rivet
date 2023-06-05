@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 
 export type CodeNode = ChartNode<'code', CodeNodeData>;
@@ -68,3 +68,5 @@ return { output: inputs.input };`,
     return outputs;
   }
 }
+
+export const codeNode = nodeDefinition(CodeNodeImpl, 'Code');

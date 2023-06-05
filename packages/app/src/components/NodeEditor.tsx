@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { nodesSelector } from '../state/graph';
 import styled from '@emotion/styled';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
-import { NodeType, nodeDisplayName, ChartNode } from '@ironclad/nodai-core';
+import { NodeType, getNodeDisplayName, ChartNode } from '@ironclad/nodai-core';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes';
 import produce from 'immer';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
@@ -181,7 +181,7 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
         <MultiplyIcon />
       </button>
       <div className="section">
-        <h3 className="section-title">Edit {nodeDisplayName[selectedNode.type as NodeType]} Node</h3>
+        <h3 className="section-title">Edit {getNodeDisplayName(selectedNode.type as NodeType)} Node</h3>
         <InlineEditableTextfield
           key={`node-title-${selectedNode.id}`}
           label="Node Title"
@@ -218,7 +218,7 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
       </section>
       {nodeEditor && (
         <div className="section section-node">
-          <h3 className="section-title">{nodeDisplayName[selectedNode.type as NodeType]}</h3>
+          <h3 className="section-title">{getNodeDisplayName(selectedNode.type as NodeType)}</h3>
           <div className="section-node-content">{nodeEditor}</div>
         </div>
       )}

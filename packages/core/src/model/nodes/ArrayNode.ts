@@ -1,6 +1,6 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { entries } from '../../utils/typeSafety';
 
@@ -107,3 +107,5 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
     };
   }
 }
+
+export const arrayNode = nodeDefinition(ArrayNodeImpl, 'Array');

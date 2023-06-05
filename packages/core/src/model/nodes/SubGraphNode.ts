@@ -1,5 +1,5 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { GraphId } from '../NodeGraph';
 import { nanoid } from 'nanoid';
@@ -97,3 +97,5 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
     return subGraphOutputs;
   }
 }
+
+export const subGraphNode = nodeDefinition(SubGraphNodeImpl, 'Subgraph');

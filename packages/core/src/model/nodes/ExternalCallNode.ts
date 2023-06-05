@@ -1,5 +1,5 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { AnyDataValue, ArrayDataValue } from '../DataValue';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor';
@@ -127,3 +127,5 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
     };
   }
 }
+
+export const externalCallNode = nodeDefinition(ExternalCallNodeImpl, 'External Call');

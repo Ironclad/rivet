@@ -1,13 +1,14 @@
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { DataValue, ControlFlowExcludedDataValue, ScalarDataValue, ArrayDataValue } from '../DataValue';
 import { nanoid } from 'nanoid';
+import { Inputs, Outputs } from '../GraphProcessor';
 
 export type IfNode = ChartNode<'if', IfNodeData>;
 
 export type IfNodeData = {};
 
-export class IfNodeImpl extends NodeImpl<ChartNode> {
+export class IfNodeImpl extends NodeImpl<IfNode> {
   static create = (): IfNode => {
     const chartNode: IfNode = {
       type: 'if',
@@ -22,7 +23,7 @@ export class IfNodeImpl extends NodeImpl<ChartNode> {
     };
     return chartNode;
   };
-  getInputDefinitions(connections: NodeConnection[]): NodeInputDefinition[] {
+  getInputDefinitions(): NodeInputDefinition[] {
     return [
       {
         id: 'if' as PortId,
@@ -47,9 +48,9 @@ export class IfNodeImpl extends NodeImpl<ChartNode> {
     ];
   }
 
-  async process(inputData: Record<string, DataValue>): Promise<Record<string, DataValue>> {
-    const ifValue = inputData['if'];
-    const value = inputData['value'] ?? { type: 'any', value: undefined };
+  async process(inputData: Inputs): Promise<Outputs> {
+    const ifValue = inputData['if' as PortId];
+    const value = inputData['value' as PortId] ?? { type: 'any', value: undefined };
 
     const excluded = {
       output: {
@@ -79,7 +80,9 @@ export class IfNodeImpl extends NodeImpl<ChartNode> {
     }
 
     return {
-      output: value,
+      ['output' as PortId]: value,
     };
   }
 }
+
+export const ifNode = nodeDefinition(IfNodeImpl, 'If');

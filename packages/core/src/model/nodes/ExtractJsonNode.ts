@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { expectType } from '../..';
 
@@ -92,3 +92,5 @@ export class ExtractJsonNodeImpl extends NodeImpl<ExtractJsonNode> {
     };
   }
 }
+
+export const extractJsonNode = nodeDefinition(ExtractJsonNodeImpl, 'Extract JSON');

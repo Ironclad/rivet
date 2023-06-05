@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataType, DataValue } from '../DataValue';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { InternalProcessContext } from '../ProcessContext';
@@ -81,3 +81,5 @@ export class ContextNodeImpl extends NodeImpl<ContextNode> {
     };
   }
 }
+
+export const contextNode = nodeDefinition(ContextNodeImpl, 'Context');

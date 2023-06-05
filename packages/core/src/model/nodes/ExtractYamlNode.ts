@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 // @ts-ignore
 import yaml from 'yaml';
@@ -160,3 +160,5 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
     };
   }
 }
+
+export const extractYamlNode = nodeDefinition(ExtractYamlNodeImpl, 'Extract YAML');

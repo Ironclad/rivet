@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl';
 import {
   FunctionDataValues,
   ScalarDataType,
@@ -125,3 +125,5 @@ export class GetGlobalNodeImpl extends NodeImpl<GetGlobalNode> {
     };
   }
 }
+
+export const getGlobalNode = nodeDefinition(GetGlobalNodeImpl, 'Get Global');
