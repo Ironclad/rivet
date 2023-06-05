@@ -156,8 +156,6 @@ export const GraphBuilder: FC = () => {
     [nodes, selectedNodeIds],
   );
 
-  console.dir({ questions, lastQuestions, firstNodeQuestions, allCurrentQuestions });
-
   return (
     <Container>
       <NodeCanvas
