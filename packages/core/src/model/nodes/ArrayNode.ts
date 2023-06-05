@@ -1,6 +1,6 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { entries } from '../../utils/typeSafety';
 
@@ -57,6 +57,10 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
         title: 'Indices',
       },
     ];
+  }
+
+  getEditors(): EditorDefinition<ArrayNode>[] {
+    return [{ type: 'toggle', label: 'Flatten', dataKey: 'flatten' }];
   }
 
   #getInputPortCount(connections: NodeConnection[]): number {

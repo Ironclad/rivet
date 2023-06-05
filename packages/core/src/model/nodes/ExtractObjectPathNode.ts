@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import * as jp from 'jsonpath';
 import { expectType } from '../../utils/expectType';
@@ -66,6 +66,18 @@ export class ExtractObjectPathNodeImpl extends NodeImpl<ExtractObjectPathNode> {
         id: 'all_matches' as PortId,
         title: 'All Matches',
         dataType: 'any[]',
+      },
+    ];
+  }
+
+  getEditors(): EditorDefinition<ExtractObjectPathNode>[] {
+    return [
+      {
+        type: 'code',
+        label: 'Path',
+        dataKey: 'path',
+        language: 'jsonpath',
+        useInputToggleDataKey: 'usePathInput',
       },
     ];
   }

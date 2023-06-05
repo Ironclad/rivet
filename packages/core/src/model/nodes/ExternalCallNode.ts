@@ -1,5 +1,5 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { AnyDataValue, ArrayDataValue } from '../DataValue';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor';
@@ -68,6 +68,22 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
     }
 
     return outputs;
+  }
+
+  getEditors(): EditorDefinition<ExternalCallNode>[] {
+    return [
+      {
+        type: 'string',
+        label: 'Function Name',
+        dataKey: 'functionName',
+        useInputToggleDataKey: 'useFunctionNameInput',
+      },
+      {
+        type: 'toggle',
+        label: 'Use Error Output',
+        dataKey: 'useErrorOutput',
+      },
+    ];
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

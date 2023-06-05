@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 
 export type ToolNode = ChartNode<'tool', ToolNodeData>;
@@ -46,6 +46,32 @@ export class ToolNodeImpl extends NodeImpl<ToolNode> {
         id: 'tool' as PortId,
         title: 'Tool',
         dataType: 'gpt-tool',
+      },
+    ];
+  }
+
+  getEditors(): EditorDefinition<ToolNode>[] {
+    return [
+      {
+        type: 'string',
+        label: 'Name',
+        dataKey: 'name',
+      },
+      {
+        type: 'string',
+        label: 'Description',
+        dataKey: 'description',
+      },
+      {
+        type: 'string',
+        label: 'Namespace',
+        dataKey: 'namespace',
+      },
+      {
+        type: 'code',
+        label: 'Schema',
+        dataKey: 'schema',
+        language: 'json',
       },
     ];
   }

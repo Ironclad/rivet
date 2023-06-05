@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import {
   FunctionDataValues,
   ScalarDataType,
@@ -18,6 +18,8 @@ export type GetGlobalNode = ChartNode<'getGlobal', GetGlobalNodeData>;
 
 export type GetGlobalNodeData = {
   id: string;
+  useIdInput: boolean;
+
   dataType: ScalarOrArrayDataType;
 
   /**
@@ -28,8 +30,6 @@ export type GetGlobalNodeData = {
 
   /** Wait until the variable is available */
   wait: boolean;
-
-  useIdInput: boolean;
 };
 
 export class GetGlobalNodeImpl extends NodeImpl<GetGlobalNode> {
@@ -76,6 +76,32 @@ export class GetGlobalNodeImpl extends NodeImpl<GetGlobalNode> {
         id: 'value' as PortId,
         title: 'Value',
         dataType: onDemand ? (`fn<${dataType}>` as const) : dataType,
+      },
+    ];
+  }
+
+  getEditors(): EditorDefinition<GetGlobalNode>[] {
+    return [
+      {
+        type: 'string',
+        label: 'Variable ID',
+        dataKey: 'id',
+        useInputToggleDataKey: 'useIdInput',
+      },
+      {
+        type: 'dataTypeSelector',
+        label: 'Data Type',
+        dataKey: 'dataType',
+      },
+      {
+        type: 'toggle',
+        label: 'On Demand',
+        dataKey: 'onDemand',
+      },
+      {
+        type: 'toggle',
+        label: 'Wait',
+        dataKey: 'wait',
       },
     ];
   }

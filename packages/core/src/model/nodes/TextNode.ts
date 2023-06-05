@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { match } from 'ts-pattern';
 import { coerceTypeOptional } from '../..';
@@ -53,6 +53,18 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
         id: 'output' as PortId,
         title: 'Output',
         dataType: 'string',
+      },
+    ];
+  }
+
+  getEditors(): EditorDefinition<TextNode>[] {
+    return [
+      {
+        type: 'code',
+        label: 'Text',
+        dataKey: 'text',
+        language: 'prompt-interpolation',
+        theme: 'prompt-interpolation',
       },
     ];
   }

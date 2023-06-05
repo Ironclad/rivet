@@ -1,5 +1,5 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor';
@@ -58,6 +58,17 @@ export class WaitForEventNodeImpl extends NodeImpl<WaitForEventNode> {
         id: 'eventData' as PortId,
         title: 'Event Data',
         dataType: 'any',
+      },
+    ];
+  }
+
+  getEditors(): EditorDefinition<WaitForEventNode>[] {
+    return [
+      {
+        type: 'string',
+        label: 'Event Name',
+        dataKey: 'eventName',
+        useInputToggleDataKey: 'useEventNameInput',
       },
     ];
   }
