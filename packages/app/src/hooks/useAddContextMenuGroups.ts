@@ -62,6 +62,7 @@ export const addContextMenuGroups = [
       { label: 'Subgraph', nodeType: 'subGraph' },
       { label: 'External Call', nodeType: 'externalCall' },
       { label: 'Raise Event', nodeType: 'raiseEvent' },
+      { label: 'Wait For Event', nodeType: 'waitForEvent' },
       { label: 'Code', nodeType: 'code' },
       { label: 'Context', nodeType: 'context' },
       { label: 'Get Global', nodeType: 'getGlobal' },

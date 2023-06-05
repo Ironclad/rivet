@@ -30,6 +30,7 @@ import { PassthroughNode, PassthroughNodeImpl } from './nodes/PassthroughNode';
 import { PopNode, PopNodeImpl } from './nodes/PopNode';
 import { SetGlobalNode, SetGlobalNodeImpl } from './nodes/SetGlobalNode';
 import { GetGlobalNode, GetGlobalNodeImpl } from './nodes/GetGlobalNode';
+import { WaitForEventNode, WaitForEventNodeImpl } from './nodes/WaitForEventNode';
 
 export type Nodes =
   | UserInputNode
@@ -61,7 +62,8 @@ export type Nodes =
   | PassthroughNode
   | PopNode
   | SetGlobalNode
-  | GetGlobalNode;
+  | GetGlobalNode
+  | WaitForEventNode;
 
 export * from './nodes/UserInputNode';
 export * from './nodes/TextNode';
@@ -93,6 +95,7 @@ export * from './nodes/PassthroughNode';
 export * from './nodes/PopNode';
 export * from './nodes/SetGlobalNode';
 export * from './nodes/GetGlobalNode';
+export * from './nodes/WaitForEventNode';
 
 export type NodeType = Nodes['type'];
 
@@ -127,6 +130,7 @@ const nodeImpls: Record<NodeType, { new (node: any): NodeImpl<ChartNode> }> = {
   pop: PopNodeImpl,
   setGlobal: SetGlobalNodeImpl,
   getGlobal: GetGlobalNodeImpl,
+  waitForEvent: WaitForEventNodeImpl,
 };
 
 export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode> => {
@@ -168,6 +172,7 @@ const nodeFactories: Record<NodeType, () => Nodes> = {
   pop: () => PopNodeImpl.create(),
   setGlobal: () => SetGlobalNodeImpl.create(),
   getGlobal: () => GetGlobalNodeImpl.create(),
+  waitForEvent: () => WaitForEventNodeImpl.create(),
 };
 
 export function nodeFactory(type: NodeType): Nodes {
@@ -205,6 +210,7 @@ export const nodeDisplayName: Record<NodeType, string> = {
   pop: 'Pop',
   setGlobal: 'Set Global',
   getGlobal: 'Get Global',
+  waitForEvent: 'Wait For Event',
 };
 
 export type NodeOfType<T extends NodeType> = Extract<Nodes, { type: T }>;

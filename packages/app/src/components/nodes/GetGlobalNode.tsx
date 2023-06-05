@@ -62,11 +62,11 @@ export const GetGlobalNodeEditor: FC<{
   const isArray = isArrayDataType(node.data.dataType);
 
   const dataTypeOptions = validTypes.map((type) => ({
-    label: dataTypeDisplayNames[type],
+    label: dataTypeDisplayNames[scalarType],
     value: type,
   }));
 
-  const selectedOption = dataTypeOptions.find((option) => option.value === node.data.dataType);
+  const selectedOption = dataTypeOptions.find((option) => option.value === scalarType);
 
   return (
     <div css={editorCss}>
@@ -114,6 +114,7 @@ export const GetGlobalNodeEditor: FC<{
               {...fieldProps}
               label="Array"
               css={checkboxCss}
+              isChecked={isArray}
               onChange={(e) =>
                 onChange?.({
                   ...node,

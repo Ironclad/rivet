@@ -40,6 +40,8 @@ export type InternalProcessContext = ProcessContext & {
   /** Raises a user event that can be listened for on the GraphProcessor. */
   raiseEvent: (eventName: string, data: DataValue | undefined) => void;
 
+  waitEvent: (eventName: string) => Promise<DataValue | undefined>;
+
   /** External functions that have been defined on the GraphProcessor (or its parent). */
   externalFunctions: Record<string, ExternalFunction>;
 
