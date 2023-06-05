@@ -31,7 +31,7 @@ export class EventSourceResponse extends Response {
 
     try {
       while (true) {
-        const { done, value } = await reader.read();
+        const { done, value } = await this.raceWithTimeout(reader.read());
         if (done) {
           break;
         }
