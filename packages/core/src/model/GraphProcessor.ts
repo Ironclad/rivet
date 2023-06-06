@@ -513,7 +513,7 @@ export class GraphProcessor {
       loopInfo.nodes.add(node.id);
     }
 
-    await this.#processNode(node as Nodes);
+    const processId = await this.#processNode(node as Nodes);
 
     if (this.slowMode) {
       await new Promise((resolve) => setTimeout(resolve, 250));
@@ -554,7 +554,8 @@ export class GraphProcessor {
     let childLoopInfo = loopInfo;
     if (node.type === 'loopController') {
       if (childLoopInfo != null && childLoopInfo.loopControllerId !== node.id) {
-        throw new Error('Nested loops are not supported');
+        this.#nodeErrored(node, new Error('Nested loops are not supported'), processId);
+        return;
       }
 
       childLoopInfo = {
@@ -568,9 +569,12 @@ export class GraphProcessor {
       };
 
       if (childLoopInfo.iterationCount > (node.data.maxIterations ?? 100)) {
-        throw new Error(
-          `Loop controller ${node.title} has exceeded max iterations of ${node.data.maxIterations ?? 100}`,
+        this.#nodeErrored(
+          node,
+          new Error(`Loop controller ${node.title} has exceeded max iterations of ${node.data.maxIterations ?? 100}`),
+          processId,
         );
+        return;
       }
     }
 
@@ -598,6 +602,7 @@ export class GraphProcessor {
 
     if (this.#abortController.signal.aborted) {
       this.#nodeErrored(node, new Error('Processing aborted'), processId);
+      return processId;
     }
 
     const inputNodes = this.#inputNodesTo(node);
@@ -609,7 +614,7 @@ export class GraphProcessor {
           .join(', ')}`,
       );
       this.#nodeErrored(node, error, processId);
-      return;
+      return processId;
     }
 
     if (this.#isNodeOfType('userInput', node)) {
@@ -619,6 +624,8 @@ export class GraphProcessor {
     } else {
       await this.#processNormalNode(node, processId);
     }
+
+    return processId;
   }
 
   #isNodeOfType<T extends Nodes['type']>(type: T, node: ChartNode): node is Extract<Nodes, { type: T }> {
