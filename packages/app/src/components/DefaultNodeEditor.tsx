@@ -76,6 +76,10 @@ export const defaultEditorContainerStyles = css`
       min-width: 75px;
     }
 
+    &.use-input-toggle label:first-child {
+      min-width: unset;
+    }
+
     div,
     label {
       margin: 0;
@@ -334,7 +338,7 @@ export const DefaultNumberEditor: FC<{
           max={editor.max}
           step={editor.step}
           {...fieldProps}
-          value={data[editor.dataKey] as number | undefined}
+          value={(data[editor.dataKey] ?? editor.defaultValue) as number | undefined}
           onChange={(e) =>
             onChange({
               ...node,
