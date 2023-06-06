@@ -387,7 +387,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             frequency_penalty: frequencyPenalty,
             presence_penalty: presencePenalty,
             stop: stop || undefined,
-            tools: toolMap,
+            tools: Object.keys(toolMap).length === 0 ? undefined : toolMap,
             format: this.data.enableToolUse ? 'merged' : undefined,
           };
           const cacheKey = JSON.stringify(options);
