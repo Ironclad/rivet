@@ -553,7 +553,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             } else {
               output['response' as PortId] = {
                 type: 'string',
-                value: responseChoicesParts[0]!.join(''),
+                value: responseChoicesParts[0]?.join('') ?? '',
               };
             }
 
@@ -566,7 +566,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                     value: toolCallJsons,
                   };
                 } else {
-                  const toolCallJson = JSON.parse(toolCallChoicesParts[0]!.join(''));
+                  const toolCallJson = JSON.parse(toolCallChoicesParts[0]?.join('') ?? '');
                   output['tool-call' as PortId] = {
                     type: 'object',
                     value: toolCallJson,
@@ -581,7 +581,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                 } else {
                   output['tool-call' as PortId] = {
                     type: 'string',
-                    value: toolCallChoicesParts[0]!.join(''),
+                    value: toolCallChoicesParts[0]?.join('') ?? '',
                   };
                 }
               }
