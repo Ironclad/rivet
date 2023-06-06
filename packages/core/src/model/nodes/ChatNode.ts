@@ -1,6 +1,6 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { ChatMessage, GptTool, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue';
 import {
   assertValidModel,
@@ -9,6 +9,7 @@ import {
   getTokenCountForMessages,
   getTokenCountForString,
   modelMaxTokens,
+  modelOptions,
   modelToTiktokenModel,
 } from '../../utils/tokenizer';
 import { addWarning } from '../../utils/outputs';
@@ -59,6 +60,9 @@ export type ChatNodeData = {
 
   user?: string;
   useUserInput?: boolean;
+
+  numberOfChoices?: number;
+  useNumberOfChoicesInput?: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
@@ -200,6 +204,14 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       });
     }
 
+    if (this.data.useNumberOfChoicesInput) {
+      inputs.push({
+        dataType: 'number',
+        id: 'numberOfChoices' as PortId,
+        title: 'Number of Choices',
+      });
+    }
+
     inputs.push({
       dataType: ['chat-message', 'chat-message[]'] as const,
       id: 'prompt' as PortId,
@@ -220,11 +232,19 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
   getOutputDefinitions(): NodeOutputDefinition[] {
     const outputs: NodeOutputDefinition[] = [];
 
-    outputs.push({
-      dataType: 'string',
-      id: 'response' as PortId,
-      title: 'Response',
-    });
+    if (this.data.useNumberOfChoicesInput || (this.data.numberOfChoices ?? 1) > 1) {
+      outputs.push({
+        dataType: 'string[]',
+        id: 'response' as PortId,
+        title: 'Responses',
+      });
+    } else {
+      outputs.push({
+        dataType: 'string',
+        id: 'response' as PortId,
+        title: 'Response',
+      });
+    }
 
     if (this.data.enableToolUse) {
       outputs.push({
@@ -235,6 +255,101 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     }
 
     return outputs;
+  }
+
+  getEditors(): EditorDefinition<ChatNode>[] {
+    return [
+      {
+        type: 'dropdown',
+        label: 'Model',
+        dataKey: 'model',
+        useInputToggleDataKey: 'useModelInput',
+        options: modelOptions,
+      },
+      {
+        type: 'number',
+        label: 'Temperature',
+        dataKey: 'temperature',
+        useInputToggleDataKey: 'useTemperatureInput',
+        min: 0,
+        max: 2,
+        step: 0.1,
+      },
+      {
+        type: 'number',
+        label: 'Top P',
+        dataKey: 'top_p',
+        useInputToggleDataKey: 'useTopPInput',
+        min: 0,
+        max: 1,
+        step: 0.1,
+      },
+      {
+        type: 'toggle',
+        label: 'Use Top P',
+        dataKey: 'useTopP',
+        useInputToggleDataKey: 'useUseTopPInput',
+      },
+      {
+        type: 'number',
+        label: 'Max Tokens',
+        dataKey: 'maxTokens',
+        useInputToggleDataKey: 'useMaxTokensInput',
+        min: 0,
+        max: Number.MAX_SAFE_INTEGER,
+        step: 1,
+      },
+      {
+        type: 'string',
+        label: 'Stop',
+        dataKey: 'stop',
+        useInputToggleDataKey: 'useStopInput',
+      },
+      {
+        type: 'number',
+        label: 'Presence Penalty',
+        dataKey: 'presencePenalty',
+        useInputToggleDataKey: 'usePresencePenaltyInput',
+        min: 0,
+        max: 2,
+        step: 0.1,
+      },
+      {
+        type: 'number',
+        label: 'Frequency Penalty',
+        dataKey: 'frequencyPenalty',
+        useInputToggleDataKey: 'useFrequencyPenaltyInput',
+        min: 0,
+        max: 2,
+        step: 0.1,
+      },
+      {
+        type: 'string',
+        label: 'User',
+        dataKey: 'user',
+        useInputToggleDataKey: 'useUserInput',
+      },
+      {
+        type: 'number',
+        label: 'Number of Choices',
+        dataKey: 'numberOfChoices',
+        useInputToggleDataKey: 'useNumberOfChoicesInput',
+        min: 1,
+        max: 10,
+        step: 1,
+        defaultValue: 1,
+      },
+      {
+        type: 'toggle',
+        label: 'Enable Tool Use',
+        dataKey: 'enableToolUse',
+      },
+      {
+        type: 'toggle',
+        label: 'Cache (same inputs, same outputs)',
+        dataKey: 'cache',
+      },
+    ];
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
@@ -271,6 +386,10 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     const frequencyPenalty = this.data.useFrequencyPenaltyInput
       ? coerceTypeOptional(inputs['frequencyPenalty' as PortId], 'number') ?? this.data.frequencyPenalty
       : this.data.frequencyPenalty;
+
+    const numberOfChoices = this.data.useNumberOfChoicesInput
+      ? coerceTypeOptional(inputs['numberOfChoices' as PortId], 'number') ?? this.data.numberOfChoices ?? 1
+      : this.data.numberOfChoices ?? 1;
 
     const prompt = inputs['prompt' as PortId];
     if (!prompt) {
@@ -374,6 +493,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       maxTokens = Math.floor((modelMaxTokens[model] - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
     }
 
+    const isMultiResponse = this.data.useNumberOfChoicesInput || (this.data.numberOfChoices ?? 1) > 1;
+
     try {
       return await retry(
         async () => {
@@ -383,7 +504,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             temperature: useTopP ? undefined : temperature,
             top_p: useTopP ? topP : undefined,
             max_tokens: maxTokens,
-            n: 1,
+            n: numberOfChoices,
             frequency_penalty: frequencyPenalty,
             presence_penalty: presencePenalty,
             stop: stop || undefined,
@@ -408,49 +529,80 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             ...options,
           });
 
-          let responseParts: string[] = [];
-          let toolCallParts: string[] = [];
+          let responseChoicesParts: string[][] = [];
+          let toolCallChoicesParts: string[][] = [];
 
           for await (const chunk of chunks) {
-            const { delta } = chunk?.choices?.[0] ?? {};
+            for (const { delta, index } of chunk.choices) {
+              if (delta.content != null) {
+                responseChoicesParts[index] ??= [];
+                responseChoicesParts[index]!.push(delta.content);
+              }
 
-            if (delta?.content != null) {
-              responseParts.push(delta.content);
+              if (delta.tool_call) {
+                toolCallChoicesParts[index] ??= [];
+                toolCallChoicesParts[index]!.push(delta.tool_call);
+              }
             }
 
-            if (delta?.tool_call) {
-              toolCallParts.push(delta.tool_call);
-            }
-
-            output['response' as PortId] = {
-              type: 'string',
-              value: responseParts.join(''),
-            };
-
-            try {
-              const toolCallJson = JSON.parse(toolCallParts.join(''));
-              output['tool-call' as PortId] = {
-                type: 'object',
-                value: toolCallJson,
+            if (isMultiResponse) {
+              output['response' as PortId] = {
+                type: 'string[]',
+                value: responseChoicesParts.map((parts) => parts.join('')),
               };
-            } catch (err) {
-              output['tool-call' as PortId] = {
+            } else {
+              output['response' as PortId] = {
                 type: 'string',
-                value: toolCallParts.join(''),
+                value: responseChoicesParts[0]!.join(''),
               };
+            }
+
+            if (toolCallChoicesParts.length > 0) {
+              try {
+                if (isMultiResponse) {
+                  const toolCallJsons = toolCallChoicesParts.map((choiceParts) => JSON.parse(choiceParts.join('')));
+                  output['tool-call' as PortId] = {
+                    type: 'object[]',
+                    value: toolCallJsons,
+                  };
+                } else {
+                  const toolCallJson = JSON.parse(toolCallChoicesParts[0]!.join(''));
+                  output['tool-call' as PortId] = {
+                    type: 'object',
+                    value: toolCallJson,
+                  };
+                }
+              } catch (err) {
+                if (isMultiResponse) {
+                  output['tool-call' as PortId] = {
+                    type: 'string[]',
+                    value: toolCallChoicesParts.map((parts) => parts.join('')),
+                  };
+                } else {
+                  output['tool-call' as PortId] = {
+                    type: 'string',
+                    value: toolCallChoicesParts[0]!.join(''),
+                  };
+                }
+              }
+
+              console.dir(output);
             }
 
             context.onPartialOutputs?.(output);
           }
 
-          if (responseParts.length === 0 && toolCallParts.length === 0) {
+          if (responseChoicesParts.length === 0 && toolCallChoicesParts.length === 0) {
             throw new Error('No response from OpenAI');
           }
 
           const requestTokenCount = getTokenCountForMessages(completionMessages, modelToTiktokenModel[model]);
-          output['requestTokens' as PortId] = { type: 'number', value: requestTokenCount };
+          output['requestTokens' as PortId] = { type: 'number', value: requestTokenCount * numberOfChoices };
 
-          const responseTokenCount = getTokenCountForString(responseParts.join(), modelToTiktokenModel[model]);
+          const responseTokenCount = responseChoicesParts
+            .map((choiceParts) => getTokenCountForString(choiceParts.join(), modelToTiktokenModel[model]))
+            .reduce((a, b) => a + b, 0);
+
           output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
 
           const cost =

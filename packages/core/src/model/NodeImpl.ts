@@ -139,6 +139,7 @@ export type NumberEditorDefinition<T extends ChartNode> = {
   label: string;
 
   dataKey: DataOfType<T, number>;
+  defaultValue?: number;
 
   useInputToggleDataKey?: DataOfType<T, boolean>;
 
