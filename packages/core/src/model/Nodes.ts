@@ -140,12 +140,12 @@ export type Nodes = typeof register.NodesType;
 
 export type NodeType = typeof register.NodeTypesType;
 
-export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<ChartNode> => {
+export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<T> => {
   return register.createImpl(node);
 };
 
 export function createUnknownNodeInstance(node: ChartNode): NodeImpl<ChartNode> {
-  return createNodeInstance(node as Nodes);
+  return createNodeInstance(node as Nodes) as NodeImpl<ChartNode>;
 }
 
 export function nodeFactory<T extends NodeType>(type: T): Extract<Nodes, { type: T }> {
