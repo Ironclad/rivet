@@ -89,8 +89,6 @@ function projectV3Deserializer(data: unknown): Project {
 
   doubleCheckProject(project);
 
-  console.dir(project, { depth: null });
-
   return project;
 }
 
