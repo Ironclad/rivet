@@ -380,6 +380,7 @@ export const DefaultCodeEditor: FC<{
       minimap: {
         enabled: false,
       },
+      wordWrap: 'on',
       value: (nodeLatest.current?.data as Record<string, unknown>)[editorDef.dataKey] as string | undefined,
     });
     editor.onDidChangeModelContent(() => {

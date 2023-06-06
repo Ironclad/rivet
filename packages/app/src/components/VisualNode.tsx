@@ -25,7 +25,7 @@ import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { useGetNodeIO } from '../hooks/useGetNodeIO';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { LoadingSpinner } from './LoadingSpinner';
-import { draggingNodesState, lastMousePositionState } from '../state/graphBuilder';
+import { lastMousePositionState } from '../state/graphBuilder';
 
 export type VisualNodeProps = {
   node: ChartNode;

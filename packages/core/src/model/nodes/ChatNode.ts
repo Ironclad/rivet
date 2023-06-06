@@ -585,8 +585,6 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                   };
                 }
               }
-
-              console.dir(output);
             }
 
             context.onPartialOutputs?.(output);
@@ -616,10 +614,31 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           return output;
         },
         {
-          retries: 4,
+          forever: true,
+          maxRetryTime: 1000 * 60 * 5,
+          factor: 2.5,
+          minTimeout: 500,
+          maxTimeout: 5000,
+          randomize: true,
           signal: context.signal,
           onFailedAttempt(err) {
+            const { retriesLeft } = err;
+
             if (err instanceof OpenAIError) {
+              if (err.status === 429) {
+                console.warn(err);
+
+                if (retriesLeft) {
+                  context.onPartialOutputs?.({
+                    ['response' as PortId]: {
+                      type: 'string',
+                      value: 'OpenAI API rate limit exceeded, retrying...',
+                    },
+                  });
+                  return;
+                }
+              }
+
               if (err.status === 500 || err.status === 400) {
                 console.error(err);
                 throw new Error(err.message);
