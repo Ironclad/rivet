@@ -14,14 +14,13 @@ import {
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
 import { GraphId, NodeGraph } from './NodeGraph';
 import { NodeImpl } from './NodeImpl';
-import { LoopControllerNode, NodeType, Nodes, createNodeInstance } from './Nodes';
+import { NodeType, Nodes, createUnknownNodeInstance } from './Nodes';
 import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode';
 import PQueue from 'p-queue';
 import { getError } from '../utils/errors';
 import Emittery from 'emittery';
 import { entries, fromEntries, values } from '../utils/typeSafety';
 import { isNotNull } from '../utils/genericUtilFunctions';
-import { GraphInputNode, GraphInputNodeImpl } from './nodes/GraphInputNode';
 import { Project } from './Project';
 import { nanoid } from 'nanoid';
 import { InternalProcessContext, ProcessContext, ProcessId } from './ProcessContext';
@@ -176,7 +175,7 @@ export class GraphProcessor {
 
     // Create node instances and store them in a lookup table
     for (const node of this.#graph.nodes) {
-      this.#nodeInstances[node.id] = createNodeInstance(node as Nodes);
+      this.#nodeInstances[node.id] = createUnknownNodeInstance(node as Nodes);
       this.#nodesById[node.id] = node;
     }
 
