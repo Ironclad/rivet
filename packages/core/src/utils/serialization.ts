@@ -255,6 +255,8 @@ function toSerializedNode(node: ChartNode, allNodes: ChartNode[], allConnections
     visualData: `${node.visualData.x}/${node.visualData.y}/${node.visualData.width ?? 'null'}/${
       node.visualData.zIndex ?? 'null'
     }`,
+    isSplitRun: node.isSplitRun,
+    splitRunMax: node.splitRunMax,
     data: node.data,
     outgoingConnections: allConnections
       .filter((connection) => connection.outputNodeId === node.id)
@@ -276,6 +278,8 @@ function fromSerializedNode(serializedNode: SerializedNode): [ChartNode, NodeCon
       title: serializedNode.title,
       description: serializedNode.description,
       type: serializedNode.type,
+      isSplitRun: serializedNode.isSplitRun,
+      splitRunMax: serializedNode.splitRunMax,
       visualData: {
         x: parseFloat(x!),
         y: parseFloat(y!),
