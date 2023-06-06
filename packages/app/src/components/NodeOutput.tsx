@@ -4,12 +4,11 @@ import { FC, ReactNode, memo, useMemo, useState } from 'react';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { copyToClipboard } from '../utils/copyToClipboard';
-import { ChartNode, PortId } from '@ironclad/nodai-core';
+import { ChartNode, PortId, getWarnings } from '@ironclad/nodai-core';
 import { css } from '@emotion/react';
 import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-line.svg';
 import { ReactComponent as ExpandIcon } from 'majesticons/line/maximize-line.svg';
 import { FullScreenModal } from './FullScreenModal';
-import { getWarnings } from '../utils/outputs';
 import { RenderDataOutputs } from './RenderDataValue';
 import { entries } from '../utils/typeSafety';
 import { orderBy } from 'lodash-es';
@@ -155,7 +154,7 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
       return;
     }
     setSelectedPage((page) => {
-      const pageNum = page === 'latest' ? output.length : page;
+      const pageNum = page === 'latest' ? output.length - 1 : page;
       return pageNum > 0 ? pageNum - 1 : pageNum;
     });
   });
@@ -165,7 +164,7 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
       return;
     }
     setSelectedPage((page) => {
-      const pageNum = page === 'latest' ? output.length : page;
+      const pageNum = page === 'latest' ? output.length - 1 : page;
       return pageNum < output.length - 1 ? pageNum + 1 : pageNum;
     });
   });

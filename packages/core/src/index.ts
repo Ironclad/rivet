@@ -14,3 +14,4 @@ export * from './utils/coerceType';
 export * from './utils/expectType';
 export * from './utils/errors';
 export * from './utils/serialization';
+export * from './utils/outputs';

@@ -30,8 +30,6 @@ import {
   ProcessId,
   StringArrayDataValue,
   coerceTypeOptional,
-  expectType,
-  getError,
 } from '@ironclad/nodai-core';
 import { TauriNativeApi } from '../model/native/TauriNativeApi';
 import { setCurrentDebuggerMessageHandler } from '../hooks/useRemoteDebugger';
