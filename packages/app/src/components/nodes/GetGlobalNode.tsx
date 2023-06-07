@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { GetGlobalNode } from '@ironclad/nodai-core';
+import { GetGlobalNode } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export const GetGlobalNodeBody: FC<{

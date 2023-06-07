@@ -61,7 +61,7 @@ try {
   }
 
   // Combine all dependencies since we bundled the two packages
-  const inlinedPackages = ['@ironclad/nodai-core', 'lodash-es', 'p-retry', 'emittery'];
+  const inlinedPackages = ['@ironclad/rivet-core', 'lodash-es', 'p-retry', 'emittery'];
   const nodePackageJSON = JSON.parse(await readFile('packages/node/package.json', 'utf8'));
   const corePackageJSON = JSON.parse(await readFile('packages/core/package.json', 'utf8'));
   const combinedDependencies = {
@@ -71,7 +71,7 @@ try {
   };
 
   const newPackageJSON = {
-    name: '@ironclad/nodai-node',
+    name: '@ironclad/rivet-node',
     main: 'bundle.js',
     types: 'packages/node/dist/index.d.ts',
     dependencies: combinedDependencies,

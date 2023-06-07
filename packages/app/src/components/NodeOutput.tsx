@@ -4,7 +4,7 @@ import { FC, ReactNode, memo, useMemo, useState } from 'react';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { copyToClipboard } from '../utils/copyToClipboard';
-import { ChartNode, PortId, getWarnings } from '@ironclad/nodai-core';
+import { ChartNode, PortId, getWarnings } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-line.svg';
 import { ReactComponent as ExpandIcon } from 'majesticons/line/maximize-line.svg';

@@ -10,13 +10,13 @@ import { dirname } from 'node:path';
 // https://vitejs.dev/config/
 export default defineConfig({
   optimizeDeps: {
-    exclude: ['@ironclad/nodai-core'],
+    exclude: ['@ironclad/rivet-core'],
   },
   resolve: {
     preserveSymlinks: true,
 
     alias: {
-      '@ironclad/nodai-core': dirname(require.resolve('@ironclad/nodai-core/src/index.ts')),
+      '@ironclad/rivet-core': dirname(require.resolve('@ironclad/rivet-core/src/index.ts')),
     },
   },
   plugins: [

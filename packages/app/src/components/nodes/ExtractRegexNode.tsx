@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import styled from '@emotion/styled';
-import { ExtractRegexNode } from '@ironclad/nodai-core';
+import { ExtractRegexNode } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type ExtractRegexNodeBodyProps = {

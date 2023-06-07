@@ -9,7 +9,7 @@ import {
   inferType,
   isArrayDataValue,
   isFunctionDataValue,
-} from '@ironclad/nodai-core';
+} from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { keys } from '../utils/typeSafety';
 

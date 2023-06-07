@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { nodesSelector } from '../state/graph';
 import styled from '@emotion/styled';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
-import { NodeType, getNodeDisplayName, ChartNode } from '@ironclad/nodai-core';
+import { NodeType, getNodeDisplayName, ChartNode } from '@ironclad/rivet-core';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes';
 import produce from 'immer';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';

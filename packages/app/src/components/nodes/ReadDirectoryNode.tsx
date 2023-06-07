@@ -5,7 +5,7 @@ import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
 import { openDirectory } from '../../utils/fileIO';
 import Button from '@atlaskit/button';
-import { ChartNode, Outputs, PortId, ReadDirectoryNode, expectType } from '@ironclad/nodai-core';
+import { ChartNode, Outputs, PortId, ReadDirectoryNode, expectType } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 type ReadDirectoryNodeBodyProps = {

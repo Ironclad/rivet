@@ -9,7 +9,7 @@ import styled from '@emotion/styled';
 import { ContextMenuData } from '../hooks/useContextMenu';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { useStableCallback } from '../hooks/useStableCallback';
-import { ArrayDataValue, ChartNode, NodeId, NodeType, Nodes, StringDataValue, nodeFactory } from '@ironclad/nodai-core';
+import { ArrayDataValue, ChartNode, NodeId, NodeType, Nodes, StringDataValue, nodeFactory } from '@ironclad/rivet-core';
 import { ProcessQuestions, userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
 import { entries } from '../utils/typeSafety';
 import { UserInputModal } from './UserInputModal';

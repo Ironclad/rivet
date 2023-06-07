@@ -13,7 +13,7 @@ import {
 } from 'react';
 import { useRecoilValue } from 'recoil';
 import { match } from 'ts-pattern';
-import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/nodai-core';
+import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
 import { lastRunData, selectedProcessPage } from '../state/dataFlow';
 import { NodeBody } from './NodeBody';
 import { NodeOutput } from './NodeOutput';

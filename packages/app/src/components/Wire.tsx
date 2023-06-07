@@ -6,7 +6,7 @@ import {
   NodeInputDefinition,
   NodeOutputDefinition,
   PortId,
-} from '@ironclad/nodai-core';
+} from '@ironclad/rivet-core';
 import { useRecoilValue } from 'recoil';
 import { nodesSelector } from '../state/graph';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';

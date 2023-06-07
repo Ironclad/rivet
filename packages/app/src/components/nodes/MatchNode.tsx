@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { ChartNode, MatchNode, NumberEditorDefinition } from '@ironclad/nodai-core';
+import { ChartNode, MatchNode, NumberEditorDefinition } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 import { DefaultNumberEditor, defaultEditorContainerStyles } from '../DefaultNodeEditor';

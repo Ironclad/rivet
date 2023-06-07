@@ -1,7 +1,7 @@
 import { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
 import produce from 'immer';
 import { useCallback } from 'react';
-import { ChartNode } from '@ironclad/nodai-core';
+import { ChartNode } from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { canvasPositionState, draggingNodesState, selectedNodesState } from '../state/graphBuilder';
 

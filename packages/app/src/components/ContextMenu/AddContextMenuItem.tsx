@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { NodeType } from '@ironclad/nodai-core';
+import { NodeType } from '@ironclad/rivet-core';
 import { ContextMenuItem } from './ContextMenu';
 import { useAddContextMenuGroups } from '../../hooks/useAddContextMenuGroups';
 

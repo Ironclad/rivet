@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import styled from '@emotion/styled';
-import { TrimChatMessagesNode } from '@ironclad/nodai-core';
+import { TrimChatMessagesNode } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type TrimChatMessagesNodeBodyProps = {

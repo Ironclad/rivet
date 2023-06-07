@@ -1,7 +1,7 @@
 import { FC, useLayoutEffect, useMemo, useRef } from 'react';
 import { monaco } from '../../utils/monaco';
 import styled from '@emotion/styled';
-import { TextNode } from '@ironclad/nodai-core';
+import { TextNode } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type TextNodeBodyProps = {

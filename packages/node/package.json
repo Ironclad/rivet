@@ -1,5 +1,5 @@
 {
-  "name": "@ironclad/nodai-node",
+  "name": "@ironclad/rivet-node",
   "main": "dist/bundle.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -8,7 +8,7 @@
     "bundle": "ts-node bundle.esbuild.ts"
   },
   "dependencies": {
-    "@ironclad/nodai-core": "workspace:^",
+    "@ironclad/rivet-core": "workspace:^",
     "emittery": "^1.0.1",
     "lodash-es": "^4.17.21",
     "ts-pattern": "^4.3.0",

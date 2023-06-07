@@ -3,7 +3,7 @@ import Toggle from '@atlaskit/toggle';
 import { css } from '@emotion/react';
 import { openFile } from '../../utils/fileIO';
 import Button from '@atlaskit/button';
-import { ChartNode, ReadFileNode } from '@ironclad/nodai-core';
+import { ChartNode, ReadFileNode } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 type ReadFileNodeBodyProps = {

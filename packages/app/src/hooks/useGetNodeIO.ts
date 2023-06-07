@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 import { graphState } from '../state/graph';
 import { useStableCallback } from './useStableCallback';
-import { ChartNode, NodeId, Nodes, createNodeInstance } from '@ironclad/nodai-core';
+import { ChartNode, NodeId, Nodes, createNodeInstance } from '@ironclad/rivet-core';
 import { projectState } from '../state/savedGraphs';
 import { keyBy } from 'lodash-es';
 import { useMemo } from 'react';

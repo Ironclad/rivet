@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { ToolNode } from '@ironclad/nodai-core';
+import { ToolNode } from '@ironclad/rivet-core';
 import styled from '@emotion/styled';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 

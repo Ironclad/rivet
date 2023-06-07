@@ -1,4 +1,4 @@
-import { NodeType } from '@ironclad/nodai-core';
+import { NodeType } from '@ironclad/rivet-core';
 import { useStableCallback } from '../../hooks/useStableCallback';
 import { ContextMenuProps } from './ContextMenu';
 import { FC } from 'react';

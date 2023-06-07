@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Outputs, PortId, UserInputNode, expectType } from '@ironclad/nodai-core';
+import { Outputs, PortId, UserInputNode, expectType } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type UserInputNodeBodyProps = {

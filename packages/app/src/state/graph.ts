@@ -1,6 +1,6 @@
 import { DefaultValue, atom, selector } from 'recoil';
 import { persistAtom } from './persist';
-import { NodeGraph, emptyNodeGraph } from '@ironclad/nodai-core';
+import { NodeGraph, emptyNodeGraph } from '@ironclad/rivet-core';
 
 export const graphState = atom<NodeGraph>({
   key: 'graphState',

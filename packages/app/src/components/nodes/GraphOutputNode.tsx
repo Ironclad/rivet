@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { GraphOutputNode } from '@ironclad/nodai-core';
+import { GraphOutputNode } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type GraphOutputNodeBodyProps = {

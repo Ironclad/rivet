@@ -1,5 +1,5 @@
 import { FC, useLayoutEffect, useMemo, useRef } from 'react';
-import { CodeNode, Outputs } from '@ironclad/nodai-core';
+import { CodeNode, Outputs } from '@ironclad/rivet-core';
 import { monaco } from '../../utils/monaco';
 import { RenderDataValue } from '../RenderDataValue';
 import styled from '@emotion/styled';

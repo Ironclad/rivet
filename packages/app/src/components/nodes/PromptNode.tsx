@@ -1,7 +1,7 @@
 import { FC, memo, useLayoutEffect, useMemo, useRef } from 'react';
 import { monaco } from '../../utils/monaco';
 import styled from '@emotion/styled';
-import { PromptNode, PromptNodeData } from '@ironclad/nodai-core';
+import { PromptNode, PromptNodeData } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type PromptNodeBodyProps = {

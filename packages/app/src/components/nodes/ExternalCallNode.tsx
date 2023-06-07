@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { ExternalCallNode } from '@ironclad/nodai-core';
+import { ExternalCallNode } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type ExternalCallNodeBodyProps = {

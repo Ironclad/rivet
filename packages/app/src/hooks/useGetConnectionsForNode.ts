@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 import { connectionsSelector } from '../state/graph';
-import { ChartNode } from '@ironclad/nodai-core';
+import { ChartNode } from '@ironclad/rivet-core';
 import { useCallback } from 'react';
 
 export function useGetConnectionsForNode() {

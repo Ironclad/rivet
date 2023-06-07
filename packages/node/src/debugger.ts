@@ -3,7 +3,7 @@ import { GraphId, GraphProcessor, getError } from './core';
 import { match } from 'ts-pattern';
 import Emittery from 'emittery';
 
-export interface NodaiDebuggerServer {
+export interface RivetDebuggerServer {
   on: Emittery<DebuggerEvents>['on'];
   off: Emittery<DebuggerEvents>['off'];
 
@@ -27,7 +27,7 @@ export function startDebuggerServer(
     port?: number;
     dynamicGraphRun?: (data: { client: WebSocket; graphId: GraphId }) => Promise<void>;
   } = {},
-): NodaiDebuggerServer {
+): RivetDebuggerServer {
   const { port = 21888 } = options;
 
   const server = options.server ?? new WebSocketServer({ port });

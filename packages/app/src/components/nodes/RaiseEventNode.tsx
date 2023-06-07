@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { RaiseEventNode } from '@ironclad/nodai-core';
+import { RaiseEventNode } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type RaiseEventNodeBodyProps = {

@@ -1,5 +1,5 @@
 import { atom, selectorFamily } from 'recoil';
-import { GraphId, Inputs, NodeId, Outputs, ProcessId } from '@ironclad/nodai-core';
+import { GraphId, Inputs, NodeId, Outputs, ProcessId } from '@ironclad/rivet-core';
 
 export type ProcessDataForNode = {
   processId: ProcessId;

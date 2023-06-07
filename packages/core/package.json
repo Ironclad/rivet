@@ -1,5 +1,5 @@
 {
-  "name": "@ironclad/nodai-core",
+  "name": "@ironclad/rivet-core",
   "packageManager": "yarn@3.5.0",
   "main": "dist/index.js",
   "module": "dist/index.js",

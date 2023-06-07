@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { ChunkNode } from '@ironclad/nodai-core';
+import { ChunkNode } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type ChunkNodeBodyProps = {
