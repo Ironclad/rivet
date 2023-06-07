@@ -1,5 +1,5 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { NodeGraph, emptyNodeGraph } from '@ironclad/nodai-core';
+import { NodeGraph, emptyNodeGraph } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph';
 import { canvasPositionState, sidebarOpenState } from '../state/graphBuilder';

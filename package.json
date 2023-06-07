@@ -1,5 +1,5 @@
 {
-  "name": "@ironclad/nodai",
+  "name": "@ironclad/rivet",
   "packageManager": "yarn@3.5.0",
   "workspaces": [
     "packages/*"
@@ -7,9 +7,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "yarn workspace @ironclad/nodai-app run dev",
+    "dev": "yarn workspace @ironclad/rivet-app run dev",
     "release-node": "node --loader ts-node/esm --loader ./.pnp.loader.mjs release-node.mts",
-    "build-lib": "yarn workspace @ironclad/nodai-core run build && yarn workspace @ironclad/nodai-node run build"
+    "build-lib": "yarn workspace @ironclad/rivet-core run build && yarn workspace @ironclad/rivet-node run build"
   },
   "devDependencies": {
     "@swc/core": "^1.3.59",

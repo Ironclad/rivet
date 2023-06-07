@@ -11,7 +11,7 @@ import {
 } from './core';
 
 import { readFile } from 'node:fs/promises';
-import { NodaiDebuggerServer } from './debugger';
+import { RivetDebuggerServer } from './debugger';
 import { PascalCase } from 'type-fest';
 import { NodeNativeApi } from './native/NodeNativeApi';
 import { mapValues } from 'lodash-es';
@@ -31,7 +31,7 @@ export type RunGraphOptions = {
   graph: string;
   inputs?: Record<string, LooseDataValue>;
   context?: Record<string, LooseDataValue>;
-  remoteDebugger?: NodaiDebuggerServer;
+  remoteDebugger?: RivetDebuggerServer;
   nativeApi?: NativeApi;
   externalFunctions?: {
     [key: string]: ExternalFunction;

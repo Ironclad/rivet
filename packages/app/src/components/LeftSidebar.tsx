@@ -13,7 +13,7 @@ import { ReactComponent as ExpandRightIcon } from 'majesticons/line/menu-expand-
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { useDeleteGraph } from '../hooks/useDeleteGraph';
 import { useLoadGraph } from '../hooks/useLoadGraph';
-import { GraphId, emptyNodeGraph } from '@ironclad/nodai-core';
+import { GraphId, emptyNodeGraph } from '@ironclad/rivet-core';
 import clsx from 'clsx';
 import { useSaveCurrentGraph } from '../hooks/useSaveCurrentGraph';
 import { useSaveProject } from '../hooks/useSaveProject';

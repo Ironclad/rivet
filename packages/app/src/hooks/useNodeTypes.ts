@@ -1,6 +1,6 @@
-import { NodeOfType, NodeType, Outputs } from '@ironclad/nodai-core';
+import { NodeOfType, NodeType, Outputs } from '@ironclad/rivet-core';
 import { FC } from 'react';
-import { ChartNode } from '@ironclad/nodai-core';
+import { ChartNode } from '@ironclad/rivet-core';
 import { assemblePromptNodeDescriptor } from '../components/nodes/AssemblePromptNode';
 import { chatNodeDescriptor } from '../components/nodes/ChatNode';
 import { chunkNodeDescriptor } from '../components/nodes/ChunkNode';

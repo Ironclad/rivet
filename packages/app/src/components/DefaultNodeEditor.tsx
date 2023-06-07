@@ -15,7 +15,7 @@ import {
   getScalarTypeOf,
   isArrayDataType,
   scalarTypes,
-} from '@ironclad/nodai-core';
+} from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { Field, Label } from '@atlaskit/form';
 import { match } from 'ts-pattern';

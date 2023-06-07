@@ -1,4 +1,4 @@
-import { GraphId, NodeGraph, NodeId } from '@ironclad/nodai-core';
+import { GraphId, NodeGraph, NodeId } from '@ironclad/rivet-core';
 import { nanoid } from 'nanoid';
 import { useLoadGraph } from './useLoadGraph';
 import { useStableCallback } from './useStableCallback';

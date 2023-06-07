@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { ExtractObjectPathNode } from '@ironclad/nodai-core';
+import { ExtractObjectPathNode } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type ExtractObjectPathNodeBodyProps = {

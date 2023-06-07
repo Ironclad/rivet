@@ -3,7 +3,7 @@ import * as esbuild from 'esbuild';
 const notExternalPlugin: esbuild.Plugin = {
   name: 'not-external',
   setup(build) {
-    build.onResolve({ filter: /^@ironclad\/nodai-(.+)/ }, async (args) => {
+    build.onResolve({ filter: /^@ironclad\/rivet-(.+)/ }, async (args) => {
       const p = args.path.split('/')[1].split('-').slice(1).join('-');
 
       const result = await build.resolve(`../${p}/src/index.ts`, {

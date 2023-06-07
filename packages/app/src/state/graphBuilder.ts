@@ -1,5 +1,5 @@
 import { atom, atomFamily } from 'recoil';
-import { ChartNode, GraphId, NodeId } from '@ironclad/nodai-core';
+import { ChartNode, GraphId, NodeId } from '@ironclad/rivet-core';
 import { persistAtom } from './persist';
 
 export const selectedNodesState = atom<NodeId[]>({

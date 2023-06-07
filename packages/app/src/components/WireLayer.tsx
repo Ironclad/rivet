@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import { NodeConnection, NodeId, PortId } from '@ironclad/nodai-core';
+import { NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { ConditionallyRenderWire } from './Wire';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';

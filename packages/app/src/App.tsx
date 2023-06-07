@@ -1,11 +1,11 @@
 import { RecoilRoot } from 'recoil';
 import '@atlaskit/css-reset';
-import { NodaiApp } from './components/NodaiApp';
+import { RivetApp } from './components/RivetApp';
 
 function App() {
   return (
     <RecoilRoot>
-      <NodaiApp />
+      <RivetApp />
     </RecoilRoot>
   );
 }

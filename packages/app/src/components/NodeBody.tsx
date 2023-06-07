@@ -1,6 +1,6 @@
 import { FC, memo } from 'react';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes';
-import { ChartNode } from '@ironclad/nodai-core';
+import { ChartNode } from '@ironclad/rivet-core';
 
 const UnknownNodeBody: FC<{ node: ChartNode }> = ({ node }) => {
   return <div></div>;

@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { WaitForEventNode } from '@ironclad/nodai-core';
+import { WaitForEventNode } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type WaitForEventNodeBodyProps = {

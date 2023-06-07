@@ -7,7 +7,7 @@ import {
   deserializeProject,
   serializeGraph,
   serializeProject,
-} from '@ironclad/nodai-core';
+} from '@ironclad/rivet-core';
 
 export async function saveGraphData(graphData: NodeGraph) {
   const filePath = await save({

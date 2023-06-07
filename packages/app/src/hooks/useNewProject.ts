@@ -1,7 +1,7 @@
 import { useSetRecoilState } from 'recoil';
 import { loadedProjectState, projectState } from '../state/savedGraphs';
 import { nanoid } from 'nanoid';
-import { ProjectId, emptyNodeGraph } from '@ironclad/nodai-core';
+import { ProjectId, emptyNodeGraph } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph';
 
 export function useNewProject() {

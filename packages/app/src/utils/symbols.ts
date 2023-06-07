@@ -1,4 +1,4 @@
-import { PortId } from '@ironclad/nodai-core';
+import { PortId } from '@ironclad/rivet-core';
 
 export const ControlFlowExcluded = Symbol('ControlFlowExcluded');
 export const ControlFlowExcludedPort = ControlFlowExcluded as unknown as PortId;

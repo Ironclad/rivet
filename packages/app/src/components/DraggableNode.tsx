@@ -1,5 +1,5 @@
 import { useDraggable } from '@dnd-kit/core';
-import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/nodai-core';
+import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
 import { MouseEvent, FC } from 'react';
 import { useRecoilValue } from 'recoil';
 import { canvasPositionState } from '../state/graphBuilder';

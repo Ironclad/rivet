@@ -30,7 +30,7 @@ import {
   ProcessId,
   StringArrayDataValue,
   coerceTypeOptional,
-} from '@ironclad/nodai-core';
+} from '@ironclad/rivet-core';
 import { TauriNativeApi } from '../model/native/TauriNativeApi';
 import { setCurrentDebuggerMessageHandler } from '../hooks/useRemoteDebugger';
 import { ToastContainer, toast } from 'react-toastify';
@@ -47,7 +47,7 @@ setGlobalTheme({
   colorMode: 'dark',
 });
 
-export const NodaiApp: FC = () => {
+export const RivetApp: FC = () => {
   const graph = useRecoilValue(graphState);
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
   const settings = useRecoilValue(settingsState);

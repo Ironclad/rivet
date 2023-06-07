@@ -1,5 +1,5 @@
 import { readDir, BaseDirectory, readTextFile, readBinaryFile, writeFile, FileEntry } from '@tauri-apps/api/fs';
-import { BaseDir, NativeApi, ReadDirOptions } from '@ironclad/nodai-core';
+import { BaseDir, NativeApi, ReadDirOptions } from '@ironclad/rivet-core';
 
 import { minimatch } from 'minimatch';
 

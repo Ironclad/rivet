@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { GraphInputNode } from '@ironclad/nodai-core';
+import { GraphInputNode } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export type GraphInputNodeBodyProps = {

@@ -3,7 +3,7 @@ import { persistAtom } from './persist';
 import { nanoid } from 'nanoid';
 import { values } from '../utils/typeSafety';
 import produce from 'immer';
-import { GraphId, NodeGraph, Project, ProjectId } from '@ironclad/nodai-core';
+import { GraphId, NodeGraph, Project, ProjectId } from '@ironclad/rivet-core';
 
 // What's the data of the last loaded project?
 export const projectState = atom<Project>({

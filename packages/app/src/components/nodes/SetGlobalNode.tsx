@@ -11,7 +11,7 @@ import {
   scalarTypes,
   getScalarTypeOf,
   isArrayDataType,
-} from '@ironclad/nodai-core';
+} from '@ironclad/rivet-core';
 import Toggle from '@atlaskit/toggle';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 

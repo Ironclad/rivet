@@ -3526,9 +3526,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ironclad/nodai-app@workspace:packages/app":
+"@ironclad/rivet-app@workspace:packages/app":
   version: 0.0.0-use.local
-  resolution: "@ironclad/nodai-app@workspace:packages/app"
+  resolution: "@ironclad/rivet-app@workspace:packages/app"
   dependencies:
     "@atlaskit/button": ^16.6.0
     "@atlaskit/checkbox": ^12.4.6
@@ -3553,7 +3553,7 @@ __metadata:
     "@emotion/babel-preset-css-prop": ^11.10.0
     "@emotion/react": ^11.10.6
     "@emotion/styled": ^11.10.6
-    "@ironclad/nodai-core": "workspace:^"
+    "@ironclad/rivet-core": "workspace:^"
     "@mdx-js/react": ^1.6.22
     "@pmmmwh/react-refresh-webpack-plugin": ^0.5.3
     "@storybook/addon-essentials": ^7.0.0-rc.8
@@ -3659,9 +3659,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ironclad/nodai-core@workspace:^, @ironclad/nodai-core@workspace:packages/core":
+"@ironclad/rivet-core@workspace:^, @ironclad/rivet-core@workspace:packages/core":
   version: 0.0.0-use.local
-  resolution: "@ironclad/nodai-core@workspace:packages/core"
+  resolution: "@ironclad/rivet-core@workspace:packages/core"
   dependencies:
     "@dqbd/tiktoken": ^1.0.7
     "@types/jsonpath": ^0.2.0
@@ -3683,11 +3683,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ironclad/nodai-node@workspace:packages/node":
+"@ironclad/rivet-node@workspace:packages/node":
   version: 0.0.0-use.local
-  resolution: "@ironclad/nodai-node@workspace:packages/node"
+  resolution: "@ironclad/rivet-node@workspace:packages/node"
   dependencies:
-    "@ironclad/nodai-core": "workspace:^"
+    "@ironclad/rivet-core": "workspace:^"
     "@swc/core": ^1.3.59
     "@types/lodash-es": ^4
     "@types/node": ^20.1.1
@@ -3704,9 +3704,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ironclad/nodai@workspace:.":
+"@ironclad/rivet@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@ironclad/nodai@workspace:."
+  resolution: "@ironclad/rivet@workspace:."
   dependencies:
     "@swc/core": ^1.3.59
     "@types/eslint": ^8

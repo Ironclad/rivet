@@ -133,7 +133,7 @@ data:
         Dl9zJxgRRBk7hQ43xWhZv:
           data:
             text: >-
-              
+
 
               Please give me a a list of the top level exported names/functions/etc from this part of the file. Put the items in bullet points.
 
@@ -583,7 +583,7 @@ data:
       metadata:
         description: ""
         id: JcFUPKbbvOvBQYdvItenL
-        name: Get Nodai File By File Name
+        name: Get Rivet File By File Name
       nodes:
         3K-EbZswm_EjMm7YvDp-8:
           data:
@@ -662,7 +662,7 @@ data:
           outgoingConnections:
             - files->"Text" o49i8FBO13BUTSJ9VVpUp/paths
             - root_path->"Text" pL1gfs7YyNnriOtL8t129/root
-          title: List Nodai Files
+          title: List Rivet Files
           type: subGraph
           visualData: -974/509/300/80
         o49i8FBO13BUTSJ9VVpUp:
@@ -1282,7 +1282,7 @@ data:
 
 
               Be extremely thorough and dense in your response. Do not use superfluous words.
-               
+
               ```
 
               {{data}}
@@ -1419,7 +1419,7 @@ data:
       metadata:
         description: ""
         id: d6Pgmz7n8qvXkaNF-2e9P
-        name: List Nodai Files
+        name: List Rivet Files
       nodes:
         FSHys4NrHcjHQvSE_Rv7-:
           data:
@@ -1447,7 +1447,7 @@ data:
               - "**/dist/**"
               - "**/src-tauri/**"
             includeDirectories: false
-            path: /Users/andy.brenneke/Documents/nodai/packages
+            path: /Users/shared/ironclad/rivet/packages
             recursive: true
             relative: true
             useFilterGlobsInput: false
@@ -1613,7 +1613,7 @@ data:
           id: 0xxgB-83ezLpsw0rLpo86
           outgoingConnections:
             - file_contents->"Text" i4cBHxWO1HLsnHg3Yh7qP/file_contents
-          title: Get Nodai File By File Name
+          title: Get Rivet File By File Name
           type: subGraph
           visualData: 5887.468401346239/-209.5399625226982/300/269
         16UsT_tJlpYi717REkv6n:
@@ -1652,7 +1652,7 @@ data:
               Your current task is: No task
 
 
-              If your current task is complete, what is your next task? Please reply with a short key or sentence describing your next task to execute. 
+              If your current task is complete, what is your next task? Please reply with a short key or sentence describing your next task to execute.
 
 
               Reply in this format:
@@ -1718,13 +1718,13 @@ data:
           id: 4S1D75ofp0W1obD11VBqI
           outgoingConnections:
             - files->"Execute Current Task Prompt" KIFBcqmOa5G-MPklHfHVR/files
-          title: List Nodai Files
+          title: List Rivet Files
           type: subGraph
           visualData: 3119.481362252188/-57.27713878661959/300/260
         6P04DpTqBQMOYpBfJuurJ:
           data:
             text: |-
-              
+
               SYSTEM_MESSAGE:
 
               You ran this command:
@@ -1814,9 +1814,9 @@ data:
               yamlDocument:
                 nextTask: The next task I should execute
                 remainingTasks:
-                  - The next task remaining 
+                  - The next task remaining
                   - Another task remaining
-              ``` 
+              ```
 
               Every task MUST be a string value, even if the step contains YAML data.
           id: B0u3WpTZggnq8Lgl7Xv8h
@@ -1874,7 +1874,7 @@ data:
             text: |-
               SYSTEM ERROR: NO SUCH FUNCTION
 
-              INPUT: 
+              INPUT:
 
               ```yml
               {{input}}
@@ -2130,7 +2130,7 @@ data:
           id: SNQCA2ZXN7LQRbPd1M6Mx
           outgoingConnections:
             - file_contents->"Digest File" cV8OdlEuJDaI2v05bTz5X/file_contents
-          title: Get Nodai File By File Name
+          title: Get Rivet File By File Name
           type: subGraph
           visualData: 5899.625587751349/-459.07944232089864/300/267
         TGIDciqmI5zMTLdVk2T2C:
@@ -2255,7 +2255,7 @@ data:
 
               How does the TrimChatMessagesNode component interact with the rest of the system?
 
-              Same as everything else 
+              Same as everything else
 
               Are there any existing tests for the TrimChatMessagesNode component that I should be aware of?
 
@@ -2395,7 +2395,7 @@ data:
             usePathInput: false
           id: iAPKowmhorGhT6DKcjkb7
           outgoingConnections:
-            - all_matches->"Get Nodai File By File Name"
+            - all_matches->"Get Rivet File By File Name"
               0xxgB-83ezLpsw0rLpo86/fileMatch
             - all_matches->"Text" i4cBHxWO1HLsnHg3Yh7qP/file_name
           title: Extract Object Path
@@ -2460,13 +2460,13 @@ data:
               {{task_list}}
 
 
-              Does your last command ran above finish your current task "{{current_task}}"? 
+              Does your last command ran above finish your current task "{{current_task}}"?
 
 
               List the tasks that your last command completed.
 
 
-              Next, imagine a scenario where you are an expert in the Nodai project, would they consider your current task completed? Would they consider the remaining tasks still applicable? Here are some examples of what an expert might ask:
+              Next, imagine a scenario where you are an expert in the Rivet project, would they consider your current task completed? Would they consider the remaining tasks still applicable? Here are some examples of what an expert might ask:
 
 
               "If you need examples, do you have enough? Or would more be better?"
@@ -2500,7 +2500,7 @@ data:
           id: wq5E83vpWqQMlS7AHPnQe
           outgoingConnections:
             - match->"Digest File" cV8OdlEuJDaI2v05bTz5X/file_name
-            - match->"Get Nodai File By File Name"
+            - match->"Get Rivet File By File Name"
               SNQCA2ZXN7LQRbPd1M6Mx/fileMatch
           title: Extract Object Path
           type: extractObjectPath
@@ -2554,7 +2554,7 @@ data:
     zYzI7xjOb0NOj9WPKJOrQ:
       metadata:
         id: zYzI7xjOb0NOj9WPKJOrQ
-        name: "**Nodai Helper"
+        name: "**Rivet Helper"
       nodes:
         1K582UsQEjPvjVRvtf4ag:
           data:
@@ -2577,7 +2577,7 @@ data:
             - files->"Prompt Question List" 5-z53LCARmASeWft67PEH/files
             - files->"Prompt Question List" KbotaIf5SLrUkOubRve1x/files
             - files->"Prompt Question List" eeqzpCkSxMDTin0sOghhU/files
-          title: List Nodai Files
+          title: List Rivet Files
           type: subGraph
           visualData: -2127.682357265696/-240.91939301727035/300/536
         4-0zbzUfiK5tL1R22gT2z:
@@ -2626,7 +2626,7 @@ data:
               {{context}}
 
 
-              These files are present in the Nodai application:
+              These files are present in the Rivet application:
 
 
               {{files}}
@@ -2652,7 +2652,7 @@ data:
               """
 
 
-              Imagine a scenario where you are the expert on the Nodai application, or a project manager on the project. What are your best answers to these questions? You may say that you do not have enough context to answer any given question. Also, phrase the answers in such a way to include the question in them. Directly answer the questions, as if this is documentation on the project.
+              Imagine a scenario where you are the expert on the Rivet application, or a project manager on the project. What are your best answers to these questions? You may say that you do not have enough context to answer any given question. Also, phrase the answers in such a way to include the question in them. Directly answer the questions, as if this is documentation on the project.
             type: user
             useTypeInput: false
           id: 5-z53LCARmASeWft67PEH
@@ -2829,7 +2829,7 @@ data:
               ```
 
 
-              You must include every single step. Every step MUST be a string, even if the list of steps contains YAML data. 
+              You must include every single step. Every step MUST be a string, even if the list of steps contains YAML data.
           id: DYYQPYCdQyMP2w5Bh2QOO
           outgoingConnections:
             - output->"Chat" At8pw5kk0skpMBKEBPgZp/prompt
@@ -2869,7 +2869,7 @@ data:
               {{context}}
 
 
-              These files are present in the Nodai application:
+              These files are present in the Rivet application:
 
 
               {{files}}
@@ -3223,7 +3223,7 @@ data:
 
               yamlDocument:
                 has-questions: true
-                questions: 
+                questions:
                   - This is one questions
                   - This is another question
               ```
@@ -3365,7 +3365,7 @@ data:
               {{feedback}}
               """
 
-              Please write the steps, with the required changes made. 
+              Please write the steps, with the required changes made.
           id: sMP1SZoQAgvMH3UtERway
           outgoingConnections:
             - output->"Chat" eJ4oKMy5hG51V_63xGOf_/prompt
@@ -3525,7 +3525,7 @@ data:
               colors are available in index.css. I'm using Emotion for CSS.
 
 
-              Every node is split into two files. The file in `core`, such as `core/src/model/nodes/TextNode.ts`, contains the main implementation of the node's functionality. The file in `app`, such as `app/src/components/nodes/TextNode.tsx`, contains three react UI components related to showing the node in the application. 
+              Every node is split into two files. The file in `core`, such as `core/src/model/nodes/TextNode.ts`, contains the main implementation of the node's functionality. The file in `app`, such as `app/src/components/nodes/TextNode.tsx`, contains three react UI components related to showing the node in the application.
             type: user
             useTypeInput: false
           id: zc7_qtAZEqumCFsUYVqt7
@@ -3655,6 +3655,6 @@ data:
           type: userInput
           visualData: 284/377/250/2
   metadata:
-    description: Project for Nodai itself
+    description: Project for Rivet itself
     id: KufOYoZj8bXSme0gx4W-e
-    title: Nodai
+    title: Rivet

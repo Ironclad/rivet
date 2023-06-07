@@ -9,7 +9,7 @@ import { WireLayer } from './WireLayer';
 import { ContextMenuData, useContextMenu } from '../hooks/useContextMenu';
 import { useDraggingNode } from '../hooks/useDraggingNode';
 import { useDraggingWire } from '../hooks/useDraggingWire';
-import { ChartNode, NodeConnection, NodeId } from '@ironclad/nodai-core';
+import { ChartNode, NodeConnection, NodeId } from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   CanvasPosition,
@@ -446,6 +446,6 @@ const DebugOverlay: FC<{ enabled: boolean }> = ({ enabled }) => {
     </div>
   );
 };
-function nanoid(): import('@ironclad/nodai-core').GraphId {
+function nanoid(): import('@ironclad/rivet-core').GraphId {
   throw new Error('Function not implemented.');
 }

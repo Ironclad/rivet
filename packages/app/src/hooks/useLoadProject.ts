@@ -1,7 +1,7 @@
 import { useSetRecoilState } from 'recoil';
 import { loadedProjectState, projectState } from '../state/savedGraphs';
 import { loadProjectData } from '../utils/fileIO';
-import { emptyNodeGraph } from '@ironclad/nodai-core';
+import { emptyNodeGraph } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph';
 
 export function useLoadProject() {

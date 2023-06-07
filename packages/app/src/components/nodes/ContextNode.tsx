@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { ContextNode } from '@ironclad/nodai-core';
+import { ContextNode } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
 export const ContextNodeBody: FC<{

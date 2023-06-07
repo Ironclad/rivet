@@ -1,7 +1,7 @@
 import { useSetRecoilState } from 'recoil';
 import { nodesSelector } from '../state/graph';
 import { useCallback } from 'react';
-import { ChartNode } from '@ironclad/nodai-core';
+import { ChartNode } from '@ironclad/rivet-core';
 
 export function useUpdateNode() {
   const setNodes = useSetRecoilState(nodesSelector);

@@ -6,7 +6,7 @@ import { useRecoilValue } from 'recoil';
 import { projectState } from '../../state/savedGraphs';
 import { values } from '../../utils/typeSafety';
 import { nanoid } from 'nanoid';
-import { GraphId, SubGraphNode } from '@ironclad/nodai-core';
+import { GraphId, SubGraphNode } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 import { orderBy } from 'lodash-es';
 
