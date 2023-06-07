@@ -874,6 +874,9 @@ export class GraphProcessor {
 
         return processor;
       },
+      trace: (message) => {
+        this.#emitter.emit('trace', message);
+      },
     };
 
     await this.#waitUntilUnpaused();

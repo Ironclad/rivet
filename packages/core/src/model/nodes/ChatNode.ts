@@ -622,29 +622,29 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           randomize: true,
           signal: context.signal,
           onFailedAttempt(err) {
+            context.trace(`ChatNode failed, retrying: ${err.toString()}`);
+
             const { retriesLeft } = err;
 
-            if (err instanceof OpenAIError) {
-              if (err.status === 429) {
-                console.warn(err);
+            if (!(err instanceof OpenAIError)) {
+              return; // Just retry?
+            }
 
-                if (retriesLeft) {
-                  context.onPartialOutputs?.({
-                    ['response' as PortId]: {
-                      type: 'string',
-                      value: 'OpenAI API rate limit exceeded, retrying...',
-                    },
-                  });
-                  return;
-                }
+            if (err.status === 429) {
+              if (retriesLeft) {
+                context.onPartialOutputs?.({
+                  ['response' as PortId]: {
+                    type: 'string',
+                    value: 'OpenAI API rate limit exceeded, retrying...',
+                  },
+                });
+                return;
               }
+            }
 
-              if (err.status === 500 || err.status === 400) {
-                console.error(err);
-                throw new Error(err.message);
-              }
-            } else {
-              console.error(err);
+            // We did something wrong (besides rate limit)
+            if (err.status >= 400 && err.status < 500) {
+              throw new Error(err.message);
             }
           },
         },
