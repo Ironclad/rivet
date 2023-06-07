@@ -61,4 +61,7 @@ export type InternalProcessContext = ProcessContext & {
   setGlobal: (id: string, value: ScalarOrArrayDataValue) => void;
 
   waitForGlobal: (id: string) => Promise<ScalarOrArrayDataValue>;
+
+  /** Logs to GraphProcessor's trace event. */
+  trace: (message: string) => void;
 };
