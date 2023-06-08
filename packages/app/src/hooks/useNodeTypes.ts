@@ -92,6 +92,7 @@ const descriptors: NodeComponentDescriptors = {
   getEmbedding: {},
   vectorNearestNeighbors: {},
   vectorStore: {},
+  hash: {},
 };
 
 export function useNodeTypes() {

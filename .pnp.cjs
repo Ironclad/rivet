@@ -352,6 +352,30 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
+        ["npm:2.2.1", {\
+          "packageLocation": "./.yarn/cache/@atlaskit-ds-explorations-npm-2.2.1-64649033dc-236c45399b.zip/node_modules/@atlaskit/ds-explorations/",\
+          "packageDependencies": [\
+            ["@atlaskit/ds-explorations", "npm:2.2.1"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:bcf06f5b79e08b27570fe7c48934b59b443822eea77bfbc7afb91847d9c486ee6ce2b2571503125da31aa67018788768262d880e6224d7339928a4d1f80b2840#npm:2.2.1", {\
+          "packageLocation": "./.yarn/__virtual__/@atlaskit-ds-explorations-virtual-a8b3af4102/0/cache/@atlaskit-ds-explorations-npm-2.2.1-64649033dc-236c45399b.zip/node_modules/@atlaskit/ds-explorations/",\
+          "packageDependencies": [\
+            ["@atlaskit/ds-explorations", "virtual:bcf06f5b79e08b27570fe7c48934b59b443822eea77bfbc7afb91847d9c486ee6ce2b2571503125da31aa67018788768262d880e6224d7339928a4d1f80b2840#npm:2.2.1"],\
+            ["@atlaskit/tokens", "virtual:bcf06f5b79e08b27570fe7c48934b59b443822eea77bfbc7afb91847d9c486ee6ce2b2571503125da31aa67018788768262d880e6224d7339928a4d1f80b2840#npm:1.5.2"],\
+            ["@babel/runtime", "npm:7.21.0"],\
+            ["@emotion/react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:11.10.6"],\
+            ["@types/react", "npm:18.0.29"],\
+            ["react", "npm:18.2.0"],\
+            ["tiny-invariant", "npm:1.3.1"]\
+          ],\
+          "packagePeers": [\
+            "@types/react",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["virtual:ff843647c0e54a47a206a68c7512368876b4bba65c22dc9bfcd3c5d02730da22fb74898b475b954714e8d0f01b46e3f642e9d6d9401bc9d68f15a4e33fcb8ba3#npm:2.0.13", {\
           "packageLocation": "./.yarn/__virtual__/@atlaskit-ds-explorations-virtual-15df4baf37/0/cache/@atlaskit-ds-explorations-npm-2.0.13-47892754a0-d9de5e3d2d.zip/node_modules/@atlaskit/ds-explorations/",\
           "packageDependencies": [\
@@ -996,6 +1020,35 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@atlaskit/tabs", [\
+        ["npm:13.4.2", {\
+          "packageLocation": "./.yarn/cache/@atlaskit-tabs-npm-13.4.2-ad47f9b642-feeaa09b72.zip/node_modules/@atlaskit/tabs/",\
+          "packageDependencies": [\
+            ["@atlaskit/tabs", "npm:13.4.2"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:13.4.2", {\
+          "packageLocation": "./.yarn/__virtual__/@atlaskit-tabs-virtual-bcf06f5b79/0/cache/@atlaskit-tabs-npm-13.4.2-ad47f9b642-feeaa09b72.zip/node_modules/@atlaskit/tabs/",\
+          "packageDependencies": [\
+            ["@atlaskit/tabs", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:13.4.2"],\
+            ["@atlaskit/analytics-next", "virtual:d800295ab01df0c54764c129a2fcaaa9b68f23dfb4dfcb2d3b31dabb1b79a8340b0605babb36c898925d6d70890e294f5cb5763c1090d7d95a8645a27e50b4bb#npm:9.1.1"],\
+            ["@atlaskit/codemod-utils", "npm:4.2.0"],\
+            ["@atlaskit/ds-explorations", "virtual:bcf06f5b79e08b27570fe7c48934b59b443822eea77bfbc7afb91847d9c486ee6ce2b2571503125da31aa67018788768262d880e6224d7339928a4d1f80b2840#npm:2.2.1"],\
+            ["@atlaskit/theme", "virtual:d800295ab01df0c54764c129a2fcaaa9b68f23dfb4dfcb2d3b31dabb1b79a8340b0605babb36c898925d6d70890e294f5cb5763c1090d7d95a8645a27e50b4bb#npm:12.5.0"],\
+            ["@atlaskit/tokens", "virtual:bcf06f5b79e08b27570fe7c48934b59b443822eea77bfbc7afb91847d9c486ee6ce2b2571503125da31aa67018788768262d880e6224d7339928a4d1f80b2840#npm:1.5.2"],\
+            ["@babel/runtime", "npm:7.21.0"],\
+            ["@emotion/react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:11.10.6"],\
+            ["@types/react", "npm:18.0.29"],\
+            ["react", "npm:18.2.0"]\
+          ],\
+          "packagePeers": [\
+            "@types/react",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@atlaskit/textarea", [\
         ["npm:4.5.6", {\
           "packageLocation": "./.yarn/cache/@atlaskit-textarea-npm-4.5.6-6015ab6065-2f4b7f1930.zip/node_modules/@atlaskit/textarea/",\
@@ -1151,6 +1204,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
+        ["npm:1.5.2", {\
+          "packageLocation": "./.yarn/cache/@atlaskit-tokens-npm-1.5.2-6adfa6bad9-449a27228b.zip/node_modules/@atlaskit/tokens/",\
+          "packageDependencies": [\
+            ["@atlaskit/tokens", "npm:1.5.2"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
         ["virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:1.2.17", {\
           "packageLocation": "./.yarn/__virtual__/@atlaskit-tokens-virtual-17d20fe37e/0/cache/@atlaskit-tokens-npm-1.2.17-b3aaaeec87-1517be0184.zip/node_modules/@atlaskit/tokens/",\
           "packageDependencies": [\
@@ -1179,6 +1239,25 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/runtime", "npm:7.21.0"],\
             ["@babel/traverse", "npm:7.21.4"],\
             ["@babel/types", "npm:7.21.4"],\
+            ["@types/react", "npm:18.0.29"],\
+            ["bind-event-listener", "npm:2.1.1"],\
+            ["react", "npm:18.2.0"]\
+          ],\
+          "packagePeers": [\
+            "@types/react",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["virtual:bcf06f5b79e08b27570fe7c48934b59b443822eea77bfbc7afb91847d9c486ee6ce2b2571503125da31aa67018788768262d880e6224d7339928a4d1f80b2840#npm:1.5.2", {\
+          "packageLocation": "./.yarn/__virtual__/@atlaskit-tokens-virtual-d11ec2ca6e/0/cache/@atlaskit-tokens-npm-1.5.2-6adfa6bad9-449a27228b.zip/node_modules/@atlaskit/tokens/",\
+          "packageDependencies": [\
+            ["@atlaskit/tokens", "virtual:bcf06f5b79e08b27570fe7c48934b59b443822eea77bfbc7afb91847d9c486ee6ce2b2571503125da31aa67018788768262d880e6224d7339928a4d1f80b2840#npm:1.5.2"],\
+            ["@atlaskit/ds-lib", "virtual:d800295ab01df0c54764c129a2fcaaa9b68f23dfb4dfcb2d3b31dabb1b79a8340b0605babb36c898925d6d70890e294f5cb5763c1090d7d95a8645a27e50b4bb#npm:2.2.0"],\
+            ["@atlaskit/platform-feature-flags", "npm:0.2.0"],\
+            ["@babel/runtime", "npm:7.21.0"],\
+            ["@babel/traverse", "npm:7.21.5"],\
+            ["@babel/types", "npm:7.21.3"],\
             ["@types/react", "npm:18.0.29"],\
             ["bind-event-listener", "npm:2.1.1"],\
             ["react", "npm:18.2.0"]\
@@ -5879,6 +5958,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@atlaskit/modal-dialog", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:12.4.11"],\
             ["@atlaskit/portal", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.2.13"],\
             ["@atlaskit/select", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:16.2.0"],\
+            ["@atlaskit/tabs", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:13.4.2"],\
             ["@atlaskit/textarea", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.5.6"],\
             ["@atlaskit/textfield", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.3.6"],\
             ["@atlaskit/theme", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:12.4.0"],\
@@ -6030,9 +6110,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@ironclad/rivet-core", "workspace:packages/core"],\
             ["@dqbd/tiktoken", "npm:1.0.7"],\
+            ["@types/crypto-js", "npm:4.1.1"],\
             ["@types/jsonpath-plus", "npm:5.0.2"],\
             ["@types/lodash-es", "npm:4.17.7"],\
             ["@types/yaml", "npm:1.9.7"],\
+            ["crypto-js", "npm:4.1.1"],\
             ["emittery", "npm:1.0.1"],\
             ["jsonpath-plus", "npm:7.2.0"],\
             ["lodash-es", "npm:4.17.21"],\
@@ -6042,6 +6124,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-queue", "npm:6.6.2"],\
             ["p-retry", "npm:5.1.2"],\
             ["safe-stable-stringify", "npm:2.4.3"],\
+            ["ts-dedent", "npm:2.2.0"],\
             ["ts-pattern", "npm:4.3.0"],\
             ["type-fest", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:3.10.0"],\
             ["typescript", "patch:typescript@npm%3A5.0.4#~builtin<compat/typescript>::version=5.0.4&hash=85af82"],\
@@ -9539,6 +9622,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@types/crypto-js", [\
+        ["npm:4.1.1", {\
+          "packageLocation": "./.yarn/cache/@types-crypto-js-npm-4.1.1-1c4ce3312a-ea3d6a67b6.zip/node_modules/@types/crypto-js/",\
+          "packageDependencies": [\
+            ["@types/crypto-js", "npm:4.1.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@types/detect-port", [\
         ["npm:1.3.2", {\
           "packageLocation": "./.yarn/cache/@types-detect-port-npm-1.3.2-b814d5e42a-e4678244fb.zip/node_modules/@types/detect-port/",\
@@ -12696,6 +12788,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["path-key", "npm:3.1.1"],\
             ["shebang-command", "npm:2.0.0"],\
             ["which", "npm:2.0.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["crypto-js", [\
+        ["npm:4.1.1", {\
+          "packageLocation": "./.yarn/cache/crypto-js-npm-4.1.1-38a3b8c19d-b3747c12ee.zip/node_modules/crypto-js/",\
+          "packageDependencies": [\
+            ["crypto-js", "npm:4.1.1"]\
           ],\
           "linkType": "HARD"\
         }]\

@@ -1,13 +1,11 @@
 import { css } from '@emotion/react';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { graphState } from '../state/graph';
 import { loadedProjectState, projectState, savedGraphsState } from '../state/savedGraphs';
 import { orderBy } from 'lodash-es';
 import { nanoid } from 'nanoid';
-import DropdownMenu, { DropdownItem } from '@atlaskit/dropdown-menu';
-import Button from '@atlaskit/button';
-import { ReactComponent as MoreIcon } from 'majesticons/line/more-menu-vertical-line.svg';
+import { DropdownItem } from '@atlaskit/dropdown-menu';
 import { ReactComponent as ExpandLeftIcon } from 'majesticons/line/menu-expand-left-line.svg';
 import { ReactComponent as ExpandRightIcon } from 'majesticons/line/menu-expand-right-line.svg';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
@@ -15,12 +13,15 @@ import { useDeleteGraph } from '../hooks/useDeleteGraph';
 import { useLoadGraph } from '../hooks/useLoadGraph';
 import { GraphId, emptyNodeGraph } from '@ironclad/rivet-core';
 import clsx from 'clsx';
-import { useSaveCurrentGraph } from '../hooks/useSaveCurrentGraph';
-import { useSaveProject } from '../hooks/useSaveProject';
 import { LoadingSpinner } from './LoadingSpinner';
 import { runningGraphsState } from '../state/dataFlow';
 import { useDuplicateGraph } from '../hooks/useDuplicateGraph';
 import { sidebarOpenState } from '../state/graphBuilder';
+import { appWindow } from '@tauri-apps/api/window';
+import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
+import { Label } from '@atlaskit/form';
+import { useContextMenu } from '../hooks/useContextMenu';
+import Portal from '@atlaskit/portal';
 
 const styles = css`
   position: fixed;
@@ -32,23 +33,37 @@ const styles = css`
   padding: 0;
   z-index: 50;
   border-right: 1px solid var(--grey);
-  display: flex;
-  flex-direction: column;
   height: calc(100vh - 32px);
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    margin: 0 -8px;
+  }
 
   label {
     font-size: 12px;
   }
 
+  .graph-info-section {
+    padding: 8px 12px;
+    background-color: #2a2a2a;
+    border-bottom: 1px solid var(--grey);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+  }
+
   .graphs-section {
     display: flex;
     flex-direction: column;
-    margin-top: 2rem;
     flex-shrink: 1;
     min-height: 0;
+    background-color: var(--grey-dark);
+    margin-top: 8px;
   }
 
   .graph-list {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -63,6 +78,7 @@ const styles = css`
     justify-content: space-between;
     align-items: center;
     user-select: none;
+    padding: 0 4px;
 
     &:hover {
       background-color: var(--grey-darkish);
@@ -102,7 +118,7 @@ const styles = css`
     justify-content: space-between;
     margin-bottom: 8px;
     align-items: center;
-    padding: 0 12px;
+    padding: 0 4px 0 12px;
     user-select: none;
 
     button {
@@ -140,16 +156,13 @@ const styles = css`
     }
   }
 
-  .graph-info-section {
-    padding: 8px 12px;
-  }
-
   .project-info-section {
-    background-color: var(--grey-darker);
     padding: 8px 12px;
   }
 
   .spinner {
+    position: absolute;
+    right: 32px;
     width: 16px;
     padding-left: 4px;
   }
@@ -180,6 +193,14 @@ const moreDropdownCss = css`
   }
 `;
 
+const contextMenuStyles = css`
+  position: absolute;
+  border: 1px solid var(--grey);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+  background: var(--grey-dark);
+  min-width: max-content;
+`;
+
 export const LeftSidebar: FC = () => {
   const [graph, setGraph] = useRecoilState(graphState);
   const [project, setProject] = useRecoilState(projectState);
@@ -191,8 +212,6 @@ export const LeftSidebar: FC = () => {
 
   const deleteGraph = useDeleteGraph();
   const loadGraph = useLoadGraph();
-  const saveGraph = useSaveCurrentGraph();
-  const { saveProject } = useSaveProject();
 
   const loadedProject = useRecoilValue(loadedProjectState);
 
@@ -202,6 +221,23 @@ export const LeftSidebar: FC = () => {
     loadGraph(emptyNodeGraph());
   }
 
+  const {
+    contextMenuRef,
+    showContextMenu,
+    contextMenuData,
+    handleContextMenu,
+    setContextMenuData,
+    setShowContextMenu,
+  } = useContextMenu();
+
+  const selectedGraphForContextMenu = contextMenuData.data
+    ? sortedGraphs.find((graph) => graph.metadata!.id === contextMenuData.data?.element.dataset.graphid)
+    : null;
+
+  useEffect(() => {
+    appWindow.setTitle(`Rivet - ${project.metadata.title} (${loadedProject.path})`);
+  }, [loadedProject, project.metadata.title]);
+
   return (
     <div
       css={styles}
@@ -210,90 +246,104 @@ export const LeftSidebar: FC = () => {
       <div className="toggle-tab" onClick={() => setSidebarOpen(!sidebarOpen)}>
         {sidebarOpen ? <ExpandLeftIcon /> : <ExpandRightIcon />}
       </div>
-      <div className="project-info-section">
-        <div className="loaded-project">
-          {loadedProject.loaded && <div>Loaded: {loadedProject.path.split('/').pop()}</div>}
-          <button className="save-project" onClick={saveProject}>
-            Save Project
-          </button>
-        </div>
-        <InlineEditableTextfield
-          key={`name-${project.metadata.id}`}
-          label="Project Name"
-          placeholder="Project Name"
-          readViewFitContainerWidth
-          defaultValue={project.metadata.title}
-          onConfirm={(newValue) => setProject({ ...project, metadata: { ...project.metadata, title: newValue } })}
-        />
-
-        <InlineEditableTextfield
-          key={`description-${project.metadata.id}`}
-          label="Description"
-          placeholder="Project Description"
-          defaultValue={project.metadata?.description ?? ''}
-          onConfirm={(newValue) => setProject({ ...project, metadata: { ...project.metadata, description: newValue } })}
-          readViewFitContainerWidth
-        />
-      </div>
-      <div className="graph-info-section">
-        <button className="save-graph" onClick={saveGraph}>
-          Save Graph
-        </button>
-        <InlineEditableTextfield
-          key={`graph-name-${graph.metadata?.id}`}
-          label="Graph Name"
-          placeholder="Graph Name"
-          onConfirm={(newValue) => setGraph({ ...graph, metadata: { ...graph.metadata, name: newValue } })}
-          defaultValue={graph.metadata?.name ?? 'Untitled Graph'}
-          readViewFitContainerWidth
-        />
-        <InlineEditableTextfield
-          key={`graph-description-${graph.metadata?.id}`}
-          label="Description"
-          placeholder="Graph Description"
-          defaultValue={graph.metadata?.description ?? ''}
-          onConfirm={(newValue) => setGraph({ ...graph, metadata: { ...graph.metadata, description: newValue } })}
-          readViewFitContainerWidth
-        />
-      </div>
-      <div className="graphs-section">
-        <div className="graphs-section-header">
-          <label>Graphs</label>
-          <button className="new-graph" onClick={handleNew}>
-            New
-          </button>
-        </div>
-        <div className="graph-list">
-          {sortedGraphs.map((savedGraph) => {
-            const graphIsRunning = runningGraphs.includes(savedGraph.metadata?.id ?? ('' as GraphId));
-            return (
-              <div
-                key={savedGraph.metadata?.id ?? nanoid()}
-                className={clsx('graph-item', { selected: graph.metadata?.id === savedGraph.metadata?.id })}
-              >
-                <div className="spinner">{graphIsRunning && <LoadingSpinner />}</div>
-                <div className="graph-item-select" onClick={() => loadGraph(savedGraph)}>
-                  {savedGraph.metadata?.name ?? 'Untitled Graph'}
-                </div>
-                <DropdownMenu
-                  trigger={({ triggerRef, ...props }) => (
-                    <Button
-                      css={moreDropdownCss}
-                      className={clsx({ selected: graph.metadata?.id === savedGraph.metadata?.id })}
-                      {...props}
-                      iconBefore={<MoreIcon />}
-                      ref={triggerRef}
-                    />
-                  )}
-                >
-                  <DropdownItem onClick={() => duplicateGraph(savedGraph)}>Duplicate</DropdownItem>
-                  <DropdownItem onClick={() => deleteGraph(savedGraph)}>Delete</DropdownItem>
-                </DropdownMenu>
+      <Tabs id="sidebar-tabs">
+        <TabList>
+          <Tab>Graphs</Tab>
+          <Tab>Project</Tab>
+        </TabList>
+        <TabPanel>
+          <div className="panel">
+            <div className="graph-info-section">
+              <InlineEditableTextfield
+                key={`graph-name-${graph.metadata?.id}`}
+                label="Graph Name"
+                placeholder="Graph Name"
+                onConfirm={(newValue) => setGraph({ ...graph, metadata: { ...graph.metadata, name: newValue } })}
+                defaultValue={graph.metadata?.name ?? 'Untitled Graph'}
+                readViewFitContainerWidth
+              />
+              <InlineEditableTextfield
+                key={`graph-description-${graph.metadata?.id}`}
+                label="Description"
+                placeholder="Graph Description"
+                defaultValue={graph.metadata?.description ?? ''}
+                onConfirm={(newValue) => setGraph({ ...graph, metadata: { ...graph.metadata, description: newValue } })}
+                readViewFitContainerWidth
+              />
+            </div>
+            <div className="graphs-section">
+              <div className="graphs-section-header">
+                <Label htmlFor="">Graphs</Label>
+                <button className="new-graph" onClick={handleNew}>
+                  New
+                </button>
               </div>
-            );
-          })}
-        </div>
-      </div>
+              <div className="graph-list" ref={contextMenuRef}>
+                {sortedGraphs.map((savedGraph) => {
+                  const graphIsRunning = runningGraphs.includes(savedGraph.metadata?.id ?? ('' as GraphId));
+                  return (
+                    <div
+                      key={savedGraph.metadata?.id ?? nanoid()}
+                      className={clsx('graph-item', { selected: graph.metadata?.id === savedGraph.metadata?.id })}
+                      onContextMenu={handleContextMenu}
+                      data-contextmenutype="graph-item"
+                      data-graphid={savedGraph.metadata?.id}
+                    >
+                      <div className="spinner">{graphIsRunning && <LoadingSpinner />}</div>
+                      <div className="graph-item-select" onClick={() => loadGraph(savedGraph)}>
+                        {savedGraph.metadata?.name ?? 'Untitled Graph'}
+                      </div>
+                    </div>
+                  );
+                })}
+                <Portal>
+                  {showContextMenu && (
+                    <div
+                      className="graph-list-context-menu"
+                      css={contextMenuStyles}
+                      style={{
+                        zIndex: 500,
+                        left: contextMenuData.x,
+                        top: contextMenuData.y,
+                      }}
+                    >
+                      <DropdownItem onClick={() => duplicateGraph(selectedGraphForContextMenu!)}>
+                        Duplicate
+                      </DropdownItem>
+                      <DropdownItem onClick={() => deleteGraph(selectedGraphForContextMenu!)}>Delete</DropdownItem>
+                    </div>
+                  )}
+                </Portal>
+              </div>
+            </div>
+          </div>
+        </TabPanel>
+        <TabPanel>
+          <div className="panel">
+            <div className="project-info-section">
+              <InlineEditableTextfield
+                key={`name-${project.metadata.id}`}
+                label="Project Name"
+                placeholder="Project Name"
+                readViewFitContainerWidth
+                defaultValue={project.metadata.title}
+                onConfirm={(newValue) => setProject({ ...project, metadata: { ...project.metadata, title: newValue } })}
+              />
+
+              <InlineEditableTextfield
+                key={`description-${project.metadata.id}`}
+                label="Description"
+                placeholder="Project Description"
+                defaultValue={project.metadata?.description ?? ''}
+                onConfirm={(newValue) =>
+                  setProject({ ...project, metadata: { ...project.metadata, description: newValue } })
+                }
+                readViewFitContainerWidth
+              />
+            </div>
+          </div>
+        </TabPanel>
+      </Tabs>
     </div>
   );
 };

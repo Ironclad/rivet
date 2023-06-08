@@ -4,13 +4,19 @@ import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { InternalProcessContext } from '../ProcessContext';
 import { DataValue, VectorDataValue, getIntegration } from '../..';
+import dedent from 'ts-dedent';
 
 export type VectorNearestNeighborsNode = ChartNode<'vectorNearestNeighbors', VectorNearestNeighborsNodeData>;
 
 export type VectorNearestNeighborsNodeData = {
-  k: number;
   integration: string;
+  useIntegrationInput?: boolean;
+
+  k: number;
+  useKInput?: boolean;
+
   collectionId: string;
+  useCollectionIdInput?: boolean;
 };
 
 export class VectorNearestNeighborsNodeImpl extends NodeImpl<VectorNearestNeighborsNode> {
@@ -38,6 +44,33 @@ export class VectorNearestNeighborsNodeImpl extends NodeImpl<VectorNearestNeighb
       required: true,
     });
 
+    if (this.data.useCollectionIdInput) {
+      inputDefinitions.push({
+        id: 'collectionId' as PortId,
+        title: 'Collection ID',
+        dataType: 'string',
+        required: true,
+      });
+    }
+
+    if (this.data.useKInput) {
+      inputDefinitions.push({
+        id: 'k' as PortId,
+        title: 'K',
+        dataType: 'number',
+        required: true,
+      });
+    }
+
+    if (this.data.useCollectionIdInput) {
+      inputDefinitions.push({
+        id: 'collectionId' as PortId,
+        title: 'Collection ID',
+        dataType: 'string',
+        required: true,
+      });
+    }
+
     return inputDefinitions;
   }
 
@@ -63,6 +96,7 @@ export class VectorNearestNeighborsNodeImpl extends NodeImpl<VectorNearestNeighb
           { label: 'Pinecone', value: 'pinecone' },
           { label: 'Milvus', value: 'milvus' },
         ],
+        useInputToggleDataKey: 'useIntegrationInput',
       },
       {
         type: 'number',
@@ -72,13 +106,23 @@ export class VectorNearestNeighborsNodeImpl extends NodeImpl<VectorNearestNeighb
         max: 100,
         step: 1,
         defaultValue: 10,
+        useInputToggleDataKey: 'useKInput',
       },
       {
         type: 'string',
         label: 'Collection ID',
         dataKey: 'collectionId',
+        useInputToggleDataKey: 'useCollectionIdInput',
       },
     ];
+  }
+
+  getBody(): string | undefined {
+    return dedent`
+      ${this.data.useIntegrationInput ? '(Integration using input)' : this.data.integration}
+      k: ${this.data.useKInput ? '(using input)' : this.data.k}
+      ${this.data.useCollectionIdInput ? '(using input)' : this.data.collectionId}
+    `;
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

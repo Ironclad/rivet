@@ -1,14 +1,12 @@
-import { ArrayDataValue, DataValue, ScalarDataValue, VectorDataValue } from '../DataValue';
 import { InternalProcessContext } from '../ProcessContext';
-
-export interface VectorDatabase {
-  store(collection: DataValue, vector: VectorDataValue, data: DataValue): Promise<void>;
-
-  nearestNeighbors(collection: DataValue, vector: VectorDataValue, k: number): Promise<ArrayDataValue<ScalarDataValue>>;
-}
+import { EmbeddingGenerator } from './EmbeddingGenerator';
+import { LLMProvider } from './LLMProvider';
+import { VectorDatabase } from './VectorDatabase';
 
 export type IntegrationFactories = {
   vectorDatabase: (context: InternalProcessContext) => VectorDatabase;
+  llmProvider: (context: InternalProcessContext) => LLMProvider;
+  embeddingGenerator: (context: InternalProcessContext) => EmbeddingGenerator;
 };
 
 export type IntegrationType = keyof IntegrationFactories;
@@ -17,6 +15,8 @@ const registeredIntegrations: {
   [P in IntegrationType]: Map<string, IntegrationFactories[P]>;
 } = {
   vectorDatabase: new Map<string, (context: InternalProcessContext) => VectorDatabase>(),
+  llmProvider: new Map<string, (context: InternalProcessContext) => LLMProvider>(),
+  embeddingGenerator: new Map<string, (context: InternalProcessContext) => EmbeddingGenerator>(),
 };
 
 export function registerIntegration<T extends IntegrationType>(

@@ -22,6 +22,9 @@
       "shell": {
         "sidecar": true,
         "scope": [{ "name": "../../app-executor/dist/app-executor", "sidecar": true }]
+      },
+      "window": {
+        "all": true
       }
     },
     "bundle": {

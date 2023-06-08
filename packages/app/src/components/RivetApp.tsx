@@ -328,7 +328,13 @@ export const RivetApp: FC = () => {
       try {
         if (remoteDebugger.remoteDebuggerState.remoteUploadAllowed) {
           remoteDebugger.send('set-dynamic-data', {
-            project: project,
+            project: {
+              ...project,
+              graphs: {
+                ...project.graphs,
+                [graph.metadata!.id!]: graph,
+              },
+            },
             settings,
           });
         }

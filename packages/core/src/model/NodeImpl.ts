@@ -55,6 +55,10 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
   getEditors(): EditorDefinition<T>[] {
     return [];
   }
+
+  getBody(): string | undefined {
+    return undefined;
+  }
 }
 
 export type NodeImplConstructor<T extends ChartNode> = {
