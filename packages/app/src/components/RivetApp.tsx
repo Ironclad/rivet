@@ -1,4 +1,4 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { GraphBuilder } from './GraphBuilder';
 import { MenuBar } from './MenuBar';
 import { graphState } from '../state/graph';
@@ -38,6 +38,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
 import { useSaveProject } from '../hooks/useSaveProject';
+import { useExecutorSidecar } from '../hooks/useExecutorSidecar';
+import { selectedExecutorState } from '../state/execution';
 
 const styles = css`
   overflow: hidden;
@@ -84,6 +86,8 @@ export const RivetApp: FC = () => {
   const currentProcessor = useRef<GraphProcessor | null>(null);
   const project = useRecoilValue(projectState);
   const setSelectedPage = useSetRecoilState(selectedProcessPageNodesState);
+  const selectedExecutor = useRecoilValue(selectedExecutorState);
+  useExecutorSidecar({ enabled: selectedExecutor === 'node' });
 
   const stopAll = () => {
     setGraphRunning(false);
@@ -303,12 +307,32 @@ export const RivetApp: FC = () => {
     }
   });
 
+  useEffect(() => {
+    if (selectedExecutor === 'node') {
+      remoteDebugger.connect('ws://localhost:21889');
+    } else {
+      remoteDebugger.disconnect();
+    }
+
+    return () => {
+      remoteDebugger.disconnect();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedExecutor]);
+
   const tryRunGraph = useStableCallback(async () => {
     if (
       remoteDebugger.remoteDebuggerState.started &&
       remoteDebugger.remoteDebuggerState.socket?.readyState === WebSocket.OPEN
     ) {
       try {
+        if (remoteDebugger.remoteDebuggerState.remoteUploadAllowed) {
+          remoteDebugger.send('set-dynamic-data', {
+            project: project,
+            settings,
+          });
+        }
+
         remoteDebugger.send('run', { graphId: graph.metadata!.id! });
       } catch (e) {
         console.error(e);

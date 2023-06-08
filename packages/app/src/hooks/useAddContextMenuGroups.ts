@@ -24,6 +24,7 @@ export const addContextMenuGroups = [
       { label: 'Assemble Prompt', nodeType: 'assemblePrompt' },
       { label: 'Trim Chat Messages', nodeType: 'trimChatMessages' },
       { label: 'Tool', nodeType: 'tool' },
+      { label: 'Get Embedding', nodeType: 'getEmbedding' },
     ],
   },
   {
@@ -56,6 +57,8 @@ export const addContextMenuGroups = [
       { label: 'User Input', nodeType: 'userInput' },
       { label: 'Read Directory', nodeType: 'readDirectory' },
       { label: 'Read File', nodeType: 'readFile' },
+      { label: 'Vector Store', nodeType: 'vectorStore' },
+      { label: 'Vector KNN', nodeType: 'vectorNearestNeighbors' },
     ],
   },
   {

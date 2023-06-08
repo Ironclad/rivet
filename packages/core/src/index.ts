@@ -15,3 +15,5 @@ export * from './utils/expectType';
 export * from './utils/errors';
 export * from './utils/serialization';
 export * from './utils/outputs';
+export * from './model/integrations/integrations';
+export * from './model/integrations/enableIntegrations';

@@ -15,6 +15,8 @@ import { useLoadProject } from '../hooks/useLoadProject';
 import { useSaveProject } from '../hooks/useSaveProject';
 import { useNewProject } from '../hooks/useNewProject';
 import { DebuggerConnectPanel } from './DebuggerConnectPanel';
+import Select from '@atlaskit/select';
+import { selectedExecutorState } from '../state/execution';
 
 const styles = css`
   display: flex;
@@ -178,6 +180,21 @@ const styles = css`
     background-color: var(--warning);
     color: var(--grey-dark);
   }
+
+  .executor {
+    display: flex;
+    align-items: center;
+
+    .executor-title,
+    .select-executor-remote {
+      color: var(--foreground);
+      font-size: 12px;
+    }
+
+    .select-executor-remote {
+      margin-left: 0.5rem;
+    }
+  }
 `;
 
 export type MenuBarProps = {
@@ -187,6 +204,11 @@ export type MenuBarProps = {
   onResumeGraph?: () => void;
 };
 
+const executorOptions = [
+  { label: 'Browser', value: 'browser' },
+  { label: 'Node', value: 'node' },
+] as const;
+
 export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGraph, onResumeGraph }) => {
   const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
   const [graphData, setGraphData] = useRecoilState(graphState);
@@ -195,6 +217,7 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
   const { saveProject, saveProjectAs } = useSaveProject();
   const newProject = useNewProject();
   const [debuggerPanelOpen, setDebuggerPanelOpen] = useState(false);
+  const [selectedExecutor, setSelectedExecutor] = useRecoilState(selectedExecutorState);
 
   const graphRunning = useRecoilValue(graphRunningState);
   const graphPaused = useRecoilValue(graphPausedState);
@@ -226,6 +249,10 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
     connect(url);
   }
 
+  const selectedExecutorOption = executorOptions.find((option) => option.value === selectedExecutor);
+
+  const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
+
   return (
     <div css={styles}>
       <div className="left-menu">
@@ -252,11 +279,11 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
         <div className="remote-debugger">
           <div
             className={clsx('menu-item remote-debugger-button', {
-              active: remoteDebugger.started,
+              active: isActuallyRemoteDebugging,
               reconnecting: remoteDebugger.reconnecting,
             })}
           >
-            {remoteDebugger.started ? (
+            {isActuallyRemoteDebugging ? (
               <button onClick={() => disconnect()}>Disconnect Remote Debugger</button>
             ) : (
               <button onClick={() => (remoteDebugger.reconnecting ? disconnect() : setDebuggerPanelOpen(true))}>
@@ -271,7 +298,53 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
             />
           )}
         </div>
+        <div className="executor">
+          <label htmlFor="select-executor" className="executor-title">
+            Executor:
+          </label>
+          {isActuallyRemoteDebugging ? (
+            <span className="select-executor-remote">Remote</span>
+          ) : (
+            <Select
+              id="select-executor"
+              appearance="subtle"
+              options={executorOptions}
+              value={selectedExecutorOption}
+              onChange={(selected) => setSelectedExecutor(selected!.value)}
+              isSearchable={false}
+              isClearable={false}
+              styles={{
+                control: (provided) => ({
+                  ...provided,
+                  height: 28,
+                  minHeight: 28,
+                  padding: 0,
+                  border: 0,
+                  fontSize: 12,
+                }),
+                valueContainer: (provided) => ({
+                  ...provided,
+                  minHeight: 28,
+                  height: 28,
+                  margin: 0,
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                }),
+                indicatorsContainer: (provided) => ({
+                  ...provided,
+                  height: 28,
+                }),
+                singleValue: (provided) => ({
+                  ...provided,
+                  color: '#f0f0f0',
+                  fontFamily: 'Roboto, sans-serif',
+                }),
+              }}
+            />
+          )}
+        </div>
       </div>
+
       <div className="right-buttons">
         {graphRunning && (
           <div className={clsx('pause-button', { paused: graphPaused })}>

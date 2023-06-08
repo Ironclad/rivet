@@ -18,6 +18,7 @@ export type TimeDataValue = DataValueDef<'time', string>;
 export type DateTimeDataValue = DataValueDef<'datetime', string>;
 export type AnyDataValue = DataValueDef<'any', unknown>;
 export type ObjectDataValue = DataValueDef<'object', Record<string, unknown>>;
+export type VectorDataValue = DataValueDef<'vector', number[]>;
 
 /** GPT tool definition */
 export type GptTool = {
@@ -42,7 +43,8 @@ export type ScalarDataValue =
   | ControlFlowExcludedDataValue
   | AnyDataValue
   | ObjectDataValue
-  | GptToolDataValue;
+  | GptToolDataValue
+  | VectorDataValue;
 
 export type ScalarType = ScalarDataValue['type'];
 
@@ -117,6 +119,10 @@ export const dataTypes = exhaustiveTuple<DataType>()(
   'gpt-tool[]',
   'fn<gpt-tool[]>',
   'fn<gpt-tool>',
+  'vector',
+  'vector[]',
+  'fn<vector>',
+  'fn<vector[]>',
 );
 
 export const scalarTypes = exhaustiveTuple<ScalarType>()(
@@ -131,6 +137,7 @@ export const scalarTypes = exhaustiveTuple<ScalarType>()(
   'control-flow-excluded',
   'object',
   'gpt-tool',
+  'vector',
 );
 
 export const dataTypeDisplayNames: Record<DataType, string> = {
@@ -178,6 +185,10 @@ export const dataTypeDisplayNames: Record<DataType, string> = {
   'fn<chat-message[]>': 'Function<ChatMessage Array>',
   'fn<control-flow-excluded[]>': 'Function<ControlFlowExcluded Array>',
   'fn<gpt-tool[]>': 'Function<GPT Tool Array>',
+  vector: 'Vector',
+  'vector[]': 'Vector Array',
+  'fn<vector>': 'Function<Vector>',
+  'fn<vector[]>': 'Function<Vector Array>',
 };
 
 export function isScalarDataValue(value: DataValue | undefined): value is ScalarDataValue {
@@ -293,6 +304,7 @@ export const scalarDefaults: { [P in ScalarDataType]: Extract<ScalarDataValue, {
     schema: {},
     namespace: undefined,
   },
+  vector: [],
 };
 
 export function getDefaultValue<T extends DataType>(type: T): (DataValue & { type: T })['value'] {
