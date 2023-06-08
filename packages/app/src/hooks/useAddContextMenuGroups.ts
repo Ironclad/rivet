@@ -36,6 +36,7 @@ export const addContextMenuGroups = [
       { label: 'Extract Object Path', nodeType: 'extractObjectPath' },
       { label: 'Array', nodeType: 'array' },
       { label: 'Pop', nodeType: 'pop' },
+      { label: 'Hash', nodeType: 'hash' },
     ],
   },
   {

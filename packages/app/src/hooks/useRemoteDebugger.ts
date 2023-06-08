@@ -88,7 +88,7 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
       manuallyDisconnecting = true;
 
       if (remoteDebugger.socket) {
-        remoteDebugger.socket.close();
+        remoteDebugger.socket?.close?.();
         onDisconnectLatest.current?.();
       }
     },

@@ -36,6 +36,7 @@
     "@atlaskit/modal-dialog": "^12.4.11",
     "@atlaskit/portal": "^4.2.13",
     "@atlaskit/select": "^16.1.8",
+    "@atlaskit/tabs": "^13.4.2",
     "@atlaskit/textarea": "^4.5.6",
     "@atlaskit/textfield": "^5.3.6",
     "@atlaskit/toggle": "^12.5.8",

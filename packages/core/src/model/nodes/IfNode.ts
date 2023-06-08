@@ -1,6 +1,6 @@
 import { NodeImpl, nodeDefinition } from '../NodeImpl';
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
-import { DataValue, ControlFlowExcludedDataValue, ScalarDataValue, ArrayDataValue } from '../DataValue';
+import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
+import { ControlFlowExcludedDataValue, ScalarDataValue, ArrayDataValue } from '../DataValue';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor';
 
@@ -18,7 +18,7 @@ export class IfNodeImpl extends NodeImpl<IfNode> {
       visualData: {
         x: 0,
         y: 0,
-        width: 100,
+        width: 125,
       },
     };
     return chartNode;

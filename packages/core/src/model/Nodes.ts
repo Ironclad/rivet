@@ -110,6 +110,9 @@ export * from './nodes/VectorStoreNode';
 import { vectorNearestNeighborsNode } from './nodes/VectorNearestNeighborsNode';
 export * from './nodes/VectorNearestNeighborsNode';
 
+import { hashNode } from './nodes/HashNode';
+export * from './nodes/HashNode';
+
 const register = new NodeRegistration()
   .register(toYamlNode)
   .register(userInputNode)
@@ -146,7 +149,8 @@ const register = new NodeRegistration()
   .register(toolNode)
   .register(getEmbeddingNode)
   .register(vectorStoreNode)
-  .register(vectorNearestNeighborsNode);
+  .register(vectorNearestNeighborsNode)
+  .register(hashNode);
 
 export type Nodes = typeof register.NodesType;
 

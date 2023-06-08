@@ -17,12 +17,14 @@ export class PineconeVectorDatabase implements VectorDatabase {
     this.#apiKey = settings.pineconeApiKey;
   }
 
-  async store(collection: DataValue, vector: VectorDataValue, data: DataValue): Promise<void> {
+  async store(collection: DataValue, vector: VectorDataValue, data: DataValue, { id }: { id?: string }): Promise<void> {
     const [indexId, namespace] = coerceType(collection, 'string').split('/');
 
     const host = `https://${indexId}.svc.us-central1-gcp.pinecone.io`;
 
-    const id = createHash('sha256').update(vector.value.join(',')).digest('hex');
+    if (!id) {
+      id = createHash('sha256').update(vector.value.join(',')).digest('hex');
+    }
 
     const response = await fetch(`${host}/vectors/upsert`, {
       method: 'POST',
