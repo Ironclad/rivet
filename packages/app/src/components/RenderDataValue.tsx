@@ -50,6 +50,7 @@ const scalarRenderers: {
       GPT Tool: <em>{value.value.name}</em>
     </>
   ),
+  vector: ({ value }) => <>Vector (length {value.value.length})</>,
 };
 
 export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number }> = ({ value, depth }) => {

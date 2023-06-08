@@ -5,12 +5,15 @@
   "scripts": {
     "build": "yarn compile && yarn bundle",
     "compile": "tsc",
-    "bundle": "ts-node bundle.esbuild.ts"
+    "bundle": "ts-node bundle.esbuild.ts",
+    "executor": "node -r ts-node/register --loader ../../.pnp.cjs --loader ts-node/esm bin/executor.ts"
   },
   "dependencies": {
     "@ironclad/rivet-core": "workspace:^",
+    "@zilliz/milvus2-sdk-node": "^2.2.14",
     "emittery": "^1.0.1",
     "lodash-es": "^4.17.21",
+    "nanoid": "^3.3.6",
     "ts-pattern": "^4.3.0",
     "type-fest": "^3.10.0",
     "ws": "^8.13.0"
@@ -24,5 +27,8 @@
     "p-retry": "^5.1.2",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
+  },
+  "volta": {
+    "node": "18.16.0"
   }
 }

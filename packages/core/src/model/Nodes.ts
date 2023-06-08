@@ -101,6 +101,15 @@ export * from './nodes/ToolNode';
 import { toYamlNode } from './nodes/ToYamlNode';
 export * from './nodes/ToYamlNode';
 
+import { getEmbeddingNode } from './nodes/GetEmbeddingNode';
+export * from './nodes/GetEmbeddingNode';
+
+import { vectorStoreNode } from './nodes/VectorStoreNode';
+export * from './nodes/VectorStoreNode';
+
+import { vectorNearestNeighborsNode } from './nodes/VectorNearestNeighborsNode';
+export * from './nodes/VectorNearestNeighborsNode';
+
 const register = new NodeRegistration()
   .register(toYamlNode)
   .register(userInputNode)
@@ -134,7 +143,10 @@ const register = new NodeRegistration()
   .register(setGlobalNode)
   .register(getGlobalNode)
   .register(waitForEventNode)
-  .register(toolNode);
+  .register(toolNode)
+  .register(getEmbeddingNode)
+  .register(vectorStoreNode)
+  .register(vectorNearestNeighborsNode);
 
 export type Nodes = typeof register.NodesType;
 

@@ -7,6 +7,8 @@ import { DataType } from '..';
 export interface Settings {
   openAiKey: string;
   openAiOrganization?: string;
+
+  pineconeApiKey?: string;
 }
 
 export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['type']> {

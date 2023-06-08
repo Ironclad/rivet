@@ -1,15 +1,6 @@
 import { useLatest } from 'ahooks';
-import { atom, useRecoilState } from 'recoil';
-
-export const remoteDebuggerState = atom({
-  key: 'remoteDebuggerState',
-  default: {
-    socket: null as WebSocket | null,
-    started: false,
-    reconnecting: false,
-    url: '',
-  },
-});
+import { useRecoilState } from 'recoil';
+import { remoteDebuggerState } from '../state/execution';
 
 let currentDebuggerMessageHandler: ((message: string, data: unknown) => void) | null = null;
 
@@ -37,6 +28,7 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
       socket,
       started: true,
       url,
+      isInternalExecutor: url === 'ws://localhost:21889',
     }));
 
     socket.onopen = () => {
@@ -52,6 +44,7 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
           ...prevState,
           started: false,
           reconnecting: false,
+          remoteUploadAllowed: false,
         }));
       } else {
         setRemoteDebuggerState((prevState) => ({
@@ -68,7 +61,16 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
 
     socket.onmessage = (event) => {
       const { message, data } = JSON.parse(event.data);
-      currentDebuggerMessageHandler?.(message, data);
+
+      if (message === 'graph-upload-allowed') {
+        console.log('Graph uploading is allowed.');
+        setRemoteDebuggerState((prevState) => ({
+          ...prevState,
+          remoteUploadAllowed: true,
+        }));
+      } else {
+        currentDebuggerMessageHandler?.(message, data);
+      }
     };
   };
 

@@ -2,7 +2,7 @@ import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } 
 import { nanoid } from 'nanoid';
 import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
-import * as jp from 'jsonpath';
+import { JSONPath } from 'jsonpath-plus';
 import { expectType } from '../../utils/expectType';
 import { coerceTypeOptional } from '../..';
 
@@ -94,7 +94,7 @@ export class ExtractObjectPathNodeImpl extends NodeImpl<ExtractObjectPathNode> {
 
     let matches: unknown[];
     try {
-      matches = jp.query(inputObject, inputPath);
+      matches = JSONPath({ json: inputObject ?? null, path: inputPath });
     } catch (err) {
       matches = [];
     }

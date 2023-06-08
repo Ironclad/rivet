@@ -89,6 +89,9 @@ const descriptors: NodeComponentDescriptors = {
   waitForEvent: waitForEventNodeDescriptor,
   tool: toolNodeDescriptor,
   toYaml: toYamlNodeDescriptor,
+  getEmbedding: {},
+  vectorNearestNeighbors: {},
+  vectorStore: {},
 };
 
 export function useNodeTypes() {
