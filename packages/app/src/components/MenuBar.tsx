@@ -249,6 +249,21 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
     connect(url);
   }
 
+  function handleSettingsMenuOption() {
+    setSettingsOpen(true);
+    setFileMenuOpen(false);
+  }
+
+  function handleExportGraph() {
+    saveGraphData(graphData);
+    setFileMenuOpen(false);
+  }
+
+  function handleImportGraph() {
+    loadGraphData((data) => setGraphData(data));
+    setFileMenuOpen(false);
+  }
+
   const selectedExecutorOption = executorOptions.find((option) => option.value === selectedExecutor);
 
   const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
@@ -265,16 +280,10 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
             <button onMouseUp={handleLoadProject}>Open Project...</button>
             <button onMouseUp={handleSaveProject}>Save Project</button>
             <button onMouseUp={handleSaveProjectAs}>Save Project As...</button>
+            <button onMouseUp={handleSettingsMenuOption}>Settings</button>
+            <button onMouseUp={handleExportGraph}>Export Graph</button>
+            <button onMouseUp={handleImportGraph}>Import Graph</button>
           </div>
-        </div>
-        <div className="menu-item settings-button">
-          <button onClick={() => setSettingsOpen(true)}>Settings</button>
-        </div>
-        <div className="menu-item export-button">
-          <button onClick={() => saveGraphData(graphData)}>Export Graph</button>
-        </div>
-        <div className="menu-item import-button">
-          <button onClick={() => loadGraphData((data) => setGraphData(data))}>Import</button>
         </div>
         <div className="remote-debugger">
           <div
