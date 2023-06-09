@@ -298,6 +298,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@atlaskit/in-product-testing@npm:^0.2.0":
+  version: 0.2.3
+  resolution: "@atlaskit/in-product-testing@npm:0.2.3"
+  dependencies:
+    "@babel/runtime": ^7.0.0
+  checksum: f7fc9ffc57297ec725f83f5adf78a7883228f7d3c283b787f6ac8f1745c1cf452f3b68c9dc1b684468b6b176de01468c0421397bfcdf914fed1577e4affda617
+  languageName: node
+  linkType: hard
+
 "@atlaskit/inline-dialog@npm:^13.5.0":
   version: 13.5.0
   resolution: "@atlaskit/inline-dialog@npm:13.5.0"
@@ -452,6 +461,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@atlaskit/popper@npm:^5.5.0":
+  version: 5.5.3
+  resolution: "@atlaskit/popper@npm:5.5.3"
+  dependencies:
+    "@atlaskit/in-product-testing": ^0.2.0
+    "@babel/runtime": ^7.0.0
+    "@popperjs/core": ^2.9.1
+    react-popper: ^2.2.3
+  peerDependencies:
+    react: ^16.8.0
+  checksum: 716acf7c18a899df03a51f92defbbdc9f1a4a718fb9d9871bb308ba2ea21eba45982607da1be11641bfde60e4e28ea69c720e674f3f95412cf9a4f1c82bf0bdb
+  languageName: node
+  linkType: hard
+
 "@atlaskit/popup@npm:^1.5.0":
   version: 1.5.5
   resolution: "@atlaskit/popup@npm:1.5.5"
@@ -469,6 +492,26 @@ __metadata:
     react: ^16.8.0
     react-dom: ^16.8.0
   checksum: 3970aa1df320f17ea2540a3ff93a7d3dbe6890394821e8afe5db003359957899eb91902d40931130a7d80fb752a268ca8b13050fa56581e7aa3fdbe74225c8dc
+  languageName: node
+  linkType: hard
+
+"@atlaskit/popup@npm:^1.6.3":
+  version: 1.6.3
+  resolution: "@atlaskit/popup@npm:1.6.3"
+  dependencies:
+    "@atlaskit/ds-lib": ^2.2.0
+    "@atlaskit/popper": ^5.5.0
+    "@atlaskit/portal": ^4.3.0
+    "@atlaskit/theme": ^12.5.0
+    "@atlaskit/tokens": ^1.4.0
+    "@babel/runtime": ^7.0.0
+    "@emotion/react": ^11.7.1
+    bind-event-listener: ^2.1.1
+    focus-trap: ^2.4.5
+  peerDependencies:
+    react: ^16.8.0
+    react-dom: ^16.8.0
+  checksum: 02bac1a9580ca54fe2f4ef455955de3114c5ab493484bcfbaadae33255f5a2e93e6131a4d033b51ef171914f004044f8038419f59b8df82d391f24931b0ba762
   languageName: node
   linkType: hard
 
@@ -495,6 +538,19 @@ __metadata:
     react: ^16.8.0
     react-dom: ^16.8.0
   checksum: 9ae0c07411dd4d5a71570f0eef36b15f6bf4144618f37d74d67fb77f89540525eaa622fcf03488923cfd7672985953966b033420b53e2f142cf0e2e1fdc0c56a
+  languageName: node
+  linkType: hard
+
+"@atlaskit/portal@npm:^4.3.0":
+  version: 4.3.4
+  resolution: "@atlaskit/portal@npm:4.3.4"
+  dependencies:
+    "@atlaskit/theme": ^12.5.0
+    "@babel/runtime": ^7.0.0
+  peerDependencies:
+    react: ^16.8.0
+    react-dom: ^16.8.0
+  checksum: a379ba939f0976e92b0598ee315d6c0db96c724439c937f527fed5776bcf5aa2392be31f025b01aa56a28248293de63b0064270487cf91d3226d91c3b4d69e2d
   languageName: node
   linkType: hard
 
@@ -3832,6 +3888,7 @@ __metadata:
     "@atlaskit/form": ^8.9.0
     "@atlaskit/inline-edit": ^12.2.12
     "@atlaskit/modal-dialog": ^12.4.11
+    "@atlaskit/popup": ^1.6.3
     "@atlaskit/portal": ^4.2.13
     "@atlaskit/select": ^16.1.8
     "@atlaskit/tabs": ^13.4.2
