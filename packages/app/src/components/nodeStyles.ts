@@ -372,7 +372,8 @@ export const nodeStyles = css`
   }
 
   .copy-button,
-  .expand-button {
+  .expand-button,
+  .prompt-designer-button {
     width: 24px;
     height: 24px;
     font-size: 24px;
@@ -383,12 +384,14 @@ export const nodeStyles = css`
   }
 
   .node:hover .copy-button,
-  .node:hover .expand-button {
+  .node:hover .expand-button,
+  .node:hover .prompt-designer-button {
     opacity: 0.2;
   }
 
   .node .copy-button:hover,
-  .node .expand-button:hover {
+  .node .expand-button:hover,
+  .node .prompt-designer-button:hover {
     opacity: 1;
   }
 

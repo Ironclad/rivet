@@ -40,6 +40,7 @@ import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
 import { useSaveProject } from '../hooks/useSaveProject';
 import { useExecutorSidecar } from '../hooks/useExecutorSidecar';
 import { selectedExecutorState } from '../state/execution';
+import { PromptDesigner, PromptDesignerRenderer } from './PromptDesigner';
 
 const styles = css`
   overflow: hidden;
@@ -471,6 +472,7 @@ export const RivetApp: FC = () => {
       <LeftSidebar />
       <GraphBuilder />
       <SettingsModal />
+      <PromptDesignerRenderer />
       <ToastContainer position="bottom-right" hideProgressBar newestOnTop />
     </div>
   );

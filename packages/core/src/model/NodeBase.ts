@@ -1,5 +1,6 @@
 import { Opaque } from 'type-fest';
 import { DataType } from './DataValue';
+import { GraphId } from '..';
 
 /** Unique in a NodeGraph. */
 export type NodeId = Opaque<string, 'NodeId'>;
@@ -45,11 +46,7 @@ export interface NodeBase {
   /** Alternative sets of data for the node. */
   variants?: ChartNodeVariant<unknown>[];
 
-  // /** Definitions for the input ports of the node. */
-  // inputDefinitions: NodeInputDefinition[];
-
-  // /** Definitions for the output ports of the node. */
-  // outputDefinitions: NodeOutputDefinition[];
+  tests?: NodeTestGroup[];
 }
 
 /** Base type for a typed node. */
@@ -67,6 +64,16 @@ export type ChartNode<Type extends string = string, Data = unknown> = NodeBase &
 export type ChartNodeVariant<Data = unknown> = {
   id: string;
   data: Data;
+};
+
+export type NodeTestGroup = {
+  id: string;
+  evaluatorGraphId: GraphId;
+  tests: NodeTest[];
+};
+
+export type NodeTest = {
+  conditionText: string;
 };
 
 export type SerializedNode = {

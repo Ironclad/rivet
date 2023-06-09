@@ -4,13 +4,13 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { nodesSelector } from '../state/graph';
 import styled from '@emotion/styled';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
-import { NodeType, getNodeDisplayName, ChartNode } from '@ironclad/rivet-core';
+import { NodeType, getNodeDisplayName, ChartNode, NodeTestGroup } from '@ironclad/rivet-core';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes';
 import produce from 'immer';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import Toggle from '@atlaskit/toggle';
 import { useStableCallback } from '../hooks/useStableCallback';
-import { DefaultNodeEditor } from './DefaultNodeEditor';
+import { DefaultGraphSelectorEditor, DefaultNodeEditor, GraphSelector } from './DefaultNodeEditor';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import { Field, Label } from '@atlaskit/form';
 import TextField from '@atlaskit/textfield';
@@ -18,6 +18,7 @@ import Select from '@atlaskit/select';
 import Button from '@atlaskit/button';
 import Popup from '@atlaskit/popup';
 import { orderBy } from 'lodash-es';
+import { nanoid } from 'nanoid';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -275,6 +276,31 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
     setSelectedVariant(undefined);
   }
 
+  function updateTestGroupGraph(testGroup: NodeTestGroup, graphId: string) {
+    updateNode(
+      produce(selectedNode, (draft) => {
+        const group = draft.tests?.find(({ id }) => id === testGroup.id);
+        if (group) {
+          group.evaluatorGraphId = graphId;
+        }
+      }),
+    );
+  }
+
+  function handleAddTestGroup() {
+    updateNode({
+      ...selectedNode,
+      tests: [
+        ...(selectedNode.tests ?? []),
+        {
+          evaluatorGraphId: '',
+          tests: [],
+          id: nanoid(),
+        },
+      ],
+    });
+  }
+
   return (
     <Container>
       <div className="tabs">
@@ -389,6 +415,27 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
               </Field>
               <div className="section section-node">
                 <div className="section-node-content">{nodeEditor}</div>
+              </div>
+            </div>
+          </TabPanel>
+          <TabPanel>
+            <div className="panel">
+              <Label htmlFor="">Tests</Label>
+              <Button appearance="link" onClick={handleAddTestGroup}>
+                Add Test Group
+              </Button>
+              <div className="test-groups">
+                {(selectedNode.tests ?? []).map((test, index) => (
+                  <div className="test-group" key={index}>
+                    <GraphSelector
+                      label="Evaluator Graph"
+                      value={test.evaluatorGraphId}
+                      onChange={(selected) => updateTestGroupGraph(test, selected)}
+                      isReadonly={false}
+                      name={`evaluator-graph-${index}`}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           </TabPanel>

@@ -83,6 +83,7 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
     disconnect: () => {
       setRemoteDebuggerState((prevState) => ({
         ...prevState,
+        started: false,
         reconnecting: false,
       }));
       manuallyDisconnecting = true;

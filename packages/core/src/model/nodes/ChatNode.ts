@@ -30,38 +30,32 @@ import { expectTypeOptional, getError } from '../..';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 
-export type ChatNodeData = {
+export type ChatNodeConfigData = {
   model: string;
-  useModelInput: boolean;
-
   temperature: number;
+  useTopP: boolean;
+  top_p?: number;
+  maxTokens: number;
+  stop?: string;
+  presencePenalty?: number;
+  frequencyPenalty?: number;
+  enableToolUse?: boolean;
+  user?: string;
+  numberOfChoices?: number;
+};
+
+export type ChatNodeData = ChatNodeConfigData & {
+  useModelInput: boolean;
   useTemperatureInput: boolean;
-
-  top_p: number;
   useTopPInput: boolean;
-
   useTopP: boolean;
   useUseTopPInput: boolean;
-
-  maxTokens: number;
   useMaxTokensInput: boolean;
-
   useStop: boolean;
-  stop: string;
   useStopInput: boolean;
-
-  presencePenalty: number;
   usePresencePenaltyInput: boolean;
-
-  frequencyPenalty: number;
   useFrequencyPenaltyInput: boolean;
-
-  enableToolUse?: boolean;
-
-  user?: string;
   useUserInput?: boolean;
-
-  numberOfChoices?: number;
   useNumberOfChoicesInput?: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
@@ -391,46 +385,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       ? coerceTypeOptional(inputs['numberOfChoices' as PortId], 'number') ?? this.data.numberOfChoices ?? 1
       : this.data.numberOfChoices ?? 1;
 
-    const prompt = inputs['prompt' as PortId];
-    if (!prompt) {
-      throw new Error('Prompt is required');
-    }
-
     const tools = expectTypeOptional(inputs['tools' as PortId], 'gpt-tool[]');
-
-    let messages: ChatMessage[] = match(prompt)
-      .with({ type: 'chat-message' }, (p) => [p.value])
-      .with({ type: 'chat-message[]' }, (p) => p.value)
-      .with({ type: 'string' }, (p): ChatMessage[] => [{ type: 'user', message: p.value }])
-      .with({ type: 'string[]' }, (p): ChatMessage[] => p.value.map((v) => ({ type: 'user', message: v })))
-      .otherwise((p) => {
-        if (isArrayDataValue(p)) {
-          const stringValues = (p.value as readonly unknown[]).map((v) =>
-            coerceType(
-              {
-                type: getScalarTypeOf(p.type),
-                value: v,
-              } as ScalarDataValue,
-              'string',
-            ),
-          );
-
-          return stringValues.filter((v) => v != null).map((v) => ({ type: 'user', message: v }));
-        }
-
-        const coercedMessage = coerceType(p, 'chat-message');
-        if (coercedMessage != null) {
-          return [coercedMessage];
-        }
-
-        const coercedString = coerceType(p, 'string');
-        return coercedString != null ? [{ type: 'user', message: coerceType(p, 'string') }] : [];
-      });
-
-    const systemPrompt = inputs['systemPrompt' as PortId];
-    if (systemPrompt) {
-      messages = [{ type: 'system', message: coerceType(systemPrompt, 'string') }, ...messages];
-    }
 
     const toolMap = (tools ?? []).reduce((acc, tool): ChatCompletionToolMap => {
       if (tool.namespace) {
@@ -465,6 +420,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         };
       }
     }, {} as ChatCompletionToolMap);
+
+    const { messages } = getChatNodeMessages(inputs);
 
     const completionMessages = messages.map(
       (message): ChatCompletionRequestMessage => ({
@@ -650,9 +607,53 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         },
       );
     } catch (error) {
+      context.trace(getError(error).stack ?? 'Missing stack');
       throw new Error(`Error processing ChatNode: ${(error as Error).message}`);
     }
   }
 }
 
 export const chatNode = nodeDefinition(ChatNodeImpl, 'Chat');
+
+export function getChatNodeMessages(inputs: Inputs) {
+  const prompt = inputs['prompt' as PortId];
+  if (!prompt) {
+    throw new Error('Prompt is required');
+  }
+
+  let messages: ChatMessage[] = match(prompt)
+    .with({ type: 'chat-message' }, (p) => [p.value])
+    .with({ type: 'chat-message[]' }, (p) => p.value)
+    .with({ type: 'string' }, (p): ChatMessage[] => [{ type: 'user', message: p.value }])
+    .with({ type: 'string[]' }, (p): ChatMessage[] => p.value.map((v) => ({ type: 'user', message: v })))
+    .otherwise((p) => {
+      if (isArrayDataValue(p)) {
+        const stringValues = (p.value as readonly unknown[]).map((v) =>
+          coerceType(
+            {
+              type: getScalarTypeOf(p.type),
+              value: v,
+            } as ScalarDataValue,
+            'string',
+          ),
+        );
+
+        return stringValues.filter((v) => v != null).map((v) => ({ type: 'user', message: v }));
+      }
+
+      const coercedMessage = coerceType(p, 'chat-message');
+      if (coercedMessage != null) {
+        return [coercedMessage];
+      }
+
+      const coercedString = coerceType(p, 'string');
+      return coercedString != null ? [{ type: 'user', message: coerceType(p, 'string') }] : [];
+    });
+
+  const systemPrompt = inputs['systemPrompt' as PortId];
+  if (systemPrompt) {
+    messages = [{ type: 'system', message: coerceType(systemPrompt, 'string') }, ...messages];
+  }
+
+  return { messages, systemPrompt };
+}
