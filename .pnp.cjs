@@ -363,7 +363,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@atlaskit-ds-explorations-virtual-a8b3af4102/0/cache/@atlaskit-ds-explorations-npm-2.2.1-64649033dc-236c45399b.zip/node_modules/@atlaskit/ds-explorations/",\
           "packageDependencies": [\
             ["@atlaskit/ds-explorations", "virtual:bcf06f5b79e08b27570fe7c48934b59b443822eea77bfbc7afb91847d9c486ee6ce2b2571503125da31aa67018788768262d880e6224d7339928a4d1f80b2840#npm:2.2.1"],\
-            ["@atlaskit/tokens", "virtual:bcf06f5b79e08b27570fe7c48934b59b443822eea77bfbc7afb91847d9c486ee6ce2b2571503125da31aa67018788768262d880e6224d7339928a4d1f80b2840#npm:1.5.2"],\
+            ["@atlaskit/tokens", "virtual:3fca56f8b5ea1fc24999d610567d8cf13b7dc4d9fe9e7a66cb3355839b90044a4dd2663d340faa93bfadbe368cadff7d8eaeef28849adf75b775cc5725f69c64#npm:1.5.2"],\
             ["@babel/runtime", "npm:7.21.0"],\
             ["@emotion/react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:11.10.6"],\
             ["@types/react", "npm:18.0.29"],\
@@ -552,6 +552,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@atlaskit-in-product-testing-npm-0.1.5-311c55b8c4-c795093787.zip/node_modules/@atlaskit/in-product-testing/",\
           "packageDependencies": [\
             ["@atlaskit/in-product-testing", "npm:0.1.5"],\
+            ["@babel/runtime", "npm:7.21.0"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:0.2.3", {\
+          "packageLocation": "./.yarn/cache/@atlaskit-in-product-testing-npm-0.2.3-5d36eb7296-f7fc9ffc57.zip/node_modules/@atlaskit/in-product-testing/",\
+          "packageDependencies": [\
+            ["@atlaskit/in-product-testing", "npm:0.2.3"],\
             ["@babel/runtime", "npm:7.21.0"]\
           ],\
           "linkType": "HARD"\
@@ -790,11 +798,35 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
+        ["npm:5.5.3", {\
+          "packageLocation": "./.yarn/cache/@atlaskit-popper-npm-5.5.3-7ae400c2e9-716acf7c18.zip/node_modules/@atlaskit/popper/",\
+          "packageDependencies": [\
+            ["@atlaskit/popper", "npm:5.5.3"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
         ["virtual:012e4dd6a882ce1d6c5890d650e1fc8baece31283ed6286abdcfa44f5965b80c6562be2c06e1273934c570796f249e8388940205fd617947c46366bef644086f#npm:5.4.11", {\
           "packageLocation": "./.yarn/__virtual__/@atlaskit-popper-virtual-03258b83db/0/cache/@atlaskit-popper-npm-5.4.11-9ba5c7b375-e41f495582.zip/node_modules/@atlaskit/popper/",\
           "packageDependencies": [\
             ["@atlaskit/popper", "virtual:012e4dd6a882ce1d6c5890d650e1fc8baece31283ed6286abdcfa44f5965b80c6562be2c06e1273934c570796f249e8388940205fd617947c46366bef644086f#npm:5.4.11"],\
             ["@atlaskit/in-product-testing", "npm:0.1.5"],\
+            ["@babel/runtime", "npm:7.21.0"],\
+            ["@popperjs/core", "npm:2.11.7"],\
+            ["@types/react", "npm:18.0.29"],\
+            ["react", "npm:18.2.0"],\
+            ["react-popper", "virtual:03258b83dbb56afebe3597f1be21e763812da68dcb316fcf398ab293af31da0256d0a6f2b1275e3384d95260259b667558559dc60a4d578ad94a2d14bf2c561a#npm:2.3.0"]\
+          ],\
+          "packagePeers": [\
+            "@types/react",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["virtual:3fca56f8b5ea1fc24999d610567d8cf13b7dc4d9fe9e7a66cb3355839b90044a4dd2663d340faa93bfadbe368cadff7d8eaeef28849adf75b775cc5725f69c64#npm:5.5.3", {\
+          "packageLocation": "./.yarn/__virtual__/@atlaskit-popper-virtual-b033b93d93/0/cache/@atlaskit-popper-npm-5.5.3-7ae400c2e9-716acf7c18.zip/node_modules/@atlaskit/popper/",\
+          "packageDependencies": [\
+            ["@atlaskit/popper", "virtual:3fca56f8b5ea1fc24999d610567d8cf13b7dc4d9fe9e7a66cb3355839b90044a4dd2663d340faa93bfadbe368cadff7d8eaeef28849adf75b775cc5725f69c64#npm:5.5.3"],\
+            ["@atlaskit/in-product-testing", "npm:0.2.3"],\
             ["@babel/runtime", "npm:7.21.0"],\
             ["@popperjs/core", "npm:2.11.7"],\
             ["@types/react", "npm:18.0.29"],\
@@ -815,6 +847,39 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@atlaskit/popup", "npm:1.5.5"]\
           ],\
           "linkType": "SOFT"\
+        }],\
+        ["npm:1.6.3", {\
+          "packageLocation": "./.yarn/cache/@atlaskit-popup-npm-1.6.3-766a896be2-02bac1a958.zip/node_modules/@atlaskit/popup/",\
+          "packageDependencies": [\
+            ["@atlaskit/popup", "npm:1.6.3"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:1.6.3", {\
+          "packageLocation": "./.yarn/__virtual__/@atlaskit-popup-virtual-3fca56f8b5/0/cache/@atlaskit-popup-npm-1.6.3-766a896be2-02bac1a958.zip/node_modules/@atlaskit/popup/",\
+          "packageDependencies": [\
+            ["@atlaskit/popup", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:1.6.3"],\
+            ["@atlaskit/ds-lib", "virtual:d800295ab01df0c54764c129a2fcaaa9b68f23dfb4dfcb2d3b31dabb1b79a8340b0605babb36c898925d6d70890e294f5cb5763c1090d7d95a8645a27e50b4bb#npm:2.2.0"],\
+            ["@atlaskit/popper", "virtual:3fca56f8b5ea1fc24999d610567d8cf13b7dc4d9fe9e7a66cb3355839b90044a4dd2663d340faa93bfadbe368cadff7d8eaeef28849adf75b775cc5725f69c64#npm:5.5.3"],\
+            ["@atlaskit/portal", "virtual:3fca56f8b5ea1fc24999d610567d8cf13b7dc4d9fe9e7a66cb3355839b90044a4dd2663d340faa93bfadbe368cadff7d8eaeef28849adf75b775cc5725f69c64#npm:4.3.4"],\
+            ["@atlaskit/theme", "virtual:d800295ab01df0c54764c129a2fcaaa9b68f23dfb4dfcb2d3b31dabb1b79a8340b0605babb36c898925d6d70890e294f5cb5763c1090d7d95a8645a27e50b4bb#npm:12.5.0"],\
+            ["@atlaskit/tokens", "virtual:3fca56f8b5ea1fc24999d610567d8cf13b7dc4d9fe9e7a66cb3355839b90044a4dd2663d340faa93bfadbe368cadff7d8eaeef28849adf75b775cc5725f69c64#npm:1.5.2"],\
+            ["@babel/runtime", "npm:7.21.0"],\
+            ["@emotion/react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:11.10.6"],\
+            ["@types/react", "npm:18.0.29"],\
+            ["@types/react-dom", "npm:18.0.11"],\
+            ["bind-event-listener", "npm:2.1.1"],\
+            ["focus-trap", "npm:2.4.6"],\
+            ["react", "npm:18.2.0"],\
+            ["react-dom", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:18.2.0"]\
+          ],\
+          "packagePeers": [\
+            "@types/react-dom",\
+            "@types/react",\
+            "react-dom",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
         }],\
         ["virtual:fef5657c08f116b7bfee09d400145d192a60f445c1a7a5840aae7d3058772b5bd1d9f0cb678c1ccdbb18b400c4501cbd649543429d214df74a0dbaeb06082ff4#npm:1.5.5", {\
           "packageLocation": "./.yarn/__virtual__/@atlaskit-popup-virtual-012e4dd6a8/0/cache/@atlaskit-popup-npm-1.5.5-7f217818f4-3970aa1df3.zip/node_modules/@atlaskit/popup/",\
@@ -858,6 +923,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
+        ["npm:4.3.4", {\
+          "packageLocation": "./.yarn/cache/@atlaskit-portal-npm-4.3.4-7146d75b51-a379ba939f.zip/node_modules/@atlaskit/portal/",\
+          "packageDependencies": [\
+            ["@atlaskit/portal", "npm:4.3.4"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
         ["virtual:1d4b8be69657b95ae281cda389b1fd64e973578d2dd9d6fc2fac55114d60638742b53b5256127b1b01635f97d01615d8571a1808266238d9d3a8d92d0b272196#npm:4.2.12", {\
           "packageLocation": "./.yarn/__virtual__/@atlaskit-portal-virtual-f22043aa67/0/cache/@atlaskit-portal-npm-4.2.12-7cb7fa1e88-9ae0c07411.zip/node_modules/@atlaskit/portal/",\
           "packageDependencies": [\
@@ -882,6 +954,25 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@atlaskit/portal", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.2.13"],\
             ["@atlaskit/theme", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:12.4.0"],\
+            ["@babel/runtime", "npm:7.21.0"],\
+            ["@types/react", "npm:18.0.29"],\
+            ["@types/react-dom", "npm:18.0.11"],\
+            ["react", "npm:18.2.0"],\
+            ["react-dom", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:18.2.0"]\
+          ],\
+          "packagePeers": [\
+            "@types/react-dom",\
+            "@types/react",\
+            "react-dom",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["virtual:3fca56f8b5ea1fc24999d610567d8cf13b7dc4d9fe9e7a66cb3355839b90044a4dd2663d340faa93bfadbe368cadff7d8eaeef28849adf75b775cc5725f69c64#npm:4.3.4", {\
+          "packageLocation": "./.yarn/__virtual__/@atlaskit-portal-virtual-e220b27c65/0/cache/@atlaskit-portal-npm-4.3.4-7146d75b51-a379ba939f.zip/node_modules/@atlaskit/portal/",\
+          "packageDependencies": [\
+            ["@atlaskit/portal", "virtual:3fca56f8b5ea1fc24999d610567d8cf13b7dc4d9fe9e7a66cb3355839b90044a4dd2663d340faa93bfadbe368cadff7d8eaeef28849adf75b775cc5725f69c64#npm:4.3.4"],\
+            ["@atlaskit/theme", "virtual:d800295ab01df0c54764c129a2fcaaa9b68f23dfb4dfcb2d3b31dabb1b79a8340b0605babb36c898925d6d70890e294f5cb5763c1090d7d95a8645a27e50b4bb#npm:12.5.0"],\
             ["@babel/runtime", "npm:7.21.0"],\
             ["@types/react", "npm:18.0.29"],\
             ["@types/react-dom", "npm:18.0.11"],\
@@ -1036,7 +1127,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@atlaskit/codemod-utils", "npm:4.2.0"],\
             ["@atlaskit/ds-explorations", "virtual:bcf06f5b79e08b27570fe7c48934b59b443822eea77bfbc7afb91847d9c486ee6ce2b2571503125da31aa67018788768262d880e6224d7339928a4d1f80b2840#npm:2.2.1"],\
             ["@atlaskit/theme", "virtual:d800295ab01df0c54764c129a2fcaaa9b68f23dfb4dfcb2d3b31dabb1b79a8340b0605babb36c898925d6d70890e294f5cb5763c1090d7d95a8645a27e50b4bb#npm:12.5.0"],\
-            ["@atlaskit/tokens", "virtual:bcf06f5b79e08b27570fe7c48934b59b443822eea77bfbc7afb91847d9c486ee6ce2b2571503125da31aa67018788768262d880e6224d7339928a4d1f80b2840#npm:1.5.2"],\
+            ["@atlaskit/tokens", "virtual:3fca56f8b5ea1fc24999d610567d8cf13b7dc4d9fe9e7a66cb3355839b90044a4dd2663d340faa93bfadbe368cadff7d8eaeef28849adf75b775cc5725f69c64#npm:1.5.2"],\
             ["@babel/runtime", "npm:7.21.0"],\
             ["@emotion/react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:11.10.6"],\
             ["@types/react", "npm:18.0.29"],\
@@ -1230,15 +1321,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["virtual:64feba6cd6fc04826b105047a7abd772b2844bc3b728996e2ffae292996171c325fdebcdd7d0c31e61fe62460895529c354085abbf5cd300a5f6303c35c588f0#npm:1.2.16", {\
-          "packageLocation": "./.yarn/__virtual__/@atlaskit-tokens-virtual-7a83916875/0/cache/@atlaskit-tokens-npm-1.2.16-c8e3b1dfb1-cd443c5dc7.zip/node_modules/@atlaskit/tokens/",\
+        ["virtual:3fca56f8b5ea1fc24999d610567d8cf13b7dc4d9fe9e7a66cb3355839b90044a4dd2663d340faa93bfadbe368cadff7d8eaeef28849adf75b775cc5725f69c64#npm:1.5.2", {\
+          "packageLocation": "./.yarn/__virtual__/@atlaskit-tokens-virtual-c5340a29a2/0/cache/@atlaskit-tokens-npm-1.5.2-6adfa6bad9-449a27228b.zip/node_modules/@atlaskit/tokens/",\
           "packageDependencies": [\
-            ["@atlaskit/tokens", "virtual:64feba6cd6fc04826b105047a7abd772b2844bc3b728996e2ffae292996171c325fdebcdd7d0c31e61fe62460895529c354085abbf5cd300a5f6303c35c588f0#npm:1.2.16"],\
-            ["@atlaskit/ds-lib", "virtual:64feba6cd6fc04826b105047a7abd772b2844bc3b728996e2ffae292996171c325fdebcdd7d0c31e61fe62460895529c354085abbf5cd300a5f6303c35c588f0#npm:2.1.3"],\
-            ["@atlaskit/platform-feature-flags", "npm:0.1.2"],\
+            ["@atlaskit/tokens", "virtual:3fca56f8b5ea1fc24999d610567d8cf13b7dc4d9fe9e7a66cb3355839b90044a4dd2663d340faa93bfadbe368cadff7d8eaeef28849adf75b775cc5725f69c64#npm:1.5.2"],\
+            ["@atlaskit/ds-lib", "virtual:d800295ab01df0c54764c129a2fcaaa9b68f23dfb4dfcb2d3b31dabb1b79a8340b0605babb36c898925d6d70890e294f5cb5763c1090d7d95a8645a27e50b4bb#npm:2.2.0"],\
+            ["@atlaskit/platform-feature-flags", "npm:0.2.0"],\
             ["@babel/runtime", "npm:7.21.0"],\
-            ["@babel/traverse", "npm:7.21.4"],\
-            ["@babel/types", "npm:7.21.4"],\
+            ["@babel/traverse", "npm:7.21.5"],\
+            ["@babel/types", "npm:7.21.3"],\
             ["@types/react", "npm:18.0.29"],\
             ["bind-event-listener", "npm:2.1.1"],\
             ["react", "npm:18.2.0"]\
@@ -1249,15 +1340,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["virtual:bcf06f5b79e08b27570fe7c48934b59b443822eea77bfbc7afb91847d9c486ee6ce2b2571503125da31aa67018788768262d880e6224d7339928a4d1f80b2840#npm:1.5.2", {\
-          "packageLocation": "./.yarn/__virtual__/@atlaskit-tokens-virtual-d11ec2ca6e/0/cache/@atlaskit-tokens-npm-1.5.2-6adfa6bad9-449a27228b.zip/node_modules/@atlaskit/tokens/",\
+        ["virtual:64feba6cd6fc04826b105047a7abd772b2844bc3b728996e2ffae292996171c325fdebcdd7d0c31e61fe62460895529c354085abbf5cd300a5f6303c35c588f0#npm:1.2.16", {\
+          "packageLocation": "./.yarn/__virtual__/@atlaskit-tokens-virtual-7a83916875/0/cache/@atlaskit-tokens-npm-1.2.16-c8e3b1dfb1-cd443c5dc7.zip/node_modules/@atlaskit/tokens/",\
           "packageDependencies": [\
-            ["@atlaskit/tokens", "virtual:bcf06f5b79e08b27570fe7c48934b59b443822eea77bfbc7afb91847d9c486ee6ce2b2571503125da31aa67018788768262d880e6224d7339928a4d1f80b2840#npm:1.5.2"],\
-            ["@atlaskit/ds-lib", "virtual:d800295ab01df0c54764c129a2fcaaa9b68f23dfb4dfcb2d3b31dabb1b79a8340b0605babb36c898925d6d70890e294f5cb5763c1090d7d95a8645a27e50b4bb#npm:2.2.0"],\
-            ["@atlaskit/platform-feature-flags", "npm:0.2.0"],\
+            ["@atlaskit/tokens", "virtual:64feba6cd6fc04826b105047a7abd772b2844bc3b728996e2ffae292996171c325fdebcdd7d0c31e61fe62460895529c354085abbf5cd300a5f6303c35c588f0#npm:1.2.16"],\
+            ["@atlaskit/ds-lib", "virtual:64feba6cd6fc04826b105047a7abd772b2844bc3b728996e2ffae292996171c325fdebcdd7d0c31e61fe62460895529c354085abbf5cd300a5f6303c35c588f0#npm:2.1.3"],\
+            ["@atlaskit/platform-feature-flags", "npm:0.1.2"],\
             ["@babel/runtime", "npm:7.21.0"],\
-            ["@babel/traverse", "npm:7.21.5"],\
-            ["@babel/types", "npm:7.21.3"],\
+            ["@babel/traverse", "npm:7.21.4"],\
+            ["@babel/types", "npm:7.21.4"],\
             ["@types/react", "npm:18.0.29"],\
             ["bind-event-listener", "npm:2.1.1"],\
             ["react", "npm:18.2.0"]\
@@ -5956,6 +6047,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@atlaskit/form", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:8.9.0"],\
             ["@atlaskit/inline-edit", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:12.2.12"],\
             ["@atlaskit/modal-dialog", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:12.4.11"],\
+            ["@atlaskit/popup", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:1.6.3"],\
             ["@atlaskit/portal", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.2.13"],\
             ["@atlaskit/select", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:16.2.0"],\
             ["@atlaskit/tabs", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:13.4.2"],\

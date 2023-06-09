@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { editingNodeState } from '../state/graphBuilder';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { nodesSelector } from '../state/graph';
@@ -14,6 +14,10 @@ import { DefaultNodeEditor } from './DefaultNodeEditor';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import { Field, Label } from '@atlaskit/form';
 import TextField from '@atlaskit/textfield';
+import Select from '@atlaskit/select';
+import Button from '@atlaskit/button';
+import Popup from '@atlaskit/popup';
+import { orderBy } from 'lodash-es';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -47,7 +51,7 @@ const Container = styled.div`
     overflow: auto;
     padding: 8px 16px 16px;
     color: var(--foreground);
-    background-color: rgba(40, 44, 52, 0.5);
+    background-color: rgba(40, 44, 52, 0.75);
     font-family: 'Roboto Mono', monospace;
     width: 100%;
     box-shadow: -4px 0 3px rgba(0, 0, 0, 0.1);
@@ -164,12 +168,30 @@ const Container = styled.div`
     display: flex;
     align-items: center;
   }
+
+  .variants {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .variant-select {
+    min-width: 150px;
+  }
+
+  .variant-buttons {
+    display: flex;
+    align-items: center;
+  }
 `;
 
 type NodeEditorProps = { selectedNode: ChartNode; onDeselect: () => void };
 
 export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) => {
   const setNodes = useSetRecoilState(nodesSelector);
+  const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
+  const [addVariantPopupOpen, setAddVariantPopupOpen] = useState(false);
 
   const updateNode = useStableCallback((node: ChartNode) => {
     setNodes((nodes) =>
@@ -180,12 +202,19 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
     );
   });
 
+  const isVariant = selectedVariant !== undefined;
+
+  const nodeForEditor = {
+    ...selectedNode,
+    data: isVariant ? selectedNode.variants?.find(({ id }) => id === selectedVariant)?.data : selectedNode.data,
+  };
+
   const { Editor } = useUnknownNodeComponentDescriptorFor(selectedNode);
 
   const nodeEditor = Editor ? (
-    <Editor node={selectedNode} onChange={updateNode} />
+    <Editor node={nodeForEditor} onChange={isVariant ? () => {} : updateNode} />
   ) : (
-    <DefaultNodeEditor node={selectedNode} onChange={updateNode} />
+    <DefaultNodeEditor node={nodeForEditor} isReadonly={isVariant} onChange={isVariant ? () => {} : updateNode} />
   );
 
   useEffect(() => {
@@ -209,6 +238,42 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
   const nodeTitleChanged = useStableCallback((title: string) => {
     updateNode({ ...selectedNode, title });
   });
+
+  const variantOptions = useMemo(() => {
+    const appliedOption = { value: '', label: '(Current)' };
+
+    return [
+      appliedOption,
+      ...orderBy(selectedNode.variants?.map(({ id }) => ({ value: id, label: id })) ?? [], 'label'),
+    ];
+  }, [selectedNode.variants]);
+
+  const selectedVariantOption =
+    selectedVariant === undefined ? variantOptions[0] : variantOptions.find(({ value }) => value === selectedVariant);
+
+  function handleSaveAsVariant(id: string) {
+    const node = { ...selectedNode, variants: [...(selectedNode.variants ?? []), { id, data: selectedNode.data }] };
+    updateNode(node);
+    setSelectedVariant(id);
+  }
+
+  function handleDeleteVariant() {
+    const node = {
+      ...selectedNode,
+      variants: selectedNode.variants?.filter(({ id }) => id !== selectedVariant),
+    };
+    updateNode(node);
+    setSelectedVariant(undefined);
+  }
+
+  function handleApplyVariant() {
+    const node = {
+      ...selectedNode,
+      data: selectedNode.variants?.find(({ id }) => id === selectedVariant)?.data,
+    };
+    updateNode(node);
+    setSelectedVariant(undefined);
+  }
 
   return (
     <Container>
@@ -262,6 +327,61 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
                         onChange={(event) =>
                           updateNode({ ...selectedNode, splitRunMax: (event.target as HTMLInputElement).valueAsNumber })
                         }
+                      />
+                    )}
+                  </section>
+                )}
+              </Field>
+              <Field name="variants" label="Variant">
+                {({ fieldProps }) => (
+                  <section className="variants">
+                    <Select
+                      className="variant-select"
+                      {...fieldProps}
+                      options={variantOptions}
+                      value={selectedVariantOption}
+                      onChange={(val) => setSelectedVariant(val!.value === '' ? undefined : val!.value)}
+                    />
+
+                    {isVariant ? (
+                      <div className="variant-buttons">
+                        <Button appearance="primary" onClick={handleApplyVariant}>
+                          Apply
+                        </Button>
+                        <Button appearance="danger" onClick={handleDeleteVariant}>
+                          Delete Variant
+                        </Button>
+                      </div>
+                    ) : (
+                      <Popup
+                        isOpen={addVariantPopupOpen}
+                        trigger={(triggerProps) => (
+                          <Button
+                            {...triggerProps}
+                            appearance="subtle-link"
+                            onClick={() => setAddVariantPopupOpen(!addVariantPopupOpen)}
+                          >
+                            Save As Variant
+                          </Button>
+                        )}
+                        content={() => (
+                          <div>
+                            <Field name="variantName" label="Variant Name">
+                              {({ fieldProps }) => (
+                                <TextField
+                                  {...fieldProps}
+                                  placeholder="Enter a name for the variant..."
+                                  onKeyDown={(event) => {
+                                    if (event.key === 'Enter') {
+                                      handleSaveAsVariant((event.target as HTMLInputElement).value);
+                                      setAddVariantPopupOpen(false);
+                                    }
+                                  }}
+                                />
+                              )}
+                            </Field>
+                          </div>
+                        )}
                       />
                     )}
                   </section>

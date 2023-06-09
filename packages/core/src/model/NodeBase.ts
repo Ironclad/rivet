@@ -42,6 +42,9 @@ export interface NodeBase {
   /** The data associated with the node. Typed when using `Nodes` or a subtype. */
   data: unknown;
 
+  /** Alternative sets of data for the node. */
+  variants?: ChartNodeVariant<unknown>[];
+
   // /** Definitions for the input ports of the node. */
   // inputDefinitions: NodeInputDefinition[];
 
@@ -53,7 +56,16 @@ export interface NodeBase {
 export type ChartNode<Type extends string = string, Data = unknown> = NodeBase & {
   /** The type of the node. */
   type: Type;
+
   /** The data associated with the node. */
+  data: Data;
+
+  /** Alternative sets of data for the node. */
+  variants?: ChartNodeVariant<Data>[];
+};
+
+export type ChartNodeVariant<Data = unknown> = {
+  id: string;
   data: Data;
 };
 
@@ -69,6 +81,7 @@ export type SerializedNode = {
   visualData: `${string}/${string}/${string}/${string}`;
   outgoingConnections: SerializedNodeConnection[];
   data: unknown;
+  variants: ChartNodeVariant<unknown>[];
 };
 
 // portId->nodeId/portId

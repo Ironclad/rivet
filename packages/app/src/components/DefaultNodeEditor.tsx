@@ -87,16 +87,23 @@ export const defaultEditorContainerStyles = css`
   }
 `;
 
-export const DefaultNodeEditor: FC<{ node: ChartNode; onChange: (changed: ChartNode) => void }> = ({
-  node,
-  onChange,
-}) => {
+export const DefaultNodeEditor: FC<{
+  node: ChartNode;
+  isReadonly: boolean;
+  onChange: (changed: ChartNode) => void;
+}> = ({ node, onChange, isReadonly }) => {
   const editors = useMemo(() => createUnknownNodeInstance(node).getEditors(), [node]);
 
   return (
     <div css={defaultEditorContainerStyles}>
       {editors.map((editor, i) => (
-        <DefaultNodeEditorField key={editor.dataKey} node={node} onChange={onChange} editor={editor} />
+        <DefaultNodeEditorField
+          key={editor.dataKey}
+          node={node}
+          onChange={onChange}
+          editor={editor}
+          isReadonly={isReadonly}
+        />
       ))}
     </div>
   );
@@ -108,25 +115,27 @@ const DefaultNodeEditorField: FC<{
   node: ChartNode;
   onChange: (changed: ChartNode) => void;
   editor: EditorDefinition<ChartNode>;
-}> = ({ node, onChange, editor }) => {
+  isReadonly: boolean;
+}> = ({ node, onChange, editor, isReadonly }) => {
   const data = node.data as Record<string, unknown>;
 
+  const sharedProps = { node, onChange, isReadonly };
+
   const input = match(editor)
-    .with({ type: 'string' }, (editor) => <DefaultStringEditor node={node} onChange={onChange} editor={editor} />)
-    .with({ type: 'toggle' }, (editor) => <DefaultToggleEditor node={node} onChange={onChange} editor={editor} />)
-    .with({ type: 'dataTypeSelector' }, (editor) => (
-      <DefaultDataTypeSelector node={node} onChange={onChange} editor={editor} />
-    ))
-    .with({ type: 'anyData' }, (editor) => <DefaultAnyDataEditor node={node} onChange={onChange} editor={editor} />)
-    .with({ type: 'dropdown' }, (editor) => <DefaultDropdownEditor node={node} onChange={onChange} editor={editor} />)
-    .with({ type: 'number' }, (editor) => <DefaultNumberEditor node={node} onChange={onChange} editor={editor} />)
-    .with({ type: 'code' }, (editor) => <DefaultCodeEditor node={node} onChange={onChange} editor={editor} />)
+    .with({ type: 'string' }, (editor) => <DefaultStringEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'toggle' }, (editor) => <DefaultToggleEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'dataTypeSelector' }, (editor) => <DefaultDataTypeSelector {...sharedProps} editor={editor} />)
+    .with({ type: 'anyData' }, (editor) => <DefaultAnyDataEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'dropdown' }, (editor) => <DefaultDropdownEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'number' }, (editor) => <DefaultNumberEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'code' }, (editor) => <DefaultCodeEditor {...sharedProps} editor={editor} />)
     .exhaustive();
 
   const toggle = editor.useInputToggleDataKey ? (
     <div className="use-input-toggle">
       <Toggle
         isChecked={data[editor.useInputToggleDataKey] as boolean | undefined}
+        isDisabled={isReadonly}
         onChange={(e) =>
           onChange({
             ...node,
@@ -152,9 +161,10 @@ const DefaultNodeEditorField: FC<{
 
 export const DefaultStringEditor: FC<{
   node: ChartNode;
+  isReadonly: boolean;
   onChange: (changed: ChartNode) => void;
   editor: StringEditorDefinition<ChartNode>;
-}> = ({ node, onChange, editor }) => {
+}> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
   return (
     <Field name={editor.dataKey} label={editor.label}>
@@ -162,6 +172,7 @@ export const DefaultStringEditor: FC<{
         <TextField
           {...fieldProps}
           value={data[editor.dataKey] as string | undefined}
+          isReadOnly={isReadonly}
           onChange={(e) =>
             onChange({
               ...node,
@@ -179,10 +190,11 @@ export const DefaultStringEditor: FC<{
 
 export const DefaultToggleEditor: FC<{
   node: ChartNode;
+  isReadonly: boolean;
 
   onChange: (changed: ChartNode) => void;
   editor: ToggleEditorDefinition<ChartNode>;
-}> = ({ node, onChange, editor }) => {
+}> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
   return (
     <Field name={editor.dataKey} label={editor.label}>
@@ -190,6 +202,7 @@ export const DefaultToggleEditor: FC<{
         <Toggle
           {...fieldProps}
           isChecked={data[editor.dataKey] as boolean | undefined}
+          isDisabled={isReadonly}
           onChange={(e) =>
             onChange({
               ...node,
@@ -207,9 +220,10 @@ export const DefaultToggleEditor: FC<{
 
 export const DefaultDataTypeSelector: FC<{
   node: ChartNode;
+  isReadonly: boolean;
   onChange: (changed: ChartNode) => void;
   editor: DataTypeSelectorEditorDefinition<ChartNode>;
-}> = ({ node, onChange, editor }) => {
+}> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
   const dataType = data[editor.dataKey] as DataType | undefined;
 
@@ -225,7 +239,7 @@ export const DefaultDataTypeSelector: FC<{
 
   return (
     <div className="data-type-selector">
-      <Field name="data-type" label="Data Type">
+      <Field name="data-type" label="Data Type" isDisabled={isReadonly}>
         {({ fieldProps }) => (
           <Select
             {...fieldProps}
@@ -243,7 +257,7 @@ export const DefaultDataTypeSelector: FC<{
           />
         )}
       </Field>
-      <Field label=" " name="is-array">
+      <Field label=" " name="is-array" isDisabled={isReadonly}>
         {({ fieldProps }) => (
           <Checkbox
             {...fieldProps}
@@ -269,9 +283,10 @@ export const DefaultDataTypeSelector: FC<{
 
 export const DefaultAnyDataEditor: FC<{
   node: ChartNode;
+  isReadonly: boolean;
   onChange: (changed: ChartNode) => void;
   editor: AnyDataEditorDefinition<ChartNode>;
-}> = ({ node, onChange, editor }) => {
+}> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
   // TODO
   return (
@@ -280,6 +295,7 @@ export const DefaultAnyDataEditor: FC<{
         <TextField
           {...fieldProps}
           value={data[editor.dataKey] as string | undefined}
+          isReadOnly={isReadonly}
           onChange={(e) =>
             onChange({
               ...node,
@@ -297,12 +313,13 @@ export const DefaultAnyDataEditor: FC<{
 
 export const DefaultDropdownEditor: FC<{
   node: ChartNode;
+  isReadonly: boolean;
   onChange: (changed: ChartNode) => void;
   editor: DropdownEditorDefinition<ChartNode>;
-}> = ({ node, onChange, editor }) => {
+}> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
   return (
-    <Field name={editor.dataKey} label={editor.label}>
+    <Field name={editor.dataKey} label={editor.label} isDisabled={isReadonly}>
       {({ fieldProps }) => (
         <Select
           {...fieldProps}
@@ -325,14 +342,16 @@ export const DefaultDropdownEditor: FC<{
 
 export const DefaultNumberEditor: FC<{
   node: ChartNode;
+  isReadonly: boolean;
   onChange: (changed: ChartNode) => void;
   editor: NumberEditorDefinition<ChartNode>;
-}> = ({ node, onChange, editor }) => {
+}> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
   return (
     <Field name={editor.dataKey} label={editor.label}>
       {({ fieldProps }) => (
         <TextField
+          isReadOnly={isReadonly}
           type="number"
           min={editor.min}
           max={editor.max}
@@ -356,9 +375,10 @@ export const DefaultNumberEditor: FC<{
 
 export const DefaultCodeEditor: FC<{
   node: ChartNode;
+  isReadonly: boolean;
   onChange: (changed: ChartNode) => void;
   editor: CodeEditorDefinition<ChartNode>;
-}> = ({ node, onChange, editor: editorDef }) => {
+}> = ({ node, isReadonly, onChange, editor: editorDef }) => {
   const editorContainer = useRef<HTMLDivElement>(null);
   const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
 
@@ -381,6 +401,7 @@ export const DefaultCodeEditor: FC<{
         enabled: false,
       },
       wordWrap: 'on',
+      readOnly: isReadonly,
       value: (nodeLatest.current?.data as Record<string, unknown>)[editorDef.dataKey] as string | undefined,
     });
     editor.onDidChangeModelContent(() => {
@@ -407,9 +428,13 @@ export const DefaultCodeEditor: FC<{
         | string
         | undefined;
       editorInstance.current.setValue(currentValue ?? '');
+
+      editorInstance.current.updateOptions({
+        readOnly: isReadonly,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [node.id]);
+  }, [node.id, isReadonly]);
 
   return (
     <div className="editor-wrapper">
