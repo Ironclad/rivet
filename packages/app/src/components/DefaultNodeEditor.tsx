@@ -7,6 +7,8 @@ import {
   DataTypeSelectorEditorDefinition,
   DropdownEditorDefinition,
   EditorDefinition,
+  GraphId,
+  GraphSelectorEditorDefinition,
   NumberEditorDefinition,
   StringEditorDefinition,
   ToggleEditorDefinition,
@@ -26,6 +28,11 @@ import Checkbox from '@atlaskit/checkbox';
 import { useLatest } from 'ahooks';
 import { monaco } from '../utils/monaco';
 import clsx from 'clsx';
+import { projectState } from '../state/savedGraphs';
+import { useRecoilValue } from 'recoil';
+import { orderBy } from 'lodash-es';
+import { values } from '../utils/typeSafety';
+import { nanoid } from 'nanoid';
 
 export const defaultEditorContainerStyles = css`
   display: flex;
@@ -129,6 +136,7 @@ const DefaultNodeEditorField: FC<{
     .with({ type: 'dropdown' }, (editor) => <DefaultDropdownEditor {...sharedProps} editor={editor} />)
     .with({ type: 'number' }, (editor) => <DefaultNumberEditor {...sharedProps} editor={editor} />)
     .with({ type: 'code' }, (editor) => <DefaultCodeEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'graphSelector' }, (editor) => <DefaultGraphSelectorEditor {...sharedProps} editor={editor} />)
     .exhaustive();
 
   const toggle = editor.useInputToggleDataKey ? (
@@ -334,6 +342,66 @@ export const DefaultDropdownEditor: FC<{
               },
             })
           }
+        />
+      )}
+    </Field>
+  );
+};
+
+export const DefaultGraphSelectorEditor: FC<{
+  node: ChartNode;
+  isReadonly: boolean;
+  onChange: (changed: ChartNode) => void;
+  editor: GraphSelectorEditorDefinition<ChartNode>;
+}> = ({ node, isReadonly, onChange, editor }) => {
+  const data = node.data as Record<string, unknown>;
+
+  return (
+    <GraphSelector
+      value={data[editor.dataKey] as string | undefined}
+      isReadonly={isReadonly}
+      onChange={(selected) =>
+        onChange({
+          ...node,
+          data: {
+            ...data,
+            [editor.dataKey]: selected,
+          },
+        })
+      }
+      label={editor.label}
+      name={editor.dataKey}
+    />
+  );
+};
+
+export const GraphSelector: FC<{
+  value: string | undefined;
+  name: string;
+  label: string;
+  isReadonly: boolean;
+  onChange?: (selected: string) => void;
+}> = ({ value, isReadonly, onChange, label, name }) => {
+  const project = useRecoilValue(projectState);
+
+  const graphOptions = orderBy(
+    values(project.graphs).map((graph) => ({
+      label: graph.metadata?.name ?? graph.metadata?.id ?? 'Unknown Graph',
+      value: graph.metadata?.id ?? (nanoid() as GraphId),
+    })),
+    'label',
+  );
+
+  const selectedOption = graphOptions.find((option) => option.value === value);
+
+  return (
+    <Field name={name} label={label} isDisabled={isReadonly}>
+      {({ fieldProps }) => (
+        <Select
+          {...fieldProps}
+          options={graphOptions}
+          value={selectedOption}
+          onChange={(selected) => onChange?.(selected!.value)}
         />
       )}
     </Field>

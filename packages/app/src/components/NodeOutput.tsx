@@ -1,17 +1,19 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { NodeRunData, ProcessDataForNode, lastRunData, selectedProcessPage } from '../state/dataFlow';
 import { FC, ReactNode, memo, useMemo, useState } from 'react';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { copyToClipboard } from '../utils/copyToClipboard';
-import { ChartNode, PortId, getWarnings } from '@ironclad/rivet-core';
+import { ChartNode, PortId, ProcessId, getWarnings } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-line.svg';
 import { ReactComponent as ExpandIcon } from 'majesticons/line/maximize-line.svg';
+import { ReactComponent as FlaskIcon } from 'majesticons/line/flask-line.svg';
 import { FullScreenModal } from './FullScreenModal';
 import { RenderDataOutputs } from './RenderDataValue';
 import { entries } from '../utils/typeSafety';
 import { orderBy } from 'lodash-es';
+import { promptDesignerAttachedChatNodeState, promptDesignerState } from '../state/promptDesigner';
 
 export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -95,7 +97,8 @@ const fullscreenOutputButtonsCss = css`
   display: inline-flex;
   gap: 8px;
 
-  .copy-button {
+  .copy-button,
+  .prompt-designer-button {
     width: 24px;
     height: 24px;
     font-size: 24px;
@@ -105,7 +108,8 @@ const fullscreenOutputButtonsCss = css`
     z-index: 1;
   }
 
-  .copy-button:hover {
+  .copy-button:hover,
+  .prompt-designer-button:hover {
     opacity: 1;
   }
 `;
@@ -116,17 +120,28 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
 
   const { FullscreenOutput, Output, OutputSimple } = useUnknownNodeComponentDescriptorFor(node);
 
-  const data = useMemo(() => {
+  const setPromptDesignerState = useSetRecoilState(promptDesignerState);
+  const setPromptDesignerAttachedNode = useSetRecoilState(promptDesignerAttachedChatNodeState);
+
+  const { data, processId } = useMemo(() => {
     if (!output?.length) {
-      return null;
+      return { data: undefined, processId: undefined };
     }
 
     if (output.length === 1) {
-      return output[0]!.data;
+      return output[0]!;
     } else {
-      return output[selectedPage === 'latest' ? output.length - 1 : selectedPage]?.data;
+      return output[selectedPage === 'latest' ? output.length - 1 : selectedPage]!;
     }
   }, [output, selectedPage]);
+
+  const handleOpenPromptDesigner = () => {
+    setPromptDesignerState((s) => ({ ...s, isOpen: true }));
+    setPromptDesignerAttachedNode({
+      nodeId: node.id,
+      processId: processId!,
+    });
+  };
 
   const handleCopyToClipboard = useStableCallback(() => {
     if (!data) {
@@ -230,6 +245,11 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
           <div className="copy-button" onClick={handleCopyToClipboard}>
             <CopyIcon />
           </div>
+          {node.type === 'chat' && (
+            <div className="prompt-designer-button" onClick={handleOpenPromptDesigner}>
+              <FlaskIcon />
+            </div>
+          )}
         </div>
       </header>
 
@@ -252,7 +272,12 @@ const NodeOutputBase: FC<{ node: ChartNode; children?: ReactNode; onOpenFullscre
   if (output.length === 1) {
     return (
       <div className="node-output">
-        <NodeOutputSingleProcess node={node} data={output[0]!.data} onOpenFullscreenModal={onOpenFullscreenModal} />
+        <NodeOutputSingleProcess
+          node={node}
+          data={output[0]!.data}
+          processId={output[0]!.processId}
+          onOpenFullscreenModal={onOpenFullscreenModal}
+        />
       </div>
     );
   } else {
@@ -267,9 +292,21 @@ const NodeOutputBase: FC<{ node: ChartNode; children?: ReactNode; onOpenFullscre
 const NodeOutputSingleProcess: FC<{
   node: ChartNode;
   data: NodeRunData;
+  processId: ProcessId;
   onOpenFullscreenModal?: () => void;
-}> = ({ node, data, onOpenFullscreenModal }) => {
+}> = ({ node, data, processId, onOpenFullscreenModal }) => {
   const { Output, OutputSimple } = useUnknownNodeComponentDescriptorFor(node);
+
+  const setPromptDesignerState = useSetRecoilState(promptDesignerState);
+  const setPromptDesignerAttachedNode = useSetRecoilState(promptDesignerAttachedChatNodeState);
+
+  const handleOpenPromptDesigner = () => {
+    setPromptDesignerState((s) => ({ ...s, isOpen: true }));
+    setPromptDesignerAttachedNode({
+      nodeId: node.id,
+      processId: processId!,
+    });
+  };
 
   const handleCopyToClipboard = useStableCallback(() => {
     const keys = Object.keys(data.outputData ?? {}) as PortId[];
@@ -332,6 +369,11 @@ const NodeOutputSingleProcess: FC<{
         <div className="copy-button" onClick={handleCopyToClipboard}>
           <CopyIcon />
         </div>
+        {node.type === 'chat' && (
+          <div className="prompt-designer-button" onClick={handleOpenPromptDesigner}>
+            <FlaskIcon />
+          </div>
+        )}
         <div
           className="expand-button"
           onClick={(e) => {
@@ -396,7 +438,12 @@ const NodeOutputMultiProcess: FC<{
         </div>
       </div>
       {selectedData && (
-        <NodeOutputSingleProcess data={selectedData.data} node={node} onOpenFullscreenModal={onOpenFullscreenModal} />
+        <NodeOutputSingleProcess
+          data={selectedData.data}
+          node={node}
+          processId={selectedData.processId}
+          onOpenFullscreenModal={onOpenFullscreenModal}
+        />
       )}
     </div>
   );

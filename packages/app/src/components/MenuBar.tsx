@@ -17,6 +17,7 @@ import { useNewProject } from '../hooks/useNewProject';
 import { DebuggerConnectPanel } from './DebuggerConnectPanel';
 import Select from '@atlaskit/select';
 import { selectedExecutorState } from '../state/execution';
+import { promptDesignerState } from '../state/promptDesigner';
 
 const styles = css`
   display: flex;
@@ -268,6 +269,8 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
 
   const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
 
+  const setPromptDesignerState = useSetRecoilState(promptDesignerState);
+
   return (
     <div css={styles}>
       <div className="left-menu">
@@ -284,6 +287,14 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
             <button onMouseUp={handleExportGraph}>Export Graph</button>
             <button onMouseUp={handleImportGraph}>Import Graph</button>
           </div>
+        </div>
+        <div className="menu-item prompt-designer-menu">
+          <button
+            className="dropdown-button"
+            onMouseDown={() => setPromptDesignerState((s) => ({ ...s, isOpen: !s.isOpen }))}
+          >
+            Prompt Designer
+          </button>
         </div>
         <div className="remote-debugger">
           <div
@@ -307,6 +318,7 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
             />
           )}
         </div>
+
         <div className="executor">
           <label htmlFor="select-executor" className="executor-title">
             Executor:

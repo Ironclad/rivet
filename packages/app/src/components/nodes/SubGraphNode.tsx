@@ -1,20 +1,12 @@
 import { FC } from 'react';
-import Select from '@atlaskit/select';
-import { Field } from '@atlaskit/form';
-import { css } from '@emotion/react';
 import { useRecoilValue } from 'recoil';
 import { projectState } from '../../state/savedGraphs';
-import { values } from '../../utils/typeSafety';
-import { nanoid } from 'nanoid';
-import { GraphId, SubGraphNode } from '@ironclad/rivet-core';
+import { SubGraphNode } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
-import { orderBy } from 'lodash-es';
 
-export type SubGraphNodeBodyProps = {
+export const SubGraphNodeBody: FC<{
   node: SubGraphNode;
-};
-
-export const SubGraphNodeBody: FC<SubGraphNodeBodyProps> = ({ node }) => {
+}> = ({ node }) => {
   const project = useRecoilValue(projectState);
   const selectedGraph = project.graphs[node.data.graphId];
   const selectedGraphName = selectedGraph?.metadata?.name ?? node.data.graphId;
@@ -26,61 +18,6 @@ export const SubGraphNodeBody: FC<SubGraphNodeBodyProps> = ({ node }) => {
   );
 };
 
-export type SubGraphNodeEditorProps = {
-  node: SubGraphNode;
-  onChange?: (node: SubGraphNode) => void;
-};
-
-const editorCss = css`
-  display: grid;
-  grid-template-columns: 1fr;
-  align-items: stretch;
-  width: 100%;
-  align-content: start;
-  align-items: center;
-  column-gap: 16px;
-`;
-
-export const SubGraphNodeEditor: FC<SubGraphNodeEditorProps> = ({ node, onChange }) => {
-  const project = useRecoilValue(projectState);
-
-  const graphOptions = orderBy(
-    values(project.graphs).map((graph) => ({
-      label: graph.metadata?.name ?? graph.metadata?.id ?? 'Unknown Graph',
-      value: graph.metadata?.id ?? (nanoid() as GraphId),
-    })),
-    'label',
-  );
-
-  const selectedOption = graphOptions.find((option) => option.value === node.data.graphId);
-
-  return (
-    <div css={editorCss}>
-      <Field name="data-type" label="Graph">
-        {({ fieldProps }) => (
-          <Select
-            {...fieldProps}
-            options={graphOptions}
-            value={selectedOption}
-            onChange={(selected) =>
-              onChange?.({
-                ...node,
-                title: selected?.label ?? 'Unknown Graph',
-                data: {
-                  ...node.data,
-                  graphId: selected?.value ?? ('' as GraphId),
-                },
-              })
-            }
-          />
-        )}
-      </Field>
-    </div>
-  );
-};
-
 export const subgraphNodeDescriptor: NodeComponentDescriptor<'subGraph'> = {
   Body: SubGraphNodeBody,
-  Output: undefined,
-  Editor: SubGraphNodeEditor,
 };
