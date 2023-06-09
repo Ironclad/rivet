@@ -19,7 +19,6 @@ import { useDuplicateGraph } from '../hooks/useDuplicateGraph';
 import { sidebarOpenState } from '../state/graphBuilder';
 import { appWindow } from '@tauri-apps/api/window';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
-import { Label } from '@atlaskit/form';
 import { useContextMenu } from '../hooks/useContextMenu';
 import Portal from '@atlaskit/portal';
 
@@ -184,7 +183,7 @@ export const LeftSidebar: FC = () => {
 
   function setGraphAndSavedGraph(graph: NodeGraph) {
     setGraph(graph);
-    setSavedGraphs(savedGraphs.map((g) => (g.metadata!.id === graph.metadata.id ? graph : g)));
+    setSavedGraphs(savedGraphs.map((g) => (g.metadata!.id === graph.metadata!.id ? graph : g)));
   }
 
   const { contextMenuRef, showContextMenu, contextMenuData, handleContextMenu } = useContextMenu();

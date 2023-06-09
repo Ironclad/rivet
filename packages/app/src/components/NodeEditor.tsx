@@ -11,6 +11,9 @@ import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import Toggle from '@atlaskit/toggle';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { DefaultNodeEditor } from './DefaultNodeEditor';
+import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
+import { Field, Label } from '@atlaskit/form';
+import TextField from '@atlaskit/textfield';
 
 export const NodeEditorRenderer: FC = () => {
   const nodes = useRecoilValue(nodesSelector);
@@ -35,34 +38,33 @@ const Container = styled.div`
   right: 0;
   bottom: 0;
   width: 45%;
-  min-width: 500px;
   max-width: 1000px;
-  padding: 20px;
-  background-color: var(--grey-darker);
-  border-left: 2px solid var(--grey);
-  color: var(--body-text);
-  font-family: 'Roboto Mono', monospace;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  color: var(--foreground);
-  overflow: auto;
+  min-width: 500px;
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    padding: 8px 16px 16px;
+    color: var(--foreground);
+    background-color: rgba(40, 44, 52, 0.5);
+    font-family: 'Roboto Mono', monospace;
+    width: 100%;
+    box-shadow: -4px 0 3px rgba(0, 0, 0, 0.1);
+    border-left: 1px solid var(--grey);
+  }
+
+  .tabs,
+  .tabs > div {
+    height: 100%;
+    width: 100%;
+  }
 
   .header {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     margin-bottom: 20px;
-  }
-
-  h2 {
-    font-size: 24px;
-    margin: 0;
-  }
-
-  h3 {
-    font-size: 20px;
-    margin: 0;
   }
 
   .close-button {
@@ -117,6 +119,17 @@ const Container = styled.div`
     border-color: var(--primary);
   }
 
+  .section-name-description {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    column-gap: 16px;
+
+    > form {
+      margin: 0;
+    }
+  }
+
   .section-node {
     flex-grow: 1;
 
@@ -133,6 +146,23 @@ const Container = styled.div`
 
   .unknown-node {
     color: var(--primary);
+  }
+
+  .split-controls {
+    display: grid;
+    grid-template-columns: 75px 1fr;
+    align-items: center;
+    gap: 8px;
+
+    > label {
+      margin: 0;
+    }
+  }
+
+  .split-controls-toggle > div {
+    margin: 0;
+    display: flex;
+    align-items: center;
   }
 `;
 
@@ -182,48 +212,67 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
 
   return (
     <Container>
-      <button className="close-button" onClick={onDeselect}>
-        <MultiplyIcon />
-      </button>
-      <div className="section">
-        <h3 className="section-title">Edit {getNodeDisplayName(selectedNode.type as NodeType)} Node</h3>
-        <InlineEditableTextfield
-          key={`node-title-${selectedNode.id}`}
-          label="Node Title"
-          placeholder="Enter a name for the node..."
-          defaultValue={selectedNode.title}
-          onConfirm={nodeTitleChanged}
-          readViewFitContainerWidth
-        />
-      </div>
-      <div className="section">
-        <InlineEditableTextfield
-          key={`node-description-${selectedNode.id}`}
-          label="Node Description"
-          defaultValue={selectedNode.description ?? ''}
-          onConfirm={nodeDescriptionChanged}
-          placeholder="Enter any description or notes for this node..."
-          readViewFitContainerWidth
-        ></InlineEditableTextfield>
-      </div>
-      <section>
-        <h3 className="section-title">Split</h3>
-        <Toggle
-          isChecked={selectedNode.isSplitRun}
-          onChange={(isSplitRun) => updateNode({ ...selectedNode, isSplitRun: isSplitRun.target.checked })}
-          label="Split"
-        />
-        <input
-          type="number"
-          className="input-field split-max"
-          placeholder="Max"
-          value={selectedNode.splitRunMax ?? 10}
-          onChange={(event) => updateNode({ ...selectedNode, splitRunMax: event.target.valueAsNumber })}
-        />
-      </section>
-      <div className="section section-node">
-        <h3 className="section-title">{getNodeDisplayName(selectedNode.type as NodeType)}</h3>
-        <div className="section-node-content">{nodeEditor}</div>
+      <div className="tabs">
+        <Tabs id="node-editor-tabs">
+          <TabList>
+            <Tab>{getNodeDisplayName(selectedNode.type as NodeType)} Node</Tab>
+            <Tab>Test Cases</Tab>
+          </TabList>
+          <TabPanel>
+            <div className="panel">
+              <button className="close-button" onClick={onDeselect}>
+                <MultiplyIcon />
+              </button>
+              <div className="section section-name-description">
+                <InlineEditableTextfield
+                  key={`node-title-${selectedNode.id}`}
+                  label="Node Title"
+                  placeholder="Enter a name for the node..."
+                  defaultValue={selectedNode.title}
+                  onConfirm={nodeTitleChanged}
+                  readViewFitContainerWidth
+                />
+                <InlineEditableTextfield
+                  key={`node-description-${selectedNode.id}`}
+                  label="Node Description"
+                  defaultValue={selectedNode.description ?? ''}
+                  onConfirm={nodeDescriptionChanged}
+                  placeholder="Enter any description or notes for this node..."
+                  readViewFitContainerWidth
+                ></InlineEditableTextfield>
+              </div>
+              <Field name="isSplitRun" label="Split">
+                {({ fieldProps }) => (
+                  <section className="split-controls">
+                    <div className="split-controls-toggle">
+                      <Toggle
+                        {...fieldProps}
+                        isChecked={selectedNode.isSplitRun}
+                        onChange={(isSplitRun) =>
+                          updateNode({ ...selectedNode, isSplitRun: isSplitRun.target.checked })
+                        }
+                      />
+                    </div>
+
+                    {selectedNode.isSplitRun && (
+                      <TextField
+                        type="number"
+                        placeholder="Max"
+                        value={selectedNode.splitRunMax ?? 10}
+                        onChange={(event) =>
+                          updateNode({ ...selectedNode, splitRunMax: (event.target as HTMLInputElement).valueAsNumber })
+                        }
+                      />
+                    )}
+                  </section>
+                )}
+              </Field>
+              <div className="section section-node">
+                <div className="section-node-content">{nodeEditor}</div>
+              </div>
+            </div>
+          </TabPanel>
+        </Tabs>
       </div>
     </Container>
   );
