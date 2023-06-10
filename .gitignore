@@ -24,3 +24,5 @@ yarn-error.log*
 dist
 
 *.tsbuildinfo
+
+packages/app-executor/bin/executor-bundle.js
