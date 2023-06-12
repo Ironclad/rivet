@@ -15,6 +15,7 @@ import { entries } from '../utils/typeSafety';
 import { UserInputModal } from './UserInputModal';
 import Button from '@atlaskit/button';
 import { isNotNull } from '../utils/genericUtilFunctions';
+import { useFactorIntoSubgraph } from '../hooks/useFactorIntoSubgraph';
 
 const Container = styled.div`
   position: relative;
@@ -60,6 +61,8 @@ export const GraphBuilder: FC = () => {
     const newConnections = connections.filter((c) => c.inputNodeId !== nodeId && c.outputNodeId !== nodeId);
     setConnections?.(newConnections);
   });
+
+  const factorIntoSubgraph = useFactorIntoSubgraph();
 
   const contextMenuItemSelected = useStableCallback((menuItemId: string, contextMenuData: ContextMenuData) => {
     if (menuItemId.startsWith('Add:')) {
@@ -108,6 +111,10 @@ export const GraphBuilder: FC = () => {
         inputNodeId: newNode.id,
       }));
       setConnections([...connections, ...newNodeConnections]);
+    }
+
+    if (menuItemId.startsWith('FactorIntoSubgraph')) {
+      factorIntoSubgraph();
     }
   });
 

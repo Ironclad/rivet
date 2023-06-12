@@ -122,6 +122,8 @@ export const Wire: FC<{
   const deltaX = Math.abs(ex - sx);
   const handleDistance = sx <= ex ? deltaX * 0.5 : Math.abs(ey - sy) * 0.6;
 
+  const isBackwards = sx > ex;
+
   const curveX1 = sx + handleDistance;
   const curveY1 = sy;
   const curveX2 = ex - handleDistance;
@@ -135,7 +137,7 @@ export const Wire: FC<{
       : `M${sx},${sy} C${curveX1},${curveY1} ${curveX1},${middleY} ${sx},${middleY} ` +
         `L${ex},${middleY} C${curveX2},${middleY} ${curveX2},${curveY2} ${ex},${ey}`;
 
-  return <path className={clsx('wire', { selected, highlighted })} d={wirePath} />;
+  return <path className={clsx('wire', { selected, highlighted, backwards: isBackwards })} d={wirePath} />;
 });
 
 export function getNodePortPosition(

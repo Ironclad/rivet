@@ -45,6 +45,15 @@ const styles = css`
     &:hover {
       background-color: var(--grey);
     }
+
+    &.active {
+      background-color: var(--primary);
+      color: var(--grey-dark);
+
+      &:hover {
+        background-color: var(--primary-light);
+      }
+    }
   }
 
   .dropdown-menu .dropdown-button {
@@ -223,7 +232,7 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
 
   const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
 
-  const setPromptDesignerState = useSetRecoilState(promptDesignerState);
+  const [promptDesigner, setPromptDesigner] = useRecoilState(promptDesignerState);
 
   useGlobalShortcut('CmdOrCtrl+Shift+D', () => {
     if (isActuallyRemoteDebugging || remoteDebugger.reconnecting) {
@@ -238,8 +247,8 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
       <div className="left-menu">
         <div className="menu-item prompt-designer-menu">
           <button
-            className="dropdown-button"
-            onMouseDown={() => setPromptDesignerState((s) => ({ ...s, isOpen: !s.isOpen }))}
+            className={clsx('dropdown-item', { active: promptDesigner.isOpen })}
+            onMouseDown={() => setPromptDesigner((s) => ({ ...s, isOpen: !s.isOpen }))}
           >
             Prompt Designer
           </button>
