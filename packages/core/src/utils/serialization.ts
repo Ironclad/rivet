@@ -260,7 +260,7 @@ function toSerializedNode(node: ChartNode, allNodes: ChartNode[], allConnections
       .filter((connection) => connection.outputNodeId === node.id)
       .map((connection) => toSerializedConnection(connection, allNodes))
       .sort(),
-    variants: node.variants ?? [],
+    variants: (node.variants?.length ?? 0) > 0 ? node.variants : undefined,
   };
 }
 
