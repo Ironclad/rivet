@@ -365,7 +365,7 @@ export const nodeStyles = css`
 
   .overlay-buttons {
     position: absolute;
-    top: 16px;
+    top: 8px;
     right: 4px;
     display: flex;
     gap: 8px;
@@ -377,7 +377,7 @@ export const nodeStyles = css`
     width: 24px;
     height: 24px;
     font-size: 24px;
-    opacity: 0;
+    opacity: 0.2;
     cursor: pointer;
     transition: opacity 0.2s;
     z-index: 1;
@@ -386,7 +386,7 @@ export const nodeStyles = css`
   .node:hover .copy-button,
   .node:hover .expand-button,
   .node:hover .prompt-designer-button {
-    opacity: 0.2;
+    opacity: 0.35;
   }
 
   .node .copy-button:hover,
