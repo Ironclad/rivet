@@ -5,19 +5,14 @@ import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.s
 import { ReactComponent as PauseIcon } from 'majesticons/line/pause-circle-line.svg';
 import { ReactComponent as PlayIcon } from 'majesticons/line/play-circle-line.svg';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { settingsModalOpenState } from './SettingsModal';
-import { loadGraphData, saveGraphData } from '../utils/fileIO';
-import { graphState } from '../state/graph';
 import { graphRunningState, graphPausedState } from '../state/dataFlow';
 import clsx from 'clsx';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
-import { useLoadProject } from '../hooks/useLoadProject';
-import { useSaveProject } from '../hooks/useSaveProject';
-import { useNewProject } from '../hooks/useNewProject';
 import { DebuggerConnectPanel } from './DebuggerConnectPanel';
 import Select from '@atlaskit/select';
 import { selectedExecutorState } from '../state/execution';
 import { promptDesignerState } from '../state/promptDesigner';
+import { useGlobalShortcut } from '../hooks/useGlobalShortcut';
 
 const styles = css`
   display: flex;
@@ -211,12 +206,6 @@ const executorOptions = [
 ] as const;
 
 export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGraph, onResumeGraph }) => {
-  const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
-  const [graphData, setGraphData] = useRecoilState(graphState);
-  const [fileMenuOpen, setFileMenuOpen] = useState(false);
-  const loadProject = useLoadProject();
-  const { saveProject, saveProjectAs } = useSaveProject();
-  const newProject = useNewProject();
   const [debuggerPanelOpen, setDebuggerPanelOpen] = useState(false);
   const [selectedExecutor, setSelectedExecutor] = useRecoilState(selectedExecutorState);
 
@@ -225,44 +214,9 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
 
   const { remoteDebuggerState: remoteDebugger, connect, disconnect } = useRemoteDebugger();
 
-  function handleNewProject() {
-    newProject();
-    setFileMenuOpen(false);
-  }
-
-  function handleLoadProject() {
-    loadProject();
-    setFileMenuOpen(false);
-  }
-
-  function handleSaveProject() {
-    saveProject();
-    setFileMenuOpen(false);
-  }
-
-  function handleSaveProjectAs() {
-    saveProjectAs();
-    setFileMenuOpen(false);
-  }
-
   function handleConnectRemoteDebugger(url: string) {
     setDebuggerPanelOpen(false);
     connect(url);
-  }
-
-  function handleSettingsMenuOption() {
-    setSettingsOpen(true);
-    setFileMenuOpen(false);
-  }
-
-  function handleExportGraph() {
-    saveGraphData(graphData);
-    setFileMenuOpen(false);
-  }
-
-  function handleImportGraph() {
-    loadGraphData((data) => setGraphData(data));
-    setFileMenuOpen(false);
   }
 
   const selectedExecutorOption = executorOptions.find((option) => option.value === selectedExecutor);
@@ -271,23 +225,17 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
 
   const setPromptDesignerState = useSetRecoilState(promptDesignerState);
 
+  useGlobalShortcut('CmdOrCtrl+Shift+D', () => {
+    if (isActuallyRemoteDebugging || remoteDebugger.reconnecting) {
+      disconnect();
+    } else {
+      setDebuggerPanelOpen(true);
+    }
+  });
+
   return (
     <div css={styles}>
       <div className="left-menu">
-        <div className="menu-item file-menu">
-          <button className="dropdown-button" onMouseDown={() => setFileMenuOpen((open) => !open)}>
-            File
-          </button>
-          <div className={clsx('file-dropdown', { open: fileMenuOpen })}>
-            <button onMouseUp={handleNewProject}>New Project</button>
-            <button onMouseUp={handleLoadProject}>Open Project...</button>
-            <button onMouseUp={handleSaveProject}>Save Project</button>
-            <button onMouseUp={handleSaveProjectAs}>Save Project As...</button>
-            <button onMouseUp={handleSettingsMenuOption}>Settings</button>
-            <button onMouseUp={handleExportGraph}>Export Graph</button>
-            <button onMouseUp={handleImportGraph}>Import Graph</button>
-          </div>
-        </div>
         <div className="menu-item prompt-designer-menu">
           <button
             className="dropdown-button"

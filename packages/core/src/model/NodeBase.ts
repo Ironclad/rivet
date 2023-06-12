@@ -87,8 +87,8 @@ export type SerializedNode = {
   // x/y/width/zIndex
   visualData: `${string}/${string}/${string}/${string}`;
   outgoingConnections: SerializedNodeConnection[];
-  data: unknown;
-  variants: ChartNodeVariant<unknown>[];
+  data?: unknown;
+  variants?: ChartNodeVariant<unknown>[];
 };
 
 // portId->nodeId/portId

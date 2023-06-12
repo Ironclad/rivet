@@ -25,6 +25,9 @@
       },
       "window": {
         "all": true
+      },
+      "globalShortcut": {
+        "all": true
       }
     },
     "bundle": {
