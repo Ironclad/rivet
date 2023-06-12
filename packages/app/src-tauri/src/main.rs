@@ -57,6 +57,17 @@ fn create_menu() -> Menu {
                 ),
         ))
         .add_submenu(Submenu::new(
+            "Edit",
+            Menu::new()
+                .add_native_item(tauri::MenuItem::Undo)
+                .add_native_item(tauri::MenuItem::Redo)
+                .add_native_item(tauri::MenuItem::Separator)
+                .add_native_item(tauri::MenuItem::Cut)
+                .add_native_item(tauri::MenuItem::Copy)
+                .add_native_item(tauri::MenuItem::Paste)
+                .add_native_item(tauri::MenuItem::SelectAll)
+        ))
+        .add_submenu(Submenu::new(
             "Run",
             Menu::new().add_item(
                 CustomMenuItem::new("run".to_string(), "Run Graph").accelerator("CmdOrCtrl+Enter"),
