@@ -46,7 +46,7 @@ export const DebuggerConnectPanel: FC<DebuggerConnectPanelProps> = ({ onConnect,
       textField.current.focus();
       textField.current.setSelectionRange(0, textField.current.value.length);
     }
-  });
+  }, []);
 
   return (
     <div css={styles}>

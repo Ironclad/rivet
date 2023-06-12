@@ -789,6 +789,10 @@ export class GraphProcessor {
 
   raiseEvent(event: string, data: DataValue) {
     this.#emitter.emit(`userEvent:${event}`, data);
+
+    for (const subprocessor of this.#subprocessors) {
+      subprocessor.raiseEvent(event, data);
+    }
   }
 
   async #processNodeWithInputData(
@@ -863,9 +867,7 @@ export class GraphProcessor {
         });
 
         processor.onAny((event, data) => {
-          if (event.startsWith('userEvent:')) {
-            this.#emitter.emit(event, data);
-          } else if (event.startsWith('globalSet:')) {
+          if (event.startsWith('globalSet:')) {
             this.#emitter.emit(event, data);
           }
         });
