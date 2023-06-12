@@ -787,6 +787,10 @@ export class GraphProcessor {
     return processor;
   }
 
+  raiseEvent(event: string, data: DataValue) {
+    this.#emitter.emit(`userEvent:${event}`, data);
+  }
+
   async #processNodeWithInputData(
     node: ChartNode,
     inputValues: Inputs,
