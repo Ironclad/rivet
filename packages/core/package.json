@@ -26,9 +26,9 @@
     "yaml": "^2.2.2"
   },
   "devDependencies": {
-    "@types/crypto-js": "^4",
+    "@types/crypto-js": "^4.1.1",
     "@types/jsonpath-plus": "^5.0.2",
-    "@types/lodash-es": "^4",
+    "@types/lodash-es": "^4.17.7",
     "@types/yaml": "^1.9.7",
     "typescript": "^5.1.3"
   }
