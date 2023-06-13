@@ -10,6 +10,7 @@ None are available yet.
 
 ### Prerequisites
 
+* Make sure [git LFS is installed](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage)
 * Make sure [Rust is installed](https://rustup.rs/)
 * [yarn](https://yarnpkg.com/getting-started/install)
 
