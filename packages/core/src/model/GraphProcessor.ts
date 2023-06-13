@@ -89,6 +89,8 @@ export type ProcessEvents = {
   [key: `userEvent:${string}`]: DataValue | undefined;
 } & {
   [key: `globalSet:${string}`]: ScalarOrArrayDataValue | undefined;
+} & {
+  [key: `userEventBubble:${string}`]: DataValue | undefined;
 };
 
 export type GraphOutputs = Record<string, DataValue>;
@@ -215,6 +217,13 @@ export class GraphProcessor {
 
     this.#emitter.on('globalSet', ({ id, value }) => {
       this.#emitter.emit(`globalSet:${id}`, value);
+    });
+
+    // When the root processor receives a userEventBubble, emit a userEvent and propagate to all children
+    this.#emitter.onAny((event, value) => {
+      if (event.startsWith('userEventBubble:') && !this.#isSubProcessor) {
+        this.raiseEvent(event.replace('userEventBubble:', ''), value as DataValue);
+      }
     });
   }
 
@@ -787,6 +796,7 @@ export class GraphProcessor {
     return processor;
   }
 
+  /** Raise a user event on the processor, all subprocessors, and their children. */
   raiseEvent(event: string, data: DataValue) {
     this.#emitter.emit(`userEvent:${event}`, data);
 
@@ -819,7 +829,9 @@ export class GraphProcessor {
         });
       },
       raiseEvent: (event, data) => {
-        this.#emitter.emit(`userEvent:${event}`, data);
+        // When a subprocessor raises an event, it emits a `userEventBubble` event, which propagates up to the root processor,
+        // then down again as a userEvent: event
+        this.#emitter.emit(`userEventBubble:${event}`, data);
       },
       contextValues: this.#contextValues,
       externalFunctions: { ...this.#externalFunctions },
@@ -867,6 +879,9 @@ export class GraphProcessor {
         });
 
         processor.onAny((event, data) => {
+          if (event.startsWith('userEventBubble:')) {
+            this.#emitter.emit(event, data);
+          }
           if (event.startsWith('globalSet:')) {
             this.#emitter.emit(event, data);
           }
