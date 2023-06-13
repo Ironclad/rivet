@@ -572,6 +572,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         },
         {
           forever: true,
+          retries: 10000,
           maxRetryTime: 1000 * 60 * 5,
           factor: 2.5,
           minTimeout: 500,
