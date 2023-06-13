@@ -1,6 +1,6 @@
 import Button from '@atlaskit/button';
 import { css } from '@emotion/react';
-import { FC, useEffect, useState, useRef, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useState, useRef, useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   PromptDesignerTestGroupResults,
@@ -43,7 +43,7 @@ import { settingsState } from '../state/settings';
 import { GraphSelector } from './DefaultNodeEditor';
 import TextArea from '@atlaskit/textarea';
 import { projectState } from '../state/savedGraphs';
-import { cloneDeep, partial, range, zip } from 'lodash-es';
+import { cloneDeep, findIndex, partial, range, zip } from 'lodash-es';
 import produce from 'immer';
 
 const styles = css`
@@ -89,6 +89,15 @@ const styles = css`
     font-size: 14px;
     line-height: 22px;
     font-family: 'Roboto', sans-serif;
+    display: flex;
+
+    .message-author-type {
+      width: 100px;
+    }
+
+    .message-text {
+      width: 100%;
+    }
 
     .message-text pre {
       font-family: 'Roboto', sans-serif;
@@ -129,6 +138,14 @@ const styles = css`
     font-size: 14px;
     font-family: 'Roboto', sans-serif;
     line-height: 22px;
+    resize: none;
+    overflow: hidden;
+    border: solid 1px transparent;
+    background: transparent;
+    outline: none;
+    &:focus {
+      border: solid 1px #fff;
+    }
   }
 
   .chat-config-area {
@@ -650,57 +667,54 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
   );
 };
 
+const CHAT_MESSAGE_TYPES = ['user' as const, 'assistant' as const, 'system' as const];
+
 const PromptDesignerMessage: FC<{
   message: ChatMessage;
   onChange: (message: ChatMessage) => void;
 }> = ({ message, onChange }) => {
-  const [editing, setEditing] = useState(false);
-  const [uneditedTextHeight, setUneditedTextHeight] = useState<number | undefined>();
+  const toggleAuthorType = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    const idx = findIndex(CHAT_MESSAGE_TYPES, (type) => message.type === type);
+    const nextMessageType = CHAT_MESSAGE_TYPES[(idx + 1) % CHAT_MESSAGE_TYPES.length]!;
+    onChange({
+      ...message,
+      type: nextMessageType,
+    });
+  }, [message, onChange]);
 
-  const [editingText, setEditingText] = useState(message.message);
+  const onTextChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onChange({
+      ...message,
+      message: e.target.value,
+    });
+  }, [message, onChange]);
 
-  const toggleEditing = () => {
-    setEditing(!editing);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    if (editing) {
-      onChange({
-        ...message,
-        message: editingText,
-      });
-    } else {
-      setEditingText(message.message);
+  useEffect(() => {
+    if (textareaRef.current != null && textareaRef.current.scrollHeight > 0) {
+      textareaRef.current.style.marginBottom = textareaRef.current.style.height ?? '10px';
+      textareaRef.current.style.height = 'inherit';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight + 10}px`;
+      textareaRef.current.style.marginBottom = 'unset';
     }
-  };
+  }, [message?.message]);
 
   return (
-    <div className="message" onClick={toggleEditing}>
+    <div className="message">
+      <div className="message-author-type">
+        <Button onClick={toggleAuthorType}>{message.type}</Button>
+      </div>
       <div className="message-text">
-        {editing ? (
-          <textarea
-            autoFocus
-            className="message-editor"
-            value={editingText}
-            style={{ height: uneditedTextHeight ?? 300 }}
-            onClick={(e) => e.stopPropagation()}
-            onChange={(e) => setEditingText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-                toggleEditing();
-              }
-            }}
-          />
-        ) : (
-          <pre
-            className="pre-wrap"
-            ref={(elem) => {
-              if (elem) {
-                setUneditedTextHeight(elem.clientHeight);
-              }
-            }}
-          >
-            {message.message}
-          </pre>
-        )}
+        <textarea
+          autoFocus
+          className="message-editor"
+          value={message?.message ?? ''}
+          onClick={(e) => e.stopPropagation()}
+          onChange={onTextChange}
+          ref={textareaRef}
+        />
       </div>
     </div>
   );
