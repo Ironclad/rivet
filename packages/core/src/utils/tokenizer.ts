@@ -50,7 +50,7 @@ export const openaiModels = {
   },
 
   'gpt-3.5-turbo-0613': {
-    maxTokens: 4096,
+    maxTokens: 16384,
     tiktokenModel: 'gpt-3.5-turbo',
     cost: {
       prompt: 0.002,
