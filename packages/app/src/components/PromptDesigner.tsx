@@ -45,7 +45,7 @@ import TextArea from '@atlaskit/textarea';
 import { projectState } from '../state/savedGraphs';
 import { cloneDeep, findIndex, range, zip } from 'lodash-es';
 import { useStableCallback } from '../hooks/useStableCallback';
-import produce from 'immer';
+import { produce } from 'immer';
 
 const styles = css`
   position: fixed;

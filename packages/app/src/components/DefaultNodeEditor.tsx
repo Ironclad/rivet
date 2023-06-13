@@ -410,7 +410,7 @@ export const GraphSelector: FC<{
 
 export const DefaultNumberEditor: FC<{
   node: ChartNode;
-  isReadonly: boolean;
+  isReadonly?: boolean;
   onChange: (changed: ChartNode) => void;
   editor: NumberEditorDefinition<ChartNode>;
 }> = ({ node, isReadonly, onChange, editor }) => {
