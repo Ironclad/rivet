@@ -21,7 +21,7 @@
     "p-retry": "^5.1.2",
     "safe-stable-stringify": "^2.4.3",
     "ts-dedent": "^2.2.0",
-    "ts-pattern": "^4.3.0",
+    "ts-pattern": "^5.0.1",
     "type-fest": "^3.11.1",
     "yaml": "^2.3.1"
   },
