@@ -98,10 +98,10 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
         if (message.type === 'chat-message') {
           outMessages.push(message.value);
         } else {
-          const coerced = coerceType(message, 'string');
+          const coerced = coerceType(message, 'chat-message');
 
           if (coerced) {
-            outMessages.push({ type: 'user', message: coerced });
+            outMessages.push(coerced);
           }
         }
       }

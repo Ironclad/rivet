@@ -95,8 +95,8 @@ export const GraphBuilder: FC = () => {
       newNode.data = { ...node.data };
       newNode.visualData = {
         ...node.visualData,
-        x: node.visualData.x + 20,
-        y: node.visualData.y + 20,
+        x: node.visualData.x,
+        y: node.visualData.y + 100,
       };
       newNode.title = node.title;
       newNode.description = node.description;
