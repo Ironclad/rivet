@@ -264,20 +264,6 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
     [attachedNodeId?.nodeId, nodes],
   );
 
-  const nodeDataForAttachedNode = attachedNodeId ? nodeOutput[attachedNodeId.nodeId] : undefined;
-  const nodeDataForAttachedNodeProcess = attachedNodeId
-    ? nodeDataForAttachedNode?.find((n) => n.processId === attachedNodeId.processId)?.data
-    : undefined;
-
-  useEffect(() => {
-    if (messages.length === 0 && nodeDataForAttachedNodeProcess?.inputData) {
-      const { messages } = getChatNodeMessages(nodeDataForAttachedNodeProcess.inputData);
-      setMessages({
-        messages,
-      });
-    }
-  }, [messages.length, nodeDataForAttachedNodeProcess, setMessages]);
-
   const testGroups = attachedNode?.tests ?? [];
 
   useEffect(() => {
@@ -298,8 +284,20 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
           user: data.user,
         },
       });
+
+      const nodeDataForAttachedNode = attachedNodeId ? nodeOutput[attachedNodeId.nodeId] : undefined;
+      const nodeDataForAttachedNodeProcess = attachedNodeId
+        ? nodeDataForAttachedNode?.find((n) => n.processId === attachedNodeId.processId)?.data
+        : undefined;
+    
+      if (nodeDataForAttachedNodeProcess?.inputData) {
+        const { messages } = getChatNodeMessages(nodeDataForAttachedNodeProcess.inputData);
+        setMessages({
+          messages,
+        });
+      }
     }
-  }, [attachedNode, setConfig]);
+  }, [attachedNode, attachedNodeId, nodeOutput, setConfig, setMessages]);
 
   const attachedNodeChanged = (newNode: ChatNode) => {
     setNodes((s) => s.map((n) => (n.id === newNode.id ? newNode : n)));
