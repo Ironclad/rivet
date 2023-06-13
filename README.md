@@ -1,6 +1,6 @@
 # Rivet
 
-Rivet is an IDE for making LLM prompt chains, AI agents, and complex interconnected LLM interations. It features a node-based editor with an integrated debugger. 
+Rivet is an IDE for making LLM prompt chains, AI agents, and complex interconnected LLM interations. It features a node-based editor with an integrated debugger.
 
 ## Getting Started
 
@@ -10,9 +10,8 @@ None are available yet.
 
 ### Prerequisites
 
-* Make sure [git LFS is installed](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage)
-* Make sure [Rust is installed](https://rustup.rs/)
-* [yarn](https://yarnpkg.com/getting-started/install)
+- Make sure [Rust is installed](https://rustup.rs/)
+- [yarn](https://yarnpkg.com/getting-started/install)
 
 ### Building and Running From Source
 
