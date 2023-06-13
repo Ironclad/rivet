@@ -2,7 +2,7 @@ import { ChartNode, NodeId } from '../../model/NodeBase';
 import { EditorDefinition, NodeImpl, nodeDefinition } from '../../model/NodeImpl';
 import { NodeInputDefinition, NodeOutputDefinition, PortId } from '../../model/NodeBase';
 import { DataValue } from '../../model/DataValue';
-import { SupportedModels, chunkStringByTokenCount, modelOptions, modelToTiktokenModel } from '../../utils/tokenizer';
+import { SupportedModels, chunkStringByTokenCount, modelOptions, openaiModels } from '../../utils/tokenizer';
 import { nanoid } from 'nanoid';
 import { coerceType } from '../../utils/coerceType';
 
@@ -115,7 +115,7 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
     const chunked = chunkStringByTokenCount(
       input,
       this.chartNode.data.numTokensPerChunk,
-      modelToTiktokenModel[this.chartNode.data.model as SupportedModels],
+      openaiModels[this.chartNode.data.model as SupportedModels].tiktokenModel,
       overlapPercent,
     );
 

@@ -48,7 +48,7 @@ const typeDisplay: Record<PromptNodeData['type'], string> = {
   assistant: 'Assistant',
   system: 'System',
   user: 'User',
-  tool: 'Tool',
+  function: 'Function',
 };
 
 export const promptNodeDescriptor: NodeComponentDescriptor<'prompt'> = {

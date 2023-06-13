@@ -1,17 +1,17 @@
 import { FC } from 'react';
-import { ToolNode } from '@ironclad/rivet-core';
+import { GptFunctionNode } from '@ironclad/rivet-core';
 import styled from '@emotion/styled';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 
-export type ToolNodeBodyProps = {
-  node: ToolNode;
+export type GptFunctionNodeBodyProps = {
+  node: GptFunctionNode;
 };
 
 const Body = styled.div`
   font-size: 12px;
 `;
 
-export const ToolNodeBody: FC<ToolNodeBodyProps> = ({ node }) => {
+export const GptFunctionNodeBody: FC<GptFunctionNodeBodyProps> = ({ node }) => {
   return (
     <Body>
       <pre className="pre-wrap">
@@ -21,6 +21,6 @@ export const ToolNodeBody: FC<ToolNodeBodyProps> = ({ node }) => {
   );
 };
 
-export const toolNodeDescriptor: NodeComponentDescriptor<'tool'> = {
-  Body: ToolNodeBody,
+export const gptFunctionNodeDescriptor: NodeComponentDescriptor<'gptFunction'> = {
+  Body: GptFunctionNodeBody,
 };

@@ -331,7 +331,7 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
         frequencyPenalty: data.frequencyPenalty,
         temperature: data.temperature,
         useTopP: data.useTopP,
-        enableToolUse: data.enableToolUse,
+        enableFunctionUse: data.enableFunctionUse,
         numberOfChoices: data.numberOfChoices,
         stop: data.stop,
         top_p: data.top_p,
@@ -383,7 +383,7 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
   const addMessage = useStableCallback((index: number) => {
     setMessages((s) =>
       produce(s, (draft) => {
-        draft.messages.splice(index + 1, 0, { type: 'user', message: '' });
+        draft.messages.splice(index + 1, 0, { type: 'user', message: '', function_call: undefined });
       }),
     );
   });
@@ -747,7 +747,7 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
   );
 };
 
-const CHAT_MESSAGE_TYPES = ['user', 'assistant', 'system', 'tool'] as const;
+const CHAT_MESSAGE_TYPES = ['user', 'assistant', 'system', 'function'] as const;
 
 const PromptDesignerMessage: FC<{
   message: ChatMessage;

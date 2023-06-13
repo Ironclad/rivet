@@ -14,6 +14,7 @@ import { useGetNodeIO } from '../hooks/useGetNodeIO';
 import clsx from 'clsx';
 import { nodePortPositionCache } from './VisualNode';
 import { lineCrossesViewport } from '../utils/lineClipping';
+import { ErrorBoundary } from 'react-error-boundary';
 
 type WireProps = {
   connection: NodeConnection | PartialConnection;
@@ -108,7 +109,11 @@ export const ConditionallyRenderWire: FC<WireProps> = ({ connection, selected, h
     return null;
   }
 
-  return <Wire sx={start.x} sy={start.y} ex={end.x} ey={end.y} selected={selected} highlighted={highlighted} />;
+  return (
+    <ErrorBoundary fallback={<></>}>
+      <Wire sx={start.x} sy={start.y} ex={end.x} ey={end.y} selected={selected} highlighted={highlighted} />;
+    </ErrorBoundary>
+  );
 };
 
 export const Wire: FC<{

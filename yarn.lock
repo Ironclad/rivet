@@ -2769,6 +2769,7 @@ __metadata:
     react-dnd: "npm:^16.0.1"
     react-dnd-html5-backend: "npm:^16.0.1"
     react-dom: "npm:^18.2.0"
+    react-error-boundary: "npm:^4.0.10"
     react-refresh: "npm:^0.14.0"
     react-toastify: "npm:^9.1.3"
     react-transition-group: "npm:^4.4.5"
@@ -7904,6 +7905,17 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
   checksum: 7c5b915fb793d63563cec1f721e059e6ff0e2855ac116ab5cb7450b6c59398f5e25f95c960ce5cb93504cc58ab724a75a78e99282354e702a0e667d0d787d028
+  languageName: node
+  linkType: hard
+
+"react-error-boundary@npm:^4.0.10":
+  version: 4.0.10
+  resolution: "react-error-boundary@npm:4.0.10"
+  dependencies:
+    "@babel/runtime": "npm:^7.12.5"
+  peerDependencies:
+    react: ">=16.13.1"
+  checksum: 99469646ad4bf9244feabe7e9fff4643af2153dc2a0a086d2c7fee64361a53932c1fddd17205f3553ab096b5c96beb63237f6b67d02e6870147b0e25e5a3c872
   languageName: node
   linkType: hard
 

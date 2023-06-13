@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { canvasPositionState } from '../state/graphBuilder';
 import { VisualNode } from './VisualNode';
 import { useStableCallback } from '../hooks/useStableCallback';
+import { ErrorBoundary } from 'react-error-boundary';
 
 interface DraggableNodeProps {
   node: ChartNode;
@@ -35,27 +36,29 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
   const { zoom } = useRecoilValue(canvasPositionState);
 
   return (
-    <VisualNode
-      ref={setNodeRef}
-      isSelected={isSelected}
-      node={node}
-      connections={connections}
-      isDragging={isDragging}
-      xDelta={transform ? transform.x / zoom : 0}
-      yDelta={transform ? transform.y / zoom : 0}
-      nodeAttributes={attributes}
-      handleAttributes={listeners}
-      onWireEndDrag={onWireEndDrag}
-      onWireStartDrag={onWireStartDrag}
-      onSelectNode={useStableCallback((multi: boolean) => {
-        onNodeSelected?.(node, multi);
-      })}
-      onStartEditing={useStableCallback(() => {
-        onNodeStartEditing?.(node);
-      })}
-      onNodeWidthChanged={(width) => onNodeWidthChanged?.(node, width)}
-      onMouseOver={onMouseOver}
-      onMouseOut={onMouseOut}
-    />
+    <ErrorBoundary fallback={<div>Failed to render node</div>}>
+      <VisualNode
+        ref={setNodeRef}
+        isSelected={isSelected}
+        node={node}
+        connections={connections}
+        isDragging={isDragging}
+        xDelta={transform ? transform.x / zoom : 0}
+        yDelta={transform ? transform.y / zoom : 0}
+        nodeAttributes={attributes}
+        handleAttributes={listeners}
+        onWireEndDrag={onWireEndDrag}
+        onWireStartDrag={onWireStartDrag}
+        onSelectNode={useStableCallback((multi: boolean) => {
+          onNodeSelected?.(node, multi);
+        })}
+        onStartEditing={useStableCallback(() => {
+          onNodeStartEditing?.(node);
+        })}
+        onNodeWidthChanged={(width) => onNodeWidthChanged?.(node, width)}
+        onMouseOver={onMouseOver}
+        onMouseOut={onMouseOut}
+      />
+    </ErrorBoundary>
   );
 };

@@ -3,20 +3,19 @@ import { nanoid } from 'nanoid';
 import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { DataValue } from '../DataValue';
 
-export type ToolNode = ChartNode<'tool', ToolNodeData>;
+export type GptFunctionNode = ChartNode<'gptFunction', GptFunctionNodeData>;
 
-export type ToolNodeData = {
+export type GptFunctionNodeData = {
   name: string;
   description: string;
-  namespace?: string;
   schema: string;
 };
 
-export class ToolNodeImpl extends NodeImpl<ToolNode> {
-  static create(): ToolNode {
-    const chartNode: ToolNode = {
-      type: 'tool',
-      title: 'Tool',
+export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
+  static create(): GptFunctionNode {
+    const chartNode: GptFunctionNode = {
+      type: 'gptFunction',
+      title: 'GPT Function',
       id: nanoid() as NodeId,
       visualData: {
         x: 0,
@@ -24,7 +23,7 @@ export class ToolNodeImpl extends NodeImpl<ToolNode> {
         width: 250,
       },
       data: {
-        name: 'newTool',
+        name: 'newFunction',
         description: 'No description provided',
         schema: `{
   "type": "object",
@@ -43,14 +42,14 @@ export class ToolNodeImpl extends NodeImpl<ToolNode> {
   getOutputDefinitions(): NodeOutputDefinition[] {
     return [
       {
-        id: 'tool' as PortId,
-        title: 'Tool',
-        dataType: 'gpt-tool',
+        id: 'function' as PortId,
+        title: 'Function',
+        dataType: 'gpt-function',
       },
     ];
   }
 
-  getEditors(): EditorDefinition<ToolNode>[] {
+  getEditors(): EditorDefinition<GptFunctionNode>[] {
     return [
       {
         type: 'string',
@@ -61,11 +60,6 @@ export class ToolNodeImpl extends NodeImpl<ToolNode> {
         type: 'string',
         label: 'Description',
         dataKey: 'description',
-      },
-      {
-        type: 'string',
-        label: 'Namespace',
-        dataKey: 'namespace',
       },
       {
         type: 'code',
@@ -80,17 +74,16 @@ export class ToolNodeImpl extends NodeImpl<ToolNode> {
     const parsedSchema = JSON.parse(this.data.schema);
 
     return {
-      ['tool' as PortId]: {
-        type: 'gpt-tool',
+      ['function' as PortId]: {
+        type: 'gpt-function',
         value: {
           name: this.data.name,
           description: this.data.description,
-          namespace: this.data.namespace,
-          schema: parsedSchema,
+          parameters: parsedSchema,
         },
       },
     };
   }
 }
 
-export const toolNode = nodeDefinition(ToolNodeImpl, 'Tool');
+export const gptFunctionNode = nodeDefinition(GptFunctionNodeImpl, 'GPT Function');

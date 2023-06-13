@@ -95,8 +95,8 @@ export * from './nodes/GetGlobalNode';
 import { waitForEventNode } from './nodes/WaitForEventNode';
 export * from './nodes/WaitForEventNode';
 
-import { toolNode } from './nodes/ToolNode';
-export * from './nodes/ToolNode';
+import { gptFunctionNode } from './nodes/GptFunctionNode';
+export * from './nodes/GptFunctionNode';
 
 import { toYamlNode } from './nodes/ToYamlNode';
 export * from './nodes/ToYamlNode';
@@ -146,7 +146,7 @@ const register = new NodeRegistration()
   .register(setGlobalNode)
   .register(getGlobalNode)
   .register(waitForEventNode)
-  .register(toolNode)
+  .register(gptFunctionNode)
   .register(getEmbeddingNode)
   .register(vectorStoreNode)
   .register(vectorNearestNeighborsNode)
@@ -172,4 +172,8 @@ export type NodeOfType<T extends NodeType> = Extract<Nodes, { type: T }>;
 
 export function getNodeDisplayName<T extends NodeType>(type: T): string {
   return register.getDisplayName(type);
+}
+
+export function isRegisteredNodeType(type: NodeType): boolean {
+  return register.isRegistered(type);
 }

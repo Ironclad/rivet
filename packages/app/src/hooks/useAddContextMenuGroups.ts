@@ -23,7 +23,7 @@ export const addContextMenuGroups = [
       { label: 'Chat', nodeType: 'chat' },
       { label: 'Assemble Prompt', nodeType: 'assemblePrompt' },
       { label: 'Trim Chat Messages', nodeType: 'trimChatMessages' },
-      { label: 'Tool', nodeType: 'tool' },
+      { label: 'GPT Function', nodeType: 'gptFunction' },
       { label: 'Get Embedding', nodeType: 'getEmbedding' },
     ],
   },
