@@ -2,4 +2,3 @@
 /.yarn/releases/* binary
 /.yarn/plugins/**/* binary
 /.pnp.* binary linguist-generated
-.yarn/cache/*.zip filter=lfs diff=lfs merge=lfs -text
