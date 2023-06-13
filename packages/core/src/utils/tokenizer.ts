@@ -37,7 +37,16 @@ export const openaiModels = {
       prompt: 0.03,
       completion: 0.06,
     },
-    displayName: 'GPT-4 0613',
+    displayName: 'GPT-4 (v0613)',
+  },
+  'gpt-4-32k-0613': {
+    maxTokens: 32768,
+    tiktokenModel: 'gpt-4',
+    cost: {
+      prompt: 0.06,
+      completion: 0.12,
+    },
+    displayName: 'GPT-4 32k (v0613)',
   },
   'gpt-3.5-turbo': {
     maxTokens: 4096,
@@ -56,7 +65,7 @@ export const openaiModels = {
       prompt: 0.002,
       completion: 0.002,
     },
-    displayName: 'GPT-3.5 0613',
+    displayName: 'GPT-3.5 (v0613)',
   },
 } satisfies Record<string, OpenAIModel>;
 
