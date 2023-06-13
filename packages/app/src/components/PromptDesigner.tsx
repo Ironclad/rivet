@@ -99,6 +99,10 @@ const styles = css`
       width: 100%;
     }
 
+    .message-delete-button-container {
+      width: 40px;
+    }
+
     .message-text pre {
       font-family: 'Roboto', sans-serif;
       user-select: none;
@@ -327,6 +331,20 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
     }));
   };
 
+  const deleteMessage = useCallback((index: number) => {
+    setMessages((s) => ({
+      ...s,
+      messages: [...s.messages.slice(0, index), ...s.messages.slice(index + 1)],
+    }));
+  }, [setMessages]);
+
+  const addMessage = useCallback(() => {
+    setMessages((s) => ({
+      ...s,
+      messages: [...s.messages, { type: 'user', message: '' }],
+    }));
+  }, [setMessages]);
+
   const testGroupChanged = (newTestGroup: NodeTestGroup, index: number) => {
     if (!attachedNode) {
       return;
@@ -471,8 +489,12 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
                 message={message}
                 key={`message-${index}`}
                 onChange={(newMessage) => messageChanged(newMessage, index)}
+                onDelete={() => deleteMessage(index)}
               />
             ))}
+            <Button className="add-message" appearance="subtle-link" onClick={addMessage}>
+              + Add message
+            </Button>
           </div>
         </div>
         <div className="response-area">
@@ -672,7 +694,8 @@ const CHAT_MESSAGE_TYPES = ['user' as const, 'assistant' as const, 'system' as c
 const PromptDesignerMessage: FC<{
   message: ChatMessage;
   onChange: (message: ChatMessage) => void;
-}> = ({ message, onChange }) => {
+  onDelete: () => void;
+}> = ({ message, onChange, onDelete }) => {
   const toggleAuthorType = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     const idx = findIndex(CHAT_MESSAGE_TYPES, (type) => message.type === type);
@@ -715,6 +738,15 @@ const PromptDesignerMessage: FC<{
           onChange={onTextChange}
           ref={textareaRef}
         />
+      </div>
+      <div className="message-delete-button-container">
+        <Button
+          appearance="subtle"
+          className="message-delete-button"
+          onClick={onDelete}
+        >
+          &times;
+        </Button>
       </div>
     </div>
   );
