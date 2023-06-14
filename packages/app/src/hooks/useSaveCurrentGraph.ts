@@ -1,4 +1,4 @@
-import produce from 'immer';
+import { produce } from 'immer';
 import { nanoid } from 'nanoid';
 import { GraphId } from '@ironclad/rivet-core';
 import { useRecoilState, useSetRecoilState } from 'recoil';

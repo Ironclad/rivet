@@ -1,21 +1,20 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
-import { DataValue } from '../DataValue';
-import { match } from 'ts-pattern';
 import { Inputs, Outputs, coerceType } from '../..';
 import { mapValues } from 'lodash-es';
 
 export type PromptNode = ChartNode<'prompt', PromptNodeData>;
 
 export type PromptNodeData = {
-  type: 'system' | 'user' | 'assistant' | 'tool';
+  type: 'system' | 'user' | 'assistant' | 'function';
   useTypeInput: boolean;
 
   promptText: string;
 
   name?: string;
   useNameInput?: boolean;
+  enableFunctionCall?: boolean;
 };
 
 export class PromptNodeImpl extends NodeImpl<PromptNode> {
@@ -33,6 +32,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
         type: 'user',
         useTypeInput: false,
         promptText,
+        enableFunctionCall: false,
       },
     };
 
@@ -41,6 +41,14 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
 
   getInputDefinitions(): NodeInputDefinition[] {
     let inputs: NodeInputDefinition[] = [];
+
+    if (this.data.enableFunctionCall) {
+      inputs.push({
+        id: 'function-call' as PortId,
+        title: 'Function Call',
+        dataType: 'object',
+      });
+    }
 
     if (this.data.useTypeInput) {
       inputs.push({
@@ -95,7 +103,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
           { value: 'system', label: 'System' },
           { value: 'user', label: 'User' },
           { value: 'assistant', label: 'Assistant' },
-          { value: 'tool', label: 'Tool' },
+          { value: 'function', label: 'Function' },
         ],
         dataKey: 'type',
         useInputToggleDataKey: 'useTypeInput',
@@ -105,6 +113,11 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
         label: 'Name',
         dataKey: 'name',
         useInputToggleDataKey: 'useNameInput',
+      },
+      {
+        type: 'toggle',
+        label: 'Enable Function Call',
+        dataKey: 'enableFunctionCall',
       },
       {
         type: 'code',
@@ -134,6 +147,9 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
         value: {
           type: this.chartNode.data.type,
           message: outputValue,
+          function_call: this.data.enableFunctionCall
+            ? coerceType(inputs['function-call' as PortId], 'object')
+            : undefined,
         },
       },
     };

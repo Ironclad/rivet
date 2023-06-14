@@ -1,4 +1,4 @@
-import produce from 'immer';
+import { produce } from 'immer';
 import { cloneDeep } from 'lodash-es';
 import { useRef, useEffect } from 'react';
 import { toast } from 'react-toastify';

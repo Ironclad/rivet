@@ -23,7 +23,7 @@ import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { VisualNode } from './VisualNode';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { useThrottleFn } from 'ahooks';
-import produce from 'immer';
+import { produce } from 'immer';
 import { graphState } from '../state/graph';
 import { useViewportBounds } from '../hooks/useViewportBounds';
 

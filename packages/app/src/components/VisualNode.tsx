@@ -26,6 +26,7 @@ import { useGetNodeIO } from '../hooks/useGetNodeIO';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { LoadingSpinner } from './LoadingSpinner';
 import { lastMousePositionState } from '../state/graphBuilder';
+import { ErrorBoundary } from 'react-error-boundary';
 
 export type VisualNodeProps = {
   node: ChartNode;
@@ -370,14 +371,21 @@ const NormalVisualNodeContent: FC<{
             </button>
           </div>
         </div>
-        <NodeBody node={node} />
-        <NodePorts
-          node={node}
-          connections={connections}
-          onWireStartDrag={onWireStartDrag}
-          onWireEndDrag={onWireEndDrag}
-        />
-        <NodeOutput node={node} />
+        <ErrorBoundary fallback={<div>Error rendering node body</div>}>
+          <NodeBody node={node} />
+        </ErrorBoundary>
+        <ErrorBoundary fallback={<></>}>
+          <NodePorts
+            node={node}
+            connections={connections}
+            onWireStartDrag={onWireStartDrag}
+            onWireEndDrag={onWireEndDrag}
+          />
+        </ErrorBoundary>
+
+        <ErrorBoundary fallback={<div>Error rendering node output</div>}>
+          <NodeOutput node={node} />
+        </ErrorBoundary>
         <div className="node-resize">
           <ResizeHandle onResizeStart={handleResizeStart} onResizeMove={handleResizeMove} />
         </div>

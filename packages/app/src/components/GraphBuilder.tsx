@@ -16,6 +16,7 @@ import { UserInputModal } from './UserInputModal';
 import Button from '@atlaskit/button';
 import { isNotNull } from '../utils/genericUtilFunctions';
 import { useFactorIntoSubgraph } from '../hooks/useFactorIntoSubgraph';
+import { ErrorBoundary } from 'react-error-boundary';
 
 const Container = styled.div`
   position: relative;
@@ -165,28 +166,30 @@ export const GraphBuilder: FC = () => {
 
   return (
     <Container>
-      <NodeCanvas
-        nodes={nodes}
-        connections={connections}
-        onNodesChanged={nodesChanged}
-        onConnectionsChanged={setConnections}
-        onNodeSelected={nodeSelected}
-        selectedNodes={selectedNodes}
-        onNodeStartEditing={nodeStartEditing}
-        onContextMenuItemSelected={contextMenuItemSelected}
-      />
-      <NodeEditorRenderer />
-      {firstNodeQuestions && firstNodeQuestions.length > 0 && (
-        <Button onClick={handleOpenUserInputModal} className="user-input-modal-open" appearance="primary">
-          User Input Needed
-        </Button>
-      )}
-      <UserInputModal
-        open={isUserInputModalOpen}
-        questions={lastQuestions}
-        onSubmit={handleSubmitUserInputModal}
-        onClose={handleCloseUserInputModal}
-      />
+      <ErrorBoundary fallback={<div>Failed to render GraphBuilder</div>}>
+        <NodeCanvas
+          nodes={nodes}
+          connections={connections}
+          onNodesChanged={nodesChanged}
+          onConnectionsChanged={setConnections}
+          onNodeSelected={nodeSelected}
+          selectedNodes={selectedNodes}
+          onNodeStartEditing={nodeStartEditing}
+          onContextMenuItemSelected={contextMenuItemSelected}
+        />
+        <NodeEditorRenderer />
+        {firstNodeQuestions && firstNodeQuestions.length > 0 && (
+          <Button onClick={handleOpenUserInputModal} className="user-input-modal-open" appearance="primary">
+            User Input Needed
+          </Button>
+        )}
+        <UserInputModal
+          open={isUserInputModalOpen}
+          questions={lastQuestions}
+          onSubmit={handleSubmitUserInputModal}
+          onClose={handleCloseUserInputModal}
+        />
+      </ErrorBoundary>
     </Container>
   );
 };

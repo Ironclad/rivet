@@ -4,7 +4,7 @@ import { useLoadGraph } from './useLoadGraph';
 import { useStableCallback } from './useStableCallback';
 import { useSetRecoilState } from 'recoil';
 import { savedGraphsState } from '../state/savedGraphs';
-import produce from 'immer';
+import { produce } from 'immer';
 
 export function useDuplicateGraph() {
   const loadGraph = useLoadGraph();

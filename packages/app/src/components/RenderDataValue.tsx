@@ -45,9 +45,9 @@ const scalarRenderers: {
     return <RenderDataValue value={inferred} depth={(depth ?? 0) + 1} />;
   },
   object: ({ value }) => <>{JSON.stringify(value.value)}</>,
-  'gpt-tool': ({ value }) => (
+  'gpt-function': ({ value }) => (
     <>
-      GPT Tool: <em>{value.value.name}</em>
+      GPT Function: <em>{value.value.name}</em>
     </>
   ),
   vector: ({ value }) => <>Vector (length {value.value.length})</>,

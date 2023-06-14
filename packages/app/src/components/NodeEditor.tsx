@@ -4,9 +4,9 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { nodesSelector } from '../state/graph';
 import styled from '@emotion/styled';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
-import { NodeType, getNodeDisplayName, ChartNode, NodeTestGroup } from '@ironclad/rivet-core';
+import { NodeType, getNodeDisplayName, ChartNode, NodeTestGroup, GraphId } from '@ironclad/rivet-core';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes';
-import produce from 'immer';
+import { produce } from 'immer';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import Toggle from '@atlaskit/toggle';
 import { useStableCallback } from '../hooks/useStableCallback';
@@ -276,7 +276,7 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
     setSelectedVariant(undefined);
   }
 
-  function updateTestGroupGraph(testGroup: NodeTestGroup, graphId: string) {
+  function updateTestGroupGraph(testGroup: NodeTestGroup, graphId: GraphId) {
     updateNode(
       produce(selectedNode, (draft) => {
         const group = draft.tests?.find(({ id }) => id === testGroup.id);
@@ -293,7 +293,7 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
       tests: [
         ...(selectedNode.tests ?? []),
         {
-          evaluatorGraphId: '',
+          evaluatorGraphId: '' as GraphId,
           tests: [],
           id: nanoid(),
         },
@@ -430,7 +430,7 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
                     <GraphSelector
                       label="Evaluator Graph"
                       value={test.evaluatorGraphId}
-                      onChange={(selected) => updateTestGroupGraph(test, selected)}
+                      onChange={(selected) => updateTestGroupGraph(test, selected as GraphId)}
                       isReadonly={false}
                       name={`evaluator-graph-${index}`}
                     />
