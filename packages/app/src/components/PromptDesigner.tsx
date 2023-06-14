@@ -46,6 +46,7 @@ import { projectState } from '../state/savedGraphs';
 import { cloneDeep, findIndex, range, zip } from 'lodash-es';
 import { useStableCallback } from '../hooks/useStableCallback';
 import produce from 'immer';
+import { toast } from 'react-toastify';
 
 const styles = css`
   position: fixed;
@@ -961,42 +962,47 @@ async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
     },
   });
 
-  const result = await chatNode.process(
-    {
-      ['prompt' as PortId]: {
-        type: 'chat-message[]',
-        value: messages,
+  try {
+    const result = await chatNode.process(
+      {
+        ['prompt' as PortId]: {
+          type: 'chat-message[]',
+          value: messages,
+        },
       },
-    },
-    {
-      contextValues: {},
-      createSubProcessor: undefined!,
-      settings,
-      nativeApi: new TauriNativeApi(),
-      processId: nanoid() as ProcessId,
-      executionCache: new Map(),
-      externalFunctions: {},
-      getGlobal: undefined!,
-      graphInputs: {},
-      graphOutputs: {},
-      project: undefined!,
-      raiseEvent: undefined!,
-      setGlobal: undefined!,
-      signal,
-      trace: (value) => console.log(value),
-      waitEvent: undefined!,
-      waitForGlobal: undefined!,
-      onPartialOutputs: (outputs) => {
-        const responsePartial = coerceTypeOptional(outputs['response' as PortId], 'string');
-        if (responsePartial) {
-          onPartialResult?.(responsePartial);
-        }
-      },
-    } as InternalProcessContext,
-  );
+      {
+        contextValues: {},
+        createSubProcessor: undefined!,
+        settings,
+        nativeApi: new TauriNativeApi(),
+        processId: nanoid() as ProcessId,
+        executionCache: new Map(),
+        externalFunctions: {},
+        getGlobal: undefined!,
+        graphInputs: {},
+        graphOutputs: {},
+        project: undefined!,
+        raiseEvent: undefined!,
+        setGlobal: undefined!,
+        signal,
+        trace: (value) => console.log(value),
+        waitEvent: undefined!,
+        waitForGlobal: undefined!,
+        onPartialOutputs: (outputs) => {
+          const responsePartial = coerceTypeOptional(outputs['response' as PortId], 'string');
+          if (responsePartial) {
+            onPartialResult?.(responsePartial);
+          }
+        },
+      } as InternalProcessContext,
+    );
 
-  const response = coerceTypeOptional(result['response' as PortId], 'string');
-  return response ?? '';
+    const response = coerceTypeOptional(result['response' as PortId], 'string');
+    return response ?? '';
+  } catch (err) {
+    toast.error((err as Error).message);
+    throw err;
+  }
 }
 
 function useRunTestGroup() {
