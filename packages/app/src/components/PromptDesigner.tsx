@@ -26,10 +26,12 @@ import {
   PortId,
   ProcessId,
   Settings,
+  arrayizeDataValue,
   coerceType,
   coerceTypeOptional,
   getChatNodeMessages,
   getError,
+  isArrayDataValue,
   modelOptions,
 } from '@ironclad/rivet-core';
 import TextField from '@atlaskit/textfield';
@@ -43,7 +45,7 @@ import { settingsState } from '../state/settings';
 import { GraphSelector } from './DefaultNodeEditor';
 import TextArea from '@atlaskit/textarea';
 import { projectState } from '../state/savedGraphs';
-import { cloneDeep, findIndex, range, zip } from 'lodash-es';
+import { cloneDeep, findIndex, mapValues, range, zip } from 'lodash-es';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { toast } from 'react-toastify';
 import { produce } from 'immer';
@@ -346,7 +348,12 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
       : undefined;
 
     if (nodeDataForAttachedNodeProcess?.inputData) {
-      const { messages } = getChatNodeMessages(nodeDataForAttachedNodeProcess.inputData);
+      let inputData = nodeDataForAttachedNodeProcess.inputData;
+      // If node is a split run, just grab the first input data.
+      if (attachedNode.isSplitRun) {
+        inputData = mapValues(inputData, (val) => isArrayDataValue(val) ? arrayizeDataValue(val)[0] : val);
+      }
+      const { messages } = getChatNodeMessages(inputData);
       setMessages({
         messages,
       });
