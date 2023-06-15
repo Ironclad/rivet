@@ -145,12 +145,7 @@ function useRunTest() {
         const duration = Date.now() - startTime;
         if (!outputs) {
           // Undefined outputs means error of some kind.
-          updateLatestTestResult({
-            name: runName,
-            inputPerturbationResults: inputPerturbationResults.slice(),
-            isRunning: false,
-          })
-          return;
+          throw new Error('Error running test');
         }
   
         const validationOutput: GraphTesterInputPerturbationResults['validationOutput'] = [];
@@ -196,6 +191,11 @@ function useRunTest() {
         });
       } catch (err: any) {
         toast.error('Error running test: ' + err.message);
+        updateLatestTestResult({
+          name: runName,
+          inputPerturbationResults: inputPerturbationResults.slice(),
+          isRunning: false,
+        });
         setState((s) => ({ ...s, activeTestRunning: false }));
       }
     }
@@ -203,13 +203,14 @@ function useRunTest() {
       name: runName,
       inputPerturbationResults: inputPerturbationResults.slice(),
       isRunning: false,
-    })
+    });
+    setState((s) => ({ ...s, activeTestRunning: false }));
   }
   return runTest;
 }
 
 export const GraphTester: FC<GraphTesterProps> = ({ onClose }) => {
-  const [{ graphTest, testResults }, setState] = useRecoilState(graphTesterState);
+  const [{ graphTest, testResults, activeInputPerturbation, activeTestRunning }, setState] = useRecoilState(graphTesterState);
   const [graph, setGraph] = useRecoilState(graphState);
   const runTest = useRunTest();
 
@@ -288,8 +289,25 @@ export const GraphTester: FC<GraphTesterProps> = ({ onClose }) => {
       </div>
       <GraphTestInputEditor
         graphInputs={graphInputs}
-        input={graphTest.testInputs?.[0] ?? { inputs: {}}}
-        setInput={(input) => setTest({ ...graphTest, testInputs: [input] })} />
+        input={graphTest.testInputs?.[activeInputPerturbation] ?? { inputs: {}}}
+        setInput={(input) => setTest({ ...graphTest, testInputs: graphTest.testInputs
+          ? [
+            ...graphTest.testInputs.slice(0, activeInputPerturbation),
+            input,
+            ...graphTest.testInputs.slice(activeInputPerturbation + 1),
+          ]
+          : [input] })}
+        activeTestRunning={activeTestRunning}
+        numPerturbations={graphTest.testInputs?.length ?? 0}
+        activeInputPerturbation={activeInputPerturbation}
+        setActiveInputPerturbation={(idx) => setState((s) => ({ ...s, activeInputPerturbation: idx }))}
+        addInputPerturbation={() => {
+          setTest({
+            ...graphTest,
+            testInputs: [...graphTest.testInputs, graphTest.testInputs[graphTest.testInputs.length - 1] ?? { inputs: {} }],
+          });
+          setState((s) => ({ ...s, activeInputPerturbation: graphTest.testInputs?.length ?? 0 }));
+        }} />
       <div className="graph-tester-validations">
         <Label htmlFor="">Validations</Label>
         <div className="graph-tester-validations-list">
@@ -322,10 +340,15 @@ export const GraphTester: FC<GraphTesterProps> = ({ onClose }) => {
 }
 
 const GraphTestInputEditor: FC<{
-  graphInputs: GraphInputNode[],
-  input: NodeGraphTestInputData,
-  setInput: (input: NodeGraphTestInputData) => void
-}> = ({ graphInputs, input, setInput }) => {
+  graphInputs: GraphInputNode[];
+  input: NodeGraphTestInputData;
+  setInput: (input: NodeGraphTestInputData) => void;
+  activeTestRunning: boolean;
+  numPerturbations: number;
+  activeInputPerturbation: number;
+  setActiveInputPerturbation: (idx: number) => void;
+  addInputPerturbation: () => void;
+}> = ({ graphInputs, input, setInput, activeTestRunning, numPerturbations, activeInputPerturbation, setActiveInputPerturbation, addInputPerturbation }) => {
   const inputEntries = useMemo(() => {
     return graphInputs.map((graphInput) => {
       const value = input.inputs[graphInput.data.id];
@@ -339,9 +362,30 @@ const GraphTestInputEditor: FC<{
   }, [graphInputs, input]);
   return <div className="graph-tester-inputs">
     <Label htmlFor="">Inputs</Label>
+    <div className="graph-tester-inputs-nav">
+      <Button
+        isDisabled={activeTestRunning}
+        onClick={() => setActiveInputPerturbation(Math.max(0, activeInputPerturbation - 1))}>
+        &lt;
+      </Button>
+      <span>{activeInputPerturbation + 1} / {numPerturbations}</span>
+      {
+        activeInputPerturbation === numPerturbations - 1
+        ? <Button
+          isDisabled={activeTestRunning}
+          onClick={addInputPerturbation}>
+          +
+        </Button>
+        : <Button
+          isDisabled={activeTestRunning}
+          onClick={() => setActiveInputPerturbation(Math.min(numPerturbations - 1, activeInputPerturbation + 1))}>
+          &gt;
+        </Button>
+      }
+    </div>
     {inputEntries.map(({ id, title, dataType, value }) => {
       return <div key={id}>
-        <Field name={`input-${id}`} label={`${id} (${title})`}>
+        <Field name={`input-${id}`} label={`${id} (${title})`} isDisabled={activeTestRunning}>
           {({ fieldProps }) => (
             <TextArea
               {...fieldProps}
