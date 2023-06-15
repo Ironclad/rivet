@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { PromptDesignerRenderer } from './PromptDesigner';
 import { useGraphExecutor } from '../hooks/useGraphExecutor';
 import { useMenuCommands } from '../hooks/useMenuCommands';
+import { GraphTesterRenderer } from './GraphTester';
 
 const styles = css`
   overflow: hidden;
@@ -38,6 +39,7 @@ export const RivetApp: FC = () => {
       <GraphBuilder />
       <SettingsModal />
       <PromptDesignerRenderer />
+      <GraphTesterRenderer />
       <ToastContainer position="bottom-right" hideProgressBar newestOnTop />
     </div>
   );

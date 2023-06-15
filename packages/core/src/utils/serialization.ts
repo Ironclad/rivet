@@ -220,6 +220,7 @@ function toSerializedGraph(graph: NodeGraph): SerializedGraph {
       }),
       {} as Record<NodeId, SerializedNode>,
     ),
+    testCases: graph.testCases,
   };
 }
 

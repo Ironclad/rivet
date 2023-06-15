@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { FC, useEffect } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { graphState } from '../state/graph';
 import { loadedProjectState, projectState, savedGraphsState } from '../state/savedGraphs';
 import { orderBy } from 'lodash-es';
@@ -11,7 +11,7 @@ import { ReactComponent as ExpandRightIcon } from 'majesticons/line/menu-expand-
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { useDeleteGraph } from '../hooks/useDeleteGraph';
 import { useLoadGraph } from '../hooks/useLoadGraph';
-import { GraphId, NodeGraph, emptyNodeGraph } from '@ironclad/rivet-core';
+import { GraphId, GraphTestId, NodeGraph, emptyNodeGraph, emptyNodeGraphTest } from '@ironclad/rivet-core';
 import clsx from 'clsx';
 import { LoadingSpinner } from './LoadingSpinner';
 import { runningGraphsState } from '../state/dataFlow';
@@ -21,6 +21,8 @@ import { appWindow } from '@tauri-apps/api/window';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import { useContextMenu } from '../hooks/useContextMenu';
 import Portal from '@atlaskit/portal';
+import Button from '@atlaskit/button';
+import { graphTesterState } from '../state/graphTester';
 
 const styles = css`
   position: fixed;
@@ -165,6 +167,7 @@ export const LeftSidebar: FC = () => {
   const [savedGraphs, setSavedGraphs] = useRecoilState(savedGraphsState);
   const [sidebarOpen, setSidebarOpen] = useRecoilState(sidebarOpenState);
   const runningGraphs = useRecoilValue(runningGraphsState);
+  const setGraphTester = useSetRecoilState(graphTesterState);
 
   const sortedGraphs = orderBy(savedGraphs, ['metadata.name'], ['asc']);
 
@@ -179,6 +182,20 @@ export const LeftSidebar: FC = () => {
     const graph = emptyNodeGraph();
     loadGraph(graph);
     setSavedGraphs([...savedGraphs, graph]);
+  }
+
+  function addGraphTest() {
+    setGraph((g) => ({
+      ...g,
+      testCases: [...(graph.testCases ?? []), emptyNodeGraphTest()],
+    }));
+  }
+
+  function loadGraphTest(testId: GraphTestId) {
+    setGraphTester({
+      isOpen: true,
+      graphTest: graph.testCases?.find((t) => t.id === testId) ?? emptyNodeGraphTest(),
+    });
   }
 
   function setGraphAndSavedGraph(graph: NodeGraph) {
@@ -278,6 +295,19 @@ export const LeftSidebar: FC = () => {
                   }
                   readViewFitContainerWidth
                 />
+                <div className="graph-test-list">
+                  <div>
+                    <label>Tests</label>
+                  </div>
+                  <div className="graph-test-list-items">
+                    {(graph.testCases ?? []).map((test, idx) => (
+                      <div key={idx} onClick={() => loadGraphTest(test.id)}>{test.name}</div>
+                    ))}
+                  </div>
+                  <div>
+                    <Button onClick={addGraphTest}>+ Add Test</Button>
+                  </div>
+                </div>
               </div>
             </div>
           </TabPanel>

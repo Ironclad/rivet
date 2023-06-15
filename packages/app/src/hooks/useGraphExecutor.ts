@@ -12,6 +12,11 @@ import {
   PortId,
   StringArrayDataValue,
   DataValue,
+  NodeGraphTestInputData,
+  NodeGraph,
+  ChartNode,
+  GraphInputNode,
+  GraphOutputs,
 } from '../../../core/src';
 import { TauriNativeApi } from '../model/native/TauriNativeApi';
 import {
@@ -31,9 +36,11 @@ import { useExecutorSidecar } from './useExecutorSidecar';
 import { useRemoteDebugger, setCurrentDebuggerMessageHandler } from './useRemoteDebugger';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph';
 import { useStableCallback } from './useStableCallback';
+import { graphTesterState } from '../state/graphTester';
 
 export function useGraphExecutor() {
   const graph = useRecoilValue(graphState);
+  const { graphTest } = useRecoilValue(graphTesterState);
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
   const settings = useRecoilValue(settingsState);
   const saveGraph = useSaveCurrentGraph();
@@ -150,15 +157,30 @@ export function useGraphExecutor() {
     setLastRunData({});
   };
 
-  const done = () => {
+  let executionPromise: Promise<GraphOutputs> & { resolve: (value: GraphOutputs) => void; reject: (reason?: Error) => void };
+  const resetExecutionPromise = () => {
+    let res, rej;
+    const p = new Promise((resolve, err) => {
+      res = resolve;
+      rej = err;
+    }) as any;
+    p.resolve = res;
+    p.reject = rej;
+    executionPromise = p;
+  }
+
+  const done = ({ results }: ProcessEvents['done']) => {
+    executionPromise?.resolve(results);
     stopAll();
   };
 
   const abort = () => {
+    executionPromise?.reject(new Error('Execution aborted'));
     stopAll();
   };
 
-  const onError = () => {
+  const onError = (data: ProcessEvents['error']) => {
+    executionPromise?.reject(typeof data.error === 'string' ? new Error(data.error) : data.error);
     stopAll();
   };
 
@@ -258,7 +280,7 @@ export function useGraphExecutor() {
         start();
         break;
       case 'done':
-        done();
+        done(data as ProcessEvents['done']);
         break;
       case 'abort':
         abort();
@@ -285,7 +307,7 @@ export function useGraphExecutor() {
         resume();
         break;
       case 'error':
-        onError();
+        onError(data as ProcessEvents['error']);
         break;
     }
   });
@@ -303,6 +325,32 @@ export function useGraphExecutor() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedExecutor]);
 
+  function isGraphInputNode(n: ChartNode): n is GraphInputNode {
+    return n.type === 'graphInput';
+  }
+
+  // TODO Weird hack to set input graph node to the value needed for the test.
+  // Potentially make this less hacky.
+  function updateGraphWithTestValues(g: NodeGraph, t: NodeGraphTestInputData): NodeGraph {
+    return {
+      ...g,
+      nodes: g.nodes.map((n) => {
+        if (isGraphInputNode(n) && t.inputs[n.title]) {
+          const value = t.inputs[n.title];
+          return {
+            ...n,
+            data: {
+              ...n.data,
+              useDefaultValueInput: false,
+              defaultValue: value?.value,
+            }
+          }
+        }
+        return n;
+      }),
+    }
+  }
+
   const tryRunGraph = useStableCallback(async () => {
     if (
       remoteDebugger.remoteDebuggerState.started &&
@@ -315,18 +363,20 @@ export function useGraphExecutor() {
               ...project,
               graphs: {
                 ...project.graphs,
-                [graph.metadata!.id!]: graph,
+                [graph.metadata!.id!]: graphTest?.testInputs?.[0] ? updateGraphWithTestValues(graph, graphTest.testInputs[0]) : graph,
               },
             },
             settings,
           });
         }
 
+        resetExecutionPromise();
         remoteDebugger.send('run', { graphId: graph.metadata!.id! });
+        return await executionPromise;
       } catch (e) {
         console.error(e);
+        return;
       }
-      return;
     }
 
     try {
@@ -340,7 +390,7 @@ export function useGraphExecutor() {
         ...project,
         graphs: {
           ...project.graphs,
-          [graph.metadata!.id!]: graph,
+          [graph.metadata!.id!]: graphTest?.testInputs?.[0] ? updateGraphWithTestValues(graph, graphTest.testInputs[0]) : graph,
         },
       };
 
@@ -386,6 +436,8 @@ export function useGraphExecutor() {
       const results = await processor.processGraph({ settings, nativeApi: new TauriNativeApi() });
 
       console.log(results);
+
+      return results;
     } catch (e) {
       console.log(e);
     }
