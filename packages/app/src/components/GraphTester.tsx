@@ -12,7 +12,7 @@ import { TauriNativeApi } from '../model/native/TauriNativeApi';
 import { settingsState } from '../state/settings';
 import { toast } from 'react-toastify';
 import { GraphSelector } from './DefaultNodeEditor';
-import { Field, Label } from '@atlaskit/form';
+import { Field, HelperMessage, Label } from '@atlaskit/form';
 import Select from '@atlaskit/select';
 import TextArea from '@atlaskit/textarea';
 import TextField from '@atlaskit/textfield';
@@ -368,13 +368,13 @@ const GraphTestInputEditor: FC<{
         onClick={() => setActiveInputPerturbation(Math.max(0, activeInputPerturbation - 1))}>
         &lt;
       </Button>
-      <span>{activeInputPerturbation + 1} / {numPerturbations}</span>
+      <span>Perturbation {activeInputPerturbation + 1} of {numPerturbations}</span>
       {
         activeInputPerturbation === numPerturbations - 1
         ? <Button
           isDisabled={activeTestRunning}
           onClick={addInputPerturbation}>
-          +
+          + Add Perturbation
         </Button>
         : <Button
           isDisabled={activeTestRunning}
@@ -383,6 +383,7 @@ const GraphTestInputEditor: FC<{
         </Button>
       }
     </div>
+    <HelperMessage>Input perturbations should represent the same idea, expressed differently.</HelperMessage>
     {inputEntries.map(({ id, title, dataType, value }) => {
       return <div key={id}>
         <Field name={`input-${id}`} label={`${id} (${title})`} isDisabled={activeTestRunning}>
