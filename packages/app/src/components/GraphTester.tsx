@@ -4,13 +4,16 @@ import { GraphTesterResults, graphTesterState } from '../state/graphTester';
 import { css } from '@emotion/react';
 import Button from '@atlaskit/button';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
-import { DataValue, GraphInputNode, GraphProcessor, NodeGraphTest, NodeGraphTestInputData, PortId, ScalarDataValue, coerceType } from '@ironclad/rivet-core';
+import { ChartNode, DataValue, GraphId, GraphInputNode, GraphOutputNode, GraphProcessor, NodeGraph, NodeGraphTest, NodeGraphTestInputData, NodeGraphTestValidation, PortId, Project, ScalarDataValue, coerceType } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph';
 import { useGraphExecutor } from '../hooks/useGraphExecutor';
 import { projectState } from '../state/savedGraphs';
 import { TauriNativeApi } from '../model/native/TauriNativeApi';
 import { settingsState } from '../state/settings';
 import { toast } from 'react-toastify';
+import { GraphSelector } from './DefaultNodeEditor';
+import { Field } from '@atlaskit/form';
+import Select from '@atlaskit/select';
 
 const styles = css`
   position: fixed;
@@ -35,7 +38,7 @@ export const GraphTesterRenderer: FC = () => {
 
   if (!isOpen) return null;
 
-  return <GraphTester onClose={() => setState((s) => ({ isOpen: false }))} />;
+  return <GraphTester onClose={() => setState((s) => ({ ...s, isOpen: false, graphTest: undefined }))} />;
 };
 
 export interface GraphTesterProps {
@@ -47,9 +50,16 @@ function useRunTest() {
   const project = useRecoilValue(projectState);
   const settings = useRecoilValue(settingsState);
   const [{ graphTest }, setState] = useRecoilState(graphTesterState);
+  const graph = useRecoilValue(graphState);
 
   const pushTestResult = (testResult: GraphTesterResults) => {
-    setState((s) => ({ ...s, testResults: [...(s.testResults ?? []), testResult] }));
+    setState((s) => ({
+      ...s,
+      testResults: {
+        ...s.testResults,
+        [s.graphTest!.id]: [...(s.testResults[s.graphTest!.id] ?? []), testResult],
+      },
+    }));
   };
 
   const runTest = async () => {
@@ -129,6 +139,40 @@ export const GraphTester: FC<GraphTesterProps> = ({ onClose }) => {
     setGraph((g) => ({ ...g, testCases: (g.testCases ?? []).map((t) => t.id === test.id ? test : t) }));
   };
 
+  const addValidation = () => {
+      if (!graphTest) return;
+      setTest({
+        ...graphTest,
+        testValidations: [
+          ...(graphTest.testValidations ?? []),
+          { outputId: '' as PortId, evaluatorGraphId: '' as GraphId },
+        ]
+    });
+  }
+
+  const deleteValidation = (idx: number) => {
+    if (!graphTest) return;
+    setTest({
+      ...graphTest,
+      testValidations: [
+        ...graphTest.testValidations.slice(0, idx),
+        ...graphTest.testValidations.slice(idx + 1),
+      ],
+    });
+  };
+
+  const setValidation = (v: NodeGraphTestValidation, idx: number) => {
+    if (!graphTest) return;
+    setTest({
+      ...graphTest,
+      testValidations: [
+        ...graphTest.testValidations.slice(0, idx),
+        v,
+        ...graphTest.testValidations.slice(idx + 1),
+      ],
+    });
+  };
+
   if (!graphTest) return null;
 
   return <div css={styles}>
@@ -167,12 +211,23 @@ export const GraphTester: FC<GraphTesterProps> = ({ onClose }) => {
       </div>
       <div className="graph-tester-validations">
         <label>Validations</label>
+        <div>
+          {(graphTest.testValidations ?? []).map((validation, i) => {
+            return <GraphTestValidationEditor
+              key={i}
+              validation={validation}
+              setValidation={(v: NodeGraphTestValidation) => setValidation(v, i)}
+              deleteValidation={() => deleteValidation(i)}
+              graph={graph} />;
+          })}
+        </div>
+        <Button onClick={addValidation}>+ Add Validation</Button>
       </div>
       <div className="graph-tester-results">
         <label>Results</label>
         <Button onClick={runTest}>Run</Button>
         <div>
-          {testResults?.map((result, i) => {
+          {testResults[graphTest.id]?.map((result, i) => {
             return <div key={i}>
               <div>Duration: {result.duration}ms</div>
               <div>Test Input Index: {result.testInputIndex}</div>
@@ -199,9 +254,9 @@ const GraphTestInputEditor: FC<{
 }> = ({ graphInputs, input, setInput }) => {
   const inputEntries = useMemo(() => {
     return graphInputs.map((graphInput) => {
-      const value = input.inputs[graphInput.title];
+      const value = input.inputs[graphInput.data.id];
       return {
-        id: graphInput.id,
+        id: graphInput.data.id,
         title: graphInput.title,
         dataType: graphInput.data.dataType,
         value,
@@ -211,15 +266,61 @@ const GraphTestInputEditor: FC<{
   return <div>
     {inputEntries.map(({ id, title, dataType, value }) => {
       return <div key={id}>
-        <label>{title}</label>
+        <label>{id} ({title})</label>
         <input type="text" value={String(value?.value ?? '')} onChange={(e) => {setInput({
           ...input,
           inputs: {
             ...input.inputs,
-            [title]: { type: dataType, value: e.target.value as any } as DataValue,
+            [id]: { type: dataType, value: e.target.value as any } as DataValue,
           },
         })}} />
       </div>;
     })}
+  </div>
+};
+
+function isGraphOutputNode(n: ChartNode): n is GraphOutputNode {
+  return n.type === 'graphOutput';
+}
+
+const GraphTestValidationEditor: FC<{
+  validation: NodeGraphTestValidation;
+  setValidation: (validation: NodeGraphTestValidation) => void;
+  deleteValidation: () => void;
+  graph: NodeGraph;
+}> = ({ validation, setValidation, deleteValidation, graph }) => {
+  const outputNodes = useMemo(() => {
+    return graph.nodes.filter((n) => isGraphOutputNode(n)) as GraphOutputNode[];
+  }, [graph.nodes]);
+  const outputOptions = useMemo(() => {
+    return outputNodes.map((n) => ({ label: n.data.id, value: n.data.id }));
+  }, [outputNodes]);
+  const outputInfo = useMemo(() => {
+    if (validation.outputId === undefined) return undefined;
+    return outputNodes.find((n) => n.data.id === validation.outputId);
+  }, [outputNodes, validation?.outputId]);
+  return <div>
+    <Button onClick={deleteValidation} appearance="subtle">&times;</Button>
+    <div>
+      <Field name="outputToValidate" label="Output for Validation">
+        {({ fieldProps }) => (
+          <Select
+            {...fieldProps}
+            options={outputOptions}
+            value={{ label: outputInfo?.data.id, value: outputInfo?.data.id }}
+            onChange={(selected) => setValidation({ ...validation, outputId: selected!.value as PortId })}
+          />
+        )}
+      </Field>
+    </div>
+    <div>
+      <GraphSelector
+        label="Evaluator Graph (input must match type; output must be boolean)"
+        value={validation.evaluatorGraphId}
+        onChange={(selected) => setValidation({ ...validation, evaluatorGraphId: selected as GraphId })}
+        isReadonly={false}
+        name="evaluator-graph-validation"
+      />
+    </div>
   </div>
 };

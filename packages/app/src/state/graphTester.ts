@@ -1,10 +1,10 @@
-import { NodeGraphTest } from '@ironclad/rivet-core';
+import { GraphTestId, NodeGraphTest } from '@ironclad/rivet-core';
 import { atom } from 'recoil';
 
 interface GraphTesterState {
   isOpen: boolean;
   graphTest?: NodeGraphTest;
-  testResults?: GraphTesterResults[];
+  testResults: Record<GraphTestId, GraphTesterResults[]>;
 }
 
 export interface GraphTesterResults {
@@ -19,5 +19,6 @@ export const graphTesterState = atom<GraphTesterState>({
   key: 'graphTesterState',
   default: {
     isOpen: false,
+    testResults: {},
   },
 });

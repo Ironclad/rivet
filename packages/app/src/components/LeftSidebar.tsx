@@ -192,10 +192,11 @@ export const LeftSidebar: FC = () => {
   }
 
   function loadGraphTest(testId: GraphTestId) {
-    setGraphTester({
+    setGraphTester((s) => ({
+      ...s,
       isOpen: true,
       graphTest: graph.testCases?.find((t) => t.id === testId) ?? emptyNodeGraphTest(),
-    });
+    }));
   }
 
   function setGraphAndSavedGraph(graph: NodeGraph) {

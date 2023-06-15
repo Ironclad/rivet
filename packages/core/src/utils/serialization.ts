@@ -242,6 +242,7 @@ function fromSerializedGraph(serializedGraph: SerializedGraph): NodeGraph {
     },
     nodes: allNodes,
     connections: allConnections,
+    testCases: serializedGraph.testCases,
   };
 }
 

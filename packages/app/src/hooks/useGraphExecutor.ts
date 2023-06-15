@@ -335,8 +335,8 @@ export function useGraphExecutor() {
     return {
       ...g,
       nodes: g.nodes.map((n) => {
-        if (isGraphInputNode(n) && t.inputs[n.title]) {
-          const value = t.inputs[n.title];
+        if (isGraphInputNode(n) && t.inputs[n.data.id]) {
+          const value = t.inputs[n.data.id];
           return {
             ...n,
             data: {
