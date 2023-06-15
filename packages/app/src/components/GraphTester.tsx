@@ -89,7 +89,6 @@ function useRunTest() {
   const project = useRecoilValue(projectState);
   const settings = useRecoilValue(settingsState);
   const [{ graphTest }, setState] = useRecoilState(graphTesterState);
-  const graph = useRecoilValue(graphState);
 
   const pushTestResult = (testResult: GraphTesterResults) => {
     setState((s) => ({
@@ -146,6 +145,7 @@ function useRunTest() {
       }
 
       pushTestResult({
+        name: `Run ${new Date(startTime).toLocaleTimeString()}`,
         duration,
         testInputIndex: 0, // TODO
         validationOutput,
@@ -260,20 +260,10 @@ export const GraphTester: FC<GraphTesterProps> = ({ onClose }) => {
           <Button className="run-tests" onClick={runTest}>Run</Button>
         </div>
         <div>
-          {testResults[graphTest.id]?.map((result, i) => {
-            return <div key={i}>
-              <div>Duration: {result.duration}ms</div>
-              <div>Test Input Index: {result.testInputIndex}</div>
-              <div>
-                {result.validationOutput.map((validation, i) => {
-                  return <div key={i}>
-                    <div>Validation {i + 1}</div>
-                    <div>Passed: {validation.passed ? 'Yes' : 'No'}</div>
-                  </div>;
-                })}
-              </div>
-            </div>;
-          })}
+          <GraphTestResults
+            testResults={testResults[graphTest.id] ?? []}
+            setTestResults={(t) => setState((s) => ({ ...s, testResults: { ...s.testResults, [graphTest.id]: t } }))}
+            />
         </div>
       </div>
     </div>
@@ -376,3 +366,40 @@ const GraphTestValidationEditor: FC<{
     </div>
   </div>
 };
+
+const GraphTestResults: FC<{
+  testResults: GraphTesterResults[];
+  setTestResults: (t: GraphTesterResults[]) => void;
+}> = ({ testResults, setTestResults }) => {
+  return <div className="graph-tester-results-list">
+    {testResults.map((result, i) => {
+      return <div key={i}>
+        <InlineEditableTextfield
+          key="resultName"
+          label="Name"
+          placeholder="Test result name"
+          onConfirm={(newValue) => {
+            setTestResults([
+              ...testResults.slice(0, i),
+              { ...result, name: newValue },
+              ...testResults.slice(i + 1),
+            ]);
+          }}
+          defaultValue={result.name}
+          readViewFitContainerWidth
+          />
+        <div>Duration: {result.duration}ms</div>
+        <div>Test Input Index: {result.testInputIndex}</div>
+        <div>
+          {result.validationOutput.map((validation, i) => {
+            return <div key={i}>
+              <div>Validation {i + 1}</div>
+              <div>Passed: {validation.passed ? 'Yes' : 'No'}</div>
+            </div>;
+          })}
+        </div>
+      </div>;
+    })}
+  </div>
+
+}

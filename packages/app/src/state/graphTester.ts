@@ -8,6 +8,7 @@ interface GraphTesterState {
 }
 
 export interface GraphTesterResults {
+  name: string;
   duration: number;
   testInputIndex: number;
   validationOutput: {
