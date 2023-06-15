@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { ChangeEvent, FC, useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { GraphTesterResults, graphTesterState } from '../state/graphTester';
 import { css } from '@emotion/react';
@@ -12,8 +12,10 @@ import { TauriNativeApi } from '../model/native/TauriNativeApi';
 import { settingsState } from '../state/settings';
 import { toast } from 'react-toastify';
 import { GraphSelector } from './DefaultNodeEditor';
-import { Field } from '@atlaskit/form';
+import { Field, Label } from '@atlaskit/form';
 import Select from '@atlaskit/select';
+import TextArea from '@atlaskit/textarea';
+import TextField from '@atlaskit/textfield';
 
 const styles = css`
   position: fixed;
@@ -30,6 +32,43 @@ const styles = css`
     top: 0;
     right: 0;
     z-index: 10;
+  }
+
+  .graph-tester-content {
+    margin: 10px;
+  }
+
+  .graph-tester-inputs {
+    margin-left: 40px;
+    margin-bottom: 20px;
+    & > label {
+      margin-left: -40px;
+    }
+  }
+
+  .graph-tester-validations {
+    margin-bottom: 20px;
+  }
+
+  .graph-tester-validations-list {
+    position: relative;
+    margin-bottom: 10px;
+
+    .graph-tester-validation-item {
+      margin-left: 40px;
+    }
+    .delete-graph-tester-validation-item {
+      position: absolute;
+      left: 0;
+    }
+  }
+
+  .graph-tester-results-header {
+    display: flex;
+    align-items: center;
+    label {
+      flex-grow: 1;
+    }
   }
 `;
 
@@ -85,13 +124,7 @@ function useRunTest() {
         }
 
         const processor = new GraphProcessor(project, testValidation.evaluatorGraphId);
-        processor.on('trace', (value) => console.log(value));
 
-        // processor.on('nodeFinish', ({ node, outputs }) => {
-        //   if (node.type === 'chat') {
-        //     console.log(outputs['response' as PortId]);
-        //   }
-        // });
         const testOutputs = await processor.processGraph(
           {
             nativeApi: new TauriNativeApi(),
@@ -145,7 +178,7 @@ export const GraphTester: FC<GraphTesterProps> = ({ onClose }) => {
         ...graphTest,
         testValidations: [
           ...(graphTest.testValidations ?? []),
-          { outputId: '' as PortId, evaluatorGraphId: '' as GraphId },
+          { description: '', outputId: '' as PortId, evaluatorGraphId: '' as GraphId },
         ]
     });
   }
@@ -202,16 +235,13 @@ export const GraphTester: FC<GraphTesterProps> = ({ onClose }) => {
           readViewFitContainerWidth
         />
       </div>
-      <div className="graph-tester-inputs">
-        <label>Inputs</label>
-        <GraphTestInputEditor
-          graphInputs={graphInputs}
-          input={graphTest.testInputs?.[0] ?? { inputs: {}}}
-          setInput={(input) => setTest({ ...graphTest, testInputs: [input] })} />
-      </div>
+      <GraphTestInputEditor
+        graphInputs={graphInputs}
+        input={graphTest.testInputs?.[0] ?? { inputs: {}}}
+        setInput={(input) => setTest({ ...graphTest, testInputs: [input] })} />
       <div className="graph-tester-validations">
-        <label>Validations</label>
-        <div>
+        <Label htmlFor="">Validations</Label>
+        <div className="graph-tester-validations-list">
           {(graphTest.testValidations ?? []).map((validation, i) => {
             return <GraphTestValidationEditor
               key={i}
@@ -223,9 +253,12 @@ export const GraphTester: FC<GraphTesterProps> = ({ onClose }) => {
         </div>
         <Button onClick={addValidation}>+ Add Validation</Button>
       </div>
+      <hr />
       <div className="graph-tester-results">
-        <label>Results</label>
-        <Button onClick={runTest}>Run</Button>
+        <div className="graph-tester-results-header">
+          <Label htmlFor="">Results</Label>
+          <Button className="run-tests" onClick={runTest}>Run</Button>
+        </div>
         <div>
           {testResults[graphTest.id]?.map((result, i) => {
             return <div key={i}>
@@ -263,17 +296,24 @@ const GraphTestInputEditor: FC<{
       };
     });
   }, [graphInputs, input]);
-  return <div>
+  return <div className="graph-tester-inputs">
+    <Label htmlFor="">Inputs</Label>
     {inputEntries.map(({ id, title, dataType, value }) => {
       return <div key={id}>
-        <label>{id} ({title})</label>
-        <input type="text" value={String(value?.value ?? '')} onChange={(e) => {setInput({
-          ...input,
-          inputs: {
-            ...input.inputs,
-            [id]: { type: dataType, value: e.target.value as any } as DataValue,
-          },
-        })}} />
+        <Field name={`input-${id}`} label={`${id} (${title})`}>
+          {({ fieldProps }) => (
+            <TextArea
+              {...fieldProps}
+              value={String(value?.value ?? '')}
+              onChange={(e) => {setInput({
+                ...input,
+                inputs: {
+                  ...input.inputs,
+                  [id]: { type: dataType, value: e.target.value as any } as DataValue,
+                },
+              })}}
+            />)}
+        </Field>
       </div>;
     })}
   </div>
@@ -299,8 +339,20 @@ const GraphTestValidationEditor: FC<{
     if (validation.outputId === undefined) return undefined;
     return outputNodes.find((n) => n.data.id === validation.outputId);
   }, [outputNodes, validation?.outputId]);
-  return <div>
-    <Button onClick={deleteValidation} appearance="subtle">&times;</Button>
+  return <div className="graph-tester-validation-item">
+    <Button className="delete-graph-tester-validation-item" onClick={deleteValidation} appearance="subtle">&times;</Button>
+    <div>
+      <Field name="validationDescription" label="Validation Description">
+        {({ fieldProps }) => (
+          <TextField
+            {...fieldProps}
+            value={validation.description}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setValidation({ ...validation, description: e.target.value })}
+            placeholder="eg. Should contain the best result"
+          />
+        )}
+      </Field>
+    </div>
     <div>
       <Field name="outputToValidate" label="Output for Validation">
         {({ fieldProps }) => (

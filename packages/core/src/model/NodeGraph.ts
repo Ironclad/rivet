@@ -55,7 +55,7 @@ export interface NodeGraphTestInputData {
 }
 
 export interface NodeGraphTestValidation {
-  // TODO I'd like to be able to support validation on intermediary nodes
+  description: string;
   outputId: PortId;
   evaluatorGraphId: GraphId;
 }
