@@ -19,6 +19,7 @@ export interface GraphTesterInputPerturbationResults {
   duration: number;
   testInputIndex: number;
   validationOutput: {
+    testName: string;
     passed: boolean;
   }[];
 }

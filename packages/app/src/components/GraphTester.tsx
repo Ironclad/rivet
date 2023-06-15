@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useMemo } from 'react';
+import React, { ChangeEvent, FC, useMemo, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { GraphTesterInputPerturbationResults, GraphTesterResults, graphTesterState } from '../state/graphTester';
 import { css } from '@emotion/react';
@@ -17,6 +17,7 @@ import Select from '@atlaskit/select';
 import TextArea from '@atlaskit/textarea';
 import TextField from '@atlaskit/textfield';
 import { LoadingSpinner } from './LoadingSpinner';
+import { groupBy, keyBy } from 'lodash-es';
 
 const styles = css`
   position: fixed;
@@ -27,6 +28,7 @@ const styles = css`
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   z-index: 60;
   width: 600px;
+  overflow-y: scroll;
 
   .close-graph-tester {
     position: absolute;
@@ -80,6 +82,32 @@ const styles = css`
       left: -40px;
       width: 40px;
       align-items: center;
+    }
+  }
+
+  .stat-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    &:hover {
+      background-color: var(--grey-dark);
+    }
+    .stat-expand-control {
+      width: 40px;
+    }
+    .stat-label-and-value {
+      flex-grow: 1;
+    }
+    .stat-bar {
+      width: 250px;
+      margin: 10px;
+      .stat-bar-fill {
+        height: 20px;
+      }
+    }
+    .stat-children {
+      margin-left: 40px;
+      width: 100%;
     }
   }
 `;
@@ -153,7 +181,7 @@ function useRunTest() {
         for (const testValidation of (graphTest.testValidations ?? [])) {
           const outputValue = outputs[testValidation.outputId];
           if (!outputValue) {
-            validationOutput.push({ passed: false });
+            validationOutput.push({ testName: testValidation.description, passed: false });
             continue;
           }
   
@@ -171,12 +199,12 @@ function useRunTest() {
           const testOutput = testOutputs['output' as PortId];
   
           if (!testOutput) {
-            validationOutput.push({ passed: false });
+            validationOutput.push({ testName: testValidation.description, passed: false });
             continue;
           }
   
           const passOrFails = coerceType(testOutput, 'boolean');
-          validationOutput.push({ passed: passOrFails });
+          validationOutput.push({ testName: testValidation.description, passed: passOrFails });
         }
   
         inputPerturbationResults.push({
@@ -480,15 +508,21 @@ const GraphTestResults: FC<{
       ...testResults.slice(0, idx),
       ...testResults.slice(idx + 1),
     ]);
-  }
+  };
+
+  const maxDuration = useMemo(() => {
+    return Math.max(...testResults.map((r) => Math.max(...r.inputPerturbationResults.map((r) => r.duration))));
+  }, [testResults]);
 
   return <div className="graph-tester-results-list">
     {testResults.map((result, i) => {
       return <GraphTestResultItem
         key={i}
         testResult={result}
+        isRunning={Boolean(result.isRunning) && i === testResults.length - 1}
         setTestResult={(r) => setTestResult(r, i)}
-        deleteTestResult={() => deleteTestResult(i)} />;
+        deleteTestResult={() => deleteTestResult(i)}
+        maxDuration={maxDuration} />;
     })}
   </div>
 }
@@ -497,7 +531,9 @@ const GraphTestResultItem: FC<{
   testResult: GraphTesterResults;
   setTestResult: (r: GraphTesterResults) => void;
   deleteTestResult: () => void;
-}> = ({ testResult, setTestResult, deleteTestResult }) => {
+  maxDuration: number;
+  isRunning: boolean;
+}> = ({ testResult, setTestResult, deleteTestResult, maxDuration, isRunning }) => {
   const durationInfo = useMemo(() => {
     const durations = testResult.inputPerturbationResults.map((r) => r.duration);
     return {
@@ -506,18 +542,28 @@ const GraphTestResultItem: FC<{
       avg: durations.reduce((a, b) => a + b, 0) / durations.length,
     };
   }, [testResult]);
-  const validationInfo = useMemo(() => {
-    const validationResults = testResult.inputPerturbationResults.map((r) => r.validationOutput);
-    const passed = validationResults.map((r) => r.every((v) => v.passed));
+  const perturbationInfo = useMemo(() => {
+    const passed = testResult.inputPerturbationResults.map((r) => r.validationOutput.every((v) => v.passed));
     return {
       passed: passed.filter((p) => p).length,
       failed: passed.filter((p) => !p).length,
       total: passed.length,
     };
   }, [testResult])
+  const validationInfo = useMemo(() => {
+    const validations = testResult.inputPerturbationResults.flatMap((r, perturbationIdx) => r.validationOutput.map((validationOutput, validationIdx) => ({ perturbationIdx, validationIdx, validationOutput })));
+    return Object.values(groupBy(validations, (v) => v.validationIdx))
+      .map((v) => {
+        return {
+          testName: v[0]?.validationOutput.testName,
+          passed: v.every((v) => v.validationOutput.passed),
+          perturbations: v,
+        }
+      });
+  }, [testResult])
   return <div className="graph-tester-result-item">
     <div className="graph-tester-result-item-status">
-      {testResult.isRunning
+      {isRunning
         ? <LoadingSpinner />
         : <Button className="graph-tester-result-item-delete" onClick={deleteTestResult} appearance="subtle">&times;</Button>
       }
@@ -534,11 +580,86 @@ const GraphTestResultItem: FC<{
       defaultValue={testResult.name}
       readViewFitContainerWidth
       />
-    <div>Passing Validations: {
-      testResult.inputPerturbationResults.length > 0 && <>{validationInfo.passed} / {validationInfo.total}</>
-    }</div>
-    <div>Latency: {
-      testResult.inputPerturbationResults.length > 0 && <>{durationInfo.avg}ms</>
-    }</div>
+    <GraphTestResultStatistic
+      label="Average Latency"
+      helpText="Measures latency"
+      value={testResult.inputPerturbationResults.length > 0 && <>{durationInfo.avg}ms</>}
+      barLength={testResult.inputPerturbationResults.length > 0 ? durationInfo.avg / maxDuration : 0}
+      barColor="teal">
+      <div>
+        {testResult.inputPerturbationResults.map((r, i) => {
+          return <GraphTestResultStatistic
+            key={i}
+            label={`Perturbation ${i + 1}`}
+            value={r.duration + 'ms'}
+            barLength={r.duration / maxDuration}
+            barColor="teal" />;
+        })}
+      </div>
+    </GraphTestResultStatistic>
+
+    <GraphTestResultStatistic
+      label="Passing Perturbations"
+      helpText="Measures robustness to user input"
+      value={testResult.inputPerturbationResults.length > 0 && <>{perturbationInfo.passed} / {perturbationInfo.total}</>}
+      barLength={perturbationInfo.total > 0 ? perturbationInfo.passed / perturbationInfo.total : 0}
+      barColor="green" >
+      {testResult.inputPerturbationResults.map((r, i) => {
+        return <GraphTestResultStatistic
+          key={i}
+          label={`Perturbation ${i + 1}`}
+          value={r.validationOutput.length > 0 && <>{r.validationOutput.filter((v) => v.passed).length} / {r.validationOutput.length}</>}
+          barLength={r.validationOutput.length > 0 ? r.validationOutput.filter((v) => v.passed).length / r.validationOutput.length : 0}
+          barColor="green">
+          {r.validationOutput.map((v, i2) => {
+            return <p key={i2}>{v.passed ? '✅' : '❌'} {v.testName}</p>;
+          })}
+        </GraphTestResultStatistic>;
+      })}
+    </GraphTestResultStatistic>
+
+    <GraphTestResultStatistic
+      label="Passing Validations"
+      helpText="Measure correctness of output"
+      value={testResult.inputPerturbationResults.length > 0 && <>{validationInfo.filter(({ passed }) => passed).length} / {validationInfo.length}</>}
+      barLength={validationInfo.length > 0 ? validationInfo.filter(({ passed }) => passed).length / validationInfo.length : 0}
+      barColor="green">
+      {validationInfo.map((v, i) => {
+        return <GraphTestResultStatistic
+          key={i}
+          label={v.testName}
+          value={v.perturbations.length > 0 && <>{v.perturbations.filter((p) => p.validationOutput.passed).length} / {v.perturbations.length}</>}
+          barLength={v.perturbations.length > 0 ? v.perturbations.filter((p) => p.validationOutput.passed).length / v.perturbations.length : 0}
+          barColor="green">
+          {v.perturbations.map((perturbation, i2) => {
+            return <p key={i2}>{perturbation.validationOutput.passed ? '✅' : '❌'} Perturbation {i2 + 1}</p>;
+          })}
+        </GraphTestResultStatistic>;
+      })}
+    </GraphTestResultStatistic>
+  </div>
+}
+
+const GraphTestResultStatistic: FC<{
+  label: string | React.ReactNode;
+  helpText?: string | React.ReactNode;
+  value?: string | React.ReactNode;
+  barLength: number; // 0 - 1.0
+  barColor: string;
+  children?: React.ReactNode;
+}> = ({ label, value, barLength, barColor, children, helpText }) => {
+  const [showChildren, setShowChildren] = useState(false);
+  return <div className="stat-item">
+    <div className="stat-expand-control">
+      {children && <Button onClick={() => setShowChildren(!showChildren)} appearance="subtle">{showChildren ? '-' : '+'}</Button>}
+    </div>
+    <div className="stat-label-and-value">
+      <p><strong>{label}:</strong> {value ?? ''}</p>
+      {helpText && <HelperMessage>{helpText}</HelperMessage>}
+    </div>
+    <div className="stat-bar">
+      <div className="stat-bar-fill" style={{ width: `${barLength * 100}%`, backgroundColor: barColor }} />
+    </div>
+    {showChildren && children && <div className="stat-children">{children}</div>}
   </div>
 }
