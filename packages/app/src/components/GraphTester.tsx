@@ -1,6 +1,6 @@
 import { ChangeEvent, FC, useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { GraphTesterResults, graphTesterState } from '../state/graphTester';
+import { GraphTesterInputPerturbationResults, GraphTesterResults, graphTesterState } from '../state/graphTester';
 import { css } from '@emotion/react';
 import Button from '@atlaskit/button';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
@@ -16,6 +16,7 @@ import { Field, Label } from '@atlaskit/form';
 import Select from '@atlaskit/select';
 import TextArea from '@atlaskit/textarea';
 import TextField from '@atlaskit/textfield';
+import { LoadingSpinner } from './LoadingSpinner';
 
 const styles = css`
   position: fixed;
@@ -70,6 +71,17 @@ const styles = css`
       flex-grow: 1;
     }
   }
+
+  .graph-tester-result-item {
+    position: relative;
+    margin-left: 40px;
+    .graph-tester-result-item-status {
+      position: absolute;
+      left: -40px;
+      width: 40px;
+      align-items: center;
+    }
+  }
 `;
 
 export const GraphTesterRenderer: FC = () => {
@@ -100,59 +112,98 @@ function useRunTest() {
     }));
   };
 
+  const updateLatestTestResult = (testResult: GraphTesterResults) => {
+    setState((s) => ({
+      ...s,
+      testResults: {
+        ...s.testResults,
+        [s.graphTest!.id]: [...(s.testResults[s.graphTest!.id] ?? []).slice(0, s.testResults[s.graphTest!.id]!.length - 1), testResult],
+      },
+    }));
+  };
+
   const runTest = async () => {
-    if (!graphTest) {
+    if (!graphTest || !graphTest.testInputs) {
       return;
     }
 
-    try {
-      const startTime = Date.now();
-      const outputs = await tryRunGraph();
-      const duration = Date.now() - startTime;
-      if (!outputs) {
-        return;
-      }
+    const runName = `Run ${new Date().toLocaleTimeString()}`;
+    const inputPerturbationResults: GraphTesterInputPerturbationResults[] = [];
+    pushTestResult({
+      name: runName,
+      inputPerturbationResults: inputPerturbationResults.slice(),
+      isRunning: true,
+    });
 
-      const validationOutput: GraphTesterResults['validationOutput'] = [];
-
-      for (const testValidation of (graphTest.testValidations ?? [])) {
-        const outputValue = outputs[testValidation.outputId];
-        if (!outputValue) {
-          validationOutput.push({ passed: false });
-          continue;
+    for (let perturbationIdx = 0; perturbationIdx < graphTest.testInputs.length; perturbationIdx++) {
+      try {
+        setState((s) => ({ ...s, activeInputPerturbation: perturbationIdx, activeTestRunning: true }));
+        // Delay, so that state gets set.
+        await new Promise(resolve => setTimeout(resolve, 10));
+        const startTime = Date.now();
+        const outputs = await tryRunGraph();
+        const duration = Date.now() - startTime;
+        if (!outputs) {
+          // Undefined outputs means error of some kind.
+          updateLatestTestResult({
+            name: runName,
+            inputPerturbationResults: inputPerturbationResults.slice(),
+            isRunning: false,
+          })
+          return;
         }
-
-        const processor = new GraphProcessor(project, testValidation.evaluatorGraphId);
-
-        const testOutputs = await processor.processGraph(
-          {
-            nativeApi: new TauriNativeApi(),
-            settings,
-          },
-          {
-            ['input' as PortId]: outputValue,
-          },
-        );
-        const testOutput = testOutputs['output' as PortId];
-
-        if (!testOutput) {
-          validationOutput.push({ passed: false });
-          continue;
+  
+        const validationOutput: GraphTesterInputPerturbationResults['validationOutput'] = [];
+  
+        for (const testValidation of (graphTest.testValidations ?? [])) {
+          const outputValue = outputs[testValidation.outputId];
+          if (!outputValue) {
+            validationOutput.push({ passed: false });
+            continue;
+          }
+  
+          const processor = new GraphProcessor(project, testValidation.evaluatorGraphId);
+  
+          const testOutputs = await processor.processGraph(
+            {
+              nativeApi: new TauriNativeApi(),
+              settings,
+            },
+            {
+              ['input' as PortId]: outputValue,
+            },
+          );
+          const testOutput = testOutputs['output' as PortId];
+  
+          if (!testOutput) {
+            validationOutput.push({ passed: false });
+            continue;
+          }
+  
+          const passOrFails = coerceType(testOutput, 'boolean');
+          validationOutput.push({ passed: passOrFails });
         }
-
-        const passOrFails = coerceType(testOutput, 'boolean');
-        validationOutput.push({ passed: passOrFails });
+  
+        inputPerturbationResults.push({
+          duration,
+          testInputIndex: perturbationIdx,
+          validationOutput,
+        });
+        updateLatestTestResult({
+          name: runName,
+          inputPerturbationResults: inputPerturbationResults.slice(),
+          isRunning: true,
+        });
+      } catch (err: any) {
+        toast.error('Error running test: ' + err.message);
+        setState((s) => ({ ...s, activeTestRunning: false }));
       }
-
-      pushTestResult({
-        name: `Run ${new Date(startTime).toLocaleTimeString()}`,
-        duration,
-        testInputIndex: 0, // TODO
-        validationOutput,
-      });
-    } catch (err: any) {
-      toast.error('Error running test: ' + err.message);
     }
+    updateLatestTestResult({
+      name: runName,
+      inputPerturbationResults: inputPerturbationResults.slice(),
+      isRunning: false,
+    })
   }
   return runTest;
 }
@@ -371,35 +422,78 @@ const GraphTestResults: FC<{
   testResults: GraphTesterResults[];
   setTestResults: (t: GraphTesterResults[]) => void;
 }> = ({ testResults, setTestResults }) => {
+  const setTestResult = (testResult: GraphTesterResults, idx: number) => {
+    setTestResults([
+      ...testResults.slice(0, idx),
+      testResult,
+      ...testResults.slice(idx + 1),
+    ]);
+  };
+
+  const deleteTestResult = (idx: number) => {
+    setTestResults([
+      ...testResults.slice(0, idx),
+      ...testResults.slice(idx + 1),
+    ]);
+  }
+
   return <div className="graph-tester-results-list">
     {testResults.map((result, i) => {
-      return <div key={i}>
-        <InlineEditableTextfield
-          key="resultName"
-          label="Name"
-          placeholder="Test result name"
-          onConfirm={(newValue) => {
-            setTestResults([
-              ...testResults.slice(0, i),
-              { ...result, name: newValue },
-              ...testResults.slice(i + 1),
-            ]);
-          }}
-          defaultValue={result.name}
-          readViewFitContainerWidth
-          />
-        <div>Duration: {result.duration}ms</div>
-        <div>Test Input Index: {result.testInputIndex}</div>
-        <div>
-          {result.validationOutput.map((validation, i) => {
-            return <div key={i}>
-              <div>Validation {i + 1}</div>
-              <div>Passed: {validation.passed ? 'Yes' : 'No'}</div>
-            </div>;
-          })}
-        </div>
-      </div>;
+      return <GraphTestResultItem
+        key={i}
+        testResult={result}
+        setTestResult={(r) => setTestResult(r, i)}
+        deleteTestResult={() => deleteTestResult(i)} />;
     })}
   </div>
+}
 
+const GraphTestResultItem: FC<{
+  testResult: GraphTesterResults;
+  setTestResult: (r: GraphTesterResults) => void;
+  deleteTestResult: () => void;
+}> = ({ testResult, setTestResult, deleteTestResult }) => {
+  const durationInfo = useMemo(() => {
+    const durations = testResult.inputPerturbationResults.map((r) => r.duration);
+    return {
+      min: Math.min(...durations),
+      max: Math.max(...durations),
+      avg: durations.reduce((a, b) => a + b, 0) / durations.length,
+    };
+  }, [testResult]);
+  const validationInfo = useMemo(() => {
+    const validationResults = testResult.inputPerturbationResults.map((r) => r.validationOutput);
+    const passed = validationResults.map((r) => r.every((v) => v.passed));
+    return {
+      passed: passed.filter((p) => p).length,
+      failed: passed.filter((p) => !p).length,
+      total: passed.length,
+    };
+  }, [testResult])
+  return <div className="graph-tester-result-item">
+    <div className="graph-tester-result-item-status">
+      {testResult.isRunning
+        ? <LoadingSpinner />
+        : <Button className="graph-tester-result-item-delete" onClick={deleteTestResult} appearance="subtle">&times;</Button>
+      }
+    </div>
+    <InlineEditableTextfield
+      key="resultName"
+      label="Name"
+      placeholder="Test result name"
+      onConfirm={(newValue) => {
+        setTestResult(
+          { ...testResult, name: newValue },
+        );
+      }}
+      defaultValue={testResult.name}
+      readViewFitContainerWidth
+      />
+    <div>Passing Validations: {
+      testResult.inputPerturbationResults.length > 0 && <>{validationInfo.passed} / {validationInfo.total}</>
+    }</div>
+    <div>Latency: {
+      testResult.inputPerturbationResults.length > 0 && <>{durationInfo.avg}ms</>
+    }</div>
+  </div>
 }

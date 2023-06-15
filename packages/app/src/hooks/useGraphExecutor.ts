@@ -40,7 +40,7 @@ import { graphTesterState } from '../state/graphTester';
 
 export function useGraphExecutor() {
   const graph = useRecoilValue(graphState);
-  const { graphTest } = useRecoilValue(graphTesterState);
+  const { graphTest, activeInputPerturbation } = useRecoilValue(graphTesterState);
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
   const settings = useRecoilValue(settingsState);
   const saveGraph = useSaveCurrentGraph();
@@ -363,7 +363,7 @@ export function useGraphExecutor() {
               ...project,
               graphs: {
                 ...project.graphs,
-                [graph.metadata!.id!]: graphTest?.testInputs?.[0] ? updateGraphWithTestValues(graph, graphTest.testInputs[0]) : graph,
+                [graph.metadata!.id!]: graphTest?.testInputs?.[activeInputPerturbation] ? updateGraphWithTestValues(graph, graphTest.testInputs[activeInputPerturbation]!) : graph,
               },
             },
             settings,
@@ -390,7 +390,7 @@ export function useGraphExecutor() {
         ...project,
         graphs: {
           ...project.graphs,
-          [graph.metadata!.id!]: graphTest?.testInputs?.[0] ? updateGraphWithTestValues(graph, graphTest.testInputs[0]) : graph,
+          [graph.metadata!.id!]: graphTest?.testInputs?.[activeInputPerturbation] ? updateGraphWithTestValues(graph, graphTest.testInputs[activeInputPerturbation]!) : graph,
         },
       };
 

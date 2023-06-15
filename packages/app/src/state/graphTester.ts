@@ -4,11 +4,18 @@ import { atom } from 'recoil';
 interface GraphTesterState {
   isOpen: boolean;
   graphTest?: NodeGraphTest;
+  activeInputPerturbation: number;
+  activeTestRunning: boolean;
   testResults: Record<GraphTestId, GraphTesterResults[]>;
 }
 
 export interface GraphTesterResults {
   name: string;
+  inputPerturbationResults: GraphTesterInputPerturbationResults[];
+  isRunning?: boolean;
+}
+
+export interface GraphTesterInputPerturbationResults {
   duration: number;
   testInputIndex: number;
   validationOutput: {
@@ -21,5 +28,7 @@ export const graphTesterState = atom<GraphTesterState>({
   default: {
     isOpen: false,
     testResults: {},
+    activeInputPerturbation: 0,
+    activeTestRunning: false,
   },
 });
