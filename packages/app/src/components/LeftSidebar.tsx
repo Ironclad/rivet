@@ -90,6 +90,17 @@ const styles = css`
     flex: 1;
   }
 
+  .graph-test-list-items {
+    margin-bottom: 8px;
+    & > div {
+      cursor: pointer;
+      padding: 4px 8px;
+      &:hover {
+        background-color: var(--grey-darkish);
+      }
+    }
+  }
+
   .toggle-tab {
     position: absolute;
     top: 10px;
