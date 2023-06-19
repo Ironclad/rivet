@@ -94,7 +94,7 @@ export class ExtractObjectPathNodeImpl extends NodeImpl<ExtractObjectPathNode> {
 
     let matches: unknown[];
     try {
-      matches = JSONPath({ json: inputObject ?? null, path: inputPath });
+      matches = JSONPath({ json: inputObject ?? null, path: inputPath.trim() });
     } catch (err) {
       matches = [];
     }

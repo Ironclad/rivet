@@ -4579,12 +4579,14 @@ const RAW_RUNTIME_STATE =
           ["@ironclad/rivet-core", "workspace:packages/core"],\
           ["@swc/core", "virtual:4a4dfdd9a7df5ec5e275841a43fbecdb97f28d7f31447ab74c1dd2a4d56fe264664aa1dc4ad44cc92e46e533864e6b71f8d1474657f30ffd4d572a69c55bcf0b#npm:1.3.63"],\
           ["@types/lodash-es", "npm:4.17.7"],\
+          ["@types/minimatch", "npm:5.1.2"],\
           ["@types/node", "npm:20.3.1"],\
           ["@types/ws", "npm:8.5.5"],\
           ["@zilliz/milvus2-sdk-node", "npm:2.2.16"],\
           ["emittery", "npm:1.0.1"],\
           ["esbuild", "npm:0.18.2"],\
           ["lodash-es", "npm:4.17.21"],\
+          ["minimatch", "npm:9.0.1"],\
           ["nanoid", "npm:3.3.6"],\
           ["p-retry", "npm:5.1.2"],\
           ["ts-node", "virtual:4a4dfdd9a7df5ec5e275841a43fbecdb97f28d7f31447ab74c1dd2a4d56fe264664aa1dc4ad44cc92e46e533864e6b71f8d1474657f30ffd4d572a69c55bcf0b#npm:10.9.1"],\
@@ -5539,6 +5541,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-long-npm-4.0.2-e7bdc00dd4-b6e4c16ca4.zip/node_modules/@types/long/",\
         "packageDependencies": [\
           ["@types/long", "npm:4.0.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@types/minimatch", [\
+      ["npm:5.1.2", {\
+        "packageLocation": "./.yarn/cache/@types-minimatch-npm-5.1.2-aab9c394d3-698855336a.zip/node_modules/@types/minimatch/",\
+        "packageDependencies": [\
+          ["@types/minimatch", "npm:5.1.2"]\
         ],\
         "linkType": "HARD"\
       }]\

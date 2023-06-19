@@ -20,7 +20,7 @@ export class PineconeVectorDatabase implements VectorDatabase {
   async store(collection: DataValue, vector: VectorDataValue, data: DataValue, { id }: { id?: string }): Promise<void> {
     const [indexId, namespace] = coerceType(collection, 'string').split('/');
 
-    const host = `https://${indexId}.svc.us-central1-gcp.pinecone.io`;
+    const host = `https://${indexId}`;
 
     if (!id) {
       id = createHash('sha256').update(vector.value.join(',')).digest('hex');
@@ -59,7 +59,7 @@ export class PineconeVectorDatabase implements VectorDatabase {
   ): Promise<ArrayDataValue<ScalarDataValue>> {
     const [indexId, namespace] = coerceType(collection, 'string').split('/');
 
-    const host = `https://${indexId}.svc.us-central1-gcp.pinecone.io`;
+    const host = `https://${indexId}`;
 
     const response = await fetch(`${host}/query`, {
       method: 'POST',
@@ -92,7 +92,7 @@ export class PineconeVectorDatabase implements VectorDatabase {
 
     return {
       type: 'object[]',
-      value: matches.map(({ metadata }) => metadata.data),
+      value: matches.map(({ id, metadata }) => ({ id, data: metadata.data })),
     };
   }
 }

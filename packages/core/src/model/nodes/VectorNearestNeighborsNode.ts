@@ -3,7 +3,7 @@ import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { InternalProcessContext } from '../ProcessContext';
-import { DataValue, VectorDataValue, getIntegration } from '../..';
+import { DataValue, VectorDataValue, coerceTypeOptional, getIntegration } from '../..';
 import dedent from 'ts-dedent';
 
 export type VectorNearestNeighborsNode = ChartNode<'vectorNearestNeighbors', VectorNearestNeighborsNodeData>;
@@ -128,15 +128,16 @@ export class VectorNearestNeighborsNodeImpl extends NodeImpl<VectorNearestNeighb
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const vectorDb = getIntegration('vectorDatabase', this.data.integration, context);
 
+    const k = this.data.useKInput ? coerceTypeOptional(inputs['k' as PortId], 'number') ?? this.data.k : this.data.k;
+
     if (inputs['vector' as PortId]?.type !== 'vector') {
       throw new Error(`Expected vector input, got ${inputs['vector' as PortId]?.type}`);
     }
 
-    console.dir({ collectionId: this.data.collectionId });
     const results = await vectorDb.nearestNeighbors(
       { type: 'string', value: this.data.collectionId },
       inputs['vector' as PortId] as VectorDataValue,
-      this.data.k,
+      k,
     );
 
     return {

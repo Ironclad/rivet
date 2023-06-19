@@ -2828,12 +2828,14 @@ __metadata:
     "@ironclad/rivet-core": "workspace:^"
     "@swc/core": "npm:^1.3.63"
     "@types/lodash-es": "npm:^4.17.7"
+    "@types/minimatch": "npm:^5.1.2"
     "@types/node": "npm:^20.3.1"
     "@types/ws": "npm:^8.5.5"
     "@zilliz/milvus2-sdk-node": "npm:^2.2.16"
     emittery: "npm:^1.0.1"
     esbuild: "npm:^0.18.2"
     lodash-es: "npm:^4.17.21"
+    minimatch: "npm:^9.0.1"
     nanoid: "npm:^3.3.6"
     p-retry: "npm:^5.1.2"
     ts-node: "npm:^10.9.1"
@@ -3588,6 +3590,13 @@ __metadata:
   version: 4.0.2
   resolution: "@types/long@npm:4.0.2"
   checksum: b6e4c16ca43a11f229cf2d54697404e791f48ac9107fb1052b8dec92e730f54ebfe6773d68fe7d27531d9b75de1aafce0fbac206cea0ef13bb1b97f5436d90cf
+  languageName: node
+  linkType: hard
+
+"@types/minimatch@npm:^5.1.2":
+  version: 5.1.2
+  resolution: "@types/minimatch@npm:5.1.2"
+  checksum: 698855336a92f768d02526d019efcf80e32d65ea5d044a5a0a909a923a9cfccc55e61284fd2c5dc71a51e9b5f0b4dc651cb187683f811582815a5206f534d04b
   languageName: node
   linkType: hard
 

@@ -67,6 +67,16 @@ export const openaiModels = {
     },
     displayName: 'GPT-3.5 (v0613)',
   },
+
+  'gpt-3.5-turbo-16k-0613': {
+    maxTokens: 16384,
+    tiktokenModel: 'gpt-3.5-turbo',
+    cost: {
+      prompt: 0.003,
+      completion: 0.004,
+    },
+    displayName: 'GPT-3.5 16k (v0613)',
+  },
 } satisfies Record<string, OpenAIModel>;
 
 export const supportedModels = Object.keys(openaiModels) as (keyof typeof openaiModels)[];
