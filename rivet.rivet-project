@@ -1,6 +1,686 @@
 version: 3
 data:
   graphs:
+    1C7HNzd5v7ULqf04-5Uob:
+      metadata:
+        description: ""
+        id: 1C7HNzd5v7ULqf04-5Uob
+        name: RA - Recall Memories
+      nodes:
+        9HlRtZ5rPSP7q5FiAHjP4:
+          data:
+            dataType: object[]
+            id: items
+          id: 9HlRtZ5rPSP7q5FiAHjP4
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 1633.1906333726722/443.91188062401466/300/31
+        QD7tiW9UZpo6N30A5foaD:
+          data:
+            path: $.topic
+            usePathInput: false
+          id: QD7tiW9UZpo6N30A5foaD
+          outgoingConnections: []
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 683/375/250/2
+        UqDCzlc17MI37nenyQCWR:
+          data:
+            dataType: string
+            defaultValue: This is a test topic
+            id: topic
+            useDefaultValueInput: false
+          id: UqDCzlc17MI37nenyQCWR
+          outgoingConnections:
+            - data->"Get Embedding" u0PxZtqctJpURQO38Gg9s/input
+          title: Graph Input
+          type: graphInput
+          visualData: 316.85283656184424/219.3939539319971/300/29
+        ZljA5lFqK9KWtpwOGZFSZ:
+          data:
+            collectionId: rivet-3ff65ea.svc.us-west1-gcp-free.pinecone.io/test1
+            integration: pinecone
+            k: 10
+            useKInput: true
+          id: ZljA5lFqK9KWtpwOGZFSZ
+          outgoingConnections:
+            - results->"Graph Output" 9HlRtZ5rPSP7q5FiAHjP4/value
+          title: Vector KNN
+          type: vectorNearestNeighbors
+          visualData: 1279.3360881667509/408.90705286005004/200/24
+        u0PxZtqctJpURQO38Gg9s:
+          data:
+            integration: openai
+            useIntegrationInput: false
+          id: u0PxZtqctJpURQO38Gg9s
+          outgoingConnections:
+            - embedding->"Vector KNN" ZljA5lFqK9KWtpwOGZFSZ/vector
+          title: Get Embedding
+          type: getEmbedding
+          visualData: 1033.9087435447254/383.59221170727943/200/23
+        uL9pTJZMx-cuabCpqrtFI:
+          data:
+            dataType: number
+            defaultValue: "3"
+            id: n
+            useDefaultValueInput: false
+          id: uL9pTJZMx-cuabCpqrtFI
+          outgoingConnections:
+            - data->"Vector KNN" ZljA5lFqK9KWtpwOGZFSZ/k
+          title: Graph Input
+          type: graphInput
+          visualData: 313.1910654160657/406.14428236670517/300/30
+    3BWUibK-Zr_i2GjKA277_:
+      metadata:
+        description: ""
+        id: 3BWUibK-Zr_i2GjKA277_
+        name: RA - Extract Commands
+      nodes:
+        U-sUa3iW4WAjSKQNC8_1e:
+          data:
+            dataType: string
+            id: input
+            useDefaultValueInput: false
+          id: U-sUa3iW4WAjSKQNC8_1e
+          outgoingConnections:
+            - data->"Extract YAML" WLtSibdAgyBDWM6gSuUhR/input
+          title: Graph Input
+          type: graphInput
+          visualData: 259/369/300/1
+        WLtSibdAgyBDWM6gSuUhR:
+          data:
+            objectPath: $.systemCommands[*]
+            rootPropertyName: systemCommands
+          id: WLtSibdAgyBDWM6gSuUhR
+          outgoingConnections:
+            - matches->"Graph Output" g3sxYEM5E-xJYvcuuGZRB/value
+          title: Extract YAML
+          type: extractYaml
+          visualData: 613/378/250/3
+        g3sxYEM5E-xJYvcuuGZRB:
+          data:
+            dataType: object[]
+            id: commands
+          id: g3sxYEM5E-xJYvcuuGZRB
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 974.8003300330032/379.94224422442244/300/9
+    49ADNSJiXKFRvgaRMhFvP:
+      metadata:
+        description: ""
+        id: 49ADNSJiXKFRvgaRMhFvP
+        name: RA - Get Response
+      nodes:
+        6P8d2awK1kumFWb15ecLK:
+          data:
+            graphId: HRMMlTL5W-Wau-f7nLLEh
+          id: 6P8d2awK1kumFWb15ecLK
+          outgoingConnections:
+            - system_prompt->"Chat" 8WoCCKIA_CkgUFUS9Z2ZI/systemPrompt
+          title: Subgraph
+          type: subGraph
+          visualData: 1456.4238678422316/454.96652023842444/300/51
+        8WoCCKIA_CkgUFUS9Z2ZI:
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 4096
+            model: gpt-4-0613
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          id: 8WoCCKIA_CkgUFUS9Z2ZI
+          outgoingConnections:
+            - response->"Graph Output" kviYXdprAn_78olEtAd-6/value
+            - response->"Prompt" iJA7SfvwwBOoyE88k97cT/input
+            - response->"Subgraph" yqSRYu7edOEf3tZQaKswg/input
+          title: Chat
+          type: chat
+          visualData: 1965.1016252864763/547.5345614232717/200/67
+        9brCG6eTcOIXX31erjqGu:
+          data: {}
+          id: 9brCG6eTcOIXX31erjqGu
+          outgoingConnections:
+            - prompt->"Graph Output" DL8bb2mbzNz2rSU2s7KUu/value
+          title: Assemble Prompt
+          type: assemblePrompt
+          visualData: 2872.693974555739/713.594640498702/250/null
+        DL8bb2mbzNz2rSU2s7KUu:
+          data:
+            dataType: chat-message[]
+            id: new_messages
+          id: DL8bb2mbzNz2rSU2s7KUu
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 3297.258302221817/669.5769681505825/300/61
+        DjJurzETlQAbzGr1rHdrc:
+          data:
+            dataType: string
+            defaultValue: This is a test
+            id: prompt_message
+            useDefaultValueInput: false
+          id: DjJurzETlQAbzGr1rHdrc
+          outgoingConnections:
+            - data->"Prompt" _ALVrW2X1sanCPkXgVBtx/input
+          title: Graph Input
+          type: graphInput
+          visualData: 544.1815668099302/926.8873241664447/300/63
+        Kc9vHiGqFgor7QZhi1ezN:
+          data:
+            maxTokenCount: 4096
+            model: gpt-4
+            removeFromBeginning: true
+          id: Kc9vHiGqFgor7QZhi1ezN
+          outgoingConnections:
+            - trimmed->"Chat" 8WoCCKIA_CkgUFUS9Z2ZI/prompt
+          title: Trim Chat Messages
+          type: trimChatMessages
+          visualData: 1658.6972703882811/613.0651361023686/200/55
+        _ALVrW2X1sanCPkXgVBtx:
+          data:
+            enableFunctionCall: false
+            name: SYSTEM INFORMATION
+            promptText: "{{input}}"
+            type: user
+            useTypeInput: false
+          id: _ALVrW2X1sanCPkXgVBtx
+          outgoingConnections:
+            - output->"Assemble Prompt" uy7Kir4TGhQ-7vrOelzOG/message2
+          title: Prompt
+          type: prompt
+          visualData: 949.3527093687692/918.8482141950393/250/65
+        iJA7SfvwwBOoyE88k97cT:
+          data:
+            enableFunctionCall: false
+            promptText: "{{input}}"
+            type: assistant
+            useTypeInput: false
+          id: iJA7SfvwwBOoyE88k97cT
+          outgoingConnections:
+            - output->"Assemble Prompt" 9brCG6eTcOIXX31erjqGu/message2
+          title: Prompt
+          type: prompt
+          visualData: 2294.628246648416/401.9702599338506/250/16
+        kviYXdprAn_78olEtAd-6:
+          data:
+            dataType: string
+            id: chat_output
+          id: kviYXdprAn_78olEtAd-6
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 3321.346081191017/948.6316276694499/300/66
+        raxkQiq1D9gedJiuQYUDd:
+          data:
+            dataType: chat-message[]
+            id: current_messages
+          id: raxkQiq1D9gedJiuQYUDd
+          outgoingConnections:
+            - data->"Assemble Prompt" uy7Kir4TGhQ-7vrOelzOG/message1
+          title: Graph Input
+          type: graphInput
+          visualData: 833.2481831324469/704.4215206372613/300/57
+        s_dZ9oRH1p1IJCuyKuyg3:
+          data:
+            graphId: u6yVHvgJi01zZYY_5f4y3
+          id: s_dZ9oRH1p1IJCuyKuyg3
+          outgoingConnections:
+            - commands_output->"Assemble Prompt" 9brCG6eTcOIXX31erjqGu/message3
+          title: Subgraph
+          type: subGraph
+          visualData: 2560.6006996846772/602.3956477259945/196.3548034934497/13
+        uy7Kir4TGhQ-7vrOelzOG:
+          data: {}
+          id: uy7Kir4TGhQ-7vrOelzOG
+          outgoingConnections:
+            - prompt->"Assemble Prompt" 9brCG6eTcOIXX31erjqGu/message1
+            - prompt->"Trim Chat Messages" Kc9vHiGqFgor7QZhi1ezN/input
+          title: Assemble Prompt
+          type: assemblePrompt
+          visualData: 1313.7972976989524/681.9189138753514/250/58
+        yqSRYu7edOEf3tZQaKswg:
+          data:
+            graphId: 3BWUibK-Zr_i2GjKA277_
+          id: yqSRYu7edOEf3tZQaKswg
+          outgoingConnections:
+            - commands->"Subgraph" s_dZ9oRH1p1IJCuyKuyg3/commands
+          title: Subgraph
+          type: subGraph
+          visualData: 2264.247517768967/599.2763797815367/202.5425764192139/11
+    7zpW_cdTXlsQbF5nNcgKP:
+      metadata:
+        description: ""
+        id: 7zpW_cdTXlsQbF5nNcgKP
+        name: "RA - Command: ASK_QUESTION_ABOUT_FILE"
+      nodes:
+        2338y8qNrzrbfDmzXJvhr:
+          data:
+            model: gpt-4
+            numTokensPerChunk: 4096
+            overlap: 0
+            useModelInput: false
+          id: 2338y8qNrzrbfDmzXJvhr
+          outgoingConnections:
+            - chunks->"Text" nELWKzIKfsG5PysjF-cSg/contents
+            - count->"Text" BiOEV7VKd8ZRQz8vwM9Ng/count
+            - count->"Text" gpA-l85r9DUJnZux3JRjt/count
+            - count->"Text" nELWKzIKfsG5PysjF-cSg/count
+            - indexes->"Text" gpA-l85r9DUJnZux3JRjt/index
+            - indexes->"Text" nELWKzIKfsG5PysjF-cSg/index
+          title: Chunk
+          type: chunk
+          visualData: 1200.8357446452283/346.2666438124874/200/23
+        2_eg1SZ7lUW33gIXYfrVK:
+          data:
+            dataType: object
+            id: arguments
+            useDefaultValueInput: false
+          id: 2_eg1SZ7lUW33gIXYfrVK
+          outgoingConnections:
+            - data->"Extract Object Path" ei3qRQVhPSrVddaO5bU-U/object
+            - data->"Extract Object Path" m9kiRPWzz-lraxQy_98B8/object
+          title: Graph Input
+          type: graphInput
+          visualData: 239/357/300/1
+        BiOEV7VKd8ZRQz8vwM9Ng:
+          data:
+            text: >-
+              A question was asked about the file {{file_name}}. It was chunked
+              into {{count}} chunks, and the question was asked for each chunk.
+              The results are:
+
+
+              {{results}}
+
+
+
+
+              You must now combine these answers into a single answer for this question: {{question}}
+          id: BiOEV7VKd8ZRQz8vwM9Ng
+          outgoingConnections:
+            - output->"Chat" rIyqK6UuYqLaIO23zgYM8/prompt
+          title: Text
+          type: text
+          visualData: 2459.7712182931887/307.24034013325036/300/31
+        LbDS-ehJ0WcfC2CipqmJ-:
+          data:
+            dataType: string
+            id: output
+          id: LbDS-ehJ0WcfC2CipqmJ-
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 3124.0951810571714/389.4792142403751/300/32
+        Thf0b7P0ZBeb7ILxkuzVU:
+          data:
+            text: You are a code file analyzer and question answerer. You are given the
+              contents of a file of code, and you are given a question about the
+              code. You directly answer the question given, with as much detail
+              as possible. However, you do not output code unless you are
+              explicitly asked to reply with some code. Otherwise, you reply
+              with plain English only.
+          id: Thf0b7P0ZBeb7ILxkuzVU
+          outgoingConnections:
+            - output->"Chat" jw7ZxX561t7Q_TYnVDEMW/systemPrompt
+            - output->"Chat" rIyqK6UuYqLaIO23zgYM8/systemPrompt
+          title: Text
+          type: text
+          visualData: 1309.0936877506306/104.97158147670746/300/18
+        ei3qRQVhPSrVddaO5bU-U:
+          data:
+            path: $.question
+            usePathInput: false
+          id: ei3qRQVhPSrVddaO5bU-U
+          outgoingConnections:
+            - match->"Text" BiOEV7VKd8ZRQz8vwM9Ng/question
+            - match->"Text" nELWKzIKfsG5PysjF-cSg/question
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 611.4508579916097/714.4118633508281/250/21
+        gpA-l85r9DUJnZux3JRjt:
+          data:
+            text: |-
+              Chunk {{index}}/{{count}} answer:
+
+              {{answer}}
+          id: gpA-l85r9DUJnZux3JRjt
+          isSplitRun: true
+          outgoingConnections:
+            - output->"Text" BiOEV7VKd8ZRQz8vwM9Ng/results
+          title: Text
+          type: text
+          visualData: 2049.0387588414633/427.4218704794111/300/30
+        jw7ZxX561t7Q_TYnVDEMW:
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-4-0613
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.3
+            top_p: 1
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          id: jw7ZxX561t7Q_TYnVDEMW
+          isSplitRun: true
+          outgoingConnections:
+            - response->"Text" gpA-l85r9DUJnZux3JRjt/answer
+          title: Chat
+          type: chat
+          visualData: 1797.1530762644013/444.63882974839595/200/25
+        lRV5SdMeGyEUVDkTN31ga:
+          data:
+            errorOnMissingFile: false
+            path: ""
+            usePathInput: true
+          id: lRV5SdMeGyEUVDkTN31ga
+          outgoingConnections:
+            - content->"Chunk" 2338y8qNrzrbfDmzXJvhr/input
+          title: Read File
+          type: readFile
+          visualData: 907.7722794413804/405.417269725349/250/12
+        m9kiRPWzz-lraxQy_98B8:
+          data:
+            path: $.path
+            usePathInput: false
+          id: m9kiRPWzz-lraxQy_98B8
+          outgoingConnections:
+            - match->"Read File" lRV5SdMeGyEUVDkTN31ga/path
+            - match->"Text" BiOEV7VKd8ZRQz8vwM9Ng/file_name
+            - match->"Text" nELWKzIKfsG5PysjF-cSg/file_name
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 613/365/250/2
+        nELWKzIKfsG5PysjF-cSg:
+          data:
+            text: >-
+              Here is chunk {{index}}/{{count}} of a code file:
+
+
+              ```
+
+              // {{file_name}} ({{index}}/{{count}})
+
+
+              {{contents}}
+
+              ```
+
+
+
+              I have this question about the file: {{question}}
+
+
+              Answer to the best of your ability about this particular chunk of the file. If this chunk of the file does not answer the question, then state that this chunk of the file does not have a sufficient answer to the question. 
+
+
+              If the file does not exist, instruct the AI calling you that they should use READ_DIRECTORY and then call ASK_QUESTION_ABOUT_FILE again with the correct path.
+          id: nELWKzIKfsG5PysjF-cSg
+          isSplitRun: true
+          outgoingConnections:
+            - output->"Chat" jw7ZxX561t7Q_TYnVDEMW/prompt
+          title: Text
+          type: text
+          visualData: 1446.7677235772446/307.9993433915212/300/24
+        rIyqK6UuYqLaIO23zgYM8:
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-4-0613
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          id: rIyqK6UuYqLaIO23zgYM8
+          outgoingConnections:
+            - response->"Graph Output" LbDS-ehJ0WcfC2CipqmJ-/value
+          title: Chat
+          type: chat
+          visualData: 2868.4447571236283/398.6248545653415/200/29
+    9cRiigw77WY0G_wWDYp4Z:
+      metadata:
+        description: ""
+        id: 9cRiigw77WY0G_wWDYp4Z
+        name: RA - Exec Command
+      nodes:
+        1e5oUEYX0KeJz114J2SRQ:
+          data:
+            graphId: g_lk18P0-BSirYNE2qGAa
+          id: 1e5oUEYX0KeJz114J2SRQ
+          outgoingConnections:
+            - output->"Coalesce" S-OKN_ugeBGnO3Ud4ks6N/input5
+          title: Subgraph
+          type: subGraph
+          visualData: 1509.9285357359627/645.4094053848103/300/23
+        6-rZH-2eS8k3Ez0ygZgJn:
+          data:
+            graphId: sgqPsMPVjV-hHvsAloa3y
+          id: 6-rZH-2eS8k3Ez0ygZgJn
+          outgoingConnections:
+            - output->"Coalesce" S-OKN_ugeBGnO3Ud4ks6N/input2
+          title: Subgraph
+          type: subGraph
+          visualData: 1508.6082012202514/212.33968423150543/300/17
+        6eBKxYuyo2HBelLbBCBPY:
+          data:
+            caseCount: 5
+            cases:
+              - LIST_FILES_IN_DIRECTORY
+              - READ_FILE
+              - ASK_QUESTION_ABOUT_FILE
+              - REMEMBER_INFO
+              - RECALL_INFO
+          id: 6eBKxYuyo2HBelLbBCBPY
+          outgoingConnections:
+            - case1->"If" HAqjF_Aqyiy8VjSaIdEOU/if
+            - case2->"If" F7NBKP3NaBGQSztiVle1n/if
+            - case3->"If" KtUEcTsgXn45Bx3A0VTeD/if
+            - case4->"If" NNy8ZDMLOw45F_obP7Yfc/if
+            - case5->"If" VGAj7Qwxgvf3Iz296cxfd/if
+            - unmatched->"If" wJMY-M1cWCp5fp6z5WU98/if
+          title: Match
+          type: match
+          visualData: 952.9784825017156/161.27627193412414/300/9
+        F7NBKP3NaBGQSztiVle1n:
+          data: {}
+          id: F7NBKP3NaBGQSztiVle1n
+          outgoingConnections:
+            - output->"Subgraph" 6-rZH-2eS8k3Ez0ygZgJn/arguments
+          title: If
+          type: if
+          visualData: 1350.055268436117/226.14086450213313/125/16
+        HAqjF_Aqyiy8VjSaIdEOU:
+          data: {}
+          id: HAqjF_Aqyiy8VjSaIdEOU
+          outgoingConnections:
+            - output->"Subgraph" WoDTNQabmc1rZf2jFKGSK/arguments
+          title: If
+          type: if
+          visualData: 1350.055268436117/89.17149806221684/125/11
+        KtUEcTsgXn45Bx3A0VTeD:
+          data: {}
+          id: KtUEcTsgXn45Bx3A0VTeD
+          outgoingConnections:
+            - output->"Subgraph" dzs2pgnFjSyTESOtah5Ct/arguments
+          title: If
+          type: if
+          visualData: 1343.4535958575607/361.7898964263381/125/18
+        NNy8ZDMLOw45F_obP7Yfc:
+          data: {}
+          id: NNy8ZDMLOw45F_obP7Yfc
+          outgoingConnections:
+            - output->"Subgraph" xfdWAxd2JfuEbN1ZBgMC5/arguments
+          title: If
+          type: if
+          visualData: 1343.4535958575607/513.2829425390786/125/20
+        S-OKN_ugeBGnO3Ud4ks6N:
+          data: {}
+          id: S-OKN_ugeBGnO3Ud4ks6N
+          outgoingConnections:
+            - output->"Prompt" eEXAsNDCNSOuZyEHA8EOH/results
+          title: Coalesce
+          type: coalesce
+          visualData: 2036.7420075047696/15.609841390522348/150/15
+        SxQDo-a8rRHE1wic8UNx1:
+          data:
+            dataType: object
+            id: command
+            useDefaultValueInput: false
+          id: SxQDo-a8rRHE1wic8UNx1
+          outgoingConnections:
+            - data->"Name" gQ9J8ptvSpdHjC0K_0Bk0/object
+            - data->"Name" hy2vJwbBEwYKCjMs2OMTP/object
+          title: Graph Input
+          type: graphInput
+          visualData: 272/386/300/1
+        VGAj7Qwxgvf3Iz296cxfd:
+          data: {}
+          id: VGAj7Qwxgvf3Iz296cxfd
+          outgoingConnections:
+            - output->"Subgraph" 1e5oUEYX0KeJz114J2SRQ/arguments
+          title: If
+          type: if
+          visualData: 1343.4535958575607/638.3692983375932/125/22
+        WoDTNQabmc1rZf2jFKGSK:
+          data:
+            graphId: lXUC_1uq9nRw3WNXCkpdB
+          id: WoDTNQabmc1rZf2jFKGSK
+          outgoingConnections:
+            - output->"Coalesce" S-OKN_ugeBGnO3Ud4ks6N/input1
+          title: Subgraph
+          type: subGraph
+          visualData: 1507.9088279784255/73.58102304569259/300/12
+        dzs2pgnFjSyTESOtah5Ct:
+          data:
+            graphId: 7zpW_cdTXlsQbF5nNcgKP
+          id: dzs2pgnFjSyTESOtah5Ct
+          outgoingConnections:
+            - output->"Coalesce" S-OKN_ugeBGnO3Ud4ks6N/input3
+          title: Subgraph
+          type: subGraph
+          visualData: 1515.2098737988078/357.57648095974787/300/19
+        eEXAsNDCNSOuZyEHA8EOH:
+          data:
+            enableFunctionCall: false
+            name: SYSTEM INFORMATION
+            promptText: |-
+              Results for command {{command_name}}:
+
+              """
+              {{results}}
+              """
+            type: user
+            useTypeInput: false
+          id: eEXAsNDCNSOuZyEHA8EOH
+          outgoingConnections:
+            - output->"Graph Output" z-12fYeNh0c6lZAGDQC5i/value
+          title: Prompt
+          type: prompt
+          visualData: 2254.428902438278/-109.11378005033785/250/24
+        gQ9J8ptvSpdHjC0K_0Bk0:
+          data:
+            path: |
+              $.arguments
+            usePathInput: false
+          id: gQ9J8ptvSpdHjC0K_0Bk0
+          outgoingConnections:
+            - match->"If" F7NBKP3NaBGQSztiVle1n/value
+            - match->"If" HAqjF_Aqyiy8VjSaIdEOU/value
+            - match->"If" KtUEcTsgXn45Bx3A0VTeD/value
+            - match->"If" NNy8ZDMLOw45F_obP7Yfc/value
+            - match->"If" VGAj7Qwxgvf3Iz296cxfd/value
+          title: Name
+          type: extractObjectPath
+          visualData: 719/481/153/5
+        hy2vJwbBEwYKCjMs2OMTP:
+          data:
+            path: |
+              $.name
+            usePathInput: false
+          id: hy2vJwbBEwYKCjMs2OMTP
+          outgoingConnections:
+            - match->"If" wJMY-M1cWCp5fp6z5WU98/value
+            - match->"Match" 6eBKxYuyo2HBelLbBCBPY/input
+            - match->"Prompt" eEXAsNDCNSOuZyEHA8EOH/command_name
+          title: Name
+          type: extractObjectPath
+          visualData: 719/248/153/4
+        wJMY-M1cWCp5fp6z5WU98:
+          data: {}
+          id: wJMY-M1cWCp5fp6z5WU98
+          outgoingConnections:
+            - output->"Text" zAIWmNhfJj_h3xPx0kewP/command_name
+          title: If
+          type: if
+          visualData: 1337.7457048662893/783.8203790315147/125/32
+        xfdWAxd2JfuEbN1ZBgMC5:
+          data:
+            graphId: pgbl6cyJ6kZWZwEb0o7rz
+          id: xfdWAxd2JfuEbN1ZBgMC5
+          outgoingConnections:
+            - output->"Coalesce" S-OKN_ugeBGnO3Ud4ks6N/input4
+          title: Subgraph
+          type: subGraph
+          visualData: 1512.5692047673851/500.1726086565678/300/21
+        z-12fYeNh0c6lZAGDQC5i:
+          data:
+            dataType: string
+            id: command_output
+          id: z-12fYeNh0c6lZAGDQC5i
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 2622.320441954619/-41.23906807529085/300/27
+        zAIWmNhfJj_h3xPx0kewP:
+          data:
+            text: Unknown command {{command_name}}! Please refer to the system commands list
+              to see all available commands.
+          id: zAIWmNhfJj_h3xPx0kewP
+          outgoingConnections:
+            - output->"Coalesce" S-OKN_ugeBGnO3Ud4ks6N/input6
+          title: Text
+          type: text
+          visualData: 1501.6714910083379/787.9185236850659/300/31
     BCH2-JTaOfU7yrJ1GQRhL:
       metadata:
         description: ""
@@ -66,6 +746,218 @@ data:
           title: Extract Regex
           type: extractRegex
           visualData: 1035/383/250/13
+    DBSqt91CfAs1dewM-IhgT:
+      metadata:
+        description: ""
+        id: DBSqt91CfAs1dewM-IhgT
+        name: RA - Analyze Until Done
+      nodes:
+        -r_2kaeMS-ZYUXhsCObVV:
+          data:
+            maxIterations: 100
+          id: -r_2kaeMS-ZYUXhsCObVV
+          outgoingConnections:
+            - break->"Extract Object Path" A1QAexk0N1yzfWytjwrlK/object
+            - break->"Extract Object Path" Vd9CYlLETL0sAr2X73_lM/object
+            - output1->"Subgraph" vLyGV7ovbUYwCpnVv_YTv/current_messages
+          title: Loop Controller
+          type: loopController
+          visualData: 1903.2274878891517/693.1500148714374/250/null
+        2r-NqWWMhUJ2vG07yyGQe:
+          data:
+            text: "false"
+          id: 2r-NqWWMhUJ2vG07yyGQe
+          outgoingConnections:
+            - output->"If/Else" V50VnTrUvH3Xga1LRYKWS/false
+          title: Text
+          type: text
+          visualData: 3206.602702252145/1085.4509610314976/300/null
+        A1QAexk0N1yzfWytjwrlK:
+          data:
+            path: $[1]
+            usePathInput: false
+          id: A1QAexk0N1yzfWytjwrlK
+          outgoingConnections:
+            - match->"Graph Output" T5dFxOs_MHn0bLFC9aQDN/value
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 2262.08154047184/377.1058722189694/250/99
+        EUuTrue5VkIy2ws195G0o:
+          data:
+            caseCount: 1
+            cases:
+              - RECALL_INFO
+          id: EUuTrue5VkIy2ws195G0o
+          outgoingConnections:
+            - case1->"If/Else" V50VnTrUvH3Xga1LRYKWS/if
+          title: Match
+          type: match
+          visualData: 3025.232574383944/603.9840477327783/300/95
+        Stx1H2iniItB-FoT4f2bS:
+          data:
+            objectPath: $.systemCommands[0].name
+            rootPropertyName: systemCommands
+          id: Stx1H2iniItB-FoT4f2bS
+          outgoingConnections:
+            - output->"Match" EUuTrue5VkIy2ws195G0o/input
+          title: Extract YAML
+          type: extractYaml
+          visualData: 2683.4297003524184/613.8913774148516/250/94
+        T5dFxOs_MHn0bLFC9aQDN:
+          data:
+            dataType: string
+            id: chat_output
+          id: T5dFxOs_MHn0bLFC9aQDN
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 2687.6193939503723/356.4100212762155/300/101
+        V50VnTrUvH3Xga1LRYKWS:
+          data: {}
+          id: V50VnTrUvH3Xga1LRYKWS
+          outgoingConnections:
+            - output->"Loop Controller" -r_2kaeMS-ZYUXhsCObVV/continue
+          title: If/Else
+          type: ifElse
+          visualData: 3563.9318877494343/567.0045981448056/125/97
+        Va4d_NrMAW2V8LMdg5WIb:
+          data:
+            text: "true"
+          id: Va4d_NrMAW2V8LMdg5WIb
+          outgoingConnections:
+            - output->"If/Else" V50VnTrUvH3Xga1LRYKWS/true
+          title: Text
+          type: text
+          visualData: 3208.1979218302577/870.0963179862564/300/null
+        Vd9CYlLETL0sAr2X73_lM:
+          data:
+            path: $[0]
+            usePathInput: false
+          id: Vd9CYlLETL0sAr2X73_lM
+          outgoingConnections:
+            - match->"Graph Output" xCY6ItteekfA9ycKqnT1Q/value
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 2247.684285398584/163.36755714024667/250/98
+        _fzwpRZw_bUBIul-X2mMs:
+          data:
+            enableFunctionCall: false
+            name: SYSTEM INFORMATION
+            promptText: Next, talk about the next thing you will be analyzing, and run
+              RECALL_INFO one or more times to see what you have already
+              analyzed and remembered. Be as descriptive and verbose as possible
+              in your topic argument, because the more information you give, the
+              better the relevant memories can be identified.
+            type: user
+            useTypeInput: false
+          id: _fzwpRZw_bUBIul-X2mMs
+          outgoingConnections: []
+          title: Prompt
+          type: prompt
+          visualData: 1650.9191658546888/358.25772586434255/250/93
+        oW8bIRG1wJNWkXl-NS_qe:
+          data:
+            enableFunctionCall: false
+            name: SYSTEM INFORMATION
+            promptText: >-
+              What is the next thing you plan on doing? Run RECALL_INFO first
+              before you run any other command.
+
+
+              If you have already run RECALL_INFO for the next thing you plan on doing, and you do not have any memories for the task, you may run a command other than RECALL_INFO to further your memories.
+            type: user
+            useTypeInput: false
+          id: oW8bIRG1wJNWkXl-NS_qe
+          outgoingConnections:
+            - output->"Subgraph" vLyGV7ovbUYwCpnVv_YTv/prompt_message
+          title: Prompt
+          type: prompt
+          visualData: 1903.556072747556/496.03363823409995/250/92
+        tSUsLaivP4rtiuLalg8Rn:
+          data:
+            dataType: any
+            id: current_messages
+          id: tSUsLaivP4rtiuLalg8Rn
+          outgoingConnections:
+            - data->"Loop Controller" -r_2kaeMS-ZYUXhsCObVV/input1Default
+          title: Graph Input
+          type: graphInput
+          visualData: 1361.7278909749107/715.2333074499701/300/87
+        vLyGV7ovbUYwCpnVv_YTv:
+          data:
+            graphId: 49ADNSJiXKFRvgaRMhFvP
+          id: vLyGV7ovbUYwCpnVv_YTv
+          outgoingConnections:
+            - chat_output->"Extract YAML" Stx1H2iniItB-FoT4f2bS/input
+            - chat_output->"Loop Controller" -r_2kaeMS-ZYUXhsCObVV/input2
+            - new_messages->"Loop Controller" -r_2kaeMS-ZYUXhsCObVV/input1
+          title: Subgraph
+          type: subGraph
+          visualData: 2292.6967321450957/710.3927639039126/300/90
+        xCY6ItteekfA9ycKqnT1Q:
+          data:
+            dataType: chat-message[]
+            id: new_messages
+          id: xCY6ItteekfA9ycKqnT1Q
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 2699.672402408892/135.11899467921754/300/100
+    HRMMlTL5W-Wau-f7nLLEh:
+      metadata:
+        description: ""
+        id: HRMMlTL5W-Wau-f7nLLEh
+        name: RA - System Prompt
+      nodes:
+        fFj_MIJQSxY4S5DIBtnFk:
+          data:
+            text: >-
+              # You
+
+
+              You are a source code analyzer. A user will give you a path to a repository. You have a set of system commands that you can then use to interact with the file system and other APIs in order to perform actions. You will go through and interatively analyze the repository, after each command you will update your analysis (either refining it as you have learned new information, or adding to your analysis in some way).
+
+
+              You store your complete analysis using a memory with the ID "analysis".
+
+
+              You frequently check your memory to see if you have already accomplished things.
+
+
+              Before reading or asking questions about any files, you always run RECALL_INFO first to see if you have already done it.
+
+
+              You always reply with a system command to interact with the System. However, you include text before your system command explaining your current thoughts.
+
+
+              There may only be at most one `systemCommands` block in your responses.
+
+
+              {{system_commands}}
+          id: fFj_MIJQSxY4S5DIBtnFk
+          outgoingConnections:
+            - output->"Graph Output" okr0iIB5gCjEG7zNOfDkP/value
+          title: Text
+          type: text
+          visualData: 578/287/300/null
+        hV6TCfunJysRgAgjMK1nj:
+          data:
+            graphId: cWbUqJZE2osNm42Q2ewC9
+          id: hV6TCfunJysRgAgjMK1nj
+          outgoingConnections:
+            - output->"Text" fFj_MIJQSxY4S5DIBtnFk/system_commands
+          title: Subgraph
+          type: subGraph
+          visualData: 179.6969610905414/450.1803932480233/300/53
+        okr0iIB5gCjEG7zNOfDkP:
+          data:
+            dataType: string
+            id: system_prompt
+          id: okr0iIB5gCjEG7zNOfDkP
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 1078/287/300/null
     HXjZhpWO0hluMiDY6pneE:
       metadata:
         description: ""
@@ -133,7 +1025,7 @@ data:
         Dl9zJxgRRBk7hQ43xWhZv:
           data:
             text: >-
-
+              
 
               Please give me a a list of the top level exported names/functions/etc from this part of the file. Put the items in bullet points.
 
@@ -695,12 +1587,6 @@ data:
           title: Graph Input
           type: graphInput
           visualData: -973.2451596049881/711.7486797972081/300/24
-    KAnpnQcN7_M7jDCUmZ19e:
-      metadata:
-        description: ""
-        id: KAnpnQcN7_M7jDCUmZ19e
-        name: Untitled Graph
-      nodes: {}
     KVOCarbcccMX-wOaypQ7L:
       metadata:
         description: ""
@@ -1349,72 +2235,317 @@ data:
           title: Text
           type: text
           visualData: 2440.4366570143184/529.7076073959739/300/15
-    X1x17cpmF8RFGb4TYdGF_:
+    Pd4dvtJ0K_FosX2rfhTg9:
       metadata:
         description: ""
-        id: X1x17cpmF8RFGb4TYdGF_
-        name: Untitled Graph
+        id: Pd4dvtJ0K_FosX2rfhTg9
+        name: 00 Rivet Analyzer
       nodes:
-        2cl8uVa3thrtBhIHCuaK1:
-          data:
-            path: $.yamlDocument.name
-            usePathInput: false
-          id: 2cl8uVa3thrtBhIHCuaK1
-          outgoingConnections: []
-          title: Extract Object Path
-          type: extractObjectPath
-          visualData: 1634/519/250/10
-        GgxznpUbo4lmVXSmWBjtC:
+        2NscQMBqyFVwE8LiDZFYg:
           data:
             text: >-
-              Please give me some YAML about a user so that I can test
-              extracting it from your message. The root property must be
-              yamlDocument, like this:
+              Your most relevant memories to "overall analysis" are:
 
 
-              yamlDocument:
-                key: value
-          id: GgxznpUbo4lmVXSmWBjtC
+              """
+
+              {{memories}}
+
+              """
+
+
+              In addition to following up with your last command (by storing memories or thoughts, or by running more commands), you should store memories related to an overall analysis of the Rivet project.
+
+
+              Only reply with a YAML document. Instead of explaining your analysis, run the REMEMBER_INFO command with your analysis inside the info of the command.
+          id: 2NscQMBqyFVwE8LiDZFYg
           outgoingConnections:
-            - output->"Chat" LT7zZ_80U7YMH4AJFNVrI/prompt
+            - output->"Subgraph" XJjaxKM5N225ejkoyxl_w/prompt_message
           title: Text
           type: text
-          visualData: 717/547/300/1
-        LT7zZ_80U7YMH4AJFNVrI:
+          visualData: 4778.988758191404/368.24492671512667/300/75
+        2UTof8lNm03gvKfFxBDWT:
           data:
-            cache: false
-            frequencyPenalty: 0
-            maxTokens: 1024
-            model: gpt-3.5-turbo
-            presencePenalty: 0
-            stop: ""
-            temperature: 0.5
-            top_p: 1
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: false
-            usePresencePenaltyInput: false
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-          id: LT7zZ_80U7YMH4AJFNVrI
+            text: overall analysis
+          id: 2UTof8lNm03gvKfFxBDWT
           outgoingConnections:
-            - response->"Extract YAML" WiAcAGKAgBc2Hh18D7z0k/input
-          title: Chat
-          type: chat
-          visualData: 1067/508/200/2
-        WiAcAGKAgBc2Hh18D7z0k:
+            - output->"If" NfeMoioEzUx3J_9DSgUWn/value
+          title: Text
+          type: text
+          visualData: 3883.9730559741065/489.1152144743757/300/73
+        40B9nTkT_zAkzbA9Rhkpn:
           data:
-            rootPropertyName: yamlDocument
-          id: WiAcAGKAgBc2Hh18D7z0k
+            text: /Users/Shared/ironclad/rivet/packages
+          id: 40B9nTkT_zAkzbA9Rhkpn
           outgoingConnections:
-            - output->"Extract Object Path" 2cl8uVa3thrtBhIHCuaK1/object
-          title: Extract YAML
-          type: extractYaml
-          visualData: 1313/524/250/3
+            - output->"Prompt" RGaXe9O2ty183OXol7_K2/input
+          title: Text
+          type: text
+          visualData: 232.485807860262/1022.3493449781658/300/6
+        7HodDk2GMdHkJC7AzB5CS:
+          data:
+            graphId: lLdez5GZqKam_L25xY7CT
+          id: 7HodDk2GMdHkJC7AzB5CS
+          outgoingConnections:
+            - output->"Prompt" kBdFzmteK69OqJokqBTb0/memories
+          title: Subgraph
+          type: subGraph
+          visualData: 3025.9705235840856/527.2202623603948/300/66
+        7blDJVDN_TbpCvaB-Rkxp:
+          data:
+            graphId: 49ADNSJiXKFRvgaRMhFvP
+          id: 7blDJVDN_TbpCvaB-Rkxp
+          outgoingConnections:
+            - new_messages->"Loop Controller" e7NvtuIgOlA9RMAuUOVt4/input1
+          title: Subgraph
+          type: subGraph
+          visualData: 3428.0551377526167/738.858001337559/300/69
+        EN5CwW_fs0KzF8KkWGRja:
+          data:
+            dataType: string
+            id: output
+          id: EN5CwW_fs0KzF8KkWGRja
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 1943.673666987144/274.91890798601685/300/18
+        Iu0BQe4zPuvWNyxWXflPL:
+          data:
+            graphId: DBSqt91CfAs1dewM-IhgT
+          id: Iu0BQe4zPuvWNyxWXflPL
+          outgoingConnections:
+            - chat_output->"Subgraph" 7HodDk2GMdHkJC7AzB5CS/topic
+            - new_messages->"Subgraph" 7blDJVDN_TbpCvaB-Rkxp/current_messages
+          title: Subgraph
+          type: subGraph
+          visualData: 2515.9237236252075/642.5077894536144/300/89
+        NfeMoioEzUx3J_9DSgUWn:
+          data: {}
+          id: NfeMoioEzUx3J_9DSgUWn
+          outgoingConnections:
+            - output->"Subgraph" iD7KUaQo78VbbWgZbijux/topic
+          title: If
+          type: if
+          visualData: 4268.167899208863/484.79841848297406/125/79
+        QIsP4PLl40qxDwv6hzBYl:
+          data:
+            enableFunctionCall: false
+            name: SYSTEM INFORMATION
+            promptText: |-
+              # Your most relevant memories to "analysis":
+
+              {{memories}}
+            type: user
+            useTypeInput: false
+          id: QIsP4PLl40qxDwv6hzBYl
+          outgoingConnections:
+            - output->"Assemble Prompt" Xa8H6S7EnNOmNp42PeE6c/message2
+          title: Prompt
+          type: prompt
+          visualData: 578/1204/250/5
+        RGaXe9O2ty183OXol7_K2:
+          data:
+            enableFunctionCall: false
+            name: User
+            promptText: "{{input}}"
+            type: user
+            useTypeInput: false
+          id: RGaXe9O2ty183OXol7_K2
+          outgoingConnections:
+            - output->"Assemble Prompt" Xa8H6S7EnNOmNp42PeE6c/message1
+          title: Prompt
+          type: prompt
+          visualData: 590/998/250/2
+        STjZ9TDdIWSWQETOlEW6j:
+          data:
+            graphId: lLdez5GZqKam_L25xY7CT
+          id: STjZ9TDdIWSWQETOlEW6j
+          outgoingConnections:
+            - output->"Prompt" QIsP4PLl40qxDwv6hzBYl/task_list
+          title: Subgraph
+          type: subGraph
+          visualData: 220.6448947432062/1688.6796416724496/300/84
+        XJjaxKM5N225ejkoyxl_w:
+          data:
+            graphId: 49ADNSJiXKFRvgaRMhFvP
+          id: XJjaxKM5N225ejkoyxl_w
+          outgoingConnections: []
+          title: Subgraph
+          type: subGraph
+          visualData: 4410.249008329616/764.2026121194765/300/83
+        Xa8H6S7EnNOmNp42PeE6c:
+          data: {}
+          id: Xa8H6S7EnNOmNp42PeE6c
+          outgoingConnections:
+            - prompt->"Loop Controller" e7NvtuIgOlA9RMAuUOVt4/input1Default
+          title: Assemble Prompt
+          type: assemblePrompt
+          visualData: 1015/833/250/null
+        Zw6Po0Edgfxls8sgPQ4yn:
+          data:
+            text: rivet overall analysis
+          id: Zw6Po0Edgfxls8sgPQ4yn
+          outgoingConnections:
+            - output->"Subgraph" rYl7JAEelRipYuDpDRHhR/topic
+          title: Text
+          type: text
+          visualData: -11.348192769476697/1421.2352369244818/160.00087463053285/43
+        cOtA3LTAJ4OD3BGjXbOxG:
+          data:
+            text: task list
+          id: cOtA3LTAJ4OD3BGjXbOxG
+          outgoingConnections:
+            - output->"Subgraph" STjZ9TDdIWSWQETOlEW6j/topic
+          title: Text
+          type: text
+          visualData: -14.520185831084863/1698.8668483745391/160.00087463053285/85
+        e7NvtuIgOlA9RMAuUOVt4:
+          data:
+            maxIterations: 100
+          id: e7NvtuIgOlA9RMAuUOVt4
+          outgoingConnections:
+            - break->"Graph Output" EN5CwW_fs0KzF8KkWGRja/value
+            - output1->"Subgraph" Iu0BQe4zPuvWNyxWXflPL/current_messages
+          title: Loop Controller
+          type: loopController
+          visualData: 1517.1101924672826/608.9026579155221/250/9
+        iD7KUaQo78VbbWgZbijux:
+          data:
+            graphId: lLdez5GZqKam_L25xY7CT
+          id: iD7KUaQo78VbbWgZbijux
+          outgoingConnections:
+            - output->"Text" 2NscQMBqyFVwE8LiDZFYg/memories
+          title: Subgraph
+          type: subGraph
+          visualData: 4453.391064740932/467.4988106785299/300/77
+        kBdFzmteK69OqJokqBTb0:
+          data:
+            enableFunctionCall: false
+            name: SYSTEM INFORMATION
+            promptText: >-
+              # Your most relevant memories to your last command:
+
+
+              {{memories}}
+
+
+              # Next
+
+
+              You may either run RECALL_INFO to recall more memories, or you may reflect on the result of your latest command. Then, store as many memories with REMEMBER_INFO as you would like. These can be as detailed or small as you'd like. These memories will be accessible later with RECALL_INFO.
+            type: user
+            useTypeInput: false
+          id: kBdFzmteK69OqJokqBTb0
+          outgoingConnections:
+            - output->"Subgraph" 7blDJVDN_TbpCvaB-Rkxp/prompt_message
+          title: Prompt
+          type: prompt
+          visualData: 3419.141459651317/378.1455376971633/250/65
+        rYl7JAEelRipYuDpDRHhR:
+          data:
+            graphId: lLdez5GZqKam_L25xY7CT
+          id: rYl7JAEelRipYuDpDRHhR
+          outgoingConnections:
+            - output->"Prompt" QIsP4PLl40qxDwv6hzBYl/memories
+          title: Subgraph
+          type: subGraph
+          visualData: 217.6087101785059/1373.1105375787274/300/45
+    cWbUqJZE2osNm42Q2ewC9:
+      metadata:
+        description: ""
+        id: cWbUqJZE2osNm42Q2ewC9
+        name: RA - System Commands
+      nodes:
+        WI9_Qj2uuV6QyYUB6Gel7:
+          data:
+            dataType: chat-message
+            id: output
+          id: WI9_Qj2uuV6QyYUB6Gel7
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 1112/503/300/null
+        vN2ea8R1hCHDK7sIBUgW7:
+          data:
+            enableFunctionCall: false
+            name: SYSTEM INFORMATION
+            promptText: >-
+              # System Commands
+
+
+              You have access to System Commands to perform actions such as iteracting with the file system and other APIs. 
+
+
+              System commands are called by using a YAML document like this:
+
+
+              ```yaml
+
+              systemCommands:
+                - name: COMMAND_NAME
+                  arguments:
+                    some-argument: some argument value
+                - name: OTHER_COMMAND_NAME
+                  arguments:
+                    some-other-argument: some other argument value
+              ```
+
+
+              When multiple commands are specified, all of the commands will be ran in parallel. You can run at most 5 commands at once in parallel.
+
+
+              ## System Command List
+
+
+              ### LIST_FILES_IN_DIRECTORY
+
+
+              Lists all files recursively in the Rivet directory.
+
+
+              Arguments:
+                directory: The directory to read.
+
+
+              ### ASK_QUESTION_ABOUT_FILE
+
+
+              Reads a file and asks another AI to answer a question about the file. You can use this to do things like summarize a file, extract key points about the file, etc. This is a very powerful command to use!
+
+
+              Arguments:
+                path: the path to the file to read
+                question: |
+                  The question to ask about the file. Be extremely detailed about what your questions are and what you are looking for in regards to this file. Give the AI as much information as you can.
+
+              ### REMEMBER_INFO
+
+
+              This function is important - it will store a block of text in your long-term memory. Call this function with a block of text, and when something relevant comes up, it will be included in the response.
+
+
+              Arguments:
+                id: [optional] - Unique identifier for the memory. If you save a memory with the same ID as an existing one, it will overwrite the existing one.
+                info: |
+                  The information to remember. Be extremely detailed as possible here. Include things such as file name, reasons for remembering this info, etc.
+
+
+              ### RECALL_INFO
+
+
+              Use this function to search for any previously stored memories related to a topic. 
+
+
+              Arguments:
+                topic: The topic to search about. Be extremely detailed about what your topic is, use as many words as possible to narrowthings down.
+            type: user
+            useTypeInput: false
+          id: vN2ea8R1hCHDK7sIBUgW7
+          outgoingConnections:
+            - output->"Graph Output" WI9_Qj2uuV6QyYUB6Gel7/value
+          title: Prompt
+          type: prompt
+          visualData: 612/503/250/1
     d6Pgmz7n8qvXkaNF-2e9P:
       metadata:
         description: ""
@@ -1462,6 +2593,506 @@ data:
           title: Read Directory
           type: readDirectory
           visualData: -1109.8933869703742/414.52061856748116/null/23
+    g_lk18P0-BSirYNE2qGAa:
+      metadata:
+        description: ""
+        id: g_lk18P0-BSirYNE2qGAa
+        name: "RA - Command: RECALL_INFO"
+      nodes:
+        1rr5wAWLGDR8OD_DtZBsj:
+          data:
+            text: "3"
+          id: 1rr5wAWLGDR8OD_DtZBsj
+          outgoingConnections:
+            - output->"If/Else" 5NK8cYmHbe2aK2FNiCOET/false
+          title: Text
+          type: text
+          visualData: 644.186134866143/828.639015006256/143.43331570736757/20
+        5NK8cYmHbe2aK2FNiCOET:
+          data: {}
+          id: 5NK8cYmHbe2aK2FNiCOET
+          outgoingConnections:
+            - output->"Text" wNNsGDoazltbd0zriLypI/n
+            - output->"Vector KNN" UodDoY4FFQD-ghaAND19v/k
+          title: If/Else
+          type: ifElse
+          visualData: 971.7547296627853/774.2293162095256/125/null
+        5Va0TC0xtEPJHrqjqzTNW:
+          data:
+            dataType: object
+            id: arguments
+            useDefaultValueInput: true
+          id: 5Va0TC0xtEPJHrqjqzTNW
+          outgoingConnections:
+            - data->"Extract Object Path" s9s3oX5pAKvtV9JuOYfFt/object
+            - data->"Extract Object Path" yc49PU2tC9-LPQmPPi28M/object
+          title: Graph Input
+          type: graphInput
+          visualData: 206.18399339933993/447.2013201320132/300/18
+        8vwMe_uU1mH6sFC3EbuO0:
+          data:
+            dataType: string
+            id: output
+          id: 8vwMe_uU1mH6sFC3EbuO0
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 3054.0182190152213/325.4223064295404/300/40
+        HDxFalAxE-LpUV_-KRVc1:
+          data:
+            integration: openai
+            useIntegrationInput: false
+          id: HDxFalAxE-LpUV_-KRVc1
+          outgoingConnections:
+            - embedding->"Vector KNN" UodDoY4FFQD-ghaAND19v/vector
+          title: Get Embedding
+          type: getEmbedding
+          visualData: 1033.9087435447254/383.59221170727943/200/23
+        SZt7GbwaokaGx5a0bzXoW:
+          data:
+            path: $.id
+            usePathInput: false
+          id: SZt7GbwaokaGx5a0bzXoW
+          isSplitRun: true
+          outgoingConnections:
+            - match->"Text" zef9WfSbXrV_24nfiBXQj/id
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 1787.719200663156/389.5547467012547/250/36
+        UodDoY4FFQD-ghaAND19v:
+          data:
+            collectionId: rivet-3ff65ea.svc.us-west1-gcp-free.pinecone.io/test1
+            integration: pinecone
+            k: 10
+            useKInput: true
+          id: UodDoY4FFQD-ghaAND19v
+          outgoingConnections:
+            - results->"Extract Object Path" ng2J56HcO9blylcpLLg_2/object
+          title: Vector KNN
+          type: vectorNearestNeighbors
+          visualData: 1279.3360881667509/408.90705286005004/200/24
+        i3--YrY0fSi5WBL7uhrJG:
+          data: {}
+          id: i3--YrY0fSi5WBL7uhrJG
+          outgoingConnections:
+            - output->"Graph Input" 5Va0TC0xtEPJHrqjqzTNW/default
+          title: Extract JSON
+          type: extractJson
+          visualData: -23.875216125178355/481.0266450929813/132.0370817950229/27
+        ng2J56HcO9blylcpLLg_2:
+          data:
+            path: $[*]
+            usePathInput: false
+          id: ng2J56HcO9blylcpLLg_2
+          outgoingConnections:
+            - all_matches->"Extract Object Path" SZt7GbwaokaGx5a0bzXoW/object
+            - all_matches->"Extract Object Path" tibz7T4GvEV5UFblNUsFN/object
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 1515.6296364360278/485.50903746734343/250/38
+        s9s3oX5pAKvtV9JuOYfFt:
+          data:
+            path: $.topic
+            usePathInput: false
+          id: s9s3oX5pAKvtV9JuOYfFt
+          outgoingConnections:
+            - match->"Get Embedding" HDxFalAxE-LpUV_-KRVc1/input
+            - match->"Text" wNNsGDoazltbd0zriLypI/topic
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 683/375/250/2
+        tibz7T4GvEV5UFblNUsFN:
+          data:
+            path: $.data
+            usePathInput: false
+          id: tibz7T4GvEV5UFblNUsFN
+          isSplitRun: true
+          outgoingConnections:
+            - match->"Text" zef9WfSbXrV_24nfiBXQj/data
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 1790.348085341679/577.6223834317746/250/37
+        wNNsGDoazltbd0zriLypI:
+          data:
+            text: |-
+              You have asked for memories related to the topic "{{topic}}".
+
+              The closest {{n}} memories you have related to this topic are:
+
+              {{memories}}
+          id: wNNsGDoazltbd0zriLypI
+          outgoingConnections:
+            - output->"Graph Output" 8vwMe_uU1mH6sFC3EbuO0/value
+          title: Text
+          type: text
+          visualData: 2700.733848787849/275.1040318143705/300/41
+        yc49PU2tC9-LPQmPPi28M:
+          data:
+            path: $.count
+            usePathInput: false
+          id: yc49PU2tC9-LPQmPPi28M
+          outgoingConnections:
+            - match->"If/Else" 5NK8cYmHbe2aK2FNiCOET/if
+            - match->"If/Else" 5NK8cYmHbe2aK2FNiCOET/true
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 674.3407590759076/582.3745874587459/250/17
+        zEyCZMZyTvWfLGWRsHles:
+          data:
+            text: |-
+              {
+                  "topic": "This is a test topic"
+              }
+          id: zEyCZMZyTvWfLGWRsHles
+          outgoingConnections:
+            - output->"Extract JSON" i3--YrY0fSi5WBL7uhrJG/input
+          title: Text
+          type: text
+          visualData: -439.48875352178374/498.85824900768716/300/28
+        zef9WfSbXrV_24nfiBXQj:
+          data:
+            text: "{{id}}: {{data}}"
+          id: zef9WfSbXrV_24nfiBXQj
+          isSplitRun: true
+          outgoingConnections:
+            - output->"Text" wNNsGDoazltbd0zriLypI/memories
+          title: Text
+          type: text
+          visualData: 2214.912960923141/436.8746709146683/300/42
+    lLdez5GZqKam_L25xY7CT:
+      metadata:
+        description: ""
+        id: lLdez5GZqKam_L25xY7CT
+        name: RA - Most Relevant Memories
+      nodes:
+        GZvTLJWLzabc_STi3EBnj:
+          data:
+            dataType: string
+            id: output
+          id: GZvTLJWLzabc_STi3EBnj
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 3341.0988051363474/1511.1227266506091/300/null
+        LCJn4Mvw7nBHLm2AG6055:
+          data:
+            path: $.data
+            usePathInput: false
+          id: LCJn4Mvw7nBHLm2AG6055
+          isSplitRun: true
+          outgoingConnections:
+            - match->"Text" Qvo5o6T6k92xZssPwg3Kj/content
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 2155.411694615173/1724.7461192834876/250/47
+        LjiWBOjBx2tMH7uaQXvP0:
+          data:
+            graphId: 1C7HNzd5v7ULqf04-5Uob
+          id: LjiWBOjBx2tMH7uaQXvP0
+          outgoingConnections:
+            - items->"Extract Object Path" VQ3q88Yuk9bejSBolE3tK/object
+          title: Subgraph
+          type: subGraph
+          visualData: 1353.1101608588772/1511.1227266506091/300/49
+        Qvo5o6T6k92xZssPwg3Kj:
+          data:
+            text: "{{id}}: {{content}}"
+          id: Qvo5o6T6k92xZssPwg3Kj
+          isSplitRun: true
+          outgoingConnections:
+            - output->"Text" xTnmDbxMqN6p3LMJsqaUg/memories
+          title: Text
+          type: text
+          visualData: 2475.1347789044294/1615.4979308949553/300/48
+        VQ3q88Yuk9bejSBolE3tK:
+          data:
+            path: $[*]
+            usePathInput: false
+          id: VQ3q88Yuk9bejSBolE3tK
+          outgoingConnections:
+            - all_matches->"Extract Object Path" LCJn4Mvw7nBHLm2AG6055/object
+            - all_matches->"Extract Object Path" pwpe07-IOJqChP5fETDzu/object
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 1765.6666125270294/1558.2787282899076/250/50
+        WZXnEWHrAnUtfoOw_XEdz:
+          data:
+            dataType: string
+            id: topic
+          id: WZXnEWHrAnUtfoOw_XEdz
+          outgoingConnections:
+            - data->"Subgraph" LjiWBOjBx2tMH7uaQXvP0/topic
+          title: Graph Input
+          type: graphInput
+          visualData: 853.1101608588772/1511.1227266506091/300/null
+        pwpe07-IOJqChP5fETDzu:
+          data:
+            path: $.id
+            usePathInput: false
+          id: pwpe07-IOJqChP5fETDzu
+          isSplitRun: true
+          outgoingConnections:
+            - match->"Text" Qvo5o6T6k92xZssPwg3Kj/id
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 2155.411694615173/1513.767858621101/250/null
+        xTnmDbxMqN6p3LMJsqaUg:
+          data:
+            text: "{{memories}}"
+          id: xTnmDbxMqN6p3LMJsqaUg
+          outgoingConnections:
+            - output->"Graph Output" GZvTLJWLzabc_STi3EBnj/value
+          title: Text
+          type: text
+          visualData: 2841.0988051363474/1590.3957052689395/300/51
+    lXUC_1uq9nRw3WNXCkpdB:
+      metadata:
+        description: ""
+        id: lXUC_1uq9nRw3WNXCkpdB
+        name: "RA - Command: READ_DIRECTORY"
+      nodes:
+        2sQqhGNeRlvjvM-LodS8R:
+          data:
+            path: $.directory
+            usePathInput: false
+          id: 2sQqhGNeRlvjvM-LodS8R
+          outgoingConnections:
+            - match->"Read Directory" YDnARl29utdEx5tX_nt-a/path
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 250.01267630499774/366.5850974833843/250/15
+        TP1i6OVQF_SnmAuhhc3yf:
+          data:
+            dataType: string
+            id: output
+          id: TP1i6OVQF_SnmAuhhc3yf
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 1660.1381498617586/402.9919627292449/300/11
+        U6X1HmD-JnYkzrw0KA3ad:
+          data:
+            text: "{{input}}"
+          id: U6X1HmD-JnYkzrw0KA3ad
+          outgoingConnections:
+            - output->"Graph Output" TP1i6OVQF_SnmAuhhc3yf/value
+          title: Text
+          type: text
+          visualData: 1466.3956685691494/425.3468644168537/150.96732208260823/8
+        YDnARl29utdEx5tX_nt-a:
+          data:
+            filterGlobs: []
+            ignores:
+              - "**/node_modules/**"
+              - "**/src-tauri/**"
+              - "**/dist/**"
+              - "**/app-executor/bin/**"
+              - "**/*.wasm"
+            includeDirectories: false
+            path: /Users/Shared/ironclad/rivet/packages
+            recursive: true
+            relative: false
+            useFilterGlobsInput: false
+            useIgnoresInput: false
+            useIncludeDirectoriesInput: false
+            usePathInput: true
+            useRecursiveInput: false
+            useRelativeInput: false
+          id: YDnARl29utdEx5tX_nt-a
+          outgoingConnections:
+            - paths->"Text" y-sDq1vd52ctHX0NCTWQb/path
+          title: Read Directory
+          type: readDirectory
+          visualData: 651.5571857432192/348.8015299069658/null/19
+        _78OsjTMGMAugz-VIcct4:
+          data:
+            dataType: object
+            id: arguments
+            useDefaultValueInput: false
+          id: _78OsjTMGMAugz-VIcct4
+          outgoingConnections:
+            - data->"Extract Object Path" 2sQqhGNeRlvjvM-LodS8R/object
+          title: Graph Input
+          type: graphInput
+          visualData: -125.57242117838655/357/300/14
+        y-sDq1vd52ctHX0NCTWQb:
+          data:
+            text: "{{path}}"
+          id: y-sDq1vd52ctHX0NCTWQb
+          isSplitRun: true
+          outgoingConnections:
+            - output->"Text" U6X1HmD-JnYkzrw0KA3ad/input
+          splitRunMax: 1000
+          title: Text
+          type: text
+          visualData: 1253.3705377832819/424.3104028500138/177.04143789015916/7
+    pgbl6cyJ6kZWZwEb0o7rz:
+      metadata:
+        description: ""
+        id: pgbl6cyJ6kZWZwEb0o7rz
+        name: "RA - Command: REMEMBER_INFO"
+      nodes:
+        3ULFu_KZhCNX9S4bTKSbI:
+          data:
+            text: The information has been remembered.
+          id: 3ULFu_KZhCNX9S4bTKSbI
+          outgoingConnections:
+            - output->"If" UV0GD007NdcPBWTThvUXn/value
+          title: Text
+          type: text
+          visualData: 1343.433220863393/676.8483689406404/300/20
+        EkSk0XXiGO9ugWxWlPhB4:
+          data:
+            path: $.info
+            usePathInput: false
+          id: EkSk0XXiGO9ugWxWlPhB4
+          outgoingConnections:
+            - match->"Get Embedding" tu5GLMWeIMTT_IJLUVVlq/input
+            - match->"Hash" xLo2UmlnOqD3OYXby4bSZ/input
+            - match->"Vector Store" MeZhLHLCVWDKzWtlOQeQb/data
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 683/375/250/2
+        MeZhLHLCVWDKzWtlOQeQb:
+          data:
+            collectionId: rivet-3ff65ea.svc.us-west1-gcp-free.pinecone.io/test1
+            integration: pinecone
+          id: MeZhLHLCVWDKzWtlOQeQb
+          outgoingConnections:
+            - complete->"If" UV0GD007NdcPBWTThvUXn/if
+          title: Vector Store
+          type: vectorStore
+          visualData: 1408/389/200/8
+        RbHUSAcTUJTsK2sRlzbJQ:
+          data: {}
+          id: RbHUSAcTUJTsK2sRlzbJQ
+          outgoingConnections:
+            - output->"Text" 3ULFu_KZhCNX9S4bTKSbI/id
+            - output->"Vector Store" MeZhLHLCVWDKzWtlOQeQb/id
+          title: If/Else
+          type: ifElse
+          visualData: 1046.2140580979324/662.0972381436029/125/18
+        UV0GD007NdcPBWTThvUXn:
+          data: {}
+          id: UV0GD007NdcPBWTThvUXn
+          outgoingConnections:
+            - output->"Graph Output" YoSsNCM2sMjGi5UwLhP9Z/value
+          title: If
+          type: if
+          visualData: 1722/436/125/12
+        YoSsNCM2sMjGi5UwLhP9Z:
+          data:
+            dataType: string
+            id: output
+          id: YoSsNCM2sMjGi5UwLhP9Z
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 2423.453795379538/216.9381188118812/300/21
+        dL7Bop8CO27-xbZKDoKF0:
+          data:
+            path: $.id
+            usePathInput: false
+          id: dL7Bop8CO27-xbZKDoKF0
+          outgoingConnections:
+            - match->"If/Else" RbHUSAcTUJTsK2sRlzbJQ/if
+            - match->"If/Else" RbHUSAcTUJTsK2sRlzbJQ/true
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 683/568.519801980198/250/16
+        tu5GLMWeIMTT_IJLUVVlq:
+          data:
+            integration: openai
+            useIntegrationInput: false
+          id: tu5GLMWeIMTT_IJLUVVlq
+          outgoingConnections:
+            - embedding->"Vector Store" MeZhLHLCVWDKzWtlOQeQb/vector
+          title: Get Embedding
+          type: getEmbedding
+          visualData: 1065/267/200/7
+        v0cI-5wGxCzMVQ2MhEl_z:
+          data:
+            dataType: object
+            id: arguments
+            useDefaultValueInput: false
+          id: v0cI-5wGxCzMVQ2MhEl_z
+          outgoingConnections:
+            - data->"Extract Object Path" EkSk0XXiGO9ugWxWlPhB4/object
+            - data->"Extract Object Path" dL7Bop8CO27-xbZKDoKF0/object
+          title: Graph Input
+          type: graphInput
+          visualData: 343/371/300/1
+        xLo2UmlnOqD3OYXby4bSZ:
+          data:
+            algorithm: sha256
+          id: xLo2UmlnOqD3OYXby4bSZ
+          outgoingConnections:
+            - hash->"If/Else" RbHUSAcTUJTsK2sRlzbJQ/false
+          title: Hash
+          type: hash
+          visualData: 655.8735656404247/821.8014999261702/250/19
+    sgqPsMPVjV-hHvsAloa3y:
+      metadata:
+        description: ""
+        id: sgqPsMPVjV-hHvsAloa3y
+        name: "RA - Command: READ_FILE"
+      nodes:
+        1zWd9IKU6oivnbRfSOulB:
+          data:
+            dataType: string
+            id: output
+          id: 1zWd9IKU6oivnbRfSOulB
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 1655.4237156131949/344.06153462220004/300/16
+        3zvt1Wdg0WAtkS_gy4Le2:
+          data:
+            text: |-
+              ```
+              // {{file_name}}
+
+              {{contents}}
+              ```
+          id: 3zvt1Wdg0WAtkS_gy4Le2
+          outgoingConnections:
+            - output->"Graph Output" 1zWd9IKU6oivnbRfSOulB/value
+          title: Text
+          type: text
+          visualData: 1310.636375619824/301.4545670474145/300/15
+        O4TUctRQ9cTMpuBfy07TM:
+          data:
+            dataType: object
+            id: arguments
+            useDefaultValueInput: false
+          id: O4TUctRQ9cTMpuBfy07TM
+          outgoingConnections:
+            - data->"Extract Object Path" gCLcAGjsk4qroZ7F0_3I0/object
+          title: Graph Input
+          type: graphInput
+          visualData: 239/357/300/1
+        gCLcAGjsk4qroZ7F0_3I0:
+          data:
+            path: $.path
+            usePathInput: false
+          id: gCLcAGjsk4qroZ7F0_3I0
+          outgoingConnections:
+            - match->"Read File" t_g4bWwfU5_b9X6pzk6OS/path
+            - match->"Text" 3zvt1Wdg0WAtkS_gy4Le2/file_name
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 613/365/250/2
+        t_g4bWwfU5_b9X6pzk6OS:
+          data:
+            errorOnMissingFile: false
+            path: ""
+            usePathInput: true
+          id: t_g4bWwfU5_b9X6pzk6OS
+          outgoingConnections:
+            - content->"Text" 3zvt1Wdg0WAtkS_gy4Le2/contents
+          title: Read File
+          type: readFile
+          visualData: 907.7722794413804/405.417269725349/250/12
     trryHWyYAN99_ADAMDalG:
       metadata:
         description: ""
@@ -1591,6 +3222,280 @@ data:
           title: Chat
           type: chat
           visualData: 2623.748661962601/86.15563920484055/200/25
+    u6yVHvgJi01zZYY_5f4y3:
+      metadata:
+        description: ""
+        id: u6yVHvgJi01zZYY_5f4y3
+        name: RA - Exec Commands
+      nodes:
+        6aKpPSGTWQarC7SnxrtH5:
+          data:
+            graphId: 9cRiigw77WY0G_wWDYp4Z
+          id: 6aKpPSGTWQarC7SnxrtH5
+          isSplitRun: true
+          outgoingConnections:
+            - command_output->"Text" HG6cDo_qEFKjH_FiOyBQC/command
+          title: Subgraph
+          type: subGraph
+          visualData: 710.6904790341357/376.5930426926441/300/2
+        HG6cDo_qEFKjH_FiOyBQC:
+          data:
+            text: |-
+              ---
+
+              {{command}}
+          id: HG6cDo_qEFKjH_FiOyBQC
+          isSplitRun: true
+          outgoingConnections:
+            - output->"Prompt" l2Lne7i6GCD4UBUCBmwEI/input
+          title: Text
+          type: text
+          visualData: 1128.3888320265673/370.2191258971111/300/4
+        TQlCAaArLhkbt7Z-YE_Ol:
+          data:
+            dataType: string
+            id: commands_output
+          id: TQlCAaArLhkbt7Z-YE_Ol
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 2162.433555324635/376.65765337302344/300/13
+        a_EfAnKA_WZ3QprwFJ_Qm:
+          data: {}
+          id: a_EfAnKA_WZ3QprwFJ_Qm
+          outgoingConnections:
+            - output->"Subgraph" 6aKpPSGTWQarC7SnxrtH5/command
+          title: If
+          type: if
+          visualData: 470.56038435942/481.8114644600358/125/16
+        gqKd_dWEPpEZHfcUNWGYW:
+          data: {}
+          id: gqKd_dWEPpEZHfcUNWGYW
+          outgoingConnections:
+            - output->"Graph Output" TQlCAaArLhkbt7Z-YE_Ol/value
+          title: If/Else
+          type: ifElse
+          visualData: 1900.9010140792252/421.6721425286348/125/15
+        l2Lne7i6GCD4UBUCBmwEI:
+          data:
+            enableFunctionCall: false
+            name: SYSTEM COMMAND
+            promptText: "{{input}}"
+            type: user
+            useTypeInput: false
+          id: l2Lne7i6GCD4UBUCBmwEI
+          outgoingConnections:
+            - output->"If/Else" gqKd_dWEPpEZHfcUNWGYW/true
+          title: Prompt
+          type: prompt
+          visualData: 1481.653703243058/377.13686377224553/250/7
+        pthEZe9kZ5WqR5qI4-Vq6:
+          data:
+            enableFunctionCall: false
+            name: SYSTEM INFORMATION
+            promptText: No commands found to run!
+            type: user
+            useTypeInput: false
+          id: pthEZe9kZ5WqR5qI4-Vq6
+          outgoingConnections:
+            - output->"If/Else" gqKd_dWEPpEZHfcUNWGYW/false
+          title: Prompt
+          type: prompt
+          visualData: 1466.9226639256026/654.1024948581031/250/17
+        wOGBtU6aVMyEK5DuRnTXe:
+          data:
+            dataType: object[]
+            id: commands
+            useDefaultValueInput: false
+          id: wOGBtU6aVMyEK5DuRnTXe
+          outgoingConnections:
+            - data->"If" a_EfAnKA_WZ3QprwFJ_Qm/if
+            - data->"If" a_EfAnKA_WZ3QprwFJ_Qm/value
+            - data->"If/Else" gqKd_dWEPpEZHfcUNWGYW/if
+          title: Graph Input
+          type: graphInput
+          visualData: -6.4520287661832185/346.62538707922704/300/9
+    xbw1yaJUIdwWrJH3WU4fR:
+      metadata:
+        description: ""
+        id: xbw1yaJUIdwWrJH3WU4fR
+        name: RA - Chat Always System Command
+      nodes:
+        2_KA9pGsv83JjkPd1MV4q:
+          data:
+            maxIterations: 100
+          id: 2_KA9pGsv83JjkPd1MV4q
+          outgoingConnections:
+            - break->"Extract Object Path" JLLQ3v_VxM6IXG32tlhN7/object
+            - output1->"Assemble Prompt" 92_icEvqGJNAYqfRkKrnr/message1
+            - output1->"Chat" 92yohvA5jf_4rF0wdgvmp/prompt
+          title: Loop Controller
+          type: loopController
+          visualData: 1533.8593700109845/649.284081111641/250/77
+        92_icEvqGJNAYqfRkKrnr:
+          data: {}
+          id: 92_icEvqGJNAYqfRkKrnr
+          outgoingConnections:
+            - prompt->"Loop Controller" 2_KA9pGsv83JjkPd1MV4q/input1
+          title: Assemble Prompt
+          type: assemblePrompt
+          visualData: 3183.8551445458884/1025.5150016819186/250/97
+        92yohvA5jf_4rF0wdgvmp:
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 4096
+            model: gpt-4-0613
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          id: 92yohvA5jf_4rF0wdgvmp
+          outgoingConnections:
+            - response->"Loop Controller" 2_KA9pGsv83JjkPd1MV4q/input2
+            - response->"Subgraph" KurJE2VRa6wnuAIMZ0yyP/input
+          title: Chat
+          type: chat
+          visualData: 1826.1340912307267/588.4484887071343/200/79
+        ChlRAn2eL4ndq2VSH0sUb:
+          data:
+            text: "true"
+          id: ChlRAn2eL4ndq2VSH0sUb
+          outgoingConnections:
+            - output->"If/Else" m53Fm7rEKyAQRqIg7RL0Y/false
+          title: Text
+          type: text
+          visualData: 2295.886404047394/925.0804762754461/300/94
+        CzhSF51XkMyp1dbJ5h7VO:
+          data:
+            dataType: string
+            id: systemPrompt
+          id: CzhSF51XkMyp1dbJ5h7VO
+          outgoingConnections:
+            - data->"Chat" 92yohvA5jf_4rF0wdgvmp/systemPrompt
+          title: Graph Input
+          type: graphInput
+          visualData: 1075.8448771225335/539.0283254118859/300/73
+        JLLQ3v_VxM6IXG32tlhN7:
+          data:
+            path: $[1]
+            usePathInput: false
+          id: JLLQ3v_VxM6IXG32tlhN7
+          outgoingConnections:
+            - match->"Graph Output" wkQn6ctmCI1yXdo6sGGBz/value
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 1888.7070328821937/336.1543563829915/250/null
+        KurJE2VRa6wnuAIMZ0yyP:
+          data:
+            graphId: 3BWUibK-Zr_i2GjKA277_
+          id: KurJE2VRa6wnuAIMZ0yyP
+          outgoingConnections:
+            - commands->"If/Else" f5fMuI0pWIHCyvx9aU4ZU/if
+            - commands->"If/Else" m53Fm7rEKyAQRqIg7RL0Y/if
+          title: Subgraph
+          type: subGraph
+          visualData: 2095.0173532344493/633.3420929518835/300/80
+        SoW97Q838zltZj6QFkfeb:
+          data:
+            enableFunctionCall: false
+            name: SYSTEM INFORMATION
+            promptText: "{{input}}"
+            type: user
+            useTypeInput: false
+          id: SoW97Q838zltZj6QFkfeb
+          outgoingConnections:
+            - output->"Assemble Prompt" 92_icEvqGJNAYqfRkKrnr/message2
+          title: Prompt
+          type: prompt
+          visualData: 2809.218422791587/1084.5003578730216/250/96
+        W7QsTE8PujofjTwS_4-rK:
+          data:
+            text: >-
+              No system command found!
+
+
+              You must restate your entire last message, but it must be in this YAML format:
+
+
+              ```yaml
+
+              systemCommands:
+                - name: COMMAND_NAME
+                  arguments:
+                  argumentName: argument value
+              ``
+          id: W7QsTE8PujofjTwS_4-rK
+          outgoingConnections:
+            - output->"If/Else" f5fMuI0pWIHCyvx9aU4ZU/false
+          title: Text
+          type: text
+          visualData: 1971.9655784724882/1350.7092231728611/300/99
+        _t1LKZtmlsPEVBEMZB7NO:
+          data:
+            text: "false"
+          id: _t1LKZtmlsPEVBEMZB7NO
+          outgoingConnections:
+            - output->"If/Else" m53Fm7rEKyAQRqIg7RL0Y/true
+          title: Text
+          type: text
+          visualData: 2292.698006415443/797.5445709973859/300/92
+        f5fMuI0pWIHCyvx9aU4ZU:
+          data: {}
+          id: f5fMuI0pWIHCyvx9aU4ZU
+          outgoingConnections:
+            - output->"Prompt" SoW97Q838zltZj6QFkfeb/input
+          title: If/Else
+          type: ifElse
+          visualData: 2622.697161322423/1060.5873756333851/125/95
+        m53Fm7rEKyAQRqIg7RL0Y:
+          data: {}
+          id: m53Fm7rEKyAQRqIg7RL0Y
+          outgoingConnections:
+            - output->"Loop Controller" 2_KA9pGsv83JjkPd1MV4q/continue
+          title: If/Else
+          type: ifElse
+          visualData: 2686.4651139614534/728.9940219104286/125/85
+        memzsvTFav2ipoBX9uSM5:
+          data:
+            dataType: chat-message[]
+            id: prompt
+          id: memzsvTFav2ipoBX9uSM5
+          outgoingConnections:
+            - data->"Loop Controller" 2_KA9pGsv83JjkPd1MV4q/input1Default
+          title: Graph Input
+          type: graphInput
+          visualData: 1088.5984676503394/847.4338448982371/300/72
+        q13gYH-nPwuJkwVWm6EuO:
+          data:
+            text: ""
+          id: q13gYH-nPwuJkwVWm6EuO
+          outgoingConnections:
+            - output->"If/Else" f5fMuI0pWIHCyvx9aU4ZU/true
+          title: Text
+          type: text
+          visualData: 2162.480754304652/1105.0577958952597/300/100
+        wkQn6ctmCI1yXdo6sGGBz:
+          data:
+            dataType: string
+            id: response
+          id: wkQn6ctmCI1yXdo6sGGBz
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 2224.554815375056/290.04076920266385/300/101
     yoe9VPnjUULQacHSolgiL:
       metadata:
         description: ""
@@ -1724,7 +3629,7 @@ data:
         6P04DpTqBQMOYpBfJuurJ:
           data:
             text: |-
-
+              
               SYSTEM_MESSAGE:
 
               You ran this command:
@@ -3538,98 +5443,6 @@ data:
           title: Base Context
           type: prompt
           visualData: -2228.0616865013358/-551.6344392043734/528/535
-    zbg_gBTAuWckH0VQ_hTMb:
-      metadata:
-        description: ""
-        id: zbg_gBTAuWckH0VQ_hTMb
-        name: Untitled Graph
-      nodes:
-        0G74tPilGW8YNgcJiXQLz:
-          data:
-            text: You are a nonsense text generator. The user is testing message lengths, so
-              needs a bunch of stuff that doesn't make sense.
-          id: 0G74tPilGW8YNgcJiXQLz
-          outgoingConnections:
-            - output->"Chat" GNAIB_ctKlUx7UNiOxxOX/systemPrompt
-          title: Text
-          type: text
-          visualData: 759.3152628212886/473.7600118789283/300/20
-        ApW33SmfgIQcxEZz9aYQo:
-          data: {}
-          id: ApW33SmfgIQcxEZz9aYQo
-          outgoingConnections:
-            - prompt->"Loop Controller" d9_44wwp_vNnfBXa6KOqL/input1
-            - prompt->"Trim Chat Messages" ur8kbx3l8kuNYovsK5OYL/input
-          title: Assemble Prompt
-          type: assemblePrompt
-          visualData: 391/760/250/11
-        GNAIB_ctKlUx7UNiOxxOX:
-          data:
-            cache: false
-            frequencyPenalty: 0
-            maxTokens: 1024
-            model: gpt-3.5-turbo
-            presencePenalty: 0
-            stop: ""
-            temperature: 0.5
-            top_p: 1
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: false
-            usePresencePenaltyInput: false
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-          id: GNAIB_ctKlUx7UNiOxxOX
-          outgoingConnections:
-            - response->"Prompt" cufCkdmxm8bHkgxn8h2TM/input
-          title: Chat
-          type: chat
-          visualData: 1327.4502985058366/682.2456434664496/200/17
-        cufCkdmxm8bHkgxn8h2TM:
-          data:
-            promptText: "{{input}}"
-            type: assistant
-            useTypeInput: false
-          id: cufCkdmxm8bHkgxn8h2TM
-          outgoingConnections:
-            - output->"Loop Controller" d9_44wwp_vNnfBXa6KOqL/input2
-          title: Prompt
-          type: prompt
-          visualData: 1614.8081371325602/696.448398816932/null/21
-        d9_44wwp_vNnfBXa6KOqL:
-          data: {}
-          id: d9_44wwp_vNnfBXa6KOqL
-          outgoingConnections:
-            - break->"Graph Output" kkvZiHHgqJDb07PY_txkb/value
-            - output1->"Assemble Prompt" ApW33SmfgIQcxEZz9aYQo/message1
-            - output2->"Assemble Prompt" ApW33SmfgIQcxEZz9aYQo/message2
-          title: Loop Controller
-          type: loopController
-          visualData: -1/514/250/6
-        kkvZiHHgqJDb07PY_txkb:
-          data:
-            dataType: string
-            id: output
-          id: kkvZiHHgqJDb07PY_txkb
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
-          visualData: 432/363/300/15
-        ur8kbx3l8kuNYovsK5OYL:
-          data:
-            maxTokenCount: 1024
-            model: gpt-3.5-turbo
-            removeFromBeginning: true
-          id: ur8kbx3l8kuNYovsK5OYL
-          outgoingConnections:
-            - trimmed->"Chat" GNAIB_ctKlUx7UNiOxxOX/prompt
-          title: Trim Chat Messages
-          type: trimChatMessages
-          visualData: 786/690/200/16
     zdzAYsxAtpaIcWCfgFZpz:
       metadata:
         description: ""

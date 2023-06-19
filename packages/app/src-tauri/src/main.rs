@@ -22,6 +22,8 @@ fn create_menu() -> Menu {
             .add_native_item(MenuItem::HideOthers)
             .add_native_item(MenuItem::ShowAll)
             .add_native_item(MenuItem::Separator)
+            .add_item(CustomMenuItem::new("settings".to_string(), "Settings..."))
+            .add_native_item(MenuItem::Separator)
             .add_native_item(MenuItem::Quit),
     );
 

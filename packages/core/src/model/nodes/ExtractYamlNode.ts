@@ -128,7 +128,7 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
 
     if (this.data.objectPath) {
       try {
-        const extractedValue = JSONPath({ json: yamlObject, path: this.data.objectPath });
+        const extractedValue = JSONPath({ json: yamlObject, path: this.data.objectPath.trim() });
         matches = extractedValue;
         yamlObject = extractedValue.length > 0 ? extractedValue[0] : undefined;
       } catch (err) {
