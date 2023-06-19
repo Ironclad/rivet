@@ -1,9 +1,11 @@
-import { FC, memo } from 'react';
+import { FC, memo, useMemo } from 'react';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes';
-import { ChartNode } from '@ironclad/rivet-core';
+import { ChartNode, createUnknownNodeInstance } from '@ironclad/rivet-core';
 
 const UnknownNodeBody: FC<{ node: ChartNode }> = ({ node }) => {
-  return <div></div>;
+  const body = useMemo(() => createUnknownNodeInstance(node).getBody(), [node]);
+
+  return <pre className="pre-wrap">{body}</pre>;
 };
 
 export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {

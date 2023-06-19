@@ -5,16 +5,14 @@ import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.s
 import { ReactComponent as PauseIcon } from 'majesticons/line/pause-circle-line.svg';
 import { ReactComponent as PlayIcon } from 'majesticons/line/play-circle-line.svg';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { settingsModalOpenState } from './SettingsModal';
-import { loadGraphData, saveGraphData } from '../utils/fileIO';
-import { graphState } from '../state/graph';
 import { graphRunningState, graphPausedState } from '../state/dataFlow';
 import clsx from 'clsx';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
-import { useLoadProject } from '../hooks/useLoadProject';
-import { useSaveProject } from '../hooks/useSaveProject';
-import { useNewProject } from '../hooks/useNewProject';
 import { DebuggerConnectPanel } from './DebuggerConnectPanel';
+import Select from '@atlaskit/select';
+import { selectedExecutorState } from '../state/execution';
+import { promptDesignerState } from '../state/promptDesigner';
+import { useGlobalShortcut } from '../hooks/useGlobalShortcut';
 
 const styles = css`
   display: flex;
@@ -46,6 +44,15 @@ const styles = css`
 
     &:hover {
       background-color: var(--grey);
+    }
+
+    &.active {
+      background-color: var(--primary);
+      color: var(--grey-dark);
+
+      &:hover {
+        background-color: var(--primary-light);
+      }
     }
   }
 
@@ -178,6 +185,21 @@ const styles = css`
     background-color: var(--warning);
     color: var(--grey-dark);
   }
+
+  .executor {
+    display: flex;
+    align-items: center;
+
+    .executor-title,
+    .select-executor-remote {
+      color: var(--foreground);
+      font-size: 12px;
+    }
+
+    .select-executor-remote {
+      margin-left: 0.5rem;
+    }
+  }
 `;
 
 export type MenuBarProps = {
@@ -187,76 +209,58 @@ export type MenuBarProps = {
   onResumeGraph?: () => void;
 };
 
+const executorOptions = [
+  { label: 'Browser', value: 'browser' },
+  { label: 'Node', value: 'node' },
+] as const;
+
 export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGraph, onResumeGraph }) => {
-  const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
-  const [graphData, setGraphData] = useRecoilState(graphState);
-  const [fileMenuOpen, setFileMenuOpen] = useState(false);
-  const loadProject = useLoadProject();
-  const { saveProject, saveProjectAs } = useSaveProject();
-  const newProject = useNewProject();
   const [debuggerPanelOpen, setDebuggerPanelOpen] = useState(false);
+  const [selectedExecutor, setSelectedExecutor] = useRecoilState(selectedExecutorState);
 
   const graphRunning = useRecoilValue(graphRunningState);
   const graphPaused = useRecoilValue(graphPausedState);
 
   const { remoteDebuggerState: remoteDebugger, connect, disconnect } = useRemoteDebugger();
 
-  function handleNewProject() {
-    newProject();
-    setFileMenuOpen(false);
-  }
-
-  function handleLoadProject() {
-    loadProject();
-    setFileMenuOpen(false);
-  }
-
-  function handleSaveProject() {
-    saveProject();
-    setFileMenuOpen(false);
-  }
-
-  function handleSaveProjectAs() {
-    saveProjectAs();
-    setFileMenuOpen(false);
-  }
-
   function handleConnectRemoteDebugger(url: string) {
     setDebuggerPanelOpen(false);
     connect(url);
   }
 
+  const selectedExecutorOption = executorOptions.find((option) => option.value === selectedExecutor);
+
+  const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
+
+  const [promptDesigner, setPromptDesigner] = useRecoilState(promptDesignerState);
+
+  useGlobalShortcut('CmdOrCtrl+Shift+D', () => {
+    if (isActuallyRemoteDebugging || remoteDebugger.reconnecting) {
+      disconnect();
+    } else {
+      setDebuggerPanelOpen(true);
+    }
+  });
+
   return (
     <div css={styles}>
       <div className="left-menu">
-        <div className="menu-item file-menu">
-          <button className="dropdown-button" onMouseDown={() => setFileMenuOpen((open) => !open)}>
-            File
+        <div className="menu-item prompt-designer-menu">
+          <button
+            className={clsx('dropdown-item', { active: promptDesigner.isOpen })}
+            onMouseDown={() => setPromptDesigner((s) => ({ ...s, isOpen: !s.isOpen }))}
+          >
+            Prompt Designer
           </button>
-          <div className={clsx('file-dropdown', { open: fileMenuOpen })}>
-            <button onMouseUp={handleNewProject}>New Project</button>
-            <button onMouseUp={handleLoadProject}>Open Project...</button>
-            <button onMouseUp={handleSaveProject}>Save Project</button>
-            <button onMouseUp={handleSaveProjectAs}>Save Project As...</button>
-          </div>
-        </div>
-        <div className="menu-item settings-button">
-          <button onClick={() => setSettingsOpen(true)}>Settings</button>
-        </div>
-        <div className="menu-item export-button">
-          <button onClick={() => saveGraphData(graphData)}>Export Graph</button>
-        </div>
-        <div className="menu-item import-button">
-          <button onClick={() => loadGraphData((data) => setGraphData(data))}>Import</button>
         </div>
         <div className="remote-debugger">
           <div
             className={clsx('menu-item remote-debugger-button', {
-              active: remoteDebugger.started,
+              active: isActuallyRemoteDebugging,
               reconnecting: remoteDebugger.reconnecting,
             })}
           >
-            {remoteDebugger.started ? (
+            {isActuallyRemoteDebugging ? (
               <button onClick={() => disconnect()}>Disconnect Remote Debugger</button>
             ) : (
               <button onClick={() => (remoteDebugger.reconnecting ? disconnect() : setDebuggerPanelOpen(true))}>
@@ -271,7 +275,54 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
             />
           )}
         </div>
+
+        <div className="executor">
+          <label htmlFor="select-executor" className="executor-title">
+            Executor:
+          </label>
+          {isActuallyRemoteDebugging ? (
+            <span className="select-executor-remote">Remote</span>
+          ) : (
+            <Select
+              id="select-executor"
+              appearance="subtle"
+              options={executorOptions}
+              value={selectedExecutorOption}
+              onChange={(selected) => setSelectedExecutor(selected!.value)}
+              isSearchable={false}
+              isClearable={false}
+              styles={{
+                control: (provided) => ({
+                  ...provided,
+                  height: 28,
+                  minHeight: 28,
+                  padding: 0,
+                  border: 0,
+                  fontSize: 12,
+                }),
+                valueContainer: (provided) => ({
+                  ...provided,
+                  minHeight: 28,
+                  height: 28,
+                  margin: 0,
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                }),
+                indicatorsContainer: (provided) => ({
+                  ...provided,
+                  height: 28,
+                }),
+                singleValue: (provided) => ({
+                  ...provided,
+                  color: '#f0f0f0',
+                  fontFamily: 'Roboto, sans-serif',
+                }),
+              }}
+            />
+          )}
+        </div>
       </div>
+
       <div className="right-buttons">
         {graphRunning && (
           <div className={clsx('pause-button', { paused: graphPaused })}>

@@ -2,7 +2,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { loadedProjectState, projectState } from '../state/savedGraphs';
 import { saveProjectData, saveProjectDataNoPrompt } from '../utils/fileIO';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph';
-import produce from 'immer';
+import { produce } from 'immer';
 import { toast } from 'react-toastify';
 
 export function useSaveProject() {

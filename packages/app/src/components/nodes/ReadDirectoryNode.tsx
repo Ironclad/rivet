@@ -118,8 +118,20 @@ export const ReadDirectoryNodeEditor: FC<ReadDirectoryNodeEditorProps> = ({ node
         <label className="label" htmlFor="baseDirectory">
           Pick Directory
         </label>
-        <Button onClick={handleBrowseClick}>Browse...</Button>
-        <div>Current Directory: {node.data.path}</div>
+        <div>
+          <Button onClick={handleBrowseClick}>Browse...</Button>
+          <div>Current Directory: {node.data.path}</div>
+        </div>
+        <Toggle
+          id="usePathInput"
+          isChecked={node.data.usePathInput}
+          onChange={() =>
+            onChange?.({
+              ...node,
+              data: { ...node.data, usePathInput: !node.data.usePathInput },
+            })
+          }
+        />
       </div>
       <div className="row">
         <label className="label" htmlFor="recursive">

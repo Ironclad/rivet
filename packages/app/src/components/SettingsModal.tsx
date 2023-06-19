@@ -46,6 +46,15 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
                 />
               )}
             </Field>
+            <Field name="pineconeApiKey" label="Pinecone API Key">
+              {() => (
+                <TextField
+                  type="password"
+                  value={settings.pineconeApiKey}
+                  onChange={(e) => setSettings((s) => ({ ...s, pineconeApiKey: (e.target as HTMLInputElement).value }))}
+                />
+              )}
+            </Field>
           </ModalBody>
           <ModalFooter>
             <Button appearance="primary" onClick={closeModal}>

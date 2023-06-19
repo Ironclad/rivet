@@ -1,5 +1,5 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { GraphId } from '../NodeGraph';
 import { nanoid } from 'nanoid';
@@ -77,6 +77,16 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
         dataType: outputNodes.find((node) => node.data.id === id)!.data.dataType,
       }),
     );
+  }
+
+  getEditors(): EditorDefinition<SubGraphNode>[] {
+    return [
+      {
+        type: 'graphSelector',
+        label: 'Graph',
+        dataKey: 'graphId',
+      },
+    ];
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

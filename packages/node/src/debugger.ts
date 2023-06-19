@@ -1,5 +1,5 @@
 import WebSocket, { WebSocketServer } from 'ws';
-import { GraphId, GraphProcessor, getError } from './core';
+import { GraphId, GraphProcessor, Project, getError, Settings } from './core';
 import { match } from 'ts-pattern';
 import Emittery from 'emittery';
 
@@ -19,6 +19,11 @@ export interface DebuggerEvents {
   error: Error;
 }
 
+export const currentDebuggerState = {
+  uploadedProject: undefined as Project | undefined,
+  settings: undefined as Settings | undefined,
+};
+
 export function startDebuggerServer(
   options: {
     getClientsForProcessor?: (processor: GraphProcessor, allClients: WebSocket[]) => WebSocket[];
@@ -26,6 +31,7 @@ export function startDebuggerServer(
     server?: WebSocketServer;
     port?: number;
     dynamicGraphRun?: (data: { client: WebSocket; graphId: GraphId }) => Promise<void>;
+    allowGraphUpload?: boolean;
   } = {},
 ): RivetDebuggerServer {
   const { port = 21888 } = options;
@@ -45,6 +51,10 @@ export function startDebuggerServer(
           const { graphId } = message.data as { graphId: GraphId };
 
           await options.dynamicGraphRun?.({ client: socket, graphId });
+        } else if (message.type === 'set-dynamic-data' && options.allowGraphUpload) {
+          const { project, settings } = message.data as { project: Project; settings: Settings };
+          currentDebuggerState.uploadedProject = project;
+          currentDebuggerState.settings = settings;
         } else {
           const processors = options.getProcessorsForClient?.(socket, attachedProcessors) ?? attachedProcessors;
 
@@ -72,6 +82,15 @@ export function startDebuggerServer(
         }
       }
     });
+
+    if (options.allowGraphUpload) {
+      socket.send(
+        JSON.stringify({
+          message: 'graph-upload-allowed',
+          data: {},
+        }),
+      );
+    }
   });
 
   return {

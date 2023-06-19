@@ -142,15 +142,22 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
       } else {
         continueValue = coerceType(continueDataValue, 'boolean');
       }
+      console.dir({ continueValue, continueDataValue });
     }
+
+    const inputCount = Object.keys(inputs).filter((key) => key.startsWith('input') && !key.endsWith('Default')).length;
 
     if (continueValue) {
       output['break' as PortId] = { type: 'control-flow-excluded', value: 'loop-not-broken' };
     } else {
-      output['break' as PortId] = { type: 'boolean', value: true };
-    }
+      let inputValues: unknown[] = [];
+      for (let i = 1; i <= inputCount; i++) {
+        inputValues.push(inputs[`input${i}` as PortId]?.value);
+      }
 
-    const inputCount = Object.keys(inputs).filter((key) => key.startsWith('input') && !key.endsWith('Default')).length;
+      // Break gets an array of all the input values
+      output['break' as PortId] = { type: 'any[]', value: inputValues };
+    }
 
     for (let i = 1; i <= inputCount; i++) {
       if (continueValue) {

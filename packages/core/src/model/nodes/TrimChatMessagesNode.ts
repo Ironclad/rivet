@@ -1,9 +1,9 @@
 import { ChartNode, NodeId, PortId, NodeInputDefinition, NodeOutputDefinition } from '../../model/NodeBase';
 import { EditorDefinition, NodeImpl, nodeDefinition } from '../../model/NodeImpl';
 import { DataValue } from '../../model/DataValue';
-import { SupportedModels, getTokenCountForMessages, modelOptions, modelToTiktokenModel } from '../../utils/tokenizer';
+import { SupportedModels, getTokenCountForMessages, modelOptions, openaiModels } from '../../utils/tokenizer';
 import { nanoid } from 'nanoid';
-import { expectType } from '../..';
+import { Inputs, Outputs, expectType } from '../..';
 import { ChatCompletionRequestMessage } from '../../utils/openai';
 
 export type TrimChatMessagesNodeData = {
@@ -76,13 +76,13 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
     ];
   }
 
-  async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {
+  async process(inputs: Inputs): Promise<Outputs> {
     const input = expectType(inputs['input' as PortId], 'chat-message[]');
     const maxTokenCount = this.chartNode.data.maxTokenCount;
     const removeFromBeginning = this.chartNode.data.removeFromBeginning;
 
     const model = 'gpt-3.5-turbo' as SupportedModels; // You can change this to a configurable model if needed
-    const tiktokenModel = modelToTiktokenModel[model];
+    const tiktokenModel = openaiModels[model].tiktokenModel;
 
     let trimmedMessages = [...input];
 
@@ -101,7 +101,7 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
       }
       tokenCount = getTokenCountForMessages(
         trimmedMessages.map(
-          (message): ChatCompletionRequestMessage => ({ content: message.message, role: message.type }),
+          (message): ChatCompletionRequestMessage => ({ content: message.message, role: message.type, function_call: message.function_call }),
         ),
         tiktokenModel,
       );

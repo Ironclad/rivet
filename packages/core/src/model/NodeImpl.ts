@@ -7,6 +7,8 @@ import { DataType } from '..';
 export interface Settings {
   openAiKey: string;
   openAiOrganization?: string;
+
+  pineconeApiKey?: string;
 }
 
 export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['type']> {
@@ -52,6 +54,10 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
 
   getEditors(): EditorDefinition<T>[] {
     return [];
+  }
+
+  getBody(): string | undefined {
+    return undefined;
   }
 }
 
@@ -134,6 +140,14 @@ export type DropdownEditorDefinition<T extends ChartNode> = {
   useInputToggleDataKey?: DataOfType<T, boolean>;
 };
 
+export type GraphSelectorEditorDefinition<T extends ChartNode> = {
+  type: 'graphSelector';
+  label: string;
+
+  dataKey: DataOfType<T, string>;
+  useInputToggleDataKey?: DataOfType<T, boolean>;
+};
+
 export type NumberEditorDefinition<T extends ChartNode> = {
   type: 'number';
   label: string;
@@ -166,4 +180,5 @@ export type EditorDefinition<T extends ChartNode> =
   | AnyDataEditorDefinition<T>
   | DropdownEditorDefinition<T>
   | NumberEditorDefinition<T>
-  | CodeEditorDefinition<T>;
+  | CodeEditorDefinition<T>
+  | GraphSelectorEditorDefinition<T>;

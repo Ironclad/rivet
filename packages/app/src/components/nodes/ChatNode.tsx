@@ -57,11 +57,11 @@ export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
     const responseTokensAll = coerceTypeOptional(outputs['responseTokens' as PortId], 'number[]') ?? [];
     const costAll = coerceTypeOptional(outputs['cost' as PortId], 'number[]') ?? [];
 
-    const toolCallOutput = outputs['tool-call' as PortId];
-    const toolCallAll =
-      toolCallOutput?.type === 'object[]'
-        ? toolCallOutput.value.map((v) => JSON.stringify(v))
-        : coerceTypeOptional(toolCallOutput, 'string[]');
+    const functionCallOutput = outputs['function-call' as PortId];
+    const functionCallAll =
+      functionCallOutput?.type === 'object[]'
+        ? functionCallOutput.value.map((v) => JSON.stringify(v))
+        : coerceTypeOptional(functionCallOutput, 'string[]');
 
     return (
       <div className="multi-message" css={styles}>
@@ -69,7 +69,7 @@ export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
           const requestTokens = requestTokensAll?.[index];
           const responseTokens = responseTokensAll?.[index];
           const cost = costAll?.[index];
-          const toolCall = toolCallAll?.[index];
+          const functionCall = functionCallAll?.[index];
 
           return (
             <ChatNodeOutputSingle
@@ -78,7 +78,7 @@ export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
               requestTokens={requestTokens}
               responseTokens={responseTokens}
               cost={cost}
-              toolCall={toolCall}
+              functionCall={functionCall}
             />
           );
         })}
@@ -91,11 +91,11 @@ export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
     const responseTokens = coerceTypeOptional(outputs['responseTokens' as PortId], 'number');
     const cost = coerceTypeOptional(outputs['cost' as PortId], 'number');
 
-    const toolCallOutput = outputs['tool-call' as PortId];
-    const toolCall =
-      toolCallOutput?.type === 'object'
-        ? JSON.stringify(toolCallOutput.value)
-        : coerceTypeOptional(toolCallOutput, 'string');
+    const functionCallOutput = outputs['function-call' as PortId];
+    const functionCall =
+      functionCallOutput?.type === 'object'
+        ? JSON.stringify(functionCallOutput.value)
+        : coerceTypeOptional(functionCallOutput, 'string');
 
     return (
       <ChatNodeOutputSingle
@@ -103,14 +103,14 @@ export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
         requestTokens={requestTokens}
         responseTokens={responseTokens}
         cost={cost}
-        toolCall={toolCall}
+        functionCall={functionCall}
       />
     );
   }
 };
 
 const ChatNodeOutputContainer = styled.div`
-  .tool-call h4 {
+  .function-call h4 {
     margin-top: 0;
     margin-bottom: 0;
     text-decoration: none;
@@ -122,11 +122,11 @@ const ChatNodeOutputContainer = styled.div`
 
 export const ChatNodeOutputSingle: FC<{
   outputText: string | undefined;
-  toolCall: string | undefined;
+  functionCall: string | undefined;
   requestTokens: number | undefined;
   responseTokens: number | undefined;
   cost: number | undefined;
-}> = ({ outputText, toolCall, requestTokens, responseTokens, cost }) => {
+}> = ({ outputText, functionCall, requestTokens, responseTokens, cost }) => {
   return (
     <ChatNodeOutputContainer>
       {(responseTokens != null || requestTokens != null || cost != null) && (
@@ -152,11 +152,11 @@ export const ChatNodeOutputSingle: FC<{
         <RenderDataValue value={inferType(outputText)} />
       </div>
 
-      {toolCall && (
-        <div className="tool-call">
-          <h4>Tool Call:</h4>
+      {functionCall && (
+        <div className="function-call">
+          <h4>Function Call:</h4>
           <div className="pre-wrap">
-            <RenderDataValue value={inferType(toolCall)} />
+            <RenderDataValue value={inferType(functionCall)} />
           </div>
         </div>
       )}

@@ -169,8 +169,9 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
           nativeApi: options.nativeApi ?? new NodeNativeApi(),
           settings: {
             openAiKey: options.openAiKey,
-            openAiOrganization: options.openAiOrganization,
-          },
+            openAiOrganization: options.openAiOrganization ?? '',
+            pineconeApiKey: options.pineconeApiKey ?? '',
+          } satisfies Required<Settings>,
         },
         resolvedInputs,
         resolvedContextValues,

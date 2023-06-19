@@ -1,15 +1,86 @@
 import { encoding_for_model, TiktokenModel } from '@dqbd/tiktoken';
 import { ChatCompletionRequestMessage } from './openai';
 
-export const supportedModels = [
-  'gpt-4',
-  'gpt-4-32k',
-  'gpt-4-tools',
-  'gpt-3.5-turbo',
-  'gpt-3.5-turbo-tools',
-  //'text-davinci-003', 'code-davinci-002'
-] as const;
-export type SupportedModels = (typeof supportedModels)[number];
+type OpenAIModel = {
+  maxTokens: number;
+  tiktokenModel: TiktokenModel;
+  cost: {
+    prompt: number;
+    completion: number;
+  };
+  displayName: string;
+};
+
+export const openaiModels = {
+  'gpt-4': {
+    maxTokens: 8192,
+    tiktokenModel: 'gpt-4',
+    cost: {
+      prompt: 0.03,
+      completion: 0.06,
+    },
+    displayName: 'GPT-4',
+  },
+  'gpt-4-32k': {
+    maxTokens: 32768,
+    tiktokenModel: 'gpt-4-32k',
+    cost: {
+      prompt: 0.06,
+      completion: 0.12,
+    },
+    displayName: 'GPT-4 32k',
+  },
+  'gpt-4-0613': {
+    maxTokens: 8192,
+    tiktokenModel: 'gpt-4',
+    cost: {
+      prompt: 0.03,
+      completion: 0.06,
+    },
+    displayName: 'GPT-4 (v0613)',
+  },
+  'gpt-4-32k-0613': {
+    maxTokens: 32768,
+    tiktokenModel: 'gpt-4',
+    cost: {
+      prompt: 0.06,
+      completion: 0.12,
+    },
+    displayName: 'GPT-4 32k (v0613)',
+  },
+  'gpt-3.5-turbo': {
+    maxTokens: 4096,
+    tiktokenModel: 'gpt-3.5-turbo',
+    cost: {
+      prompt: 0.002,
+      completion: 0.002,
+    },
+    displayName: 'GPT-3.5 Turbo',
+  },
+
+  'gpt-3.5-turbo-0613': {
+    maxTokens: 16384,
+    tiktokenModel: 'gpt-3.5-turbo',
+    cost: {
+      prompt: 0.002,
+      completion: 0.002,
+    },
+    displayName: 'GPT-3.5 (v0613)',
+  },
+
+  'gpt-3.5-turbo-16k-0613': {
+    maxTokens: 16384,
+    tiktokenModel: 'gpt-3.5-turbo',
+    cost: {
+      prompt: 0.003,
+      completion: 0.004,
+    },
+    displayName: 'GPT-3.5 16k (v0613)',
+  },
+} satisfies Record<string, OpenAIModel>;
+
+export const supportedModels = Object.keys(openaiModels) as (keyof typeof openaiModels)[];
+export type SupportedModels = keyof typeof openaiModels;
 
 export function getTokenCountForString(input: string, model: TiktokenModel): number {
   const encoding = encoding_for_model(model);
@@ -30,26 +101,6 @@ export function getTokenCountForMessages(messages: ChatCompletionRequestMessage[
 
   return tokenCount;
 }
-
-export const modelMaxTokens: Record<SupportedModels, number> = {
-  'gpt-4': 8192,
-  'gpt-4-32k': 32768,
-  'gpt-4-tools': 8192,
-  'gpt-3.5-turbo': 4096,
-  'gpt-3.5-turbo-tools': 4096,
-  // 'text-davinci-003': 4097,
-  // 'code-davinci-002': 8001,
-} as const;
-
-export const modelToTiktokenModel: Record<SupportedModels, TiktokenModel> = {
-  'gpt-4': 'gpt-4',
-  'gpt-4-32k': 'gpt-4-32k',
-  'gpt-4-tools': 'gpt-4',
-  'gpt-3.5-turbo': 'gpt-3.5-turbo',
-  'gpt-3.5-turbo-tools': 'gpt-3.5-turbo',
-  // 'text-davinci-003': 'text-davinci-003',
-  // 'code-davinci-002': 'code-davinci-002',
-};
 
 export function assertValidModel(model: string): asserts model is SupportedModels {
   if (!supportedModels.includes(model as any)) {
@@ -77,30 +128,17 @@ export function chunkStringByTokenCount(
   return chunks;
 }
 
-const modelCost: Record<SupportedModels, { prompt: number; completion: number }> = {
-  'gpt-4': { prompt: 0.03, completion: 0.06 },
-  'gpt-4-32k': { prompt: 0.06, completion: 0.12 },
-  'gpt-4-tools': { prompt: 0.03, completion: 0.06 },
-  'gpt-3.5-turbo': { prompt: 0.002, completion: 0.002 },
-  'gpt-3.5-turbo-tools': { prompt: 0.002, completion: 0.002 },
-};
-
 export function getCostForTokens(tokenCount: number, type: 'prompt' | 'completion', model: SupportedModels) {
-  const costPerThousand = modelCost[model][type];
+  const costPerThousand = openaiModels[model].cost[type];
   return (tokenCount / 1000) * costPerThousand;
 }
 
 export function getCostForPrompt(messages: ChatCompletionRequestMessage[], model: SupportedModels) {
-  const tokenCount = getTokenCountForMessages(messages, modelToTiktokenModel[model]);
+  const tokenCount = getTokenCountForMessages(messages, openaiModels[model].tiktokenModel);
   return getCostForTokens(tokenCount, 'prompt', model);
 }
 
-export const modelDisplayNames: Record<SupportedModels, string> = {
-  'gpt-4': 'GPT-4',
-  'gpt-4-32k': 'GPT-4 32k',
-  'gpt-4-tools': 'GPT-4 Tools',
-  'gpt-3.5-turbo': 'GPT-3.5 Turbo',
-  'gpt-3.5-turbo-tools': 'GPT-3.5 Turbo Tools',
-};
-
-export const modelOptions = Object.entries(modelDisplayNames).map(([value, label]) => ({ value, label }));
+export const modelOptions = Object.entries(openaiModels).map(([id, { displayName }]) => ({
+  value: id,
+  label: displayName,
+}));

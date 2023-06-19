@@ -3,6 +3,7 @@ import { NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { ConditionallyRenderWire } from './Wire';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
+import { ErrorBoundary } from 'react-error-boundary';
 
 export type WireDef = {
   startNodeId: NodeId;
@@ -59,28 +60,32 @@ export const WireLayer: FC<WireLayerProps> = ({ connections, draggingWire, highl
     <svg css={wiresStyles}>
       <g transform={`scale(${canvasPosition.zoom}) translate(${canvasPosition.x}, ${canvasPosition.y})`}>
         {draggingWire && (
-          <ConditionallyRenderWire
-            connection={{
-              nodeId: draggingWire.startNodeId,
-              portId: draggingWire.startPortId,
-              toX: mousePositionCanvas.x,
-              toY: mousePositionCanvas.y,
-            }}
-            selected={false}
-            highlighted={false}
-            key="wire-inprogress"
-          />
+          <ErrorBoundary fallback={<></>}>
+            <ConditionallyRenderWire
+              connection={{
+                nodeId: draggingWire.startNodeId,
+                portId: draggingWire.startPortId,
+                toX: mousePositionCanvas.x,
+                toY: mousePositionCanvas.y,
+              }}
+              selected={false}
+              highlighted={false}
+              key="wire-inprogress"
+            />
+          </ErrorBoundary>
         )}
         {connections.map((connection) => {
           const highlighted =
             highlightedNodes?.includes(connection.inputNodeId) || highlightedNodes?.includes(connection.outputNodeId);
           return (
-            <ConditionallyRenderWire
-              connection={connection}
-              selected={false}
-              key={`wire-${connection.inputId}-${connection.inputNodeId}`}
-              highlighted={!!highlighted}
-            />
+            <ErrorBoundary fallback={<></>}>
+              <ConditionallyRenderWire
+                connection={connection}
+                selected={false}
+                key={`wire-${connection.inputId}-${connection.inputNodeId}`}
+                highlighted={!!highlighted}
+              />
+            </ErrorBoundary>
           );
         })}
       </g>

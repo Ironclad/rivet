@@ -5,7 +5,7 @@ import { DataValue } from '../DataValue';
 // @ts-ignore
 import yaml from 'yaml';
 import { expectType } from '../../utils/expectType';
-import * as jp from 'jsonpath';
+import { JSONPath } from 'jsonpath-plus';
 
 export type ExtractYamlNode = ChartNode<'extractYaml', ExtractYamlNodeData>;
 
@@ -128,7 +128,7 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
 
     if (this.data.objectPath) {
       try {
-        const extractedValue = jp.query(yamlObject, this.data.objectPath);
+        const extractedValue = JSONPath({ json: yamlObject, path: this.data.objectPath.trim() });
         matches = extractedValue;
         yamlObject = extractedValue.length > 0 ? extractedValue[0] : undefined;
       } catch (err) {

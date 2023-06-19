@@ -260,6 +260,7 @@ function toSerializedNode(node: ChartNode, allNodes: ChartNode[], allConnections
       .filter((connection) => connection.outputNodeId === node.id)
       .map((connection) => toSerializedConnection(connection, allNodes))
       .sort(),
+    variants: (node.variants?.length ?? 0) > 0 ? node.variants : undefined,
   };
 }
 
@@ -285,6 +286,7 @@ function fromSerializedNode(serializedNode: SerializedNode): [ChartNode, NodeCon
         zIndex: zIndex === 'null' ? undefined : parseFloat(zIndex!),
       },
       data: serializedNode.data,
+      variants: serializedNode.variants,
     },
     connections,
   ];

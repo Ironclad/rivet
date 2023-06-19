@@ -14,6 +14,7 @@ import { useGetNodeIO } from '../hooks/useGetNodeIO';
 import clsx from 'clsx';
 import { nodePortPositionCache } from './VisualNode';
 import { lineCrossesViewport } from '../utils/lineClipping';
+import { ErrorBoundary } from 'react-error-boundary';
 
 type WireProps = {
   connection: NodeConnection | PartialConnection;
@@ -108,7 +109,11 @@ export const ConditionallyRenderWire: FC<WireProps> = ({ connection, selected, h
     return null;
   }
 
-  return <Wire sx={start.x} sy={start.y} ex={end.x} ey={end.y} selected={selected} highlighted={highlighted} />;
+  return (
+    <ErrorBoundary fallback={<></>}>
+      <Wire sx={start.x} sy={start.y} ex={end.x} ey={end.y} selected={selected} highlighted={highlighted} />;
+    </ErrorBoundary>
+  );
 };
 
 export const Wire: FC<{
@@ -121,6 +126,8 @@ export const Wire: FC<{
 }> = memo(({ sx, sy, ex, ey, selected, highlighted }) => {
   const deltaX = Math.abs(ex - sx);
   const handleDistance = sx <= ex ? deltaX * 0.5 : Math.abs(ey - sy) * 0.6;
+
+  const isBackwards = sx > ex;
 
   const curveX1 = sx + handleDistance;
   const curveY1 = sy;
@@ -135,7 +142,7 @@ export const Wire: FC<{
       : `M${sx},${sy} C${curveX1},${curveY1} ${curveX1},${middleY} ${sx},${middleY} ` +
         `L${ex},${middleY} C${curveX2},${middleY} ${curveX2},${curveY2} ${ex},${ey}`;
 
-  return <path className={clsx('wire', { selected, highlighted })} d={wirePath} />;
+  return <path className={clsx('wire', { selected, highlighted, backwards: isBackwards })} d={wirePath} />;
 });
 
 export function getNodePortPosition(

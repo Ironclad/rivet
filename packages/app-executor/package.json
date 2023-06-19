@@ -1,0 +1,26 @@
+{
+  "name": "@ironclad/rivet-app-executor",
+  "bin": "./bin/executor-bundle.js",
+  "scripts": {
+    "bundle": "ts-node bundle.esbuild.ts",
+    "package": "pkg . --out-path dist --targets node18-linux-x64,node18-macos-x64,node18-win-x64",
+    "package-rename": "cp dist/rivet-app-executor-macos dist/app-executor-aarch64-apple-darwin",
+    "build": "yarn bundle && yarn package && yarn package-rename"
+  },
+  "devDependencies": {
+    "@ironclad/rivet-node": "workspace:^",
+    "@swc/core": "^1.3.63",
+    "esbuild": "^0.18.2",
+    "esbuild-plugin-copy": "^2.1.1",
+    "pkg": "^5.8.1",
+    "typescript": "^5.1.3"
+  },
+  "dependencies": {
+    "@dqbd/tiktoken": "^1.0.7"
+  },
+  "pkg": {
+    "scripts": [
+      "node_modules/@dqbd/tiktoken/**/*.js"
+    ]
+  }
+}

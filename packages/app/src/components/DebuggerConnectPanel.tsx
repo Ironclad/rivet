@@ -1,7 +1,7 @@
 import Button from '@atlaskit/button';
 import TextField from '@atlaskit/textfield';
 import { css } from '@emotion/react';
-import { ChangeEvent, FC, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
 import { Field } from '@atlaskit/form';
 
 const styles = css`
@@ -37,7 +37,16 @@ export type DebuggerConnectPanelProps = {
 };
 
 export const DebuggerConnectPanel: FC<DebuggerConnectPanelProps> = ({ onConnect, onCancel }) => {
-  const [connectUrl, setConnectUrl] = useState('');
+  const [connectUrl, setConnectUrl] = useState('ws://localhost:21888');
+
+  const textField = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (textField.current) {
+      textField.current.focus();
+      textField.current.setSelectionRange(0, textField.current.value.length);
+    }
+  }, []);
 
   return (
     <div css={styles}>
@@ -45,10 +54,16 @@ export const DebuggerConnectPanel: FC<DebuggerConnectPanelProps> = ({ onConnect,
         <Field label="Connection URL (leave blank for default localhost)" name="url">
           {() => (
             <TextField
+              ref={textField}
               autoFocus
               value={connectUrl}
               placeholder="(Default)"
               onChange={(e: ChangeEvent<HTMLInputElement>) => setConnectUrl(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  onConnect?.(connectUrl);
+                }
+              }}
             />
           )}
         </Field>

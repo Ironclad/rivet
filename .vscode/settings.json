@@ -1,11 +1,17 @@
 {
   "search.exclude": {
     "**/.yarn": true,
-    "**/.pnp.*": true
+    "**/.pnp.*": true,
+    "**/*-bundle.js": true
   },
   "eslint.nodePath": ".yarn/sdks",
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "editor.tabSize": 2,
-  "typescript.preferences.importModuleSpecifier": "project-relative"
+  "typescript.preferences.importModuleSpecifier": "project-relative",
+  "rust-analyzer.check.invocationLocation": "root",
+  "rust-analyzer.cargo.buildScripts.invocationLocation": "root",
+  "rust-analyzer.linkedProjects": [
+    "packages/app/src-tauri/Cargo.toml"
+  ]
 }

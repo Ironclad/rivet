@@ -49,7 +49,13 @@ export class NodeRegistration<
   createImpl<T extends Nodes>(node: T): NodeImpl<T> {
     const type = node.type as Extract<NodeTypes, T['type']>;
 
-    const impl = new this.#impls[type](node as any) as unknown as NodeImpl<T>;
+    const ImplClass = this.#impls[type];
+
+    if (!ImplClass) {
+      throw new Error(`Unknown node type: ${type}`);
+    }
+
+    const impl = new ImplClass(node as any) as unknown as NodeImpl<T>;
     if (!impl) {
       throw new Error(`Unknown node type: ${type}`);
     }
@@ -59,5 +65,9 @@ export class NodeRegistration<
 
   getDisplayName<T extends NodeTypes>(type: T): string {
     return this.#displayNames[type];
+  }
+
+  isRegistered(type: NodeTypes): boolean {
+    return this.#impls[type] !== undefined;
   }
 }

@@ -365,30 +365,33 @@ export const nodeStyles = css`
 
   .overlay-buttons {
     position: absolute;
-    top: 16px;
+    top: 8px;
     right: 4px;
     display: flex;
     gap: 8px;
   }
 
   .copy-button,
-  .expand-button {
+  .expand-button,
+  .prompt-designer-button {
     width: 24px;
     height: 24px;
     font-size: 24px;
-    opacity: 0;
+    opacity: 0.2;
     cursor: pointer;
     transition: opacity 0.2s;
     z-index: 1;
   }
 
   .node:hover .copy-button,
-  .node:hover .expand-button {
-    opacity: 0.2;
+  .node:hover .expand-button,
+  .node:hover .prompt-designer-button {
+    opacity: 0.35;
   }
 
   .node .copy-button:hover,
-  .node .expand-button:hover {
+  .node .expand-button:hover,
+  .node .prompt-designer-button:hover {
     opacity: 1;
   }
 

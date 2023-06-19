@@ -1,22 +1,21 @@
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
+import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
 import { nanoid } from 'nanoid';
 import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
-import { ChatMessage, GptTool, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue';
+import { ChatMessage, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue';
 import {
   assertValidModel,
   getCostForPrompt,
   getCostForTokens,
   getTokenCountForMessages,
   getTokenCountForString,
-  modelMaxTokens,
   modelOptions,
-  modelToTiktokenModel,
+  openaiModels,
 } from '../../utils/tokenizer';
 import { addWarning } from '../../utils/outputs';
 import {
+  ChatCompletionFunction,
   ChatCompletionOptions,
   ChatCompletionRequestMessage,
-  ChatCompletionToolNamespace,
   OpenAIError,
   streamChatCompletions,
 } from '../../utils/openai';
@@ -25,43 +24,37 @@ import { Inputs, Outputs } from '../GraphProcessor';
 import { match } from 'ts-pattern';
 import { coerceType, coerceTypeOptional } from '../../utils/coerceType';
 import { InternalProcessContext } from '../ProcessContext';
-import { ChatCompletionToolMap } from '../../utils/openai';
 import { expectTypeOptional, getError } from '../..';
+import { merge } from 'lodash-es';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 
-export type ChatNodeData = {
+export type ChatNodeConfigData = {
   model: string;
-  useModelInput: boolean;
-
   temperature: number;
+  useTopP: boolean;
+  top_p?: number;
+  maxTokens: number;
+  stop?: string;
+  presencePenalty?: number;
+  frequencyPenalty?: number;
+  enableFunctionUse?: boolean;
+  user?: string;
+  numberOfChoices?: number;
+};
+
+export type ChatNodeData = ChatNodeConfigData & {
+  useModelInput: boolean;
   useTemperatureInput: boolean;
-
-  top_p: number;
   useTopPInput: boolean;
-
   useTopP: boolean;
   useUseTopPInput: boolean;
-
-  maxTokens: number;
   useMaxTokensInput: boolean;
-
   useStop: boolean;
-  stop: string;
   useStopInput: boolean;
-
-  presencePenalty: number;
   usePresencePenaltyInput: boolean;
-
-  frequencyPenalty: number;
   useFrequencyPenaltyInput: boolean;
-
-  enableToolUse?: boolean;
-
-  user?: string;
   useUserInput?: boolean;
-
-  numberOfChoices?: number;
   useNumberOfChoicesInput?: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
@@ -111,7 +104,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         user: undefined,
         useUserInput: false,
 
-        enableToolUse: false,
+        enableFunctionUse: false,
 
         cache: false,
       },
@@ -218,11 +211,11 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       title: 'Prompt',
     });
 
-    if (this.data.enableToolUse) {
+    if (this.data.enableFunctionUse) {
       inputs.push({
-        dataType: ['gpt-tool', 'gpt-tool[]'] as const,
-        id: 'tools' as PortId,
-        title: 'Tools',
+        dataType: ['gpt-function', 'gpt-function[]'] as const,
+        id: 'functions' as PortId,
+        title: 'Functions',
       });
     }
 
@@ -246,11 +239,11 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       });
     }
 
-    if (this.data.enableToolUse) {
+    if (this.data.enableFunctionUse) {
       outputs.push({
         dataType: 'object',
-        id: 'tool-call' as PortId,
-        title: 'Tool Call',
+        id: 'function-call' as PortId,
+        title: 'Function Call',
       });
     }
 
@@ -341,8 +334,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       },
       {
         type: 'toggle',
-        label: 'Enable Tool Use',
-        dataKey: 'enableToolUse',
+        label: 'Enable Function Use',
+        dataKey: 'enableFunctionUse',
       },
       {
         type: 'toggle',
@@ -391,80 +384,9 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       ? coerceTypeOptional(inputs['numberOfChoices' as PortId], 'number') ?? this.data.numberOfChoices ?? 1
       : this.data.numberOfChoices ?? 1;
 
-    const prompt = inputs['prompt' as PortId];
-    if (!prompt) {
-      throw new Error('Prompt is required');
-    }
+    const functions = expectTypeOptional(inputs['functions' as PortId], 'gpt-function[]');
 
-    const tools = expectTypeOptional(inputs['tools' as PortId], 'gpt-tool[]');
-
-    let messages: ChatMessage[] = match(prompt)
-      .with({ type: 'chat-message' }, (p) => [p.value])
-      .with({ type: 'chat-message[]' }, (p) => p.value)
-      .with({ type: 'string' }, (p): ChatMessage[] => [{ type: 'user', message: p.value }])
-      .with({ type: 'string[]' }, (p): ChatMessage[] => p.value.map((v) => ({ type: 'user', message: v })))
-      .otherwise((p) => {
-        if (isArrayDataValue(p)) {
-          const stringValues = (p.value as readonly unknown[]).map((v) =>
-            coerceType(
-              {
-                type: getScalarTypeOf(p.type),
-                value: v,
-              } as ScalarDataValue,
-              'string',
-            ),
-          );
-
-          return stringValues.filter((v) => v != null).map((v) => ({ type: 'user', message: v }));
-        }
-
-        const coercedMessage = coerceType(p, 'chat-message');
-        if (coercedMessage != null) {
-          return [coercedMessage];
-        }
-
-        const coercedString = coerceType(p, 'string');
-        return coercedString != null ? [{ type: 'user', message: coerceType(p, 'string') }] : [];
-      });
-
-    const systemPrompt = inputs['systemPrompt' as PortId];
-    if (systemPrompt) {
-      messages = [{ type: 'system', message: coerceType(systemPrompt, 'string') }, ...messages];
-    }
-
-    const toolMap = (tools ?? []).reduce((acc, tool): ChatCompletionToolMap => {
-      if (tool.namespace) {
-        const existing = (acc[tool.namespace] as ChatCompletionToolNamespace) ?? {};
-        const namespace: ChatCompletionToolNamespace = {
-          ...existing,
-
-          // TODO
-          description: tool.namespace,
-          tools: {
-            ...existing.tools,
-            [tool.name]: {
-              type: 'tool',
-              description: tool.description,
-              schema: tool.schema,
-            },
-          },
-        };
-        return {
-          ...acc,
-          [tool.namespace]: namespace,
-        };
-      } else {
-        return {
-          ...acc,
-
-          [tool.name]: {
-            type: 'tool',
-            description: tool.description,
-            schema: tool.schema,
-          },
-        };
-      }
-    }, {} as ChatCompletionToolMap);
+    const { messages } = getChatNodeMessages(inputs);
 
     const completionMessages = messages.map(
       (message): ChatCompletionRequestMessage => ({
@@ -475,22 +397,22 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
     let { maxTokens } = this.data;
 
-    const tokenCount = getTokenCountForMessages(completionMessages, modelToTiktokenModel[model]);
+    const tokenCount = getTokenCountForMessages(completionMessages, openaiModels[model].tiktokenModel);
 
-    if (tokenCount >= modelMaxTokens[model]) {
+    if (tokenCount >= openaiModels[model].maxTokens) {
       throw new Error(
-        `The model ${model} can only handle ${modelMaxTokens[model]} tokens, but ${tokenCount} were provided in the prompts alone.`,
+        `The model ${model} can only handle ${openaiModels[model].maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`,
       );
     }
 
-    if (tokenCount + maxTokens > modelMaxTokens[model]) {
+    if (tokenCount + maxTokens > openaiModels[model].maxTokens) {
       const message = `The model can only handle a maximum of ${
-        modelMaxTokens[model]
+        openaiModels[model].maxTokens
       } tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${
-        modelMaxTokens[model] - tokenCount
+        openaiModels[model].maxTokens - tokenCount
       }.`;
       addWarning(output, message);
-      maxTokens = Math.floor((modelMaxTokens[model] - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
+      maxTokens = Math.floor((openaiModels[model].maxTokens - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
     }
 
     const isMultiResponse = this.data.useNumberOfChoicesInput || (this.data.numberOfChoices ?? 1) > 1;
@@ -508,8 +430,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             frequency_penalty: frequencyPenalty,
             presence_penalty: presencePenalty,
             stop: stop || undefined,
-            tools: Object.keys(toolMap).length === 0 ? undefined : toolMap,
-            format: this.data.enableToolUse ? 'merged' : undefined,
+            functions: functions?.length === 0 ? undefined : functions,
           };
           const cacheKey = JSON.stringify(options);
 
@@ -530,7 +451,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           });
 
           let responseChoicesParts: string[][] = [];
-          let toolCallChoicesParts: string[][] = [];
+          let functionCalls: object[] = [];
 
           for await (const chunk of chunks) {
             for (const { delta, index } of chunk.choices) {
@@ -539,9 +460,9 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                 responseChoicesParts[index]!.push(delta.content);
               }
 
-              if (delta.tool_call) {
-                toolCallChoicesParts[index] ??= [];
-                toolCallChoicesParts[index]!.push(delta.tool_call);
+              if (delta.function_call) {
+                functionCalls[index] ??= {};
+                functionCalls[index] = merge(functionCalls[index], delta.function_call);
               }
             }
 
@@ -557,48 +478,32 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               };
             }
 
-            if (toolCallChoicesParts.length > 0) {
-              try {
-                if (isMultiResponse) {
-                  const toolCallJsons = toolCallChoicesParts.map((choiceParts) => JSON.parse(choiceParts.join('')));
-                  output['tool-call' as PortId] = {
-                    type: 'object[]',
-                    value: toolCallJsons,
-                  };
-                } else {
-                  const toolCallJson = JSON.parse(toolCallChoicesParts[0]?.join('') ?? '');
-                  output['tool-call' as PortId] = {
-                    type: 'object',
-                    value: toolCallJson,
-                  };
-                }
-              } catch (err) {
-                if (isMultiResponse) {
-                  output['tool-call' as PortId] = {
-                    type: 'string[]',
-                    value: toolCallChoicesParts.map((parts) => parts.join('')),
-                  };
-                } else {
-                  output['tool-call' as PortId] = {
-                    type: 'string',
-                    value: toolCallChoicesParts[0]?.join('') ?? '',
-                  };
-                }
+            if (functionCalls.length > 0) {
+              if (isMultiResponse) {
+                output['function-call' as PortId] = {
+                  type: 'object[]',
+                  value: functionCalls as Record<string, unknown>[],
+                };
+              } else {
+                output['function-call' as PortId] = {
+                  type: 'object',
+                  value: functionCalls[0] as Record<string, unknown>,
+                };
               }
             }
 
             context.onPartialOutputs?.(output);
           }
 
-          if (responseChoicesParts.length === 0 && toolCallChoicesParts.length === 0) {
+          if (responseChoicesParts.length === 0 && functionCalls.length === 0) {
             throw new Error('No response from OpenAI');
           }
 
-          const requestTokenCount = getTokenCountForMessages(completionMessages, modelToTiktokenModel[model]);
+          const requestTokenCount = getTokenCountForMessages(completionMessages, openaiModels[model].tiktokenModel);
           output['requestTokens' as PortId] = { type: 'number', value: requestTokenCount * numberOfChoices };
 
           const responseTokenCount = responseChoicesParts
-            .map((choiceParts) => getTokenCountForString(choiceParts.join(), modelToTiktokenModel[model]))
+            .map((choiceParts) => getTokenCountForString(choiceParts.join(), openaiModels[model].tiktokenModel))
             .reduce((a, b) => a + b, 0);
 
           output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
@@ -615,6 +520,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         },
         {
           forever: true,
+          retries: 10000,
           maxRetryTime: 1000 * 60 * 5,
           factor: 2.5,
           minTimeout: 500,
@@ -622,37 +528,87 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           randomize: true,
           signal: context.signal,
           onFailedAttempt(err) {
+            context.trace(`ChatNode failed, retrying: ${err.toString()}`);
+
             const { retriesLeft } = err;
 
-            if (err instanceof OpenAIError) {
-              if (err.status === 429) {
-                console.warn(err);
+            if (!(err instanceof OpenAIError)) {
+              return; // Just retry?
+            }
 
-                if (retriesLeft) {
-                  context.onPartialOutputs?.({
-                    ['response' as PortId]: {
-                      type: 'string',
-                      value: 'OpenAI API rate limit exceeded, retrying...',
-                    },
-                  });
-                  return;
-                }
+            if (err.status === 429) {
+              if (retriesLeft) {
+                context.onPartialOutputs?.({
+                  ['response' as PortId]: {
+                    type: 'string',
+                    value: 'OpenAI API rate limit exceeded, retrying...',
+                  },
+                });
+                return;
               }
+            }
 
-              if (err.status === 500 || err.status === 400) {
-                console.error(err);
-                throw new Error(err.message);
-              }
-            } else {
-              console.error(err);
+            // We did something wrong (besides rate limit)
+            if (err.status >= 400 && err.status < 500) {
+              throw new Error(err.message);
             }
           },
         },
       );
     } catch (error) {
+      context.trace(getError(error).stack ?? 'Missing stack');
       throw new Error(`Error processing ChatNode: ${(error as Error).message}`);
     }
   }
 }
 
 export const chatNode = nodeDefinition(ChatNodeImpl, 'Chat');
+
+export function getChatNodeMessages(inputs: Inputs) {
+  const prompt = inputs['prompt' as PortId];
+  if (!prompt) {
+    throw new Error('Prompt is required');
+  }
+
+  let messages: ChatMessage[] = match(prompt)
+    .with({ type: 'chat-message' }, (p) => [p.value])
+    .with({ type: 'chat-message[]' }, (p) => p.value)
+    .with({ type: 'string' }, (p): ChatMessage[] => [{ type: 'user', message: p.value, function_call: undefined }])
+    .with({ type: 'string[]' }, (p): ChatMessage[] =>
+      p.value.map((v) => ({ type: 'user', message: v, function_call: undefined })),
+    )
+    .otherwise((p): ChatMessage[] => {
+      if (isArrayDataValue(p)) {
+        const stringValues = (p.value as readonly unknown[]).map((v) =>
+          coerceType(
+            {
+              type: getScalarTypeOf(p.type),
+              value: v,
+            } as ScalarDataValue,
+            'string',
+          ),
+        );
+
+        return stringValues
+          .filter((v) => v != null)
+          .map((v) => ({ type: 'user', message: v, function_call: undefined }));
+      }
+
+      const coercedMessage = coerceType(p, 'chat-message');
+      if (coercedMessage != null) {
+        return [coercedMessage];
+      }
+
+      const coercedString = coerceType(p, 'string');
+      return coercedString != null
+        ? [{ type: 'user', message: coerceType(p, 'string'), function_call: undefined }]
+        : [];
+    });
+
+  const systemPrompt = inputs['systemPrompt' as PortId];
+  if (systemPrompt) {
+    messages = [{ type: 'system', message: coerceType(systemPrompt, 'string'), function_call: undefined }, ...messages];
+  }
+
+  return { messages, systemPrompt };
+}

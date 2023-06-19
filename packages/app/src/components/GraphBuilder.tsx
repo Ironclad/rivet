@@ -15,6 +15,8 @@ import { entries } from '../utils/typeSafety';
 import { UserInputModal } from './UserInputModal';
 import Button from '@atlaskit/button';
 import { isNotNull } from '../utils/genericUtilFunctions';
+import { useFactorIntoSubgraph } from '../hooks/useFactorIntoSubgraph';
+import { ErrorBoundary } from 'react-error-boundary';
 
 const Container = styled.div`
   position: relative;
@@ -61,6 +63,8 @@ export const GraphBuilder: FC = () => {
     setConnections?.(newConnections);
   });
 
+  const factorIntoSubgraph = useFactorIntoSubgraph();
+
   const contextMenuItemSelected = useStableCallback((menuItemId: string, contextMenuData: ContextMenuData) => {
     if (menuItemId.startsWith('Add:')) {
       const nodeType = menuItemId.substring(4) as NodeType;
@@ -92,8 +96,8 @@ export const GraphBuilder: FC = () => {
       newNode.data = { ...node.data };
       newNode.visualData = {
         ...node.visualData,
-        x: node.visualData.x + 20,
-        y: node.visualData.y + 20,
+        x: node.visualData.x,
+        y: node.visualData.y + 100,
       };
       newNode.title = node.title;
       newNode.description = node.description;
@@ -108,6 +112,10 @@ export const GraphBuilder: FC = () => {
         inputNodeId: newNode.id,
       }));
       setConnections([...connections, ...newNodeConnections]);
+    }
+
+    if (menuItemId.startsWith('FactorIntoSubgraph')) {
+      factorIntoSubgraph();
     }
   });
 
@@ -158,28 +166,30 @@ export const GraphBuilder: FC = () => {
 
   return (
     <Container>
-      <NodeCanvas
-        nodes={nodes}
-        connections={connections}
-        onNodesChanged={nodesChanged}
-        onConnectionsChanged={setConnections}
-        onNodeSelected={nodeSelected}
-        selectedNodes={selectedNodes}
-        onNodeStartEditing={nodeStartEditing}
-        onContextMenuItemSelected={contextMenuItemSelected}
-      />
-      <NodeEditorRenderer />
-      {firstNodeQuestions && firstNodeQuestions.length > 0 && (
-        <Button onClick={handleOpenUserInputModal} className="user-input-modal-open" appearance="primary">
-          User Input Needed
-        </Button>
-      )}
-      <UserInputModal
-        open={isUserInputModalOpen}
-        questions={lastQuestions}
-        onSubmit={handleSubmitUserInputModal}
-        onClose={handleCloseUserInputModal}
-      />
+      <ErrorBoundary fallback={<div>Failed to render GraphBuilder</div>}>
+        <NodeCanvas
+          nodes={nodes}
+          connections={connections}
+          onNodesChanged={nodesChanged}
+          onConnectionsChanged={setConnections}
+          onNodeSelected={nodeSelected}
+          selectedNodes={selectedNodes}
+          onNodeStartEditing={nodeStartEditing}
+          onContextMenuItemSelected={contextMenuItemSelected}
+        />
+        <NodeEditorRenderer />
+        {firstNodeQuestions && firstNodeQuestions.length > 0 && (
+          <Button onClick={handleOpenUserInputModal} className="user-input-modal-open" appearance="primary">
+            User Input Needed
+          </Button>
+        )}
+        <UserInputModal
+          open={isUserInputModalOpen}
+          questions={lastQuestions}
+          onSubmit={handleSubmitUserInputModal}
+          onClose={handleCloseUserInputModal}
+        />
+      </ErrorBoundary>
     </Container>
   );
 };

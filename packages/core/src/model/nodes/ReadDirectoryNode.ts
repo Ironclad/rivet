@@ -152,22 +152,31 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
       return cached as Outputs;
     }
 
-    const files = await context.nativeApi.readdir(path, undefined, {
-      recursive,
-      includeDirectories,
-      filterGlobs,
-      relative,
-      ignores,
-    });
+    try {
+      const files = await context.nativeApi.readdir(path, undefined, {
+        recursive,
+        includeDirectories,
+        filterGlobs,
+        relative,
+        ignores,
+      });
 
-    const outputs: Outputs = {
-      ['paths' as PortId]: { type: 'string[]', value: files },
-      ['rootPath' as PortId]: { type: 'string', value: path },
-    };
+      const outputs: Outputs = {
+        ['paths' as PortId]: { type: 'string[]', value: files },
+        ['rootPath' as PortId]: { type: 'string', value: path },
+      };
 
-    context.executionCache.set(cacheKey, outputs);
+      context.executionCache.set(cacheKey, outputs);
 
-    return outputs;
+      return outputs;
+    } catch (err) {
+      const outputs: Outputs = {
+        ['paths' as PortId]: { type: 'string[]', value: ['(no such path)'] },
+        ['rootPath' as PortId]: { type: 'string', value: path },
+      };
+
+      return outputs;
+    }
   }
 }
 

@@ -1,5 +1,6 @@
 import { Opaque } from 'type-fest';
 import { DataType } from './DataValue';
+import { GraphId } from '..';
 
 /** Unique in a NodeGraph. */
 export type NodeId = Opaque<string, 'NodeId'>;
@@ -42,19 +43,37 @@ export interface NodeBase {
   /** The data associated with the node. Typed when using `Nodes` or a subtype. */
   data: unknown;
 
-  // /** Definitions for the input ports of the node. */
-  // inputDefinitions: NodeInputDefinition[];
+  /** Alternative sets of data for the node. */
+  variants?: ChartNodeVariant<unknown>[];
 
-  // /** Definitions for the output ports of the node. */
-  // outputDefinitions: NodeOutputDefinition[];
+  tests?: NodeTestGroup[];
 }
 
 /** Base type for a typed node. */
 export type ChartNode<Type extends string = string, Data = unknown> = NodeBase & {
   /** The type of the node. */
   type: Type;
+
   /** The data associated with the node. */
   data: Data;
+
+  /** Alternative sets of data for the node. */
+  variants?: ChartNodeVariant<Data>[];
+};
+
+export type ChartNodeVariant<Data = unknown> = {
+  id: string;
+  data: Data;
+};
+
+export type NodeTestGroup = {
+  id: string;
+  evaluatorGraphId: GraphId;
+  tests: NodeTest[];
+};
+
+export type NodeTest = {
+  conditionText: string;
 };
 
 export type SerializedNode = {
@@ -68,7 +87,8 @@ export type SerializedNode = {
   // x/y/width/zIndex
   visualData: `${string}/${string}/${string}/${string}`;
   outgoingConnections: SerializedNodeConnection[];
-  data: unknown;
+  data?: unknown;
+  variants?: ChartNodeVariant<unknown>[];
 };
 
 // portId->nodeId/portId

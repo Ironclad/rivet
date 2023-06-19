@@ -23,6 +23,10 @@ export const NodeContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSele
     onMenuItemSelected?.(`Duplicate:${nodeId}`);
   });
 
+  const factorIntoSubgraph = useStableCallback(() => {
+    onMenuItemSelected?.(`FactorIntoSubgraph`);
+  });
+
   return (
     <>
       <ContextMenuItem
@@ -40,6 +44,14 @@ export const NodeContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSele
           </>
         }
         onClick={duplicateNode}
+      />
+      <ContextMenuItem
+        label={
+          <>
+            <DuplicateIcon /> Create Subgraph
+          </>
+        }
+        onClick={factorIntoSubgraph}
       />
       <ContextMenuItem
         label={

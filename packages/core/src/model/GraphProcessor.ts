@@ -787,6 +787,15 @@ export class GraphProcessor {
     return processor;
   }
 
+  /** Raise a user event on the processor, all subprocessors, and their children. */
+  raiseEvent(event: string, data: DataValue) {
+    this.#emitter.emit(`userEvent:${event}`, data);
+
+    for (const subprocessor of this.#subprocessors) {
+      subprocessor.raiseEvent(event, data);
+    }
+  }
+
   async #processNodeWithInputData(
     node: ChartNode,
     inputValues: Inputs,
@@ -811,7 +820,7 @@ export class GraphProcessor {
         });
       },
       raiseEvent: (event, data) => {
-        this.#emitter.emit(`userEvent:${event}`, data);
+        this.getRootProcessor().raiseEvent(event, data as DataValue);
       },
       contextValues: this.#contextValues,
       externalFunctions: { ...this.#externalFunctions },
@@ -859,9 +868,7 @@ export class GraphProcessor {
         });
 
         processor.onAny((event, data) => {
-          if (event.startsWith('userEvent:')) {
-            this.#emitter.emit(event, data);
-          } else if (event.startsWith('globalSet:')) {
+          if (event.startsWith('globalSet:')) {
             this.#emitter.emit(event, data);
           }
         });
@@ -873,6 +880,9 @@ export class GraphProcessor {
         this.on('resume', () => processor.resume());
 
         return processor;
+      },
+      trace: (message) => {
+        this.#emitter.emit('trace', message);
       },
     };
 

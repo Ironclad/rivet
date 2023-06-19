@@ -10,7 +10,7 @@ export class OpenAIError extends Error {
   }
 }
 
-export type ChatCompletionRole = 'system' | 'assistant' | 'user' | 'tool';
+export type ChatCompletionRole = 'system' | 'assistant' | 'user' | 'function';
 
 export type ChatCompletionRequestMessage = {
   role: ChatCompletionRole;
@@ -18,11 +18,7 @@ export type ChatCompletionRequestMessage = {
   /** The content of the message. */
   content: string;
 
-  /** The target of the message. Only allowed if role = assistant. Null value indicates the user. If specified, must be a tool in the 'tools' section. */
-  recipient?: {
-    role: 'tool';
-    name: string;
-  } | null;
+  function_call?: object;
 };
 
 // https://platform.openai.com/docs/api-reference/chat/create
@@ -42,26 +38,7 @@ export type ChatCompletionOptions = {
     [key: number]: number;
   };
 
-  tools?: {
-    [name: string]: ChatCompletionTool | ChatCompletionToolNamespace;
-  };
-
-  /** Force-sets the recipient of the model response. Null means the recipient is the user. Auto means the model can pick the recipient.
-   * If tools are not present, null is the default. If tools are present, 'auto' is the default.
-   */
-  recipient?:
-    | null
-    | 'auto'
-    | {
-        role: 'tool';
-        name: string;
-      };
-
-  /**
-   * Specifies the response format of messages inside a choice. Particularly applicable when the model responds with more than one
-   * message e.g. the first message says "Sure, let me look that up" and the second message calls a tool.
-   */
-  format?: 'list' | 'merged';
+  functions?: ChatCompletionFunction[];
 };
 
 export type ChatCompletionResponse = {
@@ -74,31 +51,15 @@ export type ChatCompletionResponse = {
 
 export type ChatCompletionResponseMessage = {
   role: ChatCompletionRole;
-  recipient: {
-    role: 'tool';
-    name: string;
-  } | null;
   content: string;
+  function_call?: object;
 };
 
 export type ChatCompletionResponseChoice = {
   index: number;
-  finish_reason: 'stop' | 'length' | 'insufficient_tokens' | 'tool_message';
-} & ( // If format=null
-  | {
-      message: ChatCompletionResponseMessage;
-    }
-  // If format=list
-  | {
-      messages: ChatCompletionResponseMessage[];
-    }
-  // If format=merged
-  | {
-      messages: ChatCompletionResponseMessage & {
-        tool_call: string | null;
-      };
-    }
-);
+  finish_reason: 'stop' | 'length' | 'insufficient_tokens' | 'function_call';
+  message: ChatCompletionResponseMessage;
+};
 
 export type ChatCompletionChunk = {
   object: 'chat.completion.chunk';
@@ -112,30 +73,16 @@ export type ChatCompletionChunkChoice = {
   message_index: number;
   delta: {
     role?: 'assistant';
-    recipient?: {
-      role?: 'tool';
-      name?: string;
-    };
     content?: string;
-    tool_call?: string;
+    function_call?: object;
   };
-  finish_reason: null | 'stop' | 'length' | 'insufficient_tokens' | 'tool_message';
+  finish_reason: null | 'stop' | 'length' | 'insufficient_tokens' | 'function_call';
 };
 
-export type ChatCompletionToolMap = Record<string, ChatCompletionTool | ChatCompletionToolNamespace>;
-
-export type ChatCompletionTool = {
-  type: 'tool';
+export type ChatCompletionFunction = {
+  name: string;
   description: string;
-  schema: object;
-};
-
-export type ChatCompletionToolNamespace = {
-  type: 'namespace';
-  description: string;
-  tools: {
-    [name: string]: ChatCompletionTool;
-  };
+  parameters: object;
 };
 
 export async function* streamChatCompletions({
