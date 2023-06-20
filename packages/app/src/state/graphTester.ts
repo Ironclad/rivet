@@ -1,5 +1,5 @@
 import { GraphTestId, NodeGraphTest } from '@ironclad/rivet-core';
-import { atom } from 'recoil';
+import { atom, selector } from 'recoil';
 
 interface GraphTesterState {
   isOpen: boolean;
@@ -31,5 +31,12 @@ export const graphTesterState = atom<GraphTesterState>({
     testResults: {},
     activeInputPerturbation: 0,
     activeTestRunning: false,
+  },
+});
+
+export const graphTesterOpenState = selector({
+  key: 'graphTesterOpenState',
+  get: ({ get }) => {
+    return get(graphTesterState).isOpen;
   },
 });

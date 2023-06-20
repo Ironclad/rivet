@@ -1,6 +1,6 @@
-import { DefaultValue, atom, selector } from 'recoil';
+import { DefaultValue, atom, selector, selectorFamily } from 'recoil';
 import { persistAtom } from './persist';
-import { NodeGraph, emptyNodeGraph } from '@ironclad/rivet-core';
+import { NodeGraph, NodeOfType, NodeType, emptyNodeGraph } from '@ironclad/rivet-core';
 
 export const graphState = atom<NodeGraph>({
   key: 'graphState',
@@ -36,4 +36,13 @@ export const connectionsSelector = selector({
       };
     });
   },
+});
+
+export const nodesOfTypeState = selectorFamily({
+  key: 'nodesOfTypeState',
+  get:
+    <T extends NodeType>(type: T) =>
+    ({ get }) => {
+      return get(nodesSelector).filter((node) => node.type === type) as NodeOfType<T>[];
+    },
 });

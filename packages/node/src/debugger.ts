@@ -1,5 +1,5 @@
 import WebSocket, { WebSocketServer } from 'ws';
-import { GraphId, GraphProcessor, Project, getError, Settings } from './core';
+import { GraphId, GraphProcessor, Project, getError, Settings, RemoteDebuggerEvents } from './core';
 import { match } from 'ts-pattern';
 import Emittery from 'emittery';
 
@@ -9,7 +9,11 @@ export interface RivetDebuggerServer {
 
   webSocketServer: WebSocketServer;
 
-  broadcast(processor: GraphProcessor, message: string, data: unknown): void;
+  broadcast<T extends keyof RemoteDebuggerEvents>(
+    processor: GraphProcessor,
+    message: T,
+    data: RemoteDebuggerEvents[T],
+  ): void;
 
   attach(processor: GraphProcessor): void;
   detach(processor: GraphProcessor): void;

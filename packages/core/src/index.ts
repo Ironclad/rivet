@@ -21,3 +21,4 @@ export * from './model/integrations/enableIntegrations';
 export * from './model/integrations/VectorDatabase';
 export * from './model/integrations/EmbeddingGenerator';
 export * from './model/integrations/LLMProvider';
+export type * from './utils/RemoteDebuggerEvents';

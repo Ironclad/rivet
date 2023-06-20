@@ -1,23 +1,31 @@
 import React, { ChangeEvent, FC, useMemo, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { GraphTesterInputPerturbationResults, GraphTesterResults, graphTesterState } from '../state/graphTester';
+import { GraphTesterResults, graphTesterState } from '../state/graphTester';
 import { css } from '@emotion/react';
-import Button from '@atlaskit/button';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
-import { ChartNode, DataValue, GraphId, GraphInputNode, GraphOutputNode, GraphProcessor, NodeGraph, NodeGraphTest, NodeGraphTestInputData, NodeGraphTestValidation, PortId, Project, ScalarDataValue, coerceType } from '@ironclad/rivet-core';
-import { graphState } from '../state/graph';
-import { useGraphExecutor } from '../hooks/useGraphExecutor';
-import { projectState } from '../state/savedGraphs';
-import { TauriNativeApi } from '../model/native/TauriNativeApi';
-import { settingsState } from '../state/settings';
-import { toast } from 'react-toastify';
+import {
+  ChartNode,
+  DataValue,
+  GraphId,
+  GraphInputNode,
+  GraphOutputNode,
+  NodeGraph,
+  NodeGraphTest,
+  NodeGraphTestInputData,
+  NodeGraphTestValidation,
+  PortId,
+} from '@ironclad/rivet-core';
+import { graphState, nodesOfTypeState } from '../state/graph';
 import { GraphSelector } from './DefaultNodeEditor';
 import { Field, HelperMessage, Label } from '@atlaskit/form';
 import Select from '@atlaskit/select';
 import TextArea from '@atlaskit/textarea';
 import TextField from '@atlaskit/textfield';
+import Button from '@atlaskit/button';
 import { LoadingSpinner } from './LoadingSpinner';
-import { groupBy, keyBy } from 'lodash-es';
+import { groupBy } from 'lodash-es';
+import { useRunTest } from '../hooks/useRunTest';
+import { useStableCallback } from '../hooks/useStableCallback';
 
 const styles = css`
   position: fixed;
@@ -115,257 +123,163 @@ const styles = css`
 export const GraphTesterRenderer: FC = () => {
   const [{ isOpen }, setState] = useRecoilState(graphTesterState);
 
-  if (!isOpen) return null;
+  const close = useStableCallback(() => {
+    setState((s) => ({ ...s, isOpen: false, graphTest: undefined }));
+  });
 
-  return <GraphTester onClose={() => setState((s) => ({ ...s, isOpen: false, graphTest: undefined }))} />;
+  if (!isOpen) {
+    return null;
+  }
+
+  return <GraphTester onClose={close} />;
 };
 
 export interface GraphTesterProps {
   onClose: () => void;
 }
 
-function useRunTest() {
-  const { tryRunGraph } = useGraphExecutor();
-  const project = useRecoilValue(projectState);
-  const settings = useRecoilValue(settingsState);
-  const [{ graphTest }, setState] = useRecoilState(graphTesterState);
-
-  const pushTestResult = (testResult: GraphTesterResults) => {
-    setState((s) => ({
-      ...s,
-      testResults: {
-        ...s.testResults,
-        [s.graphTest!.id]: [...(s.testResults[s.graphTest!.id] ?? []), testResult],
-      },
-    }));
-  };
-
-  const updateLatestTestResult = (testResult: GraphTesterResults) => {
-    setState((s) => ({
-      ...s,
-      testResults: {
-        ...s.testResults,
-        [s.graphTest!.id]: [...(s.testResults[s.graphTest!.id] ?? []).slice(0, s.testResults[s.graphTest!.id]!.length - 1), testResult],
-      },
-    }));
-  };
-
-  const runTest = async () => {
-    if (!graphTest || !graphTest.testInputs) {
-      return;
-    }
-
-    const runName = `Run ${new Date().toLocaleTimeString()}`;
-    const inputPerturbationResults: GraphTesterInputPerturbationResults[] = [];
-    pushTestResult({
-      name: runName,
-      inputPerturbationResults: inputPerturbationResults.slice(),
-      isRunning: true,
-    });
-
-    for (let perturbationIdx = 0; perturbationIdx < graphTest.testInputs.length; perturbationIdx++) {
-      try {
-        setState((s) => ({ ...s, activeInputPerturbation: perturbationIdx, activeTestRunning: true }));
-        // Delay, so that state gets set.
-        await new Promise(resolve => setTimeout(resolve, 10));
-        const startTime = Date.now();
-        const outputs = await tryRunGraph();
-        const duration = Date.now() - startTime;
-        if (!outputs) {
-          // Undefined outputs means error of some kind.
-          throw new Error('Error running test');
-        }
-  
-        const validationOutput: GraphTesterInputPerturbationResults['validationOutput'] = [];
-  
-        for (const testValidation of (graphTest.testValidations ?? [])) {
-          const outputValue = outputs[testValidation.outputId];
-          if (!outputValue) {
-            validationOutput.push({ testName: testValidation.description, passed: false });
-            continue;
-          }
-  
-          const processor = new GraphProcessor(project, testValidation.evaluatorGraphId);
-  
-          const testOutputs = await processor.processGraph(
-            {
-              nativeApi: new TauriNativeApi(),
-              settings,
-            },
-            {
-              ['input' as PortId]: outputValue,
-            },
-          );
-          const testOutput = testOutputs['output' as PortId];
-  
-          if (!testOutput) {
-            validationOutput.push({ testName: testValidation.description, passed: false });
-            continue;
-          }
-  
-          const passOrFails = coerceType(testOutput, 'boolean');
-          validationOutput.push({ testName: testValidation.description, passed: passOrFails });
-        }
-  
-        inputPerturbationResults.push({
-          duration,
-          testInputIndex: perturbationIdx,
-          validationOutput,
-        });
-        updateLatestTestResult({
-          name: runName,
-          inputPerturbationResults: inputPerturbationResults.slice(),
-          isRunning: true,
-        });
-      } catch (err: any) {
-        toast.error('Error running test: ' + err.message);
-        updateLatestTestResult({
-          name: runName,
-          inputPerturbationResults: inputPerturbationResults.slice(),
-          isRunning: false,
-        });
-        setState((s) => ({ ...s, activeTestRunning: false }));
-      }
-    }
-    updateLatestTestResult({
-      name: runName,
-      inputPerturbationResults: inputPerturbationResults.slice(),
-      isRunning: false,
-    });
-    setState((s) => ({ ...s, activeTestRunning: false }));
-  }
-  return runTest;
-}
-
 export const GraphTester: FC<GraphTesterProps> = ({ onClose }) => {
-  const [{ graphTest, testResults, activeInputPerturbation, activeTestRunning }, setState] = useRecoilState(graphTesterState);
+  const [{ graphTest, testResults, activeInputPerturbation, activeTestRunning }, setState] =
+    useRecoilState(graphTesterState);
+
   const [graph, setGraph] = useRecoilState(graphState);
   const runTest = useRunTest();
 
-  const graphInputs = useMemo(() => 
-    graph.nodes.filter((n): n is GraphInputNode => n.type === 'graphInput'),
-   [graph.nodes],
-  );
+  const graphInputs = useRecoilValue(nodesOfTypeState('graphInput'));
 
   const setTest = (test: NodeGraphTest) => {
     setState((s) => ({ ...s, graphTest: test }));
-    setGraph((g) => ({ ...g, testCases: (g.testCases ?? []).map((t) => t.id === test.id ? test : t) }));
+    setGraph((g) => ({ ...g, testCases: (g.testCases ?? []).map((t) => (t.id === test.id ? test : t)) }));
   };
 
-  const addValidation = () => {
-      if (!graphTest) return;
-      setTest({
-        ...graphTest,
-        testValidations: [
-          ...(graphTest.testValidations ?? []),
-          { description: '', outputId: '' as PortId, evaluatorGraphId: '' as GraphId },
-        ]
-    });
-  }
+  const addValidation = useStableCallback(() => {
+    if (!graphTest) {
+      return;
+    }
 
-  const deleteValidation = (idx: number) => {
-    if (!graphTest) return;
     setTest({
       ...graphTest,
       testValidations: [
-        ...graphTest.testValidations.slice(0, idx),
-        ...graphTest.testValidations.slice(idx + 1),
+        ...(graphTest.testValidations ?? []),
+        { description: '', outputId: '' as PortId, evaluatorGraphId: '' as GraphId },
       ],
     });
-  };
+  });
+
+  const deleteValidation = useStableCallback((idx: number) => {
+    if (!graphTest) {
+      return;
+    }
+
+    setTest({
+      ...graphTest,
+      testValidations: [...graphTest.testValidations.slice(0, idx), ...graphTest.testValidations.slice(idx + 1)],
+    });
+  });
 
   const setValidation = (v: NodeGraphTestValidation, idx: number) => {
-    if (!graphTest) return;
+    if (!graphTest) {
+      return;
+    }
+
     setTest({
       ...graphTest,
-      testValidations: [
-        ...graphTest.testValidations.slice(0, idx),
-        v,
-        ...graphTest.testValidations.slice(idx + 1),
-      ],
+      testValidations: [...graphTest.testValidations.slice(0, idx), v, ...graphTest.testValidations.slice(idx + 1)],
     });
   };
 
   if (!graphTest) return null;
 
-  return <div css={styles}>
-    <Button className="close-graph-tester" appearance="subtle" onClick={onClose}>
-      &times;
-    </Button>
-    <div className="graph-tester-content">
-      <div className="graph-tester-metadata">
-        <InlineEditableTextfield
-          key={`graph-test-${graphTest.id}-name`}
-          label="Test Name"
-          placeholder="Test Name"
-          onConfirm={(newValue) =>
-            setTest({ ...graphTest, name: newValue })
-          }
-          defaultValue={graphTest.name ?? 'Untitled Test'}
-          readViewFitContainerWidth
-        />
-        <InlineEditableTextfield
-          key={`graph-test-${graphTest.id}-description`}
-          label="Description"
-          placeholder="Description"
-          defaultValue={graphTest.description ?? ''}
-          onConfirm={(newValue) =>
-            setTest({ ...graphTest, description: newValue })
-          }
-          readViewFitContainerWidth
-        />
-      </div>
-      <GraphTestInputEditor
-        graphInputs={graphInputs}
-        input={graphTest.testInputs?.[activeInputPerturbation] ?? { inputs: {}}}
-        setInput={(input) => setTest({ ...graphTest, testInputs: graphTest.testInputs
-          ? [
-            ...graphTest.testInputs.slice(0, activeInputPerturbation),
-            input,
-            ...graphTest.testInputs.slice(activeInputPerturbation + 1),
-          ]
-          : [input] })}
-        activeTestRunning={activeTestRunning}
-        numPerturbations={graphTest.testInputs?.length ?? 0}
-        activeInputPerturbation={activeInputPerturbation}
-        setActiveInputPerturbation={(idx) => setState((s) => ({ ...s, activeInputPerturbation: idx }))}
-        addInputPerturbation={() => {
-          setTest({
-            ...graphTest,
-            testInputs: [...graphTest.testInputs, graphTest.testInputs[graphTest.testInputs.length - 1] ?? { inputs: {} }],
-          });
-          setState((s) => ({ ...s, activeInputPerturbation: graphTest.testInputs?.length ?? 0 }));
-        }} />
-      <div className="graph-tester-validations">
-        <Label htmlFor="">Validations</Label>
-        <div className="graph-tester-validations-list">
-          {(graphTest.testValidations ?? []).map((validation, i) => {
-            return <GraphTestValidationEditor
-              key={i}
-              validation={validation}
-              setValidation={(v: NodeGraphTestValidation) => setValidation(v, i)}
-              deleteValidation={() => deleteValidation(i)}
-              graph={graph} />;
-          })}
+  return (
+    <div css={styles}>
+      <Button className="close-graph-tester" appearance="subtle" onClick={onClose}>
+        &times;
+      </Button>
+      <div className="graph-tester-content">
+        <div className="graph-tester-metadata">
+          <InlineEditableTextfield
+            key={`graph-test-${graphTest.id}-name`}
+            label="Test Name"
+            placeholder="Test Name"
+            onConfirm={(newValue) => setTest({ ...graphTest, name: newValue })}
+            defaultValue={graphTest.name ?? 'Untitled Test'}
+            readViewFitContainerWidth
+          />
+          <InlineEditableTextfield
+            key={`graph-test-${graphTest.id}-description`}
+            label="Description"
+            placeholder="Description"
+            defaultValue={graphTest.description ?? ''}
+            onConfirm={(newValue) => setTest({ ...graphTest, description: newValue })}
+            readViewFitContainerWidth
+          />
         </div>
-        <Button onClick={addValidation}>+ Add Validation</Button>
-      </div>
-      <hr />
-      <div className="graph-tester-results">
-        <div className="graph-tester-results-header">
-          <Label htmlFor="">Results</Label>
-          <Button className="run-tests" onClick={runTest}>Run</Button>
+        <GraphTestInputEditor
+          graphInputs={graphInputs}
+          input={graphTest.testInputs?.[activeInputPerturbation] ?? { inputs: {} }}
+          setInput={(input) =>
+            setTest({
+              ...graphTest,
+              testInputs: graphTest.testInputs
+                ? [
+                    ...graphTest.testInputs.slice(0, activeInputPerturbation),
+                    input,
+                    ...graphTest.testInputs.slice(activeInputPerturbation + 1),
+                  ]
+                : [input],
+            })
+          }
+          activeTestRunning={activeTestRunning}
+          numPerturbations={graphTest.testInputs?.length ?? 0}
+          activeInputPerturbation={activeInputPerturbation}
+          setActiveInputPerturbation={(idx) => setState((s) => ({ ...s, activeInputPerturbation: idx }))}
+          addInputPerturbation={() => {
+            setTest({
+              ...graphTest,
+              testInputs: [
+                ...graphTest.testInputs,
+                graphTest.testInputs[graphTest.testInputs.length - 1] ?? { inputs: {} },
+              ],
+            });
+            setState((s) => ({ ...s, activeInputPerturbation: graphTest.testInputs?.length ?? 0 }));
+          }}
+        />
+        <div className="graph-tester-validations">
+          <Label htmlFor="">Validations</Label>
+          <div className="graph-tester-validations-list">
+            {(graphTest.testValidations ?? []).map((validation, i) => {
+              return (
+                <GraphTestValidationEditor
+                  key={i}
+                  validation={validation}
+                  setValidation={(v: NodeGraphTestValidation) => setValidation(v, i)}
+                  deleteValidation={() => deleteValidation(i)}
+                  graph={graph}
+                />
+              );
+            })}
+          </div>
+          <Button onClick={addValidation}>+ Add Validation</Button>
         </div>
-        <div>
-          <GraphTestResults
-            testResults={testResults[graphTest.id] ?? []}
-            setTestResults={(t) => setState((s) => ({ ...s, testResults: { ...s.testResults, [graphTest.id]: t } }))}
+        <hr />
+        <div className="graph-tester-results">
+          <div className="graph-tester-results-header">
+            <Label htmlFor="">Results</Label>
+            <Button className="run-tests" onClick={runTest}>
+              Run
+            </Button>
+          </div>
+          <div>
+            <GraphTestResults
+              testResults={testResults[graphTest.id] ?? []}
+              setTestResults={(t) => setState((s) => ({ ...s, testResults: { ...s.testResults, [graphTest.id]: t } }))}
             />
+          </div>
         </div>
       </div>
     </div>
-  </div>;
-}
+  );
+};
 
 const GraphTestInputEditor: FC<{
   graphInputs: GraphInputNode[];
@@ -376,7 +290,16 @@ const GraphTestInputEditor: FC<{
   activeInputPerturbation: number;
   setActiveInputPerturbation: (idx: number) => void;
   addInputPerturbation: () => void;
-}> = ({ graphInputs, input, setInput, activeTestRunning, numPerturbations, activeInputPerturbation, setActiveInputPerturbation, addInputPerturbation }) => {
+}> = ({
+  graphInputs,
+  input,
+  setInput,
+  activeTestRunning,
+  numPerturbations,
+  activeInputPerturbation,
+  setActiveInputPerturbation,
+  addInputPerturbation,
+}) => {
   const inputEntries = useMemo(() => {
     return graphInputs.map((graphInput) => {
       const value = input.inputs[graphInput.data.id];
@@ -388,49 +311,58 @@ const GraphTestInputEditor: FC<{
       };
     });
   }, [graphInputs, input]);
-  return <div className="graph-tester-inputs">
-    <Label htmlFor="">Inputs</Label>
-    <div className="graph-tester-inputs-nav">
-      <Button
-        isDisabled={activeTestRunning}
-        onClick={() => setActiveInputPerturbation(Math.max(0, activeInputPerturbation - 1))}>
-        &lt;
-      </Button>
-      <span>Perturbation {activeInputPerturbation + 1} of {numPerturbations}</span>
-      {
-        activeInputPerturbation === numPerturbations - 1
-        ? <Button
+  return (
+    <div className="graph-tester-inputs">
+      <Label htmlFor="">Inputs</Label>
+      <div className="graph-tester-inputs-nav">
+        <Button
           isDisabled={activeTestRunning}
-          onClick={addInputPerturbation}>
-          + Add Perturbation
+          onClick={() => setActiveInputPerturbation(Math.max(0, activeInputPerturbation - 1))}
+        >
+          &lt;
         </Button>
-        : <Button
-          isDisabled={activeTestRunning}
-          onClick={() => setActiveInputPerturbation(Math.min(numPerturbations - 1, activeInputPerturbation + 1))}>
-          &gt;
-        </Button>
-      }
+        <span>
+          Perturbation {activeInputPerturbation + 1} of {numPerturbations}
+        </span>
+        {activeInputPerturbation === numPerturbations - 1 ? (
+          <Button isDisabled={activeTestRunning} onClick={addInputPerturbation}>
+            + Add Perturbation
+          </Button>
+        ) : (
+          <Button
+            isDisabled={activeTestRunning}
+            onClick={() => setActiveInputPerturbation(Math.min(numPerturbations - 1, activeInputPerturbation + 1))}
+          >
+            &gt;
+          </Button>
+        )}
+      </div>
+      <HelperMessage>Input perturbations should represent the same idea, expressed differently.</HelperMessage>
+      {inputEntries.map(({ id, title, dataType, value }) => {
+        return (
+          <div key={id}>
+            <Field name={`input-${id}`} label={`${id} (${title})`} isDisabled={activeTestRunning}>
+              {({ fieldProps }) => (
+                <TextArea
+                  {...fieldProps}
+                  value={String(value?.value ?? '')}
+                  onChange={(e) => {
+                    setInput({
+                      ...input,
+                      inputs: {
+                        ...input.inputs,
+                        [id]: { type: dataType, value: e.target.value as any } as DataValue,
+                      },
+                    });
+                  }}
+                />
+              )}
+            </Field>
+          </div>
+        );
+      })}
     </div>
-    <HelperMessage>Input perturbations should represent the same idea, expressed differently.</HelperMessage>
-    {inputEntries.map(({ id, title, dataType, value }) => {
-      return <div key={id}>
-        <Field name={`input-${id}`} label={`${id} (${title})`} isDisabled={activeTestRunning}>
-          {({ fieldProps }) => (
-            <TextArea
-              {...fieldProps}
-              value={String(value?.value ?? '')}
-              onChange={(e) => {setInput({
-                ...input,
-                inputs: {
-                  ...input.inputs,
-                  [id]: { type: dataType, value: e.target.value as any } as DataValue,
-                },
-              })}}
-            />)}
-        </Field>
-      </div>;
-    })}
-  </div>
+  );
 };
 
 function isGraphOutputNode(n: ChartNode): n is GraphOutputNode {
@@ -453,42 +385,48 @@ const GraphTestValidationEditor: FC<{
     if (validation.outputId === undefined) return undefined;
     return outputNodes.find((n) => n.data.id === validation.outputId);
   }, [outputNodes, validation?.outputId]);
-  return <div className="graph-tester-validation-item">
-    <Button className="delete-graph-tester-validation-item" onClick={deleteValidation} appearance="subtle">&times;</Button>
-    <div>
-      <Field name="validationDescription" label="Validation Description">
-        {({ fieldProps }) => (
-          <TextField
-            {...fieldProps}
-            value={validation.description}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setValidation({ ...validation, description: e.target.value })}
-            placeholder="eg. Should contain the best result"
-          />
-        )}
-      </Field>
+  return (
+    <div className="graph-tester-validation-item">
+      <Button className="delete-graph-tester-validation-item" onClick={deleteValidation} appearance="subtle">
+        &times;
+      </Button>
+      <div>
+        <Field name="validationDescription" label="Validation Description">
+          {({ fieldProps }) => (
+            <TextField
+              {...fieldProps}
+              value={validation.description}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setValidation({ ...validation, description: e.target.value })
+              }
+              placeholder="eg. Should contain the best result"
+            />
+          )}
+        </Field>
+      </div>
+      <div>
+        <Field name="outputToValidate" label="Output for Validation">
+          {({ fieldProps }) => (
+            <Select
+              {...fieldProps}
+              options={outputOptions}
+              value={{ label: outputInfo?.data.id, value: outputInfo?.data.id }}
+              onChange={(selected) => setValidation({ ...validation, outputId: selected!.value as PortId })}
+            />
+          )}
+        </Field>
+      </div>
+      <div>
+        <GraphSelector
+          label="Evaluator Graph (input must match type; output must be boolean)"
+          value={validation.evaluatorGraphId}
+          onChange={(selected) => setValidation({ ...validation, evaluatorGraphId: selected as GraphId })}
+          isReadonly={false}
+          name="evaluator-graph-validation"
+        />
+      </div>
     </div>
-    <div>
-      <Field name="outputToValidate" label="Output for Validation">
-        {({ fieldProps }) => (
-          <Select
-            {...fieldProps}
-            options={outputOptions}
-            value={{ label: outputInfo?.data.id, value: outputInfo?.data.id }}
-            onChange={(selected) => setValidation({ ...validation, outputId: selected!.value as PortId })}
-          />
-        )}
-      </Field>
-    </div>
-    <div>
-      <GraphSelector
-        label="Evaluator Graph (input must match type; output must be boolean)"
-        value={validation.evaluatorGraphId}
-        onChange={(selected) => setValidation({ ...validation, evaluatorGraphId: selected as GraphId })}
-        isReadonly={false}
-        name="evaluator-graph-validation"
-      />
-    </div>
-  </div>
+  );
 };
 
 const GraphTestResults: FC<{
@@ -496,36 +434,34 @@ const GraphTestResults: FC<{
   setTestResults: (t: GraphTesterResults[]) => void;
 }> = ({ testResults, setTestResults }) => {
   const setTestResult = (testResult: GraphTesterResults, idx: number) => {
-    setTestResults([
-      ...testResults.slice(0, idx),
-      testResult,
-      ...testResults.slice(idx + 1),
-    ]);
+    setTestResults([...testResults.slice(0, idx), testResult, ...testResults.slice(idx + 1)]);
   };
 
   const deleteTestResult = (idx: number) => {
-    setTestResults([
-      ...testResults.slice(0, idx),
-      ...testResults.slice(idx + 1),
-    ]);
+    setTestResults([...testResults.slice(0, idx), ...testResults.slice(idx + 1)]);
   };
 
   const maxDuration = useMemo(() => {
     return Math.max(...testResults.map((r) => Math.max(...r.inputPerturbationResults.map((r) => r.duration))));
   }, [testResults]);
 
-  return <div className="graph-tester-results-list">
-    {testResults.map((result, i) => {
-      return <GraphTestResultItem
-        key={i}
-        testResult={result}
-        isRunning={Boolean(result.isRunning) && i === testResults.length - 1}
-        setTestResult={(r) => setTestResult(r, i)}
-        deleteTestResult={() => deleteTestResult(i)}
-        maxDuration={maxDuration} />;
-    })}
-  </div>
-}
+  return (
+    <div className="graph-tester-results-list">
+      {testResults.map((result, i) => {
+        return (
+          <GraphTestResultItem
+            key={i}
+            testResult={result}
+            isRunning={Boolean(result.isRunning) && i === testResults.length - 1}
+            setTestResult={(r) => setTestResult(r, i)}
+            deleteTestResult={() => deleteTestResult(i)}
+            maxDuration={maxDuration}
+          />
+        );
+      })}
+    </div>
+  );
+};
 
 const GraphTestResultItem: FC<{
   testResult: GraphTesterResults;
@@ -549,96 +485,158 @@ const GraphTestResultItem: FC<{
       failed: passed.filter((p) => !p).length,
       total: passed.length,
     };
-  }, [testResult])
+  }, [testResult]);
   const validationInfo = useMemo(() => {
-    const validations = testResult.inputPerturbationResults.flatMap((r, perturbationIdx) => r.validationOutput.map((validationOutput, validationIdx) => ({ perturbationIdx, validationIdx, validationOutput })));
-    return Object.values(groupBy(validations, (v) => v.validationIdx))
-      .map((v) => {
-        return {
-          testName: v[0]?.validationOutput.testName,
-          passed: v.every((v) => v.validationOutput.passed),
-          perturbations: v,
-        }
-      });
-  }, [testResult])
-  return <div className="graph-tester-result-item">
-    <div className="graph-tester-result-item-status">
-      {isRunning
-        ? <LoadingSpinner />
-        : <Button className="graph-tester-result-item-delete" onClick={deleteTestResult} appearance="subtle">&times;</Button>
-      }
-    </div>
-    <InlineEditableTextfield
-      key="resultName"
-      label="Name"
-      placeholder="Test result name"
-      onConfirm={(newValue) => {
-        setTestResult(
-          { ...testResult, name: newValue },
-        );
-      }}
-      defaultValue={testResult.name}
-      readViewFitContainerWidth
-      />
-    <GraphTestResultStatistic
-      label="Average Latency"
-      helpText="Measures latency"
-      value={testResult.inputPerturbationResults.length > 0 && <>{durationInfo.avg}ms</>}
-      barLength={testResult.inputPerturbationResults.length > 0 ? durationInfo.avg / maxDuration : 0}
-      barColor="teal">
-      <div>
-        {testResult.inputPerturbationResults.map((r, i) => {
-          return <GraphTestResultStatistic
-            key={i}
-            label={`Perturbation ${i + 1}`}
-            value={r.duration + 'ms'}
-            barLength={r.duration / maxDuration}
-            barColor="teal" />;
-        })}
+    const validations = testResult.inputPerturbationResults.flatMap((r, perturbationIdx) =>
+      r.validationOutput.map((validationOutput, validationIdx) => ({
+        perturbationIdx,
+        validationIdx,
+        validationOutput,
+      })),
+    );
+    return Object.values(groupBy(validations, (v) => v.validationIdx)).map((v) => {
+      return {
+        testName: v[0]?.validationOutput.testName,
+        passed: v.every((v) => v.validationOutput.passed),
+        perturbations: v,
+      };
+    });
+  }, [testResult]);
+  return (
+    <div className="graph-tester-result-item">
+      <div className="graph-tester-result-item-status">
+        {isRunning ? (
+          <LoadingSpinner />
+        ) : (
+          <Button className="graph-tester-result-item-delete" onClick={deleteTestResult} appearance="subtle">
+            &times;
+          </Button>
+        )}
       </div>
-    </GraphTestResultStatistic>
-
-    <GraphTestResultStatistic
-      label="Passing Perturbations"
-      helpText="Measures robustness to user input"
-      value={testResult.inputPerturbationResults.length > 0 && <>{perturbationInfo.passed} / {perturbationInfo.total}</>}
-      barLength={perturbationInfo.total > 0 ? perturbationInfo.passed / perturbationInfo.total : 0}
-      barColor="green" >
-      {testResult.inputPerturbationResults.map((r, i) => {
-        return <GraphTestResultStatistic
-          key={i}
-          label={`Perturbation ${i + 1}`}
-          value={r.validationOutput.length > 0 && <>{r.validationOutput.filter((v) => v.passed).length} / {r.validationOutput.length}</>}
-          barLength={r.validationOutput.length > 0 ? r.validationOutput.filter((v) => v.passed).length / r.validationOutput.length : 0}
-          barColor="green">
-          {r.validationOutput.map((v, i2) => {
-            return <p key={i2}>{v.passed ? '✅' : '❌'} {v.testName}</p>;
+      <InlineEditableTextfield
+        key="resultName"
+        label="Name"
+        placeholder="Test result name"
+        onConfirm={(newValue) => {
+          setTestResult({ ...testResult, name: newValue });
+        }}
+        defaultValue={testResult.name}
+        readViewFitContainerWidth
+      />
+      <GraphTestResultStatistic
+        label="Average Latency"
+        helpText="Measures latency"
+        value={testResult.inputPerturbationResults.length > 0 && <>{durationInfo.avg}ms</>}
+        barLength={testResult.inputPerturbationResults.length > 0 ? durationInfo.avg / maxDuration : 0}
+        barColor="teal"
+      >
+        <div>
+          {testResult.inputPerturbationResults.map((r, i) => {
+            return (
+              <GraphTestResultStatistic
+                key={i}
+                label={`Perturbation ${i + 1}`}
+                value={r.duration + 'ms'}
+                barLength={r.duration / maxDuration}
+                barColor="teal"
+              />
+            );
           })}
-        </GraphTestResultStatistic>;
-      })}
-    </GraphTestResultStatistic>
+        </div>
+      </GraphTestResultStatistic>
 
-    <GraphTestResultStatistic
-      label="Passing Validations"
-      helpText="Measure correctness of output"
-      value={testResult.inputPerturbationResults.length > 0 && <>{validationInfo.filter(({ passed }) => passed).length} / {validationInfo.length}</>}
-      barLength={validationInfo.length > 0 ? validationInfo.filter(({ passed }) => passed).length / validationInfo.length : 0}
-      barColor="green">
-      {validationInfo.map((v, i) => {
-        return <GraphTestResultStatistic
-          key={i}
-          label={v.testName}
-          value={v.perturbations.length > 0 && <>{v.perturbations.filter((p) => p.validationOutput.passed).length} / {v.perturbations.length}</>}
-          barLength={v.perturbations.length > 0 ? v.perturbations.filter((p) => p.validationOutput.passed).length / v.perturbations.length : 0}
-          barColor="green">
-          {v.perturbations.map((perturbation, i2) => {
-            return <p key={i2}>{perturbation.validationOutput.passed ? '✅' : '❌'} Perturbation {i2 + 1}</p>;
-          })}
-        </GraphTestResultStatistic>;
-      })}
-    </GraphTestResultStatistic>
-  </div>
-}
+      <GraphTestResultStatistic
+        label="Passing Perturbations"
+        helpText="Measures robustness to user input"
+        value={
+          testResult.inputPerturbationResults.length > 0 && (
+            <>
+              {perturbationInfo.passed} / {perturbationInfo.total}
+            </>
+          )
+        }
+        barLength={perturbationInfo.total > 0 ? perturbationInfo.passed / perturbationInfo.total : 0}
+        barColor="green"
+      >
+        {testResult.inputPerturbationResults.map((r, i) => {
+          return (
+            <GraphTestResultStatistic
+              key={i}
+              label={`Perturbation ${i + 1}`}
+              value={
+                r.validationOutput.length > 0 && (
+                  <>
+                    {r.validationOutput.filter((v) => v.passed).length} / {r.validationOutput.length}
+                  </>
+                )
+              }
+              barLength={
+                r.validationOutput.length > 0
+                  ? r.validationOutput.filter((v) => v.passed).length / r.validationOutput.length
+                  : 0
+              }
+              barColor="green"
+            >
+              {r.validationOutput.map((v, i2) => {
+                return (
+                  <p key={i2}>
+                    {v.passed ? '✅' : '❌'} {v.testName}
+                  </p>
+                );
+              })}
+            </GraphTestResultStatistic>
+          );
+        })}
+      </GraphTestResultStatistic>
+
+      <GraphTestResultStatistic
+        label="Passing Validations"
+        helpText="Measure correctness of output"
+        value={
+          testResult.inputPerturbationResults.length > 0 && (
+            <>
+              {validationInfo.filter(({ passed }) => passed).length} / {validationInfo.length}
+            </>
+          )
+        }
+        barLength={
+          validationInfo.length > 0 ? validationInfo.filter(({ passed }) => passed).length / validationInfo.length : 0
+        }
+        barColor="green"
+      >
+        {validationInfo.map((v, i) => {
+          return (
+            <GraphTestResultStatistic
+              key={i}
+              label={v.testName}
+              value={
+                v.perturbations.length > 0 && (
+                  <>
+                    {v.perturbations.filter((p) => p.validationOutput.passed).length} / {v.perturbations.length}
+                  </>
+                )
+              }
+              barLength={
+                v.perturbations.length > 0
+                  ? v.perturbations.filter((p) => p.validationOutput.passed).length / v.perturbations.length
+                  : 0
+              }
+              barColor="green"
+            >
+              {v.perturbations.map((perturbation, i2) => {
+                return (
+                  <p key={i2}>
+                    {perturbation.validationOutput.passed ? '✅' : '❌'} Perturbation {i2 + 1}
+                  </p>
+                );
+              })}
+            </GraphTestResultStatistic>
+          );
+        })}
+      </GraphTestResultStatistic>
+    </div>
+  );
+};
 
 const GraphTestResultStatistic: FC<{
   label: string | React.ReactNode;
@@ -649,17 +647,25 @@ const GraphTestResultStatistic: FC<{
   children?: React.ReactNode;
 }> = ({ label, value, barLength, barColor, children, helpText }) => {
   const [showChildren, setShowChildren] = useState(false);
-  return <div className="stat-item">
-    <div className="stat-expand-control">
-      {children && <Button onClick={() => setShowChildren(!showChildren)} appearance="subtle">{showChildren ? '-' : '+'}</Button>}
+  return (
+    <div className="stat-item">
+      <div className="stat-expand-control">
+        {children && (
+          <Button onClick={() => setShowChildren(!showChildren)} appearance="subtle">
+            {showChildren ? '-' : '+'}
+          </Button>
+        )}
+      </div>
+      <div className="stat-label-and-value">
+        <p>
+          <strong>{label}:</strong> {value ?? ''}
+        </p>
+        {helpText && <HelperMessage>{helpText}</HelperMessage>}
+      </div>
+      <div className="stat-bar">
+        <div className="stat-bar-fill" style={{ width: `${barLength * 100}%`, backgroundColor: barColor }} />
+      </div>
+      {showChildren && children && <div className="stat-children">{children}</div>}
     </div>
-    <div className="stat-label-and-value">
-      <p><strong>{label}:</strong> {value ?? ''}</p>
-      {helpText && <HelperMessage>{helpText}</HelperMessage>}
-    </div>
-    <div className="stat-bar">
-      <div className="stat-bar-fill" style={{ width: `${barLength * 100}%`, backgroundColor: barColor }} />
-    </div>
-    {showChildren && children && <div className="stat-children">{children}</div>}
-  </div>
-}
+  );
+};
