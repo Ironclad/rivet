@@ -18,6 +18,7 @@ const sidebars = {
     'user-guide/working-with-projects',
     'user-guide/live-debugging',
     'user-guide/remote-debugging',
+    'user-guide/executors',
   ],
   tutorial: [
     'tutorial',

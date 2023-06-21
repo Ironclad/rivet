@@ -22,4 +22,4 @@ Rivet supports using Pinecone as a vector database. You must set your Pinecone A
 
 ![Pinecone Settings](assets/pinecone-settings.png)
 
-Additionally, **Using Pinecone requires using the Node executor**. See the [executors](./executors.md) section for more information.
+Additionally, **Using Pinecone requires using the Node executor**. See the [executors](../user-guide/executors.md) section for more information.

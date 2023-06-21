@@ -92,7 +92,7 @@ const config = {
             items: [
               {
                 label: 'Getting Started',
-                to: '/getting-started',
+                to: '/getting-started/installation',
               },
               {
                 label: 'User Guide',
