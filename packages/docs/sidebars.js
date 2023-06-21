@@ -2,8 +2,41 @@
 
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
-  userGuide: ['user-guide', 'getting-started/first-ai-agent'],
-  apiReference: ['api-reference', 'api-reference/getting-started-integration'],
+  userGuide: [
+    'user-guide',
+    {
+      type: 'category',
+      label: 'Getting Started',
+      collapsible: true,
+      collapsed: false,
+      items: ['getting-started/installation', 'getting-started/first-ai-agent'],
+    },
+    'user-guide/overview-of-interface',
+    'user-guide/adding-connecting-nodes',
+    'user-guide/executing-ai-chains',
+    'user-guide/working-with-graphs',
+    'user-guide/working-with-projects',
+    'user-guide/live-debugging',
+    'user-guide/remote-debugging',
+  ],
+  apiReference: [
+    'api-reference',
+    'api-reference/getting-started-integration',
+    {
+      type: 'category',
+      label: 'Core',
+      collapsible: true,
+      collapsed: false,
+      items: ['api-reference/core/GraphProcessor'],
+    },
+    {
+      type: 'category',
+      label: 'Node',
+      collapsible: true,
+      collapsed: false,
+      items: ['api-reference/node/runGraph'],
+    },
+  ],
   nodeReference: [
     'node-reference',
     'node-reference/all-nodes',

@@ -1,6 +1,5 @@
 ---
-id: installation
 title: Installation
 ---
 
-# Test
+# Installation
