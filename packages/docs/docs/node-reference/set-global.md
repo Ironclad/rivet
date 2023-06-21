@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Set Global'
 ---
 
-# Todo Node
+# Set Global Node

@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Wait For Event'
 ---
 
-# Todo Node
+# Wait For Event Node

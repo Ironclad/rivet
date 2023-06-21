@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Extract YAML'
 ---
 
-# Todo Node
+# Extract YAML Node

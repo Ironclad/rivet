@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Vector Store'
 ---
 
-# Todo Node
+# Vector Store Node

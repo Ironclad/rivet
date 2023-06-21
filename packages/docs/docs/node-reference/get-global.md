@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Get Global'
 ---
 
-# Todo Node
+# Get Global Node

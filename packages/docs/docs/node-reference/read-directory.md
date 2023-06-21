@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Read Directory'
 ---
 
-# Todo Node
+# Read Directory Node

@@ -1,5 +1,7 @@
 ---
-title: 'Todo'
+title: 'Assemble Prompt'
 ---
 
-# Todo Node
+# Assemble Prompt Node
+
+Docs for the assemble prompt node

@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Hash'
 ---
 
-# Todo Node
+# Hash Node

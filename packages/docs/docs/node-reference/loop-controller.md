@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Loop Controller'
 ---
 
-# Todo Node
+# Loop Controller Node

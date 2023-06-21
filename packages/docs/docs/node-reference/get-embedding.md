@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Get Embedding'
 ---
 
-# Todo Node
+# Get Embedding Node

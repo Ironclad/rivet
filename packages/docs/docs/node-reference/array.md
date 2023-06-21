@@ -1,5 +1,7 @@
 ---
-title: 'Todo'
+title: 'Array'
 ---
 
-# Todo Node
+# Array Node
+
+Docs for the array node

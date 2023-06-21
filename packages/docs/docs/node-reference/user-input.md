@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'User Input'
 ---
 
-# Todo Node
+# User Input Node

@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Vector Nearest Neighbors'
 ---
 
-# Todo Node
+# Vector Nearest Neighbors Node

@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'GPT Function'
 ---
 
-# Todo Node
+# GPT Function Node

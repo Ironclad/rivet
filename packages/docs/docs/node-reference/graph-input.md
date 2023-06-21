@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Graph Input'
 ---
 
-# Todo Node
+# Graph Input Node

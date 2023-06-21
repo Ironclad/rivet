@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Prompt'
 ---
 
-# Todo Node
+# Prompt Node

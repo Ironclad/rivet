@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Coalesce'
 ---
 
-# Todo Node
+# Coalesce Node

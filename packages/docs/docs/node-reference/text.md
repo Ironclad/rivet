@@ -1,5 +1,5 @@
 ---
-title: 'Text Node'
+title: 'Text'
 ---
 
 # Text Node

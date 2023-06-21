@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Extract Object Path'
 ---
 
-# Todo Node
+# Extract Object Path Node

@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Subgraph'
 ---
 
-# Todo Node
+# Subgraph Node

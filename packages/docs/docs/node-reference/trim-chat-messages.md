@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Trim Chat Messages'
 ---
 
-# Todo Node
+# Trim Chat Messages Node

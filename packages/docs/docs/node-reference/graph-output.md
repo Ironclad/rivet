@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Graph Output'
 ---
 
-# Todo Node
+# Graph Output Node

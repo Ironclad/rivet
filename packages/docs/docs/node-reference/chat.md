@@ -1,5 +1,5 @@
 ---
-title: 'Todo'
+title: 'Chat'
 ---
 
-# Todo Node
+# Chat Node
