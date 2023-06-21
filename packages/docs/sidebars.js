@@ -9,7 +9,7 @@ const sidebars = {
       label: 'Getting Started',
       collapsible: true,
       collapsed: false,
-      items: ['getting-started/installation', 'getting-started/first-ai-agent'],
+      items: ['getting-started/installation', 'getting-started/setup', 'getting-started/first-ai-agent'],
     },
     'user-guide/overview-of-interface',
     'user-guide/adding-connecting-nodes',
