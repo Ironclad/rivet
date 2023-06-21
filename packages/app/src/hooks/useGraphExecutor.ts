@@ -12,7 +12,7 @@ import {
   PortId,
   StringArrayDataValue,
   DataValue,
-} from '../../../core/src';
+} from '@ironclad/rivet-core';
 import { TauriNativeApi } from '../model/native/TauriNativeApi';
 import {
   lastRunDataByNodeState,

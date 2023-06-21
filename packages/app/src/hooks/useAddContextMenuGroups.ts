@@ -1,4 +1,4 @@
-import { NodeType } from '../../../core/src';
+import { NodeType } from '@ironclad/rivet-core';
 
 export const addContextMenuGroups = [
   {
