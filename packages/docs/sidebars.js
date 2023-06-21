@@ -3,7 +3,7 @@
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
   userGuide: [
-    'user-guide',
+    'introduction',
     {
       type: 'category',
       label: 'Getting Started',
@@ -18,6 +18,17 @@ const sidebars = {
     'user-guide/working-with-projects',
     'user-guide/live-debugging',
     'user-guide/remote-debugging',
+  ],
+  tutorial: [
+    'tutorial',
+    'tutorial/installing-getting-started',
+    'tutorial/simple-graph',
+    'tutorial/interpolation-more-node-types',
+    'tutorial/matching-conditionals',
+    'tutorial/yaml',
+    'tutorial/subgraphs',
+    'tutorial/splitting',
+    'tutorial/loops',
   ],
   apiReference: [
     'api-reference',

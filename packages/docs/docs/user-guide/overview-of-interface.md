@@ -1,5 +1,5 @@
 ---
-title: 'Overview of Interface'
+title: 'Overview of the Interface'
 ---
 
-# Overview of Interface
+# Overview of the Interface

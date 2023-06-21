@@ -55,9 +55,15 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'user-guide',
+            docId: 'introduction',
             position: 'left',
             label: 'User Guide',
+          },
+          {
+            type: 'doc',
+            docId: 'tutorial',
+            position: 'left',
+            label: 'Tutorial',
           },
           {
             type: 'doc',
@@ -90,7 +96,7 @@ const config = {
               },
               {
                 label: 'User Guide',
-                to: '/user-guide',
+                to: '/',
               },
               {
                 label: 'API Reference',
