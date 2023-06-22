@@ -26,10 +26,12 @@ import {
   PortId,
   ProcessId,
   Settings,
+  arrayizeDataValue,
   coerceType,
   coerceTypeOptional,
   getChatNodeMessages,
   getError,
+  isArrayDataValue,
   modelOptions,
 } from '@ironclad/rivet-core';
 import TextField from '@atlaskit/textfield';
@@ -43,8 +45,9 @@ import { settingsState } from '../state/settings';
 import { GraphSelector } from './DefaultNodeEditor';
 import TextArea from '@atlaskit/textarea';
 import { projectState } from '../state/savedGraphs';
-import { cloneDeep, findIndex, range, zip } from 'lodash-es';
+import { cloneDeep, findIndex, mapValues, range, zip } from 'lodash-es';
 import { useStableCallback } from '../hooks/useStableCallback';
+import { toast } from 'react-toastify';
 import { produce } from 'immer';
 
 const styles = css`
@@ -345,7 +348,12 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
       : undefined;
 
     if (nodeDataForAttachedNodeProcess?.inputData) {
-      const { messages } = getChatNodeMessages(nodeDataForAttachedNodeProcess.inputData);
+      let inputData = nodeDataForAttachedNodeProcess.inputData;
+      // If node is a split run, just grab the first input data.
+      if (attachedNode.isSplitRun) {
+        inputData = mapValues(inputData, (val) => isArrayDataValue(val) ? arrayizeDataValue(val)[0] : val);
+      }
+      const { messages } = getChatNodeMessages(inputData);
       setMessages({
         messages,
       });
@@ -961,42 +969,47 @@ async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
     },
   });
 
-  const result = await chatNode.process(
-    {
-      ['prompt' as PortId]: {
-        type: 'chat-message[]',
-        value: messages,
+  try {
+    const result = await chatNode.process(
+      {
+        ['prompt' as PortId]: {
+          type: 'chat-message[]',
+          value: messages,
+        },
       },
-    },
-    {
-      contextValues: {},
-      createSubProcessor: undefined!,
-      settings,
-      nativeApi: new TauriNativeApi(),
-      processId: nanoid() as ProcessId,
-      executionCache: new Map(),
-      externalFunctions: {},
-      getGlobal: undefined!,
-      graphInputs: {},
-      graphOutputs: {},
-      project: undefined!,
-      raiseEvent: undefined!,
-      setGlobal: undefined!,
-      signal,
-      trace: (value) => console.log(value),
-      waitEvent: undefined!,
-      waitForGlobal: undefined!,
-      onPartialOutputs: (outputs) => {
-        const responsePartial = coerceTypeOptional(outputs['response' as PortId], 'string');
-        if (responsePartial) {
-          onPartialResult?.(responsePartial);
-        }
-      },
-    } as InternalProcessContext,
-  );
+      {
+        contextValues: {},
+        createSubProcessor: undefined!,
+        settings,
+        nativeApi: new TauriNativeApi(),
+        processId: nanoid() as ProcessId,
+        executionCache: new Map(),
+        externalFunctions: {},
+        getGlobal: undefined!,
+        graphInputs: {},
+        graphOutputs: {},
+        project: undefined!,
+        raiseEvent: undefined!,
+        setGlobal: undefined!,
+        signal,
+        trace: (value) => console.log(value),
+        waitEvent: undefined!,
+        waitForGlobal: undefined!,
+        onPartialOutputs: (outputs) => {
+          const responsePartial = coerceTypeOptional(outputs['response' as PortId], 'string');
+          if (responsePartial) {
+            onPartialResult?.(responsePartial);
+          }
+        },
+      } as InternalProcessContext,
+    );
 
-  const response = coerceTypeOptional(result['response' as PortId], 'string');
-  return response ?? '';
+    const response = coerceTypeOptional(result['response' as PortId], 'string');
+    return response ?? '';
+  } catch (err) {
+    toast.error((err as Error).message);
+    throw err;
+  }
 }
 
 function useRunTestGroup() {
