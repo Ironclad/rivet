@@ -11,9 +11,6 @@ const initialBranch = (await $`git branch --show-current`).stdout.trim();
 try {
   // Check if the working directory is clean
   const gitStatus = (await $`git status --porcelain`).stdout.trim();
-  if (gitStatus.length > 0) {
-    throw new Error('Working directory is not clean. Commit or stash your changes before running this script.');
-  }
 
   // Parse command-line arguments
   const argv = await yargs(hideBin(process.argv))
@@ -33,7 +30,16 @@ try {
       type: 'string',
       description: 'Version name for the new tag',
     })
+    .option('only-package-json', {
+      alias: 'o',
+      type: 'boolean',
+      description: 'Only update the package.json file',
+    })
     .parseAsync();
+
+  if (gitStatus.length > 0 && argv.onlyPackageJson === false) {
+    throw new Error('Working directory is not clean. Commit or stash your changes before running this script.');
+  }
 
   // Get the latest tag
   let defaultVersion: string;
@@ -73,11 +79,17 @@ try {
   const newPackageJSON = {
     name: '@ironclad/rivet-node',
     main: 'bundle.js',
+    version: argv.version,
     types: 'packages/node/dist/index.d.ts',
     dependencies: combinedDependencies,
   };
 
   await writeFile('dist/node/package.json', JSON.stringify(newPackageJSON, null, 2));
+
+  if (argv.onlyPackageJson) {
+    console.log(`Updated package.json file with dependencies from core and node packages.`);
+    process.exit(0);
+  }
 
   // Create a temporary branch without any history
   const tempBranch = 'temp-' + argv.version;

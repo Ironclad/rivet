@@ -1,6 +1,7 @@
 import { save, open } from '@tauri-apps/api/dialog';
 import { writeFile, readTextFile } from '@tauri-apps/api/fs';
 import {
+  ExecutionRecorder,
   NodeGraph,
   Project,
   deserializeGraph,
@@ -105,6 +106,27 @@ export async function loadProjectData(callback: (data: { project: Project; path:
     const data = await readTextFile(path as string);
     const projectData = deserializeProject(data);
     callback({ project: projectData, path: path as string });
+  }
+}
+
+export async function loadRecordingData(callback: (data: { recorder: ExecutionRecorder; path: string }) => void) {
+  const path = await open({
+    filters: [
+      {
+        name: 'Rivet Recording',
+        extensions: ['rivet-recording'],
+      },
+    ],
+    multiple: false,
+    directory: false,
+    recursive: false,
+    title: 'Open recording',
+  });
+
+  if (path) {
+    const data = await readTextFile(path as string);
+    const recorder = ExecutionRecorder.deserializeFromString(data);
+    callback({ recorder, path: path as string });
   }
 }
 

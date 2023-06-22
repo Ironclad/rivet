@@ -142,7 +142,6 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
       } else {
         continueValue = coerceType(continueDataValue, 'boolean');
       }
-      console.dir({ continueValue, continueDataValue });
     }
 
     const inputCount = Object.keys(inputs).filter((key) => key.startsWith('input') && !key.endsWith('Default')).length;

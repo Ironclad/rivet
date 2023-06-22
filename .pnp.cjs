@@ -7855,6 +7855,7 @@ const RAW_RUNTIME_STATE =
           ["@types/lodash-es", "npm:4.17.7"],\
           ["@types/minimatch", "npm:5.1.2"],\
           ["@types/node", "npm:20.3.1"],\
+          ["@types/retry", "npm:0.12.2"],\
           ["@types/ws", "npm:8.5.5"],\
           ["@zilliz/milvus2-sdk-node", "npm:2.2.16"],\
           ["emittery", "npm:1.0.1"],\
@@ -7863,6 +7864,7 @@ const RAW_RUNTIME_STATE =
           ["minimatch", "npm:9.0.1"],\
           ["nanoid", "npm:3.3.6"],\
           ["p-retry", "npm:5.1.2"],\
+          ["retry", "npm:0.13.1"],\
           ["ts-node", "virtual:4a4dfdd9a7df5ec5e275841a43fbecdb97f28d7f31447ab74c1dd2a4d56fe264664aa1dc4ad44cc92e46e533864e6b71f8d1474657f30ffd4d572a69c55bcf0b#npm:10.9.1"],\
           ["ts-pattern", "npm:5.0.1"],\
           ["type-fest", "npm:3.11.1"],\

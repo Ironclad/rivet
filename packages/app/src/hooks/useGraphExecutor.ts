@@ -12,6 +12,7 @@ import {
   PortId,
   StringArrayDataValue,
   DataValue,
+  GraphOutputs,
 } from '@ironclad/rivet-core';
 import { TauriNativeApi } from '../model/native/TauriNativeApi';
 import {
@@ -22,7 +23,7 @@ import {
   graphPausedState,
   selectedProcessPageNodesState,
 } from '../state/dataFlow';
-import { selectedExecutorState } from '../state/execution';
+import { loadedRecordingState, selectedExecutorState } from '../state/execution';
 import { graphState } from '../state/graph';
 import { projectState } from '../state/savedGraphs';
 import { settingsState } from '../state/settings';
@@ -71,6 +72,7 @@ export function useGraphExecutor() {
   const setSelectedPage = useSetRecoilState(selectedProcessPageNodesState);
   const selectedExecutor = useRecoilValue(selectedExecutorState);
   useExecutorSidecar({ enabled: selectedExecutor === 'node' });
+  const loadedRecording = useRecoilValue(loadedRecordingState);
 
   const stopAll = () => {
     setGraphRunning(false);
@@ -383,7 +385,13 @@ export function useGraphExecutor() {
 
       currentProcessor.current = processor;
 
-      const results = await processor.processGraph({ settings, nativeApi: new TauriNativeApi() });
+      let results: GraphOutputs;
+
+      if (loadedRecording) {
+        results = await processor.replayRecording(loadedRecording.recorder);
+      } else {
+        results = await processor.processGraph({ settings, nativeApi: new TauriNativeApi() });
+      }
 
       console.log(results);
     } catch (e) {

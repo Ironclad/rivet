@@ -8,6 +8,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { settingsModalOpenState } from '../components/SettingsModal';
 import { loadGraphData, saveGraphData } from '../utils/fileIO';
 import { graphState } from '../state/graph';
+import { useLoadRecording } from './useLoadRecording';
 
 type MenuIds =
   | 'settings'
@@ -18,7 +19,8 @@ type MenuIds =
   | 'save_project_as'
   | 'export_graph'
   | 'import_graph'
-  | 'run';
+  | 'run'
+  | 'load_recording';
 
 const handlerState: {
   handler: (e: { payload: MenuIds }) => void;
@@ -39,6 +41,7 @@ export function useMenuCommands(
   const newProject = useNewProject();
   const loadProject = useLoadProject();
   const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
+  const { loadRecording } = useLoadRecording();
 
   useEffect(() => {
     const handler: (e: { payload: MenuIds }) => void = ({ payload }) => {
@@ -69,6 +72,9 @@ export function useMenuCommands(
         })
         .with('run', () => {
           options.onRunGraph?.();
+        })
+        .with('load_recording', () => {
+          loadRecording();
         })
         .exhaustive();
     };

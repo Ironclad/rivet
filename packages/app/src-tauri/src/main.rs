@@ -44,6 +44,11 @@ fn create_menu() -> Menu {
         Menu::new().add_native_item(MenuItem::EnterFullScreen),
     );
 
+    let debug_menu = Submenu::new(
+        "Debug",
+        Menu::new().add_item(CustomMenuItem::new("load_recording", "Load Recording...")),
+    );
+
     let window_menu = Submenu::new(
         "Window",
         Menu::new()
@@ -97,6 +102,7 @@ fn create_menu() -> Menu {
             ),
         ))
         .add_submenu(view_menu)
+        .add_submenu(debug_menu)
         .add_submenu(window_menu)
         .add_submenu(help_menu)
 }

@@ -10,9 +10,10 @@ import clsx from 'clsx';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
 import { DebuggerConnectPanel } from './DebuggerConnectPanel';
 import Select from '@atlaskit/select';
-import { selectedExecutorState } from '../state/execution';
+import { loadedRecordingState, selectedExecutorState } from '../state/execution';
 import { promptDesignerState } from '../state/promptDesigner';
 import { useGlobalShortcut } from '../hooks/useGlobalShortcut';
+import { useLoadRecording } from '../hooks/useLoadRecording';
 
 const styles = css`
   display: flex;
@@ -73,7 +74,8 @@ const styles = css`
   }
 
   .run-button button,
-  .pause-button button {
+  .pause-button button,
+  .unload-recording-button button {
     border: none;
     padding: 0.5rem 1rem;
     cursor: pointer;
@@ -97,6 +99,11 @@ const styles = css`
     &:hover {
       background-color: rgba(255, 255, 255, 0.2);
     }
+  }
+
+  .unload-recording-button button {
+    background-color: var(--warning);
+    color: var(--grey-dark);
   }
 
   .run-button.running button {
@@ -221,6 +228,9 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
   const graphRunning = useRecoilValue(graphRunningState);
   const graphPaused = useRecoilValue(graphPausedState);
 
+  const loadedRecording = useRecoilValue(loadedRecordingState);
+  const { unloadRecording } = useLoadRecording();
+
   const { remoteDebuggerState: remoteDebugger, connect, disconnect } = useRemoteDebugger();
 
   function handleConnectRemoteDebugger(url: string) {
@@ -324,6 +334,11 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
       </div>
 
       <div className="right-buttons">
+        {loadedRecording && (
+          <div className={clsx('unload-recording-button')}>
+            <button onClick={() => unloadRecording()}>Unload Recording</button>
+          </div>
+        )}
         {graphRunning && (
           <div className={clsx('pause-button', { paused: graphPaused })}>
             <button onClick={graphPaused ? onResumeGraph : onPauseGraph}>
@@ -339,11 +354,15 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
             </button>
           </div>
         )}
-        <div className={clsx('run-button', { running: graphRunning })}>
+        <div className={clsx('run-button', { running: graphRunning, recording: !!loadedRecording })}>
           <button onClick={graphRunning ? onAbortGraph : onRunGraph}>
             {graphRunning ? (
               <>
                 Abort <MultiplyIcon />
+              </>
+            ) : loadedRecording ? (
+              <>
+                Play Recording <ChevronRightIcon />
               </>
             ) : (
               <>

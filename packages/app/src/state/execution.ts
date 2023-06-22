@@ -1,5 +1,6 @@
 import { atom } from 'recoil';
 import { persistAtom } from './persist';
+import { ExecutionRecorder } from '@ironclad/rivet-core';
 
 export const remoteUploadAllowedState = atom<boolean>({
   key: 'remoteUploadAllowed',
@@ -31,4 +32,12 @@ export const remoteDebuggerState = atom<RemoteDebuggerState>({
     isInternalExecutor: false,
   },
   effects_UNSTABLE: [persistAtom],
+});
+
+export const loadedRecordingState = atom<{
+  path: string;
+  recorder: ExecutionRecorder;
+} | null>({
+  key: 'loadedRecording',
+  default: null,
 });

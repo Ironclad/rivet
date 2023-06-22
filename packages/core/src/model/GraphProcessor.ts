@@ -24,10 +24,12 @@ import { isNotNull } from '../utils/genericUtilFunctions';
 import { Project } from './Project';
 import { nanoid } from 'nanoid';
 import { InternalProcessContext, ProcessContext, ProcessId } from './ProcessContext';
+import { ExecutionRecorder } from '../recording/ExecutionRecorder';
+import { P, match } from 'ts-pattern';
 
 export type ProcessEvents = {
   /** Called when processing has started. */
-  start: void;
+  start: { project: Project; inputs: GraphInputs; contextValues: Record<string, DataValue> };
 
   /** Called when a graph or subgraph has started. */
   graphStart: { graph: NodeGraph; inputs: GraphInputs };
@@ -128,6 +130,9 @@ export class GraphProcessor {
   #isPaused = false;
   #parent: GraphProcessor | undefined;
   id = nanoid();
+
+  /** The interval between nodeFinish events when playing back a recording. I.e. how fast the playback is. */
+  recordingPlaybackChatLatency = 1000;
 
   // Per-process state
   #erroredNodes: Map<NodeId, string> = undefined!;
@@ -295,6 +300,171 @@ export class GraphProcessor {
     await this.#emitter.once('resume');
   }
 
+  async replayRecording(recorder: ExecutionRecorder): Promise<GraphOutputs> {
+    const { events } = recorder;
+
+    this.#initProcessState();
+
+    const nodesByIdAllGraphs: Record<NodeId, ChartNode> = {};
+    for (const graph of Object.values(this.#project.graphs)) {
+      for (const node of graph.nodes) {
+        nodesByIdAllGraphs[node.id] = node;
+      }
+    }
+
+    const getGraph = (graphId: GraphId) => {
+      const graph = this.#project.graphs[graphId];
+      if (!graph) {
+        throw new Error(`Mismatch between project and recording: graph ${graphId} not found in project`);
+      }
+      return graph;
+    };
+
+    const getNode = (nodeId: NodeId) => {
+      const node = nodesByIdAllGraphs[nodeId];
+
+      if (!node) {
+        throw new Error(`Mismatch between project and recording: node ${nodeId} not found in any graph in project`);
+      }
+
+      return node;
+    };
+
+    for (const event of events) {
+      await this.#waitUntilUnpaused();
+
+      await match(event)
+        .with({ type: 'start' }, ({ data }) => {
+          this.#emitter.emit('start', {
+            project: this.#project,
+            contextValues: data.contextValues,
+            inputs: data.inputs,
+          });
+          this.#contextValues = data.contextValues;
+          this.#graphInputs = data.inputs;
+        })
+        .with({ type: 'abort' }, () => {
+          this.#emitter.emit('abort', void 0);
+        })
+        .with({ type: 'pause' }, () => {})
+        .with({ type: 'resume' }, () => {})
+        .with({ type: 'done' }, ({ data }) => {
+          this.#emitter.emit('done', data);
+          this.#graphOutputs = data.results;
+          this.#running = false;
+        })
+        .with({ type: 'error' }, ({ data }) => {
+          this.#emitter.emit('error', data);
+        })
+        .with({ type: 'globalSet' }, ({ data }) => {
+          this.#emitter.emit('globalSet', data);
+        })
+        .with({ type: 'trace' }, ({ data }) => {
+          this.#emitter.emit('trace', data);
+        })
+        .with({ type: 'graphStart' }, ({ data }) => {
+          this.#emitter.emit('graphStart', {
+            graph: getGraph(data.graphId),
+            inputs: data.inputs,
+          });
+        })
+        .with({ type: 'graphFinish' }, ({ data }) => {
+          this.#emitter.emit('graphFinish', {
+            graph: getGraph(data.graphId),
+            outputs: data.outputs,
+          });
+        })
+        .with({ type: 'graphError' }, ({ data }) => {
+          this.#emitter.emit('graphError', {
+            graph: getGraph(data.graphId),
+            error: data.error,
+          });
+        })
+        .with({ type: 'nodeStart' }, async ({ data }) => {
+          const node = getNode(data.nodeId);
+          this.#emitter.emit('nodeStart', {
+            node: getNode(data.nodeId),
+            inputs: data.inputs,
+            processId: data.processId,
+          });
+
+          // Every time a chat node starts, we wait for the playback interval
+          if (node.type === 'chat') {
+            await new Promise((resolve) => setTimeout(resolve, this.recordingPlaybackChatLatency));
+          }
+        })
+        .with({ type: 'nodeFinish' }, ({ data }) => {
+          const node = getNode(data.nodeId);
+          this.#emitter.emit('nodeFinish', {
+            node,
+            outputs: data.outputs,
+            processId: data.processId,
+          });
+
+          this.#nodeResults.set(data.nodeId, data.outputs);
+          this.#visitedNodes.add(data.nodeId);
+        })
+        .with({ type: 'nodeError' }, ({ data }) => {
+          this.#emitter.emit('nodeError', {
+            node: getNode(data.nodeId),
+            error: data.error,
+            processId: data.processId,
+          });
+
+          this.#erroredNodes.set(data.nodeId, data.error);
+          this.#visitedNodes.add(data.nodeId);
+        })
+        .with({ type: 'nodeExcluded' }, ({ data }) => {
+          this.#emitter.emit('nodeExcluded', {
+            node: getNode(data.nodeId),
+            processId: data.processId,
+          });
+
+          this.#visitedNodes.add(data.nodeId);
+        })
+        .with({ type: 'nodeOutputsCleared' }, () => {})
+        .with({ type: 'partialOutput' }, () => {})
+        .with({ type: 'userInput' }, ({ data }) => {
+          this.#emitter.emit('userInput', {
+            callback: undefined!,
+            inputs: data.inputs,
+            node: getNode(data.nodeId) as UserInputNode,
+            processId: data.processId,
+          });
+        })
+        .with({ type: P.string.startsWith('globalSet:') }, ({ type, data }) => {
+          this.#emitter.emit(type, data);
+        })
+        .with({ type: P.string.startsWith('userEvent:') }, ({ type, data }) => {
+          this.#emitter.emit(type, data);
+        })
+        .with(undefined, () => {})
+        .exhaustive();
+    }
+
+    return this.#graphOutputs;
+  }
+
+  #initProcessState() {
+    this.#running = true;
+    this.#nodeResults = new Map();
+    this.#erroredNodes = new Map();
+    this.#visitedNodes = new Set();
+    this.#currentlyProcessing = new Set();
+    this.#remainingNodes = new Set(this.#graph.nodes.map((n) => n.id));
+    this.#pendingUserInputs = {};
+    this.#abortController = new AbortController();
+    this.#processingQueue = new PQueue({ concurrency: Infinity });
+    this.#graphOutputs = {};
+    this.#executionCache ??= new Map();
+    this.#queuedNodes = new Set();
+    this.#loopControllersSeen = new Set();
+    this.#subprocessors = new Set();
+    this.#loopInfoForNode = new Map();
+
+    this.#globals ??= new Map();
+  }
+
   /** Main function for running a graph. Runs a graph and returns the outputs from the output nodes of the graph. */
   async processGraph(
     /** Required and optional context available to the nodes and all subgraphs. */
@@ -311,29 +481,18 @@ export class GraphProcessor {
         throw new Error('Cannot process graph while already processing');
       }
 
-      this.#running = true;
-      this.#context = context;
-      this.#nodeResults = new Map();
-      this.#erroredNodes = new Map();
-      this.#visitedNodes = new Set();
-      this.#currentlyProcessing = new Set();
-      this.#remainingNodes = new Set(this.#graph.nodes.map((n) => n.id));
-      this.#pendingUserInputs = {};
-      this.#abortController = new AbortController();
-      this.#processingQueue = new PQueue({ concurrency: Infinity });
-      this.#graphInputs = inputs;
-      this.#graphOutputs = {};
-      this.#executionCache ??= new Map();
-      this.#queuedNodes = new Set();
-      this.#loopControllersSeen = new Set();
-      this.#subprocessors = new Set();
-      this.#loopInfoForNode = new Map();
+      this.#initProcessState();
 
-      this.#globals ??= new Map();
+      this.#context = context;
+      this.#graphInputs = inputs;
       this.#contextValues ??= contextValues;
 
       if (!this.#isSubProcessor) {
-        this.#emitter.emit('start', void 0);
+        this.#emitter.emit('start', {
+          contextValues: this.#contextValues,
+          inputs: this.#graphInputs,
+          project: this.#project,
+        });
       }
 
       this.#emitter.emit('graphStart', { graph: this.#graph, inputs: this.#graphInputs });

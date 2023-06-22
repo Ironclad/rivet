@@ -17,6 +17,7 @@ import Button from '@atlaskit/button';
 import { isNotNull } from '../utils/genericUtilFunctions';
 import { useFactorIntoSubgraph } from '../hooks/useFactorIntoSubgraph';
 import { ErrorBoundary } from 'react-error-boundary';
+import { loadedRecordingState } from '../state/execution';
 
 const Container = styled.div`
   position: relative;
@@ -27,6 +28,16 @@ const Container = styled.div`
     right: 0;
     z-index: 100;
   }
+
+  .recording-border {
+    border: 3px solid var(--warning-dark);
+    position: absolute;
+    top: 32px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
 `;
 
 export const GraphBuilder: FC = () => {
@@ -35,6 +46,7 @@ export const GraphBuilder: FC = () => {
   const [selectedNodeIds, setSelectedNodeIds] = useRecoilState(selectedNodesState);
   const { clientToCanvasPosition } = useCanvasPositioning();
   const setEditingNodeId = useSetRecoilState(editingNodeState);
+  const loadedRecording = useRecoilValue(loadedRecordingState);
 
   const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {
     setNodes?.(newNodes);
@@ -177,6 +189,7 @@ export const GraphBuilder: FC = () => {
           onNodeStartEditing={nodeStartEditing}
           onContextMenuItemSelected={contextMenuItemSelected}
         />
+        {loadedRecording && <div className="recording-border" />}
         <NodeEditorRenderer />
         {firstNodeQuestions && firstNodeQuestions.length > 0 && (
           <Button onClick={handleOpenUserInputModal} className="user-input-modal-open" appearance="primary">
