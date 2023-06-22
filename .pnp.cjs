@@ -55,6 +55,7 @@ const RAW_RUNTIME_STATE =
           ["@types/eslint", "npm:8.40.2"],\
           ["@types/node", "npm:20.3.1"],\
           ["@types/yargs", "npm:17.0.24"],\
+          ["chalk", "npm:5.2.0"],\
           ["esbuild", "npm:0.18.2"],\
           ["eslint", "npm:8.42.0"],\
           ["rollup", "npm:3.25.1"],\
@@ -7699,6 +7700,7 @@ const RAW_RUNTIME_STATE =
           ["@types/eslint", "npm:8.40.2"],\
           ["@types/node", "npm:20.3.1"],\
           ["@types/yargs", "npm:17.0.24"],\
+          ["chalk", "npm:5.2.0"],\
           ["esbuild", "npm:0.18.2"],\
           ["eslint", "npm:8.42.0"],\
           ["rollup", "npm:3.25.1"],\
