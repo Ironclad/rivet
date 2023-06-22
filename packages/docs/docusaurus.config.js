@@ -9,6 +9,7 @@ const config = {
   title: 'Rivet',
   tagline: 'IDE and Library for Creating AI Agents',
   favicon: 'img/favicon.ico',
+  noIndex: true, // Restrict search engine indexing. Remove once Rivet is publicly open-sourced.
 
   url: 'https://rivet.ironcladapp.com',
   baseUrl: '/',
