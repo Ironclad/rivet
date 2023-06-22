@@ -6,8 +6,8 @@ title: 'Text'
 
 Text nodes are string constants used to pass data to other nodes.
 
-## Properties
+## Config Data
 - text - The text to pass to other nodes.
 
-## Connections
+## Ports
 - output - Outputs the text to other nodes.
