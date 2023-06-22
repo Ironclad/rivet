@@ -23,7 +23,7 @@ Splitting is most useful for parallelizing execution. For example, you could use
 
 The most powerful feature of splitting is its ability to chain splits.
 
-For the above example, the Read File could then be piped into a split [Text Node](../node-reference/text), to interpolate the contents of each file into another string. The split Text node can then be piped into a split [Chat Node](../node-reference/chat), to send each file's contents to a chatbot in parallel. The output of the Chat node will be an array of strings, which can then be piped into a split [Write File Node](../node-reference/write-file), to write each response to a file in parallel.
+For the above example, the Read File could then be piped into a split [Text Node](../node-reference/text), to interpolate the contents of each file into another string. The split Text node can then be piped into a split [Chat Node](../node-reference/chat), to send each file's contents to a chatbot in parallel. The output of the Chat node will be an array of strings, giving you the response from the AI for each file.
 
 ## Joining
 
