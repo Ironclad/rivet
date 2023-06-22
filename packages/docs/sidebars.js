@@ -7,7 +7,8 @@ const sidebars = {
     {
       type: 'category',
       label: 'Getting Started',
-      collapsible: false,
+      collapsible: true,
+      collapsed: false,
       items: ['getting-started/installation', 'getting-started/setup', 'getting-started/first-ai-agent'],
     },
     // {
@@ -19,7 +20,8 @@ const sidebars = {
     {
       type: 'category',
       label: 'Working with Rivet',
-      collapsible: false,
+      collapsible: true,
+      collapsed: false,
       items: [
         'user-guide/overview-of-interface',
         'user-guide/adding-connecting-nodes',
@@ -34,14 +36,23 @@ const sidebars = {
     {
       type: 'category',
       label: 'Debugging',
-      collapsible: false,
+      collapsible: true,
+      collapsed: false,
       items: ['user-guide/live-debugging', 'user-guide/remote-debugging'],
     },
     {
       type: 'category',
       label: 'Testing',
-      collapsible: false,
+      collapsible: true,
+      collapsed: false,
       items: ['user-guide/node-testing', 'user-guide/graph-testing'],
+    },
+    {
+      type: 'category',
+      label: 'Advanced',
+      collapsible: true,
+      collapsed: false,
+      items: ['user-guide/data-types', 'user-guide/control-flow', 'user-guide/loops'],
     },
   ],
   tutorial: [
