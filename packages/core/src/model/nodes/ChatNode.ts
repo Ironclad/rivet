@@ -441,6 +441,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             }
           }
 
+          const startTime = Date.now();
+
           const chunks = streamChatCompletions({
             auth: {
               apiKey: context.settings.openAiKey,
@@ -495,6 +497,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             context.onPartialOutputs?.(output);
           }
 
+          const endTime = Date.now();
+
           if (responseChoicesParts.length === 0 && functionCalls.length === 0) {
             throw new Error('No response from OpenAI');
           }
@@ -512,6 +516,10 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             getCostForPrompt(completionMessages, model) + getCostForTokens(responseTokenCount, 'completion', model);
 
           output['cost' as PortId] = { type: 'number', value: cost };
+
+          const duration = endTime - startTime;
+
+          output['duration' as PortId] = { type: 'number', value: duration };
 
           Object.freeze(output);
           cache.set(cacheKey, output);

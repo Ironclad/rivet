@@ -56,6 +56,7 @@ export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
     const requestTokensAll = coerceTypeOptional(outputs['requestTokens' as PortId], 'number[]') ?? [];
     const responseTokensAll = coerceTypeOptional(outputs['responseTokens' as PortId], 'number[]') ?? [];
     const costAll = coerceTypeOptional(outputs['cost' as PortId], 'number[]') ?? [];
+    const durationAll = coerceTypeOptional(outputs['duration' as PortId], 'number[]') ?? [];
 
     const functionCallOutput = outputs['function-call' as PortId];
     const functionCallAll =
@@ -69,6 +70,7 @@ export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
           const requestTokens = requestTokensAll?.[index];
           const responseTokens = responseTokensAll?.[index];
           const cost = costAll?.[index];
+          const duration = durationAll?.[index];
           const functionCall = functionCallAll?.[index];
 
           return (
@@ -78,6 +80,7 @@ export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
               requestTokens={requestTokens}
               responseTokens={responseTokens}
               cost={cost}
+              duration={duration}
               functionCall={functionCall}
             />
           );
@@ -90,6 +93,7 @@ export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
     const requestTokens = coerceTypeOptional(outputs['requestTokens' as PortId], 'number');
     const responseTokens = coerceTypeOptional(outputs['responseTokens' as PortId], 'number');
     const cost = coerceTypeOptional(outputs['cost' as PortId], 'number');
+    const duration = coerceTypeOptional(outputs['duration' as PortId], 'number');
 
     const functionCallOutput = outputs['function-call' as PortId];
     const functionCall =
@@ -104,6 +108,7 @@ export const ChatNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
         responseTokens={responseTokens}
         cost={cost}
         functionCall={functionCall}
+        duration={duration}
       />
     );
   }
@@ -126,7 +131,8 @@ export const ChatNodeOutputSingle: FC<{
   requestTokens: number | undefined;
   responseTokens: number | undefined;
   cost: number | undefined;
-}> = ({ outputText, functionCall, requestTokens, responseTokens, cost }) => {
+  duration: number | undefined;
+}> = ({ outputText, functionCall, requestTokens, responseTokens, cost, duration }) => {
   return (
     <ChatNodeOutputContainer>
       {(responseTokens != null || requestTokens != null || cost != null) && (
@@ -144,6 +150,11 @@ export const ChatNodeOutputSingle: FC<{
           {(cost ?? 0) > 0 && (
             <div>
               <em>${cost!.toFixed(3)}</em>
+            </div>
+          )}
+          {(duration ?? 0) > 0 && (
+            <div>
+              <em>Duration: {duration}ms</em>
             </div>
           )}
         </div>
