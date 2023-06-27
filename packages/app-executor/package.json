@@ -4,7 +4,7 @@
   "scripts": {
     "bundle": "ts-node bundle.esbuild.ts",
     "package": "pkg . --out-path dist --targets node18-linux-x64,node18-macos-x64,node18-win-x64",
-    "package-rename": "cp dist/rivet-app-executor-macos dist/app-executor-aarch64-apple-darwin",
+    "package-rename": "/bin/sh -c \"cp dist/rivet-app-executor-macos dist/app-executor-`rustc -Vv | grep host | cut -f2 -d' '`\"",
     "build": "yarn bundle && yarn package && yarn package-rename"
   },
   "devDependencies": {
