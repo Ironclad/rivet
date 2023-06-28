@@ -116,7 +116,11 @@ export class VectorStoreNodeImpl extends NodeImpl<VectorStoreNode> {
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
-    const vectorDb = getIntegration('vectorDatabase', this.data.integration, context);
+    const integration = this.data.useIntegrationInput
+      ? coerceTypeOptional(inputs['integration' as PortId], 'string') ?? this.data.integration
+      : this.data.integration;
+
+    const vectorDb = getIntegration('vectorDatabase', integration, context);
 
     if (inputs['vector' as PortId]?.type !== 'vector') {
       throw new Error(`Expected vector input, got ${inputs['vector' as PortId]?.type}`);

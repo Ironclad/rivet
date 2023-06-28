@@ -35,7 +35,10 @@ export const PromptNodeBody: FC<PromptNodeBodyProps> = memo(({ node }) => {
   return (
     <Body>
       <div>
-        <em>{typeDisplay[node.data.type]}:</em>
+        <em>
+          {typeDisplay[node.data.type]}
+          {node.data.name ? ` (${node.data.name})` : ''}:
+        </em>
       </div>
       <pre ref={bodyRef} className="pre-wrap" data-lang="prompt-interpolation">
         {truncated}

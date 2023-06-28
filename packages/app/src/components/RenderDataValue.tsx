@@ -61,7 +61,8 @@ export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number 
     return <>undefined</>;
   }
 
-  if ((value?.value as any)?.type && (value?.value as any)?.value) {
+  const keys = Object.keys(value?.value ?? {});
+  if (keys.length === 2 && keys.includes('type') && keys.includes('value')) {
     return <div>ERROR: INVALID VALUE: {JSON.stringify(value)}</div>;
   }
 

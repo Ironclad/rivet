@@ -44,6 +44,15 @@ export class VectorNearestNeighborsNodeImpl extends NodeImpl<VectorNearestNeighb
       required: true,
     });
 
+    if (this.data.useIntegrationInput) {
+      inputDefinitions.push({
+        id: 'integration' as PortId,
+        title: 'Integration',
+        dataType: 'string',
+        required: true,
+      });
+    }
+
     if (this.data.useCollectionIdInput) {
       inputDefinitions.push({
         id: 'collectionId' as PortId,
@@ -126,7 +135,10 @@ export class VectorNearestNeighborsNodeImpl extends NodeImpl<VectorNearestNeighb
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
-    const vectorDb = getIntegration('vectorDatabase', this.data.integration, context);
+    const integration = this.data.useIntegrationInput
+      ? coerceTypeOptional(inputs['integration' as PortId], 'string') ?? this.data.integration
+      : this.data.integration;
+    const vectorDb = getIntegration('vectorDatabase', integration, context);
 
     const k = this.data.useKInput ? coerceTypeOptional(inputs['k' as PortId], 'number') ?? this.data.k : this.data.k;
 
