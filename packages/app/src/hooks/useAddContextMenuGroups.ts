@@ -15,6 +15,7 @@ export const addContextMenuGroups = [
       { label: 'Prompt', nodeType: 'prompt' },
       { label: 'Chunk', nodeType: 'chunk' },
       { label: 'To YAML', nodeType: 'toYaml' },
+      { label: 'To JSON', nodeType: 'toJson' },
     ],
   },
   {
