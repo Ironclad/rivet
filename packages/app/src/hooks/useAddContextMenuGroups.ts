@@ -49,6 +49,7 @@ export const addContextMenuGroups = [
       { label: 'Coalesce', nodeType: 'coalesce' },
       { label: 'Passthrough', nodeType: 'passthrough' },
       { label: 'Abort Graph', nodeType: 'abortGraph' },
+      { label: 'Race Inputs', nodeType: 'raceInputs' },
     ],
   },
   {

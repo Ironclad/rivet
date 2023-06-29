@@ -116,6 +116,9 @@ export * from './nodes/HashNode';
 import { abortGraphNode } from './nodes/AbortGraphNode';
 export * from './nodes/AbortGraphNode';
 
+import { raceInputsNode } from './nodes/RaceInputsNode';
+export * from './nodes/RaceInputsNode';
+
 const register = new NodeRegistration()
   .register(toYamlNode)
   .register(userInputNode)
@@ -154,7 +157,8 @@ const register = new NodeRegistration()
   .register(vectorStoreNode)
   .register(vectorNearestNeighborsNode)
   .register(hashNode)
-  .register(abortGraphNode);
+  .register(abortGraphNode)
+  .register(raceInputsNode);
 
 export type Nodes = typeof register.NodesType;
 

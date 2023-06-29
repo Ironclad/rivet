@@ -1,4 +1,4 @@
-import { max, range } from 'lodash-es';
+import { mapValues, max, range, uniqBy } from 'lodash-es';
 import { ControlFlowExcluded, ControlFlowExcludedPort } from '../utils/symbols';
 import {
   DataValue,
@@ -26,6 +26,7 @@ import { nanoid } from 'nanoid';
 import { InternalProcessContext, ProcessContext, ProcessId } from './ProcessContext';
 import { ExecutionRecorder } from '../recording/ExecutionRecorder';
 import { P, match } from 'ts-pattern';
+import { Opaque } from 'type-fest';
 
 export type ProcessEvents = {
   /** Called when processing has started. */
@@ -102,7 +103,9 @@ export type Outputs = Record<PortId, DataValue | undefined>;
 
 export type ExternalFunction = (...args: unknown[]) => Promise<DataValue>;
 
-type LoopInfo = {
+type RaceId = Opaque<string, 'RaceId'>;
+
+type LoopInfo = AttachedNodeDataItem & {
   /** ID of the controller of the loop */
   loopControllerId: NodeId;
 
@@ -110,6 +113,23 @@ type LoopInfo = {
   nodes: Set<NodeId>;
 
   iterationCount: number;
+};
+
+type AttachedNodeDataItem = {
+  propagate: boolean | ((parent: ChartNode, connections: NodeConnection[]) => boolean);
+};
+
+type AttachedNodeData = {
+  loopInfo?: LoopInfo;
+  races?: {
+    propagate: boolean;
+    raceIds: RaceId[];
+
+    // The race is completed by some branch
+    completed: boolean;
+  };
+
+  [key: string]: AttachedNodeDataItem | undefined;
 };
 
 export class GraphProcessor {
@@ -151,10 +171,12 @@ export class GraphProcessor {
   #subprocessors: Set<GraphProcessor> = undefined!;
   #contextValues: Record<string, DataValue> = undefined!;
   #globals: Map<string, ScalarOrArrayDataValue> = undefined!;
-  #loopInfoForNode: Map<NodeId, LoopInfo> = undefined!;
+  #attachedNodeData: Map<NodeId, AttachedNodeData> = undefined!;
   #aborted = false;
   #abortSuccessfully = false;
   #abortError: Error | string | undefined = undefined;
+
+  #nodeAbortControllers = new Map<`${NodeId}-${ProcessId}`, AbortController>();
 
   /** User input nodes that are pending user input. */
   #pendingUserInputs: Record<
@@ -464,7 +486,7 @@ export class GraphProcessor {
     this.#queuedNodes = new Set();
     this.#loopControllersSeen = new Set();
     this.#subprocessors = new Set();
-    this.#loopInfoForNode = new Map();
+    this.#attachedNodeData = new Map();
     this.#globals ??= new Map();
 
     this.#abortController = new AbortController();
@@ -474,6 +496,7 @@ export class GraphProcessor {
     this.#aborted = false;
     this.#abortError = undefined;
     this.#abortSuccessfully = false;
+    this.#nodeAbortControllers = new Map();
   }
 
   /** Main function for running a graph. Runs a graph and returns the outputs from the output nodes of the graph. */
@@ -508,7 +531,7 @@ export class GraphProcessor {
 
       this.#emitter.emit('graphStart', { graph: this.#graph, inputs: this.#graphInputs });
 
-      const nodesWithoutOutputs = this.#graph.nodes.filter((node) => this.#outputNodesFrom(node).length === 0);
+      const nodesWithoutOutputs = this.#graph.nodes.filter((node) => this.#outputNodesFrom(node).nodes.length === 0);
 
       await this.#waitUntilUnpaused();
 
@@ -590,6 +613,25 @@ export class GraphProcessor {
       `Node ${node.title} has required inputs nodes: ${inputNodes.map((n) => n.title).join(', ')}`,
     );
 
+    const attachedData = this.#getAttachedDataTo(node);
+
+    if (node.type === 'raceInputs' || attachedData.races) {
+      for (const inputNode of inputNodes) {
+        const inputNodeAttachedData = this.#getAttachedDataTo(inputNode);
+        const raceIds = new Set<RaceId>([...(attachedData.races?.raceIds ?? ([] as RaceId[]))]);
+
+        if (node.type == 'raceInputs') {
+          raceIds.add(`race-${node.id}` as RaceId);
+        }
+
+        inputNodeAttachedData.races = {
+          propagate: false,
+          raceIds: [...raceIds],
+          completed: false,
+        };
+      }
+    }
+
     this.#queuedNodes.add(node.id);
 
     this.#processingQueue.addAll(
@@ -634,7 +676,7 @@ export class GraphProcessor {
 
     // Check if all required inputs have connections and if the connected output nodes have been visited
     const connections = this.#connections[node.id] ?? [];
-    const inputsReady = this.#definitions[node.id]!.inputs.every((input) => {
+    let inputsReady = this.#definitions[node.id]!.inputs.every((input) => {
       const connectionToInput = connections?.find((conn) => conn.inputId === input.id && conn.inputNodeId === node.id);
       return connectionToInput || !input.required;
     });
@@ -657,6 +699,7 @@ export class GraphProcessor {
       return;
     }
 
+    let waitingForInputNode: false | string = false;
     for (const inputNode of inputNodes) {
       // For loop controllers, allow nodes in the same cycle to be not processed yet,
       // but if we're in a 2nd iteration, we do need to wait for them
@@ -668,10 +711,20 @@ export class GraphProcessor {
         continue;
       }
 
-      if (this.#visitedNodes.has(inputNode.id) === false) {
-        this.#emitter.emit('trace', `Node ${node.title} is waiting for input node ${inputNode.title}`);
-        return;
+      // Only one visited node required for a raceInputs node
+      if (node.type === 'raceInputs' && this.#visitedNodes.has(inputNode.id)) {
+        waitingForInputNode = false;
+        break;
       }
+
+      if (waitingForInputNode === false && this.#visitedNodes.has(inputNode.id) === false) {
+        waitingForInputNode = inputNode.title;
+      }
+    }
+
+    if (waitingForInputNode) {
+      this.#emitter.emit('trace', `Node ${node.title} is waiting for input node ${waitingForInputNode}`);
+      return;
     }
 
     this.#currentlyProcessing.add(node.id);
@@ -680,10 +733,15 @@ export class GraphProcessor {
       this.#loopControllersSeen.add(node.id);
     }
 
-    const loopInfo = this.#loopInfoForNode.get(node.id);
+    const attachedData = this.#getAttachedDataTo(node);
 
-    if (loopInfo && loopInfo.loopControllerId !== node.id) {
-      loopInfo.nodes.add(node.id);
+    if (attachedData.loopInfo && attachedData.loopInfo.loopControllerId !== node.id) {
+      attachedData.loopInfo.nodes.add(node.id);
+    }
+
+    if (attachedData.races?.completed) {
+      this.#emitter.emit('trace', `Node ${node.title} is part of a race that was completed`);
+      return;
     }
 
     const processId = await this.#processNode(node as Nodes);
@@ -712,7 +770,7 @@ export class GraphProcessor {
 
       if (!didBreak) {
         this.#emitter.emit('trace', `Loop controller ${node.title} did not break, so we're looping again`);
-        for (const loopNodeId of loopInfo?.nodes ?? []) {
+        for (const loopNodeId of attachedData.loopInfo?.nodes ?? []) {
           const cycleNode = this.#nodesById[loopNodeId]!;
           this.#emitter.emit('trace', `Clearing cycle node ${cycleNode.title} (${cycleNode.id})`);
           this.#visitedNodes.delete(cycleNode.id);
@@ -724,7 +782,30 @@ export class GraphProcessor {
       }
     }
 
-    let childLoopInfo = loopInfo;
+    // Abort everything the race depends on - everything already executed won't
+    // be aborted, but everything that hasn't will be, effectively terminating all slower branches
+    if (node.type === 'raceInputs') {
+      const allNodesForRace = [...this.#attachedNodeData.entries()].filter(([, { races }]) =>
+        races?.raceIds.includes(`race-${node.id}` as RaceId),
+      );
+      for (const [nodeId] of allNodesForRace) {
+        for (const [key, abortController] of this.#nodeAbortControllers.entries()) {
+          if (key.startsWith(nodeId)) {
+            this.#emitter.emit('trace', `Aborting node ${nodeId} because other race branch won`);
+            abortController.abort();
+          }
+        }
+
+        // Mark every attached data as completed for the race
+        for (const [, nodeAttachedData] of [...this.#attachedNodeData.entries()]) {
+          if (nodeAttachedData.races?.raceIds.includes(`race-${node.id}` as RaceId)) {
+            nodeAttachedData.races.completed = true;
+          }
+        }
+      }
+    }
+
+    let childLoopInfo = attachedData.loopInfo;
     if (node.type === 'loopController') {
       if (childLoopInfo != null && childLoopInfo.loopControllerId !== node.id) {
         this.#nodeErrored(node, new Error('Nested loops are not supported'), processId);
@@ -732,6 +813,16 @@ export class GraphProcessor {
       }
 
       childLoopInfo = {
+        propagate: (parent, connectionsFromParent) => {
+          if (
+            parent.type === 'loopController' &&
+            connectionsFromParent.some((c) => c.outputId === ('break' as PortId))
+          ) {
+            return false;
+          }
+          return true;
+        },
+
         loopControllerId: node.id,
 
         // We want to be able to clear every node that _potentially_ could run in the loop
@@ -751,15 +842,34 @@ export class GraphProcessor {
       }
     }
 
-    if (childLoopInfo) {
-      for (const outputNode of outputNodes) {
-        this.#loopInfoForNode.set(outputNode.id, childLoopInfo);
+    for (const { node: outputNode, connections: connectionsToOutputNode } of outputNodes.connectionsToNodes) {
+      const outputNodeAttachedData = this.#getAttachedDataTo(outputNode);
+
+      // Hacky? Need to bootstrap the propagation somewhere
+      if (childLoopInfo) {
+        outputNodeAttachedData.loopInfo = childLoopInfo;
+      }
+
+      const propagatedAttachedData = Object.entries(attachedData).filter(([, value]): boolean => {
+        if (!value) {
+          return false;
+        }
+
+        if (typeof value.propagate === 'boolean') {
+          return value.propagate;
+        }
+
+        return value.propagate(node, connectionsToOutputNode);
+      });
+
+      for (const [key, value] of propagatedAttachedData) {
+        outputNodeAttachedData[key] = value;
       }
     }
 
     // Node is finished, check if we can run any more nodes that depend on this one
     this.#processingQueue.addAll(
-      outputNodes.map((outputNode) => async () => {
+      outputNodes.nodes.map((outputNode) => async () => {
         this.#emitter.emit(
           'trace',
           `Trying to run output node from ${node.title}: ${outputNode.title} (${outputNode.id})`,
@@ -768,6 +878,16 @@ export class GraphProcessor {
         await this.#processNodeIfAllInputsAvailable(outputNode as Nodes);
       }),
     );
+  }
+
+  #getAttachedDataTo(node: ChartNode | NodeId): AttachedNodeData {
+    const nodeId = typeof node === 'string' ? node : node.id;
+    let nodeData = this.#attachedNodeData.get(nodeId);
+    if (nodeData == null) {
+      nodeData = {};
+      this.#attachedNodeData.set(nodeId, nodeData);
+    }
+    return nodeData;
   }
 
   async #processNode(node: Nodes) {
@@ -977,6 +1097,11 @@ export class GraphProcessor {
     partialOutput?: (node: ChartNode, partialOutputs: Outputs, index: number) => void,
   ) {
     const instance = this.#nodeInstances[node.id]!;
+    const nodeAbortController = new AbortController();
+    this.#nodeAbortControllers.set(`${node.id}-${processId}`, nodeAbortController);
+    this.#abortController.signal.addEventListener('abort', () => {
+      nodeAbortController.abort();
+    });
 
     const context: InternalProcessContext = {
       ...this.#context,
@@ -987,7 +1112,7 @@ export class GraphProcessor {
       waitEvent: async (event) => {
         return new Promise((resolve, reject) => {
           this.#emitter.once(`userEvent:${event}`).then(resolve).catch(reject);
-          this.#abortController.signal.addEventListener('abort', () => {
+          nodeAbortController.signal.addEventListener('abort', () => {
             reject(new Error('Process aborted'));
           });
         });
@@ -998,7 +1123,7 @@ export class GraphProcessor {
       contextValues: this.#contextValues,
       externalFunctions: { ...this.#externalFunctions },
       onPartialOutputs: (partialOutputs) => partialOutput?.(node, partialOutputs, index),
-      signal: this.#abortController.signal,
+      signal: nodeAbortController.signal,
       processId,
       getGlobal: (id) => this.#globals.get(id),
       setGlobal: (id, value) => {
@@ -1066,9 +1191,12 @@ export class GraphProcessor {
 
     await this.#waitUntilUnpaused();
     const results = await instance.process(inputValues, context);
-    if (this.#abortController.signal.aborted) {
+    if (nodeAbortController.signal.aborted) {
       throw new Error('Aborted');
     }
+
+    this.#nodeAbortControllers.delete(`${node.id}-${processId}`);
+
     return results;
   }
 
@@ -1172,23 +1300,38 @@ export class GraphProcessor {
   }
 
   /** Gets the nodes that the given node it outputting to. */
-  #outputNodesFrom(node: ChartNode): ChartNode[] {
+  #outputNodesFrom(node: ChartNode): {
+    nodes: ChartNode[];
+    connections: NodeConnection[];
+    connectionsToNodes: { connections: NodeConnection[]; node: ChartNode }[];
+  } {
     const connections = this.#connections[node.id];
     if (!connections) {
-      return [];
+      return { nodes: [], connections: [], connectionsToNodes: [] };
     }
 
     const connectionsToNode = connections.filter((conn) => conn.outputNodeId === node.id);
 
     // Filter out invalid connections
     const outputDefinitions = this.#definitions[node.id]?.outputs ?? [];
-    return connectionsToNode
-      .filter((connection) => {
-        const connectionDefinition = outputDefinitions.find((def) => def.id === connection.outputId);
-        return connectionDefinition != null;
-      })
-      .map((conn) => this.#nodesById[conn.inputNodeId])
-      .filter(isNotNull);
+    const outputConnections = connectionsToNode.filter((connection) => {
+      const connectionDefinition = outputDefinitions.find((def) => def.id === connection.outputId);
+      return connectionDefinition != null;
+    });
+
+    const outputNodes = uniqBy(
+      outputConnections.map((conn) => this.#nodesById[conn.inputNodeId]).filter(isNotNull),
+      (x) => x.id,
+    );
+
+    const connectionsToNodes: { connections: NodeConnection[]; node: ChartNode }[] = [];
+
+    outputNodes.forEach((node) => {
+      const connections = outputConnections.filter((conn) => conn.inputNodeId === node.id);
+      connectionsToNodes.push({ connections, node });
+    });
+
+    return { nodes: outputNodes, connections: outputConnections, connectionsToNodes };
   }
 
   #tarjanSCC(): ChartNode[][] {

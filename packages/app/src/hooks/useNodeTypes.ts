@@ -94,6 +94,7 @@ const descriptors: NodeComponentDescriptors = {
   vectorStore: {},
   hash: {},
   abortGraph: {},
+  raceInputs: {},
 };
 
 export function useNodeTypes() {

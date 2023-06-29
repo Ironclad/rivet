@@ -48,7 +48,7 @@ const toRecordedEventMap: {
     error: typeof error === 'string' ? error : error.stack!,
     processId,
   }),
-  abort: () => void 0,
+  abort: ({ successful, error }) => ({ successful, error: typeof error === 'string' ? error : error?.stack }),
   nodeExcluded: ({ node, processId }) => ({
     nodeId: node.id,
     processId,
