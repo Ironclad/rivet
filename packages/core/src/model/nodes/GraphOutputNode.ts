@@ -44,7 +44,13 @@ export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
   }
 
   getOutputDefinitions(): NodeOutputDefinition[] {
-    return [];
+    return [
+      {
+        id: 'valueOutput' as PortId,
+        title: this.data.id,
+        dataType: this.chartNode.data.dataType as DataType,
+      },
+    ];
   }
 
   getEditors(): EditorDefinition<GraphOutputNode>[] {
@@ -81,7 +87,7 @@ export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
 
     if (isExcluded) {
       return {
-        ['value' as PortId]: {
+        ['valueOutput' as PortId]: {
           type: 'control-flow-excluded',
           value: undefined,
         },

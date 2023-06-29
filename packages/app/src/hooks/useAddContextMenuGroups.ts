@@ -48,6 +48,7 @@ export const addContextMenuGroups = [
       { label: 'Loop Controller', nodeType: 'loopController' },
       { label: 'Coalesce', nodeType: 'coalesce' },
       { label: 'Passthrough', nodeType: 'passthrough' },
+      { label: 'Abort Graph', nodeType: 'abortGraph' },
     ],
   },
   {

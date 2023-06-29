@@ -6,13 +6,15 @@ import { nanoid } from 'nanoid';
 import { Project } from '../Project';
 import { GraphInputNode } from './GraphInputNode';
 import { GraphOutputNode } from './GraphOutputNode';
-import { DataValue } from '../DataValue';
+import { ControlFlowExcludedDataValue, DataValue } from '../DataValue';
 import { InternalProcessContext } from '../ProcessContext';
+import { getError } from '../..';
 
 export type SubGraphNode = ChartNode & {
   type: 'subGraph';
   data: {
     graphId: GraphId;
+    useErrorOutput?: boolean;
   };
 };
 
@@ -29,6 +31,7 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
       },
       data: {
         graphId: '' as GraphId,
+        useErrorOutput: false,
       },
     };
 
@@ -57,11 +60,7 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
     );
   }
 
-  getOutputDefinitions(
-    _connections: NodeConnection[],
-    _nodes: Record<NodeId, ChartNode>,
-    project: Project,
-  ): NodeOutputDefinition[] {
+  getGraphOutputs(project: Project): NodeOutputDefinition[] {
     const graph = project.graphs[this.data.graphId];
     if (!graph) {
       return [];
@@ -70,13 +69,35 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
     const outputNodes = graph.nodes.filter((node) => node.type === 'graphOutput') as GraphOutputNode[];
     const outputIds = [...new Set(outputNodes.map((node) => node.data.id))].sort();
 
-    return outputIds.map(
+    const outputs = outputIds.map(
       (id): NodeOutputDefinition => ({
         id: id as PortId,
         title: id,
         dataType: outputNodes.find((node) => node.data.id === id)!.data.dataType,
       }),
     );
+
+    return outputs;
+  }
+
+  getOutputDefinitions(
+    _connections: NodeConnection[],
+    _nodes: Record<NodeId, ChartNode>,
+    project: Project,
+  ): NodeOutputDefinition[] {
+    const outputs: NodeOutputDefinition[] = [];
+
+    outputs.push(...this.getGraphOutputs(project));
+
+    if (this.data.useErrorOutput) {
+      outputs.push({
+        id: 'error' as PortId,
+        title: 'Error',
+        dataType: 'string',
+      });
+    }
+
+    return outputs;
   }
 
   getEditors(): EditorDefinition<SubGraphNode>[] {
@@ -85,6 +106,11 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
         type: 'graphSelector',
         label: 'Graph',
         dataKey: 'graphId',
+      },
+      {
+        type: 'toggle',
+        label: 'Use Error Output',
+        dataKey: 'useErrorOutput',
       },
     ];
   }
@@ -98,13 +124,44 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
 
     const subGraphProcessor = context.createSubProcessor(this.data.graphId);
 
-    const subGraphOutputs = await subGraphProcessor.processGraph(
-      context,
-      inputs as Record<string, DataValue>,
-      context.contextValues,
-    );
+    try {
+      const outputs = await subGraphProcessor.processGraph(
+        context,
+        inputs as Record<string, DataValue>,
+        context.contextValues,
+      );
 
-    return subGraphOutputs;
+      if (this.data.useErrorOutput) {
+        outputs['error' as PortId] = {
+          type: 'control-flow-excluded',
+          value: undefined,
+        };
+      }
+
+      return outputs;
+    } catch (err) {
+      if (!this.data.useErrorOutput) {
+        throw err;
+      }
+
+      const outputs: Outputs = this.getGraphOutputs(context.project).reduce(
+        (obj, output): Outputs => ({
+          ...obj,
+          [output.id as PortId]: {
+            type: 'control-flow-excluded',
+            value: undefined,
+          },
+        }),
+        {} as Outputs,
+      );
+
+      outputs['error' as PortId] = {
+        type: 'string',
+        value: getError(err).message,
+      };
+
+      return outputs;
+    }
   }
 }
 

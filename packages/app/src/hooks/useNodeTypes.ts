@@ -93,6 +93,7 @@ const descriptors: NodeComponentDescriptors = {
   vectorNearestNeighbors: {},
   vectorStore: {},
   hash: {},
+  abortGraph: {},
 };
 
 export function useNodeTypes() {

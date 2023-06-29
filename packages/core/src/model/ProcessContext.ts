@@ -64,4 +64,7 @@ export type InternalProcessContext = ProcessContext & {
 
   /** Logs to GraphProcessor's trace event. */
   trace: (message: string) => void;
+
+  /** Aborts the current graph, if there is an error, the graph is error aborted, and if undefined, then it is simply early-exited. */
+  abortGraph: (error?: Error | string) => void;
 };

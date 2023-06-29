@@ -73,7 +73,7 @@ export type ProcessEvents = {
   done: { results: GraphOutputs };
 
   /** Called when processing has been aborted. */
-  abort: void;
+  abort: { successful: boolean; error?: string | Error };
 
   /** Called for trace level logs. */
   trace: string;
@@ -152,6 +152,9 @@ export class GraphProcessor {
   #contextValues: Record<string, DataValue> = undefined!;
   #globals: Map<string, ScalarOrArrayDataValue> = undefined!;
   #loopInfoForNode: Map<NodeId, LoopInfo> = undefined!;
+  #aborted = false;
+  #abortSuccessfully = false;
+  #abortError: Error | string | undefined = undefined;
 
   /** User input nodes that are pending user input. */
   #pendingUserInputs: Record<
@@ -263,13 +266,15 @@ export class GraphProcessor {
     this.#externalFunctions[name] = fn;
   }
 
-  async abort(): Promise<void> {
+  async abort(successful: boolean = false, error?: Error | string): Promise<void> {
     if (!this.#running) {
       return Promise.resolve();
     }
 
     this.#abortController.abort();
-    this.#emitter.emit('abort', void 0);
+    this.#abortSuccessfully = successful;
+    this.#abortError = error;
+    this.#emitter.emit('abort', { successful, error });
 
     await this.#processingQueue.onIdle();
   }
@@ -343,8 +348,8 @@ export class GraphProcessor {
           this.#contextValues = data.contextValues;
           this.#graphInputs = data.inputs;
         })
-        .with({ type: 'abort' }, () => {
-          this.#emitter.emit('abort', void 0);
+        .with({ type: 'abort' }, ({ data }) => {
+          this.#emitter.emit('abort', data);
         })
         .with({ type: 'pause' }, () => {})
         .with({ type: 'resume' }, () => {})
@@ -453,7 +458,6 @@ export class GraphProcessor {
     this.#currentlyProcessing = new Set();
     this.#remainingNodes = new Set(this.#graph.nodes.map((n) => n.id));
     this.#pendingUserInputs = {};
-    this.#abortController = new AbortController();
     this.#processingQueue = new PQueue({ concurrency: Infinity });
     this.#graphOutputs = {};
     this.#executionCache ??= new Map();
@@ -461,8 +465,15 @@ export class GraphProcessor {
     this.#loopControllersSeen = new Set();
     this.#subprocessors = new Set();
     this.#loopInfoForNode = new Map();
-
     this.#globals ??= new Map();
+
+    this.#abortController = new AbortController();
+    this.#abortController.signal.addEventListener('abort', () => {
+      this.#aborted = true;
+    });
+    this.#aborted = false;
+    this.#abortError = undefined;
+    this.#abortSuccessfully = false;
   }
 
   /** Main function for running a graph. Runs a graph and returns the outputs from the output nodes of the graph. */
@@ -509,14 +520,17 @@ export class GraphProcessor {
 
       await this.#processingQueue.onIdle();
 
-      if (this.#erroredNodes.size > 0) {
-        const error = Error(
-          `Graph ${this.#graph.metadata!.name} (${
-            this.#graph.metadata!.id
-          }) failed to process due to errors in nodes: ${Array.from(this.#erroredNodes)
-            .map(([nodeId, error]) => `${this.#nodesById[nodeId]!.title} (${nodeId}): ${error}`)
-            .join(', ')}`,
-        );
+      // If we've aborted successfully, we can treat the graph like it succeeded
+      if (this.#erroredNodes.size > 0 && !this.#abortSuccessfully) {
+        const error =
+          this.#abortError ??
+          Error(
+            `Graph ${this.#graph.metadata!.name} (${
+              this.#graph.metadata!.id
+            }) failed to process due to errors in nodes: ${Array.from(this.#erroredNodes)
+              .map(([nodeId, error]) => `${this.#nodesById[nodeId]!.title} (${nodeId}): ${error}`)
+              .join(', ')}`,
+          );
 
         this.#emitter.emit('graphError', { graph: this.#graph, error });
 
@@ -1034,7 +1048,9 @@ export class GraphProcessor {
 
         this.#subprocessors.add(processor);
 
+        // If parent is aborted, abort subgraph with error (it's fine, success state is on the parent)
         this.on('abort', () => processor.abort());
+
         this.on('pause', () => processor.pause());
         this.on('resume', () => processor.resume());
 
@@ -1042,6 +1058,9 @@ export class GraphProcessor {
       },
       trace: (message) => {
         this.#emitter.emit('trace', message);
+      },
+      abortGraph: (error) => {
+        this.abort(error === undefined, error);
       },
     };
 

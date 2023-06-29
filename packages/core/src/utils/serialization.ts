@@ -12,6 +12,7 @@ import {
   SerializedNode,
   SerializedNodeConnection,
   SerializedProject,
+  getError,
 } from '..';
 import stableStringify from 'safe-stable-stringify';
 import { mapValues } from 'lodash-es';
@@ -24,16 +25,32 @@ export function deserializeProject(serializedProject: unknown): Project {
   try {
     return projectV3Deserializer(serializedProject);
   } catch (err) {
+    if (err instanceof yaml.YAMLError) {
+      yamlProblem(err);
+    }
+    console.warn(`Failed to deserialize project v3: ${getError(err).stack}`);
+
     try {
       return projectV2Deserializer(serializedProject);
     } catch (err) {
+      if (err instanceof yaml.YAMLError) {
+        yamlProblem(err);
+      }
+      console.warn(`Failed to deserialize project v2: ${getError(err).stack}`);
+
       try {
         return projectV1Deserializer(serializedProject);
       } catch (err) {
+        console.warn(`Failed to deserialize project v1: ${getError(err).stack}`);
         throw new Error('Could not deserialize project');
       }
     }
   }
+}
+
+function yamlProblem(err: yaml.YAMLError): never {
+  const { code, message, pos, linePos } = err;
+  throw new Error(`YAML error: ${code} ${message} at ${pos} ${linePos}`);
 }
 
 export function serializeGraph(graph: NodeGraph): unknown {
