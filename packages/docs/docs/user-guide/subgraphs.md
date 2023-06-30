@@ -14,7 +14,7 @@ You may want to add [Graph Input Nodes](../node-reference/graph-input) to the gr
 
 ### Create Subgraph Helper
 
-If you select multiple nodes by holding shift and clicking on them, you can right click on the selection and choose **Create Subgraph**. This will create a new subgraph with the selected nodes in it. The nodes will not be removed from the current graph at this time. See [working with nodes](./adding-connecting-nodes.md) for more information on how to use this.
+If you select multiple nodes by holding shift and clicking on them, you can right click on the selection and choose **Create Subgraph**. This will create a new subgraph with the selected nodes in it. The nodes will not be removed from the current graph at this time. See [working with nodes](./adding-connecting-nodes) for more information on how to use this.
 
 ### Calling a Subgraph
 

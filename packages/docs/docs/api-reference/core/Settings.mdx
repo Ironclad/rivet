@@ -1,0 +1,47 @@
+# Settings
+
+## Description
+
+`Settings` is an interface that encapsulates the configuration options required for the integration with OpenAI services in the graph execution process.
+
+## Definition
+
+```typescript
+export interface Settings {
+  openAiKey: string;
+  openAiOrganization?: string;
+}
+```
+
+## Properties
+
+### openAiKey
+
+Type: `string`
+
+The `openAiKey` property represents the API key for OpenAI. This key is used to authenticate your application with OpenAI services. It is a required property for the `Settings` interface.
+
+### openAiOrganization
+
+Type: `string`
+
+The `openAiOrganization` property represents the organization ID to use for OpenAI. Use this if your API key's default organization is not the one you want to use. This property is optional.
+
+## Usage
+
+The `Settings` interface is part of the `RunGraphOptions` type and is used to provide OpenAI-specific settings for the graph execution process.
+
+```typescript
+const options: RunGraphOptions = {
+  // Other properties...
+  settings: {
+    openAiKey: 'your-openai-key',
+    openAiOrganization: 'your-openai-organization-id',
+  },
+};
+```
+
+## See Also
+
+- [RunGraphOptions](../node/RunGraphOptions)
+- [OpenAI Documentation](https://platform.openai.com/docs/api-reference/authentication) (for more information about OpenAI keys and organization IDs)

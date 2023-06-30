@@ -1,0 +1,44 @@
+# runGraph
+
+## Description
+
+The `runGraph` function runs a graph for a given project with specific options. This is useful when you have loaded a Project
+separately from a file or string, and want to run a graph in that project.
+
+## Syntax
+
+```typescript
+function runGraph(project: Project, options: RunGraphOptions): Promise<Record<string, DataValue>>;
+```
+
+## Parameters
+
+- `project` (Project): The project in which the graph will be run. This should be a valid `Project` instance.
+
+- `options` (RunGraphOptions): The options for running the graph. This should be an instance of `RunGraphOptions`.
+
+## Return
+
+Returns a Promise that resolves to a `Record<string, DataValue>`. The record represents the outputs of the graph after it has been processed. Each
+key in the record is the name of an output node id in the graph, and the value is the value is the data which was input to that node.
+
+## Examples
+
+```typescript
+const project = await loadProjectFromFile('./path/to/project.json');
+const outputs = await runGraph(project, {
+  graph: 'My Graph',
+  inputs: {...},
+  context: {...},
+  // other options...
+});
+```
+
+## See Also
+
+- [loadProjectFromFile](./loadProjectFromFile)
+- [loadProjectFromString](./loadProjectFromString)
+- [createProcessor](./createProcessor)
+- [RunGraphOptions](./RunGraphOptions)
+- Project
+- DataValue

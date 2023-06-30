@@ -1,0 +1,27 @@
+# API Overview
+
+This is the API overview for our Node.js library. Each of the exports in the `api.ts` file is documented in its own page, as linked below:
+
+## Core
+
+Every type and method exported from `@ironclad/rivet-core` is re-exported from `@ironclad/rivet-node` for convenience. See the [core API overview](../core/overview) for more information.
+
+Sure, I can help you with that. Here's how you could update the API overview:
+
+## Functions
+
+- [loadProjectFromFile](./loadProjectFromFile): This function loads a project from a given file path.
+- [loadProjectFromString](./loadProjectFromString): This function loads a project from a string content.
+- [runGraphInFile](./runGraphInFile): This function runs a graph in a file with the provided options.
+- [createProcessor](./createProcessor): This function creates a processor for a given project with specific options.
+- [runGraph](./runGraph): This function runs a graph for a given project with specific options.
+- [startDebuggerServer](./startDebuggerServer): This function starts a debugger server with the provided options.
+
+## Types
+
+- [LooseDataValue](./LooseDataValue): This type represents a loose data value that can be a `DataValue`, `string`, `number`, or `boolean`.
+- [RunGraphOptions](./RunGraphOptions): This type represents the options that can be provided when running a graph.
+- [RivetDebuggerServer](./RivetDebuggerServer): This type represents a debugger server instance with a WebSocketServer and several methods for handling events and processor interaction.
+- [DebuggerEvents](./DebuggerEvents): This type represents the events that can be emitted by the debugger server.
+
+Please visit each page for detailed information on each export, including usage examples and type definitions.

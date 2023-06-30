@@ -1,0 +1,86 @@
+# startDebuggerServer
+
+## Description
+
+The `startDebuggerServer` function starts a Rivet debugger server. By creating a debugger server in your application, you can
+connect to it from Rivet to debug graphs running in your application in real-time.
+
+## Syntax
+
+```typescript
+function startDebuggerServer(options?: {
+  getClientsForProcessor?: (processor: GraphProcessor, allClients: WebSocket[]) => WebSocket[];
+  getProcessorsForClient?: (client: WebSocket, allProcessors: GraphProcessor[]) => GraphProcessor[];
+  server?: WebSocketServer;
+  port?: number;
+  dynamicGraphRun?: (data: { client: WebSocket; graphId: GraphId }) => Promise<void>;
+  allowGraphUpload?: boolean;
+}): RivetDebuggerServer;
+```
+
+## Parameters
+
+- `options` (Object): The options for starting the debugger server. This should be an object with the following optional properties:
+
+### getClientsForProcessor
+
+To allow multiple debuggers to connect to multiple processors, it is necesssary to store a mapping of processors to clients.
+
+This function takes a processor and all clients, and must return the clients for the processor.
+
+If this function is not passed, then the server will assume that there is only one processor and all clients are connected to it.
+
+### getProcessorsForClient
+
+To allow multiple debuggers to connect to multiple processors, it is necesssary to store a mapping of processors to clients.
+
+This function takes a client and all processors, and must return the processors for the client.
+
+If this function is not passed, then the server will assume that there is only one processor and all clients are connected to it.
+
+### server
+
+An instance of a WebSocket server. You may use this to override the default server.
+
+### port
+
+The port on which the default server will listen. The default port is 21888.
+
+### dynamicGraphRun
+
+Implement this function to allow pressing the "Start" button when remote debugging in Rivet to execute a graph inside your application dynamically.
+
+The function will be called with the WebSocket client calling the start, as well as the graph ID of the graph to run. You must construct a Project
+and run the graph yourself, passing in the debugger server, to connect the execution with the dynamic graph run.
+
+This function does not return anything, as the connection between the graph execution and the debugger server is handled by the `remoteDebugger` parameter
+passed to the `runGraph` function.
+
+### allowGraphUpload
+
+If this is set to true, then the server will allow uploading graphs to the server. This is useful for debugging graphs that are not part of a project,
+or for debugging graphs that are part of a project but have not been saved to disk.
+
+## Return
+
+Returns an instance of `RivetDebuggerServer`. This should be passed to the `runGraph` function to allow the graph execution to communicate with the debugger server.
+
+## Examples
+
+```typescript
+const debuggerServer = startDebuggerServer({
+  port: 8080,
+  allowGraphUpload: true,
+  dynamicGraphRun: async ({ client, graphId }) => {
+    // Implement your dynamic graph run logic here
+  },
+});
+```
+
+## See Also
+
+- [RivetDebuggerServer](./RivetDebuggerServer)
+- [DebuggerEvents](./DebuggerEvents)
+- WebSocketServer
+- GraphProcessor
+- GraphId

@@ -1,0 +1,32 @@
+# loadProjectFromString
+
+## Description
+
+The `loadProjectFromString` function loads a project from a string content.
+
+## Syntax
+
+```typescript
+function loadProjectFromString(content: string): Project;
+```
+
+## Parameters
+
+- `content` (string): The string content of the project. This must be a valid string representation of a project, loaded from a `*.rivet-project` file.
+
+## Return
+
+Returns a `Project`. The `Project` is a representation of the loaded project.
+
+## Examples
+
+```typescript
+const projectContent = await readFile('my-project.rivet-project', 'utf8');
+const project = loadProjectFromString(projectContent);
+```
+
+## See Also
+
+- [loadProjectFromFile](./loadProjectFromFile)
+- [runGraphInFile](./runGraphInFile)
+- Project

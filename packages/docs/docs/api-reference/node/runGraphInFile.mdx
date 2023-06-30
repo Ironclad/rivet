@@ -1,0 +1,76 @@
+# runGraphInFile
+
+## Description
+
+The `runGraphInFile` function allows you to execute a graph defined in a Rivet project file. This is the simplest way to get started with Rivet.
+
+## Syntax
+
+```typescript
+function runGraphInFile(path: string, options: RunGraphOptions): Promise<Record<string, DataValue>>;
+```
+
+## Parameters
+
+- `path` (string): A string representing the path to your Rivet project file.
+
+- `options` (RunGraphOptions): An object of type `RunGraphOptions`. This type is used to pass various parameters to the `runGraphInFile` function.
+
+## Return
+
+Returns a Promise that resolves to a `Record<string, DataValue>`. The record represents the outputs of the graph after it has been processed. Each
+key in the record is the name of an output node id in the graph, and the value is the value is the data which was input to that node.
+
+## RunGraphOptions
+
+The `RunGraphOptions` type is used to pass various parameters to the `runGraphInFile` function. It includes the following fields:
+
+- `graph`: Specifies the graph you're running. This can either be the ID or the display name of the graph.
+- `inputs`: Specifies the input values to the graph. These can either be plain JavaScript values like "foo", or `{type: 'string', value: 'foo'}` objects.
+- `context`: Similar to `inputs`, but these values are available to every graph and subgraph.
+- `externalFunctions`: This is how you define integration points that you can call from inside Rivet graphs.
+- `openAiKey`: Your OpenAI API key. This is required if you're using any Chat nodes in your graph.
+- `openAiOrganization`: If you are using a non-default OpenAI organization, you may specify your organization here.
+
+For more details, refer to [RunGraphOptions](./RunGraphOptions).
+
+## Examples
+
+```typescript
+import { runGraphInFile, DataValue } from '@ironclad/rivet-node';
+
+await rivet.runGraphInFile('./myProject.rivet', {
+  graph: 'My Graph Name',
+  inputs: {
+    myInput: 'hello world',
+  },
+  context: {
+    myContext: 'global value',
+  },
+  externalFunctions: {
+    helloWorld: async (...args: unknown[]): Promise<DataValue> => {
+      return {
+        type: 'string',
+        value: 'hello world',
+      };
+    },
+  },
+  onUserEvent: {
+    myEvent: (data: DataValue): Promise<void> => {
+      console.log(data);
+    },
+  },
+  openAiKey: 'my-openai-key',
+  openAiOrganization: 'my-organization',
+});
+```
+
+## See Also
+
+- [loadProjectFromFile](./loadProjectFromFile)
+- [loadProjectFromString](./loadProjectFromString)
+- [runGraph](./runGraph)
+- [createProcessor](./createProcessor)
+- [RunGraphOptions](./RunGraphOptions)
+- Project
+- DataValue

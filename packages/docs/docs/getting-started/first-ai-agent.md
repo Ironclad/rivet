@@ -6,11 +6,11 @@ When you first open Rivet you are presented with a blank canvas. This is where y
 
 ![Rivet blank canvas](assets/rivet-blank-canvas.png)
 
-Right click to open the **Add** menu, go into **Common**, and select a [Chat Node](../node-reference/chat.md). This will create a new Chat node where you right clicked.
+Right click to open the **Add** menu, go into **Common**, and select a [Chat Node](../node-reference/chat). This will create a new Chat node where you right clicked.
 
 ![Rivet add chat node](assets/add-chat-node.png) ![Rivet chat node](assets/chat-node.png).
 
-Do the same thing again, but now create a [Text Node](../node-reference/text.md) (in Common or Text) to the left of the Chat node.
+Do the same thing again, but now create a [Text Node](../node-reference/text) (in Common or Text) to the left of the Chat node.
 
 ![chat and text node](assets/chat-and-text-node.png)
 
@@ -36,4 +36,4 @@ If you click the Expand icon in the top right of the response area, you can expa
 
 Congratulations! You've just created your first AI chain in Rivet! There is a lot more work to enable a full AI Agent, but this is a good start.
 
-Next, you can go through the [tutorial](../tutorial.md) to learn more about what nodes are available and how to assemble them into a full AI Agent, or you can continue with the [user guide](../user-guide/overview-of-interface.md) to learn more about Rivet's features in depth.
+Next, you can go through the [tutorial](../tutorial) to learn more about what nodes are available and how to assemble them into a full AI Agent, or you can continue with the [user guide](../user-guide/overview-of-interface) to learn more about Rivet's features in depth.

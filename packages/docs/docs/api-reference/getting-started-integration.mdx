@@ -1,0 +1,151 @@
+---
+title: 'Rivet Integration Getting Started'
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Welcome to the starting guide for integrating Rivet into your application! Currently, we only support integration via Node.js using the `@ironclad/rivet-node` package.
+
+## Installation
+
+First, you'll need to install Rivet into your JavaScript application. This can be done using either npm or yarn.
+
+:::note
+
+Rivet is not available on NPM yet. You'll need to install it directly from our GitHub repository.
+
+:::
+
+<Tabs
+  defaultValue="yarn"
+  values={[
+    {label: 'Yarn', value: 'yarn'},
+    {label: 'NPM', value: 'npm'},
+  ]}>
+
+<TabItem value="yarn">
+
+Install using Yarn:
+
+```bash
+yarn add @ironclad/rivet-node@git+ssh://git@github.com:Ironclad/rivet.git#node-v0.9.0
+```
+
+</TabItem>
+
+<TabItem value="npm">
+
+Install using NPM:
+
+```bash
+npm install git+ssh://git@github.com:Ironclad/rivet.git#node-v0.9.0
+```
+
+</TabItem>
+
+</Tabs>
+
+:::tip
+
+Remember to replace `0.9.0` with the latest version available on our releases page.
+
+:::
+
+:::caution
+
+Installation can take a while at the moment. We're working on improving this, and we appreciate your patience in the meantime.
+
+:::
+
+## Getting Started
+
+Once Rivet is installed, you can import it into your application using the following code:
+
+```javascript
+import * as Rivet from '@ironclad/rivet-node';
+```
+
+## Using `runGraphInFile`
+
+The simplest way to get started with Rivet is by using the `runGraphInFile` function. This function allows you to execute a graph defined in a Rivet project file.
+
+### `runGraphInFile` Parameters
+
+The `runGraphInFile` function takes two parameters:
+
+1. `path`: A string representing the path to your Rivet project file.
+2. `options`: An object of type `RunGraphOptions`.
+
+### `RunGraphOptions`
+
+The `RunGraphOptions` type is used to pass various parameters to the `runGraphInFile` function. Here is what it looks like:
+
+```javascript
+export type RunGraphOptions = {
+  graph: string;
+  inputs?: Record<string, LooseDataValue>;
+  context?: Record<string, LooseDataValue>;
+  remoteDebugger?: RivetDebuggerServer;
+  nativeApi?: NativeApi;
+  externalFunctions?: {
+    [key: string]: ExternalFunction;
+  };
+  onUserEvent?: {
+    [key: string]: (data: DataValue | undefined) => void;
+  };
+  abortSignal?: AbortSignal;
+} & {
+  [P in keyof ProcessEvents as `on${PascalCase<P>}`]?: (params: ProcessEvents[P]) => void;
+} & Settings;
+```
+
+Let's break down the important fields:
+
+- `graph`: Specifies the graph you're running. This can either be the ID or the display name of the graph.
+- `inputs`: Specifies the input values to the graph. These can either be plain JavaScript values like "foo", or `{type: 'string', value: 'foo'}` objects.
+- `context`: Similar to `inputs`, but these values are available to every graph and subgraph.
+- `externalFunctions`: This is how you define integration points that you can call from inside Rivet graphs.
+- `openAiKey`: Your OpenAI API key. This is required if you're using any Chat nodes in your graph.
+- `openAiOrganization`: If you are using a non-default OpenAI organization, you may specify your organization here.
+
+### Example Code
+
+Here's a basic example of using `runGraphInFile`:
+
+```typescript
+import { runGraphInFile, DataValue } from '@ironclad/rivet-node';
+
+await rivet.runGraphInFile('./myProject.rivet', {
+  graph: 'My Graph Name',
+  inputs: {
+    myInput: 'hello world',
+  },
+  context: {
+    myContext: 'global value',
+  },
+  externalFunctions: {
+    helloWorld: async (...args: unknown[]): Promise<DataValue> => {
+      return {
+        type: 'string',
+        value: 'hello world',
+      };
+    },
+  },
+  onUserEvent: {
+    myEvent: (data: DataValue): Promise<void> => {
+      console.log(data);
+    },
+  },
+  openAiKey: 'my-openai-key',
+  openAiOrganization: 'my-organization',
+});
+```
+
+## Remote Debugging
+
+See the (Remote Debugging)[./remote-debugging] page for more information on how to set up the remote debugger.
+
+## See Also
+
+- [Rivet Node API Reference](./node/overview)

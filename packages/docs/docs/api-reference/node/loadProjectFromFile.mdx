@@ -1,0 +1,31 @@
+# loadProjectFromFile
+
+## Description
+
+The `loadProjectFromFile` function loads a project from a given file path.
+
+## Syntax
+
+```typescript
+function loadProjectFromFile(path: string): Promise<Project>;
+```
+
+## Parameters
+
+- `path` (string): The file path to the project. This must be a valid path to a project file.
+
+## Return
+
+Returns a Promise that resolves to a `Project`. The `Project` is a representation of the loaded project.
+
+## Examples
+
+```typescript
+const project = await loadProjectFromFile('./path/to/project.json');
+```
+
+## See Also
+
+- [loadProjectFromString](./loadProjectFromString)
+- [runGraphInFile](./runGraphInFile)
+- Project

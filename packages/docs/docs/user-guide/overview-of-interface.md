@@ -44,7 +44,7 @@ Click the edit node icon to edit the current node and open the [Node Editor](#3-
 
 ### 2.3 Node Body
 
-Shows the current configured data on the node, such as the text of a [Text Node](../node-reference/text.md) or the configuration of a [Chat Node](../node-reference/chat.md).
+Shows the current configured data on the node, such as the text of a [Text Node](../node-reference/text) or the configuration of a [Chat Node](../node-reference/chat).
 
 Right click in the node body or the node title to delete or duplicate the node.
 
@@ -78,7 +78,7 @@ You can edit the title of the node in the node editor (changes the title shown o
 
 ### 3.2 Split Node
 
-Toggles whether the node is a split node. For more information on split nodes, see the [Splitting](./splitting.md) documentation.
+Toggles whether the node is a split node. For more information on split nodes, see the [Splitting](./splitting) documentation.
 
 When splitting is enabled, the number input next to the split toggle is the **maximum split amount**. This is a safeguard for excessive splitting. If the data exceeds the maximum split amount, only the first N items will be executed, where N is the maximum split amount.
 
@@ -86,11 +86,11 @@ When splitting is enabled, the number input next to the split toggle is the **ma
 
 Variants are used to create multiple versions of the same node. The button on the right allows you to save the current node configuration as a new variant. The dropdown on the left allows you to apply existing variants to the current data on the node.
 
-Variants allow you to save slight differences to a node, and test them without losing the data. For example, you may have a [Text Node](../node-reference/text.md) with a message to an LLM. You may want to test different variations of the message to see which one performs better and gives better AI results.
+Variants allow you to save slight differences to a node, and test them without losing the data. For example, you may have a [Text Node](../node-reference/text) with a message to an LLM. You may want to test different variations of the message to see which one performs better and gives better AI results.
 
 ### 3.4 Node Data Editor
 
-This area contains the editors for the currently selected node. The editor will change depending on the type of node you are editing. For example, the [Text Node](../node-reference/text.md) has a text editor, and the [Chat Node](../node-reference/chat.md) has a chat configuration editor.
+This area contains the editors for the currently selected node. The editor will change depending on the type of node you are editing. For example, the [Text Node](../node-reference/text) has a text editor, and the [Chat Node](../node-reference/chat) has a chat configuration editor.
 
 ## Menu Bar
 

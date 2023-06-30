@@ -1,0 +1,37 @@
+# LooseDataValue
+
+## Description
+
+`LooseDataValue` is a type that represents a loose data value. It can be a `DataValue`, `string`, `number`, or `boolean`.
+
+## Definition
+
+```typescript
+type LooseDataValue = DataValue | string | number | boolean;
+```
+
+## Explanation
+
+- `DataValue`: This is a specific type defined in the library. For more details, see the [DataValue](../core/DataValue) documentation page.
+- `string`: A standard JavaScript string.
+- `number`: A standard JavaScript number.
+- `boolean`: A standard JavaScript boolean.
+
+## Usage
+
+`LooseDataValue` is used in various places across the API, particularly as a type for inputs and context values in the `RunGraphOptions` type.
+
+```typescript
+export type RunGraphOptions = {
+  inputs?: Record<string, LooseDataValue>;
+  context?: Record<string, LooseDataValue>;
+  // Other properties...
+};
+```
+
+In this example, `inputs` and `context` in `RunGraphOptions` can accept an object where the values can be a `DataValue`, `string`, `number`, or `boolean`.
+
+## See Also
+
+- [DataValue](../core/DataValue)
+- [RunGraphOptions](./RunGraphOptions)

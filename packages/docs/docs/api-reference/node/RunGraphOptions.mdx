@@ -1,0 +1,106 @@
+# RunGraphOptions
+
+## Description
+
+`RunGraphOptions` is a complex type that encapsulates a range of options and configurations that can be provided when running a graph. This type gives you the flexibility to customize the graph execution process according to your specific needs.
+
+## Definition
+
+```typescript
+type RunGraphOptions = {
+  graph: string;
+  inputs?: Record<string, LooseDataValue>;
+  context?: Record<string, LooseDataValue>;
+  remoteDebugger?: RivetDebuggerServer;
+  nativeApi?: NativeApi;
+  externalFunctions?: {
+    [key: string]: ExternalFunction;
+  };
+  onUserEvent?: {
+    [key: string]: (data: DataValue | undefined) => void;
+  };
+  abortSignal?: AbortSignal;
+} & {
+  [P in keyof ProcessEvents as `on${PascalCase<P>}`]?: (params: ProcessEvents[P]) => void;
+} & Settings;
+```
+
+## Properties
+
+### graph
+
+Type: `string`
+
+The `graph` property represents the graph in the project to execute. This should correspond to one of the graphs defined in your project. This may either be the ID of the graph, or the name of the graph as shown in the Rivet UI.
+
+### inputs
+
+Type: `Record<string, LooseDataValue>`
+
+Specifies a set of input values to the graph you are executing. The keys in the object must correspond to the IDs for the Graph Input nodes in the graph, and the associated values are the values to be passed to the graph.
+
+See [LooseDataValue](./LooseDataValue) for more information about the different types of values that can be passed to the graph.
+
+### context
+
+Type: `Record<string, LooseDataValue>`
+
+Specifies a set of context values to the graph you are executing. The keys in the object must correspond to the IDs for the Context nodes in the graph, and the associated values are the values to be passed to the graph. Context is similar to inputs, but these values are available to every graph and subgraph.
+
+See [LooseDataValue](./LooseDataValue) for more information about the different types of values that can be passed to the graph.
+
+### remoteDebugger
+
+Type: `RivetDebuggerServer`
+
+Passes a `RivetDebuggerServer` instance to the graph execution process. This allows you to debug the graph execution process using the Rivet Debugger.
+
+See the [Remote Debugging](../remote-debugging) page for more information.
+
+### nativeApi
+
+Type: `NativeApi`
+
+The `nativeApi` property is an optional instance of a `NativeApi`. This can be used to provide a custom native API implementation for the graph execution process.
+
+### externalFunctions
+
+Type: `Object`
+
+The `externalFunctions` property is an optional object that can be used to provide external functions that can be invoked by the graph. Each key in the object corresponds to the name of an external function, and the associated value is the function to be invoked.
+
+A function must return a `Promise` that resolves to a `DataValue` or `undefined`. The `DataValue` returned by the function will be passed to the graph as the result of the function call.
+
+See (DataValue)[../core/DataValue] for more information about the different types of values that can be returned from an external function.
+
+### onUserEvent
+
+Type: `Object`
+
+The `onUserEvent` property is an optional object of user event handlers. The keys are event names and the values are functions that will be called when the event is triggered. This allows you to handle custom events that may occur during the graph execution process.
+
+### abortSignal
+
+Type: `AbortSignal`
+
+The `abortSignal` property is an optional `AbortSignal` instance. This can be used to send an abort signal to the graph processing operation, allowing you to programmatically stop the execution process.
+
+### Event Handlers
+
+Type: `Object`
+
+This part of the `RunGraphOptions` type represents an object of event handlers for the graph processing. The keys are event names in PascalCase prefixed with `on` and the values are functions that will be called when the event is triggered. This allows you to handle a variety of events that may occur during the graph execution process.
+
+## Settings
+
+The properties of (Settings)[../core/Settings] are merged into the `RunGraphOptions` type. Some properties on Settings are required. See that page for more information.
+
+## See Also
+
+- [LooseDataValue](./LooseDataValue)
+- [DataValue](../core/DataValue)
+- [Settings](../core/Settings)
+- [RivetDebuggerServer](./RivetDebuggerServer)
+- NativeApi
+- ExternalFunction
+- ProcessEvents
