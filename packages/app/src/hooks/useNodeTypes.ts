@@ -96,6 +96,7 @@ const descriptors: NodeComponentDescriptors = {
   abortGraph: {},
   raceInputs: {},
   toJson: {},
+  join: {},
 };
 
 export function useNodeTypes() {

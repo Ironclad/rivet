@@ -16,6 +16,7 @@ export const addContextMenuGroups = [
       { label: 'Chunk', nodeType: 'chunk' },
       { label: 'To YAML', nodeType: 'toYaml' },
       { label: 'To JSON', nodeType: 'toJson' },
+      { label: 'Join', nodeType: 'join' },
     ],
   },
   {

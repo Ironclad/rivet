@@ -122,6 +122,9 @@ export * from './nodes/RaceInputsNode';
 import { toJsonNode } from './nodes/ToJsonNode';
 export * from './nodes/ToJsonNode';
 
+import { joinNode } from './nodes/JoinNode';
+export * from './nodes/JoinNode';
+
 const register = new NodeRegistration()
   .register(toYamlNode)
   .register(userInputNode)
@@ -162,7 +165,8 @@ const register = new NodeRegistration()
   .register(hashNode)
   .register(abortGraphNode)
   .register(raceInputsNode)
-  .register(toJsonNode);
+  .register(toJsonNode)
+  .register(joinNode);
 
 export type Nodes = typeof register.NodesType;
 
