@@ -1,0 +1,125 @@
+---
+id: join
+title: Join Node
+sidebar_label: Join
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+## Overview
+
+The Join Node is used to concatenate multiple strings using a specified delimiter. The delimiter can be set directly in the node or provided as an input.
+
+![Join Node Screenshot](./assets/join-node.png)
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+## Inputs
+
+| Title                  | Data Type | Description                                                                  | Default Value | Notes                                                            |
+| ---------------------- | --------- | ---------------------------------------------------------------------------- | ------------- | ---------------------------------------------------------------- |
+| Join String (optional) | string    | The string to be used as a delimiter when `Use Join String Input` is enabled | `\n`          | Only appears if the `Use Join String Input` setting is enabled   |
+| Input [i]              | string    | The ith string input to be joined                                            | N/A           | Dynamic number of inputs based on how many connections there are |
+
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title  | Data Type | Description             | Notes                                                                             |
+| ------ | --------- | ----------------------- | --------------------------------------------------------------------------------- |
+| Joined | string    | The concatenated string | The output will be a single string resulting from joining all valid string inputs |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting     | Description                                               | Default Value | Use Input Toggle |
+| ----------- | --------------------------------------------------------- | ------------- | ---------------- |
+| Flatten     | If enabled, array inputs will be flattened before joining | true          | No               |
+| Join String | The string to be used as a delimiter when joining inputs  | `\n`          | Yes              |
+
+</TabItem>
+
+</Tabs>
+
+### Example 1: Joining Two Text Nodes
+
+Let's say you have two Text nodes: one with the value `"Hello"` and the other with the value `"World"`. If you want to concatenate these two strings with a newline in between, you can do the following:
+
+1. Add a Join Node to your graph.
+2. Connect the output of the first Text node to `Input 1` of the Join Node.
+3. Connect the output of the second Text node to `Input 2` of the Join Node.
+4. Leave the `Join String` setting as the default value (`\n`).
+
+The `Joined` output of the Join Node will now be `"Hello\nWorld"`.
+
+### Example 2: Joining an Array with a Custom Delimiter
+
+Imagine you have an Array node with the value `["One", "Two", "Three"]` and you want to join these values with a `/` delimiter. Here's how to do it:
+
+1. Add a Join Node to your graph.
+2. Connect the output of the Array node to `Input 1` of the Join Node.
+3. Change the `Join String` setting to `"/"`.
+
+The `Joined` output of the Join Node will now be `"One/Two/Three"`.
+
+### Example 3: Connecting a Split Node to a Join Node
+
+Suppose you have a node with `Split` enabled, which runs N times in parallel and outputs an array of results. If you want to join these results into a single string, you can do the following:
+
+1. Add a Join Node to your graph.
+2. Connect the output of the node with `Split` enabled to `Input 1` of the Join Node.
+3. Set the `Join String` setting to the delimiter you want to use.
+
+The `Joined` output of the Join Node will now be a string that joins all the results from the Split node. For instance, if the Split node outputs `["Hello", "World"]` and the `Join String` is `" "`, the `Joined` output will be `"Hello World"`.
+
+1. **Dynamic Join String:** The Join Node allows for dynamic join strings. If you have a node that generates a delimiter string dynamically, you can use this as your join string by enabling the `Use Join String Input` setting and connecting the output of that node to the `Join String` input of the Join Node.
+
+2. **Multiple Inputs:** The Join Node can handle any number of inputs. If you have several nodes generating strings and you want to join all of them, you can simply connect all of them to the Join Node. The Join Node will automatically adjust the number of `Input [i]` inputs based on the number of connections.
+
+3. **Handling Missing Inputs:** If an input is missing or not a string, the Join Node will simply ignore it during the joining process. This can be useful when dealing with optional inputs that may not always be present.
+
+4. **Special Characters as Delimiters:** You can use special characters as delimiters. This includes newline (`\n`), tab (`\t`), and space (` `).
+
+## Flattening Arrays
+
+The Join Node has a `Flatten` setting. When enabled, this setting treats each element of an array input as a separate string to be joined. This is particularly useful when you're dealing with array inputs and want to concatenate all elements of an array into a single string.
+
+Flattening in the Join Node works similarly to the [Array Node](./array-node.md). For more information on how flattening works, refer to the documentation for the Array Node.
+
+## Error Handling
+
+If `Use Join String Input` is enabled but no valid `Join String` input is provided, the Join Node will default to the `Join String` specified in the node data. If no valid string inputs are provided, the output will be an empty string.
+
+**Q: What happens if I connect a non-string node to the Join Node?**
+
+A: The Join Node is designed to work with string inputs. If a non-string input is connected, the node will attempt to convert it to a string. If this conversion isn't possible, the input will be ignored during the joining process.
+
+**Q: Can I connect an Array Node to the Join Node?**
+
+A: Yes, you can connect an Array Node to the Join Node. If the `Flatten` setting is enabled, each element of the array will be treated as a separate string to be joined. If `Flatten` is disabled, the array will be converted to a string representation and then joined.
+
+**Q: What happens if I use a dynamic join string but the input is missing or not a string?**
+
+A: If the `Use Join String Input` setting is enabled but no valid `Join String` input is provided, the Join Node will default to the `Join String` specified in the node data.
+
+**Q: How does the Join Node handle empty strings or null values?**
+
+A: The Join Node will ignore any inputs that are null or not a string. Empty strings, however, will be included in the join operation. For example, if your inputs are `"Hello"`, `""`, and `"World"`, and your join string is `" "`, the output will be `"Hello  World"` (note the extra space between "Hello" and "World").
+
+## See Also

@@ -92,7 +92,14 @@ const sidebars = {
       label: 'Text',
       collapsible: true,
       collapsed: false,
-      items: ['node-reference/text', 'node-reference/prompt', 'node-reference/chunk', 'node-reference/to-yaml'],
+      items: [
+        'node-reference/text',
+        'node-reference/prompt',
+        'node-reference/chunk',
+        'node-reference/to-yaml',
+        'node-reference/to-json',
+        'node-reference/join',
+      ],
     },
     {
       type: 'category',

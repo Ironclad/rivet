@@ -544,13 +544,17 @@ export class GraphProcessor {
       await this.#processingQueue.onIdle();
 
       // If we've aborted successfully, we can treat the graph like it succeeded
-      if (this.#erroredNodes.size > 0 && !this.#abortSuccessfully) {
+      const erroredNodes = [...this.#erroredNodes.entries()].filter(([nodeId]) => {
+        const erroredNodeAttachedData = this.#getAttachedDataTo(nodeId);
+        return erroredNodeAttachedData.races == null || erroredNodeAttachedData.races.completed === false;
+      });
+      if (erroredNodes.length && !this.#abortSuccessfully) {
         const error =
           this.#abortError ??
           Error(
             `Graph ${this.#graph.metadata!.name} (${
               this.#graph.metadata!.id
-            }) failed to process due to errors in nodes: ${Array.from(this.#erroredNodes)
+            }) failed to process due to errors in nodes: ${erroredNodes
               .map(([nodeId, error]) => `${this.#nodesById[nodeId]!.title} (${nodeId}): ${error}`)
               .join(', ')}`,
           );
@@ -1191,11 +1195,11 @@ export class GraphProcessor {
 
     await this.#waitUntilUnpaused();
     const results = await instance.process(inputValues, context);
+    this.#nodeAbortControllers.delete(`${node.id}-${processId}`);
+
     if (nodeAbortController.signal.aborted) {
       throw new Error('Aborted');
     }
-
-    this.#nodeAbortControllers.delete(`${node.id}-${processId}`);
 
     return results;
   }
