@@ -438,7 +438,7 @@ data:
               I have this question about the file: {{question}}
 
 
-              Answer to the best of your ability about this particular chunk of the file. If this chunk of the file does not answer the question, then state that this chunk of the file does not have a sufficient answer to the question. 
+              Answer to the best of your ability about this particular chunk of the file. If this chunk of the file does not answer the question, then state that this chunk of the file does not have a sufficient answer to the question.
 
 
               If the file does not exist, instruct the AI calling you that they should use READ_DIRECTORY and then call ASK_QUESTION_ABOUT_FILE again with the correct path.
@@ -1031,7 +1031,7 @@ data:
         Dl9zJxgRRBk7hQ43xWhZv:
           data:
             text: >-
-              
+
 
               Please give me a a list of the top level exported names/functions/etc from this part of the file. Put the items in bullet points.
 
@@ -2894,7 +2894,7 @@ data:
               The Join Node has a `Flatten` setting. When enabled, this setting treats each element of an array input as a separate string to be joined. This is particularly useful when you're dealing with array inputs and want to concatenate all elements of an array into a single string.
 
 
-              Flattening in the Join Node works similarly to the [Array Node](./array.md). For more information on how flattening works, refer to the documentation for the Array Node.
+              Flattening in the Join Node works similarly to the [Array Node](./array). For more information on how flattening works, refer to the documentation for the Array Node.
 
 
               ## Error Handling
@@ -3141,7 +3141,7 @@ data:
               # System Commands
 
 
-              You have access to System Commands to perform actions such as iteracting with the file system and other APIs. 
+              You have access to System Commands to perform actions such as iteracting with the file system and other APIs.
 
 
               System commands are called by using a YAML document like this:
@@ -3201,7 +3201,7 @@ data:
               ### RECALL_INFO
 
 
-              Use this function to search for any previously stored memories related to a topic. 
+              Use this function to search for any previously stored memories related to a topic.
 
 
               Arguments:
@@ -4168,7 +4168,7 @@ data:
         6P04DpTqBQMOYpBfJuurJ:
           data:
             text: |-
-              
+
               SYSTEM_MESSAGE:
 
               You ran this command:
