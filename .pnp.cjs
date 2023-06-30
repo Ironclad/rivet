@@ -7743,6 +7743,7 @@ const RAW_RUNTIME_STATE =
           ["@tauri-apps/cli", "npm:1.3.1"],\
           ["@types/jsonpath-plus", "npm:5.0.2"],\
           ["@types/lodash-es", "npm:4.17.7"],\
+          ["@types/marked", "npm:5.0.0"],\
           ["@types/node", "npm:20.3.1"],\
           ["@types/react", "npm:18.2.12"],\
           ["@types/react-dom", "npm:18.2.5"],\
@@ -7762,6 +7763,7 @@ const RAW_RUNTIME_STATE =
           ["jsonpath-plus", "npm:7.2.0"],\
           ["lodash-es", "npm:4.17.21"],\
           ["majesticons", "npm:2.1.2"],\
+          ["marked", "npm:5.1.0"],\
           ["minimatch", "npm:9.0.1"],\
           ["monaco-editor", "npm:0.39.0"],\
           ["nanoid", "npm:3.3.6"],\
@@ -9454,6 +9456,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-long-npm-4.0.2-e7bdc00dd4-b6e4c16ca4.zip/node_modules/@types/long/",\
         "packageDependencies": [\
           ["@types/long", "npm:4.0.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@types/marked", [\
+      ["npm:5.0.0", {\
+        "packageLocation": "./.yarn/cache/@types-marked-npm-5.0.0-87556995f9-5c489e8a43.zip/node_modules/@types/marked/",\
+        "packageDependencies": [\
+          ["@types/marked", "npm:5.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -17059,6 +17070,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/markdown-escapes-npm-1.0.4-6f56c61420-c17e144fe3.zip/node_modules/markdown-escapes/",\
         "packageDependencies": [\
           ["markdown-escapes", "npm:1.0.4"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["marked", [\
+      ["npm:5.1.0", {\
+        "packageLocation": "./.yarn/cache/marked-npm-5.1.0-a79a18cf61-017f42f088.zip/node_modules/marked/",\
+        "packageDependencies": [\
+          ["marked", "npm:5.1.0"]\
         ],\
         "linkType": "HARD"\
       }]\

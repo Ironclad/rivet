@@ -118,7 +118,7 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
   const output = useRecoilValue(lastRunData(node.id));
   let [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
 
-  const { FullscreenOutput, Output, OutputSimple } = useUnknownNodeComponentDescriptorFor(node);
+  const { FullscreenOutput, Output, OutputSimple, FullscreenOutputSimple } = useUnknownNodeComponentDescriptorFor(node);
 
   const setPromptDesignerState = useSetRecoilState(promptDesignerState);
   const setPromptDesignerAttachedNode = useSetRecoilState(promptDesignerAttachedChatNodeState);
@@ -211,7 +211,9 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
     body = (
       <div className="split-output">
         {outputs.map(({ key, value }) =>
-          OutputSimple ? (
+          FullscreenOutputSimple ? (
+            <FullscreenOutputSimple key={`outputs-${key}`} outputs={value} />
+          ) : OutputSimple ? (
             <OutputSimple key={`outputs-${key}`} outputs={value} />
           ) : (
             <RenderDataOutputs key={`outputs-${key}`} outputs={value} />
@@ -220,7 +222,9 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
       </div>
     );
   } else {
-    body = OutputSimple ? (
+    body = FullscreenOutputSimple ? (
+      <FullscreenOutputSimple outputs={data.outputData!} />
+    ) : OutputSimple ? (
       <OutputSimple outputs={data.outputData!} />
     ) : (
       <RenderDataOutputs outputs={data.outputData!} />

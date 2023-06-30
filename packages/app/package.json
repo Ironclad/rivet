@@ -73,6 +73,7 @@
     "jsonpath-plus": "^7.2.0",
     "lodash-es": "^4.17.21",
     "majesticons": "^2.1.2",
+    "marked": "^5.1.0",
     "minimatch": "^9.0.1",
     "monaco-editor": "^0.39.0",
     "nanoid": "^3.3.6",
@@ -115,5 +116,8 @@
   "volta": {
     "node": "18.15.0",
     "yarn": "3.5.0"
+  },
+  "devDependencies": {
+    "@types/marked": "^5"
   }
 }

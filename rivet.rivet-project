@@ -903,6 +903,12 @@ data:
           title: Graph Output
           type: graphOutput
           visualData: 2699.672402408892/135.11899467921754/300/100
+    GHCFrZ4a-LuzXZzUZwVjt:
+      metadata:
+        description: ""
+        id: GHCFrZ4a-LuzXZzUZwVjt
+        name: Untitled Graph
+      nodes: {}
     HRMMlTL5W-Wau-f7nLLEh:
       metadata:
         description: ""
@@ -2235,6 +2241,189 @@ data:
           title: Text
           type: text
           visualData: 2440.4366570143184/529.7076073959739/300/15
+    MurwaMMNbRHYMOW3runpn:
+      metadata:
+        description: ""
+        id: MurwaMMNbRHYMOW3runpn
+        name: Testing
+      nodes:
+        --gHsQqvmvRXzykSV7OA_:
+          data:
+            maxIterations: 100
+          id: --gHsQqvmvRXzykSV7OA_
+          outgoingConnections:
+            - output1->"Assemble Prompt" Hu7Inl7-wPpDh25xPauMz/message1
+          title: Loop Controller
+          type: loopController
+          visualData: 1050.5768011377613/1853.0830185917564/250/19
+        7oeiNm0plc2v8AOs6z7yR:
+          data:
+            enableFunctionCall: false
+            promptText: Message from assistant
+            type: assistant
+            useTypeInput: false
+          id: 7oeiNm0plc2v8AOs6z7yR
+          outgoingConnections:
+            - output->"Assemble Prompt" Q_wcRYDqOd3HXbJBLljXf/message1
+          title: Prompt
+          type: prompt
+          visualData: 317.4655897358294/1178.5454407886202/250/18
+        8s2n2hiSw36yezwSOBPQG:
+          data:
+            text: Give me a markdown formatted document
+          id: 8s2n2hiSw36yezwSOBPQG
+          outgoingConnections:
+            - output->"Chat" WnxX9EQzXu-cdVJrKH0jj/prompt
+          title: Text
+          type: text
+          visualData: 783.2821782178219/806.7574257425742/300/null
+        BFPkIhMdkomg6_MY9keoI:
+          data:
+            text: First message
+          id: BFPkIhMdkomg6_MY9keoI
+          outgoingConnections:
+            - output->"Loop Controller" --gHsQqvmvRXzykSV7OA_/input1Default
+          title: Text
+          type: text
+          visualData: 646.6520674756624/1884.206508882605/300/28
+        Hu7Inl7-wPpDh25xPauMz:
+          data: {}
+          id: Hu7Inl7-wPpDh25xPauMz
+          outgoingConnections:
+            - prompt->"Loop Controller" --gHsQqvmvRXzykSV7OA_/input1
+          title: Assemble Prompt
+          type: assemblePrompt
+          visualData: 1427.358544251912/2090.028394191343/250/27
+        MS9RaH9CNZTO1ARi-1nMo:
+          data:
+            text: Cherry
+          id: MS9RaH9CNZTO1ARi-1nMo
+          outgoingConnections:
+            - output->"Array" NiK0-s74J6ciULASTJK4N/input3
+          title: Text
+          type: text
+          visualData: 335/485/164/3
+        NiK0-s74J6ciULASTJK4N:
+          data:
+            flatten: true
+          id: NiK0-s74J6ciULASTJK4N
+          outgoingConnections:
+            - indices->"Text" eQfF99SqPxg3j6VON6kQV/index
+            - output->"Text" eQfF99SqPxg3j6VON6kQV/fruit
+            - output->"Text" eQfF99SqPxg3j6VON6kQV/input
+          title: Array
+          type: array
+          visualData: 749/361/200/4
+        Q_wcRYDqOd3HXbJBLljXf:
+          data: {}
+          id: Q_wcRYDqOd3HXbJBLljXf
+          outgoingConnections:
+            - prompt->"Chat" VEidgtZm66j1ZSQe_-1q7/prompt
+          title: Assemble Prompt
+          type: assemblePrompt
+          visualData: 922.8477668727571/1251.4264019196676/214.7350188075576/15
+        VEidgtZm66j1ZSQe_-1q7:
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          id: VEidgtZm66j1ZSQe_-1q7
+          outgoingConnections: []
+          title: Chat
+          type: chat
+          visualData: 1380.1170230014266/1186.7739364001902/200/16
+        WnxX9EQzXu-cdVJrKH0jj:
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          id: WnxX9EQzXu-cdVJrKH0jj
+          outgoingConnections: []
+          title: Chat
+          type: chat
+          visualData: 1180.0396039603959/753.6633663366337/200/9
+        clNSdw87GwbTjiQp7LdQ4:
+          data:
+            text: Banana
+          id: clNSdw87GwbTjiQp7LdQ4
+          outgoingConnections:
+            - output->"Array" NiK0-s74J6ciULASTJK4N/input2
+          title: Text
+          type: text
+          visualData: 334/357/164/2
+        djvEekj5wmQWV72uGDfIl:
+          data:
+            text: This message is appended
+          id: djvEekj5wmQWV72uGDfIl
+          outgoingConnections:
+            - output->"Assemble Prompt" Hu7Inl7-wPpDh25xPauMz/message2
+          title: Text
+          type: text
+          visualData: 1023.1286674573225/2095.465841731702/300/26
+        eQfF99SqPxg3j6VON6kQV:
+          data:
+            text: "[{{index}}] - {{fruit}}"
+          id: eQfF99SqPxg3j6VON6kQV
+          isSplitRun: true
+          outgoingConnections: []
+          title: Text
+          type: text
+          visualData: 1004/359/300/8
+        iNNukcnXz4AnAUnCPAJD9:
+          data:
+            text: Apple
+          id: iNNukcnXz4AnAUnCPAJD9
+          outgoingConnections:
+            - output->"Array" NiK0-s74J6ciULASTJK4N/input1
+          title: Text
+          type: text
+          visualData: 334/230/164/1
+        t_zHDgfHtGvTODEKs8mbQ:
+          data:
+            enableFunctionCall: false
+            promptText: Message from user
+            type: user
+            useTypeInput: false
+          id: t_zHDgfHtGvTODEKs8mbQ
+          outgoingConnections:
+            - output->"Assemble Prompt" Q_wcRYDqOd3HXbJBLljXf/message2
+          title: Prompt
+          type: prompt
+          visualData: 325.69408534739927/1394.91987872368/250/17
     Pd4dvtJ0K_FosX2rfhTg9:
       metadata:
         description: ""
@@ -2450,6 +2639,485 @@ data:
           title: Subgraph
           type: subGraph
           visualData: 217.6087101785059/1373.1105375787274/300/45
+    WTeEkN10vbyJnpSBOowvw:
+      metadata:
+        description: ""
+        id: WTeEkN10vbyJnpSBOowvw
+        name: Docs
+      nodes:
+        4PTl5m4gQ3PWpP-mezsqp:
+          data:
+            dataType: string
+            id: output
+          id: 4PTl5m4gQ3PWpP-mezsqp
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 1824.638991409224/319.95254020907737/300/13
+        7mKMzipo-q7OoP3D2i6Ia:
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 4096
+            model: gpt-4-32k-0613
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.3
+            top_p: 1
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          id: 7mKMzipo-q7OoP3D2i6Ia
+          outgoingConnections:
+            - response->"Prompt" ywivfgGxt7SCyi_-ugZ5X/input
+            - response->"User Input" Mnzm_hHdBXR7-tMCuoytx/questions
+          title: Chat
+          type: chat
+          visualData: 1829.0649195994358/559.8641943858444/200/7
+        BzJ0g3_FSPV70p7cnVZNh:
+          data:
+            text: >-
+              I am working on documentation for my AI IDE called Rivet. It uses
+              a visual node editor like in blender and unreal engine, just so
+              you know. I am using docusaurus for the docs, and am working on
+              documenting every node.
+
+
+              {{existing_docs_page}}
+
+
+              Can you make a docs page using the existing one as a template, but for this source file for a node?
+
+
+              {{source_file}}
+          id: BzJ0g3_FSPV70p7cnVZNh
+          outgoingConnections:
+            - output->"Loop Controller" MZ_w9eR32hImFKnkTHtrn/input1Default
+          title: Text
+          type: text
+          visualData: 812.1989866333732/586.6526333596356/300/null
+        MZ_w9eR32hImFKnkTHtrn:
+          data:
+            maxIterations: 100
+          id: MZ_w9eR32hImFKnkTHtrn
+          outgoingConnections:
+            - break->"Graph Output" 4PTl5m4gQ3PWpP-mezsqp/value
+            - output1->"Assemble Prompt" uYrY8xrol_pPkSNVs3hNV/message1
+            - output1->"Chat" 7mKMzipo-q7OoP3D2i6Ia/prompt
+          title: Loop Controller
+          type: loopController
+          visualData: 1192.12520774107/609.5158402552806/250/null
+        Mnzm_hHdBXR7-tMCuoytx:
+          data:
+            prompt: This is an example question?
+            useInput: true
+          id: Mnzm_hHdBXR7-tMCuoytx
+          outgoingConnections:
+            - output->"Assemble Prompt" uYrY8xrol_pPkSNVs3hNV/message3
+          title: User Input
+          type: userInput
+          visualData: 2377.909126290767/767.7690984682896/250/12
+        VtwWldPN8RBa7V9rSNQzt:
+          data:
+            text: >-
+              Here is the existing docs page for the `JoinNode`:
+
+
+              ```
+
+              ---
+
+              id: join
+
+              title: Join Node
+
+              sidebar_label: Join
+
+              ---
+
+
+              import Tabs from '@theme/Tabs';
+
+              import TabItem from '@theme/TabItem';
+
+              import Admonition from '@theme/Admonition';
+
+
+              ## Overview
+
+
+              The Join Node is used to concatenate multiple strings using a specified delimiter. The delimiter can be set directly in the node or provided as an input.
+
+
+              ![Join Node Screenshot](./assets/join-node.png)
+
+
+              <Tabs
+                defaultValue="inputs"
+                values={[
+                  {label: 'Inputs', value: 'inputs'},
+                  {label: 'Outputs', value: 'outputs'},
+                  {label: 'Editor Settings', value: 'settings'},
+                ]
+              }>
+
+
+              <TabItem value="inputs">
+
+
+              ## Inputs
+
+
+              | Title                  | Data Type | Description                                                                  | Default Value | Notes                                                            |
+
+              | ---------------------- | --------- | ---------------------------------------------------------------------------- | ------------- | ---------------------------------------------------------------- |
+
+              | Join String (optional) | string    | The string to be used as a delimiter when `Use Join String Input` is enabled | `\n`          | Only appears if the `Use Join String Input` setting is enabled   |
+
+              | Input [i]              | string    | The ith string input to be joined                                            | N/A           | Dynamic number of inputs based on how many connections there are |
+
+
+              </TabItem>
+
+
+              <TabItem value="outputs">
+
+
+              ## Outputs
+
+
+              | Title  | Data Type | Description             | Notes                                                                             |
+
+              | ------ | --------- | ----------------------- | --------------------------------------------------------------------------------- |
+
+              | Joined | string    | The concatenated string | The output will be a single string resulting from joining all valid string inputs |
+
+
+              </TabItem>
+
+
+              <TabItem value="settings">
+
+
+              ## Editor Settings
+
+
+              | Setting     | Description                                               | Default Value | Use Input Toggle |
+
+              | ----------- | --------------------------------------------------------- | ------------- | ---------------- |
+
+              | Flatten     | If enabled, array inputs will be flattened before joining | true          | No               |
+
+              | Join String | The string to be used as a delimiter when joining inputs  | `\n`          | Yes              |
+
+
+              </TabItem>
+
+
+              </Tabs>
+
+
+              ### Example 1: Joining Two Text Nodes
+
+
+              Let's say you have two Text nodes: one with the value `"Hello"` and the other with the value `"World"`. If you want to concatenate these two strings with a newline in between, you can do the following:
+
+
+              1. Add a Join Node to your graph.
+
+              2. Connect the output of the first Text node to `Input 1` of the Join Node.
+
+              3. Connect the output of the second Text node to `Input 2` of the Join Node.
+
+              4. Leave the `Join String` setting as the default value (`\n`).
+
+
+              The `Joined` output of the Join Node will now be `"Hello\nWorld"`.
+
+
+              ### Example 2: Joining an Array with a Custom Delimiter
+
+
+              Imagine you have an Array node with the value `["One", "Two", "Three"]` and you want to join these values with a `/` delimiter. Here's how to do it:
+
+
+              1. Add a Join Node to your graph.
+
+              2. Connect the output of the Array node to `Input 1` of the Join Node.
+
+              3. Change the `Join String` setting to `"/"`.
+
+
+              The `Joined` output of the Join Node will now be `"One/Two/Three"`.
+
+
+              ### Example 3: Connecting a Split Node to a Join Node
+
+
+              Suppose you have a node with `Split` enabled, which runs N times in parallel and outputs an array of results. If you want to join these results into a single string, you can do the following:
+
+
+              1. Add a Join Node to your graph.
+
+              2. Connect the output of the node with `Split` enabled to `Input 1` of the Join Node.
+
+              3. Set the `Join String` setting to the delimiter you want to use.
+
+
+              The `Joined` output of the Join Node will now be a string that joins all the results from the Split node. For instance, if the Split node outputs `["Hello", "World"]` and the `Join String` is `" "`, the `Joined` output will be `"Hello World"`.
+
+
+              1. **Dynamic Join String:** The Join Node allows for dynamic join strings. If you have a node that generates a delimiter string dynamically, you can use this as your join string by enabling the `Use Join String Input` setting and connecting the output of that node to the `Join String` input of the Join Node.
+
+
+              2. **Multiple Inputs:** The Join Node can handle any number of inputs. If you have several nodes generating strings and you want to join all of them, you can simply connect all of them to the Join Node. The Join Node will automatically adjust the number of `Input [i]` inputs based on the number of connections.
+
+
+              3. **Handling Missing Inputs:** If an input is missing or not a string, the Join Node will simply ignore it during the joining process. This can be useful when dealing with optional inputs that may not always be present.
+
+
+              4. **Special Characters as Delimiters:** You can use special characters as delimiters. This includes newline (`\n`), tab (`\t`), and space (` `).
+
+
+              ## Flattening Arrays
+
+
+              The Join Node has a `Flatten` setting. When enabled, this setting treats each element of an array input as a separate string to be joined. This is particularly useful when you're dealing with array inputs and want to concatenate all elements of an array into a single string.
+
+
+              Flattening in the Join Node works similarly to the [Array Node](./array.md). For more information on how flattening works, refer to the documentation for the Array Node.
+
+
+              ## Error Handling
+
+
+              If `Use Join String Input` is enabled but no valid `Join String` input is provided, the Join Node will default to the `Join String` specified in the node data. If no valid string inputs are provided, the output will be an empty string.
+
+
+              **Q: What happens if I connect a non-string node to the Join Node?**
+
+
+              A: The Join Node is designed to work with string inputs. If a non-string input is connected, the node will attempt to convert it to a string. If this conversion isn't possible, the input will be ignored during the joining process.
+
+
+              **Q: Can I connect an Array Node to the Join Node?**
+
+
+              A: Yes, you can connect an Array Node to the Join Node. If the `Flatten` setting is enabled, each element of the array will be treated as a separate string to be joined. If `Flatten` is disabled, the array will be converted to a string representation and then joined.
+
+
+              **Q: What happens if I use a dynamic join string but the input is missing or not a string?**
+
+
+              A: If the `Use Join String Input` setting is enabled but no valid `Join String` input is provided, the Join Node will default to the `Join String` specified in the node data.
+
+
+              **Q: How does the Join Node handle empty strings or null values?**
+
+
+              A: The Join Node will ignore any inputs that are null or not a string. Empty strings, however, will be included in the join operation. For example, if your inputs are `"Hello"`, `""`, and `"World"`, and your join string is `" "`, the output will be `"Hello  World"` (note the extra space between "Hello" and "World").
+
+
+              ## See Also
+
+              ```
+          id: VtwWldPN8RBa7V9rSNQzt
+          outgoingConnections:
+            - output->"Text" BzJ0g3_FSPV70p7cnVZNh/existing_docs_page
+          title: Text
+          type: text
+          visualData: 337.15066883147637/416.09957189316515/300/1
+        _fpeIdnKWH_osAtkxQmyz:
+          data:
+            prompt: Paste in the file to write docs for
+            useInput: false
+          id: _fpeIdnKWH_osAtkxQmyz
+          outgoingConnections:
+            - output->"Text" BzJ0g3_FSPV70p7cnVZNh/source_file
+          title: User Input
+          type: userInput
+          visualData: 378.2262752579562/763.4563305866574/250/2
+        iD3sWLJf7G-CHBZpsaB9L:
+          data:
+            text: You are a documentation assistant that can help write documentation for an
+              application when given examples and source code.
+          id: iD3sWLJf7G-CHBZpsaB9L
+          outgoingConnections:
+            - output->"Chat" 7mKMzipo-q7OoP3D2i6Ia/systemPrompt
+          title: Text
+          type: text
+          visualData: 1183.9419997089549/356.3468775151959/300/5
+        uYrY8xrol_pPkSNVs3hNV:
+          data: {}
+          id: uYrY8xrol_pPkSNVs3hNV
+          outgoingConnections:
+            - prompt->"Loop Controller" MZ_w9eR32hImFKnkTHtrn/input1
+          title: Assemble Prompt
+          type: assemblePrompt
+          visualData: 2861.2599254739066/748.9590017775972/250/11
+        ywivfgGxt7SCyi_-ugZ5X:
+          data:
+            enableFunctionCall: false
+            promptText: "{{input}}"
+            type: assistant
+            useTypeInput: false
+          id: ywivfgGxt7SCyi_-ugZ5X
+          outgoingConnections:
+            - output->"Assemble Prompt" uYrY8xrol_pPkSNVs3hNV/message2
+          title: Prompt
+          type: prompt
+          visualData: 2106.8544425110695/601.0461251185214/250/8
+    Z58ZSUt6PzrLJYSKKdmMk:
+      metadata:
+        description: ""
+        id: Z58ZSUt6PzrLJYSKKdmMk
+        name: Docs 2
+      nodes:
+        2hFef_YClkWthsXSdfIpz:
+          data:
+            enableFunctionCall: false
+            promptText: "{{input}}"
+            type: assistant
+            useTypeInput: false
+          id: 2hFef_YClkWthsXSdfIpz
+          outgoingConnections:
+            - output->"Assemble Prompt" C4eG4iCgiuErt-jkU5FNW/message2
+          title: Prompt
+          type: prompt
+          visualData: 2106.8544425110695/601.0461251185214/250/8
+        C4eG4iCgiuErt-jkU5FNW:
+          data: {}
+          id: C4eG4iCgiuErt-jkU5FNW
+          outgoingConnections:
+            - prompt->"Loop Controller" GBKitGL6d89jMwz4KD--U/input1
+          title: Assemble Prompt
+          type: assemblePrompt
+          visualData: 2861.2599254739066/748.9590017775972/250/11
+        GBKitGL6d89jMwz4KD--U:
+          data:
+            maxIterations: 100
+          id: GBKitGL6d89jMwz4KD--U
+          outgoingConnections:
+            - break->"Graph Output" jXLfU1WHl-2pRmVlluCNp/value
+            - output1->"Assemble Prompt" C4eG4iCgiuErt-jkU5FNW/message1
+            - output1->"Chat" UWBFvj9LZsaT5Fmczqy6B/prompt
+          title: Loop Controller
+          type: loopController
+          visualData: 1192.12520774107/609.5158402552806/250/null
+        IK_7V7t62MtOGLVThoAbs:
+          data:
+            prompt: This is an example question?
+            useInput: true
+          id: IK_7V7t62MtOGLVThoAbs
+          outgoingConnections:
+            - output->"Assemble Prompt" C4eG4iCgiuErt-jkU5FNW/message3
+          title: User Input
+          type: userInput
+          visualData: 2377.909126290767/767.7690984682896/250/12
+        IaDN_IvRyCyd4w5OSbU1m:
+          data:
+            text: >-
+              I am working on documentation for my AI IDE called Rivet. It uses
+              a visual node editor like in blender and unreal engine, just so
+              you know. I am using docusaurus for the docs, and am working on
+              documenting every node.
+
+
+              Here is an existing docs page:
+
+
+              ```
+
+              {{page}}
+
+              ```
+
+
+              {{question}}
+          id: IaDN_IvRyCyd4w5OSbU1m
+          outgoingConnections:
+            - output->"Loop Controller" GBKitGL6d89jMwz4KD--U/input1Default
+          title: Text
+          type: text
+          visualData: 812.1989866333732/586.6526333596356/300/null
+        MtVQBLQTrG8OIkGYEZE40:
+          data:
+            prompt: What question do you have?
+            useInput: false
+          id: MtVQBLQTrG8OIkGYEZE40
+          outgoingConnections:
+            - output->"Text" IaDN_IvRyCyd4w5OSbU1m/question
+          title: User Input
+          type: userInput
+          visualData: 422.5936698889692/768.7259474555756/250/15
+        UWBFvj9LZsaT5Fmczqy6B:
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 4096
+            model: gpt-4-32k-0613
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.3
+            top_p: 1
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          id: UWBFvj9LZsaT5Fmczqy6B
+          outgoingConnections:
+            - response->"Prompt" 2hFef_YClkWthsXSdfIpz/input
+            - response->"User Input" IK_7V7t62MtOGLVThoAbs/questions
+          title: Chat
+          type: chat
+          visualData: 1829.0649195994358/559.8641943858444/200/7
+        WHWxlLVSal4QpXV_NYmi0:
+          data:
+            prompt: Paste in the existing docs page
+            useInput: false
+          id: WHWxlLVSal4QpXV_NYmi0
+          outgoingConnections:
+            - output->"Text" IaDN_IvRyCyd4w5OSbU1m/page
+            - output->"Text" IaDN_IvRyCyd4w5OSbU1m/source_file
+          title: User Input
+          type: userInput
+          visualData: 422.5936698889692/558.4070202649488/250/14
+        jXLfU1WHl-2pRmVlluCNp:
+          data:
+            dataType: string
+            id: output
+          id: jXLfU1WHl-2pRmVlluCNp
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 1824.638991409224/319.95254020907737/300/13
+        qNHEy4-4-T4taIBwubuAU:
+          data:
+            text: You are a documentation assistant that can help write documentation for an
+              application when given examples and source code.
+          id: qNHEy4-4-T4taIBwubuAU
+          outgoingConnections:
+            - output->"Chat" UWBFvj9LZsaT5Fmczqy6B/systemPrompt
+          title: Text
+          type: text
+          visualData: 1183.9419997089549/356.3468775151959/300/5
     cWbUqJZE2osNm42Q2ewC9:
       metadata:
         description: ""
@@ -3093,135 +3761,6 @@ data:
           title: Read File
           type: readFile
           visualData: 907.7722794413804/405.417269725349/250/12
-    trryHWyYAN99_ADAMDalG:
-      metadata:
-        description: ""
-        id: trryHWyYAN99_ADAMDalG
-        name: WorkflowServiceImpl Explanation
-      nodes:
-        0kYaxftKW7nshQnUHeleh:
-          data:
-            errorOnMissingFile: false
-            path: /Users/Shared/ironclad/ironclad/harbor/packages/leaf-app-server/src/workflow/service/WorkflowServiceImpl.ts
-            usePathInput: false
-          id: 0kYaxftKW7nshQnUHeleh
-          outgoingConnections:
-            - content->"Chunk" XOjUzZkbpGh1GYBqidg97/input
-          title: Read File
-          type: readFile
-          visualData: 806/161/250/2
-        DZMA6R4Vz0t4qm8oS-2kI:
-          data:
-            cache: true
-            frequencyPenalty: 0.5
-            maxTokens: 1024
-            model: gpt-3.5-turbo
-            presencePenalty: 0.5
-            stop: ""
-            temperature: 0.2
-            top_p: 1
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: false
-            usePresencePenaltyInput: false
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-          id: DZMA6R4Vz0t4qm8oS-2kI
-          outgoingConnections:
-            - response->"Text" VirQr-vQN4fmaLvpsAqau/summary
-          title: Chat
-          type: chat
-          visualData: 1985.8482769223158/25.624945733864607/200/20
-        VirQr-vQN4fmaLvpsAqau:
-          data:
-            text: >-
-              Hi, here's a summary of a file called WorkflowServiceImpl. Can you
-              please explain to me the main algorithm used in this file?
-
-
-              {{summary}}
-          id: VirQr-vQN4fmaLvpsAqau
-          outgoingConnections:
-            - output->"Chat" xwRypu9DS55_4C1_goBE_/message1
-          title: Text
-          type: text
-          visualData: 2272.205019111933/90.81184639491566/300/23
-        WLRmmhSopqgZ44Z3AFO-9:
-          data:
-            promptText: You are a helpful code summarizer AI. You try to summarize code
-              using technical details and avoid superfluous text.
-            type: system
-            useTypeInput: false
-          id: WLRmmhSopqgZ44Z3AFO-9
-          outgoingConnections:
-            - output->"Chat" DZMA6R4Vz0t4qm8oS-2kI/message1
-          title: Prompt
-          type: prompt
-          visualData: 1409.6426371505256/-70.99135346019317/null/18
-        XOjUzZkbpGh1GYBqidg97:
-          data:
-            model: gpt-3.5-turbo
-            numTokensPerChunk: 2048
-            overlap: 10
-            useModelInput: false
-          id: XOjUzZkbpGh1GYBqidg97
-          outgoingConnections:
-            - chunks->"Prompt" wBNkA_KnnTKfE-ollR7ot/chunk
-            - count->"Prompt" wBNkA_KnnTKfE-ollR7ot/total
-            - indexes->"Prompt" wBNkA_KnnTKfE-ollR7ot/index
-          title: Chunk
-          type: chunk
-          visualData: 1139.5826201261716/179.27978300634197/200/4
-        wBNkA_KnnTKfE-ollR7ot:
-          data:
-            promptText: >-
-              Hi, this is chunk {{index}}/{{total}} for the file called
-              WorkflowServiceImpl. Can you please summarize what this part of
-              the file does? Try to include technical details mostly.
-
-
-              ```
-
-              {{chunk}}
-
-              ```
-            type: user
-            useTypeInput: false
-          id: wBNkA_KnnTKfE-ollR7ot
-          outgoingConnections:
-            - output->"Chat" DZMA6R4Vz0t4qm8oS-2kI/message2
-          title: Prompt
-          type: prompt
-          visualData: 1408.4785853530072/101.28831257258456/null/12
-        xwRypu9DS55_4C1_goBE_:
-          data:
-            cache: false
-            frequencyPenalty: 0
-            maxTokens: 1024
-            model: gpt-4
-            presencePenalty: 0
-            stop: ""
-            temperature: 0.3
-            top_p: 1
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: false
-            usePresencePenaltyInput: false
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-          id: xwRypu9DS55_4C1_goBE_
-          outgoingConnections: []
-          title: Chat
-          type: chat
-          visualData: 2623.748661962601/86.15563920484055/200/25
     u6yVHvgJi01zZYY_5f4y3:
       metadata:
         description: ""
