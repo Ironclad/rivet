@@ -53,6 +53,7 @@ By default, inputs will be flattened, so if any of the inputs are arrays themsel
 | Setting | Description                                               | Default Value | Use Input Toggle |
 | ------- | --------------------------------------------------------- | ------------- | ---------------- |
 | Flatten | If enabled, array inputs will be flattened before joining | true          | No               |
+| Deep    | If enabled, array inputs will be flattened recursively    | false         | No               |
 
 </TabItem>
 
@@ -108,6 +109,9 @@ The Array Node has a `Flatten` setting. When enabled, this setting treats each e
 Note that with flatten disabled you can get arrays of arrays. These are not well supported in Rivet and you may have to use a [Code Node](./code) to work with them.
 
 :::
+
+If the `Deep` setting is enabled, the Array Node will recursively flatten all array inputs. This means that if an array input contains another array, the Array Node will flatten the inner array as well. You can
+use the Array Node as a Flatten node this way.
 
 ## Error Handling
 

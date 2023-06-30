@@ -18,6 +18,7 @@ export function coerceTypeOptional<T extends DataType>(
 ): GetDataValue<T>['value'] | undefined {
   const value = wrapped ? unwrapDataValue(wrapped) : undefined;
 
+  // Coerce 'true' to [true] for example
   if (isArrayDataType(type) && !isArrayDataValue(value)) {
     const coerced = coerceTypeOptional(value, getScalarTypeOf(type));
     if (coerced === undefined) {
@@ -25,6 +26,11 @@ export function coerceTypeOptional<T extends DataType>(
     }
 
     return [coerced] as any;
+  }
+
+  // Coerce foo[] to bar[]
+  if (isArrayDataType(type) && isArrayDataValue(value) && getScalarTypeOf(type) !== getScalarTypeOf(value.type)) {
+    return value.value.map((v) => coerceTypeOptional(inferType(v), getScalarTypeOf(type))) as any;
   }
 
   const result = match(type as DataType)

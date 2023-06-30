@@ -39,6 +39,7 @@ export const addContextMenuGroups = [
       { label: 'Array', nodeType: 'array' },
       { label: 'Pop', nodeType: 'pop' },
       { label: 'Hash', nodeType: 'hash' },
+      { label: 'Filter', nodeType: 'filter' },
     ],
   },
   {

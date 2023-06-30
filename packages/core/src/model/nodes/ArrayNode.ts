@@ -3,11 +3,13 @@ import { nanoid } from 'nanoid';
 import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
 import { Inputs, Outputs } from '../GraphProcessor';
 import { entries } from '../../utils/typeSafety';
+import { flattenDepth } from 'lodash-es';
 
 export type ArrayNode = ChartNode<'array', ArrayNodeData>;
 
 export type ArrayNodeData = {
   flatten?: boolean;
+  flattenDeep?: boolean;
 };
 
 export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
@@ -23,6 +25,7 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
       },
       data: {
         flatten: true,
+        flattenDeep: false,
       },
     };
 
@@ -60,7 +63,14 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
   }
 
   getEditors(): EditorDefinition<ArrayNode>[] {
-    return [{ type: 'toggle', label: 'Flatten', dataKey: 'flatten' }];
+    return [
+      { type: 'toggle', label: 'Flatten', dataKey: 'flatten' },
+      {
+        type: 'toggle',
+        label: 'Deep',
+        dataKey: 'flattenDeep',
+      },
+    ];
   }
 
   #getInputPortCount(connections: NodeConnection[]): number {
@@ -88,7 +98,11 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
         if (this.data.flatten) {
           if (Array.isArray(input?.value)) {
             for (const value of input?.value ?? []) {
-              outputArray.push(value);
+              if (this.data.flattenDeep) {
+                outputArray.push(...flattenDepth(value));
+              } else {
+                outputArray.push(value);
+              }
             }
           } else {
             outputArray.push(input?.value);

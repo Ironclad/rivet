@@ -99,6 +99,7 @@ const descriptors: NodeComponentDescriptors = {
   raceInputs: {},
   toJson: {},
   join: {},
+  filter: {},
 };
 
 export function useNodeTypes() {

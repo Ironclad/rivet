@@ -125,6 +125,9 @@ export * from './nodes/ToJsonNode';
 import { joinNode } from './nodes/JoinNode';
 export * from './nodes/JoinNode';
 
+import { filterNode } from './nodes/FilterNode';
+export * from './nodes/FilterNode';
+
 const register = new NodeRegistration()
   .register(toYamlNode)
   .register(userInputNode)
@@ -166,7 +169,8 @@ const register = new NodeRegistration()
   .register(abortGraphNode)
   .register(raceInputsNode)
   .register(toJsonNode)
-  .register(joinNode);
+  .register(joinNode)
+  .register(filterNode);
 
 export type Nodes = typeof register.NodesType;
 
