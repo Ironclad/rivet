@@ -4,12 +4,18 @@ import { useStableCallback } from '../../hooks/useStableCallback';
 import { ReactComponent as DeleteIcon } from 'majesticons/line/delete-bin-line.svg';
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
 import { ReactComponent as DuplicateIcon } from 'majesticons/line/image-multiple-line.svg';
+import { useRecoilValue } from 'recoil';
+import { nodesSelector } from '../../state/graph';
+import { Nodes } from '@ironclad/rivet-core';
 
 export const NodeContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSelected'>> = ({
   data,
   onMenuItemSelected,
 }) => {
   const nodeId = data?.element.dataset.nodeId;
+
+  const nodes = useRecoilValue(nodesSelector);
+  const node = nodes.find((n) => n.id === nodeId) as Nodes;
 
   const editNode = useStableCallback(() => {
     onMenuItemSelected?.(`Edit:${nodeId}`);
@@ -27,8 +33,22 @@ export const NodeContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSele
     onMenuItemSelected?.(`FactorIntoSubgraph`);
   });
 
+  if (!node) {
+    return null;
+  }
+
   return (
     <>
+      {node.type === 'subGraph' && (
+        <ContextMenuItem
+          label={
+            <>
+              <SettingsCogIcon /> Go To Subgraph
+            </>
+          }
+          onClick={() => onMenuItemSelected?.(`GoToSubgraph:${nodeId}`)}
+        />
+      )}
       <ContextMenuItem
         label={
           <>

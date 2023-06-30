@@ -18,6 +18,8 @@ import { isNotNull } from '../utils/genericUtilFunctions';
 import { useFactorIntoSubgraph } from '../hooks/useFactorIntoSubgraph';
 import { ErrorBoundary } from 'react-error-boundary';
 import { loadedRecordingState } from '../state/execution';
+import { useLoadGraph } from '../hooks/useLoadGraph';
+import { projectState } from '../state/savedGraphs';
 
 const Container = styled.div`
   position: relative;
@@ -47,6 +49,8 @@ export const GraphBuilder: FC = () => {
   const { clientToCanvasPosition } = useCanvasPositioning();
   const setEditingNodeId = useSetRecoilState(editingNodeState);
   const loadedRecording = useRecoilValue(loadedRecordingState);
+  const loadGraph = useLoadGraph();
+  const project = useRecoilValue(projectState);
 
   const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {
     setNodes?.(newNodes);
@@ -128,6 +132,25 @@ export const GraphBuilder: FC = () => {
 
     if (menuItemId.startsWith('FactorIntoSubgraph')) {
       factorIntoSubgraph();
+    }
+
+    if (menuItemId.startsWith('GoToSubgraph:')) {
+      const nodeId = menuItemId.substring(13) as NodeId;
+      const node = nodes.find((n) => n.id === nodeId) as Nodes;
+
+      if (node?.type !== 'subGraph') {
+        return;
+      }
+
+      const { graphId } = node.data;
+
+      const graph = project.graphs[graphId];
+
+      if (!graph) {
+        return;
+      }
+
+      loadGraph(graph);
     }
   });
 
