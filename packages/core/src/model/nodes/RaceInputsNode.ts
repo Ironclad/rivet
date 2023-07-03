@@ -74,7 +74,9 @@ export class RaceInputsNodeImpl extends NodeImpl<RaceInputsNode> {
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     // GraphProcessor handles most of the racing/aborting logic for us.
-    const value = Object.entries(inputs).find(([key, value]) => key.startsWith('input') && value !== undefined);
+    const value = Object.entries(inputs).find(
+      ([key, value]) => key.startsWith('input') && value !== undefined && value.type !== 'control-flow-excluded',
+    );
 
     if (!value) {
       return {

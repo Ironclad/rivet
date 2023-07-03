@@ -704,6 +704,9 @@ export class GraphProcessor {
     }
 
     let waitingForInputNode: false | string = false;
+    const anyInputIsValid = Object.values(inputValues).some(
+      (value) => value && value.type.includes('control-flow-excluded') === false,
+    );
     for (const inputNode of inputNodes) {
       // For loop controllers, allow nodes in the same cycle to be not processed yet,
       // but if we're in a 2nd iteration, we do need to wait for them
@@ -716,7 +719,7 @@ export class GraphProcessor {
       }
 
       // Only one visited node required for a raceInputs node
-      if (node.type === 'raceInputs' && this.#visitedNodes.has(inputNode.id)) {
+      if (node.type === 'raceInputs' && this.#visitedNodes.has(inputNode.id) && anyInputIsValid) {
         waitingForInputNode = false;
         break;
       }
@@ -1239,7 +1242,7 @@ export class GraphProcessor {
 
     const isWaitingForLoop = controlFlowExcludedValues.some((value) => value?.value === 'loop-not-broken');
 
-    const nodesAllowedToConsumeExcludedValue: NodeType[] = ['if', 'ifElse', 'coalesce', 'graphOutput'];
+    const nodesAllowedToConsumeExcludedValue: NodeType[] = ['if', 'ifElse', 'coalesce', 'graphOutput', 'raceInputs'];
 
     const allowedToConsumedExcludedValue =
       nodesAllowedToConsumeExcludedValue.includes(node.type as NodeType) && !isWaitingForLoop;
