@@ -7755,6 +7755,7 @@ const RAW_RUNTIME_STATE =
           ["@zilliz/milvus2-sdk-node", "npm:2.2.16"],\
           ["ahooks", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:3.7.7"],\
           ["clsx", "npm:1.2.1"],\
+          ["core-js", "npm:3.31.0"],\
           ["emittery", "npm:1.0.1"],\
           ["esbuild", "npm:0.18.2"],\
           ["eslint", "npm:8.42.0"],\

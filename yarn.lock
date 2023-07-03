@@ -4602,6 +4602,7 @@ __metadata:
     "@zilliz/milvus2-sdk-node": "npm:^2.2.16"
     ahooks: "npm:^3.7.7"
     clsx: "npm:^1.2.1"
+    core-js: "npm:^3.31.0"
     emittery: "npm:^1.0.1"
     esbuild: "npm:^0.18.2"
     eslint: "npm:^8.42.0"
@@ -8102,7 +8103,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.23.3":
+"core-js@npm:^3.23.3, core-js@npm:^3.31.0":
   version: 3.31.0
   resolution: "core-js@npm:3.31.0"
   checksum: 8d38fb70c4dc7e2b3e43dc7e0c7e9770fb6cc5870f1aa9d69f8a7bffb27b5085d9968925dfe746e3856d3e68fa7314d789241b81094bc664b5cb69addd3f70b1

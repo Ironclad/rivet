@@ -65,6 +65,7 @@
     "@zilliz/milvus2-sdk-node": "^2.2.16",
     "ahooks": "^3.7.7",
     "clsx": "^1.2.1",
+    "core-js": "^3.31.0",
     "emittery": "^1.0.1",
     "esbuild": "^0.18.2",
     "eslint": "^8.42.0",
