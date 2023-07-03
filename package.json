@@ -1,0 +1,24 @@
+{
+  "name": "@ironclad/rivet-node",
+  "main": "bundle.js",
+  "version": "0.9.4",
+  "types": "packages/node/dist/index.d.ts",
+  "dependencies": {
+    "@types/retry": "^0.12.2",
+    "@zilliz/milvus2-sdk-node": "^2.2.16",
+    "minimatch": "^9.0.1",
+    "nanoid": "^3.3.6",
+    "retry": "^0.13.1",
+    "ts-pattern": "^5.0.1",
+    "type-fest": "^3.11.1",
+    "ws": "^8.13.0",
+    "@dqbd/tiktoken": "^1.0.7",
+    "crypto-js": "^4.1.1",
+    "jsonpath-plus": "^7.2.0",
+    "openai": "^3.3.0",
+    "p-queue": "^6.6.2",
+    "safe-stable-stringify": "^2.4.3",
+    "ts-dedent": "^2.2.0",
+    "yaml": "^2.3.1"
+  }
+}
