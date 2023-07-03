@@ -79,7 +79,7 @@ try {
   const newPackageJSON = {
     name: '@ironclad/rivet-node',
     main: 'bundle.js',
-    version: argv.version,
+    version: argv.version.replace('node-v', ''),
     types: 'packages/node/dist/index.d.ts',
     dependencies: combinedDependencies,
   };
