@@ -15,7 +15,6 @@ import { useDuplicateGraph } from '../hooks/useDuplicateGraph';
 import { useContextMenu } from '../hooks/useContextMenu';
 import Portal from '@atlaskit/portal';
 import TableTree, { Rows, Row, Cell } from '@atlaskit/table-tree';
-import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { NodeGraph } from '@ironclad/rivet-core';
 
 const styles = css`
@@ -194,7 +193,7 @@ function getFolderNames(folderedGraphs: NodeGraphFolderItem[]): string[] {
 }
 
 export const GraphList: FC = () => {
-  const graph = useRecoilValue(graphState);
+  const [graph, setGraph] = useRecoilState(graphState);
   const [savedGraphs, setSavedGraphs] = useRecoilState(savedGraphsState);
 
   // Track the graph that is being renamed, so that we can update the name when the user is done.
@@ -219,10 +218,13 @@ export const GraphList: FC = () => {
     }
     loadGraph(graph);
     setSavedGraphs([...savedGraphs, graph]);
+    startRename(graph.metadata!.name!);
   }
 
-  function handleNewFolder() {
-    setFolderNames((prev) => [...prev, 'New Folder']);
+  function handleNewFolder(parentPath?: string) {
+    const newFolderPath = parentPath ? `${parentPath}/New Folder` : 'New Folder';
+    setFolderNames((prev) => [...prev, newFolderPath]);
+    startRename(newFolderPath);
   }
 
   function handleDelete(graph: NodeGraph) {
@@ -242,19 +244,26 @@ export const GraphList: FC = () => {
 
   function renameFolderItem(fullPath: string, newName: string) {
     const newFullPath = fullPath.replace(/[^/]+$/, newName);
-    setSavedGraphs(savedGraphs.map((graph) => {
-      if (graph.metadata?.name?.startsWith(fullPath)) {
+    setSavedGraphs(savedGraphs.map((g) => {
+      if (g.metadata?.name?.startsWith(fullPath)) {
         return {
-          ...graph,
+          ...g,
           metadata: {
-            ...graph.metadata,
-            name: graph.metadata.name.replace(fullPath, newFullPath),
+            ...g.metadata,
+            name: g.metadata.name.replace(fullPath, newFullPath),
           },
         };
       } else {
-        return graph;
+        return g;
       }
     }));
+    setGraph({
+      ...graph,
+      metadata: {
+        ...graph.metadata,
+        name: graph.metadata?.name?.replace(fullPath, newFullPath),
+      },
+    });
     setFolderNames((prev) => prev.map((name) => name.startsWith(fullPath) ? name.replace(fullPath, newFullPath) : name));
     setRenamingItemFullPath(undefined);
   }
@@ -295,15 +304,10 @@ export const GraphList: FC = () => {
                   <div className="spinner">{graphIsRunning && <LoadingSpinner />}</div>
                   <div className="graph-item-select" onClick={() => item.type === 'graph' && loadGraph(item.graph)}>
                     {isRenaming
-                      ? <InlineEditableTextfield
-                        key={`graph-name-${savedGraph?.metadata?.id ?? fullPath}`}
-                        placeholder="Graph Name"
-                        onConfirm={(newValue) =>
-                          renameFolderItem(fullPath!, newValue)
-                        }
-                        onCancel={() => setRenamingItemFullPath(undefined)}
+                      ? <input
+                        autoFocus
+                        onBlur={(e) => renameFolderItem(fullPath!, e.target.value)}
                         defaultValue={item.name ?? 'Untitled Graph'}
-                        readViewFitContainerWidth
                       />
                       : <span>{item.name ?? 'Untitled Graph'}</span>
                     }
@@ -344,6 +348,7 @@ export const GraphList: FC = () => {
         >
           <DropdownItem onClick={() => startRename(selectedFolderNameForContextMenu!)}>Rename Folder</DropdownItem>
           <DropdownItem onClick={() => handleNew(selectedFolderNameForContextMenu!)}>New Graph</DropdownItem>
+          <DropdownItem onClick={() => handleNewFolder(selectedFolderNameForContextMenu!)}>New Folder</DropdownItem>
           <DropdownItem onClick={() => handleDeleteFolder(selectedFolderNameForContextMenu!)}>Delete</DropdownItem>
         </div>
       )}
@@ -361,7 +366,7 @@ export const GraphList: FC = () => {
           }}
         >
           <DropdownItem onClick={() => handleNew()}>New Graph</DropdownItem>
-          <DropdownItem onClick={handleNewFolder}>New Folder</DropdownItem>
+          <DropdownItem onClick={() => handleNewFolder()}>New Folder</DropdownItem>
         </div>
       )}
     </Portal>
