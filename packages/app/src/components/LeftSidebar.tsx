@@ -89,6 +89,7 @@ export const LeftSidebar: FC = () => {
     <div
       css={styles}
       style={{ transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)', transition: 'transform 0.3s ease' }}
+      key={project.metadata.id}
     >
       <div className="toggle-tab" onClick={() => setSidebarOpen(!sidebarOpen)}>
         {sidebarOpen ? <ExpandLeftIcon /> : <ExpandRightIcon />}
