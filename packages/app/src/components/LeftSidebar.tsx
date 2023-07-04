@@ -193,7 +193,13 @@ export const LeftSidebar: FC = () => {
     : null;
 
   useEffect(() => {
-    appWindow.setTitle(`Rivet - ${project.metadata.title} (${loadedProject.path})`);
+    (async () => {
+      try {
+        await appWindow.setTitle(`Rivet - ${project.metadata.title} (${loadedProject.path})`);
+      } catch (err) {
+        console.warn(`Failed to set window title, likely not running in Tauri: ${err}`);
+      }
+    })();
   }, [loadedProject, project.metadata.title]);
 
   return (

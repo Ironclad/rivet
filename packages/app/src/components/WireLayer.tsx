@@ -60,7 +60,7 @@ export const WireLayer: FC<WireLayerProps> = ({ connections, draggingWire, highl
     <svg css={wiresStyles}>
       <g transform={`scale(${canvasPosition.zoom}) translate(${canvasPosition.x}, ${canvasPosition.y})`}>
         {draggingWire && (
-          <ErrorBoundary fallback={<></>}>
+          <ErrorBoundary fallback={<></>} key="wire-inprogress">
             <ConditionallyRenderWire
               connection={{
                 nodeId: draggingWire.startNodeId,
@@ -70,7 +70,6 @@ export const WireLayer: FC<WireLayerProps> = ({ connections, draggingWire, highl
               }}
               selected={false}
               highlighted={false}
-              key="wire-inprogress"
             />
           </ErrorBoundary>
         )}
@@ -78,13 +77,8 @@ export const WireLayer: FC<WireLayerProps> = ({ connections, draggingWire, highl
           const highlighted =
             highlightedNodes?.includes(connection.inputNodeId) || highlightedNodes?.includes(connection.outputNodeId);
           return (
-            <ErrorBoundary fallback={<></>}>
-              <ConditionallyRenderWire
-                connection={connection}
-                selected={false}
-                key={`wire-${connection.inputId}-${connection.inputNodeId}`}
-                highlighted={!!highlighted}
-              />
+            <ErrorBoundary fallback={<></>} key={`wire-${connection.inputId}-${connection.inputNodeId}`}>
+              <ConditionallyRenderWire connection={connection} selected={false} highlighted={!!highlighted} />
             </ErrorBoundary>
           );
         })}

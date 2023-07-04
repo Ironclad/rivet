@@ -6,9 +6,10 @@ import { useNewProject } from './useNewProject';
 import { useLoadProject } from './useLoadProject';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { settingsModalOpenState } from '../components/SettingsModal';
-import { loadGraphData, saveGraphData } from '../utils/fileIO';
 import { graphState } from '../state/graph';
 import { useLoadRecording } from './useLoadRecording';
+import { WebviewWindow } from '@tauri-apps/api/window';
+import { ioProvider } from '../utils/globals';
 
 type MenuIds =
   | 'settings'
@@ -26,10 +27,24 @@ const handlerState: {
   handler: (e: { payload: MenuIds }) => void;
 } = { handler: () => {} };
 
-const mainWindow = window.getCurrent();
-mainWindow.onMenuClicked((e) => {
-  handlerState.handler(e as { payload: MenuIds });
-});
+let mainWindow: WebviewWindow;
+
+try {
+  mainWindow = window.getCurrent();
+  mainWindow.onMenuClicked((e) => {
+    handlerState.handler(e as { payload: MenuIds });
+  });
+} catch (err) {
+  console.warn(`Error getting main window, likely not running in tauri: ${err}`);
+}
+
+export function useRunMenuCommand() {
+  return (command: MenuIds) => {
+    const { handler } = handlerState;
+
+    handler({ payload: command });
+  };
+}
 
 export function useMenuCommands(
   options: {
@@ -65,10 +80,10 @@ export function useMenuCommands(
           saveProjectAs();
         })
         .with('export_graph', () => {
-          saveGraphData(graphData);
+          ioProvider.saveGraphData(graphData);
         })
         .with('import_graph', () => {
-          loadGraphData((data) => setGraphData(data));
+          ioProvider.loadGraphData((data) => setGraphData(data));
         })
         .with('run', () => {
           options.onRunGraph?.();
@@ -85,5 +100,15 @@ export function useMenuCommands(
     return () => {
       handlerState.handler = prevHandler;
     };
-  }, [saveProject, saveProjectAs, newProject, loadProject, setSettingsOpen, graphData, setGraphData, options]);
+  }, [
+    saveProject,
+    saveProjectAs,
+    newProject,
+    loadProject,
+    setSettingsOpen,
+    graphData,
+    setGraphData,
+    options,
+    loadRecording,
+  ]);
 }

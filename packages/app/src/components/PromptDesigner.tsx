@@ -351,7 +351,7 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
       let inputData = nodeDataForAttachedNodeProcess.inputData;
       // If node is a split run, just grab the first input data.
       if (attachedNode.isSplitRun) {
-        inputData = mapValues(inputData, (val) => isArrayDataValue(val) ? arrayizeDataValue(val)[0] : val);
+        inputData = mapValues(inputData, (val) => (isArrayDataValue(val) ? arrayizeDataValue(val)[0] : val));
       }
       const { messages } = getChatNodeMessages(inputData);
       setMessages({
@@ -1001,6 +1001,7 @@ async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
             onPartialResult?.(responsePartial);
           }
         },
+        abortGraph: undefined!,
       } as InternalProcessContext,
     );
 

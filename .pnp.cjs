@@ -7741,6 +7741,7 @@ const RAW_RUNTIME_STATE =
           ["@swc/core", "virtual:4a4dfdd9a7df5ec5e275841a43fbecdb97f28d7f31447ab74c1dd2a4d56fe264664aa1dc4ad44cc92e46e533864e6b71f8d1474657f30ffd4d572a69c55bcf0b#npm:1.3.63"],\
           ["@tauri-apps/api", "npm:1.3.0"],\
           ["@tauri-apps/cli", "npm:1.3.1"],\
+          ["@types/filesystem", "npm:0.0.32"],\
           ["@types/jsonpath-plus", "npm:5.0.2"],\
           ["@types/lodash-es", "npm:4.17.7"],\
           ["@types/marked", "npm:5.0.0"],\
@@ -7749,6 +7750,7 @@ const RAW_RUNTIME_STATE =
           ["@types/react-dom", "npm:18.2.5"],\
           ["@types/react-transition-group", "npm:4.4.6"],\
           ["@types/retry", "npm:0.12.2"],\
+          ["@types/wicg-file-system-access", "npm:2020.9.6"],\
           ["@types/ws", "npm:8.5.5"],\
           ["@types/yargs", "npm:17.0.24"],\
           ["@vitejs/plugin-react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.0.0"],\
@@ -9292,6 +9294,25 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@types/filesystem", [\
+      ["npm:0.0.32", {\
+        "packageLocation": "./.yarn/cache/@types-filesystem-npm-0.0.32-f9e6035fd6-3a967025ff.zip/node_modules/@types/filesystem/",\
+        "packageDependencies": [\
+          ["@types/filesystem", "npm:0.0.32"],\
+          ["@types/filewriter", "npm:0.0.29"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@types/filewriter", [\
+      ["npm:0.0.29", {\
+        "packageLocation": "./.yarn/cache/@types-filewriter-npm-0.0.29-08151cd903-da5d0d2e88.zip/node_modules/@types/filewriter/",\
+        "packageDependencies": [\
+          ["@types/filewriter", "npm:0.0.29"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@types/fs-extra", [\
       ["npm:11.0.1", {\
         "packageLocation": "./.yarn/cache/@types-fs-extra-npm-11.0.1-f11620397b-aefb00f11b.zip/node_modules/@types/fs-extra/",\
@@ -9784,6 +9805,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-which-npm-3.0.0-3d41ceeb57-601467cc37.zip/node_modules/@types/which/",\
         "packageDependencies": [\
           ["@types/which", "npm:3.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@types/wicg-file-system-access", [\
+      ["npm:2020.9.6", {\
+        "packageLocation": "./.yarn/cache/@types-wicg-file-system-access-npm-2020.9.6-97b11f6f2d-d48afc94dd.zip/node_modules/@types/wicg-file-system-access/",\
+        "packageDependencies": [\
+          ["@types/wicg-file-system-access", "npm:2020.9.6"]\
         ],\
         "linkType": "HARD"\
       }]\

@@ -119,6 +119,8 @@
     "yarn": "3.5.0"
   },
   "devDependencies": {
-    "@types/marked": "^5"
+    "@types/filesystem": "^0.0.32",
+    "@types/marked": "^5",
+    "@types/wicg-file-system-access": "^2020.9.6"
   }
 }
