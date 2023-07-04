@@ -15,6 +15,7 @@ import { useDuplicateGraph } from '../hooks/useDuplicateGraph';
 import { useContextMenu } from '../hooks/useContextMenu';
 import Portal from '@atlaskit/portal';
 import TableTree, { Rows, Row, Cell } from '@atlaskit/table-tree';
+import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { NodeGraph } from '@ironclad/rivet-core';
 
 const styles = css`
@@ -196,6 +197,9 @@ export const GraphList: FC = () => {
   const graph = useRecoilValue(graphState);
   const [savedGraphs, setSavedGraphs] = useRecoilState(savedGraphsState);
 
+  // Track the graph that is being renamed, so that we can update the name when the user is done.
+  const [renamingItemFullPath, setRenamingItemFullPath] = useState<string>();
+
   // Track folders on deletion or creation, so that empty folders aren't automatically deleted.
   const [folderNames, setFolderNames] = useState<string[]>([]);
   
@@ -232,6 +236,29 @@ export const GraphList: FC = () => {
     setFolderNames((prev) => prev.filter((name) => name !== folderName));
   }
 
+  function startRename(folderItemName: string) {
+    setRenamingItemFullPath(folderItemName);
+  }
+
+  function renameFolderItem(fullPath: string, newName: string) {
+    const newFullPath = fullPath.replace(/[^/]+$/, newName);
+    setSavedGraphs(savedGraphs.map((graph) => {
+      if (graph.metadata?.name?.startsWith(fullPath)) {
+        return {
+          ...graph,
+          metadata: {
+            ...graph.metadata,
+            name: graph.metadata.name.replace(fullPath, newFullPath),
+          },
+        };
+      } else {
+        return graph;
+      }
+    }));
+    setFolderNames((prev) => prev.map((name) => name.startsWith(fullPath) ? name.replace(fullPath, newFullPath) : name));
+    setRenamingItemFullPath(undefined);
+  }
+
   const { contextMenuRef, showContextMenu, contextMenuData, handleContextMenu } = useContextMenu();
 
   const selectedGraphForContextMenu = contextMenuData.data
@@ -250,6 +277,8 @@ export const GraphList: FC = () => {
           render={(item: NodeGraphFolderItem) => {
             const savedGraph = item.type === 'graph' ? item.graph : undefined;
             const graphIsRunning = savedGraph && runningGraphs.includes(savedGraph.metadata?.id ?? ('' as GraphId));
+            const fullPath = item.type === 'folder' ? item.fullPath : item.graph.metadata?.name;
+            const isRenaming = renamingItemFullPath === fullPath;
 
             return <Row
               itemId={savedGraph?.metadata?.id ?? item.name}
@@ -265,7 +294,19 @@ export const GraphList: FC = () => {
                 >
                   <div className="spinner">{graphIsRunning && <LoadingSpinner />}</div>
                   <div className="graph-item-select" onClick={() => item.type === 'graph' && loadGraph(item.graph)}>
-                    {item.name ?? 'Untitled Graph'}
+                    {isRenaming
+                      ? <InlineEditableTextfield
+                        key={`graph-name-${savedGraph?.metadata?.id ?? fullPath}`}
+                        placeholder="Graph Name"
+                        onConfirm={(newValue) =>
+                          renameFolderItem(fullPath!, newValue)
+                        }
+                        onCancel={() => setRenamingItemFullPath(undefined)}
+                        defaultValue={item.name ?? 'Untitled Graph'}
+                        readViewFitContainerWidth
+                      />
+                      : <span>{item.name ?? 'Untitled Graph'}</span>
+                    }
                   </div>
                 </div>
               </Cell>
@@ -284,6 +325,7 @@ export const GraphList: FC = () => {
               top: contextMenuData.y,
             }}
           >
+            <DropdownItem onClick={() => startRename(selectedFolderNameForContextMenu!)}>Rename Graph</DropdownItem>
             <DropdownItem onClick={() => duplicateGraph(selectedGraphForContextMenu!)}>
               Duplicate
             </DropdownItem>
@@ -300,6 +342,7 @@ export const GraphList: FC = () => {
             top: contextMenuData.y,
           }}
         >
+          <DropdownItem onClick={() => startRename(selectedFolderNameForContextMenu!)}>Rename Folder</DropdownItem>
           <DropdownItem onClick={() => handleNew(selectedFolderNameForContextMenu!)}>New Graph</DropdownItem>
           <DropdownItem onClick={() => handleDeleteFolder(selectedFolderNameForContextMenu!)}>Delete</DropdownItem>
         </div>
