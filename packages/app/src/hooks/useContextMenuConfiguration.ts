@@ -95,8 +95,8 @@ export function useContextMenuConfiguration() {
             items: [],
           },
         },
-      } as const satisfies Record<string, ContextMenuContextConfig> as const),
-    [addMenuConfig],
+      } as const satisfies Record<string, ContextMenuContextConfig>),
+    [addMenuConfig, selectedNodeIds.length],
   );
 
   return config;

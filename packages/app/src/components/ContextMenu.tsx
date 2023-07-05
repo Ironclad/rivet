@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { FC, forwardRef, useEffect, useState } from 'react';
+import { FC, forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { useFloating, useMergeRefs, autoUpdate, shift, flip } from '@floating-ui/react';
@@ -9,6 +9,10 @@ import {
   useContextMenuConfiguration,
   ContextMenuItem as ContextMenuConfigItem,
 } from '../hooks/useContextMenuConfiguration';
+import { useFuseSearch } from '../hooks/useFuseSearch';
+import TextField from '@atlaskit/textfield';
+import { uniqBy } from 'lodash-es';
+import clsx from 'clsx';
 
 const menuReferenceStyles = css`
   position: absolute;
@@ -45,6 +49,16 @@ export const menuStyles = css`
     margin: 0;
     padding: 0;
   }
+
+  .context-menu-search {
+    input {
+      border: none;
+      outline: none;
+      padding: 8px;
+      font-size: 14px;
+      line-height: 14px;
+    }
+  }
 `;
 
 export type ContextMenuContext = {
@@ -63,6 +77,9 @@ export interface ContextMenuProps {
 
 export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
   ({ x, y, context, onMenuItemSelected }, ref) => {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedResultIndex, setSelectedResultIndex] = useState(0);
+
     const { refs, floatingStyles, update } = useFloating({
       placement: 'bottom-start',
       whileElementsMounted: autoUpdate,
@@ -74,13 +91,67 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
     const config = useContextMenuConfiguration();
     const { items } = config.contexts[context.type];
 
+    // Flatten the items into a single array
+    const flatItems = useMemo(() => {
+      const flattenItems = (
+        items: readonly ContextMenuConfigItem[],
+        path: string[] = [],
+      ): (ContextMenuConfigItem & { path: string[] })[] => {
+        const allItems = items.reduce((acc, item) => {
+          const newPath = [...path, item.label];
+          return acc.concat({ ...item, path: newPath }, ...flattenItems(item.items || [], newPath));
+        }, [] as (ContextMenuConfigItem & { path: string[] })[]);
+
+        const onlyLeaves = allItems.filter((item) => !item.items?.length);
+
+        return uniqBy(onlyLeaves, 'id');
+      };
+
+      return flattenItems(items);
+    }, [items]);
+
+    const searchRef = useRef<HTMLInputElement>(null);
+
     useEffect(() => {
       update();
+      searchRef.current?.focus();
     }, [update, x, y]);
 
     const handleMenuItemSelected = useStableCallback((id: string, data: unknown) => {
       onMenuItemSelected?.(id, data, context, { x, y });
     });
+
+    const searchResults = useFuseSearch(flatItems, searchTerm, ['label'], { max: 5 });
+    const searchResultsItems = useMemo(() => searchResults.map((r) => r.item), [searchResults]);
+
+    const shownItems = searchTerm.length > 0 ? searchResultsItems : items;
+
+    useEffect(() => {
+      if (searchTerm.length > 0 && searchResults.length > 0 && selectedResultIndex >= searchResults.length) {
+        setSelectedResultIndex(0);
+      }
+    }, [searchResults.length, searchTerm.length, selectedResultIndex]);
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      switch (e.key) {
+        case 'ArrowUp':
+          setSelectedResultIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : searchResultsItems.length - 1));
+          break;
+        case 'ArrowDown':
+          setSelectedResultIndex((prevIndex) => (prevIndex < searchResultsItems.length - 1 ? prevIndex + 1 : 0));
+          break;
+        case 'Enter':
+          if (searchResultsItems[selectedResultIndex]) {
+            handleMenuItemSelected(
+              searchResultsItems[selectedResultIndex]!.id,
+              searchResultsItems[selectedResultIndex]!.data,
+            );
+          }
+          break;
+        default:
+          break;
+      }
+    };
 
     return (
       <div
@@ -90,14 +161,28 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
         onClick={(e) => e.stopPropagation()}
       >
         <div style={floatingStyles} css={menuStyles} ref={refs.setFloating}>
-          {items.map((item) => (
-            <ContextMenuItem
-              key={item.id}
-              config={item}
-              onMenuItemSelected={handleMenuItemSelected}
-              context={context.data}
+          <div className="context-menu-search">
+            <input
+              ref={searchRef}
+              autoFocus
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm((e.target as HTMLInputElement).value)}
+              onKeyDown={handleKeyDown}
             />
-          ))}
+          </div>
+          <div className="context-menu-items">
+            {shownItems.map((item, index) => (
+              <ContextMenuItem
+                key={item.id}
+                config={item}
+                onMenuItemSelected={handleMenuItemSelected}
+                onHover={() => setSelectedResultIndex(index)}
+                context={context.data}
+                active={searchTerm.length > 0 && index === selectedResultIndex}
+              />
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -156,7 +241,8 @@ export const ContextMenuItemDiv = styled.div<{ hasSubmenu?: boolean }>`
     user-select: none;
   }
 
-  &:hover {
+  &:hover,
+  &.active {
     background-color: #4444446e;
     color: var(--primary);
   }
@@ -186,10 +272,12 @@ export const ContextMenuItemDiv = styled.div<{ hasSubmenu?: boolean }>`
 export interface ContextMenuItemProps {
   config: ContextMenuConfigItem;
   context: unknown;
+  active?: boolean;
   onMenuItemSelected?: (id: string, data: unknown) => void;
+  onHover?: () => void;
 }
 
-export const ContextMenuItem: FC<ContextMenuItemProps> = ({ config, onMenuItemSelected, context }) => {
+export const ContextMenuItem: FC<ContextMenuItemProps> = ({ config, context, active, onMenuItemSelected, onHover }) => {
   const [isSubMenuVisible, setIsSubMenuVisible] = useState(false);
   const hasSubMenu = (config.items?.length ?? 0) > 0;
   const { refs, floatingStyles } = useFloating({
@@ -202,6 +290,7 @@ export const ContextMenuItem: FC<ContextMenuItemProps> = ({ config, onMenuItemSe
     if (hasSubMenu) {
       setIsSubMenuVisible(true);
     }
+    onHover?.();
   });
 
   const handleMouseLeave = useStableCallback(() => {
@@ -229,6 +318,7 @@ export const ContextMenuItem: FC<ContextMenuItemProps> = ({ config, onMenuItemSe
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       ref={refs.setReference}
+      className={clsx({ active })}
     >
       <div className="label">
         {config.icon && <config.icon />}
