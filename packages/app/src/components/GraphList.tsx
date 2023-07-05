@@ -365,7 +365,7 @@ export const GraphList: FC = () => {
           renameFolderItem={renameFolderItem}
           dragOverFolderName={dragOverFolderName}
           depth={0} />)}
-        <div className="graph-list-spacer" />
+        <GraphListSpacer />
       </DndContext>
       <Portal>
         {showContextMenu && contextMenuData.data?.type === 'graph-item' && (
@@ -421,6 +421,12 @@ export const GraphList: FC = () => {
     </Portal>
   </div>;
 }
+
+// Allows the bottom of the list to be a drop target
+export const GraphListSpacer: FC = () => {
+  const { setNodeRef: setDroppableNodeRef } = useDroppable({ id: '/' });
+  return <div className="graph-list-spacer" ref={setDroppableNodeRef}/>;
+};
 
 export const FolderItem: FC<{
   item: NodeGraphFolderItem;
