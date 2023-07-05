@@ -16,6 +16,9 @@ import clsx from 'clsx';
 
 const menuReferenceStyles = css`
   position: absolute;
+  &.disabled {
+    display: none;
+  }
 `;
 
 export const menuStyles = css`
@@ -174,6 +177,7 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
         ref={anchorRef}
         css={menuReferenceStyles}
         style={{ top: y + 4, left: x - 16 }}
+        className={clsx({ disabled })}
         onClick={(e) => e.stopPropagation()}
       >
         <div style={floatingStyles} css={menuStyles} ref={refs.setFloating}>

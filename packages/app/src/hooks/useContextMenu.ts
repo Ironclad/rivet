@@ -11,7 +11,7 @@ export type ContextMenuData = {
 export const useContextMenu = () => {
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const [showContextMenu, setShowContextMenu] = useState(false);
-  const [contextMenuData, setContextMenuData] = useState<ContextMenuData>({ x: 0, y: 0, data: null });
+  const [contextMenuData, setContextMenuData] = useState<ContextMenuData>({ x: -3000, y: 0, data: null });
 
   const handleContextMenu = useCallback(
     (event: Pick<React.MouseEvent<HTMLDivElement>, 'clientX' | 'clientY' | 'target'>) => {

@@ -82,8 +82,8 @@ const styles = css`
 
   .debug-overlay {
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: 50px;
+    left: 50px;
     padding: 10px 20px;
     border-radius: 5px;
     background-color: rgba(255, 255, 255, 0.03);
@@ -104,6 +104,14 @@ const styles = css`
     position: absolute;
     left: -5px;
     top: -5px;
+  }
+
+  .selection-box {
+    position: absolute;
+    border: 2px dashed var(--primary);
+    background-color: rgba(255, 153, 0, 0.05); /* --primary color with 20% opacity */
+    pointer-events: none;
+    z-index: 2000;
   }
 
   ${nodeStyles}
@@ -147,13 +155,16 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const setLastMousePosition = useSetRecoilState(lastMousePositionState);
 
   const lastMouseInfoRef = useRef<{ x: number; y: number; target: EventTarget | undefined }>({
-    x: 0,
+    x: -3000,
     y: 0,
     target: undefined,
   });
 
   const [editingNodeId, setEditingNodeId] = useRecoilState(editingNodeState);
   const [selectedNodeIds, setSelectedNodeIds] = useRecoilState(selectedNodesState);
+  const [selectionBox, setSelectionBox] = useState<{ x: number; y: number; width: number; height: number } | null>(
+    null,
+  );
 
   const { draggingNodes, onNodeStartDrag, onNodeDragged } = useDraggingNode(onNodesChanged);
   const { draggingWire, onWireStartDrag, onWireEndDrag } = useDraggingWire(onConnectionsChanged);
@@ -200,8 +211,12 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
     e.preventDefault();
 
-    setIsDraggingCanvas(true);
-    setDragStart({ x: e.clientX, y: e.clientY, canvasStartX: canvasPosition.x, canvasStartY: canvasPosition.y });
+    if (e.shiftKey) {
+      setSelectionBox({ x: e.clientX, y: e.clientY, width: 0, height: 0 });
+    } else {
+      setIsDraggingCanvas(true);
+      setDragStart({ x: e.clientX, y: e.clientY, canvasStartX: canvasPosition.x, canvasStartY: canvasPosition.y });
+    }
   });
 
   const canvasMouseMove = useThrottleFn(
@@ -209,18 +224,42 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
       setLastMousePosition({ x: e.clientX, y: e.clientY });
       lastMouseInfoRef.current = { x: e.clientX, y: e.clientY, target: e.target };
 
-      if (!isDraggingCanvas) return;
+      if (selectionBox) {
+        const newBox = {
+          ...selectionBox!,
+          width: e.clientX - selectionBox!.x,
+          height: e.clientY - selectionBox!.y,
+        };
+        setSelectionBox(newBox);
+        const canvasStartPoint = clientToCanvasPosition(newBox.x, newBox.y);
+        const canvasEndPoint = clientToCanvasPosition(e.clientX, e.clientY);
 
-      const dx = (e.clientX - dragStart.x) * (1 / canvasPosition.zoom);
-      const dy = (e.clientY - dragStart.y) * (1 / canvasPosition.zoom);
+        const nodesInBox = nodes.filter(
+          (node) =>
+            node.visualData.x >= canvasStartPoint.x &&
+            node.visualData.x <= canvasEndPoint.x &&
+            node.visualData.y >= canvasStartPoint.y &&
+            node.visualData.y <= canvasEndPoint.y,
+        );
 
-      const position: CanvasPosition = {
-        x: dragStart.canvasStartX + dx,
-        y: dragStart.canvasStartY + dy,
-        zoom: canvasPosition.zoom,
-      };
-      setCanvasPosition(position);
-      setLastSavedCanvasPosition(position);
+        const isSameSetOfNodes =
+          selectedNodeIds.length === nodesInBox.length &&
+          selectedNodeIds.every((node) => nodesInBox.some((n) => n.id === node));
+        if (!isSameSetOfNodes) {
+          setSelectedNodeIds(nodesInBox.map((node) => node.id));
+        }
+      } else if (isDraggingCanvas) {
+        const dx = (e.clientX - dragStart.x) * (1 / canvasPosition.zoom);
+        const dy = (e.clientY - dragStart.y) * (1 / canvasPosition.zoom);
+
+        const position: CanvasPosition = {
+          x: dragStart.canvasStartX + dx,
+          y: dragStart.canvasStartY + dy,
+          zoom: canvasPosition.zoom,
+        };
+        setCanvasPosition(position);
+        setLastSavedCanvasPosition(position);
+      }
     },
     { wait: 10 },
   );
@@ -285,7 +324,9 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   });
 
   const canvasMouseUp = (e: React.MouseEvent) => {
-    if (!isDraggingCanvas) {
+    if (selectionBox) {
+      setSelectionBox(null);
+    } else if (!isDraggingCanvas) {
       return;
     }
 
@@ -387,7 +428,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   // Idk, before we were able to unmount the context menu, but safari be weird,
   // so we move it off screen instead
-  const [contextMenuDisabled, setContextMenuDisabled] = useState(false);
+  const [contextMenuDisabled, setContextMenuDisabled] = useState(true);
 
   return (
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
@@ -489,6 +530,17 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
             onMenuItemSelected={contextMenuItemSelected}
           />
         </CSSTransition>
+        {selectionBox && (
+          <div
+            className="selection-box"
+            style={{
+              left: selectionBox.x,
+              top: selectionBox.y,
+              width: selectionBox.width,
+              height: selectionBox.height,
+            }}
+          />
+        )}
 
         <WireLayer connections={connections} draggingWire={draggingWire} highlightedNodes={highlightedNodes} />
       </div>
