@@ -1,6 +1,6 @@
 import { DefaultValue, atom, selector } from 'recoil';
 import { nanoid } from 'nanoid';
-import { values } from '../utils/typeSafety';
+import { entries, values } from '../utils/typeSafety';
 import { produce } from 'immer';
 import { GraphId, NodeGraph, Project, ProjectId } from '@ironclad/rivet-core';
 import { blankProject } from '../hooks/useNewProject';
@@ -34,6 +34,26 @@ export const projectMetadataState = selector({
         metadata: newValue instanceof DefaultValue ? blankProject().metadata : newValue,
       };
     });
+  },
+});
+
+export const projectGraphInfoState = selector({
+  key: 'projectGraphInfoState',
+  get: ({ get }) => {
+    const project = get(projectState);
+    return {
+      graphs: Object.fromEntries(
+        entries(project.graphs).map(([id, graph]) => [
+          id,
+          {
+            id,
+            name: graph.metadata!.name,
+            description: graph.metadata!.description,
+          },
+        ]),
+      ),
+      metadata: project.metadata,
+    };
   },
 });
 

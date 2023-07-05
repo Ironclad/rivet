@@ -88,11 +88,11 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
 
     const anchorRef = useMergeRefs([ref, refs.setReference]);
 
-    const config = useContextMenuConfiguration();
-    const { items } = config.contexts[context.type];
+    const { contexts, commands } = useContextMenuConfiguration();
+    const { items } = contexts[context.type];
 
     // Flatten the items into a single array
-    const flatItems = useMemo(() => {
+    const searchItems = useMemo(() => {
       const flattenItems = (
         items: readonly ContextMenuConfigItem[],
         path: string[] = [],
@@ -104,7 +104,9 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
 
         const onlyLeaves = allItems.filter((item) => !item.items?.length);
 
-        return uniqBy(onlyLeaves, 'id');
+        const allSearchItems = [...onlyLeaves, ...commands.map((command) => ({ ...command, path: [command.label] }))];
+
+        return uniqBy(allSearchItems, 'id');
       };
 
       return flattenItems(items);
@@ -121,7 +123,7 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
       onMenuItemSelected?.(id, data, context, { x, y });
     });
 
-    const searchResults = useFuseSearch(flatItems, searchTerm, ['label'], { max: 5 });
+    const searchResults = useFuseSearch(searchItems, searchTerm, ['label', 'subLabel'], { max: 5 });
     const searchResultsItems = useMemo(() => searchResults.map((r) => r.item), [searchResults]);
 
     const shownItems = searchTerm.length > 0 ? searchResultsItems : items;
@@ -136,11 +138,14 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
       switch (e.key) {
         case 'ArrowUp':
           setSelectedResultIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : searchResultsItems.length - 1));
+          e.preventDefault();
           break;
         case 'ArrowDown':
           setSelectedResultIndex((prevIndex) => (prevIndex < searchResultsItems.length - 1 ? prevIndex + 1 : 0));
+          e.preventDefault();
           break;
         case 'Enter':
+          e.preventDefault();
           if (searchResultsItems[selectedResultIndex]) {
             handleMenuItemSelected(
               searchResultsItems[selectedResultIndex]!.id,
@@ -241,6 +246,11 @@ export const ContextMenuItemDiv = styled.div<{ hasSubmenu?: boolean }>`
     user-select: none;
   }
 
+  .sublabel {
+    font-size: 12px;
+    color: var(--grey-lightish);
+  }
+
   &:hover,
   &.active {
     background-color: #4444446e;
@@ -320,10 +330,14 @@ export const ContextMenuItem: FC<ContextMenuItemProps> = ({ config, context, act
       ref={refs.setReference}
       className={clsx({ active })}
     >
-      <div className="label">
-        {config.icon && <config.icon />}
-        {config.label}
+      <div className="label-area">
+        <div className="label">
+          {config.icon && <config.icon />}
+          {config.label}
+        </div>
+        {config.subLabel && <div className="sublabel">{config.subLabel}</div>}
       </div>
+
       <CSSTransition nodeRef={refs.floating} in={isSubMenuVisible} timeout={100} classNames="submenu" unmountOnExit>
         <div ref={refs.setFloating} css={submenuStyles} style={floatingStyles}>
           {hasSubMenu &&

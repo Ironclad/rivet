@@ -6,6 +6,12 @@ import { ReactComponent as DuplicateIcon } from 'majesticons/line/image-multiple
 import { NodeId, NodeType } from '@ironclad/rivet-core';
 import { useRecoilValue } from 'recoil';
 import { selectedNodesState } from '../state/graphBuilder';
+import { useContextMenuCommands } from './useContextMenuCommands';
+
+export type ContextMenuConfig = {
+  contexts: ContextMenuContextConfig;
+  commands: ContextMenuItem[];
+};
 
 export type ContextMenuContextConfig = {
   [key: string]: ContextMenuContextConfigContext;
@@ -19,6 +25,7 @@ export type ContextMenuContextConfigContext<Context = unknown> = {
 export type ContextMenuItem<Context = unknown, Data = unknown> = {
   id: string;
   label: string;
+  subLabel?: string;
   icon?: ComponentType;
   data?: Data | ((context: Context) => Data);
   conditional?: (context: Context) => boolean;
@@ -31,6 +38,7 @@ const type = <T>() => undefined! as T;
 
 export function useContextMenuConfiguration() {
   const addMenuConfig = useContextMenuAddNodeConfiguration();
+  const commands = useContextMenuCommands();
   const selectedNodeIds = useRecoilValue(selectedNodesState);
 
   const config = useMemo(
@@ -95,8 +103,9 @@ export function useContextMenuConfiguration() {
             items: [],
           },
         },
-      } as const satisfies Record<string, ContextMenuContextConfig>),
-    [addMenuConfig, selectedNodeIds.length],
+        commands,
+      } as const satisfies ContextMenuConfig),
+    [addMenuConfig, selectedNodeIds.length, commands],
   );
 
   return config;
