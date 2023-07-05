@@ -110,7 +110,6 @@ const styles = css`
     position: absolute;
     border: 2px dashed var(--primary);
     background-color: rgba(255, 153, 0, 0.05); /* --primary color with 20% opacity */
-    pointer-events: none;
     z-index: 2000;
   }
 
@@ -231,16 +230,41 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           height: e.clientY - selectionBox!.y,
         };
         setSelectionBox(newBox);
-        const canvasStartPoint = clientToCanvasPosition(newBox.x, newBox.y);
-        const canvasEndPoint = clientToCanvasPosition(e.clientX, e.clientY);
 
-        const nodesInBox = nodes.filter(
-          (node) =>
-            node.visualData.x >= canvasStartPoint.x &&
-            node.visualData.x <= canvasEndPoint.x &&
-            node.visualData.y >= canvasStartPoint.y &&
-            node.visualData.y <= canvasEndPoint.y,
-        );
+        const topLeft = {
+          x: newBox.width < 0 ? newBox.x + newBox.width : newBox.x,
+          y: newBox.height < 0 ? newBox.y + newBox.height : newBox.y,
+        };
+        const bottomRight = {
+          x: newBox.width < 0 ? newBox.x : newBox.x + newBox.width,
+          y: newBox.height < 0 ? newBox.y : newBox.y + newBox.height,
+        };
+
+        const canvasStartPoint = clientToCanvasPosition(topLeft.x, topLeft.y);
+        const canvasEndPoint = clientToCanvasPosition(bottomRight.x, bottomRight.y);
+
+        const nodesInBox = nodes.filter((node) => {
+          const nodeWidth = node.visualData.width ?? 150;
+          const nodeHeight = 150; // Assuming the height is 150
+
+          const nodeArea = nodeWidth * nodeHeight;
+          const halfNodeArea = nodeArea / 2;
+
+          // Calculate the area of intersection
+          const xOverlap = Math.max(
+            0,
+            Math.min(canvasEndPoint.x, node.visualData.x + nodeWidth) - Math.max(canvasStartPoint.x, node.visualData.x),
+          );
+          const yOverlap = Math.max(
+            0,
+            Math.min(canvasEndPoint.y, node.visualData.y + nodeHeight) -
+              Math.max(canvasStartPoint.y, node.visualData.y),
+          );
+          const overlapArea = xOverlap * yOverlap;
+
+          // Check if at least 50% of the node is in the selection box
+          return overlapArea > 0 && overlapArea >= halfNodeArea;
+        });
 
         const isSameSetOfNodes =
           selectedNodeIds.length === nodesInBox.length &&
@@ -534,10 +558,10 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           <div
             className="selection-box"
             style={{
-              left: selectionBox.x,
-              top: selectionBox.y,
-              width: selectionBox.width,
-              height: selectionBox.height,
+              left: selectionBox.width < 0 ? selectionBox.x + selectionBox.width : selectionBox.x,
+              top: selectionBox.height < 0 ? selectionBox.y + selectionBox.height : selectionBox.y,
+              width: Math.abs(selectionBox.width),
+              height: Math.abs(selectionBox.height),
             }}
           />
         )}

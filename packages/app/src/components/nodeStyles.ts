@@ -319,8 +319,7 @@ export const nodeStyles = css`
     border-top-color: var(--error-light);
   }
 
-  .node:hover .node-output-inner,
-  .node.selected .node-output-inner {
+  .node:hover .node-output-inner {
     max-height: 500px;
     overflow: auto;
   }
