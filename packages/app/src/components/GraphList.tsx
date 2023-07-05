@@ -20,6 +20,7 @@ import { ReactComponent as ArrowRightIcon } from 'majesticons/line/arrow-right-l
 import { ReactComponent as ArrowDownIcon } from 'majesticons/line/arrow-down-line.svg';
 import { ReactComponent as MenuLineIcon } from 'majesticons/line/menu-line.svg';
 import { toast } from 'react-toastify';
+import { useStableCallback } from '../hooks/useStableCallback';
 
 const styles = css`
   display: flex;
@@ -343,6 +344,10 @@ export const GraphList: FC = () => {
   }
 
   const { contextMenuRef, showContextMenu, contextMenuData, handleContextMenu } = useContextMenu();
+  const handleSidebarContextMenu = useStableCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.preventDefault();
+    handleContextMenu(e);
+  });
 
   const selectedGraphForContextMenu = contextMenuData.data
     ? savedGraphs.find((graph) => graph.metadata!.id === contextMenuData.data?.element.dataset.graphid)
@@ -352,7 +357,7 @@ export const GraphList: FC = () => {
     ? contextMenuData.data?.element.dataset.folderpath
     : undefined;
 
-  return <div css={styles} ref={contextMenuRef} onContextMenu={handleContextMenu}>
+  return <div css={styles} ref={contextMenuRef} onContextMenu={handleSidebarContextMenu}>
     <div className={clsx("graph-list", { 'dragging-over': dragOverFolderName === '' })}>
       <DndContext onDragEnd={handleDragEnd} onDragOver={handleDragOver}>
         {folderedGraphs.map((item) => <FolderItem
