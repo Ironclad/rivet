@@ -403,7 +403,6 @@ export const ContextMenuItem: FC<ContextMenuItemProps> = ({ config, context, act
 };
 
 const contextMenuInfoBoxStyles = css`
-  position: absolute;
   border: 2px solid var(--grey-darkish);
   border-radius: 4px;
   box-shadow: 0 8px 16px var(--shadow-dark);
@@ -439,6 +438,7 @@ const ContextMenuInfoBox: FC<{ info: NonNullable<ContextMenuConfigItem['infoBox'
       {info.image && <img src={info.image} alt="" />}
       <h1>{info.title}</h1>
       <p dangerouslySetInnerHTML={markdownDescription} />
+      <div style={{ clear: 'right' }} />
     </div>
   );
 };
