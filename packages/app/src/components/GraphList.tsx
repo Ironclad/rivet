@@ -42,6 +42,13 @@ const styles = css`
     margin-top: 8px;
   }
 
+  .folder-children {
+    display: none;
+    &.expanded {
+      display: flex;
+    }
+  }
+
   .graph-item {
     display: flex;
     flex-direction: row;
@@ -257,6 +264,10 @@ export const GraphList: FC = () => {
   }
 
   function renameFolderItem(fullPath: string, newFullPath: string) {
+    if (newFullPath.split('/').some((part) => part === '')) {
+      toast.error('Names cannot be empty.');
+      return;
+    }
     if (savedGraphs.some((g) => g.metadata?.name === newFullPath) || folderNames.includes(newFullPath)) {
       toast.error('A graph or folder with that name already exists.');
       return;
@@ -430,7 +441,7 @@ export const FolderItem: FC<{
         <MenuLineIcon />
       </div>
     </div>
-    {item.type === 'folder' && isExpanded && <div className="folder-children">
+    {item.type === 'folder' && <div className={clsx("folder-children", { expanded: isExpanded })}>
       {item.children.map((child) => <FolderItem
         key={child.type === 'graph' ? child.graph.metadata?.id : child.fullPath}
         item={child}
