@@ -308,6 +308,10 @@ export const GraphList: FC = () => {
     const activeFullPath =  dragResult.active?.id as string;
     const overFullPath = dragResult.over?.id as string;
     if (overFullPath && activeFullPath) {
+      if (isInFolder(activeFullPath, overFullPath)) {
+        // Don't allow dragging into a folder that is a child of the active item
+        return;
+      }
       const overFolderName = overFullPath.indexOf('/') > 0 ? overFullPath.replace(/\/[^/]*$/, '') : '';
       // Get the last part of the active id's name
       const itemName = activeFullPath.split('/').pop()!;
