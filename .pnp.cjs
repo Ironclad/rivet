@@ -7596,6 +7596,13 @@ const RAW_RUNTIME_STATE =
           ["@floating-ui/core", "npm:1.2.6"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:1.3.1", {\
+        "packageLocation": "./.yarn/cache/@floating-ui-core-npm-1.3.1-d31cabf485-96b051e597.zip/node_modules/@floating-ui/core/",\
+        "packageDependencies": [\
+          ["@floating-ui/core", "npm:1.3.1"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["@floating-ui/dom", [\
@@ -7604,6 +7611,70 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@floating-ui/dom", "npm:1.2.7"],\
           ["@floating-ui/core", "npm:1.2.6"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:1.4.3", {\
+        "packageLocation": "./.yarn/cache/@floating-ui-dom-npm-1.4.3-c7d7aa0493-4caeb55a45.zip/node_modules/@floating-ui/dom/",\
+        "packageDependencies": [\
+          ["@floating-ui/dom", "npm:1.4.3"],\
+          ["@floating-ui/core", "npm:1.3.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@floating-ui/react", [\
+      ["npm:0.24.5", {\
+        "packageLocation": "./.yarn/cache/@floating-ui-react-npm-0.24.5-789b56cf68-bbf441340b.zip/node_modules/@floating-ui/react/",\
+        "packageDependencies": [\
+          ["@floating-ui/react", "npm:0.24.5"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:0.24.5", {\
+        "packageLocation": "./.yarn/__virtual__/@floating-ui-react-virtual-cb64deb901/0/cache/@floating-ui-react-npm-0.24.5-789b56cf68-bbf441340b.zip/node_modules/@floating-ui/react/",\
+        "packageDependencies": [\
+          ["@floating-ui/react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:0.24.5"],\
+          ["@floating-ui/react-dom", "virtual:cb64deb9013c96222c3e2132d348375113eca5532a7a317c798235c6dec450ce7bfd06b7f40d8c68cde231d9ad5abef7f415f0acc378d406a9891a1de1f642da#npm:2.0.1"],\
+          ["@types/react", "npm:18.2.12"],\
+          ["@types/react-dom", "npm:18.2.5"],\
+          ["aria-hidden", "npm:1.2.3"],\
+          ["react", "npm:18.2.0"],\
+          ["react-dom", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:18.2.0"],\
+          ["tabbable", "npm:6.2.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/react-dom",\
+          "@types/react",\
+          "react-dom",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@floating-ui/react-dom", [\
+      ["npm:2.0.1", {\
+        "packageLocation": "./.yarn/cache/@floating-ui-react-dom-npm-2.0.1-9c7cfe6387-03cc65e90e.zip/node_modules/@floating-ui/react-dom/",\
+        "packageDependencies": [\
+          ["@floating-ui/react-dom", "npm:2.0.1"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:cb64deb9013c96222c3e2132d348375113eca5532a7a317c798235c6dec450ce7bfd06b7f40d8c68cde231d9ad5abef7f415f0acc378d406a9891a1de1f642da#npm:2.0.1", {\
+        "packageLocation": "./.yarn/__virtual__/@floating-ui-react-dom-virtual-e43538ac0a/0/cache/@floating-ui-react-dom-npm-2.0.1-9c7cfe6387-03cc65e90e.zip/node_modules/@floating-ui/react-dom/",\
+        "packageDependencies": [\
+          ["@floating-ui/react-dom", "virtual:cb64deb9013c96222c3e2132d348375113eca5532a7a317c798235c6dec450ce7bfd06b7f40d8c68cde231d9ad5abef7f415f0acc378d406a9891a1de1f642da#npm:2.0.1"],\
+          ["@floating-ui/dom", "npm:1.4.3"],\
+          ["@types/react", "npm:18.2.12"],\
+          ["@types/react-dom", "npm:18.2.5"],\
+          ["react", "npm:18.2.0"],\
+          ["react-dom", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:18.2.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/react-dom",\
+          "@types/react",\
+          "react-dom",\
+          "react"\
         ],\
         "linkType": "HARD"\
       }]\
@@ -7737,6 +7808,7 @@ const RAW_RUNTIME_STATE =
           ["@dqbd/tiktoken", "npm:1.0.7"],\
           ["@emotion/react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:11.11.1"],\
           ["@emotion/styled", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:11.11.0"],\
+          ["@floating-ui/react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:0.24.5"],\
           ["@ironclad/rivet-core", "workspace:packages/core"],\
           ["@swc/core", "virtual:4a4dfdd9a7df5ec5e275841a43fbecdb97f28d7f31447ab74c1dd2a4d56fe264664aa1dc4ad44cc92e46e533864e6b71f8d1474657f30ffd4d572a69c55bcf0b#npm:1.3.63"],\
           ["@tauri-apps/api", "npm:1.3.0"],\
@@ -10747,6 +10819,16 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/argparse-npm-2.0.1-faff7999e6-e041432563.zip/node_modules/argparse/",\
         "packageDependencies": [\
           ["argparse", "npm:2.0.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["aria-hidden", [\
+      ["npm:1.2.3", {\
+        "packageLocation": "./.yarn/cache/aria-hidden-npm-1.2.3-02d72be80c-b7d0f367dc.zip/node_modules/aria-hidden/",\
+        "packageDependencies": [\
+          ["aria-hidden", "npm:1.2.3"],\
+          ["tslib", "npm:2.5.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -22041,6 +22123,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/tabbable-npm-1.1.3-71f194244e-603ff83e2f.zip/node_modules/tabbable/",\
         "packageDependencies": [\
           ["tabbable", "npm:1.1.3"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:6.2.0", {\
+        "packageLocation": "./.yarn/cache/tabbable-npm-6.2.0-5a74c8b4e2-7c9d83bb10.zip/node_modules/tabbable/",\
+        "packageDependencies": [\
+          ["tabbable", "npm:6.2.0"]\
         ],\
         "linkType": "HARD"\
       }]\

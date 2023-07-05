@@ -4462,12 +4462,54 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@floating-ui/core@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "@floating-ui/core@npm:1.3.1"
+  checksum: 96b051e59713aa91003c9df1577390dd6e7a99207f62b2dabff1b0f576728a249a152bd9ead9a9ca8e6458a31a5332c1d1e0d7b3a207eef27d6a18b450525978
+  languageName: node
+  linkType: hard
+
 "@floating-ui/dom@npm:^1.0.1":
   version: 1.2.7
   resolution: "@floating-ui/dom@npm:1.2.7"
   dependencies:
     "@floating-ui/core": "npm:^1.2.6"
   checksum: af2e5c2b3b3add6b9fcaec6d82a6ce12096b8e610c83df5407aff5d09ace45e2e07dcacef14b180567acdff15199469686ef77726a34bb92d5383475149d4873
+  languageName: node
+  linkType: hard
+
+"@floating-ui/dom@npm:^1.3.0":
+  version: 1.4.3
+  resolution: "@floating-ui/dom@npm:1.4.3"
+  dependencies:
+    "@floating-ui/core": "npm:^1.3.1"
+  checksum: 4caeb55a45d3c4c9fcbd8e7a905c96debf45648f148d96f10f7f876f8c7cce1fa3002ea754e82f1f6ea9d9ad07742b3c42f84d629967ebacd73712e931f4823c
+  languageName: node
+  linkType: hard
+
+"@floating-ui/react-dom@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@floating-ui/react-dom@npm:2.0.1"
+  dependencies:
+    "@floating-ui/dom": "npm:^1.3.0"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 03cc65e90e9b9034ae1f08ab901c0a71327ff077c1b2f120cdc366e89ffb548e51b3794fe41368455c255a570a087fd2f0317b4a9a74ea35533762fa33c1824a
+  languageName: node
+  linkType: hard
+
+"@floating-ui/react@npm:^0.24.5":
+  version: 0.24.5
+  resolution: "@floating-ui/react@npm:0.24.5"
+  dependencies:
+    "@floating-ui/react-dom": "npm:^2.0.1"
+    aria-hidden: "npm:^1.2.3"
+    tabbable: "npm:^6.0.1"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: bbf441340b904322d1e2829ea053dfcca45a127d30745fc58d2ace71a1f91788c40621ba281e147caf97602fb8d29573c2f50a9413b2c7d11b22261472bf4057
   languageName: node
   linkType: hard
 
@@ -4584,6 +4626,7 @@ __metadata:
     "@dqbd/tiktoken": "npm:^1.0.7"
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
+    "@floating-ui/react": "npm:^0.24.5"
     "@ironclad/rivet-core": "workspace:^"
     "@swc/core": "npm:^1.3.63"
     "@tauri-apps/api": "npm:^1.3.0"
@@ -6903,6 +6946,15 @@ __metadata:
   version: 2.0.1
   resolution: "argparse@npm:2.0.1"
   checksum: e041432563aadcf1267e543c472a756aaf57bb020ee5280093fe3c59fdde30d8b434c8d3c83614610550572acd18198395e2c20a38b3041a400dfe551320e0fb
+  languageName: node
+  linkType: hard
+
+"aria-hidden@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "aria-hidden@npm:1.2.3"
+  dependencies:
+    tslib: "npm:^2.0.0"
+  checksum: b7d0f367dc7d1fa6b56461d86834ca135185d6d4ac5de61e679173c15773313512036c75694837f5fc520f80b2213ee1cdc57661bcde725087f67e52c2cfa614
   languageName: node
   linkType: hard
 
@@ -15998,6 +16050,13 @@ __metadata:
   version: 1.1.3
   resolution: "tabbable@npm:1.1.3"
   checksum: 603ff83e2fa4bff7cb23c0610cc8886dd6c3546f8b21cf4efc2cb209f1d1bed4edf1adc0bc0b9db8cce4488a62a8be237a7c6286a71f2ded06c77660336946d0
+  languageName: node
+  linkType: hard
+
+"tabbable@npm:^6.0.1":
+  version: 6.2.0
+  resolution: "tabbable@npm:6.2.0"
+  checksum: 7c9d83bb10e6f3cd5273c669e1c2fa0b1b79eda4e815e2e407c1689e90a6488d16c8e8c85caa7b88f746a5460efcc4bbc4900a9cf41c1651f22db3970013c69a
   languageName: node
   linkType: hard
 

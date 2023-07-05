@@ -1,11 +1,12 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { FC, ReactNode, forwardRef, useCallback, useRef, useState } from 'react';
+import { FC, ReactNode, forwardRef, useEffect, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { ContextMenuData } from '../../hooks/useContextMenu';
 import { BlankAreaContextMenu } from './BlankAreaContextMenu';
 import { NodeContextMenu } from './NodeContextMenu';
 import { useStableCallback } from '../../hooks/useStableCallback';
+import { useFloating, useMergeRefs, autoUpdate, shift, flip } from '@floating-ui/react';
 
 export interface ContextMenuProps {
   x: number;
@@ -14,8 +15,11 @@ export interface ContextMenuProps {
   onMenuItemSelected?: (nodeType: string) => void;
 }
 
-export const menuStyles = css`
+const menuReferenceStyles = css`
   position: absolute;
+`;
+
+export const menuStyles = css`
   background-color: var(--grey-darkest);
   border: 2px solid var(--grey-darkish);
   border-radius: 4px;
@@ -135,9 +139,13 @@ export interface ContextMenuItemProps {
 }
 
 export const ContextMenuItem: FC<ContextMenuItemProps> = ({ label, onClick, children }) => {
-  const submenuRef = useRef<HTMLDivElement>(null);
   const [isSubMenuVisible, setIsSubMenuVisible] = useState(false);
   const hasSubMenu = !!children;
+  const { refs, floatingStyles } = useFloating({
+    placement: 'right-start',
+    whileElementsMounted: autoUpdate,
+    middleware: [flip()],
+  });
 
   const handleMouseEnter = useStableCallback(() => {
     if (hasSubMenu) {
@@ -157,10 +165,11 @@ export const ContextMenuItem: FC<ContextMenuItemProps> = ({ label, onClick, chil
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      ref={refs.setReference}
     >
       <div className="label">{label}</div>
-      <CSSTransition nodeRef={submenuRef} in={isSubMenuVisible} timeout={100} classNames="submenu" unmountOnExit>
-        <div ref={submenuRef} css={submenuStyles}>
+      <CSSTransition nodeRef={refs.floating} in={isSubMenuVisible} timeout={100} classNames="submenu" unmountOnExit>
+        <div ref={refs.setFloating} css={submenuStyles} style={floatingStyles}>
           {children}
         </div>
       </CSSTransition>
@@ -169,6 +178,14 @@ export const ContextMenuItem: FC<ContextMenuItemProps> = ({ label, onClick, chil
 };
 
 export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(({ x, y, data, onMenuItemSelected }, ref) => {
+  const { refs, floatingStyles, update } = useFloating({
+    placement: 'bottom-start',
+    whileElementsMounted: autoUpdate,
+    middleware: [shift({ crossAxis: true })],
+  });
+
+  const anchorRef = useMergeRefs([ref, refs.setReference]);
+
   let menuContent: ReactNode = null;
   if (!data) {
     menuContent = <BlankAreaContextMenu data={data} onMenuItemSelected={onMenuItemSelected} />;
@@ -178,9 +195,20 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(({ x, y,
     menuContent = <NodeContextMenu data={data} onMenuItemSelected={onMenuItemSelected} />;
   }
 
+  useEffect(() => {
+    update();
+  }, [update, x, y]);
+
   return (
-    <div ref={ref} css={menuStyles} style={{ top: y + 4, left: x - 16 }} onClick={(e) => e.stopPropagation()}>
-      {menuContent}
+    <div
+      ref={anchorRef}
+      css={menuReferenceStyles}
+      style={{ top: y + 4, left: x - 16 }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div style={floatingStyles} css={menuStyles} ref={refs.setFloating}>
+        {menuContent}
+      </div>
     </div>
   );
 });
