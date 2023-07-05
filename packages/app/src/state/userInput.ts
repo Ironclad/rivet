@@ -1,6 +1,8 @@
 import { atom } from 'recoil';
-import { persistAtom } from './persist';
 import { ArrayDataValue, NodeId, ProcessId, StringDataValue } from '@ironclad/rivet-core';
+import { recoilPersist } from 'recoil-persist';
+
+const { persistAtom } = recoilPersist({ key: 'userInput' });
 
 export const userInputModalOpenState = atom({
   key: 'userInputModalOpenState',

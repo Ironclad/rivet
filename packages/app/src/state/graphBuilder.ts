@@ -1,6 +1,8 @@
 import { atom, atomFamily } from 'recoil';
 import { ChartNode, GraphId, NodeId } from '@ironclad/rivet-core';
-import { persistAtom } from './persist';
+import { recoilPersist } from 'recoil-persist';
+
+const { persistAtom } = recoilPersist({ key: 'graphBuilder' });
 
 export const selectedNodesState = atom<NodeId[]>({
   key: 'selectedNodeState',

@@ -1,10 +1,12 @@
 import { DefaultValue, atom, selector } from 'recoil';
-import { persistAtom } from './persist';
 import { nanoid } from 'nanoid';
 import { values } from '../utils/typeSafety';
 import { produce } from 'immer';
 import { GraphId, NodeGraph, Project, ProjectId } from '@ironclad/rivet-core';
 import { blankProject } from '../hooks/useNewProject';
+import { recoilPersist } from 'recoil-persist';
+
+const { persistAtom } = recoilPersist({ key: 'project' });
 
 // What's the data of the last loaded project?
 export const projectState = atom<Project>({
