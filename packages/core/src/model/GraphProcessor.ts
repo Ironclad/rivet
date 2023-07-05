@@ -1046,8 +1046,6 @@ export class GraphProcessor {
         return acc;
       }, {} as Outputs);
 
-      console.dir({ aggregateResults });
-
       this.#nodeResults.set(node.id, aggregateResults);
       this.#visitedNodes.add(node.id);
       this.#emitter.emit('nodeFinish', { node, outputs: aggregateResults, processId });

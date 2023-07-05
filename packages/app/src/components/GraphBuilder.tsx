@@ -93,7 +93,6 @@ export const GraphBuilder: FC = () => {
 
   const contextMenuItemSelected = useStableCallback(
     (menuItemId: string, data: unknown, context: ContextMenuContext, meta: { x: number; y: number }) => {
-      console.dir({ menuItemId, data, context, meta });
       if (menuItemId.startsWith('add-node:')) {
         const nodeType = data as NodeType;
         addNode(nodeType, clientToCanvasPosition(meta.x, meta.y));

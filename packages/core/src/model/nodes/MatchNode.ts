@@ -71,8 +71,6 @@ export class MatchNodeImpl extends NodeImpl<MatchNode> {
     let matched = false;
     const output: Record<string, DataValue> = {};
 
-    console.dir({ inputs });
-
     for (let i = 0; i < cases.length; i++) {
       const regExp = new RegExp(cases[i]!);
       const match = regExp.test(inputString);
