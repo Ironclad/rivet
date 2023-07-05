@@ -361,13 +361,17 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
               <Field name="variants" label="Variant">
                 {({ fieldProps }) => (
                   <section className="variants">
-                    <Select
-                      className="variant-select"
-                      {...fieldProps}
-                      options={variantOptions}
-                      value={selectedVariantOption}
-                      onChange={(val) => setSelectedVariant(val!.value === '' ? undefined : val!.value)}
-                    />
+                    {variantOptions.length > 1 ? (
+                      <Select
+                        className="variant-select"
+                        {...fieldProps}
+                        options={variantOptions}
+                        value={selectedVariantOption}
+                        onChange={(val) => setSelectedVariant(val!.value === '' ? undefined : val!.value)}
+                      />
+                    ) : (
+                      <div />
+                    )}
 
                     {isVariant ? (
                       <div className="variant-buttons">

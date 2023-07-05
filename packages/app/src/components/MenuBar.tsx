@@ -218,10 +218,12 @@ export type MenuBarProps = {
   onResumeGraph?: () => void;
 };
 
-const executorOptions = [
-  { label: 'Browser', value: 'browser' },
-  { label: 'Node', value: 'node' },
-] as const;
+const executorOptions = isInTauri()
+  ? ([
+      { label: 'Browser', value: 'browser' },
+      { label: 'Node', value: 'node' },
+    ] as const)
+  : ([{ label: 'Browser', value: 'browser' }] as const);
 
 export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGraph, onResumeGraph }) => {
   const [debuggerPanelOpen, setDebuggerPanelOpen] = useState(false);
