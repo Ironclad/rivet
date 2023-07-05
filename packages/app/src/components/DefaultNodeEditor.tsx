@@ -450,7 +450,6 @@ export const DefaultCodeEditor: FC<{
   const editorContainer = useRef<HTMLDivElement>(null);
   const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
 
-  const onChangeLatest = useLatest(onChange);
   const nodeLatest = useLatest(node);
 
   const debouncedOnChange = useDebounceFn<(node: ChartNode) => void>(onChange, { wait: 250 });

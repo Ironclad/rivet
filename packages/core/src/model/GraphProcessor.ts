@@ -151,6 +151,15 @@ export class GraphProcessor {
   #parent: GraphProcessor | undefined;
   id = nanoid();
 
+  /** The node that is executing this graph, almost always a subgraph node. Undefined for root. */
+  #executor:
+    | {
+        nodeId: NodeId;
+        index: number;
+        processId: ProcessId;
+      }
+    | undefined;
+
   /** The interval between nodeFinish events when playing back a recording. I.e. how fast the playback is. */
   recordingPlaybackChatLatency = 1000;
 
@@ -1131,7 +1140,23 @@ export class GraphProcessor {
       },
       contextValues: this.#contextValues,
       externalFunctions: { ...this.#externalFunctions },
-      onPartialOutputs: (partialOutputs) => partialOutput?.(node, partialOutputs, index),
+      onPartialOutputs: (partialOutputs) => {
+        partialOutput?.(node, partialOutputs, index);
+
+        const { useAsGraphPartialOutput } = (node.data as { useAsGraphPartialOutput?: boolean } | undefined) ?? {};
+
+        if (useAsGraphPartialOutput && this.#executor && this.#parent) {
+          const executorNode = this.#parent.#nodesById[this.#executor.nodeId];
+          if (executorNode) {
+            this.#emitter.emit('partialOutput', {
+              index: this.#executor.index,
+              node: executorNode,
+              outputs: partialOutputs,
+              processId: this.#executor.processId,
+            });
+          }
+        }
+      },
       signal: nodeAbortController.signal,
       processId,
       getGlobal: (id) => this.#globals.get(id),
@@ -1154,6 +1179,11 @@ export class GraphProcessor {
         processor.#contextValues = this.#contextValues;
         processor.#parent = this;
         processor.#globals = this.#globals;
+        processor.#executor = {
+          nodeId: node.id,
+          index,
+          processId,
+        };
         processor.on('nodeError', (e) => this.#emitter.emit('nodeError', e));
         processor.on('nodeFinish', (e) => this.#emitter.emit('nodeFinish', e));
         processor.on('partialOutput', (e) => this.#emitter.emit('partialOutput', e));

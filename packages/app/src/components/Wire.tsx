@@ -149,27 +149,30 @@ export function getNodePortPosition(
   portId: PortId,
   getIO: (node: ChartNode) => { inputDefinitions: NodeInputDefinition[]; outputDefinitions: NodeOutputDefinition[] },
 ): { x: number; y: number } {
-  if (node && portId) {
-    let isInput = true;
-    const io = getIO(node);
-    const foundInput = io.inputDefinitions.find((input) => input.id === portId);
-    let foundPort: NodeInputDefinition | NodeOutputDefinition | undefined = foundInput;
-    if (!foundPort) {
-      isInput = false;
-      foundPort = io.outputDefinitions.find((output) => output.id === portId);
-    }
+  if (!(node && portId)) {
+    return { x: 0, y: 0 };
+  }
 
-    if (foundPort) {
-      const portPosition = nodePortPositionCache[node.id]?.[foundPort.id];
-      if (portPosition) {
-        return { x: portPosition.x, y: portPosition.y };
-      } else {
-        return {
-          x: isInput ? node.visualData.x : node.visualData.x + (node.visualData.width ?? 300),
-          y: node.visualData.y + 100,
-        };
-      }
+  let isInput = true;
+  const io = getIO(node);
+  const foundInput = io.inputDefinitions.find((input) => input.id === portId);
+  let foundPort: NodeInputDefinition | NodeOutputDefinition | undefined = foundInput;
+  if (!foundPort) {
+    isInput = false;
+    foundPort = io.outputDefinitions.find((output) => output.id === portId);
+  }
+
+  if (foundPort) {
+    const portPosition = nodePortPositionCache[node.id]?.[foundPort.id];
+    if (portPosition) {
+      return { x: portPosition.x, y: portPosition.y };
+    } else {
+      return {
+        x: isInput ? node.visualData.x : node.visualData.x + (node.visualData.width ?? 300),
+        y: node.visualData.y + 100,
+      };
     }
   }
+
   return { x: 0, y: 0 };
 }
