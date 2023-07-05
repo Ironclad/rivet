@@ -15,6 +15,7 @@ export type SubGraphNode = ChartNode & {
   data: {
     graphId: GraphId;
     useErrorOutput?: boolean;
+    useAsGraphPartialOutput?: boolean;
   };
 };
 
@@ -32,6 +33,7 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
       data: {
         graphId: '' as GraphId,
         useErrorOutput: false,
+        useAsGraphPartialOutput: false,
       },
     };
 

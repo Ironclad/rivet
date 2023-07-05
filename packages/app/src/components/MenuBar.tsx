@@ -4,7 +4,7 @@ import { ReactComponent as ChevronRightIcon } from 'majesticons/line/chevron-rig
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
 import { ReactComponent as PauseIcon } from 'majesticons/line/pause-circle-line.svg';
 import { ReactComponent as PlayIcon } from 'majesticons/line/play-circle-line.svg';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { graphRunningState, graphPausedState } from '../state/dataFlow';
 import clsx from 'clsx';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
@@ -14,6 +14,8 @@ import { loadedRecordingState, selectedExecutorState } from '../state/execution'
 import { promptDesignerState } from '../state/promptDesigner';
 import { useGlobalShortcut } from '../hooks/useGlobalShortcut';
 import { useLoadRecording } from '../hooks/useLoadRecording';
+import { useRunMenuCommand } from '../hooks/useMenuCommands';
+import { isInTauri } from '../utils/tauri';
 
 const styles = css`
   display: flex;
@@ -216,14 +218,18 @@ export type MenuBarProps = {
   onResumeGraph?: () => void;
 };
 
-const executorOptions = [
-  { label: 'Browser', value: 'browser' },
-  { label: 'Node', value: 'node' },
-] as const;
+const executorOptions = isInTauri()
+  ? ([
+      { label: 'Browser', value: 'browser' },
+      { label: 'Node', value: 'node' },
+    ] as const)
+  : ([{ label: 'Browser', value: 'browser' }] as const);
 
 export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGraph, onResumeGraph }) => {
   const [debuggerPanelOpen, setDebuggerPanelOpen] = useState(false);
   const [selectedExecutor, setSelectedExecutor] = useRecoilState(selectedExecutorState);
+  const runMenuCommandImpl = useRunMenuCommand();
+  const [fileMenuOpen, setFileMenuOpen] = useState(false);
 
   const graphRunning = useRecoilValue(graphRunningState);
   const graphPaused = useRecoilValue(graphPausedState);
@@ -252,9 +258,30 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
     }
   });
 
+  const runMenuCommand: typeof runMenuCommandImpl = (command) => {
+    setFileMenuOpen(false);
+    runMenuCommandImpl(command);
+  };
+
   return (
     <div css={styles}>
       <div className="left-menu">
+        {!isInTauri() && (
+          <div className="menu-item file-menu">
+            <button className="dropdown-button" onMouseDown={() => setFileMenuOpen((open) => !open)}>
+              File
+            </button>
+            <div className={clsx('file-dropdown', { open: fileMenuOpen })}>
+              <button onMouseUp={() => runMenuCommand('new_project')}>New Project</button>
+              <button onMouseUp={() => runMenuCommand('open_project')}>Open Project...</button>
+              <button onMouseUp={() => runMenuCommand('save_project_as')}>Save Project As...</button>
+              <button onMouseUp={() => runMenuCommand('settings')}>Settings</button>
+              <button onMouseUp={() => runMenuCommand('export_graph')}>Export Graph</button>
+              <button onMouseUp={() => runMenuCommand('import_graph')}>Import Graph</button>
+            </div>
+          </div>
+        )}
+
         <div className="menu-item prompt-designer-menu">
           <button
             className={clsx('dropdown-item', { active: promptDesigner.isOpen })}

@@ -132,7 +132,7 @@ export const VisualNode = memo(
           ref={nodeRef}
           style={style}
           {...nodeAttributes}
-          data-node-id={node.id}
+          data-nodeid={node.id}
           data-contextmenutype={`node-${node.type}`}
           onMouseOver={(event) => onMouseOver?.(event, node.id)}
           onMouseOut={(event) => onMouseOut?.(event, node.id)}

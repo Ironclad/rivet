@@ -8,21 +8,21 @@ export type ContextMenuData = {
     element: HTMLElement;
   } | null;
 };
-
 export const useContextMenu = () => {
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const [showContextMenu, setShowContextMenu] = useState(false);
-  const [contextMenuData, setContextMenuData] = useState<ContextMenuData>({ x: 0, y: 0, data: null });
+  const [contextMenuData, setContextMenuData] = useState<ContextMenuData>({ x: -3000, y: 0, data: null });
 
-  const handleContextMenu = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
-    event.preventDefault();
+  const handleContextMenu = useCallback(
+    (event: Pick<React.MouseEvent<HTMLDivElement>, 'clientX' | 'clientY' | 'target'>) => {
+      const data = getContextMenuDataFromTarget(event.target as HTMLElement);
 
-    const data = getContextMenuDataFromTarget(event.target as HTMLElement);
+      setShowContextMenu(true);
 
-    setShowContextMenu(true);
-
-    setContextMenuData({ x: event.clientX, y: event.clientY, data });
-  }, []);
+      setContextMenuData({ x: event.clientX, y: event.clientY, data });
+    },
+    [],
+  );
 
   useEffect(() => {
     const handleWindowClick = (event: MouseEvent) => {
@@ -32,9 +32,18 @@ export const useContextMenu = () => {
       }
     };
 
+    const handleEscapePress = (event: KeyboardEvent) => {
+      // Close context menu if escape key is pressed
+      if (event.key === 'Escape') {
+        setShowContextMenu(false);
+      }
+    };
+
     window.addEventListener('click', handleWindowClick);
+    window.addEventListener('keydown', handleEscapePress);
     return () => {
       window.removeEventListener('click', handleWindowClick);
+      window.removeEventListener('keydown', handleEscapePress);
     };
   }, [contextMenuRef]);
 

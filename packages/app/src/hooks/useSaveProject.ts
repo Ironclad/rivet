@@ -1,9 +1,9 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { loadedProjectState, projectState } from '../state/savedGraphs';
-import { saveProjectData, saveProjectDataNoPrompt } from '../utils/fileIO';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph';
 import { produce } from 'immer';
 import { toast } from 'react-toastify';
+import { ioProvider } from '../utils/globals';
 
 export function useSaveProject() {
   const saveGraph = useSaveCurrentGraph();
@@ -21,7 +21,7 @@ export function useSaveProject() {
       draft.graphs[savedGraph.metadata!.id!] = savedGraph;
     });
 
-    await saveProjectDataNoPrompt(newProject, loadedProject.path);
+    await ioProvider.saveProjectDataNoPrompt(newProject, loadedProject.path);
     toast.success('Project saved');
     setLoadedProject({
       loaded: true,
@@ -36,7 +36,7 @@ export function useSaveProject() {
       draft.graphs[savedGraph.metadata!.id!] = savedGraph;
     });
 
-    const filePath = await saveProjectData(newProject);
+    const filePath = await ioProvider.saveProjectData(newProject);
 
     if (filePath) {
       toast.success('Project saved');

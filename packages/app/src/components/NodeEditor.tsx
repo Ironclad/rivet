@@ -1,7 +1,7 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { editingNodeState } from '../state/graphBuilder';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { nodesSelector } from '../state/graph';
+import { nodesByIdState, nodesState } from '../state/graph';
 import styled from '@emotion/styled';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
 import { NodeType, getNodeDisplayName, ChartNode, NodeTestGroup, GraphId } from '@ironclad/rivet-core';
@@ -10,7 +10,7 @@ import { produce } from 'immer';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import Toggle from '@atlaskit/toggle';
 import { useStableCallback } from '../hooks/useStableCallback';
-import { DefaultGraphSelectorEditor, DefaultNodeEditor, GraphSelector } from './DefaultNodeEditor';
+import { DefaultNodeEditor, GraphSelector } from './DefaultNodeEditor';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import { Field, Label } from '@atlaskit/form';
 import TextField from '@atlaskit/textfield';
@@ -21,14 +21,14 @@ import { orderBy } from 'lodash-es';
 import { nanoid } from 'nanoid';
 
 export const NodeEditorRenderer: FC = () => {
-  const nodes = useRecoilValue(nodesSelector);
+  const nodesById = useRecoilValue(nodesByIdState);
   const [editingNodeId, setEditingNodeId] = useRecoilState(editingNodeState);
 
   const deselect = useStableCallback(() => {
     setEditingNodeId(null);
   });
 
-  const selectedNode = nodes.find((node) => node.id === editingNodeId);
+  const selectedNode = editingNodeId ? nodesById[editingNodeId] : undefined;
 
   if (!editingNodeId || !selectedNode) {
     return null;
@@ -190,7 +190,7 @@ const Container = styled.div`
 type NodeEditorProps = { selectedNode: ChartNode; onDeselect: () => void };
 
 export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) => {
-  const setNodes = useSetRecoilState(nodesSelector);
+  const setNodes = useSetRecoilState(nodesState);
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
   const [addVariantPopupOpen, setAddVariantPopupOpen] = useState(false);
 
@@ -361,13 +361,17 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
               <Field name="variants" label="Variant">
                 {({ fieldProps }) => (
                   <section className="variants">
-                    <Select
-                      className="variant-select"
-                      {...fieldProps}
-                      options={variantOptions}
-                      value={selectedVariantOption}
-                      onChange={(val) => setSelectedVariant(val!.value === '' ? undefined : val!.value)}
-                    />
+                    {variantOptions.length > 1 ? (
+                      <Select
+                        className="variant-select"
+                        {...fieldProps}
+                        options={variantOptions}
+                        value={selectedVariantOption}
+                        onChange={(val) => setSelectedVariant(val!.value === '' ? undefined : val!.value)}
+                      />
+                    ) : (
+                      <div />
+                    )}
 
                     {isVariant ? (
                       <div className="variant-buttons">

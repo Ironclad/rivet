@@ -2,14 +2,14 @@ import { DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
 import { DraggableNode } from './DraggableNode';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles';
-import { FC, useMemo, useState } from 'react';
-import { ContextMenu } from './ContextMenu/ContextMenu';
+import { FC, useMemo, useRef, useState } from 'react';
+import { ContextMenu, ContextMenuContext } from './ContextMenu';
 import { CSSTransition } from 'react-transition-group';
 import { WireLayer } from './WireLayer';
-import { ContextMenuData, useContextMenu } from '../hooks/useContextMenu';
+import { useContextMenu } from '../hooks/useContextMenu';
 import { useDraggingNode } from '../hooks/useDraggingNode';
 import { useDraggingWire } from '../hooks/useDraggingWire';
-import { ChartNode, NodeConnection, NodeId } from '@ironclad/rivet-core';
+import { ChartNode, GraphId, NodeConnection, NodeId, NodeType } from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   CanvasPosition,
@@ -24,8 +24,10 @@ import { VisualNode } from './VisualNode';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { useThrottleFn } from 'ahooks';
 import { produce } from 'immer';
-import { graphState } from '../state/graph';
+import { graphMetadataState } from '../state/graph';
 import { useViewportBounds } from '../hooks/useViewportBounds';
+import { nanoid } from 'nanoid';
+import { useGlobalHotkey } from '../hooks/useGlobalHotkey';
 
 const styles = css`
   width: 100vw;
@@ -45,32 +47,43 @@ const styles = css`
   }
 
   .context-menu {
+    position: absolute;
     display: none;
   }
 
   .context-menu-enter {
     display: block;
     opacity: 0;
+    position: absolute;
   }
 
   .context-menu-enter-active {
     opacity: 1;
     transition: opacity 100ms ease-out;
+    position: absolute;
   }
 
   .context-menu-exit {
     opacity: 1;
+    position: absolute;
   }
 
   .context-menu-exit-active {
     opacity: 0;
     transition: opacity 100ms ease-out;
+    position: absolute;
+  }
+
+  .context-menu-exit-done {
+    opacity: 0;
+    position: absolute;
+    left: -1000px;
   }
 
   .debug-overlay {
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: 50px;
+    left: 50px;
     padding: 10px 20px;
     border-radius: 5px;
     background-color: rgba(255, 255, 255, 0.03);
@@ -93,6 +106,13 @@ const styles = css`
     top: -5px;
   }
 
+  .selection-box {
+    position: absolute;
+    border: 2px dashed var(--primary);
+    background-color: rgba(255, 153, 0, 0.05); /* --primary color with 20% opacity */
+    z-index: 2000;
+  }
+
   ${nodeStyles}
 `;
 
@@ -104,7 +124,12 @@ export interface NodeCanvasProps {
   onConnectionsChanged: (connections: NodeConnection[]) => void;
   onNodeSelected: (node: ChartNode, multi: boolean) => void;
   onNodeStartEditing?: (node: ChartNode) => void;
-  onContextMenuItemSelected?: (menuItemId: string, contextMenuData: ContextMenuData) => void;
+  onContextMenuItemSelected?: (
+    menuItemId: string,
+    data: unknown,
+    context: ContextMenuContext,
+    meta: { x: number; y: number },
+  ) => void;
 }
 
 export const NodeCanvas: FC<NodeCanvasProps> = ({
@@ -117,21 +142,31 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   onContextMenuItemSelected,
 }) => {
   const [canvasPosition, setCanvasPosition] = useRecoilState(canvasPositionState);
-  const selectedGraph = useRecoilValue(graphState);
+  const selectedGraphMetadata = useRecoilValue(graphMetadataState);
 
   const setLastSavedCanvasPosition = useSetRecoilState(
-    lastCanvasPositionForGraphState(selectedGraph?.metadata?.id ?? nanoid()),
+    lastCanvasPositionForGraphState(selectedGraphMetadata?.id ?? (nanoid() as GraphId)),
   );
 
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, canvasStartX: 0, canvasStartY: 0 });
   const { clientToCanvasPosition } = useCanvasPositioning();
   const setLastMousePosition = useSetRecoilState(lastMousePositionState);
+
+  const lastMouseInfoRef = useRef<{ x: number; y: number; target: EventTarget | undefined }>({
+    x: -3000,
+    y: 0,
+    target: undefined,
+  });
+
   const [editingNodeId, setEditingNodeId] = useRecoilState(editingNodeState);
   const [selectedNodeIds, setSelectedNodeIds] = useRecoilState(selectedNodesState);
+  const [selectionBox, setSelectionBox] = useState<{ x: number; y: number; width: number; height: number } | null>(
+    null,
+  );
 
-  const { draggingNodes, onNodeStartDrag, onNodeDragged } = useDraggingNode(nodes, onNodesChanged);
-  const { draggingWire, onWireStartDrag, onWireEndDrag } = useDraggingWire(nodes, connections, onConnectionsChanged);
+  const { draggingNodes, onNodeStartDrag, onNodeDragged } = useDraggingNode(onNodesChanged);
+  const { draggingWire, onWireStartDrag, onWireEndDrag } = useDraggingWire(onConnectionsChanged);
 
   const {
     contextMenuRef,
@@ -157,10 +192,12 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     );
   }, [connections, draggingNodes]);
 
-  const contextMenuItemSelected = useStableCallback((menuItemId: string) => {
-    onContextMenuItemSelected?.(menuItemId, contextMenuData);
-    setShowContextMenu(false);
-  });
+  const contextMenuItemSelected = useStableCallback(
+    (itemId: string, data: unknown, context: ContextMenuContext, meta: { x: number; y: number }) => {
+      onContextMenuItemSelected?.(itemId, data, context, meta);
+      setShowContextMenu(false);
+    },
+  );
 
   const canvasMouseDown = useStableCallback((e: React.MouseEvent) => {
     if (e.button !== 0) {
@@ -173,26 +210,80 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
     e.preventDefault();
 
-    setIsDraggingCanvas(true);
-    setDragStart({ x: e.clientX, y: e.clientY, canvasStartX: canvasPosition.x, canvasStartY: canvasPosition.y });
+    if (e.shiftKey) {
+      setSelectionBox({ x: e.clientX, y: e.clientY, width: 0, height: 0 });
+    } else {
+      setIsDraggingCanvas(true);
+      setDragStart({ x: e.clientX, y: e.clientY, canvasStartX: canvasPosition.x, canvasStartY: canvasPosition.y });
+    }
   });
 
   const canvasMouseMove = useThrottleFn(
     (e: React.MouseEvent) => {
       setLastMousePosition({ x: e.clientX, y: e.clientY });
+      lastMouseInfoRef.current = { x: e.clientX, y: e.clientY, target: e.target };
 
-      if (!isDraggingCanvas) return;
+      if (selectionBox) {
+        const newBox = {
+          ...selectionBox!,
+          width: e.clientX - selectionBox!.x,
+          height: e.clientY - selectionBox!.y,
+        };
+        setSelectionBox(newBox);
 
-      const dx = (e.clientX - dragStart.x) * (1 / canvasPosition.zoom);
-      const dy = (e.clientY - dragStart.y) * (1 / canvasPosition.zoom);
+        const topLeft = {
+          x: newBox.width < 0 ? newBox.x + newBox.width : newBox.x,
+          y: newBox.height < 0 ? newBox.y + newBox.height : newBox.y,
+        };
+        const bottomRight = {
+          x: newBox.width < 0 ? newBox.x : newBox.x + newBox.width,
+          y: newBox.height < 0 ? newBox.y : newBox.y + newBox.height,
+        };
 
-      const position: CanvasPosition = {
-        x: dragStart.canvasStartX + dx,
-        y: dragStart.canvasStartY + dy,
-        zoom: canvasPosition.zoom,
-      };
-      setCanvasPosition(position);
-      setLastSavedCanvasPosition(position);
+        const canvasStartPoint = clientToCanvasPosition(topLeft.x, topLeft.y);
+        const canvasEndPoint = clientToCanvasPosition(bottomRight.x, bottomRight.y);
+
+        const nodesInBox = nodes.filter((node) => {
+          const nodeWidth = node.visualData.width ?? 150;
+          const nodeHeight = 150; // Assuming the height is 150
+
+          const nodeArea = nodeWidth * nodeHeight;
+          const halfNodeArea = nodeArea / 2;
+
+          // Calculate the area of intersection
+          const xOverlap = Math.max(
+            0,
+            Math.min(canvasEndPoint.x, node.visualData.x + nodeWidth) - Math.max(canvasStartPoint.x, node.visualData.x),
+          );
+          const yOverlap = Math.max(
+            0,
+            Math.min(canvasEndPoint.y, node.visualData.y + nodeHeight) -
+              Math.max(canvasStartPoint.y, node.visualData.y),
+          );
+          const overlapArea = xOverlap * yOverlap;
+
+          // Check if at least 50% of the node is in the selection box
+          return overlapArea > 0 && overlapArea >= halfNodeArea;
+        });
+
+        const isSameSetOfNodes =
+          selectedNodeIds.length === nodesInBox.length &&
+          selectedNodeIds.every((node) => nodesInBox.some((n) => n.id === node));
+        if (!isSameSetOfNodes) {
+          setSelectedNodeIds(nodesInBox.map((node) => node.id));
+        }
+      } else if (isDraggingCanvas) {
+        const dx = (e.clientX - dragStart.x) * (1 / canvasPosition.zoom);
+        const dy = (e.clientY - dragStart.y) * (1 / canvasPosition.zoom);
+
+        const position: CanvasPosition = {
+          x: dragStart.canvasStartX + dx,
+          y: dragStart.canvasStartY + dy,
+          zoom: canvasPosition.zoom,
+        };
+        setCanvasPosition(position);
+        setLastSavedCanvasPosition(position);
+      }
     },
     { wait: 10 },
   );
@@ -257,7 +348,9 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   });
 
   const canvasMouseUp = (e: React.MouseEvent) => {
-    if (!isDraggingCanvas) {
+    if (selectionBox) {
+      setSelectionBox(null);
+    } else if (!isDraggingCanvas) {
       return;
     }
 
@@ -320,13 +413,54 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   const viewportBounds = useViewportBounds();
 
+  useGlobalHotkey(
+    'Space',
+    (e) => {
+      e.preventDefault();
+      handleContextMenu({
+        clientX: lastMouseInfoRef.current.x!,
+        clientY: lastMouseInfoRef.current.y!,
+        target: lastMouseInfoRef.current.target!,
+      });
+    },
+    { notWhenInputFocused: true },
+  );
+
+  const handleCanvasContextMenu = useStableCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    handleContextMenu(e);
+  });
+
+  const hydratedContextMenuData = useMemo((): ContextMenuContext | null => {
+    if (contextMenuData.data?.type.startsWith('node-')) {
+      const nodeType = contextMenuData.data.type.replace('node-', '') as NodeType;
+      const nodeId = contextMenuData.data.element.dataset.nodeid as NodeId;
+      return {
+        type: 'node',
+        data: {
+          nodeType,
+          nodeId,
+        },
+      };
+    }
+
+    return {
+      type: 'blankArea',
+      data: {},
+    };
+  }, [contextMenuData]);
+
+  // Idk, before we were able to unmount the context menu, but safari be weird,
+  // so we move it off screen instead
+  const [contextMenuDisabled, setContextMenuDisabled] = useState(true);
+
   return (
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
       <div
         ref={setNodeRef}
         className="node-canvas"
         css={styles}
-        onContextMenu={handleContextMenu}
+        onContextMenu={handleCanvasContextMenu}
         onMouseDown={canvasMouseDown}
         onMouseMove={canvasMouseMove.run}
         onMouseUp={canvasMouseUp}
@@ -400,20 +534,38 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         </div>
         <CSSTransition
           nodeRef={contextMenuRef}
-          in={showContextMenu}
+          in={showContextMenu && !!hydratedContextMenuData}
           timeout={200}
           classNames="context-menu"
-          unmountOnExit
-          onExited={() => setContextMenuData({ x: 0, y: 0, data: null })}
+          onEnter={() => {
+            setContextMenuDisabled(false);
+          }}
+          onExited={() => {
+            setContextMenuData({ x: 0, y: 0, data: null });
+            setContextMenuDisabled(true);
+          }}
         >
           <ContextMenu
+            disabled={contextMenuDisabled}
             ref={contextMenuRef}
             x={contextMenuData.x}
             y={contextMenuData.y}
-            data={contextMenuData.data}
+            context={hydratedContextMenuData!}
             onMenuItemSelected={contextMenuItemSelected}
           />
         </CSSTransition>
+        {selectionBox && (
+          <div
+            className="selection-box"
+            style={{
+              left: selectionBox.width < 0 ? selectionBox.x + selectionBox.width : selectionBox.x,
+              top: selectionBox.height < 0 ? selectionBox.y + selectionBox.height : selectionBox.y,
+              width: Math.abs(selectionBox.width),
+              height: Math.abs(selectionBox.height),
+            }}
+          />
+        )}
+
         <WireLayer connections={connections} draggingWire={draggingWire} highlightedNodes={highlightedNodes} />
       </div>
     </DndContext>
@@ -446,6 +598,3 @@ const DebugOverlay: FC<{ enabled: boolean }> = ({ enabled }) => {
     </div>
   );
 };
-function nanoid(): import('@ironclad/rivet-core').GraphId {
-  throw new Error('Function not implemented.');
-}

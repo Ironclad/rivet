@@ -1,6 +1,8 @@
 import { atom } from 'recoil';
-import { persistAtom } from './persist';
 import { ExecutionRecorder } from '@ironclad/rivet-core';
+import { recoilPersist } from 'recoil-persist';
+
+const { persistAtom } = recoilPersist({ key: 'execution' });
 
 export const remoteUploadAllowedState = atom<boolean>({
   key: 'remoteUploadAllowed',

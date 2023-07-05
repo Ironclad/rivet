@@ -1,12 +1,10 @@
 import { FC } from 'react';
-import { useRecoilValue } from 'recoil';
-import { lastRunData } from '../../state/dataFlow';
 import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
-import { openDirectory } from '../../utils/fileIO';
 import Button from '@atlaskit/button';
 import { ChartNode, Outputs, PortId, ReadDirectoryNode, expectType } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { ioProvider } from '../../utils/globals';
 
 type ReadDirectoryNodeBodyProps = {
   node: ReadDirectoryNode;
@@ -103,7 +101,7 @@ export type ReadDirectoryNodeEditorProps = {
 
 export const ReadDirectoryNodeEditor: FC<ReadDirectoryNodeEditorProps> = ({ node, onChange }) => {
   const handleBrowseClick = async () => {
-    const directory = await openDirectory();
+    const directory = await ioProvider.openDirectory();
     if (directory) {
       onChange?.({
         ...node,

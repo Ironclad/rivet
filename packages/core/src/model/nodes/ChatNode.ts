@@ -59,6 +59,8 @@ export type ChatNodeData = ChatNodeConfigData & {
 
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
+
+  useAsGraphPartialOutput?: boolean;
 };
 
 // Temporary
@@ -107,6 +109,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         enableFunctionUse: false,
 
         cache: false,
+        useAsGraphPartialOutput: true,
       },
     };
 
@@ -341,6 +344,11 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         type: 'toggle',
         label: 'Cache (same inputs, same outputs)',
         dataKey: 'cache',
+      },
+      {
+        type: 'toggle',
+        label: 'Use for subgraph partial output',
+        dataKey: 'useAsGraphPartialOutput',
       },
     ];
   }

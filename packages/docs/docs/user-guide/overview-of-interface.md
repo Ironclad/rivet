@@ -66,6 +66,8 @@ The canvas is the main area of the graph. You can click and drag on the canvas t
 
 Right click to open the context menu to add new nodes.
 
+Hold shift and drag to create a selection box. Any nodes inside the selection box will be selected. You can then move all of the selected nodes as a group, or create a subgraph from the selected nodes.
+
 ## 3. Node Editor
 
 The node editor is visible when you click the edit node icon on a node. It is used to edit the data on the node.

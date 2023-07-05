@@ -9,6 +9,7 @@ import { css } from '@emotion/react';
 import { marked } from 'marked';
 import { CodeEditor } from './CodeEditor';
 import { monaco } from '../utils/monaco';
+import { useMarkdown } from '../hooks/useMarkdown';
 
 const styles = css`
   .question {
@@ -108,8 +109,7 @@ const UserInputModalQuestion: FC<{
     }
   };
 
-  const questionHtml = useMemo(() => ({ __html: marked(question, { mangle: false }) }), [question]);
-  console.dir({ question, questionHtml });
+  const questionHtml = useMarkdown(question);
 
   return (
     <Field name={`question-${index}`} label={`Question ${index + 1}`}>

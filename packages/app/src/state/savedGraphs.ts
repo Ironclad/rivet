@@ -1,9 +1,12 @@
 import { DefaultValue, atom, selector } from 'recoil';
-import { persistAtom } from './persist';
 import { nanoid } from 'nanoid';
-import { values } from '../utils/typeSafety';
+import { entries, values } from '../utils/typeSafety';
 import { produce } from 'immer';
 import { GraphId, NodeGraph, Project, ProjectId } from '@ironclad/rivet-core';
+import { blankProject } from '../hooks/useNewProject';
+import { recoilPersist } from 'recoil-persist';
+
+const { persistAtom } = recoilPersist({ key: 'project' });
 
 // What's the data of the last loaded project?
 export const projectState = atom<Project>({
@@ -17,6 +20,41 @@ export const projectState = atom<Project>({
     graphs: {},
   },
   effects_UNSTABLE: [persistAtom],
+});
+
+export const projectMetadataState = selector({
+  key: 'projectMetadataState',
+  get: ({ get }) => {
+    return get(projectState).metadata;
+  },
+  set: ({ set }, newValue) => {
+    set(projectState, (oldValue) => {
+      return {
+        ...oldValue,
+        metadata: newValue instanceof DefaultValue ? blankProject().metadata : newValue,
+      };
+    });
+  },
+});
+
+export const projectGraphInfoState = selector({
+  key: 'projectGraphInfoState',
+  get: ({ get }) => {
+    const project = get(projectState);
+    return {
+      graphs: Object.fromEntries(
+        entries(project.graphs).map(([id, graph]) => [
+          id,
+          {
+            id,
+            name: graph.metadata!.name,
+            description: graph.metadata!.description,
+          },
+        ]),
+      ),
+      metadata: project.metadata,
+    };
+  },
 });
 
 // Which project file was loaded last and where is it?

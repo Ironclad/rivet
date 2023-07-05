@@ -8,7 +8,7 @@ import {
   PortId,
 } from '@ironclad/rivet-core';
 import { useRecoilValue } from 'recoil';
-import { nodesSelector } from '../state/graph';
+import { nodesByIdState } from '../state/graph';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { useGetNodeIO } from '../hooks/useGetNodeIO';
 import clsx from 'clsx';
@@ -30,8 +30,7 @@ export type PartialConnection = {
 };
 
 export function useWireStartEnd(connection: NodeConnection | PartialConnection) {
-  const nodes = useRecoilValue(nodesSelector);
-
+  const nodesById = useRecoilValue(nodesByIdState);
   const getIO = useGetNodeIO();
 
   let possibleNodes = 'toX' in connection ? [connection.nodeId] : [connection.inputNodeId, connection.outputNodeId];
@@ -55,7 +54,7 @@ export function useWireStartEnd(connection: NodeConnection | PartialConnection) 
     let end: { x: number; y: number };
 
     if ('toX' in connection) {
-      const node = nodes.find((node) => node.id === connection.nodeId);
+      const node = nodesById[connection.nodeId];
 
       let port = null;
       if (node) {
@@ -69,15 +68,15 @@ export function useWireStartEnd(connection: NodeConnection | PartialConnection) 
         return null;
       }
 
-      start = getNodePortPosition(nodes, connection.nodeId, connection.portId, getIO);
+      start = getNodePortPosition(nodesById[connection.nodeId]!, connection.portId, getIO);
       end = { x: connection.toX, y: connection.toY };
     } else {
-      const outputNode = nodes.find((node) => node.id === connection.outputNodeId);
+      const outputNode = nodesById[connection.outputNodeId];
 
       const outputPort = outputNode
         ? getIO(outputNode).outputDefinitions.find((port) => port.id === connection.outputId)
         : null;
-      const inputNode = nodes.find((node) => node.id === connection.inputNodeId);
+      const inputNode = nodesById[connection.inputNodeId];
       const inputPort = inputNode
         ? getIO(inputNode).inputDefinitions.find((port) => port.id === connection.inputId)
         : null;
@@ -86,13 +85,13 @@ export function useWireStartEnd(connection: NodeConnection | PartialConnection) 
         return null;
       }
 
-      start = getNodePortPosition(nodes, connection.outputNodeId, connection.outputId, getIO);
-      end = getNodePortPosition(nodes, connection.inputNodeId, connection.inputId, getIO);
+      start = getNodePortPosition(nodesById[connection.outputNodeId]!, connection.outputId, getIO);
+      end = getNodePortPosition(nodesById[connection.inputNodeId]!, connection.inputId, getIO);
     }
 
     return { start, end };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes, connection, getIO, possibleNodeCachedValues]);
+  }, [nodesById, connection, getIO, possibleNodeCachedValues]);
 }
 
 export const ConditionallyRenderWire: FC<WireProps> = ({ connection, selected, highlighted }) => {
@@ -146,33 +145,34 @@ export const Wire: FC<{
 });
 
 export function getNodePortPosition(
-  nodes: ChartNode[],
-  nodeId: NodeId,
+  node: ChartNode,
   portId: PortId,
   getIO: (node: ChartNode) => { inputDefinitions: NodeInputDefinition[]; outputDefinitions: NodeOutputDefinition[] },
 ): { x: number; y: number } {
-  const node = nodes.find((node) => node.id === nodeId);
-  if (node && portId) {
-    let isInput = true;
-    const io = getIO(node);
-    const foundInput = io.inputDefinitions.find((input) => input.id === portId);
-    let foundPort: NodeInputDefinition | NodeOutputDefinition | undefined = foundInput;
-    if (!foundPort) {
-      isInput = false;
-      foundPort = io.outputDefinitions.find((output) => output.id === portId);
-    }
+  if (!(node && portId)) {
+    return { x: 0, y: 0 };
+  }
 
-    if (foundPort) {
-      const portPosition = nodePortPositionCache[node.id]?.[foundPort.id];
-      if (portPosition) {
-        return { x: portPosition.x, y: portPosition.y };
-      } else {
-        return {
-          x: isInput ? node.visualData.x : node.visualData.x + (node.visualData.width ?? 300),
-          y: node.visualData.y + 100,
-        };
-      }
+  let isInput = true;
+  const io = getIO(node);
+  const foundInput = io.inputDefinitions.find((input) => input.id === portId);
+  let foundPort: NodeInputDefinition | NodeOutputDefinition | undefined = foundInput;
+  if (!foundPort) {
+    isInput = false;
+    foundPort = io.outputDefinitions.find((output) => output.id === portId);
+  }
+
+  if (foundPort) {
+    const portPosition = nodePortPositionCache[node.id]?.[foundPort.id];
+    if (portPosition) {
+      return { x: portPosition.x, y: portPosition.y };
+    } else {
+      return {
+        x: isInput ? node.visualData.x : node.visualData.x + (node.visualData.width ?? 300),
+        y: node.visualData.y + 100,
+      };
     }
   }
+
   return { x: 0, y: 0 };
 }

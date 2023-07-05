@@ -1,33 +1,19 @@
 import { useRecoilValue } from 'recoil';
-import { graphState } from '../state/graph';
+import { connectionsForNodeState, nodesByIdState } from '../state/graph';
 import { useStableCallback } from './useStableCallback';
-import { ChartNode, NodeId, Nodes, createNodeInstance } from '@ironclad/rivet-core';
+import { ChartNode, Nodes, createNodeInstance } from '@ironclad/rivet-core';
 import { projectState } from '../state/savedGraphs';
-import { keyBy } from 'lodash-es';
-import { useMemo } from 'react';
 
 export function useGetNodeIO() {
   const project = useRecoilValue(projectState);
-  const graph = useRecoilValue(graphState);
-  const connections = graph.connections;
-
-  const connectionsByNode = useMemo(() => {
-    return connections.reduce((acc, connection) => {
-      acc[connection.inputNodeId] = acc[connection.inputNodeId] ?? [];
-      acc[connection.inputNodeId]!.push(connection);
-      acc[connection.outputNodeId] = acc[connection.outputNodeId] ?? [];
-      acc[connection.outputNodeId]!.push(connection);
-      return acc;
-    }, {} as Record<NodeId, typeof connections>);
-  }, [connections]);
+  const nodesById = useRecoilValue(nodesByIdState);
+  const connectionsForNode = useRecoilValue(connectionsForNodeState);
 
   return useStableCallback((node: ChartNode) => {
     const tempImpl = createNodeInstance(node as Nodes);
-    const nodeConnections = connectionsByNode[node.id] ?? [];
-    const nodesById = keyBy(graph.nodes, 'id') as Record<NodeId, ChartNode>;
 
-    const inputDefinitions = tempImpl.getInputDefinitions(nodeConnections, nodesById, project);
-    const outputDefinitions = tempImpl.getOutputDefinitions(nodeConnections, nodesById, project);
+    const inputDefinitions = tempImpl.getInputDefinitions(connectionsForNode[node.id] ?? [], nodesById, project);
+    const outputDefinitions = tempImpl.getOutputDefinitions(connectionsForNode[node.id] ?? [], nodesById, project);
 
     return {
       inputDefinitions,

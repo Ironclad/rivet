@@ -11,7 +11,7 @@ import {
   promptDesignerState,
   promptDesignerTestGroupResultsByNodeIdState,
 } from '../state/promptDesigner';
-import { nodesSelector } from '../state/graph';
+import { nodesByIdState, nodesState } from '../state/graph';
 import { lastRunDataByNodeState } from '../state/dataFlow';
 import {
   ChatMessage,
@@ -303,16 +303,14 @@ const lastPromptDesignerAttachedNodeState = atom<NodeId | undefined>({
 export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
   const [{ messages }, setMessages] = useRecoilState(promptDesignerMessagesState);
   const attachedNodeId = useRecoilValue(promptDesignerAttachedChatNodeState);
-  const [nodes, setNodes] = useRecoilState(nodesSelector);
+  const [, setNodes] = useRecoilState(nodesState);
   const nodeOutput = useRecoilValue(lastRunDataByNodeState);
   const [config, setConfig] = useRecoilState(promptDesignerConfigurationState);
   const [response, setResponse] = useRecoilState(promptDesignerResponseState);
   const [promptDesigner, setPromptDesigner] = useRecoilState(promptDesignerState);
+  const nodesById = useRecoilValue(nodesByIdState);
 
-  const attachedNode = useMemo(
-    () => nodes.find((n) => n.id === attachedNodeId?.nodeId) as ChatNode | undefined,
-    [attachedNodeId?.nodeId, nodes],
-  );
+  const attachedNode = attachedNodeId?.nodeId ? (nodesById[attachedNodeId.nodeId] as ChatNode) : undefined;
 
   const testGroups = attachedNode?.tests ?? [];
 
@@ -351,7 +349,7 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
       let inputData = nodeDataForAttachedNodeProcess.inputData;
       // If node is a split run, just grab the first input data.
       if (attachedNode.isSplitRun) {
-        inputData = mapValues(inputData, (val) => isArrayDataValue(val) ? arrayizeDataValue(val)[0] : val);
+        inputData = mapValues(inputData, (val) => (isArrayDataValue(val) ? arrayizeDataValue(val)[0] : val));
       }
       const { messages } = getChatNodeMessages(inputData);
       setMessages({
@@ -1001,6 +999,7 @@ async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
             onPartialResult?.(responsePartial);
           }
         },
+        abortGraph: undefined!,
       } as InternalProcessContext,
     );
 

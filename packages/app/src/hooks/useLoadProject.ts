@@ -1,8 +1,8 @@
 import { useSetRecoilState } from 'recoil';
 import { loadedProjectState, projectState } from '../state/savedGraphs';
-import { loadProjectData } from '../utils/fileIO';
 import { emptyNodeGraph } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph';
+import { ioProvider } from '../utils/globals';
 
 export function useLoadProject() {
   const setProject = useSetRecoilState(projectState);
@@ -10,7 +10,7 @@ export function useLoadProject() {
   const setGraphData = useSetRecoilState(graphState);
 
   return () => {
-    loadProjectData(({ project, path }) => {
+    ioProvider.loadProjectData(({ project, path }) => {
       setProject(project);
 
       setGraphData(emptyNodeGraph());
