@@ -6,7 +6,6 @@ import { nodesState } from '../state/graph';
 import { editingNodeState, selectedNodesState } from '../state/graphBuilder';
 import { NodeEditorRenderer } from './NodeEditor';
 import styled from '@emotion/styled';
-import { ContextMenuData } from '../hooks/useContextMenu';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { ArrayDataValue, ChartNode, NodeId, NodeType, Nodes, StringDataValue, nodeFactory } from '@ironclad/rivet-core';
@@ -20,6 +19,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { loadedRecordingState } from '../state/execution';
 import { useLoadGraph } from '../hooks/useLoadGraph';
 import { projectState } from '../state/savedGraphs';
+import { ContextMenuContext } from './ContextMenu';
 
 const Container = styled.div`
   position: relative;
@@ -82,78 +82,80 @@ export const GraphBuilder: FC = () => {
   const factorIntoSubgraph = useFactorIntoSubgraph();
   const nodesById = useRecoilValue(nodesByIdState);
 
-  const contextMenuItemSelected = useStableCallback((menuItemId: string, contextMenuData: ContextMenuData) => {
-    if (menuItemId.startsWith('Add:')) {
-      const nodeType = menuItemId.substring(4) as NodeType;
-      addNode(nodeType, clientToCanvasPosition(contextMenuData.x, contextMenuData.y));
-      return;
-    }
-
-    if (menuItemId.startsWith('Delete:')) {
-      const nodeId = menuItemId.substring(7) as NodeId;
-      removeNode(nodeId);
-      return;
-    }
-
-    if (menuItemId.startsWith('Edit:')) {
-      const nodeId = menuItemId.substring(5) as NodeId;
-      setSelectedNodeIds([nodeId]);
-      return;
-    }
-
-    if (menuItemId.startsWith('Duplicate:')) {
-      const nodeId = menuItemId.substring(10) as NodeId;
-      const node = nodesById[nodeId] as Nodes;
-
-      if (!node) {
+  const contextMenuItemSelected = useStableCallback(
+    (menuItemId: string, data: unknown, context: ContextMenuContext, meta: { x: number; y: number }) => {
+      if (menuItemId.startsWith('add-node:')) {
+        const nodeType = data as NodeType;
+        addNode(nodeType, clientToCanvasPosition(meta.x, meta.y));
         return;
       }
 
-      const newNode = nodeFactory(node.type);
-      newNode.data = { ...node.data };
-      newNode.visualData = {
-        ...node.visualData,
-        x: node.visualData.x,
-        y: node.visualData.y + 100,
-      };
-      newNode.title = node.title;
-      newNode.description = node.description;
-      newNode.isSplitRun = node.isSplitRun;
-      newNode.splitRunMax = node.splitRunMax;
-      nodesChanged?.([...nodes, newNode]);
-
-      // Copy the connections to the input ports
-      const oldNodeConnections = connections.filter((c) => c.inputNodeId === nodeId);
-      const newNodeConnections = oldNodeConnections.map((c) => ({
-        ...c,
-        inputNodeId: newNode.id,
-      }));
-      setConnections([...connections, ...newNodeConnections]);
-    }
-
-    if (menuItemId.startsWith('FactorIntoSubgraph')) {
-      factorIntoSubgraph();
-    }
-
-    if (menuItemId.startsWith('GoToSubgraph:')) {
-      const nodeId = menuItemId.substring(13) as NodeId;
-      const node = nodesById[nodeId] as Nodes;
-
-      if (node?.type !== 'subGraph') {
+      if (menuItemId === 'node-delete') {
+        const { nodeId } = context.data as { nodeId: NodeId };
+        removeNode(nodeId);
         return;
       }
 
-      const { graphId } = node.data;
-
-      const graph = project.graphs[graphId];
-
-      if (!graph) {
+      if (menuItemId === 'node-edit') {
+        const { nodeId } = context.data as { nodeId: NodeId };
+        setEditingNodeId(nodeId);
         return;
       }
 
-      loadGraph(graph);
-    }
-  });
+      if (menuItemId === 'node-duplicate') {
+        const { nodeId } = context.data as { nodeId: NodeId };
+        const node = nodesById[nodeId] as Nodes;
+
+        if (!node) {
+          return;
+        }
+
+        const newNode = nodeFactory(node.type);
+        newNode.data = { ...node.data };
+        newNode.visualData = {
+          ...node.visualData,
+          x: node.visualData.x,
+          y: node.visualData.y + 100,
+        };
+        newNode.title = node.title;
+        newNode.description = node.description;
+        newNode.isSplitRun = node.isSplitRun;
+        newNode.splitRunMax = node.splitRunMax;
+        nodesChanged?.([...nodes, newNode]);
+
+        // Copy the connections to the input ports
+        const oldNodeConnections = connections.filter((c) => c.inputNodeId === nodeId);
+        const newNodeConnections = oldNodeConnections.map((c) => ({
+          ...c,
+          inputNodeId: newNode.id,
+        }));
+        setConnections([...connections, ...newNodeConnections]);
+      }
+
+      if (menuItemId === 'nodes-factor-into-subgraph') {
+        factorIntoSubgraph();
+      }
+
+      if (menuItemId === 'node-go-to-subgraph') {
+        const { nodeId } = context.data as { nodeId: NodeId };
+        const node = nodesById[nodeId] as Nodes;
+
+        if (node?.type !== 'subGraph') {
+          return;
+        }
+
+        const { graphId } = node.data;
+
+        const graph = project.graphs[graphId];
+
+        if (!graph) {
+          return;
+        }
+
+        loadGraph(graph);
+      }
+    },
+  );
 
   const nodeSelected = useStableCallback((node: ChartNode, multi: boolean) => {
     if (!multi) {

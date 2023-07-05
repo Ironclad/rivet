@@ -2,14 +2,14 @@ import { DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
 import { DraggableNode } from './DraggableNode';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles';
-import { FC, useMemo, useState } from 'react';
-import { ContextMenu } from './ContextMenu/ContextMenu';
+import { FC, useMemo, useRef, useState } from 'react';
+import { ContextMenu, ContextMenuContext } from './ContextMenu';
 import { CSSTransition } from 'react-transition-group';
 import { WireLayer } from './WireLayer';
-import { ContextMenuData, useContextMenu } from '../hooks/useContextMenu';
+import { useContextMenu } from '../hooks/useContextMenu';
 import { useDraggingNode } from '../hooks/useDraggingNode';
 import { useDraggingWire } from '../hooks/useDraggingWire';
-import { ChartNode, NodeConnection, NodeId } from '@ironclad/rivet-core';
+import { ChartNode, GraphId, NodeConnection, NodeId, NodeType } from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   CanvasPosition,
@@ -24,8 +24,11 @@ import { VisualNode } from './VisualNode';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { useThrottleFn } from 'ahooks';
 import { produce } from 'immer';
-import { graphMetadataState, graphState } from '../state/graph';
+import { graphMetadataState } from '../state/graph';
 import { useViewportBounds } from '../hooks/useViewportBounds';
+import { nanoid } from 'nanoid';
+import { useGlobalHotkey } from '../hooks/useGlobalHotkey';
+import { ErrorBoundary } from 'react-error-boundary';
 
 const styles = css`
   width: 100vw;
@@ -104,7 +107,12 @@ export interface NodeCanvasProps {
   onConnectionsChanged: (connections: NodeConnection[]) => void;
   onNodeSelected: (node: ChartNode, multi: boolean) => void;
   onNodeStartEditing?: (node: ChartNode) => void;
-  onContextMenuItemSelected?: (menuItemId: string, contextMenuData: ContextMenuData) => void;
+  onContextMenuItemSelected?: (
+    menuItemId: string,
+    data: unknown,
+    context: ContextMenuContext,
+    meta: { x: number; y: number },
+  ) => void;
 }
 
 export const NodeCanvas: FC<NodeCanvasProps> = ({
@@ -120,13 +128,20 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const selectedGraphMetadata = useRecoilValue(graphMetadataState);
 
   const setLastSavedCanvasPosition = useSetRecoilState(
-    lastCanvasPositionForGraphState(selectedGraphMetadata?.id ?? nanoid()),
+    lastCanvasPositionForGraphState(selectedGraphMetadata?.id ?? (nanoid() as GraphId)),
   );
 
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, canvasStartX: 0, canvasStartY: 0 });
   const { clientToCanvasPosition } = useCanvasPositioning();
   const setLastMousePosition = useSetRecoilState(lastMousePositionState);
+
+  const lastMouseInfoRef = useRef<{ x: number; y: number; target: EventTarget | undefined }>({
+    x: 0,
+    y: 0,
+    target: undefined,
+  });
+
   const [editingNodeId, setEditingNodeId] = useRecoilState(editingNodeState);
   const [selectedNodeIds, setSelectedNodeIds] = useRecoilState(selectedNodesState);
 
@@ -157,10 +172,12 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     );
   }, [connections, draggingNodes]);
 
-  const contextMenuItemSelected = useStableCallback((menuItemId: string) => {
-    onContextMenuItemSelected?.(menuItemId, contextMenuData);
-    setShowContextMenu(false);
-  });
+  const contextMenuItemSelected = useStableCallback(
+    (itemId: string, data: unknown, context: ContextMenuContext, meta: { x: number; y: number }) => {
+      onContextMenuItemSelected?.(itemId, data, context, meta);
+      setShowContextMenu(false);
+    },
+  );
 
   const canvasMouseDown = useStableCallback((e: React.MouseEvent) => {
     if (e.button !== 0) {
@@ -180,6 +197,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const canvasMouseMove = useThrottleFn(
     (e: React.MouseEvent) => {
       setLastMousePosition({ x: e.clientX, y: e.clientY });
+      lastMouseInfoRef.current = { x: e.clientX, y: e.clientY, target: e.target };
 
       if (!isDraggingCanvas) return;
 
@@ -320,13 +338,49 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   const viewportBounds = useViewportBounds();
 
+  useGlobalHotkey(
+    'Space',
+    () => {
+      handleContextMenu({
+        clientX: lastMouseInfoRef.current.x!,
+        clientY: lastMouseInfoRef.current.y!,
+        target: lastMouseInfoRef.current.target!,
+      });
+    },
+    { notWhenInputFocused: true },
+  );
+
+  const handleCanvasContextMenu = useStableCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    handleContextMenu(e);
+  });
+
+  const hydratedContextMenuData = useMemo((): ContextMenuContext | null => {
+    if (contextMenuData.data?.type.startsWith('node-')) {
+      const nodeType = contextMenuData.data.type.replace('node-', '') as NodeType;
+      const nodeId = contextMenuData.data.element.dataset['node-id'] as NodeId;
+      return {
+        type: 'node',
+        data: {
+          nodeType,
+          nodeId,
+        },
+      };
+    }
+
+    return {
+      type: 'blankArea',
+      data: {},
+    };
+  }, [contextMenuData]);
+
   return (
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
       <div
         ref={setNodeRef}
         className="node-canvas"
         css={styles}
-        onContextMenu={handleContextMenu}
+        onContextMenu={handleCanvasContextMenu}
         onMouseDown={canvasMouseDown}
         onMouseMove={canvasMouseMove.run}
         onMouseUp={canvasMouseUp}
@@ -398,22 +452,25 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
             ))}
           </DragOverlay>
         </div>
-        <CSSTransition
-          nodeRef={contextMenuRef}
-          in={showContextMenu}
-          timeout={200}
-          classNames="context-menu"
-          unmountOnExit
-          onExited={() => setContextMenuData({ x: 0, y: 0, data: null })}
-        >
-          <ContextMenu
-            ref={contextMenuRef}
-            x={contextMenuData.x}
-            y={contextMenuData.y}
-            data={contextMenuData.data}
-            onMenuItemSelected={contextMenuItemSelected}
-          />
-        </CSSTransition>
+        <ErrorBoundary fallback={null}>
+          <CSSTransition
+            nodeRef={contextMenuRef}
+            in={showContextMenu && !!hydratedContextMenuData}
+            timeout={200}
+            classNames="context-menu"
+            unmountOnExit
+            onExited={() => setContextMenuData({ x: 0, y: 0, data: null })}
+          >
+            <ContextMenu
+              ref={contextMenuRef}
+              x={contextMenuData.x}
+              y={contextMenuData.y}
+              context={hydratedContextMenuData!}
+              onMenuItemSelected={contextMenuItemSelected}
+            />
+          </CSSTransition>
+        </ErrorBoundary>
+
         <WireLayer connections={connections} draggingWire={draggingWire} highlightedNodes={highlightedNodes} />
       </div>
     </DndContext>
@@ -446,6 +503,3 @@ const DebugOverlay: FC<{ enabled: boolean }> = ({ enabled }) => {
     </div>
   );
 };
-function nanoid(): import('@ironclad/rivet-core').GraphId {
-  throw new Error('Function not implemented.');
-}

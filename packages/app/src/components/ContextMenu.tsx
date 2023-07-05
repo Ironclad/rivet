@@ -1,19 +1,14 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { FC, ReactNode, forwardRef, useEffect, useRef, useState } from 'react';
+import { FC, forwardRef, useEffect, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { ContextMenuData } from '../../hooks/useContextMenu';
-import { BlankAreaContextMenu } from './BlankAreaContextMenu';
-import { NodeContextMenu } from './NodeContextMenu';
-import { useStableCallback } from '../../hooks/useStableCallback';
+import { useStableCallback } from '../hooks/useStableCallback';
 import { useFloating, useMergeRefs, autoUpdate, shift, flip } from '@floating-ui/react';
-
-export interface ContextMenuProps {
-  x: number;
-  y: number;
-  data: ContextMenuData['data'];
-  onMenuItemSelected?: (nodeType: string) => void;
-}
+import {
+  ContextMenuConfiguration,
+  useContextMenuConfiguration,
+  ContextMenuItem as ContextMenuConfigItem,
+} from '../hooks/useContextMenuConfiguration';
 
 const menuReferenceStyles = css`
   position: absolute;
@@ -51,6 +46,63 @@ export const menuStyles = css`
     padding: 0;
   }
 `;
+
+export type ContextMenuContext = {
+  [P in keyof ContextMenuConfiguration['contexts']]: {
+    type: P;
+    data: ContextMenuConfiguration['contexts'][P]['contextType'];
+  };
+}[keyof ContextMenuConfiguration['contexts']];
+
+export interface ContextMenuProps {
+  x: number;
+  y: number;
+  context: ContextMenuContext;
+  onMenuItemSelected?: (id: string, data: unknown, context: ContextMenuContext, meta: { x: number; y: number }) => void;
+}
+
+export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
+  ({ x, y, context, onMenuItemSelected }, ref) => {
+    const { refs, floatingStyles, update } = useFloating({
+      placement: 'bottom-start',
+      whileElementsMounted: autoUpdate,
+      middleware: [shift({ crossAxis: true })],
+    });
+
+    const anchorRef = useMergeRefs([ref, refs.setReference]);
+
+    const config = useContextMenuConfiguration();
+    const { items } = config.contexts[context.type];
+
+    useEffect(() => {
+      update();
+    }, [update, x, y]);
+
+    const handleMenuItemSelected = useStableCallback((id: string, data: unknown) => {
+      onMenuItemSelected?.(id, data, context, { x, y });
+    });
+
+    return (
+      <div
+        ref={anchorRef}
+        css={menuReferenceStyles}
+        style={{ top: y + 4, left: x - 16 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div style={floatingStyles} css={menuStyles} ref={refs.setFloating}>
+          {items.map((item) => (
+            <ContextMenuItem
+              key={item.id}
+              config={item}
+              onMenuItemSelected={handleMenuItemSelected}
+              context={context.data}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  },
+);
 
 export const submenuStyles = css`
   position: absolute;
@@ -132,15 +184,14 @@ export const ContextMenuItemDiv = styled.div<{ hasSubmenu?: boolean }>`
 `;
 
 export interface ContextMenuItemProps {
-  label: string | ReactNode;
-  onClick?: () => void;
-  hasSubMenu?: boolean;
-  children?: ReactNode;
+  config: ContextMenuConfigItem;
+  context: unknown;
+  onMenuItemSelected?: (id: string, data: unknown) => void;
 }
 
-export const ContextMenuItem: FC<ContextMenuItemProps> = ({ label, onClick, children }) => {
+export const ContextMenuItem: FC<ContextMenuItemProps> = ({ config, onMenuItemSelected, context }) => {
   const [isSubMenuVisible, setIsSubMenuVisible] = useState(false);
-  const hasSubMenu = !!children;
+  const hasSubMenu = (config.items?.length ?? 0) > 0;
   const { refs, floatingStyles } = useFloating({
     placement: 'right-start',
     whileElementsMounted: autoUpdate,
@@ -159,56 +210,43 @@ export const ContextMenuItem: FC<ContextMenuItemProps> = ({ label, onClick, chil
     }
   });
 
+  const handleClick = () => {
+    if (hasSubMenu) {
+      return;
+    }
+
+    onMenuItemSelected?.(config.id, config.data);
+  };
+
+  if (config.conditional && !config.conditional(context)) {
+    return null;
+  }
+
   return (
     <ContextMenuItemDiv
       hasSubmenu={hasSubMenu}
-      onClick={onClick}
+      onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       ref={refs.setReference}
     >
-      <div className="label">{label}</div>
+      <div className="label">
+        {config.icon && <config.icon />}
+        {config.label}
+      </div>
       <CSSTransition nodeRef={refs.floating} in={isSubMenuVisible} timeout={100} classNames="submenu" unmountOnExit>
         <div ref={refs.setFloating} css={submenuStyles} style={floatingStyles}>
-          {children}
+          {hasSubMenu &&
+            config.items!.map((subItem) => (
+              <ContextMenuItem
+                key={subItem.id}
+                config={subItem}
+                onMenuItemSelected={onMenuItemSelected}
+                context={context}
+              />
+            ))}
         </div>
       </CSSTransition>
     </ContextMenuItemDiv>
   );
 };
-
-export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(({ x, y, data, onMenuItemSelected }, ref) => {
-  const { refs, floatingStyles, update } = useFloating({
-    placement: 'bottom-start',
-    whileElementsMounted: autoUpdate,
-    middleware: [shift({ crossAxis: true })],
-  });
-
-  const anchorRef = useMergeRefs([ref, refs.setReference]);
-
-  let menuContent: ReactNode = null;
-  if (!data) {
-    menuContent = <BlankAreaContextMenu data={data} onMenuItemSelected={onMenuItemSelected} />;
-  }
-
-  if (data?.type.startsWith('node')) {
-    menuContent = <NodeContextMenu data={data} onMenuItemSelected={onMenuItemSelected} />;
-  }
-
-  useEffect(() => {
-    update();
-  }, [update, x, y]);
-
-  return (
-    <div
-      ref={anchorRef}
-      css={menuReferenceStyles}
-      style={{ top: y + 4, left: x - 16 }}
-      onClick={(e) => e.stopPropagation()}
-    >
-      <div style={floatingStyles} css={menuStyles} ref={refs.setFloating}>
-        {menuContent}
-      </div>
-    </div>
-  );
-});

@@ -21,6 +21,7 @@ import { appWindow } from '@tauri-apps/api/window';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import { useContextMenu } from '../hooks/useContextMenu';
 import Portal from '@atlaskit/portal';
+import { useStableCallback } from '../hooks/useStableCallback';
 
 const styles = css`
   position: fixed;
@@ -202,12 +203,17 @@ export const LeftSidebar: FC = () => {
     })();
   }, [loadedProject, project.metadata.title]);
 
+  const handleSidebarContextMenu = useStableCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.preventDefault();
+    handleContextMenu(e);
+  });
+
   return (
     <div
       ref={contextMenuRef}
       css={styles}
       style={{ transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)', transition: 'transform 0.3s ease' }}
-      onContextMenu={handleContextMenu}
+      onContextMenu={handleSidebarContextMenu}
     >
       <div className="toggle-tab" onClick={() => setSidebarOpen(!sidebarOpen)}>
         {sidebarOpen ? <ExpandLeftIcon /> : <ExpandRightIcon />}

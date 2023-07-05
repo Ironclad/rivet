@@ -8,6 +8,7 @@ import Toggle from '@atlaskit/toggle';
 import { useToggle } from 'ahooks';
 import { marked } from 'marked';
 import clsx from 'clsx';
+import { useMarkdown } from '../../hooks/useMarkdown';
 
 type ChatNodeBodyProps = {
   node: ChatNode;
@@ -166,7 +167,7 @@ export const ChatNodeOutputSingle: FC<{
 }> = ({ outputText, functionCall, requestTokens, responseTokens, cost, duration, fullscreen }) => {
   const [renderMarkdown, toggleRenderMarkdown] = useToggle(fullscreen);
 
-  const outputHtml = useMemo(() => ({ __html: marked(outputText ?? '', { mangle: false }) }), [outputText]);
+  const outputHtml = useMarkdown(outputText);
 
   return (
     <ChatNodeOutputContainer className={clsx({ fullscreen })}>
