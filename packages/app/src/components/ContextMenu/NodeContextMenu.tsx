@@ -5,17 +5,16 @@ import { ReactComponent as DeleteIcon } from 'majesticons/line/delete-bin-line.s
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
 import { ReactComponent as DuplicateIcon } from 'majesticons/line/image-multiple-line.svg';
 import { useRecoilValue } from 'recoil';
-import { nodesSelector } from '../../state/graph';
-import { Nodes } from '@ironclad/rivet-core';
+import { nodesByIdState, nodesState } from '../../state/graph';
+import { NodeId, Nodes } from '@ironclad/rivet-core';
 
 export const NodeContextMenu: FC<Pick<ContextMenuProps, 'data' | 'onMenuItemSelected'>> = ({
   data,
   onMenuItemSelected,
 }) => {
   const nodeId = data?.element.dataset.nodeId;
-
-  const nodes = useRecoilValue(nodesSelector);
-  const node = nodes.find((n) => n.id === nodeId) as Nodes;
+  const nodesById = useRecoilValue(nodesByIdState);
+  const node = nodeId ? nodesById[nodeId as NodeId] : undefined;
 
   const editNode = useStableCallback(() => {
     onMenuItemSelected?.(`Edit:${nodeId}`);

@@ -25,7 +25,7 @@ import Toggle from '@atlaskit/toggle';
 import TextField from '@atlaskit/textfield';
 import Select from '@atlaskit/select';
 import Checkbox from '@atlaskit/checkbox';
-import { useLatest } from 'ahooks';
+import { useDebounceFn, useLatest } from 'ahooks';
 import { monaco } from '../utils/monaco';
 import clsx from 'clsx';
 import { projectState } from '../state/savedGraphs';
@@ -453,6 +453,8 @@ export const DefaultCodeEditor: FC<{
   const onChangeLatest = useLatest(onChange);
   const nodeLatest = useLatest(node);
 
+  const debouncedOnChange = useDebounceFn<(node: ChartNode) => void>(onChange, { wait: 250 });
+
   useEffect(() => {
     if (!editorContainer.current) {
       return;
@@ -473,7 +475,7 @@ export const DefaultCodeEditor: FC<{
       value: (nodeLatest.current?.data as Record<string, unknown>)[editorDef.dataKey] as string | undefined,
     });
     editor.onDidChangeModelContent(() => {
-      onChangeLatest.current?.({
+      debouncedOnChange.run({
         ...nodeLatest.current,
         data: {
           ...(nodeLatest.current?.data as Record<string, unknown> | undefined),

@@ -1,11 +1,10 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useStableCallback } from './useStableCallback';
 import { selectedNodesState } from '../state/graphBuilder';
-import { connectionsSelector, nodesSelector } from '../state/graph';
-import { keyBy, max, min, minBy, uniqBy } from 'lodash-es';
+import { connectionsState, nodesByIdState } from '../state/graph';
+import { max, min, uniqBy } from 'lodash-es';
 import {
   ChartNode,
-  GraphInputNode,
   GraphInputNodeImpl,
   GraphOutputNodeImpl,
   NodeConnection,
@@ -21,18 +20,16 @@ import { nanoid } from 'nanoid';
 import { useLoadGraph } from './useLoadGraph';
 
 export function useFactorIntoSubgraph() {
-  const [project, setProject] = useRecoilState(projectState);
-  const [nodes, setNodes] = useRecoilState(nodesSelector);
-  const [selectedNodeIds, setSelectedNodes] = useRecoilState(selectedNodesState);
-  const [connections, setConnections] = useRecoilState(connectionsSelector);
+  const project = useRecoilValue(projectState);
+  const selectedNodeIds = useRecoilValue(selectedNodesState);
+  const connections = useRecoilValue(connectionsState);
   const loadGraph = useLoadGraph();
+  const nodesById = useRecoilValue(nodesByIdState);
 
   return useStableCallback(() => {
     if (selectedNodeIds.length === 0) {
       return;
     }
-
-    const nodesById = keyBy(nodes, 'id');
 
     const selectedNodes = selectedNodeIds.map((id) => nodesById[id]).filter(isNotNull);
 

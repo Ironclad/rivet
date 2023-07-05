@@ -24,7 +24,7 @@ import { VisualNode } from './VisualNode';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { useThrottleFn } from 'ahooks';
 import { produce } from 'immer';
-import { graphState } from '../state/graph';
+import { graphMetadataState, graphState } from '../state/graph';
 import { useViewportBounds } from '../hooks/useViewportBounds';
 
 const styles = css`
@@ -117,10 +117,10 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   onContextMenuItemSelected,
 }) => {
   const [canvasPosition, setCanvasPosition] = useRecoilState(canvasPositionState);
-  const selectedGraph = useRecoilValue(graphState);
+  const selectedGraphMetadata = useRecoilValue(graphMetadataState);
 
   const setLastSavedCanvasPosition = useSetRecoilState(
-    lastCanvasPositionForGraphState(selectedGraph?.metadata?.id ?? nanoid()),
+    lastCanvasPositionForGraphState(selectedGraphMetadata?.id ?? nanoid()),
   );
 
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
@@ -130,8 +130,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const [editingNodeId, setEditingNodeId] = useRecoilState(editingNodeState);
   const [selectedNodeIds, setSelectedNodeIds] = useRecoilState(selectedNodesState);
 
-  const { draggingNodes, onNodeStartDrag, onNodeDragged } = useDraggingNode(nodes, onNodesChanged);
-  const { draggingWire, onWireStartDrag, onWireEndDrag } = useDraggingWire(nodes, connections, onConnectionsChanged);
+  const { draggingNodes, onNodeStartDrag, onNodeDragged } = useDraggingNode(onNodesChanged);
+  const { draggingWire, onWireStartDrag, onWireEndDrag } = useDraggingWire(onConnectionsChanged);
 
   const {
     contextMenuRef,

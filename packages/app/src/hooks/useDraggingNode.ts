@@ -1,22 +1,25 @@
 import { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
 import { produce } from 'immer';
 import { useCallback } from 'react';
-import { ChartNode } from '@ironclad/rivet-core';
+import { ChartNode, NodeId } from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { canvasPositionState, draggingNodesState, selectedNodesState } from '../state/graphBuilder';
 import { isNotNull } from '../utils/genericUtilFunctions';
+import { nodesByIdState, nodesState } from '../state/graph';
 
-export const useDraggingNode = (nodes: ChartNode[], onNodesChanged: (nodes: ChartNode[]) => void) => {
+export const useDraggingNode = (onNodesChanged: (nodes: ChartNode[]) => void) => {
   const selectedNodeIds = useRecoilValue(selectedNodesState);
   const [draggingNodes, setDraggingNodes] = useRecoilState(draggingNodesState);
   const canvasPosition = useRecoilValue(canvasPositionState);
+  const nodes = useRecoilValue(nodesState);
+  const nodesById = useRecoilValue(nodesByIdState);
 
   const onNodeStartDrag = useCallback(
     (e: DragStartEvent) => {
       const nodesToDrag =
         selectedNodeIds.length > 0
-          ? selectedNodeIds.map((id) => nodes.find((n) => n.id === id)).filter(isNotNull)
-          : [nodes.find((n) => n.id === e.active.id)].filter(isNotNull);
+          ? selectedNodeIds.map((id) => nodesById[id]).filter(isNotNull)
+          : [nodesById[e.active.id as NodeId]].filter(isNotNull);
 
       setDraggingNodes(nodesToDrag);
 
@@ -33,7 +36,7 @@ export const useDraggingNode = (nodes: ChartNode[], onNodesChanged: (nodes: Char
         }),
       );
     },
-    [nodes, onNodesChanged, setDraggingNodes, selectedNodeIds],
+    [nodesById, nodes, onNodesChanged, setDraggingNodes, selectedNodeIds],
   );
 
   const onNodeDragged = useCallback(

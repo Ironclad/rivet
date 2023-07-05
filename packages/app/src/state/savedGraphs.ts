@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import { values } from '../utils/typeSafety';
 import { produce } from 'immer';
 import { GraphId, NodeGraph, Project, ProjectId } from '@ironclad/rivet-core';
+import { blankProject } from '../hooks/useNewProject';
 
 // What's the data of the last loaded project?
 export const projectState = atom<Project>({
@@ -17,6 +18,21 @@ export const projectState = atom<Project>({
     graphs: {},
   },
   effects_UNSTABLE: [persistAtom],
+});
+
+export const projectMetadataState = selector({
+  key: 'projectMetadataState',
+  get: ({ get }) => {
+    return get(projectState).metadata;
+  },
+  set: ({ set }, newValue) => {
+    set(projectState, (oldValue) => {
+      return {
+        ...oldValue,
+        metadata: newValue instanceof DefaultValue ? blankProject().metadata : newValue,
+      };
+    });
+  },
 });
 
 // Which project file was loaded last and where is it?

@@ -15,32 +15,14 @@ export class BrowserIOProvider implements IOProvider {
   }
 
   async saveGraphData(graphData: NodeGraph): Promise<void> {
-    const fileHandle = await window.showSaveFilePicker({
-      types: [
-        {
-          description: 'Rivet Graph',
-          accept: {
-            'application/json': ['.rivet-graph'],
-          },
-        },
-      ],
-    });
+    const fileHandle = await window.showSaveFilePicker();
     const writable = await fileHandle.createWritable();
     await writable.write(serializeGraph(graphData) as string);
     await writable.close();
   }
 
   async saveProjectData(project: Project): Promise<string | undefined> {
-    const fileHandle = await window.showSaveFilePicker({
-      types: [
-        {
-          description: 'Rivet Project',
-          accept: {
-            'application/json': ['.rivet-project'],
-          },
-        },
-      ],
-    });
+    const fileHandle = await window.showSaveFilePicker();
     const writable = await fileHandle.createWritable();
     await writable.write(serializeProject(project) as string);
     await writable.close();
@@ -52,48 +34,21 @@ export class BrowserIOProvider implements IOProvider {
   }
 
   async loadGraphData(callback: (graphData: NodeGraph) => void): Promise<void> {
-    const [fileHandle] = await window.showOpenFilePicker({
-      types: [
-        {
-          description: 'Rivet Graph',
-          accept: {
-            'application/json': ['.rivet-graph'],
-          },
-        },
-      ],
-    });
+    const [fileHandle] = await window.showOpenFilePicker();
     const file = await fileHandle.getFile();
     const text = await file.text();
     callback(deserializeGraph(text));
   }
 
   async loadProjectData(callback: (data: { project: Project; path: string }) => void): Promise<void> {
-    const [fileHandle] = await window.showOpenFilePicker({
-      types: [
-        {
-          description: 'Rivet Project',
-          accept: {
-            'application/json': ['.rivet-project'],
-          },
-        },
-      ],
-    });
+    const [fileHandle] = await window.showOpenFilePicker();
     const file = await fileHandle.getFile();
     const text = await file.text();
     callback({ project: deserializeProject(text), path: fileHandle.name });
   }
 
   async loadRecordingData(callback: (data: { recorder: ExecutionRecorder; path: string }) => void): Promise<void> {
-    const [fileHandle] = await window.showOpenFilePicker({
-      types: [
-        {
-          description: 'Rivet Recording',
-          accept: {
-            'application/json': ['.rivet-recording'],
-          },
-        },
-      ],
-    });
+    const [fileHandle] = await window.showOpenFilePicker();
     const file = await fileHandle.getFile();
     const text = await file.text();
     callback({ recorder: ExecutionRecorder.deserializeFromString(text), path: fileHandle.name });

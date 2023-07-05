@@ -1,8 +1,8 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { NodeCanvas } from './NodeCanvas';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { connectionsSelector } from '../state/graph';
-import { nodesSelector } from '../state/graph';
+import { connectionsState, nodesByIdState } from '../state/graph';
+import { nodesState } from '../state/graph';
 import { editingNodeState, selectedNodesState } from '../state/graphBuilder';
 import { NodeEditorRenderer } from './NodeEditor';
 import styled from '@emotion/styled';
@@ -43,8 +43,8 @@ const Container = styled.div`
 `;
 
 export const GraphBuilder: FC = () => {
-  const [nodes, setNodes] = useRecoilState(nodesSelector);
-  const [connections, setConnections] = useRecoilState(connectionsSelector);
+  const [nodes, setNodes] = useRecoilState(nodesState);
+  const [connections, setConnections] = useRecoilState(connectionsState);
   const [selectedNodeIds, setSelectedNodeIds] = useRecoilState(selectedNodesState);
   const { clientToCanvasPosition } = useCanvasPositioning();
   const setEditingNodeId = useSetRecoilState(editingNodeState);
@@ -80,6 +80,7 @@ export const GraphBuilder: FC = () => {
   });
 
   const factorIntoSubgraph = useFactorIntoSubgraph();
+  const nodesById = useRecoilValue(nodesByIdState);
 
   const contextMenuItemSelected = useStableCallback((menuItemId: string, contextMenuData: ContextMenuData) => {
     if (menuItemId.startsWith('Add:')) {
@@ -102,7 +103,7 @@ export const GraphBuilder: FC = () => {
 
     if (menuItemId.startsWith('Duplicate:')) {
       const nodeId = menuItemId.substring(10) as NodeId;
-      const node = nodes.find((n) => n.id === nodeId) as Nodes;
+      const node = nodesById[nodeId] as Nodes;
 
       if (!node) {
         return;
@@ -136,7 +137,7 @@ export const GraphBuilder: FC = () => {
 
     if (menuItemId.startsWith('GoToSubgraph:')) {
       const nodeId = menuItemId.substring(13) as NodeId;
-      const node = nodes.find((n) => n.id === nodeId) as Nodes;
+      const node = nodesById[nodeId] as Nodes;
 
       if (node?.type !== 'subGraph') {
         return;
@@ -195,8 +196,8 @@ export const GraphBuilder: FC = () => {
   const lastQuestions = questions.at(-1)?.questions ?? [];
 
   const selectedNodes = useMemo(
-    () => selectedNodeIds.map((nodeId) => nodes.find((n) => n.id === nodeId)).filter(isNotNull),
-    [nodes, selectedNodeIds],
+    () => selectedNodeIds.map((nodeId) => nodesById[nodeId]).filter(isNotNull),
+    [selectedNodeIds, nodesById],
   );
 
   return (

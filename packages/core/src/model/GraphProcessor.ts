@@ -1226,8 +1226,8 @@ export class GraphProcessor {
 
     const inputConnections = this.#connections[node.id]?.filter((conn) => conn.inputNodeId === node.id) ?? [];
     const outputNodes = inputConnections
-      .map((conn) => this.#graph.nodes.find((n) => n.id === conn.outputNodeId))
-      .filter((n) => n) as ChartNode[];
+      .map((conn) => this.#nodesById[conn.outputNodeId])
+      .filter(isNotNull) as ChartNode[];
 
     const anyOutputIsExcludedValue =
       outputNodes.length > 0 &&

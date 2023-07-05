@@ -11,7 +11,7 @@ import {
   promptDesignerState,
   promptDesignerTestGroupResultsByNodeIdState,
 } from '../state/promptDesigner';
-import { nodesSelector } from '../state/graph';
+import { nodesByIdState, nodesState } from '../state/graph';
 import { lastRunDataByNodeState } from '../state/dataFlow';
 import {
   ChatMessage,
@@ -303,16 +303,14 @@ const lastPromptDesignerAttachedNodeState = atom<NodeId | undefined>({
 export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
   const [{ messages }, setMessages] = useRecoilState(promptDesignerMessagesState);
   const attachedNodeId = useRecoilValue(promptDesignerAttachedChatNodeState);
-  const [nodes, setNodes] = useRecoilState(nodesSelector);
+  const [, setNodes] = useRecoilState(nodesState);
   const nodeOutput = useRecoilValue(lastRunDataByNodeState);
   const [config, setConfig] = useRecoilState(promptDesignerConfigurationState);
   const [response, setResponse] = useRecoilState(promptDesignerResponseState);
   const [promptDesigner, setPromptDesigner] = useRecoilState(promptDesignerState);
+  const nodesById = useRecoilValue(nodesByIdState);
 
-  const attachedNode = useMemo(
-    () => nodes.find((n) => n.id === attachedNodeId?.nodeId) as ChatNode | undefined,
-    [attachedNodeId?.nodeId, nodes],
-  );
+  const attachedNode = attachedNodeId?.nodeId ? (nodesById[attachedNodeId.nodeId] as ChatNode) : undefined;
 
   const testGroups = attachedNode?.tests ?? [];
 

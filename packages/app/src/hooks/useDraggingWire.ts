@@ -1,22 +1,22 @@
 import { useState, useCallback, useEffect } from 'react';
 import { WireDef } from '../components/WireLayer';
-import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
+import { NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
 import { useGetNodeIO } from './useGetNodeIO';
+import { useRecoilValue } from 'recoil';
+import { connectionsState, nodesByIdState } from '../state/graph';
 
-export const useDraggingWire = (
-  nodes: ChartNode[],
-  connections: NodeConnection[],
-  onConnectionsChanged: (connections: NodeConnection[]) => void,
-) => {
+export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnection[]) => void) => {
   const [draggingWire, setDraggingWire] = useState<WireDef | undefined>();
   const getIO = useGetNodeIO();
+  const connections = useRecoilValue(connectionsState);
+  const nodesById = useRecoilValue(nodesByIdState);
 
   const onWireStartDrag = useCallback(
     (event: React.MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => {
       event.stopPropagation();
 
       // Check if the starting port is an input port
-      const startNode = nodes.find((n) => n.id === startNodeId);
+      const startNode = nodesById[startNodeId];
       if (startNode) {
         const { inputDefinitions } = getIO(startNode);
         const isInputPort = inputDefinitions.some((i) => i.id === startPortId);
@@ -42,15 +42,15 @@ export const useDraggingWire = (
       }
       setDraggingWire({ startNodeId, startPortId });
     },
-    [connections, nodes, onConnectionsChanged, getIO],
+    [connections, nodesById, onConnectionsChanged, getIO],
   );
 
   const onWireEndDrag = useCallback(
     (event: React.MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => {
       event.stopPropagation();
       if (draggingWire) {
-        let inputNode = nodes.find((n) => n.id === endNodeId);
-        let outputNode = nodes.find((n) => n.id === draggingWire.startNodeId);
+        let inputNode = nodesById[endNodeId];
+        let outputNode = nodesById[draggingWire.startNodeId];
 
         let inputNodeIO = inputNode ? getIO(inputNode) : null;
         let outputNodeIO = outputNode ? getIO(outputNode) : null;
@@ -100,7 +100,7 @@ export const useDraggingWire = (
         setDraggingWire(undefined);
       }
     },
-    [draggingWire, connections, nodes, onConnectionsChanged, getIO],
+    [draggingWire, connections, nodesById, onConnectionsChanged, getIO],
   );
 
   useEffect(() => {
