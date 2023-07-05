@@ -19,6 +19,7 @@ import { NodeGraph } from '@ironclad/rivet-core';
 import { ReactComponent as ArrowRightIcon } from 'majesticons/line/arrow-right-line.svg';
 import { ReactComponent as ArrowDownIcon } from 'majesticons/line/arrow-down-line.svg';
 import { ReactComponent as MenuLineIcon } from 'majesticons/line/menu-line.svg';
+import { toast } from 'react-toastify';
 
 const styles = css`
   display: flex;
@@ -256,6 +257,10 @@ export const GraphList: FC = () => {
   }
 
   function renameFolderItem(fullPath: string, newFullPath: string) {
+    if (savedGraphs.some((g) => g.metadata?.name === newFullPath) || folderNames.includes(newFullPath)) {
+      toast.error('A graph or folder with that name already exists.');
+      return;
+    }
     setSavedGraphs(savedGraphs.map((g) => {
       if (g.metadata?.name?.startsWith(fullPath)) {
         return {
