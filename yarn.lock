@@ -4680,6 +4680,7 @@ __metadata:
     retry: "npm:^0.13.1"
     rollup: "npm:^3.25.1"
     safe-stable-stringify: "npm:^2.4.3"
+    ts-dedent: "npm:^2.2.0"
     ts-node: "npm:^10.9.1"
     ts-pattern: "npm:^5.0.1"
     type-fest: "npm:^3.11.1"

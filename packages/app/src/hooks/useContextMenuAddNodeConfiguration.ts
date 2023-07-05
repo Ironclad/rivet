@@ -1,20 +1,52 @@
 import { NodeType } from '@ironclad/rivet-core';
 import { ContextMenuItem } from './useContextMenuConfiguration';
+import dedent from 'ts-dedent';
+
+import textNodeImage from '../../public/node_images/text_node.png';
+import chatNodeImage from '../../public/node_images/chat_node.png';
+
+const textNode = {
+  label: 'Text',
+  data: 'text',
+  id: 'add-node:text',
+  infoBox: {
+    title: 'Text Node',
+    image: textNodeImage,
+    description: dedent`
+      Outputs a string of text. It can also interpolate values using <span style="color: var(--primary)">{{tags}}</span>.
+
+      The inputs are dynamic based on the interpolation tags.
+    `,
+  },
+} as const satisfies ContextMenuItem;
+const chatNode = {
+  label: 'Chat',
+  data: 'chat',
+  id: 'add-node:chat',
+  infoBox: {
+    title: 'Chat Node',
+    image: chatNodeImage,
+    description: dedent`
+      Makes a call to an LLM chat model. Currently only supports GPT. The settings contains many options for tweaking the model's behavior.
+
+      The \`System Prompt\` input specifies a system prompt as the first message to the model. This is useful for providing context to the model.
+
+      The \`Prompt\` input takes one or more strings or chat-messages (from a Prompt node) to send to the model.
+    `,
+  },
+} as const satisfies ContextMenuItem;
 
 export const addContextMenuGroups = [
   {
     id: 'add-node-group:common',
     label: 'Common',
-    items: [
-      { id: 'add-node:text', label: 'Text', data: 'text' },
-      { label: 'Chat', data: 'chat', id: 'add-node:chat' },
-    ],
+    items: [textNode, chatNode],
   },
   {
     id: 'add-node-group:text',
     label: 'Text',
     items: [
-      { label: 'Text', data: 'text', id: 'add-node:text' },
+      textNode,
       { label: 'Prompt', data: 'prompt', id: 'add-node:prompt' },
       { label: 'Chunk', data: 'chunk', id: 'add-node:chunk' },
       { label: 'To YAML', data: 'toYaml', id: 'add-node:toYaml' },
@@ -26,7 +58,7 @@ export const addContextMenuGroups = [
     id: 'add-node-group:ai',
     label: 'AI',
     items: [
-      { label: 'Chat', data: 'chat', id: 'add-node:chat' },
+      chatNode,
       { label: 'Assemble Prompt', data: 'assemblePrompt', id: 'add-node:assemblePrompt' },
       { label: 'Trim Chat Messages', data: 'trimChatMessages', id: 'add-node:trimChatMessages' },
       { label: 'GPT Function', data: 'gptFunction', id: 'add-node:gptFunction' },

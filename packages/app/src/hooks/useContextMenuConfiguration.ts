@@ -30,6 +30,11 @@ export type ContextMenuItem<Context = unknown, Data = unknown> = {
   data?: Data | ((context: Context) => Data);
   conditional?: (context: Context) => boolean;
   items?: readonly ContextMenuItem<Context>[];
+  infoBox?: {
+    title: string;
+    description: string;
+    image?: string;
+  };
 };
 
 export type ContextMenuConfiguration = ReturnType<typeof useContextMenuConfiguration>;

@@ -13,6 +13,7 @@ import { useFuseSearch } from '../hooks/useFuseSearch';
 import TextField from '@atlaskit/textfield';
 import { uniqBy } from 'lodash-es';
 import clsx from 'clsx';
+import { useMarkdown } from '../hooks/useMarkdown';
 
 const menuReferenceStyles = css`
   position: absolute;
@@ -305,8 +306,15 @@ export interface ContextMenuItemProps {
 
 export const ContextMenuItem: FC<ContextMenuItemProps> = ({ config, context, active, onMenuItemSelected, onHover }) => {
   const [isSubMenuVisible, setIsSubMenuVisible] = useState(false);
+  const [isInfoVisible, setIsInfoVisible] = useState(false);
   const hasSubMenu = (config.items?.length ?? 0) > 0;
-  const { refs, floatingStyles } = useFloating({
+  const submenuFloating = useFloating({
+    placement: 'right-start',
+    whileElementsMounted: autoUpdate,
+    middleware: [flip()],
+  });
+
+  const infoBoxFloating = useFloating({
     placement: 'right-start',
     whileElementsMounted: autoUpdate,
     middleware: [flip()],
@@ -316,6 +324,7 @@ export const ContextMenuItem: FC<ContextMenuItemProps> = ({ config, context, act
     if (hasSubMenu) {
       setIsSubMenuVisible(true);
     }
+    setIsInfoVisible(true);
     onHover?.();
   });
 
@@ -323,6 +332,7 @@ export const ContextMenuItem: FC<ContextMenuItemProps> = ({ config, context, act
     if (hasSubMenu) {
       setIsSubMenuVisible(false);
     }
+    setIsInfoVisible(false);
   });
 
   const handleClick = () => {
@@ -332,6 +342,8 @@ export const ContextMenuItem: FC<ContextMenuItemProps> = ({ config, context, act
 
     onMenuItemSelected?.(config.id, config.data);
   };
+
+  const mainRef = useMergeRefs([submenuFloating.refs.setReference, infoBoxFloating.refs.setReference]);
 
   if (config.conditional && !config.conditional(context)) {
     return null;
@@ -343,7 +355,7 @@ export const ContextMenuItem: FC<ContextMenuItemProps> = ({ config, context, act
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      ref={refs.setReference}
+      ref={mainRef}
       className={clsx({ active })}
     >
       <div className="label-area">
@@ -354,8 +366,14 @@ export const ContextMenuItem: FC<ContextMenuItemProps> = ({ config, context, act
         {config.subLabel && <div className="sublabel">{config.subLabel}</div>}
       </div>
 
-      <CSSTransition nodeRef={refs.floating} in={isSubMenuVisible} timeout={100} classNames="submenu" unmountOnExit>
-        <div ref={refs.setFloating} css={submenuStyles} style={floatingStyles}>
+      <CSSTransition
+        nodeRef={submenuFloating.refs.floating}
+        in={isSubMenuVisible}
+        timeout={100}
+        classNames="submenu"
+        unmountOnExit
+      >
+        <div ref={submenuFloating.refs.setFloating} css={submenuStyles} style={submenuFloating.floatingStyles}>
           {hasSubMenu &&
             config.items!.map((subItem) => (
               <ContextMenuItem
@@ -367,6 +385,60 @@ export const ContextMenuItem: FC<ContextMenuItemProps> = ({ config, context, act
             ))}
         </div>
       </CSSTransition>
+      {config.infoBox && (
+        <CSSTransition
+          nodeRef={infoBoxFloating.refs.floating}
+          in={isInfoVisible || active}
+          timeout={100}
+          classNames="submenu"
+          unmountOnExit
+        >
+          <div ref={infoBoxFloating.refs.setFloating} style={infoBoxFloating.floatingStyles}>
+            <ContextMenuInfoBox info={config.infoBox} />
+          </div>
+        </CSSTransition>
+      )}
     </ContextMenuItemDiv>
+  );
+};
+
+const contextMenuInfoBoxStyles = css`
+  position: absolute;
+  border: 2px solid var(--grey-darkish);
+  border-radius: 4px;
+  box-shadow: 0 8px 16px var(--shadow-dark);
+  background-color: var(--grey-darkest);
+  color: var(--foreground);
+  z-index: 1;
+  padding: 16px 16px;
+  border-radius: 4px;
+  width: 500px;
+  font-family: 'Roboto', sans-serif;
+  white-space: normal;
+
+  img {
+    float: right;
+    max-width: 250px;
+    margin: 8px;
+  }
+
+  h1 {
+    font-size: 16px;
+    margin-top: 0;
+  }
+
+  p {
+    font-size: 13px;
+  }
+`;
+
+const ContextMenuInfoBox: FC<{ info: NonNullable<ContextMenuConfigItem['infoBox']> }> = ({ info }) => {
+  const markdownDescription = useMarkdown(info.description);
+  return (
+    <div css={contextMenuInfoBoxStyles}>
+      {info.image && <img src={info.image} alt="" />}
+      <h1>{info.title}</h1>
+      <p dangerouslySetInnerHTML={markdownDescription} />
+    </div>
   );
 };

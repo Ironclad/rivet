@@ -99,6 +99,7 @@
     "retry": "^0.13.1",
     "rollup": "^3.25.1",
     "safe-stable-stringify": "^2.4.3",
+    "ts-dedent": "^2.2.0",
     "ts-node": "^10.9.1",
     "ts-pattern": "^5.0.1",
     "type-fest": "^3.11.1",
