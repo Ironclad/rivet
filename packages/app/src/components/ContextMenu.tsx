@@ -244,6 +244,26 @@ export const submenuStyles = css`
   }
 `;
 
+const infoBoxTransitionStyles = css`
+  &.info-box-enter {
+    opacity: 0;
+  }
+
+  &.info-box-enter-active {
+    opacity: 1;
+    transition: opacity 100ms ease-out;
+  }
+
+  &.info-box-exit {
+    opacity: 1;
+  }
+
+  &.info-box-exit-active {
+    opacity: 0;
+    transition: opacity 100ms ease-out;
+  }
+`;
+
 export const ContextMenuItemDiv = styled.div<{ hasSubmenu?: boolean }>`
   position: relative;
   display: flex;
@@ -390,10 +410,14 @@ export const ContextMenuItem: FC<ContextMenuItemProps> = ({ config, context, act
           nodeRef={infoBoxFloating.refs.floating}
           in={isInfoVisible || active}
           timeout={100}
-          classNames="submenu"
+          classNames="info-box"
           unmountOnExit
         >
-          <div ref={infoBoxFloating.refs.setFloating} style={infoBoxFloating.floatingStyles}>
+          <div
+            ref={infoBoxFloating.refs.setFloating}
+            css={infoBoxTransitionStyles}
+            style={infoBoxFloating.floatingStyles}
+          >
             <ContextMenuInfoBox info={config.infoBox} />
           </div>
         </CSSTransition>
