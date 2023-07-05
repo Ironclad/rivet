@@ -94,6 +94,10 @@ const styles = css`
   .graph-item:hover .dragger {
     visibility: visible;
   }
+
+  .graph-list-spacer {
+    min-height: 100px;
+  }
 `;
 
 const contextMenuStyles = css`
@@ -260,7 +264,7 @@ export const GraphList: FC = () => {
   function handleDeleteFolder(folderName: string) {
     const graphsToDelete = savedGraphs.filter((graph) => graph.metadata?.name && isInFolder(folderName, graph.metadata?.name));
     graphsToDelete.forEach((graph) => deleteGraph(graph));
-    setFolderNames((prev) => prev.filter((name) => !isInFolder(folderName, name)));
+    setFolderNames((prev) => prev.filter((name) => folderName !== name && !isInFolder(folderName, name)));
   }
 
   function startRename(folderItemName: string) {
@@ -336,6 +340,7 @@ export const GraphList: FC = () => {
           loadGraph={loadGraph}
           renameFolderItem={renameFolderItem}
           depth={0} />)}
+        <div className="graph-list-spacer" />
       </DndContext>
       <Portal>
         {showContextMenu && contextMenuData.data?.type === 'graph-item' && (
