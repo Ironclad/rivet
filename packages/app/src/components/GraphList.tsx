@@ -1,9 +1,10 @@
+import { useDraggable } from '@dnd-kit/core';
 import { css } from '@emotion/react';
 import { FC, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { graphState } from '../state/graph';
 import { savedGraphsState } from '../state/savedGraphs';
-import { orderBy } from 'lodash-es';
+import { orderBy, range } from 'lodash-es';
 import { DropdownItem } from '@atlaskit/dropdown-menu';
 import { useDeleteGraph } from '../hooks/useDeleteGraph';
 import { useLoadGraph } from '../hooks/useLoadGraph';
@@ -14,8 +15,9 @@ import { runningGraphsState } from '../state/dataFlow';
 import { useDuplicateGraph } from '../hooks/useDuplicateGraph';
 import { useContextMenu } from '../hooks/useContextMenu';
 import Portal from '@atlaskit/portal';
-import TableTree, { Rows, Row, Cell } from '@atlaskit/table-tree';
 import { NodeGraph } from '@ironclad/rivet-core';
+import { ReactComponent as ArrowRightIcon } from 'majesticons/line/arrow-right-line.svg';
+import { ReactComponent as ArrowDownIcon } from 'majesticons/line/arrow-down-line.svg';
 
 const styles = css`
   display: flex;
@@ -24,7 +26,7 @@ const styles = css`
   min-height: 100%;
   margin-top: 8px;
 
-  .graph-list {
+  .graph-list, .folder-children {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -37,6 +39,7 @@ const styles = css`
 
   .graph-item {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
     user-select: none;
@@ -52,6 +55,10 @@ const styles = css`
     cursor: pointer;
     padding: 4px 8px;
     flex: 1;
+  }
+
+  .depthSpacer, .expander {
+    width: 10px;
   }
 
   .selected {
@@ -280,44 +287,15 @@ export const GraphList: FC = () => {
 
   return <div css={styles} ref={contextMenuRef} onContextMenu={handleContextMenu}>
     <div className="graph-list">
-      <TableTree>
-        <Rows
-          items={folderedGraphs}
-          render={(item: NodeGraphFolderItem) => {
-            const savedGraph = item.type === 'graph' ? item.graph : undefined;
-            const graphIsRunning = savedGraph && runningGraphs.includes(savedGraph.metadata?.id ?? ('' as GraphId));
-            const fullPath = item.type === 'folder' ? item.fullPath : item.graph.metadata?.name;
-            const isRenaming = renamingItemFullPath === fullPath;
-
-            return <Row
-              itemId={savedGraph?.metadata?.id ?? item.name}
-              items={item.type === 'folder' && item.children}
-              isDefaultExpanded
-              hasChildren={item.type === 'folder'}>
-              <Cell>
-                <div
-                  className={clsx('graph-item', { selected: graph.metadata?.id === savedGraph?.metadata?.id })}
-                  data-contextmenutype={item.type === 'folder' ? 'graph-folder' : 'graph-item'}
-                  data-graphid={savedGraph?.metadata?.id}
-                  data-folderpath={item.type === 'folder' ? item.fullPath : item.graph.metadata?.name}
-                >
-                  <div className="spinner">{graphIsRunning && <LoadingSpinner />}</div>
-                  <div className="graph-item-select" onClick={() => item.type === 'graph' && loadGraph(item.graph)}>
-                    {isRenaming
-                      ? <input
-                        autoFocus
-                        onBlur={(e) => renameFolderItem(fullPath!, e.target.value)}
-                        defaultValue={item.name ?? 'Untitled Graph'}
-                      />
-                      : <span>{item.name ?? 'Untitled Graph'}</span>
-                    }
-                  </div>
-                </div>
-              </Cell>
-            </Row>
-          }}
-        />
-      </TableTree>
+      {folderedGraphs.map((item) => <FolderItem
+        key={item.type === 'graph' ? item.graph.metadata?.id : item.fullPath}
+        item={item}
+        runningGraphs={runningGraphs}
+        renamingItemFullPath={renamingItemFullPath}
+        graph={graph}
+        loadGraph={loadGraph}
+        renameFolderItem={renameFolderItem}
+        depth={0} />)}
       <Portal>
         {showContextMenu && contextMenuData.data?.type === 'graph-item' && (
           <div
@@ -372,3 +350,53 @@ export const GraphList: FC = () => {
     </Portal>
   </div>;
 }
+
+export const FolderItem: FC<{
+  item: NodeGraphFolderItem;
+  runningGraphs: GraphId[];
+  renamingItemFullPath: string | undefined;
+  graph: NodeGraph;
+  loadGraph: (savedGraph: NodeGraph) => void;
+  renameFolderItem: (fullPath: string, newName: string) => void;
+  depth: number;
+}> = ({ item, runningGraphs, renamingItemFullPath, graph, loadGraph, renameFolderItem, depth }) => {
+  const [isExpanded, setExpanded] = useState(true);
+  const savedGraph = item.type === 'graph' ? item.graph : undefined;
+  const graphIsRunning = savedGraph && runningGraphs.includes(savedGraph.metadata?.id ?? ('' as GraphId));
+  const fullPath = item.type === 'folder' ? item.fullPath : item.graph.metadata?.name;
+  const isRenaming = renamingItemFullPath === fullPath;
+
+  return <div>
+    <div
+      className={clsx('graph-item', { selected: graph.metadata?.id === savedGraph?.metadata?.id })}
+      data-contextmenutype={item.type === 'folder' ? 'graph-folder' : 'graph-item'}
+      data-graphid={savedGraph?.metadata?.id}
+      data-folderpath={item.type === 'folder' ? item.fullPath : item.graph.metadata?.name}
+    >
+      {range(item.type === 'folder' ? depth : depth + 1).map((idx) => (<div className="depthSpacer" key={idx} />))}
+      {item.type === 'folder' && <div className='expander' onClick={() => setExpanded(!isExpanded)}>
+        {isExpanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
+      </div>}
+      <div className="graph-item-select" onClick={() => item.type === 'graph' ? loadGraph(item.graph) : setExpanded(!isExpanded)}>
+        {isRenaming
+          ? <input
+            autoFocus
+            onBlur={(e) => renameFolderItem(fullPath!, e.target.value)}
+            defaultValue={item.name ?? 'Untitled Graph'} />
+          : <span>{item.name ?? 'Untitled Graph'}</span>}
+      </div>
+      <div className="spinner">{graphIsRunning && <LoadingSpinner />}</div>
+    </div>
+    {item.type === 'folder' && isExpanded && <div className="folder-children">
+      {item.children.map((child) => <FolderItem
+        key={child.type === 'graph' ? child.graph.metadata?.id : child.fullPath}
+        item={child}
+        runningGraphs={runningGraphs}
+        renamingItemFullPath={renamingItemFullPath}
+        graph={graph}
+        loadGraph={loadGraph}
+        renameFolderItem={renameFolderItem}
+        depth={depth + 1} />)}
+    </div>}
+  </div>;
+};

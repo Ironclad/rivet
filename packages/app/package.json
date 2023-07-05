@@ -38,7 +38,6 @@
     "@atlaskit/popup": "^1.6.4",
     "@atlaskit/portal": "^4.3.4",
     "@atlaskit/select": "^16.5.3",
-    "@atlaskit/table-tree": "^9.6.0",
     "@atlaskit/tabs": "^13.4.2",
     "@atlaskit/textarea": "^4.7.1",
     "@atlaskit/textfield": "^5.5.1",
