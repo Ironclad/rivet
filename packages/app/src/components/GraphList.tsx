@@ -181,7 +181,7 @@ function createFoldersFromGraphs(graphs: NodeGraph[], folderNames: string[]): No
 
   // Order by name recursively
   const sortFolder = (folder: NodeGraphFolder) => {
-    folder.children = orderBy(folder.children, ['name'], ['asc']);
+    folder.children = orderBy(folder.children, ['type', 'name'], ['asc', 'asc']);
     folder.children.forEach((child) => {
       if (child.type === 'folder') {
         sortFolder(child);

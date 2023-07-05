@@ -5,7 +5,7 @@ data:
       metadata:
         description: ""
         id: D0TnEZI8WPm1ZjZyhYfeQ
-        name: 5. Subgraphs/5. Subgraphs
+        name: "5. Subgraphs/Subgraphs #0 Main Graph"
       nodes:
         C4FkXT3pPwN9qFlhdOiKK:
           data:
@@ -37,7 +37,7 @@ data:
       metadata:
         description: ""
         id: Eg64hugBjOEWIexE8WTTL
-        name: 5. Subgraphs/5.2 Generate Contract From Name
+        name: "5. Subgraphs/Subgraphs #2 Generate Contract From Name"
       nodes:
         9t3pedo4zJOTeDeoUXBXI:
           data:
@@ -117,7 +117,7 @@ data:
       metadata:
         description: ""
         id: EoHPH8XxU03t5hQ-UoBqz
-        name: 5. Subgraphs/5.1 Generate Contract Names
+        name: "5. Subgraphs/Subgraphs #1 Generate Contract Names"
       nodes:
         2H57ZtGaHVCnI4x2XUxRm:
           data:
@@ -212,7 +212,7 @@ data:
       metadata:
         description: ""
         id: QgeLNyhpAsVJ_Ktlbm3FR
-        name: 1. Simple Graph
+        name: 1. Simple Graph/Simple Graph
       nodes:
         6dZUAsYq2jnPmBXm9BpL4:
           data:
@@ -252,7 +252,7 @@ data:
       metadata:
         description: ""
         id: VOQ6sZ_rTNDo34KdiUBU9
-        name: 6. Splitting
+        name: 6. Splitting/Splitting
       nodes:
         8Jz3xEu_AjnFIKaqH3dm_:
           data:
@@ -397,7 +397,7 @@ data:
       metadata:
         description: ""
         id: eypKXuqaDubv9o3NK8RmL
-        name: 7. Loops
+        name: 7. Loops/Loops
       nodes:
         BGxIU1lPfHInWebPnkjIp:
           data:
@@ -510,7 +510,7 @@ data:
       metadata:
         description: ""
         id: hiEyYlH301i1i5f_Cb-H6
-        name: 2. Interpolation
+        name: 2. Interpolation/Interpolation
       nodes:
         -AwgdFbt38Yryjg0pvI9c:
           data:
@@ -688,7 +688,7 @@ data:
       metadata:
         description: ""
         id: nZep72-K0xnReLaC0Ax66
-        name: 4. YAML
+        name: 4. YAML/YAML
       nodes:
         -jY5XNm0pNYQ7WBPbzlLF:
           data:
@@ -887,7 +887,7 @@ data:
       metadata:
         description: ""
         id: tt5rzcZT15dZ9Jr8B0d4E
-        name: 3. Matching and Conditionals
+        name: 3. Matching and Conditionals/Matching and Conditionals
       nodes:
         2TngHBPmLYQ_W2rIFJf8T:
           data:
