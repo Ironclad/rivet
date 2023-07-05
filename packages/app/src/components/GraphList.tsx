@@ -421,13 +421,12 @@ export const FolderItem: FC<{
   const style: CSSProperties = transform ? { transform: `translate3d(0px, ${transform.y}px, 0)`, zIndex: 100 } : {};
   const { setNodeRef: setDroppableNodeRef } = useDroppable({ id: item.type === 'folder' ? fullPath + '/' : fullPath });
 
-  return <div ref={setDroppableNodeRef}>
+  return <div ref={setDroppableNodeRef} style={style}>
     <div
       className={clsx('graph-item', { selected: isSelected, dragging: isDragging })}
       data-contextmenutype={item.type === 'folder' ? 'graph-folder' : 'graph-item'}
       data-graphid={savedGraph?.metadata?.id}
       data-folderpath={item.type === 'folder' ? item.fullPath : item.graph.metadata?.name}
-      style={style}
       ref={setDraggableNodeRef}
     >
       {range(depth + 1).map((idx) => {
