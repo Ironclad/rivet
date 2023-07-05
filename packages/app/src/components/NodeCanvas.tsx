@@ -28,7 +28,6 @@ import { graphMetadataState } from '../state/graph';
 import { useViewportBounds } from '../hooks/useViewportBounds';
 import { nanoid } from 'nanoid';
 import { useGlobalHotkey } from '../hooks/useGlobalHotkey';
-import { ErrorBoundary } from 'react-error-boundary';
 
 const styles = css`
   width: 100vw;
@@ -48,26 +47,37 @@ const styles = css`
   }
 
   .context-menu {
+    position: absolute;
     display: none;
   }
 
   .context-menu-enter {
     display: block;
     opacity: 0;
+    position: absolute;
   }
 
   .context-menu-enter-active {
     opacity: 1;
     transition: opacity 100ms ease-out;
+    position: absolute;
   }
 
   .context-menu-exit {
     opacity: 1;
+    position: absolute;
   }
 
   .context-menu-exit-active {
     opacity: 0;
     transition: opacity 100ms ease-out;
+    position: absolute;
+  }
+
+  .context-menu-exit-done {
+    opacity: 0;
+    position: absolute;
+    left: -1000px;
   }
 
   .debug-overlay {
@@ -340,7 +350,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   useGlobalHotkey(
     'Space',
-    () => {
+    (e) => {
+      e.preventDefault();
       handleContextMenu({
         clientX: lastMouseInfoRef.current.x!,
         clientY: lastMouseInfoRef.current.y!,
@@ -358,7 +369,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const hydratedContextMenuData = useMemo((): ContextMenuContext | null => {
     if (contextMenuData.data?.type.startsWith('node-')) {
       const nodeType = contextMenuData.data.type.replace('node-', '') as NodeType;
-      const nodeId = contextMenuData.data.element.dataset['node-id'] as NodeId;
+      const nodeId = contextMenuData.data.element.dataset.nodeid as NodeId;
       return {
         type: 'node',
         data: {
@@ -373,6 +384,10 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
       data: {},
     };
   }, [contextMenuData]);
+
+  // Idk, before we were able to unmount the context menu, but safari be weird,
+  // so we move it off screen instead
+  const [contextMenuDisabled, setContextMenuDisabled] = useState(false);
 
   return (
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
@@ -452,24 +467,28 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
             ))}
           </DragOverlay>
         </div>
-        <ErrorBoundary fallback={null}>
-          <CSSTransition
-            nodeRef={contextMenuRef}
-            in={showContextMenu && !!hydratedContextMenuData}
-            timeout={200}
-            classNames="context-menu"
-            unmountOnExit
-            onExited={() => setContextMenuData({ x: 0, y: 0, data: null })}
-          >
-            <ContextMenu
-              ref={contextMenuRef}
-              x={contextMenuData.x}
-              y={contextMenuData.y}
-              context={hydratedContextMenuData!}
-              onMenuItemSelected={contextMenuItemSelected}
-            />
-          </CSSTransition>
-        </ErrorBoundary>
+        <CSSTransition
+          nodeRef={contextMenuRef}
+          in={showContextMenu && !!hydratedContextMenuData}
+          timeout={200}
+          classNames="context-menu"
+          onEnter={() => {
+            setContextMenuDisabled(false);
+          }}
+          onExited={() => {
+            setContextMenuData({ x: 0, y: 0, data: null });
+            setContextMenuDisabled(true);
+          }}
+        >
+          <ContextMenu
+            disabled={contextMenuDisabled}
+            ref={contextMenuRef}
+            x={contextMenuData.x}
+            y={contextMenuData.y}
+            context={hydratedContextMenuData!}
+            onMenuItemSelected={contextMenuItemSelected}
+          />
+        </CSSTransition>
 
         <WireLayer connections={connections} draggingWire={draggingWire} highlightedNodes={highlightedNodes} />
       </div>

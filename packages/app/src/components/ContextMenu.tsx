@@ -52,6 +52,7 @@ export const menuStyles = css`
 
   .context-menu-search {
     input {
+      background-color: var(--grey-darkest);
       border: none;
       outline: none;
       padding: 8px;
@@ -72,11 +73,12 @@ export interface ContextMenuProps {
   x: number;
   y: number;
   context: ContextMenuContext;
+  disabled?: boolean;
   onMenuItemSelected?: (id: string, data: unknown, context: ContextMenuContext, meta: { x: number; y: number }) => void;
 }
 
 export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
-  ({ x, y, context, onMenuItemSelected }, ref) => {
+  ({ x, y, context, disabled, onMenuItemSelected }, ref) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedResultIndex, setSelectedResultIndex] = useState(0);
 
@@ -110,7 +112,7 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
       };
 
       return flattenItems(items);
-    }, [items]);
+    }, [items, commands]);
 
     const searchRef = useRef<HTMLInputElement>(null);
 
@@ -126,7 +128,7 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
     const searchResults = useFuseSearch(searchItems, searchTerm, ['label', 'subLabel'], { max: 5 });
     const searchResultsItems = useMemo(() => searchResults.map((r) => r.item), [searchResults]);
 
-    const shownItems = searchTerm.length > 0 ? searchResultsItems : items;
+    const shownItems = searchTerm.trim().length > 0 ? searchResultsItems : items;
 
     useEffect(() => {
       if (searchTerm.length > 0 && searchResults.length > 0 && selectedResultIndex >= searchResults.length) {
@@ -157,6 +159,15 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
           break;
       }
     };
+    useEffect(() => {
+      if (disabled) {
+        setSearchTerm('');
+        setSelectedResultIndex(0);
+        searchRef.current?.blur();
+      } else {
+        searchRef.current?.focus();
+      }
+    }, [disabled]);
 
     return (
       <div
@@ -174,6 +185,7 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
               value={searchTerm}
               onChange={(e) => setSearchTerm((e.target as HTMLInputElement).value)}
               onKeyDown={handleKeyDown}
+              disabled={disabled}
             />
           </div>
           <div className="context-menu-items">

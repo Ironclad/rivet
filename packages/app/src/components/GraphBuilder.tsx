@@ -8,7 +8,16 @@ import { NodeEditorRenderer } from './NodeEditor';
 import styled from '@emotion/styled';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { useStableCallback } from '../hooks/useStableCallback';
-import { ArrayDataValue, ChartNode, NodeId, NodeType, Nodes, StringDataValue, nodeFactory } from '@ironclad/rivet-core';
+import {
+  ArrayDataValue,
+  ChartNode,
+  GraphId,
+  NodeId,
+  NodeType,
+  Nodes,
+  StringDataValue,
+  nodeFactory,
+} from '@ironclad/rivet-core';
 import { ProcessQuestions, userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
 import { entries } from '../utils/typeSafety';
 import { UserInputModal } from './UserInputModal';
@@ -84,6 +93,7 @@ export const GraphBuilder: FC = () => {
 
   const contextMenuItemSelected = useStableCallback(
     (menuItemId: string, data: unknown, context: ContextMenuContext, meta: { x: number; y: number }) => {
+      console.dir({ menuItemId, data, context, meta });
       if (menuItemId.startsWith('add-node:')) {
         const nodeType = data as NodeType;
         addNode(nodeType, clientToCanvasPosition(meta.x, meta.y));
@@ -153,6 +163,14 @@ export const GraphBuilder: FC = () => {
         }
 
         loadGraph(graph);
+      }
+
+      if (menuItemId.startsWith('go-to-graph:')) {
+        const graphId = data as GraphId;
+        const graph = project.graphs[graphId];
+        if (graph) {
+          loadGraph(graph);
+        }
       }
     },
   );

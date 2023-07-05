@@ -10,7 +10,7 @@ export function useContextMenuCommands() {
   const commands = useMemo(() => {
     const goToGraphCommands = values(projectInfo.graphs).map(
       (graph): ContextMenuItem => ({
-        id: `go-to-graph-${graph.id}`,
+        id: `go-to-graph:${graph.id}`,
         label: `${graph.name}`,
         subLabel: `Go to graph ${graph.name}`,
         data: graph.id,

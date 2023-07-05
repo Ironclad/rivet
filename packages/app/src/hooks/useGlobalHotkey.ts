@@ -7,7 +7,7 @@ interface UseGlobalHotkeyOptions {
 
 export const useGlobalHotkey = (
   key: string,
-  action: () => void,
+  action: (event: KeyboardEvent) => void,
   options: UseGlobalHotkeyOptions = { notWhenInputFocused: false },
 ) => {
   const latestAction = useLatest(action);
@@ -19,7 +19,7 @@ export const useGlobalHotkey = (
         activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA');
 
       if (e.code === key && (!options.notWhenInputFocused || !isInputOrTextarea)) {
-        latestAction.current();
+        latestAction.current(e);
       }
     };
 
