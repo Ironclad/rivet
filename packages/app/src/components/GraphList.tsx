@@ -194,6 +194,10 @@ function createFoldersFromGraphs(graphs: NodeGraph[], folderNames: string[]): No
   return rootFolder.children;
 }
 
+function isInFolder(folderPath: string, itemPath: string): boolean {
+  return itemPath.startsWith(folderPath + '/');
+}
+
 function getFolderNames(folderedGraphs: NodeGraphFolderItem[]): string[] {
   const folderNames: string[] = [];
 
@@ -254,9 +258,9 @@ export const GraphList: FC = () => {
   }
 
   function handleDeleteFolder(folderName: string) {
-    const graphsToDelete = savedGraphs.filter((graph) => graph.metadata?.name?.startsWith(folderName));
+    const graphsToDelete = savedGraphs.filter((graph) => graph.metadata?.name && isInFolder(folderName, graph.metadata?.name));
     graphsToDelete.forEach((graph) => deleteGraph(graph));
-    setFolderNames((prev) => prev.filter((name) => name !== folderName));
+    setFolderNames((prev) => prev.filter((name) => !isInFolder(folderName, name)));
   }
 
   function startRename(folderItemName: string) {
@@ -273,7 +277,7 @@ export const GraphList: FC = () => {
       return;
     }
     setSavedGraphs(savedGraphs.map((g) => {
-      if (g.metadata?.name?.startsWith(fullPath)) {
+      if (g.metadata?.name && (fullPath === g.metadata.name || isInFolder(fullPath, g.metadata.name))) {
         return {
           ...g,
           metadata: {
@@ -292,7 +296,7 @@ export const GraphList: FC = () => {
         name: graph.metadata?.name?.replace(fullPath, newFullPath),
       },
     });
-    setFolderNames((prev) => prev.map((name) => name.startsWith(fullPath) ? name.replace(fullPath, newFullPath) : name));
+    setFolderNames((prev) => prev.map((name) => name === fullPath || isInFolder(fullPath, name) ? name.replace(fullPath, newFullPath) : name));
     setRenamingItemFullPath(undefined);
   }
 
