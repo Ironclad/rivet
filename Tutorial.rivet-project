@@ -1,111 +1,65 @@
-version: 2
+version: 3
 data:
   graphs:
     D0TnEZI8WPm1ZjZyhYfeQ:
-      connections:
-        - inputId: array
-          inputNodeId: WR2CtLwyVsIGx7If1fg7a
-          outputId: output
-          outputNodeId: FaZREqOh4fcKSehT5lxuq
-        - inputId: contract_name
-          inputNodeId: C4FkXT3pPwN9qFlhdOiKK
-          outputId: lastItem
-          outputNodeId: WR2CtLwyVsIGx7If1fg7a
       metadata:
         description: ""
         id: D0TnEZI8WPm1ZjZyhYfeQ
-        name: 5. Subgraphs
+        name: "5. Subgraphs/Subgraphs #0 Main Graph"
       nodes:
-        - data:
-            graphId: EoHPH8XxU03t5hQ-UoBqz
-          id: FaZREqOh4fcKSehT5lxuq
-          title: 5.1 Generate Contract Names
-          type: subGraph
-          visualData:
-            width: 300
-            x: 842
-            y: 540
-            zIndex: 2
-        - data: {}
-          id: WR2CtLwyVsIGx7If1fg7a
-          title: Pop
-          type: pop
-          visualData:
-            width: 200
-            x: 1179.3915224072066
-            y: 551.2889072953498
-            zIndex: 4
-        - data:
+        C4FkXT3pPwN9qFlhdOiKK:
+          data:
             graphId: Eg64hugBjOEWIexE8WTTL
           id: C4FkXT3pPwN9qFlhdOiKK
+          outgoingConnections: []
           title: 5.2 Generate Contract From Name
           type: subGraph
-          visualData:
-            width: 300
-            x: 1418.0393028635392
-            y: 535.4844185234072
-            zIndex: 5
+          visualData: 1418.0393028635392/535.4844185234072/300/5
+        FaZREqOh4fcKSehT5lxuq:
+          data:
+            graphId: EoHPH8XxU03t5hQ-UoBqz
+          id: FaZREqOh4fcKSehT5lxuq
+          outgoingConnections:
+            - output->"Pop" WR2CtLwyVsIGx7If1fg7a/array
+          title: 5.1 Generate Contract Names
+          type: subGraph
+          visualData: 842/540/300/2
+        WR2CtLwyVsIGx7If1fg7a:
+          data: {}
+          id: WR2CtLwyVsIGx7If1fg7a
+          outgoingConnections:
+            - lastItem->"5.2 Generate Contract From Name"
+              C4FkXT3pPwN9qFlhdOiKK/contract_name
+          title: Pop
+          type: pop
+          visualData: 1179.3915224072066/551.2889072953498/200/4
     Eg64hugBjOEWIexE8WTTL:
-      connections:
-        - inputId: name
-          inputNodeId: jD2maXks4GVQR6K__1Wzh
-          outputId: data
-          outputNodeId: r9yxt_s8B0igVB_RHmkRH
-        - inputId: systemPrompt
-          inputNodeId: dm2kGek-SGwla0BgZvQtc
-          outputId: output
-          outputNodeId: EI2Qe3sbmafs41MFea55y
-        - inputId: prompt
-          inputNodeId: dm2kGek-SGwla0BgZvQtc
-          outputId: output
-          outputNodeId: jD2maXks4GVQR6K__1Wzh
-        - inputId: value
-          inputNodeId: vn_hc_h0L7XBuOtQ2UXja
-          outputId: response
-          outputNodeId: dm2kGek-SGwla0BgZvQtc
-        - inputId: default
-          inputNodeId: r9yxt_s8B0igVB_RHmkRH
-          outputId: output
-          outputNodeId: 9t3pedo4zJOTeDeoUXBXI
       metadata:
         description: ""
         id: Eg64hugBjOEWIexE8WTTL
-        name: 5.2 Generate Contract From Name
+        name: "5. Subgraphs/Subgraphs #2 Generate Contract From Name"
       nodes:
-        - data:
-            dataType: string
-            id: contract_name
-            useDefaultValueInput: true
-          id: r9yxt_s8B0igVB_RHmkRH
-          title: Graph Input
-          type: graphInput
-          visualData:
-            width: 300
-            x: 620
-            y: 589
-            zIndex: 1
-        - data:
+        9t3pedo4zJOTeDeoUXBXI:
+          data:
+            text: MNDA with Acme, Inc
+          id: 9t3pedo4zJOTeDeoUXBXI
+          outgoingConnections:
+            - output->"Graph Input" r9yxt_s8B0igVB_RHmkRH/default
+          title: Text
+          type: text
+          visualData: 254/617/300/9
+        EI2Qe3sbmafs41MFea55y:
+          data:
             text: You are a fake contract generator. Given the name of a contract, you
               output the (fake) text of the contract.
           id: EI2Qe3sbmafs41MFea55y
+          outgoingConnections:
+            - output->"Chat" dm2kGek-SGwla0BgZvQtc/systemPrompt
           title: Text
           type: text
-          visualData:
-            width: 300
-            x: 643
-            y: 403
-            zIndex: 4
-        - data:
-            text: "Please generate a contract with this name: {{name}}"
-          id: jD2maXks4GVQR6K__1Wzh
-          title: Text
-          type: text
-          visualData:
-            width: 300
-            x: 969
-            y: 619
-            zIndex: 3
-        - data:
+          visualData: 643/403/300/4
+        dm2kGek-SGwla0BgZvQtc:
+          data:
             cache: false
             frequencyPenalty: 0
             maxTokens: 1024
@@ -125,62 +79,76 @@ data:
             useTopPInput: false
             useUseTopPInput: false
           id: dm2kGek-SGwla0BgZvQtc
+          outgoingConnections:
+            - response->"Graph Output" vn_hc_h0L7XBuOtQ2UXja/value
           title: Chat
           type: chat
-          visualData:
-            width: 200
-            x: 1403
-            y: 494
-            zIndex: 5
-        - data:
+          visualData: 1403/494/200/5
+        jD2maXks4GVQR6K__1Wzh:
+          data:
+            text: "Please generate a contract with this name: {{name}}"
+          id: jD2maXks4GVQR6K__1Wzh
+          outgoingConnections:
+            - output->"Chat" dm2kGek-SGwla0BgZvQtc/prompt
+          title: Text
+          type: text
+          visualData: 969/619/300/3
+        r9yxt_s8B0igVB_RHmkRH:
+          data:
+            dataType: string
+            id: contract_name
+            useDefaultValueInput: true
+          id: r9yxt_s8B0igVB_RHmkRH
+          outgoingConnections:
+            - data->"Text" jD2maXks4GVQR6K__1Wzh/name
+          title: Graph Input
+          type: graphInput
+          visualData: 620/589/300/1
+        vn_hc_h0L7XBuOtQ2UXja:
+          data:
             dataType: string
             id: output
           id: vn_hc_h0L7XBuOtQ2UXja
+          outgoingConnections: []
           title: Graph Output
           type: graphOutput
-          visualData:
-            width: 300
-            x: 1674
-            y: 511
-            zIndex: 7
-        - data:
-            text: MNDA with Acme, Inc
-          id: 9t3pedo4zJOTeDeoUXBXI
-          title: Text
-          type: text
-          visualData:
-            width: 300
-            x: 254
-            y: 617
-            zIndex: 9
+          visualData: 1674/511/300/7
     EoHPH8XxU03t5hQ-UoBqz:
-      connections:
-        - inputId: systemPrompt
-          inputNodeId: Y1ERrr0Of-8dZ931vP14j
-          outputId: output
-          outputNodeId: Ec6aQbICojPqp-p7C-20s
-        - inputId: prompt
-          inputNodeId: Y1ERrr0Of-8dZ931vP14j
-          outputId: output
-          outputNodeId: 2H57ZtGaHVCnI4x2XUxRm
-        - inputId: input
-          inputNodeId: ArXuvzGCXA_WY1xMPK9ri
-          outputId: response
-          outputNodeId: Y1ERrr0Of-8dZ931vP14j
-        - inputId: object
-          inputNodeId: 6fDC1Ftb3kuPVU0rfhyqz
-          outputId: output
-          outputNodeId: ArXuvzGCXA_WY1xMPK9ri
-        - inputId: value
-          inputNodeId: gkPN4enxzXUoY0ddv__qg
-          outputId: all_matches
-          outputNodeId: 6fDC1Ftb3kuPVU0rfhyqz
       metadata:
         description: ""
         id: EoHPH8XxU03t5hQ-UoBqz
-        name: 5.1 Generate Contract Names
+        name: "5. Subgraphs/Subgraphs #1 Generate Contract Names"
       nodes:
-        - data:
+        2H57ZtGaHVCnI4x2XUxRm:
+          data:
+            text: Please generate me a list of 10 random business contracts
+          id: 2H57ZtGaHVCnI4x2XUxRm
+          outgoingConnections:
+            - output->"Chat" Y1ERrr0Of-8dZ931vP14j/prompt
+          title: Text
+          type: text
+          visualData: 688/697/300/2
+        6fDC1Ftb3kuPVU0rfhyqz:
+          data:
+            path: $.yamlDocument.names[*]
+            usePathInput: false
+          id: 6fDC1Ftb3kuPVU0rfhyqz
+          outgoingConnections:
+            - all_matches->"Graph Output" gkPN4enxzXUoY0ddv__qg/value
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 1745/498/250/4
+        ArXuvzGCXA_WY1xMPK9ri:
+          data:
+            rootPropertyName: yamlDocument
+          id: ArXuvzGCXA_WY1xMPK9ri
+          outgoingConnections:
+            - output->"Extract Object Path" 6fDC1Ftb3kuPVU0rfhyqz/object
+          title: Extract YAML
+          type: extractYaml
+          visualData: 1446/518/250/3
+        Ec6aQbICojPqp-p7C-20s:
+          data:
             text: >-
               You are a contract name generator. For the purposes of
               demonstration, you generate random names for fake business
@@ -200,14 +168,13 @@ data:
                   - Name 3
               ```
           id: Ec6aQbICojPqp-p7C-20s
+          outgoingConnections:
+            - output->"Chat" Y1ERrr0Of-8dZ931vP14j/systemPrompt
           title: Text
           type: text
-          visualData:
-            width: 300
-            x: 701
-            y: 350
-            zIndex: 1
-        - data:
+          visualData: 701/350/300/1
+        Y1ERrr0Of-8dZ931vP14j:
+          data:
             cache: false
             frequencyPenalty: 0
             maxTokens: 1024
@@ -227,76 +194,28 @@ data:
             useTopPInput: false
             useUseTopPInput: false
           id: Y1ERrr0Of-8dZ931vP14j
+          outgoingConnections:
+            - response->"Extract YAML" ArXuvzGCXA_WY1xMPK9ri/input
           title: Chat
           type: chat
-          visualData:
-            width: 200
-            x: 1206
-            y: 482
-        - data:
-            text: Please generate me a list of 10 random business contracts
-          id: 2H57ZtGaHVCnI4x2XUxRm
-          title: Text
-          type: text
-          visualData:
-            width: 300
-            x: 688
-            y: 697
-            zIndex: 2
-        - data:
-            rootPropertyName: yamlDocument
-          id: ArXuvzGCXA_WY1xMPK9ri
-          title: Extract YAML
-          type: extractYaml
-          visualData:
-            width: 250
-            x: 1446
-            y: 518
-            zIndex: 3
-        - data:
-            path: $.yamlDocument.names[*]
-            usePathInput: false
-          id: 6fDC1Ftb3kuPVU0rfhyqz
-          title: Extract Object Path
-          type: extractObjectPath
-          visualData:
-            width: 250
-            x: 1745
-            y: 498
-            zIndex: 4
-        - data:
+          visualData: 1206/482/200/null
+        gkPN4enxzXUoY0ddv__qg:
+          data:
             dataType: string[]
             id: output
           id: gkPN4enxzXUoY0ddv__qg
+          outgoingConnections: []
           title: Graph Output
           type: graphOutput
-          visualData:
-            width: 300
-            x: 2047
-            y: 494
-            zIndex: 6
+          visualData: 2047/494/300/6
     QgeLNyhpAsVJ_Ktlbm3FR:
-      connections:
-        - inputId: prompt
-          inputNodeId: 6dZUAsYq2jnPmBXm9BpL4
-          outputId: output
-          outputNodeId: GH1F0s0SnAEH-mMgTKyYU
       metadata:
         description: ""
         id: QgeLNyhpAsVJ_Ktlbm3FR
-        name: 1. Simple Graph
+        name: 1. Simple Graph/Simple Graph
       nodes:
-        - data:
-            text: Hello, what is the typical lifecycle of a simple business contract?
-          id: GH1F0s0SnAEH-mMgTKyYU
-          title: Text
-          type: text
-          visualData:
-            width: 295.1514952133798
-            x: 1109.8410018316115
-            y: 523.6327700750103
-            zIndex: 8
-        - data:
+        6dZUAsYq2jnPmBXm9BpL4:
+          data:
             cache: true
             frequencyPenalty: 0.2
             maxTokens: 1024
@@ -316,105 +235,27 @@ data:
             useTopPInput: false
             useUseTopPInput: false
           id: 6dZUAsYq2jnPmBXm9BpL4
+          outgoingConnections: []
           title: Chat
           type: chat
-          visualData:
-            width: 274.59222479817527
-            x: 1560.7519469872752
-            y: 458.52427722611264
-            zIndex: 9
+          visualData: 1560.7519469872752/458.52427722611264/274.59222479817527/9
+        GH1F0s0SnAEH-mMgTKyYU:
+          data:
+            text: Hello, what is the typical lifecycle of a simple business contract?
+          id: GH1F0s0SnAEH-mMgTKyYU
+          outgoingConnections:
+            - output->"Chat" 6dZUAsYq2jnPmBXm9BpL4/prompt
+          title: Text
+          type: text
+          visualData: 1109.8410018316115/523.6327700750103/295.1514952133798/8
     VOQ6sZ_rTNDo34KdiUBU9:
-      connections:
-        - inputId: input
-          inputNodeId: bqet1InKJKVBNVJUa-Et2
-          outputId: output
-          outputNodeId: UalbqiLxJ7siwGWDwGTjf
-        - inputId: data
-          inputNodeId: Ur5YiCYlK6HQ2dKcyMCq0
-          outputId: chunks
-          outputNodeId: bqet1InKJKVBNVJUa-Et2
-        - inputId: count
-          inputNodeId: Ur5YiCYlK6HQ2dKcyMCq0
-          outputId: count
-          outputNodeId: bqet1InKJKVBNVJUa-Et2
-        - inputId: index
-          inputNodeId: Ur5YiCYlK6HQ2dKcyMCq0
-          outputId: indexes
-          outputNodeId: bqet1InKJKVBNVJUa-Et2
-        - inputId: prompt
-          inputNodeId: 8Jz3xEu_AjnFIKaqH3dm_
-          outputId: output
-          outputNodeId: Ur5YiCYlK6HQ2dKcyMCq0
-        - inputId: response
-          inputNodeId: lwGi_tSI52oRwN3ejDSiW
-          outputId: response
-          outputNodeId: 8Jz3xEu_AjnFIKaqH3dm_
-        - inputId: chunk
-          inputNodeId: lwGi_tSI52oRwN3ejDSiW
-          outputId: indexes
-          outputNodeId: bqet1InKJKVBNVJUa-Et2
-        - inputId: index
-          inputNodeId: lwGi_tSI52oRwN3ejDSiW
-          outputId: count
-          outputNodeId: bqet1InKJKVBNVJUa-Et2
-        - inputId: input
-          inputNodeId: Hqq8aptRlHylVtshquDd2
-          outputId: output
-          outputNodeId: lwGi_tSI52oRwN3ejDSiW
-        - inputId: prompt
-          inputNodeId: lnbhZR4YUfR-hgsmf-ZID
-          outputId: output
-          outputNodeId: Hqq8aptRlHylVtshquDd2
-        - inputId: contract_name
-          inputNodeId: DAvEDA4VwuxJPO7hfg24l
-          outputId: output
-          outputNodeId: mA3U5L01VtG93L8jXiytR
       metadata:
         description: ""
         id: VOQ6sZ_rTNDo34KdiUBU9
-        name: 6. Splitting
+        name: 6. Splitting/Splitting
       nodes:
-        - data:
-            prompt: Please provide the contract text
-            useInput: false
-          id: UalbqiLxJ7siwGWDwGTjf
-          title: User Input
-          type: userInput
-          visualData:
-            width: 250
-            x: 602
-            y: 551
-            zIndex: 3
-        - data:
-            model: gpt-3.5-turbo
-            numTokensPerChunk: 256
-            overlap: 0
-            useModelInput: false
-          id: bqet1InKJKVBNVJUa-Et2
-          title: Chunk
-          type: chunk
-          visualData:
-            width: 200
-            x: 930
-            y: 536
-            zIndex: 7
-        - data:
-            text: |-
-              This is chunk {{index}}/{{count}} of a contract:
-
-              {{data}}
-
-              Can you summarize this part of the contract?
-          id: Ur5YiCYlK6HQ2dKcyMCq0
-          isSplitRun: true
-          title: Text
-          type: text
-          visualData:
-            width: 300
-            x: 1248
-            y: 524
-            zIndex: 14
-        - data:
+        8Jz3xEu_AjnFIKaqH3dm_:
+          data:
             cache: false
             frequencyPenalty: 0
             maxTokens: 1024
@@ -435,43 +276,76 @@ data:
             useUseTopPInput: false
           id: 8Jz3xEu_AjnFIKaqH3dm_
           isSplitRun: true
+          outgoingConnections:
+            - response->"Text" lwGi_tSI52oRwN3ejDSiW/response
           title: Chat
           type: chat
-          visualData:
-            width: 200
-            x: 1622
-            y: 525
-            zIndex: 15
-        - data:
-            text: |+
-              This is the summary for chunk {{chunk}}/{{index}} for a contract:
-
-              {{response}}
-
-          id: lwGi_tSI52oRwN3ejDSiW
+          visualData: 1622/525/200/15
+        DAvEDA4VwuxJPO7hfg24l:
+          data:
+            graphId: Eg64hugBjOEWIexE8WTTL
+          id: DAvEDA4VwuxJPO7hfg24l
           isSplitRun: true
-          title: Text
-          type: text
-          visualData:
-            width: 300
-            x: 1903.9637120761452
-            y: 534.8191552647233
-            zIndex: 18
-        - data:
+          outgoingConnections: []
+          title: 5.2 Generate Contract From Name
+          type: subGraph
+          visualData: 1285.9119571683518/1039.711481261154/300/26
+        Hqq8aptRlHylVtshquDd2:
+          data:
             text: |-
               {{input}}
 
 
               Please combine these into one summary of the contract.
           id: Hqq8aptRlHylVtshquDd2
+          outgoingConnections:
+            - output->"Chat" lnbhZR4YUfR-hgsmf-ZID/prompt
           title: Text
           type: text
-          visualData:
-            width: 142.95062462819715
-            x: 2257.714455681142
-            y: 566.6597263533611
-            zIndex: 20
-        - data:
+          visualData: 2257.714455681142/566.6597263533611/142.95062462819715/20
+        UalbqiLxJ7siwGWDwGTjf:
+          data:
+            prompt: Please provide the contract text
+            useInput: false
+          id: UalbqiLxJ7siwGWDwGTjf
+          outgoingConnections:
+            - output->"Chunk" bqet1InKJKVBNVJUa-Et2/input
+          title: User Input
+          type: userInput
+          visualData: 602/551/250/3
+        Ur5YiCYlK6HQ2dKcyMCq0:
+          data:
+            text: |-
+              This is chunk {{index}}/{{count}} of a contract:
+
+              {{data}}
+
+              Can you summarize this part of the contract?
+          id: Ur5YiCYlK6HQ2dKcyMCq0
+          isSplitRun: true
+          outgoingConnections:
+            - output->"Chat" 8Jz3xEu_AjnFIKaqH3dm_/prompt
+          title: Text
+          type: text
+          visualData: 1248/524/300/14
+        bqet1InKJKVBNVJUa-Et2:
+          data:
+            model: gpt-3.5-turbo
+            numTokensPerChunk: 256
+            overlap: 0
+            useModelInput: false
+          id: bqet1InKJKVBNVJUa-Et2
+          outgoingConnections:
+            - chunks->"Text" Ur5YiCYlK6HQ2dKcyMCq0/data
+            - count->"Text" Ur5YiCYlK6HQ2dKcyMCq0/count
+            - count->"Text" lwGi_tSI52oRwN3ejDSiW/index
+            - indexes->"Text" Ur5YiCYlK6HQ2dKcyMCq0/index
+            - indexes->"Text" lwGi_tSI52oRwN3ejDSiW/chunk
+          title: Chunk
+          type: chunk
+          visualData: 930/536/200/7
+        lnbhZR4YUfR-hgsmf-ZID:
+          data:
             cache: false
             frequencyPenalty: 0
             maxTokens: 1024
@@ -491,139 +365,122 @@ data:
             useTopPInput: false
             useUseTopPInput: false
           id: lnbhZR4YUfR-hgsmf-ZID
+          outgoingConnections: []
           title: Chat
           type: chat
-          visualData:
-            width: 200
-            x: 2484.2462819750144
-            y: 551.4306960142771
-            zIndex: 23
-        - data:
+          visualData: 2484.2462819750144/551.4306960142771/200/23
+        lwGi_tSI52oRwN3ejDSiW:
+          data:
+            text: |+
+              This is the summary for chunk {{chunk}}/{{index}} for a contract:
+
+              {{response}}
+
+          id: lwGi_tSI52oRwN3ejDSiW
+          isSplitRun: true
+          outgoingConnections:
+            - output->"Text" Hqq8aptRlHylVtshquDd2/input
+          title: Text
+          type: text
+          visualData: 1903.9637120761452/534.8191552647233/300/18
+        mA3U5L01VtG93L8jXiytR:
+          data:
             graphId: EoHPH8XxU03t5hQ-UoBqz
           id: mA3U5L01VtG93L8jXiytR
+          outgoingConnections:
+            - output->"5.2 Generate Contract From Name"
+              DAvEDA4VwuxJPO7hfg24l/contract_name
           title: 5.1 Generate Contract Names
           type: subGraph
-          visualData:
-            width: 300
-            x: 909.9452706722185
-            y: 1045.4223676383106
-            zIndex: 25
-        - data:
-            graphId: Eg64hugBjOEWIexE8WTTL
-          id: DAvEDA4VwuxJPO7hfg24l
-          isSplitRun: true
-          title: 5.2 Generate Contract From Name
-          type: subGraph
-          visualData:
-            width: 300
-            x: 1285.9119571683518
-            y: 1039.711481261154
-            zIndex: 26
+          visualData: 909.9452706722185/1045.4223676383106/300/25
     eypKXuqaDubv9o3NK8RmL:
-      connections:
-        - inputId: value
-          inputNodeId: BGxIU1lPfHInWebPnkjIp
-          outputId: break
-          outputNodeId: CbTQrNMACOxrr_GJqBQni
-        - inputId: message1
-          inputNodeId: x4FAAOuoIN1S0Lw7fek5z
-          outputId: output1
-          outputNodeId: CbTQrNMACOxrr_GJqBQni
-        - inputId: message2
-          inputNodeId: x4FAAOuoIN1S0Lw7fek5z
-          outputId: output
-          outputNodeId: Lx_WFbTOiJVsZb6QpEVTR
-        - inputId: prompt
-          inputNodeId: yJvjBz6gm2pP9mAHpno0F
-          outputId: prompt
-          outputNodeId: x4FAAOuoIN1S0Lw7fek5z
-        - inputId: message1
-          inputNodeId: THt39JHlYuxYTw9ci2j0y
-          outputId: output2
-          outputNodeId: CbTQrNMACOxrr_GJqBQni
-        - inputId: message2
-          inputNodeId: THt39JHlYuxYTw9ci2j0y
-          outputId: output
-          outputNodeId: Lx_WFbTOiJVsZb6QpEVTR
-        - inputId: input
-          inputNodeId: KEgT2C3VQqLFR7ynVkL_c
-          outputId: response
-          outputNodeId: yJvjBz6gm2pP9mAHpno0F
-        - inputId: message3
-          inputNodeId: THt39JHlYuxYTw9ci2j0y
-          outputId: output
-          outputNodeId: KEgT2C3VQqLFR7ynVkL_c
-        - inputId: input2Default
-          inputNodeId: CbTQrNMACOxrr_GJqBQni
-          outputId: output
-          outputNodeId: QlaeQMJ82j3dg3urW9DnV
-        - inputId: input1Default
-          inputNodeId: CbTQrNMACOxrr_GJqBQni
-          outputId: output
-          outputNodeId: QlaeQMJ82j3dg3urW9DnV
-        - inputId: input1
-          inputNodeId: CbTQrNMACOxrr_GJqBQni
-          outputId: response
-          outputNodeId: yJvjBz6gm2pP9mAHpno0F
-        - inputId: input2
-          inputNodeId: CbTQrNMACOxrr_GJqBQni
-          outputId: prompt
-          outputNodeId: THt39JHlYuxYTw9ci2j0y
-        - inputId: input
-          inputNodeId: aL6MDkuQg6rur5RsEg2Mo
-          outputId: output1
-          outputNodeId: CbTQrNMACOxrr_GJqBQni
-        - inputId: questions
-          inputNodeId: Lx_WFbTOiJVsZb6QpEVTR
-          outputId: output
-          outputNodeId: aL6MDkuQg6rur5RsEg2Mo
       metadata:
         description: ""
         id: eypKXuqaDubv9o3NK8RmL
-        name: 7. Loops
+        name: 7. Loops/Loops
       nodes:
-        - data:
-            maxIterations: 100
-          id: CbTQrNMACOxrr_GJqBQni
-          title: Loop Controller
-          type: loopController
-          visualData:
-            width: 250
-            x: 717
-            y: 543
-            zIndex: 38
-        - data:
+        BGxIU1lPfHInWebPnkjIp:
+          data:
             dataType: string
             id: output
           id: BGxIU1lPfHInWebPnkjIp
+          outgoingConnections: []
           title: Graph Output
           type: graphOutput
-          visualData:
-            width: 300
-            x: 1567
-            y: 259
-            zIndex: 42
-        - data:
+          visualData: 1567/259/300/42
+        CbTQrNMACOxrr_GJqBQni:
+          data:
+            maxIterations: 100
+          id: CbTQrNMACOxrr_GJqBQni
+          outgoingConnections:
+            - break->"Graph Output" BGxIU1lPfHInWebPnkjIp/value
+            - output1->"Assemble Prompt" x4FAAOuoIN1S0Lw7fek5z/message1
+            - output1->"Text" aL6MDkuQg6rur5RsEg2Mo/input
+            - output2->"Assemble Prompt" THt39JHlYuxYTw9ci2j0y/message1
+          title: Loop Controller
+          type: loopController
+          visualData: 717/543/250/38
+        KEgT2C3VQqLFR7ynVkL_c:
+          data:
+            promptText: "{{input}}"
+            type: assistant
+            useTypeInput: false
+          id: KEgT2C3VQqLFR7ynVkL_c
+          outgoingConnections:
+            - output->"Assemble Prompt" THt39JHlYuxYTw9ci2j0y/message3
+          title: Prompt
+          type: prompt
+          visualData: 2517/685/193/34
+        Lx_WFbTOiJVsZb6QpEVTR:
+          data:
             prompt: This is an example question?
             useInput: true
           id: Lx_WFbTOiJVsZb6QpEVTR
+          outgoingConnections:
+            - output->"Assemble Prompt" THt39JHlYuxYTw9ci2j0y/message2
+            - output->"Assemble Prompt" x4FAAOuoIN1S0Lw7fek5z/message2
           title: User Input
           type: userInput
-          visualData:
-            width: 250
-            x: 1570
-            y: 608
-            zIndex: 36
-        - data: {}
-          id: x4FAAOuoIN1S0Lw7fek5z
+          visualData: 1570/608/250/36
+        QlaeQMJ82j3dg3urW9DnV:
+          data:
+            promptText: Hello, I am an AI assistant. How can I help you?
+            type: assistant
+            useTypeInput: false
+          id: QlaeQMJ82j3dg3urW9DnV
+          outgoingConnections:
+            - output->"Loop Controller" CbTQrNMACOxrr_GJqBQni/input1Default
+            - output->"Loop Controller" CbTQrNMACOxrr_GJqBQni/input2Default
+          title: Prompt
+          type: prompt
+          visualData: -34.91748569748657/563.4159878938866/null/43
+        THt39JHlYuxYTw9ci2j0y:
+          data: {}
+          id: THt39JHlYuxYTw9ci2j0y
+          outgoingConnections:
+            - prompt->"Loop Controller" CbTQrNMACOxrr_GJqBQni/input2
           title: Assemble Prompt
           type: assemblePrompt
-          visualData:
-            width: 250
-            x: 1929
-            y: 561
-            zIndex: 35
-        - data:
+          visualData: 2809/982/250/31
+        aL6MDkuQg6rur5RsEg2Mo:
+          data:
+            text: "{{input}}"
+          id: aL6MDkuQg6rur5RsEg2Mo
+          outgoingConnections:
+            - output->"User Input" Lx_WFbTOiJVsZb6QpEVTR/questions
+          title: Text
+          type: text
+          visualData: 1113/616/259/41
+        x4FAAOuoIN1S0Lw7fek5z:
+          data: {}
+          id: x4FAAOuoIN1S0Lw7fek5z
+          outgoingConnections:
+            - prompt->"Chat" yJvjBz6gm2pP9mAHpno0F/prompt
+          title: Assemble Prompt
+          type: assemblePrompt
+          visualData: 1929/561/250/35
+        yJvjBz6gm2pP9mAHpno0F:
+          data:
             cache: false
             frequencyPenalty: 0
             maxTokens: 1024
@@ -643,130 +500,65 @@ data:
             useTopPInput: false
             useUseTopPInput: false
           id: yJvjBz6gm2pP9mAHpno0F
+          outgoingConnections:
+            - response->"Loop Controller" CbTQrNMACOxrr_GJqBQni/input1
+            - response->"Prompt" KEgT2C3VQqLFR7ynVkL_c/input
           title: Chat
           type: chat
-          visualData:
-            width: 200
-            x: 2263
-            y: 381
-            zIndex: 33
-        - data: {}
-          id: THt39JHlYuxYTw9ci2j0y
-          title: Assemble Prompt
-          type: assemblePrompt
-          visualData:
-            width: 250
-            x: 2809
-            y: 982
-            zIndex: 31
-        - data:
-            promptText: "{{input}}"
-            type: assistant
-            useTypeInput: false
-          id: KEgT2C3VQqLFR7ynVkL_c
-          title: Prompt
-          type: prompt
-          visualData:
-            width: 193
-            x: 2517
-            y: 685
-            zIndex: 34
-        - data:
-            promptText: Hello, I am an AI assistant. How can I help you?
-            type: assistant
-            useTypeInput: false
-          id: QlaeQMJ82j3dg3urW9DnV
-          title: Prompt
-          type: prompt
-          visualData:
-            x: -34.91748569748657
-            y: 563.4159878938866
-            zIndex: 43
-        - data:
-            text: "{{input}}"
-          id: aL6MDkuQg6rur5RsEg2Mo
-          title: Text
-          type: text
-          visualData:
-            width: 259
-            x: 1113
-            y: 616
-            zIndex: 41
+          visualData: 2263/381/200/33
     hiEyYlH301i1i5f_Cb-H6:
-      connections:
-        - inputId: systemPrompt
-          inputNodeId: F2FpT27oVpfKnsxVht6d7
-          outputId: output
-          outputNodeId: qwaxSQochbTLU0zKhX9N9
-        - inputId: prompt
-          inputNodeId: F2FpT27oVpfKnsxVht6d7
-          outputId: output
-          outputNodeId: -AwgdFbt38Yryjg0pvI9c
-        - inputId: systemPrompt
-          inputNodeId: lZDsm-nZ1kdG2934rDFvU
-          outputId: output
-          outputNodeId: qwaxSQochbTLU0zKhX9N9
-        - inputId: prompt
-          inputNodeId: lZDsm-nZ1kdG2934rDFvU
-          outputId: output
-          outputNodeId: yLbk-PtbB2DQxsJD42QCx
-        - inputId: introduction
-          inputNodeId: 7HKPcVRT3aqPSW5BE0f9c
-          outputId: response
-          outputNodeId: F2FpT27oVpfKnsxVht6d7
-        - inputId: templates
-          inputNodeId: 7HKPcVRT3aqPSW5BE0f9c
-          outputId: response
-          outputNodeId: lZDsm-nZ1kdG2934rDFvU
-        - inputId: questions
-          inputNodeId: wqB87yxrgwoH5ThFJ34qO
-          outputId: output
-          outputNodeId: 7HKPcVRT3aqPSW5BE0f9c
-        - inputId: message2
-          inputNodeId: 1T4q6C6b97-XNbAqAqdx4
-          outputId: output
-          outputNodeId: wqB87yxrgwoH5ThFJ34qO
-        - inputId: type
-          inputNodeId: e8scS4YSujo0I1DOkbCyo
-          outputId: output
-          outputNodeId: wqB87yxrgwoH5ThFJ34qO
-        - inputId: message3
-          inputNodeId: 1T4q6C6b97-XNbAqAqdx4
-          outputId: output
-          outputNodeId: e8scS4YSujo0I1DOkbCyo
-        - inputId: input
-          inputNodeId: 88mTRO1EvW4tpwupYMnhP
-          outputId: response
-          outputNodeId: F2FpT27oVpfKnsxVht6d7
-        - inputId: message1
-          inputNodeId: 1T4q6C6b97-XNbAqAqdx4
-          outputId: output
-          outputNodeId: 88mTRO1EvW4tpwupYMnhP
-        - inputId: systemPrompt
-          inputNodeId: Wzh9TCggdASIrUTKhTphE
-          outputId: output
-          outputNodeId: qwaxSQochbTLU0zKhX9N9
-        - inputId: prompt
-          inputNodeId: Wzh9TCggdASIrUTKhTphE
-          outputId: prompt
-          outputNodeId: 1T4q6C6b97-XNbAqAqdx4
       metadata:
         description: ""
         id: hiEyYlH301i1i5f_Cb-H6
-        name: 2. Interpolation
+        name: 2. Interpolation/Interpolation
       nodes:
-        - data:
-            text: You are an AI contract template generator. Given a type of contract from
-              the user, you will output a template that the user can then use to
-              draft a contract using your template.
-          id: qwaxSQochbTLU0zKhX9N9
+        -AwgdFbt38Yryjg0pvI9c:
+          data:
+            promptText: Please give the user an introduction to yourself and ask what
+              contract they would like a draft for.
+            type: system
+            useTypeInput: false
+          id: -AwgdFbt38Yryjg0pvI9c
+          outgoingConnections:
+            - output->"Chat" F2FpT27oVpfKnsxVht6d7/prompt
+          title: Prompt
+          type: prompt
+          visualData: 642/621/null/3
+        1T4q6C6b97-XNbAqAqdx4:
+          data: {}
+          id: 1T4q6C6b97-XNbAqAqdx4
+          outgoingConnections:
+            - prompt->"Chat" Wzh9TCggdASIrUTKhTphE/prompt
+          title: Assemble Prompt
+          type: assemblePrompt
+          visualData: 2636/676/250/18
+        7HKPcVRT3aqPSW5BE0f9c:
+          data:
+            text: |-
+              {{introduction}}
+
+              Here are some contract types I can generate templates for:
+
+              {{templates}}
+          id: 7HKPcVRT3aqPSW5BE0f9c
+          outgoingConnections:
+            - output->"User Input" wqB87yxrgwoH5ThFJ34qO/questions
           title: Text
           type: text
-          visualData:
-            width: 300
-            x: 789
-            y: 442
-        - data:
+          visualData: 1754/612/300/11
+        88mTRO1EvW4tpwupYMnhP:
+          data:
+            promptText: "{{input}}"
+            type: assistant
+            useTypeInput: false
+          id: 88mTRO1EvW4tpwupYMnhP
+          outgoingConnections:
+            - output->"Assemble Prompt" 1T4q6C6b97-XNbAqAqdx4/message1
+          title: Prompt
+          type: prompt
+          visualData: 1872/418/159/24
+        F2FpT27oVpfKnsxVht6d7:
+          data:
             cache: false
             frequencyPenalty: 0
             maxTokens: 1024
@@ -786,125 +578,14 @@ data:
             useTopPInput: false
             useUseTopPInput: false
           id: F2FpT27oVpfKnsxVht6d7
+          outgoingConnections:
+            - response->"Prompt" 88mTRO1EvW4tpwupYMnhP/input
+            - response->"Text" 7HKPcVRT3aqPSW5BE0f9c/introduction
           title: Chat
           type: chat
-          visualData:
-            width: 200
-            x: 1425
-            y: 440
-            zIndex: 8
-        - data:
-            promptText: Please give the user an introduction to yourself and ask what
-              contract they would like a draft for.
-            type: system
-            useTypeInput: false
-          id: -AwgdFbt38Yryjg0pvI9c
-          title: Prompt
-          type: prompt
-          visualData:
-            x: 642
-            y: 621
-            zIndex: 3
-        - data:
-            cache: false
-            frequencyPenalty: 0
-            maxTokens: 1024
-            model: gpt-3.5-turbo
-            presencePenalty: 0
-            stop: ""
-            temperature: 0.5
-            top_p: 1
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: false
-            usePresencePenaltyInput: false
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-          id: lZDsm-nZ1kdG2934rDFvU
-          title: Chat
-          type: chat
-          visualData:
-            width: 200
-            x: 1439
-            y: 795
-            zIndex: 7
-        - data:
-            promptText: Provide a list of contract types you can generate templates for. A
-              maximum of 10. Reply with only a list of contract types.
-            type: system
-            useTypeInput: false
-          id: yLbk-PtbB2DQxsJD42QCx
-          title: Prompt
-          type: prompt
-          visualData:
-            x: 646
-            y: 947
-            zIndex: 6
-        - data:
-            text: |-
-              {{introduction}}
-
-              Here are some contract types I can generate templates for:
-
-              {{templates}}
-          id: 7HKPcVRT3aqPSW5BE0f9c
-          title: Text
-          type: text
-          visualData:
-            width: 300
-            x: 1754
-            y: 612
-            zIndex: 11
-        - data:
-            prompt: This is an example question?
-            useInput: true
-          id: wqB87yxrgwoH5ThFJ34qO
-          title: User Input
-          type: userInput
-          visualData:
-            width: 250
-            x: 2131
-            y: 680
-            zIndex: 16
-        - data: {}
-          id: 1T4q6C6b97-XNbAqAqdx4
-          title: Assemble Prompt
-          type: assemblePrompt
-          visualData:
-            width: 250
-            x: 2636
-            y: 676
-            zIndex: 18
-        - data:
-            promptText: "The user has indicated that they want to generate this contract
-              type: {{type}}. You must now output a template for this contract
-              type. Only reply with a template."
-            type: system
-            useTypeInput: false
-          id: e8scS4YSujo0I1DOkbCyo
-          title: Prompt
-          type: prompt
-          visualData:
-            x: 2042
-            y: 926
-            zIndex: 23
-        - data:
-            promptText: "{{input}}"
-            type: assistant
-            useTypeInput: false
-          id: 88mTRO1EvW4tpwupYMnhP
-          title: Prompt
-          type: prompt
-          visualData:
-            width: 159
-            x: 1872
-            y: 418
-            zIndex: 24
-        - data:
+          visualData: 1425/440/200/8
+        Wzh9TCggdASIrUTKhTphE:
+          data:
             cache: false
             frequencyPenalty: 0
             maxTokens: 1024
@@ -924,111 +605,114 @@ data:
             useTopPInput: false
             useUseTopPInput: false
           id: Wzh9TCggdASIrUTKhTphE
+          outgoingConnections: []
           title: Chat
           type: chat
-          visualData:
-            width: 200
-            x: 2953.823597266632
-            y: 591.1830216148071
-            zIndex: 26
+          visualData: 2953.823597266632/591.1830216148071/200/26
+        e8scS4YSujo0I1DOkbCyo:
+          data:
+            promptText: "The user has indicated that they want to generate this contract
+              type: {{type}}. You must now output a template for this contract
+              type. Only reply with a template."
+            type: system
+            useTypeInput: false
+          id: e8scS4YSujo0I1DOkbCyo
+          outgoingConnections:
+            - output->"Assemble Prompt" 1T4q6C6b97-XNbAqAqdx4/message3
+          title: Prompt
+          type: prompt
+          visualData: 2042/926/null/23
+        lZDsm-nZ1kdG2934rDFvU:
+          data:
+            cache: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+          id: lZDsm-nZ1kdG2934rDFvU
+          outgoingConnections:
+            - response->"Text" 7HKPcVRT3aqPSW5BE0f9c/templates
+          title: Chat
+          type: chat
+          visualData: 1439/795/200/7
+        qwaxSQochbTLU0zKhX9N9:
+          data:
+            text: You are an AI contract template generator. Given a type of contract from
+              the user, you will output a template that the user can then use to
+              draft a contract using your template.
+          id: qwaxSQochbTLU0zKhX9N9
+          outgoingConnections:
+            - output->"Chat" F2FpT27oVpfKnsxVht6d7/systemPrompt
+            - output->"Chat" Wzh9TCggdASIrUTKhTphE/systemPrompt
+            - output->"Chat" lZDsm-nZ1kdG2934rDFvU/systemPrompt
+          title: Text
+          type: text
+          visualData: 789/442/300/null
+        wqB87yxrgwoH5ThFJ34qO:
+          data:
+            prompt: This is an example question?
+            useInput: true
+          id: wqB87yxrgwoH5ThFJ34qO
+          outgoingConnections:
+            - output->"Assemble Prompt" 1T4q6C6b97-XNbAqAqdx4/message2
+            - output->"Prompt" e8scS4YSujo0I1DOkbCyo/type
+          title: User Input
+          type: userInput
+          visualData: 2131/680/250/16
+        yLbk-PtbB2DQxsJD42QCx:
+          data:
+            promptText: Provide a list of contract types you can generate templates for. A
+              maximum of 10. Reply with only a list of contract types.
+            type: system
+            useTypeInput: false
+          id: yLbk-PtbB2DQxsJD42QCx
+          outgoingConnections:
+            - output->"Chat" lZDsm-nZ1kdG2934rDFvU/prompt
+          title: Prompt
+          type: prompt
+          visualData: 646/947/null/6
     nZep72-K0xnReLaC0Ax66:
-      connections:
-        - inputId: prompt
-          inputNodeId: SFoi_cl0IArhpvxOu-TyZ
-          outputId: output
-          outputNodeId: J4s4oC-2Wan_ZCm960s4l
-        - inputId: input
-          inputNodeId: snX_4a3o4ha0fZUmRzPFC
-          outputId: response
-          outputNodeId: SFoi_cl0IArhpvxOu-TyZ
-        - inputId: object
-          inputNodeId: pBi1UW83voiJY8qX8LG7k
-          outputId: output
-          outputNodeId: snX_4a3o4ha0fZUmRzPFC
-        - inputId: object
-          inputNodeId: gSVe_sWppAgiGeIgAXP6n
-          outputId: output
-          outputNodeId: snX_4a3o4ha0fZUmRzPFC
-        - inputId: object
-          inputNodeId: RCoE8xOlYEao67MpCMd8I
-          outputId: output
-          outputNodeId: snX_4a3o4ha0fZUmRzPFC
-        - inputId: object
-          inputNodeId: -jY5XNm0pNYQ7WBPbzlLF
-          outputId: output
-          outputNodeId: snX_4a3o4ha0fZUmRzPFC
-        - inputId: object
-          inputNodeId: ir-6VMWxQG00D9PPk4mq6
-          outputId: output
-          outputNodeId: snX_4a3o4ha0fZUmRzPFC
-        - inputId: object
-          inputNodeId: A0gdwrFt2_gY0KnJ4kEzW
-          outputId: output
-          outputNodeId: snX_4a3o4ha0fZUmRzPFC
-        - inputId: first_name
-          inputNodeId: r0_Xfe9Ibvalmrc0HK7A_
-          outputId: match
-          outputNodeId: RCoE8xOlYEao67MpCMd8I
-        - inputId: last_name
-          inputNodeId: r0_Xfe9Ibvalmrc0HK7A_
-          outputId: match
-          outputNodeId: -jY5XNm0pNYQ7WBPbzlLF
-        - inputId: username
-          inputNodeId: r0_Xfe9Ibvalmrc0HK7A_
-          outputId: match
-          outputNodeId: pBi1UW83voiJY8qX8LG7k
-        - inputId: email
-          inputNodeId: r0_Xfe9Ibvalmrc0HK7A_
-          outputId: match
-          outputNodeId: gSVe_sWppAgiGeIgAXP6n
-        - inputId: object
-          inputNodeId: xntVoyQwLRB-XJde_bx1v
-          outputId: match
-          outputNodeId: ir-6VMWxQG00D9PPk4mq6
-        - inputId: object
-          inputNodeId: PVz2yQaYDCDQ7N9TVgaSZ
-          outputId: match
-          outputNodeId: ir-6VMWxQG00D9PPk4mq6
-        - inputId: object
-          inputNodeId: wnRb7KIgFANLHMV7igV40
-          outputId: match
-          outputNodeId: A0gdwrFt2_gY0KnJ4kEzW
-        - inputId: object
-          inputNodeId: wqtepO1i_cQ0PYBFpUoLw
-          outputId: match
-          outputNodeId: A0gdwrFt2_gY0KnJ4kEzW
-        - inputId: favorite_food
-          inputNodeId: r0_Xfe9Ibvalmrc0HK7A_
-          outputId: match
-          outputNodeId: xntVoyQwLRB-XJde_bx1v
-        - inputId: favorite_color
-          inputNodeId: r0_Xfe9Ibvalmrc0HK7A_
-          outputId: match
-          outputNodeId: PVz2yQaYDCDQ7N9TVgaSZ
-        - inputId: dislike_food
-          inputNodeId: r0_Xfe9Ibvalmrc0HK7A_
-          outputId: match
-          outputNodeId: wnRb7KIgFANLHMV7igV40
-        - inputId: dislike_color
-          inputNodeId: r0_Xfe9Ibvalmrc0HK7A_
-          outputId: match
-          outputNodeId: wqtepO1i_cQ0PYBFpUoLw
       metadata:
         description: ""
         id: nZep72-K0xnReLaC0Ax66
-        name: 4. YAML
+        name: 4. YAML/YAML
       nodes:
-        - data:
-            rootPropertyName: yamlDocument
-          id: snX_4a3o4ha0fZUmRzPFC
-          title: Extract YAML
-          type: extractYaml
-          visualData:
-            width: 250
-            x: 1177
-            y: 570
-            zIndex: 6
-        - data:
+        -jY5XNm0pNYQ7WBPbzlLF:
+          data:
+            path: $.yamlDocument['last-name']
+            usePathInput: false
+          id: -jY5XNm0pNYQ7WBPbzlLF
+          outgoingConnections:
+            - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/last_name
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 1620/945/250/12
+        A0gdwrFt2_gY0KnJ4kEzW:
+          data:
+            path: $.yamlDocument.dislikes
+            usePathInput: false
+          id: A0gdwrFt2_gY0KnJ4kEzW
+          outgoingConnections:
+            - match->"Extract Object Path" wnRb7KIgFANLHMV7igV40/object
+            - match->"Extract Object Path" wqtepO1i_cQ0PYBFpUoLw/object
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 1406/1653/250/16
+        J4s4oC-2Wan_ZCm960s4l:
+          data:
             text: >-
               You are a user profile generator. You generate a random profile
               for a user, and output in YAML format. The structure of a user
@@ -1054,14 +738,33 @@ data:
 
               You must reply in YAML and it must follow the above format.
           id: J4s4oC-2Wan_ZCm960s4l
+          outgoingConnections:
+            - output->"Chat" SFoi_cl0IArhpvxOu-TyZ/prompt
           title: Text
           type: text
-          visualData:
-            width: 300
-            x: 552
-            y: 377
-            zIndex: 7
-        - data:
+          visualData: 552/377/300/7
+        PVz2yQaYDCDQ7N9TVgaSZ:
+          data:
+            path: $.color
+            usePathInput: false
+          id: PVz2yQaYDCDQ7N9TVgaSZ
+          outgoingConnections:
+            - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/favorite_color
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 1728/1443/250/19
+        RCoE8xOlYEao67MpCMd8I:
+          data:
+            path: $.yamlDocument['first-name']
+            usePathInput: false
+          id: RCoE8xOlYEao67MpCMd8I
+          outgoingConnections:
+            - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/first_name
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 1628/722/250/11
+        SFoi_cl0IArhpvxOu-TyZ:
+          data:
             cache: false
             frequencyPenalty: 0
             maxTokens: 1024
@@ -1081,80 +784,44 @@ data:
             useTopPInput: false
             useUseTopPInput: false
           id: SFoi_cl0IArhpvxOu-TyZ
+          outgoingConnections:
+            - response->"Extract YAML" snX_4a3o4ha0fZUmRzPFC/input
           title: Chat
           type: chat
-          visualData:
-            width: 200
-            x: 906
-            y: 531
-            zIndex: 4
-        - data:
-            path: $.yamlDocument.username
-            usePathInput: false
-          id: pBi1UW83voiJY8qX8LG7k
-          title: Extract Object Path
-          type: extractObjectPath
-          visualData:
-            width: 250
-            x: 1639
-            y: 239
-            zIndex: 9
-        - data:
+          visualData: 906/531/200/4
+        gSVe_sWppAgiGeIgAXP6n:
+          data:
             path: $.yamlDocument.email
             usePathInput: false
           id: gSVe_sWppAgiGeIgAXP6n
+          outgoingConnections:
+            - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/email
           title: Extract Object Path
           type: extractObjectPath
-          visualData:
-            width: 250
-            x: 1639
-            y: 480
-            zIndex: 10
-        - data:
-            path: $.yamlDocument['first-name']
-            usePathInput: false
-          id: RCoE8xOlYEao67MpCMd8I
-          title: Extract Object Path
-          type: extractObjectPath
-          visualData:
-            width: 250
-            x: 1628
-            y: 722
-            zIndex: 11
-        - data:
-            path: $.yamlDocument['last-name']
-            usePathInput: false
-          id: -jY5XNm0pNYQ7WBPbzlLF
-          title: Extract Object Path
-          type: extractObjectPath
-          visualData:
-            width: 250
-            x: 1620
-            y: 945
-            zIndex: 12
-        - data:
+          visualData: 1639/480/250/10
+        ir-6VMWxQG00D9PPk4mq6:
+          data:
             path: $.yamlDocument.favorites
             usePathInput: false
           id: ir-6VMWxQG00D9PPk4mq6
+          outgoingConnections:
+            - match->"Extract Object Path" PVz2yQaYDCDQ7N9TVgaSZ/object
+            - match->"Extract Object Path" xntVoyQwLRB-XJde_bx1v/object
           title: Extract Object Path
           type: extractObjectPath
-          visualData:
-            width: 250
-            x: 1408
-            y: 1340
-            zIndex: 17
-        - data:
-            path: $.yamlDocument.dislikes
+          visualData: 1408/1340/250/17
+        pBi1UW83voiJY8qX8LG7k:
+          data:
+            path: $.yamlDocument.username
             usePathInput: false
-          id: A0gdwrFt2_gY0KnJ4kEzW
+          id: pBi1UW83voiJY8qX8LG7k
+          outgoingConnections:
+            - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/username
           title: Extract Object Path
           type: extractObjectPath
-          visualData:
-            width: 250
-            x: 1406
-            y: 1653
-            zIndex: 16
-        - data:
+          visualData: 1639/239/250/9
+        r0_Xfe9Ibvalmrc0HK7A_:
+          data:
             text: >-
               The user ({{first_name}} {{last_name}}) has a username of
               {{username}}.
@@ -1168,149 +835,72 @@ data:
 
               They dislike {{dislike_food}} and {{dislike_color}}.
           id: r0_Xfe9Ibvalmrc0HK7A_
+          outgoingConnections: []
           title: Text
           type: text
-          visualData:
-            width: 300
-            x: 2345
-            y: 741
-            zIndex: 23
-        - data:
-            path: $.food
-            usePathInput: false
-          id: xntVoyQwLRB-XJde_bx1v
-          title: Extract Object Path
-          type: extractObjectPath
-          visualData:
-            width: 250
-            x: 1734
-            y: 1238
-            zIndex: 18
-        - data:
-            path: $.color
-            usePathInput: false
-          id: PVz2yQaYDCDQ7N9TVgaSZ
-          title: Extract Object Path
-          type: extractObjectPath
-          visualData:
-            width: 250
-            x: 1728
-            y: 1443
-            zIndex: 19
-        - data:
+          visualData: 2345/741/300/23
+        snX_4a3o4ha0fZUmRzPFC:
+          data:
+            rootPropertyName: yamlDocument
+          id: snX_4a3o4ha0fZUmRzPFC
+          outgoingConnections:
+            - output->"Extract Object Path" -jY5XNm0pNYQ7WBPbzlLF/object
+            - output->"Extract Object Path" A0gdwrFt2_gY0KnJ4kEzW/object
+            - output->"Extract Object Path" RCoE8xOlYEao67MpCMd8I/object
+            - output->"Extract Object Path" gSVe_sWppAgiGeIgAXP6n/object
+            - output->"Extract Object Path" ir-6VMWxQG00D9PPk4mq6/object
+            - output->"Extract Object Path" pBi1UW83voiJY8qX8LG7k/object
+          title: Extract YAML
+          type: extractYaml
+          visualData: 1177/570/250/6
+        wnRb7KIgFANLHMV7igV40:
+          data:
             path: $.food
             usePathInput: false
           id: wnRb7KIgFANLHMV7igV40
+          outgoingConnections:
+            - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/dislike_food
           title: Extract Object Path
           type: extractObjectPath
-          visualData:
-            width: 250
-            x: 1756
-            y: 1608
-            zIndex: 20
-        - data:
+          visualData: 1756/1608/250/20
+        wqtepO1i_cQ0PYBFpUoLw:
+          data:
             path: $.color
             usePathInput: false
           id: wqtepO1i_cQ0PYBFpUoLw
+          outgoingConnections:
+            - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/dislike_color
           title: Extract Object Path
           type: extractObjectPath
-          visualData:
-            width: 250
-            x: 1753
-            y: 1814
-            zIndex: 22
+          visualData: 1753/1814/250/22
+        xntVoyQwLRB-XJde_bx1v:
+          data:
+            path: $.food
+            usePathInput: false
+          id: xntVoyQwLRB-XJde_bx1v
+          outgoingConnections:
+            - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/favorite_food
+          title: Extract Object Path
+          type: extractObjectPath
+          visualData: 1734/1238/250/18
     tt5rzcZT15dZ9Jr8B0d4E:
-      connections:
-        - inputId: systemPrompt
-          inputNodeId: mNbY5g_-GCqqmQiJ9Bzw8
-          outputId: output
-          outputNodeId: D7W4TK_ERPD8sIEA0JRug
-        - inputId: prompt
-          inputNodeId: mNbY5g_-GCqqmQiJ9Bzw8
-          outputId: output
-          outputNodeId: msQmGwzygdNfcJ-s9Up7m
-        - inputId: input
-          inputNodeId: YbOSw8qc0s1kSQCB-2L02
-          outputId: response
-          outputNodeId: mNbY5g_-GCqqmQiJ9Bzw8
-        - inputId: if
-          inputNodeId: zRP90oq6upnr46fpEZBft
-          outputId: case1
-          outputNodeId: YbOSw8qc0s1kSQCB-2L02
-        - inputId: value
-          inputNodeId: zRP90oq6upnr46fpEZBft
-          outputId: output
-          outputNodeId: msQmGwzygdNfcJ-s9Up7m
-        - inputId: content
-          inputNodeId: XReMa-VsiUP-N4UrTKuaN
-          outputId: output
-          outputNodeId: zRP90oq6upnr46fpEZBft
-        - inputId: value
-          inputNodeId: NcEXtUk62okg1S80WQWDf
-          outputId: output
-          outputNodeId: msQmGwzygdNfcJ-s9Up7m
-        - inputId: if
-          inputNodeId: NcEXtUk62okg1S80WQWDf
-          outputId: case2
-          outputNodeId: YbOSw8qc0s1kSQCB-2L02
-        - inputId: content
-          inputNodeId: MXHr61DHTlCNro58cnf2T
-          outputId: output
-          outputNodeId: NcEXtUk62okg1S80WQWDf
-        - inputId: content
-          inputNodeId: bNMSmB7yGkCn0D4RH4xIn
-          outputId: output
-          outputNodeId: OQdGuE7nllmDknCYVKGXM
-        - inputId: type
-          inputNodeId: u54vVsW4AlpMVCppSH2Pt
-          outputId: unmatched
-          outputNodeId: YbOSw8qc0s1kSQCB-2L02
-        - inputId: input1
-          inputNodeId: i0hsgldRcB80fPoXh25w_
-          outputId: output
-          outputNodeId: XReMa-VsiUP-N4UrTKuaN
-        - inputId: input2
-          inputNodeId: i0hsgldRcB80fPoXh25w_
-          outputId: output
-          outputNodeId: MXHr61DHTlCNro58cnf2T
-        - inputId: input3
-          inputNodeId: i0hsgldRcB80fPoXh25w_
-          outputId: output
-          outputNodeId: bNMSmB7yGkCn0D4RH4xIn
-        - inputId: prompt
-          inputNodeId: dYF2ZXDrg5CA1iry9e-zR
-          outputId: output
-          outputNodeId: i0hsgldRcB80fPoXh25w_
-        - inputId: systemPrompt
-          inputNodeId: dYF2ZXDrg5CA1iry9e-zR
-          outputId: output
-          outputNodeId: 2TngHBPmLYQ_W2rIFJf8T
-        - inputId: value
-          inputNodeId: OQdGuE7nllmDknCYVKGXM
-          outputId: output
-          outputNodeId: msQmGwzygdNfcJ-s9Up7m
-        - inputId: if
-          inputNodeId: OQdGuE7nllmDknCYVKGXM
-          outputId: case3
-          outputNodeId: YbOSw8qc0s1kSQCB-2L02
-        - inputId: if
-          inputNodeId: SID1-IpD7cwznVFYLUAp0
-          outputId: output
-          outputNodeId: NcEXtUk62okg1S80WQWDf
-        - inputId: "false"
-          inputNodeId: SID1-IpD7cwznVFYLUAp0
-          outputId: output
-          outputNodeId: wCV5IZSVDd8Lk6jED09xY
-        - inputId: prompt
-          inputNodeId: ZQEs_FTqXHTtlmDudc1xZ
-          outputId: output
-          outputNodeId: SID1-IpD7cwznVFYLUAp0
       metadata:
         description: ""
         id: tt5rzcZT15dZ9Jr8B0d4E
-        name: 3. Matching and Conditionals
+        name: 3. Matching and Conditionals/Matching and Conditionals
       nodes:
-        - data:
+        2TngHBPmLYQ_W2rIFJf8T:
+          data:
+            text: You are an AI contract analyzer. Given a contract text and a question, you
+              answer the question based on the text of the contract.
+          id: 2TngHBPmLYQ_W2rIFJf8T
+          outgoingConnections:
+            - output->"Chat" dYF2ZXDrg5CA1iry9e-zR/systemPrompt
+          title: Text
+          type: text
+          visualData: 2336/282/300/32
+        D7W4TK_ERPD8sIEA0JRug:
+          data:
             text: >-
               You are a contract type analyzer. Given the text of a contract,
               you will output what type of contract you think it is. 
@@ -1330,83 +920,13 @@ data:
 
               You reply only with the type of contract you think has been sent. You reply with nothing but a contract type (or Other).
           id: D7W4TK_ERPD8sIEA0JRug
+          outgoingConnections:
+            - output->"Chat" mNbY5g_-GCqqmQiJ9Bzw8/systemPrompt
           title: Text
           type: text
-          visualData:
-            width: 300
-            x: 646
-            y: 296
-            zIndex: 1
-        - data:
-            prompt: Please paste the contents of the contract
-            useInput: false
-          id: msQmGwzygdNfcJ-s9Up7m
-          title: User Input
-          type: userInput
-          visualData:
-            width: 250
-            x: 704
-            y: 625
-            zIndex: 17
-        - data:
-            cache: false
-            frequencyPenalty: 0
-            maxTokens: 10
-            model: gpt-4
-            presencePenalty: 0
-            stop: ""
-            temperature: 0
-            top_p: 1
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: false
-            usePresencePenaltyInput: false
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-          id: mNbY5g_-GCqqmQiJ9Bzw8
-          title: Chat
-          type: chat
-          visualData:
-            width: 200
-            x: 1036
-            y: 453
-            zIndex: 5
-        - data:
-            caseCount: 3
-            cases:
-              - \bNDA
-              - \bMNDA
-              - Employment Contract
-          id: YbOSw8qc0s1kSQCB-2L02
-          title: Match
-          type: match
-          visualData:
-            width: 300
-            x: 1313
-            y: 436
-            zIndex: 7
-        - data:
-            text: |-
-              Here is an NDA contract:
-
-              """
-              {{content}}
-              """
-
-              Who is under the NDA's obligations?
-          id: XReMa-VsiUP-N4UrTKuaN
-          title: Text
-          type: text
-          visualData:
-            width: 300
-            x: 1956
-            y: 132
-            zIndex: 13
-        - data:
+          visualData: 646/296/300/1
+        MXHr61DHTlCNro58cnf2T:
+          data:
             text: |-
               Here is an MNDA contract:
 
@@ -1416,133 +936,70 @@ data:
 
               Who are the parties under MNDA?
           id: MXHr61DHTlCNro58cnf2T
+          outgoingConnections:
+            - output->"Coalesce" i0hsgldRcB80fPoXh25w_/input2
           title: Text
           type: text
-          visualData:
-            width: 300
-            x: 1967
-            y: 411
-            zIndex: 16
-        - data:
+          visualData: 1967/411/300/16
+        NcEXtUk62okg1S80WQWDf:
+          data: {}
+          id: NcEXtUk62okg1S80WQWDf
+          outgoingConnections:
+            - output->"If/Else" SID1-IpD7cwznVFYLUAp0/if
+            - output->"Text" MXHr61DHTlCNro58cnf2T/content
+          title: If
+          type: if
+          visualData: 1745/486/100/21
+        OQdGuE7nllmDknCYVKGXM:
+          data: {}
+          id: OQdGuE7nllmDknCYVKGXM
+          outgoingConnections:
+            - output->"Text" bNMSmB7yGkCn0D4RH4xIn/content
+          title: If
+          type: if
+          visualData: 1741/685/100/22
+        SID1-IpD7cwznVFYLUAp0:
+          data: {}
+          id: SID1-IpD7cwznVFYLUAp0
+          outgoingConnections:
+            - output->"Chat" ZQEs_FTqXHTtlmDudc1xZ/prompt
+          title: If/Else
+          type: ifElse
+          visualData: 2696/816/125/41
+        XReMa-VsiUP-N4UrTKuaN:
+          data:
             text: |-
-              Here is an employment contract:
+              Here is an NDA contract:
 
               """
               {{content}}
               """
 
-              Who is being employed?
-          id: bNMSmB7yGkCn0D4RH4xIn
+              Who is under the NDA's obligations?
+          id: XReMa-VsiUP-N4UrTKuaN
+          outgoingConnections:
+            - output->"Coalesce" i0hsgldRcB80fPoXh25w_/input1
           title: Text
           type: text
-          visualData:
-            width: 300
-            x: 1964
-            y: 698
-            zIndex: 35
-        - data: {}
-          id: zRP90oq6upnr46fpEZBft
-          title: If
-          type: if
-          visualData:
-            width: 100
-            x: 1743
-            y: 257
-            zIndex: 26
-        - data: {}
-          id: NcEXtUk62okg1S80WQWDf
-          title: If
-          type: if
-          visualData:
-            width: 100
-            x: 1745
-            y: 486
-            zIndex: 21
-        - data: {}
-          id: OQdGuE7nllmDknCYVKGXM
-          title: If
-          type: if
-          visualData:
-            width: 100
-            x: 1741
-            y: 685
-            zIndex: 22
-        - data:
-            text: Sorry, I don't know how to process a {{type}} contract.
-          id: u54vVsW4AlpMVCppSH2Pt
-          title: Text
-          type: text
-          visualData:
-            width: 300
-            x: 1771
-            y: 1021
-            zIndex: 25
-        - data: {}
-          id: i0hsgldRcB80fPoXh25w_
-          title: Coalesce
-          type: coalesce
-          visualData:
-            width: 150
-            x: 2382
-            y: 445
-            zIndex: 36
-        - data:
-            cache: false
-            frequencyPenalty: 0
-            maxTokens: 1024
-            model: gpt-4
-            presencePenalty: 0
-            stop: ""
-            temperature: 0
-            top_p: 1
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: false
-            usePresencePenaltyInput: false
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-          id: dYF2ZXDrg5CA1iry9e-zR
-          title: Chat
-          type: chat
-          visualData:
-            width: 200
-            x: 2737
-            y: 381
-            zIndex: 33
-        - data:
-            text: You are an AI contract analyzer. Given a contract text and a question, you
-              answer the question based on the text of the contract.
-          id: 2TngHBPmLYQ_W2rIFJf8T
-          title: Text
-          type: text
-          visualData:
-            width: 300
-            x: 2336
-            y: 282
-            zIndex: 32
-        - data: {}
-          id: SID1-IpD7cwznVFYLUAp0
-          title: If/Else
-          type: ifElse
-          visualData:
-            width: 125
-            x: 2696
-            y: 816
-            zIndex: 41
-        - data:
-            text: Some text
-          id: wCV5IZSVDd8Lk6jED09xY
-          title: Text
-          type: text
-          visualData:
-            width: 300
-            x: 2245
-            y: 1049
-        - data:
+          visualData: 1956/132/300/13
+        YbOSw8qc0s1kSQCB-2L02:
+          data:
+            caseCount: 3
+            cases:
+              - \bNDA
+              - \bMNDA
+              - Employment Contract
+          id: YbOSw8qc0s1kSQCB-2L02
+          outgoingConnections:
+            - case1->"If" zRP90oq6upnr46fpEZBft/if
+            - case2->"If" NcEXtUk62okg1S80WQWDf/if
+            - case3->"If" OQdGuE7nllmDknCYVKGXM/if
+            - unmatched->"Text" u54vVsW4AlpMVCppSH2Pt/type
+          title: Match
+          type: match
+          visualData: 1313/436/300/7
+        ZQEs_FTqXHTtlmDudc1xZ:
+          data:
             cache: false
             frequencyPenalty: 0
             maxTokens: 1024
@@ -1562,13 +1019,123 @@ data:
             useTopPInput: false
             useUseTopPInput: false
           id: ZQEs_FTqXHTtlmDudc1xZ
+          outgoingConnections: []
           title: Chat
           type: chat
-          visualData:
-            width: 200
-            x: 2908
-            y: 747
-            zIndex: 43
+          visualData: 2908/747/200/43
+        bNMSmB7yGkCn0D4RH4xIn:
+          data:
+            text: |-
+              Here is an employment contract:
+
+              """
+              {{content}}
+              """
+
+              Who is being employed?
+          id: bNMSmB7yGkCn0D4RH4xIn
+          outgoingConnections:
+            - output->"Coalesce" i0hsgldRcB80fPoXh25w_/input3
+          title: Text
+          type: text
+          visualData: 1964/698/300/35
+        dYF2ZXDrg5CA1iry9e-zR:
+          data:
+            cache: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-4
+            presencePenalty: 0
+            stop: ""
+            temperature: 0
+            top_p: 1
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+          id: dYF2ZXDrg5CA1iry9e-zR
+          outgoingConnections: []
+          title: Chat
+          type: chat
+          visualData: 2737/381/200/33
+        i0hsgldRcB80fPoXh25w_:
+          data: {}
+          id: i0hsgldRcB80fPoXh25w_
+          outgoingConnections:
+            - output->"Chat" dYF2ZXDrg5CA1iry9e-zR/prompt
+          title: Coalesce
+          type: coalesce
+          visualData: 2382/445/150/36
+        mNbY5g_-GCqqmQiJ9Bzw8:
+          data:
+            cache: false
+            frequencyPenalty: 0
+            maxTokens: 10
+            model: gpt-4
+            presencePenalty: 0
+            stop: ""
+            temperature: 0
+            top_p: 1
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+          id: mNbY5g_-GCqqmQiJ9Bzw8
+          outgoingConnections:
+            - response->"Match" YbOSw8qc0s1kSQCB-2L02/input
+          title: Chat
+          type: chat
+          visualData: 1036/453/200/5
+        msQmGwzygdNfcJ-s9Up7m:
+          data:
+            prompt: Please paste the contents of the contract
+            useInput: false
+          id: msQmGwzygdNfcJ-s9Up7m
+          outgoingConnections:
+            - output->"Chat" mNbY5g_-GCqqmQiJ9Bzw8/prompt
+            - output->"If" NcEXtUk62okg1S80WQWDf/value
+            - output->"If" OQdGuE7nllmDknCYVKGXM/value
+            - output->"If" zRP90oq6upnr46fpEZBft/value
+          title: User Input
+          type: userInput
+          visualData: 704/625/250/17
+        u54vVsW4AlpMVCppSH2Pt:
+          data:
+            text: Sorry, I don't know how to process a {{type}} contract.
+          id: u54vVsW4AlpMVCppSH2Pt
+          outgoingConnections: []
+          title: Text
+          type: text
+          visualData: 1771/1021/300/25
+        wCV5IZSVDd8Lk6jED09xY:
+          data:
+            text: Some text
+          id: wCV5IZSVDd8Lk6jED09xY
+          outgoingConnections:
+            - output->"If/Else" SID1-IpD7cwznVFYLUAp0/false
+          title: Text
+          type: text
+          visualData: 2245/1049/300/null
+        zRP90oq6upnr46fpEZBft:
+          data: {}
+          id: zRP90oq6upnr46fpEZBft
+          outgoingConnections:
+            - output->"Text" XReMa-VsiUP-N4UrTKuaN/content
+          title: If
+          type: if
+          visualData: 1743/257/100/26
   metadata:
     description: Project for the Rivet tutorial
     id: liGprwPyTFI883VYgoMB-
