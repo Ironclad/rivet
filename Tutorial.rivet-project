@@ -208,6 +208,84 @@ data:
           title: Graph Output
           type: graphOutput
           visualData: 2047/494/300/6
+    JuOmsjIkC_FrhVtNgRBWA:
+      metadata:
+        description: ""
+        id: JuOmsjIkC_FrhVtNgRBWA
+        name: 8. Testing Graphs/tests/TEST Mission Missing
+      nodes:
+        7ObfDJZMJQFKh9LDd9pnK:
+          data:
+            text: "true"
+          id: 7ObfDJZMJQFKh9LDd9pnK
+          outgoingConnections:
+            - output->"If/Else" g4iA2LEtqAlRIzUKsttgc/true
+          title: Text
+          type: text
+          visualData: 1331.8426804675494/667.2002766710888/300/7
+        KR5IcMBcsWUwbBgtsTaf3:
+          data:
+            dataType: string
+            id: output
+          description: It should output NO, and nothing else.
+          id: KR5IcMBcsWUwbBgtsTaf3
+          outgoingConnections: []
+          title: Mission Missing
+          type: graphOutput
+          visualData: 1922.1891067655395/494.6146840394304/300/11
+        PYmODelzVsedv1Z3X3zVq:
+          data:
+            text: >-
+              ABOUT IRONCLAD
+
+
+              Ironclad is a Contract Lifecycle Management (CLM) platform that helps business and legal teams manage every aspect of the contracting process.
+          id: PYmODelzVsedv1Z3X3zVq
+          outgoingConnections:
+            - output->"Subgraph" u8tsYP2OF0iK8T-4mfMye/input
+          title: Text
+          type: text
+          visualData: 354.26666666666665/408.6666666666667/300/2
+        bTVRtSLdnnleOL1gsNr8M:
+          data:
+            text: "false"
+          id: bTVRtSLdnnleOL1gsNr8M
+          outgoingConnections:
+            - output->"If/Else" g4iA2LEtqAlRIzUKsttgc/false
+          title: Text
+          type: text
+          visualData: 1332.5833911655393/799.7874916112899/300/null
+        eHfkZqm8v1u9bJZKFSeHx:
+          data:
+            caseCount: 2
+            cases:
+              - YES
+              - NO
+          id: eHfkZqm8v1u9bJZKFSeHx
+          outgoingConnections:
+            - case2->"If/Else" g4iA2LEtqAlRIzUKsttgc/if
+          title: Match
+          type: match
+          visualData: 1171.7448435821482/399.4804613512404/300/4
+        g4iA2LEtqAlRIzUKsttgc:
+          data: {}
+          id: g4iA2LEtqAlRIzUKsttgc
+          outgoingConnections:
+            - output->"Mission Missing" KR5IcMBcsWUwbBgtsTaf3/value
+          title: If/Else
+          type: ifElse
+          visualData: 1728.1229038921726/527.9466654489783/125/8
+        u8tsYP2OF0iK8T-4mfMye:
+          data:
+            graphId: rUcgbRwgkovsnv8X5xyVF
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          id: u8tsYP2OF0iK8T-4mfMye
+          outgoingConnections:
+            - output->"Match" eHfkZqm8v1u9bJZKFSeHx/input
+          title: Subgraph
+          type: subGraph
+          visualData: 766/444/300/1
     QgeLNyhpAsVJ_Ktlbm3FR:
       metadata:
         description: ""
@@ -883,6 +961,91 @@ data:
           title: Extract Object Path
           type: extractObjectPath
           visualData: 1734/1238/250/18
+    rUcgbRwgkovsnv8X5xyVF:
+      metadata:
+        description: ""
+        id: rUcgbRwgkovsnv8X5xyVF
+        name: 8. Testing Graphs/Graph to Test
+      nodes:
+        LmPob-xavvr3oj4TUQ1K_:
+          data:
+            text: >-
+              ABOUT IRONCLAD
+
+
+              We're on a mission to power the world's contracts.
+
+
+              Ironclad is a Contract Lifecycle Management (CLM) platform that helps business and legal teams manage every aspect of the contracting process.
+          id: LmPob-xavvr3oj4TUQ1K_
+          outgoingConnections:
+            - output->"Graph Input" hiGbJvedGXiOex0h93GDN/default
+          title: Text
+          type: text
+          visualData: 373/319/300/null
+        MjPGAG0CiUARtVbB0tnXX:
+          data:
+            dataType: string
+            id: output
+          id: MjPGAG0CiUARtVbB0tnXX
+          outgoingConnections: []
+          title: Graph Output
+          type: graphOutput
+          visualData: 1860.2380178509513/363.374672110798/300/5
+        cykKF3gfFLeM9bQ6K7X6v:
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo-0613
+            presencePenalty: 0
+            stop: ""
+            temperature: 0
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          id: cykKF3gfFLeM9bQ6K7X6v
+          outgoingConnections:
+            - response->"Graph Output" MjPGAG0CiUARtVbB0tnXX/value
+          title: Chat
+          type: chat
+          visualData: 1566.5841494194358/353.83822393282753/200/3
+        hiGbJvedGXiOex0h93GDN:
+          data:
+            dataType: string
+            id: input
+            useDefaultValueInput: true
+          id: hiGbJvedGXiOex0h93GDN
+          outgoingConnections:
+            - data->"Text" nUF-DuERfQB3tj6gG94zc/input
+          title: Graph Input
+          type: graphInput
+          visualData: 777.4988999043496/334.739345282144/300/1
+        nUF-DuERfQB3tj6gG94zc:
+          data:
+            text: |-
+              {{input}}
+
+              Based on the text above, does Ironclad have a mission statement?
+
+              Answer either YES or NO
+          id: nUF-DuERfQB3tj6gG94zc
+          outgoingConnections:
+            - output->"Chat" cykKF3gfFLeM9bQ6K7X6v/prompt
+          title: Text
+          type: text
+          visualData: 1194.6586178008602/331.723732863615/300/2
     tt5rzcZT15dZ9Jr8B0d4E:
       metadata:
         description: ""

@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "include": ["src"],
+  "ts-node": {
+    "swc": true,
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  },
+  "references": [{ "path": "../core" }]
+}

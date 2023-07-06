@@ -32,6 +32,10 @@ const RAW_RUNTIME_STATE =
     {\
       "name": "@ironclad/rivet-node",\
       "reference": "workspace:packages/node"\
+    },\
+    {\
+      "name": "@ironclad/trivet",\
+      "reference": "workspace:packages/trivet"\
     }\
   ],\
   "enableTopLevelFallback": true,\
@@ -42,6 +46,7 @@ const RAW_RUNTIME_STATE =
     ["@ironclad/rivet-app-executor", ["workspace:packages/app-executor"]],\
     ["@ironclad/rivet-core", ["workspace:packages/core"]],\
     ["@ironclad/rivet-node", ["workspace:packages/node"]],\
+    ["@ironclad/trivet", ["workspace:packages/trivet"]],\
     ["docs", ["workspace:packages/docs"]]\
   ],\
   "fallbackPool": [\
@@ -7954,6 +7959,23 @@ const RAW_RUNTIME_STATE =
         "linkType": "SOFT"\
       }]\
     ]],\
+    ["@ironclad/trivet", [\
+      ["workspace:packages/trivet", {\
+        "packageLocation": "./packages/trivet/",\
+        "packageDependencies": [\
+          ["@ironclad/trivet", "workspace:packages/trivet"],\
+          ["@ironclad/rivet-core", "workspace:packages/core"],\
+          ["@types/lodash-es", "npm:4.17.7"],\
+          ["@types/node", "npm:20.4.0"],\
+          ["clipanion", "virtual:763b5751e0360e14ffc929bbc0bd7578f8f57d8885d5b4f58aaa162c104e4df8cde06b85f86472c72428047754184723fb46f2f667ad4920b095b26bc8ed2f66#npm:3.2.1"],\
+          ["lodash-es", "npm:4.17.21"],\
+          ["minimatch", "npm:9.0.2"],\
+          ["ts-node", "virtual:763b5751e0360e14ffc929bbc0bd7578f8f57d8885d5b4f58aaa162c104e4df8cde06b85f86472c72428047754184723fb46f2f667ad4920b095b26bc8ed2f66#npm:10.9.1"],\
+          ["typescript", "patch:typescript@npm%3A5.1.3#optional!builtin<compat/typescript>::version=5.1.3&hash=5da071"]\
+        ],\
+        "linkType": "SOFT"\
+      }]\
+    ]],\
     ["@isaacs/cliui", [\
       ["npm:8.0.2", {\
         "packageLocation": "./.yarn/cache/@isaacs-cliui-npm-8.0.2-f4364666d5-b9a4e36972.zip/node_modules/@isaacs/cliui/",\
@@ -9672,6 +9694,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-node-npm-20.3.1-86012346c0-262e63e934.zip/node_modules/@types/node/",\
         "packageDependencies": [\
           ["@types/node", "npm:20.3.1"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:20.4.0", {\
+        "packageLocation": "./.yarn/cache/@types-node-npm-20.4.0-2eb9c50cc4-204d77441c.zip/node_modules/@types/node/",\
+        "packageDependencies": [\
+          ["@types/node", "npm:20.4.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11931,6 +11960,27 @@ const RAW_RUNTIME_STATE =
           ["cli-table3", "npm:0.6.3"],\
           ["@colors/colors", "npm:1.5.0"],\
           ["string-width", "npm:4.2.3"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["clipanion", [\
+      ["npm:3.2.1", {\
+        "packageLocation": "./.yarn/cache/clipanion-npm-3.2.1-fc9187f56c-6f757bde93.zip/node_modules/clipanion/",\
+        "packageDependencies": [\
+          ["clipanion", "npm:3.2.1"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:763b5751e0360e14ffc929bbc0bd7578f8f57d8885d5b4f58aaa162c104e4df8cde06b85f86472c72428047754184723fb46f2f667ad4920b095b26bc8ed2f66#npm:3.2.1", {\
+        "packageLocation": "./.yarn/__virtual__/clipanion-virtual-3fe6f987f6/0/cache/clipanion-npm-3.2.1-fc9187f56c-6f757bde93.zip/node_modules/clipanion/",\
+        "packageDependencies": [\
+          ["clipanion", "virtual:763b5751e0360e14ffc929bbc0bd7578f8f57d8885d5b4f58aaa162c104e4df8cde06b85f86472c72428047754184723fb46f2f667ad4920b095b26bc8ed2f66#npm:3.2.1"],\
+          ["@types/typanion", null],\
+          ["typanion", "npm:3.13.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/typanion"\
         ],\
         "linkType": "HARD"\
       }]\
@@ -17614,6 +17664,14 @@ const RAW_RUNTIME_STATE =
           ["brace-expansion", "npm:2.0.1"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:9.0.2", {\
+        "packageLocation": "./.yarn/cache/minimatch-npm-9.0.2-54f51f778f-104c2050e7.zip/node_modules/minimatch/",\
+        "packageDependencies": [\
+          ["minimatch", "npm:9.0.2"],\
+          ["brace-expansion", "npm:2.0.1"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["minimist", [\
@@ -22639,6 +22697,42 @@ const RAW_RUNTIME_STATE =
           "typescript"\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["virtual:763b5751e0360e14ffc929bbc0bd7578f8f57d8885d5b4f58aaa162c104e4df8cde06b85f86472c72428047754184723fb46f2f667ad4920b095b26bc8ed2f66#npm:10.9.1", {\
+        "packageLocation": "./.yarn/__virtual__/ts-node-virtual-6f1fbd17d1/0/cache/ts-node-npm-10.9.1-6c268be7f4-c4caff4b9b.zip/node_modules/ts-node/",\
+        "packageDependencies": [\
+          ["ts-node", "virtual:763b5751e0360e14ffc929bbc0bd7578f8f57d8885d5b4f58aaa162c104e4df8cde06b85f86472c72428047754184723fb46f2f667ad4920b095b26bc8ed2f66#npm:10.9.1"],\
+          ["@cspotcode/source-map-support", "npm:0.8.1"],\
+          ["@swc/core", null],\
+          ["@swc/wasm", null],\
+          ["@tsconfig/node10", "npm:1.0.9"],\
+          ["@tsconfig/node12", "npm:1.0.11"],\
+          ["@tsconfig/node14", "npm:1.0.3"],\
+          ["@tsconfig/node16", "npm:1.0.3"],\
+          ["@types/node", "npm:20.4.0"],\
+          ["@types/swc__core", null],\
+          ["@types/swc__wasm", null],\
+          ["@types/typescript", null],\
+          ["acorn", "npm:8.8.2"],\
+          ["acorn-walk", "npm:8.2.0"],\
+          ["arg", "npm:4.1.3"],\
+          ["create-require", "npm:1.1.1"],\
+          ["diff", "npm:4.0.2"],\
+          ["make-error", "npm:1.3.6"],\
+          ["typescript", "patch:typescript@npm%3A5.1.3#optional!builtin<compat/typescript>::version=5.1.3&hash=5da071"],\
+          ["v8-compile-cache-lib", "npm:3.0.1"],\
+          ["yn", "npm:3.1.1"]\
+        ],\
+        "packagePeers": [\
+          "@swc/core",\
+          "@swc/wasm",\
+          "@types/node",\
+          "@types/swc__core",\
+          "@types/swc__wasm",\
+          "@types/typescript",\
+          "typescript"\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["ts-pattern", [\
@@ -22751,6 +22845,15 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["tunnel-agent", "npm:0.6.0"],\
           ["safe-buffer", "npm:5.2.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["typanion", [\
+      ["npm:3.13.0", {\
+        "packageLocation": "./.yarn/cache/typanion-npm-3.13.0-d2aff17787-e89e93b8fe.zip/node_modules/typanion/",\
+        "packageDependencies": [\
+          ["typanion", "npm:3.13.0"]\
         ],\
         "linkType": "HARD"\
       }]\

@@ -1,0 +1,15 @@
+{
+  "name": "@ironclad/trivet",
+  "dependencies": {
+    "@ironclad/rivet-core": "workspace:^",
+    "@types/lodash-es": "^4.17.7",
+    "clipanion": "^3.2.1",
+    "lodash-es": "^4.17.21",
+    "minimatch": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.4.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.3"
+  }
+}
