@@ -1,4 +1,4 @@
-import { DataValue, Project, GraphProcessor, GraphId, NativeApi, BaseDir, ReadDirOptions, Settings } from '@ironclad/rivet-core';
+import { DataValue, Project, GraphProcessor, GraphId, NativeApi, BaseDir, ReadDirOptions, Settings, GraphOutputNode } from '@ironclad/rivet-core';
 import { keyBy } from 'lodash-es';
 import { minimatch } from 'minimatch';
 
@@ -68,7 +68,7 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
     const processor = new GraphProcessor(project, graphId as GraphId);
     const resolvedInputs: Record<string, DataValue> = {};
     const resolvedContextValues: Record<string, DataValue> = {};
-    const nodesById = keyBy(graph.nodes, 'id');
+    const outputNodesById = keyBy(graph.nodes.filter((n): n is GraphOutputNode => n.type === 'graphOutput'), (n) => n.data.id);
     const outputs = await processor.processGraph(
       {
         nativeApi: new DummyNativeApi(),
@@ -82,7 +82,7 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
       resolvedContextValues,
     );
     const validationResults = Object.entries(outputs).map(([outputId, result]): TrivetValidationResult => {
-      const node = nodesById[outputId];
+      const node = outputNodesById[outputId];
       if (node === undefined) {
         throw new Error('Missing node for validation');
       }

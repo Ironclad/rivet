@@ -7,7 +7,7 @@ import { deserializeProject } from '@ironclad/rivet-core';
 const args = process.argv.slice(2);
 
 class RunTest extends Command {
-  globForTestGraphs = Option.String('', 'TEST*');
+  globForTestGraphs = Option.String('', '**/TEST*');
   projectToTest = Option.String('--project', {
     required: true,
     description: 'Rivet project to test.'

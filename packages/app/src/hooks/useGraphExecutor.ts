@@ -327,7 +327,7 @@ export function useGraphExecutor() {
       const result = await runTrivet({
         project: tempProject,
         openAiKey: settings.openAiKey,
-        testGlobs: ['TEST*'],
+        testGlobs: ['**/TEST*'],
       });
       console.log(result);
     } catch (e) {
