@@ -2,8 +2,8 @@ import { NodeType } from '@ironclad/rivet-core';
 import { ContextMenuItem } from './useContextMenuConfiguration';
 import dedent from 'ts-dedent';
 
-import textNodeImage from '../../public/node_images/text_node.png';
-import chatNodeImage from '../../public/node_images/chat_node.png';
+import textNodeImage from '../assets/node_images/text_node.png';
+import chatNodeImage from '../assets/node_images/chat_node.png';
 
 const textNode = {
   label: 'Text',
