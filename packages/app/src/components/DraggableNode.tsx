@@ -11,7 +11,12 @@ interface DraggableNodeProps {
   node: ChartNode;
   connections?: NodeConnection[];
   isSelected?: boolean;
-  onWireStartDrag?: (event: MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => void;
+  onWireStartDrag?: (
+    event: MouseEvent<HTMLElement>,
+    startNodeId: NodeId,
+    startPortId: PortId,
+    isInput: boolean,
+  ) => void;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
   onNodeSelected?: (node: ChartNode, multi: boolean) => void;
   onNodeStartEditing?: (node: ChartNode) => void;

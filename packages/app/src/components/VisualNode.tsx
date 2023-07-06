@@ -1,16 +1,5 @@
 import clsx from 'clsx';
-import {
-  CSSProperties,
-  FC,
-  HTMLAttributes,
-  MouseEvent,
-  forwardRef,
-  memo,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { CSSProperties, FC, HTMLAttributes, MouseEvent, forwardRef, memo, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { match } from 'ts-pattern';
 import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
@@ -22,11 +11,10 @@ import { ReactComponent as SendIcon } from 'majesticons/solid/send.svg';
 import { ReactComponent as GitForkLine } from 'majesticons/line/git-fork-line.svg';
 import { ResizeHandle } from './ResizeHandle';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
-import { useGetNodeIO } from '../hooks/useGetNodeIO';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { LoadingSpinner } from './LoadingSpinner';
-import { lastMousePositionState } from '../state/graphBuilder';
 import { ErrorBoundary } from 'react-error-boundary';
+import { NodePorts } from './NodePorts';
 
 export type VisualNodeProps = {
   node: ChartNode;
@@ -37,7 +25,12 @@ export type VisualNodeProps = {
   isOverlay?: boolean;
   isSelected?: boolean;
   scale?: number;
-  onWireStartDrag?: (event: MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => void;
+  onWireStartDrag?: (
+    event: MouseEvent<HTMLElement>,
+    startNodeId: NodeId,
+    startPortId: PortId,
+    isInput: boolean,
+  ) => void;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
   onSelectNode?: (multi: boolean) => void;
   onStartEditing?: () => void;
@@ -248,7 +241,12 @@ const NormalVisualNodeContent: FC<{
   node: ChartNode;
   connections?: NodeConnection[];
   handleAttributes?: HTMLAttributes<HTMLDivElement>;
-  onWireStartDrag?: (event: MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => void;
+  onWireStartDrag?: (
+    event: MouseEvent<HTMLElement>,
+    startNodeId: NodeId,
+    startPortId: PortId,
+    isInput: boolean,
+  ) => void;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
   onSelectNode?: (multi: boolean) => void;
   onStartEditing?: () => void;
@@ -393,111 +391,3 @@ const NormalVisualNodeContent: FC<{
     );
   },
 );
-
-const NodePorts: FC<{
-  node: ChartNode;
-  connections: NodeConnection[];
-  zoomedOut?: boolean;
-  onWireStartDrag?: (event: MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => void;
-  onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
-}> = ({ node, connections, zoomedOut, onWireStartDrag, onWireEndDrag }) => {
-  const getIO = useGetNodeIO();
-  const { inputDefinitions, outputDefinitions } = getIO(node);
-
-  const handlePortMouseDown = useStableCallback((event: MouseEvent<HTMLDivElement>, port: PortId) => {
-    event.stopPropagation();
-    event.preventDefault();
-    onWireStartDrag?.(event, node.id, port);
-  });
-
-  const handlePortMouseUp = useStableCallback((event: MouseEvent<HTMLDivElement>, port: PortId) => {
-    event.stopPropagation();
-    event.preventDefault();
-    onWireEndDrag?.(event, node.id, port);
-  });
-
-  // Force rerender on mouse move to update position 🤷‍♂️
-  useRecoilValue(lastMousePositionState);
-
-  return (
-    <div className="node-ports">
-      <div className="input-ports">
-        {inputDefinitions.map((input) => {
-          const connected = connections.some((conn) => conn.inputNodeId === node.id && conn.inputId === input.id);
-          return (
-            <Port
-              title={input.title}
-              id={input.id}
-              input
-              connected={connected}
-              key={`input-${input.id}`}
-              nodeId={node.id}
-              onMouseDown={handlePortMouseDown}
-              onMouseUp={handlePortMouseUp}
-            />
-          );
-        })}
-      </div>
-      <div className="output-ports">
-        {outputDefinitions.map((output) => {
-          const connected = connections.some((conn) => conn.outputNodeId === node.id && conn.outputId === output.id);
-          return (
-            <Port
-              title={output.title}
-              id={output.id}
-              connected={connected}
-              key={`output-${output.id}`}
-              nodeId={node.id}
-              onMouseDown={handlePortMouseDown}
-              onMouseUp={handlePortMouseUp}
-            />
-          );
-        })}
-      </div>
-    </div>
-  );
-};
-
-const Port: FC<{
-  input?: boolean;
-  title: string;
-  nodeId: NodeId;
-  id: PortId;
-  connected?: boolean;
-  onMouseDown?: (event: MouseEvent<HTMLDivElement>, port: PortId) => void;
-  onMouseUp?: (event: MouseEvent<HTMLDivElement>, port: PortId) => void;
-}> = ({ input, title, nodeId, id, connected, onMouseDown, onMouseUp }) => {
-  const { clientToCanvasPosition } = useCanvasPositioning();
-  const ref = useRef<HTMLDivElement>(null);
-
-  useLayoutEffect(() => {
-    if (!ref.current) {
-      return;
-    }
-
-    nodePortCache[nodeId] ??= {};
-    nodePortCache[nodeId]![id] = ref.current;
-
-    const rect = ref.current.getBoundingClientRect();
-    const canvasPosition = clientToCanvasPosition(rect.x + rect.width / 2, rect.y + rect.height / 2);
-
-    nodePortPositionCache[nodeId] ??= {};
-    nodePortPositionCache[nodeId]![id] = {
-      x: canvasPosition.x,
-      y: canvasPosition.y,
-    };
-  });
-
-  return (
-    <div key={id} className={clsx('port', { connected })}>
-      <div
-        ref={ref}
-        className={clsx('port-circle', { 'input-port': input, 'output-port': !input })}
-        onMouseDown={(e) => onMouseDown?.(e, id)}
-        onMouseUp={(e) => onMouseUp?.(e, id)}
-        data-port-id={id}
-      />
-      <div className="port-label">{title}</div>
-    </div>
-  );
-};

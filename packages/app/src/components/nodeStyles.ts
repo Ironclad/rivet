@@ -203,6 +203,10 @@ export const nodeStyles = css`
     margin-right: -8px;
   }
 
+  .port-circle {
+    position: relative;
+  }
+
   .input-port,
   .output-port {
     background-color: var(--grey-dark);
@@ -231,7 +235,8 @@ export const nodeStyles = css`
     left: calc(100% + 8px);
   }
 
-  .port.connected .port-circle {
+  .port.connected .port-circle,
+  .port.closest .port-circle {
     background-color: var(--primary);
     border: 2px solid var(--primary-dark);
   }
@@ -460,5 +465,16 @@ export const nodeStyles = css`
 
   .multi-node-output-inner {
     padding: 12px;
+  }
+
+  .port-hover-area {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    transform: translate(-50%, -50%);
+    /* background-color: rgba(1, 1, 1, 0.5); */
   }
 `;

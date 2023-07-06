@@ -1,6 +1,7 @@
-import { atom, atomFamily } from 'recoil';
-import { ChartNode, GraphId, NodeId } from '@ironclad/rivet-core';
+import { atom, atomFamily, selector } from 'recoil';
+import { ChartNode, GraphId, NodeId, PortId } from '@ironclad/rivet-core';
 import { recoilPersist } from 'recoil-persist';
+import { WireDef } from '../components/WireLayer';
 
 const { persistAtom } = recoilPersist({ key: 'graphBuilder' });
 
@@ -40,4 +41,21 @@ export const lastMousePositionState = atom<{ x: number; y: number }>({
 export const sidebarOpenState = atom<boolean>({
   key: 'sidebarOpen',
   default: true,
+});
+
+export const draggingWireState = atom<WireDef | undefined>({
+  key: 'draggingWire',
+  default: undefined,
+});
+
+export const isDraggingWireState = selector<boolean>({
+  key: 'isDraggingWire',
+  get: ({ get }) => {
+    return get(draggingWireState) !== undefined;
+  },
+});
+
+export const draggingWireClosestPortState = atom<{ nodeId: NodeId; portId: PortId } | undefined>({
+  key: 'draggingWireClosestPort',
+  default: undefined,
 });

@@ -1,15 +1,19 @@
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { ConditionallyRenderWire } from './Wire';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
 import { ErrorBoundary } from 'react-error-boundary';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { draggingWireClosestPortState } from '../state/graphBuilder';
+import { orderBy } from 'lodash-es';
 
 export type WireDef = {
   startNodeId: NodeId;
   startPortId: PortId;
   endNodeId?: NodeId;
   endPortId?: PortId;
+  startPortIsInput: boolean;
 };
 
 type WireLayerProps = {
@@ -41,10 +45,46 @@ const wiresStyles = css`
 
 export const WireLayer: FC<WireLayerProps> = ({ connections, draggingWire, highlightedNodes }) => {
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const setClosestPort = useSetRecoilState(draggingWireClosestPortState);
 
-  const handleMouseMove = useCallback((event: MouseEvent) => {
-    setMousePosition({ x: event.clientX, y: event.clientY });
-  }, []);
+  const handleMouseMove = useCallback(
+    (event: MouseEvent) => {
+      const { clientX, clientY } = event;
+      setMousePosition({ x: clientX, y: clientY });
+
+      if (draggingWire) {
+        const hoverElems = document
+          .elementsFromPoint(clientX, clientY)
+          .filter((elem) => elem.classList.contains('port-hover-area'));
+
+        if (hoverElems.length === 0) {
+          setClosestPort(undefined);
+        } else {
+          const closestHoverElem = orderBy(hoverElems, (elem) => {
+            const elemPosition = elem.getBoundingClientRect();
+            const elemCenter = {
+              x: elemPosition.x + elemPosition.width / 2,
+              y: elemPosition.y + elemPosition.height / 2,
+            };
+            const distance = Math.sqrt(Math.pow(clientX - elemCenter.x, 2) + Math.pow(clientY - elemCenter.y, 2));
+            return distance;
+          })[0] as HTMLElement;
+
+          const portId = closestHoverElem!.parentElement!.dataset.portid as PortId | undefined;
+          const nodeId = closestHoverElem!.parentElement!.dataset.nodeid as NodeId | undefined;
+
+          if (portId && nodeId) {
+            setClosestPort({ nodeId, portId });
+          } else {
+            setClosestPort(undefined);
+          }
+        }
+      } else {
+        setClosestPort(undefined);
+      }
+    },
+    [draggingWire, setClosestPort],
+  );
 
   useEffect(() => {
     window.addEventListener('mousemove', handleMouseMove);
@@ -52,6 +92,8 @@ export const WireLayer: FC<WireLayerProps> = ({ connections, draggingWire, highl
       window.removeEventListener('mousemove', handleMouseMove);
     };
   }, [handleMouseMove]);
+
+  useLayoutEffect(() => {}, [draggingWire, mousePosition.x, mousePosition.y, setClosestPort]);
 
   const { canvasPosition, clientToCanvasPosition } = useCanvasPositioning();
   const mousePositionCanvas = clientToCanvasPosition(mousePosition.x, mousePosition.y);
@@ -62,14 +104,23 @@ export const WireLayer: FC<WireLayerProps> = ({ connections, draggingWire, highl
         {draggingWire && (
           <ErrorBoundary fallback={<></>} key="wire-inprogress">
             <ConditionallyRenderWire
-              connection={{
-                nodeId: draggingWire.startNodeId,
-                portId: draggingWire.startPortId,
-                toX: mousePositionCanvas.x,
-                toY: mousePositionCanvas.y,
-              }}
+              connection={
+                draggingWire.endNodeId && draggingWire.endPortId
+                  ? {
+                      outputNodeId: draggingWire.startNodeId,
+                      outputId: draggingWire.startPortId,
+                      inputNodeId: draggingWire.endNodeId,
+                      inputId: draggingWire.endPortId,
+                    }
+                  : {
+                      nodeId: draggingWire.startNodeId,
+                      portId: draggingWire.startPortId,
+                      toX: mousePositionCanvas.x,
+                      toY: mousePositionCanvas.y,
+                    }
+              }
               selected={false}
-              highlighted={false}
+              highlighted={!!(draggingWire.endNodeId && draggingWire.endPortId)}
             />
           </ErrorBoundary>
         )}

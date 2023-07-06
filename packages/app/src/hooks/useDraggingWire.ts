@@ -1,54 +1,65 @@
-import { useState, useCallback, useEffect } from 'react';
-import { WireDef } from '../components/WireLayer';
+import { useCallback, useEffect } from 'react';
 import { NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
 import { useGetNodeIO } from './useGetNodeIO';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { connectionsState, nodesByIdState } from '../state/graph';
+import { draggingWireClosestPortState, draggingWireState } from '../state/graphBuilder';
 
 export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnection[]) => void) => {
-  const [draggingWire, setDraggingWire] = useState<WireDef | undefined>();
+  const [draggingWire, setDraggingWire] = useRecoilState(draggingWireState);
   const getIO = useGetNodeIO();
   const connections = useRecoilValue(connectionsState);
   const nodesById = useRecoilValue(nodesByIdState);
+  const closestPortToDraggingWire = useRecoilValue(draggingWireClosestPortState);
+  const isDragging = !!draggingWire;
+
+  useEffect(() => {
+    if (closestPortToDraggingWire && isDragging) {
+      setDraggingWire((w) => ({
+        ...w!,
+        endNodeId: closestPortToDraggingWire.nodeId,
+        endPortId: closestPortToDraggingWire.portId,
+      }));
+    } else if (isDragging) {
+      setDraggingWire((w) => ({ ...w!, endNodeId: undefined, endPortId: undefined }));
+    }
+  }, [closestPortToDraggingWire, setDraggingWire, isDragging]);
 
   const onWireStartDrag = useCallback(
-    (event: React.MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => {
+    (event: React.MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId, isInput: boolean) => {
       event.stopPropagation();
 
-      // Check if the starting port is an input port
-      const startNode = nodesById[startNodeId];
-      if (startNode) {
-        const { inputDefinitions } = getIO(startNode);
-        const isInputPort = inputDefinitions.some((i) => i.id === startPortId);
+      if (isInput) {
+        // If the input port is already connected, remove the existing connection
+        const existingConnectionIndex = connections.findIndex(
+          (conn) => conn.inputNodeId === startNodeId && conn.inputId === startPortId,
+        );
 
-        if (isInputPort) {
-          // If the input port is already connected, remove the existing connection
-          const existingConnectionIndex = connections.findIndex(
-            (conn) => conn.inputNodeId === startNodeId && conn.inputId === startPortId,
-          );
+        if (existingConnectionIndex !== -1) {
+          const newConnections = [...connections];
+          newConnections.splice(existingConnectionIndex, 1);
+          onConnectionsChanged(newConnections);
 
-          if (existingConnectionIndex !== -1) {
-            const newConnections = [...connections];
-            newConnections.splice(existingConnectionIndex, 1);
-            onConnectionsChanged(newConnections);
-
-            setDraggingWire({
-              startNodeId: connections[existingConnectionIndex]!.outputNodeId,
-              startPortId: connections[existingConnectionIndex]!.outputId,
-            });
-            return;
-          }
+          setDraggingWire({
+            startNodeId: connections[existingConnectionIndex]!.outputNodeId,
+            startPortId: connections[existingConnectionIndex]!.outputId,
+            startPortIsInput: isInput,
+          });
+          return;
         }
+        return;
       }
-      setDraggingWire({ startNodeId, startPortId });
+      setDraggingWire({ startNodeId, startPortId, startPortIsInput: isInput });
     },
-    [connections, nodesById, onConnectionsChanged, getIO],
+    [connections, onConnectionsChanged, setDraggingWire],
   );
 
   const onWireEndDrag = useCallback(
-    (event: React.MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => {
+    (event: React.MouseEvent<HTMLElement>) => {
       event.stopPropagation();
       if (draggingWire) {
+        const { nodeId: endNodeId, portId: endPortId } = closestPortToDraggingWire!;
+
         let inputNode = nodesById[endNodeId];
         let outputNode = nodesById[draggingWire.startNodeId];
 
@@ -100,7 +111,7 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
         setDraggingWire(undefined);
       }
     },
-    [draggingWire, connections, nodesById, onConnectionsChanged, getIO],
+    [draggingWire, connections, nodesById, onConnectionsChanged, getIO, setDraggingWire],
   );
 
   useEffect(() => {
@@ -119,7 +130,7 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
     return () => {
       window.removeEventListener('mouseup', handleWindowClick);
     };
-  }, [draggingWire]);
+  }, [draggingWire, setDraggingWire]);
 
   return {
     draggingWire,
