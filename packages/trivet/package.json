@@ -1,14 +1,21 @@
 {
   "name": "@ironclad/trivet",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "src": "src/index.ts",
+  "scripts": {
+    "build": "tsc"
+  },
   "dependencies": {
     "@ironclad/rivet-core": "workspace:^",
-    "@types/lodash-es": "^4.17.7",
-    "clipanion": "^3.2.1",
     "lodash-es": "^4.17.21",
     "minimatch": "^9.0.2"
   },
   "devDependencies": {
+    "@types/lodash-es": "^4.17.7",
     "@types/node": "^20.4.0",
+    "clipanion": "^3.2.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.3"
   }

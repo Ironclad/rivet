@@ -4628,6 +4628,7 @@ __metadata:
     "@emotion/styled": "npm:^11.11.0"
     "@floating-ui/react": "npm:^0.24.5"
     "@ironclad/rivet-core": "workspace:^"
+    "@ironclad/trivet": "workspace:^"
     "@swc/core": "npm:^1.3.63"
     "@tauri-apps/api": "npm:^1.3.0"
     "@tauri-apps/cli": "npm:^1.3.1"
@@ -4770,7 +4771,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ironclad/trivet@workspace:packages/trivet":
+"@ironclad/trivet@workspace:^, @ironclad/trivet@workspace:packages/trivet":
   version: 0.0.0-use.local
   resolution: "@ironclad/trivet@workspace:packages/trivet"
   dependencies:

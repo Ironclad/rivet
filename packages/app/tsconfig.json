@@ -26,5 +26,5 @@
       "module": "CommonJS"
     }
   },
-  "references": [{ "path": "../core" }]
+  "references": [{ "path": "../core" }, { "path": "../trivet" }]
 }

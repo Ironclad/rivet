@@ -14,6 +14,7 @@ import {
   DataValue,
   GraphOutputs,
 } from '@ironclad/rivet-core';
+import { runTrivet } from '@ironclad/trivet'
 import { TauriNativeApi } from '../model/native/TauriNativeApi';
 import {
   lastRunDataByNodeState,
@@ -305,6 +306,35 @@ export function useGraphExecutor() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedExecutor]);
 
+  const tryRunTests = useStableCallback(async () => {
+    console.log('trying to run tests');
+    try {
+      saveGraph();
+
+      if (currentProcessor.current?.isRunning) {
+        return;
+      }
+
+      const tempProject = {
+        ...project,
+        graphs: {
+          ...project.graphs,
+          [graph.metadata!.id!]: graph,
+        },
+      };
+
+      console.log('starting trivet');
+      const result = await runTrivet({
+        project: tempProject,
+        openAiKey: settings.openAiKey,
+        testGlobs: ['TEST*'],
+      });
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
   const tryRunGraph = useStableCallback(async () => {
     if (
       remoteDebugger.remoteDebuggerState.started &&
@@ -440,5 +470,6 @@ export function useGraphExecutor() {
     tryAbortGraph,
     tryPauseGraph,
     tryResumeGraph,
+    tryRunTests,
   };
 }

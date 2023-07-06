@@ -20,7 +20,7 @@ setGlobalTheme({
 });
 
 export const RivetApp: FC = () => {
-  const { tryRunGraph, tryAbortGraph, tryPauseGraph, tryResumeGraph } = useGraphExecutor();
+  const { tryRunGraph, tryRunTests, tryAbortGraph, tryPauseGraph, tryResumeGraph } = useGraphExecutor();
 
   useMenuCommands({
     onRunGraph: tryRunGraph,
@@ -30,6 +30,7 @@ export const RivetApp: FC = () => {
     <div className="app" css={styles}>
       <MenuBar
         onRunGraph={tryRunGraph}
+        onRunTests={tryRunTests}
         onAbortGraph={tryAbortGraph}
         onPauseGraph={tryPauseGraph}
         onResumeGraph={tryResumeGraph}

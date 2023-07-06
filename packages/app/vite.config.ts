@@ -10,13 +10,14 @@ import { dirname } from 'node:path';
 // https://vitejs.dev/config/
 export default defineConfig({
   optimizeDeps: {
-    exclude: ['@ironclad/rivet-core'],
+    exclude: ['@ironclad/rivet-core', '@ironclad/trivet'],
   },
   resolve: {
     preserveSymlinks: true,
 
     alias: {
       '@ironclad/rivet-core': dirname(require.resolve('@ironclad/rivet-core/src/index.ts')),
+      '@ironclad/trivet': dirname(require.resolve('@ironclad/trivet/src/index.ts')),
     },
   },
   plugins: [

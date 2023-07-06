@@ -213,6 +213,7 @@ const styles = css`
 
 export type MenuBarProps = {
   onRunGraph?: () => void;
+  onRunTests?: () => void;
   onAbortGraph?: () => void;
   onPauseGraph?: () => void;
   onResumeGraph?: () => void;
@@ -225,7 +226,7 @@ const executorOptions = isInTauri()
     ] as const)
   : ([{ label: 'Browser', value: 'browser' }] as const);
 
-export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGraph, onResumeGraph }) => {
+export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onRunTests, onAbortGraph, onPauseGraph, onResumeGraph }) => {
   const [debuggerPanelOpen, setDebuggerPanelOpen] = useState(false);
   const [selectedExecutor, setSelectedExecutor] = useRecoilState(selectedExecutorState);
   const runMenuCommandImpl = useRunMenuCommand();
@@ -381,6 +382,11 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
             </button>
           </div>
         )}
+        <div className={clsx('run-test-button', { running: graphRunning })}>
+          <button onClick={graphRunning ? onAbortGraph : onRunTests}>
+            Run Test <ChevronRightIcon />
+          </button>
+        </div>
         <div className={clsx('run-button', { running: graphRunning, recording: !!loadedRecording })}>
           <button onClick={graphRunning ? onAbortGraph : onRunGraph}>
             {graphRunning ? (

@@ -7815,6 +7815,7 @@ const RAW_RUNTIME_STATE =
           ["@emotion/styled", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:11.11.0"],\
           ["@floating-ui/react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:0.24.5"],\
           ["@ironclad/rivet-core", "workspace:packages/core"],\
+          ["@ironclad/trivet", "workspace:packages/trivet"],\
           ["@swc/core", "virtual:4a4dfdd9a7df5ec5e275841a43fbecdb97f28d7f31447ab74c1dd2a4d56fe264664aa1dc4ad44cc92e46e533864e6b71f8d1474657f30ffd4d572a69c55bcf0b#npm:1.3.63"],\
           ["@tauri-apps/api", "npm:1.3.0"],\
           ["@tauri-apps/cli", "npm:1.3.1"],\
