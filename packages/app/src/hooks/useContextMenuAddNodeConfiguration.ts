@@ -4,6 +4,23 @@ import dedent from 'ts-dedent';
 
 import textNodeImage from '../assets/node_images/text_node.png';
 import chatNodeImage from '../assets/node_images/chat_node.png';
+import chunkNodeImage from '../assets/node_images/chunk_node.png';
+import promptNodeImage from '../assets/node_images/prompt_node.png';
+import toYamlNodeImage from '../assets/node_images/to_yaml_node.png';
+import toJsonNodeImage from '../assets/node_images/to_json_node.png';
+import joinNodeImage from '../assets/node_images/join_node.png';
+import assemblePromptNodeImage from '../assets/node_images/assemble_prompt_node.png';
+import trimChatMessagesNodeImage from '../assets/node_images/trim_chat_messages_node.png';
+import gptFunctionNodeImage from '../assets/node_images/gpt_function_node.png';
+import getEmbeddingNodeImage from '../assets/node_images/get_embedding_node.png';
+import extractRegexNodeImage from '../assets/node_images/extract_regex_node.png';
+import extractJsonNodeImage from '../assets/node_images/extract_json_node.png';
+import extractYamlNodeImage from '../assets/node_images/extract_yaml_node.png';
+import extractObjectPathNodeImage from '../assets/node_images/extract_object_path_node.png';
+import arrayNodeImage from '../assets/node_images/array_node.png';
+import popNodeImage from '../assets/node_images/pop_node.png';
+import hashNodeImage from '../assets/node_images/hash_node.png';
+import filterNodeImage from '../assets/node_images/filter_node.png';
 
 const textNode = {
   label: 'Text',
@@ -53,6 +70,7 @@ export const addContextMenuGroups = [
         id: 'add-node:prompt',
         infoBox: {
           title: 'Prompt Node',
+          image: promptNodeImage,
           description: dedent`
             Outputs a chat message, which is a string of text with an attached "type" saying who sent the message (User, Assistant, System) and optionally an attached "name".
 
@@ -68,6 +86,7 @@ export const addContextMenuGroups = [
         id: 'add-node:chunk',
         infoBox: {
           title: 'Chunk Node',
+          image: chunkNodeImage,
           description: dedent`
             Splits the input text into an array of chunks based on an approximate GPT token count per chunk.
 
@@ -83,6 +102,7 @@ export const addContextMenuGroups = [
         id: 'add-node:toYaml',
         infoBox: {
           title: 'To YAML Node',
+          image: toYamlNodeImage,
           description: dedent`
           Turns the input object into YAML text.
         `,
@@ -94,6 +114,7 @@ export const addContextMenuGroups = [
         id: 'add-node:toJson',
         infoBox: {
           title: 'To JSON Node',
+          image: toJsonNodeImage,
           description: dedent`
             Turns the input value into its JSON equivalent (stringifies the value).
           `,
@@ -105,6 +126,7 @@ export const addContextMenuGroups = [
         id: 'add-node:join',
         infoBox: {
           title: 'Join Node',
+          image: joinNodeImage,
           description: dedent`
             Takes an array of strings, and joins them using the configured delimiter.
 
@@ -125,10 +147,13 @@ export const addContextMenuGroups = [
         id: 'add-node:assemblePrompt',
         infoBox: {
           title: 'Assemble Prompt Node',
+          image: assemblePromptNodeImage,
           description: dedent`
             Assembles an array of chat messages for use with a Chat node. The inputs can be strings or chat messages.
 
             The number of inputs is dynamic based on the number of connections.
+
+            Strings are converted to User type chat messages.
           `,
         },
       },
@@ -138,6 +163,7 @@ export const addContextMenuGroups = [
         id: 'add-node:trimChatMessages',
         infoBox: {
           title: 'Trim Chat Messages Node',
+          image: trimChatMessagesNodeImage,
           description: dedent`
             Takes an array of chat messages, and slices messages from the beginning or the end of the list until the total length of the messages is under the configured token length.
 
@@ -151,6 +177,7 @@ export const addContextMenuGroups = [
         id: 'add-node:gptFunction',
         infoBox: {
           title: 'GPT Function Node',
+          image: gptFunctionNodeImage,
           description: dedent`
             Defines a GPT function, which is a method that the LLM can call in its responses.
           `,
@@ -162,6 +189,7 @@ export const addContextMenuGroups = [
         id: 'add-node:getEmbedding',
         infoBox: {
           title: 'Get Embedding Node',
+          image: getEmbeddingNodeImage,
           description: dedent`
             Gets a OpenAI vector embedding for the input text provided.
 
@@ -181,6 +209,7 @@ export const addContextMenuGroups = [
         id: 'add-node:extractRegex',
         infoBox: {
           title: 'Extract With Regex Node',
+          image: extractRegexNodeImage,
           description: dedent`
             Extracts data from the input text using the configured regular expression. The regular expression can contain capture groups to extract specific parts of the text.
 
@@ -194,6 +223,7 @@ export const addContextMenuGroups = [
         id: 'add-node:extractJson',
         infoBox: {
           title: 'Extract JSON Node',
+          image: extractJsonNodeImage,
           description: dedent`
             Finds and parses the first JSON object in the input text.
 
@@ -207,6 +237,7 @@ export const addContextMenuGroups = [
         id: 'add-node:extractYaml',
         infoBox: {
           title: 'Extract YAML Node',
+          image: extractYamlNodeImage,
           description: dedent`
             Finds and parses a YAML object in the input text with a predefined root property name (configurable).
 
@@ -222,6 +253,7 @@ export const addContextMenuGroups = [
         id: 'add-node:extractObjectPath',
         infoBox: {
           title: 'Extract Object Path Node',
+          image: extractObjectPathNodeImage,
           description: dedent`
             Extracts the value at the specified path from the input value. The path uses JSONPath notation to navigate through the value.
           `,
@@ -233,6 +265,7 @@ export const addContextMenuGroups = [
         id: 'add-node:array',
         infoBox: {
           title: 'Array Node',
+          image: arrayNodeImage,
           description: dedent`
             Creates an array from the input values. By default, flattens any arrays which are inputs into a single array. Can be configured to keep the arrays separate, or deeply flatten arrays.
 
@@ -248,6 +281,7 @@ export const addContextMenuGroups = [
         id: 'add-node:pop',
         infoBox: {
           title: 'Pop Node',
+          image: popNodeImage,
           description: dedent`
             Pops the last value off the input array and outputs the new array and the popped value.
 
@@ -261,6 +295,7 @@ export const addContextMenuGroups = [
         id: 'add-node:hash',
         infoBox: {
           title: 'Hash Node',
+          image: hashNodeImage,
           description: dedent`
             Computes a hash of the input value using the configured hash function.
           `,
@@ -272,6 +307,7 @@ export const addContextMenuGroups = [
         id: 'add-node:filter',
         infoBox: {
           title: 'Filter Node',
+          image: filterNodeImage,
           description: dedent`
             Takes in both an array of values, and an array of booleans of the same length, and filters the array where the corresponding boolean is true.
           `,

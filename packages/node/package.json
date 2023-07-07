@@ -39,8 +39,8 @@
   "dependencies": {
     "@ironclad/rivet-core": "workspace:^",
     "@zilliz/milvus2-sdk-node": "^2.2.16",
-    "emittery-0-13": "npm:emittery@^0.13.1",
     "emittery": "^1.0.1",
+    "emittery-0-13": "npm:emittery@^0.13.1",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "minimatch": "^9.0.1",
