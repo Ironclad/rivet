@@ -4090,6 +4090,7 @@ __metadata:
     lodash-es: "npm:^4.17.21"
     minimatch: "npm:^9.0.2"
     ts-node: "npm:^10.9.1"
+    tsx: "npm:^3.12.7"
     typescript: "npm:^5.1.3"
   languageName: unknown
   linkType: soft

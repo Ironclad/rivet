@@ -1,5 +1,5 @@
 import { Builtins, Cli, Command, Option } from 'clipanion';
-import { runTrivet } from '.';
+import { runTrivet } from './index.js';
 import { env } from 'process';
 import { readFile } from 'node:fs/promises';
 import { deserializeProject } from '@ironclad/rivet-core';
@@ -10,7 +10,7 @@ class RunTest extends Command {
   globForTestGraphs = Option.String('', '**/TEST*');
   projectToTest = Option.String('--project', {
     required: true,
-    description: 'Rivet project to test.'
+    description: 'Rivet project to test.',
   });
   async execute() {
     this.context.stdout.write('Running tests\n');
