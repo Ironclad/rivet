@@ -1,5 +1,6 @@
 {
   "name": "@ironclad/rivet-app-executor",
+  "repository": "https://github.com/ironclad/rivet",
   "bin": "./bin/executor-bundle.js",
   "scripts": {
     "bundle": "ts-node bundle.esbuild.ts",
@@ -9,7 +10,7 @@
   },
   "devDependencies": {
     "@ironclad/rivet-node": "workspace:^",
-    "@swc/core": "^1.3.63",
+    "@swc/core": "^1.3.68",
     "esbuild": "^0.18.2",
     "esbuild-plugin-copy": "^2.1.1",
     "pkg": "^5.8.1",
@@ -19,8 +20,8 @@
     "@dqbd/tiktoken": "^1.0.7"
   },
   "pkg": {
-    "scripts": [
-      "node_modules/@dqbd/tiktoken/**/*.js"
+    "assets": [
+      "bin/tiktoken_bg.wasm"
     ]
   }
 }

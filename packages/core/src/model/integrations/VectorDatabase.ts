@@ -1,4 +1,4 @@
-import { DataValue, VectorDataValue, ArrayDataValue, ScalarDataValue } from '../DataValue';
+import { DataValue, VectorDataValue, ArrayDataValue, ScalarDataValue } from '../DataValue.js';
 
 export interface VectorDatabase {
   store(collection: DataValue, vector: VectorDataValue, data: DataValue, metadata: { id?: string }): Promise<void>;

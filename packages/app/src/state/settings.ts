@@ -1,5 +1,5 @@
 import { atom } from 'recoil';
-import { persistAtom } from './persist';
+import { persistAtom } from './persist.js';
 import { Settings } from '@ironclad/rivet-core';
 
 export const settingsState = atom<Settings>({

@@ -7,7 +7,7 @@ import {
   Recording,
   RecordingId,
   SerializedRecording,
-} from '..';
+} from '../index.js';
 import Emittery from 'emittery';
 
 export type ExecutionRecorderEvents = {

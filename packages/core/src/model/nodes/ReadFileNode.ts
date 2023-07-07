@@ -1,10 +1,10 @@
-import { ChartNode, NodeId, PortId } from '../NodeBase';
-import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase';
-import { DataValue } from '../DataValue';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { ChartNode, NodeId, PortId } from '../NodeBase.js';
+import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
+import { DataValue } from '../DataValue.js';
+import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { nanoid } from 'nanoid';
-import { expectType } from '../..';
-import { InternalProcessContext } from '../ProcessContext';
+import { expectType } from '../../index.js';
+import { InternalProcessContext } from '../ProcessContext.js';
 
 export type ReadFileNode = ChartNode<'readFile', ReadFileNodeData>;
 

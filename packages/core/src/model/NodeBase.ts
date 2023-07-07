@@ -1,6 +1,6 @@
 import { Opaque } from 'type-fest';
-import { DataType } from './DataValue';
-import { GraphId } from '..';
+import { DataType } from './DataValue.js';
+import { GraphId } from '../index.js';
 
 /** Unique in a NodeGraph. */
 export type NodeId = Opaque<string, 'NodeId'>;

@@ -1,9 +1,9 @@
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
-import { isArrayDataValue } from '../DataValue';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
+import { isArrayDataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
-import { coerceType, coerceTypeOptional, inferType } from '../../utils/coerceType';
-import { Inputs, Outputs } from '../GraphProcessor';
+import { coerceType, coerceTypeOptional, inferType } from '../../utils/coerceType.js';
+import { Inputs, Outputs } from '../GraphProcessor.js';
 
 export type JoinNode = ChartNode<'join', JoinNodeData>;
 

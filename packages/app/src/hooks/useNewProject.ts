@@ -1,8 +1,8 @@
 import { useSetRecoilState } from 'recoil';
-import { loadedProjectState, projectState } from '../state/savedGraphs';
+import { loadedProjectState, projectState } from '../state/savedGraphs.js';
 import { nanoid } from 'nanoid';
 import { Project, ProjectId, emptyNodeGraph } from '@ironclad/rivet-core';
-import { graphState } from '../state/graph';
+import { graphState } from '../state/graph.js';
 
 export function blankProject(): Project {
   return {

@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import { projectGraphInfoState } from '../state/savedGraphs';
+import { projectGraphInfoState } from '../state/savedGraphs.js';
 import { useRecoilValue } from 'recoil';
-import { values } from '../utils/typeSafety';
-import { ContextMenuItem } from './useContextMenuConfiguration';
+import { values } from '../utils/typeSafety.js';
+import { ContextMenuItem } from './useContextMenuConfiguration.js';
 
 export function useContextMenuCommands() {
   const projectInfo = useRecoilValue(projectGraphInfoState);

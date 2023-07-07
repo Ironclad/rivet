@@ -1,9 +1,9 @@
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { DataValue, ArrayDataValue, StringDataValue } from '../DataValue';
+import { DataValue, ArrayDataValue, StringDataValue } from '../DataValue.js';
 import { zip } from 'lodash-es';
-import { Outputs, Inputs, expectType } from '../..';
+import { Outputs, Inputs, expectType } from '../../index.js';
 
 export type UserInputNode = ChartNode<'userInput', UserInputNodeData>;
 

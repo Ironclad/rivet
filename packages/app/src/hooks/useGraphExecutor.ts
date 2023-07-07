@@ -15,7 +15,7 @@ import {
   GraphOutputs,
 } from '@ironclad/rivet-core';
 import { runTrivet } from '@ironclad/trivet'
-import { TauriNativeApi } from '../model/native/TauriNativeApi';
+import { TauriNativeApi } from '../model/native/TauriNativeApi.js';
 import {
   lastRunDataByNodeState,
   runningGraphsState,
@@ -24,15 +24,15 @@ import {
   graphPausedState,
   selectedProcessPageNodesState,
 } from '../state/dataFlow';
-import { loadedRecordingState, selectedExecutorState } from '../state/execution';
-import { graphState } from '../state/graph';
-import { projectState } from '../state/savedGraphs';
-import { settingsState } from '../state/settings';
-import { userInputModalQuestionsState, userInputModalSubmitState, ProcessQuestions } from '../state/userInput';
-import { useExecutorSidecar } from './useExecutorSidecar';
-import { useRemoteDebugger, setCurrentDebuggerMessageHandler } from './useRemoteDebugger';
-import { useSaveCurrentGraph } from './useSaveCurrentGraph';
-import { useStableCallback } from './useStableCallback';
+import { loadedRecordingState, selectedExecutorState } from '../state/execution.js';
+import { graphState } from '../state/graph.js';
+import { projectState } from '../state/savedGraphs.js';
+import { settingsState } from '../state/settings.js';
+import { userInputModalQuestionsState, userInputModalSubmitState, ProcessQuestions } from '../state/userInput.js';
+import { useExecutorSidecar } from './useExecutorSidecar.js';
+import { useRemoteDebugger, setCurrentDebuggerMessageHandler } from './useRemoteDebugger.js';
+import { useSaveCurrentGraph } from './useSaveCurrentGraph.js';
+import { useStableCallback } from './useStableCallback.js';
 
 export function useGraphExecutor() {
   const graph = useRecoilValue(graphState);

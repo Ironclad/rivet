@@ -7,7 +7,7 @@ import {
   VectorDataValue,
   VectorDatabase,
   coerceType,
-} from '../../core';
+} from '@ironclad/rivet-core';
 import { nanoid } from 'nanoid';
 
 export class PineconeVectorDatabase implements VectorDatabase {

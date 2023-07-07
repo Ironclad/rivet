@@ -1,10 +1,10 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
-import { DataValue } from '../DataValue';
+import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { DataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
-import { Inputs, Outputs } from '../GraphProcessor';
-import { coerceType } from '../../utils/coerceType';
-import { InternalProcessContext } from '../ProcessContext';
+import { Inputs, Outputs } from '../GraphProcessor.js';
+import { coerceType } from '../../utils/coerceType.js';
+import { InternalProcessContext } from '../ProcessContext.js';
 
 export type WaitForEventNode = ChartNode<'waitForEvent', WaitForEventNodeData>;
 

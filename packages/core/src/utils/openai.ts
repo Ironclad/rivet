@@ -1,5 +1,5 @@
-import fetchEventSource from './fetchEventSource';
-import { SupportedModels } from './tokenizer';
+import fetchEventSource from './fetchEventSource.js';
+import { SupportedModels } from './tokenizer.js';
 
 // https://github.com/openai/openai-node/issues/18#issuecomment-1518715285
 

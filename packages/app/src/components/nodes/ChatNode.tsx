@@ -1,14 +1,14 @@
 import { FC, useMemo } from 'react';
 import { css } from '@emotion/react';
-import { RenderDataValue } from '../RenderDataValue';
+import { RenderDataValue } from '../RenderDataValue.js';
 import { ChatNode, Outputs, PortId, coerceTypeOptional, inferType, isArrayDataValue } from '@ironclad/rivet-core';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 import styled from '@emotion/styled';
 import Toggle from '@atlaskit/toggle';
 import { useToggle } from 'ahooks';
 import { marked } from 'marked';
 import clsx from 'clsx';
-import { useMarkdown } from '../../hooks/useMarkdown';
+import { useMarkdown } from '../../hooks/useMarkdown.js';
 
 type ChatNodeBodyProps = {
   node: ChatNode;

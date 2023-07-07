@@ -1,7 +1,7 @@
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
+import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { Inputs, Outputs } from '../GraphProcessor';
+import { Inputs, Outputs } from '../GraphProcessor.js';
 
 export type PassthroughNode = ChartNode<'passthrough', PassthroughNodeData>;
 

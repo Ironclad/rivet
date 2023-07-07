@@ -1,10 +1,10 @@
-import { ChartNode, NodeId, NodeOutputDefinition, PortId, NodeInputDefinition } from '../NodeBase';
+import { ChartNode, NodeId, NodeOutputDefinition, PortId, NodeInputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
-import { Inputs, Outputs } from '../GraphProcessor';
-import { InternalProcessContext } from '../ProcessContext';
-import { coerceTypeOptional } from '../..';
-import dedent from 'ts-dedent';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { Inputs, Outputs } from '../GraphProcessor.js';
+import { InternalProcessContext } from '../ProcessContext.js';
+import { coerceTypeOptional } from '../../index.js';
+import { dedent } from 'ts-dedent';
 
 export type AbortGraphNode = ChartNode<'abortGraph', AbortGraphNodeData>;
 

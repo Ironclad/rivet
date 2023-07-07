@@ -3,9 +3,9 @@ import { produce } from 'immer';
 import { useCallback } from 'react';
 import { ChartNode, NodeId } from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { canvasPositionState, draggingNodesState, selectedNodesState } from '../state/graphBuilder';
-import { isNotNull } from '../utils/genericUtilFunctions';
-import { nodesByIdState, nodesState } from '../state/graph';
+import { canvasPositionState, draggingNodesState, selectedNodesState } from '../state/graphBuilder.js';
+import { isNotNull } from '../utils/genericUtilFunctions.js';
+import { nodesByIdState, nodesState } from '../state/graph.js';
 
 export const useDraggingNode = (onNodesChanged: (nodes: ChartNode[]) => void) => {
   const selectedNodeIds = useRecoilValue(selectedNodesState);

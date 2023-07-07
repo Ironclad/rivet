@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { ChartNode, NodeConnection, NodeId, PortId, SerializedNode } from './NodeBase';
+import { ChartNode, NodeConnection, NodeId, PortId, SerializedNode } from './NodeBase.js';
 import { Opaque } from 'type-fest';
 
 export type GraphId = Opaque<string, 'GraphId'>;

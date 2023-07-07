@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { GetGlobalNode } from '@ironclad/rivet-core';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 
 export const GetGlobalNodeBody: FC<{
   node: GetGlobalNode;

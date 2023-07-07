@@ -1287,49 +1287,49 @@ data:
         yQD0z-eBeqo0Hmb0yhZ05:
           data:
             text: >
-              import { ChartNode } from './NodeBase';
+              import { ChartNode } from './NodeBase.js';
 
-              import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode';
+              import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode.js';
 
-              import { NodeImpl } from './NodeImpl';
+              import { NodeImpl } from './NodeImpl.js';
 
-              import { TextNode, TextNodeImpl } from './nodes/TextNode';
+              import { TextNode, TextNodeImpl } from './nodes/TextNode.js';
 
-              import { ChatNode, ChatNodeImpl } from './nodes/ChatNode';
+              import { ChatNode, ChatNodeImpl } from './nodes/ChatNode.js';
 
-              import { PromptNode, PromptNodeImpl } from './nodes/PromptNode';
+              import { PromptNode, PromptNodeImpl } from './nodes/PromptNode.js';
 
               import { match } from 'ts-pattern';
 
-              import { ExtractRegexNode, ExtractRegexNodeImpl } from './nodes/ExtractRegexNode';
+              import { ExtractRegexNode, ExtractRegexNodeImpl } from './nodes/ExtractRegexNode.js';
 
-              import { CodeNode, CodeNodeImpl } from './nodes/CodeNode';
+              import { CodeNode, CodeNodeImpl } from './nodes/CodeNode.js';
 
-              import { MatchNode, MatchNodeImpl } from './nodes/MatchNode';
+              import { MatchNode, MatchNodeImpl } from './nodes/MatchNode.js';
 
-              import { IfNode, IfNodeImpl } from './nodes/IfNode';
+              import { IfNode, IfNodeImpl } from './nodes/IfNode.js';
 
-              import { ReadDirectoryNode, ReadDirectoryNodeImpl } from './nodes/ReadDirectoryNode';
+              import { ReadDirectoryNode, ReadDirectoryNodeImpl } from './nodes/ReadDirectoryNode.js';
 
-              import { ReadFileNode, ReadFileNodeImpl } from './nodes/ReadFileNode';
+              import { ReadFileNode, ReadFileNodeImpl } from './nodes/ReadFileNode.js';
 
-              import { IfElseNode, IfElseNodeImpl } from './nodes/IfElseNode';
+              import { IfElseNode, IfElseNodeImpl } from './nodes/IfElseNode.js';
 
-              import { ChunkNode, ChunkNodeImpl } from './nodes/ChunkNode';
+              import { ChunkNode, ChunkNodeImpl } from './nodes/ChunkNode.js';
 
-              import { GraphInputNode, GraphInputNodeImpl } from './nodes/GraphInputNode';
+              import { GraphInputNode, GraphInputNodeImpl } from './nodes/GraphInputNode.js';
 
-              import { GraphOutputNode, GraphOutputNodeImpl } from './nodes/GraphOutputNode';
+              import { GraphOutputNode, GraphOutputNodeImpl } from './nodes/GraphOutputNode.js';
 
-              import { SubGraphNode, SubGraphNodeImpl } from './nodes/SubGraphNode';
+              import { SubGraphNode, SubGraphNodeImpl } from './nodes/SubGraphNode.js';
 
-              import { ArrayNode, ArrayNodeImpl } from './nodes/ArrayNode';
+              import { ArrayNode, ArrayNodeImpl } from './nodes/ArrayNode.js';
 
-              import { ExtractJsonNode, ExtractJsonNodeImpl } from './nodes/ExtractJsonNode';
+              import { ExtractJsonNode, ExtractJsonNodeImpl } from './nodes/ExtractJsonNode.js';
 
-              import { AssemblePromptNode, AssemblePromptNodeImpl } from './nodes/AssemblePromptNode';
+              import { AssemblePromptNode, AssemblePromptNodeImpl } from './nodes/AssemblePromptNode.js';
 
-              import { LoopControllerNode, LoopControllerNodeImpl } from './nodes/LoopControllerNode';
+              import { LoopControllerNode, LoopControllerNodeImpl } from './nodes/LoopControllerNode.js';
 
 
               export type Nodes =
@@ -1723,19 +1723,19 @@ data:
             text: >
               import { max, range, uniqBy } from 'lodash-es';
 
-              import { ControlFlowExcluded } from '../utils/symbols';
+              import { ControlFlowExcluded } from '../utils/symbols.js';
 
-              import { DataValue, ArrayDataValue, AnyDataValue, StringDataValue, expectType, ScalarDataValue } from './DataValue';
+              import { DataValue, ArrayDataValue, AnyDataValue, StringDataValue, expectType, ScalarDataValue } from './DataValue.js';
 
-              import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
+              import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase.js';
 
-              import { NodeGraph } from './NodeGraph';
+              import { NodeGraph } from './NodeGraph.js';
 
-              import { NodeImpl, ProcessContext } from './NodeImpl';
+              import { NodeImpl, ProcessContext } from './NodeImpl.js';
 
-              import { Nodes, createNodeInstance } from './Nodes';
+              import { Nodes, createNodeInstance } from './Nodes.js';
 
-              import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode';
+              import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode.js';
 
 
               export type NodeResults = Map<string, Record<PortId, DataValue>>;

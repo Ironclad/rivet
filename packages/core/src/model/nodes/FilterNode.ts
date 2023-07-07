@@ -1,8 +1,8 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
+import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
-import { Inputs, Outputs } from '../GraphProcessor';
-import { DataValue, coerceType } from '../..';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { Inputs, Outputs } from '../GraphProcessor.js';
+import { DataValue, coerceType } from '../../index.js';
 import { zip } from 'lodash-es';
 
 export type FilterNode = ChartNode<'filter', FilterNodeData>;

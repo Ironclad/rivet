@@ -11,8 +11,8 @@ import {
   promptDesignerState,
   promptDesignerTestGroupResultsByNodeIdState,
 } from '../state/promptDesigner';
-import { nodesByIdState, nodesState } from '../state/graph';
-import { lastRunDataByNodeState } from '../state/dataFlow';
+import { nodesByIdState, nodesState } from '../state/graph.js';
+import { lastRunDataByNodeState } from '../state/dataFlow.js';
 import {
   ChatMessage,
   ChatNode,
@@ -40,13 +40,13 @@ import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import Select from '@atlaskit/select';
 import Toggle from '@atlaskit/toggle';
 import { nanoid } from 'nanoid';
-import { TauriNativeApi } from '../model/native/TauriNativeApi';
-import { settingsState } from '../state/settings';
-import { GraphSelector } from './DefaultNodeEditor';
+import { TauriNativeApi } from '../model/native/TauriNativeApi.js';
+import { settingsState } from '../state/settings.js';
+import { GraphSelector } from './DefaultNodeEditor.js';
 import TextArea from '@atlaskit/textarea';
-import { projectState } from '../state/savedGraphs';
+import { projectState } from '../state/savedGraphs.js';
 import { cloneDeep, findIndex, mapValues, range, zip } from 'lodash-es';
-import { useStableCallback } from '../hooks/useStableCallback';
+import { useStableCallback } from '../hooks/useStableCallback.js';
 import { toast } from 'react-toastify';
 import { produce } from 'immer';
 

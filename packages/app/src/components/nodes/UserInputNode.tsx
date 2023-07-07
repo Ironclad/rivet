@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Outputs, PortId, UserInputNode, expectType } from '@ironclad/rivet-core';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 
 export type UserInputNodeBodyProps = {
   node: UserInputNode;

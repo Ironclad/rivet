@@ -1,11 +1,11 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
-import { AnyDataValue, ArrayDataValue } from '../DataValue';
+import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { AnyDataValue, ArrayDataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
-import { Inputs, Outputs } from '../GraphProcessor';
-import { coerceType } from '../../utils/coerceType';
-import { getError } from '../../utils/errors';
-import { InternalProcessContext } from '../ProcessContext';
+import { Inputs, Outputs } from '../GraphProcessor.js';
+import { coerceType } from '../../utils/coerceType.js';
+import { getError } from '../../utils/errors.js';
+import { InternalProcessContext } from '../ProcessContext.js';
 
 export type ExternalCallNode = ChartNode<'externalCall', ExternalCallNodeData>;
 

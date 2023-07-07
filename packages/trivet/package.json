@@ -1,11 +1,40 @@
 {
   "name": "@ironclad/trivet",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "repository": "https://github.com/ironclad/rivet",
+  "version": "0.10.0",
+  "main": "dist/cjs/bundle.cjs",
+  "module": "dist/esm/index.js",
   "src": "src/index.ts",
+  "types": "dist/types/index.d.ts",
+  "type": "module",
+  "exports": {
+    "node": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/bundle.cjs"
+    },
+    "browser": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/bundle.cjs"
+    },
+    "default": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/bundle.cjs"
+    }
+  },
+  "files": [
+    "dist/cjs/**",
+    "dist/esm/**",
+    "dist/types/**"
+  ],
   "scripts": {
-    "build": "tsc"
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "rm -rf dist/esm dist/types dist/tsconfig.tsbuildinfo && tsc -b --verbose",
+    "build:cjs": "rm -rf dist/cjs && tsx ../core/bundle.esbuild.ts",
+    "prepublishOnly": "yarn build && cp -r ../../LICENSE ../../README.md .",
+    "publish": "yarn npm publish"
   },
   "dependencies": {
     "@ironclad/rivet-core": "workspace:^",
@@ -17,6 +46,10 @@
     "@types/node": "^20.4.0",
     "clipanion": "^3.2.1",
     "ts-node": "^10.9.1",
+    "tsx": "^3.12.7",
     "typescript": "^5.1.3"
+  },
+  "volta": {
+    "node": "20.4.0"
   }
 }

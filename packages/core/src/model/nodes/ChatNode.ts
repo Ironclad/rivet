@@ -1,7 +1,7 @@
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
+import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
-import { ChatMessage, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { ChatMessage, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue.js';
 import {
   assertValidModel,
   getCostForPrompt,
@@ -10,21 +10,21 @@ import {
   getTokenCountForString,
   modelOptions,
   openaiModels,
-} from '../../utils/tokenizer';
-import { addWarning } from '../../utils/outputs';
+} from '../../utils/tokenizer.js';
+import { addWarning } from '../../utils/outputs.js';
 import {
   ChatCompletionFunction,
   ChatCompletionOptions,
   ChatCompletionRequestMessage,
   OpenAIError,
   streamChatCompletions,
-} from '../../utils/openai';
+} from '../../utils/openai.js';
 import retry from 'p-retry';
-import { Inputs, Outputs } from '../GraphProcessor';
+import { Inputs, Outputs } from '../GraphProcessor.js';
 import { match } from 'ts-pattern';
-import { coerceType, coerceTypeOptional } from '../../utils/coerceType';
-import { InternalProcessContext } from '../ProcessContext';
-import { expectTypeOptional, getError } from '../..';
+import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
+import { InternalProcessContext } from '../ProcessContext.js';
+import { expectTypeOptional, getError } from '../../index.js';
 import { merge } from 'lodash-es';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;

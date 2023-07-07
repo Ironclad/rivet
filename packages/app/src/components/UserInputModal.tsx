@@ -1,15 +1,15 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { ArrayDataValue, StringDataValue } from '@ironclad/rivet-core';
-import { lastAnswersState } from '../state/userInput';
+import { lastAnswersState } from '../state/userInput.js';
 import Modal, { ModalBody, ModalFooter, ModalHeader, ModalTitle, ModalTransition } from '@atlaskit/modal-dialog';
 import Button from '@atlaskit/button';
 import { Field } from '@atlaskit/form';
 import { css } from '@emotion/react';
 import { marked } from 'marked';
-import { CodeEditor } from './CodeEditor';
-import { monaco } from '../utils/monaco';
-import { useMarkdown } from '../hooks/useMarkdown';
+import { CodeEditor } from './CodeEditor.js';
+import { monaco } from '../utils/monaco.js';
+import { useMarkdown } from '../hooks/useMarkdown.js';
 
 const styles = css`
   .question {

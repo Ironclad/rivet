@@ -1,8 +1,8 @@
-import { Inputs, Outputs } from './GraphProcessor';
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition } from './NodeBase';
-import { Project } from './Project';
-import { InternalProcessContext } from './ProcessContext';
-import { DataType } from '..';
+import { Inputs, Outputs } from './GraphProcessor.js';
+import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition } from './NodeBase.js';
+import { Project } from './Project.js';
+import { InternalProcessContext } from './ProcessContext.js';
+import { DataType } from '../index.js';
 
 export interface Settings {
   openAiKey: string;

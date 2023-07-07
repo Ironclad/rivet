@@ -1,10 +1,10 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
+import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
-import { DataType, DataValue, getDefaultValue, isArrayDataType } from '../DataValue';
-import { GraphInputs, Inputs, Outputs } from '../GraphProcessor';
-import { InternalProcessContext } from '../ProcessContext';
-import { coerceTypeOptional, inferType } from '../..';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { DataType, DataValue, getDefaultValue, isArrayDataType } from '../DataValue.js';
+import { GraphInputs, Inputs, Outputs } from '../GraphProcessor.js';
+import { InternalProcessContext } from '../ProcessContext.js';
+import { coerceTypeOptional, inferType } from '../../index.js';
 
 export type GraphInputNode = ChartNode<'graphInput', GraphInputNodeData>;
 

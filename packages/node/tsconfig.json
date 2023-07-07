@@ -1,29 +1,20 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "commonjs",
-    "isolatedModules": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "@emotion/react",
-    "noUncheckedIndexedAccess": true,
-    "composite": true,
-    "outDir": "dist",
-    "rootDir": "src"
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "dist/esm",
+    "rootDir": "src",
+    "declarationDir": "dist/types",
+    "allowSyntheticDefaultImports": false,
+    "esModuleInterop": false
   },
   "include": ["src"],
   "ts-node": {
     "swc": true,
-    "compilerOptions": {
-      "module": "CommonJS"
-    }
+    "experimentalResolver": true,
+    "experimentalSpecifierResolution": "node",
+    "compilerOptions": {}
   },
   "references": [{ "path": "../core" }]
 }

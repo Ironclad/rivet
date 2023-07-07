@@ -1,8 +1,8 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
+import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
-import { DataValue } from '../DataValue';
-import { expectType } from '../..';
+import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { DataValue } from '../DataValue.js';
+import { expectType } from '../../index.js';
 
 export type ExtractJsonNode = ChartNode<'extractJson', ExtractJsonNodeData>;
 

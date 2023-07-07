@@ -34,3 +34,5 @@ packages/app-executor/bin/executor-bundle.js
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+.turbo

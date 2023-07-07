@@ -1,4 +1,4 @@
-import { ChartNode, NodeImplConstructor, NodeDefinition, NodeImpl } from '..';
+import { ChartNode, NodeImplConstructor, NodeDefinition, NodeImpl } from '../index.js';
 
 export class NodeRegistration<
   NodeTypes extends string = never,

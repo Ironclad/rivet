@@ -1,5 +1,5 @@
 import { encoding_for_model, TiktokenModel } from '@dqbd/tiktoken';
-import { ChatCompletionRequestMessage } from './openai';
+import { ChatCompletionRequestMessage } from './openai.js';
 
 type OpenAIModel = {
   maxTokens: number;

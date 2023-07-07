@@ -1,10 +1,10 @@
-import { ChartNode, NodeId, PortId, NodeInputDefinition, NodeOutputDefinition } from '../../model/NodeBase';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../../model/NodeImpl';
-import { DataValue } from '../../model/DataValue';
-import { SupportedModels, getTokenCountForMessages, modelOptions, openaiModels } from '../../utils/tokenizer';
+import { ChartNode, NodeId, PortId, NodeInputDefinition, NodeOutputDefinition } from '../../model/NodeBase.js';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../../model/NodeImpl.js';
+import { DataValue } from '../../model/DataValue.js';
+import { SupportedModels, getTokenCountForMessages, modelOptions, openaiModels } from '../../utils/tokenizer.js';
 import { nanoid } from 'nanoid';
-import { Inputs, Outputs, expectType } from '../..';
-import { ChatCompletionRequestMessage } from '../../utils/openai';
+import { Inputs, Outputs, expectType } from '../../index.js';
+import { ChatCompletionRequestMessage } from '../../utils/openai.js';
 
 export type TrimChatMessagesNodeData = {
   maxTokenCount: number;
@@ -101,7 +101,11 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
       }
       tokenCount = getTokenCountForMessages(
         trimmedMessages.map(
-          (message): ChatCompletionRequestMessage => ({ content: message.message, role: message.type, function_call: message.function_call }),
+          (message): ChatCompletionRequestMessage => ({
+            content: message.message,
+            role: message.type,
+            function_call: message.function_call,
+          }),
         ),
         tiktokenModel,
       );

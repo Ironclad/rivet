@@ -5,17 +5,17 @@ import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.s
 import { ReactComponent as PauseIcon } from 'majesticons/line/pause-circle-line.svg';
 import { ReactComponent as PlayIcon } from 'majesticons/line/play-circle-line.svg';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { graphRunningState, graphPausedState } from '../state/dataFlow';
+import { graphRunningState, graphPausedState } from '../state/dataFlow.js';
 import clsx from 'clsx';
-import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
-import { DebuggerConnectPanel } from './DebuggerConnectPanel';
+import { useRemoteDebugger } from '../hooks/useRemoteDebugger.js';
+import { DebuggerConnectPanel } from './DebuggerConnectPanel.js';
 import Select from '@atlaskit/select';
-import { loadedRecordingState, selectedExecutorState } from '../state/execution';
-import { promptDesignerState } from '../state/promptDesigner';
-import { useGlobalShortcut } from '../hooks/useGlobalShortcut';
-import { useLoadRecording } from '../hooks/useLoadRecording';
-import { useRunMenuCommand } from '../hooks/useMenuCommands';
-import { isInTauri } from '../utils/tauri';
+import { loadedRecordingState, selectedExecutorState } from '../state/execution.js';
+import { promptDesignerState } from '../state/promptDesigner.js';
+import { useGlobalShortcut } from '../hooks/useGlobalShortcut.js';
+import { useLoadRecording } from '../hooks/useLoadRecording.js';
+import { useRunMenuCommand } from '../hooks/useMenuCommands.js';
+import { isInTauri } from '../utils/tauri.js';
 
 const styles = css`
   display: flex;

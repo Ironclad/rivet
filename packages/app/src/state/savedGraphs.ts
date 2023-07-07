@@ -1,9 +1,9 @@
 import { DefaultValue, atom, selector } from 'recoil';
 import { nanoid } from 'nanoid';
-import { entries, values } from '../utils/typeSafety';
+import { entries, values } from '../utils/typeSafety.js';
 import { produce } from 'immer';
 import { GraphId, NodeGraph, Project, ProjectId } from '@ironclad/rivet-core';
-import { blankProject } from '../hooks/useNewProject';
+import { blankProject } from '../hooks/useNewProject.js';
 import { recoilPersist } from 'recoil-persist';
 
 const { persistAtom } = recoilPersist({ key: 'project' });

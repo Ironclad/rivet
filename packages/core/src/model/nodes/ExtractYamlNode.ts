@@ -1,10 +1,10 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
+import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
-import { DataValue } from '../DataValue';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { DataValue } from '../DataValue.js';
 // @ts-ignore
 import yaml from 'yaml';
-import { expectType } from '../../utils/expectType';
+import { expectType } from '../../utils/expectType.js';
 import { JSONPath } from 'jsonpath-plus';
 
 export type ExtractYamlNode = ChartNode<'extractYaml', ExtractYamlNodeData>;

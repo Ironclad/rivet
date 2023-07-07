@@ -1,9 +1,9 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { loadedProjectState, projectState } from '../state/savedGraphs';
-import { useSaveCurrentGraph } from './useSaveCurrentGraph';
+import { loadedProjectState, projectState } from '../state/savedGraphs.js';
+import { useSaveCurrentGraph } from './useSaveCurrentGraph.js';
 import { produce } from 'immer';
 import { toast } from 'react-toastify';
-import { ioProvider } from '../utils/globals';
+import { ioProvider } from '../utils/globals.js';
 
 export function useSaveProject() {
   const saveGraph = useSaveCurrentGraph();

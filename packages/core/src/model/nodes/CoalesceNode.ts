@@ -1,9 +1,9 @@
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
-import { DataValue } from '../DataValue';
+import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
+import { DataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
-import { coerceType } from '../../utils/coerceType';
-import { Inputs, Outputs } from '../GraphProcessor';
+import { coerceType } from '../../utils/coerceType.js';
+import { Inputs, Outputs } from '../GraphProcessor.js';
 
 export type CoalesceNode = ChartNode<'coalesce', CoalesceNodeData>;
 

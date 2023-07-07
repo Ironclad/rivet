@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
-import { useStableCallback } from './useStableCallback';
-import { selectedNodesState } from '../state/graphBuilder';
-import { connectionsState, nodesByIdState } from '../state/graph';
+import { useStableCallback } from './useStableCallback.js';
+import { selectedNodesState } from '../state/graphBuilder.js';
+import { connectionsState, nodesByIdState } from '../state/graph.js';
 import { max, min, uniqBy } from 'lodash-es';
 import {
   ChartNode,
@@ -14,10 +14,10 @@ import {
   createUnknownNodeInstance,
   emptyNodeGraph,
 } from '@ironclad/rivet-core';
-import { projectState } from '../state/savedGraphs';
-import { isNotNull } from '../utils/genericUtilFunctions';
+import { projectState } from '../state/savedGraphs.js';
+import { isNotNull } from '../utils/genericUtilFunctions.js';
 import { nanoid } from 'nanoid';
-import { useLoadGraph } from './useLoadGraph';
+import { useLoadGraph } from './useLoadGraph.js';
 
 export function useFactorIntoSubgraph() {
   const project = useRecoilValue(projectState);

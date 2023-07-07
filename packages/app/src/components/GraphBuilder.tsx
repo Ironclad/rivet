@@ -1,13 +1,13 @@
 import { FC, useEffect, useMemo, useState } from 'react';
-import { NodeCanvas } from './NodeCanvas';
+import { NodeCanvas } from './NodeCanvas.js';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { connectionsState, nodesByIdState } from '../state/graph';
-import { nodesState } from '../state/graph';
-import { editingNodeState, selectedNodesState } from '../state/graphBuilder';
-import { NodeEditorRenderer } from './NodeEditor';
+import { connectionsState, nodesByIdState } from '../state/graph.js';
+import { nodesState } from '../state/graph.js';
+import { editingNodeState, selectedNodesState } from '../state/graphBuilder.js';
+import { NodeEditorRenderer } from './NodeEditor.js';
 import styled from '@emotion/styled';
-import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
-import { useStableCallback } from '../hooks/useStableCallback';
+import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
+import { useStableCallback } from '../hooks/useStableCallback.js';
 import {
   ArrayDataValue,
   ChartNode,
@@ -18,17 +18,17 @@ import {
   StringDataValue,
   nodeFactory,
 } from '@ironclad/rivet-core';
-import { ProcessQuestions, userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
-import { entries } from '../utils/typeSafety';
-import { UserInputModal } from './UserInputModal';
+import { ProcessQuestions, userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput.js';
+import { entries } from '../utils/typeSafety.js';
+import { UserInputModal } from './UserInputModal.js';
 import Button from '@atlaskit/button';
-import { isNotNull } from '../utils/genericUtilFunctions';
-import { useFactorIntoSubgraph } from '../hooks/useFactorIntoSubgraph';
+import { isNotNull } from '../utils/genericUtilFunctions.js';
+import { useFactorIntoSubgraph } from '../hooks/useFactorIntoSubgraph.js';
 import { ErrorBoundary } from 'react-error-boundary';
-import { loadedRecordingState } from '../state/execution';
-import { useLoadGraph } from '../hooks/useLoadGraph';
-import { projectState } from '../state/savedGraphs';
-import { ContextMenuContext } from './ContextMenu';
+import { loadedRecordingState } from '../state/execution.js';
+import { useLoadGraph } from '../hooks/useLoadGraph.js';
+import { projectState } from '../state/savedGraphs.js';
+import { ContextMenuContext } from './ContextMenu.js';
 
 const Container = styled.div`
   position: relative;

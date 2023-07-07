@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { RaiseEventNode } from '@ironclad/rivet-core';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 
 export type RaiseEventNodeBodyProps = {
   node: RaiseEventNode;

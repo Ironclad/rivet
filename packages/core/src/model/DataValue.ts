@@ -1,4 +1,4 @@
-import { exhaustiveTuple } from '../utils/genericUtilFunctions';
+import { exhaustiveTuple } from '../utils/genericUtilFunctions.js';
 
 export type DataValueDef<Type extends string, RuntimeType> = {
   type: Type;

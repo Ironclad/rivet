@@ -5,7 +5,7 @@ import svgr from 'vite-plugin-svgr';
 import monacoEditorPlugin from 'vite-plugin-monaco-editor';
 import wasm from 'vite-plugin-wasm';
 import topLevelAwait from 'vite-plugin-top-level-await';
-import { dirname } from 'node:path';
+import { dirname, resolve } from 'node:path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -16,8 +16,8 @@ export default defineConfig({
     preserveSymlinks: true,
 
     alias: {
-      '@ironclad/rivet-core': dirname(require.resolve('@ironclad/rivet-core/src/index.ts')),
-      '@ironclad/trivet': dirname(require.resolve('@ironclad/trivet/src/index.ts')),
+      '@ironclad/rivet-core': resolve('../core/src/index.ts'),
+      '@ironclad/trivet': resolve('../trivet/src/index.ts'),
     },
   },
   plugins: [

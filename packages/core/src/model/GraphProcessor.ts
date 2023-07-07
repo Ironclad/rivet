@@ -1,5 +1,5 @@
-import { mapValues, max, range, uniqBy } from 'lodash-es';
-import { ControlFlowExcluded, ControlFlowExcludedPort } from '../utils/symbols';
+import { max, range, uniqBy } from 'lodash-es';
+import { ControlFlowExcluded, ControlFlowExcludedPort } from '../utils/symbols.js';
 import {
   DataValue,
   ArrayDataValue,
@@ -10,21 +10,21 @@ import {
   arrayizeDataValue,
   ScalarOrArrayDataValue,
   getScalarTypeOf,
-} from './DataValue';
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase';
-import { GraphId, NodeGraph } from './NodeGraph';
-import { NodeImpl } from './NodeImpl';
-import { NodeType, Nodes, createUnknownNodeInstance } from './Nodes';
-import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode';
+} from './DataValue.js';
+import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase.js';
+import { GraphId, NodeGraph } from './NodeGraph.js';
+import { NodeImpl } from './NodeImpl.js';
+import { NodeType, Nodes, createUnknownNodeInstance } from './Nodes.js';
+import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode.js';
 import PQueue from 'p-queue';
-import { getError } from '../utils/errors';
+import { getError } from '../utils/errors.js';
 import Emittery from 'emittery';
-import { entries, fromEntries, values } from '../utils/typeSafety';
-import { isNotNull } from '../utils/genericUtilFunctions';
-import { Project } from './Project';
+import { entries, fromEntries, values } from '../utils/typeSafety.js';
+import { isNotNull } from '../utils/genericUtilFunctions.js';
+import { Project } from './Project.js';
 import { nanoid } from 'nanoid';
-import { InternalProcessContext, ProcessContext, ProcessId } from './ProcessContext';
-import { ExecutionRecorder } from '../recording/ExecutionRecorder';
+import { InternalProcessContext, ProcessContext, ProcessId } from './ProcessContext.js';
+import { ExecutionRecorder } from '../recording/ExecutionRecorder.js';
 import { P, match } from 'ts-pattern';
 import { Opaque } from 'type-fest';
 

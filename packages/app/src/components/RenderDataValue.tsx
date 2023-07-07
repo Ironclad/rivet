@@ -11,7 +11,7 @@ import {
   isFunctionDataValue,
 } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
-import { keys } from '../utils/typeSafety';
+import { keys } from '../utils/typeSafety.js';
 
 const multiOutput = css`
   display: flex;

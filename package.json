@@ -1,5 +1,6 @@
 {
   "name": "@ironclad/rivet",
+  "repository": "https://github.com/ironclad/rivet",
   "packageManager": "yarn@4.0.0-rc.45",
   "workspaces": [
     "packages/*"
@@ -7,14 +8,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "yarn build-app-executor && yarn workspace @ironclad/rivet-app run dev",
+    "dev": "yarn workspace @ironclad/rivet-app-executor run build && yarn workspace @ironclad/rivet-app run dev",
     "release-node": "node --loader ts-node/esm --loader ./.pnp.loader.mjs release-node.mts",
     "publish-docs": "node --loader ts-node/esm --loader ./.pnp.loader.mjs publish-docs.mts",
-    "build-lib": "yarn workspace @ironclad/rivet-core run build && yarn workspace @ironclad/rivet-node run build && yarn workspace @ironclad/trivet run build",
-    "build-app-executor": "yarn workspace @ironclad/rivet-app-executor run build"
+    "build": "yarn workspace @ironclad/rivet-core run build && yarn workspace @ironclad/rivet-node run build && yarn workspace @ironclad/rivet-app-executor run build && yarn workspace @ironclad/rivet-app run build",
+    "publish": "yarn workspace @ironclad/rivet-core run publish && yarn workspace @ironclad/rivet-node run publish"
   },
   "devDependencies": {
-    "@swc/core": "^1.3.63",
+    "@swc/core": "^1.3.68",
     "@types/eslint": "^8.40.2",
     "@types/node": "^20.3.1",
     "@types/yargs": "^17.0.24",
@@ -31,7 +32,11 @@
     "jest-mock": "^28.1.0"
   },
   "volta": {
-    "node": "20.2.0",
+    "node": "20.4.0",
     "yarn": "3.5.0"
+  },
+  "dependencies": {
+    "@ironclad/rivet-core": "workspace:^",
+    "@ironclad/rivet-node": "workspace:^"
   }
 }
