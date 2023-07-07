@@ -425,7 +425,7 @@ export const DefaultNumberEditor: FC<{
           max={editor.max}
           step={editor.step}
           {...fieldProps}
-          value={(data[editor.dataKey] ?? editor.defaultValue) as number | undefined}
+          defaultValue={(data[editor.dataKey] ?? editor.defaultValue) as number | undefined}
           onChange={(e) =>
             onChange({
               ...node,

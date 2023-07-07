@@ -8,7 +8,6 @@ export type ObjectNode = ChartNode<'object', ObjectNodeData>;
 
 export type ObjectNodeData = {
   jsonTemplate: string;
-  removeEmpty: boolean;
 };
 
 const DEFAULT_JSON_TEMPLATE = `{
@@ -28,7 +27,6 @@ export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
       },
       data: {
         jsonTemplate: DEFAULT_JSON_TEMPLATE,
-        removeEmpty: false,
       },
     };
 
@@ -41,11 +39,10 @@ export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
     return (
       inputNames?.map((inputName) => {
         return {
-          type: 'string',
           // id and title should not have the {{ and }}
           id: inputName.slice(2, -2) as PortId,
           title: inputName.slice(2, -2),
-          dataType: 'string',
+          dataType: 'any',
           required: false,
         };
       }) ?? []
@@ -64,7 +61,6 @@ export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
 
   getEditors(): EditorDefinition<ObjectNode>[] {
     return [
-      { type: 'toggle', label: 'Remove Empty Properties?', dataKey: 'removeEmpty' },
       {
         type: 'code',
         label: 'JSON Template',
@@ -84,10 +80,10 @@ export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
 
   async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
     const inputMap = Object.keys(inputs).reduce((acc, key) => {
-      const stringValue = coerceTypeOptional(inputs[key], 'string') ?? undefined;
+      const stringValue = coerceTypeOptional(inputs[key], 'string');
 
       // Make string JSON-safe.
-      acc[key] = stringValue ? JSON.stringify(stringValue) : undefined;
+      acc[key] = stringValue != null ? JSON.stringify(stringValue) : undefined;
       return acc;
     }, {} as Record<string, string | undefined>);
 

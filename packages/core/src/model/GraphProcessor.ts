@@ -16,7 +16,7 @@ import { GraphId, NodeGraph } from './NodeGraph.js';
 import { NodeImpl } from './NodeImpl.js';
 import { NodeType, Nodes, createUnknownNodeInstance } from './Nodes.js';
 import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode.js';
-import PQueue from 'p-queue';
+import PQueueImport from 'p-queue';
 import { getError } from '../utils/errors.js';
 import Emittery from 'emittery';
 import { entries, fromEntries, values } from '../utils/typeSafety.js';
@@ -27,6 +27,12 @@ import { InternalProcessContext, ProcessContext, ProcessId } from './ProcessCont
 import { ExecutionRecorder } from '../recording/ExecutionRecorder.js';
 import { P, match } from 'ts-pattern';
 import { Opaque } from 'type-fest';
+
+// CJS compatibility, gets default.default for whatever reason
+let PQueue = PQueueImport;
+if (typeof PQueue !== 'function') {
+  PQueue = (PQueueImport as any).default;
+}
 
 export type ProcessEvents = {
   /** Called when processing has started. */
@@ -171,7 +177,7 @@ export class GraphProcessor {
   #context: ProcessContext = undefined!;
   #nodeResults: NodeResults = undefined!;
   #abortController: AbortController = undefined!;
-  #processingQueue: PQueue = undefined!;
+  #processingQueue: PQueueImport = undefined!;
   #graphInputs: GraphInputs = undefined!;
   #graphOutputs: GraphOutputs = undefined!;
   #executionCache: Map<string, unknown> = undefined!;

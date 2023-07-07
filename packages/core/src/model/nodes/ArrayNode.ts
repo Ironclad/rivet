@@ -59,6 +59,11 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
         id: 'indices' as PortId,
         title: 'Indices',
       },
+      {
+        dataType: 'number',
+        id: 'length' as PortId,
+        title: 'Length',
+      },
     ];
   }
 
@@ -121,6 +126,10 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
       ['indices' as PortId]: {
         type: 'number[]',
         value: outputArray.map((_, index) => index),
+      },
+      ['length' as PortId]: {
+        type: 'number',
+        value: outputArray.length,
       },
     };
   }
