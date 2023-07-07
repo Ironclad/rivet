@@ -169,6 +169,8 @@ export class GraphProcessor {
   /** The interval between nodeFinish events when playing back a recording. I.e. how fast the playback is. */
   recordingPlaybackChatLatency = 1000;
 
+  warnOnInvalidGraph = false;
+
   // Per-process state
   #erroredNodes: Map<NodeId, string> = undefined!;
   #remainingNodes: Set<NodeId> = undefined!;
@@ -226,12 +228,27 @@ export class GraphProcessor {
 
     // Store connections in a lookup table
     for (const conn of this.#graph.connections) {
-      if (!this.#connections[conn.inputNodeId]) {
-        this.#connections[conn.inputNodeId] = [];
+      if (!this.#nodesById[conn.inputNodeId] || !this.#nodesById[conn.outputNodeId]) {
+        if (this.warnOnInvalidGraph) {
+          if (!this.#nodesById[conn.inputNodeId]) {
+            console.warn(
+              `Missing node ${conn.inputNodeId} in graph ${graphId} (connection from ${
+                this.#nodesById[conn.outputNodeId]?.title
+              })`,
+            );
+          } else {
+            console.warn(
+              `Missing node ${conn.outputNodeId} in graph ${graphId} (connection to ${
+                this.#nodesById[conn.inputNodeId]?.title
+              }) `,
+            );
+          }
+        }
+        continue;
       }
-      if (!this.#connections[conn.outputNodeId]) {
-        this.#connections[conn.outputNodeId] = [];
-      }
+
+      this.#connections[conn.inputNodeId] ??= [];
+      this.#connections[conn.outputNodeId] ??= [];
       this.#connections[conn.inputNodeId]!.push(conn);
       this.#connections[conn.outputNodeId]!.push(conn);
     }
@@ -239,18 +256,62 @@ export class GraphProcessor {
     // Store input and output definitions in a lookup table
     this.#definitions = {};
     for (const node of this.#graph.nodes) {
-      this.#definitions[node.id] = {
-        inputs: this.#nodeInstances[node.id]!.getInputDefinitions(
-          this.#connections[node.id] ?? [],
-          this.#nodesById,
-          this.#project,
-        ),
-        outputs: this.#nodeInstances[node.id]!.getOutputDefinitions(
-          this.#connections[node.id] ?? [],
-          this.#nodesById,
-          this.#project,
-        ),
-      };
+      const connectionsForNode = this.#connections[node.id] ?? [];
+      const inputDefs = this.#nodeInstances[node.id]!.getInputDefinitions(
+        connectionsForNode,
+        this.#nodesById,
+        this.#project,
+      );
+
+      const outputDefs = this.#nodeInstances[node.id]!.getOutputDefinitions(
+        connectionsForNode,
+        this.#nodesById,
+        this.#project,
+      );
+
+      this.#definitions[node.id] = { inputs: inputDefs, outputs: outputDefs };
+
+      // Find all invalid connections to or from the node, then remove them from consideration
+      const invalidConnections = connectionsForNode.filter((connection) => {
+        if (connection.inputNodeId === node.id) {
+          const inputDef = inputDefs.find((def) => def.id === connection.inputId);
+
+          if (!inputDef) {
+            if (this.warnOnInvalidGraph) {
+              const nodeFrom = this.#nodesById[connection.outputNodeId];
+              console.warn(
+                `[Warn] Invalid connection going from "${nodeFrom?.title}".${connection.outputId} to "${node.title}".${connection.inputId}`,
+              );
+            }
+
+            return true;
+          }
+        } else {
+          const outputDef = outputDefs.find((def) => def.id === connection.outputId);
+
+          if (!outputDef) {
+            if (this.warnOnInvalidGraph) {
+              const nodeTo = this.#nodesById[connection.inputNodeId];
+              console.warn(
+                `[Warn] Invalid connection going from "${node.title}".${connection.outputId} to "${nodeTo?.title}".${connection.inputId}`,
+              );
+            }
+
+            return true;
+          }
+        }
+
+        return false;
+      });
+
+      for (const connections of values(this.#connections)) {
+        for (const invalidConnection of invalidConnections) {
+          const index = connections.indexOf(invalidConnection);
+          if (index !== -1) {
+            connections.splice(index, 1);
+          }
+        }
+      }
     }
 
     this.#scc = this.#tarjanSCC();
@@ -1392,9 +1453,9 @@ export class GraphProcessor {
       stack.push(node);
       onStack.set(node.id, true);
 
-      const connections = this.#connections[node.id];
-      connections?.forEach((conn) => {
-        const successor = this.#nodesById[conn.outputNodeId]!;
+      const outgoingConnections = this.#connections[node.id]?.filter((conn) => conn.outputNodeId === node.id);
+      for (const connection of outgoingConnections ?? []) {
+        const successor = this.#nodesById[connection.inputNodeId]!;
 
         if (!indices.has(successor.id)) {
           strongConnect(successor);
@@ -1402,7 +1463,7 @@ export class GraphProcessor {
         } else if (onStack.get(successor.id)) {
           lowLinks.set(node.id, Math.min(lowLinks.get(node.id)!, indices.get(successor.id)!));
         }
-      });
+      }
 
       if (lowLinks.get(node.id) === indices.get(node.id)) {
         const scc: Array<ChartNode> = [];
