@@ -1,10 +1,10 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { NodeGraph, emptyNodeGraph } from '@ironclad/rivet-core';
-import { graphState } from '../state/graph';
-import { useSaveCurrentGraph } from './useSaveCurrentGraph';
-import { canvasPositionState, sidebarOpenState } from '../state/graphBuilder';
-import { useStableCallback } from './useStableCallback';
-import { fitBoundsToViewport } from './useViewportBounds';
+import { graphState } from '../state/graph.js';
+import { useSaveCurrentGraph } from './useSaveCurrentGraph.js';
+import { canvasPositionState, sidebarOpenState } from '../state/graphBuilder.js';
+import { useStableCallback } from './useStableCallback.js';
+import { fitBoundsToViewport } from './useViewportBounds.js';
 
 export function useLoadGraph() {
   const [graph, setGraph] = useRecoilState(graphState);

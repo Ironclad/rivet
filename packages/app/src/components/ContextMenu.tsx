@@ -2,18 +2,18 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { FC, forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { useStableCallback } from '../hooks/useStableCallback';
+import { useStableCallback } from '../hooks/useStableCallback.js';
 import { useFloating, useMergeRefs, autoUpdate, shift, flip } from '@floating-ui/react';
 import {
   ContextMenuConfiguration,
   useContextMenuConfiguration,
   ContextMenuItem as ContextMenuConfigItem,
 } from '../hooks/useContextMenuConfiguration';
-import { useFuseSearch } from '../hooks/useFuseSearch';
+import { useFuseSearch } from '../hooks/useFuseSearch.js';
 import TextField from '@atlaskit/textfield';
 import { uniqBy } from 'lodash-es';
 import clsx from 'clsx';
-import { useMarkdown } from '../hooks/useMarkdown';
+import { useMarkdown } from '../hooks/useMarkdown.js';
 
 const menuReferenceStyles = css`
   position: absolute;

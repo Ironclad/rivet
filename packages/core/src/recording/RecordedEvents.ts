@@ -11,7 +11,7 @@ import {
   ProcessId,
   Outputs,
   StringArrayDataValue,
-} from '..';
+} from '../index.js';
 
 export type RecordingId = Opaque<string, 'RecordingId'>;
 

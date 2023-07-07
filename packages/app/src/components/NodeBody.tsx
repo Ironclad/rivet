@@ -1,5 +1,5 @@
 import { FC, memo, useMemo } from 'react';
-import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes';
+import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import { ChartNode, createUnknownNodeInstance } from '@ironclad/rivet-core';
 
 const UnknownNodeBody: FC<{ node: ChartNode }> = ({ node }) => {

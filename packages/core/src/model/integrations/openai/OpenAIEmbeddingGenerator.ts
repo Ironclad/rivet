@@ -1,5 +1,5 @@
-import { Settings } from '../../NodeImpl';
-import { EmbeddingGenerator } from '../EmbeddingGenerator';
+import { Settings } from '../../NodeImpl.js';
+import { EmbeddingGenerator } from '../EmbeddingGenerator.js';
 import * as openai from 'openai';
 
 export class OpenAIEmbeddingGenerator implements EmbeddingGenerator {

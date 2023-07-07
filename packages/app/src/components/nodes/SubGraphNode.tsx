@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { useRecoilValue } from 'recoil';
-import { projectState } from '../../state/savedGraphs';
+import { projectState } from '../../state/savedGraphs.js';
 import { SubGraphNode } from '@ironclad/rivet-core';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 
 export const SubGraphNodeBody: FC<{
   node: SubGraphNode;

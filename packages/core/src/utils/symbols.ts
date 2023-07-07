@@ -1,4 +1,4 @@
-import { PortId } from '../model/NodeBase';
+import { PortId } from '../model/NodeBase.js';
 
 export const ControlFlowExcluded = '__internalPort_ControlFlowExcluded';
 export const ControlFlowExcludedPort = ControlFlowExcluded as unknown as PortId;

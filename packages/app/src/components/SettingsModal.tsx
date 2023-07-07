@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { atom, useRecoilState } from 'recoil';
-import { settingsState } from '../state/settings';
+import { settingsState } from '../state/settings.js';
 import Modal, { ModalTransition, ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
 import TextField from '@atlaskit/textfield';
 import Button from '@atlaskit/button';

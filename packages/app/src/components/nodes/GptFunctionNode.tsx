@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { GptFunctionNode } from '@ironclad/rivet-core';
 import styled from '@emotion/styled';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 
 export type GptFunctionNodeBodyProps = {
   node: GptFunctionNode;

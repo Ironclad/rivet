@@ -1,6 +1,6 @@
 import { useLatest } from 'ahooks';
 import { useRecoilState } from 'recoil';
-import { remoteDebuggerState } from '../state/execution';
+import { remoteDebuggerState } from '../state/execution.js';
 
 let currentDebuggerMessageHandler: ((message: string, data: unknown) => void) | null = null;
 

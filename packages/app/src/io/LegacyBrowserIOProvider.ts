@@ -7,7 +7,7 @@ import {
   serializeGraph,
   serializeProject,
 } from '@ironclad/rivet-core';
-import { IOProvider } from './IOProvider';
+import { IOProvider } from './IOProvider.js';
 
 export class LegacyBrowserIOProvider implements IOProvider {
   async saveGraphData(graphData: NodeGraph): Promise<void> {

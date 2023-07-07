@@ -1,9 +1,9 @@
 import { FC, useLayoutEffect, useMemo, useRef } from 'react';
 import { CodeNode, Outputs } from '@ironclad/rivet-core';
-import { monaco } from '../../utils/monaco';
-import { RenderDataValue } from '../RenderDataValue';
+import { monaco } from '../../utils/monaco.js';
+import { RenderDataValue } from '../RenderDataValue.js';
 import styled from '@emotion/styled';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 
 export type CodeNodeBodyProps = {
   node: CodeNode;

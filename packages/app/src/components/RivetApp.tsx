@@ -1,15 +1,15 @@
-import { GraphBuilder } from './GraphBuilder';
-import { MenuBar } from './MenuBar';
+import { GraphBuilder } from './GraphBuilder.js';
+import { MenuBar } from './MenuBar.js';
 import { FC } from 'react';
 import { css } from '@emotion/react';
-import { SettingsModal } from './SettingsModal';
+import { SettingsModal } from './SettingsModal.js';
 import { setGlobalTheme } from '@atlaskit/tokens';
-import { LeftSidebar } from './LeftSidebar';
+import { LeftSidebar } from './LeftSidebar.js';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { PromptDesignerRenderer } from './PromptDesigner';
-import { useGraphExecutor } from '../hooks/useGraphExecutor';
-import { useMenuCommands } from '../hooks/useMenuCommands';
+import { PromptDesignerRenderer } from './PromptDesigner.js';
+import { useGraphExecutor } from '../hooks/useGraphExecutor.js';
+import { useMenuCommands } from '../hooks/useMenuCommands.js';
 
 const styles = css`
   overflow: hidden;

@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { ChartNode, MatchNode, NumberEditorDefinition } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
-import { DefaultNumberEditor, defaultEditorContainerStyles } from '../DefaultNodeEditor';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
+import { DefaultNumberEditor, defaultEditorContainerStyles } from '../DefaultNodeEditor.js';
 import TextField from '@atlaskit/textfield';
 import { Label } from '@atlaskit/form';
 

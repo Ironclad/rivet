@@ -1,5 +1,5 @@
 import WebSocket, { WebSocketServer } from 'ws';
-import { GraphId, GraphProcessor, Project, getError, Settings } from './core';
+import { GraphId, GraphProcessor, Project, getError, Settings } from '@ironclad/rivet-core';
 import { match } from 'ts-pattern';
 import Emittery from 'emittery';
 

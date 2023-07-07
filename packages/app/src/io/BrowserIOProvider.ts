@@ -7,7 +7,7 @@ import {
   serializeGraph,
   serializeProject,
 } from '@ironclad/rivet-core';
-import { IOProvider } from './IOProvider';
+import { IOProvider } from './IOProvider.js';
 
 export class BrowserIOProvider implements IOProvider {
   static isSupported(): boolean {

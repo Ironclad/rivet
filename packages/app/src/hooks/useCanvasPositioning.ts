@@ -1,5 +1,5 @@
 import { useRecoilValue } from 'recoil';
-import { canvasPositionState } from '../state/graphBuilder';
+import { canvasPositionState } from '../state/graphBuilder.js';
 import { useCallback } from 'react';
 
 export function useCanvasPositioning() {

@@ -8,12 +8,12 @@ import {
   Project,
   Settings,
   deserializeProject,
-} from './core';
+} from '@ironclad/rivet-core';
 
 import { readFile } from 'node:fs/promises';
-import { RivetDebuggerServer } from './debugger';
+import { RivetDebuggerServer } from './debugger.js';
 import { PascalCase } from 'type-fest';
-import { NodeNativeApi } from './native/NodeNativeApi';
+import { NodeNativeApi } from './native/NodeNativeApi.js';
 import { mapValues } from 'lodash-es';
 
 export async function loadProjectFromFile(path: string): Promise<Project> {

@@ -7,7 +7,7 @@ import {
   isFunctionDataType,
   isScalarDataValue,
   unwrapDataValue,
-} from '../model/DataValue';
+} from '../model/DataValue.js';
 
 export function expectType<T extends DataType>(value: DataValue | undefined, type: T): GetDataValue<T>['value'] {
   // Allow a string to be expected for a string[], just return an array of one element

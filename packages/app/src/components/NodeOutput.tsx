@@ -1,19 +1,19 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { NodeRunData, ProcessDataForNode, lastRunData, selectedProcessPage } from '../state/dataFlow';
+import { NodeRunData, ProcessDataForNode, lastRunData, selectedProcessPage } from '../state/dataFlow.js';
 import { FC, ReactNode, memo, useMemo, useState } from 'react';
-import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes';
-import { useStableCallback } from '../hooks/useStableCallback';
-import { copyToClipboard } from '../utils/copyToClipboard';
+import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
+import { useStableCallback } from '../hooks/useStableCallback.js';
+import { copyToClipboard } from '../utils/copyToClipboard.js';
 import { ChartNode, PortId, ProcessId, getWarnings } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-line.svg';
 import { ReactComponent as ExpandIcon } from 'majesticons/line/maximize-line.svg';
 import { ReactComponent as FlaskIcon } from 'majesticons/line/flask-line.svg';
-import { FullScreenModal } from './FullScreenModal';
-import { RenderDataOutputs } from './RenderDataValue';
-import { entries } from '../utils/typeSafety';
+import { FullScreenModal } from './FullScreenModal.js';
+import { RenderDataOutputs } from './RenderDataValue.js';
+import { entries } from '../utils/typeSafety.js';
 import { orderBy } from 'lodash-es';
-import { promptDesignerAttachedChatNodeState, promptDesignerState } from '../state/promptDesigner';
+import { promptDesignerAttachedChatNodeState, promptDesignerState } from '../state/promptDesigner.js';
 
 export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);

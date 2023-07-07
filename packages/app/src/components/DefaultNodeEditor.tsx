@@ -26,12 +26,12 @@ import TextField from '@atlaskit/textfield';
 import Select from '@atlaskit/select';
 import Checkbox from '@atlaskit/checkbox';
 import { useDebounceFn, useLatest } from 'ahooks';
-import { monaco } from '../utils/monaco';
+import { monaco } from '../utils/monaco.js';
 import clsx from 'clsx';
-import { projectState } from '../state/savedGraphs';
+import { projectState } from '../state/savedGraphs.js';
 import { useRecoilValue } from 'recoil';
 import { orderBy } from 'lodash-es';
-import { values } from '../utils/typeSafety';
+import { values } from '../utils/typeSafety.js';
 import { nanoid } from 'nanoid';
 
 export const defaultEditorContainerStyles = css`

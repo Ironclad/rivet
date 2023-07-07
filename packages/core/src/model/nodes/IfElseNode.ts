@@ -1,8 +1,8 @@
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
-import { ArrayDataValue, DataValue, ScalarDataValue } from '../DataValue';
+import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
+import { ArrayDataValue, DataValue, ScalarDataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
-import { ControlFlowExcludedPort } from '../../utils/symbols';
+import { ControlFlowExcludedPort } from '../../utils/symbols.js';
 
 export type IfElseNode = ChartNode<'ifElse', IfElseNodeData>;
 

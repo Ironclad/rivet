@@ -1,5 +1,5 @@
 import { useSetRecoilState } from 'recoil';
-import { nodesState } from '../state/graph';
+import { nodesState } from '../state/graph.js';
 import { useCallback } from 'react';
 import { ChartNode } from '@ironclad/rivet-core';
 

@@ -8,12 +8,12 @@ import {
   PortId,
 } from '@ironclad/rivet-core';
 import { useRecoilValue } from 'recoil';
-import { nodesByIdState } from '../state/graph';
-import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
-import { useGetNodeIO } from '../hooks/useGetNodeIO';
+import { nodesByIdState } from '../state/graph.js';
+import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
+import { useGetNodeIO } from '../hooks/useGetNodeIO.js';
 import clsx from 'clsx';
-import { nodePortPositionCache } from './VisualNode';
-import { lineCrossesViewport } from '../utils/lineClipping';
+import { nodePortPositionCache } from './VisualNode.js';
+import { lineCrossesViewport } from '../utils/lineClipping.js';
 import { ErrorBoundary } from 'react-error-boundary';
 
 type WireProps = {

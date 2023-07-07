@@ -13,7 +13,7 @@ import {
   isArrayDataType,
 } from '@ironclad/rivet-core';
 import Toggle from '@atlaskit/toggle';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 
 export const SetGlobalNodeBody: FC<{
   node: SetGlobalNode;

@@ -1,11 +1,30 @@
 {
   "name": "@ironclad/rivet-node",
-  "main": "dist/bundle.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/cjs/bundle.cjs",
+  "module": "dist/esm/index.js",
+  "src": "src/index.ts",
+  "type": "module",
+  "exports": {
+    "node": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/bundle.cjs",
+      "types": "./dist/types/index.d.ts"
+    },
+    "browser": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/bundle.cjs",
+      "types": "./dist/types/index.d.ts"
+    },
+    "default": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/bundle.cjs",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
   "scripts": {
-    "build": "yarn compile && yarn bundle",
-    "compile": "tsc",
-    "bundle": "ts-node bundle.esbuild.ts",
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "rm -rf dist/esm dist/types dist/tsconfig.tsbuildinfo && tsc -b",
+    "build:cjs": "rm -rf dist/cjs && tsx ../core/bundle.esbuild.ts",
     "executor": "node -r ts-node/register --loader ../../.pnp.cjs --loader ts-node/esm bin/executor.ts"
   },
   "dependencies": {
@@ -13,6 +32,8 @@
     "@types/retry": "^0.12.2",
     "@zilliz/milvus2-sdk-node": "^2.2.16",
     "emittery": "^1.0.1",
+    "emittery-0-13": "npm:emittery@^0.13.1",
+    "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "minimatch": "^9.0.1",
     "nanoid": "^3.3.6",
@@ -22,17 +43,19 @@
     "ws": "^8.13.0"
   },
   "devDependencies": {
-    "@swc/core": "^1.3.63",
+    "@swc/core": "^1.3.68",
+    "@types/lodash": "^4",
     "@types/lodash-es": "^4.17.7",
     "@types/minimatch": "^5.1.2",
     "@types/node": "^20.3.1",
     "@types/ws": "^8.5.5",
-    "esbuild": "^0.18.2",
+    "esbuild": "^0.18.11",
     "p-retry": "^5.1.2",
     "ts-node": "^10.9.1",
+    "tsx": "^3.12.7",
     "typescript": "^5.1.3"
   },
   "volta": {
-    "node": "18.16.0"
+    "node": "20.4.0"
   }
 }

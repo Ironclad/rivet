@@ -1,8 +1,8 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
+import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
-import { DataValue } from '../DataValue';
-import { expectType, expectTypeOptional } from '../../utils/expectType';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { DataValue } from '../DataValue.js';
+import { expectType, expectTypeOptional } from '../../utils/expectType.js';
 
 export type ExtractRegexNode = ChartNode<'extractRegex', ExtractRegexNodeData>;
 

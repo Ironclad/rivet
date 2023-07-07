@@ -1,12 +1,12 @@
 import { ComponentType, useMemo } from 'react';
-import { useContextMenuAddNodeConfiguration } from './useContextMenuAddNodeConfiguration';
+import { useContextMenuAddNodeConfiguration } from './useContextMenuAddNodeConfiguration.js';
 import { ReactComponent as DeleteIcon } from 'majesticons/line/delete-bin-line.svg';
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
 import { ReactComponent as DuplicateIcon } from 'majesticons/line/image-multiple-line.svg';
 import { NodeId, NodeType } from '@ironclad/rivet-core';
 import { useRecoilValue } from 'recoil';
-import { selectedNodesState } from '../state/graphBuilder';
-import { useContextMenuCommands } from './useContextMenuCommands';
+import { selectedNodesState } from '../state/graphBuilder.js';
+import { useContextMenuCommands } from './useContextMenuCommands.js';
 
 export type ContextMenuConfig = {
   contexts: ContextMenuContextConfig;

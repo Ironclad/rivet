@@ -1,11 +1,11 @@
 import { FC, useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
-import { ConditionallyRenderWire } from './Wire';
-import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
+import { ConditionallyRenderWire } from './Wire.js';
+import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { draggingWireClosestPortState } from '../state/graphBuilder';
+import { draggingWireClosestPortState } from '../state/graphBuilder.js';
 import { orderBy } from 'lodash-es';
 
 export type WireDef = {

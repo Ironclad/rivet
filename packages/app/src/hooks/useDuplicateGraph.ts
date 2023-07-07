@@ -1,9 +1,9 @@
 import { GraphId, NodeGraph, NodeId } from '@ironclad/rivet-core';
 import { nanoid } from 'nanoid';
-import { useLoadGraph } from './useLoadGraph';
-import { useStableCallback } from './useStableCallback';
+import { useLoadGraph } from './useLoadGraph.js';
+import { useStableCallback } from './useStableCallback.js';
 import { useSetRecoilState } from 'recoil';
-import { savedGraphsState } from '../state/savedGraphs';
+import { savedGraphsState } from '../state/savedGraphs.js';
 import { produce } from 'immer';
 
 export function useDuplicateGraph() {

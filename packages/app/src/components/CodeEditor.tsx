@@ -1,6 +1,6 @@
 import { useLatest } from 'ahooks';
 import { FC, useEffect, useRef } from 'react';
-import { monaco } from '../utils/monaco';
+import { monaco } from '../utils/monaco.js';
 
 export const CodeEditor: FC<{
   text: string;

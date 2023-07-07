@@ -9,7 +9,7 @@ import {
   GraphId,
   GraphProcessor,
   ScalarOrArrayDataValue,
-} from '..';
+} from '../index.js';
 
 export type ProcessContext = {
   settings: Settings;

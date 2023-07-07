@@ -2,8 +2,8 @@ import { produce } from 'immer';
 import { nanoid } from 'nanoid';
 import { GraphId } from '@ironclad/rivet-core';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { graphState } from '../state/graph';
-import { savedGraphsState } from '../state/savedGraphs';
+import { graphState } from '../state/graph.js';
+import { savedGraphsState } from '../state/savedGraphs.js';
 
 export function useSaveCurrentGraph() {
   const [graphData, setGraphData] = useRecoilState(graphState);

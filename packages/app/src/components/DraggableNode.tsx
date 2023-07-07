@@ -2,9 +2,9 @@ import { useDraggable } from '@dnd-kit/core';
 import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
 import { MouseEvent, FC } from 'react';
 import { useRecoilValue } from 'recoil';
-import { canvasPositionState } from '../state/graphBuilder';
-import { VisualNode } from './VisualNode';
-import { useStableCallback } from '../hooks/useStableCallback';
+import { canvasPositionState } from '../state/graphBuilder.js';
+import { VisualNode } from './VisualNode.js';
+import { useStableCallback } from '../hooks/useStableCallback.js';
 import { ErrorBoundary } from 'react-error-boundary';
 
 interface DraggableNodeProps {

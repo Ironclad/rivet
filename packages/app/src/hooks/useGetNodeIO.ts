@@ -1,8 +1,8 @@
 import { useRecoilValue } from 'recoil';
-import { connectionsForNodeState, nodesByIdState } from '../state/graph';
-import { useStableCallback } from './useStableCallback';
+import { connectionsForNodeState, nodesByIdState } from '../state/graph.js';
+import { useStableCallback } from './useStableCallback.js';
 import { ChartNode, Nodes, createNodeInstance } from '@ironclad/rivet-core';
-import { projectState } from '../state/savedGraphs';
+import { projectState } from '../state/savedGraphs.js';
 
 export function useGetNodeIO() {
   const project = useRecoilValue(projectState);
