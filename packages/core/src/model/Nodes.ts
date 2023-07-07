@@ -128,6 +128,9 @@ export * from './nodes/JoinNode.js';
 import { filterNode } from './nodes/FilterNode.js';
 export * from './nodes/FilterNode.js';
 
+import { objectNode } from './nodes/ObjectNode.js';
+export * from './nodes/ObjectNode.js';
+
 import { booleanNode } from './nodes/BooleanNode.js';
 export * from './nodes/BooleanNode.js';
 
@@ -183,6 +186,7 @@ const register = new NodeRegistration()
   .register(toJsonNode)
   .register(joinNode)
   .register(filterNode)
+  .register(objectNode)
   .register(booleanNode)
   .register(compareNode)
   .register(evaluateNode)
