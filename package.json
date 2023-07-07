@@ -11,7 +11,7 @@
     "dev": "yarn workspace @ironclad/rivet-app-executor run build && yarn workspace @ironclad/rivet-app run dev",
     "release-node": "node --loader ts-node/esm --loader ./.pnp.loader.mjs release-node.mts",
     "publish-docs": "node --loader ts-node/esm --loader ./.pnp.loader.mjs publish-docs.mts",
-    "build": "yarn workspace @ironclad/rivet-core run build && yarn workspace @ironclad/rivet-node run build && yarn workspace @ironclad/rivet-app-executor run build && yarn workspace @ironclad/rivet-app run build",
+    "build": "yarn workspace @ironclad/rivet-core run build && yarn workspace @ironclad/rivet-node run build && yarn workspace @ironclad/rivet-app-executor run build && yarn workspace @ironclad/trivet run build && yarn workspace @ironclad/rivet-app run build",
     "publish": "yarn workspace @ironclad/rivet-core run publish && yarn workspace @ironclad/rivet-node run publish"
   },
   "devDependencies": {
