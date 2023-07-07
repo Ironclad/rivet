@@ -21,6 +21,10 @@ import arrayNodeImage from '../assets/node_images/array_node.png';
 import popNodeImage from '../assets/node_images/pop_node.png';
 import hashNodeImage from '../assets/node_images/hash_node.png';
 import filterNodeImage from '../assets/node_images/filter_node.png';
+import boolNodeImage from '../assets/node_images/bool_node.png';
+import numberNodeImage from '../assets/node_images/number_node.png';
+import compareNodeImage from '../assets/node_images/compare_node.png';
+import evaluateNodeImage from '../assets/node_images/evaluate_node.png';
 
 const textNode = {
   label: 'Text',
@@ -313,6 +317,32 @@ export const addContextMenuGroups = [
           `,
         },
       },
+      {
+        label: 'Bool',
+        data: 'boolean',
+        id: 'add-node:boolean',
+        infoBox: {
+          title: 'Bool Node',
+          image: boolNodeImage,
+          description: dedent`
+            Outputs a boolean constant, or converts an input value into a boolean.
+          `,
+        },
+      },
+      {
+        label: 'Number',
+        data: 'number',
+        id: 'add-node:number',
+        infoBox: {
+          title: 'Number Node',
+          image: numberNodeImage,
+          description: dedent`
+            Outputs a number constant, or converts an input value into a number.
+
+            Can be configured to round the number to a certain number of decimal places.
+          `,
+        },
+      },
     ],
   },
   {
@@ -410,6 +440,34 @@ export const addContextMenuGroups = [
           title: 'Race Inputs Node',
           description: dedent`
             Takes in multiple inputs and outputs the value of the first one to finish. The other inputs are cancelled.
+          `,
+        },
+      },
+      {
+        label: 'Compare',
+        data: 'compare',
+        id: 'add-node:compare',
+        infoBox: {
+          title: 'Compare Node',
+          image: compareNodeImage,
+          description: dedent`
+            Compares two values using the configured operator and outputs the result.
+
+            If the data types of the values do not match, then the B value is converted to the type of the A value.
+          `,
+        },
+      },
+      {
+        label: 'Evaluate',
+        data: 'evaluate',
+        id: 'add-node:evaluate',
+        infoBox: {
+          title: 'Evaluate Node',
+          image: evaluateNodeImage,
+          description: dedent`
+            Evaluates the configured mathematical operation on the input values and outputs the result.
+
+            For more complex operations, you should use the \`Code\` node.
           `,
         },
       },

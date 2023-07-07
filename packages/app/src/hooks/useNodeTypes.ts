@@ -100,6 +100,10 @@ const descriptors: NodeComponentDescriptors = {
   toJson: {},
   join: {},
   filter: {},
+  boolean: {},
+  compare: {},
+  evaluate: {},
+  number: {},
 };
 
 export function useNodeTypes() {

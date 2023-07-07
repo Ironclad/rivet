@@ -128,6 +128,18 @@ export * from './nodes/JoinNode.js';
 import { filterNode } from './nodes/FilterNode.js';
 export * from './nodes/FilterNode.js';
 
+import { booleanNode } from './nodes/BooleanNode.js';
+export * from './nodes/BooleanNode.js';
+
+import { compareNode } from './nodes/CompareNode.js';
+export * from './nodes/CompareNode.js';
+
+import { evaluateNode } from './nodes/EvaluateNode.js';
+export * from './nodes/EvaluateNode.js';
+
+import { numberNode } from './nodes/NumberNode.js';
+export * from './nodes/NumberNode.js';
+
 const register = new NodeRegistration()
   .register(toYamlNode)
   .register(userInputNode)
@@ -170,7 +182,11 @@ const register = new NodeRegistration()
   .register(raceInputsNode)
   .register(toJsonNode)
   .register(joinNode)
-  .register(filterNode);
+  .register(filterNode)
+  .register(booleanNode)
+  .register(compareNode)
+  .register(evaluateNode)
+  .register(numberNode);
 
 export type Nodes = typeof register.NodesType;
 
