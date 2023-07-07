@@ -29,6 +29,7 @@ const styles = css`
     position: relative;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     border-radius: 4px;
+    overscroll-behavior: contain;
   }
 `;
 

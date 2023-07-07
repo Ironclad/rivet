@@ -124,7 +124,7 @@ export const GraphBuilder: FC = () => {
         newNode.visualData = {
           ...node.visualData,
           x: node.visualData.x,
-          y: node.visualData.y + 100,
+          y: node.visualData.y + 200,
         };
         newNode.title = node.title;
         newNode.description = node.description;

@@ -102,6 +102,10 @@ const descriptors: NodeComponentDescriptors = {
   join: {},
   filter: {},
   object: ObjectNodeDescriptor,
+  boolean: {},
+  compare: {},
+  evaluate: {},
+  number: {},
 };
 
 export function useNodeTypes() {
