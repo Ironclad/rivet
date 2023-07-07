@@ -9,37 +9,78 @@ Welcome to the starting guide for integrating Rivet into your application! Curre
 
 ## Installation
 
-First, you'll need to install Rivet into your JavaScript application. This can be done using either npm or yarn.
+First, you'll need to setup your environment to authenticate with our private GitHub NPM registry.
 
-:::note
+### Getting GitHub Access Token
 
-Rivet is not available on NPM yet. You'll need to install it directly from our GitHub repository.
+You need to get a GitHub access token (classic) for the account that has access to Rivet.
 
-:::
+### Setting Up the Environment
 
 <Tabs
-  defaultValue="yarn"
-  values={[
-    {label: 'Yarn', value: 'yarn'},
-    {label: 'NPM', value: 'npm'},
-  ]}>
+defaultValue="yarn2"
+values={[
+{label: 'Yarn 2', value: 'yarn2'},
+{label: 'Yarn 1', value: 'yarn1'},
+{label: 'NPM', value: 'npm'},
+]}>
 
-<TabItem value="yarn">
+<TabItem value="yarn2">
 
-Install using Yarn:
+For Yarn 2, create or update a `~/.yarnrc.yml` file with the following contents:
+
+```yaml
+npmScopes:
+  ironclad:
+    npmRegistryServer: https://npm.pkg.github.com/ironclad
+    npmAuthToken: YOUR_AUTH_TOKEN
+    npmAlwaysAuth: true
+```
+
+Install using Yarn 2:
 
 ```bash
-yarn add @ironclad/rivet-node@git+ssh://git@github.com:Ironclad/rivet.git#node-v0.9.0
+yarn add @ironclad/rivet-node
+```
+
+</TabItem>
+
+<TabItem value="yarn1">
+
+For Yarn 1, you need to create or update a `~/.npmrc` file with:
+
+```bash
+//npm.ironclad/:_authToken=YOUR_AUTH_TOKEN
+@ironclad:registry=https://npm.pkg.github.com/ironclad
+```
+
+And also a `~/.yarnrc` with:
+
+```bash
+"@ironclad:registry" "https://npm.pkg.github.com/ironclad"
+```
+
+Install using Yarn 1:
+
+```bash
+yarn add @ironclad/rivet-node
 ```
 
 </TabItem>
 
 <TabItem value="npm">
 
+For NPM, create or update a `~/.npmrc` file with:
+
+```bash
+//npm.ironclad/:_authToken=YOUR_AUTH_TOKEN
+@ironclad:registry=https://npm.pkg.github.com/ironclad
+```
+
 Install using NPM:
 
 ```bash
-npm install git+ssh://git@github.com:Ironclad/rivet.git#node-v0.9.0
+npm install @ironclad/rivet-node
 ```
 
 </TabItem>
@@ -48,13 +89,7 @@ npm install git+ssh://git@github.com:Ironclad/rivet.git#node-v0.9.0
 
 :::tip
 
-Remember to replace `0.9.0` with the latest version available on our releases page.
-
-:::
-
-:::caution
-
-Installation can take a while at the moment. We're working on improving this, and we appreciate your patience in the meantime.
+Remember to replace `YOUR_AUTH_TOKEN` with your GitHub access token.
 
 :::
 
