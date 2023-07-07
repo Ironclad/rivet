@@ -34,6 +34,7 @@ import { setGlobalNodeDescriptor } from '../components/nodes/SetGlobalNode.js';
 import { waitForEventNodeDescriptor } from '../components/nodes/WaitForEventNode.js';
 import { gptFunctionNodeDescriptor } from '../components/nodes/GptFunctionNode.js';
 import { toYamlNodeDescriptor } from '../components/nodes/ToYamlNode.js';
+import { ObjectNodeDescriptor } from '../components/nodes/ObjectNode.js';
 
 export type UnknownNodeComponentDescriptor = {
   Body?: FC<{ node: ChartNode }>;
@@ -100,6 +101,7 @@ const descriptors: NodeComponentDescriptors = {
   toJson: {},
   join: {},
   filter: {},
+  object: ObjectNodeDescriptor,
 };
 
 export function useNodeTypes() {
