@@ -1,5 +1,6 @@
 {
   "name": "@ironclad/rivet-app",
+  "repository": "https://github.com/ironclad/rivet",
   "version": "0.1.0",
   "private": true,
   "scripts": {
