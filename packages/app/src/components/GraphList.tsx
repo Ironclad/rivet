@@ -1,6 +1,6 @@
 import { DndContext, DragEndEvent, DragOverEvent, useDraggable, useDroppable } from '@dnd-kit/core';
 import { css } from '@emotion/react';
-import { CSSProperties, FC, useState, useMemo } from 'react';
+import { CSSProperties, FC, useState, useMemo, FocusEvent, MouseEvent, KeyboardEvent, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { graphState } from '../state/graph.js';
 import { savedGraphsState } from '../state/savedGraphs.js';
@@ -21,6 +21,7 @@ import { ReactComponent as ArrowDownIcon } from 'majesticons/line/arrow-down-lin
 import { ReactComponent as MenuLineIcon } from 'majesticons/line/menu-line.svg';
 import { toast } from 'react-toastify';
 import { useStableCallback } from '../hooks/useStableCallback.js';
+import TextField from '@atlaskit/textfield';
 
 const styles = css`
   display: flex;
@@ -287,12 +288,19 @@ export const GraphList: FC = () => {
     setRenamingItemFullPath(folderItemName);
   }
 
-  function renameFolderItem(fullPath: string, newFullPath: string) {
-    if (newFullPath.split('/').some((part) => part === '')) {
-      toast.error('Names cannot be empty.');
+  function renameFolderItem(fullPath: string, newFullPath: string, itemId?: string) {
+    if (fullPath === newFullPath || !newFullPath || /\/$/.test(newFullPath)) {
+      setRenamingItemFullPath(undefined);
       return;
     }
+
+    if (newFullPath.split('/').some((part) => part === '')) {
+      toast.error('Names contains invalid segments');
+      return;
+    }
+
     if (savedGraphs.some((g) => g.metadata?.name === newFullPath) || folderNames.includes(newFullPath)) {
+      console.dir({ fullPath, newFullPath, savedGraphs: savedGraphs.map((g) => g.metadata?.name), folderNames });
       toast.error('A graph or folder with that name already exists.');
       return;
     }
@@ -357,7 +365,7 @@ export const GraphList: FC = () => {
   }
 
   const { contextMenuRef, showContextMenu, contextMenuData, handleContextMenu } = useContextMenu();
-  const handleSidebarContextMenu = useStableCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleSidebarContextMenu = useStableCallback((e: MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     handleContextMenu(e);
   });
@@ -467,6 +475,10 @@ export const FolderItem: FC<{
   const isSelected = graph.metadata?.id === savedGraph?.metadata?.id;
   const isDraggingOver = item.type === 'folder' && dragOverFolderName === fullPath;
 
+  const handleRenameSaved = useStableCallback((newName: string) => {
+    renameFolderItem(fullPath, fullPath.replace(/[^/]+$/, newName));
+  });
+
   const {
     attributes,
     listeners,
@@ -521,13 +533,9 @@ export const FolderItem: FC<{
             onClick={() => (item.type === 'graph' ? loadGraph(item.graph) : setExpanded(!isExpanded))}
           >
             {isRenaming ? (
-              <input
-                autoFocus
-                onBlur={(e) => renameFolderItem(fullPath!, fullPath.replace(/[^/]+$/, e.target.value))}
-                defaultValue={item.name ?? 'Untitled Graph'}
-              />
+              <FolderItemRename value={fullPath.replace(/.*\//, '')} onSaved={handleRenameSaved} />
             ) : (
-              <span>{item.name ?? 'Untitled Graph'}</span>
+              <span>{item.name}</span>
             )}
           </div>
           <div className="dragger" {...listeners} {...attributes}>
@@ -553,5 +561,38 @@ export const FolderItem: FC<{
         )}
       </div>
     </div>
+  );
+};
+
+const FolderItemRename: FC<{
+  value: string;
+  onSaved?: (newName: string) => void;
+}> = ({ value, onSaved }) => {
+  const [renameValue, setRenameValue] = useState(value);
+
+  const handleRenameFocus = useStableCallback((e: FocusEvent<HTMLInputElement>) => {
+    e.target.select();
+    e.preventDefault();
+  });
+
+  const handleRenameBlur = useStableCallback((e: FocusEvent<HTMLInputElement>) => {
+    onSaved?.(renameValue);
+  });
+
+  const handleRenameKeyDown = useStableCallback((e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      onSaved?.(renameValue);
+    }
+  });
+
+  return (
+    <TextField
+      autoFocus
+      onFocus={handleRenameFocus}
+      onBlur={handleRenameBlur}
+      onKeyDown={handleRenameKeyDown}
+      value={renameValue}
+      onChange={(e) => setRenameValue((e.target as HTMLInputElement).value)}
+    />
   );
 };
