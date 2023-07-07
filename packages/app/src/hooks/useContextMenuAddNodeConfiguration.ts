@@ -243,6 +243,19 @@ export const addContextMenuGroups = [
         },
       },
       {
+        label: 'Object',
+        data: 'object',
+        id: 'add-node:object',
+        infoBox: {
+          title: 'Object Node',
+          description: dedent`
+            Creates an object from input values and a JSON template, escaping the input values and inserting them into the template.
+
+            Useful for creating objects from multiple string inputs.
+          `,
+        }
+      },
+      {
         label: 'Pop',
         data: 'pop',
         id: 'add-node:pop',
