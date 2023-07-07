@@ -1,27 +1,28 @@
 {
   "name": "@ironclad/rivet-core",
   "repository": "https://github.com/ironclad/rivet",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "packageManager": "yarn@3.5.0",
   "main": "dist/cjs/bundle.cjs",
   "module": "dist/esm/index.js",
   "src": "src/index.ts",
   "type": "module",
+  "types": "dist/types/index.d.ts",
   "exports": {
     "node": {
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/bundle.cjs",
-      "types": "./dist/types/index.d.ts"
+      "require": "./dist/cjs/bundle.cjs"
     },
     "browser": {
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/bundle.cjs",
-      "types": "./dist/types/index.d.ts"
+      "require": "./dist/cjs/bundle.cjs"
     },
     "default": {
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/bundle.cjs",
-      "types": "./dist/types/index.d.ts"
+      "require": "./dist/cjs/bundle.cjs"
     }
   },
   "files": [
