@@ -1,9 +1,9 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
+import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
-import { DataValue } from '../DataValue';
-import { expectType } from '../../utils/expectType';
-import { coerceType } from '../..';
+import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { DataValue } from '../DataValue.js';
+import { expectType } from '../../utils/expectType.js';
+import { coerceType } from '../../index.js';
 
 export type MatchNode = ChartNode<'match', MatchNodeData>;
 

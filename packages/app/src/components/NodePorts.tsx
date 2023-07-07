@@ -1,10 +1,10 @@
 import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
 import { FC, MouseEvent } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useGetNodeIO } from '../hooks/useGetNodeIO';
-import { useStableCallback } from '../hooks/useStableCallback';
-import { draggingWireState, lastMousePositionState } from '../state/graphBuilder';
-import { Port } from './Port';
+import { useGetNodeIO } from '../hooks/useGetNodeIO.js';
+import { useStableCallback } from '../hooks/useStableCallback.js';
+import { draggingWireState, lastMousePositionState } from '../state/graphBuilder.js';
+import { Port } from './Port.js';
 
 export const NodePorts: FC<{
   node: ChartNode;

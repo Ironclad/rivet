@@ -1,7 +1,7 @@
-import { InternalProcessContext } from '../ProcessContext';
-import { EmbeddingGenerator } from './EmbeddingGenerator';
-import { LLMProvider } from './LLMProvider';
-import { VectorDatabase } from './VectorDatabase';
+import { InternalProcessContext } from '../ProcessContext.js';
+import { EmbeddingGenerator } from './EmbeddingGenerator.js';
+import { LLMProvider } from './LLMProvider.js';
+import { VectorDatabase } from './VectorDatabase.js';
 
 export type IntegrationFactories = {
   vectorDatabase: (context: InternalProcessContext) => VectorDatabase;

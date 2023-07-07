@@ -1,4 +1,4 @@
-import { ArrayDataValue, ChatMessageDataValue } from '../DataValue';
+import { ArrayDataValue, ChatMessageDataValue } from '../DataValue.js';
 
 export type LLMParameters = {
   [key: string]: string;

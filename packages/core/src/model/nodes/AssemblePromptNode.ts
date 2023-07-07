@@ -1,6 +1,6 @@
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
+import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import {
   ArrayDataValue,
   ChatMessage,
@@ -9,10 +9,10 @@ import {
   ScalarDataValue,
   arrayizeDataValue,
   unwrapDataValue,
-} from '../DataValue';
-import { Inputs, Outputs } from '../GraphProcessor';
+} from '../DataValue.js';
+import { Inputs, Outputs } from '../GraphProcessor.js';
 import { orderBy } from 'lodash-es';
-import { coerceType } from '../..';
+import { coerceType } from '../../index.js';
 
 export type AssemblePromptNode = ChartNode<'assemblePrompt', AssemblePromptNodeData>;
 

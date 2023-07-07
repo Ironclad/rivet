@@ -1,10 +1,10 @@
 import { NodeId, PortId } from '@ironclad/rivet-core';
 import { FC, useRef, useLayoutEffect, MouseEvent } from 'react';
-import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
-import { nodePortCache, nodePortPositionCache } from './VisualNode';
+import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
+import { nodePortCache, nodePortPositionCache } from './VisualNode.js';
 import clsx from 'clsx';
 import { useRecoilValue } from 'recoil';
-import { draggingWireClosestPortState, draggingWireState } from '../state/graphBuilder';
+import { draggingWireClosestPortState, draggingWireState } from '../state/graphBuilder.js';
 
 export const Port: FC<{
   input?: boolean;

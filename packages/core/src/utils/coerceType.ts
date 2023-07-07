@@ -9,8 +9,8 @@ import {
   isArrayDataType,
   isArrayDataValue,
   unwrapDataValue,
-} from '../model/DataValue';
-import { expectTypeOptional } from './expectType';
+} from '../model/DataValue.js';
+import { expectTypeOptional } from './expectType.js';
 
 export function coerceTypeOptional<T extends DataType>(
   wrapped: DataValue | undefined,

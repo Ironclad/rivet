@@ -3,18 +3,18 @@ import { CSSProperties, FC, HTMLAttributes, MouseEvent, forwardRef, memo, useEff
 import { useRecoilValue } from 'recoil';
 import { match } from 'ts-pattern';
 import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
-import { lastRunData, selectedProcessPage } from '../state/dataFlow';
-import { NodeBody } from './NodeBody';
-import { NodeOutput } from './NodeOutput';
+import { lastRunData, selectedProcessPage } from '../state/dataFlow.js';
+import { NodeBody } from './NodeBody.js';
+import { NodeOutput } from './NodeOutput.js';
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
 import { ReactComponent as SendIcon } from 'majesticons/solid/send.svg';
 import { ReactComponent as GitForkLine } from 'majesticons/line/git-fork-line.svg';
-import { ResizeHandle } from './ResizeHandle';
-import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
-import { useStableCallback } from '../hooks/useStableCallback';
-import { LoadingSpinner } from './LoadingSpinner';
+import { ResizeHandle } from './ResizeHandle.js';
+import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
+import { useStableCallback } from '../hooks/useStableCallback.js';
+import { LoadingSpinner } from './LoadingSpinner.js';
 import { ErrorBoundary } from 'react-error-boundary';
-import { NodePorts } from './NodePorts';
+import { NodePorts } from './NodePorts.js';
 
 export type VisualNodeProps = {
   node: ChartNode;

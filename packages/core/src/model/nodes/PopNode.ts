@@ -1,7 +1,7 @@
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
+import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
-import { Inputs, Outputs } from '../GraphProcessor';
+import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { Inputs, Outputs } from '../GraphProcessor.js';
 
 export type PopNode = ChartNode<'pop', {}>;
 

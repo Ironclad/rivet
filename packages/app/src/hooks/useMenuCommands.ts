@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
-import { useSaveProject } from './useSaveProject';
+import { useSaveProject } from './useSaveProject.js';
 import { window } from '@tauri-apps/api';
 import { match } from 'ts-pattern';
-import { useNewProject } from './useNewProject';
-import { useLoadProject } from './useLoadProject';
+import { useNewProject } from './useNewProject.js';
+import { useLoadProject } from './useLoadProject.js';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { settingsModalOpenState } from '../components/SettingsModal';
-import { graphState } from '../state/graph';
-import { useLoadRecording } from './useLoadRecording';
+import { settingsModalOpenState } from '../components/SettingsModal.js';
+import { graphState } from '../state/graph.js';
+import { useLoadRecording } from './useLoadRecording.js';
 import { WebviewWindow } from '@tauri-apps/api/window';
-import { ioProvider } from '../utils/globals';
+import { ioProvider } from '../utils/globals.js';
 
 type MenuIds =
   | 'settings'

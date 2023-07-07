@@ -1,6 +1,7 @@
-export * from './native/NodeNativeApi';
-export * from './core';
-export * from './api';
-export * from './debugger';
+export * from '@ironclad/rivet-core';
 
-import './integrations/registerNodeIntegrations';
+export * from './native/NodeNativeApi.js';
+export * from './api.js';
+export * from './debugger.js';
+
+import './integrations/registerNodeIntegrations.js';

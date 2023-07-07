@@ -2,15 +2,18 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "module": "ESNext",
-    "moduleResolution": "bundler",
-    "outDir": "dist",
-    "rootDir": "src"
+    "moduleResolution": "NodeNext",
+    "outDir": "dist/esm",
+    "rootDir": "src",
+    "declarationDir": "dist/types",
+    "allowSyntheticDefaultImports": false,
+    "esModuleInterop": false
   },
   "include": ["src"],
   "ts-node": {
     "swc": true,
-    "compilerOptions": {
-      "module": "CommonJS"
-    }
+    "experimentalResolver": true,
+    "experimentalSpecifierResolution": "node",
+    "compilerOptions": {}
   }
 }

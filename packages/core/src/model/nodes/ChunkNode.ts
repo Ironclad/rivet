@@ -1,10 +1,10 @@
-import { ChartNode, NodeId } from '../../model/NodeBase';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../../model/NodeImpl';
-import { NodeInputDefinition, NodeOutputDefinition, PortId } from '../../model/NodeBase';
-import { DataValue } from '../../model/DataValue';
-import { SupportedModels, chunkStringByTokenCount, modelOptions, openaiModels } from '../../utils/tokenizer';
+import { ChartNode, NodeId } from '../../model/NodeBase.js';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../../model/NodeImpl.js';
+import { NodeInputDefinition, NodeOutputDefinition, PortId } from '../../model/NodeBase.js';
+import { DataValue } from '../../model/DataValue.js';
+import { SupportedModels, chunkStringByTokenCount, modelOptions, openaiModels } from '../../utils/tokenizer.js';
 import { nanoid } from 'nanoid';
-import { coerceType } from '../../utils/coerceType';
+import { coerceType } from '../../utils/coerceType.js';
 
 export type ChunkNodeData = {
   numTokensPerChunk: number;

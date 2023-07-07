@@ -1,9 +1,9 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
+import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
-import { DataValue } from '../DataValue';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { DataValue } from '../DataValue.js';
 import { match } from 'ts-pattern';
-import { coerceTypeOptional } from '../..';
+import { coerceTypeOptional } from '../../index.js';
 
 export type TextNode = ChartNode<'text', TextNodeData>;
 

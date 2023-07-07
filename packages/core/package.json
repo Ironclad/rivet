@@ -1,24 +1,55 @@
 {
   "name": "@ironclad/rivet-core",
+  "repository": "https://github.com/ironclad/rivet",
+  "version": "0.10.0",
   "packageManager": "yarn@3.5.0",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/cjs/bundle.cjs",
+  "module": "dist/esm/index.js",
   "src": "src/index.ts",
+  "type": "module",
+  "exports": {
+    "node": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/bundle.cjs",
+      "types": "./dist/types/index.d.ts"
+    },
+    "browser": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/bundle.cjs",
+      "types": "./dist/types/index.d.ts"
+    },
+    "default": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/bundle.cjs",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
+  "files": [
+    "dist/cjs/**",
+    "dist/esm/**",
+    "dist/types/**"
+  ],
   "scripts": {
-    "build": "tsc"
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "rm -rf dist/esm dist/types dist/tsconfig.tsbuildinfo && tsc -b --verbose",
+    "build:cjs": "rm -rf dist/cjs && tsx bundle.esbuild.ts",
+    "prepublishOnly": "yarn build && cp -r ../../LICENSE ../../README.md .",
+    "publish": "yarn npm publish"
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",
     "crypto-js": "^4.1.1",
     "emittery": "^1.0.1",
+    "emittery-0-13": "npm:emittery@^0.13.1",
     "jsonpath-plus": "^7.2.0",
     "lodash-es": "^4.17.21",
     "minimatch": "^9.0.1",
     "nanoid": "^3.3.6",
     "openai": "^3.3.0",
-    "p-queue": "^6.6.2",
+    "p-queue": "^7.3.4",
+    "p-queue-6": "npm:p-queue@^6.0.0",
     "p-retry": "^5.1.2",
+    "p-retry-4": "npm:p-retry@^4.0.0",
     "safe-stable-stringify": "^2.4.3",
     "ts-dedent": "^2.2.0",
     "ts-pattern": "^5.0.1",
@@ -26,10 +57,19 @@
     "yaml": "^2.3.1"
   },
   "devDependencies": {
+    "@swc/core": "^1.3.68",
     "@types/crypto-js": "^4.1.1",
     "@types/jsonpath-plus": "^5.0.2",
+    "@types/lodash": "^4",
     "@types/lodash-es": "^4.17.7",
     "@types/yaml": "^1.9.7",
+    "esbuild": "^0.18.11",
+    "lodash": "^4.17.21",
+    "ts-node": "^10.9.1",
+    "tsx": "^3.12.7",
     "typescript": "^5.1.3"
+  },
+  "volta": {
+    "node": "20.4.0"
   }
 }

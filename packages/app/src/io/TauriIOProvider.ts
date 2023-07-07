@@ -9,8 +9,8 @@ import {
   serializeGraph,
   serializeProject,
 } from '@ironclad/rivet-core';
-import { IOProvider } from './IOProvider';
-import { isInTauri } from '../utils/tauri';
+import { IOProvider } from './IOProvider.js';
+import { isInTauri } from '../utils/tauri.js';
 
 export class TauriIOProvider implements IOProvider {
   static isSupported(): boolean {

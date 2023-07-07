@@ -1,9 +1,9 @@
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
+import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
-import { Inputs, Outputs } from '../GraphProcessor';
-import { coerceType } from '../../utils/coerceType';
-import { InternalProcessContext } from '../ProcessContext';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { Inputs, Outputs } from '../GraphProcessor.js';
+import { coerceType } from '../../utils/coerceType.js';
+import { InternalProcessContext } from '../ProcessContext.js';
 
 export type LoopControllerNode = ChartNode<'loopController', LoopControllerNodeData>;
 

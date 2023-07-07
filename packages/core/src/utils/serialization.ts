@@ -13,7 +13,7 @@ import {
   SerializedNodeConnection,
   SerializedProject,
   getError,
-} from '..';
+} from '../index.js';
 import stableStringify from 'safe-stable-stringify';
 import { mapValues } from 'lodash-es';
 

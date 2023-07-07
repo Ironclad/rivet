@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { register, unregister } from '@tauri-apps/api/globalShortcut';
-import { useStableCallback } from './useStableCallback';
+import { useStableCallback } from './useStableCallback.js';
 
 export function useGlobalShortcut(shortcut: string, handler: () => void) {
   // const handlerStable = useStableCallback(() => {

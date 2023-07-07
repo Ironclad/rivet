@@ -1,8 +1,8 @@
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
-import { ControlFlowExcludedDataValue, ScalarDataValue, ArrayDataValue } from '../DataValue';
+import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
+import { ControlFlowExcludedDataValue, ScalarDataValue, ArrayDataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
-import { Inputs, Outputs } from '../GraphProcessor';
+import { Inputs, Outputs } from '../GraphProcessor.js';
 
 export type IfNode = ChartNode<'if', IfNodeData>;
 

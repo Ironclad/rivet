@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { ExtractYamlNode } from '@ironclad/rivet-core';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 
 export type ExtractYamlNodeBodyProps = {
   node: ExtractYamlNode;

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useUnrenderedValue } from './useUnrenderedValue';
+import { useUnrenderedValue } from './useUnrenderedValue.js';
 
 /**
  * Very similar to useCallback, but is guaranteed to be referentially equal, even when deps change.

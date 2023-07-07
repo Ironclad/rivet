@@ -1,14 +1,14 @@
 import { DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
-import { DraggableNode } from './DraggableNode';
+import { DraggableNode } from './DraggableNode.js';
 import { css } from '@emotion/react';
-import { nodeStyles } from './nodeStyles';
+import { nodeStyles } from './nodeStyles.js';
 import { FC, useMemo, useRef, useState } from 'react';
-import { ContextMenu, ContextMenuContext } from './ContextMenu';
+import { ContextMenu, ContextMenuContext } from './ContextMenu.js';
 import { CSSTransition } from 'react-transition-group';
-import { WireLayer } from './WireLayer';
-import { useContextMenu } from '../hooks/useContextMenu';
-import { useDraggingNode } from '../hooks/useDraggingNode';
-import { useDraggingWire } from '../hooks/useDraggingWire';
+import { WireLayer } from './WireLayer.js';
+import { useContextMenu } from '../hooks/useContextMenu.js';
+import { useDraggingNode } from '../hooks/useDraggingNode.js';
+import { useDraggingWire } from '../hooks/useDraggingWire.js';
 import { ChartNode, GraphId, NodeConnection, NodeId, NodeType } from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
@@ -19,15 +19,15 @@ import {
   lastMousePositionState,
   selectedNodesState,
 } from '../state/graphBuilder';
-import { useCanvasPositioning } from '../hooks/useCanvasPositioning';
-import { VisualNode } from './VisualNode';
-import { useStableCallback } from '../hooks/useStableCallback';
+import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
+import { VisualNode } from './VisualNode.js';
+import { useStableCallback } from '../hooks/useStableCallback.js';
 import { useThrottleFn } from 'ahooks';
 import { produce } from 'immer';
-import { graphMetadataState } from '../state/graph';
-import { useViewportBounds } from '../hooks/useViewportBounds';
+import { graphMetadataState } from '../state/graph.js';
+import { useViewportBounds } from '../hooks/useViewportBounds.js';
 import { nanoid } from 'nanoid';
-import { useGlobalHotkey } from '../hooks/useGlobalHotkey';
+import { useGlobalHotkey } from '../hooks/useGlobalHotkey.js';
 
 const styles = css`
   width: 100vw;

@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { LoopControllerNode, Outputs, PortId } from '@ironclad/rivet-core';
-import { RenderDataValue } from '../RenderDataValue';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { RenderDataValue } from '../RenderDataValue.js';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 
 type LoopControllerNodeBodyProps = {
   node: LoopControllerNode;

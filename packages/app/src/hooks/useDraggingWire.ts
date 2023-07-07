@@ -1,9 +1,9 @@
 import { useCallback, useEffect } from 'react';
 import { NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
-import { useGetNodeIO } from './useGetNodeIO';
+import { useGetNodeIO } from './useGetNodeIO.js';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { connectionsState, nodesByIdState } from '../state/graph';
-import { draggingWireClosestPortState, draggingWireState } from '../state/graphBuilder';
+import { connectionsState, nodesByIdState } from '../state/graph.js';
+import { draggingWireClosestPortState, draggingWireState } from '../state/graphBuilder.js';
 
 export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnection[]) => void) => {
   const [draggingWire, setDraggingWire] = useRecoilState(draggingWireState);

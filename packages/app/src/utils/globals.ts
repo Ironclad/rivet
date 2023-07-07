@@ -1,7 +1,7 @@
-import { BrowserIOProvider } from '../io/BrowserIOProvider';
-import { IOProvider } from '../io/IOProvider';
-import { LegacyBrowserIOProvider } from '../io/LegacyBrowserIOProvider';
-import { TauriIOProvider } from '../io/TauriIOProvider';
+import { BrowserIOProvider } from '../io/BrowserIOProvider.js';
+import { IOProvider } from '../io/IOProvider.js';
+import { LegacyBrowserIOProvider } from '../io/LegacyBrowserIOProvider.js';
+import { TauriIOProvider } from '../io/TauriIOProvider.js';
 
 let ioProvider: IOProvider;
 

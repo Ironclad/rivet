@@ -1,7 +1,7 @@
 import { atom, atomFamily, selector } from 'recoil';
 import { ChartNode, GraphId, NodeId, PortId } from '@ironclad/rivet-core';
 import { recoilPersist } from 'recoil-persist';
-import { WireDef } from '../components/WireLayer';
+import { WireDef } from '../components/WireLayer.js';
 
 const { persistAtom } = recoilPersist({ key: 'graphBuilder' });
 

@@ -1,6 +1,6 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase';
+import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl';
+import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import {
   DataType,
   ScalarDataValue,
@@ -8,10 +8,10 @@ import {
   isScalarDataType,
   scalarDefaults,
   unwrapDataValue,
-} from '../DataValue';
-import { Inputs, Outputs } from '../GraphProcessor';
-import { coerceType } from '../../utils/coerceType';
-import { InternalProcessContext } from '../ProcessContext';
+} from '../DataValue.js';
+import { Inputs, Outputs } from '../GraphProcessor.js';
+import { coerceType } from '../../utils/coerceType.js';
+import { InternalProcessContext } from '../ProcessContext.js';
 
 export type SetGlobalNode = ChartNode<'setGlobal', SetGlobalNodeData>;
 

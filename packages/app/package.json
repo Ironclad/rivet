@@ -1,5 +1,6 @@
 {
   "name": "@ironclad/rivet-app",
+  "repository": "https://github.com/ironclad/rivet",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -51,7 +52,7 @@
     "@floating-ui/react": "^0.24.5",
     "@ironclad/rivet-core": "workspace:^",
     "@ironclad/trivet": "workspace:^",
-    "@swc/core": "^1.3.63",
+    "@swc/core": "^1.3.68",
     "@tauri-apps/api": "^1.3.0",
     "@tauri-apps/cli": "^1.3.1",
     "@types/fuse": "^2.6.0",
@@ -83,7 +84,7 @@
     "monaco-editor": "^0.39.0",
     "nanoid": "^3.3.6",
     "openai": "^3.3.0",
-    "p-queue": "^6.6.2",
+    "p-queue": "^7.3.4",
     "p-retry": "^5.1.2",
     "pkg": "^5.8.1",
     "prettier": "^2.8.8",

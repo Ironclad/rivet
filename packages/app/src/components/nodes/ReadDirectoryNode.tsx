@@ -3,8 +3,8 @@ import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
 import Button from '@atlaskit/button';
 import { ChartNode, Outputs, PortId, ReadDirectoryNode, expectType } from '@ironclad/rivet-core';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
-import { ioProvider } from '../../utils/globals';
+import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
+import { ioProvider } from '../../utils/globals.js';
 
 type ReadDirectoryNodeBodyProps = {
   node: ReadDirectoryNode;
