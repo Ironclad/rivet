@@ -128,8 +128,8 @@ export * from './nodes/JoinNode.js';
 import { filterNode } from './nodes/FilterNode.js';
 export * from './nodes/FilterNode.js';
 
-import { objectNode } from './nodes/ObjectNode';
-export * from './nodes/ObjectNode';
+import { objectNode } from './nodes/ObjectNode.js';
+export * from './nodes/ObjectNode.js';
 
 const register = new NodeRegistration()
   .register(toYamlNode)

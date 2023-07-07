@@ -1,8 +1,8 @@
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase';
+import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl';
-import { coerceTypeOptional } from '../../utils/coerceType';
-import { DataValue } from '../DataValue';
+import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { coerceTypeOptional } from '../../utils/coerceType.js';
+import { DataValue } from '../DataValue.js';
 
 export type ObjectNode = ChartNode<'object', ObjectNodeData>;
 
@@ -85,7 +85,7 @@ export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
   async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
     const inputMap = Object.keys(inputs).reduce((acc, key) => {
       const stringValue = coerceTypeOptional(inputs[key], 'string') ?? undefined;
-      
+
       // Make string JSON-safe.
       acc[key] = stringValue ? JSON.stringify(stringValue) : undefined;
       return acc;
