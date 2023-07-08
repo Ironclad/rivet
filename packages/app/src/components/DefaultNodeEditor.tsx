@@ -452,7 +452,7 @@ export const DefaultCodeEditor: FC<{
 
   const nodeLatest = useLatest(node);
 
-  const debouncedOnChange = useDebounceFn<(node: ChartNode) => void>(onChange, { wait: 250 });
+  const debouncedOnChange = useDebounceFn<(node: ChartNode) => void>(onChange, { wait: 100 });
 
   useEffect(() => {
     if (!editorContainer.current) {
@@ -485,7 +485,18 @@ export const DefaultCodeEditor: FC<{
 
     editorInstance.current = editor;
 
+    const currentNode = nodeLatest.current;
+
     return () => {
+      // Final commit on unmount
+      onChange?.({
+        ...currentNode,
+        data: {
+          ...(currentNode?.data as Record<string, unknown> | undefined),
+          [editorDef.dataKey]: editor.getValue(),
+        },
+      });
+
       editor.dispose();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
