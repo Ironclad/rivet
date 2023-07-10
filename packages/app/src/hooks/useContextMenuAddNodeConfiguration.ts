@@ -148,6 +148,20 @@ export const addContextMenuGroups = [
           `,
         },
       },
+      {
+        label: 'Extract With Regex',
+        data: 'extractRegex',
+        id: 'add-node:extractRegex',
+        infoBox: {
+          title: 'Extract With Regex Node',
+          image: extractRegexNodeImage,
+          description: dedent`
+            Extracts data from the input text using the configured regular expression. The regular expression can contain capture groups to extract specific parts of the text.
+
+            Each capture group corresponds to an output port of the node.
+          `,
+        },
+      },
     ],
   },
   {
@@ -214,23 +228,104 @@ export const addContextMenuGroups = [
     ],
   },
   {
-    id: 'add-node-group:data',
-    label: 'Data',
+    id: 'add-node-group:lists',
+    label: 'Lists',
     items: [
       {
-        label: 'Extract With Regex',
-        data: 'extractRegex',
-        id: 'add-node:extractRegex',
+        label: 'Array',
+        data: 'array',
+        id: 'add-node:array',
         infoBox: {
-          title: 'Extract With Regex Node',
-          image: extractRegexNodeImage,
+          title: 'Array Node',
+          image: arrayNodeImage,
           description: dedent`
-            Extracts data from the input text using the configured regular expression. The regular expression can contain capture groups to extract specific parts of the text.
+            Creates an array from the input values. By default, flattens any arrays which are inputs into a single array. Can be configured to keep the arrays separate, or deeply flatten arrays.
 
-            Each capture group corresponds to an output port of the node.
+            Useful for both creating and merging arrays.
+
+            The number of inputs is dynamic based on the number of connections.
           `,
         },
       },
+
+      {
+        label: 'Pop',
+        data: 'pop',
+        id: 'add-node:pop',
+        infoBox: {
+          title: 'Pop Node',
+          image: popNodeImage,
+          description: dedent`
+            Pops the last value off the input array and outputs the new array and the popped value.
+
+            Can also be used to just extract the last value from an array.
+          `,
+        },
+      },
+      {
+        label: 'Filter',
+        data: 'filter',
+        id: 'add-node:filter',
+        infoBox: {
+          title: 'Filter Node',
+          image: filterNodeImage,
+          description: dedent`
+            Takes in both an array of values, and an array of booleans of the same length, and filters the array where the corresponding boolean is true.
+          `,
+        },
+      },
+      {
+        label: 'Shuffle',
+        data: 'shuffle',
+        id: 'add-node:shuffle',
+        infoBox: {
+          title: 'Shuffle Node',
+          image: shuffleNodeImage,
+          description: dedent`
+            Shuffles the input array. Outputs the shuffled array.
+          `,
+        },
+      },
+    ],
+  },
+  {
+    id: 'add-node-group:numbers',
+    label: 'Numbers',
+    items: [
+      {
+        label: 'Number',
+        data: 'number',
+        id: 'add-node:number',
+        infoBox: {
+          title: 'Number Node',
+          image: numberNodeImage,
+          description: dedent`
+            Outputs a number constant, or converts an input value into a number.
+
+            Can be configured to round the number to a certain number of decimal places.
+          `,
+        },
+      },
+      {
+        label: 'RNG',
+        data: 'randomNumber',
+        id: 'add-node:randomNumber',
+        infoBox: {
+          title: 'RNG Node',
+          image: randomNumberNodeImage,
+          description: dedent`
+            Outputs a random number between the configured min and max values.
+
+            Can be configured to output only integers, and whether the max value is inclusive or exclusive.
+          `,
+        },
+      },
+    ],
+  },
+  {
+    id: 'add-node-group:objects',
+    label: 'Objects',
+    items: [
       {
         label: 'Extract JSON',
         data: 'extractJson',
@@ -274,22 +369,6 @@ export const addContextMenuGroups = [
         },
       },
       {
-        label: 'Array',
-        data: 'array',
-        id: 'add-node:array',
-        infoBox: {
-          title: 'Array Node',
-          image: arrayNodeImage,
-          description: dedent`
-            Creates an array from the input values. By default, flattens any arrays which are inputs into a single array. Can be configured to keep the arrays separate, or deeply flatten arrays.
-
-            Useful for both creating and merging arrays.
-
-            The number of inputs is dynamic based on the number of connections.
-          `,
-        },
-      },
-      {
         label: 'Object',
         data: 'object',
         id: 'add-node:object',
@@ -302,20 +381,12 @@ export const addContextMenuGroups = [
           `,
         },
       },
-      {
-        label: 'Pop',
-        data: 'pop',
-        id: 'add-node:pop',
-        infoBox: {
-          title: 'Pop Node',
-          image: popNodeImage,
-          description: dedent`
-            Pops the last value off the input array and outputs the new array and the popped value.
-
-            Can also be used to just extract the last value from an array.
-          `,
-        },
-      },
+    ],
+  },
+  {
+    id: 'add-node-group:data',
+    label: 'Data',
+    items: [
       {
         label: 'Hash',
         data: 'hash',
@@ -329,18 +400,6 @@ export const addContextMenuGroups = [
         },
       },
       {
-        label: 'Filter',
-        data: 'filter',
-        id: 'add-node:filter',
-        infoBox: {
-          title: 'Filter Node',
-          image: filterNodeImage,
-          description: dedent`
-            Takes in both an array of values, and an array of booleans of the same length, and filters the array where the corresponding boolean is true.
-          `,
-        },
-      },
-      {
         label: 'Bool',
         data: 'boolean',
         id: 'add-node:boolean',
@@ -349,46 +408,6 @@ export const addContextMenuGroups = [
           image: boolNodeImage,
           description: dedent`
             Outputs a boolean constant, or converts an input value into a boolean.
-          `,
-        },
-      },
-      {
-        label: 'Number',
-        data: 'number',
-        id: 'add-node:number',
-        infoBox: {
-          title: 'Number Node',
-          image: numberNodeImage,
-          description: dedent`
-            Outputs a number constant, or converts an input value into a number.
-
-            Can be configured to round the number to a certain number of decimal places.
-          `,
-        },
-      },
-      {
-        label: 'RNG',
-        data: 'randomNumber',
-        id: 'add-node:randomNumber',
-        infoBox: {
-          title: 'RNG Node',
-          image: randomNumberNodeImage,
-          description: dedent`
-            Outputs a random number between the configured min and max values.
-
-            Can be configured to output only integers, and whether the max value is inclusive or exclusive.
-          `,
-        },
-      },
-      {
-        label: 'Shuffle',
-        data: 'shuffle',
-        id: 'add-node:shuffle',
-        infoBox: {
-          title: 'Shuffle Node',
-          image: shuffleNodeImage,
-          description: dedent`
-            Shuffles the input array. Outputs the shuffled array.
           `,
         },
       },
