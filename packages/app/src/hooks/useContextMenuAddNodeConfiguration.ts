@@ -25,6 +25,14 @@ import boolNodeImage from '../assets/node_images/bool_node.png';
 import numberNodeImage from '../assets/node_images/number_node.png';
 import compareNodeImage from '../assets/node_images/compare_node.png';
 import evaluateNodeImage from '../assets/node_images/evaluate_node.png';
+import matchNodeImage from '../assets/node_images/match_node.png';
+import ifNodeImage from '../assets/node_images/if_node.png';
+import ifElseNodeImage from '../assets/node_images/if_else_node.png';
+import loopControllerNodeImage from '../assets/node_images/loop_controller_node.png';
+import coalesceNodeImage from '../assets/node_images/coalesce_node.png';
+import passthroughNodeImage from '../assets/node_images/passthrough_node.png';
+import abortGraphNodeImage from '../assets/node_images/abort_graph_node.png';
+import raceInputsNodeImage from '../assets/node_images/race_inputs_node.png';
 
 const textNode = {
   label: 'Text',
@@ -290,7 +298,7 @@ export const addContextMenuGroups = [
 
             Useful for creating objects from multiple string inputs.
           `,
-        }
+        },
       },
       {
         label: 'Pop',
@@ -368,6 +376,7 @@ export const addContextMenuGroups = [
         id: 'add-node:match',
         infoBox: {
           title: 'Match Node',
+          image: matchNodeImage,
           description: dedent`
             Any number of regular expressions can be configured, each corresponding to an output of the node. The output port of the first matching regex will be ran, and all other output ports will not be ran.
           `,
@@ -379,6 +388,7 @@ export const addContextMenuGroups = [
         id: 'add-node:if',
         infoBox: {
           title: 'If Node',
+          image: ifNodeImage,
           description: dedent`
             Takes in a condition and a value. If the condition is truthy, the value is passed through the output port. If the condition is not truthy, the output port is not ran.
           `,
@@ -390,6 +400,7 @@ export const addContextMenuGroups = [
         id: 'add-node:ifElse',
         infoBox: {
           title: 'If/Else Node',
+          image: ifElseNodeImage,
           description: dedent`
             Takes in three inputs: a condition, a true value, and a false value. If the condition is truthy, the true value is passed through the output port. If the condition is not truthy, the false value is passed through the output port.
 
@@ -403,6 +414,7 @@ export const addContextMenuGroups = [
         id: 'add-node:loopController',
         infoBox: {
           title: 'Loop Controller Node',
+          image: loopControllerNodeImage,
           description: dedent`
             Defines the entry point for a loop. Values from inside the loop should be passed back through the "Input" ports, and their corresponding "Default" values can be specified on the input ports as well.
 
@@ -416,6 +428,7 @@ export const addContextMenuGroups = [
         id: 'add-node:coalesce',
         infoBox: {
           title: 'Coalesce Node',
+          image: coalesceNodeImage,
           description: dedent`
             Takes in any number of inputs and outputs the first value that exists. Useful for consolidating branches after a Match node. This node can also "consume" the "Not Ran" value.
           `,
@@ -427,6 +440,7 @@ export const addContextMenuGroups = [
         id: 'add-node:passthrough',
         infoBox: {
           title: 'Passthrough Node',
+          image: passthroughNodeImage,
           description: dedent`
             Simply passes the input value to the output without any modifications.
           `,
@@ -438,6 +452,7 @@ export const addContextMenuGroups = [
         id: 'add-node:abortGraph',
         infoBox: {
           title: 'Abort Graph Node',
+          image: abortGraphNodeImage,
           description: dedent`
             Aborts the execution of the entire graph immediately.
 
@@ -451,6 +466,7 @@ export const addContextMenuGroups = [
         id: 'add-node:raceInputs',
         infoBox: {
           title: 'Race Inputs Node',
+          image: raceInputsNodeImage,
           description: dedent`
             Takes in multiple inputs and outputs the value of the first one to finish. The other inputs are cancelled.
           `,
