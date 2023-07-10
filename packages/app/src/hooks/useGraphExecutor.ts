@@ -13,6 +13,7 @@ import {
   StringArrayDataValue,
   DataValue,
   GraphOutputs,
+  Settings,
 } from '@ironclad/rivet-core';
 import { TauriNativeApi } from '../model/native/TauriNativeApi.js';
 import {
@@ -32,11 +33,12 @@ import { useExecutorSidecar } from './useExecutorSidecar.js';
 import { useRemoteDebugger, setCurrentDebuggerMessageHandler } from './useRemoteDebugger.js';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph.js';
 import { useStableCallback } from './useStableCallback.js';
+import { fillMissingSettingsFromEnvironmentVariables, getEnvVar } from '../utils/tauri';
 
 export function useGraphExecutor() {
   const graph = useRecoilValue(graphState);
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
-  const settings = useRecoilValue(settingsState);
+  const savedSettings = useRecoilValue(settingsState);
   const saveGraph = useSaveCurrentGraph();
   const setRunningGraphsState = useSetRecoilState(runningGraphsState);
 
@@ -320,7 +322,7 @@ export function useGraphExecutor() {
                 [graph.metadata!.id!]: graph,
               },
             },
-            settings,
+            settings: await fillMissingSettingsFromEnvironmentVariables(savedSettings),
           });
         }
 
@@ -390,7 +392,10 @@ export function useGraphExecutor() {
       if (loadedRecording) {
         results = await processor.replayRecording(loadedRecording.recorder);
       } else {
-        results = await processor.processGraph({ settings, nativeApi: new TauriNativeApi() });
+        results = await processor.processGraph({
+          settings: await fillMissingSettingsFromEnvironmentVariables(savedSettings),
+          nativeApi: new TauriNativeApi(),
+        });
       }
 
       console.log(results);
