@@ -1,6 +1,22 @@
 import * as esbuild from 'esbuild';
 import { copy } from 'esbuild-plugin-copy';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
+
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+
+const resolveRivet: esbuild.Plugin = {
+  name: 'resolve-rivet',
+  setup(build) {
+    build.onResolve({ filter: /^@ironclad\/rivet-/ }, (args) => {
+      const rivetPackage = args.path.replace(/^@ironclad\/rivet-/, '');
+      return {
+        path: resolve(`../${rivetPackage}/src/index.ts`),
+      };
+    });
+  },
+};
 
 esbuild.build({
   entryPoints: ['bin/executor.ts'],
@@ -11,6 +27,7 @@ esbuild.build({
   target: 'node16',
   external: [],
   plugins: [
+    resolveRivet,
     copy({
       assets: [
         {
