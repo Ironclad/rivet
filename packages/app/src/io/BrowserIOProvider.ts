@@ -63,4 +63,11 @@ export class BrowserIOProvider implements IOProvider {
     const [fileHandle] = await window.showOpenFilePicker();
     return fileHandle.name;
   }
+
+  async saveString(content: string, defaultFileName: string): Promise<void> {
+    const fileHandle = await window.showSaveFilePicker({ suggestedName: defaultFileName });
+    const writable = await fileHandle.createWritable();
+    await writable.write(content);
+    await writable.close();
+  }
 }

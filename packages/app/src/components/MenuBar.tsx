@@ -10,12 +10,13 @@ import clsx from 'clsx';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger.js';
 import { DebuggerConnectPanel } from './DebuggerConnectPanel.js';
 import Select from '@atlaskit/select';
-import { loadedRecordingState, selectedExecutorState } from '../state/execution.js';
+import { lastRecordingState, loadedRecordingState, selectedExecutorState } from '../state/execution.js';
 import { promptDesignerState } from '../state/promptDesigner.js';
 import { useGlobalShortcut } from '../hooks/useGlobalShortcut.js';
 import { useLoadRecording } from '../hooks/useLoadRecording.js';
 import { useRunMenuCommand } from '../hooks/useMenuCommands.js';
 import { isInTauri } from '../utils/tauri.js';
+import { useSaveRecording } from '../hooks/useSaveRecording';
 
 const styles = css`
   display: flex;
@@ -77,7 +78,8 @@ const styles = css`
 
   .run-button button,
   .pause-button button,
-  .unload-recording-button button {
+  .unload-recording-button button,
+  .save-recording-button button {
     border: none;
     padding: 0.5rem 1rem;
     cursor: pointer;
@@ -95,7 +97,8 @@ const styles = css`
     }
   }
 
-  .pause-button button {
+  .pause-button button,
+  .save-recording-button button {
     background-color: rgba(255, 255, 255, 0.1);
 
     &:hover {
@@ -230,6 +233,8 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
   const [selectedExecutor, setSelectedExecutor] = useRecoilState(selectedExecutorState);
   const runMenuCommandImpl = useRunMenuCommand();
   const [fileMenuOpen, setFileMenuOpen] = useState(false);
+  const lastRecording = useRecoilValue(lastRecordingState);
+  const saveRecording = useSaveRecording();
 
   const graphRunning = useRecoilValue(graphRunningState);
   const graphPaused = useRecoilValue(graphPausedState);
@@ -379,6 +384,11 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
                 </>
               )}
             </button>
+          </div>
+        )}
+        {lastRecording && (
+          <div className={clsx('save-recording-button')}>
+            <button onClick={saveRecording}>Save Recording</button>
           </div>
         )}
         <div className={clsx('run-button', { running: graphRunning, recording: !!loadedRecording })}>

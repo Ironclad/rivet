@@ -160,4 +160,19 @@ export class TauriIOProvider implements IOProvider {
 
     return path as string;
   }
+
+  async saveString(content: string, defaultFileName: string) {
+    const path = await save({
+      filters: [],
+      title: 'Save File',
+      defaultPath: defaultFileName,
+    });
+
+    if (path) {
+      await writeFile({
+        contents: content,
+        path: path,
+      });
+    }
+  }
 }

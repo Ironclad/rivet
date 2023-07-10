@@ -14,6 +14,7 @@ import {
   DataValue,
   GraphOutputs,
   Settings,
+  ExecutionRecorder,
 } from '@ironclad/rivet-core';
 import { TauriNativeApi } from '../model/native/TauriNativeApi.js';
 import {
@@ -24,7 +25,7 @@ import {
   graphPausedState,
   selectedProcessPageNodesState,
 } from '../state/dataFlow';
-import { loadedRecordingState, selectedExecutorState } from '../state/execution.js';
+import { lastRecordingState, loadedRecordingState, selectedExecutorState } from '../state/execution.js';
 import { graphState } from '../state/graph.js';
 import { projectState } from '../state/savedGraphs.js';
 import { settingsState } from '../state/settings.js';
@@ -33,7 +34,7 @@ import { useExecutorSidecar } from './useExecutorSidecar.js';
 import { useRemoteDebugger, setCurrentDebuggerMessageHandler } from './useRemoteDebugger.js';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph.js';
 import { useStableCallback } from './useStableCallback.js';
-import { fillMissingSettingsFromEnvironmentVariables, getEnvVar } from '../utils/tauri';
+import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
 
 export function useGraphExecutor() {
   const graph = useRecoilValue(graphState);
@@ -41,6 +42,7 @@ export function useGraphExecutor() {
   const savedSettings = useRecoilValue(settingsState);
   const saveGraph = useSaveCurrentGraph();
   const setRunningGraphsState = useSetRecoilState(runningGraphsState);
+  const setLastRecordingState = useSetRecoilState(lastRecordingState);
 
   const setDataForNode = (nodeId: NodeId, processId: ProcessId, data: Partial<NodeRunData>) => {
     setLastRunData((prev) =>
@@ -149,6 +151,7 @@ export function useGraphExecutor() {
   };
 
   const start = () => {
+    setLastRecordingState(undefined);
     setUserInputQuestions({});
     setGraphRunning(true);
     setLastRunData({});
@@ -308,6 +311,8 @@ export function useGraphExecutor() {
   }, [selectedExecutor]);
 
   const tryRunGraph = useStableCallback(async () => {
+    setLastRecordingState(undefined);
+
     if (
       remoteDebugger.remoteDebuggerState.started &&
       remoteDebugger.remoteDebuggerState.socket?.readyState === WebSocket.OPEN
@@ -348,7 +353,9 @@ export function useGraphExecutor() {
         },
       };
 
+      const recorder = new ExecutionRecorder();
       const processor = new GraphProcessor(tempProject, graph.metadata!.id!);
+      recorder.record(processor);
 
       processor.on('nodeStart', nodeStart);
       processor.on('nodeFinish', nodeFinish);
@@ -397,6 +404,8 @@ export function useGraphExecutor() {
           nativeApi: new TauriNativeApi(),
         });
       }
+
+      setLastRecordingState(recorder.serialize());
 
       console.log(results);
     } catch (e) {

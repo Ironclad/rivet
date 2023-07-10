@@ -43,3 +43,8 @@ export const loadedRecordingState = atom<{
   key: 'loadedRecording',
   default: null,
 });
+
+export const lastRecordingState = atom<string | undefined>({
+  key: 'lastRecording',
+  default: undefined,
+});
