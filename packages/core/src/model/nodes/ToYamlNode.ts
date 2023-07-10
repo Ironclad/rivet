@@ -53,6 +53,7 @@ export class ToYamlNodeImpl extends NodeImpl<ToYamlNode> {
 
     const toYaml = yaml.stringify(object, null, {
       indent: 2,
+      aliasDuplicateObjects: false,
     });
 
     return {

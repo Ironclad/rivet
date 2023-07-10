@@ -485,14 +485,13 @@ export const DefaultCodeEditor: FC<{
 
     editorInstance.current = editor;
 
-    const currentNode = nodeLatest.current;
-
     return () => {
       // Final commit on unmount
       onChange?.({
-        ...currentNode,
+        ...nodeLatest.current,
         data: {
-          ...(currentNode?.data as Record<string, unknown> | undefined),
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+          ...(nodeLatest.current?.data as Record<string, unknown> | undefined),
           [editorDef.dataKey]: editor.getValue(),
         },
       });
