@@ -52,7 +52,8 @@ const Container = styled.div`
     overflow: auto;
     padding: 8px 16px 16px;
     color: var(--foreground);
-    background-color: rgba(40, 44, 52, 0.75);
+    background-color: rgba(40, 44, 52, 0.8);
+    backdrop-filter: blur(2px);
     font-family: 'Roboto Mono', monospace;
     width: 100%;
     box-shadow: -4px 0 3px rgba(0, 0, 0, 0.1);
