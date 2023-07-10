@@ -24,7 +24,7 @@ export function deserializeProject(serializedProject: unknown): Project {
     if (err instanceof yaml.YAMLError) {
       yamlProblem(err);
     }
-    console.warn(`Failed to deserialize project v3: ${getError(err).stack}`);
+    console.warn(`Failed to deserialize project v4: ${getError(err).stack}`);
 
     try {
       return projectV3Deserializer(serializedProject);

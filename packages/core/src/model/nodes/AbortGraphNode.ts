@@ -21,7 +21,7 @@ export class AbortGraphNodeImpl extends NodeImpl<AbortGraphNode> {
   static create(): AbortGraphNode {
     const chartNode: AbortGraphNode = {
       type: 'abortGraph',
-      title: 'Graph Output',
+      title: 'Abort Graph',
       id: nanoid() as NodeId,
       visualData: {
         x: 0,

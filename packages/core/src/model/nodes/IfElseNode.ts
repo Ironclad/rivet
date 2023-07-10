@@ -18,7 +18,7 @@ export class IfElseNodeImpl extends NodeImpl<IfElseNode> {
       visualData: {
         x: 0,
         y: 0,
-        width: 125,
+        width: 175,
       },
     };
     return chartNode;
