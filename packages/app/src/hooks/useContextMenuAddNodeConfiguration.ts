@@ -33,6 +33,8 @@ import coalesceNodeImage from '../assets/node_images/coalesce_node.png';
 import passthroughNodeImage from '../assets/node_images/passthrough_node.png';
 import abortGraphNodeImage from '../assets/node_images/abort_graph_node.png';
 import raceInputsNodeImage from '../assets/node_images/race_inputs_node.png';
+import randomNumberNodeImage from '../assets/node_images/random_number_node.png';
+import shuffleNodeImage from '../assets/node_images/shuffle_node.png';
 
 const textNode = {
   label: 'Text',
@@ -361,6 +363,32 @@ export const addContextMenuGroups = [
             Outputs a number constant, or converts an input value into a number.
 
             Can be configured to round the number to a certain number of decimal places.
+          `,
+        },
+      },
+      {
+        label: 'RNG',
+        data: 'randomNumber',
+        id: 'add-node:randomNumber',
+        infoBox: {
+          title: 'RNG Node',
+          image: randomNumberNodeImage,
+          description: dedent`
+            Outputs a random number between the configured min and max values.
+
+            Can be configured to output only integers, and whether the max value is inclusive or exclusive.
+          `,
+        },
+      },
+      {
+        label: 'Shuffle',
+        data: 'shuffle',
+        id: 'add-node:shuffle',
+        infoBox: {
+          title: 'Shuffle Node',
+          image: shuffleNodeImage,
+          description: dedent`
+            Shuffles the input array. Outputs the shuffled array.
           `,
         },
       },

@@ -143,6 +143,12 @@ export * from './nodes/EvaluateNode.js';
 import { numberNode } from './nodes/NumberNode.js';
 export * from './nodes/NumberNode.js';
 
+import { randomNumberNode } from './nodes/RandomNumberNode.js';
+export * from './nodes/RandomNumberNode.js';
+
+import { shuffleNode } from './nodes/ShuffleNode.js';
+export * from './nodes/ShuffleNode.js';
+
 const register = new NodeRegistration()
   .register(toYamlNode)
   .register(userInputNode)
@@ -190,7 +196,9 @@ const register = new NodeRegistration()
   .register(booleanNode)
   .register(compareNode)
   .register(evaluateNode)
-  .register(numberNode);
+  .register(numberNode)
+  .register(randomNumberNode)
+  .register(shuffleNode);
 
 export type Nodes = typeof register.NodesType;
 
