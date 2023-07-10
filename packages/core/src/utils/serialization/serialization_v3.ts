@@ -1,97 +1,62 @@
+import { mapValues } from 'lodash-es';
+import {
+  NodeGraph,
+  Project,
+  GraphId,
+  NodeId,
+  NodeConnection,
+  ChartNode,
+  PortId,
+  ChartNodeVariant,
+  ProjectId,
+} from '../../index.js';
+import stableStringify from 'safe-stable-stringify';
 // @ts-ignore
 import * as yaml from 'yaml';
-import {
-  ChartNode,
-  GraphId,
-  NodeConnection,
-  NodeGraph,
-  NodeId,
-  PortId,
-  Project,
-  SerializedGraph,
-  SerializedNode,
-  SerializedNodeConnection,
-  SerializedProject,
-  getError,
-} from '../index.js';
-import stableStringify from 'safe-stable-stringify';
-import { mapValues } from 'lodash-es';
+import { doubleCheckProject } from './serializationUtils.js';
 
-export function serializeProject(project: Project): unknown {
-  return projectV3Serializer(project);
-}
+type SerializedProject = {
+  metadata: {
+    id: ProjectId;
+    title: string;
+    description: string;
+  };
 
-export function deserializeProject(serializedProject: unknown): Project {
-  try {
-    return projectV3Deserializer(serializedProject);
-  } catch (err) {
-    if (err instanceof yaml.YAMLError) {
-      yamlProblem(err);
-    }
-    console.warn(`Failed to deserialize project v3: ${getError(err).stack}`);
+  graphs: Record<GraphId, SerializedGraph>;
+};
 
-    try {
-      return projectV2Deserializer(serializedProject);
-    } catch (err) {
-      if (err instanceof yaml.YAMLError) {
-        yamlProblem(err);
-      }
-      console.warn(`Failed to deserialize project v2: ${getError(err).stack}`);
+type SerializedGraph = {
+  metadata: {
+    id: GraphId;
+    name: string;
+    description: string;
+  };
 
-      try {
-        return projectV1Deserializer(serializedProject);
-      } catch (err) {
-        console.warn(`Failed to deserialize project v1: ${getError(err).stack}`);
-        throw new Error('Could not deserialize project');
-      }
-    }
-  }
-}
+  nodes: Record<NodeId, SerializedNode>;
+};
 
-function yamlProblem(err: yaml.YAMLError): never {
-  const { code, message, pos, linePos } = err;
-  throw new Error(`YAML error: ${code} ${message} at ${pos} ${linePos}`);
-}
+export type SerializedNode = {
+  type: string;
+  id: string;
+  title: string;
+  description?: string;
+  isSplitRun?: boolean;
+  splitRunMax?: number;
 
-export function serializeGraph(graph: NodeGraph): unknown {
-  return graphV3Serializer(graph);
-}
+  // x/y/width/zIndex
+  visualData: `${string}/${string}/${string}/${string}`;
+  outgoingConnections: SerializedNodeConnection[];
+  data?: unknown;
+  variants?: ChartNodeVariant<unknown>[];
+};
 
-export function deserializeGraph(serializedGraph: unknown): NodeGraph {
-  try {
-    return graphV3Deserializer(serializedGraph);
-  } catch (err) {
-    try {
-      return graphV2Deserializer(serializedGraph);
-    } catch (err) {
-      try {
-        return graphV1Deserializer(serializedGraph);
-      } catch (err) {
-        throw new Error('Could not deserialize graph');
-      }
-    }
-  }
-}
+/** x/y/width/zIndex */
+type SerializedVisualData = `${string}/${string}/${string}/${string}`;
 
-function projectV3Serializer(project: Project): unknown {
-  // Make sure all data is ordered deterministically first
-  const stabilized = JSON.parse(stableStringify(toSerializedProject(project)));
+// portId->nodeId/portId
+type SerializedNodeConnection = `${string}->"${string}" ${string}/${string}`;
 
-  const serialized = yaml.stringify(
-    {
-      version: 3,
-      data: stabilized,
-    },
-    null,
-    {
-      indent: 2,
-    },
-  );
-
-  return serialized;
-}
-
-function projectV3Deserializer(data: unknown): Project {
+export function projectV3Deserializer(data: unknown): Project {
   if (typeof data !== 'string') {
     throw new Error('Project v3 deserializer requires a string');
   }
@@ -109,37 +74,23 @@ function projectV3Deserializer(data: unknown): Project {
   return project;
 }
 
-function projectV2Deserializer(data: unknown): Project {
+export function graphV3Deserializer(data: unknown): NodeGraph {
   if (typeof data !== 'string') {
-    throw new Error('Project v2 deserializer requires a string');
+    throw new Error('Graph v3 deserializer requires a string');
   }
 
-  const project = yaml.parse(data) as { version: number; data: Project };
+  const serializedGraph = yaml.parse(data) as { version: number; data: SerializedGraph };
 
-  if (project.version !== 2) {
-    throw new Error('Project v2 deserializer requires a version 2 project');
+  if (serializedGraph.version !== 3) {
+    throw new Error('Graph v3 deserializer requires a version 3 graph');
   }
 
-  doubleCheckProject(project.data);
-
-  return project.data;
+  return fromSerializedGraph(serializedGraph.data);
 }
 
-function projectV1Deserializer(data: unknown): Project {
-  if (typeof data !== 'string') {
-    throw new Error('Project v1 deserializer requires a string');
-  }
-
-  const project = JSON.parse(data);
-
-  doubleCheckProject(project);
-
-  return project;
-}
-
-function graphV3Serializer(graph: NodeGraph): unknown {
+export function projectV3Serializer(project: Project): unknown {
   // Make sure all data is ordered deterministically first
-  const stabilized = JSON.parse(stableStringify(toSerializedGraph(graph)));
+  const stabilized = JSON.parse(stableStringify(toSerializedProject(project)));
 
   const serialized = yaml.stringify(
     {
@@ -155,58 +106,22 @@ function graphV3Serializer(graph: NodeGraph): unknown {
   return serialized;
 }
 
-function graphV3Deserializer(data: unknown): NodeGraph {
-  if (typeof data !== 'string') {
-    throw new Error('Graph v3 deserializer requires a string');
-  }
+export function graphV3Serializer(graph: NodeGraph): unknown {
+  // Make sure all data is ordered deterministically first
+  const stabilized = JSON.parse(stableStringify(toSerializedGraph(graph)));
 
-  const serializedGraph = yaml.parse(data) as { version: number; data: SerializedGraph };
+  const serialized = yaml.stringify(
+    {
+      version: 4,
+      data: stabilized,
+    },
+    null,
+    {
+      indent: 2,
+    },
+  );
 
-  if (serializedGraph.version !== 3) {
-    throw new Error('Graph v3 deserializer requires a version 3 graph');
-  }
-
-  return fromSerializedGraph(serializedGraph.data);
-}
-
-function graphV2Deserializer(data: unknown): NodeGraph {
-  if (typeof data !== 'string') {
-    throw new Error('Graph v2 deserializer requires a string');
-  }
-
-  const graph = yaml.parse(data) as { version: number; data: NodeGraph };
-
-  if (graph.version !== 2) {
-    throw new Error('Graph v2 deserializer requires a version 2 graph');
-  }
-
-  return graph.data;
-}
-
-function graphV1Deserializer(data: unknown): NodeGraph {
-  if (typeof data !== 'string') {
-    throw new Error('Graph v1 deserializer requires a string');
-  }
-
-  const graph = JSON.parse(data);
-
-  if (!graph.nodes || !graph.connections) {
-    throw new Error('Invalid graph file');
-  }
-
-  return graph;
-}
-
-function doubleCheckProject(project: Project): void {
-  if (
-    !project.metadata ||
-    !project.metadata!.id ||
-    !project.metadata!.title ||
-    !project.graphs ||
-    typeof project.graphs !== 'object'
-  ) {
-    throw new Error('Invalid project file');
-  }
+  return serialized;
 }
 
 function toSerializedProject(project: Project): SerializedProject {

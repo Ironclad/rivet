@@ -13,7 +13,7 @@ export * from './model/ProcessContext.js';
 export * from './utils/coerceType.js';
 export * from './utils/expectType.js';
 export * from './utils/errors.js';
-export * from './utils/serialization.js';
+export * from './utils/serialization/serialization.js';
 export * from './utils/tokenizer.js';
 export * from './utils/outputs.js';
 export * from './model/integrations/integrations.js';

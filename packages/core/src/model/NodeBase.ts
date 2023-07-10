@@ -76,24 +76,6 @@ export type NodeTest = {
   conditionText: string;
 };
 
-export type SerializedNode = {
-  type: string;
-  id: string;
-  title: string;
-  description?: string;
-  isSplitRun?: boolean;
-  splitRunMax?: number;
-
-  // x/y/width/zIndex
-  visualData: `${string}/${string}/${string}/${string}`;
-  outgoingConnections: SerializedNodeConnection[];
-  data?: unknown;
-  variants?: ChartNodeVariant<unknown>[];
-};
-
-// portId->nodeId/portId
-export type SerializedNodeConnection = `${string}->"${string}" ${string}/${string}`;
-
 /** Represents an input definition of a node. */
 export type NodeInputDefinition = {
   /** The unique identifier of the input. Unique within a single node only. */
