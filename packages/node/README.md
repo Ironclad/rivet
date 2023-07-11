@@ -10,6 +10,7 @@ None are available yet.
 
 ### Prerequisites
 
+- Make sure [Volta is installed](https://volta.sh/) for using the correct node versions
 - Make sure [Rust is installed](https://rustup.rs/)
 - [yarn](https://yarnpkg.com/getting-started/install)
 
