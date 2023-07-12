@@ -12,6 +12,7 @@ import { DebuggerConnectPanel } from './DebuggerConnectPanel.js';
 import Select from '@atlaskit/select';
 import { loadedRecordingState, selectedExecutorState } from '../state/execution.js';
 import { promptDesignerState } from '../state/promptDesigner.js';
+import { trivetState } from '../state/trivet.js';
 import { useGlobalShortcut } from '../hooks/useGlobalShortcut.js';
 import { useLoadRecording } from '../hooks/useLoadRecording.js';
 import { useRunMenuCommand } from '../hooks/useMenuCommands.js';
@@ -77,7 +78,8 @@ const styles = css`
 
   .run-button button,
   .pause-button button,
-  .unload-recording-button button {
+  .unload-recording-button button,
+  .run-test-button button {
     border: none;
     padding: 0.5rem 1rem;
     cursor: pointer;
@@ -118,6 +120,15 @@ const styles = css`
 
     &:hover {
       background-color: var(--warning-dark);
+    }
+  }
+
+  .run-test-button button {
+    background-color: var(--grey-dark);
+    color: #ffffff;
+
+    &:hover {
+      background-color: var(--grey);
     }
   }
 
@@ -250,6 +261,7 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onRunTests, onAbortGraph
   const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
 
   const [promptDesigner, setPromptDesigner] = useRecoilState(promptDesignerState);
+  const [trivet, setTrivet] = useRecoilState(trivetState);
 
   useGlobalShortcut('CmdOrCtrl+Shift+D', () => {
     if (isActuallyRemoteDebugging || remoteDebugger.reconnecting) {
@@ -289,6 +301,14 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onRunTests, onAbortGraph
             onMouseDown={() => setPromptDesigner((s) => ({ ...s, isOpen: !s.isOpen }))}
           >
             Prompt Designer
+          </button>
+        </div>
+        <div className="menu-item trivet-menu">
+          <button
+            className={clsx('dropdown-item', { active: trivet.isOpen })}
+            onMouseDown={() => setTrivet((s) => ({ ...s, isOpen: !s.isOpen }))}
+          >
+            Trivet Tests
           </button>
         </div>
         <div className="remote-debugger">

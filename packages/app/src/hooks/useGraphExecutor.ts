@@ -33,6 +33,7 @@ import { useExecutorSidecar } from './useExecutorSidecar.js';
 import { useRemoteDebugger, setCurrentDebuggerMessageHandler } from './useRemoteDebugger.js';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph.js';
 import { useStableCallback } from './useStableCallback.js';
+import { trivetState } from '../state/trivet.js';
 
 export function useGraphExecutor() {
   const graph = useRecoilValue(graphState);
@@ -40,6 +41,7 @@ export function useGraphExecutor() {
   const settings = useRecoilValue(settingsState);
   const saveGraph = useSaveCurrentGraph();
   const setRunningGraphsState = useSetRecoilState(runningGraphsState);
+  const { testSuites } = useRecoilValue(trivetState);
 
   const setDataForNode = (nodeId: NodeId, processId: ProcessId, data: Partial<NodeRunData>) => {
     setLastRunData((prev) =>
@@ -307,6 +309,7 @@ export function useGraphExecutor() {
   }, [selectedExecutor]);
 
   const tryRunTests = useStableCallback(async () => {
+    toast.info('Running Tests');
     console.log('trying to run tests');
     try {
       saveGraph();
@@ -327,8 +330,9 @@ export function useGraphExecutor() {
       const result = await runTrivet({
         project: tempProject,
         openAiKey: settings.openAiKey,
-        testGlobs: ['**/TEST*'],
+        testSuites: testSuites ?? [],
       });
+      toast.info(`Ran tests: ${result.testSuiteResults.length} tests, ${result.testSuiteResults.filter((t) => t.passing).length} passing`);
       console.log(result);
     } catch (e) {
       console.log(e);
