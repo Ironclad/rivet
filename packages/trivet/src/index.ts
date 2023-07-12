@@ -5,9 +5,11 @@ export interface TrivetOpts {
   project: Project;
   openAiKey: string;
   testSuites: TrivetTestSuite[];
+  onUpdate?: (results: TrivetResults) => void;
 }
 
 export interface TrivetTestSuite {
+  id: string;
   name?: string;
   description?: string;
   testGraph: string;
@@ -16,6 +18,7 @@ export interface TrivetTestSuite {
 }
 
 export interface TrivetTestCase {
+  id: string;
   inputs: Record<string, unknown>;
   baselineOutputs: Record<string, unknown>;
 }
@@ -25,6 +28,7 @@ export interface TrivetResults {
 }
 
 export interface TrivetTestSuiteResult {
+  id: string;
   testGraph: string;
   validationGraph: string;
   name: string;
@@ -34,8 +38,10 @@ export interface TrivetTestSuiteResult {
 }
 
 export interface TrivetTestCaseResult {
+  id: string;
   passing: boolean;
   message: string;
+  outputs: Record<string, unknown>;
 }
 
 const TRUTHY_STRINGS = new Set(['true', 'TRUE']);
@@ -67,7 +73,7 @@ export class DummyNativeApi implements NativeApi {
 }
 
 export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
-  const { project, testSuites, openAiKey } = opts;
+  const { project, testSuites, openAiKey, onUpdate } = opts;
 
   const graphsById = keyBy(project.graphs, (g) => g.metadata?.id ?? '');
 
@@ -154,15 +160,33 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
         };
       });
       testCaseResults.push({
+        id: testCase.id,
         passing: validationResults.every((r) => r.valid),
         message: validationResults.find((r) => !r.valid)?.description ?? 'PASS',
+        outputs: mapValues(outputs, (dataValue) => dataValue.value),
+      });
+      onUpdate?.({
+        ...trivetResults,
+        testSuiteResults: [
+          ...trivetResults.testSuiteResults,
+          {
+            id: testSuite.id,
+            testGraph: testSuite.testGraph,
+            validationGraph: testSuite.validationGraph,
+            name: testSuite.name ?? 'Test',
+            description: testSuite.description ?? 'It should pass.',
+            testCaseResults: testCaseResults.slice(),
+            passing: testCaseResults.every((r) => r.passing),      
+          }
+        ],
       });
     }
     trivetResults.testSuiteResults.push({
+      id: testSuite.id,
       testGraph: testSuite.testGraph,
       validationGraph: testSuite.validationGraph,
-      name: testGraph.metadata?.name ?? 'Test',
-      description: testGraph.metadata?.description ?? 'It should pass.',
+      name: testSuite.name ?? 'Test',
+      description: testSuite.description ?? 'It should pass.',
       testCaseResults,
       passing: testCaseResults.every((r) => r.passing),
     });

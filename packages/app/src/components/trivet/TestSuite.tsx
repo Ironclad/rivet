@@ -1,15 +1,16 @@
 import { FC, useCallback, useMemo } from "react";
-import { TrivetUiTypes } from "./TrivetUiTypes";
 import { TestCaseTable } from "./TestCaseTable";
 import { InlineEditableTextfield } from "@atlaskit/inline-edit";
 import { GraphSelector } from "../DefaultNodeEditor";
 import { nanoid } from "nanoid";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { savedGraphsState } from "../../state/savedGraphs";
 import { keyBy } from "lodash-es";
 import { GraphInputNode, GraphOutputNode, NodeGraph } from "@ironclad/rivet-core";
 import { TestCaseEditor } from "./TestCaseEditor";
 import { css } from "@emotion/react";
+import { TrivetTestSuite } from "@ironclad/trivet";
+import { trivetState } from "../../state/trivet";
 
 const styles = css`
   min-height: 100%;
@@ -29,25 +30,41 @@ const styles = css`
   }
 `;
 
-export type TestSuiteProps = {
-  testSuite: TrivetUiTypes.TrivetTestSuiteWithId | undefined;
-  updateTestSuite: (testSuite: TrivetUiTypes.TrivetTestSuiteWithId) => void;
-  setEditingTestCase: (id: string | undefined) => void;
-  deleteTestCase: (id: string) => void;
-  isEditingTestCase: boolean;
-  editingTestCaseId: string | undefined;
-};
-
-export const TestSuite: FC<TestSuiteProps> = ({
-  testSuite,
-  updateTestSuite,
-  setEditingTestCase,
-  isEditingTestCase,
-  editingTestCaseId,
-  deleteTestCase,
-}) => {
+export const TestSuite: FC = () => {
+  const [{ testSuites, selectedTestSuiteId, editingTestCaseId, recentTestResults, runningTests }, setState] = useRecoilState(trivetState);
   const savedGraphs = useRecoilValue(savedGraphsState);
+
+  const testSuite = useMemo(() => testSuites.find((ts) => ts.id === selectedTestSuiteId), [testSuites, selectedTestSuiteId]);
+  const isEditingTestCase = useMemo(
+    () => Boolean(editingTestCaseId) && (testSuite?.testCases.find((tc) => tc.id === editingTestCaseId) != null),
+    [editingTestCaseId, testSuite]);
+  const updateTestSuite = useCallback((testSuite: TrivetTestSuite) => {
+    setState((s) => ({
+      ...s,
+      testSuites: s.testSuites.map((ts) => ts.id === testSuite.id ? testSuite : ts)
+    }));
+  }, [setState]);
+
+  const setEditingTestCase = useCallback((id: string | undefined) => {
+    setState((s) => ({
+      ...s,
+      editingTestCaseId: id,
+    }));
+  }, [setState]);
+  const deleteTestCase = useCallback((id: string) => {
+    setState((s) => ({
+      ...s,
+      testSuites: s.testSuites.map((ts) => ts.id === selectedTestSuiteId ? { ...ts, testCases: ts.testCases.filter((tc) => tc.id !== id) } : ts),
+    }));
+  }, [setState, selectedTestSuiteId]);
+
+  const latestResult = useMemo(
+    () => recentTestResults?.testSuiteResults.find((tsr) => tsr.id === selectedTestSuiteId),
+    [recentTestResults, selectedTestSuiteId]
+  );
+
   const graphsById = useMemo<Record<string, NodeGraph>>(() => keyBy(savedGraphs, (g) => g.metadata?.id as string), [savedGraphs]);
+
   const addTestCase = useCallback(() => {
     if (testSuite == null) {
       return;
@@ -119,6 +136,8 @@ export const TestSuite: FC<TestSuiteProps> = ({
         setEditingTestCase={setEditingTestCase}
         editingTestCaseId={editingTestCaseId}
         deleteTestCase={deleteTestCase}
+        running={runningTests}
+        testCaseResults={latestResult?.testCaseResults ?? []}
       />
       {isEditingTestCase && <div className="test-case-editor">
         <TestCaseEditor key={editingTestCaseId} />

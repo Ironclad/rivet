@@ -19,9 +19,15 @@ const styles = css`
 `;
 
 export const TestCaseEditor: FC = () => {
-  const [{ testSuites, selectedTestSuiteId, editingTestCaseId }, setState] = useRecoilState(trivetState);
+  const [{ testSuites, selectedTestSuiteId, editingTestCaseId, recentTestResults }, setState] = useRecoilState(trivetState);
   const selectedTestSuite = useMemo(() => testSuites.find((ts) => ts.id === selectedTestSuiteId), [testSuites, selectedTestSuiteId]);
   const selectedTestCase = useMemo(() => selectedTestSuite?.testCases.find((tc) => tc.id === editingTestCaseId), [selectedTestSuite, editingTestCaseId]);
+  const testCaseResults = useMemo(
+    () => recentTestResults?.testSuiteResults
+      .find((tsr) => tsr.id === selectedTestSuiteId)?.testCaseResults
+      .find((tcr) => tcr.id === editingTestCaseId),
+    [recentTestResults, selectedTestSuiteId, editingTestCaseId]
+  )
 
   function onClose() {
     setState((s) => ({ ...s, editingTestCaseId: undefined }));
@@ -51,18 +57,32 @@ export const TestCaseEditor: FC = () => {
           setJson={(baselineOutputs) => setState((s) => ({ ...s, testSuites: s.testSuites.map((ts) => ts.id === selectedTestSuiteId ? { ...ts, testCases: ts.testCases.map((tc) => tc.id === editingTestCaseId ? { ...tc, baselineOutputs } : tc) } : ts) }))}
         />
       </div>
+      {testCaseResults != null && (
+        <div>
+          <label>
+            {testCaseResults.passing ? '✅' : '❌'}
+            Test Result Outputs
+          </label>
+          <InputOutputEditor
+            json={testCaseResults.outputs ?? {}}
+          />
+        </div>
+      )}
     </div>
   );
 };
 
-const InputOutputEditor: FC<{ json: Record<string, unknown>, setJson: (json: Record<string, unknown>) => void }> = ({ json, setJson }) => {
+const InputOutputEditor: FC<{
+  json: Record<string, unknown>,
+  setJson?: (json: Record<string, unknown>) => void,
+}> = ({ json, setJson }) => {
   const [text, setText] = useState(JSON.stringify(json, null, 2));
 
   const handleChange = (newText: string) => {
     setText(newText);
     try {
       const updatedJson = JSON.parse(newText);
-      setJson(updatedJson);
+      setJson?.(updatedJson);
     } catch (err) {
       // ignore
     }
@@ -84,6 +104,7 @@ const InputOutputEditor: FC<{ json: Record<string, unknown>, setJson: (json: Rec
   return (
     <div className="editor">
       <CodeEditor
+        isReadonly={setJson == null}
         text={text}
         onChange={handleChange}
         language="json"

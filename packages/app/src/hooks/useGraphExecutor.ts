@@ -42,6 +42,7 @@ export function useGraphExecutor() {
   const saveGraph = useSaveCurrentGraph();
   const setRunningGraphsState = useSetRecoilState(runningGraphsState);
   const { testSuites } = useRecoilValue(trivetState);
+  const setTrivetState = useSetRecoilState(trivetState);
 
   const setDataForNode = (nodeId: NodeId, processId: ProcessId, data: Partial<NodeRunData>) => {
     setLastRunData((prev) =>
@@ -311,6 +312,11 @@ export function useGraphExecutor() {
   const tryRunTests = useStableCallback(async () => {
     toast.info('Running Tests');
     console.log('trying to run tests');
+    setTrivetState((s) => ({
+      ...s,
+      runningTests: true,
+      recentTestResults: undefined,
+    }));
     try {
       saveGraph();
 
@@ -331,11 +337,26 @@ export function useGraphExecutor() {
         project: tempProject,
         openAiKey: settings.openAiKey,
         testSuites: testSuites ?? [],
+        onUpdate: (results) => {
+          setTrivetState((s) => ({
+            ...s,
+            recentTestResults: results,
+          }));
+        },
       });
+      setTrivetState((s) => ({
+        ...s,
+        recentTestResults: result,
+        runningTests: false,
+      }));
       toast.info(`Ran tests: ${result.testSuiteResults.length} tests, ${result.testSuiteResults.filter((t) => t.passing).length} passing`);
       console.log(result);
     } catch (e) {
       console.log(e);
+      setTrivetState((s) => ({
+        ...s,
+        runningTests: false,
+      }));
     }
   });
 

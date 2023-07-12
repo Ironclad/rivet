@@ -5,8 +5,8 @@ import { css } from '@emotion/react';
 import Button from '@atlaskit/button';
 import { TestSuiteList } from './TestSuiteList';
 import { TestSuite } from './TestSuite';
-import { TrivetUiTypes } from './TrivetUiTypes';
 import { nanoid } from 'nanoid';
+import { TrivetTestSuite } from '@ironclad/trivet';
 
 
 const styles = css`
@@ -55,15 +55,8 @@ export type TrivetContainerProps = {
 };
 
 export const TrivetContainer: FC<TrivetContainerProps> = ({ onClose }) => {
-  const [{ testSuites, selectedTestSuiteId, editingTestCaseId }, setState] = useRecoilState(trivetState);
+  const [{ testSuites, selectedTestSuiteId }, setState] = useRecoilState(trivetState);
   const selectedTestSuite = useMemo(() => testSuites.find((ts) => ts.id === selectedTestSuiteId), [testSuites, selectedTestSuiteId]);
-  const isEditingTestCase = useMemo(() => Boolean(editingTestCaseId) && (selectedTestSuite?.testCases.find((tc) => tc.id === editingTestCaseId) != null), [editingTestCaseId, selectedTestSuite]);
-  const updateSelectedTestSuite = useCallback((testSuite: TrivetUiTypes.TrivetTestSuiteWithId) => {
-    setState((s) => ({
-      ...s,
-      testSuites: s.testSuites.map((ts) => ts.id === testSuite.id ? testSuite : ts)
-    }));
-  }, [setState]);
   const createNewTestSuite = useCallback(() => {
     setState((s) => ({
       ...s,
@@ -76,18 +69,6 @@ export const TrivetContainer: FC<TrivetContainerProps> = ({ onClose }) => {
       testSuites: s.testSuites.filter((ts) => ts.id !== id),
     }));
   }, [setState]);
-  const setEditingTestCase = useCallback((id: string | undefined) => {
-    setState((s) => ({
-      ...s,
-      editingTestCaseId: id,
-    }));
-  }, [setState]);
-  const deleteTestCase = useCallback((id: string) => {
-    setState((s) => ({
-      ...s,
-      testSuites: s.testSuites.map((ts) => ts.id === selectedTestSuiteId ? { ...ts, testCases: ts.testCases.filter((tc) => tc.id !== id) } : ts),
-    }));
-  }, [setState, selectedTestSuiteId]);
 
   return (
     <div css={styles}>
@@ -106,14 +87,7 @@ export const TrivetContainer: FC<TrivetContainerProps> = ({ onClose }) => {
           />
         </div>
         <div className="test-case-column">
-          <TestSuite
-            testSuite={selectedTestSuite}
-            updateTestSuite={updateSelectedTestSuite}
-            setEditingTestCase={setEditingTestCase}
-            isEditingTestCase={isEditingTestCase}
-            editingTestCaseId={editingTestCaseId}
-            deleteTestCase={deleteTestCase}
-          />
+          <TestSuite />
         </div>
       </div>
     </div>

@@ -1,11 +1,13 @@
+import { TrivetResults, TrivetTestSuite } from '@ironclad/trivet';
 import { atom } from 'recoil';
-import { TrivetUiTypes } from '../components/trivet/TrivetUiTypes';
 
 export type TrivetState = {
   isOpen: boolean;
-  testSuites: TrivetUiTypes.TrivetTestSuiteWithId[];
+  testSuites: TrivetTestSuite[];
   selectedTestSuiteId?: string;
   editingTestCaseId?: string;
+  recentTestResults?: TrivetResults;
+  runningTests: boolean;
 };
 
 export const trivetState = atom<TrivetState>({

@@ -1,11 +1,11 @@
 import { css } from "@emotion/react";
 import { FC, MouseEvent } from "react";
-import { TrivetUiTypes } from "./TrivetUiTypes";
 import clsx from "clsx";
 import { useContextMenu } from "../../hooks/useContextMenu";
 import { useStableCallback } from "../../hooks/useStableCallback";
 import Portal from "@atlaskit/portal";
 import { DropdownItem } from "@atlaskit/dropdown-menu";
+import { TrivetTestSuite } from "@ironclad/trivet";
 
 const styles = css`
 min-height: 100%;
@@ -35,8 +35,8 @@ const contextMenuStyles = css`
 `;
 
 export type TestSuiteListProps = {
-  testSuites: TrivetUiTypes.TrivetTestSuiteWithId[];
-  selectedTestSuite: TrivetUiTypes.TrivetTestSuiteWithId | undefined;
+  testSuites: TrivetTestSuite[];
+  selectedTestSuite: TrivetTestSuite | undefined;
   setSelectedTestSuite: (id: string) => void;
   createNewTestSuite: () => void;
   deleteTestSuite: (id: string) => void;

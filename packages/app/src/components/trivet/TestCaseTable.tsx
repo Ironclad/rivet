@@ -1,8 +1,10 @@
-import { FC } from "react";
-import { TrivetUiTypes } from "./TrivetUiTypes";
+import { FC, useMemo } from "react";
 import Button from "@atlaskit/button";
 import clsx from "clsx";
 import { css } from "@emotion/react";
+import { TrivetTestCase, TrivetTestCaseResult } from "@ironclad/trivet";
+import { keyBy } from "lodash-es";
+import { LoadingSpinner } from "../LoadingSpinner";
 
 const styles = css`
   .test-case-row {
@@ -18,14 +20,19 @@ const styles = css`
       background-color: var(--primary-dark);
     }
   }
+  .status-icon {
+    width: 20px;
+  }
 `;
 
 export type TestCaseTableProps = {
-  testCases: TrivetUiTypes.TrivetTestCaseWithId[];
+  testCases: TrivetTestCase[];
   addTestCase: () => void;
   deleteTestCase: (id: string) => void;
   setEditingTestCase: (id: string | undefined) => void;
   editingTestCaseId: string | undefined;
+  testCaseResults: TrivetTestCaseResult[];
+  running: boolean;
 };
 
 export const TestCaseTable: FC<TestCaseTableProps> = ({
@@ -34,7 +41,13 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
   setEditingTestCase,
   editingTestCaseId,
   deleteTestCase,
+  testCaseResults,
+  running,
 }) => {
+  const testCaseResultsById = useMemo(
+    () => keyBy(testCaseResults, (tcr) => tcr.id),
+    [testCaseResults],
+  );
   function toggleSelected(id: string) {
     if (editingTestCaseId === id) {
       setEditingTestCase(undefined);
@@ -46,6 +59,7 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
     <table css={styles}>
       <thead>
         <tr>
+          <th />
           <th>Inputs</th>
           <th>Outputs</th>
         </tr>
@@ -53,6 +67,7 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
       <tbody>
         {testCases.map((testCase) => (
           <tr key={testCase.id} className={clsx('test-case-row', { selected: editingTestCaseId === testCase.id })} onClick={() => toggleSelected(testCase.id)}>
+            <td className="status-icon"><TestCaseStatusIcon result={testCaseResultsById[testCase.id]} running={running} /></td>
             <td>{JSON.stringify(testCase.inputs).slice(0, 20)}</td>
             <td>{JSON.stringify(testCase.baselineOutputs).slice(0, 20)}</td>
             <td>
@@ -68,4 +83,16 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
       </tbody>
     </table>
   );
+};
+
+const TestCaseStatusIcon: FC<{ result?: TrivetTestCaseResult, running: boolean }> = ({ result, running }) => {
+  if (result == null) {
+    if (running) {
+      return <LoadingSpinner />;
+    } else {
+      return <div />;
+    }
+  } else {
+    return <div>{result.passing ? '✅' : '❌'}</div>;
+  }
 };
