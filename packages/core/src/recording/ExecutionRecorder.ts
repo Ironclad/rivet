@@ -110,12 +110,19 @@ function toRecordedEvent<T extends keyof ProcessEvents>(event: T, data: ProcessE
   };
 }
 
+export type ExecutionRecorderOptions = {
+  includePartialOutputs?: boolean;
+  includeTrace?: boolean;
+};
+
 export class ExecutionRecorder {
   #events: RecordedEvents[] = [];
   recordingId: RecordingId | undefined;
   #emitter: Emittery<ExecutionRecorderEvents>;
+  #options: ExecutionRecorderOptions;
 
-  constructor() {
+  constructor(options: ExecutionRecorderOptions = {}) {
+    this.#options = options;
     this.#emitter = new Emittery();
     this.#emitter.bindMethods(this as any, ['on', 'off', 'once']);
   }
@@ -127,6 +134,14 @@ export class ExecutionRecorder {
   record(processor: GraphProcessor) {
     this.recordingId = nanoid() as RecordingId;
     processor.onAny((event, data) => {
+      if (this.#options.includePartialOutputs === false && event === 'partialOutput') {
+        return;
+      }
+
+      if (this.#options.includeTrace === false && event === 'trace') {
+        return;
+      }
+
       this.#events.push(toRecordedEvent(event, data) as RecordedEvents);
 
       if (event === 'done' || event === 'abort' || event === 'error') {
