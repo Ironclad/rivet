@@ -1236,7 +1236,7 @@ export class GraphProcessor {
         await this.getRootProcessor().#emitter.once(`globalSet:${id}`);
         return this.#globals.get(id)!;
       },
-      createSubProcessor: (subGraphId: GraphId) => {
+      createSubProcessor: (subGraphId: GraphId, { signal }: { signal?: AbortSignal } = {}) => {
         const processor = new GraphProcessor(this.#project, subGraphId);
         processor.#isSubProcessor = true;
         processor.#executionCache = this.#executionCache;
@@ -1277,6 +1277,9 @@ export class GraphProcessor {
 
         this.#subprocessors.add(processor);
 
+        if (signal) {
+          signal.addEventListener('abort', () => processor.abort());
+        }
         // If parent is aborted, abort subgraph with error (it's fine, success state is on the parent)
         this.on('abort', () => processor.abort());
 
