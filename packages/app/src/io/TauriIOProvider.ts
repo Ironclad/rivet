@@ -60,7 +60,7 @@ export class TauriIOProvider implements IOProvider {
     if (filePath) {
       await writeFile({
         // TODO HACK
-        contents: data + SEPARATOR + serializedTestData,
+        contents: testData?.length > 0 ? data + SEPARATOR + serializedTestData : data,
         path: filePath,
       });
 
@@ -76,7 +76,7 @@ export class TauriIOProvider implements IOProvider {
 
     await writeFile({
       // TODO HACK
-      contents: data + SEPARATOR + serializedTestData,
+      contents: testData?.length > 0 ? data + SEPARATOR + serializedTestData : data,
       path: path,
     });
   }
