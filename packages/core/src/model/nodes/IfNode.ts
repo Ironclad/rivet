@@ -75,8 +75,12 @@ export class IfNodeImpl extends NodeImpl<IfNode> {
       return excluded;
     }
 
-    if (ifValue.type.endsWith('[]') && (ifValue as ArrayDataValue<ScalarDataValue>).value.length === 0) {
-      return excluded;
+    if (ifValue.type.endsWith('[]')) {
+      const value = ifValue as ArrayDataValue<ScalarDataValue>;
+
+      if (!value.value || value.value.length === 0) {
+        return excluded;
+      }
     }
 
     return {
