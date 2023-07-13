@@ -1,13 +1,7 @@
-import {
-  NodeId,
-  PortId,
-  ProcessEvents,
-  ProcessId,
-  coerceTypeOptional,
-} from '@ironclad/rivet-core';
+import { NodeId, PortId, ProcessEvents, ProcessId, coerceTypeOptional } from '@ironclad/rivet-core';
 import { produce } from 'immer';
 import { cloneDeep } from 'lodash-es';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import {
   NodeRunData,
   graphPausedState,
@@ -17,11 +11,9 @@ import {
   selectedProcessPageNodesState,
 } from '../state/dataFlow';
 import { ProcessQuestions, userInputModalQuestionsState } from '../state/userInput';
-import { graphState } from '../state/graph';
 import { lastRecordingState } from '../state/execution';
 
 export function useCurrentExecution() {
-  const graph = useRecoilValue(graphState);
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
   const setSelectedPage = useSetRecoilState(selectedProcessPageNodesState);
   const setUserInputQuestions = useSetRecoilState(userInputModalQuestionsState);
@@ -142,16 +134,16 @@ export function useCurrentExecution() {
     setSelectedNodePageLatest(node.id);
   };
 
-  function onGraphStart(_data: ProcessEvents['graphStart']) {
-    setRunningGraphsState((running) => [...running, graph.metadata!.id!]);
+  function onGraphStart(data: ProcessEvents['graphStart']) {
+    setRunningGraphsState((running) => [...running, data.graph.metadata!.id!]);
   }
 
-  function onGraphFinish(_data: ProcessEvents['graphFinish']) {
-    if (graph.metadata?.id) {
+  function onGraphFinish(data: ProcessEvents['graphFinish']) {
+    if (data.graph.metadata?.id) {
       setRunningGraphsState((running) => {
         // Can have same graph multiple times, so just remove first one
         const existing = [...running];
-        const graphIndex = existing.indexOf(graph.metadata!.id!);
+        const graphIndex = existing.indexOf(data.graph.metadata!.id!);
         if (graphIndex !== -1) {
           existing.splice(graphIndex, 1);
         }
