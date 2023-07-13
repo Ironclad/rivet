@@ -17,4 +17,6 @@ export interface IOProvider {
   openDirectory(): Promise<string | string[] | null>;
 
   openFile(): Promise<string>;
+
+  saveString(content: string, defaultFileName: string): Promise<void>;
 }

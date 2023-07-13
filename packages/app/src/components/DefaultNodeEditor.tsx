@@ -41,6 +41,8 @@ export const defaultEditorContainerStyles = css`
   width: 100%;
   align-content: start;
   gap: 8px;
+  flex: 1 1 auto;
+  min-height: 0;
 
   .row {
     display: grid;
@@ -60,9 +62,18 @@ export const defaultEditorContainerStyles = css`
     column-gap: 16px;
   }
 
+  .editor-wrapper-wrapper {
+    min-height: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    /* height: 100%; */
+  }
+
   .editor-wrapper {
     min-height: 0;
-    flex-grow: 1;
+    flex: 1 1 auto;
+    /* height: 100%; */
   }
 
   .editor-container {
@@ -71,7 +82,9 @@ export const defaultEditorContainerStyles = css`
 
   .row.code {
     min-height: 0;
-    flex-grow: 1;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
   }
 
   .row.toggle > div {
@@ -452,7 +465,7 @@ export const DefaultCodeEditor: FC<{
 
   const nodeLatest = useLatest(node);
 
-  const debouncedOnChange = useDebounceFn<(node: ChartNode) => void>(onChange, { wait: 250 });
+  const debouncedOnChange = useDebounceFn<(node: ChartNode) => void>(onChange, { wait: 100 });
 
   useEffect(() => {
     if (!editorContainer.current) {
@@ -472,6 +485,7 @@ export const DefaultCodeEditor: FC<{
       wordWrap: 'on',
       readOnly: isReadonly,
       value: (nodeLatest.current?.data as Record<string, unknown>)[editorDef.dataKey] as string | undefined,
+      scrollBeyondLastLine: false,
     });
     editor.onDidChangeModelContent(() => {
       debouncedOnChange.run({
@@ -483,10 +497,29 @@ export const DefaultCodeEditor: FC<{
       });
     });
 
+    const onResize = () => {
+      editor.layout();
+    };
+
+    editor.layout();
+
+    window.addEventListener('resize', onResize);
+
     editorInstance.current = editor;
 
     return () => {
+      // Final commit on unmount
+      onChange?.({
+        ...nodeLatest.current,
+        data: {
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+          ...(nodeLatest.current?.data as Record<string, unknown> | undefined),
+          [editorDef.dataKey]: editor.getValue(),
+        },
+      });
+
       editor.dispose();
+      window.removeEventListener('resize', onResize);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -506,9 +539,11 @@ export const DefaultCodeEditor: FC<{
   }, [node.id, isReadonly]);
 
   return (
-    <div className="editor-wrapper">
+    <div className="editor-wrapper-wrapper">
       <Label htmlFor="">{editorDef.label}</Label>
-      <div ref={editorContainer} className="editor-container" />
+      <div className="editor-wrapper">
+        <div ref={editorContainer} className="editor-container" />
+      </div>
     </div>
   );
 };

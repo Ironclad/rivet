@@ -3892,6 +3892,7 @@ __metadata:
     esbuild: "npm:^0.18.2"
     esbuild-plugin-copy: "npm:^2.1.1"
     pkg: "npm:^5.8.1"
+    tsx: "npm:^3.12.7"
     typescript: "npm:^5.1.3"
   bin:
     rivet-app-executor: ./bin/executor-bundle.js

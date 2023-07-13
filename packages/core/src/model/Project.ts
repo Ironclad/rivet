@@ -1,5 +1,5 @@
 import { Opaque } from 'type-fest';
-import { GraphId, NodeGraph, SerializedGraph } from './NodeGraph.js';
+import { GraphId, NodeGraph } from './NodeGraph.js';
 
 export type ProjectId = Opaque<string, 'ProjectId'>;
 
@@ -11,14 +11,4 @@ export type Project = {
   };
 
   graphs: Record<GraphId, NodeGraph>;
-};
-
-export type SerializedProject = {
-  metadata: {
-    id: ProjectId;
-    title: string;
-    description: string;
-  };
-
-  graphs: Record<GraphId, SerializedGraph>;
 };

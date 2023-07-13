@@ -25,6 +25,31 @@ import boolNodeImage from '../assets/node_images/bool_node.png';
 import numberNodeImage from '../assets/node_images/number_node.png';
 import compareNodeImage from '../assets/node_images/compare_node.png';
 import evaluateNodeImage from '../assets/node_images/evaluate_node.png';
+import matchNodeImage from '../assets/node_images/match_node.png';
+import ifNodeImage from '../assets/node_images/if_node.png';
+import ifElseNodeImage from '../assets/node_images/if_else_node.png';
+import loopControllerNodeImage from '../assets/node_images/loop_controller_node.png';
+import coalesceNodeImage from '../assets/node_images/coalesce_node.png';
+import passthroughNodeImage from '../assets/node_images/passthrough_node.png';
+import abortGraphNodeImage from '../assets/node_images/abort_graph_node.png';
+import raceInputsNodeImage from '../assets/node_images/race_inputs_node.png';
+import randomNumberNodeImage from '../assets/node_images/random_number_node.png';
+import shuffleNodeImage from '../assets/node_images/shuffle_node.png';
+import codeNodeImage from '../assets/node_images/code_node.png';
+import contextNodeImage from '../assets/node_images/context_node.png';
+import externalCallNodeImage from '../assets/node_images/external_call_node.png';
+import getGlobalNodeImage from '../assets/node_images/get_global_node.png';
+import graphInputNodeImage from '../assets/node_images/graph_input_node.png';
+import graphOutputNodeImage from '../assets/node_images/graph_output_node.png';
+import raiseEventNodeImage from '../assets/node_images/raise_event_node.png';
+import readDirectoryNodeImage from '../assets/node_images/read_directory_node.png';
+import readFileNodeImage from '../assets/node_images/read_file_node.png';
+import setGlobalNodeImage from '../assets/node_images/set_global_node.png';
+import subgraphNodeImage from '../assets/node_images/subgraph_node.png';
+import userInputNodeImage from '../assets/node_images/user_input_node.png';
+import vectorKnnNodeImage from '../assets/node_images/vector_knn_node.png';
+import vectorStoreNodeImage from '../assets/node_images/vector_store_node.png';
+import waitForEventNodeImage from '../assets/node_images/wait_for_event_node.png';
 
 const textNode = {
   label: 'Text',
@@ -138,6 +163,20 @@ export const addContextMenuGroups = [
           `,
         },
       },
+      {
+        label: 'Extract With Regex',
+        data: 'extractRegex',
+        id: 'add-node:extractRegex',
+        infoBox: {
+          title: 'Extract With Regex Node',
+          image: extractRegexNodeImage,
+          description: dedent`
+            Extracts data from the input text using the configured regular expression. The regular expression can contain capture groups to extract specific parts of the text.
+
+            Each capture group corresponds to an output port of the node.
+          `,
+        },
+      },
     ],
   },
   {
@@ -204,23 +243,104 @@ export const addContextMenuGroups = [
     ],
   },
   {
-    id: 'add-node-group:data',
-    label: 'Data',
+    id: 'add-node-group:lists',
+    label: 'Lists',
     items: [
       {
-        label: 'Extract With Regex',
-        data: 'extractRegex',
-        id: 'add-node:extractRegex',
+        label: 'Array',
+        data: 'array',
+        id: 'add-node:array',
         infoBox: {
-          title: 'Extract With Regex Node',
-          image: extractRegexNodeImage,
+          title: 'Array Node',
+          image: arrayNodeImage,
           description: dedent`
-            Extracts data from the input text using the configured regular expression. The regular expression can contain capture groups to extract specific parts of the text.
+            Creates an array from the input values. By default, flattens any arrays which are inputs into a single array. Can be configured to keep the arrays separate, or deeply flatten arrays.
 
-            Each capture group corresponds to an output port of the node.
+            Useful for both creating and merging arrays.
+
+            The number of inputs is dynamic based on the number of connections.
           `,
         },
       },
+
+      {
+        label: 'Pop',
+        data: 'pop',
+        id: 'add-node:pop',
+        infoBox: {
+          title: 'Pop Node',
+          image: popNodeImage,
+          description: dedent`
+            Pops the last value off the input array and outputs the new array and the popped value.
+
+            Can also be used to just extract the last value from an array.
+          `,
+        },
+      },
+      {
+        label: 'Filter',
+        data: 'filter',
+        id: 'add-node:filter',
+        infoBox: {
+          title: 'Filter Node',
+          image: filterNodeImage,
+          description: dedent`
+            Takes in both an array of values, and an array of booleans of the same length, and filters the array where the corresponding boolean is true.
+          `,
+        },
+      },
+      {
+        label: 'Shuffle',
+        data: 'shuffle',
+        id: 'add-node:shuffle',
+        infoBox: {
+          title: 'Shuffle Node',
+          image: shuffleNodeImage,
+          description: dedent`
+            Shuffles the input array. Outputs the shuffled array.
+          `,
+        },
+      },
+    ],
+  },
+  {
+    id: 'add-node-group:numbers',
+    label: 'Numbers',
+    items: [
+      {
+        label: 'Number',
+        data: 'number',
+        id: 'add-node:number',
+        infoBox: {
+          title: 'Number Node',
+          image: numberNodeImage,
+          description: dedent`
+            Outputs a number constant, or converts an input value into a number.
+
+            Can be configured to round the number to a certain number of decimal places.
+          `,
+        },
+      },
+      {
+        label: 'RNG',
+        data: 'randomNumber',
+        id: 'add-node:randomNumber',
+        infoBox: {
+          title: 'RNG Node',
+          image: randomNumberNodeImage,
+          description: dedent`
+            Outputs a random number between the configured min and max values.
+
+            Can be configured to output only integers, and whether the max value is inclusive or exclusive.
+          `,
+        },
+      },
+    ],
+  },
+  {
+    id: 'add-node-group:objects',
+    label: 'Objects',
+    items: [
       {
         label: 'Extract JSON',
         data: 'extractJson',
@@ -264,22 +384,6 @@ export const addContextMenuGroups = [
         },
       },
       {
-        label: 'Array',
-        data: 'array',
-        id: 'add-node:array',
-        infoBox: {
-          title: 'Array Node',
-          image: arrayNodeImage,
-          description: dedent`
-            Creates an array from the input values. By default, flattens any arrays which are inputs into a single array. Can be configured to keep the arrays separate, or deeply flatten arrays.
-
-            Useful for both creating and merging arrays.
-
-            The number of inputs is dynamic based on the number of connections.
-          `,
-        },
-      },
-      {
         label: 'Object',
         data: 'object',
         id: 'add-node:object',
@@ -290,22 +394,14 @@ export const addContextMenuGroups = [
 
             Useful for creating objects from multiple string inputs.
           `,
-        }
-      },
-      {
-        label: 'Pop',
-        data: 'pop',
-        id: 'add-node:pop',
-        infoBox: {
-          title: 'Pop Node',
-          image: popNodeImage,
-          description: dedent`
-            Pops the last value off the input array and outputs the new array and the popped value.
-
-            Can also be used to just extract the last value from an array.
-          `,
         },
       },
+    ],
+  },
+  {
+    id: 'add-node-group:data',
+    label: 'Data',
+    items: [
       {
         label: 'Hash',
         data: 'hash',
@@ -315,18 +411,6 @@ export const addContextMenuGroups = [
           image: hashNodeImage,
           description: dedent`
             Computes a hash of the input value using the configured hash function.
-          `,
-        },
-      },
-      {
-        label: 'Filter',
-        data: 'filter',
-        id: 'add-node:filter',
-        infoBox: {
-          title: 'Filter Node',
-          image: filterNodeImage,
-          description: dedent`
-            Takes in both an array of values, and an array of booleans of the same length, and filters the array where the corresponding boolean is true.
           `,
         },
       },
@@ -342,20 +426,6 @@ export const addContextMenuGroups = [
           `,
         },
       },
-      {
-        label: 'Number',
-        data: 'number',
-        id: 'add-node:number',
-        infoBox: {
-          title: 'Number Node',
-          image: numberNodeImage,
-          description: dedent`
-            Outputs a number constant, or converts an input value into a number.
-
-            Can be configured to round the number to a certain number of decimal places.
-          `,
-        },
-      },
     ],
   },
   {
@@ -368,6 +438,7 @@ export const addContextMenuGroups = [
         id: 'add-node:match',
         infoBox: {
           title: 'Match Node',
+          image: matchNodeImage,
           description: dedent`
             Any number of regular expressions can be configured, each corresponding to an output of the node. The output port of the first matching regex will be ran, and all other output ports will not be ran.
           `,
@@ -379,6 +450,7 @@ export const addContextMenuGroups = [
         id: 'add-node:if',
         infoBox: {
           title: 'If Node',
+          image: ifNodeImage,
           description: dedent`
             Takes in a condition and a value. If the condition is truthy, the value is passed through the output port. If the condition is not truthy, the output port is not ran.
           `,
@@ -390,6 +462,7 @@ export const addContextMenuGroups = [
         id: 'add-node:ifElse',
         infoBox: {
           title: 'If/Else Node',
+          image: ifElseNodeImage,
           description: dedent`
             Takes in three inputs: a condition, a true value, and a false value. If the condition is truthy, the true value is passed through the output port. If the condition is not truthy, the false value is passed through the output port.
 
@@ -403,6 +476,7 @@ export const addContextMenuGroups = [
         id: 'add-node:loopController',
         infoBox: {
           title: 'Loop Controller Node',
+          image: loopControllerNodeImage,
           description: dedent`
             Defines the entry point for a loop. Values from inside the loop should be passed back through the "Input" ports, and their corresponding "Default" values can be specified on the input ports as well.
 
@@ -416,6 +490,7 @@ export const addContextMenuGroups = [
         id: 'add-node:coalesce',
         infoBox: {
           title: 'Coalesce Node',
+          image: coalesceNodeImage,
           description: dedent`
             Takes in any number of inputs and outputs the first value that exists. Useful for consolidating branches after a Match node. This node can also "consume" the "Not Ran" value.
           `,
@@ -427,6 +502,7 @@ export const addContextMenuGroups = [
         id: 'add-node:passthrough',
         infoBox: {
           title: 'Passthrough Node',
+          image: passthroughNodeImage,
           description: dedent`
             Simply passes the input value to the output without any modifications.
           `,
@@ -438,6 +514,7 @@ export const addContextMenuGroups = [
         id: 'add-node:abortGraph',
         infoBox: {
           title: 'Abort Graph Node',
+          image: abortGraphNodeImage,
           description: dedent`
             Aborts the execution of the entire graph immediately.
 
@@ -451,6 +528,7 @@ export const addContextMenuGroups = [
         id: 'add-node:raceInputs',
         infoBox: {
           title: 'Race Inputs Node',
+          image: raceInputsNodeImage,
           description: dedent`
             Takes in multiple inputs and outputs the value of the first one to finish. The other inputs are cancelled.
           `,
@@ -496,6 +574,7 @@ export const addContextMenuGroups = [
         id: 'add-node:graphOutput',
         infoBox: {
           title: 'Graph Output Node',
+          image: graphOutputNodeImage,
           description: dedent`
             Each instance of this node represents an individual output of the graph. The value passed into this node becomes part of the overall output of the graph.
           `,
@@ -507,6 +586,7 @@ export const addContextMenuGroups = [
         id: 'add-node:graphInput',
         infoBox: {
           title: 'Graph Input Node',
+          image: graphInputNodeImage,
           description: dedent`
             Defines an input for the graph which can be passed in when the graph is called, or defines one of the input ports when the graph is a subgraph.
           `,
@@ -518,6 +598,7 @@ export const addContextMenuGroups = [
         id: 'add-node:userInput',
         infoBox: {
           title: 'User Input Node',
+          image: userInputNodeImage,
           description: dedent`
             Prompts the user for input during the execution of the graph. The user's response becomes the output of this node.
           `,
@@ -529,6 +610,7 @@ export const addContextMenuGroups = [
         id: 'add-node:readDirectory',
         infoBox: {
           title: 'Read Directory Node',
+          image: readDirectoryNodeImage,
           description: dedent`
             Reads the contents of the specified directory and outputs an array of filenames.
           `,
@@ -540,6 +622,7 @@ export const addContextMenuGroups = [
         id: 'add-node:readFile',
         infoBox: {
           title: 'Read File Node',
+          image: readFileNodeImage,
           description: dedent`
             Reads the contents of the specified file and outputs it as a string.
           `,
@@ -551,6 +634,7 @@ export const addContextMenuGroups = [
         id: 'add-node:vectorStore',
         infoBox: {
           title: 'Vector Store Node',
+          image: vectorStoreNodeImage,
           description: dedent`
             Takes in a vector, as well as data to store with the vector. This data is stored in the configured vector DB integration for later retrieval.
           `,
@@ -562,6 +646,7 @@ export const addContextMenuGroups = [
         id: 'add-node:vectorNearestNeighbors',
         infoBox: {
           title: 'Vector KNN Node',
+          image: vectorKnnNodeImage,
           description: dedent`
             Performs a k-nearest neighbors search on the vectors stored in the configured vector DB integration. Takes in a vector and returns the k closest vectors and their corresponding data.
           `,
@@ -579,6 +664,7 @@ export const addContextMenuGroups = [
         id: 'add-node:subGraph',
         infoBox: {
           title: 'Subgraph Node',
+          image: subgraphNodeImage,
           description: dedent`
             Executes another graph. Inputs and outputs are defined by Graph Input and Graph Output nodes within the subgraph.
           `,
@@ -590,6 +676,7 @@ export const addContextMenuGroups = [
         id: 'add-node:externalCall',
         infoBox: {
           title: 'External Call Node',
+          image: externalCallNodeImage,
           description: dedent`
             Provides a way to call into the host project from inside a Rivet graph when Rivet graphs are integrated into another project.
           `,
@@ -601,6 +688,7 @@ export const addContextMenuGroups = [
         id: 'add-node:raiseEvent',
         infoBox: {
           title: 'Raise Event Node',
+          image: raiseEventNodeImage,
           description: dedent`
             Raises an event that the host project or a 'Wait For Event' node can listen for.
           `,
@@ -612,6 +700,7 @@ export const addContextMenuGroups = [
         id: 'add-node:waitForEvent',
         infoBox: {
           title: 'Wait For Event Node',
+          image: waitForEventNodeImage,
           description: dedent`
             Waits for a specific event to be raised by a 'Raise Event' node or the host project. The event name can be configured.
           `,
@@ -623,6 +712,7 @@ export const addContextMenuGroups = [
         id: 'add-node:code',
         infoBox: {
           title: 'Code Node',
+          image: codeNodeImage,
           description: dedent`
             Executes a piece of JavaScript code. Documentation for the inputs and outputs is available in the default code.
           `,
@@ -634,6 +724,7 @@ export const addContextMenuGroups = [
         id: 'add-node:context',
         infoBox: {
           title: 'Context Node',
+          image: contextNodeImage,
           description: dedent`
             Retrieves a value from the graph's context using a configured id. The context serves as a "global graph input", allowing the same values to be accessible from any graph or subgraph.
           `,
@@ -645,6 +736,7 @@ export const addContextMenuGroups = [
         id: 'add-node:getGlobal',
         infoBox: {
           title: 'Get Global Node',
+          image: getGlobalNodeImage,
           description: dedent`
             Retrieves a global value that is shared across all graphs and subgraphs. The id of the global value is configured in this node.
           `,
@@ -656,6 +748,7 @@ export const addContextMenuGroups = [
         id: 'add-node:setGlobal',
         infoBox: {
           title: 'Set Global Node',
+          image: setGlobalNodeImage,
           description: dedent`
             Sets a global value that is shared across all graphs and subgraphs. The id of the global value and the value itself are configured in this node.
           `,

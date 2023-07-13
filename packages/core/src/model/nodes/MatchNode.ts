@@ -21,7 +21,7 @@ export class MatchNodeImpl extends NodeImpl<MatchNode> {
       visualData: {
         x: 0,
         y: 0,
-        width: 300,
+        width: 250,
       },
       data: {
         caseCount,

@@ -106,6 +106,8 @@ const descriptors: NodeComponentDescriptors = {
   compare: {},
   evaluate: {},
   number: {},
+  randomNumber: {},
+  shuffle: {},
 };
 
 export function useNodeTypes() {

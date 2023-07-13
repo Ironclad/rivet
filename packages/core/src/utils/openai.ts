@@ -65,7 +65,7 @@ export type ChatCompletionChunk = {
   object: 'chat.completion.chunk';
   created: number;
   model: string;
-  choices: ChatCompletionChunkChoice[];
+  choices?: ChatCompletionChunkChoice[];
 };
 
 export type ChatCompletionChunkChoice = {

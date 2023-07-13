@@ -1,9 +1,13 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "declarationDir": "dist/types",
+    "allowSyntheticDefaultImports": false,
+    "esModuleInterop": false
   },
   "include": ["src"],
   "ts-node": {

@@ -9,9 +9,15 @@ fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_persisted_scope::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
+        .invoke_handler(tauri::generate_handler![get_environment_variable])
         .menu(create_menu())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+#[tauri::command]
+fn get_environment_variable(name: &str) -> String {
+    std::env::var(name).unwrap_or_default()
 }
 
 fn create_menu() -> Menu {

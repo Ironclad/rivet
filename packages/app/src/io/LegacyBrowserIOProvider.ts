@@ -87,4 +87,13 @@ export class LegacyBrowserIOProvider implements IOProvider {
       input.click();
     });
   }
+
+  async saveString(content: string, defaultFileName: string): Promise<void> {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = defaultFileName;
+    link.click();
+  }
 }

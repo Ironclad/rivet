@@ -464,6 +464,11 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           let functionCalls: object[] = [];
 
           for await (const chunk of chunks) {
+            if (!chunk.choices) {
+              // Could be error for some reason 🤷‍♂️ but ignoring has worked for me so far.
+              continue;
+            }
+
             for (const { delta, index } of chunk.choices) {
               if (delta.content != null) {
                 responseChoicesParts[index] ??= [];

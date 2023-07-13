@@ -31,7 +31,8 @@ const styles = css`
   margin-top: 8px;
 
   .graph-list {
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .graph-list,
@@ -74,6 +75,7 @@ const styles = css`
 
   .depthSpacer {
     width: 10px;
+    flex-shrink: 0;
   }
 
   .selected {
@@ -509,6 +511,7 @@ export const FolderItem: FC<{
           data-contextmenutype={item.type === 'folder' ? 'graph-folder' : 'graph-item'}
           data-graphid={savedGraph?.metadata?.id}
           data-folderpath={item.type === 'folder' ? item.fullPath : item.graph.metadata?.name}
+          title={fullPath}
         >
           {range(virtualDepth + 1).map((idx) => {
             const isSpinner = idx === 0 && graphIsRunning;
