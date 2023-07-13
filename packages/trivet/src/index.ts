@@ -1,5 +1,6 @@
-import { DataValue, Project, GraphProcessor, GraphId, NativeApi, BaseDir, ReadDirOptions, Settings, GraphOutputNode, coerceType, inferType } from '@ironclad/rivet-core';
+import { DataValue, Project, GraphProcessor, NativeApi, BaseDir, ReadDirOptions, Settings, GraphOutputNode, inferType } from '@ironclad/rivet-core';
 import { keyBy, mapValues } from 'lodash-es';
+import * as yaml from 'yaml';
 
 export interface TrivetOpts {
   project: Project;
@@ -192,4 +193,25 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
     });
   }
   return trivetResults;
+}
+
+export function serializeTestSuites(testSuites: TrivetTestSuite[]): string {
+  const serialized = yaml.stringify(
+    {
+      version: 1,
+      data: testSuites,
+    },
+    null,
+    {
+      indent: 2,
+    },
+  );
+
+  return serialized;
+
+}
+
+export function deserializeTestSuites(data: string): TrivetTestSuite[] {
+  const serializedTestSuites = yaml.parse(data) as { version: number; data: TrivetTestSuite[] };
+  return serializedTestSuites.data;
 }

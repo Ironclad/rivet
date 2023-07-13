@@ -11,6 +11,9 @@ import {
 } from '@ironclad/rivet-core';
 import { IOProvider } from './IOProvider.js';
 import { isInTauri } from '../utils/tauri.js';
+import { TrivetTestSuite, deserializeTestSuites, serializeTestSuites } from '@ironclad/trivet';
+
+const SEPARATOR = '\n======== TRIVET TESTS =========\n';
 
 export class TauriIOProvider implements IOProvider {
   static isSupported(): boolean {
@@ -39,7 +42,7 @@ export class TauriIOProvider implements IOProvider {
     }
   }
 
-  async saveProjectData(project: Project) {
+  async saveProjectData(project: Project, testData: TrivetTestSuite[]) {
     const filePath = await save({
       filters: [
         {
@@ -52,10 +55,12 @@ export class TauriIOProvider implements IOProvider {
     });
 
     const data = serializeProject(project) as string;
+    const serializedTestData = serializeTestSuites(testData) as string;
 
     if (filePath) {
       await writeFile({
-        contents: data,
+        // TODO HACK
+        contents: data + SEPARATOR + serializedTestData,
         path: filePath,
       });
 
@@ -65,11 +70,13 @@ export class TauriIOProvider implements IOProvider {
     return undefined;
   }
 
-  async saveProjectDataNoPrompt(project: Project, path: string) {
+  async saveProjectDataNoPrompt(project: Project, testData: TrivetTestSuite[], path: string) {
     const data = serializeProject(project) as string;
+    const serializedTestData = serializeTestSuites(testData) as string;
 
     await writeFile({
-      contents: data,
+      // TODO HACK
+      contents: data + SEPARATOR + serializedTestData,
       path: path,
     });
   }
@@ -95,7 +102,7 @@ export class TauriIOProvider implements IOProvider {
     }
   }
 
-  async loadProjectData(callback: (data: { project: Project; path: string }) => void) {
+  async loadProjectData(callback: (data: { project: Project; testData: TrivetTestSuite[]; path: string }) => void) {
     const path = await open({
       filters: [
         {
@@ -111,8 +118,15 @@ export class TauriIOProvider implements IOProvider {
 
     if (path) {
       const data = await readTextFile(path as string);
-      const projectData = deserializeProject(data);
-      callback({ project: projectData, path: path as string });
+      // TODO HACK
+      const [projDataStr, testDataStr] = data.split(SEPARATOR);
+      const projectData = deserializeProject(projDataStr);
+
+      let testSuites: TrivetTestSuite[] = [];
+      if (testDataStr) {
+        testSuites = deserializeTestSuites(testDataStr);
+      }
+      callback({ project: projectData, testData: testSuites, path: path as string });
     }
   }
 

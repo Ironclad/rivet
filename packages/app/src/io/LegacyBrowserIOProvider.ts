@@ -8,6 +8,7 @@ import {
   serializeProject,
 } from '@ironclad/rivet-core';
 import { IOProvider } from './IOProvider.js';
+import { TrivetTestSuite } from '@ironclad/trivet';
 
 export class LegacyBrowserIOProvider implements IOProvider {
   async saveGraphData(graphData: NodeGraph): Promise<void> {
@@ -20,7 +21,7 @@ export class LegacyBrowserIOProvider implements IOProvider {
     link.click();
   }
 
-  async saveProjectData(project: Project): Promise<string | undefined> {
+  async saveProjectData(project: Project, testSuites: TrivetTestSuite[]): Promise<string | undefined> {
     const serializedData = serializeProject(project);
     const blob = new Blob([serializedData as string], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -31,7 +32,7 @@ export class LegacyBrowserIOProvider implements IOProvider {
     return link.download;
   }
 
-  async saveProjectDataNoPrompt(project: Project, path: string): Promise<void> {
+  async saveProjectDataNoPrompt(project: Project, testSuites: TrivetTestSuite[], path: string): Promise<void> {
     throw new Error('Function not supported in the browser');
   }
 
@@ -47,14 +48,14 @@ export class LegacyBrowserIOProvider implements IOProvider {
     input.click();
   }
 
-  async loadProjectData(callback: (data: { project: Project; path: string }) => void): Promise<void> {
+  async loadProjectData(callback: (data: { project: Project; testData: TrivetTestSuite[]; path: string }) => void): Promise<void> {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.rivet-project';
     input.onchange = async (event) => {
       const file = (event.target as HTMLInputElement)!.files![0]!;
       const text = await file.text();
-      callback({ project: deserializeProject(text), path: file.name });
+      callback({ project: deserializeProject(text), testData: [], path: file.name });
     };
     input.click();
   }

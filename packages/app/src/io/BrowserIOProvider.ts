@@ -8,6 +8,7 @@ import {
   serializeProject,
 } from '@ironclad/rivet-core';
 import { IOProvider } from './IOProvider.js';
+import { TrivetTestSuite } from '@ironclad/trivet';
 
 export class BrowserIOProvider implements IOProvider {
   static isSupported(): boolean {
@@ -21,7 +22,7 @@ export class BrowserIOProvider implements IOProvider {
     await writable.close();
   }
 
-  async saveProjectData(project: Project): Promise<string | undefined> {
+  async saveProjectData(project: Project, testSuites: TrivetTestSuite[]): Promise<string | undefined> {
     const fileHandle = await window.showSaveFilePicker();
     const writable = await fileHandle.createWritable();
     await writable.write(serializeProject(project) as string);
@@ -29,7 +30,7 @@ export class BrowserIOProvider implements IOProvider {
     return fileHandle.name;
   }
 
-  async saveProjectDataNoPrompt(project: Project, path: string): Promise<void> {
+  async saveProjectDataNoPrompt(project: Project, testSuites: TrivetTestSuite[], path: string): Promise<void> {
     throw new Error('Function not supported in the browser');
   }
 
@@ -40,11 +41,11 @@ export class BrowserIOProvider implements IOProvider {
     callback(deserializeGraph(text));
   }
 
-  async loadProjectData(callback: (data: { project: Project; path: string }) => void): Promise<void> {
+  async loadProjectData(callback: (data: { project: Project; testData: TrivetTestSuite[]; path: string }) => void): Promise<void> {
     const [fileHandle] = await window.showOpenFilePicker();
     const file = await fileHandle.getFile();
     const text = await file.text();
-    callback({ project: deserializeProject(text), path: fileHandle.name });
+    callback({ project: deserializeProject(text), testData: [], path: fileHandle.name });
   }
 
   async loadRecordingData(callback: (data: { recorder: ExecutionRecorder; path: string }) => void): Promise<void> {

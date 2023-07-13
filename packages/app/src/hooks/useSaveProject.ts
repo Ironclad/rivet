@@ -4,11 +4,13 @@ import { useSaveCurrentGraph } from './useSaveCurrentGraph.js';
 import { produce } from 'immer';
 import { toast } from 'react-toastify';
 import { ioProvider } from '../utils/globals.js';
+import { trivetState } from '../state/trivet.js';
 
 export function useSaveProject() {
   const saveGraph = useSaveCurrentGraph();
   const project = useRecoilValue(projectState);
   const [loadedProject, setLoadedProject] = useRecoilState(loadedProjectState);
+  const { testSuites } = useRecoilValue(trivetState);
 
   async function saveProject() {
     if (!loadedProject.loaded || !loadedProject.path) {
@@ -21,7 +23,7 @@ export function useSaveProject() {
       draft.graphs[savedGraph.metadata!.id!] = savedGraph;
     });
 
-    await ioProvider.saveProjectDataNoPrompt(newProject, loadedProject.path);
+    await ioProvider.saveProjectDataNoPrompt(newProject, testSuites, loadedProject.path);
     toast.success('Project saved');
     setLoadedProject({
       loaded: true,
@@ -36,7 +38,7 @@ export function useSaveProject() {
       draft.graphs[savedGraph.metadata!.id!] = savedGraph;
     });
 
-    const filePath = await ioProvider.saveProjectData(newProject);
+    const filePath = await ioProvider.saveProjectData(newProject, testSuites);
 
     if (filePath) {
       toast.success('Project saved');

@@ -6706,12 +6706,14 @@ const RAW_RUNTIME_STATE =
           ["@ironclad/rivet-core", "workspace:packages/core"],\
           ["@types/lodash-es", "npm:4.17.7"],\
           ["@types/node", "npm:20.4.0"],\
+          ["@types/yaml", "npm:1.9.7"],\
           ["clipanion", "virtual:763b5751e0360e14ffc929bbc0bd7578f8f57d8885d5b4f58aaa162c104e4df8cde06b85f86472c72428047754184723fb46f2f667ad4920b095b26bc8ed2f66#npm:3.2.1"],\
           ["lodash-es", "npm:4.17.21"],\
           ["minimatch", "npm:9.0.2"],\
           ["ts-node", "virtual:763b5751e0360e14ffc929bbc0bd7578f8f57d8885d5b4f58aaa162c104e4df8cde06b85f86472c72428047754184723fb46f2f667ad4920b095b26bc8ed2f66#npm:10.9.1"],\
           ["tsx", "npm:3.12.7"],\
-          ["typescript", "patch:typescript@npm%3A5.1.3#optional!builtin<compat/typescript>::version=5.1.3&hash=5da071"]\
+          ["typescript", "patch:typescript@npm%3A5.1.3#optional!builtin<compat/typescript>::version=5.1.3&hash=5da071"],\
+          ["yaml", "npm:2.3.1"]\
         ],\
         "linkType": "SOFT"\
       }]\
