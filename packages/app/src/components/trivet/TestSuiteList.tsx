@@ -9,6 +9,7 @@ import { TrivetTestSuite } from "@ironclad/trivet";
 
 const styles = css`
 min-height: 100%;
+border-right: 1px solid var(--grey);
 
 .test-suite-item {
   &:hover {
@@ -70,6 +71,8 @@ export const TestSuiteList: FC<TestSuiteListProps> = ({
 
   return (
     <div css={styles} onContextMenu={handleSidebarContextMenu} data-contextmenutype="test-suite-list" ref={contextMenuRef}>
+      <h2>Test Suites</h2>
+      <hr />
       {testSuites.map((testSuite) => (
         <div
           key={testSuite.id}
