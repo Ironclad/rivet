@@ -29,6 +29,9 @@ export type RecordedEventsMap = OverrideProperties<
     /** Called when a graph or a subgraph has finished. */
     graphFinish: { graphId: GraphId; outputs: GraphOutputs };
 
+    /** Called when a graph or subgraph has been aborted. */
+    graphAbort: { graphId: GraphId; error?: string; successful: boolean };
+
     /** Called when a node has started processing, with the input values for the node. */
     nodeStart: { nodeId: NodeId; inputs: Inputs; processId: ProcessId };
 

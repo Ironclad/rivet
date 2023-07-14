@@ -103,6 +103,10 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
     processor.on('abort', options.onAbort);
   }
 
+  if (options.onGraphAbort) {
+    processor.on('graphAbort', options.onGraphAbort);
+  }
+
   if (options.onTrace) {
     processor.on('trace', options.onTrace);
   }

@@ -42,6 +42,9 @@ export function useRemoteExecutor() {
       case 'abort':
         currentExecution.onAbort(data as ProcessEvents['abort']);
         break;
+      case 'graphAbort':
+        currentExecution.onGraphAbort(data as ProcessEvents['graphAbort']);
+        break;
       case 'partialOutput':
         currentExecution.onPartialOutput(data as ProcessEvents['partialOutput']);
         break;

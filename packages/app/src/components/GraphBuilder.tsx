@@ -120,7 +120,7 @@ export const GraphBuilder: FC = () => {
         }
 
         const newNode = nodeFactory(node.type);
-        newNode.data = { ...node.data };
+        newNode.data = { ...(node.data as object) };
         newNode.visualData = {
           ...node.visualData,
           x: node.visualData.x,

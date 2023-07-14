@@ -47,6 +47,9 @@ export type ProcessEvents = {
   /** Called when a graph or a subgraph has finished. */
   graphFinish: { graph: NodeGraph; outputs: GraphOutputs };
 
+  /** Called when a graph has been aborted. */
+  graphAbort: { successful: boolean; graph: NodeGraph; error?: Error | string };
+
   /** Called when a node has started processing, with the input values for the node. */
   nodeStart: { node: ChartNode; inputs: Inputs; processId: ProcessId };
 
@@ -365,14 +368,19 @@ export class GraphProcessor {
   }
 
   async abort(successful: boolean = false, error?: Error | string): Promise<void> {
-    if (!this.#running) {
+    if (!this.#running || this.#aborted) {
       return Promise.resolve();
     }
 
     this.#abortController.abort();
     this.#abortSuccessfully = successful;
     this.#abortError = error;
-    this.#emitter.emit('abort', { successful, error });
+
+    this.#emitter.emit('graphAbort', { successful, error, graph: this.#graph });
+
+    if (!this.#isSubProcessor) {
+      this.#emitter.emit('abort', { successful, error });
+    }
 
     await this.#processingQueue.onIdle();
   }
@@ -481,6 +489,13 @@ export class GraphProcessor {
           this.#emitter.emit('graphError', {
             graph: getGraph(data.graphId),
             error: data.error,
+          });
+        })
+        .with({ type: 'graphAbort' }, ({ data }) => {
+          this.#emitter.emit('graphAbort', {
+            graph: getGraph(data.graphId),
+            error: data.error,
+            successful: data.successful,
           });
         })
         .with({ type: 'nodeStart' }, async ({ data }) => {
@@ -1254,6 +1269,7 @@ export class GraphProcessor {
         processor.on('partialOutput', (e) => this.#emitter.emit('partialOutput', e));
         processor.on('nodeExcluded', (e) => this.#emitter.emit('nodeExcluded', e));
         processor.on('nodeStart', (e) => this.#emitter.emit('nodeStart', e));
+        processor.on('graphAbort', (e) => this.#emitter.emit('graphAbort', e));
         processor.on('userInput', (e) => this.#emitter.emit('userInput', e)); // TODO!
         processor.on('graphStart', (e) => this.#emitter.emit('graphStart', e));
         processor.on('graphFinish', (e) => this.#emitter.emit('graphFinish', e));
@@ -1280,8 +1296,9 @@ export class GraphProcessor {
         if (signal) {
           signal.addEventListener('abort', () => processor.abort());
         }
+
         // If parent is aborted, abort subgraph with error (it's fine, success state is on the parent)
-        this.on('abort', () => processor.abort());
+        this.#abortController.signal.addEventListener('abort', () => processor.abort());
 
         this.on('pause', () => processor.pause());
         this.on('resume', () => processor.resume());

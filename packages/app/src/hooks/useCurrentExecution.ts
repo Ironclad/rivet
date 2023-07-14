@@ -101,6 +101,10 @@ export function useCurrentExecution() {
     stopAll();
   }
 
+  function onGraphAbort(_data: ProcessEvents['graphAbort']) {
+    // nothing right now
+  }
+
   function onError(_data: ProcessEvents['error']) {
     stopAll();
   }
@@ -225,6 +229,7 @@ export function useCurrentExecution() {
     onError,
     onGraphStart,
     onGraphFinish,
+    onGraphAbort,
     onPartialOutput,
     onPause,
     onResume,

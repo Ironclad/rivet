@@ -156,6 +156,9 @@ export function startDebuggerServer(
       processor.on('abort', () => {
         this.broadcast(processor, 'abort', null);
       });
+      processor.on('graphAbort', (data) => {
+        this.broadcast(processor, 'graphAbort', data);
+      });
       processor.on('trace', (message) => {
         this.broadcast(processor, 'trace', message);
       });
