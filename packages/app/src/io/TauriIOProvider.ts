@@ -13,7 +13,26 @@ import { IOProvider } from './IOProvider.js';
 import { isInTauri } from '../utils/tauri.js';
 import { TrivetTestSuite, deserializeTestSuites, serializeTestSuites } from '@ironclad/trivet';
 
-const SEPARATOR = '\n======== TRIVET TESTS =========\n';
+// HACK: Stores Trivet tests in the .rivet-project, under the "trivet" key.
+// This makes the rivet project readable by older versions of rivet-core.
+// Longer term, we may want to break this out into its own file.
+const TRIVET_YAML_HEADER = `version: 1
+data:`;
+const TRIVET_YAML_MARKER = 'trivet:';
+
+function serializeTrivet(testSuite: TrivetTestSuite[]): string {
+  const serialized = serializeTestSuites(testSuite);
+  return serialized.replace(TRIVET_YAML_HEADER, TRIVET_YAML_MARKER);
+}
+
+function deserializeTrivet(data: string): TrivetTestSuite[] {
+  const trivetStartIndex = data.indexOf(TRIVET_YAML_MARKER);
+  if (trivetStartIndex === -1) {
+    return [];
+  }
+  const serializedTestSuites = deserializeTestSuites(data.slice(trivetStartIndex).replace(TRIVET_YAML_MARKER, TRIVET_YAML_HEADER));
+  return serializedTestSuites;
+}
 
 export class TauriIOProvider implements IOProvider {
   static isSupported(): boolean {
@@ -55,12 +74,12 @@ export class TauriIOProvider implements IOProvider {
     });
 
     const data = serializeProject(project) as string;
-    const serializedTestData = serializeTestSuites(testData) as string;
+    const serializedTestData = serializeTrivet(testData);
 
     if (filePath) {
       await writeFile({
         // TODO HACK
-        contents: testData?.length > 0 ? data + SEPARATOR + serializedTestData : data,
+        contents: testData?.length > 0 ? data + serializedTestData : data,
         path: filePath,
       });
 
@@ -72,11 +91,11 @@ export class TauriIOProvider implements IOProvider {
 
   async saveProjectDataNoPrompt(project: Project, testData: TrivetTestSuite[], path: string) {
     const data = serializeProject(project) as string;
-    const serializedTestData = serializeTestSuites(testData) as string;
+    const serializedTestData = serializeTrivet(testData);
 
     await writeFile({
       // TODO HACK
-      contents: testData?.length > 0 ? data + SEPARATOR + serializedTestData : data,
+      contents: testData?.length > 0 ? data + serializedTestData : data,
       path: path,
     });
   }
@@ -118,14 +137,9 @@ export class TauriIOProvider implements IOProvider {
 
     if (path) {
       const data = await readTextFile(path as string);
-      // TODO HACK
-      const [projDataStr, testDataStr] = data.split(SEPARATOR);
-      const projectData = deserializeProject(projDataStr);
-
-      let testSuites: TrivetTestSuite[] = [];
-      if (testDataStr) {
-        testSuites = deserializeTestSuites(testDataStr);
-      }
+      const projectData = deserializeProject(data);
+      
+      let testSuites: TrivetTestSuite[] = deserializeTrivet(data);
       callback({ project: projectData, testData: testSuites, path: path as string });
     }
   }
