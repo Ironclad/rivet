@@ -20,7 +20,7 @@ export class BooleanNodeImpl extends NodeImpl<BooleanNode> {
       visualData: {
         x: 0,
         y: 0,
-        width: 100,
+        width: 130,
       },
       data: {
         value: false,
