@@ -1,11 +1,13 @@
-import { DataValue, Project, GraphProcessor, NativeApi, BaseDir, ReadDirOptions, Settings, GraphOutputNode, inferType } from '@ironclad/rivet-core';
+import { DataValue, Project, GraphProcessor, NativeApi, BaseDir, ReadDirOptions, Settings, GraphOutputNode, inferType, GraphOutputs, GraphInputs, GraphId } from '@ironclad/rivet-core';
 import { keyBy, mapValues } from 'lodash-es';
 import * as yaml from 'yaml';
 
+export type TrivetGraphRunner = (project: Project, graphId: GraphId, inputs: GraphInputs) => Promise<GraphOutputs>;
+
 export interface TrivetOpts {
   project: Project;
-  openAiKey: string;
   testSuites: TrivetTestSuite[];
+  runGraph: TrivetGraphRunner;
   onUpdate?: (results: TrivetResults) => void;
 }
 
@@ -73,8 +75,28 @@ export class DummyNativeApi implements NativeApi {
   }
 }
 
+export function createTestGraphRunner(opts: { openAiKey: string }): TrivetGraphRunner {
+  return async (project, graphId, inputs) => {
+    const processor = new GraphProcessor(project, graphId);
+    const resolvedContextValues: Record<string, DataValue> = {};
+    const outputs = await processor.processGraph(
+      {
+        nativeApi: new DummyNativeApi(),
+        settings: {
+          openAiKey: opts.openAiKey,
+          openAiOrganization: '',
+          pineconeApiKey: '',
+        } satisfies Required<Settings>,
+      },
+      inputs,
+      resolvedContextValues,
+    );
+    return outputs;
+  };
+}
+
 export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
-  const { project, testSuites, openAiKey, onUpdate } = opts;
+  const { project, testSuites, runGraph, onUpdate } = opts;
 
   const graphsById = keyBy(project.graphs, (g) => g.metadata?.id ?? '');
 
@@ -99,25 +121,11 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
     const testCaseResults: TrivetTestCaseResult[] = [];
 
     for (const testCase of testSuite.testCases) {
-      const processor = new GraphProcessor(project, testGraph.metadata!.id!);
       const resolvedInputs: Record<string, DataValue> = mapValues(testCase.inputs, inferType);
-      const resolvedContextValues: Record<string, DataValue> = {};
-      const outputs = await processor.processGraph(
-        {
-          nativeApi: new DummyNativeApi(),
-          settings: {
-            openAiKey,
-            openAiOrganization: '',
-            pineconeApiKey: '',
-          } satisfies Required<Settings>,
-        },
-        resolvedInputs,
-        resolvedContextValues,
-      );
+      const outputs = await runGraph(project, testGraph.metadata!.id!, resolvedInputs);
 
       console.log('ran test graph', outputs);
 
-      const validationProcessor = new GraphProcessor(project, validationGraph.metadata!.id!);
       const validationInputs: Record<string, DataValue> = {
         input: {
           type: 'object',
@@ -135,18 +143,7 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
 
       console.log('runnign validation graph', validationInputs);
 
-      const validationOutputs = await validationProcessor.processGraph(
-        {
-          nativeApi: new DummyNativeApi(),
-          settings: {
-            openAiKey,
-            openAiOrganization: '',
-            pineconeApiKey: '',
-          } satisfies Required<Settings>,
-        },
-        validationInputs,
-        resolvedContextValues,
-      );
+      const validationOutputs = await runGraph(project, validationGraph.metadata!.id!, validationInputs);
       const validationResults = Object.entries(validationOutputs).map(([outputId, result]) => {
         const node = validationOutputNodesById[outputId];
         if (node === undefined) {

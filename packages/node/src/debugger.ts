@@ -1,5 +1,5 @@
 import WebSocket, { WebSocketServer } from 'ws';
-import { GraphId, GraphProcessor, Project, getError, Settings } from '@ironclad/rivet-core';
+import { GraphId, GraphProcessor, Project, getError, Settings, GraphInputs } from '@ironclad/rivet-core';
 import { match } from 'ts-pattern';
 import Emittery from 'emittery';
 
@@ -30,7 +30,7 @@ export function startDebuggerServer(
     getProcessorsForClient?: (client: WebSocket, allProcessors: GraphProcessor[]) => GraphProcessor[];
     server?: WebSocketServer;
     port?: number;
-    dynamicGraphRun?: (data: { client: WebSocket; graphId: GraphId }) => Promise<void>;
+    dynamicGraphRun?: (data: { client: WebSocket; graphId: GraphId; inputs?: GraphInputs }) => Promise<void>;
     allowGraphUpload?: boolean;
   } = {},
 ): RivetDebuggerServer {
@@ -48,9 +48,9 @@ export function startDebuggerServer(
         const message = JSON.parse(data.toString()) as { type: string; data: unknown };
 
         if (message.type === 'run') {
-          const { graphId } = message.data as { graphId: GraphId };
+          const { graphId, inputs } = message.data as { graphId: GraphId, inputs: GraphInputs };
 
-          await options.dynamicGraphRun?.({ client: socket, graphId });
+          await options.dynamicGraphRun?.({ client: socket, graphId, inputs });
         } else if (message.type === 'set-dynamic-data' && options.allowGraphUpload) {
           const { project, settings } = message.data as { project: Project; settings: Settings };
           currentDebuggerState.uploadedProject = project;

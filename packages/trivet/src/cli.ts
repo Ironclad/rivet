@@ -1,5 +1,5 @@
 import { Builtins, Cli, Command, Option } from 'clipanion';
-import { runTrivet } from './index.js';
+import { createTestGraphRunner, runTrivet } from './index.js';
 import { env } from 'process';
 import { readFile } from 'node:fs/promises';
 import { deserializeProject } from '@ironclad/rivet-core';
@@ -20,8 +20,9 @@ class RunTest extends Command {
 
     const results = await runTrivet({
       project,
-      testGlobs: [this.globForTestGraphs],
-      openAiKey: env.OPENAI_API_KEY ?? '',
+      testSuites: [],
+      // testGlobs: [this.globForTestGraphs],
+      runGraph: createTestGraphRunner({ openAiKey: env.OPENAI_API_KEY ?? '' }),
     });
 
     this.context.stdout.write(JSON.stringify(results, null, 2));

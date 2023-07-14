@@ -14,13 +14,15 @@ import { TauriNativeApi } from '../model/native/TauriNativeApi';
 import { useStableCallback } from './useStableCallback';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph';
 import { useCurrentExecution } from './useCurrentExecution';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
 import { projectState } from '../state/savedGraphs';
 import { settingsState } from '../state/settings';
 import { graphState } from '../state/graph';
 import { lastRecordingState, loadedRecordingState } from '../state/execution';
 import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
+import { trivetState } from '../state/trivet';
+import { runTrivet } from '@ironclad/trivet';
 
 export function useLocalExecutor() {
   const project = useRecoilValue(projectState);
@@ -33,9 +35,10 @@ export function useLocalExecutor() {
   const savedSettings = useRecoilValue(settingsState);
   const loadedRecording = useRecoilValue(loadedRecordingState);
   const setLastRecordingState = useSetRecoilState(lastRecordingState);
+  const [{ testSuites }, setTrivetState] = useRecoilState(trivetState);
 
   const tryRunGraph = useStableCallback(
-    async (options: { inputs?: Record<string, DataValue>; contextValues?: Record<string, DataValue> } = {}) => {
+    async () => {
       try {
         saveGraph();
   
@@ -112,6 +115,60 @@ export function useLocalExecutor() {
     },
   );
 
+  const tryRunTests = useStableCallback(
+    async (options: { testSuiteIds?: string[], testCaseIds?: string[] } = {}) => {
+      toast.info('Running Tests');
+      console.log('trying to run tests');
+  
+      setTrivetState((s) => ({
+        ...s,
+        runningTests: true,
+        recentTestResults: undefined,
+      }));
+      const testSuitesToRun = options.testSuiteIds
+        ? testSuites
+          .filter((t) => options.testSuiteIds!.includes(t.id))
+          .map((t) => ({
+            ...t,
+            testCases: options.testCaseIds ? t.testCases.filter((tc) => options.testCaseIds?.includes(tc.id)) : t.testCases,
+          }))
+        : testSuites;
+      try {
+        const result = await runTrivet({
+          project,
+          testSuites: testSuitesToRun,
+          onUpdate: (results) => {
+            setTrivetState((s) => ({
+              ...s,
+              recentTestResults: results,
+            }));
+          },
+          runGraph: async (project, graphId, inputs) => {
+            const processor = new GraphProcessor(project, graphId);
+            return processor.processGraph({
+              settings: await fillMissingSettingsFromEnvironmentVariables(savedSettings),
+              nativeApi: new TauriNativeApi(),
+            }, inputs);
+          },
+        });
+        setTrivetState((s) => ({
+          ...s,
+          recentTestResults: result,
+          runningTests: false,
+        }));
+        toast.info(`Ran tests: ${result.testSuiteResults.length} tests, ${result.testSuiteResults.filter((t) => t.passing).length} passing`);
+        console.log(result);
+      } catch (e) {
+        console.log(e);
+        setTrivetState((s) => ({
+          ...s,
+          runningTests: false,
+        }));
+        toast.error('Error running tests');
+      }
+    },
+  );
+
   function tryAbortGraph() {
     currentProcessor.current?.abort();
   }
@@ -129,5 +186,6 @@ export function useLocalExecutor() {
     tryAbortGraph,
     tryPauseGraph,
     tryResumeGraph,
+    tryRunTests,
   };
 }

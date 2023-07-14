@@ -3,13 +3,14 @@ import { startDebuggerServer, currentDebuggerState, createProcessor } from '@iro
 const rivetDebugger = startDebuggerServer({
   port: 21889,
   allowGraphUpload: true,
-  dynamicGraphRun: async ({ graphId }) => {
+  dynamicGraphRun: async ({ graphId, inputs }) => {
     if (currentDebuggerState.uploadedProject === undefined) {
       return;
     }
 
     const processor = createProcessor(currentDebuggerState.uploadedProject, {
       graph: graphId,
+      inputs,
       ...currentDebuggerState.settings!,
       remoteDebugger: rivetDebugger,
       onTrace: (trace) => {
