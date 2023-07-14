@@ -1,7 +1,7 @@
 {
   "name": "@ironclad/rivet-app",
   "repository": "https://github.com/ironclad/rivet",
-  "version": "0.12.3",
+  "version": "0.12.4",
   "private": true,
   "scripts": {
     "dev": "tauri dev",
