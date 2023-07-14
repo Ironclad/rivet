@@ -926,9 +926,10 @@ export class GraphProcessor {
         // We want to be able to clear every node that _potentially_ could run in the loop
         nodes: childLoopInfo?.nodes ?? new Set(),
 
-        // TODO loop controller max iterations
         iterationCount: (childLoopInfo?.iterationCount ?? 0) + 1,
       };
+
+      attachedData.loopInfo = childLoopInfo; // Not 100% sure if this is right - sets the childLoopInfo on the loop controller itself, probably fine?
 
       if (childLoopInfo.iterationCount > (node.data.maxIterations ?? 100)) {
         this.#nodeErrored(
@@ -942,11 +943,6 @@ export class GraphProcessor {
 
     for (const { node: outputNode, connections: connectionsToOutputNode } of outputNodes.connectionsToNodes) {
       const outputNodeAttachedData = this.#getAttachedDataTo(outputNode);
-
-      // Hacky? Need to bootstrap the propagation somewhere
-      if (childLoopInfo) {
-        outputNodeAttachedData.loopInfo = childLoopInfo;
-      }
 
       const propagatedAttachedData = Object.entries(attachedData).filter(([, value]): boolean => {
         if (!value) {

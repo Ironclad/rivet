@@ -302,7 +302,6 @@ export const GraphList: FC = () => {
     }
 
     if (savedGraphs.some((g) => g.metadata?.name === newFullPath) || folderNames.includes(newFullPath)) {
-      console.dir({ fullPath, newFullPath, savedGraphs: savedGraphs.map((g) => g.metadata?.name), folderNames });
       toast.error('A graph or folder with that name already exists.');
       return;
     }
