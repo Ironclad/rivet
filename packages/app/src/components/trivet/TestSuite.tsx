@@ -11,6 +11,7 @@ import { TestCaseEditor } from "./TestCaseEditor";
 import { css } from "@emotion/react";
 import { TrivetTestSuite } from "@ironclad/trivet";
 import { trivetState } from "../../state/trivet";
+import { useGraphExecutor } from "../../hooks/useGraphExecutor";
 
 const styles = css`
   min-height: 100%;
@@ -41,6 +42,7 @@ const styles = css`
 export const TestSuite: FC = () => {
   const [{ testSuites, selectedTestSuiteId, editingTestCaseId, recentTestResults, runningTests }, setState] = useRecoilState(trivetState);
   const savedGraphs = useRecoilValue(savedGraphsState);
+  const { tryRunTests } = useGraphExecutor();
 
   const testSuite = useMemo(() => testSuites.find((ts) => ts.id === selectedTestSuiteId), [testSuites, selectedTestSuiteId]);
   const isEditingTestCase = useMemo(
@@ -97,6 +99,16 @@ export const TestSuite: FC = () => {
     });
   }, [graphsById, testSuite, updateTestSuite]);
 
+  const runTestCase = useCallback((id: string) => {
+    if (selectedTestSuiteId == null) {
+      return;
+    }
+    tryRunTests({
+      testSuiteIds: [selectedTestSuiteId],
+      testCaseIds: [id],
+    })
+  }, [tryRunTests, selectedTestSuiteId]);
+
   if (testSuite == null) {
     return <div />;
   }
@@ -146,6 +158,7 @@ export const TestSuite: FC = () => {
         deleteTestCase={deleteTestCase}
         running={runningTests}
         testCaseResults={latestResult?.testCaseResults ?? []}
+        runTestCase={runTestCase}
       />
       {isEditingTestCase && <div className="test-case-editor">
         <TestCaseEditor key={editingTestCaseId} />
