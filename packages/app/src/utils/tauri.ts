@@ -26,7 +26,5 @@ export async function fillMissingSettingsFromEnvironmentVariables(settings: Part
     pineconeApiKey: (settings.pineconeApiKey || (await getEnvVar('PINECONE_API_KEY'))) ?? '',
   };
 
-  console.dir({ fullSettings });
-
   return fullSettings;
 }

@@ -100,7 +100,6 @@ export class CompareNodeImpl extends NodeImpl<CompareNode> {
     const inputA = inputs['a' as PortId];
     const inputB = inputs['b' as PortId];
 
-    console.dir({ inputA, inputB, inputs });
     if (!inputA) {
       return {
         ['output' as PortId]: {

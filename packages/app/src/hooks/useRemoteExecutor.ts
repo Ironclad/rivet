@@ -60,6 +60,9 @@ export function useRemoteExecutor() {
         graphExecutionPromise.current.reject?.(new Error('graph execution aborted'));
         currentExecution.onAbort(data as ProcessEvents['abort']);
         break;
+      case 'graphAbort':
+        currentExecution.onGraphAbort(data as ProcessEvents['graphAbort']);
+        break;
       case 'partialOutput':
         currentExecution.onPartialOutput(data as ProcessEvents['partialOutput']);
         break;

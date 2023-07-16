@@ -551,6 +551,10 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           onFailedAttempt(err) {
             context.trace(`ChatNode failed, retrying: ${err.toString()}`);
 
+            if (context.signal.aborted) {
+              throw new Error('Aborted');
+            }
+
             const { retriesLeft } = err;
 
             if (!(err instanceof OpenAIError)) {

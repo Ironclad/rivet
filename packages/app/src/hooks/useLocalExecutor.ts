@@ -41,11 +41,11 @@ export function useLocalExecutor() {
     async () => {
       try {
         saveGraph();
-  
+
         if (currentProcessor.current?.isRunning) {
           return;
         }
-  
+
         const tempProject = {
           ...project,
           graphs: {
@@ -53,19 +53,19 @@ export function useLocalExecutor() {
             [graph.metadata!.id!]: graph,
           },
         };
-  
+
         const recorder = new ExecutionRecorder();
         const processor = new GraphProcessor(tempProject, graph.metadata!.id!);
         recorder.record(processor);
-  
+
         processor.on('nodeStart', currentExecution.onNodeStart);
         processor.on('nodeFinish', currentExecution.onNodeFinish);
         processor.on('nodeError', currentExecution.onNodeError);
-  
+
         setUserInputModalSubmit({
           submit: (nodeId: NodeId, answers: StringArrayDataValue) => {
             processor.userInput(nodeId, answers);
-  
+
             // Remove from pending questions
             setUserInputQuestions((q) =>
               produce(q, (draft) => {
@@ -74,11 +74,12 @@ export function useLocalExecutor() {
             );
           },
         });
-  
+
         processor.on('userInput', currentExecution.onUserInput);
         processor.on('start', currentExecution.onStart);
         processor.on('done', currentExecution.onDone);
         processor.on('abort', currentExecution.onAbort);
+        processor.on('graphAbort', currentExecution.onGraphAbort);
         processor.on('partialOutput', currentExecution.onPartialOutput);
         processor.on('graphStart', currentExecution.onGraphStart);
         processor.on('graphFinish', currentExecution.onGraphFinish);
@@ -87,16 +88,16 @@ export function useLocalExecutor() {
         processor.on('pause', currentExecution.onPause);
         processor.on('resume', currentExecution.onResume);
         processor.on('error', currentExecution.onError);
-  
+
         processor.onUserEvent('toast', (data: DataValue | undefined) => {
           const stringData = coerceTypeOptional(data, 'string');
           toast(stringData ?? 'Toast called, but no message was provided');
         });
-  
+
         currentProcessor.current = processor;
-  
+
         let results: GraphOutputs;
-  
+
         if (loadedRecording) {
           results = await processor.replayRecording(loadedRecording.recorder);
         } else {
@@ -105,9 +106,9 @@ export function useLocalExecutor() {
             nativeApi: new TauriNativeApi(),
           });
         }
-  
+
         setLastRecordingState(recorder.serialize());
-  
+
         console.log(results);
       } catch (e) {
         console.log(e);
