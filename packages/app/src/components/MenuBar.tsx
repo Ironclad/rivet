@@ -18,6 +18,7 @@ import { useLoadRecording } from '../hooks/useLoadRecording.js';
 import { useRunMenuCommand } from '../hooks/useMenuCommands.js';
 import { isInTauri } from '../utils/tauri.js';
 import { useSaveRecording } from '../hooks/useSaveRecording';
+import { LoadingSpinner } from './LoadingSpinner.js';
 
 const styles = css`
   display: flex;
@@ -223,6 +224,19 @@ const styles = css`
       margin-left: 0.5rem;
     }
   }
+
+  .trivet-menu button {
+    display: flex;
+    flex-direction: row;
+
+    .spinner {
+      margin-left: 4px;
+    }
+
+    &.active .spinner svg {
+      color: var(--grey-dark);
+    }
+  }
 `;
 
 export type MenuBarProps = {
@@ -314,6 +328,7 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onRunTests, onAbortGraph
             onMouseDown={() => setTrivet((s) => ({ ...s, isOpen: !s.isOpen }))}
           >
             Trivet Tests
+            {trivet.runningTests && <div className="spinner"><LoadingSpinner /></div>}
           </button>
         </div>
         <div className="remote-debugger">
