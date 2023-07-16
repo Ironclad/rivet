@@ -15,6 +15,12 @@ import { trivetState } from "../../state/trivet";
 const styles = css`
   min-height: 100%;
   position: relative;
+  padding-left: 8px;
+  padding-top: 8px;
+
+  .test-suite-header {
+    max-width: 600px;
+  }
 
   .test-case-editor {
     position: absolute;
@@ -27,6 +33,8 @@ const styles = css`
     border-left: 1px solid var(--grey);
     background-color: var(--grey-darker);
     padding: 10px;
+    // Left box shadow
+    box-shadow: -10px 0 8px 0px rgba(0, 0, 0, 0.2);
   }
 `;
 
