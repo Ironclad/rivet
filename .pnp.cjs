@@ -6708,9 +6708,7 @@ const RAW_RUNTIME_STATE =
           ["@types/lodash-es", "npm:4.17.7"],\
           ["@types/node", "npm:20.4.0"],\
           ["@types/yaml", "npm:1.9.7"],\
-          ["clipanion", "virtual:763b5751e0360e14ffc929bbc0bd7578f8f57d8885d5b4f58aaa162c104e4df8cde06b85f86472c72428047754184723fb46f2f667ad4920b095b26bc8ed2f66#npm:3.2.1"],\
           ["lodash-es", "npm:4.17.21"],\
-          ["minimatch", "npm:9.0.2"],\
           ["ts-node", "virtual:763b5751e0360e14ffc929bbc0bd7578f8f57d8885d5b4f58aaa162c104e4df8cde06b85f86472c72428047754184723fb46f2f667ad4920b095b26bc8ed2f66#npm:10.9.1"],\
           ["tsx", "npm:3.12.7"],\
           ["typescript", "patch:typescript@npm%3A5.1.3#optional!builtin<compat/typescript>::version=5.1.3&hash=5da071"],\
@@ -10644,27 +10642,6 @@ const RAW_RUNTIME_STATE =
           ["cli-table3", "npm:0.6.3"],\
           ["@colors/colors", "npm:1.5.0"],\
           ["string-width", "npm:4.2.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["clipanion", [\
-      ["npm:3.2.1", {\
-        "packageLocation": "./.yarn/cache/clipanion-npm-3.2.1-fc9187f56c-6f757bde93.zip/node_modules/clipanion/",\
-        "packageDependencies": [\
-          ["clipanion", "npm:3.2.1"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:763b5751e0360e14ffc929bbc0bd7578f8f57d8885d5b4f58aaa162c104e4df8cde06b85f86472c72428047754184723fb46f2f667ad4920b095b26bc8ed2f66#npm:3.2.1", {\
-        "packageLocation": "./.yarn/__virtual__/clipanion-virtual-3fe6f987f6/0/cache/clipanion-npm-3.2.1-fc9187f56c-6f757bde93.zip/node_modules/clipanion/",\
-        "packageDependencies": [\
-          ["clipanion", "virtual:763b5751e0360e14ffc929bbc0bd7578f8f57d8885d5b4f58aaa162c104e4df8cde06b85f86472c72428047754184723fb46f2f667ad4920b095b26bc8ed2f66#npm:3.2.1"],\
-          ["@types/typanion", null],\
-          ["typanion", "npm:3.13.0"]\
-        ],\
-        "packagePeers": [\
-          "@types/typanion"\
         ],\
         "linkType": "HARD"\
       }]\
@@ -16372,14 +16349,6 @@ const RAW_RUNTIME_STATE =
           ["brace-expansion", "npm:2.0.1"]\
         ],\
         "linkType": "HARD"\
-      }],\
-      ["npm:9.0.2", {\
-        "packageLocation": "./.yarn/cache/minimatch-npm-9.0.2-54f51f778f-104c2050e7.zip/node_modules/minimatch/",\
-        "packageDependencies": [\
-          ["minimatch", "npm:9.0.2"],\
-          ["brace-expansion", "npm:2.0.1"]\
-        ],\
-        "linkType": "HARD"\
       }]\
     ]],\
     ["minimist", [\
@@ -21627,15 +21596,6 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["tunnel-agent", "npm:0.6.0"],\
           ["safe-buffer", "npm:5.2.1"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["typanion", [\
-      ["npm:3.13.0", {\
-        "packageLocation": "./.yarn/cache/typanion-npm-3.13.0-d2aff17787-e89e93b8fe.zip/node_modules/typanion/",\
-        "packageDependencies": [\
-          ["typanion", "npm:3.13.0"]\
         ],\
         "linkType": "HARD"\
       }]\
