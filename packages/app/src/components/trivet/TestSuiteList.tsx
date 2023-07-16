@@ -65,6 +65,7 @@ export type TestSuiteListProps = {
   createNewTestSuite: () => void;
   deleteTestSuite: (id: string) => void;
   runningTestSuiteId: string | undefined;
+  runTestSuite: (id: string) => void;
 };
 
 export const TestSuiteList: FC<TestSuiteListProps> = ({
@@ -74,6 +75,7 @@ export const TestSuiteList: FC<TestSuiteListProps> = ({
   createNewTestSuite,
   deleteTestSuite,
   runningTestSuiteId,
+  runTestSuite,
 }) => {
   const { contextMenuRef, showContextMenu, contextMenuData, handleContextMenu } = useContextMenu();
 
@@ -144,6 +146,7 @@ export const TestSuiteList: FC<TestSuiteListProps> = ({
               top: contextMenuData.y,
             }}
           >
+            <DropdownItem onClick={() => selectedTestSuiteIdForContextMenu && runTestSuite(selectedTestSuiteIdForContextMenu)}>Run Test Suite</DropdownItem>
             <DropdownItem onClick={() => handleDelete(selectedTestSuiteIdForContextMenu)}>Delete</DropdownItem>
           </div>
         )}
