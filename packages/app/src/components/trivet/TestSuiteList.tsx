@@ -6,12 +6,22 @@ import { useStableCallback } from "../../hooks/useStableCallback";
 import Portal from "@atlaskit/portal";
 import { DropdownItem } from "@atlaskit/dropdown-menu";
 import { TrivetTestSuite } from "@ironclad/trivet";
+import Tabs, { Tab, TabList, TabPanel } from "@atlaskit/tabs";
 
 const styles = css`
 min-height: 100%;
 border-right: 1px solid var(--grey);
 
+.test-suite-list {
+  margin: 10px 0;
+  width: 100%;
+}
+
 .test-suite-item {
+  padding: 0 4px;
+  margin-top: 8px;
+  cursor: pointer;
+
   &:hover {
     background-color: var(--grey-darkish);
   }
@@ -71,18 +81,25 @@ export const TestSuiteList: FC<TestSuiteListProps> = ({
 
   return (
     <div css={styles} onContextMenu={handleSidebarContextMenu} data-contextmenutype="test-suite-list" ref={contextMenuRef}>
-      <h2>Test Suites</h2>
-      <hr />
-      {testSuites.map((testSuite) => (
-        <div
-          key={testSuite.id}
-          onClick={() => setSelectedTestSuite(testSuite.id)}
-          className={clsx('test-suite-item', { selected: testSuite.id === selectedTestSuite?.id })}
-          data-contextmenutype="test-suite-item"
-          data-testsuiteid={testSuite.id}>
-          {testSuite.name ?? 'Untitled Test Suite'}
-        </div>
-      ))}
+      <Tabs id="test-suite-tabs">
+        <TabList>
+          <Tab>Test Suites</Tab>
+        </TabList>
+        <TabPanel>
+          <div className="test-suite-list">
+            {testSuites.map((testSuite) => (
+              <div
+                key={testSuite.id}
+                onClick={() => setSelectedTestSuite(testSuite.id)}
+                className={clsx('test-suite-item', { selected: testSuite.id === selectedTestSuite?.id })}
+                data-contextmenutype="test-suite-item"
+                data-testsuiteid={testSuite.id}>
+                {testSuite.name ?? 'Untitled Test Suite'}
+              </div>
+            ))}
+          </div>
+        </TabPanel>
+      </Tabs>
       <Portal>
         {showContextMenu && contextMenuData.data?.type === 'test-suite-list' && (
           <div
