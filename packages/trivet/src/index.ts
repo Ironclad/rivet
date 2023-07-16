@@ -120,6 +120,22 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
 
     const testCaseResults: TrivetTestCaseResult[] = [];
 
+    onUpdate?.({
+      ...trivetResults,
+      testSuiteResults: [
+        ...trivetResults.testSuiteResults,
+        {
+          id: testSuite.id,
+          testGraph: testSuite.testGraph,
+          validationGraph: testSuite.validationGraph,
+          name: testSuite.name ?? 'Test',
+          description: testSuite.description ?? 'It should pass.',
+          testCaseResults: testCaseResults.slice(),
+          passing: testCaseResults.every((r) => r.passing),      
+        }
+      ],
+    });
+
     for (const testCase of testSuite.testCases) {
       const resolvedInputs: Record<string, DataValue> = mapValues(testCase.inputs, inferType);
       const outputs = await runGraph(project, testGraph.metadata!.id!, resolvedInputs);

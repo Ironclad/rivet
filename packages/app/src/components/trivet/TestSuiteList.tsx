@@ -7,6 +7,7 @@ import Portal from "@atlaskit/portal";
 import { DropdownItem } from "@atlaskit/dropdown-menu";
 import { TrivetTestSuite } from "@ironclad/trivet";
 import Tabs, { Tab, TabList, TabPanel } from "@atlaskit/tabs";
+import { LoadingSpinner } from "../LoadingSpinner";
 
 const styles = css`
 min-height: 100%;
@@ -18,7 +19,10 @@ border-right: 1px solid var(--grey);
 }
 
 .test-suite-item {
-  padding: 0 4px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 4px 8px;
   margin-top: 8px;
   cursor: pointer;
 
@@ -34,6 +38,15 @@ border-right: 1px solid var(--grey);
   &:hover {
     background-color: var(--primary-dark);
   }
+}
+
+.selected .spinner svg {
+  color: var(--grey-dark);
+}
+
+.test-suite-status {
+  width: 20px;
+  margin-right: 4px;
 }
 `;
 
@@ -51,6 +64,7 @@ export type TestSuiteListProps = {
   setSelectedTestSuite: (id: string) => void;
   createNewTestSuite: () => void;
   deleteTestSuite: (id: string) => void;
+  runningTestSuiteId: string | undefined;
 };
 
 export const TestSuiteList: FC<TestSuiteListProps> = ({
@@ -59,6 +73,7 @@ export const TestSuiteList: FC<TestSuiteListProps> = ({
   selectedTestSuite,
   createNewTestSuite,
   deleteTestSuite,
+  runningTestSuiteId,
 }) => {
   const { contextMenuRef, showContextMenu, contextMenuData, handleContextMenu } = useContextMenu();
 
@@ -94,7 +109,12 @@ export const TestSuiteList: FC<TestSuiteListProps> = ({
                 className={clsx('test-suite-item', { selected: testSuite.id === selectedTestSuite?.id })}
                 data-contextmenutype="test-suite-item"
                 data-testsuiteid={testSuite.id}>
-                {testSuite.name ?? 'Untitled Test Suite'}
+                <div className="test-suite-status spinner">
+                  {runningTestSuiteId === testSuite.id && <LoadingSpinner />}
+                </div>
+                <div className="test-suite-name">
+                  {testSuite.name ?? 'Untitled Test Suite'}
+                </div>
               </div>
             ))}
           </div>

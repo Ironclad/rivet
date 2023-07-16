@@ -55,7 +55,7 @@ export type TrivetContainerProps = {
 };
 
 export const TrivetContainer: FC<TrivetContainerProps> = ({ onClose }) => {
-  const [{ testSuites, selectedTestSuiteId }, setState] = useRecoilState(trivetState);
+  const [{ testSuites, selectedTestSuiteId, runningTests, recentTestResults }, setState] = useRecoilState(trivetState);
   const selectedTestSuite = useMemo(() => testSuites.find((ts) => ts.id === selectedTestSuiteId), [testSuites, selectedTestSuiteId]);
   const createNewTestSuite = useCallback(() => {
     setState((s) => ({
@@ -69,6 +69,12 @@ export const TrivetContainer: FC<TrivetContainerProps> = ({ onClose }) => {
       testSuites: s.testSuites.filter((ts) => ts.id !== id),
     }));
   }, [setState]);
+  const runningTestSuiteId = useMemo(() => {
+    if (!runningTests || recentTestResults == null || recentTestResults.testSuiteResults.length === 0) {
+      return undefined;
+    }
+    return recentTestResults.testSuiteResults[recentTestResults.testSuiteResults.length - 1]?.id;
+  }, [runningTests, recentTestResults]);
 
   return (
     <div css={styles}>
@@ -84,6 +90,7 @@ export const TrivetContainer: FC<TrivetContainerProps> = ({ onClose }) => {
             setSelectedTestSuite={(id) => setState((s) => ({ ...s, selectedTestSuiteId: id }))}
             createNewTestSuite={createNewTestSuite}
             deleteTestSuite={deleteTestSuite}
+            runningTestSuiteId={runningTestSuiteId}
           />
         </div>
         <div className="test-case-column">
