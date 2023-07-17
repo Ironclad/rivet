@@ -15,7 +15,7 @@ import {
   CanvasPosition,
   canvasPositionState,
   editingNodeState,
-  lastCanvasPositionForGraphState,
+  lastCanvasPositionByGraphState,
   lastMousePositionState,
   selectedNodesState,
 } from '../state/graphBuilder';
@@ -144,9 +144,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const [canvasPosition, setCanvasPosition] = useRecoilState(canvasPositionState);
   const selectedGraphMetadata = useRecoilValue(graphMetadataState);
 
-  const setLastSavedCanvasPosition = useSetRecoilState(
-    lastCanvasPositionForGraphState(selectedGraphMetadata?.id ?? (nanoid() as GraphId)),
-  );
+  const setLastSavedCanvasPosition = useSetRecoilState(lastCanvasPositionByGraphState);
 
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, canvasStartX: 0, canvasStartY: 0 });
@@ -282,7 +280,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           zoom: canvasPosition.zoom,
         };
         setCanvasPosition(position);
-        setLastSavedCanvasPosition(position);
+        setLastSavedCanvasPosition((saved) => ({ ...saved, [selectedGraphMetadata!.id!]: position }));
       }
     },
     { wait: 10 },
@@ -331,12 +329,15 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         y: newY - currentMousePosCanvas.y,
       };
 
-      // Step 7: Update the canvas position and zoom value
-      setCanvasPosition((pos) => ({
-        x: pos.x + diff.x,
-        y: pos.y + diff.y,
+      const position: CanvasPosition = {
+        x: canvasPosition.x + diff.x,
+        y: canvasPosition.y + diff.y,
         zoom: newZoom,
-      }));
+      };
+
+      setCanvasPosition(position);
+
+      setLastSavedCanvasPosition((saved) => ({ ...saved, [selectedGraphMetadata!.id!]: position }));
     },
     { wait: 25 },
   );

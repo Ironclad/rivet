@@ -22,9 +22,9 @@ export const canvasPositionState = atom<CanvasPosition>({
   default: { x: 0, y: 0, zoom: 1 },
 });
 
-export const lastCanvasPositionForGraphState = atomFamily<CanvasPosition | undefined, GraphId>({
-  key: 'lastCanvasPositionForGraph',
-  default: undefined,
+export const lastCanvasPositionByGraphState = atom<Record<GraphId, CanvasPosition | undefined>>({
+  key: 'lastCanvasPositionByGraph',
+  default: {},
   effects_UNSTABLE: [persistAtom],
 });
 

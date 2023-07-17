@@ -2,7 +2,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { NodeGraph, emptyNodeGraph } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph.js';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph.js';
-import { canvasPositionState, sidebarOpenState } from '../state/graphBuilder.js';
+import { canvasPositionState, lastCanvasPositionByGraphState, sidebarOpenState } from '../state/graphBuilder.js';
 import { useStableCallback } from './useStableCallback.js';
 import { fitBoundsToViewport } from './useViewportBounds.js';
 
@@ -12,6 +12,7 @@ export function useLoadGraph() {
   const setPosition = useSetRecoilState(canvasPositionState);
   const saveCurrentGraph = useSaveCurrentGraph();
   const sidebarOpen = useRecoilValue(sidebarOpenState);
+  const lastSavedPositions = useRecoilValue(lastCanvasPositionByGraphState);
 
   return useStableCallback((savedGraph: NodeGraph) => {
     if (graph.nodes.length > 0 || graph.metadata?.name !== emptyNodeGraph().metadata!.name) {
@@ -20,7 +21,10 @@ export function useLoadGraph() {
 
     setGraph(savedGraph);
 
-    if (savedGraph.nodes.length > 0) {
+    const lastSavedPosition = lastSavedPositions[savedGraph.metadata!.id!];
+    if (lastSavedPosition) {
+      setPosition(lastSavedPosition);
+    } else if (savedGraph.nodes.length > 0) {
       const minNodeX = Math.min(...savedGraph.nodes.map((n) => n.visualData.x));
       const maxNodeX = Math.max(...savedGraph.nodes.map((n) => n.visualData.x + (n.visualData.width ?? 300)));
       const minNodeY = Math.min(...savedGraph.nodes.map((n) => n.visualData.y));
