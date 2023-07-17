@@ -216,6 +216,10 @@ export function nodeFactory<T extends NodeType>(type: T): Extract<Nodes, { type:
   return register.create(type);
 }
 
+export function getNodeTypes(): NodeType[] {
+  return register.getNodeTypes();
+}
+
 export type NodeOfType<T extends NodeType> = Extract<Nodes, { type: T }>;
 
 export function getNodeDisplayName<T extends NodeType>(type: T): string {

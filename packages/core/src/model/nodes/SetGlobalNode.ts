@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import {
   DataType,
   ScalarDataValue,
@@ -12,6 +12,7 @@ import {
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { coerceType } from '../../utils/coerceType.js';
 import { InternalProcessContext } from '../ProcessContext.js';
+import { dedent } from 'ts-dedent';
 
 export type SetGlobalNode = ChartNode<'setGlobal', SetGlobalNodeData>;
 
@@ -75,6 +76,30 @@ export class SetGlobalNodeImpl extends NodeImpl<SetGlobalNode> {
         dataType: this.data.dataType,
       },
     ];
+  }
+
+  getEditors(): EditorDefinition<SetGlobalNode>[] {
+    return [
+      {
+        type: 'string',
+        dataKey: 'id',
+        useInputToggleDataKey: 'useIdInput',
+        label: 'ID',
+      },
+      {
+        type: 'dataTypeSelector',
+        dataKey: 'dataType',
+        label: 'Data Type',
+        useInputToggleDataKey: 'useIdInput',
+      },
+    ];
+  }
+
+  getBody(): string | NodeBodySpec | undefined {
+    return dedent`
+      ${this.data.id}
+      Type: ${this.data.dataType}
+    `;
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

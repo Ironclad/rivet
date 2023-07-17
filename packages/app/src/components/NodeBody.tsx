@@ -1,19 +1,17 @@
-import { FC, memo, useMemo } from 'react';
+import { FC, memo, useLayoutEffect, useMemo, useRef } from 'react';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
-import { ChartNode, createUnknownNodeInstance } from '@ironclad/rivet-core';
+import {
+  ChartNode,
+  ColorizedNodeBodySpec,
+  MarkdownNodeBodySpec,
+  NodeBodySpec,
+  PlainNodeBodySpec,
+  createUnknownNodeInstance,
+} from '@ironclad/rivet-core';
 import { useMarkdown } from '../hooks/useMarkdown';
-
-const UnknownNodeBody: FC<{ node: ChartNode }> = ({ node }) => {
-  const body = useMemo(() => createUnknownNodeInstance(node).getBody(), [node]);
-
-  const markdownBody = useMarkdown(body?.replace(/^!markdown/, ''), body?.startsWith('!markdown'));
-
-  if (markdownBody.__html) {
-    return <div className="pre-wrap" dangerouslySetInnerHTML={markdownBody} />;
-  }
-
-  return <pre className="pre-wrap">{body}</pre>;
-};
+import { match } from 'ts-pattern';
+import { monaco } from '../utils/monaco';
+import styled from '@emotion/styled';
 
 export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
   const { Body } = useUnknownNodeComponentDescriptorFor(node);
@@ -21,4 +19,73 @@ export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
   const body = Body ? <Body node={node} /> : <UnknownNodeBody node={node} />;
 
   return <div className="node-body">{body}</div>;
+});
+
+const UnknownNodeBodyWrapper = styled.div<{
+  fontSize: number;
+  fontFamily: 'monospace' | 'sans-serif';
+}>`
+  font-size: ${(props) => props.fontSize}px;
+  font-family: ${(props) => (props.fontFamily === 'monospace' ? "'Roboto Mono', monospace" : "'Roboto', sans-serif")};
+`;
+
+const UnknownNodeBody: FC<{ node: ChartNode }> = ({ node }) => {
+  const body = useMemo(() => createUnknownNodeInstance(node).getBody(), [node]);
+
+  let bodySpec: NodeBodySpec | NodeBodySpec[] | undefined =
+    typeof body === 'string' ? { type: 'plain', text: body } : body;
+  let allSpecs = bodySpec ? (Array.isArray(bodySpec) ? bodySpec : [bodySpec]) : [];
+
+  allSpecs = allSpecs.map((spec) => {
+    if (spec.type === 'plain' && spec.text.startsWith('!markdown')) {
+      return { type: 'markdown', text: spec.text.replace(/^!markdown/, '') };
+    }
+
+    return spec;
+  });
+
+  const renderedSpecs = allSpecs.map((spec) => ({
+    spec,
+    rendered: match(spec)
+      .with({ type: 'plain' }, (spec) => <PlainNodeBody {...spec} />)
+      .with({ type: 'markdown' }, (spec) => <MarkdownNodeBody {...spec} />)
+      .with({ type: 'colorized' }, (spec) => <ColorizedNodeBody {...spec} />)
+      .exhaustive(),
+  }));
+
+  return (
+    <div>
+      {renderedSpecs.map(({ spec, rendered }, i) => (
+        <UnknownNodeBodyWrapper key={i} fontFamily={spec.fontFamily ?? 'sans-serif'} fontSize={spec.fontSize ?? 12}>
+          {rendered}
+        </UnknownNodeBodyWrapper>
+      ))}
+    </div>
+  );
+};
+
+export const PlainNodeBody: FC<PlainNodeBodySpec> = memo(({ text }) => {
+  return <pre className="pre-wrap">{text}</pre>;
+});
+
+export const MarkdownNodeBody: FC<MarkdownNodeBodySpec> = memo(({ text }) => {
+  const markdownBody = useMarkdown(text);
+
+  return <div className="pre-wrap" dangerouslySetInnerHTML={markdownBody} />;
+});
+
+export const ColorizedNodeBody: FC<ColorizedNodeBodySpec> = memo(({ text, theme, language }) => {
+  const bodyRef = useRef<HTMLPreElement>(null);
+
+  useLayoutEffect(() => {
+    monaco.editor.colorizeElement(bodyRef.current!, {
+      theme: theme ?? 'vs-dark',
+    });
+  }, [text, theme]);
+
+  return (
+    <pre ref={bodyRef} data-lang={language}>
+      {text}
+    </pre>
+  );
 });

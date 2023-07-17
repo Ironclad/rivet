@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
 import { JSONPath } from 'jsonpath-plus';
 import { expectType } from '../../utils/expectType.js';
@@ -80,6 +80,10 @@ export class ExtractObjectPathNodeImpl extends NodeImpl<ExtractObjectPathNode> {
         useInputToggleDataKey: 'usePathInput',
       },
     ];
+  }
+
+  getBody(): string | NodeBodySpec | undefined {
+    return this.data.usePathInput ? '(Using Input)' : this.data.path;
   }
 
   async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {

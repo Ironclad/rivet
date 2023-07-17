@@ -56,7 +56,7 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
     return [];
   }
 
-  getBody(): string | undefined {
+  getBody(): string | NodeBodySpec | NodeBodySpec[] | undefined {
     return undefined;
   }
 }
@@ -182,3 +182,27 @@ export type EditorDefinition<T extends ChartNode> =
   | NumberEditorDefinition<T>
   | CodeEditorDefinition<T>
   | GraphSelectorEditorDefinition<T>;
+
+export type NodeBodySpecBase = {
+  fontSize?: number;
+  fontFamily?: 'monospace' | 'sans-serif';
+};
+
+export type PlainNodeBodySpec = {
+  type: 'plain';
+  text: string;
+};
+
+export type MarkdownNodeBodySpec = {
+  type: 'markdown';
+  text: string;
+};
+
+export type ColorizedNodeBodySpec = {
+  type: 'colorized';
+  language: string;
+  text: string;
+  theme?: string;
+};
+
+export type NodeBodySpec = NodeBodySpecBase & (PlainNodeBodySpec | MarkdownNodeBodySpec | ColorizedNodeBodySpec);

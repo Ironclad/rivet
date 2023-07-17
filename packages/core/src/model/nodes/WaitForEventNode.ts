@@ -1,5 +1,5 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor.js';
@@ -71,6 +71,10 @@ export class WaitForEventNodeImpl extends NodeImpl<WaitForEventNode> {
         useInputToggleDataKey: 'useEventNameInput',
       },
     ];
+  }
+
+  getBody(): string | NodeBodySpec | undefined {
+    return this.data.useEventNameInput ? '(Using Input)' : this.data.eventName;
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

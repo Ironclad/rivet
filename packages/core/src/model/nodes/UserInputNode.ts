@@ -1,4 +1,4 @@
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
 import { DataValue, ArrayDataValue, StringDataValue } from '../DataValue.js';
@@ -70,6 +70,10 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
         language: 'plain-text',
       },
     ];
+  }
+
+  getBody(): string | NodeBodySpec | undefined {
+    return this.data.useInput ? '(Using input)' : this.data.prompt;
   }
 
   async process(): Promise<Outputs> {

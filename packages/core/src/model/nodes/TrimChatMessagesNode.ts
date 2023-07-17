@@ -1,10 +1,10 @@
 import { ChartNode, NodeId, PortId, NodeInputDefinition, NodeOutputDefinition } from '../../model/NodeBase.js';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../../model/NodeImpl.js';
-import { DataValue } from '../../model/DataValue.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../../model/NodeImpl.js';
 import { SupportedModels, getTokenCountForMessages, modelOptions, openaiModels } from '../../utils/tokenizer.js';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs, expectType } from '../../index.js';
 import { ChatCompletionRequestMessage } from '../../utils/openai.js';
+import { dedent } from 'ts-dedent';
 
 export type TrimChatMessagesNodeData = {
   maxTokenCount: number;
@@ -74,6 +74,13 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
         options: modelOptions,
       },
     ];
+  }
+
+  getBody(): string | NodeBodySpec | undefined {
+    return dedent`
+      Max Token Count: ${this.data.maxTokenCount}
+      Remove From Beginning: ${this.data.removeFromBeginning ? 'Yes' : 'No'}
+    `;
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

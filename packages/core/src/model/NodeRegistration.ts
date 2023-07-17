@@ -1,4 +1,5 @@
 import { ChartNode, NodeImplConstructor, NodeDefinition, NodeImpl } from '../index.js';
+import { keys } from '../utils/typeSafety.js';
 
 export class NodeRegistration<
   NodeTypes extends string = never,
@@ -69,5 +70,9 @@ export class NodeRegistration<
 
   isRegistered(type: NodeTypes): boolean {
     return this.#impls[type] !== undefined;
+  }
+
+  getNodeTypes(): NodeTypes[] {
+    return keys(this.#impls);
   }
 }

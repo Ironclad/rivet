@@ -1,5 +1,5 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { AnyDataValue, ArrayDataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor.js';
@@ -84,6 +84,10 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
         dataKey: 'useErrorOutput',
       },
     ];
+  }
+
+  getBody(): string | NodeBodySpec | undefined {
+    return this.data.useFunctionNameInput ? '(Using Input)' : this.data.functionName;
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

@@ -1,10 +1,11 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { DataType, DataValue, getDefaultValue, isArrayDataType } from '../DataValue.js';
 import { GraphInputs, Inputs, Outputs } from '../GraphProcessor.js';
 import { InternalProcessContext } from '../ProcessContext.js';
 import { coerceTypeOptional, inferType } from '../../index.js';
+import { dedent } from 'ts-dedent';
 
 export type GraphInputNode = ChartNode<'graphInput', GraphInputNodeData>;
 
@@ -80,6 +81,13 @@ export class GraphInputNodeImpl extends NodeImpl<GraphInputNode> {
         useInputToggleDataKey: 'useDefaultValueInput',
       },
     ];
+  }
+
+  getBody(): string | NodeBodySpec | undefined {
+    return dedent`
+      ${this.data.id}
+      Type: ${this.data.dataType}
+    `;
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Record<string, DataValue>> {

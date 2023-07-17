@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
 import { match } from 'ts-pattern';
 import { coerceTypeOptional } from '../../index.js';
@@ -67,6 +67,17 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
         theme: 'prompt-interpolation',
       },
     ];
+  }
+
+  getBody(): string | NodeBodySpec | undefined {
+    const truncated = this.data.text.split('\n').slice(0, 15).join('\n').trim();
+
+    return {
+      type: 'colorized',
+      language: 'prompt-interpolation',
+      theme: 'prompt-interpolation',
+      text: truncated,
+    };
   }
 
   interpolate(baseString: string, values: Record<string, any>): string {

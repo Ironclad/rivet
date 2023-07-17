@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
 
 export type CodeNode = ChartNode<'code', CodeNodeData>;
@@ -70,6 +70,23 @@ return { output: inputs.input };`,
         language: 'javascript',
       },
     ];
+  }
+
+  getBody(): string | NodeBodySpec | undefined {
+    const trimmed = this.data.code
+      .split('\n')
+      .slice(0, 15)
+      .map((line) => (line.length > 50 ? line.slice(0, 50) + '...' : line))
+      .join('\n')
+      .trim();
+
+    return {
+      type: 'colorized',
+      text: trimmed,
+      language: 'javascript',
+      fontSize: 12,
+      fontFamily: 'monospace',
+    };
   }
 
   async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {

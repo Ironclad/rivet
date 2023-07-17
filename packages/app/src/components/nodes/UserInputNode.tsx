@@ -1,24 +1,7 @@
 import { FC } from 'react';
 import { css } from '@emotion/react';
-import styled from '@emotion/styled';
-import { Outputs, PortId, UserInputNode, expectType } from '@ironclad/rivet-core';
+import { Outputs, PortId, expectType } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
-
-export type UserInputNodeBodyProps = {
-  node: UserInputNode;
-};
-
-const Body = styled.div`
-  font-size: 12px;
-`;
-
-export const UserInputNodeBody: FC<UserInputNodeBodyProps> = ({ node }) => {
-  return (
-    <>
-      <Body>{node.data.useInput ? <span>(Using input)</span> : <span>{node.data.prompt}</span>}</Body>
-    </>
-  );
-};
 
 const questionsAndAnswersStyles = css`
   display: flex;
@@ -45,6 +28,5 @@ export const UserInputNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
 };
 
 export const userInputNodeDescriptor: NodeComponentDescriptor<'userInput'> = {
-  Body: UserInputNodeBody,
   OutputSimple: UserInputNodeOutput,
 };

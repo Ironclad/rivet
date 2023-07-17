@@ -1,10 +1,11 @@
 import { ChartNode, NodeId, NodeOutputDefinition, PortId, NodeInputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { DataType, DataValue } from '../DataValue.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { InternalProcessContext } from '../ProcessContext.js';
 import { ControlFlowExcludedPort } from '../../utils/symbols.js';
+import { dedent } from 'ts-dedent';
 
 export type GraphOutputNode = ChartNode<'graphOutput', GraphOutputNodeData>;
 
@@ -66,6 +67,13 @@ export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
         dataKey: 'dataType',
       },
     ];
+  }
+
+  getBody(): string | NodeBodySpec | undefined {
+    return dedent`
+      ${this.data.id}
+      Type: ${this.data.dataType}
+    `;
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

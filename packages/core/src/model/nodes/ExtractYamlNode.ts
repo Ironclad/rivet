@@ -1,11 +1,12 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
 // @ts-ignore
 import yaml from 'yaml';
 import { expectType } from '../../utils/expectType.js';
 import { JSONPath } from 'jsonpath-plus';
+import { dedent } from 'ts-dedent';
 
 export type ExtractYamlNode = ChartNode<'extractYaml', ExtractYamlNodeData>;
 
@@ -78,6 +79,13 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
         language: 'jsonpath',
       },
     ];
+  }
+
+  getBody(): string | NodeBodySpec | undefined {
+    return dedent`
+      Root: ${this.data.rootPropertyName}
+      ${this.data.objectPath ? `Path: ${this.data.objectPath}` : ``}
+    `;
   }
 
   async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {

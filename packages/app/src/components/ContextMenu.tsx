@@ -10,7 +10,6 @@ import {
   ContextMenuItem as ContextMenuConfigItem,
 } from '../hooks/useContextMenuConfiguration';
 import { useFuseSearch } from '../hooks/useFuseSearch.js';
-import TextField from '@atlaskit/textfield';
 import { uniqBy } from 'lodash-es';
 import clsx from 'clsx';
 import { useMarkdown } from '../hooks/useMarkdown.js';

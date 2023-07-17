@@ -1,10 +1,11 @@
 import { ChartNode, NodeId, PortId } from '../NodeBase.js';
 import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
-import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { expectType } from '../../index.js';
 import { InternalProcessContext } from '../ProcessContext.js';
+import { dedent } from 'ts-dedent';
 
 export type ReadDirectoryNode = ChartNode<'readDirectory', ReadDirectoryNodeData>;
 
@@ -116,6 +117,22 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
         dataType: 'string[]',
       },
     ];
+  }
+
+  getBody(): string | NodeBodySpec | undefined {
+    return dedent`
+      Path: ${this.data.usePathInput ? '(Input)' : this.data.path}
+      Recursive: ${this.data.useRecursiveInput ? '(Input)' : this.data.recursive}
+      Include Directories: ${this.data.useIncludeDirectoriesInput ? '(Input)' : this.data.includeDirectories}
+      Relative: ${this.data.useRelativeInput ? '(Input)' : this.data.relative}
+      Filters: ${
+        this.data.useFilterGlobsInput
+          ? '(Input)'
+          : this.data.filterGlobs.length > 0
+          ? this.data.filterGlobs.join(', ')
+          : 'None'
+      }
+    `;
   }
 
   async process(inputData: Inputs, context: InternalProcessContext): Promise<Outputs> {
