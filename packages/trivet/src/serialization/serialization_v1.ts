@@ -12,8 +12,8 @@ export interface SerializedTrivetTestSuite {
 
 export interface SerializedTrivetTestCase {
   id: string;
-  inputs: Record<string, unknown>;
-  baselineOutputs: Record<string, unknown>;
+  input: Record<string, unknown>;
+  expectedOutput: Record<string, unknown>;
 }
 
 export interface SerializedTrivetData {
@@ -24,16 +24,16 @@ export interface SerializedTrivetData {
 export function serializeTestCase(testCase: TrivetTestCase): SerializedTrivetTestCase {
   return {
     id: testCase.id,
-    inputs: testCase.inputs,
-    baselineOutputs: testCase.baselineOutputs,
+    input: testCase.input,
+    expectedOutput: testCase.expectedOutput,
   };
 }
 
 export function deserializeTestCase(data: SerializedTrivetTestCase): TrivetTestCase {
   return {
     id: data.id,
-    inputs: data.inputs,
-    baselineOutputs: data.baselineOutputs,
+    input: data.input,
+    expectedOutput: data.expectedOutput,
   };
 }
 

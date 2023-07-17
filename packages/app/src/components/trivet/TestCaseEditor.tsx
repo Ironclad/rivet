@@ -44,17 +44,17 @@ export const TestCaseEditor: FC = () => {
       </Button>
 
       <div>
-        <label>Inputs</label>
+        <label>Input</label>
         <InputOutputEditor
-          json={selectedTestCase?.inputs ?? {}}
-          setJson={(inputs) => setState((s) => ({ ...s, testSuites: s.testSuites.map((ts) => ts.id === selectedTestSuiteId ? { ...ts, testCases: ts.testCases.map((tc) => tc.id === editingTestCaseId ? { ...tc, inputs } : tc) } : ts) }))}
+          json={selectedTestCase?.input ?? {}}
+          setJson={(input) => setState((s) => ({ ...s, testSuites: s.testSuites.map((ts) => ts.id === selectedTestSuiteId ? { ...ts, testCases: ts.testCases.map((tc) => tc.id === editingTestCaseId ? { ...tc, input } : tc) } : ts) }))}
         />
       </div>
       <div>
-        <label>Baseline Outputs</label>
+        <label>Expected Output</label>
         <InputOutputEditor
-          json={selectedTestCase?.baselineOutputs ?? {}}
-          setJson={(baselineOutputs) => setState((s) => ({ ...s, testSuites: s.testSuites.map((ts) => ts.id === selectedTestSuiteId ? { ...ts, testCases: ts.testCases.map((tc) => tc.id === editingTestCaseId ? { ...tc, baselineOutputs } : tc) } : ts) }))}
+          json={selectedTestCase?.expectedOutput ?? {}}
+          setJson={(expectedOutput) => setState((s) => ({ ...s, testSuites: s.testSuites.map((ts) => ts.id === selectedTestSuiteId ? { ...ts, testCases: ts.testCases.map((tc) => tc.id === editingTestCaseId ? { ...tc, expectedOutput } : tc) } : ts) }))}
         />
       </div>
       {testCaseResults != null && (

@@ -101,8 +101,8 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
               data-testcaseid={testCase.id}
             >
               <td className="status-icon"><TestCaseStatusIcon result={testCaseResultsById[testCase.id]} running={running} /></td>
-              <td>{JSON.stringify(testCase.inputs).slice(0, 20)}</td>
-              <td>{JSON.stringify(testCase.baselineOutputs).slice(0, 20)}</td>
+              <td>{JSON.stringify(testCase.input).slice(0, 20)}</td>
+              <td>{JSON.stringify(testCase.expectedOutput).slice(0, 20)}</td>
             </tr>
           ))}
           <tr>

@@ -6,17 +6,17 @@ data:
         - id: MaoXCgibUQDV5fCN_oy2e
           name: Graph to Test
           testCases:
-            - baselineOutputs:
+            - expectedOutput:
                 has_mission: YES
                 mission_statement: Ironclad is on a mission to power the world's contracts.
               id: hxRYlHF68ZmmpMT0lo037
-              inputs:
+              input:
                 statement: Ironclad is on a mission to power the world's contracts.
-            - baselineOutputs:
+            - expectedOutput:
                 has_mission: YES
                 mission_statement: Ironclad is on a mission to power the world's contracts
               id: ngJC1XL42jQCTRZW5fhRG
-              inputs:
+              input:
                 statement: Ironclad is a contract lifecycle management system
           testGraph: rUcgbRwgkovsnv8X5xyVF
           validationGraph: fVykgHFjTZ8dWoJmnxEha
@@ -459,7 +459,7 @@ data:
         '[ey2CAjcC_cDSekdEx-3ma]:graphInput "Graph Input"':
           data:
             dataType: object
-            id: baselineOutput
+            id: expectedOutput
             useDefaultValueInput: false
           outgoingConnections:
             - data->"Extract Object Path" U-ioiOl27qUJnCz7mR6lc/object
@@ -870,12 +870,10 @@ data:
           visualData: 777.4988999043496/334.739345282144/300/1
         '[nUF-DuERfQB3tj6gG94zc]:text "Text"':
           data:
-            text: >-
+            text: |-
               {{input}}
 
-
-              Based on the text above, does the company have a mission statement?
-
+              Based on the text above, does the company have a mission?
 
               Answer either YES or NO.
           outgoingConnections:

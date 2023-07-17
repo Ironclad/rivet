@@ -104,7 +104,7 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
     });
 
     for (const testCase of testSuite.testCases) {
-      const resolvedInputs: Record<string, DataValue> = mapValues(testCase.inputs, inferType);
+      const resolvedInputs: Record<string, DataValue> = mapValues(testCase.input, inferType);
       const outputs = await runGraph(project, testGraph.metadata!.id!, resolvedInputs);
 
       console.log('ran test graph', outputs);
@@ -112,11 +112,11 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
       const validationInputs: Record<string, DataValue> = {
         input: {
           type: 'object',
-          value: testCase.inputs,
+          value: testCase.input,
         },
-        baselineOutput: {
+        expectedOutput: {
           type: 'object',
-          value: testCase.baselineOutputs,
+          value: testCase.expectedOutput,
         },
         output: {
           type: 'object',

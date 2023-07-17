@@ -9,7 +9,7 @@ import { keyBy } from "lodash-es";
 import { GraphInputNode, GraphOutputNode, NodeGraph } from "@ironclad/rivet-core";
 import { TestCaseEditor } from "./TestCaseEditor";
 import { css } from "@emotion/react";
-import { TrivetTestSuite } from "@ironclad/trivet";
+import { TrivetTestSuite, validateValidationGraphFormat } from "@ironclad/trivet";
 import { trivetState } from "../../state/trivet";
 import { useGraphExecutor } from "../../hooks/useGraphExecutor";
 
@@ -80,11 +80,11 @@ export const TestSuite: FC = () => {
       return;
     }
     const testGraph = graphsById[testSuite.testGraph];
-    let inputs: Record<string, unknown> = {};
-    let outputs: Record<string, unknown> = {};
+    let input: Record<string, unknown> = {};
+    let output: Record<string, unknown> = {};
     if (testGraph != null) {
-      inputs = Object.fromEntries(testGraph.nodes.filter((n): n is GraphInputNode => n.type === 'graphInput').map((n) => [n.data.id, n.data.dataType]));
-      outputs = Object.fromEntries(testGraph.nodes.filter((n): n is GraphOutputNode => n.type === 'graphOutput').map((n) => [n.data.id, n.data.dataType]));
+      input = Object.fromEntries(testGraph.nodes.filter((n): n is GraphInputNode => n.type === 'graphInput').map((n) => [n.data.id, n.data.dataType]));
+      output = Object.fromEntries(testGraph.nodes.filter((n): n is GraphOutputNode => n.type === 'graphOutput').map((n) => [n.data.id, n.data.dataType]));
     }
     updateTestSuite({
       ...testSuite,
@@ -92,12 +92,23 @@ export const TestSuite: FC = () => {
         ...testSuite.testCases,
         {
           id: nanoid(),
-          inputs,
-          baselineOutputs: outputs,
+          input,
+          expectedOutput: output,
         },
       ],
     });
   }, [graphsById, testSuite, updateTestSuite]);
+
+  const validationGraphValidationResults = useMemo(() => {
+    if (testSuite?.validationGraph == null) {
+      return undefined;
+    }
+    const validationGraph = graphsById[testSuite.validationGraph];
+    if (validationGraph == null) {
+      return undefined;
+    }
+    return validateValidationGraphFormat(validationGraph);
+  }, [graphsById, testSuite?.validationGraph]);
 
   const runTestCase = useCallback((id: string) => {
     if (selectedTestSuiteId == null) {
@@ -149,6 +160,12 @@ export const TestSuite: FC = () => {
           onChange={(graphId) => updateTestSuite({ ...testSuite, validationGraph: graphId })}
           isReadonly={false}
         />
+        {validationGraphValidationResults != null && !validationGraphValidationResults.valid && <div className="validation-results">
+          ⚠️ Validation graph requires a specific format. Please fix the following errors:
+          <ul>
+            {validationGraphValidationResults.errorMessages.map((e, idx) => <li key={idx}>{e}</li>)}
+          </ul>
+        </div>}
       </div>
       <TestCaseTable
         testCases={testSuite.testCases}

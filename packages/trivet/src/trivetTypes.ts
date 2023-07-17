@@ -20,8 +20,8 @@ export interface TrivetTestSuite {
 
 export interface TrivetTestCase {
   id: string;
-  inputs: Record<string, unknown>;
-  baselineOutputs: Record<string, unknown>;
+  input: Record<string, unknown>;
+  expectedOutput: Record<string, unknown>;
 }
 
 export interface TrivetResults {
