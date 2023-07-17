@@ -1,7 +1,7 @@
 {
   "name": "@ironclad/trivet",
   "repository": "https://github.com/ironclad/rivet",
-  "version": "0.10.0",
+  "version": "0.1.0",
   "main": "dist/cjs/bundle.cjs",
   "module": "dist/esm/index.js",
   "src": "src/index.ts",
