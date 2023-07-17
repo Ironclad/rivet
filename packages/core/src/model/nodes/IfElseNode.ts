@@ -79,6 +79,12 @@ export class IfElseNodeImpl extends NodeImpl<IfElseNode> {
       };
     }
 
+    if (ifValue?.value == null) {
+      return {
+        ['output' as PortId]: falseValue,
+      };
+    }
+
     if (ifValue?.type && ifValue.type === 'boolean') {
       return {
         ['output' as PortId]: ifValue.value ? trueValue : falseValue,
