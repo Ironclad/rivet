@@ -13,8 +13,8 @@ data:
               input:
                 statement: Ironclad is on a mission to power the world's contracts.
             - expectedOutput:
-                has_mission: YES
-                mission_statement: Ironclad is on a mission to power the world's contracts
+                has_mission: NO
+                mission_statement: Not applicable
               id: ngJC1XL42jQCTRZW5fhRG
               input:
                 statement: Ironclad is a contract lifecycle management system
@@ -180,6 +180,12 @@ data:
             dataType: string[]
             id: output
           visualData: 2047/494/300/6
+    IvK_QwNE4hAUoFaGPElUA:
+      metadata:
+        description: ""
+        id: IvK_QwNE4hAUoFaGPElUA
+        name: Untitled Graph
+      nodes: {}
     QgeLNyhpAsVJ_Ktlbm3FR:
       metadata:
         description: ""
@@ -871,11 +877,11 @@ data:
         '[nUF-DuERfQB3tj6gG94zc]:text "Text"':
           data:
             text: |-
+              Answer YES or NO.
+
               {{input}}
 
               Based on the text above, does the company have a mission?
-
-              Answer either YES or NO.
           outgoingConnections:
             - output->"Chat" cykKF3gfFLeM9bQ6K7X6v/prompt
           visualData: 1194.6586178008602/331.723732863615/300/2
