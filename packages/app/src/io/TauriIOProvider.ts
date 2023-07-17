@@ -14,7 +14,6 @@ import { isInTauri } from '../utils/tauri.js';
 import {
   SerializedTrivetData,
   TrivetData,
-  TrivetTestSuite,
   deserializeTrivetData,
   serializeTrivetData,
 } from '@ironclad/trivet';
