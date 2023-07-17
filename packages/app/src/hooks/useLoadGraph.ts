@@ -22,7 +22,7 @@ export function useLoadGraph() {
     setGraph(savedGraph);
 
     const lastSavedPosition = lastSavedPositions[savedGraph.metadata!.id!];
-    if (lastSavedPosition) {
+    if (lastSavedPosition && graph.metadata!.id! !== savedGraph.metadata!.id!) {
       setPosition(lastSavedPosition);
     } else if (savedGraph.nodes.length > 0) {
       const minNodeX = Math.min(...savedGraph.nodes.map((n) => n.visualData.x));
