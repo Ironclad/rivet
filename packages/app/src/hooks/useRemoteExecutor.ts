@@ -10,7 +10,15 @@ import { useStableCallback } from './useStableCallback';
 import { toast } from 'react-toastify';
 import { trivetState } from '../state/trivet';
 import { runTrivet } from '@ironclad/trivet';
-import { useRef } from 'react';
+
+// TODO: This allows us to retrieve the GraphOutputs from the remote debugger.
+// If the remote debugger events had a unique ID for each run, this would feel a lot less hacky.
+// For now, it will be impossible to support parallel processing in remote debugger mode.
+let graphExecutionPromise: {
+  promise: Promise<GraphOutputs> | undefined;
+  resolve: ((value: GraphOutputs) => void) | undefined;
+  reject: ((reason?: any) => void) | undefined;
+};
 
 export function useRemoteExecutor() {
   const currentExecution = useCurrentExecution();
@@ -24,15 +32,6 @@ export function useRemoteExecutor() {
       currentExecution.onStop();
     },
   });
-
-  // TODO: This allows us to retrieve the GraphOutputs from the remote debugger.
-  // If the remote debugger events had a unique ID for each run, this would feel a lot less hacky.
-  // For now, it will be impossible to support parallel processing in remote debugger mode.
-  let graphExecutionPromise = useRef<{
-    promise: Promise<GraphOutputs> | undefined;
-    resolve: ((value: GraphOutputs) => void) | undefined;
-    reject: ((reason?: any) => void) | undefined;
-  }>({ promise: undefined, resolve: undefined, reject: undefined });
 
   setCurrentDebuggerMessageHandler((message, data) => {
     switch (message) {
@@ -53,11 +52,11 @@ export function useRemoteExecutor() {
         break;
       case 'done':
         const doneData = data as ProcessEvents['done'];
-        graphExecutionPromise.current.resolve?.(doneData.results);
+        graphExecutionPromise?.resolve?.(doneData.results);
         currentExecution.onDone(data as ProcessEvents['done']);
         break;
       case 'abort':
-        graphExecutionPromise.current.reject?.(new Error('graph execution aborted'));
+        graphExecutionPromise?.reject?.(new Error('graph execution aborted'));
         currentExecution.onAbort(data as ProcessEvents['abort']);
         break;
       case 'graphAbort':
@@ -86,7 +85,7 @@ export function useRemoteExecutor() {
         break;
       case 'error':
         const errorData = data as ProcessEvents['error'];
-        graphExecutionPromise.current.reject?.(errorData.error);
+        graphExecutionPromise?.reject?.(errorData.error);
         currentExecution.onError(data as ProcessEvents['error']);
         break;
     }
@@ -163,14 +162,23 @@ export function useRemoteExecutor() {
               });
             }
 
-            graphExecutionPromise.current.promise = new Promise((resolve, reject) => {
-              graphExecutionPromise.current.resolve = resolve;
-              graphExecutionPromise.current.reject = reject;
-            });
+            {
+              let resolve: (value: GraphOutputs) => void;
+              let reject: (err: string) => void;
+              const promise = new Promise<GraphOutputs>((res, rej) => {
+                resolve = res;
+                reject = rej;
+              });
+              graphExecutionPromise = {
+                promise,
+                resolve: resolve!,
+                reject: reject!,
+              };
+            }
 
             remoteDebugger.send('run', { graphId, inputs });
       
-            const results = await graphExecutionPromise.current.promise!;
+            const results = await graphExecutionPromise.promise!;
             return results;
           },
         });
