@@ -1,5 +1,26 @@
-version: 3
+version: 4
 data:
+  attachedData:
+    trivet:
+      testSuites:
+        - id: MaoXCgibUQDV5fCN_oy2e
+          name: Graph to Test
+          testCases:
+            - expectedOutput:
+                has_mission: YES
+                mission_statement: Ironclad is on a mission to power the world's contracts.
+              id: hxRYlHF68ZmmpMT0lo037
+              input:
+                statement: Ironclad is on a mission to power the world's contracts.
+            - expectedOutput:
+                has_mission: NO
+                mission_statement: Not applicable
+              id: ngJC1XL42jQCTRZW5fhRG
+              input:
+                statement: Ironclad is a contract lifecycle management system
+          testGraph: rUcgbRwgkovsnv8X5xyVF
+          validationGraph: fVykgHFjTZ8dWoJmnxEha
+      version: 1
   graphs:
     D0TnEZI8WPm1ZjZyhYfeQ:
       metadata:
@@ -7,31 +28,20 @@ data:
         id: D0TnEZI8WPm1ZjZyhYfeQ
         name: "5. Subgraphs/Subgraphs #0 Main Graph"
       nodes:
-        C4FkXT3pPwN9qFlhdOiKK:
+        '[C4FkXT3pPwN9qFlhdOiKK]:subGraph "5.2 Generate Contract From Name"':
           data:
             graphId: Eg64hugBjOEWIexE8WTTL
-          id: C4FkXT3pPwN9qFlhdOiKK
-          outgoingConnections: []
-          title: 5.2 Generate Contract From Name
-          type: subGraph
           visualData: 1418.0393028635392/535.4844185234072/300/5
-        FaZREqOh4fcKSehT5lxuq:
+        '[FaZREqOh4fcKSehT5lxuq]:subGraph "5.1 Generate Contract Names"':
           data:
             graphId: EoHPH8XxU03t5hQ-UoBqz
-          id: FaZREqOh4fcKSehT5lxuq
           outgoingConnections:
             - output->"Pop" WR2CtLwyVsIGx7If1fg7a/array
-          title: 5.1 Generate Contract Names
-          type: subGraph
           visualData: 842/540/300/2
-        WR2CtLwyVsIGx7If1fg7a:
-          data: {}
-          id: WR2CtLwyVsIGx7If1fg7a
+        '[WR2CtLwyVsIGx7If1fg7a]:pop "Pop"':
           outgoingConnections:
             - lastItem->"5.2 Generate Contract From Name"
               C4FkXT3pPwN9qFlhdOiKK/contract_name
-          title: Pop
-          type: pop
           visualData: 1179.3915224072066/551.2889072953498/200/4
     Eg64hugBjOEWIexE8WTTL:
       metadata:
@@ -39,26 +49,20 @@ data:
         id: Eg64hugBjOEWIexE8WTTL
         name: "5. Subgraphs/Subgraphs #2 Generate Contract From Name"
       nodes:
-        9t3pedo4zJOTeDeoUXBXI:
+        '[9t3pedo4zJOTeDeoUXBXI]:text "Text"':
           data:
             text: MNDA with Acme, Inc
-          id: 9t3pedo4zJOTeDeoUXBXI
           outgoingConnections:
             - output->"Graph Input" r9yxt_s8B0igVB_RHmkRH/default
-          title: Text
-          type: text
           visualData: 254/617/300/9
-        EI2Qe3sbmafs41MFea55y:
+        '[EI2Qe3sbmafs41MFea55y]:text "Text"':
           data:
             text: You are a fake contract generator. Given the name of a contract, you
               output the (fake) text of the contract.
-          id: EI2Qe3sbmafs41MFea55y
           outgoingConnections:
             - output->"Chat" dm2kGek-SGwla0BgZvQtc/systemPrompt
-          title: Text
-          type: text
           visualData: 643/403/300/4
-        dm2kGek-SGwla0BgZvQtc:
+        '[dm2kGek-SGwla0BgZvQtc]:chat "Chat"':
           data:
             cache: false
             frequencyPenalty: 0
@@ -78,40 +82,27 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: dm2kGek-SGwla0BgZvQtc
           outgoingConnections:
             - response->"Graph Output" vn_hc_h0L7XBuOtQ2UXja/value
-          title: Chat
-          type: chat
           visualData: 1403/494/200/5
-        jD2maXks4GVQR6K__1Wzh:
+        '[jD2maXks4GVQR6K__1Wzh]:text "Text"':
           data:
             text: "Please generate a contract with this name: {{name}}"
-          id: jD2maXks4GVQR6K__1Wzh
           outgoingConnections:
             - output->"Chat" dm2kGek-SGwla0BgZvQtc/prompt
-          title: Text
-          type: text
           visualData: 969/619/300/3
-        r9yxt_s8B0igVB_RHmkRH:
+        '[r9yxt_s8B0igVB_RHmkRH]:graphInput "Graph Input"':
           data:
             dataType: string
             id: contract_name
             useDefaultValueInput: true
-          id: r9yxt_s8B0igVB_RHmkRH
           outgoingConnections:
             - data->"Text" jD2maXks4GVQR6K__1Wzh/name
-          title: Graph Input
-          type: graphInput
           visualData: 620/589/300/1
-        vn_hc_h0L7XBuOtQ2UXja:
+        '[vn_hc_h0L7XBuOtQ2UXja]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: output
-          id: vn_hc_h0L7XBuOtQ2UXja
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 1674/511/300/7
     EoHPH8XxU03t5hQ-UoBqz:
       metadata:
@@ -119,35 +110,26 @@ data:
         id: EoHPH8XxU03t5hQ-UoBqz
         name: "5. Subgraphs/Subgraphs #1 Generate Contract Names"
       nodes:
-        2H57ZtGaHVCnI4x2XUxRm:
+        '[2H57ZtGaHVCnI4x2XUxRm]:text "Text"':
           data:
             text: Please generate me a list of 10 random business contracts
-          id: 2H57ZtGaHVCnI4x2XUxRm
           outgoingConnections:
             - output->"Chat" Y1ERrr0Of-8dZ931vP14j/prompt
-          title: Text
-          type: text
           visualData: 688/697/300/2
-        6fDC1Ftb3kuPVU0rfhyqz:
+        '[6fDC1Ftb3kuPVU0rfhyqz]:extractObjectPath "Extract Object Path"':
           data:
             path: $.yamlDocument.names[*]
             usePathInput: false
-          id: 6fDC1Ftb3kuPVU0rfhyqz
           outgoingConnections:
             - all_matches->"Graph Output" gkPN4enxzXUoY0ddv__qg/value
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 1745/498/250/4
-        ArXuvzGCXA_WY1xMPK9ri:
+        '[ArXuvzGCXA_WY1xMPK9ri]:extractYaml "Extract YAML"':
           data:
             rootPropertyName: yamlDocument
-          id: ArXuvzGCXA_WY1xMPK9ri
           outgoingConnections:
             - output->"Extract Object Path" 6fDC1Ftb3kuPVU0rfhyqz/object
-          title: Extract YAML
-          type: extractYaml
           visualData: 1446/518/250/3
-        Ec6aQbICojPqp-p7C-20s:
+        '[Ec6aQbICojPqp-p7C-20s]:text "Text"':
           data:
             text: >-
               You are a contract name generator. For the purposes of
@@ -167,13 +149,10 @@ data:
                   - Name 2
                   - Name 3
               ```
-          id: Ec6aQbICojPqp-p7C-20s
           outgoingConnections:
             - output->"Chat" Y1ERrr0Of-8dZ931vP14j/systemPrompt
-          title: Text
-          type: text
           visualData: 701/350/300/1
-        Y1ERrr0Of-8dZ931vP14j:
+        '[Y1ERrr0Of-8dZ931vP14j]:chat "Chat"':
           data:
             cache: false
             frequencyPenalty: 0
@@ -193,28 +172,27 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: Y1ERrr0Of-8dZ931vP14j
           outgoingConnections:
             - response->"Extract YAML" ArXuvzGCXA_WY1xMPK9ri/input
-          title: Chat
-          type: chat
           visualData: 1206/482/200/null
-        gkPN4enxzXUoY0ddv__qg:
+        '[gkPN4enxzXUoY0ddv__qg]:graphOutput "Graph Output"':
           data:
             dataType: string[]
             id: output
-          id: gkPN4enxzXUoY0ddv__qg
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 2047/494/300/6
+    IvK_QwNE4hAUoFaGPElUA:
+      metadata:
+        description: ""
+        id: IvK_QwNE4hAUoFaGPElUA
+        name: Untitled Graph
+      nodes: {}
     QgeLNyhpAsVJ_Ktlbm3FR:
       metadata:
         description: ""
         id: QgeLNyhpAsVJ_Ktlbm3FR
         name: 1. Simple Graph/Simple Graph
       nodes:
-        6dZUAsYq2jnPmBXm9BpL4:
+        '[6dZUAsYq2jnPmBXm9BpL4]:chat "Chat"':
           data:
             cache: true
             frequencyPenalty: 0.2
@@ -234,19 +212,12 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: 6dZUAsYq2jnPmBXm9BpL4
-          outgoingConnections: []
-          title: Chat
-          type: chat
           visualData: 1560.7519469872752/458.52427722611264/274.59222479817527/9
-        GH1F0s0SnAEH-mMgTKyYU:
+        '[GH1F0s0SnAEH-mMgTKyYU]:text "Text"':
           data:
             text: Hello, what is the typical lifecycle of a simple business contract?
-          id: GH1F0s0SnAEH-mMgTKyYU
           outgoingConnections:
             - output->"Chat" 6dZUAsYq2jnPmBXm9BpL4/prompt
-          title: Text
-          type: text
           visualData: 1109.8410018316115/523.6327700750103/295.1514952133798/8
     VOQ6sZ_rTNDo34KdiUBU9:
       metadata:
@@ -254,7 +225,7 @@ data:
         id: VOQ6sZ_rTNDo34KdiUBU9
         name: 6. Splitting/Splitting
       nodes:
-        8Jz3xEu_AjnFIKaqH3dm_:
+        '[8Jz3xEu_AjnFIKaqH3dm_]:chat "Chat"':
           data:
             cache: false
             frequencyPenalty: 0
@@ -274,46 +245,35 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: 8Jz3xEu_AjnFIKaqH3dm_
           isSplitRun: true
           outgoingConnections:
             - response->"Text" lwGi_tSI52oRwN3ejDSiW/response
-          title: Chat
-          type: chat
+          splitRunMax: 10
           visualData: 1622/525/200/15
-        DAvEDA4VwuxJPO7hfg24l:
+        '[DAvEDA4VwuxJPO7hfg24l]:subGraph "5.2 Generate Contract From Name"':
           data:
             graphId: Eg64hugBjOEWIexE8WTTL
-          id: DAvEDA4VwuxJPO7hfg24l
           isSplitRun: true
-          outgoingConnections: []
-          title: 5.2 Generate Contract From Name
-          type: subGraph
+          splitRunMax: 10
           visualData: 1285.9119571683518/1039.711481261154/300/26
-        Hqq8aptRlHylVtshquDd2:
+        '[Hqq8aptRlHylVtshquDd2]:text "Text"':
           data:
             text: |-
               {{input}}
 
 
               Please combine these into one summary of the contract.
-          id: Hqq8aptRlHylVtshquDd2
           outgoingConnections:
             - output->"Chat" lnbhZR4YUfR-hgsmf-ZID/prompt
-          title: Text
-          type: text
           visualData: 2257.714455681142/566.6597263533611/142.95062462819715/20
-        UalbqiLxJ7siwGWDwGTjf:
+        '[UalbqiLxJ7siwGWDwGTjf]:userInput "User Input"':
           data:
             prompt: Please provide the contract text
             useInput: false
-          id: UalbqiLxJ7siwGWDwGTjf
           outgoingConnections:
             - output->"Chunk" bqet1InKJKVBNVJUa-Et2/input
-          title: User Input
-          type: userInput
           visualData: 602/551/250/3
-        Ur5YiCYlK6HQ2dKcyMCq0:
+        '[Ur5YiCYlK6HQ2dKcyMCq0]:text "Text"':
           data:
             text: |-
               This is chunk {{index}}/{{count}} of a contract:
@@ -321,30 +281,25 @@ data:
               {{data}}
 
               Can you summarize this part of the contract?
-          id: Ur5YiCYlK6HQ2dKcyMCq0
           isSplitRun: true
           outgoingConnections:
             - output->"Chat" 8Jz3xEu_AjnFIKaqH3dm_/prompt
-          title: Text
-          type: text
+          splitRunMax: 10
           visualData: 1248/524/300/14
-        bqet1InKJKVBNVJUa-Et2:
+        '[bqet1InKJKVBNVJUa-Et2]:chunk "Chunk"':
           data:
             model: gpt-3.5-turbo
             numTokensPerChunk: 256
             overlap: 0
             useModelInput: false
-          id: bqet1InKJKVBNVJUa-Et2
           outgoingConnections:
             - chunks->"Text" Ur5YiCYlK6HQ2dKcyMCq0/data
             - count->"Text" Ur5YiCYlK6HQ2dKcyMCq0/count
             - count->"Text" lwGi_tSI52oRwN3ejDSiW/index
             - indexes->"Text" Ur5YiCYlK6HQ2dKcyMCq0/index
             - indexes->"Text" lwGi_tSI52oRwN3ejDSiW/chunk
-          title: Chunk
-          type: chunk
           visualData: 930/536/200/7
-        lnbhZR4YUfR-hgsmf-ZID:
+        '[lnbhZR4YUfR-hgsmf-ZID]:chat "Chat"':
           data:
             cache: false
             frequencyPenalty: 0
@@ -364,34 +319,25 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: lnbhZR4YUfR-hgsmf-ZID
-          outgoingConnections: []
-          title: Chat
-          type: chat
           visualData: 2484.2462819750144/551.4306960142771/200/23
-        lwGi_tSI52oRwN3ejDSiW:
+        '[lwGi_tSI52oRwN3ejDSiW]:text "Text"':
           data:
             text: |+
               This is the summary for chunk {{chunk}}/{{index}} for a contract:
 
               {{response}}
 
-          id: lwGi_tSI52oRwN3ejDSiW
           isSplitRun: true
           outgoingConnections:
             - output->"Text" Hqq8aptRlHylVtshquDd2/input
-          title: Text
-          type: text
+          splitRunMax: 10
           visualData: 1903.9637120761452/534.8191552647233/300/18
-        mA3U5L01VtG93L8jXiytR:
+        '[mA3U5L01VtG93L8jXiytR]:subGraph "5.1 Generate Contract Names"':
           data:
             graphId: EoHPH8XxU03t5hQ-UoBqz
-          id: mA3U5L01VtG93L8jXiytR
           outgoingConnections:
             - output->"5.2 Generate Contract From Name"
               DAvEDA4VwuxJPO7hfg24l/contract_name
-          title: 5.1 Generate Contract Names
-          type: subGraph
           visualData: 909.9452706722185/1045.4223676383106/300/25
     eypKXuqaDubv9o3NK8RmL:
       metadata:
@@ -399,87 +345,60 @@ data:
         id: eypKXuqaDubv9o3NK8RmL
         name: 7. Loops/Loops
       nodes:
-        BGxIU1lPfHInWebPnkjIp:
+        '[BGxIU1lPfHInWebPnkjIp]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: output
-          id: BGxIU1lPfHInWebPnkjIp
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 1567/259/300/42
-        CbTQrNMACOxrr_GJqBQni:
+        '[CbTQrNMACOxrr_GJqBQni]:loopController "Loop Controller"':
           data:
             maxIterations: 100
-          id: CbTQrNMACOxrr_GJqBQni
           outgoingConnections:
             - break->"Graph Output" BGxIU1lPfHInWebPnkjIp/value
             - output1->"Assemble Prompt" x4FAAOuoIN1S0Lw7fek5z/message1
             - output1->"Text" aL6MDkuQg6rur5RsEg2Mo/input
             - output2->"Assemble Prompt" THt39JHlYuxYTw9ci2j0y/message1
-          title: Loop Controller
-          type: loopController
           visualData: 717/543/250/38
-        KEgT2C3VQqLFR7ynVkL_c:
+        '[KEgT2C3VQqLFR7ynVkL_c]:prompt "Prompt"':
           data:
             promptText: "{{input}}"
             type: assistant
             useTypeInput: false
-          id: KEgT2C3VQqLFR7ynVkL_c
           outgoingConnections:
             - output->"Assemble Prompt" THt39JHlYuxYTw9ci2j0y/message3
-          title: Prompt
-          type: prompt
           visualData: 2517/685/193/34
-        Lx_WFbTOiJVsZb6QpEVTR:
+        '[Lx_WFbTOiJVsZb6QpEVTR]:userInput "User Input"':
           data:
             prompt: This is an example question?
             useInput: true
-          id: Lx_WFbTOiJVsZb6QpEVTR
           outgoingConnections:
             - output->"Assemble Prompt" THt39JHlYuxYTw9ci2j0y/message2
             - output->"Assemble Prompt" x4FAAOuoIN1S0Lw7fek5z/message2
-          title: User Input
-          type: userInput
           visualData: 1570/608/250/36
-        QlaeQMJ82j3dg3urW9DnV:
+        '[QlaeQMJ82j3dg3urW9DnV]:prompt "Prompt"':
           data:
             promptText: Hello, I am an AI assistant. How can I help you?
             type: assistant
             useTypeInput: false
-          id: QlaeQMJ82j3dg3urW9DnV
           outgoingConnections:
             - output->"Loop Controller" CbTQrNMACOxrr_GJqBQni/input1Default
             - output->"Loop Controller" CbTQrNMACOxrr_GJqBQni/input2Default
-          title: Prompt
-          type: prompt
           visualData: -34.91748569748657/563.4159878938866/null/43
-        THt39JHlYuxYTw9ci2j0y:
-          data: {}
-          id: THt39JHlYuxYTw9ci2j0y
+        '[THt39JHlYuxYTw9ci2j0y]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Loop Controller" CbTQrNMACOxrr_GJqBQni/input2
-          title: Assemble Prompt
-          type: assemblePrompt
           visualData: 2809/982/250/31
-        aL6MDkuQg6rur5RsEg2Mo:
+        '[aL6MDkuQg6rur5RsEg2Mo]:text "Text"':
           data:
             text: "{{input}}"
-          id: aL6MDkuQg6rur5RsEg2Mo
           outgoingConnections:
             - output->"User Input" Lx_WFbTOiJVsZb6QpEVTR/questions
-          title: Text
-          type: text
           visualData: 1113/616/259/41
-        x4FAAOuoIN1S0Lw7fek5z:
-          data: {}
-          id: x4FAAOuoIN1S0Lw7fek5z
+        '[x4FAAOuoIN1S0Lw7fek5z]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Chat" yJvjBz6gm2pP9mAHpno0F/prompt
-          title: Assemble Prompt
-          type: assemblePrompt
           visualData: 1929/561/250/35
-        yJvjBz6gm2pP9mAHpno0F:
+        '[yJvjBz6gm2pP9mAHpno0F]:chat "Chat"':
           data:
             cache: false
             frequencyPenalty: 0
@@ -499,40 +418,84 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: yJvjBz6gm2pP9mAHpno0F
           outgoingConnections:
             - response->"Loop Controller" CbTQrNMACOxrr_GJqBQni/input1
             - response->"Prompt" KEgT2C3VQqLFR7ynVkL_c/input
-          title: Chat
-          type: chat
           visualData: 2263/381/200/33
+    fVykgHFjTZ8dWoJmnxEha:
+      metadata:
+        description: ""
+        id: fVykgHFjTZ8dWoJmnxEha
+        name: 8. Testing Graphs/Validator - Mission Equals
+      nodes:
+        '[6E6yFuxK66-qmP-8UoCxY]:graphOutput "has_mission matches"':
+          data:
+            dataType: string
+            id: output
+          description: has_mission should match the original answer
+          visualData: 1600/647/300/6
+        '[F3aa9qh9iEEqFKugriJAK]:graphInput "Graph Input"':
+          data:
+            dataType: object
+            id: output
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Extract Object Path" Ze__xKy4jtZZfbwFhvk3C/object
+          visualData: 534/773/300/3
+        '[U-ioiOl27qUJnCz7mR6lc]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $.has_mission
+            usePathInput: false
+          outgoingConnections:
+            - match->"Compare" pW_Q9CMUAzOnp0VhWYtGm/a
+          visualData: 981/583/250/4
+        '[XSgYfFEkh3T1BfYS-TAQ7]:graphInput "Graph Input"':
+          data:
+            dataType: object
+            id: input
+            useDefaultValueInput: false
+          visualData: 532/373/300/null
+        '[Ze__xKy4jtZZfbwFhvk3C]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $.has_mission
+            usePathInput: false
+          outgoingConnections:
+            - match->"Compare" pW_Q9CMUAzOnp0VhWYtGm/b
+          visualData: 981/783/250/4
+        '[ey2CAjcC_cDSekdEx-3ma]:graphInput "Graph Input"':
+          data:
+            dataType: object
+            id: expectedOutput
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Extract Object Path" U-ioiOl27qUJnCz7mR6lc/object
+          visualData: 535/565/300/1
+        '[pW_Q9CMUAzOnp0VhWYtGm]:compare "Compare"':
+          data:
+            comparisonFunction: ==
+          outgoingConnections:
+            - output->"has_mission matches" 6E6yFuxK66-qmP-8UoCxY/value
+          visualData: 1346/672/160/5
     hiEyYlH301i1i5f_Cb-H6:
       metadata:
         description: ""
         id: hiEyYlH301i1i5f_Cb-H6
         name: 2. Interpolation/Interpolation
       nodes:
-        -AwgdFbt38Yryjg0pvI9c:
+        '[-AwgdFbt38Yryjg0pvI9c]:prompt "Prompt"':
           data:
             promptText: Please give the user an introduction to yourself and ask what
               contract they would like a draft for.
             type: system
             useTypeInput: false
-          id: -AwgdFbt38Yryjg0pvI9c
           outgoingConnections:
             - output->"Chat" F2FpT27oVpfKnsxVht6d7/prompt
-          title: Prompt
-          type: prompt
           visualData: 642/621/null/3
-        1T4q6C6b97-XNbAqAqdx4:
-          data: {}
-          id: 1T4q6C6b97-XNbAqAqdx4
+        '[1T4q6C6b97-XNbAqAqdx4]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Chat" Wzh9TCggdASIrUTKhTphE/prompt
-          title: Assemble Prompt
-          type: assemblePrompt
           visualData: 2636/676/250/18
-        7HKPcVRT3aqPSW5BE0f9c:
+        '[7HKPcVRT3aqPSW5BE0f9c]:text "Text"':
           data:
             text: |-
               {{introduction}}
@@ -540,24 +503,18 @@ data:
               Here are some contract types I can generate templates for:
 
               {{templates}}
-          id: 7HKPcVRT3aqPSW5BE0f9c
           outgoingConnections:
             - output->"User Input" wqB87yxrgwoH5ThFJ34qO/questions
-          title: Text
-          type: text
           visualData: 1754/612/300/11
-        88mTRO1EvW4tpwupYMnhP:
+        '[88mTRO1EvW4tpwupYMnhP]:prompt "Prompt"':
           data:
             promptText: "{{input}}"
             type: assistant
             useTypeInput: false
-          id: 88mTRO1EvW4tpwupYMnhP
           outgoingConnections:
             - output->"Assemble Prompt" 1T4q6C6b97-XNbAqAqdx4/message1
-          title: Prompt
-          type: prompt
           visualData: 1872/418/159/24
-        F2FpT27oVpfKnsxVht6d7:
+        '[F2FpT27oVpfKnsxVht6d7]:chat "Chat"':
           data:
             cache: false
             frequencyPenalty: 0
@@ -577,14 +534,11 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: F2FpT27oVpfKnsxVht6d7
           outgoingConnections:
             - response->"Prompt" 88mTRO1EvW4tpwupYMnhP/input
             - response->"Text" 7HKPcVRT3aqPSW5BE0f9c/introduction
-          title: Chat
-          type: chat
           visualData: 1425/440/200/8
-        Wzh9TCggdASIrUTKhTphE:
+        '[Wzh9TCggdASIrUTKhTphE]:chat "Chat"':
           data:
             cache: false
             frequencyPenalty: 0
@@ -604,25 +558,18 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: Wzh9TCggdASIrUTKhTphE
-          outgoingConnections: []
-          title: Chat
-          type: chat
           visualData: 2953.823597266632/591.1830216148071/200/26
-        e8scS4YSujo0I1DOkbCyo:
+        '[e8scS4YSujo0I1DOkbCyo]:prompt "Prompt"':
           data:
             promptText: "The user has indicated that they want to generate this contract
               type: {{type}}. You must now output a template for this contract
               type. Only reply with a template."
             type: system
             useTypeInput: false
-          id: e8scS4YSujo0I1DOkbCyo
           outgoingConnections:
             - output->"Assemble Prompt" 1T4q6C6b97-XNbAqAqdx4/message3
-          title: Prompt
-          type: prompt
           visualData: 2042/926/null/23
-        lZDsm-nZ1kdG2934rDFvU:
+        '[lZDsm-nZ1kdG2934rDFvU]:chat "Chat"':
           data:
             cache: false
             frequencyPenalty: 0
@@ -642,47 +589,35 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: lZDsm-nZ1kdG2934rDFvU
           outgoingConnections:
             - response->"Text" 7HKPcVRT3aqPSW5BE0f9c/templates
-          title: Chat
-          type: chat
           visualData: 1439/795/200/7
-        qwaxSQochbTLU0zKhX9N9:
+        '[qwaxSQochbTLU0zKhX9N9]:text "Text"':
           data:
             text: You are an AI contract template generator. Given a type of contract from
               the user, you will output a template that the user can then use to
               draft a contract using your template.
-          id: qwaxSQochbTLU0zKhX9N9
           outgoingConnections:
             - output->"Chat" F2FpT27oVpfKnsxVht6d7/systemPrompt
             - output->"Chat" Wzh9TCggdASIrUTKhTphE/systemPrompt
             - output->"Chat" lZDsm-nZ1kdG2934rDFvU/systemPrompt
-          title: Text
-          type: text
           visualData: 789/442/300/null
-        wqB87yxrgwoH5ThFJ34qO:
+        '[wqB87yxrgwoH5ThFJ34qO]:userInput "User Input"':
           data:
             prompt: This is an example question?
             useInput: true
-          id: wqB87yxrgwoH5ThFJ34qO
           outgoingConnections:
             - output->"Assemble Prompt" 1T4q6C6b97-XNbAqAqdx4/message2
             - output->"Prompt" e8scS4YSujo0I1DOkbCyo/type
-          title: User Input
-          type: userInput
           visualData: 2131/680/250/16
-        yLbk-PtbB2DQxsJD42QCx:
+        '[yLbk-PtbB2DQxsJD42QCx]:prompt "Prompt"':
           data:
             promptText: Provide a list of contract types you can generate templates for. A
               maximum of 10. Reply with only a list of contract types.
             type: system
             useTypeInput: false
-          id: yLbk-PtbB2DQxsJD42QCx
           outgoingConnections:
             - output->"Chat" lZDsm-nZ1kdG2934rDFvU/prompt
-          title: Prompt
-          type: prompt
           visualData: 646/947/null/6
     nZep72-K0xnReLaC0Ax66:
       metadata:
@@ -690,28 +625,22 @@ data:
         id: nZep72-K0xnReLaC0Ax66
         name: 4. YAML/YAML
       nodes:
-        -jY5XNm0pNYQ7WBPbzlLF:
+        '[-jY5XNm0pNYQ7WBPbzlLF]:extractObjectPath "Extract Object Path"':
           data:
             path: $.yamlDocument['last-name']
             usePathInput: false
-          id: -jY5XNm0pNYQ7WBPbzlLF
           outgoingConnections:
             - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/last_name
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 1620/945/250/12
-        A0gdwrFt2_gY0KnJ4kEzW:
+        '[A0gdwrFt2_gY0KnJ4kEzW]:extractObjectPath "Extract Object Path"':
           data:
             path: $.yamlDocument.dislikes
             usePathInput: false
-          id: A0gdwrFt2_gY0KnJ4kEzW
           outgoingConnections:
             - match->"Extract Object Path" wnRb7KIgFANLHMV7igV40/object
             - match->"Extract Object Path" wqtepO1i_cQ0PYBFpUoLw/object
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 1406/1653/250/16
-        J4s4oC-2Wan_ZCm960s4l:
+        '[J4s4oC-2Wan_ZCm960s4l]:text "Text"':
           data:
             text: >-
               You are a user profile generator. You generate a random profile
@@ -737,33 +666,24 @@ data:
 
 
               You must reply in YAML and it must follow the above format.
-          id: J4s4oC-2Wan_ZCm960s4l
           outgoingConnections:
             - output->"Chat" SFoi_cl0IArhpvxOu-TyZ/prompt
-          title: Text
-          type: text
           visualData: 552/377/300/7
-        PVz2yQaYDCDQ7N9TVgaSZ:
+        '[PVz2yQaYDCDQ7N9TVgaSZ]:extractObjectPath "Extract Object Path"':
           data:
             path: $.color
             usePathInput: false
-          id: PVz2yQaYDCDQ7N9TVgaSZ
           outgoingConnections:
             - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/favorite_color
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 1728/1443/250/19
-        RCoE8xOlYEao67MpCMd8I:
+        '[RCoE8xOlYEao67MpCMd8I]:extractObjectPath "Extract Object Path"':
           data:
             path: $.yamlDocument['first-name']
             usePathInput: false
-          id: RCoE8xOlYEao67MpCMd8I
           outgoingConnections:
             - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/first_name
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 1628/722/250/11
-        SFoi_cl0IArhpvxOu-TyZ:
+        '[SFoi_cl0IArhpvxOu-TyZ]:chat "Chat"':
           data:
             cache: false
             frequencyPenalty: 0
@@ -783,44 +703,32 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: SFoi_cl0IArhpvxOu-TyZ
           outgoingConnections:
             - response->"Extract YAML" snX_4a3o4ha0fZUmRzPFC/input
-          title: Chat
-          type: chat
           visualData: 906/531/200/4
-        gSVe_sWppAgiGeIgAXP6n:
+        '[gSVe_sWppAgiGeIgAXP6n]:extractObjectPath "Extract Object Path"':
           data:
             path: $.yamlDocument.email
             usePathInput: false
-          id: gSVe_sWppAgiGeIgAXP6n
           outgoingConnections:
             - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/email
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 1639/480/250/10
-        ir-6VMWxQG00D9PPk4mq6:
+        '[ir-6VMWxQG00D9PPk4mq6]:extractObjectPath "Extract Object Path"':
           data:
             path: $.yamlDocument.favorites
             usePathInput: false
-          id: ir-6VMWxQG00D9PPk4mq6
           outgoingConnections:
             - match->"Extract Object Path" PVz2yQaYDCDQ7N9TVgaSZ/object
             - match->"Extract Object Path" xntVoyQwLRB-XJde_bx1v/object
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 1408/1340/250/17
-        pBi1UW83voiJY8qX8LG7k:
+        '[pBi1UW83voiJY8qX8LG7k]:extractObjectPath "Extract Object Path"':
           data:
             path: $.yamlDocument.username
             usePathInput: false
-          id: pBi1UW83voiJY8qX8LG7k
           outgoingConnections:
             - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/username
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 1639/239/250/9
-        r0_Xfe9Ibvalmrc0HK7A_:
+        '[r0_Xfe9Ibvalmrc0HK7A_]:text "Text"':
           data:
             text: >-
               The user ({{first_name}} {{last_name}}) has a username of
@@ -834,15 +742,10 @@ data:
 
 
               They dislike {{dislike_food}} and {{dislike_color}}.
-          id: r0_Xfe9Ibvalmrc0HK7A_
-          outgoingConnections: []
-          title: Text
-          type: text
           visualData: 2345/741/300/23
-        snX_4a3o4ha0fZUmRzPFC:
+        '[snX_4a3o4ha0fZUmRzPFC]:extractYaml "Extract YAML"':
           data:
             rootPropertyName: yamlDocument
-          id: snX_4a3o4ha0fZUmRzPFC
           outgoingConnections:
             - output->"Extract Object Path" -jY5XNm0pNYQ7WBPbzlLF/object
             - output->"Extract Object Path" A0gdwrFt2_gY0KnJ4kEzW/object
@@ -850,56 +753,152 @@ data:
             - output->"Extract Object Path" gSVe_sWppAgiGeIgAXP6n/object
             - output->"Extract Object Path" ir-6VMWxQG00D9PPk4mq6/object
             - output->"Extract Object Path" pBi1UW83voiJY8qX8LG7k/object
-          title: Extract YAML
-          type: extractYaml
           visualData: 1177/570/250/6
-        wnRb7KIgFANLHMV7igV40:
+        '[wnRb7KIgFANLHMV7igV40]:extractObjectPath "Extract Object Path"':
           data:
             path: $.food
             usePathInput: false
-          id: wnRb7KIgFANLHMV7igV40
           outgoingConnections:
             - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/dislike_food
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 1756/1608/250/20
-        wqtepO1i_cQ0PYBFpUoLw:
+        '[wqtepO1i_cQ0PYBFpUoLw]:extractObjectPath "Extract Object Path"':
           data:
             path: $.color
             usePathInput: false
-          id: wqtepO1i_cQ0PYBFpUoLw
           outgoingConnections:
             - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/dislike_color
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 1753/1814/250/22
-        xntVoyQwLRB-XJde_bx1v:
+        '[xntVoyQwLRB-XJde_bx1v]:extractObjectPath "Extract Object Path"':
           data:
             path: $.food
             usePathInput: false
-          id: xntVoyQwLRB-XJde_bx1v
           outgoingConnections:
             - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/favorite_food
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 1734/1238/250/18
+    rUcgbRwgkovsnv8X5xyVF:
+      metadata:
+        description: ""
+        id: rUcgbRwgkovsnv8X5xyVF
+        name: 8. Testing Graphs/Graph to Test
+      nodes:
+        '[F3p7D1IkzN_1gWplMHfXj]:text "Text"':
+          data:
+            text: |-
+              {{input}}
+
+              Based on the text above, what is the company's mission?
+          outgoingConnections:
+            - output->"Chat" L1zqqOtd6l0S8zhTlMjCy/prompt
+          visualData: 1202.831121932729/586.255821477281/300/null
+        '[IqZpo_N0QLQbHdtrx14cc]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: mission_statement
+          visualData: 1870.150555087616/587.4825116117569/300/8
+        '[L1zqqOtd6l0S8zhTlMjCy]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            presencePenalty: 0
+            stop: ""
+            temperature: 0
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Graph Output" IqZpo_N0QLQbHdtrx14cc/value
+          visualData: 1601.5054156373951/583.8024412083291/200/6
+        '[LmPob-xavvr3oj4TUQ1K_]:text "Text"':
+          data:
+            text: >-
+              ABOUT IRONCLAD
+
+
+              We're on a mission to power the world's contracts.
+
+
+              Ironclad is a Contract Lifecycle Management (CLM) platform that helps business and legal teams manage every aspect of the contracting process.
+          outgoingConnections:
+            - output->"Graph Input" hiGbJvedGXiOex0h93GDN/default
+          visualData: 373/319/300/null
+        '[MjPGAG0CiUARtVbB0tnXX]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: has_mission
+          visualData: 1860.2380178509513/363.374672110798/300/5
+        '[cykKF3gfFLeM9bQ6K7X6v]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo-0613
+            presencePenalty: 0
+            stop: ""
+            temperature: 0
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Graph Output" MjPGAG0CiUARtVbB0tnXX/value
+          visualData: 1566.5841494194358/353.83822393282753/200/3
+        '[hiGbJvedGXiOex0h93GDN]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: statement
+            useDefaultValueInput: true
+          outgoingConnections:
+            - data->"Text" F3p7D1IkzN_1gWplMHfXj/input
+            - data->"Text" nUF-DuERfQB3tj6gG94zc/input
+          visualData: 777.4988999043496/334.739345282144/300/1
+        '[nUF-DuERfQB3tj6gG94zc]:text "Text"':
+          data:
+            text: |-
+              Answer YES or NO.
+
+              {{input}}
+
+              Based on the text above, does the company have a mission?
+          outgoingConnections:
+            - output->"Chat" cykKF3gfFLeM9bQ6K7X6v/prompt
+          visualData: 1194.6586178008602/331.723732863615/300/2
     tt5rzcZT15dZ9Jr8B0d4E:
       metadata:
         description: ""
         id: tt5rzcZT15dZ9Jr8B0d4E
         name: 3. Matching and Conditionals/Matching and Conditionals
       nodes:
-        2TngHBPmLYQ_W2rIFJf8T:
+        '[2TngHBPmLYQ_W2rIFJf8T]:text "Text"':
           data:
             text: You are an AI contract analyzer. Given a contract text and a question, you
               answer the question based on the text of the contract.
-          id: 2TngHBPmLYQ_W2rIFJf8T
           outgoingConnections:
             - output->"Chat" dYF2ZXDrg5CA1iry9e-zR/systemPrompt
-          title: Text
-          type: text
           visualData: 2336/282/300/32
-        D7W4TK_ERPD8sIEA0JRug:
+        '[D7W4TK_ERPD8sIEA0JRug]:text "Text"':
           data:
             text: >-
               You are a contract type analyzer. Given the text of a contract,
@@ -919,13 +918,10 @@ data:
 
 
               You reply only with the type of contract you think has been sent. You reply with nothing but a contract type (or Other).
-          id: D7W4TK_ERPD8sIEA0JRug
           outgoingConnections:
             - output->"Chat" mNbY5g_-GCqqmQiJ9Bzw8/systemPrompt
-          title: Text
-          type: text
           visualData: 646/296/300/1
-        MXHr61DHTlCNro58cnf2T:
+        '[MXHr61DHTlCNro58cnf2T]:text "Text"':
           data:
             text: |-
               Here is an MNDA contract:
@@ -935,38 +931,23 @@ data:
               """
 
               Who are the parties under MNDA?
-          id: MXHr61DHTlCNro58cnf2T
           outgoingConnections:
             - output->"Coalesce" i0hsgldRcB80fPoXh25w_/input2
-          title: Text
-          type: text
           visualData: 1967/411/300/16
-        NcEXtUk62okg1S80WQWDf:
-          data: {}
-          id: NcEXtUk62okg1S80WQWDf
+        '[NcEXtUk62okg1S80WQWDf]:if "If"':
           outgoingConnections:
             - output->"If/Else" SID1-IpD7cwznVFYLUAp0/if
             - output->"Text" MXHr61DHTlCNro58cnf2T/content
-          title: If
-          type: if
           visualData: 1745/486/100/21
-        OQdGuE7nllmDknCYVKGXM:
-          data: {}
-          id: OQdGuE7nllmDknCYVKGXM
+        '[OQdGuE7nllmDknCYVKGXM]:if "If"':
           outgoingConnections:
             - output->"Text" bNMSmB7yGkCn0D4RH4xIn/content
-          title: If
-          type: if
           visualData: 1741/685/100/22
-        SID1-IpD7cwznVFYLUAp0:
-          data: {}
-          id: SID1-IpD7cwznVFYLUAp0
+        '[SID1-IpD7cwznVFYLUAp0]:ifElse "If/Else"':
           outgoingConnections:
             - output->"Chat" ZQEs_FTqXHTtlmDudc1xZ/prompt
-          title: If/Else
-          type: ifElse
           visualData: 2696/816/125/41
-        XReMa-VsiUP-N4UrTKuaN:
+        '[XReMa-VsiUP-N4UrTKuaN]:text "Text"':
           data:
             text: |-
               Here is an NDA contract:
@@ -976,29 +957,23 @@ data:
               """
 
               Who is under the NDA's obligations?
-          id: XReMa-VsiUP-N4UrTKuaN
           outgoingConnections:
             - output->"Coalesce" i0hsgldRcB80fPoXh25w_/input1
-          title: Text
-          type: text
           visualData: 1956/132/300/13
-        YbOSw8qc0s1kSQCB-2L02:
+        '[YbOSw8qc0s1kSQCB-2L02]:match "Match"':
           data:
             caseCount: 3
             cases:
               - \bNDA
               - \bMNDA
               - Employment Contract
-          id: YbOSw8qc0s1kSQCB-2L02
           outgoingConnections:
             - case1->"If" zRP90oq6upnr46fpEZBft/if
             - case2->"If" NcEXtUk62okg1S80WQWDf/if
             - case3->"If" OQdGuE7nllmDknCYVKGXM/if
             - unmatched->"Text" u54vVsW4AlpMVCppSH2Pt/type
-          title: Match
-          type: match
           visualData: 1313/436/300/7
-        ZQEs_FTqXHTtlmDudc1xZ:
+        '[ZQEs_FTqXHTtlmDudc1xZ]:chat "Chat"':
           data:
             cache: false
             frequencyPenalty: 0
@@ -1018,12 +993,8 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: ZQEs_FTqXHTtlmDudc1xZ
-          outgoingConnections: []
-          title: Chat
-          type: chat
           visualData: 2908/747/200/43
-        bNMSmB7yGkCn0D4RH4xIn:
+        '[bNMSmB7yGkCn0D4RH4xIn]:text "Text"':
           data:
             text: |-
               Here is an employment contract:
@@ -1033,13 +1004,10 @@ data:
               """
 
               Who is being employed?
-          id: bNMSmB7yGkCn0D4RH4xIn
           outgoingConnections:
             - output->"Coalesce" i0hsgldRcB80fPoXh25w_/input3
-          title: Text
-          type: text
           visualData: 1964/698/300/35
-        dYF2ZXDrg5CA1iry9e-zR:
+        '[dYF2ZXDrg5CA1iry9e-zR]:chat "Chat"':
           data:
             cache: false
             frequencyPenalty: 0
@@ -1059,20 +1027,12 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: dYF2ZXDrg5CA1iry9e-zR
-          outgoingConnections: []
-          title: Chat
-          type: chat
           visualData: 2737/381/200/33
-        i0hsgldRcB80fPoXh25w_:
-          data: {}
-          id: i0hsgldRcB80fPoXh25w_
+        '[i0hsgldRcB80fPoXh25w_]:coalesce "Coalesce"':
           outgoingConnections:
             - output->"Chat" dYF2ZXDrg5CA1iry9e-zR/prompt
-          title: Coalesce
-          type: coalesce
           visualData: 2382/445/150/36
-        mNbY5g_-GCqqmQiJ9Bzw8:
+        '[mNbY5g_-GCqqmQiJ9Bzw8]:chat "Chat"':
           data:
             cache: false
             frequencyPenalty: 0
@@ -1092,49 +1052,32 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: mNbY5g_-GCqqmQiJ9Bzw8
           outgoingConnections:
             - response->"Match" YbOSw8qc0s1kSQCB-2L02/input
-          title: Chat
-          type: chat
           visualData: 1036/453/200/5
-        msQmGwzygdNfcJ-s9Up7m:
+        '[msQmGwzygdNfcJ-s9Up7m]:userInput "User Input"':
           data:
             prompt: Please paste the contents of the contract
             useInput: false
-          id: msQmGwzygdNfcJ-s9Up7m
           outgoingConnections:
             - output->"Chat" mNbY5g_-GCqqmQiJ9Bzw8/prompt
             - output->"If" NcEXtUk62okg1S80WQWDf/value
             - output->"If" OQdGuE7nllmDknCYVKGXM/value
             - output->"If" zRP90oq6upnr46fpEZBft/value
-          title: User Input
-          type: userInput
           visualData: 704/625/250/17
-        u54vVsW4AlpMVCppSH2Pt:
+        '[u54vVsW4AlpMVCppSH2Pt]:text "Text"':
           data:
             text: Sorry, I don't know how to process a {{type}} contract.
-          id: u54vVsW4AlpMVCppSH2Pt
-          outgoingConnections: []
-          title: Text
-          type: text
           visualData: 1771/1021/300/25
-        wCV5IZSVDd8Lk6jED09xY:
+        '[wCV5IZSVDd8Lk6jED09xY]:text "Text"':
           data:
             text: Some text
-          id: wCV5IZSVDd8Lk6jED09xY
           outgoingConnections:
             - output->"If/Else" SID1-IpD7cwznVFYLUAp0/false
-          title: Text
-          type: text
           visualData: 2245/1049/300/null
-        zRP90oq6upnr46fpEZBft:
-          data: {}
-          id: zRP90oq6upnr46fpEZBft
+        '[zRP90oq6upnr46fpEZBft]:if "If"':
           outgoingConnections:
             - output->"Text" XReMa-VsiUP-N4UrTKuaN/content
-          title: If
-          type: if
           visualData: 1743/257/100/26
   metadata:
     description: Project for the Rivet tutorial

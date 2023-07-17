@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "dist/esm",
+    "rootDir": "src",
+    "declarationDir": "dist/types",
+    "allowSyntheticDefaultImports": false,
+    "esModuleInterop": false
+  },
+  "include": ["src"],
+  "ts-node": {
+    "swc": true,
+    "experimentalResolver": true,
+    "experimentalSpecifierResolution": "node",
+    "compilerOptions": {}
+  },
+  "references": [{ "path": "../core" }]
+}

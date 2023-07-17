@@ -32,5 +32,6 @@ export function useGraphExecutor() {
     tryAbortGraph: executor.tryAbortGraph,
     tryPauseGraph: executor.tryPauseGraph,
     tryResumeGraph: executor.tryResumeGraph,
+    tryRunTests: executor.tryRunTests,
   };
 }

@@ -12,11 +12,13 @@ import { DebuggerConnectPanel } from './DebuggerConnectPanel.js';
 import Select from '@atlaskit/select';
 import { lastRecordingState, loadedRecordingState, selectedExecutorState } from '../state/execution.js';
 import { promptDesignerState } from '../state/promptDesigner.js';
+import { trivetState } from '../state/trivet.js';
 import { useGlobalShortcut } from '../hooks/useGlobalShortcut.js';
 import { useLoadRecording } from '../hooks/useLoadRecording.js';
 import { useRunMenuCommand } from '../hooks/useMenuCommands.js';
 import { isInTauri } from '../utils/tauri.js';
 import { useSaveRecording } from '../hooks/useSaveRecording';
+import { LoadingSpinner } from './LoadingSpinner.js';
 
 const styles = css`
   display: flex;
@@ -79,6 +81,7 @@ const styles = css`
   .run-button button,
   .pause-button button,
   .unload-recording-button button,
+  .run-test-button button,
   .save-recording-button button {
     border: none;
     padding: 0.5rem 1rem;
@@ -121,6 +124,15 @@ const styles = css`
 
     &:hover {
       background-color: var(--warning-dark);
+    }
+  }
+
+  .run-test-button button {
+    background-color: var(--grey-dark);
+    color: #ffffff;
+
+    &:hover {
+      background-color: var(--grey);
     }
   }
 
@@ -212,10 +224,24 @@ const styles = css`
       margin-left: 0.5rem;
     }
   }
+
+  .trivet-menu button {
+    display: flex;
+    flex-direction: row;
+
+    .spinner {
+      margin-left: 4px;
+    }
+
+    &.active .spinner svg {
+      color: var(--grey-dark);
+    }
+  }
 `;
 
 export type MenuBarProps = {
   onRunGraph?: () => void;
+  onRunTests?: () => void;
   onAbortGraph?: () => void;
   onPauseGraph?: () => void;
   onResumeGraph?: () => void;
@@ -228,7 +254,7 @@ const executorOptions = isInTauri()
     ] as const)
   : ([{ label: 'Browser', value: 'browser' }] as const);
 
-export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGraph, onResumeGraph }) => {
+export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onRunTests, onAbortGraph, onPauseGraph, onResumeGraph }) => {
   const [debuggerPanelOpen, setDebuggerPanelOpen] = useState(false);
   const [selectedExecutor, setSelectedExecutor] = useRecoilState(selectedExecutorState);
   const runMenuCommandImpl = useRunMenuCommand();
@@ -254,6 +280,7 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
   const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
 
   const [promptDesigner, setPromptDesigner] = useRecoilState(promptDesignerState);
+  const [trivet, setTrivet] = useRecoilState(trivetState);
 
   useGlobalShortcut('CmdOrCtrl+Shift+D', () => {
     if (isActuallyRemoteDebugging || remoteDebugger.reconnecting) {
@@ -293,6 +320,15 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
             onMouseDown={() => setPromptDesigner((s) => ({ ...s, isOpen: !s.isOpen }))}
           >
             Prompt Designer
+          </button>
+        </div>
+        <div className="menu-item trivet-menu">
+          <button
+            className={clsx('dropdown-item', { active: trivet.isOpen })}
+            onMouseDown={() => setTrivet((s) => ({ ...s, isOpen: !s.isOpen }))}
+          >
+            Trivet Tests
+            {trivet.runningTests && <div className="spinner"><LoadingSpinner /></div>}
           </button>
         </div>
         <div className="remote-debugger">
@@ -386,6 +422,11 @@ export const MenuBar: FC<MenuBarProps> = ({ onRunGraph, onAbortGraph, onPauseGra
             </button>
           </div>
         )}
+        <div className={clsx('run-test-button', { running: graphRunning })}>
+          <button onClick={graphRunning ? onAbortGraph : onRunTests}>
+            Run Test <ChevronRightIcon />
+          </button>
+        </div>
         {lastRecording && (
           <div className={clsx('save-recording-button')}>
             <button onClick={saveRecording}>Save Recording</button>
