@@ -1,16 +1,16 @@
 import { NodeGraph, Project, ExecutionRecorder } from '@ironclad/rivet-core';
-import { TrivetTestSuite } from '@ironclad/trivet';
+import { TrivetData } from '@ironclad/trivet';
 
 export interface IOProvider {
   saveGraphData(graphData: NodeGraph): Promise<void>;
 
-  saveProjectData(project: Project, testData: TrivetTestSuite[]): Promise<string | undefined>;
+  saveProjectData(project: Project, testData: TrivetData): Promise<string | undefined>;
 
-  saveProjectDataNoPrompt(project: Project, testData: TrivetTestSuite[], path: string): Promise<void>;
+  saveProjectDataNoPrompt(project: Project, testData: TrivetData, path: string): Promise<void>;
 
   loadGraphData(callback: (graphData: NodeGraph) => void): Promise<void>;
 
-  loadProjectData(callback: (data: { project: Project; testData: TrivetTestSuite[]; path: string }) => void): Promise<void>;
+  loadProjectData(callback: (data: { project: Project; testData: TrivetData; path: string }) => void): Promise<void>;
 
   loadRecordingData(callback: (data: { recorder: ExecutionRecorder; path: string }) => void): Promise<void>;
 

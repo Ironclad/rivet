@@ -23,7 +23,7 @@ export function useSaveProject() {
       draft.graphs[savedGraph.metadata!.id!] = savedGraph;
     });
 
-    await ioProvider.saveProjectDataNoPrompt(newProject, testSuites, loadedProject.path);
+    await ioProvider.saveProjectDataNoPrompt(newProject, { testSuites }, loadedProject.path);
     toast.success('Project saved');
     setLoadedProject({
       loaded: true,
@@ -38,7 +38,7 @@ export function useSaveProject() {
       draft.graphs[savedGraph.metadata!.id!] = savedGraph;
     });
 
-    const filePath = await ioProvider.saveProjectData(newProject, testSuites);
+    const filePath = await ioProvider.saveProjectData(newProject, { testSuites });
 
     if (filePath) {
       toast.success('Project saved');

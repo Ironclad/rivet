@@ -24,7 +24,7 @@ export function useLoadProject() {
 
       setTrivetState({
         isOpen: false,
-        testSuites: testData,
+        testSuites: testData.testSuites,
         selectedTestSuiteId: undefined,
         editingTestCaseId: undefined,
         recentTestResults: undefined,
