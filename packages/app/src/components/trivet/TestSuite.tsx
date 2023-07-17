@@ -9,9 +9,10 @@ import { keyBy } from "lodash-es";
 import { GraphInputNode, GraphOutputNode, NodeGraph } from "@ironclad/rivet-core";
 import { TestCaseEditor } from "./TestCaseEditor";
 import { css } from "@emotion/react";
-import { TrivetTestSuite, validateValidationGraphFormat } from "@ironclad/trivet";
+import { TrivetTestCase, TrivetTestSuite, validateTestCaseFormat, validateValidationGraphFormat } from "@ironclad/trivet";
 import { trivetState } from "../../state/trivet";
 import { useGraphExecutor } from "../../hooks/useGraphExecutor";
+import Button from "@atlaskit/button";
 
 const styles = css`
   min-height: 100%;
@@ -74,12 +75,17 @@ export const TestSuite: FC = () => {
   );
 
   const graphsById = useMemo<Record<string, NodeGraph>>(() => keyBy(savedGraphs, (g) => g.metadata?.id as string), [savedGraphs]);
+  const testGraph = useMemo(() => {
+    if (testSuite?.testGraph == null) {
+      return;
+    }
+    return graphsById[testSuite.testGraph];
+  }, [graphsById, testSuite?.testGraph]);
 
   const addTestCase = useCallback(() => {
     if (testSuite == null) {
       return;
     }
-    const testGraph = graphsById[testSuite.testGraph];
     let input: Record<string, unknown> = {};
     let output: Record<string, unknown> = {};
     if (testGraph != null) {
@@ -97,7 +103,7 @@ export const TestSuite: FC = () => {
         },
       ],
     });
-  }, [graphsById, testSuite, updateTestSuite]);
+  }, [testGraph, testSuite, updateTestSuite]);
 
   const validationGraphValidationResults = useMemo(() => {
     if (testSuite?.validationGraph == null) {
@@ -119,6 +125,31 @@ export const TestSuite: FC = () => {
       testCaseIds: [id],
     })
   }, [tryRunTests, selectedTestSuiteId]);
+
+  const testCaseValidationResults = useMemo(() => {
+    if (testGraph == null) {
+      return { valid: false };
+    }
+    const testCaseValidations = testSuite?.testCases.map((tc) => validateTestCaseFormat(testGraph, tc));
+    return {
+      valid: testCaseValidations != null && testCaseValidations?.every((v) => v.valid),
+      testCaseValidations,
+    }
+  }, [testGraph, testSuite?.testCases]);
+
+  const fixInvalidTestCases = useCallback(() => {
+    if (testSuite?.testCases == null || testCaseValidationResults == null || testCaseValidationResults.valid || testCaseValidationResults.testCaseValidations == null) {
+      return;
+    }
+    const fixedTestCases = testCaseValidationResults.testCaseValidations
+      .map((v, idx): TrivetTestCase => v.valid 
+      ? testSuite?.testCases[idx]!
+      : fixTestCase(testSuite?.testCases[idx]!, v.missingInputIds, v.missingOutputIds));
+    updateTestSuite({
+      ...testSuite,
+      testCases: fixedTestCases,
+    });
+  }, [testCaseValidationResults, testSuite, updateTestSuite]);
 
   if (testSuite == null) {
     return <div />;
@@ -167,19 +198,39 @@ export const TestSuite: FC = () => {
           </ul>
         </div>}
       </div>
-      <TestCaseTable
-        testCases={testSuite.testCases}
-        addTestCase={addTestCase}
-        setEditingTestCase={setEditingTestCase}
-        editingTestCaseId={editingTestCaseId}
-        deleteTestCase={deleteTestCase}
-        running={runningTests}
-        testCaseResults={latestResult?.testCaseResults ?? []}
-        runTestCase={runTestCase}
-      />
+      <div>
+        {testCaseValidationResults != null && !testCaseValidationResults.valid && <div className="validation-results">
+          <p>⚠️ Test cases must match the inputs and outputs of the test graph.</p>
+          <Button onClick={fixInvalidTestCases}>Fix Invalid Test Cases</Button>
+        </div>}
+        <TestCaseTable
+          testCases={testSuite.testCases}
+          addTestCase={addTestCase}
+          setEditingTestCase={setEditingTestCase}
+          editingTestCaseId={editingTestCaseId}
+          deleteTestCase={deleteTestCase}
+          running={runningTests}
+          testCaseResults={latestResult?.testCaseResults ?? []}
+          runTestCase={runTestCase}
+        />
+      </div>
       {isEditingTestCase && <div className="test-case-editor">
         <TestCaseEditor key={editingTestCaseId} />
       </div>}
     </div>
   )
 };
+
+function fixTestCase(testCase: TrivetTestCase, missingInputs: string[], missingOutputs: string[]): TrivetTestCase {
+  return {
+    ...testCase,
+    input: {
+      ...testCase.input,
+      ...Object.fromEntries(missingInputs.map((input) => [input, ''])),
+    },
+    expectedOutput: {
+      ...testCase.expectedOutput,
+      ...Object.fromEntries(missingOutputs.map((output) => [output, ''])),
+    }
+  };
+}
