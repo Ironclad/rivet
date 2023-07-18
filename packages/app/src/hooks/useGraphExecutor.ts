@@ -5,6 +5,13 @@ import { useExecutorSidecar } from './useExecutorSidecar';
 import { useLocalExecutor } from './useLocalExecutor';
 import { useRemoteExecutor } from './useRemoteExecutor';
 
+/**
+ * Caution: only use this hook on components that will not dismount. The `useEffect` cleanup function
+ * can result in a subtle bug where the remote debugger will mysteriously disconnect when the
+ * component dismounts.
+ * TODO Refactor so that this doesn't happen.
+ * @returns 
+ */
 export function useGraphExecutor() {
   const selectedExecutor = useRecoilValue(selectedExecutorState);
   const localExecutor = useLocalExecutor();
