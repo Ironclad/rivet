@@ -11,8 +11,8 @@ import { TestCaseEditor } from "./TestCaseEditor";
 import { css } from "@emotion/react";
 import { TrivetTestCase, TrivetTestSuite, validateTestCaseFormat, validateValidationGraphFormat } from "@ironclad/trivet";
 import { trivetState } from "../../state/trivet";
-import { useGraphExecutor } from "../../hooks/useGraphExecutor";
 import Button from "@atlaskit/button";
+import { TryRunTests } from "./api";
 
 const styles = css`
   min-height: 100%;
@@ -40,10 +40,9 @@ const styles = css`
   }
 `;
 
-export const TestSuite: FC = () => {
+export const TestSuite: FC<{ tryRunTests: TryRunTests }> = ({ tryRunTests }) => {
   const [{ testSuites, selectedTestSuiteId, editingTestCaseId, recentTestResults, runningTests }, setState] = useRecoilState(trivetState);
   const savedGraphs = useRecoilValue(savedGraphsState);
-  const { tryRunTests } = useGraphExecutor();
 
   const testSuite = useMemo(() => testSuites.find((ts) => ts.id === selectedTestSuiteId), [testSuites, selectedTestSuiteId]);
   const isEditingTestCase = useMemo(

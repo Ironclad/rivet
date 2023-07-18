@@ -6,8 +6,7 @@ import Button from '@atlaskit/button';
 import { TestSuiteList } from './TestSuiteList';
 import { TestSuite } from './TestSuite';
 import { nanoid } from 'nanoid';
-import { useGraphExecutor } from '../../hooks/useGraphExecutor';
-
+import { TryRunTests } from './api';
 
 const styles = css`
   position: fixed;
@@ -42,21 +41,23 @@ const styles = css`
   }
 `
 
-export const TrivetRenderer: FC = () => {
+export const TrivetRenderer: FC<{ tryRunTests: TryRunTests }> = ({ tryRunTests }) => {
   const [{ isOpen }, setState] = useRecoilState(trivetState);
 
   if (!isOpen) return null;
 
-  return <TrivetContainer onClose={() => setState((s) => ({ ...s, isOpen: false }))} />;
+  return <TrivetContainer
+    tryRunTests={tryRunTests}
+    onClose={() => setState((s) => ({ ...s, isOpen: false }))} />;
 };
 
 export type TrivetContainerProps = {
   onClose: () => void;
+  tryRunTests: TryRunTests;
 };
 
-export const TrivetContainer: FC<TrivetContainerProps> = ({ onClose }) => {
+export const TrivetContainer: FC<TrivetContainerProps> = ({ tryRunTests, onClose }) => {
   const [{ testSuites, selectedTestSuiteId, runningTests, recentTestResults }, setState] = useRecoilState(trivetState);
-  const { tryRunTests } = useGraphExecutor();
   const selectedTestSuite = useMemo(() => testSuites.find((ts) => ts.id === selectedTestSuiteId), [testSuites, selectedTestSuiteId]);
   const createNewTestSuite = useCallback(() => {
     setState((s) => ({
@@ -101,7 +102,7 @@ export const TrivetContainer: FC<TrivetContainerProps> = ({ onClose }) => {
           />
         </div>
         <div className="test-case-column">
-          <TestSuite />
+          <TestSuite tryRunTests={tryRunTests} />
         </div>
       </div>
     </div>
