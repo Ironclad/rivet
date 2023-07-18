@@ -55,6 +55,17 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
                 />
               )}
             </Field>
+            <Field name="anthropicApiKey" label="Anthropic API Key">
+              {() => (
+                <TextField
+                  type="password"
+                  value={settings.anthropicApiKey}
+                  onChange={(e) =>
+                    setSettings((s) => ({ ...s, anthropicApiKey: (e.target as HTMLInputElement).value }))
+                  }
+                />
+              )}
+            </Field>
           </ModalBody>
           <ModalFooter>
             <Button appearance="primary" onClick={closeModal}>

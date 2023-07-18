@@ -50,6 +50,7 @@ export function createTestGraphRunner(opts: { openAiKey: string }): TrivetGraphR
           openAiKey: opts.openAiKey,
           openAiOrganization: '',
           pineconeApiKey: '',
+          anthropicApiKey: '',
         } satisfies Required<Settings>,
       },
       inputs,

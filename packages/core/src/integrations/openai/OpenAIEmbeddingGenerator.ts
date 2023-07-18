@@ -1,4 +1,4 @@
-import { Settings } from '../../NodeImpl.js';
+import { Settings } from '../../model/NodeImpl.js';
 import { EmbeddingGenerator } from '../EmbeddingGenerator.js';
 import * as openai from 'openai';
 

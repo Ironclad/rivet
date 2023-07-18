@@ -7,7 +7,8 @@
     "bundle": "tsx bundle.esbuild.ts",
     "package": "pkg . --out-path dist --targets node18-linux-x64,node18-macos-x64,node18-win-x64",
     "package-rename": "/bin/sh -c \"cp dist/rivet-app-executor-macos dist/app-executor-`rustc -Vv | grep host | cut -f2 -d' '`\"",
-    "build": "yarn bundle && yarn package && yarn package-rename"
+    "build": "yarn bundle && yarn package && yarn package-rename",
+    "start": "yarn bundle && node bin/executor-bundle.js"
   },
   "devDependencies": {
     "@ironclad/rivet-node": "workspace:^",

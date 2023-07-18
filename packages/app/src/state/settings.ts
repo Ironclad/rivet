@@ -7,6 +7,7 @@ export const settingsState = atom<Settings>({
   default: {
     openAiKey: '',
     openAiOrganization: '',
+    anthropicApiKey: '',
   },
   effects_UNSTABLE: [persistAtom],
 });

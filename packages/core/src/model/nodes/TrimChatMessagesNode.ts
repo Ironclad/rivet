@@ -1,9 +1,9 @@
 import { ChartNode, NodeId, PortId, NodeInputDefinition, NodeOutputDefinition } from '../../model/NodeBase.js';
 import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../../model/NodeImpl.js';
-import { SupportedModels, getTokenCountForMessages, modelOptions, openaiModels } from '../../utils/tokenizer.js';
+import { SupportedModels, getTokenCountForMessages } from '../../utils/tokenizer.js';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs, expectType } from '../../index.js';
-import { ChatCompletionRequestMessage } from '../../utils/openai.js';
+import { ChatCompletionRequestMessage, openAiModelOptions, openaiModels } from '../../utils/openai.js';
 import { dedent } from 'ts-dedent';
 
 export type TrimChatMessagesNodeData = {
@@ -71,7 +71,7 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
         type: 'dropdown',
         label: 'Model',
         dataKey: 'model',
-        options: modelOptions,
+        options: openAiModelOptions,
       },
     ];
   }
