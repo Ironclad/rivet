@@ -40,7 +40,7 @@ export const RivetApp: FC = () => {
       <GraphBuilder />
       <SettingsModal />
       <PromptDesignerRenderer />
-      <TrivetRenderer />
+      <TrivetRenderer tryRunTests={tryRunTests} />
       <ToastContainer position="bottom-right" hideProgressBar newestOnTop />
     </div>
   );
