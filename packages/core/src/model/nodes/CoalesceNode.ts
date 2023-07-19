@@ -92,7 +92,7 @@ export class CoalesceNodeImpl extends NodeImpl<CoalesceNode> {
 
     for (let i = 1; i <= inputCount; i++) {
       const inputValue = inputData[`input${i}` as PortId];
-      if (inputValue && inputValue.type !== 'control-flow-excluded' && coerceType(inputValue, 'boolean')) {
+      if (inputValue && inputValue.type !== 'control-flow-excluded') {
         okInputValues.push(inputValue);
       }
     }
