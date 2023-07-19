@@ -1,4 +1,4 @@
-import { InternalProcessContext } from '../ProcessContext.js';
+import { InternalProcessContext } from '../model/ProcessContext.js';
 import { EmbeddingGenerator } from './EmbeddingGenerator.js';
 import { LLMProvider } from './LLMProvider.js';
 import { VectorDatabase } from './VectorDatabase.js';

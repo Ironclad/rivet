@@ -140,7 +140,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
       },
       {
         type: 'colorized',
-        text: this.data.promptText,
+        text: this.data.promptText.split('\n').slice(0, 15).join('\n').trim(),
         language: 'prompt-interpolation',
         theme: 'prompt-interpolation',
       },

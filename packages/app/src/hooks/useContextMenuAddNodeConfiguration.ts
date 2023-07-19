@@ -185,6 +185,17 @@ export const addContextMenuGroups = [
     items: [
       chatNode,
       {
+        label: 'Chat (Anthropic)',
+        data: 'chatAnthropic',
+        id: 'add-node:chatAnthropic',
+        infoBox: {
+          title: 'Chat (Anthropic) Node',
+          description: dedent`
+            Makes a call to an Anthropic chat model. The settings contains many options for tweaking the model's behavior.
+          `,
+        },
+      },
+      {
         label: 'Assemble Prompt',
         data: 'assemblePrompt',
         id: 'add-node:assemblePrompt',

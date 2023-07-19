@@ -186,6 +186,7 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
             openAiKey: options.openAiKey,
             openAiOrganization: options.openAiOrganization ?? '',
             pineconeApiKey: options.pineconeApiKey ?? '',
+            anthropicApiKey: options.anthropicApiKey ?? '',
           } satisfies Required<Settings>,
         },
         resolvedInputs,

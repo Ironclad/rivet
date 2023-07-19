@@ -34,7 +34,7 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
       socket,
       started: true,
       url,
-      isInternalExecutor: url === 'ws://localhost:21889',
+      isInternalExecutor: url === 'ws://localhost:21889/internal',
     }));
 
     socket.onopen = () => {

@@ -9,6 +9,7 @@ export interface Settings {
   openAiOrganization?: string;
 
   pineconeApiKey?: string;
+  anthropicApiKey?: string;
 }
 
 export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['type']> {

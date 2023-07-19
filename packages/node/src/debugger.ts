@@ -48,7 +48,7 @@ export function startDebuggerServer(
         const message = JSON.parse(data.toString()) as { type: string; data: unknown };
 
         if (message.type === 'run') {
-          const { graphId, inputs } = message.data as { graphId: GraphId, inputs: GraphInputs };
+          const { graphId, inputs } = message.data as { graphId: GraphId; inputs: GraphInputs };
 
           await options.dynamicGraphRun?.({ client: socket, graphId, inputs });
         } else if (message.type === 'set-dynamic-data' && options.allowGraphUpload) {

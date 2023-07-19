@@ -32,7 +32,7 @@ import {
   getChatNodeMessages,
   getError,
   isArrayDataValue,
-  modelOptions,
+  openai,
 } from '@ironclad/rivet-core';
 import TextField from '@atlaskit/textfield';
 import { Field } from '@atlaskit/form';
@@ -582,8 +582,8 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
                       {({ fieldProps }) => (
                         <Select
                           {...fieldProps}
-                          options={modelOptions}
-                          value={modelOptions.find((o) => o.value === config.data.model)!}
+                          options={openai.openAiModelOptions}
+                          value={openai.openAiModelOptions.find((o) => o.value === config.data.model)!}
                           placeholder="Select a model"
                           onChange={(value) => setConfig((s) => ({ ...s, data: { ...s.data, model: value!.value } }))}
                         />

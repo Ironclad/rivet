@@ -8,8 +8,6 @@ import {
   getCostForTokens,
   getTokenCountForMessages,
   getTokenCountForString,
-  modelOptions,
-  openaiModels,
 } from '../../utils/tokenizer.js';
 import { addWarning } from '../../utils/outputs.js';
 import {
@@ -17,6 +15,8 @@ import {
   ChatCompletionOptions,
   ChatCompletionRequestMessage,
   OpenAIError,
+  openAiModelOptions,
+  openaiModels,
   streamChatCompletions,
 } from '../../utils/openai.js';
 import retry from 'p-retry';
@@ -260,7 +260,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         label: 'Model',
         dataKey: 'model',
         useInputToggleDataKey: 'useModelInput',
-        options: modelOptions,
+        options: openAiModelOptions,
       },
       {
         type: 'number',

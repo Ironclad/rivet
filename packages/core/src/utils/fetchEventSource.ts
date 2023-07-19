@@ -109,6 +109,9 @@ function createEventStream(body: ReadableStream<Uint8Array> | null) {
         if (line.startsWith('data: ')) {
           const data = line.slice(6).trim();
           controller.enqueue(data);
+        } else if (line.startsWith('event: ')) {
+          const event = line.slice(7).trim();
+          controller.enqueue(`[${event}]`);
         }
       },
     }),
