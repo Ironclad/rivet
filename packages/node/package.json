@@ -1,7 +1,7 @@
 {
   "name": "@ironclad/rivet-node",
   "repository": "https://github.com/ironclad/rivet",
-  "version": "0.12.5",
+  "version": "0.12.6",
   "main": "dist/cjs/bundle.cjs",
   "module": "dist/esm/index.js",
   "src": "src/index.ts",
