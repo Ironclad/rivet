@@ -1,6 +1,6 @@
 import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { DataValue } from '../DataValue.js';
+import { DataValue, unwrapDataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
 import { coerceType } from '../../utils/coerceType.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
@@ -92,7 +92,7 @@ export class CoalesceNodeImpl extends NodeImpl<CoalesceNode> {
 
     for (let i = 1; i <= inputCount; i++) {
       const inputValue = inputData[`input${i}` as PortId];
-      if (inputValue && inputValue.type !== 'control-flow-excluded' && coerceType(inputValue, 'boolean')) {
+      if (inputValue && inputValue.type !== 'control-flow-excluded' && unwrapDataValue(inputValue) != null) {
         okInputValues.push(inputValue);
       }
     }
