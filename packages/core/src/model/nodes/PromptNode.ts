@@ -135,7 +135,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
       {
         type: 'markdown',
         text: dedent`
-          _${typeDisplay[this.data.type]} ${this.data.name ? `(${this.data.name})` : ''}_
+          _${typeDisplay[this.data.type]}${this.data.name ? ` (${this.data.name})` : ''}_
       `,
       },
       {

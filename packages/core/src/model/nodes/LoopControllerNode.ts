@@ -48,7 +48,9 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
         title: `Input ${i}`,
       };
 
-      const inputConnection = connections.find((connection) => connection.inputId === input.id);
+      const inputConnection = connections.find(
+        (connection) => connection.inputId === input.id && connection.inputNodeId === this.id,
+      );
       if (inputConnection && nodes[inputConnection.outputNodeId]) {
         input.title = nodes[inputConnection.outputNodeId]!.title;
       }
@@ -58,7 +60,9 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
         id: `input${i}Default` as PortId,
         title: `Input ${i} Default`,
       };
-      const inputDefaultConnection = connections.find((connection) => connection.inputId === inputDefault.id);
+      const inputDefaultConnection = connections.find(
+        (connection) => connection.inputId === inputDefault.id && connection.inputNodeId === this.id,
+      );
       if (inputDefaultConnection && nodes[inputDefaultConnection.outputNodeId]) {
         inputDefault.title = nodes[inputDefaultConnection.outputNodeId]!.title;
       }
@@ -88,7 +92,9 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
         title: `Output ${i}`,
       };
 
-      const inputConnection = connections.find((connection) => connection.inputId === `input${i}`);
+      const inputConnection = connections.find(
+        (connection) => connection.inputId === `input${i}` && connection.inputNodeId === this.id,
+      );
       if (inputConnection && nodes[inputConnection.outputNodeId]) {
         output.title = `${nodes[inputConnection.outputNodeId]!.title}?`;
       }
