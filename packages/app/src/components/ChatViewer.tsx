@@ -9,6 +9,7 @@ import { NodeRunData, lastRunDataByNodeState } from '../state/dataFlow';
 import { projectState } from '../state/savedGraphs';
 import { ErrorBoundary } from 'react-error-boundary';
 import TextField from '@atlaskit/textfield';
+import { useGoToNode } from '../hooks/useGoToNode';
 
 export const ChatViewerRenderer: FC = () => {
   const [openOverlay, setOpenOverlay] = useRecoilState(overlayOpenState);
@@ -73,13 +74,30 @@ const styles = css`
     }
 
     header {
-      padding: 5px 15px;
+      padding: 0 15px;
       background-color: var(--grey-darkish);
       border-radius: 10px 10px 0 0;
       border-bottom: 1px solid var(--grey-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
 
       .graph-name {
         color: var(--primary);
+      }
+
+      .go-to-node {
+        background-color: transparent;
+        color: var(--foreground);
+        border: 0;
+        cursor: pointer;
+        display: inline-block;
+        height: 32px;
+        padding: 0 15px;
+
+        &:hover {
+          color: var(--primary);
+        }
       }
     }
 
@@ -114,6 +132,7 @@ export const ChatViewer: FC<{
   const project = useRecoilValue(projectState);
   const allLastRunData = useRecoilValue(lastRunDataByNodeState);
   const [graphFilter, setGraphFilter] = useState('');
+  const goToNode = useGoToNode();
 
   const nodesToGraphNameMap = useMemo(() => {
     const map: Record<NodeId, string> = {};
@@ -159,6 +178,11 @@ export const ChatViewer: FC<{
     ];
   }, [processes]);
 
+  const doGoToNode = (nodeId: NodeId) => {
+    goToNode(nodeId);
+    onClose();
+  };
+
   return (
     <div css={styles}>
       <div className="controls-filters">
@@ -179,6 +203,7 @@ export const ChatViewer: FC<{
                 data={process.data}
                 key={`${node.id}-${process.processId}`}
                 graphName={graphName}
+                onGoToNode={doGoToNode}
               />
             );
           })}
@@ -193,6 +218,7 @@ export const ChatViewer: FC<{
                 data={process.data}
                 key={`${node.id}-${process.processId}`}
                 graphName={graphName}
+                onGoToNode={doGoToNode}
               />
             );
           })}
@@ -207,7 +233,8 @@ const ChatBubble: FC<{
   nodeId: NodeId;
   processId: ProcessId;
   data: NodeRunData;
-}> = ({ nodeId, processId, data, graphName }) => {
+  onGoToNode?: (nodeId: NodeId) => void;
+}> = ({ nodeId, processId, data, graphName, onGoToNode }) => {
   const promptRef = useRef<HTMLDivElement>(null);
   const responseRef = useRef<HTMLDivElement>(null);
 
@@ -241,7 +268,12 @@ const ChatBubble: FC<{
       })}
     >
       <header>
-        In: <span className="graph-name">{graphName}</span>
+        <span>
+          In: <span className="graph-name">{graphName}</span>
+        </span>
+        <button className="go-to-node" onClick={() => onGoToNode?.(nodeId)}>
+          Go To
+        </button>
       </header>
       <div className="prompt" ref={promptRef}>
         {promptText}
