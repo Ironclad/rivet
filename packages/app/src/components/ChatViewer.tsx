@@ -40,7 +40,7 @@ const styles = css`
     display: flex;
     align-items: center;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    margin: 56px 48px 0 48px;
+    margin: 56px 48px 32px 48px;
   }
 
   .chats {
