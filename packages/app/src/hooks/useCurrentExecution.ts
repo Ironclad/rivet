@@ -53,6 +53,7 @@ export function useCurrentExecution() {
     setDataForNode(node.id, processId, {
       inputData: inputs,
       status: { type: 'running' },
+      startedAt: Date.now(),
     });
 
     setSelectedNodePageLatest(node.id);
@@ -62,6 +63,7 @@ export function useCurrentExecution() {
     setDataForNode(node.id, processId, {
       outputData: outputs,
       status: { type: 'ok' },
+      finishedAt: Date.now(),
     });
 
     setSelectedNodePageLatest(node.id);
@@ -70,6 +72,7 @@ export function useCurrentExecution() {
   const onNodeError = ({ node, error, processId }: ProcessEvents['nodeError']) => {
     setDataForNode(node.id, processId, {
       status: { type: 'error', error: typeof error === 'string' ? error : error.toString() },
+      finishedAt: Date.now(),
     });
 
     setSelectedNodePageLatest(node.id);

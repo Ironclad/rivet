@@ -144,9 +144,7 @@ const styles = css`
   }
 `;
 
-export type MenuBarProps = {};
-
-export const MenuBar: FC<MenuBarProps> = () => {
+export const OverlayTabs: FC = () => {
   const [openOverlay, setOpenOverlay] = useRecoilState(overlayOpenState);
   const runMenuCommandImpl = useRunMenuCommand();
   const [fileMenuOpen, setFileMenuOpen] = useState(false);
@@ -196,6 +194,14 @@ export const MenuBar: FC<MenuBarProps> = () => {
                 <LoadingSpinner />
               </div>
             )}
+          </button>
+        </div>
+        <div className="menu-item chat-viewer-menu">
+          <button
+            className={clsx('dropdown-item', { active: openOverlay === 'chatViewer' })}
+            onMouseDown={() => setOpenOverlay((s) => (s === 'chatViewer' ? undefined : 'chatViewer'))}
+          >
+            Chat Viewer
           </button>
         </div>
       </div>

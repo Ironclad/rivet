@@ -23,7 +23,6 @@ export function useLoadProject() {
       });
 
       setTrivetState({
-        isOpen: false,
         testSuites: testData.testSuites,
         selectedTestSuiteId: undefined,
         editingTestCaseId: undefined,

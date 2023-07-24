@@ -5,7 +5,7 @@ export const debuggerPanelOpenState = atom({
   default: false,
 });
 
-export type OverlayKey = 'promptDesigner' | 'trivet';
+export type OverlayKey = 'promptDesigner' | 'trivet' | 'chatViewer';
 
 export const overlayOpenState = atom<OverlayKey | undefined>({
   key: 'overlayOpenState',
