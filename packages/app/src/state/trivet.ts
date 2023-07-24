@@ -1,5 +1,8 @@
 import { TrivetResults, TrivetTestSuite } from '@ironclad/trivet';
 import { atom } from 'recoil';
+import { recoilPersist } from 'recoil-persist';
+
+const { persistAtom } = recoilPersist({ key: 'trivet' });
 
 export type TrivetState = {
   isOpen: boolean;
@@ -17,4 +20,5 @@ export const trivetState = atom<TrivetState>({
     testSuites: [],
     runningTests: false,
   },
+  effects_UNSTABLE: [persistAtom],
 });
