@@ -5,7 +5,6 @@ import { recoilPersist } from 'recoil-persist';
 const { persistAtom } = recoilPersist({ key: 'trivet' });
 
 export type TrivetState = {
-  isOpen: boolean;
   testSuites: TrivetTestSuite[];
   selectedTestSuiteId?: string;
   editingTestCaseId?: string;
@@ -16,7 +15,6 @@ export type TrivetState = {
 export const trivetState = atom<TrivetState>({
   key: 'trivetState',
   default: {
-    isOpen: false,
     testSuites: [],
     runningTests: false,
   },

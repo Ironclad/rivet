@@ -11,6 +11,8 @@ import { PromptDesignerRenderer } from './PromptDesigner.js';
 import { useGraphExecutor } from '../hooks/useGraphExecutor.js';
 import { useMenuCommands } from '../hooks/useMenuCommands.js';
 import { TrivetRenderer } from './trivet/Trivet.js';
+import { ActionBar } from './ActionBar';
+import { DebuggerPanelRenderer } from './DebuggerConnectPanel';
 
 const styles = css`
   overflow: hidden;
@@ -29,13 +31,15 @@ export const RivetApp: FC = () => {
 
   return (
     <div className="app" css={styles}>
-      <MenuBar
+      <MenuBar />
+      <ActionBar
         onRunGraph={tryRunGraph}
         onRunTests={tryRunTests}
         onAbortGraph={tryAbortGraph}
         onPauseGraph={tryPauseGraph}
         onResumeGraph={tryResumeGraph}
       />
+      <DebuggerPanelRenderer />
       <LeftSidebar />
       <GraphBuilder />
       <SettingsModal />

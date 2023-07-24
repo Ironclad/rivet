@@ -41,13 +41,14 @@ const Container = styled.div`
   }
 
   .recording-border {
-    border: 3px solid var(--warning-dark);
     position: absolute;
-    top: 32px;
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     pointer-events: none;
+    z-index: 100;
+    box-shadow: inset 0 0 2px 3px var(--warning-dark);
   }
 `;
 

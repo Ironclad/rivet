@@ -14,7 +14,7 @@ import { GraphList } from './GraphList.js';
 
 const styles = css`
   position: fixed;
-  top: 32px; // Adjust this value based on the height of the MenuBar
+  top: 0;
   left: 0;
   bottom: 0;
   width: 250px; // Adjust the width of the sidebar as needed

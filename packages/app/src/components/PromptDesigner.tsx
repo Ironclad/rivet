@@ -1,6 +1,6 @@
 import Button from '@atlaskit/button';
 import { css } from '@emotion/react';
-import { MouseEvent, ChangeEvent, FC, useCallback, useEffect, useState, useRef, useMemo, useLayoutEffect } from 'react';
+import { ChangeEvent, FC, useEffect, useState, useRef, useLayoutEffect } from 'react';
 import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import {
   PromptDesignerTestGroupResults,
@@ -49,10 +49,11 @@ import { cloneDeep, findIndex, mapValues, range, zip } from 'lodash-es';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { toast } from 'react-toastify';
 import { produce } from 'immer';
+import { overlayOpenState } from '../state/ui';
 
 const styles = css`
   position: fixed;
-  top: 32px;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
@@ -80,6 +81,7 @@ const styles = css`
     height: 100%;
     min-height: 0;
     overflow: auto;
+    padding-top: 32px;
   }
 
   .message-list {
@@ -126,6 +128,7 @@ const styles = css`
     padding: 20px;
     height: 100%;
     overflow: auto;
+    padding-top: 32px;
   }
 
   .controls-area {
@@ -284,11 +287,13 @@ const styles = css`
 `;
 
 export const PromptDesignerRenderer: FC = () => {
-  const [{ isOpen }, setState] = useRecoilState(promptDesignerState);
+  const [openOverlay, setOpenOverlay] = useRecoilState(overlayOpenState);
 
-  if (!isOpen) return null;
+  if (openOverlay !== 'promptDesigner') {
+    return null;
+  }
 
-  return <PromptDesigner onClose={() => setState((s) => ({ ...s, isOpen: false }))} />;
+  return <PromptDesigner onClose={() => setOpenOverlay(undefined)} />;
 };
 
 export type PromptDesignerProps = {

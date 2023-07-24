@@ -7,10 +7,11 @@ import { TestSuiteList } from './TestSuiteList';
 import { TestSuite } from './TestSuite';
 import { nanoid } from 'nanoid';
 import { TryRunTests } from './api';
+import { overlayOpenState } from '../../state/ui';
 
 const styles = css`
   position: fixed;
-  top: 32px;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
@@ -39,16 +40,14 @@ const styles = css`
   .test-case-column {
     flex: 1;
   }
-`
+`;
 
 export const TrivetRenderer: FC<{ tryRunTests: TryRunTests }> = ({ tryRunTests }) => {
-  const [{ isOpen }, setState] = useRecoilState(trivetState);
+  const [openOverlay, setOpenOverlay] = useRecoilState(overlayOpenState);
 
-  if (!isOpen) return null;
+  if (openOverlay !== 'trivet') return null;
 
-  return <TrivetContainer
-    tryRunTests={tryRunTests}
-    onClose={() => setState((s) => ({ ...s, isOpen: false }))} />;
+  return <TrivetContainer tryRunTests={tryRunTests} onClose={() => setOpenOverlay(undefined)} />;
 };
 
 export type TrivetContainerProps = {
@@ -58,30 +57,39 @@ export type TrivetContainerProps = {
 
 export const TrivetContainer: FC<TrivetContainerProps> = ({ tryRunTests, onClose }) => {
   const [{ testSuites, selectedTestSuiteId, runningTests, recentTestResults }, setState] = useRecoilState(trivetState);
-  const selectedTestSuite = useMemo(() => testSuites.find((ts) => ts.id === selectedTestSuiteId), [testSuites, selectedTestSuiteId]);
+  const selectedTestSuite = useMemo(
+    () => testSuites.find((ts) => ts.id === selectedTestSuiteId),
+    [testSuites, selectedTestSuiteId],
+  );
   const createNewTestSuite = useCallback(() => {
     setState((s) => ({
       ...s,
       testSuites: [...s.testSuites, { id: nanoid(), testCases: [], testGraph: 'a', validationGraph: 'a' }],
     }));
   }, [setState]);
-  const deleteTestSuite = useCallback((id: string) => {
-    setState((s) => ({
-      ...s,
-      testSuites: s.testSuites.filter((ts) => ts.id !== id),
-    }));
-  }, [setState]);
+  const deleteTestSuite = useCallback(
+    (id: string) => {
+      setState((s) => ({
+        ...s,
+        testSuites: s.testSuites.filter((ts) => ts.id !== id),
+      }));
+    },
+    [setState],
+  );
   const runningTestSuiteId = useMemo(() => {
     if (!runningTests || recentTestResults == null || recentTestResults.testSuiteResults.length === 0) {
       return undefined;
     }
     return recentTestResults.testSuiteResults[recentTestResults.testSuiteResults.length - 1]?.id;
   }, [runningTests, recentTestResults]);
-  const runTestSuite = useCallback((id: string) => {
-    tryRunTests({
-      testSuiteIds: [id],
-    });
-  }, [tryRunTests]);
+  const runTestSuite = useCallback(
+    (id: string) => {
+      tryRunTests({
+        testSuiteIds: [id],
+      });
+    },
+    [tryRunTests],
+  );
 
   return (
     <div css={styles}>
