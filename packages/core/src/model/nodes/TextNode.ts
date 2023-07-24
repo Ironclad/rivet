@@ -63,7 +63,7 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
         type: 'code',
         label: 'Text',
         dataKey: 'text',
-        language: 'prompt-interpolation',
+        language: 'prompt-interpolation-markdown',
         theme: 'prompt-interpolation',
       },
     ];
@@ -74,7 +74,7 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
 
     return {
       type: 'colorized',
-      language: 'prompt-interpolation',
+      language: 'prompt-interpolation-markdown',
       theme: 'prompt-interpolation',
       text: truncated,
     };

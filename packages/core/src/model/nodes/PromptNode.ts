@@ -124,7 +124,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
         type: 'code',
         label: 'Prompt Text',
         dataKey: 'promptText',
-        language: 'prompt-interpolation',
+        language: 'prompt-interpolation-markdown',
         theme: 'prompt-interpolation',
       },
     ];
@@ -141,7 +141,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
       {
         type: 'colorized',
         text: this.data.promptText.split('\n').slice(0, 15).join('\n').trim(),
-        language: 'prompt-interpolation',
+        language: 'prompt-interpolation-markdown',
         theme: 'prompt-interpolation',
       },
     ];
