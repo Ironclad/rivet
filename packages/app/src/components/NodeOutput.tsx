@@ -14,6 +14,7 @@ import { RenderDataOutputs } from './RenderDataValue.js';
 import { entries } from '../utils/typeSafety.js';
 import { orderBy } from 'lodash-es';
 import { promptDesignerAttachedChatNodeState, promptDesignerState } from '../state/promptDesigner.js';
+import { overlayOpenState } from '../state/ui';
 
 export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -120,7 +121,7 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
 
   const { FullscreenOutput, Output, OutputSimple, FullscreenOutputSimple } = useUnknownNodeComponentDescriptorFor(node);
 
-  const setPromptDesignerState = useSetRecoilState(promptDesignerState);
+  const setOverlayOpen = useSetRecoilState(overlayOpenState);
   const setPromptDesignerAttachedNode = useSetRecoilState(promptDesignerAttachedChatNodeState);
 
   const { data, processId } = useMemo(() => {
@@ -136,7 +137,7 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
   }, [output, selectedPage]);
 
   const handleOpenPromptDesigner = () => {
-    setPromptDesignerState((s) => ({ ...s, isOpen: true }));
+    setOverlayOpen('promptDesigner');
     setPromptDesignerAttachedNode({
       nodeId: node.id,
       processId: processId!,
@@ -301,11 +302,11 @@ const NodeOutputSingleProcess: FC<{
 }> = ({ node, data, processId, onOpenFullscreenModal }) => {
   const { Output, OutputSimple } = useUnknownNodeComponentDescriptorFor(node);
 
-  const setPromptDesignerState = useSetRecoilState(promptDesignerState);
+  const setOverlayOpen = useSetRecoilState(overlayOpenState);
   const setPromptDesignerAttachedNode = useSetRecoilState(promptDesignerAttachedChatNodeState);
 
   const handleOpenPromptDesigner = () => {
-    setPromptDesignerState((s) => ({ ...s, isOpen: true }));
+    setOverlayOpen('promptDesigner');
     setPromptDesignerAttachedNode({
       nodeId: node.id,
       processId: processId!,
