@@ -1,5 +1,9 @@
-version: 3
+version: 4
 data:
+  attachedData:
+    trivet:
+      testSuites: []
+      version: 1
   graphs:
     1C7HNzd5v7ULqf04-5Uob:
       metadata:
@@ -7,69 +11,49 @@ data:
         id: 1C7HNzd5v7ULqf04-5Uob
         name: RA - Recall Memories
       nodes:
-        9HlRtZ5rPSP7q5FiAHjP4:
+        '[9HlRtZ5rPSP7q5FiAHjP4]:graphOutput "Graph Output"':
           data:
             dataType: object[]
             id: items
-          id: 9HlRtZ5rPSP7q5FiAHjP4
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 1633.1906333726722/443.91188062401466/300/31
-        QD7tiW9UZpo6N30A5foaD:
+        '[QD7tiW9UZpo6N30A5foaD]:extractObjectPath "Extract Object Path"':
           data:
             path: $.topic
             usePathInput: false
-          id: QD7tiW9UZpo6N30A5foaD
-          outgoingConnections: []
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 683/375/250/2
-        UqDCzlc17MI37nenyQCWR:
+        '[UqDCzlc17MI37nenyQCWR]:graphInput "Graph Input"':
           data:
             dataType: string
             defaultValue: This is a test topic
             id: topic
             useDefaultValueInput: false
-          id: UqDCzlc17MI37nenyQCWR
           outgoingConnections:
             - data->"Get Embedding" u0PxZtqctJpURQO38Gg9s/input
-          title: Graph Input
-          type: graphInput
           visualData: 316.85283656184424/219.3939539319971/300/29
-        ZljA5lFqK9KWtpwOGZFSZ:
+        '[ZljA5lFqK9KWtpwOGZFSZ]:vectorNearestNeighbors "Vector KNN"':
           data:
             collectionId: rivet-3ff65ea.svc.us-west1-gcp-free.pinecone.io/test1
             integration: pinecone
             k: 10
             useKInput: true
-          id: ZljA5lFqK9KWtpwOGZFSZ
           outgoingConnections:
             - results->"Graph Output" 9HlRtZ5rPSP7q5FiAHjP4/value
-          title: Vector KNN
-          type: vectorNearestNeighbors
           visualData: 1279.3360881667509/408.90705286005004/200/24
-        u0PxZtqctJpURQO38Gg9s:
+        '[u0PxZtqctJpURQO38Gg9s]:getEmbedding "Get Embedding"':
           data:
             integration: openai
             useIntegrationInput: false
-          id: u0PxZtqctJpURQO38Gg9s
           outgoingConnections:
             - embedding->"Vector KNN" ZljA5lFqK9KWtpwOGZFSZ/vector
-          title: Get Embedding
-          type: getEmbedding
           visualData: 1033.9087435447254/383.59221170727943/200/23
-        uL9pTJZMx-cuabCpqrtFI:
+        '[uL9pTJZMx-cuabCpqrtFI]:graphInput "Graph Input"':
           data:
             dataType: number
             defaultValue: "3"
             id: n
             useDefaultValueInput: false
-          id: uL9pTJZMx-cuabCpqrtFI
           outgoingConnections:
             - data->"Vector KNN" ZljA5lFqK9KWtpwOGZFSZ/k
-          title: Graph Input
-          type: graphInput
           visualData: 313.1910654160657/406.14428236670517/300/30
     3BWUibK-Zr_i2GjKA277_:
       metadata:
@@ -77,35 +61,25 @@ data:
         id: 3BWUibK-Zr_i2GjKA277_
         name: RA - Extract Commands
       nodes:
-        U-sUa3iW4WAjSKQNC8_1e:
+        '[U-sUa3iW4WAjSKQNC8_1e]:graphInput "Graph Input"':
           data:
             dataType: string
             id: input
             useDefaultValueInput: false
-          id: U-sUa3iW4WAjSKQNC8_1e
           outgoingConnections:
             - data->"Extract YAML" WLtSibdAgyBDWM6gSuUhR/input
-          title: Graph Input
-          type: graphInput
           visualData: 259/369/300/1
-        WLtSibdAgyBDWM6gSuUhR:
+        '[WLtSibdAgyBDWM6gSuUhR]:extractYaml "Extract YAML"':
           data:
             objectPath: $.systemCommands[*]
             rootPropertyName: systemCommands
-          id: WLtSibdAgyBDWM6gSuUhR
           outgoingConnections:
             - matches->"Graph Output" g3sxYEM5E-xJYvcuuGZRB/value
-          title: Extract YAML
-          type: extractYaml
           visualData: 613/378/250/3
-        g3sxYEM5E-xJYvcuuGZRB:
+        '[g3sxYEM5E-xJYvcuuGZRB]:graphOutput "Graph Output"':
           data:
             dataType: object[]
             id: commands
-          id: g3sxYEM5E-xJYvcuuGZRB
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 974.8003300330032/379.94224422442244/300/9
     49ADNSJiXKFRvgaRMhFvP:
       metadata:
@@ -113,16 +87,13 @@ data:
         id: 49ADNSJiXKFRvgaRMhFvP
         name: RA - Get Response
       nodes:
-        6P8d2awK1kumFWb15ecLK:
+        '[6P8d2awK1kumFWb15ecLK]:subGraph "Subgraph"':
           data:
             graphId: HRMMlTL5W-Wau-f7nLLEh
-          id: 6P8d2awK1kumFWb15ecLK
           outgoingConnections:
             - system_prompt->"Chat" 8WoCCKIA_CkgUFUS9Z2ZI/systemPrompt
-          title: Subgraph
-          type: subGraph
           visualData: 1456.4238678422316/454.96652023842444/300/51
-        8WoCCKIA_CkgUFUS9Z2ZI:
+        '[8WoCCKIA_CkgUFUS9Z2ZI]:chat "Chat"':
           data:
             cache: false
             enableFunctionUse: false
@@ -144,138 +115,338 @@ data:
             useTopPInput: false
             useUseTopPInput: false
             useUserInput: false
-          id: 8WoCCKIA_CkgUFUS9Z2ZI
           outgoingConnections:
             - response->"Graph Output" kviYXdprAn_78olEtAd-6/value
             - response->"Prompt" iJA7SfvwwBOoyE88k97cT/input
             - response->"Subgraph" yqSRYu7edOEf3tZQaKswg/input
-          title: Chat
-          type: chat
           visualData: 1965.1016252864763/547.5345614232717/200/67
-        9brCG6eTcOIXX31erjqGu:
-          data: {}
-          id: 9brCG6eTcOIXX31erjqGu
+        '[9brCG6eTcOIXX31erjqGu]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Graph Output" DL8bb2mbzNz2rSU2s7KUu/value
-          title: Assemble Prompt
-          type: assemblePrompt
           visualData: 2872.693974555739/713.594640498702/250/null
-        DL8bb2mbzNz2rSU2s7KUu:
+        '[DL8bb2mbzNz2rSU2s7KUu]:graphOutput "Graph Output"':
           data:
             dataType: chat-message[]
             id: new_messages
-          id: DL8bb2mbzNz2rSU2s7KUu
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 3297.258302221817/669.5769681505825/300/61
-        DjJurzETlQAbzGr1rHdrc:
+        '[DjJurzETlQAbzGr1rHdrc]:graphInput "Graph Input"':
           data:
             dataType: string
             defaultValue: This is a test
             id: prompt_message
             useDefaultValueInput: false
-          id: DjJurzETlQAbzGr1rHdrc
           outgoingConnections:
             - data->"Prompt" _ALVrW2X1sanCPkXgVBtx/input
-          title: Graph Input
-          type: graphInput
           visualData: 544.1815668099302/926.8873241664447/300/63
-        Kc9vHiGqFgor7QZhi1ezN:
+        '[Kc9vHiGqFgor7QZhi1ezN]:trimChatMessages "Trim Chat Messages"':
           data:
             maxTokenCount: 4096
             model: gpt-4
             removeFromBeginning: true
-          id: Kc9vHiGqFgor7QZhi1ezN
           outgoingConnections:
             - trimmed->"Chat" 8WoCCKIA_CkgUFUS9Z2ZI/prompt
-          title: Trim Chat Messages
-          type: trimChatMessages
           visualData: 1658.6972703882811/613.0651361023686/200/55
-        _ALVrW2X1sanCPkXgVBtx:
+        '[_ALVrW2X1sanCPkXgVBtx]:prompt "Prompt"':
           data:
             enableFunctionCall: false
             name: SYSTEM INFORMATION
             promptText: "{{input}}"
             type: user
             useTypeInput: false
-          id: _ALVrW2X1sanCPkXgVBtx
           outgoingConnections:
             - output->"Assemble Prompt" uy7Kir4TGhQ-7vrOelzOG/message2
-          title: Prompt
-          type: prompt
           visualData: 949.3527093687692/918.8482141950393/250/65
-        iJA7SfvwwBOoyE88k97cT:
+        '[iJA7SfvwwBOoyE88k97cT]:prompt "Prompt"':
           data:
             enableFunctionCall: false
             promptText: "{{input}}"
             type: assistant
             useTypeInput: false
-          id: iJA7SfvwwBOoyE88k97cT
           outgoingConnections:
             - output->"Assemble Prompt" 9brCG6eTcOIXX31erjqGu/message2
-          title: Prompt
-          type: prompt
           visualData: 2294.628246648416/401.9702599338506/250/16
-        kviYXdprAn_78olEtAd-6:
+        '[kviYXdprAn_78olEtAd-6]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: chat_output
-          id: kviYXdprAn_78olEtAd-6
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 3321.346081191017/948.6316276694499/300/66
-        raxkQiq1D9gedJiuQYUDd:
+        '[raxkQiq1D9gedJiuQYUDd]:graphInput "Graph Input"':
           data:
             dataType: chat-message[]
             id: current_messages
-          id: raxkQiq1D9gedJiuQYUDd
           outgoingConnections:
             - data->"Assemble Prompt" uy7Kir4TGhQ-7vrOelzOG/message1
-          title: Graph Input
-          type: graphInput
           visualData: 833.2481831324469/704.4215206372613/300/57
-        s_dZ9oRH1p1IJCuyKuyg3:
+        '[s_dZ9oRH1p1IJCuyKuyg3]:subGraph "Subgraph"':
           data:
             graphId: u6yVHvgJi01zZYY_5f4y3
-          id: s_dZ9oRH1p1IJCuyKuyg3
           outgoingConnections:
             - commands_output->"Assemble Prompt" 9brCG6eTcOIXX31erjqGu/message3
-          title: Subgraph
-          type: subGraph
           visualData: 2560.6006996846772/602.3956477259945/196.3548034934497/13
-        uy7Kir4TGhQ-7vrOelzOG:
-          data: {}
-          id: uy7Kir4TGhQ-7vrOelzOG
+        '[uy7Kir4TGhQ-7vrOelzOG]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Assemble Prompt" 9brCG6eTcOIXX31erjqGu/message1
             - prompt->"Trim Chat Messages" Kc9vHiGqFgor7QZhi1ezN/input
-          title: Assemble Prompt
-          type: assemblePrompt
           visualData: 1313.7972976989524/681.9189138753514/250/58
-        yqSRYu7edOEf3tZQaKswg:
+        '[yqSRYu7edOEf3tZQaKswg]:subGraph "Subgraph"':
           data:
             graphId: 3BWUibK-Zr_i2GjKA277_
-          id: yqSRYu7edOEf3tZQaKswg
           outgoingConnections:
             - commands->"Subgraph" s_dZ9oRH1p1IJCuyKuyg3/commands
-          title: Subgraph
-          type: subGraph
           visualData: 2264.247517768967/599.2763797815367/202.5425764192139/11
+    5S6OjvRiN5DSNiYVUxf2d:
+      metadata:
+        description: ""
+        id: 5S6OjvRiN5DSNiYVUxf2d
+        name: Graph Maker
+      nodes:
+        '[-ELvIeQcb0AtnN6y0Y4w9]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: >-
+              You are an AI for creating graphs in Rivet based on a user's
+              specifications. You know everything you can do with Rivet, and you
+              create an entire graph in plain english based on the user's
+              request.
+
+
+              Rivet Specification:
+
+
+              {{rivet}}
+
+
+
+              # Goal
+
+
+              The user will ask you to create a graph. You must output a series of steps you will take to great a graph like the user has asked for.
+
+
+              For example:
+
+
+              - Add a X node and name it "Foo"
+
+              - Add a Y node and name it "Bar"
+
+              - Connect the "x" output of Foo to the Y output of Bar
+
+              - Etc
+
+
+              Your steps should be extremely thorough, complete, and in plain english.
+            type: system
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Chat" Sao72Qnzs9LA6eJXT5FX8/systemPrompt
+          visualData: 1262/546/250/3
+        '[Sao72Qnzs9LA6eJXT5FX8]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          visualData: 1639/620/200/5
+        '[hn39Ds4GBHK0C8LkBmA5X]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: Can you give me a graph that would be suitable as a tutorial?
+            type: user
+            useTypeInput: false
+          visualData: 1131/925/250/null
+        '[qp4n1iV7rXEYXlfWsXUkl]:text "Text"':
+          data:
+            text: >-
+              # Rivet
+
+
+              Rivet is a graph-based tool for creating AI large languagte models chains and AI agents. Rivet works by linking together nodes using their input and output ports. Data flows through the wires to the next node. The graphs start at nodes without inputs, and proceed to nodes without outputs. Graphs are turing-complete due to the variety of nodes available.
+
+
+              ## Nodes
+
+
+              Available nodes are:
+
+
+              #### Text Node
+
+
+              Outputs a string of text. It can also interpolate values using interpolation tags. Inputs are dynamic based on the tags (words inside {{}}).
+
+
+              #### Prompt Node
+
+
+              Outputs a Chat Message, which is a string of text with an attached "Assistant", "User", or "System" tag, and optionally a message.
+
+
+              #### Chunk Node
+
+
+              Splits the input text into an array of chunks based on an approximate GPT token count per chunk.
+
+
+              #### Extract With Regex Node
+
+
+              Extracts data from the input text using the configured regular expression. The regular expression can contain capture groups to extract specific parts of the text.
+
+
+              Each capture group corresponds to an output port of the node.
+
+
+              #### Chat Node
+
+
+              Performs a chat with OpenAI. Takes two inputs - a system prompt (optional) and a prompt (which is either a list of strings, chat-messages, or a single string/chat-message). Outputs the response from the AI.
+
+
+              #### Assemble Prompt Node
+
+
+              Takes in a list of strings or chat-messages or arrays of each and outputs a flat list of chat messages for use with a Chat Node.
+
+
+              #### Array Node
+
+
+              Creates an array from the input values. Number of inputs is unlimited. Outputs the array, and its length, and the indexes.
+
+
+              #### Pop Node
+
+
+              Pops the last value off the input array and outputs the new array and the popped value.
+
+
+              #### Number Node
+
+
+              Outputs a configurable number.
+
+
+              #### Extract JSON
+
+
+              Given a string, extracts a JSON object out of the string, parses it, and outputs the object.
+
+
+              #### Extract YAML
+
+
+              Given a string, extracts a YAML object out of the string (must start with `yamlDocument:` by default) and outputs the object.
+
+
+              #### Extract Object Path
+
+
+              Uses jsonpath to extract something out of an object. Outputs the extracted value.
+
+
+              #### Bool Node
+
+
+              Outputs a boolean value.
+
+
+              #### Match Node
+
+
+              Configured with a list of strings. Each string is a regular expression. For the matching regex, the output port with the same index is given the input string. All other output ports are not ran.
+
+
+              #### If Node
+
+
+              Two inputs - if and value. If the `if` value is truthy, the `value` is passed through. Otherwise, the output is not ran.
+
+
+              #### If/Else Node
+
+
+              Three inputs, `if`, `true`, and `false`. If the `if` value is truthy, the `true` value is passed through. Otherwise, the `false` value is passed through.
+
+
+              #### Loop Controller Node
+
+
+              Marks a loop. The `continue` input specifies whether the loop should continue after the first iteration. Contains unlimited pairs of values. For example, `input1` is the value that should be output for `output2`, except for the first iteration, which takes its value from the `input1Default` input. Nodes inside the loop should wrap around to connect to the `inputX` inputs or the `continue` input. The `break` output is executed when `continue` is false, and has the list of values.
+
+
+              #### Coalesce Node
+
+
+              Any number of inputs. Takes the first non-null input and outputs it.
+
+
+              #### Graph Output Node
+
+
+              Each instance of this node represents an individual output of the graph. The value passed into this node becomes part of the overall output of the graph. The `id` data of this specifies the name of the output.
+
+
+              #### Graph Input Node 
+
+
+              Defines an input for the graph which can be passed in when the graph is called, or defines one of the input ports when the graph is a subgraph. The `id` data of this specifies the name of the input.
+
+
+              #### User Input Node
+
+
+              Prompts the user for input during the execution of the graph. The user's response becomes the output of this node. Can be configured to either prompt with and input port, or with a static configured text.
+
+
+              #### Subgraph Node
+
+
+              Calls a subgraph as a node. The inputs of the node come from the graph's Graph Input Nodes, and the outputs of the node come from the Graph Output Nodes.
+
+
+              #### External Call Node
+
+
+              Calls a function in the external library that is executing Rivet. 
+
+
+              #### Code Node
+
+
+              Executes arbitrary JavaScript code. Takes in one input and has one output.
+          outgoingConnections:
+            - output->"Prompt" -ELvIeQcb0AtnN6y0Y4w9/rivet
+          visualData: 845/412/300/4
     7zpW_cdTXlsQbF5nNcgKP:
       metadata:
         description: ""
         id: 7zpW_cdTXlsQbF5nNcgKP
         name: "RA - Command: ASK_QUESTION_ABOUT_FILE"
       nodes:
-        2338y8qNrzrbfDmzXJvhr:
+        '[2338y8qNrzrbfDmzXJvhr]:chunk "Chunk"':
           data:
             model: gpt-4
             numTokensPerChunk: 4096
             overlap: 0
             useModelInput: false
-          id: 2338y8qNrzrbfDmzXJvhr
           outgoingConnections:
             - chunks->"Text" nELWKzIKfsG5PysjF-cSg/contents
             - count->"Text" BiOEV7VKd8ZRQz8vwM9Ng/count
@@ -283,22 +454,17 @@ data:
             - count->"Text" nELWKzIKfsG5PysjF-cSg/count
             - indexes->"Text" gpA-l85r9DUJnZux3JRjt/index
             - indexes->"Text" nELWKzIKfsG5PysjF-cSg/index
-          title: Chunk
-          type: chunk
           visualData: 1200.8357446452283/346.2666438124874/200/23
-        2_eg1SZ7lUW33gIXYfrVK:
+        '[2_eg1SZ7lUW33gIXYfrVK]:graphInput "Graph Input"':
           data:
             dataType: object
             id: arguments
             useDefaultValueInput: false
-          id: 2_eg1SZ7lUW33gIXYfrVK
           outgoingConnections:
             - data->"Extract Object Path" ei3qRQVhPSrVddaO5bU-U/object
             - data->"Extract Object Path" m9kiRPWzz-lraxQy_98B8/object
-          title: Graph Input
-          type: graphInput
           visualData: 239/357/300/1
-        BiOEV7VKd8ZRQz8vwM9Ng:
+        '[BiOEV7VKd8ZRQz8vwM9Ng]:text "Text"':
           data:
             text: >-
               A question was asked about the file {{file_name}}. It was chunked
@@ -312,22 +478,15 @@ data:
 
 
               You must now combine these answers into a single answer for this question: {{question}}
-          id: BiOEV7VKd8ZRQz8vwM9Ng
           outgoingConnections:
             - output->"Chat" rIyqK6UuYqLaIO23zgYM8/prompt
-          title: Text
-          type: text
           visualData: 2459.7712182931887/307.24034013325036/300/31
-        LbDS-ehJ0WcfC2CipqmJ-:
+        '[LbDS-ehJ0WcfC2CipqmJ-]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: output
-          id: LbDS-ehJ0WcfC2CipqmJ-
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 3124.0951810571714/389.4792142403751/300/32
-        Thf0b7P0ZBeb7ILxkuzVU:
+        '[Thf0b7P0ZBeb7ILxkuzVU]:text "Text"':
           data:
             text: You are a code file analyzer and question answerer. You are given the
               contents of a file of code, and you are given a question about the
@@ -335,38 +494,29 @@ data:
               as possible. However, you do not output code unless you are
               explicitly asked to reply with some code. Otherwise, you reply
               with plain English only.
-          id: Thf0b7P0ZBeb7ILxkuzVU
           outgoingConnections:
             - output->"Chat" jw7ZxX561t7Q_TYnVDEMW/systemPrompt
             - output->"Chat" rIyqK6UuYqLaIO23zgYM8/systemPrompt
-          title: Text
-          type: text
           visualData: 1309.0936877506306/104.97158147670746/300/18
-        ei3qRQVhPSrVddaO5bU-U:
+        '[ei3qRQVhPSrVddaO5bU-U]:extractObjectPath "Extract Object Path"':
           data:
             path: $.question
             usePathInput: false
-          id: ei3qRQVhPSrVddaO5bU-U
           outgoingConnections:
             - match->"Text" BiOEV7VKd8ZRQz8vwM9Ng/question
             - match->"Text" nELWKzIKfsG5PysjF-cSg/question
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 611.4508579916097/714.4118633508281/250/21
-        gpA-l85r9DUJnZux3JRjt:
+        '[gpA-l85r9DUJnZux3JRjt]:text "Text"':
           data:
             text: |-
               Chunk {{index}}/{{count}} answer:
 
               {{answer}}
-          id: gpA-l85r9DUJnZux3JRjt
           isSplitRun: true
           outgoingConnections:
             - output->"Text" BiOEV7VKd8ZRQz8vwM9Ng/results
-          title: Text
-          type: text
           visualData: 2049.0387588414633/427.4218704794111/300/30
-        jw7ZxX561t7Q_TYnVDEMW:
+        '[jw7ZxX561t7Q_TYnVDEMW]:chat "Chat"':
           data:
             cache: false
             enableFunctionUse: false
@@ -388,37 +538,28 @@ data:
             useTopPInput: false
             useUseTopPInput: false
             useUserInput: false
-          id: jw7ZxX561t7Q_TYnVDEMW
           isSplitRun: true
           outgoingConnections:
             - response->"Text" gpA-l85r9DUJnZux3JRjt/answer
-          title: Chat
-          type: chat
           visualData: 1797.1530762644013/444.63882974839595/200/25
-        lRV5SdMeGyEUVDkTN31ga:
+        '[lRV5SdMeGyEUVDkTN31ga]:readFile "Read File"':
           data:
             errorOnMissingFile: false
             path: ""
             usePathInput: true
-          id: lRV5SdMeGyEUVDkTN31ga
           outgoingConnections:
             - content->"Chunk" 2338y8qNrzrbfDmzXJvhr/input
-          title: Read File
-          type: readFile
           visualData: 907.7722794413804/405.417269725349/250/12
-        m9kiRPWzz-lraxQy_98B8:
+        '[m9kiRPWzz-lraxQy_98B8]:extractObjectPath "Extract Object Path"':
           data:
             path: $.path
             usePathInput: false
-          id: m9kiRPWzz-lraxQy_98B8
           outgoingConnections:
             - match->"Read File" lRV5SdMeGyEUVDkTN31ga/path
             - match->"Text" BiOEV7VKd8ZRQz8vwM9Ng/file_name
             - match->"Text" nELWKzIKfsG5PysjF-cSg/file_name
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 613/365/250/2
-        nELWKzIKfsG5PysjF-cSg:
+        '[nELWKzIKfsG5PysjF-cSg]:text "Text"':
           data:
             text: >-
               Here is chunk {{index}}/{{count}} of a code file:
@@ -442,14 +583,11 @@ data:
 
 
               If the file does not exist, instruct the AI calling you that they should use READ_DIRECTORY and then call ASK_QUESTION_ABOUT_FILE again with the correct path.
-          id: nELWKzIKfsG5PysjF-cSg
           isSplitRun: true
           outgoingConnections:
             - output->"Chat" jw7ZxX561t7Q_TYnVDEMW/prompt
-          title: Text
-          type: text
           visualData: 1446.7677235772446/307.9993433915212/300/24
-        rIyqK6UuYqLaIO23zgYM8:
+        '[rIyqK6UuYqLaIO23zgYM8]:chat "Chat"':
           data:
             cache: false
             enableFunctionUse: false
@@ -471,11 +609,8 @@ data:
             useTopPInput: false
             useUseTopPInput: false
             useUserInput: false
-          id: rIyqK6UuYqLaIO23zgYM8
           outgoingConnections:
             - response->"Graph Output" LbDS-ehJ0WcfC2CipqmJ-/value
-          title: Chat
-          type: chat
           visualData: 2868.4447571236283/398.6248545653415/200/29
     9cRiigw77WY0G_wWDYp4Z:
       metadata:
@@ -483,25 +618,19 @@ data:
         id: 9cRiigw77WY0G_wWDYp4Z
         name: RA - Exec Command
       nodes:
-        1e5oUEYX0KeJz114J2SRQ:
+        '[1e5oUEYX0KeJz114J2SRQ]:subGraph "Subgraph"':
           data:
             graphId: g_lk18P0-BSirYNE2qGAa
-          id: 1e5oUEYX0KeJz114J2SRQ
           outgoingConnections:
             - output->"Coalesce" S-OKN_ugeBGnO3Ud4ks6N/input5
-          title: Subgraph
-          type: subGraph
           visualData: 1509.9285357359627/645.4094053848103/300/23
-        6-rZH-2eS8k3Ez0ygZgJn:
+        '[6-rZH-2eS8k3Ez0ygZgJn]:subGraph "Subgraph"':
           data:
             graphId: sgqPsMPVjV-hHvsAloa3y
-          id: 6-rZH-2eS8k3Ez0ygZgJn
           outgoingConnections:
             - output->"Coalesce" S-OKN_ugeBGnO3Ud4ks6N/input2
-          title: Subgraph
-          type: subGraph
           visualData: 1508.6082012202514/212.33968423150543/300/17
-        6eBKxYuyo2HBelLbBCBPY:
+        '[6eBKxYuyo2HBelLbBCBPY]:match "Match"':
           data:
             caseCount: 5
             cases:
@@ -510,7 +639,6 @@ data:
               - ASK_QUESTION_ABOUT_FILE
               - REMEMBER_INFO
               - RECALL_INFO
-          id: 6eBKxYuyo2HBelLbBCBPY
           outgoingConnections:
             - case1->"If" HAqjF_Aqyiy8VjSaIdEOU/if
             - case2->"If" F7NBKP3NaBGQSztiVle1n/if
@@ -518,88 +646,53 @@ data:
             - case4->"If" NNy8ZDMLOw45F_obP7Yfc/if
             - case5->"If" VGAj7Qwxgvf3Iz296cxfd/if
             - unmatched->"If" wJMY-M1cWCp5fp6z5WU98/if
-          title: Match
-          type: match
           visualData: 952.9784825017156/161.27627193412414/300/9
-        F7NBKP3NaBGQSztiVle1n:
-          data: {}
-          id: F7NBKP3NaBGQSztiVle1n
+        '[F7NBKP3NaBGQSztiVle1n]:if "If"':
           outgoingConnections:
             - output->"Subgraph" 6-rZH-2eS8k3Ez0ygZgJn/arguments
-          title: If
-          type: if
           visualData: 1350.055268436117/226.14086450213313/125/16
-        HAqjF_Aqyiy8VjSaIdEOU:
-          data: {}
-          id: HAqjF_Aqyiy8VjSaIdEOU
+        '[HAqjF_Aqyiy8VjSaIdEOU]:if "If"':
           outgoingConnections:
             - output->"Subgraph" WoDTNQabmc1rZf2jFKGSK/arguments
-          title: If
-          type: if
           visualData: 1350.055268436117/89.17149806221684/125/11
-        KtUEcTsgXn45Bx3A0VTeD:
-          data: {}
-          id: KtUEcTsgXn45Bx3A0VTeD
+        '[KtUEcTsgXn45Bx3A0VTeD]:if "If"':
           outgoingConnections:
             - output->"Subgraph" dzs2pgnFjSyTESOtah5Ct/arguments
-          title: If
-          type: if
           visualData: 1343.4535958575607/361.7898964263381/125/18
-        NNy8ZDMLOw45F_obP7Yfc:
-          data: {}
-          id: NNy8ZDMLOw45F_obP7Yfc
+        '[NNy8ZDMLOw45F_obP7Yfc]:if "If"':
           outgoingConnections:
             - output->"Subgraph" xfdWAxd2JfuEbN1ZBgMC5/arguments
-          title: If
-          type: if
           visualData: 1343.4535958575607/513.2829425390786/125/20
-        S-OKN_ugeBGnO3Ud4ks6N:
-          data: {}
-          id: S-OKN_ugeBGnO3Ud4ks6N
+        '[S-OKN_ugeBGnO3Ud4ks6N]:coalesce "Coalesce"':
           outgoingConnections:
             - output->"Prompt" eEXAsNDCNSOuZyEHA8EOH/results
-          title: Coalesce
-          type: coalesce
           visualData: 2036.7420075047696/15.609841390522348/150/15
-        SxQDo-a8rRHE1wic8UNx1:
+        '[SxQDo-a8rRHE1wic8UNx1]:graphInput "Graph Input"':
           data:
             dataType: object
             id: command
             useDefaultValueInput: false
-          id: SxQDo-a8rRHE1wic8UNx1
           outgoingConnections:
             - data->"Name" gQ9J8ptvSpdHjC0K_0Bk0/object
             - data->"Name" hy2vJwbBEwYKCjMs2OMTP/object
-          title: Graph Input
-          type: graphInput
           visualData: 272/386/300/1
-        VGAj7Qwxgvf3Iz296cxfd:
-          data: {}
-          id: VGAj7Qwxgvf3Iz296cxfd
+        '[VGAj7Qwxgvf3Iz296cxfd]:if "If"':
           outgoingConnections:
             - output->"Subgraph" 1e5oUEYX0KeJz114J2SRQ/arguments
-          title: If
-          type: if
           visualData: 1343.4535958575607/638.3692983375932/125/22
-        WoDTNQabmc1rZf2jFKGSK:
+        '[WoDTNQabmc1rZf2jFKGSK]:subGraph "Subgraph"':
           data:
             graphId: lXUC_1uq9nRw3WNXCkpdB
-          id: WoDTNQabmc1rZf2jFKGSK
           outgoingConnections:
             - output->"Coalesce" S-OKN_ugeBGnO3Ud4ks6N/input1
-          title: Subgraph
-          type: subGraph
           visualData: 1507.9088279784255/73.58102304569259/300/12
-        dzs2pgnFjSyTESOtah5Ct:
+        '[dzs2pgnFjSyTESOtah5Ct]:subGraph "Subgraph"':
           data:
             graphId: 7zpW_cdTXlsQbF5nNcgKP
-          id: dzs2pgnFjSyTESOtah5Ct
           outgoingConnections:
             - output->"Coalesce" S-OKN_ugeBGnO3Ud4ks6N/input3
-          title: Subgraph
-          type: subGraph
           visualData: 1515.2098737988078/357.57648095974787/300/19
-        eEXAsNDCNSOuZyEHA8EOH:
+        '[eEXAsNDCNSOuZyEHA8EOH]:prompt "Prompt"':
           data:
             enableFunctionCall: false
             name: SYSTEM INFORMATION
@@ -611,75 +704,52 @@ data:
               """
             type: user
             useTypeInput: false
-          id: eEXAsNDCNSOuZyEHA8EOH
           outgoingConnections:
             - output->"Graph Output" z-12fYeNh0c6lZAGDQC5i/value
-          title: Prompt
-          type: prompt
           visualData: 2254.428902438278/-109.11378005033785/250/24
-        gQ9J8ptvSpdHjC0K_0Bk0:
+        '[gQ9J8ptvSpdHjC0K_0Bk0]:extractObjectPath "Name"':
           data:
             path: |
               $.arguments
             usePathInput: false
-          id: gQ9J8ptvSpdHjC0K_0Bk0
           outgoingConnections:
             - match->"If" F7NBKP3NaBGQSztiVle1n/value
             - match->"If" HAqjF_Aqyiy8VjSaIdEOU/value
             - match->"If" KtUEcTsgXn45Bx3A0VTeD/value
             - match->"If" NNy8ZDMLOw45F_obP7Yfc/value
             - match->"If" VGAj7Qwxgvf3Iz296cxfd/value
-          title: Name
-          type: extractObjectPath
           visualData: 719/481/153/5
-        hy2vJwbBEwYKCjMs2OMTP:
+        '[hy2vJwbBEwYKCjMs2OMTP]:extractObjectPath "Name"':
           data:
             path: |
               $.name
             usePathInput: false
-          id: hy2vJwbBEwYKCjMs2OMTP
           outgoingConnections:
             - match->"If" wJMY-M1cWCp5fp6z5WU98/value
             - match->"Match" 6eBKxYuyo2HBelLbBCBPY/input
             - match->"Prompt" eEXAsNDCNSOuZyEHA8EOH/command_name
-          title: Name
-          type: extractObjectPath
           visualData: 719/248/153/4
-        wJMY-M1cWCp5fp6z5WU98:
-          data: {}
-          id: wJMY-M1cWCp5fp6z5WU98
+        '[wJMY-M1cWCp5fp6z5WU98]:if "If"':
           outgoingConnections:
             - output->"Text" zAIWmNhfJj_h3xPx0kewP/command_name
-          title: If
-          type: if
           visualData: 1337.7457048662893/783.8203790315147/125/32
-        xfdWAxd2JfuEbN1ZBgMC5:
+        '[xfdWAxd2JfuEbN1ZBgMC5]:subGraph "Subgraph"':
           data:
             graphId: pgbl6cyJ6kZWZwEb0o7rz
-          id: xfdWAxd2JfuEbN1ZBgMC5
           outgoingConnections:
             - output->"Coalesce" S-OKN_ugeBGnO3Ud4ks6N/input4
-          title: Subgraph
-          type: subGraph
           visualData: 1512.5692047673851/500.1726086565678/300/21
-        z-12fYeNh0c6lZAGDQC5i:
+        '[z-12fYeNh0c6lZAGDQC5i]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: command_output
-          id: z-12fYeNh0c6lZAGDQC5i
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 2622.320441954619/-41.23906807529085/300/27
-        zAIWmNhfJj_h3xPx0kewP:
+        '[zAIWmNhfJj_h3xPx0kewP]:text "Text"':
           data:
             text: Unknown command {{command_name}}! Please refer to the system commands list
               to see all available commands.
-          id: zAIWmNhfJj_h3xPx0kewP
           outgoingConnections:
             - output->"Coalesce" S-OKN_ugeBGnO3Ud4ks6N/input6
-          title: Text
-          type: text
           visualData: 1501.6714910083379/787.9185236850659/300/31
     BCH2-JTaOfU7yrJ1GQRhL:
       metadata:
@@ -687,64 +757,44 @@ data:
         id: BCH2-JTaOfU7yrJ1GQRhL
         name: Extract List Items
       nodes:
-        0ciq8PeUozuVOAQ8D6lQ_:
-          data: {}
-          id: 0ciq8PeUozuVOAQ8D6lQ_
+        '[0ciq8PeUozuVOAQ8D6lQ_]:ifElse "If/Else"':
           outgoingConnections:
             - output->"Graph Output" N-LYZkuLW9qvIFobDpRo5/value
-          title: If/Else
-          type: ifElse
           visualData: 1387/387/125/18
-        FClS4P3cvRs8mZHieN9VO:
+        '[FClS4P3cvRs8mZHieN9VO]:match "Match"':
           data:
             caseCount: 1
             cases:
               - \*
-          id: FClS4P3cvRs8mZHieN9VO
           outgoingConnections:
             - case1->"Extract Regex" uscIqNzkwiFK1zWdxydCj/input
             - case1->"If/Else" 0ciq8PeUozuVOAQ8D6lQ_/if
-          title: Match
-          type: match
           visualData: 663/451/300/12
-        JXxrnJnWCwYxJbnlgh_KM:
+        '[JXxrnJnWCwYxJbnlgh_KM]:graphInput "Graph Input"':
           data:
             dataType: string
             id: text
-          id: JXxrnJnWCwYxJbnlgh_KM
           outgoingConnections:
             - data->"Match" FClS4P3cvRs8mZHieN9VO/input
-          title: Graph Input
-          type: graphInput
           visualData: 288/323/300/8
-        MGGvYxorqqDFpvGmFLWmw:
+        '[MGGvYxorqqDFpvGmFLWmw]:text "Text"':
           data:
             text: ""
-          id: MGGvYxorqqDFpvGmFLWmw
           outgoingConnections:
             - output->"If/Else" 0ciq8PeUozuVOAQ8D6lQ_/false
-          title: Text
-          type: text
           visualData: 688/648/154/16
-        N-LYZkuLW9qvIFobDpRo5:
+        '[N-LYZkuLW9qvIFobDpRo5]:graphOutput "Graph Output"':
           data:
             dataType: string[]
             id: items
-          id: N-LYZkuLW9qvIFobDpRo5
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 1625/402/300/14
-        uscIqNzkwiFK1zWdxydCj:
+        '[uscIqNzkwiFK1zWdxydCj]:extractRegex "Extract Regex"':
           data:
             errorOnFailed: true
             regex: \* (.+)
             useRegexInput: false
-          id: uscIqNzkwiFK1zWdxydCj
           outgoingConnections:
             - matches->"If/Else" 0ciq8PeUozuVOAQ8D6lQ_/true
-          title: Extract Regex
-          type: extractRegex
           visualData: 1035/383/250/13
     DBSqt91CfAs1dewM-IhgT:
       metadata:
@@ -752,94 +802,65 @@ data:
         id: DBSqt91CfAs1dewM-IhgT
         name: RA - Analyze Until Done
       nodes:
-        -r_2kaeMS-ZYUXhsCObVV:
+        '[-r_2kaeMS-ZYUXhsCObVV]:loopController "Loop Controller"':
           data:
             maxIterations: 100
-          id: -r_2kaeMS-ZYUXhsCObVV
           outgoingConnections:
             - break->"Extract Object Path" A1QAexk0N1yzfWytjwrlK/object
             - break->"Extract Object Path" Vd9CYlLETL0sAr2X73_lM/object
             - output1->"Subgraph" vLyGV7ovbUYwCpnVv_YTv/current_messages
-          title: Loop Controller
-          type: loopController
           visualData: 1903.2274878891517/693.1500148714374/250/null
-        2r-NqWWMhUJ2vG07yyGQe:
+        '[2r-NqWWMhUJ2vG07yyGQe]:text "Text"':
           data:
             text: "false"
-          id: 2r-NqWWMhUJ2vG07yyGQe
           outgoingConnections:
             - output->"If/Else" V50VnTrUvH3Xga1LRYKWS/false
-          title: Text
-          type: text
           visualData: 3206.602702252145/1085.4509610314976/300/null
-        A1QAexk0N1yzfWytjwrlK:
+        '[A1QAexk0N1yzfWytjwrlK]:extractObjectPath "Extract Object Path"':
           data:
             path: $[1]
             usePathInput: false
-          id: A1QAexk0N1yzfWytjwrlK
           outgoingConnections:
             - match->"Graph Output" T5dFxOs_MHn0bLFC9aQDN/value
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 2262.08154047184/377.1058722189694/250/99
-        EUuTrue5VkIy2ws195G0o:
+        '[EUuTrue5VkIy2ws195G0o]:match "Match"':
           data:
             caseCount: 1
             cases:
               - RECALL_INFO
-          id: EUuTrue5VkIy2ws195G0o
           outgoingConnections:
             - case1->"If/Else" V50VnTrUvH3Xga1LRYKWS/if
-          title: Match
-          type: match
           visualData: 3025.232574383944/603.9840477327783/300/95
-        Stx1H2iniItB-FoT4f2bS:
+        '[Stx1H2iniItB-FoT4f2bS]:extractYaml "Extract YAML"':
           data:
             objectPath: $.systemCommands[0].name
             rootPropertyName: systemCommands
-          id: Stx1H2iniItB-FoT4f2bS
           outgoingConnections:
             - output->"Match" EUuTrue5VkIy2ws195G0o/input
-          title: Extract YAML
-          type: extractYaml
           visualData: 2683.4297003524184/613.8913774148516/250/94
-        T5dFxOs_MHn0bLFC9aQDN:
+        '[T5dFxOs_MHn0bLFC9aQDN]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: chat_output
-          id: T5dFxOs_MHn0bLFC9aQDN
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 2687.6193939503723/356.4100212762155/300/101
-        V50VnTrUvH3Xga1LRYKWS:
-          data: {}
-          id: V50VnTrUvH3Xga1LRYKWS
+        '[V50VnTrUvH3Xga1LRYKWS]:ifElse "If/Else"':
           outgoingConnections:
             - output->"Loop Controller" -r_2kaeMS-ZYUXhsCObVV/continue
-          title: If/Else
-          type: ifElse
           visualData: 3563.9318877494343/567.0045981448056/125/97
-        Va4d_NrMAW2V8LMdg5WIb:
+        '[Va4d_NrMAW2V8LMdg5WIb]:text "Text"':
           data:
             text: "true"
-          id: Va4d_NrMAW2V8LMdg5WIb
           outgoingConnections:
             - output->"If/Else" V50VnTrUvH3Xga1LRYKWS/true
-          title: Text
-          type: text
           visualData: 3208.1979218302577/870.0963179862564/300/null
-        Vd9CYlLETL0sAr2X73_lM:
+        '[Vd9CYlLETL0sAr2X73_lM]:extractObjectPath "Extract Object Path"':
           data:
             path: $[0]
             usePathInput: false
-          id: Vd9CYlLETL0sAr2X73_lM
           outgoingConnections:
             - match->"Graph Output" xCY6ItteekfA9ycKqnT1Q/value
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 2247.684285398584/163.36755714024667/250/98
-        _fzwpRZw_bUBIul-X2mMs:
+        '[_fzwpRZw_bUBIul-X2mMs]:prompt "Prompt"':
           data:
             enableFunctionCall: false
             name: SYSTEM INFORMATION
@@ -850,12 +871,8 @@ data:
               better the relevant memories can be identified.
             type: user
             useTypeInput: false
-          id: _fzwpRZw_bUBIul-X2mMs
-          outgoingConnections: []
-          title: Prompt
-          type: prompt
           visualData: 1650.9191658546888/358.25772586434255/250/93
-        oW8bIRG1wJNWkXl-NS_qe:
+        '[oW8bIRG1wJNWkXl-NS_qe]:prompt "Prompt"':
           data:
             enableFunctionCall: false
             name: SYSTEM INFORMATION
@@ -867,55 +884,36 @@ data:
               If you have already run RECALL_INFO for the next thing you plan on doing, and you do not have any memories for the task, you may run a command other than RECALL_INFO to further your memories.
             type: user
             useTypeInput: false
-          id: oW8bIRG1wJNWkXl-NS_qe
           outgoingConnections:
             - output->"Subgraph" vLyGV7ovbUYwCpnVv_YTv/prompt_message
-          title: Prompt
-          type: prompt
           visualData: 1903.556072747556/496.03363823409995/250/92
-        tSUsLaivP4rtiuLalg8Rn:
+        '[tSUsLaivP4rtiuLalg8Rn]:graphInput "Graph Input"':
           data:
             dataType: any
             id: current_messages
-          id: tSUsLaivP4rtiuLalg8Rn
           outgoingConnections:
             - data->"Loop Controller" -r_2kaeMS-ZYUXhsCObVV/input1Default
-          title: Graph Input
-          type: graphInput
           visualData: 1361.7278909749107/715.2333074499701/300/87
-        vLyGV7ovbUYwCpnVv_YTv:
+        '[vLyGV7ovbUYwCpnVv_YTv]:subGraph "Subgraph"':
           data:
             graphId: 49ADNSJiXKFRvgaRMhFvP
-          id: vLyGV7ovbUYwCpnVv_YTv
           outgoingConnections:
             - chat_output->"Extract YAML" Stx1H2iniItB-FoT4f2bS/input
             - chat_output->"Loop Controller" -r_2kaeMS-ZYUXhsCObVV/input2
             - new_messages->"Loop Controller" -r_2kaeMS-ZYUXhsCObVV/input1
-          title: Subgraph
-          type: subGraph
           visualData: 2292.6967321450957/710.3927639039126/300/90
-        xCY6ItteekfA9ycKqnT1Q:
+        '[xCY6ItteekfA9ycKqnT1Q]:graphOutput "Graph Output"':
           data:
             dataType: chat-message[]
             id: new_messages
-          id: xCY6ItteekfA9ycKqnT1Q
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 2699.672402408892/135.11899467921754/300/100
-    GHCFrZ4a-LuzXZzUZwVjt:
-      metadata:
-        description: ""
-        id: GHCFrZ4a-LuzXZzUZwVjt
-        name: Untitled Graph
-      nodes: {}
     HRMMlTL5W-Wau-f7nLLEh:
       metadata:
         description: ""
         id: HRMMlTL5W-Wau-f7nLLEh
         name: RA - System Prompt
       nodes:
-        fFj_MIJQSxY4S5DIBtnFk:
+        '[fFj_MIJQSxY4S5DIBtnFk]:text "Text"':
           data:
             text: >-
               # You
@@ -940,29 +938,19 @@ data:
 
 
               {{system_commands}}
-          id: fFj_MIJQSxY4S5DIBtnFk
           outgoingConnections:
             - output->"Graph Output" okr0iIB5gCjEG7zNOfDkP/value
-          title: Text
-          type: text
           visualData: 578/287/300/null
-        hV6TCfunJysRgAgjMK1nj:
+        '[hV6TCfunJysRgAgjMK1nj]:subGraph "Subgraph"':
           data:
             graphId: cWbUqJZE2osNm42Q2ewC9
-          id: hV6TCfunJysRgAgjMK1nj
           outgoingConnections:
             - output->"Text" fFj_MIJQSxY4S5DIBtnFk/system_commands
-          title: Subgraph
-          type: subGraph
           visualData: 179.6969610905414/450.1803932480233/300/53
-        okr0iIB5gCjEG7zNOfDkP:
+        '[okr0iIB5gCjEG7zNOfDkP]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: system_prompt
-          id: okr0iIB5gCjEG7zNOfDkP
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 1078/287/300/null
     HXjZhpWO0hluMiDY6pneE:
       metadata:
@@ -970,7 +958,7 @@ data:
         id: HXjZhpWO0hluMiDY6pneE
         name: Digest File
       nodes:
-        -c9ebiNnhmYedQN8Wo8hw:
+        '[-c9ebiNnhmYedQN8Wo8hw]:chat "Chat"':
           data:
             cache: true
             frequencyPenalty: 0
@@ -990,48 +978,35 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: -c9ebiNnhmYedQN8Wo8hw
           outgoingConnections:
             - response->"Text" IYT_PxYTFx5P4zMzhOqn_/name
             - response->"Text" IYT_PxYTFx5P4zMzhOqn_/responses
-          title: Chat
-          type: chat
           visualData: 1785.4317276583695/362.6631476479146/200/52
-        7VrEtnVAjfEeOfFVEBu_B:
+        '[7VrEtnVAjfEeOfFVEBu_B]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: digest
-          id: 7VrEtnVAjfEeOfFVEBu_B
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 3540.1001678580496/818.9951954575467/300/96
-        BykrT115qLE_8iVjmBCAp:
+        '[BykrT115qLE_8iVjmBCAp]:text "Text"':
           data:
             text: Please tell me what the responsibility for this file is with respect to
               other files. Be extremely thorough in your response. Basically, if
               another person asked you "what is the purpose of this file? What
               does it do?", this would be your detailed response.
-          id: BykrT115qLE_8iVjmBCAp
           outgoingConnections:
             - output->"Assemble Prompt" iNgsHuW1d-8xDv1A21bXK/message3
             - output->"Chat" _Gs7cTnnvcCHLxF8W5mFD/message3
-          title: Text
-          type: text
           visualData: 971.7770959717168/1315.8146243045526/300/94
-        CNa2GH7LRJIXnWGt366QH:
+        '[CNa2GH7LRJIXnWGt366QH]:subGraph "Extract List Items"':
           data:
             graphId: BCH2-JTaOfU7yrJ1GQRhL
-          id: CNa2GH7LRJIXnWGt366QH
           outgoingConnections:
             - items->"Text" f6u3NUOg5S__5gSn8MXUF/exportedTypes
-          title: Extract List Items
-          type: subGraph
           visualData: 2392.746502255515/387.9603279891064/300/59
-        Dl9zJxgRRBk7hQ43xWhZv:
+        '[Dl9zJxgRRBk7hQ43xWhZv]:text "Text"':
           data:
             text: >-
-
+              
 
               Please give me a a list of the top level exported names/functions/etc from this part of the file. Put the items in bullet points.
 
@@ -1042,14 +1017,11 @@ data:
               * type Foo
 
               * type Bar
-          id: Dl9zJxgRRBk7hQ43xWhZv
           outgoingConnections:
             - output->"Assemble Prompt" piQXWR9MhnC5iwPAK7zOC/message3
             - output->"Chat" -c9ebiNnhmYedQN8Wo8hw/message3
-          title: Text
-          type: text
           visualData: 1037.1953261535937/389.80109239577234/300/91
-        H7yY7sJF7zumxm1akfDD5:
+        '[H7yY7sJF7zumxm1akfDD5]:text "Text"':
           data:
             text: |-
               Here is part {{index}}/{{count}} of a file named {{fileName}}:
@@ -1057,7 +1029,6 @@ data:
               ```
               {{content}}
               ```
-          id: H7yY7sJF7zumxm1akfDD5
           outgoingConnections:
             - output->"Assemble Prompt" ZBqKPDo-QOpXD-Xo0XXpD/message2
             - output->"Assemble Prompt" iNgsHuW1d-8xDv1A21bXK/message2
@@ -1065,57 +1036,41 @@ data:
             - output->"Chat" -c9ebiNnhmYedQN8Wo8hw/message2
             - output->"Chat" _Gs7cTnnvcCHLxF8W5mFD/message2
             - output->"Chat" jB5sIeojQRHXqNPoMQ3hD/message2
-          title: Text
-          type: text
           visualData: 921.042358937134/607.8022923490608/300/50
-        IYT_PxYTFx5P4zMzhOqn_:
+        '[IYT_PxYTFx5P4zMzhOqn_]:text "Text"':
           data:
             text: "{{responses}}"
-          id: IYT_PxYTFx5P4zMzhOqn_
           outgoingConnections:
             - output->"Extract List Items" CNa2GH7LRJIXnWGt366QH/text
-          title: Text
-          type: text
           visualData: 2045.0325311729325/391.53579298738487/300/57
-        MA5Uv_ITTzx9NQV08ugic:
+        '[MA5Uv_ITTzx9NQV08ugic]:text "Text"':
           data:
             text: "{{responses}}"
-          id: MA5Uv_ITTzx9NQV08ugic
           outgoingConnections:
             - output->"Text" f6u3NUOg5S__5gSn8MXUF/imports
-          title: Text
-          type: text
           visualData: 2011.055065642513/922.81832877346/300/80
-        SrMnr7J2d7Buwtd0vl8OF:
+        '[SrMnr7J2d7Buwtd0vl8OF]:chunk "Chunk"':
           data:
             model: gpt-3.5-turbo
             numTokensPerChunk: 2048
             overlap: 0
             useModelInput: false
-          id: SrMnr7J2d7Buwtd0vl8OF
           outgoingConnections:
             - chunks->"Text" H7yY7sJF7zumxm1akfDD5/content
             - count->"Text" H7yY7sJF7zumxm1akfDD5/count
             - indexes->"Text" H7yY7sJF7zumxm1akfDD5/index
-          title: Chunk
-          type: chunk
           visualData: 513.6527622586358/541.0860856359533/200/49
-        ZBqKPDo-QOpXD-Xo0XXpD:
-          data: {}
-          id: ZBqKPDo-QOpXD-Xo0XXpD
+        '[ZBqKPDo-QOpXD-Xo0XXpD]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Chat" jB5sIeojQRHXqNPoMQ3hD/prompt
-          title: Assemble Prompt
-          type: assemblePrompt
           visualData: 1434.5456573857782/944.3831259770584/250/93
-        ZghD25qGelXbZLU6VLwLm:
+        '[ZghD25qGelXbZLU6VLwLm]:prompt "Prompt"':
           data:
             promptText: You are a sophisticated AI tool for extracting and analyzing code
               for the purposes of summarizing/digesting a code file. Given a
               request, you give a direct response.
             type: system
             useTypeInput: false
-          id: ZghD25qGelXbZLU6VLwLm
           outgoingConnections:
             - output->"Assemble Prompt" ZBqKPDo-QOpXD-Xo0XXpD/message1
             - output->"Assemble Prompt" iNgsHuW1d-8xDv1A21bXK/message1
@@ -1123,10 +1078,8 @@ data:
             - output->"Chat" -c9ebiNnhmYedQN8Wo8hw/message1
             - output->"Chat" _Gs7cTnnvcCHLxF8W5mFD/message1
             - output->"Chat" jB5sIeojQRHXqNPoMQ3hD/message1
-          title: Prompt
-          type: prompt
           visualData: 331.1046122293854/209.09150971792653/null/42
-        _Gs7cTnnvcCHLxF8W5mFD:
+        '[_Gs7cTnnvcCHLxF8W5mFD]:chat "Chat"':
           data:
             cache: true
             frequencyPenalty: 0.2
@@ -1146,22 +1099,16 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: _Gs7cTnnvcCHLxF8W5mFD
           outgoingConnections:
             - response->"Text" qP77T0iicnT05aOyXu4bl/responses
-          title: Chat
-          type: chat
           visualData: 1787.0996057501923/1218.8364162908351/200/73
-        cQlhtmjsV2OU-_F9vbLni:
+        '[cQlhtmjsV2OU-_F9vbLni]:text "Text"':
           data:
             text: "{{fileName}}"
-          id: cQlhtmjsV2OU-_F9vbLni
           outgoingConnections:
             - output->"Text" f6u3NUOg5S__5gSn8MXUF/fileName
-          title: Text
-          type: text
           visualData: 2237.7406238561566/643.7676374637542/141.47817312027655/68
-        f6u3NUOg5S__5gSn8MXUF:
+        '[f6u3NUOg5S__5gSn8MXUF]:text "Text"':
           data:
             text: |-
               Here is a summary of {{fileName}}:
@@ -1177,21 +1124,14 @@ data:
               """
               {{summary}}
               ""
-          id: f6u3NUOg5S__5gSn8MXUF
           outgoingConnections:
             - output->"Graph Output" 7VrEtnVAjfEeOfFVEBu_B/value
-          title: Text
-          type: text
           visualData: 3159.6649042897557/663.832260816221/300/90
-        iNgsHuW1d-8xDv1A21bXK:
-          data: {}
-          id: iNgsHuW1d-8xDv1A21bXK
+        '[iNgsHuW1d-8xDv1A21bXK]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Chat" _Gs7cTnnvcCHLxF8W5mFD/prompt
-          title: Assemble Prompt
-          type: assemblePrompt
           visualData: 1427.8561981049036/1298.9244678634084/250/95
-        jB5sIeojQRHXqNPoMQ3hD:
+        '[jB5sIeojQRHXqNPoMQ3hD]:chat "Chat"':
           data:
             cache: true
             frequencyPenalty: 0
@@ -1211,25 +1151,19 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: jB5sIeojQRHXqNPoMQ3hD
           outgoingConnections:
             - response->"Text" MA5Uv_ITTzx9NQV08ugic/responses
-          title: Chat
-          type: chat
           visualData: 1785.2088940836688/871.453829230769/200/62
-        pVOBgjtUCeoRf7O_aUK5z:
+        '[pVOBgjtUCeoRf7O_aUK5z]:graphInput "Graph Input"':
           data:
             dataType: string
             defaultValue: Nodes.ts
             id: file_name
-          id: pVOBgjtUCeoRf7O_aUK5z
           outgoingConnections:
             - data->"Text" H7yY7sJF7zumxm1akfDD5/fileName
             - data->"Text" cQlhtmjsV2OU-_F9vbLni/fileName
-          title: Graph Input
-          type: graphInput
           visualData: 467.8341151842628/843.852274140362/300/77
-        pZFkwyQ1DNAh158xMFaOr:
+        '[pZFkwyQ1DNAh158xMFaOr]:text "Text"':
           data:
             text: >-
               If there are any relative imports, please list the files that are
@@ -1249,42 +1183,29 @@ data:
 
 
               NO IMPORTS
-          id: pZFkwyQ1DNAh158xMFaOr
           outgoingConnections:
             - output->"Assemble Prompt" ZBqKPDo-QOpXD-Xo0XXpD/message3
             - output->"Chat" jB5sIeojQRHXqNPoMQ3hD/message3
-          title: Text
-          type: text
           visualData: 985.2658327776197/899.6643074227177/300/92
-        piQXWR9MhnC5iwPAK7zOC:
-          data: {}
-          id: piQXWR9MhnC5iwPAK7zOC
+        '[piQXWR9MhnC5iwPAK7zOC]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Chat" -c9ebiNnhmYedQN8Wo8hw/prompt
-          title: Assemble Prompt
-          type: assemblePrompt
           visualData: 1470.2227735504423/275.4371978896052/250/null
-        qP77T0iicnT05aOyXu4bl:
+        '[qP77T0iicnT05aOyXu4bl]:text "Text"':
           data:
             text: "{{responses}}"
-          id: qP77T0iicnT05aOyXu4bl
           outgoingConnections:
             - output->"Text" f6u3NUOg5S__5gSn8MXUF/summary
-          title: Text
-          type: text
           visualData: 2068.5571459636226/1283.7209368325432/300/74
-        wGuXGa_VR2yGn5F3Gm-r7:
+        '[wGuXGa_VR2yGn5F3Gm-r7]:graphInput "Graph Input"':
           data:
             dataType: string
             id: file_contents
             useDefaultValueInput: true
-          id: wGuXGa_VR2yGn5F3Gm-r7
           outgoingConnections:
             - data->"Chunk" SrMnr7J2d7Buwtd0vl8OF/input
-          title: Graph Input
-          type: graphInput
           visualData: 141.6021328645315/556.4574325729797/300/78
-        yQD0z-eBeqo0Hmb0yhZ05:
+        '[yQD0z-eBeqo0Hmb0yhZ05]:text "Text"':
           data:
             text: >
               import { ChartNode } from './NodeBase.js';
@@ -1471,11 +1392,8 @@ data:
                 subGraph: 'Subgraph',
                 array: 'Array',
               };
-          id: yQD0z-eBeqo0Hmb0yhZ05
           outgoingConnections:
             - output->"Graph Input" wGuXGa_VR2yGn5F3Gm-r7/default
-          title: Text
-          type: text
           visualData: -252.53117819207165/401.97028781741056/300/97
     JcFUPKbbvOvBQYdvItenL:
       metadata:
@@ -1483,115 +1401,79 @@ data:
         id: JcFUPKbbvOvBQYdvItenL
         name: Get Rivet File By File Name
       nodes:
-        3K-EbZswm_EjMm7YvDp-8:
+        '[3K-EbZswm_EjMm7YvDp-8]:extractRegex "Extract Regex"':
           data:
             errorOnFailed: false
             regex: ([a-zA-Z]+)
             useRegexInput: true
-          id: 3K-EbZswm_EjMm7YvDp-8
           outgoingConnections:
             - output1->"Extract Regex" dC9Q17Nml5jtpt-VrG2E6/input
             - output1->"Text" pL1gfs7YyNnriOtL8t129/path
-          title: Extract Regex
-          type: extractRegex
           visualData: -260.64747296379056/576.2537087926187/250/29
-        6AXzyyVMSyqo6LN36roAj:
+        '[6AXzyyVMSyqo6LN36roAj]:text "Text"':
           data:
             text: (.*{{value}}.*)
-          id: 6AXzyyVMSyqo6LN36roAj
           outgoingConnections:
             - output->"Extract Regex" 3K-EbZswm_EjMm7YvDp-8/regex
-          title: Text
-          type: text
           visualData: -622.3074425333289/708.7566296572189/300/26
-        8WYEygiw4rtsog1_vAhUN:
+        '[8WYEygiw4rtsog1_vAhUN]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: file_name
-          id: 8WYEygiw4rtsog1_vAhUN
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 510/665/300/84
-        DPHvuC_nC6P9cHeMx6AfY:
+        '[DPHvuC_nC6P9cHeMx6AfY]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: abs_path
-          id: DPHvuC_nC6P9cHeMx6AfY
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 498/257/300/85
-        IJx_hhz0xYQMQ6LKp58Ut:
+        '[IJx_hhz0xYQMQ6LKp58Ut]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: file_contents
-          id: IJx_hhz0xYQMQ6LKp58Ut
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 518/453/300/82
-        XhzNj4pzQ2LB31xvUOa38:
+        '[XhzNj4pzQ2LB31xvUOa38]:readFile "Read File"':
           data:
             errorOnMissingFile: false
             path: ""
             usePathInput: true
-          id: XhzNj4pzQ2LB31xvUOa38
           outgoingConnections:
             - content->"Graph Output" IJx_hhz0xYQMQ6LKp58Ut/value
-          title: Read File
-          type: readFile
           visualData: 78.53696254114706/589.5330651481295/250/30
-        dC9Q17Nml5jtpt-VrG2E6:
+        '[dC9Q17Nml5jtpt-VrG2E6]:extractRegex "Extract Regex"':
           data:
             errorOnFailed: false
             regex: ([^/]+$)
             useRegexInput: false
-          id: dC9Q17Nml5jtpt-VrG2E6
           outgoingConnections:
             - output1->"Graph Output" 8WYEygiw4rtsog1_vAhUN/value
-          title: Extract Regex
-          type: extractRegex
           visualData: 75.95255224213457/757.5597475716329/250/34
-        hnMBT-lVJPf62eBijBv23:
+        '[hnMBT-lVJPf62eBijBv23]:subGraph "List Rivet Files"':
           data:
             graphId: d6Pgmz7n8qvXkaNF-2e9P
-          id: hnMBT-lVJPf62eBijBv23
           outgoingConnections:
             - files->"Text" o49i8FBO13BUTSJ9VVpUp/paths
             - root_path->"Text" pL1gfs7YyNnriOtL8t129/root
-          title: List Rivet Files
-          type: subGraph
           visualData: -974/509/300/80
-        o49i8FBO13BUTSJ9VVpUp:
+        '[o49i8FBO13BUTSJ9VVpUp]:text "Text"':
           data:
             text: "{{paths}}"
-          id: o49i8FBO13BUTSJ9VVpUp
           outgoingConnections:
             - output->"Extract Regex" 3K-EbZswm_EjMm7YvDp-8/input
-          title: Text
-          type: text
           visualData: -619.508171986833/504.0287905543141/300/28
-        pL1gfs7YyNnriOtL8t129:
+        '[pL1gfs7YyNnriOtL8t129]:text "Text"':
           data:
             text: "{{root}}/{{path}}"
-          id: pL1gfs7YyNnriOtL8t129
           outgoingConnections:
             - output->"Graph Output" DPHvuC_nC6P9cHeMx6AfY/value
             - output->"Read File" XhzNj4pzQ2LB31xvUOa38/path
-          title: Text
-          type: text
           visualData: -91.24293197539083/370.6588599708293/300/78
-        pS3t0dhKo4pndES52TC25:
+        '[pS3t0dhKo4pndES52TC25]:graphInput "Graph Input"':
           data:
             dataType: string
             defaultValue: GraphProcessor.ts
             id: fileMatch
-          id: pS3t0dhKo4pndES52TC25
           outgoingConnections:
             - data->"Text" 6AXzyyVMSyqo6LN36roAj/value
-          title: Graph Input
-          type: graphInput
           visualData: -973.2451596049881/711.7486797972081/300/24
     KVOCarbcccMX-wOaypQ7L:
       metadata:
@@ -1599,7 +1481,7 @@ data:
         id: KVOCarbcccMX-wOaypQ7L
         name: Ask User Questions
       nodes:
-        0EuQ8ONijZa5voMTZGTps:
+        '[0EuQ8ONijZa5voMTZGTps]:prompt "Prompt"':
           data:
             promptText: >-
               I have the following question or request:
@@ -1633,32 +1515,22 @@ data:
               Questions: NONE
             type: user
             useTypeInput: false
-          id: 0EuQ8ONijZa5voMTZGTps
           outgoingConnections:
             - output->"Chat" G4wKhESWcRoSKT7DSsNdy/message1
-          title: Prompt
-          type: prompt
           visualData: -193.28978127029873/304.7484539029439/null/16
-        1Qj53m9VECmnmTWByVo_d:
+        '[1Qj53m9VECmnmTWByVo_d]:userInput "User Input"':
           data:
             prompt: This is an example question?
             useInput: true
-          id: 1Qj53m9VECmnmTWByVo_d
           outgoingConnections:
             - questionsAndAnswers->"Text" vpmf3hIf-86GRlg3Bg-Lu/qa
-          title: User Input
-          type: userInput
           visualData: 948/385/250/5
-        2QcutpULV4uH0CkPgA3ti:
+        '[2QcutpULV4uH0CkPgA3ti]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: output
-          id: 2QcutpULV4uH0CkPgA3ti
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 1634/380/300/8
-        G4wKhESWcRoSKT7DSsNdy:
+        '[G4wKhESWcRoSKT7DSsNdy]:chat "Chat"':
           data:
             cache: false
             frequencyPenalty: 0
@@ -1678,39 +1550,27 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: G4wKhESWcRoSKT7DSsNdy
           outgoingConnections:
             - response->"Extract List Items" XrdweoN7N1ectKzjP3WHS/text
-          title: Chat
-          type: chat
           visualData: 339.06620729836334/457.8536805742646/200/17
-        XrdweoN7N1ectKzjP3WHS:
+        '[XrdweoN7N1ectKzjP3WHS]:subGraph "Extract List Items"':
           data:
             graphId: BCH2-JTaOfU7yrJ1GQRhL
-          id: XrdweoN7N1ectKzjP3WHS
           outgoingConnections:
             - items->"User Input" 1Qj53m9VECmnmTWByVo_d/questions
-          title: Extract List Items
-          type: subGraph
           visualData: 597/385/300/3
-        glCn_a3AsNTs25UyCMCiG:
+        '[glCn_a3AsNTs25UyCMCiG]:graphInput "Graph Input"':
           data:
             dataType: string
             id: AI Prompt
-          id: glCn_a3AsNTs25UyCMCiG
           outgoingConnections:
             - data->"Prompt" 0EuQ8ONijZa5voMTZGTps/request
-          title: Graph Input
-          type: graphInput
           visualData: -560.0248699650894/345.73225810806554/300/15
-        vpmf3hIf-86GRlg3Bg-Lu:
+        '[vpmf3hIf-86GRlg3Bg-Lu]:text "Text"':
           data:
             text: "{{qa}}"
-          id: vpmf3hIf-86GRlg3Bg-Lu
           outgoingConnections:
             - output->"Graph Output" 2QcutpULV4uH0CkPgA3ti/value
-          title: Text
-          type: text
           visualData: 1265/407/300/7
     LOt0W_XCiFbuqbRlbF1oM:
       metadata:
@@ -1718,7 +1578,7 @@ data:
         id: LOt0W_XCiFbuqbRlbF1oM
         name: Split and summarize file
       nodes:
-        67RewDBJlQUInF8WV3-GB:
+        '[67RewDBJlQUInF8WV3-GB]:text "Text"':
           data:
             text: >
               import { max, range, uniqBy } from 'lodash-es';
@@ -2087,13 +1947,10 @@ data:
                   }, {} as Record<string, any>);
                 }
               }
-          id: 67RewDBJlQUInF8WV3-GB
           outgoingConnections:
             - output->"Chunk" RtTfDTcXP3eigkIWeAhh-/input
-          title: Text
-          type: text
           visualData: 437.4469649520634/314.3452826722073/300/null
-        F_dKF3vDhO7Cr1c8mvaKP:
+        '[F_dKF3vDhO7Cr1c8mvaKP]:chat "Chat"':
           data:
             cache: true
             frequencyPenalty: 0
@@ -2108,26 +1965,20 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: F_dKF3vDhO7Cr1c8mvaKP
           outgoingConnections:
             - response->"Text" rBQqW1q3Qp07IV6R66kMF/summaries
             - response->"Text" rBQqW1q3Qp07IV6R66kMF/summary
-          title: Chat
-          type: chat
           visualData: 2795.150414098868/521.6459310985977/200/16
-        Gnh145qZDCCV2B23I5qZQ:
+        '[Gnh145qZDCCV2B23I5qZQ]:text "Text"':
           data:
             text: |-
               Chunk {{chunk}}/{{total}}:
 
               {{response}}
-          id: Gnh145qZDCCV2B23I5qZQ
           outgoingConnections:
             - output->"Text" wzOfI8FoCi4YPH7SMqzYv/summaries
-          title: Text
-          type: text
           visualData: 2095.460140320323/531.2883282385967/300/14
-        I2obFLvUBKGtYx8arwMeA:
+        '[I2obFLvUBKGtYx8arwMeA]:chat "Chat"':
           data:
             cache: true
             frequencyPenalty: 0.5
@@ -2142,29 +1993,23 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: I2obFLvUBKGtYx8arwMeA
           outgoingConnections:
             - response->"Text" Gnh145qZDCCV2B23I5qZQ/response
-          title: Chat
-          type: chat
           visualData: 1841.424761136081/546.4923363640078/200/13
-        RtTfDTcXP3eigkIWeAhh-:
+        '[RtTfDTcXP3eigkIWeAhh-]:chunk "Chunk"':
           data:
             model: gpt-4
             numTokensPerChunk: 512
             overlap: 10
             useModelInput: false
-          id: RtTfDTcXP3eigkIWeAhh-
           outgoingConnections:
             - chunks->"Text" ZJiOQyn0wI8ifplV9LgQt/data
             - count->"Text" Gnh145qZDCCV2B23I5qZQ/total
             - count->"Text" ZJiOQyn0wI8ifplV9LgQt/total
             - indexes->"Text" Gnh145qZDCCV2B23I5qZQ/chunk
             - indexes->"Text" ZJiOQyn0wI8ifplV9LgQt/chunk
-          title: Chunk
-          type: chunk
           visualData: 840.3950226023861/508.5530350479365/550.1024107453622/1
-        ZJiOQyn0wI8ifplV9LgQt:
+        '[ZJiOQyn0wI8ifplV9LgQt]:text "Text"':
           data:
             text: >-
               This is chunk {{chunk}}/{{total}} of the GraphProcessor.ts file.
@@ -2180,13 +2025,10 @@ data:
               {{data}}
 
               ```
-          id: ZJiOQyn0wI8ifplV9LgQt
           outgoingConnections:
             - output->"Chat" I2obFLvUBKGtYx8arwMeA/message1
-          title: Text
-          type: text
           visualData: 1486.823749346318/511.12600971449524/300/4
-        _vXnvuuQa4FO01wqqD22k:
+        '[_vXnvuuQa4FO01wqqD22k]:chat "Chat"':
           data:
             frequencyPenalty: 0.5
             maxTokens: 1024
@@ -2205,12 +2047,8 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: _vXnvuuQa4FO01wqqD22k
-          outgoingConnections: []
-          title: Chat
-          type: chat
           visualData: 3399.2982395184267/530.0224627304983/200/19
-        rBQqW1q3Qp07IV6R66kMF:
+        '[rBQqW1q3Qp07IV6R66kMF]:text "Text"':
           data:
             text: |-
               Here is a summary of a TypeScript file called GraphProcessor.ts:
@@ -2220,13 +2058,10 @@ data:
               """
 
               Can you recreate this file to the best of your ability?
-          id: rBQqW1q3Qp07IV6R66kMF
           outgoingConnections:
             - output->"Chat" _vXnvuuQa4FO01wqqD22k/message1
-          title: Text
-          type: text
           visualData: 3045.751670546527/529.0821793023815/300/18
-        wzOfI8FoCi4YPH7SMqzYv:
+        '[wzOfI8FoCi4YPH7SMqzYv]:text "Text"':
           data:
             text: >-
               Please remove any redundancies and superfluous data from this
@@ -2235,11 +2070,8 @@ data:
 
 
               {{summaries}}
-          id: wzOfI8FoCi4YPH7SMqzYv
           outgoingConnections:
             - output->"Chat" F_dKF3vDhO7Cr1c8mvaKP/message1
-          title: Text
-          type: text
           visualData: 2440.4366570143184/529.7076073959739/300/15
     MurwaMMNbRHYMOW3runpn:
       metadata:
@@ -2247,82 +2079,56 @@ data:
         id: MurwaMMNbRHYMOW3runpn
         name: Testing
       nodes:
-        --gHsQqvmvRXzykSV7OA_:
+        '[--gHsQqvmvRXzykSV7OA_]:loopController "Loop Controller"':
           data:
             maxIterations: 100
-          id: --gHsQqvmvRXzykSV7OA_
           outgoingConnections:
             - output1->"Assemble Prompt" Hu7Inl7-wPpDh25xPauMz/message1
-          title: Loop Controller
-          type: loopController
           visualData: 1050.5768011377613/1853.0830185917564/250/19
-        7oeiNm0plc2v8AOs6z7yR:
+        '[7oeiNm0plc2v8AOs6z7yR]:prompt "Prompt"':
           data:
             enableFunctionCall: false
             promptText: Message from assistant
             type: assistant
             useTypeInput: false
-          id: 7oeiNm0plc2v8AOs6z7yR
           outgoingConnections:
             - output->"Assemble Prompt" Q_wcRYDqOd3HXbJBLljXf/message1
-          title: Prompt
-          type: prompt
           visualData: 317.4655897358294/1178.5454407886202/250/18
-        8s2n2hiSw36yezwSOBPQG:
+        '[8s2n2hiSw36yezwSOBPQG]:text "Text"':
           data:
             text: Give me a markdown formatted document
-          id: 8s2n2hiSw36yezwSOBPQG
           outgoingConnections:
             - output->"Chat" WnxX9EQzXu-cdVJrKH0jj/prompt
-          title: Text
-          type: text
           visualData: 783.2821782178219/806.7574257425742/300/null
-        BFPkIhMdkomg6_MY9keoI:
+        '[BFPkIhMdkomg6_MY9keoI]:text "Text"':
           data:
             text: First message
-          id: BFPkIhMdkomg6_MY9keoI
           outgoingConnections:
             - output->"Loop Controller" --gHsQqvmvRXzykSV7OA_/input1Default
-          title: Text
-          type: text
           visualData: 646.6520674756624/1884.206508882605/300/28
-        Hu7Inl7-wPpDh25xPauMz:
-          data: {}
-          id: Hu7Inl7-wPpDh25xPauMz
+        '[Hu7Inl7-wPpDh25xPauMz]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Loop Controller" --gHsQqvmvRXzykSV7OA_/input1
-          title: Assemble Prompt
-          type: assemblePrompt
           visualData: 1427.358544251912/2090.028394191343/250/27
-        MS9RaH9CNZTO1ARi-1nMo:
+        '[MS9RaH9CNZTO1ARi-1nMo]:text "Text"':
           data:
             text: Cherry
-          id: MS9RaH9CNZTO1ARi-1nMo
           outgoingConnections:
             - output->"Array" NiK0-s74J6ciULASTJK4N/input3
-          title: Text
-          type: text
           visualData: 335/485/164/3
-        NiK0-s74J6ciULASTJK4N:
+        '[NiK0-s74J6ciULASTJK4N]:array "Array"':
           data:
             flatten: true
-          id: NiK0-s74J6ciULASTJK4N
           outgoingConnections:
             - indices->"Text" eQfF99SqPxg3j6VON6kQV/index
             - output->"Text" eQfF99SqPxg3j6VON6kQV/fruit
             - output->"Text" eQfF99SqPxg3j6VON6kQV/input
-          title: Array
-          type: array
           visualData: 749/361/200/4
-        Q_wcRYDqOd3HXbJBLljXf:
-          data: {}
-          id: Q_wcRYDqOd3HXbJBLljXf
+        '[Q_wcRYDqOd3HXbJBLljXf]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Chat" VEidgtZm66j1ZSQe_-1q7/prompt
-          title: Assemble Prompt
-          type: assemblePrompt
           visualData: 922.8477668727571/1251.4264019196676/214.7350188075576/15
-        VEidgtZm66j1ZSQe_-1q7:
+        '[VEidgtZm66j1ZSQe_-1q7]:chat "Chat"':
           data:
             cache: false
             enableFunctionUse: false
@@ -2344,12 +2150,8 @@ data:
             useTopPInput: false
             useUseTopPInput: false
             useUserInput: false
-          id: VEidgtZm66j1ZSQe_-1q7
-          outgoingConnections: []
-          title: Chat
-          type: chat
           visualData: 1380.1170230014266/1186.7739364001902/200/16
-        WnxX9EQzXu-cdVJrKH0jj:
+        '[WnxX9EQzXu-cdVJrKH0jj]:chat "Chat"':
           data:
             cache: false
             enableFunctionUse: false
@@ -2371,58 +2173,38 @@ data:
             useTopPInput: false
             useUseTopPInput: false
             useUserInput: false
-          id: WnxX9EQzXu-cdVJrKH0jj
-          outgoingConnections: []
-          title: Chat
-          type: chat
           visualData: 1180.0396039603959/753.6633663366337/200/9
-        clNSdw87GwbTjiQp7LdQ4:
+        '[clNSdw87GwbTjiQp7LdQ4]:text "Text"':
           data:
             text: Banana
-          id: clNSdw87GwbTjiQp7LdQ4
           outgoingConnections:
             - output->"Array" NiK0-s74J6ciULASTJK4N/input2
-          title: Text
-          type: text
           visualData: 334/357/164/2
-        djvEekj5wmQWV72uGDfIl:
+        '[djvEekj5wmQWV72uGDfIl]:text "Text"':
           data:
             text: This message is appended
-          id: djvEekj5wmQWV72uGDfIl
           outgoingConnections:
             - output->"Assemble Prompt" Hu7Inl7-wPpDh25xPauMz/message2
-          title: Text
-          type: text
           visualData: 1023.1286674573225/2095.465841731702/300/26
-        eQfF99SqPxg3j6VON6kQV:
+        '[eQfF99SqPxg3j6VON6kQV]:text "Text"':
           data:
             text: "[{{index}}] - {{fruit}}"
-          id: eQfF99SqPxg3j6VON6kQV
           isSplitRun: true
-          outgoingConnections: []
-          title: Text
-          type: text
           visualData: 1004/359/300/8
-        iNNukcnXz4AnAUnCPAJD9:
+        '[iNNukcnXz4AnAUnCPAJD9]:text "Text"':
           data:
             text: Apple
-          id: iNNukcnXz4AnAUnCPAJD9
           outgoingConnections:
             - output->"Array" NiK0-s74J6ciULASTJK4N/input1
-          title: Text
-          type: text
           visualData: 334/230/164/1
-        t_zHDgfHtGvTODEKs8mbQ:
+        '[t_zHDgfHtGvTODEKs8mbQ]:prompt "Prompt"':
           data:
             enableFunctionCall: false
             promptText: Message from user
             type: user
             useTypeInput: false
-          id: t_zHDgfHtGvTODEKs8mbQ
           outgoingConnections:
             - output->"Assemble Prompt" Q_wcRYDqOd3HXbJBLljXf/message2
-          title: Prompt
-          type: prompt
           visualData: 325.69408534739927/1394.91987872368/250/17
     Pd4dvtJ0K_FosX2rfhTg9:
       metadata:
@@ -2430,7 +2212,7 @@ data:
         id: Pd4dvtJ0K_FosX2rfhTg9
         name: 00 Rivet Analyzer
       nodes:
-        2NscQMBqyFVwE8LiDZFYg:
+        '[2NscQMBqyFVwE8LiDZFYg]:text "Text"':
           data:
             text: >-
               Your most relevant memories to "overall analysis" are:
@@ -2447,76 +2229,50 @@ data:
 
 
               Only reply with a YAML document. Instead of explaining your analysis, run the REMEMBER_INFO command with your analysis inside the info of the command.
-          id: 2NscQMBqyFVwE8LiDZFYg
           outgoingConnections:
             - output->"Subgraph" XJjaxKM5N225ejkoyxl_w/prompt_message
-          title: Text
-          type: text
           visualData: 4778.988758191404/368.24492671512667/300/75
-        2UTof8lNm03gvKfFxBDWT:
+        '[2UTof8lNm03gvKfFxBDWT]:text "Text"':
           data:
             text: overall analysis
-          id: 2UTof8lNm03gvKfFxBDWT
           outgoingConnections:
             - output->"If" NfeMoioEzUx3J_9DSgUWn/value
-          title: Text
-          type: text
           visualData: 3883.9730559741065/489.1152144743757/300/73
-        40B9nTkT_zAkzbA9Rhkpn:
+        '[40B9nTkT_zAkzbA9Rhkpn]:text "Text"':
           data:
             text: /Users/Shared/ironclad/rivet/packages
-          id: 40B9nTkT_zAkzbA9Rhkpn
           outgoingConnections:
             - output->"Prompt" RGaXe9O2ty183OXol7_K2/input
-          title: Text
-          type: text
           visualData: 232.485807860262/1022.3493449781658/300/6
-        7HodDk2GMdHkJC7AzB5CS:
+        '[7HodDk2GMdHkJC7AzB5CS]:subGraph "Subgraph"':
           data:
             graphId: lLdez5GZqKam_L25xY7CT
-          id: 7HodDk2GMdHkJC7AzB5CS
           outgoingConnections:
             - output->"Prompt" kBdFzmteK69OqJokqBTb0/memories
-          title: Subgraph
-          type: subGraph
           visualData: 3025.9705235840856/527.2202623603948/300/66
-        7blDJVDN_TbpCvaB-Rkxp:
+        '[7blDJVDN_TbpCvaB-Rkxp]:subGraph "Subgraph"':
           data:
             graphId: 49ADNSJiXKFRvgaRMhFvP
-          id: 7blDJVDN_TbpCvaB-Rkxp
           outgoingConnections:
             - new_messages->"Loop Controller" e7NvtuIgOlA9RMAuUOVt4/input1
-          title: Subgraph
-          type: subGraph
           visualData: 3428.0551377526167/738.858001337559/300/69
-        EN5CwW_fs0KzF8KkWGRja:
+        '[EN5CwW_fs0KzF8KkWGRja]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: output
-          id: EN5CwW_fs0KzF8KkWGRja
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 1943.673666987144/274.91890798601685/300/18
-        Iu0BQe4zPuvWNyxWXflPL:
+        '[Iu0BQe4zPuvWNyxWXflPL]:subGraph "Subgraph"':
           data:
             graphId: DBSqt91CfAs1dewM-IhgT
-          id: Iu0BQe4zPuvWNyxWXflPL
           outgoingConnections:
             - chat_output->"Subgraph" 7HodDk2GMdHkJC7AzB5CS/topic
             - new_messages->"Subgraph" 7blDJVDN_TbpCvaB-Rkxp/current_messages
-          title: Subgraph
-          type: subGraph
           visualData: 2515.9237236252075/642.5077894536144/300/89
-        NfeMoioEzUx3J_9DSgUWn:
-          data: {}
-          id: NfeMoioEzUx3J_9DSgUWn
+        '[NfeMoioEzUx3J_9DSgUWn]:if "If"':
           outgoingConnections:
             - output->"Subgraph" iD7KUaQo78VbbWgZbijux/topic
-          title: If
-          type: if
           visualData: 4268.167899208863/484.79841848297406/125/79
-        QIsP4PLl40qxDwv6hzBYl:
+        '[QIsP4PLl40qxDwv6hzBYl]:prompt "Prompt"':
           data:
             enableFunctionCall: false
             name: SYSTEM INFORMATION
@@ -2526,88 +2282,59 @@ data:
               {{memories}}
             type: user
             useTypeInput: false
-          id: QIsP4PLl40qxDwv6hzBYl
           outgoingConnections:
             - output->"Assemble Prompt" Xa8H6S7EnNOmNp42PeE6c/message2
-          title: Prompt
-          type: prompt
           visualData: 578/1204/250/5
-        RGaXe9O2ty183OXol7_K2:
+        '[RGaXe9O2ty183OXol7_K2]:prompt "Prompt"':
           data:
             enableFunctionCall: false
             name: User
             promptText: "{{input}}"
             type: user
             useTypeInput: false
-          id: RGaXe9O2ty183OXol7_K2
           outgoingConnections:
             - output->"Assemble Prompt" Xa8H6S7EnNOmNp42PeE6c/message1
-          title: Prompt
-          type: prompt
           visualData: 590/998/250/2
-        STjZ9TDdIWSWQETOlEW6j:
+        '[STjZ9TDdIWSWQETOlEW6j]:subGraph "Subgraph"':
           data:
             graphId: lLdez5GZqKam_L25xY7CT
-          id: STjZ9TDdIWSWQETOlEW6j
           outgoingConnections:
             - output->"Prompt" QIsP4PLl40qxDwv6hzBYl/task_list
-          title: Subgraph
-          type: subGraph
           visualData: 220.6448947432062/1688.6796416724496/300/84
-        XJjaxKM5N225ejkoyxl_w:
+        '[XJjaxKM5N225ejkoyxl_w]:subGraph "Subgraph"':
           data:
             graphId: 49ADNSJiXKFRvgaRMhFvP
-          id: XJjaxKM5N225ejkoyxl_w
-          outgoingConnections: []
-          title: Subgraph
-          type: subGraph
           visualData: 4410.249008329616/764.2026121194765/300/83
-        Xa8H6S7EnNOmNp42PeE6c:
-          data: {}
-          id: Xa8H6S7EnNOmNp42PeE6c
+        '[Xa8H6S7EnNOmNp42PeE6c]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Loop Controller" e7NvtuIgOlA9RMAuUOVt4/input1Default
-          title: Assemble Prompt
-          type: assemblePrompt
           visualData: 1015/833/250/null
-        Zw6Po0Edgfxls8sgPQ4yn:
+        '[Zw6Po0Edgfxls8sgPQ4yn]:text "Text"':
           data:
             text: rivet overall analysis
-          id: Zw6Po0Edgfxls8sgPQ4yn
           outgoingConnections:
             - output->"Subgraph" rYl7JAEelRipYuDpDRHhR/topic
-          title: Text
-          type: text
           visualData: -11.348192769476697/1421.2352369244818/160.00087463053285/43
-        cOtA3LTAJ4OD3BGjXbOxG:
+        '[cOtA3LTAJ4OD3BGjXbOxG]:text "Text"':
           data:
             text: task list
-          id: cOtA3LTAJ4OD3BGjXbOxG
           outgoingConnections:
             - output->"Subgraph" STjZ9TDdIWSWQETOlEW6j/topic
-          title: Text
-          type: text
           visualData: -14.520185831084863/1698.8668483745391/160.00087463053285/85
-        e7NvtuIgOlA9RMAuUOVt4:
+        '[e7NvtuIgOlA9RMAuUOVt4]:loopController "Loop Controller"':
           data:
             maxIterations: 100
-          id: e7NvtuIgOlA9RMAuUOVt4
           outgoingConnections:
             - break->"Graph Output" EN5CwW_fs0KzF8KkWGRja/value
             - output1->"Subgraph" Iu0BQe4zPuvWNyxWXflPL/current_messages
-          title: Loop Controller
-          type: loopController
           visualData: 1517.1101924672826/608.9026579155221/250/9
-        iD7KUaQo78VbbWgZbijux:
+        '[iD7KUaQo78VbbWgZbijux]:subGraph "Subgraph"':
           data:
             graphId: lLdez5GZqKam_L25xY7CT
-          id: iD7KUaQo78VbbWgZbijux
           outgoingConnections:
             - output->"Text" 2NscQMBqyFVwE8LiDZFYg/memories
-          title: Subgraph
-          type: subGraph
           visualData: 4453.391064740932/467.4988106785299/300/77
-        kBdFzmteK69OqJokqBTb0:
+        '[kBdFzmteK69OqJokqBTb0]:prompt "Prompt"':
           data:
             enableFunctionCall: false
             name: SYSTEM INFORMATION
@@ -2624,20 +2351,14 @@ data:
               You may either run RECALL_INFO to recall more memories, or you may reflect on the result of your latest command. Then, store as many memories with REMEMBER_INFO as you would like. These can be as detailed or small as you'd like. These memories will be accessible later with RECALL_INFO.
             type: user
             useTypeInput: false
-          id: kBdFzmteK69OqJokqBTb0
           outgoingConnections:
             - output->"Subgraph" 7blDJVDN_TbpCvaB-Rkxp/prompt_message
-          title: Prompt
-          type: prompt
           visualData: 3419.141459651317/378.1455376971633/250/65
-        rYl7JAEelRipYuDpDRHhR:
+        '[rYl7JAEelRipYuDpDRHhR]:subGraph "Subgraph"':
           data:
             graphId: lLdez5GZqKam_L25xY7CT
-          id: rYl7JAEelRipYuDpDRHhR
           outgoingConnections:
             - output->"Prompt" QIsP4PLl40qxDwv6hzBYl/memories
-          title: Subgraph
-          type: subGraph
           visualData: 217.6087101785059/1373.1105375787274/300/45
     WTeEkN10vbyJnpSBOowvw:
       metadata:
@@ -2645,16 +2366,12 @@ data:
         id: WTeEkN10vbyJnpSBOowvw
         name: Docs
       nodes:
-        4PTl5m4gQ3PWpP-mezsqp:
+        '[4PTl5m4gQ3PWpP-mezsqp]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: output
-          id: 4PTl5m4gQ3PWpP-mezsqp
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 1824.638991409224/319.95254020907737/300/13
-        7mKMzipo-q7OoP3D2i6Ia:
+        '[7mKMzipo-q7OoP3D2i6Ia]:chat "Chat"':
           data:
             cache: false
             enableFunctionUse: false
@@ -2676,14 +2393,11 @@ data:
             useTopPInput: false
             useUseTopPInput: false
             useUserInput: false
-          id: 7mKMzipo-q7OoP3D2i6Ia
           outgoingConnections:
             - response->"Prompt" ywivfgGxt7SCyi_-ugZ5X/input
             - response->"User Input" Mnzm_hHdBXR7-tMCuoytx/questions
-          title: Chat
-          type: chat
           visualData: 1829.0649195994358/559.8641943858444/200/7
-        BzJ0g3_FSPV70p7cnVZNh:
+        '[BzJ0g3_FSPV70p7cnVZNh]:text "Text"':
           data:
             text: >-
               I am working on documentation for my AI IDE called Rivet. It uses
@@ -2699,34 +2413,25 @@ data:
 
 
               {{source_file}}
-          id: BzJ0g3_FSPV70p7cnVZNh
           outgoingConnections:
             - output->"Loop Controller" MZ_w9eR32hImFKnkTHtrn/input1Default
-          title: Text
-          type: text
           visualData: 812.1989866333732/586.6526333596356/300/null
-        MZ_w9eR32hImFKnkTHtrn:
+        '[MZ_w9eR32hImFKnkTHtrn]:loopController "Loop Controller"':
           data:
             maxIterations: 100
-          id: MZ_w9eR32hImFKnkTHtrn
           outgoingConnections:
             - break->"Graph Output" 4PTl5m4gQ3PWpP-mezsqp/value
             - output1->"Assemble Prompt" uYrY8xrol_pPkSNVs3hNV/message1
             - output1->"Chat" 7mKMzipo-q7OoP3D2i6Ia/prompt
-          title: Loop Controller
-          type: loopController
           visualData: 1192.12520774107/609.5158402552806/250/null
-        Mnzm_hHdBXR7-tMCuoytx:
+        '[Mnzm_hHdBXR7-tMCuoytx]:userInput "User Input"':
           data:
             prompt: This is an example question?
             useInput: true
-          id: Mnzm_hHdBXR7-tMCuoytx
           outgoingConnections:
             - output->"Assemble Prompt" uYrY8xrol_pPkSNVs3hNV/message3
-          title: User Input
-          type: userInput
           visualData: 2377.909126290767/767.7690984682896/250/12
-        VtwWldPN8RBa7V9rSNQzt:
+        '[VtwWldPN8RBa7V9rSNQzt]:text "Text"':
           data:
             text: >-
               Here is the existing docs page for the `JoinNode`:
@@ -2930,51 +2635,35 @@ data:
               ## See Also
 
               ```
-          id: VtwWldPN8RBa7V9rSNQzt
           outgoingConnections:
             - output->"Text" BzJ0g3_FSPV70p7cnVZNh/existing_docs_page
-          title: Text
-          type: text
           visualData: 337.15066883147637/416.09957189316515/300/1
-        _fpeIdnKWH_osAtkxQmyz:
+        '[_fpeIdnKWH_osAtkxQmyz]:userInput "User Input"':
           data:
             prompt: Paste in the file to write docs for
             useInput: false
-          id: _fpeIdnKWH_osAtkxQmyz
           outgoingConnections:
             - output->"Text" BzJ0g3_FSPV70p7cnVZNh/source_file
-          title: User Input
-          type: userInput
           visualData: 378.2262752579562/763.4563305866574/250/2
-        iD3sWLJf7G-CHBZpsaB9L:
+        '[iD3sWLJf7G-CHBZpsaB9L]:text "Text"':
           data:
             text: You are a documentation assistant that can help write documentation for an
               application when given examples and source code.
-          id: iD3sWLJf7G-CHBZpsaB9L
           outgoingConnections:
             - output->"Chat" 7mKMzipo-q7OoP3D2i6Ia/systemPrompt
-          title: Text
-          type: text
           visualData: 1183.9419997089549/356.3468775151959/300/5
-        uYrY8xrol_pPkSNVs3hNV:
-          data: {}
-          id: uYrY8xrol_pPkSNVs3hNV
+        '[uYrY8xrol_pPkSNVs3hNV]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Loop Controller" MZ_w9eR32hImFKnkTHtrn/input1
-          title: Assemble Prompt
-          type: assemblePrompt
           visualData: 2861.2599254739066/748.9590017775972/250/11
-        ywivfgGxt7SCyi_-ugZ5X:
+        '[ywivfgGxt7SCyi_-ugZ5X]:prompt "Prompt"':
           data:
             enableFunctionCall: false
             promptText: "{{input}}"
             type: assistant
             useTypeInput: false
-          id: ywivfgGxt7SCyi_-ugZ5X
           outgoingConnections:
             - output->"Assemble Prompt" uYrY8xrol_pPkSNVs3hNV/message2
-          title: Prompt
-          type: prompt
           visualData: 2106.8544425110695/601.0461251185214/250/8
     Z58ZSUt6PzrLJYSKKdmMk:
       metadata:
@@ -2982,48 +2671,35 @@ data:
         id: Z58ZSUt6PzrLJYSKKdmMk
         name: Docs 2
       nodes:
-        2hFef_YClkWthsXSdfIpz:
+        '[2hFef_YClkWthsXSdfIpz]:prompt "Prompt"':
           data:
             enableFunctionCall: false
             promptText: "{{input}}"
             type: assistant
             useTypeInput: false
-          id: 2hFef_YClkWthsXSdfIpz
           outgoingConnections:
             - output->"Assemble Prompt" C4eG4iCgiuErt-jkU5FNW/message2
-          title: Prompt
-          type: prompt
           visualData: 2106.8544425110695/601.0461251185214/250/8
-        C4eG4iCgiuErt-jkU5FNW:
-          data: {}
-          id: C4eG4iCgiuErt-jkU5FNW
+        '[C4eG4iCgiuErt-jkU5FNW]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Loop Controller" GBKitGL6d89jMwz4KD--U/input1
-          title: Assemble Prompt
-          type: assemblePrompt
           visualData: 2861.2599254739066/748.9590017775972/250/11
-        GBKitGL6d89jMwz4KD--U:
+        '[GBKitGL6d89jMwz4KD--U]:loopController "Loop Controller"':
           data:
             maxIterations: 100
-          id: GBKitGL6d89jMwz4KD--U
           outgoingConnections:
             - break->"Graph Output" jXLfU1WHl-2pRmVlluCNp/value
             - output1->"Assemble Prompt" C4eG4iCgiuErt-jkU5FNW/message1
             - output1->"Chat" UWBFvj9LZsaT5Fmczqy6B/prompt
-          title: Loop Controller
-          type: loopController
           visualData: 1192.12520774107/609.5158402552806/250/null
-        IK_7V7t62MtOGLVThoAbs:
+        '[IK_7V7t62MtOGLVThoAbs]:userInput "User Input"':
           data:
             prompt: This is an example question?
             useInput: true
-          id: IK_7V7t62MtOGLVThoAbs
           outgoingConnections:
             - output->"Assemble Prompt" C4eG4iCgiuErt-jkU5FNW/message3
-          title: User Input
-          type: userInput
           visualData: 2377.909126290767/767.7690984682896/250/12
-        IaDN_IvRyCyd4w5OSbU1m:
+        '[IaDN_IvRyCyd4w5OSbU1m]:text "Text"':
           data:
             text: >-
               I am working on documentation for my AI IDE called Rivet. It uses
@@ -3043,23 +2719,17 @@ data:
 
 
               {{question}}
-          id: IaDN_IvRyCyd4w5OSbU1m
           outgoingConnections:
             - output->"Loop Controller" GBKitGL6d89jMwz4KD--U/input1Default
-          title: Text
-          type: text
           visualData: 812.1989866333732/586.6526333596356/300/null
-        MtVQBLQTrG8OIkGYEZE40:
+        '[MtVQBLQTrG8OIkGYEZE40]:userInput "User Input"':
           data:
             prompt: What question do you have?
             useInput: false
-          id: MtVQBLQTrG8OIkGYEZE40
           outgoingConnections:
             - output->"Text" IaDN_IvRyCyd4w5OSbU1m/question
-          title: User Input
-          type: userInput
           visualData: 422.5936698889692/768.7259474555756/250/15
-        UWBFvj9LZsaT5Fmczqy6B:
+        '[UWBFvj9LZsaT5Fmczqy6B]:chat "Chat"':
           data:
             cache: false
             enableFunctionUse: false
@@ -3081,42 +2751,29 @@ data:
             useTopPInput: false
             useUseTopPInput: false
             useUserInput: false
-          id: UWBFvj9LZsaT5Fmczqy6B
           outgoingConnections:
             - response->"Prompt" 2hFef_YClkWthsXSdfIpz/input
             - response->"User Input" IK_7V7t62MtOGLVThoAbs/questions
-          title: Chat
-          type: chat
           visualData: 1829.0649195994358/559.8641943858444/200/7
-        WHWxlLVSal4QpXV_NYmi0:
+        '[WHWxlLVSal4QpXV_NYmi0]:userInput "User Input"':
           data:
             prompt: Paste in the existing docs page
             useInput: false
-          id: WHWxlLVSal4QpXV_NYmi0
           outgoingConnections:
             - output->"Text" IaDN_IvRyCyd4w5OSbU1m/page
             - output->"Text" IaDN_IvRyCyd4w5OSbU1m/source_file
-          title: User Input
-          type: userInput
           visualData: 422.5936698889692/558.4070202649488/250/14
-        jXLfU1WHl-2pRmVlluCNp:
+        '[jXLfU1WHl-2pRmVlluCNp]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: output
-          id: jXLfU1WHl-2pRmVlluCNp
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 1824.638991409224/319.95254020907737/300/13
-        qNHEy4-4-T4taIBwubuAU:
+        '[qNHEy4-4-T4taIBwubuAU]:text "Text"':
           data:
             text: You are a documentation assistant that can help write documentation for an
               application when given examples and source code.
-          id: qNHEy4-4-T4taIBwubuAU
           outgoingConnections:
             - output->"Chat" UWBFvj9LZsaT5Fmczqy6B/systemPrompt
-          title: Text
-          type: text
           visualData: 1183.9419997089549/356.3468775151959/300/5
     cWbUqJZE2osNm42Q2ewC9:
       metadata:
@@ -3124,16 +2781,12 @@ data:
         id: cWbUqJZE2osNm42Q2ewC9
         name: RA - System Commands
       nodes:
-        WI9_Qj2uuV6QyYUB6Gel7:
+        '[WI9_Qj2uuV6QyYUB6Gel7]:graphOutput "Graph Output"':
           data:
             dataType: chat-message
             id: output
-          id: WI9_Qj2uuV6QyYUB6Gel7
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 1112/503/300/null
-        vN2ea8R1hCHDK7sIBUgW7:
+        '[vN2ea8R1hCHDK7sIBUgW7]:prompt "Prompt"':
           data:
             enableFunctionCall: false
             name: SYSTEM INFORMATION
@@ -3208,11 +2861,8 @@ data:
                 topic: The topic to search about. Be extremely detailed about what your topic is, use as many words as possible to narrowthings down.
             type: user
             useTypeInput: false
-          id: vN2ea8R1hCHDK7sIBUgW7
           outgoingConnections:
             - output->"Graph Output" WI9_Qj2uuV6QyYUB6Gel7/value
-          title: Prompt
-          type: prompt
           visualData: 612/503/250/1
     d6Pgmz7n8qvXkaNF-2e9P:
       metadata:
@@ -3220,25 +2870,17 @@ data:
         id: d6Pgmz7n8qvXkaNF-2e9P
         name: List Rivet Files
       nodes:
-        FSHys4NrHcjHQvSE_Rv7-:
+        '[FSHys4NrHcjHQvSE_Rv7-]:graphOutput "Graph Output"':
           data:
             dataType: string[]
             id: files
-          id: FSHys4NrHcjHQvSE_Rv7-
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: -553/644/300/24
-        oz0gemjC0VdsTeemnG_Kp:
+        '[oz0gemjC0VdsTeemnG_Kp]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: root_path
-          id: oz0gemjC0VdsTeemnG_Kp
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: -556/443/300/25
-        wNG3QGg-NzvkTyoaynBz_:
+        '[wNG3QGg-NzvkTyoaynBz_]:readDirectory "Read Directory"':
           data:
             filterGlobs:
               - "**/*.{ts,tsx,css}"
@@ -3254,12 +2896,9 @@ data:
             usePathInput: false
             useRecursiveInput: false
             useRelativeInput: false
-          id: wNG3QGg-NzvkTyoaynBz_
           outgoingConnections:
             - paths->"Graph Output" FSHys4NrHcjHQvSE_Rv7-/value
             - rootPath->"Graph Output" oz0gemjC0VdsTeemnG_Kp/value
-          title: Read Directory
-          type: readDirectory
           visualData: -1109.8933869703742/414.52061856748116/null/23
     g_lk18P0-BSirYNE2qGAa:
       metadata:
@@ -3267,120 +2906,84 @@ data:
         id: g_lk18P0-BSirYNE2qGAa
         name: "RA - Command: RECALL_INFO"
       nodes:
-        1rr5wAWLGDR8OD_DtZBsj:
+        '[1rr5wAWLGDR8OD_DtZBsj]:text "Text"':
           data:
             text: "3"
-          id: 1rr5wAWLGDR8OD_DtZBsj
           outgoingConnections:
             - output->"If/Else" 5NK8cYmHbe2aK2FNiCOET/false
-          title: Text
-          type: text
           visualData: 644.186134866143/828.639015006256/143.43331570736757/20
-        5NK8cYmHbe2aK2FNiCOET:
-          data: {}
-          id: 5NK8cYmHbe2aK2FNiCOET
+        '[5NK8cYmHbe2aK2FNiCOET]:ifElse "If/Else"':
           outgoingConnections:
             - output->"Text" wNNsGDoazltbd0zriLypI/n
             - output->"Vector KNN" UodDoY4FFQD-ghaAND19v/k
-          title: If/Else
-          type: ifElse
           visualData: 971.7547296627853/774.2293162095256/125/null
-        5Va0TC0xtEPJHrqjqzTNW:
+        '[5Va0TC0xtEPJHrqjqzTNW]:graphInput "Graph Input"':
           data:
             dataType: object
             id: arguments
             useDefaultValueInput: true
-          id: 5Va0TC0xtEPJHrqjqzTNW
           outgoingConnections:
             - data->"Extract Object Path" s9s3oX5pAKvtV9JuOYfFt/object
             - data->"Extract Object Path" yc49PU2tC9-LPQmPPi28M/object
-          title: Graph Input
-          type: graphInput
           visualData: 206.18399339933993/447.2013201320132/300/18
-        8vwMe_uU1mH6sFC3EbuO0:
+        '[8vwMe_uU1mH6sFC3EbuO0]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: output
-          id: 8vwMe_uU1mH6sFC3EbuO0
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 3054.0182190152213/325.4223064295404/300/40
-        HDxFalAxE-LpUV_-KRVc1:
+        '[HDxFalAxE-LpUV_-KRVc1]:getEmbedding "Get Embedding"':
           data:
             integration: openai
             useIntegrationInput: false
-          id: HDxFalAxE-LpUV_-KRVc1
           outgoingConnections:
             - embedding->"Vector KNN" UodDoY4FFQD-ghaAND19v/vector
-          title: Get Embedding
-          type: getEmbedding
           visualData: 1033.9087435447254/383.59221170727943/200/23
-        SZt7GbwaokaGx5a0bzXoW:
+        '[SZt7GbwaokaGx5a0bzXoW]:extractObjectPath "Extract Object Path"':
           data:
             path: $.id
             usePathInput: false
-          id: SZt7GbwaokaGx5a0bzXoW
           isSplitRun: true
           outgoingConnections:
             - match->"Text" zef9WfSbXrV_24nfiBXQj/id
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 1787.719200663156/389.5547467012547/250/36
-        UodDoY4FFQD-ghaAND19v:
+        '[UodDoY4FFQD-ghaAND19v]:vectorNearestNeighbors "Vector KNN"':
           data:
             collectionId: rivet-3ff65ea.svc.us-west1-gcp-free.pinecone.io/test1
             integration: pinecone
             k: 10
             useKInput: true
-          id: UodDoY4FFQD-ghaAND19v
           outgoingConnections:
             - results->"Extract Object Path" ng2J56HcO9blylcpLLg_2/object
-          title: Vector KNN
-          type: vectorNearestNeighbors
           visualData: 1279.3360881667509/408.90705286005004/200/24
-        i3--YrY0fSi5WBL7uhrJG:
-          data: {}
-          id: i3--YrY0fSi5WBL7uhrJG
+        '[i3--YrY0fSi5WBL7uhrJG]:extractJson "Extract JSON"':
           outgoingConnections:
             - output->"Graph Input" 5Va0TC0xtEPJHrqjqzTNW/default
-          title: Extract JSON
-          type: extractJson
           visualData: -23.875216125178355/481.0266450929813/132.0370817950229/27
-        ng2J56HcO9blylcpLLg_2:
+        '[ng2J56HcO9blylcpLLg_2]:extractObjectPath "Extract Object Path"':
           data:
             path: $[*]
             usePathInput: false
-          id: ng2J56HcO9blylcpLLg_2
           outgoingConnections:
             - all_matches->"Extract Object Path" SZt7GbwaokaGx5a0bzXoW/object
             - all_matches->"Extract Object Path" tibz7T4GvEV5UFblNUsFN/object
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 1515.6296364360278/485.50903746734343/250/38
-        s9s3oX5pAKvtV9JuOYfFt:
+        '[s9s3oX5pAKvtV9JuOYfFt]:extractObjectPath "Extract Object Path"':
           data:
             path: $.topic
             usePathInput: false
-          id: s9s3oX5pAKvtV9JuOYfFt
           outgoingConnections:
             - match->"Get Embedding" HDxFalAxE-LpUV_-KRVc1/input
             - match->"Text" wNNsGDoazltbd0zriLypI/topic
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 683/375/250/2
-        tibz7T4GvEV5UFblNUsFN:
+        '[tibz7T4GvEV5UFblNUsFN]:extractObjectPath "Extract Object Path"':
           data:
             path: $.data
             usePathInput: false
-          id: tibz7T4GvEV5UFblNUsFN
           isSplitRun: true
           outgoingConnections:
             - match->"Text" zef9WfSbXrV_24nfiBXQj/data
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 1790.348085341679/577.6223834317746/250/37
-        wNNsGDoazltbd0zriLypI:
+        '[wNNsGDoazltbd0zriLypI]:text "Text"':
           data:
             text: |-
               You have asked for memories related to the topic "{{topic}}".
@@ -3388,44 +2991,32 @@ data:
               The closest {{n}} memories you have related to this topic are:
 
               {{memories}}
-          id: wNNsGDoazltbd0zriLypI
           outgoingConnections:
             - output->"Graph Output" 8vwMe_uU1mH6sFC3EbuO0/value
-          title: Text
-          type: text
           visualData: 2700.733848787849/275.1040318143705/300/41
-        yc49PU2tC9-LPQmPPi28M:
+        '[yc49PU2tC9-LPQmPPi28M]:extractObjectPath "Extract Object Path"':
           data:
             path: $.count
             usePathInput: false
-          id: yc49PU2tC9-LPQmPPi28M
           outgoingConnections:
             - match->"If/Else" 5NK8cYmHbe2aK2FNiCOET/if
             - match->"If/Else" 5NK8cYmHbe2aK2FNiCOET/true
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 674.3407590759076/582.3745874587459/250/17
-        zEyCZMZyTvWfLGWRsHles:
+        '[zEyCZMZyTvWfLGWRsHles]:text "Text"':
           data:
             text: |-
               {
                   "topic": "This is a test topic"
               }
-          id: zEyCZMZyTvWfLGWRsHles
           outgoingConnections:
             - output->"Extract JSON" i3--YrY0fSi5WBL7uhrJG/input
-          title: Text
-          type: text
           visualData: -439.48875352178374/498.85824900768716/300/28
-        zef9WfSbXrV_24nfiBXQj:
+        '[zef9WfSbXrV_24nfiBXQj]:text "Text"':
           data:
             text: "{{id}}: {{data}}"
-          id: zef9WfSbXrV_24nfiBXQj
           isSplitRun: true
           outgoingConnections:
             - output->"Text" wNNsGDoazltbd0zriLypI/memories
-          title: Text
-          type: text
           visualData: 2214.912960923141/436.8746709146683/300/42
     lLdez5GZqKam_L25xY7CT:
       metadata:
@@ -3433,85 +3024,60 @@ data:
         id: lLdez5GZqKam_L25xY7CT
         name: RA - Most Relevant Memories
       nodes:
-        GZvTLJWLzabc_STi3EBnj:
+        '[GZvTLJWLzabc_STi3EBnj]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: output
-          id: GZvTLJWLzabc_STi3EBnj
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 3341.0988051363474/1511.1227266506091/300/null
-        LCJn4Mvw7nBHLm2AG6055:
+        '[LCJn4Mvw7nBHLm2AG6055]:extractObjectPath "Extract Object Path"':
           data:
             path: $.data
             usePathInput: false
-          id: LCJn4Mvw7nBHLm2AG6055
           isSplitRun: true
           outgoingConnections:
             - match->"Text" Qvo5o6T6k92xZssPwg3Kj/content
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 2155.411694615173/1724.7461192834876/250/47
-        LjiWBOjBx2tMH7uaQXvP0:
+        '[LjiWBOjBx2tMH7uaQXvP0]:subGraph "Subgraph"':
           data:
             graphId: 1C7HNzd5v7ULqf04-5Uob
-          id: LjiWBOjBx2tMH7uaQXvP0
           outgoingConnections:
             - items->"Extract Object Path" VQ3q88Yuk9bejSBolE3tK/object
-          title: Subgraph
-          type: subGraph
           visualData: 1353.1101608588772/1511.1227266506091/300/49
-        Qvo5o6T6k92xZssPwg3Kj:
+        '[Qvo5o6T6k92xZssPwg3Kj]:text "Text"':
           data:
             text: "{{id}}: {{content}}"
-          id: Qvo5o6T6k92xZssPwg3Kj
           isSplitRun: true
           outgoingConnections:
             - output->"Text" xTnmDbxMqN6p3LMJsqaUg/memories
-          title: Text
-          type: text
           visualData: 2475.1347789044294/1615.4979308949553/300/48
-        VQ3q88Yuk9bejSBolE3tK:
+        '[VQ3q88Yuk9bejSBolE3tK]:extractObjectPath "Extract Object Path"':
           data:
             path: $[*]
             usePathInput: false
-          id: VQ3q88Yuk9bejSBolE3tK
           outgoingConnections:
             - all_matches->"Extract Object Path" LCJn4Mvw7nBHLm2AG6055/object
             - all_matches->"Extract Object Path" pwpe07-IOJqChP5fETDzu/object
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 1765.6666125270294/1558.2787282899076/250/50
-        WZXnEWHrAnUtfoOw_XEdz:
+        '[WZXnEWHrAnUtfoOw_XEdz]:graphInput "Graph Input"':
           data:
             dataType: string
             id: topic
-          id: WZXnEWHrAnUtfoOw_XEdz
           outgoingConnections:
             - data->"Subgraph" LjiWBOjBx2tMH7uaQXvP0/topic
-          title: Graph Input
-          type: graphInput
           visualData: 853.1101608588772/1511.1227266506091/300/null
-        pwpe07-IOJqChP5fETDzu:
+        '[pwpe07-IOJqChP5fETDzu]:extractObjectPath "Extract Object Path"':
           data:
             path: $.id
             usePathInput: false
-          id: pwpe07-IOJqChP5fETDzu
           isSplitRun: true
           outgoingConnections:
             - match->"Text" Qvo5o6T6k92xZssPwg3Kj/id
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 2155.411694615173/1513.767858621101/250/null
-        xTnmDbxMqN6p3LMJsqaUg:
+        '[xTnmDbxMqN6p3LMJsqaUg]:text "Text"':
           data:
             text: "{{memories}}"
-          id: xTnmDbxMqN6p3LMJsqaUg
           outgoingConnections:
             - output->"Graph Output" GZvTLJWLzabc_STi3EBnj/value
-          title: Text
-          type: text
           visualData: 2841.0988051363474/1590.3957052689395/300/51
     lXUC_1uq9nRw3WNXCkpdB:
       metadata:
@@ -3519,35 +3085,25 @@ data:
         id: lXUC_1uq9nRw3WNXCkpdB
         name: "RA - Command: READ_DIRECTORY"
       nodes:
-        2sQqhGNeRlvjvM-LodS8R:
+        '[2sQqhGNeRlvjvM-LodS8R]:extractObjectPath "Extract Object Path"':
           data:
             path: $.directory
             usePathInput: false
-          id: 2sQqhGNeRlvjvM-LodS8R
           outgoingConnections:
             - match->"Read Directory" YDnARl29utdEx5tX_nt-a/path
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 250.01267630499774/366.5850974833843/250/15
-        TP1i6OVQF_SnmAuhhc3yf:
+        '[TP1i6OVQF_SnmAuhhc3yf]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: output
-          id: TP1i6OVQF_SnmAuhhc3yf
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 1660.1381498617586/402.9919627292449/300/11
-        U6X1HmD-JnYkzrw0KA3ad:
+        '[U6X1HmD-JnYkzrw0KA3ad]:text "Text"':
           data:
             text: "{{input}}"
-          id: U6X1HmD-JnYkzrw0KA3ad
           outgoingConnections:
             - output->"Graph Output" TP1i6OVQF_SnmAuhhc3yf/value
-          title: Text
-          type: text
           visualData: 1466.3956685691494/425.3468644168537/150.96732208260823/8
-        YDnARl29utdEx5tX_nt-a:
+        '[YDnARl29utdEx5tX_nt-a]:readDirectory "Read Directory"':
           data:
             filterGlobs: []
             ignores:
@@ -3566,33 +3122,24 @@ data:
             usePathInput: true
             useRecursiveInput: false
             useRelativeInput: false
-          id: YDnARl29utdEx5tX_nt-a
           outgoingConnections:
             - paths->"Text" y-sDq1vd52ctHX0NCTWQb/path
-          title: Read Directory
-          type: readDirectory
           visualData: 651.5571857432192/348.8015299069658/null/19
-        _78OsjTMGMAugz-VIcct4:
+        '[_78OsjTMGMAugz-VIcct4]:graphInput "Graph Input"':
           data:
             dataType: object
             id: arguments
             useDefaultValueInput: false
-          id: _78OsjTMGMAugz-VIcct4
           outgoingConnections:
             - data->"Extract Object Path" 2sQqhGNeRlvjvM-LodS8R/object
-          title: Graph Input
-          type: graphInput
           visualData: -125.57242117838655/357/300/14
-        y-sDq1vd52ctHX0NCTWQb:
+        '[y-sDq1vd52ctHX0NCTWQb]:text "Text"':
           data:
             text: "{{path}}"
-          id: y-sDq1vd52ctHX0NCTWQb
           isSplitRun: true
           outgoingConnections:
             - output->"Text" U6X1HmD-JnYkzrw0KA3ad/input
           splitRunMax: 1000
-          title: Text
-          type: text
           visualData: 1253.3705377832819/424.3104028500138/177.04143789015916/7
     pgbl6cyJ6kZWZwEb0o7rz:
       metadata:
@@ -3600,104 +3147,71 @@ data:
         id: pgbl6cyJ6kZWZwEb0o7rz
         name: "RA - Command: REMEMBER_INFO"
       nodes:
-        3ULFu_KZhCNX9S4bTKSbI:
+        '[3ULFu_KZhCNX9S4bTKSbI]:text "Text"':
           data:
             text: The information has been remembered.
-          id: 3ULFu_KZhCNX9S4bTKSbI
           outgoingConnections:
             - output->"If" UV0GD007NdcPBWTThvUXn/value
-          title: Text
-          type: text
           visualData: 1343.433220863393/676.8483689406404/300/20
-        EkSk0XXiGO9ugWxWlPhB4:
+        '[EkSk0XXiGO9ugWxWlPhB4]:extractObjectPath "Extract Object Path"':
           data:
             path: $.info
             usePathInput: false
-          id: EkSk0XXiGO9ugWxWlPhB4
           outgoingConnections:
             - match->"Get Embedding" tu5GLMWeIMTT_IJLUVVlq/input
             - match->"Hash" xLo2UmlnOqD3OYXby4bSZ/input
             - match->"Vector Store" MeZhLHLCVWDKzWtlOQeQb/data
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 683/375/250/2
-        MeZhLHLCVWDKzWtlOQeQb:
+        '[MeZhLHLCVWDKzWtlOQeQb]:vectorStore "Vector Store"':
           data:
             collectionId: rivet-3ff65ea.svc.us-west1-gcp-free.pinecone.io/test1
             integration: pinecone
-          id: MeZhLHLCVWDKzWtlOQeQb
           outgoingConnections:
             - complete->"If" UV0GD007NdcPBWTThvUXn/if
-          title: Vector Store
-          type: vectorStore
           visualData: 1408/389/200/8
-        RbHUSAcTUJTsK2sRlzbJQ:
-          data: {}
-          id: RbHUSAcTUJTsK2sRlzbJQ
+        '[RbHUSAcTUJTsK2sRlzbJQ]:ifElse "If/Else"':
           outgoingConnections:
             - output->"Text" 3ULFu_KZhCNX9S4bTKSbI/id
             - output->"Vector Store" MeZhLHLCVWDKzWtlOQeQb/id
-          title: If/Else
-          type: ifElse
           visualData: 1046.2140580979324/662.0972381436029/125/18
-        UV0GD007NdcPBWTThvUXn:
-          data: {}
-          id: UV0GD007NdcPBWTThvUXn
+        '[UV0GD007NdcPBWTThvUXn]:if "If"':
           outgoingConnections:
             - output->"Graph Output" YoSsNCM2sMjGi5UwLhP9Z/value
-          title: If
-          type: if
           visualData: 1722/436/125/12
-        YoSsNCM2sMjGi5UwLhP9Z:
+        '[YoSsNCM2sMjGi5UwLhP9Z]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: output
-          id: YoSsNCM2sMjGi5UwLhP9Z
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 2423.453795379538/216.9381188118812/300/21
-        dL7Bop8CO27-xbZKDoKF0:
+        '[dL7Bop8CO27-xbZKDoKF0]:extractObjectPath "Extract Object Path"':
           data:
             path: $.id
             usePathInput: false
-          id: dL7Bop8CO27-xbZKDoKF0
           outgoingConnections:
             - match->"If/Else" RbHUSAcTUJTsK2sRlzbJQ/if
             - match->"If/Else" RbHUSAcTUJTsK2sRlzbJQ/true
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 683/568.519801980198/250/16
-        tu5GLMWeIMTT_IJLUVVlq:
+        '[tu5GLMWeIMTT_IJLUVVlq]:getEmbedding "Get Embedding"':
           data:
             integration: openai
             useIntegrationInput: false
-          id: tu5GLMWeIMTT_IJLUVVlq
           outgoingConnections:
             - embedding->"Vector Store" MeZhLHLCVWDKzWtlOQeQb/vector
-          title: Get Embedding
-          type: getEmbedding
           visualData: 1065/267/200/7
-        v0cI-5wGxCzMVQ2MhEl_z:
+        '[v0cI-5wGxCzMVQ2MhEl_z]:graphInput "Graph Input"':
           data:
             dataType: object
             id: arguments
             useDefaultValueInput: false
-          id: v0cI-5wGxCzMVQ2MhEl_z
           outgoingConnections:
             - data->"Extract Object Path" EkSk0XXiGO9ugWxWlPhB4/object
             - data->"Extract Object Path" dL7Bop8CO27-xbZKDoKF0/object
-          title: Graph Input
-          type: graphInput
           visualData: 343/371/300/1
-        xLo2UmlnOqD3OYXby4bSZ:
+        '[xLo2UmlnOqD3OYXby4bSZ]:hash "Hash"':
           data:
             algorithm: sha256
-          id: xLo2UmlnOqD3OYXby4bSZ
           outgoingConnections:
             - hash->"If/Else" RbHUSAcTUJTsK2sRlzbJQ/false
-          title: Hash
-          type: hash
           visualData: 655.8735656404247/821.8014999261702/250/19
     sgqPsMPVjV-hHvsAloa3y:
       metadata:
@@ -3705,16 +3219,12 @@ data:
         id: sgqPsMPVjV-hHvsAloa3y
         name: "RA - Command: READ_FILE"
       nodes:
-        1zWd9IKU6oivnbRfSOulB:
+        '[1zWd9IKU6oivnbRfSOulB]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: output
-          id: 1zWd9IKU6oivnbRfSOulB
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 1655.4237156131949/344.06153462220004/300/16
-        3zvt1Wdg0WAtkS_gy4Le2:
+        '[3zvt1Wdg0WAtkS_gy4Le2]:text "Text"':
           data:
             text: |-
               ```
@@ -3722,44 +3232,32 @@ data:
 
               {{contents}}
               ```
-          id: 3zvt1Wdg0WAtkS_gy4Le2
           outgoingConnections:
             - output->"Graph Output" 1zWd9IKU6oivnbRfSOulB/value
-          title: Text
-          type: text
           visualData: 1310.636375619824/301.4545670474145/300/15
-        O4TUctRQ9cTMpuBfy07TM:
+        '[O4TUctRQ9cTMpuBfy07TM]:graphInput "Graph Input"':
           data:
             dataType: object
             id: arguments
             useDefaultValueInput: false
-          id: O4TUctRQ9cTMpuBfy07TM
           outgoingConnections:
             - data->"Extract Object Path" gCLcAGjsk4qroZ7F0_3I0/object
-          title: Graph Input
-          type: graphInput
           visualData: 239/357/300/1
-        gCLcAGjsk4qroZ7F0_3I0:
+        '[gCLcAGjsk4qroZ7F0_3I0]:extractObjectPath "Extract Object Path"':
           data:
             path: $.path
             usePathInput: false
-          id: gCLcAGjsk4qroZ7F0_3I0
           outgoingConnections:
             - match->"Read File" t_g4bWwfU5_b9X6pzk6OS/path
             - match->"Text" 3zvt1Wdg0WAtkS_gy4Le2/file_name
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 613/365/250/2
-        t_g4bWwfU5_b9X6pzk6OS:
+        '[t_g4bWwfU5_b9X6pzk6OS]:readFile "Read File"':
           data:
             errorOnMissingFile: false
             path: ""
             usePathInput: true
-          id: t_g4bWwfU5_b9X6pzk6OS
           outgoingConnections:
             - content->"Text" 3zvt1Wdg0WAtkS_gy4Le2/contents
-          title: Read File
-          type: readFile
           visualData: 907.7722794413804/405.417269725349/250/12
     u6yVHvgJi01zZYY_5f4y3:
       metadata:
@@ -3767,92 +3265,65 @@ data:
         id: u6yVHvgJi01zZYY_5f4y3
         name: RA - Exec Commands
       nodes:
-        6aKpPSGTWQarC7SnxrtH5:
+        '[6aKpPSGTWQarC7SnxrtH5]:subGraph "Subgraph"':
           data:
             graphId: 9cRiigw77WY0G_wWDYp4Z
-          id: 6aKpPSGTWQarC7SnxrtH5
           isSplitRun: true
           outgoingConnections:
             - command_output->"Text" HG6cDo_qEFKjH_FiOyBQC/command
-          title: Subgraph
-          type: subGraph
           visualData: 710.6904790341357/376.5930426926441/300/2
-        HG6cDo_qEFKjH_FiOyBQC:
+        '[HG6cDo_qEFKjH_FiOyBQC]:text "Text"':
           data:
             text: |-
               ---
 
               {{command}}
-          id: HG6cDo_qEFKjH_FiOyBQC
           isSplitRun: true
           outgoingConnections:
             - output->"Prompt" l2Lne7i6GCD4UBUCBmwEI/input
-          title: Text
-          type: text
           visualData: 1128.3888320265673/370.2191258971111/300/4
-        TQlCAaArLhkbt7Z-YE_Ol:
+        '[TQlCAaArLhkbt7Z-YE_Ol]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: commands_output
-          id: TQlCAaArLhkbt7Z-YE_Ol
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 2162.433555324635/376.65765337302344/300/13
-        a_EfAnKA_WZ3QprwFJ_Qm:
-          data: {}
-          id: a_EfAnKA_WZ3QprwFJ_Qm
+        '[a_EfAnKA_WZ3QprwFJ_Qm]:if "If"':
           outgoingConnections:
             - output->"Subgraph" 6aKpPSGTWQarC7SnxrtH5/command
-          title: If
-          type: if
           visualData: 470.56038435942/481.8114644600358/125/16
-        gqKd_dWEPpEZHfcUNWGYW:
-          data: {}
-          id: gqKd_dWEPpEZHfcUNWGYW
+        '[gqKd_dWEPpEZHfcUNWGYW]:ifElse "If/Else"':
           outgoingConnections:
             - output->"Graph Output" TQlCAaArLhkbt7Z-YE_Ol/value
-          title: If/Else
-          type: ifElse
           visualData: 1900.9010140792252/421.6721425286348/125/15
-        l2Lne7i6GCD4UBUCBmwEI:
+        '[l2Lne7i6GCD4UBUCBmwEI]:prompt "Prompt"':
           data:
             enableFunctionCall: false
             name: SYSTEM COMMAND
             promptText: "{{input}}"
             type: user
             useTypeInput: false
-          id: l2Lne7i6GCD4UBUCBmwEI
           outgoingConnections:
             - output->"If/Else" gqKd_dWEPpEZHfcUNWGYW/true
-          title: Prompt
-          type: prompt
           visualData: 1481.653703243058/377.13686377224553/250/7
-        pthEZe9kZ5WqR5qI4-Vq6:
+        '[pthEZe9kZ5WqR5qI4-Vq6]:prompt "Prompt"':
           data:
             enableFunctionCall: false
             name: SYSTEM INFORMATION
             promptText: No commands found to run!
             type: user
             useTypeInput: false
-          id: pthEZe9kZ5WqR5qI4-Vq6
           outgoingConnections:
             - output->"If/Else" gqKd_dWEPpEZHfcUNWGYW/false
-          title: Prompt
-          type: prompt
           visualData: 1466.9226639256026/654.1024948581031/250/17
-        wOGBtU6aVMyEK5DuRnTXe:
+        '[wOGBtU6aVMyEK5DuRnTXe]:graphInput "Graph Input"':
           data:
             dataType: object[]
             id: commands
             useDefaultValueInput: false
-          id: wOGBtU6aVMyEK5DuRnTXe
           outgoingConnections:
             - data->"If" a_EfAnKA_WZ3QprwFJ_Qm/if
             - data->"If" a_EfAnKA_WZ3QprwFJ_Qm/value
             - data->"If/Else" gqKd_dWEPpEZHfcUNWGYW/if
-          title: Graph Input
-          type: graphInput
           visualData: -6.4520287661832185/346.62538707922704/300/9
     xbw1yaJUIdwWrJH3WU4fR:
       metadata:
@@ -3860,26 +3331,19 @@ data:
         id: xbw1yaJUIdwWrJH3WU4fR
         name: RA - Chat Always System Command
       nodes:
-        2_KA9pGsv83JjkPd1MV4q:
+        '[2_KA9pGsv83JjkPd1MV4q]:loopController "Loop Controller"':
           data:
             maxIterations: 100
-          id: 2_KA9pGsv83JjkPd1MV4q
           outgoingConnections:
             - break->"Extract Object Path" JLLQ3v_VxM6IXG32tlhN7/object
             - output1->"Assemble Prompt" 92_icEvqGJNAYqfRkKrnr/message1
             - output1->"Chat" 92yohvA5jf_4rF0wdgvmp/prompt
-          title: Loop Controller
-          type: loopController
           visualData: 1533.8593700109845/649.284081111641/250/77
-        92_icEvqGJNAYqfRkKrnr:
-          data: {}
-          id: 92_icEvqGJNAYqfRkKrnr
+        '[92_icEvqGJNAYqfRkKrnr]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Loop Controller" 2_KA9pGsv83JjkPd1MV4q/input1
-          title: Assemble Prompt
-          type: assemblePrompt
           visualData: 3183.8551445458884/1025.5150016819186/250/97
-        92yohvA5jf_4rF0wdgvmp:
+        '[92yohvA5jf_4rF0wdgvmp]:chat "Chat"':
           data:
             cache: false
             enableFunctionUse: false
@@ -3901,66 +3365,48 @@ data:
             useTopPInput: false
             useUseTopPInput: false
             useUserInput: false
-          id: 92yohvA5jf_4rF0wdgvmp
           outgoingConnections:
             - response->"Loop Controller" 2_KA9pGsv83JjkPd1MV4q/input2
             - response->"Subgraph" KurJE2VRa6wnuAIMZ0yyP/input
-          title: Chat
-          type: chat
           visualData: 1826.1340912307267/588.4484887071343/200/79
-        ChlRAn2eL4ndq2VSH0sUb:
+        '[ChlRAn2eL4ndq2VSH0sUb]:text "Text"':
           data:
             text: "true"
-          id: ChlRAn2eL4ndq2VSH0sUb
           outgoingConnections:
             - output->"If/Else" m53Fm7rEKyAQRqIg7RL0Y/false
-          title: Text
-          type: text
           visualData: 2295.886404047394/925.0804762754461/300/94
-        CzhSF51XkMyp1dbJ5h7VO:
+        '[CzhSF51XkMyp1dbJ5h7VO]:graphInput "Graph Input"':
           data:
             dataType: string
             id: systemPrompt
-          id: CzhSF51XkMyp1dbJ5h7VO
           outgoingConnections:
             - data->"Chat" 92yohvA5jf_4rF0wdgvmp/systemPrompt
-          title: Graph Input
-          type: graphInput
           visualData: 1075.8448771225335/539.0283254118859/300/73
-        JLLQ3v_VxM6IXG32tlhN7:
+        '[JLLQ3v_VxM6IXG32tlhN7]:extractObjectPath "Extract Object Path"':
           data:
             path: $[1]
             usePathInput: false
-          id: JLLQ3v_VxM6IXG32tlhN7
           outgoingConnections:
             - match->"Graph Output" wkQn6ctmCI1yXdo6sGGBz/value
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 1888.7070328821937/336.1543563829915/250/null
-        KurJE2VRa6wnuAIMZ0yyP:
+        '[KurJE2VRa6wnuAIMZ0yyP]:subGraph "Subgraph"':
           data:
             graphId: 3BWUibK-Zr_i2GjKA277_
-          id: KurJE2VRa6wnuAIMZ0yyP
           outgoingConnections:
             - commands->"If/Else" f5fMuI0pWIHCyvx9aU4ZU/if
             - commands->"If/Else" m53Fm7rEKyAQRqIg7RL0Y/if
-          title: Subgraph
-          type: subGraph
           visualData: 2095.0173532344493/633.3420929518835/300/80
-        SoW97Q838zltZj6QFkfeb:
+        '[SoW97Q838zltZj6QFkfeb]:prompt "Prompt"':
           data:
             enableFunctionCall: false
             name: SYSTEM INFORMATION
             promptText: "{{input}}"
             type: user
             useTypeInput: false
-          id: SoW97Q838zltZj6QFkfeb
           outgoingConnections:
             - output->"Assemble Prompt" 92_icEvqGJNAYqfRkKrnr/message2
-          title: Prompt
-          type: prompt
           visualData: 2809.218422791587/1084.5003578730216/250/96
-        W7QsTE8PujofjTwS_4-rK:
+        '[W7QsTE8PujofjTwS_4-rK]:text "Text"':
           data:
             text: >-
               No system command found!
@@ -3976,64 +3422,40 @@ data:
                   arguments:
                   argumentName: argument value
               ``
-          id: W7QsTE8PujofjTwS_4-rK
           outgoingConnections:
             - output->"If/Else" f5fMuI0pWIHCyvx9aU4ZU/false
-          title: Text
-          type: text
           visualData: 1971.9655784724882/1350.7092231728611/300/99
-        _t1LKZtmlsPEVBEMZB7NO:
+        '[_t1LKZtmlsPEVBEMZB7NO]:text "Text"':
           data:
             text: "false"
-          id: _t1LKZtmlsPEVBEMZB7NO
           outgoingConnections:
             - output->"If/Else" m53Fm7rEKyAQRqIg7RL0Y/true
-          title: Text
-          type: text
           visualData: 2292.698006415443/797.5445709973859/300/92
-        f5fMuI0pWIHCyvx9aU4ZU:
-          data: {}
-          id: f5fMuI0pWIHCyvx9aU4ZU
+        '[f5fMuI0pWIHCyvx9aU4ZU]:ifElse "If/Else"':
           outgoingConnections:
             - output->"Prompt" SoW97Q838zltZj6QFkfeb/input
-          title: If/Else
-          type: ifElse
           visualData: 2622.697161322423/1060.5873756333851/125/95
-        m53Fm7rEKyAQRqIg7RL0Y:
-          data: {}
-          id: m53Fm7rEKyAQRqIg7RL0Y
+        '[m53Fm7rEKyAQRqIg7RL0Y]:ifElse "If/Else"':
           outgoingConnections:
             - output->"Loop Controller" 2_KA9pGsv83JjkPd1MV4q/continue
-          title: If/Else
-          type: ifElse
           visualData: 2686.4651139614534/728.9940219104286/125/85
-        memzsvTFav2ipoBX9uSM5:
+        '[memzsvTFav2ipoBX9uSM5]:graphInput "Graph Input"':
           data:
             dataType: chat-message[]
             id: prompt
-          id: memzsvTFav2ipoBX9uSM5
           outgoingConnections:
             - data->"Loop Controller" 2_KA9pGsv83JjkPd1MV4q/input1Default
-          title: Graph Input
-          type: graphInput
           visualData: 1088.5984676503394/847.4338448982371/300/72
-        q13gYH-nPwuJkwVWm6EuO:
+        '[q13gYH-nPwuJkwVWm6EuO]:text "Text"':
           data:
             text: ""
-          id: q13gYH-nPwuJkwVWm6EuO
           outgoingConnections:
             - output->"If/Else" f5fMuI0pWIHCyvx9aU4ZU/true
-          title: Text
-          type: text
           visualData: 2162.480754304652/1105.0577958952597/300/100
-        wkQn6ctmCI1yXdo6sGGBz:
+        '[wkQn6ctmCI1yXdo6sGGBz]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: response
-          id: wkQn6ctmCI1yXdo6sGGBz
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 2224.554815375056/290.04076920266385/300/101
     yoe9VPnjUULQacHSolgiL:
       metadata:
@@ -4041,46 +3463,33 @@ data:
         id: yoe9VPnjUULQacHSolgiL
         name: Execute Task List
       nodes:
-        0bSFyrwELYC6bRERr5Znc:
+        '[0bSFyrwELYC6bRERr5Znc]:extractObjectPath "Remaining Tasks"':
           data:
             path: $.yamlDocument.remainingTasks[*]
             usePathInput: false
-          id: 0bSFyrwELYC6bRERr5Znc
           outgoingConnections:
             - all_matches->"Remaining Task" mOqA0ixaGWn4vW2dVbGu7/input
-          title: Remaining Tasks
-          type: extractObjectPath
           visualData: 8858.792221881899/-10.430405764192535/250/302
-        0xxgB-83ezLpsw0rLpo86:
+        '[0xxgB-83ezLpsw0rLpo86]:subGraph "Get Rivet File By File Name"':
           data:
             graphId: JcFUPKbbvOvBQYdvItenL
-          id: 0xxgB-83ezLpsw0rLpo86
           outgoingConnections:
             - file_contents->"Text" i4cBHxWO1HLsnHg3Yh7qP/file_contents
-          title: Get Rivet File By File Name
-          type: subGraph
           visualData: 5887.468401346239/-209.5399625226982/300/269
-        16UsT_tJlpYi717REkv6n:
-          data: {}
-          id: 16UsT_tJlpYi717REkv6n
+        '[16UsT_tJlpYi717REkv6n]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Chat" F3cvl2CAcA0PAj6KEiF6q/prompt
-          title: Assemble Prompt
-          type: assemblePrompt
           visualData: 1158/478/250/11
-        18WP87xc4D7JXdSGTRlYD:
+        '[18WP87xc4D7JXdSGTRlYD]:graphInput "Graph Input"':
           data:
             dataType: string
             id: context
             useDefaultValueInput: true
-          id: 18WP87xc4D7JXdSGTRlYD
           outgoingConnections:
             - data->"Execute Current Task Prompt" KIFBcqmOa5G-MPklHfHVR/context
             - data->"Text" uEWXLi8XmKpaiGzzTFDme/context
-          title: Graph Input
-          type: graphInput
           visualData: 2071.0798553565564/161.51608679287446/300/328
-        2duN-SQvGKbhGgvdS0U6n:
+        '[2duN-SQvGKbhGgvdS0U6n]:text "Text"':
           data:
             text: >-
               Here is a task list provided by another AI:
@@ -4103,72 +3512,50 @@ data:
 
 
               Next Task: A short description of what I will be doing next
-          id: 2duN-SQvGKbhGgvdS0U6n
           outgoingConnections:
             - output->"Assemble Prompt" 16UsT_tJlpYi717REkv6n/message2
-          title: Text
-          type: text
           visualData: 779.0555310294967/440.4303654785995/300/39
-        3bvstHODyToviHmuGwEl0:
+        '[3bvstHODyToviHmuGwEl0]:text "Text"':
           data:
             text: "- {{input}}"
-          id: 3bvstHODyToviHmuGwEl0
           outgoingConnections:
             - output->"Task List" tgcfyWHl6ut3-ivyZ8jEA/input
-          title: Text
-          type: text
           visualData: 864.2677686086065/869.4863033502647/132.05028524130944/null
-        3uXtY4n-rlV41w6joxUdE:
+        '[3uXtY4n-rlV41w6joxUdE]:extractObjectPath "Extract Object Path"':
           data:
             path: $.message
             usePathInput: false
-          id: 3uXtY4n-rlV41w6joxUdE
           outgoingConnections:
             - match->"User Input" RIiW55iFfMEKP4fXdsETJ/questions
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 5570.698610051417/-729.7916844518388/250/355
-        3xo9qKcGwicvWvyQkgZD4:
+        '[3xo9qKcGwicvWvyQkgZD4]:extractYaml "Extract YAML"':
           data:
             rootPropertyName: yamlDocument
-          id: 3xo9qKcGwicvWvyQkgZD4
           outgoingConnections:
             - output->"Next Task" xP7TQ0W3vIsCOyGtZEX5q/object
             - output->"Remaining Tasks" 0bSFyrwELYC6bRERr5Znc/object
-          title: Extract YAML
-          type: extractYaml
           visualData: 8587.35236611393/-174.5117304558507/134.44348359916876/299
-        4CgGTnsYZdZFKi12cKmiP:
-          data: {}
-          id: 4CgGTnsYZdZFKi12cKmiP
+        '[4CgGTnsYZdZFKi12cKmiP]:if "If"':
           outgoingConnections:
             - output->"Text" FyLqlQhLYBHb5SD8Bbjx5/input
-          title: If
-          type: if
           visualData: 5752.306145236096/217.18316729256162/100/362
-        4JUAkBJxsbKfNAXOdmGS6:
+        '[4JUAkBJxsbKfNAXOdmGS6]:extractObjectPath "Extract Object Path"':
           data:
             path: $.notes
             usePathInput: false
-          id: 4JUAkBJxsbKfNAXOdmGS6
           outgoingConnections:
             - match->"Coalesce" SNJjOp-rPmQwnU52nE8kO/input7
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 5874.8418618563355/7.449881473971996/250/377
-        4S1D75ofp0W1obD11VBqI:
+        '[4S1D75ofp0W1obD11VBqI]:subGraph "List Rivet Files"':
           data:
             graphId: d6Pgmz7n8qvXkaNF-2e9P
-          id: 4S1D75ofp0W1obD11VBqI
           outgoingConnections:
             - files->"Execute Current Task Prompt" KIFBcqmOa5G-MPklHfHVR/files
-          title: List Rivet Files
-          type: subGraph
           visualData: 3119.481362252188/-57.27713878661959/300/260
-        6P04DpTqBQMOYpBfJuurJ:
+        '[6P04DpTqBQMOYpBfJuurJ]:text "Text"':
           data:
             text: |-
-
+              
               SYSTEM_MESSAGE:
 
               You ran this command:
@@ -4183,14 +3570,11 @@ data:
               COMMAND_OUTPUT_START
               {{command_output}}
               COMMAND_OUTPUT_END
-          id: 6P04DpTqBQMOYpBfJuurJ
           outgoingConnections:
             - output->"Command History" JA8Lk0pXQTMaNfUhEphm2/command
             - output->"Text" uEWXLi8XmKpaiGzzTFDme/command_info
-          title: Text
-          type: text
           visualData: 7486.925742104204/-160.8828855686792/300/229
-        8xAF_gsGq9anwwpehGo2Y:
+        '[8xAF_gsGq9anwwpehGo2Y]:text "Text"':
           data:
             text: >-
               You have Chat API functions available to you to use. You may call
@@ -4229,15 +3613,12 @@ data:
                 arguments:
                   notes: This is me thinking out loud
               ```
-          id: 8xAF_gsGq9anwwpehGo2Y
           outgoingConnections:
             - output->"Execute Current Task Prompt"
               KIFBcqmOa5G-MPklHfHVR/functions
             - output->"Text" uEWXLi8XmKpaiGzzTFDme/functions
-          title: Text
-          type: text
           visualData: 2432.601813980837/872.2598561008039/300/160
-        B0u3WpTZggnq8Lgl7Xv8h:
+        '[B0u3WpTZggnq8Lgl7Xv8h]:text "Text"':
           data:
             text: >-
               Here is some text about a task list:
@@ -4263,31 +3644,21 @@ data:
               ```
 
               Every task MUST be a string value, even if the step contains YAML data.
-          id: B0u3WpTZggnq8Lgl7Xv8h
           outgoingConnections:
             - output->"Chat" PLU5yC3u52dOPIxlmPIf-/prompt
-          title: Text
-          type: text
           visualData: 8226.95339201243/-548.2113674897184/300/290
-        CGAZhTY_eFuZpMhTT_-XX:
+        '[CGAZhTY_eFuZpMhTT_-XX]:text "Text"':
           data:
             text: You are a AI tool that analyzes another AI's message and determines the
               next task for it to run.
-          id: CGAZhTY_eFuZpMhTT_-XX
           outgoingConnections:
             - output->"Chat" gHSSvkoWQ76ko-0EvUdZn/systemPrompt
-          title: Text
-          type: text
           visualData: 7832.703318346902/-435.1156370653609/300/289
-        CWz3hh4xEp4FLbYV3Tw3v:
-          data: {}
-          id: CWz3hh4xEp4FLbYV3Tw3v
+        '[CWz3hh4xEp4FLbYV3Tw3v]:if "If"':
           outgoingConnections:
             - output->"Extract Object Path" wq5E83vpWqQMlS7AHPnQe/object
-          title: If
-          type: if
           visualData: 5388.238498672117/-404.8323310274315/100/346
-        F3cvl2CAcA0PAj6KEiF6q:
+        '[F3cvl2CAcA0PAj6KEiF6q]:chat "Chat"':
           data:
             cache: false
             frequencyPenalty: 0
@@ -4307,13 +3678,10 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: F3cvl2CAcA0PAj6KEiF6q
           outgoingConnections:
             - response->"Extract Regex" L8j7UVv6-Qc2Pnm9B4MRB/input
-          title: Chat
-          type: chat
           visualData: 1478/413/200/13
-        FyLqlQhLYBHb5SD8Bbjx5:
+        '[FyLqlQhLYBHb5SD8Bbjx5]:text "Text"':
           data:
             text: |-
               SYSTEM ERROR: NO SUCH FUNCTION
@@ -4323,41 +3691,28 @@ data:
               ```yml
               {{input}}
               ```
-          id: FyLqlQhLYBHb5SD8Bbjx5
           outgoingConnections:
             - output->"Coalesce" SNJjOp-rPmQwnU52nE8kO/input6
-          title: Text
-          type: text
           visualData: 6421.102213946726/101.64363655647925/300/374
-        H4TGM34XgUZZOny6PfmFt:
+        '[H4TGM34XgUZZOny6PfmFt]:text "Remaining Tasks"':
           data:
             text: "{{input}}"
-          id: H4TGM34XgUZZOny6PfmFt
           outgoingConnections:
             - output->"Loop Controller" cObRObIxgwrJablQHLGnw/input2
-          title: Remaining Tasks
-          type: text
           visualData: 9376.061220068554/4.762078225718085/154.63565140719766/326
-        ItFByM3wvP_dPEoP5D6Mx:
-          data: {}
-          id: ItFByM3wvP_dPEoP5D6Mx
+        '[ItFByM3wvP_dPEoP5D6Mx]:if "If"':
           outgoingConnections:
             - output->"Coalesce" YJDAqTtxqpNkKPX5FvtPt/input2
-          title: If
-          type: if
           visualData: 5380.482613085664/157.3401052405825/100/373
-        JA8Lk0pXQTMaNfUhEphm2:
+        '[JA8Lk0pXQTMaNfUhEphm2]:text "Command History"':
           data:
             text: |-
               {{prev_commands}}
               {{command}}
-          id: JA8Lk0pXQTMaNfUhEphm2
           outgoingConnections:
             - output->"Loop Controller" cObRObIxgwrJablQHLGnw/input3
-          title: Command History
-          type: text
           visualData: 7911.318384602866/322.2310779162274/300/382
-        KIFBcqmOa5G-MPklHfHVR:
+        '[KIFBcqmOa5G-MPklHfHVR]:text "Execute Current Task Prompt"':
           data:
             text: >-
               {{context}}
@@ -4411,34 +3766,25 @@ data:
                   argumentName: value
                   argument2: value2
               ```
-          id: KIFBcqmOa5G-MPklHfHVR
           outgoingConnections:
             - output->"Chat - Execute Current Task" NlqmTc5SUrwdCFOOU26CP/prompt
-          title: Execute Current Task Prompt
-          type: text
           visualData: 3827.4091396369313/31.86885376256144/300/215
-        L27NwFvq6cJgke83F55ei:
+        '[L27NwFvq6cJgke83F55ei]:userInput "User Input"':
           data:
             prompt: This is an example question?
             useInput: true
-          id: L27NwFvq6cJgke83F55ei
           outgoingConnections:
             - output->"Coalesce" SNJjOp-rPmQwnU52nE8kO/input2
-          title: User Input
-          type: userInput
           visualData: 6271.2758460845735/-1025.009768641542/250/254
-        L8j7UVv6-Qc2Pnm9B4MRB:
+        '[L8j7UVv6-Qc2Pnm9B4MRB]:extractRegex "Extract Regex"':
           data:
             errorOnFailed: false
             regex: "Next Task: (.+)"
             useRegexInput: false
-          id: L8j7UVv6-Qc2Pnm9B4MRB
           outgoingConnections:
             - output1->"Loop Controller" cObRObIxgwrJablQHLGnw/input1Default
-          title: Extract Regex
-          type: extractRegex
           visualData: 1734/445/145/22
-        MHz_Mr-O-KivwLl_Qbevp:
+        '[MHz_Mr-O-KivwLl_Qbevp]:text "Text"':
           data:
             text: >-
               yamlDocument:
@@ -4447,21 +3793,14 @@ data:
                   - Next, I will review the existing codebase to gain an understanding of how the system works and how the TrimChatMessagesNode component fits into it.
                   - I will examine the ExtractRegexNode.tsx file to see how a similar component is implemented and determine if there are any useful patterns or techniques that can be applied to the TrimChatMessagesNode component.
                   - I will create a new file called TrimChatMessagesNode.tsx and implement the components according to the specifications and examples provided.
-          id: MHz_Mr-O-KivwLl_Qbevp
           outgoingConnections:
             - output->"Extract YAML" bjL5VE8Zzz84m3QFLJ7x7/input
-          title: Text
-          type: text
           visualData: -870.9610414764056/564.0734459241355/300/274
-        Mvbq2URURhELcYZH2EUKw:
-          data: {}
-          id: Mvbq2URURhELcYZH2EUKw
+        '[Mvbq2URURhELcYZH2EUKw]:if "If"':
           outgoingConnections:
             - output->"Extract Object Path" 3uXtY4n-rlV41w6joxUdE/object
-          title: If
-          type: if
           visualData: 5375.549822945474/-705.1813531485337/100/351
-        NlqmTc5SUrwdCFOOU26CP:
+        '[NlqmTc5SUrwdCFOOU26CP]:chat "Chat - Execute Current Task"':
           data:
             cache: false
             frequencyPenalty: 0
@@ -4481,14 +3820,11 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: NlqmTc5SUrwdCFOOU26CP
           outgoingConnections:
             - response->"Extract YAML" RRQkzAYP86x8a9_9_KOx_/input
             - response->"If" 4CgGTnsYZdZFKi12cKmiP/value
-          title: Chat - Execute Current Task
-          type: chat
           visualData: 4196.338904061931/191.56471881852312/194.08208299619673/278
-        PLU5yC3u52dOPIxlmPIf-:
+        '[PLU5yC3u52dOPIxlmPIf-]:chat "Chat"':
           data:
             cache: true
             frequencyPenalty: 0
@@ -4508,166 +3844,110 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: PLU5yC3u52dOPIxlmPIf-
           outgoingConnections:
             - response->"Extract YAML" 3xo9qKcGwicvWvyQkgZD4/input
-          title: Chat
-          type: chat
           visualData: 8606.039472972514/-393.373390759543/200/292
-        Q2-bYh6LGkVm2WPb46tEz:
+        '[Q2-bYh6LGkVm2WPb46tEz]:text "Text"':
           data:
             text: "Please create this file: {{file_path}}"
-          id: Q2-bYh6LGkVm2WPb46tEz
           outgoingConnections:
             - output->"User Input" L27NwFvq6cJgke83F55ei/questions
-          title: Text
-          type: text
           visualData: 5885.144058035461/-1031.3397979538224/300/251
-        RIiW55iFfMEKP4fXdsETJ:
+        '[RIiW55iFfMEKP4fXdsETJ]:userInput "User Input"':
           data:
             prompt: This is an example question?
             useInput: true
-          id: RIiW55iFfMEKP4fXdsETJ
           outgoingConnections:
             - output->"Coalesce" SNJjOp-rPmQwnU52nE8kO/input3
-          title: User Input
-          type: userInput
           visualData: 5907.5865905173505/-741.4244278640571/250/259
-        RNxCaWdA7mOcrJBVUKiqr:
-          data: {}
-          id: RNxCaWdA7mOcrJBVUKiqr
+        '[RNxCaWdA7mOcrJBVUKiqr]:if "If"':
           outgoingConnections:
             - output->"Extract Object Path" iAPKowmhorGhT6DKcjkb7/object
-          title: If
-          type: if
           visualData: 5389.610793391964/-187.54344359294475/100/368
-        RRQkzAYP86x8a9_9_KOx_:
+        '[RRQkzAYP86x8a9_9_KOx_]:extractYaml "Extract YAML"':
           data:
             objectPath: $.yamlDocument
             rootPropertyName: yamlDocument
-          id: RRQkzAYP86x8a9_9_KOx_
           outgoingConnections:
             - output->"Extract Object Path" TflHhIRIPHK_PlpMpMCtL/object
             - output->"Extract Object Path" z5IaklOOBA20wwMI0aRkq/object
-          title: Extract YAML
-          type: extractYaml
           visualData: 4198.2280237908735/436.0668212402672/149.28242186462194/281
-        Rh5FbKt-FMnow6je0Hm4u:
-          data: {}
-          id: Rh5FbKt-FMnow6je0Hm4u
+        '[Rh5FbKt-FMnow6je0Hm4u]:if "If"':
           outgoingConnections:
             - output->"Extract Object Path" u2sddIBdrSCM-8EkJ_qS4/object
-          title: If
-          type: if
           visualData: 5391.813974291001/-998.058677960689/100/358
-        SNJjOp-rPmQwnU52nE8kO:
-          data: {}
-          id: SNJjOp-rPmQwnU52nE8kO
+        '[SNJjOp-rPmQwnU52nE8kO]:coalesce "Coalesce"':
           outgoingConnections:
             - output->"Text" 6P04DpTqBQMOYpBfJuurJ/command_output
-          title: Coalesce
-          type: coalesce
           visualData: 7107.0327313666685/-155.45997396385604/150/285
-        SNQCA2ZXN7LQRbPd1M6Mx:
+        '[SNQCA2ZXN7LQRbPd1M6Mx]:subGraph "Get Rivet File By File Name"':
           data:
             graphId: JcFUPKbbvOvBQYdvItenL
-          id: SNQCA2ZXN7LQRbPd1M6Mx
           outgoingConnections:
             - file_contents->"Digest File" cV8OdlEuJDaI2v05bTz5X/file_contents
-          title: Get Rivet File By File Name
-          type: subGraph
           visualData: 5899.625587751349/-459.07944232089864/300/267
-        TGIDciqmI5zMTLdVk2T2C:
-          data: {}
-          id: TGIDciqmI5zMTLdVk2T2C
+        '[TGIDciqmI5zMTLdVk2T2C]:if "If"':
           outgoingConnections:
             - output->"Coalesce" YJDAqTtxqpNkKPX5FvtPt/input1
-          title: If
-          type: if
           visualData: 5396.161154674258/9.417887736214652/100/367
-        TflHhIRIPHK_PlpMpMCtL:
+        '[TflHhIRIPHK_PlpMpMCtL]:extractObjectPath "Extract Object Path"':
           data:
             path: $.command
             usePathInput: false
-          id: TflHhIRIPHK_PlpMpMCtL
           outgoingConnections:
             - match->"Match" eKe_lJayfu9fVyZAD7ri_/input
             - match->"Text" 6P04DpTqBQMOYpBfJuurJ/command_name
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 4437.355919239172/355.562416243158/250/372
-        U0EcCqP66WFZahvpiGPFf:
+        '[U0EcCqP66WFZahvpiGPFf]:userInput "User Input"':
           data:
             prompt: This is an example question?
             useInput: true
-          id: U0EcCqP66WFZahvpiGPFf
           outgoingConnections:
             - output->"Coalesce" SNJjOp-rPmQwnU52nE8kO/input1
-          title: User Input
-          type: userInput
           visualData: 6281.8258949383735/-1270.8259069351022/250/256
-        VIZaMd_lS9i-zMjpKl5wj:
+        '[VIZaMd_lS9i-zMjpKl5wj]:text "Task List"':
           data:
             text: "{{input}}"
-          id: VIZaMd_lS9i-zMjpKl5wj
           outgoingConnections:
             - output->"Text" uEWXLi8XmKpaiGzzTFDme/task_list
-          title: Task List
-          type: text
           visualData: 5995.575145528108/766.7859412690377/280.41157562862554/384
-        Vudek72LbIFekPR5DVDsq:
+        '[Vudek72LbIFekPR5DVDsq]:graphInput "Task List"':
           data:
             dataType: string[]
             id: task_list
             useDefaultValueInput: true
-          id: Vudek72LbIFekPR5DVDsq
           outgoingConnections:
             - data->"Text" 2duN-SQvGKbhGgvdS0U6n/task_list
             - data->"Text" 3bvstHODyToviHmuGwEl0/input
-          title: Task List
-          type: graphInput
           visualData: 424/642/300/4
-        YDjSbuZX0TA_4lFNEQGaN:
+        '[YDjSbuZX0TA_4lFNEQGaN]:text "Text"':
           data:
             text: You are an AI that converts English text into YAML documents, given a
               structure to output in.
-          id: YDjSbuZX0TA_4lFNEQGaN
           outgoingConnections:
             - output->"Chat" PLU5yC3u52dOPIxlmPIf-/systemPrompt
-          title: Text
-          type: text
           visualData: 8217.342758974006/-728.677698989026/300/294
-        YJDAqTtxqpNkKPX5FvtPt:
-          data: {}
-          id: YJDAqTtxqpNkKPX5FvtPt
+        '[YJDAqTtxqpNkKPX5FvtPt]:coalesce "Coalesce"':
           outgoingConnections:
             - output->"Extract Object Path" 4JUAkBJxsbKfNAXOdmGS6/object
-          title: Coalesce
-          type: coalesce
           visualData: 5664.504228276922/38.811399688325125/150/376
-        YMPhS3MhQdfMqPqj8Ss8k:
+        '[YMPhS3MhQdfMqPqj8Ss8k]:text "Text"':
           data:
             text: |-
               Please write these contents to {{file_path}}:
 
               {{contents}}
-          id: YMPhS3MhQdfMqPqj8Ss8k
           outgoingConnections:
             - output->"User Input" U0EcCqP66WFZahvpiGPFf/questions
-          title: Text
-          type: text
           visualData: 5903.034048264701/-1281.4210486111251/300/255
-        _tOy610lqFqHX6iUfQZu1:
+        '[_tOy610lqFqHX6iUfQZu1]:extractObjectPath "Extract Object Path"':
           data:
             path: $.file
             usePathInput: false
-          id: _tOy610lqFqHX6iUfQZu1
           outgoingConnections:
             - match->"Text" YMPhS3MhQdfMqPqj8Ss8k/file_path
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 5570.538237015827/-1264.1784150771389/250/361
-        aymg3sOX3k4VaMI8L7NUg:
+        '[aymg3sOX3k4VaMI8L7NUg]:text "Text"':
           data:
             text: >
               Here is additional context:
@@ -4708,37 +3988,26 @@ data:
               Is there any documentation or examples available for similar components that I can reference while implementing this?
 
               A good example would be ExtractRegexNode.ts
-          id: aymg3sOX3k4VaMI8L7NUg
           outgoingConnections:
             - output->"Graph Input" 18WP87xc4D7JXdSGTRlYD/default
-          title: Text
-          type: text
           visualData: 1596.3955567814364/-106.05238101849785/300/35
-        bjL5VE8Zzz84m3QFLJ7x7:
+        '[bjL5VE8Zzz84m3QFLJ7x7]:extractYaml "Extract YAML"':
           data:
             rootPropertyName: yamlDocument
-          id: bjL5VE8Zzz84m3QFLJ7x7
           outgoingConnections:
             - output->"Extract Object Path" qt2AdWZptLCfvACUeDtea/object
-          title: Extract YAML
-          type: extractYaml
           visualData: -511.4509344968344/638.2666631869166/250/275
-        cER_B2LLcZYy15z-KNJDK:
+        '[cER_B2LLcZYy15z-KNJDK]:prompt "Prompt"':
           data:
             promptText: You are a programming assistant that iteratively executes commands
               and thinks out loud to accomplish tasks.
             type: system
             useTypeInput: false
-          id: cER_B2LLcZYy15z-KNJDK
           outgoingConnections:
             - output->"Assemble Prompt" 16UsT_tJlpYi717REkv6n/message1
             - output->"System" z1APvC5m5fW-AIfzoVeox/input
-          title: Prompt
-          type: prompt
           visualData: 553.1915381834611/-17.88559476470175/null/28
-        cObRObIxgwrJablQHLGnw:
-          data: {}
-          id: cObRObIxgwrJablQHLGnw
+        '[cObRObIxgwrJablQHLGnw]:loopController "Loop Controller"':
           outgoingConnections:
             - break->"Graph Output" xe4vk7BUOsT-mnIoEjOha/value
             - output1->"Execute Current Task Prompt"
@@ -4750,27 +4019,18 @@ data:
             - output3->"Command History" JA8Lk0pXQTMaNfUhEphm2/prev_commands
             - output3->"Execute Current Task Prompt"
               KIFBcqmOa5G-MPklHfHVR/previously_executed
-          title: Loop Controller
-          type: loopController
           visualData: 2012.432896034012/500.84246666707406/439.1093458908531/133
-        cV8OdlEuJDaI2v05bTz5X:
+        '[cV8OdlEuJDaI2v05bTz5X]:subGraph "Digest File"':
           data:
             graphId: HXjZhpWO0hluMiDY6pneE
-          id: cV8OdlEuJDaI2v05bTz5X
           outgoingConnections:
             - digest->"Coalesce" SNJjOp-rPmQwnU52nE8kO/input4
-          title: Digest File
-          type: subGraph
           visualData: 6325.94927766123/-439.4589639215074/300/130
-        dHDzOydr6Q5IFDBH6z6HU:
-          data: {}
-          id: dHDzOydr6Q5IFDBH6z6HU
+        '[dHDzOydr6Q5IFDBH6z6HU]:if "If"':
           outgoingConnections:
             - output->"Extract Object Path" _tOy610lqFqHX6iUfQZu1/object
-          title: If
-          type: if
           visualData: 5368.851714764555/-1237.700159446597/100/359
-        eKe_lJayfu9fVyZAD7ri_:
+        '[eKe_lJayfu9fVyZAD7ri_]:match "Match"':
           data:
             caseCount: 7
             cases:
@@ -4781,7 +4041,6 @@ data:
               - CREATE_BLANK_FILE
               - WRITE_FILE
               - THINK_OUT_LOUD
-          id: eKe_lJayfu9fVyZAD7ri_
           outgoingConnections:
             - case1->"If" CWz3hh4xEp4FLbYV3Tw3v/if
             - case2->"If" RNxCaWdA7mOcrJBVUKiqr/if
@@ -4791,10 +4050,8 @@ data:
             - case6->"If" dHDzOydr6Q5IFDBH6z6HU/if
             - case7->"If" ItFByM3wvP_dPEoP5D6Mx/if
             - unmatched->"If" 4CgGTnsYZdZFKi12cKmiP/if
-          title: Match
-          type: match
           visualData: 4151.319415255813/-535.8389204523792/300/334
-        gHSSvkoWQ76ko-0EvUdZn:
+        '[gHSSvkoWQ76ko-0EvUdZn]:chat "Chat"':
           data:
             cache: false
             frequencyPenalty: 0
@@ -4814,76 +4071,55 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: gHSSvkoWQ76ko-0EvUdZn
           outgoingConnections:
             - response->"Text" B0u3WpTZggnq8Lgl7Xv8h/text
-          title: Chat
-          type: chat
           visualData: 8224.64735040648/-110.60521742736663/200/288
-        i4cBHxWO1HLsnHg3Yh7qP:
+        '[i4cBHxWO1HLsnHg3Yh7qP]:text "Text"':
           data:
             text: |-
               ```
               // {{file_name}}
               {{file_contents}}
               ```
-          id: i4cBHxWO1HLsnHg3Yh7qP
           outgoingConnections:
             - output->"Coalesce" SNJjOp-rPmQwnU52nE8kO/input5
-          title: Text
-          type: text
           visualData: 6300.416322248281/-178.5223306236974/300/272
-        iAPKowmhorGhT6DKcjkb7:
+        '[iAPKowmhorGhT6DKcjkb7]:extractObjectPath "Extract Object Path"':
           data:
             path: $.files[*]
             usePathInput: false
-          id: iAPKowmhorGhT6DKcjkb7
           outgoingConnections:
             - all_matches->"Get Rivet File By File Name"
               0xxgB-83ezLpsw0rLpo86/fileMatch
             - all_matches->"Text" i4cBHxWO1HLsnHg3Yh7qP/file_name
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 5557.238871649446/-193.98449142035096/250/337
-        mOqA0ixaGWn4vW2dVbGu7:
+        '[mOqA0ixaGWn4vW2dVbGu7]:text "Remaining Task"':
           data:
             text: "- {{input}}"
-          id: mOqA0ixaGWn4vW2dVbGu7
           outgoingConnections:
             - output->"Remaining Tasks" H4TGM34XgUZZOny6PfmFt/input
-          title: Remaining Task
-          type: text
           visualData: 9157.914625813317/9.440688943435534/176.6780763504812/315
-        qt2AdWZptLCfvACUeDtea:
+        '[qt2AdWZptLCfvACUeDtea]:extractObjectPath "Extract Object Path"':
           data:
             path: $.yamlDocument.steps
             usePathInput: false
-          id: qt2AdWZptLCfvACUeDtea
           outgoingConnections:
             - match->"Task List" Vudek72LbIFekPR5DVDsq/default
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: -33.58278249236042/631.2095385792555/250/277
-        tgcfyWHl6ut3-ivyZ8jEA:
+        '[tgcfyWHl6ut3-ivyZ8jEA]:text "Task List"':
           data:
             text: "{{input}}"
-          id: tgcfyWHl6ut3-ivyZ8jEA
           outgoingConnections:
             - output->"Loop Controller" cObRObIxgwrJablQHLGnw/input2Default
-          title: Task List
-          type: text
           visualData: 1045.9677524118683/852.789548081857/116.3356920475137/370
-        u2sddIBdrSCM-8EkJ_qS4:
+        '[u2sddIBdrSCM-8EkJ_qS4]:extractObjectPath "Extract Object Path"':
           data:
             path: $.file
             usePathInput: false
-          id: u2sddIBdrSCM-8EkJ_qS4
           outgoingConnections:
             - match->"Text" Q2-bYh6LGkVm2WPb46tEz/file_path
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 5550.538237015827/-1026.4048579184675/250/357
-        uEWXLi8XmKpaiGzzTFDme:
+        '[uEWXLi8XmKpaiGzzTFDme]:text "Text"':
           data:
             text: >-
               {{context}}
@@ -4931,58 +4167,41 @@ data:
 
 
               Next, revise your task list (remove your now completed tasks), explain your revisions, and write down your current task.
-          id: uEWXLi8XmKpaiGzzTFDme
           outgoingConnections:
             - output->"Chat" gHSSvkoWQ76ko-0EvUdZn/prompt
-          title: Text
-          type: text
           visualData: 7875.686049522404/-255.33900115338668/300/381
-        wq5E83vpWqQMlS7AHPnQe:
+        '[wq5E83vpWqQMlS7AHPnQe]:extractObjectPath "Extract Object Path"':
           data:
             path: $.file
             usePathInput: false
-          id: wq5E83vpWqQMlS7AHPnQe
           outgoingConnections:
             - match->"Digest File" cV8OdlEuJDaI2v05bTz5X/file_name
             - match->"Get Rivet File By File Name"
               SNQCA2ZXN7LQRbPd1M6Mx/fileMatch
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 5536.689177597142/-434.1124731488284/250/345
-        xP7TQ0W3vIsCOyGtZEX5q:
+        '[xP7TQ0W3vIsCOyGtZEX5q]:extractObjectPath "Next Task"':
           data:
             path: $.yamlDocument.nextTask
             usePathInput: false
-          id: xP7TQ0W3vIsCOyGtZEX5q
           outgoingConnections:
             - match->"Loop Controller" cObRObIxgwrJablQHLGnw/input1
-          title: Next Task
-          type: extractObjectPath
           visualData: 8854.274134954136/-180.79168735899/250/311
-        xe4vk7BUOsT-mnIoEjOha:
+        '[xe4vk7BUOsT-mnIoEjOha]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: output
-          id: xe4vk7BUOsT-mnIoEjOha
-          outgoingConnections: []
-          title: Graph Output
-          type: graphOutput
           visualData: 2652.651717877761/223.07146808148678/300/161
-        z1APvC5m5fW-AIfzoVeox:
+        '[z1APvC5m5fW-AIfzoVeox]:text "System"':
           data:
             text: "{{input}}"
-          id: z1APvC5m5fW-AIfzoVeox
           outgoingConnections:
             - output->"Chat - Execute Current Task"
               NlqmTc5SUrwdCFOOU26CP/systemPrompt
-          title: System
-          type: text
           visualData: 3617.485828731137/-47.72596476201433/148.77673982924148/279
-        z5IaklOOBA20wwMI0aRkq:
+        '[z5IaklOOBA20wwMI0aRkq]:extractObjectPath "Extract Object Path"':
           data:
             path: $.arguments
             usePathInput: false
-          id: z5IaklOOBA20wwMI0aRkq
           outgoingConnections:
             - match->"If" CWz3hh4xEp4FLbYV3Tw3v/value
             - match->"If" ItFByM3wvP_dPEoP5D6Mx/value
@@ -4992,39 +4211,31 @@ data:
             - match->"If" TGIDciqmI5zMTLdVk2T2C/value
             - match->"If" dHDzOydr6Q5IFDBH6z6HU/value
             - match->"Text" 6P04DpTqBQMOYpBfJuurJ/arguments
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 4434.673893565094/600.9131958907702/250/385
     zYzI7xjOb0NOj9WPKJOrQ:
       metadata:
         id: zYzI7xjOb0NOj9WPKJOrQ
         name: "**Rivet Helper"
       nodes:
-        1K582UsQEjPvjVRvtf4ag:
+        '[1K582UsQEjPvjVRvtf4ag]:userInput "Question"':
           data:
             prompt: What is your question for the AI to answer?
             useInput: false
-          id: 1K582UsQEjPvjVRvtf4ag
           outgoingConnections:
             - output->"Prompt Question List" 5-z53LCARmASeWft67PEH/request
             - output->"Prompt Question List" KbotaIf5SLrUkOubRve1x/request
             - output->"Prompt Question List" eeqzpCkSxMDTin0sOghhU/request
             - output->"Prompt" YFPEXiTSWNawBUvgAF0_F/question
-          title: Question
-          type: userInput
           visualData: -2195.2160232826423/-17.22315339809552/378.6378084183709/537
-        2AsgAl-VGTQHHKgMYanRs:
+        '[2AsgAl-VGTQHHKgMYanRs]:subGraph "List Rivet Files"':
           data:
             graphId: d6Pgmz7n8qvXkaNF-2e9P
-          id: 2AsgAl-VGTQHHKgMYanRs
           outgoingConnections:
             - files->"Prompt Question List" 5-z53LCARmASeWft67PEH/files
             - files->"Prompt Question List" KbotaIf5SLrUkOubRve1x/files
             - files->"Prompt Question List" eeqzpCkSxMDTin0sOghhU/files
-          title: List Rivet Files
-          type: subGraph
           visualData: -2127.682357265696/-240.91939301727035/300/536
-        4-0zbzUfiK5tL1R22gT2z:
+        '[4-0zbzUfiK5tL1R22gT2z]:text "Text"':
           data:
             text: >-
               Here are some answers given for some questions:
@@ -5048,23 +4259,17 @@ data:
 
 
               Rewrite these answers with the changes. Additionally, rephrase the answers as statements instead of answers, as if they were found in a technical document for the project.
-          id: 4-0zbzUfiK5tL1R22gT2z
           outgoingConnections:
             - output->"Chat" xxSFUqUpaoGhRrU__HAUO/prompt
-          title: Text
-          type: text
           visualData: 1216.727187150413/-425.279616238741/300/625
-        41OQXeM5D_KXd8nvMgD13:
+        '[41OQXeM5D_KXd8nvMgD13]:extractYaml "Extract YAML"':
           data:
             objectPath: $.yamlDocument.steps
             rootPropertyName: yamlDocument
-          id: 41OQXeM5D_KXd8nvMgD13
           outgoingConnections:
             - output->"Execute Task List" yWAKuzopcX8M17WGEDi-6/task_list
-          title: Extract YAML
-          type: extractYaml
           visualData: 5077.347198549942/142.63332091512157/179.6401800954518/678
-        5-z53LCARmASeWft67PEH:
+        '[5-z53LCARmASeWft67PEH]:prompt "Prompt Question List"':
           data:
             promptText: >-
               {{context}}
@@ -5099,21 +4304,14 @@ data:
               Imagine a scenario where you are the expert on the Rivet application, or a project manager on the project. What are your best answers to these questions? You may say that you do not have enough context to answer any given question. Also, phrase the answers in such a way to include the question in them. Directly answer the questions, as if this is documentation on the project.
             type: user
             useTypeInput: false
-          id: 5-z53LCARmASeWft67PEH
           outgoingConnections:
             - output->"Chat" RfEA6xsgL1vEu9oDqRe88/prompt
-          title: Prompt Question List
-          type: prompt
           visualData: -1488.9069047003868/208.5550898161199/485.03013745499055/546
-        6UTrt-tWAv0UmymCmjyGg:
-          data: {}
-          id: 6UTrt-tWAv0UmymCmjyGg
+        '[6UTrt-tWAv0UmymCmjyGg]:if "If"':
           outgoingConnections:
             - output->"Coalesce" b3NT35IXmv6oqd2kSitLM/input2
-          title: If
-          type: if
           visualData: 1111/592/100/596
-        7vNigNnYPyllzuKCncBQd:
+        '[7vNigNnYPyllzuKCncBQd]:text "Text"':
           data:
             text: >-
               {{context}}
@@ -5132,23 +4330,17 @@ data:
 
 
               There are no tests to read. There is no documentation to read. Do not write tests. Do not write documentation.
-          id: 7vNigNnYPyllzuKCncBQd
           outgoingConnections:
             - output->"Chat" wnITtjycZ2FJpLYSThTVo/prompt
-          title: Text
-          type: text
           visualData: 2260.208598489028/282.32332571050824/300/677
-        9f2Us4WxeKYfvqMm1_XUZ:
+        '[9f2Us4WxeKYfvqMm1_XUZ]:userInput "User Input"':
           data:
             prompt: This is an example question?
             useInput: true
-          id: 9f2Us4WxeKYfvqMm1_XUZ
           outgoingConnections:
             - questionsAndAnswers->"Coalesce" b3NT35IXmv6oqd2kSitLM/input1
-          title: User Input
-          type: userInput
           visualData: 1168.2615368939803/321.2573005264068/187/594
-        AGmIpXCDl_sHyhLIjtXie:
+        '[AGmIpXCDl_sHyhLIjtXie]:chat "Get Question List"':
           data:
             cache: true
             maxTokens: 1024
@@ -5161,14 +4353,11 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: AGmIpXCDl_sHyhLIjtXie
           outgoingConnections:
             - response->"Prompt Question List" 5-z53LCARmASeWft67PEH/questions
             - response->"Text" VszyH3-ShGM2DBZw1v7VW/questions
-          title: Get Question List
-          type: chat
           visualData: -885.2318474821926/-230.54556081772057/233.53671241371717/544
-        At8pw5kk0skpMBKEBPgZp:
+        '[At8pw5kk0skpMBKEBPgZp]:chat "Chat"':
           data:
             cache: true
             frequencyPenalty: 0
@@ -5188,13 +4377,10 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: At8pw5kk0skpMBKEBPgZp
           outgoingConnections:
             - response->"Extract YAML" 41OQXeM5D_KXd8nvMgD13/input
-          title: Chat
-          type: chat
           visualData: 4811.227708168585/182.57139818613453/200/658
-        B7bKOsVis46f2wZGjHok0:
+        '[B7bKOsVis46f2wZGjHok0]:chat "Chat"':
           data:
             cache: true
             frequencyPenalty: 0
@@ -5214,41 +4400,28 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: B7bKOsVis46f2wZGjHok0
           outgoingConnections:
             - response->"Text" oFk-Eg5dbpoWQCK9hx_gs/steps
             - response->"Text" sMP1SZoQAgvMH3UtERway/steps
-          title: Chat
-          type: chat
           visualData: 3464.179659645404/24.612441249477307/200/661
-        CQ11jAUax-dtEvf7Jw3Ux:
-          data: {}
-          id: CQ11jAUax-dtEvf7Jw3Ux
+        '[CQ11jAUax-dtEvf7Jw3Ux]:if "If"':
           outgoingConnections:
             - output->"User Input" 9f2Us4WxeKYfvqMm1_XUZ/questions
-          title: If
-          type: if
           visualData: 1044/328/100/593
-        CZqk_fQFmbzNKep6CsIVU:
+        '[CZqk_fQFmbzNKep6CsIVU]:text "Text"':
           data:
             text: You are an advanced AI that makes changes to text.
-          id: CZqk_fQFmbzNKep6CsIVU
           outgoingConnections:
             - output->"Chat" xxSFUqUpaoGhRrU__HAUO/systemPrompt
-          title: Text
-          type: text
           visualData: 1188.9614185009382/-574.3368036976119/300/null
-        CfsTEn_pniYVjsyJP-paR:
+        '[CfsTEn_pniYVjsyJP-paR]:text "Text"':
           data:
             text: "{{context}}"
-          id: CfsTEn_pniYVjsyJP-paR
           outgoingConnections:
             - output->"Assemble Prompt" H7i41CNQTM5fM5KcJDwfq/message1
             - output->"Execute Task List" yWAKuzopcX8M17WGEDi-6/context
-          title: Text
-          type: text
           visualData: 2657.4058456180655/-200.8621114414035/300/643
-        DYYQPYCdQyMP2w5Bh2QOO:
+        '[DYYQPYCdQyMP2w5Bh2QOO]:text "Text"':
           data:
             text: >-
               Here is a list of steps:
@@ -5274,40 +4447,26 @@ data:
 
 
               You must include every single step. Every step MUST be a string, even if the list of steps contains YAML data.
-          id: DYYQPYCdQyMP2w5Bh2QOO
           outgoingConnections:
             - output->"Chat" At8pw5kk0skpMBKEBPgZp/prompt
-          title: Text
-          type: text
           visualData: 4482.313290057272/41.00054812622696/300/660
-        GsiNZWC4KFQa-MiYQcjUG:
+        '[GsiNZWC4KFQa-MiYQcjUG]:extractObjectPath "Extract Object Path"':
           data:
             path: $.yamlDocument.questions
             usePathInput: false
-          id: GsiNZWC4KFQa-MiYQcjUG
           outgoingConnections:
             - match->"If" CQ11jAUax-dtEvf7Jw3Ux/value
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 627.8152048842937/679.5426701770796/227/583
-        H7i41CNQTM5fM5KcJDwfq:
-          data: {}
-          id: H7i41CNQTM5fM5KcJDwfq
+        '[H7i41CNQTM5fM5KcJDwfq]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Chat" B7bKOsVis46f2wZGjHok0/prompt
-          title: Assemble Prompt
-          type: assemblePrompt
           visualData: 3184.1516408542043/114.06032561384635/250/642
-        Hqpwl6OBs8GdL917iMJNw:
+        '[Hqpwl6OBs8GdL917iMJNw]:extractObjectPath "Extract Object Path"':
           data:
             path: $.yamlDocument[*].question
             usePathInput: false
-          id: Hqpwl6OBs8GdL917iMJNw
-          outgoingConnections: []
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 725.0975654729407/-223.09365273391288/205.2941012713909/610
-        KbotaIf5SLrUkOubRve1x:
+        '[KbotaIf5SLrUkOubRve1x]:prompt "Prompt Question List"':
           data:
             promptText: >-
               {{context}}
@@ -5335,36 +4494,27 @@ data:
               You have a maximum of 6 questions.
             type: user
             useTypeInput: false
-          id: KbotaIf5SLrUkOubRve1x
           outgoingConnections:
             - output->"Get Question List" AGmIpXCDl_sHyhLIjtXie/message2
             - output->"Get Question List" AGmIpXCDl_sHyhLIjtXie/prompt
             - output->"Prompt Question List" eeqzpCkSxMDTin0sOghhU/questions
-          title: Prompt Question List
-          type: prompt
           visualData: -1490.4278366754174/-424.16270749159196/485.03013745499055/538
-        NCeGFcpBOCqnZICq3vn9m:
+        '[NCeGFcpBOCqnZICq3vn9m]:extractObjectPath "Extract Object Path"':
           data:
             path: $.yamlDocument['has-questions']
             usePathInput: false
-          id: NCeGFcpBOCqnZICq3vn9m
           outgoingConnections:
             - match->"Match" kshUlDyeosoaczIy5rp_C/input
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 624.8152048842937/494.54267017707963/172.91706398583165/578
-        P3JViEfh4tcb4Kq8X9TSo:
+        '[P3JViEfh4tcb4Kq8X9TSo]:text "Text"':
           data:
             text: You are an advanced AI YAML generator tool that takes in inputs and
               produces valid YAML based on a question.
-          id: P3JViEfh4tcb4Kq8X9TSo
           outgoingConnections:
             - output->"Chat" noeONFrQRJhnNOIqzfe0v/systemPrompt
             - output->"Chat" wTZ8HUHOjU5COaWxaohVb/systemPrompt
-          title: Text
-          type: text
           visualData: 30.111429314528237/-82.36315841333024/300/567
-        RfEA6xsgL1vEu9oDqRe88:
+        '[RfEA6xsgL1vEu9oDqRe88]:chat "Chat"':
           data:
             cache: true
             frequencyPenalty: 0
@@ -5384,34 +4534,25 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: RfEA6xsgL1vEu9oDqRe88
           outgoingConnections:
             - response->"Prompt Question List" eeqzpCkSxMDTin0sOghhU/answers
             - response->"Text" VszyH3-ShGM2DBZw1v7VW/answers
-          title: Chat
-          type: chat
           visualData: -860.5478300364443/314.275559094539/200/555
-        U0bz-jzJ615Vgm78Lpley:
+        '[U0bz-jzJ615Vgm78Lpley]:extractYaml "Extract YAML"':
           data:
             rootPropertyName: yamlDocument
-          id: U0bz-jzJ615Vgm78Lpley
           outgoingConnections:
             - output->"Extract Object Path" GsiNZWC4KFQa-MiYQcjUG/object
             - output->"Extract Object Path" NCeGFcpBOCqnZICq3vn9m/object
-          title: Extract YAML
-          type: extractYaml
           visualData: 466.5038997695302/505.5426701770796/137.3689875131763/577
-        V1Gia2nRcaIx-6Zu8YKjx:
+        '[V1Gia2nRcaIx-6Zu8YKjx]:userInput "User Input"':
           data:
             prompt: This is an example question?
             useInput: true
-          id: V1Gia2nRcaIx-6Zu8YKjx
           outgoingConnections:
             - output->"Text" 4-0zbzUfiK5tL1R22gT2z/feedback
-          title: User Input
-          type: userInput
           visualData: 1683.6344428877155/-62.36167594296539/173.2418484290331/630
-        VrlVJ3R4e5XeyDKqHmrjz:
+        '[VrlVJ3R4e5XeyDKqHmrjz]:text "Text"':
           data:
             text: >-
               Make these changes:
@@ -5426,13 +4567,10 @@ data:
               * Remove any steps talking about testing or tests
 
               * Flatten any nested steps, there should only be one single list, no nested lists.
-          id: VrlVJ3R4e5XeyDKqHmrjz
           outgoingConnections:
             - output->"Assemble Prompt" H7i41CNQTM5fM5KcJDwfq/message3
-          title: Text
-          type: text
           visualData: 2739.943217152992/332.8979395249134/300/641
-        VszyH3-ShGM2DBZw1v7VW:
+        '[VszyH3-ShGM2DBZw1v7VW]:text "Text"':
           data:
             text: >-
               Can you please combine these questions and answers into a YAML
@@ -5466,23 +4604,17 @@ data:
 
 
               {{qa2}}
-          id: VszyH3-ShGM2DBZw1v7VW
           outgoingConnections:
             - output->"Chat" wTZ8HUHOjU5COaWxaohVb/prompt
-          title: Text
-          type: text
           visualData: 523.5852096259869/-685.6221670073336/300/607
-        Y5dFBHDnIc0yTEcNA87W3:
+        '[Y5dFBHDnIc0yTEcNA87W3]:text "Text"':
           data:
             text: |
               {{input}}
-          id: Y5dFBHDnIc0yTEcNA87W3
           outgoingConnections:
             - output->"Text" pqxbw_BaWOjpkd3G8WnRT/input
-          title: Text
-          type: text
           visualData: 976.8681178648283/-36.7432284340459/128.14831452392036/680
-        YFPEXiTSWNawBUvgAF0_F:
+        '[YFPEXiTSWNawBUvgAF0_F]:prompt "Prompt"':
           data:
             promptText: |-
               {{context}}
@@ -5498,57 +4630,41 @@ data:
               {{qanda}}
             type: user
             useTypeInput: false
-          id: YFPEXiTSWNawBUvgAF0_F
           outgoingConnections:
             - output->"Text" 7vNigNnYPyllzuKCncBQd/context
             - output->"Text" CfsTEn_pniYVjsyJP-paR/context
-          title: Prompt
-          type: prompt
           visualData: 1879.8025484562081/-164.03783773403975/null/674
-        Z115WdCClukxy33gFZQLm:
+        '[Z115WdCClukxy33gFZQLm]:userInput "User Input"':
           data:
             prompt: This is an example question?
             useInput: true
-          id: Z115WdCClukxy33gFZQLm
           outgoingConnections:
             - output->"Text" sMP1SZoQAgvMH3UtERway/feedback
-          title: User Input
-          type: userInput
           visualData: 3161.412174129719/424.40649291776276/250/668
-        ZGfDzvqbUcnQunNNplfBA:
+        '[ZGfDzvqbUcnQunNNplfBA]:text "Text"':
           data:
             text: |-
               Do these answers look sufficient to you? Any changes to make?
 
               {{answers}}
-          id: ZGfDzvqbUcnQunNNplfBA
           outgoingConnections:
             - output->"User Input" V1Gia2nRcaIx-6Zu8YKjx/questions
-          title: Text
-          type: text
           visualData: 1397.9960111510754/-66.32861624841605/225.89983857684933/631
-        _7tr8cgQEbY6mtIakJd-N:
+        '[_7tr8cgQEbY6mtIakJd-N]:text "Text"':
           data:
             text: "You are an advanced automated code developer. You are able to
               autonomously be given a task, and do all relevant development
               tasks assocated with accomplishing that task. "
-          id: _7tr8cgQEbY6mtIakJd-N
           outgoingConnections:
             - output->"Chat" RfEA6xsgL1vEu9oDqRe88/systemPrompt
             - output->"Chat" tl7qCr9Y92oWPkXWIZXqr/systemPrompt
             - output->"Get Question List" AGmIpXCDl_sHyhLIjtXie/systemPrompt
-          title: Text
-          type: text
           visualData: -1600.0835425653868/-718.8751748082445/300/554
-        b3NT35IXmv6oqd2kSitLM:
-          data: {}
-          id: b3NT35IXmv6oqd2kSitLM
+        '[b3NT35IXmv6oqd2kSitLM]:coalesce "Coalesce"':
           outgoingConnections:
             - output->"Text" VszyH3-ShGM2DBZw1v7VW/qa2
-          title: Coalesce
-          type: coalesce
           visualData: 1425/423/150/595
-        eJ4oKMy5hG51V_63xGOf_:
+        '[eJ4oKMy5hG51V_63xGOf_]:chat "Chat"':
           data:
             cache: true
             frequencyPenalty: 0
@@ -5568,13 +4684,10 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: eJ4oKMy5hG51V_63xGOf_
           outgoingConnections:
             - response->"Text" DYYQPYCdQyMP2w5Bh2QOO/steps
-          title: Chat
-          type: chat
           visualData: 3800.927073268016/366.97261735496113/200/673
-        eeqzpCkSxMDTin0sOghhU:
+        '[eeqzpCkSxMDTin0sOghhU]:prompt "Prompt Question List"':
           data:
             promptText: |-
               {{context}}
@@ -5596,23 +4709,17 @@ data:
               Do you have any additional questions? Or followup questions?
             type: user
             useTypeInput: false
-          id: eeqzpCkSxMDTin0sOghhU
           outgoingConnections:
             - output->"Chat" tl7qCr9Y92oWPkXWIZXqr/prompt
-          title: Prompt Question List
-          type: prompt
           visualData: -518.606438840874/61.927116736475924/485.03013745499055/556
-        erjoEqmUs-QcW3xxYqdKW:
+        '[erjoEqmUs-QcW3xxYqdKW]:extractObjectPath "Extract Object Path"':
           data:
             path: $.yamlDocument[*].answer
             usePathInput: false
-          id: erjoEqmUs-QcW3xxYqdKW
           outgoingConnections:
             - all_matches->"Text" Y5dFBHDnIc0yTEcNA87W3/input
-          title: Extract Object Path
-          type: extractObjectPath
           visualData: 722.5034572418909/-34.12901726693207/215.11762658923863/613
-        gMe54j9zmTUGFU1t_1viB:
+        '[gMe54j9zmTUGFU1t_1viB]:text "Text"':
           data:
             text: >-
               You have Chat API functions available to you to use. You may call
@@ -5640,14 +4747,11 @@ data:
                 arguments:
                   message: The message for the user
                 description: Asks the user questions or for feedback on what you are doing. This can help make sure your plan is good.
-          id: gMe54j9zmTUGFU1t_1viB
           outgoingConnections:
             - output->"Prompt" YFPEXiTSWNawBUvgAF0_F/functions
             - output->"Text" 7vNigNnYPyllzuKCncBQd/functions
-          title: Text
-          type: text
           visualData: 1027.1890763146014/825.3197409716632/529/675
-        jj8mjjtKJPlcHzr64IYWp:
+        '[jj8mjjtKJPlcHzr64IYWp]:text "Text"':
           data:
             text: >
               Here is some text:
@@ -5681,70 +4785,52 @@ data:
               yamlDocument:
                 has-questions: false
               ```
-          id: jj8mjjtKJPlcHzr64IYWp
           outgoingConnections:
             - output->"Chat" noeONFrQRJhnNOIqzfe0v/prompt
-          title: Text
-          type: text
           visualData: 321.75173175600827/110.2229471496421/300/565
-        klbBsHw6M8_i7Jz1aYovd:
+        '[klbBsHw6M8_i7Jz1aYovd]:extractYaml "Extract YAML"':
           data:
             rootPropertyName: yamlDocument
-          id: klbBsHw6M8_i7Jz1aYovd
           outgoingConnections:
             - output->"Extract Object Path" Hqpwl6OBs8GdL917iMJNw/object
             - output->"Extract Object Path" erjoEqmUs-QcW3xxYqdKW/object
-          title: Extract YAML
-          type: extractYaml
           visualData: 529.2154812835439/-228.29406204867558/147.72528347633283/609
-        koUO8WjYqJBw5m1DqUzgv:
+        '[koUO8WjYqJBw5m1DqUzgv]:text "Text"':
           data:
             text: You are an advanced AI for creating and updating task lists to accomplish
               programming tasks. You interact with the chat API to accomplish
               your tasks. You use the chat API to take notes for yourself and to
               think out loud about what you are doing. You are very detailed in
               your explanations and steps.
-          id: koUO8WjYqJBw5m1DqUzgv
           outgoingConnections:
             - output->"Chat" B7bKOsVis46f2wZGjHok0/systemPrompt
             - output->"Chat" wnITtjycZ2FJpLYSThTVo/systemPrompt
-          title: Text
-          type: text
           visualData: 2274.1767851688805/-464.34829550512757/300/618
-        kshUlDyeosoaczIy5rp_C:
+        '[kshUlDyeosoaczIy5rp_C]:match "Match"':
           data:
             caseCount: 2
             cases:
               - "true"
               - "false"
-          id: kshUlDyeosoaczIy5rp_C
           outgoingConnections:
             - case1->"If" CQ11jAUax-dtEvf7Jw3Ux/if
             - case2->"If" 6UTrt-tWAv0UmymCmjyGg/if
-          title: Match
-          type: match
           visualData: 815.6277136675187/481.2361797361615/177.18989855369773/581
-        mpzTKKufP2XKwIToZ6C4x:
+        '[mpzTKKufP2XKwIToZ6C4x]:prompt "Prompt"':
           data:
             promptText: "{{input}}"
             type: assistant
             useTypeInput: false
-          id: mpzTKKufP2XKwIToZ6C4x
           outgoingConnections:
             - output->"Assemble Prompt" H7i41CNQTM5fM5KcJDwfq/message2
-          title: Prompt
-          type: prompt
           visualData: 2936.650166754064/58.192032198931265/132/639
-        nmuXZqWZghE8cxrYC1BRW:
+        '[nmuXZqWZghE8cxrYC1BRW]:text "Text"':
           data:
             text: None
-          id: nmuXZqWZghE8cxrYC1BRW
           outgoingConnections:
             - output->"If" 6UTrt-tWAv0UmymCmjyGg/value
-          title: Text
-          type: text
           visualData: 932/700/138/590
-        noeONFrQRJhnNOIqzfe0v:
+        '[noeONFrQRJhnNOIqzfe0v]:chat "Chat"':
           data:
             cache: true
             frequencyPenalty: 0
@@ -5764,13 +4850,10 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: noeONFrQRJhnNOIqzfe0v
           outgoingConnections:
             - response->"Extract YAML" U0bz-jzJ615Vgm78Lpley/input
-          title: Chat
-          type: chat
           visualData: 693.2893628468472/281.2261400604991/200/566
-        oFk-Eg5dbpoWQCK9hx_gs:
+        '[oFk-Eg5dbpoWQCK9hx_gs]:text "Text"':
           data:
             text: |-
               Here is the list of steps I will be doing:
@@ -5778,23 +4861,17 @@ data:
               {{steps}}
 
               Do you have any changes I should make?
-          id: oFk-Eg5dbpoWQCK9hx_gs
           outgoingConnections:
             - output->"User Input" Z115WdCClukxy33gFZQLm/questions
-          title: Text
-          type: text
           visualData: 3704.1400052653166/5.251166476408985/237.2099079807631/663
-        pqxbw_BaWOjpkd3G8WnRT:
+        '[pqxbw_BaWOjpkd3G8WnRT]:text "Text"':
           data:
             text: "{{input}}"
-          id: pqxbw_BaWOjpkd3G8WnRT
           outgoingConnections:
             - output->"Text" 4-0zbzUfiK5tL1R22gT2z/answers
             - output->"Text" ZGfDzvqbUcnQunNNplfBA/answers
-          title: Text
-          type: text
           visualData: 1141.592660493523/-32.3165797585659/109.04166402015858/679
-        sMP1SZoQAgvMH3UtERway:
+        '[sMP1SZoQAgvMH3UtERway]:text "Text"':
           data:
             text: |-
               Here is a list of steps:
@@ -5810,13 +4887,10 @@ data:
               """
 
               Please write the steps, with the required changes made.
-          id: sMP1SZoQAgvMH3UtERway
           outgoingConnections:
             - output->"Chat" eJ4oKMy5hG51V_63xGOf_/prompt
-          title: Text
-          type: text
           visualData: 3449.6025964744235/222.3511968045764/300/669
-        tl7qCr9Y92oWPkXWIZXqr:
+        '[tl7qCr9Y92oWPkXWIZXqr]:chat "Chat"':
           data:
             cache: true
             frequencyPenalty: 0
@@ -5836,13 +4910,10 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: tl7qCr9Y92oWPkXWIZXqr
           outgoingConnections:
             - response->"Text" jj8mjjtKJPlcHzr64IYWp/text
-          title: Chat
-          type: chat
           visualData: 58.74579830891864/277.5903593432446/200/558
-        wTZ8HUHOjU5COaWxaohVb:
+        '[wTZ8HUHOjU5COaWxaohVb]:chat "Chat"':
           data:
             cache: true
             frequencyPenalty: 0
@@ -5862,23 +4933,17 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: wTZ8HUHOjU5COaWxaohVb
           outgoingConnections:
             - response->"Extract YAML" klbBsHw6M8_i7Jz1aYovd/input
-          title: Chat
-          type: chat
           visualData: 852.9285172548934/-523.9745290372787/200/608
-        wVMd8FhPjQOvVlnHxZR_L:
+        '[wVMd8FhPjQOvVlnHxZR_L]:text "Text"':
           data:
             text: You are an advanced AI that combines two pieces of text. You do not leave
               any details out.
-          id: wVMd8FhPjQOvVlnHxZR_L
           outgoingConnections:
             - output->"Chat" eJ4oKMy5hG51V_63xGOf_/systemPrompt
-          title: Text
-          type: text
           visualData: 3089.9485001028697/288.8805450446473/304.0744894139352/672
-        wnITtjycZ2FJpLYSThTVo:
+        '[wnITtjycZ2FJpLYSThTVo]:chat "Chat"':
           data:
             cache: true
             frequencyPenalty: 0.2
@@ -5898,14 +4963,11 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: wnITtjycZ2FJpLYSThTVo
           outgoingConnections:
             - response->"Prompt" mpzTKKufP2XKwIToZ6C4x/input
             - response->"Text" VrlVJ3R4e5XeyDKqHmrjz/steps
-          title: Chat
-          type: chat
           visualData: 2665.869382184409/17.864793208914165/200/635
-        xxSFUqUpaoGhRrU__HAUO:
+        '[xxSFUqUpaoGhRrU__HAUO]:chat "Chat"':
           data:
             cache: true
             frequencyPenalty: 0
@@ -5925,32 +4987,22 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          id: xxSFUqUpaoGhRrU__HAUO
           outgoingConnections:
             - response->"Prompt" YFPEXiTSWNawBUvgAF0_F/qanda
-          title: Chat
-          type: chat
           visualData: 1571.1932071403805/-284.56226186771005/200/628
-        yWAKuzopcX8M17WGEDi-6:
+        '[yWAKuzopcX8M17WGEDi-6]:subGraph "Execute Task List"':
           data:
             graphId: yoe9VPnjUULQacHSolgiL
-          id: yWAKuzopcX8M17WGEDi-6
-          outgoingConnections: []
-          title: Execute Task List
-          type: subGraph
           visualData: 5580.14785799502/-48.341959799326155/300/655
-        zE8Wp38T4EAR0doXvx4zT:
+        '[zE8Wp38T4EAR0doXvx4zT]:text "Text"':
           data:
             text: You are an advanced AI YAML generator tool that takes in inputs and
               produces valid YAML based on a question. You leave nothing out.
               Your conversion is verbatim.
-          id: zE8Wp38T4EAR0doXvx4zT
           outgoingConnections:
             - output->"Chat" At8pw5kk0skpMBKEBPgZp/systemPrompt
-          title: Text
-          type: text
           visualData: 4488.321151175641/-135.07604537061488/300/659
-        zc7_qtAZEqumCFsUYVqt7:
+        '[zc7_qtAZEqumCFsUYVqt7]:prompt "Base Context"':
           data:
             promptText: >-
               I am working on developing an AI storyboarding tool that allows
@@ -5972,15 +5024,12 @@ data:
               Every node is split into two files. The file in `core`, such as `core/src/model/nodes/TextNode.ts`, contains the main implementation of the node's functionality. The file in `app`, such as `app/src/components/nodes/TextNode.tsx`, contains three react UI components related to showing the node in the application.
             type: user
             useTypeInput: false
-          id: zc7_qtAZEqumCFsUYVqt7
           outgoingConnections:
             - output->"Get Question List" AGmIpXCDl_sHyhLIjtXie/message1
             - output->"Prompt Question List" 5-z53LCARmASeWft67PEH/context
             - output->"Prompt Question List" KbotaIf5SLrUkOubRve1x/context
             - output->"Prompt Question List" eeqzpCkSxMDTin0sOghhU/context
             - output->"Prompt" YFPEXiTSWNawBUvgAF0_F/context
-          title: Base Context
-          type: prompt
           visualData: -2228.0616865013358/-551.6344392043734/528/535
     zdzAYsxAtpaIcWCfgFZpz:
       metadata:
@@ -5988,23 +5037,16 @@ data:
         id: zdzAYsxAtpaIcWCfgFZpz
         name: Test Digest
       nodes:
-        LCcfd6Kcj2Rw0q1glhv6O:
+        '[LCcfd6Kcj2Rw0q1glhv6O]:subGraph "Digest File"':
           data:
             graphId: HXjZhpWO0hluMiDY6pneE
-          id: LCcfd6Kcj2Rw0q1glhv6O
-          outgoingConnections: []
-          title: Digest File
-          type: subGraph
           visualData: 589/377/300/3
-        tNLFIIZaLhPiLXTzaSX4V:
+        '[tNLFIIZaLhPiLXTzaSX4V]:userInput "User Input"':
           data:
             prompt: File
             useInput: false
-          id: tNLFIIZaLhPiLXTzaSX4V
           outgoingConnections:
             - output->"Digest File" LCcfd6Kcj2Rw0q1glhv6O/fileMatch
-          title: User Input
-          type: userInput
           visualData: 284/377/250/2
   metadata:
     description: Project for Rivet itself

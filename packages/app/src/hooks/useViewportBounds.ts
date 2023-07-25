@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useLayoutEffect, useMemo, useState } from 'react';
 import { useCanvasPositioning } from './useCanvasPositioning.js';
 import { CanvasPosition } from '../state/graphBuilder.js';
 
@@ -12,9 +12,29 @@ interface ViewportBounds {
 export function useViewportBounds(): ViewportBounds {
   const { clientToCanvasPosition } = useCanvasPositioning();
 
+  let [{ innerWidth, innerHeight }, setWindowSize] = useState({
+    innerWidth: window.innerWidth,
+    innerHeight: window.innerHeight,
+  });
+
+  useLayoutEffect(() => {
+    const onResize = () => {
+      setWindowSize({
+        innerWidth: window.innerWidth,
+        innerHeight: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      window.removeEventListener('resize', onResize);
+    };
+  }, []);
+
   const bounds = useMemo(() => {
     const topLeft = clientToCanvasPosition(0, 0);
-    const bottomRight = clientToCanvasPosition(window.innerWidth, window.innerHeight);
+    const bottomRight = clientToCanvasPosition(innerWidth, innerHeight);
 
     return {
       left: topLeft.x,
@@ -22,7 +42,7 @@ export function useViewportBounds(): ViewportBounds {
       right: bottomRight.x,
       bottom: bottomRight.y,
     };
-  }, [clientToCanvasPosition]);
+  }, [clientToCanvasPosition, innerWidth, innerHeight]);
 
   return bounds;
 }
