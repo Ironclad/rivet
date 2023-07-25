@@ -682,6 +682,17 @@ export const addContextMenuGroups = [
         },
       },
       {
+        label: 'Comment',
+        data: 'comment',
+        id: 'add-node:comment',
+        infoBox: {
+          title: 'Comment Node',
+          description: dedent`
+            A comment node is a node that does nothing. It is useful for adding notes to a graph.
+          `,
+        },
+      },
+      {
         label: 'External Call',
         data: 'externalCall',
         id: 'add-node:externalCall',

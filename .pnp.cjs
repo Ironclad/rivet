@@ -6481,6 +6481,28 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@icons/material", [\
+      ["npm:0.2.4", {\
+        "packageLocation": "./.yarn/cache/@icons-material-npm-0.2.4-7c2363ec33-c4f784c36f.zip/node_modules/@icons/material/",\
+        "packageDependencies": [\
+          ["@icons/material", "npm:0.2.4"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:e1a8226b2b8099f31029d02ea4cbdbb2dee313f1b5f2072197ea222051fabcf5cbb43f08ece418d2276a84b37b2fb36f9091bf03891d6556ca13954793553787#npm:0.2.4", {\
+        "packageLocation": "./.yarn/__virtual__/@icons-material-virtual-dd49aa33bc/0/cache/@icons-material-npm-0.2.4-7c2363ec33-c4f784c36f.zip/node_modules/@icons/material/",\
+        "packageDependencies": [\
+          ["@icons/material", "virtual:e1a8226b2b8099f31029d02ea4cbdbb2dee313f1b5f2072197ea222051fabcf5cbb43f08ece418d2276a84b37b2fb36f9091bf03891d6556ca13954793553787#npm:0.2.4"],\
+          ["@types/react", "npm:18.2.12"],\
+          ["react", "npm:18.2.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@ironclad/rivet", [\
       ["workspace:.", {\
         "packageLocation": "./",\
@@ -6542,6 +6564,7 @@ const RAW_RUNTIME_STATE =
           ["@types/marked", "npm:5.0.0"],\
           ["@types/node", "npm:20.3.1"],\
           ["@types/react", "npm:18.2.12"],\
+          ["@types/react-color", "npm:2.17.6"],\
           ["@types/react-dom", "npm:18.2.5"],\
           ["@types/react-transition-group", "npm:4.4.6"],\
           ["@types/retry", "npm:0.12.2"],\
@@ -6572,6 +6595,7 @@ const RAW_RUNTIME_STATE =
           ["pkg", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.8.1"],\
           ["prettier", "npm:2.8.8"],\
           ["react", "npm:18.2.0"],\
+          ["react-color", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.19.3"],\
           ["react-dnd", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:16.0.1"],\
           ["react-dnd-html5-backend", "npm:16.0.1"],\
           ["react-dom", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:18.2.0"],\
@@ -8519,6 +8543,17 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@types/react-color", [\
+      ["npm:2.17.6", {\
+        "packageLocation": "./.yarn/cache/@types-react-color-npm-2.17.6-73f65ee27c-58f4b11448.zip/node_modules/@types/react-color/",\
+        "packageDependencies": [\
+          ["@types/react-color", "npm:2.17.6"],\
+          ["@types/react", "npm:18.2.12"],\
+          ["@types/reactcss", "npm:1.2.6"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@types/react-dom", [\
       ["npm:18.2.5", {\
         "packageLocation": "./.yarn/cache/@types-react-dom-npm-18.2.5-994872ac5e-7ae5eeb0c9.zip/node_modules/@types/react-dom/",\
@@ -8569,6 +8604,16 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-react-transition-group-npm-4.4.6-3b139bdf30-67cb6a4170.zip/node_modules/@types/react-transition-group/",\
         "packageDependencies": [\
           ["@types/react-transition-group", "npm:4.4.6"],\
+          ["@types/react", "npm:18.2.12"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@types/reactcss", [\
+      ["npm:1.2.6", {\
+        "packageLocation": "./.yarn/cache/@types-reactcss-npm-1.2.6-e0159cfd52-df270286a0.zip/node_modules/@types/reactcss/",\
+        "packageDependencies": [\
+          ["@types/reactcss", "npm:1.2.6"],\
           ["@types/react", "npm:18.2.12"]\
         ],\
         "linkType": "HARD"\
@@ -16078,6 +16123,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["material-colors", [\
+      ["npm:1.2.6", {\
+        "packageLocation": "./.yarn/cache/material-colors-npm-1.2.6-38f7e3d1c1-92ac1dc4bb.zip/node_modules/material-colors/",\
+        "packageDependencies": [\
+          ["material-colors", "npm:1.2.6"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["mdast-squeeze-paragraphs", [\
       ["npm:4.0.0", {\
         "packageLocation": "./.yarn/cache/mdast-squeeze-paragraphs-npm-4.0.0-d8fce7865c-2df1b63a69.zip/node_modules/mdast-squeeze-paragraphs/",\
@@ -18833,6 +18887,35 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["react-color", [\
+      ["npm:2.19.3", {\
+        "packageLocation": "./.yarn/cache/react-color-npm-2.19.3-d63f96d772-9d93e2ad9e.zip/node_modules/react-color/",\
+        "packageDependencies": [\
+          ["react-color", "npm:2.19.3"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.19.3", {\
+        "packageLocation": "./.yarn/__virtual__/react-color-virtual-e1a8226b2b/0/cache/react-color-npm-2.19.3-d63f96d772-9d93e2ad9e.zip/node_modules/react-color/",\
+        "packageDependencies": [\
+          ["react-color", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.19.3"],\
+          ["@icons/material", "virtual:e1a8226b2b8099f31029d02ea4cbdbb2dee313f1b5f2072197ea222051fabcf5cbb43f08ece418d2276a84b37b2fb36f9091bf03891d6556ca13954793553787#npm:0.2.4"],\
+          ["@types/react", "npm:18.2.12"],\
+          ["lodash", "npm:4.17.21"],\
+          ["lodash-es", "npm:4.17.21"],\
+          ["material-colors", "npm:1.2.6"],\
+          ["prop-types", "npm:15.8.1"],\
+          ["react", "npm:18.2.0"],\
+          ["reactcss", "virtual:e1a8226b2b8099f31029d02ea4cbdbb2dee313f1b5f2072197ea222051fabcf5cbb43f08ece418d2276a84b37b2fb36f9091bf03891d6556ca13954793553787#npm:1.2.3"],\
+          ["tinycolor2", "npm:1.6.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["react-dev-utils", [\
       ["npm:12.0.1", {\
         "packageLocation": "./.yarn/cache/react-dev-utils-npm-12.0.1-83ba06e3ee-27925abaab.zip/node_modules/react-dev-utils/",\
@@ -19546,6 +19629,29 @@ const RAW_RUNTIME_STATE =
           ["@types/react", "npm:18.2.12"],\
           ["react", "npm:18.2.0"],\
           ["tslib", "npm:2.5.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["reactcss", [\
+      ["npm:1.2.3", {\
+        "packageLocation": "./.yarn/cache/reactcss-npm-1.2.3-16f7947bcd-88a5522d07.zip/node_modules/reactcss/",\
+        "packageDependencies": [\
+          ["reactcss", "npm:1.2.3"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:e1a8226b2b8099f31029d02ea4cbdbb2dee313f1b5f2072197ea222051fabcf5cbb43f08ece418d2276a84b37b2fb36f9091bf03891d6556ca13954793553787#npm:1.2.3", {\
+        "packageLocation": "./.yarn/__virtual__/reactcss-virtual-789dd464a5/0/cache/reactcss-npm-1.2.3-16f7947bcd-88a5522d07.zip/node_modules/reactcss/",\
+        "packageDependencies": [\
+          ["reactcss", "virtual:e1a8226b2b8099f31029d02ea4cbdbb2dee313f1b5f2072197ea222051fabcf5cbb43f08ece418d2276a84b37b2fb36f9091bf03891d6556ca13954793553787#npm:1.2.3"],\
+          ["@types/react", "npm:18.2.12"],\
+          ["lodash", "npm:4.17.21"],\
+          ["react", "npm:18.2.0"]\
         ],\
         "packagePeers": [\
           "@types/react",\
@@ -21252,6 +21358,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/tiny-warning-npm-1.0.3-750b7a07c4-2fe4472b89.zip/node_modules/tiny-warning/",\
         "packageDependencies": [\
           ["tiny-warning", "npm:1.0.3"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["tinycolor2", [\
+      ["npm:1.6.0", {\
+        "packageLocation": "./.yarn/cache/tinycolor2-npm-1.6.0-8df41252c6-6f44e01b8a.zip/node_modules/tinycolor2/",\
+        "packageDependencies": [\
+          ["tinycolor2", "npm:1.6.0"]\
         ],\
         "linkType": "HARD"\
       }]\

@@ -152,6 +152,9 @@ export * from './nodes/ShuffleNode.js';
 import { chatAnthropicNode } from './nodes/ChatAnthropicNode.js';
 export * from './nodes/ChatAnthropicNode.js';
 
+import { commentNode } from './nodes/CommentNode.js';
+export * from './nodes/CommentNode.js';
+
 const register = new NodeRegistration()
   .register(toYamlNode)
   .register(userInputNode)
@@ -202,7 +205,8 @@ const register = new NodeRegistration()
   .register(numberNode)
   .register(randomNumberNode)
   .register(shuffleNode)
-  .register(chatAnthropicNode);
+  .register(chatAnthropicNode)
+  .register(commentNode);
 
 export type Nodes = typeof register.NodesType;
 

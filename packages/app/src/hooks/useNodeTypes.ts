@@ -9,6 +9,7 @@ import { readFileNodeDescriptor } from '../components/nodes/ReadFileNode.js';
 import { subgraphNodeDescriptor } from '../components/nodes/SubGraphNode.js';
 import { userInputNodeDescriptor } from '../components/nodes/UserInputNode.js';
 import { ObjectNodeDescriptor } from '../components/nodes/ObjectNode.js';
+import { commentNodeDescriptor } from '../components/nodes/CommentNode';
 
 export type UnknownNodeComponentDescriptor = {
   Body?: FC<{ node: ChartNode }>;
@@ -41,6 +42,7 @@ const overriddenDescriptors: Partial<NodeComponentDescriptors> = {
   subGraph: subgraphNodeDescriptor,
   userInput: userInputNodeDescriptor,
   object: ObjectNodeDescriptor,
+  comment: commentNodeDescriptor,
 };
 
 export function useNodeTypes(): NodeComponentDescriptors {

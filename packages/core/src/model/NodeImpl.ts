@@ -174,6 +174,14 @@ export type CodeEditorDefinition<T extends ChartNode> = {
   theme?: string;
 };
 
+export type ColorEditorDefinition<T extends ChartNode> = {
+  type: 'color';
+  label: string;
+
+  dataKey: DataOfType<T, string>;
+  useInputToggleDataKey?: DataOfType<T, boolean>;
+};
+
 export type EditorDefinition<T extends ChartNode> =
   | StringEditorDefinition<T>
   | ToggleEditorDefinition<T>
@@ -182,7 +190,8 @@ export type EditorDefinition<T extends ChartNode> =
   | DropdownEditorDefinition<T>
   | NumberEditorDefinition<T>
   | CodeEditorDefinition<T>
-  | GraphSelectorEditorDefinition<T>;
+  | GraphSelectorEditorDefinition<T>
+  | ColorEditorDefinition<T>;
 
 export type NodeBodySpecBase = {
   fontSize?: number;

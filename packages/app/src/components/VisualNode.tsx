@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { CSSProperties, FC, HTMLAttributes, MouseEvent, forwardRef, memo, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { match } from 'ts-pattern';
-import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
+import { ChartNode, CommentNode, NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
 import { lastRunData, selectedProcessPage } from '../state/dataFlow.js';
 import { NodeBody } from './NodeBody.js';
 import { NodeOutput } from './NodeOutput.js';
@@ -34,7 +34,7 @@ export type VisualNodeProps = {
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
   onSelectNode?: (multi: boolean) => void;
   onStartEditing?: () => void;
-  onNodeWidthChanged?: (newWidth: number) => void;
+  onNodeSizeChanged?: (newWidth: number, newHeight: number) => void;
   onMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId) => void;
   onMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId) => void;
 
@@ -66,7 +66,7 @@ export const VisualNode = memo(
         onWireStartDrag,
         onSelectNode,
         onStartEditing,
-        onNodeWidthChanged,
+        onNodeSizeChanged,
         onMouseOver,
         onMouseOut,
       },
@@ -74,6 +74,7 @@ export const VisualNode = memo(
     ) => {
       const lastRun = useRecoilValue(lastRunData(node.id));
       const processPage = useRecoilValue(selectedProcessPage(node.id));
+      const isComment = node.type === 'comment';
 
       const {
         canvasPosition: { zoom },
@@ -82,8 +83,9 @@ export const VisualNode = memo(
       const style: CSSProperties = {
         opacity: isDragging ? '0' : '',
         transform: `translate(${node.visualData.x + xDelta}px, ${node.visualData.y + yDelta}px) scale(${scale ?? 1})`,
-        zIndex: node.visualData.zIndex ?? 0,
+        zIndex: isComment ? -10000 : node.visualData.zIndex ?? 0,
         width: node.visualData.width,
+        height: isComment ? (node as CommentNode).data.height : undefined,
       };
 
       const nodeRef = (refValue: HTMLDivElement | null) => {
@@ -105,7 +107,7 @@ export const VisualNode = memo(
         };
       }, [node.id]);
 
-      const isZoomedOut = zoom < 0.4;
+      const isZoomedOut = !isComment && zoom < 0.4;
 
       const selectedProcessRun =
         lastRun && lastRun.length > 0
@@ -121,6 +123,7 @@ export const VisualNode = memo(
             error: selectedProcessRun?.status?.type === 'error',
             running: selectedProcessRun?.status?.type === 'running',
             zoomedOut: isZoomedOut,
+            isComment,
           })}
           ref={nodeRef}
           style={style}
@@ -146,7 +149,7 @@ export const VisualNode = memo(
               onWireEndDrag={onWireEndDrag}
               onSelectNode={onSelectNode}
               onStartEditing={onStartEditing}
-              onNodeWidthChanged={onNodeWidthChanged}
+              onNodeSizeChanged={onNodeSizeChanged}
               handleAttributes={handleAttributes}
             />
           )}
@@ -250,7 +253,7 @@ const NormalVisualNodeContent: FC<{
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
   onSelectNode?: (multi: boolean) => void;
   onStartEditing?: () => void;
-  onNodeWidthChanged?: (newWidth: number) => void;
+  onNodeSizeChanged?: (newWidth: number, newHeight: number) => void;
 }> = memo(
   ({
     node,
@@ -259,23 +262,28 @@ const NormalVisualNodeContent: FC<{
     onWireEndDrag,
     onSelectNode,
     onStartEditing,
-    onNodeWidthChanged,
+    onNodeSizeChanged,
     handleAttributes,
   }) => {
+    const isComment = node.type === 'comment';
     const lastRun = useRecoilValue(lastRunData(node.id));
     const processPage = useRecoilValue(selectedProcessPage(node.id));
 
+    const [initialHeight, setInitialHeight] = useState<number | undefined>();
     const [initialWidth, setInitialWidth] = useState<number | undefined>();
     const [initialMouseX, setInitialMouseX] = useState(0);
+    const [initialMouseY, setInitialMouseY] = useState(0);
     const { clientToCanvasPosition } = useCanvasPositioning();
 
-    const getNodeCurrentWidth = (elementOrChild: HTMLElement): number => {
+    const getNodeCurrentDimensions = (elementOrChild: HTMLElement): [number, number] => {
       const nodeElement = elementOrChild.closest('.node');
       if (!nodeElement) {
-        return 100;
+        return [100, 100];
       }
       const cssWidth = window.getComputedStyle(nodeElement).width;
-      return parseInt(cssWidth, 10);
+      const cssHeight = window.getComputedStyle(nodeElement).height;
+
+      return [parseInt(cssWidth, 10), parseInt(cssHeight, 10)];
     };
 
     const handleEditClick = useStableCallback((event: MouseEvent<HTMLButtonElement>) => {
@@ -292,22 +300,37 @@ const NormalVisualNodeContent: FC<{
       event.preventDefault();
       event.stopPropagation();
 
-      setInitialWidth(getNodeCurrentWidth(event.target as HTMLElement));
+      const [initialWidth, initialHeight] = getNodeCurrentDimensions(event.target as HTMLElement);
+
+      setInitialWidth(initialWidth);
+      setInitialHeight(initialHeight);
       setInitialMouseX(event.clientX);
+      setInitialMouseY(event.clientY);
     });
 
     const handleResizeMove = useStableCallback((event: MouseEvent) => {
       event.preventDefault();
       event.stopPropagation();
 
-      const initialMousePositionCanvas = clientToCanvasPosition(initialMouseX, 0);
-      const newMousePositionCanvas = clientToCanvasPosition(event.clientX, 0);
+      const initialMousePositionCanvas = clientToCanvasPosition(initialMouseX, initialMouseY);
+      const newMousePositionCanvas = clientToCanvasPosition(event.clientX, event.clientY);
 
-      const delta = newMousePositionCanvas.x - initialMousePositionCanvas.x;
+      const deltaX = newMousePositionCanvas.x - initialMousePositionCanvas.x;
+      const deltaY = newMousePositionCanvas.y - initialMousePositionCanvas.y;
 
-      if (initialWidth) {
-        const newWidth = initialWidth + delta;
-        onNodeWidthChanged?.(newWidth);
+      let newWidth = initialWidth;
+      let newHeight = initialHeight;
+
+      if (initialWidth != null) {
+        newWidth = initialWidth + deltaX;
+      }
+
+      if (initialHeight != null) {
+        newHeight = initialHeight + deltaY;
+      }
+
+      if (newWidth != null && newHeight != null && (newWidth !== initialWidth || newHeight !== initialHeight)) {
+        onNodeSizeChanged?.(newWidth, newHeight);
       }
     });
 

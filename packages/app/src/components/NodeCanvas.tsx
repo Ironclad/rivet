@@ -9,7 +9,7 @@ import { WireLayer } from './WireLayer.js';
 import { useContextMenu } from '../hooks/useContextMenu.js';
 import { useDraggingNode } from '../hooks/useDraggingNode.js';
 import { useDraggingWire } from '../hooks/useDraggingWire.js';
-import { ChartNode, GraphId, NodeConnection, NodeId, NodeType } from '@ironclad/rivet-core';
+import { ChartNode, CommentNode, GraphId, NodeConnection, NodeId, NodeType } from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   CanvasPosition,
@@ -370,12 +370,16 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     }
   };
 
-  const onNodeWidthChanged = useStableCallback((node: ChartNode, width: number) => {
+  const onNodeSizeChanged = useStableCallback((node: ChartNode, width: number, height: number) => {
     onNodesChanged(
       produce(nodes, (draft) => {
         const foundNode = draft.find((n) => n.id === node.id);
         if (foundNode) {
           foundNode.visualData.width = width;
+        }
+
+        if (foundNode?.type === 'comment') {
+          (foundNode as CommentNode).data.height = height;
         }
       }),
     );
@@ -503,7 +507,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
                   onWireEndDrag={onWireEndDrag}
                   onNodeSelected={nodeSelected}
                   onNodeStartEditing={nodeStartEditing}
-                  onNodeWidthChanged={onNodeWidthChanged}
+                  onNodeSizeChanged={onNodeSizeChanged}
                   onMouseOver={onNodeMouseOver}
                   onMouseOut={onNodeMouseOut}
                 />

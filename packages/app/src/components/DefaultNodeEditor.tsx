@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useRef } from 'react';
+import { Component, FC, useEffect, useMemo, useRef } from 'react';
 import {
   AnyDataEditorDefinition,
   ChartNode,
@@ -33,6 +33,8 @@ import { useRecoilValue } from 'recoil';
 import { orderBy } from 'lodash-es';
 import { values } from '../utils/typeSafety.js';
 import { nanoid } from 'nanoid';
+import { HuePicker, AlphaPicker, CustomPicker, CustomPickerProps, CustomPickerInjectedProps } from 'react-color';
+import { Alpha, Hue, Saturation } from 'react-color/lib/components/common';
 
 export const defaultEditorContainerStyles = css`
   display: flex;
@@ -150,6 +152,7 @@ const DefaultNodeEditorField: FC<{
     .with({ type: 'number' }, (editor) => <DefaultNumberEditor {...sharedProps} editor={editor} />)
     .with({ type: 'code' }, (editor) => <DefaultCodeEditor {...sharedProps} editor={editor} />)
     .with({ type: 'graphSelector' }, (editor) => <DefaultGraphSelectorEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'color' }, (editor) => <DefaultColorEditor {...sharedProps} editor={editor} />)
     .exhaustive();
 
   const toggle = editor.useInputToggleDataKey ? (
@@ -547,3 +550,77 @@ export const DefaultCodeEditor: FC<{
     </div>
   );
 };
+
+export const DefaultColorEditor: FC<{
+  node: ChartNode;
+  isReadonly: boolean;
+  onChange: (changed: ChartNode) => void;
+  editor: EditorDefinition<ChartNode>;
+}> = ({ node, isReadonly, onChange, editor }) => {
+  const data = node.data as Record<string, unknown>;
+
+  const parsed = /rgba\((?<rStr>\d+),(?<gStr>\d+),(?<bStr>\d+),(?<aStr>[\d.]+)\)/.exec(data[editor.dataKey] as string);
+
+  const { rStr, gStr, bStr, aStr } = parsed ? parsed.groups! : { rStr: '0', gStr: '0', bStr: '0', aStr: '0' };
+
+  const { r, g, b, a } = {
+    r: parseInt(rStr!, 10),
+    g: parseInt(gStr!, 10),
+    b: parseInt(bStr!, 10),
+    a: parseFloat(aStr!),
+  };
+
+  return (
+    <Field name={editor.dataKey} label={editor.label}>
+      {() => (
+        <TripleBarPicker
+          color={{ r, g, b, a }}
+          onChange={(newColor) => {
+            onChange({
+              ...node,
+              data: {
+                ...data,
+                [editor.dataKey]: `rgba(${newColor.rgb.r},${newColor.rgb.g},${newColor.rgb.b},${newColor.rgb.a})`,
+              },
+            });
+          }}
+        />
+      )}
+    </Field>
+  );
+};
+
+const TripleBarPicker = CustomPicker((props) => {
+  return (
+    <div
+      css={css`
+        user-select: none;
+      `}
+    >
+      <div
+        css={css`
+          height: 48px;
+          position: relative;
+        `}
+      >
+        <Saturation {...props} />
+      </div>
+      <div
+        css={css`
+          height: 16px;
+          position: relative;
+        `}
+      >
+        <Hue {...props} />
+      </div>
+      <div
+        css={css`
+          height: 16px;
+          position: relative;
+        `}
+      >
+        <Alpha {...props} />
+      </div>
+    </div>
+  );
+});

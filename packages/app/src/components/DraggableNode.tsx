@@ -20,7 +20,7 @@ interface DraggableNodeProps {
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
   onNodeSelected?: (node: ChartNode, multi: boolean) => void;
   onNodeStartEditing?: (node: ChartNode) => void;
-  onNodeWidthChanged?: (node: ChartNode, newWidth: number) => void;
+  onNodeSizeChanged?: (node: ChartNode, newWidth: number, newHeight: number) => void;
   onMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId) => void;
   onMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId) => void;
 }
@@ -33,7 +33,7 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
   onWireEndDrag,
   onNodeSelected,
   onNodeStartEditing,
-  onNodeWidthChanged,
+  onNodeSizeChanged,
   onMouseOver,
   onMouseOut,
 }) => {
@@ -60,7 +60,7 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
         onStartEditing={useStableCallback(() => {
           onNodeStartEditing?.(node);
         })}
-        onNodeWidthChanged={(width) => onNodeWidthChanged?.(node, width)}
+        onNodeSizeChanged={(width, height) => onNodeSizeChanged?.(node, width, height)}
         onMouseOver={onMouseOver}
         onMouseOut={onMouseOut}
       />
