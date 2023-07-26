@@ -110,7 +110,9 @@ export type NodeResults = Map<NodeId, Outputs>;
 export type Inputs = Record<PortId, DataValue | undefined>;
 export type Outputs = Record<PortId, DataValue | undefined>;
 
-export type ExternalFunction = (...args: unknown[]) => Promise<DataValue>;
+export type ExternalFunctionProcessContext = Omit<InternalProcessContext, 'setGlobal' | 'settings' | 'nativeApi'>;
+
+export type ExternalFunction = (context: ExternalFunctionProcessContext, ...args: unknown[]) => Promise<DataValue>;
 
 type RaceId = Opaque<string, 'RaceId'>;
 
