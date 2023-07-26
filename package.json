@@ -12,7 +12,8 @@
     "release-node": "node --loader ts-node/esm --loader ./.pnp.loader.mjs release-node.mts",
     "publish-docs": "node --loader ts-node/esm --loader ./.pnp.loader.mjs publish-docs.mts",
     "build": "yarn workspace @ironclad/rivet-core run build && yarn workspace @ironclad/rivet-node run build && yarn workspace @ironclad/rivet-app-executor run build && yarn workspace @ironclad/trivet run build && yarn workspace @ironclad/rivet-app run build",
-    "publish": "yarn workspace @ironclad/rivet-core run publish && yarn workspace @ironclad/rivet-node run publish"
+    "publish": "yarn workspace @ironclad/rivet-core run publish && yarn workspace @ironclad/rivet-node run publish",
+    "test": "yarn workspace @ironclad/rivet-core run test"
   },
   "devDependencies": {
     "@swc/core": "^1.3.68",
