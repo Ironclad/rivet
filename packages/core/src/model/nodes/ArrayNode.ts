@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid';
 import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { entries } from '../../utils/typeSafety.js';
-import { flattenDepth } from 'lodash-es';
+import { flattenDeep } from 'lodash-es';
 
 export type ArrayNode = ChartNode<'array', ArrayNodeData>;
 
@@ -104,7 +104,7 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
           if (Array.isArray(input?.value)) {
             for (const value of input?.value ?? []) {
               if (this.data.flattenDeep) {
-                outputArray.push(...flattenDepth(value));
+                outputArray.push(...(Array.isArray(value) ? flattenDeep(value) : [value]));
               } else {
                 outputArray.push(value);
               }

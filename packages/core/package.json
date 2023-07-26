@@ -35,7 +35,8 @@
     "build:esm": "rm -rf dist/esm dist/types dist/tsconfig.tsbuildinfo && tsc -b --verbose",
     "build:cjs": "rm -rf dist/cjs && tsx bundle.esbuild.ts",
     "prepack": "yarn build && cp -r ../../LICENSE ../../README.md .",
-    "publish": "yarn npm publish"
+    "publish": "yarn npm publish",
+    "test": "tsx --test test/**/*.ts"
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",
