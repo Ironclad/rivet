@@ -6,6 +6,7 @@ import { Inputs, Outputs } from '../GraphProcessor.js';
 import { coerceType } from '../../utils/coerceType.js';
 import { getError } from '../../utils/errors.js';
 import { InternalProcessContext } from '../ProcessContext.js';
+import { omit } from 'lodash-es';
 
 export type ExternalCallNode = ChartNode<'externalCall', ExternalCallNodeData>;
 
@@ -113,6 +114,7 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
     }
 
     const fn = context.externalFunctions[functionName];
+    const externalContext = omit(context, ['setGlobal', 'settings', 'nativeApi']);
 
     if (!fn) {
       throw new Error(`Function ${functionName} not was not defined using setExternalCall`);
@@ -120,7 +122,7 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
 
     if (this.data.useErrorOutput) {
       try {
-        const result = await fn(...arrayArgs.value);
+        const result = await fn(externalContext, ...arrayArgs.value);
         return {
           ['result' as PortId]: result,
           ['error' as PortId]: {
@@ -141,7 +143,7 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
         };
       }
     }
-    const result = await fn(...arrayArgs.value);
+    const result = await fn(externalContext, ...arrayArgs.value);
     return {
       ['result' as PortId]: result,
     };
