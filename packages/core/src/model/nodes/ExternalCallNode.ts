@@ -114,7 +114,7 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
     }
 
     const fn = context.externalFunctions[functionName];
-    const externalContext = omit(context, ['setGlobal', 'settings', 'nativeApi']);
+    const externalContext = omit(context, ['setGlobal']);
 
     if (!fn) {
       throw new Error(`Function ${functionName} not was not defined using setExternalCall`);
