@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { ArrayDataValue, StringDataValue } from '@ironclad/rivet-core';
 import { lastAnswersState } from '../state/userInput.js';
@@ -45,8 +45,7 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, onSub
 
   useEffect(() => {
     setAnswers(questions.map((question) => lastAnswers[question] ?? ''));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [open, lastAnswers, questions]);
 
   const handleChange = (index: number, value: string) => {
     const newAnswers = [...answers];
@@ -102,6 +101,8 @@ const UserInputModalQuestion: FC<{
   onChange?: (index: number, newText: string) => void;
   onSubmit?: () => void;
 }> = ({ question, answer, index, onChange, onSubmit }) => {
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>();
+
   const handleTextAreaKeyDown = (e: monaco.IKeyboardEvent) => {
     if (e.keyCode === monaco.KeyCode.Enter && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
@@ -118,10 +119,12 @@ const UserInputModalQuestion: FC<{
           <div className="question" dangerouslySetInnerHTML={questionHtml} />
           <div className="editor">
             <CodeEditor
+              key={question}
               text={answer ?? ''}
               onChange={(e) => onChange?.(index, e)}
               autoFocus
               onKeyDown={handleTextAreaKeyDown}
+              editorRef={editorRef}
             />
           </div>
         </div>
