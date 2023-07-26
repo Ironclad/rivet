@@ -43,6 +43,7 @@ export interface TrivetTestCaseResult {
   passing: boolean;
   message: string;
   outputs: Record<string, unknown>;
+  error?: Error | string | any;
 }
 
 export type TrivetData = {

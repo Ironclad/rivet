@@ -16,6 +16,10 @@ const styles = css`
   .editor-container {
     min-height: 200px;
   }
+
+  .testCaseError pre {
+    white-space: pre-wrap;
+  }
 `;
 
 export const TestCaseEditor: FC = () => {
@@ -66,6 +70,15 @@ export const TestCaseEditor: FC = () => {
           <InputOutputEditor
             json={testCaseResults.outputs ?? {}}
           />
+        </div>
+      )}
+      {testCaseResults?.error != null && (
+        <div className="testCaseError">
+          <label>Error</label>
+          <pre>
+            {testCaseResults.error.message ?? testCaseResults.error}
+            {testCaseResults.error.stack ?? ''}
+          </pre>
         </div>
       )}
     </div>
