@@ -33,4 +33,4 @@ const rivetDebugger = startDebuggerServer({
   },
 });
 
-console.log('Node.js executor started on port 21889.');
+console.log(`Node.js executor started on port ${port}.`);

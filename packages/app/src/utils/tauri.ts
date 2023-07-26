@@ -27,7 +27,5 @@ export async function fillMissingSettingsFromEnvironmentVariables(settings: Part
     anthropicApiKey: (settings.anthropicApiKey || (await getEnvVar('ANTHROPIC_API_KEY'))) ?? '',
   };
 
-  console.dir({ fullSettings });
-
   return fullSettings;
 }

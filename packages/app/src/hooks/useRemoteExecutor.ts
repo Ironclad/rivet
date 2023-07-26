@@ -95,19 +95,6 @@ export function useRemoteExecutor() {
     }
   });
 
-  setUserInputModalSubmit({
-    submit: (nodeId: NodeId, answers: StringArrayDataValue) => {
-      remoteDebugger.send('user-input', { nodeId, answers });
-
-      // Remove from pending questions
-      setUserInputQuestions((q) =>
-        produce(q, (draft) => {
-          delete draft[nodeId];
-        }),
-      );
-    },
-  });
-
   const tryRunGraph = async () => {
     if (
       !remoteDebugger.remoteDebuggerState.started ||
@@ -115,6 +102,19 @@ export function useRemoteExecutor() {
     ) {
       return;
     }
+
+    setUserInputModalSubmit({
+      submit: (nodeId: NodeId, answers: StringArrayDataValue) => {
+        remoteDebugger.send('user-input', { nodeId, answers });
+
+        // Remove from pending questions
+        setUserInputQuestions((q) =>
+          produce(q, (draft) => {
+            delete draft[nodeId];
+          }),
+        );
+      },
+    });
 
     try {
       if (remoteDebugger.remoteDebuggerState.remoteUploadAllowed) {
