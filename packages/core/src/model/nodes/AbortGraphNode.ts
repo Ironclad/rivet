@@ -100,7 +100,8 @@ export class AbortGraphNodeImpl extends NodeImpl<AbortGraphNode> {
       context.abortGraph();
     } else {
       const errorMessage =
-        (coerceTypeOptional(inputs['data' as PortId], 'string')?.trim() || this.data.errorMessage) ??
+        coerceTypeOptional(inputs['data' as PortId], 'string')?.trim() ||
+        this.data.errorMessage ||
         'Graph aborted with error';
       context.abortGraph(errorMessage);
     }

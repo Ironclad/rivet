@@ -1,5 +1,5 @@
 import { useLatest } from 'ahooks';
-import { FC, useEffect, useRef } from 'react';
+import { FC, MutableRefObject, useEffect, useRef } from 'react';
 import { monaco } from '../utils/monaco.js';
 
 export const CodeEditor: FC<{
@@ -10,7 +10,8 @@ export const CodeEditor: FC<{
   theme?: string;
   autoFocus?: boolean;
   onKeyDown?: (e: monaco.IKeyboardEvent) => void;
-}> = ({ text, isReadonly, onChange, language, theme, autoFocus, onKeyDown }) => {
+  editorRef?: MutableRefObject<monaco.editor.IStandaloneCodeEditor | undefined>;
+}> = ({ text, isReadonly, onChange, language, theme, autoFocus, onKeyDown, editorRef }) => {
   const editorContainer = useRef<HTMLDivElement>(null);
   const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
 
@@ -42,6 +43,9 @@ export const CodeEditor: FC<{
     });
 
     editorInstance.current = editor;
+    if (editorRef) {
+      editorRef.current = editor;
+    }
 
     return () => {
       editor.dispose();

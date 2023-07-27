@@ -1,6 +1,6 @@
-import { GraphOutputs, ProcessEvents } from '@ironclad/rivet-core';
+import { GraphOutputs, NodeId, ProcessEvents, StringArrayDataValue } from '@ironclad/rivet-core';
 import { useCurrentExecution } from './useCurrentExecution';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { graphState } from '../state/graph';
 import { settingsState } from '../state/settings';
 import { setCurrentDebuggerMessageHandler, useRemoteDebugger } from './useRemoteDebugger';
@@ -10,6 +10,8 @@ import { useStableCallback } from './useStableCallback';
 import { toast } from 'react-toastify';
 import { trivetState } from '../state/trivet';
 import { runTrivet } from '@ironclad/trivet';
+import { produce } from 'immer';
+import { userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
 
 // TODO: This allows us to retrieve the GraphOutputs from the remote debugger.
 // If the remote debugger events had a unique ID for each run, this would feel a lot less hacky.
@@ -26,6 +28,8 @@ export function useRemoteExecutor() {
   const savedSettings = useRecoilValue(settingsState);
   const project = useRecoilValue(projectState);
   const [{ testSuites }, setTrivetState] = useRecoilState(trivetState);
+  const setUserInputModalSubmit = useSetRecoilState(userInputModalSubmitState);
+  const setUserInputQuestions = useSetRecoilState(userInputModalQuestionsState);
 
   const remoteDebugger = useRemoteDebugger({
     onDisconnect: () => {
@@ -99,6 +103,19 @@ export function useRemoteExecutor() {
       return;
     }
 
+    setUserInputModalSubmit({
+      submit: (nodeId: NodeId, answers: StringArrayDataValue) => {
+        remoteDebugger.send('user-input', { nodeId, answers });
+
+        // Remove from pending questions
+        setUserInputQuestions((q) =>
+          produce(q, (draft) => {
+            delete draft[nodeId];
+          }),
+        );
+      },
+    });
+
     try {
       if (remoteDebugger.remoteDebuggerState.remoteUploadAllowed) {
         remoteDebugger.send('set-dynamic-data', {
@@ -120,85 +137,89 @@ export function useRemoteExecutor() {
     return;
   };
 
-  const tryRunTests = useStableCallback(
-    async (options: { testSuiteIds?: string[], testCaseIds?: string[] } = {}) => {
-      toast.info('Running Tests');
-      console.log('trying to run tests');
-  
-      setTrivetState((s) => ({
-        ...s,
-        runningTests: true,
-        recentTestResults: undefined,
-      }));
-      const testSuitesToRun = options.testSuiteIds
-        ? testSuites
+  const tryRunTests = useStableCallback(async (options: { testSuiteIds?: string[]; testCaseIds?: string[] } = {}) => {
+    toast.info('Running Tests');
+    console.log('trying to run tests');
+
+    setTrivetState((s) => ({
+      ...s,
+      runningTests: true,
+      recentTestResults: undefined,
+    }));
+    const testSuitesToRun = options.testSuiteIds
+      ? testSuites
           .filter((t) => options.testSuiteIds!.includes(t.id))
           .map((t) => ({
             ...t,
-            testCases: options.testCaseIds ? t.testCases.filter((tc) => options.testCaseIds?.includes(tc.id)) : t.testCases,
+            testCases: options.testCaseIds
+              ? t.testCases.filter((tc) => options.testCaseIds?.includes(tc.id))
+              : t.testCases,
           }))
-        : testSuites;
-      try {
-        const result = await runTrivet({
-          project,
-          testSuites: testSuitesToRun,
-          onUpdate: (results) => {
-            setTrivetState((s) => ({
-              ...s,
-              recentTestResults: results,
-            }));
-          },
-          runGraph: async (project, graphId, inputs) => {
-            if (remoteDebugger.remoteDebuggerState.remoteUploadAllowed) {
-              remoteDebugger.send('set-dynamic-data', {
-                project: {
-                  ...project,
-                  graphs: {
-                    ...project.graphs,
-                    [graph.metadata!.id!]: graph,
-                  },
+      : testSuites;
+    try {
+      const result = await runTrivet({
+        project,
+        testSuites: testSuitesToRun,
+        onUpdate: (results) => {
+          setTrivetState((s) => ({
+            ...s,
+            recentTestResults: results,
+          }));
+        },
+        runGraph: async (project, graphId, inputs) => {
+          if (remoteDebugger.remoteDebuggerState.remoteUploadAllowed) {
+            remoteDebugger.send('set-dynamic-data', {
+              project: {
+                ...project,
+                graphs: {
+                  ...project.graphs,
+                  [graph.metadata!.id!]: graph,
                 },
-                settings: await fillMissingSettingsFromEnvironmentVariables(savedSettings),
-              });
-            }
+              },
+              settings: await fillMissingSettingsFromEnvironmentVariables(savedSettings),
+            });
+          }
 
-            {
-              let resolve: (value: GraphOutputs) => void;
-              let reject: (err: string) => void;
-              const promise = new Promise<GraphOutputs>((res, rej) => {
-                resolve = res;
-                reject = rej;
-              });
-              graphExecutionPromise = {
-                promise,
-                resolve: resolve!,
-                reject: reject!,
-              };
-            }
+          {
+            let resolve: (value: GraphOutputs) => void;
+            let reject: (err: string) => void;
+            const promise = new Promise<GraphOutputs>((res, rej) => {
+              resolve = res;
+              reject = rej;
+            });
+            graphExecutionPromise = {
+              promise,
+              resolve: resolve!,
+              reject: reject!,
+            };
+          }
 
-            remoteDebugger.send('run', { graphId, inputs });
-      
-            const results = await graphExecutionPromise.promise!;
-            return results;
-          },
-        });
-        setTrivetState((s) => ({
-          ...s,
-          recentTestResults: result,
-          runningTests: false,
-        }));
-        toast.info(`Ran tests: ${result.testSuiteResults.length} tests, ${result.testSuiteResults.filter((t) => t.passing).length} passing`);
-        console.log(result);
-      } catch (e) {
-        console.log(e);
-        setTrivetState((s) => ({
-          ...s,
-          runningTests: false,
-        }));
-        toast.error('Error running tests');
-      }
-    },
-  );
+          remoteDebugger.send('run', { graphId, inputs });
+
+          const results = await graphExecutionPromise.promise!;
+          return results;
+        },
+      });
+      setTrivetState((s) => ({
+        ...s,
+        recentTestResults: result,
+        runningTests: false,
+      }));
+      toast.info(
+        `Ran tests: ${result.testSuiteResults.length} tests, ${
+          result.testSuiteResults.filter((t) => t.passing).length
+        } passing`,
+      );
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+      setTrivetState((s) => ({
+        ...s,
+        runningTests: false,
+      }));
+      toast.error('Error running tests');
+    }
+  });
 
   function tryAbortGraph() {
     console.log('Aborting via remote debugger');

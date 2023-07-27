@@ -1,5 +1,14 @@
 import WebSocket, { WebSocketServer } from 'ws';
-import { GraphId, GraphProcessor, Project, getError, Settings, GraphInputs } from '@ironclad/rivet-core';
+import {
+  GraphId,
+  GraphProcessor,
+  Project,
+  getError,
+  Settings,
+  GraphInputs,
+  NodeId,
+  StringArrayDataValue,
+} from '@ironclad/rivet-core';
 import { match } from 'ts-pattern';
 import Emittery from 'emittery';
 
@@ -47,33 +56,42 @@ export function startDebuggerServer(
       try {
         const message = JSON.parse(data.toString()) as { type: string; data: unknown };
 
-        if (message.type === 'run') {
-          const { graphId, inputs } = message.data as { graphId: GraphId; inputs: GraphInputs };
+        await match(message)
+          .with({ type: 'run' }, async () => {
+            const { graphId, inputs } = message.data as { graphId: GraphId; inputs: GraphInputs };
 
-          await options.dynamicGraphRun?.({ client: socket, graphId, inputs });
-        } else if (message.type === 'set-dynamic-data' && options.allowGraphUpload) {
-          const { project, settings } = message.data as { project: Project; settings: Settings };
-          currentDebuggerState.uploadedProject = project;
-          currentDebuggerState.settings = settings;
-        } else {
-          const processors = options.getProcessorsForClient?.(socket, attachedProcessors) ?? attachedProcessors;
+            await options.dynamicGraphRun?.({ client: socket, graphId, inputs });
+          })
+          .with({ type: 'set-dynamic-data' }, async () => {
+            if (options.allowGraphUpload) {
+              const { project, settings } = message.data as { project: Project; settings: Settings };
+              currentDebuggerState.uploadedProject = project;
+              currentDebuggerState.settings = settings;
+            }
+          })
+          .otherwise(async () => {
+            const processors = options.getProcessorsForClient?.(socket, attachedProcessors) ?? attachedProcessors;
 
-          for (const processor of processors) {
-            await match(message)
-              .with({ type: 'abort' }, async () => {
-                await processor.abort();
-              })
-              .with({ type: 'pause' }, async () => {
-                processor.pause();
-              })
-              .with({ type: 'resume' }, async () => {
-                processor.resume();
-              })
-              .otherwise(async () => {
-                throw new Error(`Unknown message type: ${message.type}`);
-              });
-          }
-        }
+            for (const processor of processors) {
+              await match(message)
+                .with({ type: 'abort' }, async () => {
+                  await processor.abort();
+                })
+                .with({ type: 'pause' }, async () => {
+                  processor.pause();
+                })
+                .with({ type: 'resume' }, async () => {
+                  processor.resume();
+                })
+                .with({ type: 'user-input' }, async () => {
+                  const { nodeId, answers } = message.data as { nodeId: NodeId; answers: StringArrayDataValue };
+                  processor.userInput(nodeId, answers);
+                })
+                .otherwise(async () => {
+                  throw new Error(`Unknown message type: ${message.type}`);
+                });
+            }
+          });
       } catch (err) {
         try {
           await emitter.emit('error', getError(err));
@@ -176,6 +194,9 @@ export function startDebuggerServer(
       });
       processor.on('resume', () => {
         this.broadcast(processor, 'resume', null);
+      });
+      processor.on('userInput', (data) => {
+        this.broadcast(processor, 'userInput', data);
       });
     },
 
