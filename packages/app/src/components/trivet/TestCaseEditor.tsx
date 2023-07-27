@@ -3,23 +3,56 @@ import { trivetState } from '../../state/trivet';
 import { useRecoilState } from 'recoil';
 import Button from '@atlaskit/button';
 import { css } from '@emotion/react';
-import { CodeEditor } from '../CodeEditor';
 import { isEqual } from 'lodash-es';
 import { LazyCodeEditor } from '../LazyComponents';
 
 const styles = css`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+
+  .group {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
   .close-button {
     position: absolute;
     top: 0;
     right: 0;
     cursor: pointer;
   }
+
+  .editor,
   .editor-container {
-    min-height: 200px;
+    height: 100%;
+  }
+
+  .editor {
+    position: relative;
+  }
+
+  .editor-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
 
   .testCaseError pre {
     white-space: pre-wrap;
+  }
+
+  > div {
+    margin-bottom: 10px;
+  }
+
+  .group label {
+    display: block;
+    padding-bottom: 4px;
   }
 `;
 
@@ -56,7 +89,7 @@ export const TestCaseEditor: FC = () => {
         &times;
       </Button>
 
-      <div>
+      <div className="group">
         <label>Input</label>
         <InputOutputEditor
           json={selectedTestCase?.input ?? {}}
@@ -75,7 +108,7 @@ export const TestCaseEditor: FC = () => {
           }
         />
       </div>
-      <div>
+      <div className="group">
         <label>Expected Output</label>
         <InputOutputEditor
           json={selectedTestCase?.expectedOutput ?? {}}
@@ -97,9 +130,9 @@ export const TestCaseEditor: FC = () => {
         />
       </div>
       {testCaseResults != null && (
-        <div>
+        <div className="group">
           <label>
-            {testCaseResults.passing ? '✅' : '❌'}
+            {testCaseResults.passing ? '✅ ' : '❌ '}
             Test Result Outputs
           </label>
           <InputOutputEditor json={testCaseResults.outputs ?? {}} />
@@ -150,7 +183,13 @@ const InputOutputEditor: FC<{
   return (
     <div className="editor">
       <Suspense fallback={<div />}>
-        <LazyCodeEditor isReadonly={setJson == null} text={text} onChange={handleChange} language="json" />
+        <LazyCodeEditor
+          isReadonly={setJson == null}
+          text={text}
+          onChange={handleChange}
+          language="json"
+          scrollBeyondLastLine={false}
+        />
       </Suspense>
     </div>
   );

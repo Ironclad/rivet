@@ -22,20 +22,32 @@ import { TryRunTests } from './api';
 const styles = css`
   min-height: 100%;
   position: relative;
-  padding-left: 8px;
-  padding-top: 8px;
+  display: flex;
+
+  .test-suite-area {
+    padding: 48px 20px 20px 20px;
+    flex: 1 1 auto;
+  }
 
   .test-suite-header {
-    max-width: 600px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    form {
+      margin: 0;
+      min-width: 300px;
+    }
+  }
+
+  .graph-selectors {
+    flex: 1;
   }
 
   .test-case-editor {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
     width: 400px;
     z-index: 20;
+    flex: 1 0 auto;
 
     border-left: 1px solid var(--grey);
     background-color: var(--grey-darker);
@@ -197,65 +209,70 @@ export const TestSuite: FC<{ tryRunTests: TryRunTests }> = ({ tryRunTests }) => 
   }
   return (
     <div css={styles}>
-      <div className="test-suite-header" key={testSuite.id}>
-        <InlineEditableTextfield
-          key={`test-suite-name-${testSuite.id}`}
-          label="Test Suite Name"
-          placeholder="Test Suite Name"
-          onConfirm={(newValue) => updateTestSuite({ ...testSuite, name: newValue })}
-          defaultValue={testSuite.name ?? 'Untitled Test Suite'}
-          readViewFitContainerWidth
-        />
-        <InlineEditableTextfield
-          key={`test-suite-description-${testSuite.id}`}
-          label="Description"
-          placeholder="Test Suite Description"
-          defaultValue={testSuite.description ?? ''}
-          onConfirm={(newValue) => updateTestSuite({ ...testSuite, description: newValue })}
-          readViewFitContainerWidth
-        />
-        <GraphSelector
-          value={testSuite.testGraph}
-          name="Test Graph"
-          label="Test Graph"
-          onChange={(graphId) => updateTestSuite({ ...testSuite, testGraph: graphId })}
-          isReadonly={false}
-        />
-        <GraphSelector
-          value={testSuite.validationGraph}
-          name="Validation Graph"
-          label="Validation Graph"
-          onChange={(graphId) => updateTestSuite({ ...testSuite, validationGraph: graphId })}
-          isReadonly={false}
-        />
-        {validationGraphValidationResults != null && !validationGraphValidationResults.valid && (
-          <div className="validation-results">
-            ⚠️ Validation graph requires a specific format. Please fix the following errors:
-            <ul>
-              {validationGraphValidationResults.errorMessages.map((e, idx) => (
-                <li key={idx}>{e}</li>
-              ))}
-            </ul>
+      <div className="test-suite-area">
+        <div className="test-suite-header" key={testSuite.id}>
+          <InlineEditableTextfield
+            key={`test-suite-name-${testSuite.id}`}
+            label="Test Suite Name"
+            placeholder="Test Suite Name"
+            onConfirm={(newValue) => updateTestSuite({ ...testSuite, name: newValue })}
+            defaultValue={testSuite.name ?? 'Untitled Test Suite'}
+            readViewFitContainerWidth
+          />
+          <InlineEditableTextfield
+            key={`test-suite-description-${testSuite.id}`}
+            label="Description"
+            placeholder="Test Suite Description"
+            defaultValue={testSuite.description ?? ''}
+            onConfirm={(newValue) => updateTestSuite({ ...testSuite, description: newValue })}
+            readViewFitContainerWidth
+          />
+          <div className="graph-selectors">
+            <GraphSelector
+              value={testSuite.testGraph}
+              name="Test Graph"
+              label="Test Graph"
+              onChange={(graphId) => updateTestSuite({ ...testSuite, testGraph: graphId })}
+              isReadonly={false}
+            />
+            <GraphSelector
+              value={testSuite.validationGraph}
+              name="Validation Graph"
+              label="Validation Graph"
+              onChange={(graphId) => updateTestSuite({ ...testSuite, validationGraph: graphId })}
+              isReadonly={false}
+            />
           </div>
-        )}
-      </div>
-      <div>
-        {testCaseValidationResults != null && !testCaseValidationResults.valid && (
-          <div className="validation-results">
-            <p>⚠️ Test cases must match the inputs and outputs of the test graph.</p>
-            <Button onClick={fixInvalidTestCases}>Fix Invalid Test Cases</Button>
-          </div>
-        )}
-        <TestCaseTable
-          testCases={testSuite.testCases}
-          addTestCase={addTestCase}
-          setEditingTestCase={setEditingTestCase}
-          editingTestCaseId={editingTestCaseId}
-          deleteTestCase={deleteTestCase}
-          running={runningTests}
-          testCaseResults={latestResult?.testCaseResults ?? []}
-          runTestCase={runTestCase}
-        />
+
+          {validationGraphValidationResults != null && !validationGraphValidationResults.valid && (
+            <div className="validation-results">
+              ⚠️ Validation graph requires a specific format. Please fix the following errors:
+              <ul>
+                {validationGraphValidationResults.errorMessages.map((e, idx) => (
+                  <li key={idx}>{e}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+        <div>
+          {testCaseValidationResults != null && !testCaseValidationResults.valid && (
+            <div className="validation-results">
+              <p>⚠️ Test cases must match the inputs and outputs of the test graph.</p>
+              <Button onClick={fixInvalidTestCases}>Fix Invalid Test Cases</Button>
+            </div>
+          )}
+          <TestCaseTable
+            testCases={testSuite.testCases}
+            addTestCase={addTestCase}
+            setEditingTestCase={setEditingTestCase}
+            editingTestCaseId={editingTestCaseId}
+            deleteTestCase={deleteTestCase}
+            running={runningTests}
+            testCaseResults={latestResult?.testCaseResults ?? []}
+            runTestCase={runTestCase}
+          />
+        </div>
       </div>
       {isEditingTestCase && (
         <div className="test-case-editor">

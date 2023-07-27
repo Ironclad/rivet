@@ -11,7 +11,8 @@ export const CodeEditor: FC<{
   autoFocus?: boolean;
   onKeyDown?: (e: monaco.IKeyboardEvent) => void;
   editorRef?: MutableRefObject<monaco.editor.IStandaloneCodeEditor | undefined>;
-}> = ({ text, isReadonly, onChange, language, theme, autoFocus, onKeyDown, editorRef }) => {
+  scrollBeyondLastLine?: boolean;
+}> = ({ text, isReadonly, onChange, language, theme, autoFocus, onKeyDown, editorRef, scrollBeyondLastLine }) => {
   const editorContainer = useRef<HTMLDivElement>(null);
   const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
 
@@ -35,7 +36,7 @@ export const CodeEditor: FC<{
       wordWrap: 'on',
       readOnly: isReadonly,
       value: text,
-      scrollBeyondLastLine: false,
+      scrollBeyondLastLine,
     });
 
     const onResize = () => {

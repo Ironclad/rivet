@@ -1,31 +1,69 @@
-import { FC, useMemo, MouseEvent } from "react";
-import Button from "@atlaskit/button";
-import clsx from "clsx";
-import { css } from "@emotion/react";
-import { TrivetTestCase, TrivetTestCaseResult } from "@ironclad/trivet";
-import { keyBy } from "lodash-es";
-import { LoadingSpinner } from "../LoadingSpinner";
-import { useContextMenu } from "../../hooks/useContextMenu";
-import { useStableCallback } from "../../hooks/useStableCallback";
-import Portal from "@atlaskit/portal";
-import { DropdownItem } from "@atlaskit/dropdown-menu";
+import { FC, useMemo, MouseEvent } from 'react';
+import Button from '@atlaskit/button';
+import clsx from 'clsx';
+import { css } from '@emotion/react';
+import { TrivetTestCase, TrivetTestCaseResult } from '@ironclad/trivet';
+import { keyBy } from 'lodash-es';
+import { LoadingSpinner } from '../LoadingSpinner';
+import { useContextMenu } from '../../hooks/useContextMenu';
+import { useStableCallback } from '../../hooks/useStableCallback';
+import Portal from '@atlaskit/portal';
+import { DropdownItem } from '@atlaskit/dropdown-menu';
+import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
 
 const styles = css`
+  display: grid;
+  grid-template-columns: 36px 1fr 1fr;
+  padding-top: 20px;
+
+  tr,
+  thead,
+  tbody {
+    display: contents;
+  }
+
+  td {
+    padding: 8px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    user-select: none;
+  }
+
   .test-case-row {
-    &:hover {
+    cursor: pointer;
+
+    &:hover td {
       background-color: var(--grey-darkish);
     }
-    cursor: pointer;
   }
+
   .test-case-row.selected {
-    background-color: var(--primary);
-    color: var(--grey-dark);
-    &:hover {
+    td {
+      background-color: var(--primary);
+      color: var(--grey-dark);
+    }
+
+    &:hover td {
       background-color: var(--primary-dark);
     }
   }
+
   .status-icon {
-    width: 20px;
+    .failing {
+      color: red !important;
+    }
+
+    .passing {
+      color: var(--success);
+    }
+
+    font-size: 20px;
+    line-height: 20px;
+  }
+
+  .add-test-case {
+    grid-column: span 3;
   }
 `;
 
@@ -58,17 +96,14 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
   running,
   runTestCase,
 }) => {
-  const testCaseResultsById = useMemo(
-    () => keyBy(testCaseResults, (tcr) => tcr.id),
-    [testCaseResults],
-  );
+  const testCaseResultsById = useMemo(() => keyBy(testCaseResults, (tcr) => tcr.id), [testCaseResults]);
   function toggleSelected(id: string) {
     if (editingTestCaseId === id) {
       setEditingTestCase(undefined);
     } else {
       setEditingTestCase(id);
     }
-  };
+  }
 
   const { contextMenuRef, showContextMenu, contextMenuData, handleContextMenu } = useContextMenu();
 
@@ -100,13 +135,19 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
               data-contextmenutype="test-case-item"
               data-testcaseid={testCase.id}
             >
-              <td className="status-icon"><TestCaseStatusIcon result={testCaseResultsById[testCase.id]} running={running} /></td>
-              <td>{JSON.stringify(testCase.input).slice(0, 20)}</td>
-              <td>{JSON.stringify(testCase.expectedOutput).slice(0, 20)}</td>
+              <td className="status-icon">
+                <TestCaseStatusIcon result={testCaseResultsById[testCase.id]} running={running} />
+              </td>
+              <td>
+                <DisplayInputsOrOutputs data={testCase.input} />
+              </td>
+              <td>
+                <DisplayInputsOrOutputs data={testCase.expectedOutput} />
+              </td>
             </tr>
           ))}
           <tr>
-            <td colSpan={3}>
+            <td className="add-test-case">
               <Button onClick={addTestCase}>Add Test Case</Button>
             </td>
           </tr>
@@ -136,8 +177,16 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
               top: contextMenuData.y,
             }}
           >
-            <DropdownItem onClick={() => selectedTestCaseIdForContextMenu && runTestCase(selectedTestCaseIdForContextMenu)}>Run Test Case</DropdownItem>
-            <DropdownItem onClick={() => selectedTestCaseIdForContextMenu && deleteTestCase(selectedTestCaseIdForContextMenu)}>Delete</DropdownItem>
+            <DropdownItem
+              onClick={() => selectedTestCaseIdForContextMenu && runTestCase(selectedTestCaseIdForContextMenu)}
+            >
+              Run Test Case
+            </DropdownItem>
+            <DropdownItem
+              onClick={() => selectedTestCaseIdForContextMenu && deleteTestCase(selectedTestCaseIdForContextMenu)}
+            >
+              Delete
+            </DropdownItem>
           </div>
         )}
       </Portal>
@@ -145,7 +194,30 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
   );
 };
 
-const TestCaseStatusIcon: FC<{ result?: TrivetTestCaseResult, running: boolean }> = ({ result, running }) => {
+const DisplayInputsOrOutputs: FC<{ data: Record<string, unknown> }> = ({ data }) => {
+  if (data == null) {
+    return JSON.stringify(data);
+  }
+
+  const keys = Object.keys(data);
+
+  if (keys.length === 0) {
+    return '(Empty)';
+  }
+
+  if (keys.length === 1) {
+    const value = data[keys[0]!];
+    if (typeof value === 'string') {
+      return value;
+    }
+
+    return JSON.stringify(value);
+  }
+
+  return JSON.stringify(data);
+};
+
+const TestCaseStatusIcon: FC<{ result?: TrivetTestCaseResult; running: boolean }> = ({ result, running }) => {
   if (result == null) {
     if (running) {
       return <LoadingSpinner />;
@@ -153,6 +225,6 @@ const TestCaseStatusIcon: FC<{ result?: TrivetTestCaseResult, running: boolean }
       return <div />;
     }
   } else {
-    return <div>{result.passing ? '✅' : '❌'}</div>;
+    return <div className={result.passing ? 'passing' : 'failing'}>{result.passing ? '✓' : <MultiplyIcon />}</div>;
   }
 };

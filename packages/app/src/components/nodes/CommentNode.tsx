@@ -36,6 +36,10 @@ const styles = css`
   h6 {
     font-size: 12px;
   }
+
+  p {
+    max-width: 600px;
+  }
 `;
 
 const CommentNodeBody: FC<{ node: CommentNode }> = ({ node }) => {
