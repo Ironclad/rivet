@@ -11,7 +11,8 @@ export const CodeEditor: FC<{
   autoFocus?: boolean;
   onKeyDown?: (e: monaco.IKeyboardEvent) => void;
   editorRef?: MutableRefObject<monaco.editor.IStandaloneCodeEditor | undefined>;
-}> = ({ text, isReadonly, onChange, language, theme, autoFocus, onKeyDown, editorRef }) => {
+  scrollBeyondLastLine?: boolean;
+}> = ({ text, isReadonly, onChange, language, theme, autoFocus, onKeyDown, editorRef, scrollBeyondLastLine }) => {
   const editorContainer = useRef<HTMLDivElement>(null);
   const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
 
@@ -35,8 +36,16 @@ export const CodeEditor: FC<{
       wordWrap: 'on',
       readOnly: isReadonly,
       value: text,
-      automaticLayout: true,
+      scrollBeyondLastLine,
     });
+
+    const onResize = () => {
+      editor.layout();
+    };
+
+    editor.layout();
+
+    window.addEventListener('resize', onResize);
 
     editor.onDidChangeModelContent(() => {
       onChangeLatest.current?.(editor.getValue());
@@ -49,6 +58,7 @@ export const CodeEditor: FC<{
 
     return () => {
       editor.dispose();
+      window.removeEventListener('resize', onResize);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

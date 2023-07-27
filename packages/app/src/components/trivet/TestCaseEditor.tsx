@@ -1,41 +1,83 @@
-import { FC, useEffect, useMemo, useState } from "react";
-import { trivetState } from "../../state/trivet";
-import { useRecoilState } from "recoil";
-import Button from "@atlaskit/button";
-import { css } from "@emotion/react";
-import { CodeEditor } from "../CodeEditor";
-import { isEqual } from "lodash-es";
+import { FC, useEffect, useMemo, useState } from 'react';
+import { trivetState } from '../../state/trivet';
+import { useRecoilState } from 'recoil';
+import Button from '@atlaskit/button';
+import { css } from '@emotion/react';
+import { CodeEditor } from '../CodeEditor';
+import { isEqual } from 'lodash-es';
 
 const styles = css`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+
+  .group {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
   .close-button {
     position: absolute;
     top: 0;
     right: 0;
     cursor: pointer;
   }
+
+  .editor,
   .editor-container {
-    min-height: 200px;
+    height: 100%;
+  }
+
+  .editor {
+    position: relative;
+  }
+
+  .editor-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
 
   .testCaseError pre {
     white-space: pre-wrap;
   }
+
+  > div {
+    margin-bottom: 10px;
+  }
+
+  .group label {
+    display: block;
+    padding-bottom: 4px;
+  }
 `;
 
 export const TestCaseEditor: FC = () => {
-  const [{ testSuites, selectedTestSuiteId, editingTestCaseId, recentTestResults }, setState] = useRecoilState(trivetState);
-  const selectedTestSuite = useMemo(() => testSuites.find((ts) => ts.id === selectedTestSuiteId), [testSuites, selectedTestSuiteId]);
-  const selectedTestCase = useMemo(() => selectedTestSuite?.testCases.find((tc) => tc.id === editingTestCaseId), [selectedTestSuite, editingTestCaseId]);
+  const [{ testSuites, selectedTestSuiteId, editingTestCaseId, recentTestResults }, setState] =
+    useRecoilState(trivetState);
+  const selectedTestSuite = useMemo(
+    () => testSuites.find((ts) => ts.id === selectedTestSuiteId),
+    [testSuites, selectedTestSuiteId],
+  );
+  const selectedTestCase = useMemo(
+    () => selectedTestSuite?.testCases.find((tc) => tc.id === editingTestCaseId),
+    [selectedTestSuite, editingTestCaseId],
+  );
   const testCaseResults = useMemo(
-    () => recentTestResults?.testSuiteResults
-      .find((tsr) => tsr.id === selectedTestSuiteId)?.testCaseResults
-      .find((tcr) => tcr.id === editingTestCaseId),
-    [recentTestResults, selectedTestSuiteId, editingTestCaseId]
-  )
+    () =>
+      recentTestResults?.testSuiteResults
+        .find((tsr) => tsr.id === selectedTestSuiteId)
+        ?.testCaseResults.find((tcr) => tcr.id === editingTestCaseId),
+    [recentTestResults, selectedTestSuiteId, editingTestCaseId],
+  );
 
   function onClose() {
     setState((s) => ({ ...s, editingTestCaseId: undefined }));
-  };
+  }
 
   if (selectedTestCase == null) {
     return <div />;
@@ -47,29 +89,53 @@ export const TestCaseEditor: FC = () => {
         &times;
       </Button>
 
-      <div>
+      <div className="group">
         <label>Input</label>
         <InputOutputEditor
           json={selectedTestCase?.input ?? {}}
-          setJson={(input) => setState((s) => ({ ...s, testSuites: s.testSuites.map((ts) => ts.id === selectedTestSuiteId ? { ...ts, testCases: ts.testCases.map((tc) => tc.id === editingTestCaseId ? { ...tc, input } : tc) } : ts) }))}
+          setJson={(input) =>
+            setState((s) => ({
+              ...s,
+              testSuites: s.testSuites.map((ts) =>
+                ts.id === selectedTestSuiteId
+                  ? {
+                      ...ts,
+                      testCases: ts.testCases.map((tc) => (tc.id === editingTestCaseId ? { ...tc, input } : tc)),
+                    }
+                  : ts,
+              ),
+            }))
+          }
         />
       </div>
-      <div>
+      <div className="group">
         <label>Expected Output</label>
         <InputOutputEditor
           json={selectedTestCase?.expectedOutput ?? {}}
-          setJson={(expectedOutput) => setState((s) => ({ ...s, testSuites: s.testSuites.map((ts) => ts.id === selectedTestSuiteId ? { ...ts, testCases: ts.testCases.map((tc) => tc.id === editingTestCaseId ? { ...tc, expectedOutput } : tc) } : ts) }))}
+          setJson={(expectedOutput) =>
+            setState((s) => ({
+              ...s,
+              testSuites: s.testSuites.map((ts) =>
+                ts.id === selectedTestSuiteId
+                  ? {
+                      ...ts,
+                      testCases: ts.testCases.map((tc) =>
+                        tc.id === editingTestCaseId ? { ...tc, expectedOutput } : tc,
+                      ),
+                    }
+                  : ts,
+              ),
+            }))
+          }
         />
       </div>
       {testCaseResults != null && (
-        <div>
+        <div className="group">
           <label>
-            {testCaseResults.passing ? '✅' : '❌'}
+            {testCaseResults.passing ? '✅ ' : '❌ '}
             Test Result Outputs
           </label>
-          <InputOutputEditor
-            json={testCaseResults.outputs ?? {}}
-          />
+          <InputOutputEditor json={testCaseResults.outputs ?? {}} />
         </div>
       )}
       {testCaseResults?.error != null && (
@@ -86,8 +152,8 @@ export const TestCaseEditor: FC = () => {
 };
 
 const InputOutputEditor: FC<{
-  json: Record<string, unknown>,
-  setJson?: (json: Record<string, unknown>) => void,
+  json: Record<string, unknown>;
+  setJson?: (json: Record<string, unknown>) => void;
 }> = ({ json, setJson }) => {
   const [text, setText] = useState(JSON.stringify(json, null, 2));
 
@@ -111,7 +177,7 @@ const InputOutputEditor: FC<{
     if (!isEqual(obj, json)) {
       setText(JSON.stringify(json, null, 2));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [json]);
 
   return (
@@ -121,6 +187,7 @@ const InputOutputEditor: FC<{
         text={text}
         onChange={handleChange}
         language="json"
+        scrollBeyondLastLine={false}
       />
     </div>
   );
