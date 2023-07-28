@@ -55,7 +55,7 @@
     "safe-stable-stringify": "^2.4.3",
     "ts-dedent": "^2.2.0",
     "ts-pattern": "^5.0.4",
-    "type-fest": "^3.13.1",
+    "type-fest": "^4.0.0",
     "yaml": "^2.3.1"
   },
   "devDependencies": {

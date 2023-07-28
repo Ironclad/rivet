@@ -46,7 +46,7 @@
     "minimatch": "^9.0.3",
     "nanoid": "^3.3.6",
     "ts-pattern": "^5.0.4",
-    "type-fest": "^3.13.1",
+    "type-fest": "^4.0.0",
     "ws": "^8.13.0"
   },
   "devDependencies": {
