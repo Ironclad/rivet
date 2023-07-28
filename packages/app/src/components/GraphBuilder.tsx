@@ -29,6 +29,7 @@ import { loadedRecordingState } from '../state/execution.js';
 import { useLoadGraph } from '../hooks/useLoadGraph.js';
 import { projectState } from '../state/savedGraphs.js';
 import { ContextMenuContext } from './ContextMenu.js';
+import { useGraphHistoryNavigation } from '../hooks/useGraphHistoryNavigation';
 
 const Container = styled.div`
   position: relative;
@@ -62,6 +63,7 @@ export const GraphBuilder: FC = () => {
   const loadGraph = useLoadGraph();
   const project = useRecoilValue(projectState);
   const [graphNavigationStack, setGraphNavigationStack] = useRecoilState(graphNavigationStackState);
+  const historyNav = useGraphHistoryNavigation();
 
   const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {
     setNodes?.(newNodes);
@@ -214,38 +216,14 @@ export const GraphBuilder: FC = () => {
   }, [firstNodeQuestions]);
 
   const containerMouseDown = useStableCallback((e: MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-
     if (e.buttons === 8) {
+      e.preventDefault();
       // Mouse Back
-      if ((graphNavigationStack.index ?? -1) > 0) {
-        const prevGraphId = graphNavigationStack.stack[graphNavigationStack.index! - 1]!;
-        setGraphNavigationStack((stack) => ({
-          ...stack,
-          index: stack.index! - 1,
-        }));
-
-        const graph = project.graphs[prevGraphId];
-
-        if (graph) {
-          loadGraph(graph, { pushHistory: false });
-        }
-      }
+      historyNav.navigateBack();
     } else if (e.buttons === 16) {
+      e.preventDefault();
       // Mouse Forward
-      if (graphNavigationStack.index != null && graphNavigationStack.index < graphNavigationStack.stack.length - 1) {
-        const nextGraphId = graphNavigationStack.stack[graphNavigationStack.index! + 1]!;
-        setGraphNavigationStack((stack) => ({
-          ...stack,
-          index: stack.index! + 1,
-        }));
-
-        const graph = project.graphs[nextGraphId];
-
-        if (graph) {
-          loadGraph(graph, { pushHistory: false });
-        }
-      }
+      historyNav.navigateForward();
     }
   });
 
