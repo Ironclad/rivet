@@ -4,7 +4,16 @@ import { orderBy } from 'lodash-es';
 import { overlayOpenState } from '../state/ui';
 import { css } from '@emotion/react';
 import clsx from 'clsx';
-import { NodeId, Nodes, PortId, ProcessId, coerceTypeOptional } from '@ironclad/rivet-core';
+import {
+  DataValue,
+  NodeId,
+  Nodes,
+  PortId,
+  ProcessId,
+  ScalarOrArrayDataValue,
+  arrayizeDataValue,
+  coerceTypeOptional,
+} from '@ironclad/rivet-core';
 import { NodeRunData, lastRunDataByNodeState } from '../state/dataFlow';
 import { projectState } from '../state/savedGraphs';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -163,20 +172,32 @@ export const ChatViewer: FC<{
     return processes;
   }, [chatNodes, allLastRunData]);
 
+  const processesWithIndex = useMemo(() => {
+    return processes.flatMap((process) => {
+      if (process.process.data.splitOutputData) {
+        return Object.entries(process.process.data.splitOutputData).map(([index, data]) => {
+          return { ...process, index: parseInt(index) };
+        });
+      }
+
+      return [{ ...process, index: -1 }];
+    });
+  }, [processes]);
+
   const [runningProcesses, completedProcesses] = useMemo(() => {
     return [
       orderBy(
-        processes.filter(({ process }) => process.data.status?.type === 'running'),
+        processesWithIndex.filter(({ process }) => process.data.status?.type === 'running'),
         ({ process }) => process?.data.startedAt ?? 0,
         'desc',
       ),
       orderBy(
-        processes.filter(({ process }) => process.data.status?.type !== 'running'),
+        processesWithIndex.filter(({ process }) => process.data.status?.type !== 'running'),
         ({ process }) => process?.data.finishedAt ?? 0,
         'desc',
       ),
     ];
-  }, [processes]);
+  }, [processesWithIndex]);
 
   const doGoToNode = (nodeId: NodeId) => {
     goToNode(nodeId);
@@ -194,7 +215,7 @@ export const ChatViewer: FC<{
       </div>
       <div className="chats">
         <section>
-          {runningProcesses.map(({ node, process }) => {
+          {runningProcesses.map(({ node, process, index }) => {
             const graphName = nodesToGraphNameMap[node.id]!;
             return (
               <ChatBubble
@@ -204,12 +225,13 @@ export const ChatViewer: FC<{
                 key={`${node.id}-${process.processId}`}
                 graphName={graphName}
                 onGoToNode={doGoToNode}
+                splitIndex={index}
               />
             );
           })}
         </section>
         <section>
-          {completedProcesses.map(({ node, process }) => {
+          {completedProcesses.map(({ node, process, index }) => {
             const graphName = nodesToGraphNameMap[node.id]!;
             return (
               <ChatBubble
@@ -219,6 +241,7 @@ export const ChatViewer: FC<{
                 key={`${node.id}-${process.processId}`}
                 graphName={graphName}
                 onGoToNode={doGoToNode}
+                splitIndex={index}
               />
             );
           })}
@@ -233,13 +256,29 @@ const ChatBubble: FC<{
   nodeId: NodeId;
   processId: ProcessId;
   data: NodeRunData;
+  splitIndex: number;
   onGoToNode?: (nodeId: NodeId) => void;
-}> = ({ nodeId, processId, data, graphName, onGoToNode }) => {
+}> = ({ nodeId, splitIndex, data, graphName, onGoToNode }) => {
   const promptRef = useRef<HTMLDivElement>(null);
   const responseRef = useRef<HTMLDivElement>(null);
 
-  const prompt = data.inputData?.['prompt' as PortId];
-  const chatOutput = data.outputData?.['response' as PortId];
+  let prompt: DataValue;
+
+  if (splitIndex === -1) {
+    prompt = data.inputData?.['prompt' as PortId]!;
+  } else {
+    const values = arrayizeDataValue(data.inputData?.['prompt' as PortId] as ScalarOrArrayDataValue);
+    if (values.length === 1) {
+      prompt = values[0]!;
+    } else {
+      prompt = values[splitIndex]!;
+    }
+  }
+
+  const chatOutput =
+    splitIndex === -1
+      ? data.outputData?.['response' as PortId]
+      : data.splitOutputData![splitIndex]!['response' as PortId];
 
   const promptText = coerceTypeOptional(prompt, 'string');
   const responseText = coerceTypeOptional(chatOutput, 'string');
