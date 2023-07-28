@@ -50,7 +50,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/gogwilt"><img src="https://avatars.githubusercontent.com/u/448108?v=4?s=100" width="100px;" alt="Cai GoGwilt"/><br /><sub><b>Cai GoGwilt</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=gogwilt" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/gogwilt"><img src="https://avatars.githubusercontent.com/u/448108?v=4?s=100" width="100px;" alt="Cai GoGwilt"/><br /><sub><b>Cai GoGwilt</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=gogwilt" title="Code">💻</a> <a href="#business-gogwilt" title="Business development">💼</a> <a href="#ideas-gogwilt" title="Ideas, Planning, & Feedback">🤔</a> <a href="#maintenance-gogwilt" title="Maintenance">🚧</a> <a href="#promotion-gogwilt" title="Promotion">📣</a> <a href="https://github.com/Ironclad/rivet/pulls?q=is%3Apr+reviewed-by%3Agogwilt" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/Ironclad/rivet/issues?q=author%3Agogwilt" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
