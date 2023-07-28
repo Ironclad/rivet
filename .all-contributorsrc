@@ -13,7 +13,13 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/448108?v=4",
       "profile": "https://github.com/gogwilt",
       "contributions": [
-        "code"
+        "code",
+        "business",
+        "ideas",
+        "maintenance",
+        "promotion",
+        "review",
+        "bug"
       ]
     }
   ],
