@@ -51,6 +51,16 @@
         "tutorial",
         "doc"
       ]
+    },
+    {
+      "login": "dominiccooney",
+      "name": "Dominic Cooney",
+      "avatar_url": "https://avatars.githubusercontent.com/u/55120?v=4",
+      "profile": "http://twitter.com/dominiccooney",
+      "contributions": [
+        "ideas",
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
