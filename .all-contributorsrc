@@ -31,6 +31,16 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "tberman",
+      "name": "Todd Berman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/183738?v=4",
+      "profile": "https://github.com/tberman",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
