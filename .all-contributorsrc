@@ -41,6 +41,16 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "a-rothwell",
+      "name": "Andrew Rothwell",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12634659?v=4",
+      "profile": "https://github.com/a-rothwell",
+      "contributions": [
+        "tutorial",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
