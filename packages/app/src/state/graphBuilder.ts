@@ -59,3 +59,14 @@ export const draggingWireClosestPortState = atom<{ nodeId: NodeId; portId: PortI
   key: 'draggingWireClosestPort',
   default: undefined,
 });
+
+export const graphNavigationStackState = atom<{
+  stack: GraphId[];
+  index?: number;
+}>({
+  key: 'graphNavigationStack',
+  default: {
+    stack: [],
+    index: undefined,
+  },
+});

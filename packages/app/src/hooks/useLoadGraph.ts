@@ -2,7 +2,12 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { NodeGraph, emptyNodeGraph } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph.js';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph.js';
-import { canvasPositionState, lastCanvasPositionByGraphState, sidebarOpenState } from '../state/graphBuilder.js';
+import {
+  canvasPositionState,
+  graphNavigationStackState,
+  lastCanvasPositionByGraphState,
+  sidebarOpenState,
+} from '../state/graphBuilder.js';
 import { useStableCallback } from './useStableCallback.js';
 import { fitBoundsToViewport } from './useViewportBounds.js';
 
@@ -13,13 +18,21 @@ export function useLoadGraph() {
   const saveCurrentGraph = useSaveCurrentGraph();
   const sidebarOpen = useRecoilValue(sidebarOpenState);
   const lastSavedPositions = useRecoilValue(lastCanvasPositionByGraphState);
+  const setGraphNavigationStack = useSetRecoilState(graphNavigationStackState);
 
-  return useStableCallback((savedGraph: NodeGraph) => {
+  return useStableCallback((savedGraph: NodeGraph, { pushHistory = true }: { pushHistory?: boolean } = {}) => {
     if (graph.nodes.length > 0 || graph.metadata?.name !== emptyNodeGraph().metadata!.name) {
       saveCurrentGraph();
     }
 
     setGraph(savedGraph);
+
+    if (pushHistory) {
+      setGraphNavigationStack((state) => ({
+        index: (state.index ?? -1) + 1,
+        stack: [...state.stack.slice(0, (state.index ?? -1) + 1), savedGraph.metadata!.id!],
+      }));
+    }
 
     const lastSavedPosition = lastSavedPositions[savedGraph.metadata!.id!];
     if (lastSavedPosition && graph.metadata!.id! !== savedGraph.metadata!.id!) {

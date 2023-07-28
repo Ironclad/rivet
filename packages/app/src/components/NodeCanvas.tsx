@@ -198,6 +198,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   );
 
   const canvasMouseDown = useStableCallback((e: React.MouseEvent) => {
+    console.dir({ e });
     if (e.button !== 0) {
       return;
     }

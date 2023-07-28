@@ -1,9 +1,9 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState, MouseEvent } from 'react';
 import { NodeCanvas } from './NodeCanvas.js';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { connectionsState, nodesByIdState } from '../state/graph.js';
+import { connectionsState, graphState, nodesByIdState } from '../state/graph.js';
 import { nodesState } from '../state/graph.js';
-import { editingNodeState, selectedNodesState } from '../state/graphBuilder.js';
+import { editingNodeState, graphNavigationStackState, selectedNodesState } from '../state/graphBuilder.js';
 import { NodeEditorRenderer } from './NodeEditor.js';
 import styled from '@emotion/styled';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
@@ -61,6 +61,7 @@ export const GraphBuilder: FC = () => {
   const loadedRecording = useRecoilValue(loadedRecordingState);
   const loadGraph = useLoadGraph();
   const project = useRecoilValue(projectState);
+  const [graphNavigationStack, setGraphNavigationStack] = useRecoilState(graphNavigationStackState);
 
   const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {
     setNodes?.(newNodes);
@@ -212,6 +213,42 @@ export const GraphBuilder: FC = () => {
     }
   }, [firstNodeQuestions]);
 
+  const containerMouseDown = useStableCallback((e: MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    if (e.buttons === 8) {
+      // Mouse Back
+      if ((graphNavigationStack.index ?? -1) > 0) {
+        const prevGraphId = graphNavigationStack.stack[graphNavigationStack.index! - 1]!;
+        setGraphNavigationStack((stack) => ({
+          ...stack,
+          index: stack.index! - 1,
+        }));
+
+        const graph = project.graphs[prevGraphId];
+
+        if (graph) {
+          loadGraph(graph, { pushHistory: false });
+        }
+      }
+    } else if (e.buttons === 16) {
+      // Mouse Forward
+      if (graphNavigationStack.index != null && graphNavigationStack.index < graphNavigationStack.stack.length - 1) {
+        const nextGraphId = graphNavigationStack.stack[graphNavigationStack.index! + 1]!;
+        setGraphNavigationStack((stack) => ({
+          ...stack,
+          index: stack.index! + 1,
+        }));
+
+        const graph = project.graphs[nextGraphId];
+
+        if (graph) {
+          loadGraph(graph, { pushHistory: false });
+        }
+      }
+    }
+  });
+
   const [, questions] = firstNodeQuestions ? firstNodeQuestions : [undefined, [] as ProcessQuestions[]];
   const lastQuestions = questions.at(-1)?.questions ?? [];
 
@@ -221,7 +258,7 @@ export const GraphBuilder: FC = () => {
   );
 
   return (
-    <Container>
+    <Container onMouseDown={containerMouseDown}>
       <ErrorBoundary fallback={<div>Failed to render GraphBuilder</div>}>
         <NodeCanvas
           nodes={nodes}
