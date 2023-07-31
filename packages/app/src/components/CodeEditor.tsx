@@ -35,8 +35,16 @@ export const CodeEditor: FC<{
       wordWrap: 'on',
       readOnly: isReadonly,
       value: text,
-      automaticLayout: true,
+      scrollBeyondLastLine: false,
     });
+
+    const onResize = () => {
+      editor.layout();
+    };
+
+    editor.layout();
+
+    window.addEventListener('resize', onResize);
 
     editor.onDidChangeModelContent(() => {
       onChangeLatest.current?.(editor.getValue());
@@ -47,8 +55,12 @@ export const CodeEditor: FC<{
       editorRef.current = editor;
     }
 
+    const latestBeforeDispose = onChangeLatest.current;
+
     return () => {
+      latestBeforeDispose?.(editor.getValue());
       editor.dispose();
+      window.removeEventListener('resize', onResize);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -70,3 +82,5 @@ export const CodeEditor: FC<{
 
   return <div ref={editorContainer} className="editor-container" />;
 };
+
+export default CodeEditor;
