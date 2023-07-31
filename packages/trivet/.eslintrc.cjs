@@ -1,9 +1,12 @@
 module.exports = {
     "extends": "../../.eslintrc.cjs",
     "root": true,
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module",
-        "project": 'tsconfig.json',
-    },
+    "overrides": [{
+        "files": ["*.ts", "*.tsx"],
+        "parserOptions": {
+            "project": true,
+            "ecmaVersion": "latest",
+            "sourceType": "module",
+        }
+    }]
 }
