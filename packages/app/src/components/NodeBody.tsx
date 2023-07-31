@@ -1,4 +1,4 @@
-import { FC, memo, useLayoutEffect, useMemo, useRef } from 'react';
+import { FC, Suspense, memo, useLayoutEffect, useMemo, useRef } from 'react';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import {
   ChartNode,
@@ -10,8 +10,8 @@ import {
 } from '@ironclad/rivet-core';
 import { useMarkdown } from '../hooks/useMarkdown';
 import { match } from 'ts-pattern';
-import { monaco } from '../utils/monaco';
 import styled from '@emotion/styled';
+import { LazyColorizedPreformattedText } from './LazyComponents';
 
 export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
   const { Body } = useUnknownNodeComponentDescriptorFor(node);
@@ -75,18 +75,10 @@ export const MarkdownNodeBody: FC<MarkdownNodeBodySpec> = memo(({ text }) => {
   return <div className="pre-wrap" dangerouslySetInnerHTML={markdownBody} />;
 });
 
-export const ColorizedNodeBody: FC<ColorizedNodeBodySpec> = memo(({ text, theme, language }) => {
-  const bodyRef = useRef<HTMLPreElement>(null);
-
-  useLayoutEffect(() => {
-    monaco.editor.colorizeElement(bodyRef.current!, {
-      theme: theme ?? 'vs-dark',
-    });
-  }, [text, theme]);
-
+export const ColorizedNodeBody: FC<ColorizedNodeBodySpec> = memo(({ text, language, theme }) => {
   return (
-    <pre ref={bodyRef} data-lang={language}>
-      {text}
-    </pre>
+    <Suspense fallback={<div />}>
+      <LazyColorizedPreformattedText text={text} language={language} theme={theme} />
+    </Suspense>
   );
 });
