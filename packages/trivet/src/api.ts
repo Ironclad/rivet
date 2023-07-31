@@ -106,12 +106,11 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
 
     for (const testCase of testSuite.testCases) {
       try {
-
         const resolvedInputs: Record<string, DataValue> = mapValues(testCase.input, inferType);
         const outputs = await runGraph(project, testGraph.metadata!.id!, resolvedInputs);
-  
+
         console.log('ran test graph', outputs);
-  
+
         const validationInputs: Record<string, DataValue> = {
           input: {
             type: 'object',
@@ -126,10 +125,12 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
             value: mapValues(outputs, (dataValue) => dataValue.value),
           },
         };
-  
+
         console.log('running validation graph', validationInputs);
-  
+
         const validationOutputs = await runGraph(project, validationGraph.metadata!.id!, validationInputs);
+
+        console.dir({ validationOutputs });
         const validationResults = Object.entries(validationOutputs).map(([outputId, result]) => {
           const node = validationOutputNodesById[outputId];
           if (node === undefined) {
