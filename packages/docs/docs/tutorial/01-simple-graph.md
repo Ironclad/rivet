@@ -36,4 +36,6 @@ Let's experiment with the nodes in this graph. To change the parameters of a nod
  - Change the chat nodes temperature to 1. Run the graph again and observe the chat node respond with more variable text.
 
 
- 
+ ## Nodes used
+ - [Chat](../node-reference/chat)
+ - [Text](../node-reference/text)

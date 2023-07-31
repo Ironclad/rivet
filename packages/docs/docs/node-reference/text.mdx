@@ -1,0 +1,57 @@
+---
+title: 'Text'
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+# Text Node
+
+Text nodes are string constants used to pass data to other nodes.
+
+## Config Data
+- text - .
+
+## Ports
+- output - .
+
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+## Inputs
+
+This node does not have any specific inputs.
+
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title   | Data Type | Description                              | Notes    |
+| ------- | --------- | ---------------------------------------- | -------- |
+| Output  | String    | Outputs the text to other nodes          |          |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting | Description                        | Default Value | Use Input Toggle |
+| ------- | ---------------------------------- | ------------- | ---------------- |
+| Text    | The text to pass to other nodes    | Empty String  | No               |
+
+</TabItem>
+
+</Tabs>
