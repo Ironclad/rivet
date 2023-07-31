@@ -15,6 +15,7 @@ import {
   ProcessContext,
   ProcessEvents,
   Project,
+  ProjectId,
   Settings,
   StringPluginConfigurationSpec,
   StringDataValue,
@@ -51,19 +52,6 @@ export type LoosedDataValue<T extends DataValue> = T extends StringDataValue
   : T extends ArrayDataValue<ObjectDataValue>
   ? ArrayDataValue<ObjectDataValue> | Record<string, unknown>[]
   : DataValue;
-
-export interface TypedProjectGraph {
-  inputs?: object;
-  outputs?: object;
-}
-
-export type TypedProjectInfo<T extends object> = {
-  [P in keyof T]: T[P] extends TypedProjectGraph ? T[P] : never;
-};
-
-export type UntypedProjectInfo = Project & {
-  graphs: Record<string, TypedProjectGraph>;
-};
 
 export function looseToDataValue(value: LoosedDataValue<DataValue>): DataValue {
   if (typeof value === 'string') {
@@ -136,33 +124,12 @@ export function loadProjectAndAttachedDataFromString(content: string): [Project,
   return deserializeProject(content);
 }
 
-export interface Graph_ExecTaskAskQuestionAboutWorkflow_Inputs {
-  command: LoosedDataValue<ObjectDataValue>;
-}
-export interface Graph_ExecTaskAskQuestionAboutWorkflow_Outputs {
-  command_output: StringDataValue;
-}
-export interface Graph_ExecTaskAskQuestionAboutWorkflow {
-  metadata: {
-    id: GraphId & 'yF8etgQK7-V51hBFM06Zf';
-    name: 'ExecTask - ASK_QUESTION_ABOUT WORKFLOW';
-    description: "One of the commands/tasks the AI can run in the main loop, asks a question about one or more contracts' metadata";
-  };
-  inputs: Graph_ExecTaskAskQuestionAboutWorkflow_Inputs;
-  outputs: Graph_ExecTaskAskQuestionAboutWorkflow_Outputs;
-}
-export interface Project_IroncladChatbot {
-  Graph_ExecTaskAskQuestionAboutWorkflow: Graph_ExecTaskAskQuestionAboutWorkflow;
-}
-
 export type RunGraphOptions<
-  T extends TypedProjectInfo<object> = UntypedProjectInfo,
-  GraphNameOrId extends NonNullable<T['graphs'][string]['metadata']>['name'] = NonNullable<
-    T['graphs'][string]['metadata']
-  >['name'],
+  Inputs extends {} = Record<string, LoosedDataValue<DataValue>>,
+  GraphNameOrId extends string = string,
 > = {
   graph: GraphNameOrId;
-  inputs?: Extract<T['graphs'][string], { metadata: { name: GraphNameOrId } }>['inputs'];
+  inputs?: Inputs;
   context?: Record<string, LoosedDataValue<DataValue>>;
   remoteDebugger?: RivetDebuggerServer;
   nativeApi?: NativeApi;
@@ -178,31 +145,64 @@ export type RunGraphOptions<
   [P in keyof ProcessEvents as `on${PascalCase<P>}`]?: (params: ProcessEvents[P]) => void;
 } & Settings;
 
-type A = TypedProjectInfo<Project_IroncladChatbot>;
-
-type P = RunGraphOptions<TypedProjectInfo<Project_IroncladChatbot>, 'ExecTask - ASK_QUESTION_ABOUT WORKFLOW'>;
-
 export async function runGraphInFile(path: string, options: RunGraphOptions): Promise<Record<string, DataValue>> {
   const project = await loadProjectFromFile(path);
   return runGraph(project, options);
 }
 
-export function createProcessor<
-  T extends TypedProjectInfo<TypedProjectGraphs> = UntypedProjectInfo,
-  GraphName extends T['metadata']['title'] = T['metadata']['title'],
->(project: T, options: RunGraphOptions<T, GraphName>) {
+type TypedProject = {
+  metadata: {
+    id: string;
+  };
+  graphs: {};
+};
+
+type TypedGraphInfo = {
+  metadata: {
+    id: string;
+    name: string;
+    description: string;
+  };
+
+  inputs: object;
+  outputs: object;
+};
+
+type TypedOptions<T extends TypedProject, GraphName extends keyof T['graphs'] = keyof T['graphs']> = Pick<
+  {
+    [P in keyof T['graphs']]: T['graphs'][P] extends TypedGraphInfo
+      ? RunGraphOptions<T['graphs'][P]['inputs'], T['graphs'][P]['metadata']['id'] | T['graphs'][P]['metadata']['name']>
+      : RunGraphOptions;
+  },
+  GraphName
+>[GraphName];
+
+type Outputs<T extends TypedProject, GraphName extends keyof T['graphs'] = keyof T['graphs']> = Pick<
+  {
+    [P in keyof T['graphs']]: T['graphs'][P] extends TypedGraphInfo
+      ? T['graphs'][P]['outputs']
+      : Record<string, DataValue>;
+  },
+  GraphName
+>[GraphName];
+
+export function createProcessor<T extends TypedProject, GraphName extends keyof T['graphs']>(
+  project: T,
+  options: TypedOptions<T, GraphName>,
+) {
   const { graph, inputs = {}, context = {} } = options;
+  const asProject = project as unknown as Project;
 
   const graphId =
     graph in project.graphs
       ? graph
-      : Object.values(project.graphs).find((g) => g.metadata?.name === graph)?.metadata?.id;
+      : Object.values(asProject.graphs).find((g) => g.metadata?.name === graph)?.metadata?.id;
 
   if (!graphId) {
     throw new Error('Graph not found');
   }
 
-  const processor = new GraphProcessor(project, graphId as GraphId, options.registry);
+  const processor = new GraphProcessor(asProject, graphId as GraphId, options.registry);
 
   if (options.remoteDebugger) {
     options.remoteDebugger.attach(processor);
@@ -272,7 +272,7 @@ export function createProcessor<
     processor.abort();
   });
 
-  const resolvedInputs: Record<string, DataValue> = mapValues(inputs, (value) => looseToDataValue(value));
+  const resolvedInputs: Record<string, DataValue> = mapValues(inputs, (value) => looseToDataValue(value as any));
   const resolvedContextValues: Record<string, DataValue> = mapValues(context, (value) => looseToDataValue(value));
 
   let pluginEnv = options.pluginEnv;
@@ -301,7 +301,7 @@ export function createProcessor<
         resolvedContextValues,
       );
 
-      return outputs as T['graphs'][GraphName]['outputs'];
+      return outputs as Outputs<T, GraphName>;
     },
   };
 }

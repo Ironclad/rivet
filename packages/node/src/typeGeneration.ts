@@ -15,18 +15,18 @@ import { pascalCase } from 'change-case';
 import { loadProjectFromFile } from './api.js';
 
 const dataValueTypeToDataValueName: Record<ScalarDataType, string> = {
-  string: 'StringDataValue',
-  number: 'NumberDataValue',
-  object: 'ObjectDataValue',
-  boolean: 'BoolDataValue',
-  date: 'DateDataValue',
-  any: 'DataValue',
-  'chat-message': 'ChatMessageDataValue',
-  'control-flow-excluded': 'ControlFlowExcludedDataValue',
-  'gpt-function': 'GptFunctionDataValue',
-  datetime: 'DateTimeDataValue',
-  time: 'TimeDataValue',
-  vector: 'VectorDataValue',
+  string: 'Rivet.StringDataValue',
+  number: 'Rivet.NumberDataValue',
+  object: 'Rivet.ObjectDataValue',
+  boolean: 'Rivet.BoolDataValue',
+  date: 'Rivet.DateDataValue',
+  any: 'Rivet.DataValue',
+  'chat-message': 'Rivet.ChatMessageDataValue',
+  'control-flow-excluded': 'Rivet.ControlFlowExcludedDataValue',
+  'gpt-function': 'Rivet.GptFunctionDataValue',
+  datetime: 'Rivet.DateTimeDataValue',
+  time: 'Rivet.TimeDataValue',
+  vector: 'Rivet.VectorDataValue',
 };
 
 function createProjectInterface(project: Project) {
@@ -38,6 +38,7 @@ function createProjectInterface(project: Project) {
 
   // Create an array to hold the statements (interfaces) we'll add to the source file
   const statements: ts.Statement[] = [];
+
   const graphTypes: ts.InterfaceDeclaration[] = [];
 
   let projectName = pascalCase(project.metadata?.title ?? 'Untitled Project').replace(/[^a-zA-Z0-9]/g, '');
@@ -54,6 +55,9 @@ function createProjectInterface(project: Project) {
     const inputProperties: ts.PropertySignature[] = [];
     const outputProperties: ts.PropertySignature[] = [];
 
+    const inputNames = new Set<string>();
+    const outputNames = new Set<string>();
+
     // Iterate over nodes to find input and output nodes
     for (const node of (graph.nodes as Nodes[]).filter(
       (n): n is GraphInputNode | GraphOutputNode => n.type === 'graphInput' || n.type === 'graphOutput',
@@ -63,13 +67,13 @@ function createProjectInterface(project: Project) {
       let codeTypeName: string;
       let codeTypeGeneric: ts.TypeNode | undefined;
       if (isArrayDataType(dataType)) {
-        codeTypeName = 'ArrayDataValue';
+        codeTypeName = 'Rivet.ArrayDataValue';
         codeTypeGeneric = ts.factory.createTypeReferenceNode(
           dataValueTypeToDataValueName[getScalarTypeOf(dataType)],
           undefined,
         );
       } else if (isFunctionDataType(dataType)) {
-        codeTypeName = 'FunctionDataValue';
+        codeTypeName = 'Rivet.FunctionDataValue';
         codeTypeGeneric = ts.factory.createTypeReferenceNode(
           dataValueTypeToDataValueName[getScalarTypeOf(dataType)],
           undefined,
@@ -78,18 +82,19 @@ function createProjectInterface(project: Project) {
         codeTypeName = dataValueTypeToDataValueName[dataType];
       }
 
-      if (node.type === 'graphInput') {
+      if (node.type === 'graphInput' && !inputNames.has(node.data.id)) {
         inputProperties.push(
           ts.factory.createPropertySignature(
             undefined,
-            node.data.id,
+            ts.factory.createStringLiteral(node.data.id),
             undefined,
-            ts.factory.createTypeReferenceNode('LoosedDataValue', [
+            ts.factory.createTypeReferenceNode('Rivet.LoosedDataValue', [
               ts.factory.createTypeReferenceNode(codeTypeName, codeTypeGeneric ? [codeTypeGeneric] : undefined),
             ]),
           ),
         );
-      } else if (node.type === 'graphOutput') {
+        inputNames.add(node.data.id);
+      } else if (node.type === 'graphOutput' && !outputNames.has(node.data.id)) {
         outputProperties.push(
           ts.factory.createPropertySignature(
             undefined,
@@ -98,6 +103,7 @@ function createProjectInterface(project: Project) {
             ts.factory.createTypeReferenceNode(codeTypeName, codeTypeGeneric ? [codeTypeGeneric] : undefined),
           ),
         );
+        outputNames.add(node.data.id);
       }
     }
 
@@ -136,10 +142,7 @@ function createProjectInterface(project: Project) {
               undefined,
               'id',
               undefined,
-              ts.factory.createIntersectionTypeNode([
-                ts.factory.createTypeReferenceNode('GraphId', undefined),
-                ts.factory.createLiteralTypeNode(ts.factory.createStringLiteral(graphId)),
-              ]),
+              ts.factory.createLiteralTypeNode(ts.factory.createStringLiteral(graphId)),
             ),
             ts.factory.createPropertySignature(
               undefined,
@@ -176,9 +179,9 @@ function createProjectInterface(project: Project) {
   }
 
   // Create a type for the project
-  const projectType = ts.factory.createInterfaceDeclaration(
+  const projectGraphsType = ts.factory.createInterfaceDeclaration(
     [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-    projectName,
+    `${projectName}_Graphs`,
     undefined,
     undefined,
     graphTypes.map((graphType) =>
@@ -192,13 +195,45 @@ function createProjectInterface(project: Project) {
   );
 
   // Add the project type to the statements array
+  statements.push(projectGraphsType);
+
+  const projectType = ts.factory.createInterfaceDeclaration(
+    [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+    projectName,
+    undefined,
+    undefined,
+    [
+      ts.factory.createPropertySignature(
+        undefined,
+        'metadata',
+        undefined,
+        ts.factory.createTypeLiteralNode([
+          ts.factory.createPropertySignature(
+            undefined,
+            'id',
+            undefined,
+            ts.factory.createLiteralTypeNode(ts.factory.createStringLiteral(project.metadata.id, true)),
+          ),
+        ]),
+      ),
+      ts.factory.createPropertySignature(
+        undefined,
+        'graphs',
+        undefined,
+        ts.factory.createTypeReferenceNode(`${projectName}_Graphs`, undefined),
+      ),
+    ],
+  );
+
   statements.push(projectType);
 
   // Update the source file with the new statements
   const updatedSourceFile = ts.factory.updateSourceFile(sourceFile, statements);
 
   // Print the updated source file
-  const result = printer.printFile(updatedSourceFile);
+  const result = `import * as Rivet from '@ironclad/rivet-node';
+
+${printer.printFile(updatedSourceFile)}`;
 
   return result;
 }
