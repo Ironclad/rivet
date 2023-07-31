@@ -54,7 +54,7 @@ const config = {
         title: 'Rivet',
         logo: {
           alt: 'Rivet Logo',
-          src: 'img/logo.svg',
+          src: 'img/Square150x150Logo.png',
         },
         items: [
           {
