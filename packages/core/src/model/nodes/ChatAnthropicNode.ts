@@ -294,7 +294,7 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
         async () => {
           const options: Omit<ChatCompletionOptions, 'apiKey' | 'signal'> = {
             prompt,
-            model: model,
+            model,
             temperature: useTopP ? undefined : temperature,
             top_p: useTopP ? topP : undefined,
             max_tokens_to_sample: maxTokens,
@@ -317,7 +317,7 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
             ...options,
           });
 
-          let responseParts: string[] = [];
+          const responseParts: string[] = [];
 
           for await (const chunk of chunks) {
             if (!chunk.completion) {
@@ -422,7 +422,7 @@ export function getChatAnthropicNodeMessages(inputs: Inputs) {
     throw new Error('Prompt is required');
   }
 
-  let messages: ChatMessage[] = match(prompt)
+  const messages: ChatMessage[] = match(prompt)
     .with({ type: 'chat-message' }, (p) => [p.value])
     .with({ type: 'chat-message[]' }, (p) => p.value)
     .with({ type: 'string' }, (p): ChatMessage[] => [{ type: 'user', message: p.value, function_call: undefined }])

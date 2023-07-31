@@ -91,7 +91,7 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
           (c) => inputNode != null && input != null && c.inputNodeId === inputNode.id && c.inputId === input.id,
         );
 
-        let newConnections = [...connections];
+        const newConnections = [...connections];
 
         // If there's an existing connection, remove it
         if (existingConnectionIndex !== -1) {

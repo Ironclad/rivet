@@ -142,7 +142,7 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
     if (inputs['continue' as PortId] === undefined) {
       continueValue = true;
     } else {
-      let continueDataValue = inputs['continue' as PortId]!;
+      const continueDataValue = inputs['continue' as PortId]!;
       if (continueDataValue.type === 'control-flow-excluded') {
         continueValue = false;
       } else {
@@ -155,7 +155,7 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
     if (continueValue) {
       output['break' as PortId] = { type: 'control-flow-excluded', value: 'loop-not-broken' };
     } else {
-      let inputValues: unknown[] = [];
+      const inputValues: unknown[] = [];
       for (let i = 1; i <= inputCount; i++) {
         inputValues.push(inputs[`input${i}` as PortId]?.value);
       }

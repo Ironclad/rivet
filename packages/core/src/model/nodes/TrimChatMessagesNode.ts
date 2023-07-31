@@ -91,7 +91,7 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
     const model = 'gpt-3.5-turbo' as SupportedModels; // You can change this to a configurable model if needed
     const tiktokenModel = openaiModels[model].tiktokenModel;
 
-    let trimmedMessages = [...input];
+    const trimmedMessages = [...input];
 
     let tokenCount = getTokenCountForMessages(
       trimmedMessages.map(

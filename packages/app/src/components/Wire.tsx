@@ -33,7 +33,7 @@ export function useWireStartEnd(connection: NodeConnection | PartialConnection) 
   const nodesById = useRecoilValue(nodesByIdState);
   const getIO = useGetNodeIO();
 
-  let possibleNodes = 'toX' in connection ? [connection.nodeId] : [connection.inputNodeId, connection.outputNodeId];
+  const possibleNodes = 'toX' in connection ? [connection.nodeId] : [connection.inputNodeId, connection.outputNodeId];
 
   const possibleNodeCachedValues = possibleNodes
     .flatMap((nodeId) => {

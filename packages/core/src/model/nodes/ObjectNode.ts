@@ -12,7 +12,7 @@ export type ObjectNodeData = {
 
 const DEFAULT_JSON_TEMPLATE = `{
   "key": "{{input}}"
-}`
+}`;
 
 export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
   static create(): ObjectNode {
@@ -87,7 +87,10 @@ export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
       return acc;
     }, {} as Record<string, string | undefined>);
 
-    const outputValue = JSON.parse(this.interpolate(this.chartNode.data.jsonTemplate, inputMap)) as Record<string, unknown>;
+    const outputValue = JSON.parse(this.interpolate(this.chartNode.data.jsonTemplate, inputMap)) as Record<
+      string,
+      unknown
+    >;
 
     return {
       output: {

@@ -82,7 +82,7 @@ export class NumberNodeImpl extends NodeImpl<NumberNode> {
     return {
       ['value' as PortId]: {
         type: 'number',
-        value: value,
+        value,
       },
     };
   }

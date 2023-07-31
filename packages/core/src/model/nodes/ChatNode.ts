@@ -460,8 +460,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             ...options,
           });
 
-          let responseChoicesParts: string[][] = [];
-          let functionCalls: object[] = [];
+          const responseChoicesParts: string[][] = [];
+          const functionCalls: object[] = [];
 
           for await (const chunk of chunks) {
             if (!chunk.choices) {

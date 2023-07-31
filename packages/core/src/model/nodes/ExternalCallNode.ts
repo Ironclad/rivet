@@ -96,7 +96,7 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
       ? coerceType(inputs['functionName' as PortId], 'string')
       : this.chartNode.data.functionName;
 
-    let args = inputs['arguments' as PortId];
+    const args = inputs['arguments' as PortId];
     let arrayArgs: ArrayDataValue<AnyDataValue> = {
       type: 'any[]',
       value: [],

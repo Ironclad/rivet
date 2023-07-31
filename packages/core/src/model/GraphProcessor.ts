@@ -322,7 +322,7 @@ export class GraphProcessor {
     this.#scc = this.#tarjanSCC();
     this.#nodesNotInCycle = this.#scc.filter((cycle) => cycle.length === 1).flat();
 
-    this.setExternalFunction('echo', async (value) => ({ type: 'any', value: value } satisfies DataValue));
+    this.setExternalFunction('echo', async (value) => ({ type: 'any', value } satisfies DataValue));
 
     this.#emitter.on('globalSet', ({ id, value }) => {
       this.#emitter.emit(`globalSet:${id}`, value);
@@ -717,7 +717,7 @@ export class GraphProcessor {
         const inputNodeAttachedData = this.#getAttachedDataTo(inputNode);
         const raceIds = new Set<RaceId>([...(attachedData.races?.raceIds ?? ([] as RaceId[]))]);
 
-        if (node.type == 'raceInputs') {
+        if (node.type === 'raceInputs') {
           raceIds.add(`race-${node.id}` as RaceId);
         }
 
@@ -773,7 +773,7 @@ export class GraphProcessor {
 
     // Check if all required inputs have connections and if the connected output nodes have been visited
     const connections = this.#connections[node.id] ?? [];
-    let inputsReady = this.#definitions[node.id]!.inputs.every((input) => {
+    const inputsReady = this.#definitions[node.id]!.inputs.every((input) => {
       const connectionToInput = connections?.find((conn) => conn.inputId === input.id && conn.inputNodeId === node.id);
       return connectionToInput || !input.required;
     });
@@ -1272,12 +1272,12 @@ export class GraphProcessor {
         processor.on('graphStart', (e) => this.#emitter.emit('graphStart', e));
         processor.on('graphFinish', (e) => this.#emitter.emit('graphFinish', e));
         processor.on('globalSet', (e) => this.#emitter.emit('globalSet', e));
-        processor.on('pause', (e) => {
+        processor.on('pause', () => {
           if (!this.#isPaused) {
             this.pause();
           }
         });
-        processor.on('resume', (e) => {
+        processor.on('resume', () => {
           if (this.#isPaused) {
             this.resume();
           }

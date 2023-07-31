@@ -117,7 +117,7 @@ const fullscreenOutputButtonsCss = css`
 
 const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
   const output = useRecoilValue(lastRunData(node.id));
-  let [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
+  const [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
 
   const { FullscreenOutput, Output, OutputSimple, FullscreenOutputSimple } = useUnknownNodeComponentDescriptorFor(node);
 
@@ -408,7 +408,7 @@ const NodeOutputMultiProcess: FC<{
   data: ProcessDataForNode[];
   onOpenFullscreenModal?: () => void;
 }> = ({ node, data, onOpenFullscreenModal }) => {
-  let [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
+  const [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
 
   const prevPage = useStableCallback(() => {
     setSelectedPage((page) => {

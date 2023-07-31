@@ -28,7 +28,7 @@ export const CodeEditor: FC<{
       glyphMargin: false,
       folding: false,
       lineNumbersMinChars: 2,
-      language: language,
+      language,
       minimap: {
         enabled: false,
       },

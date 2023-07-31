@@ -68,7 +68,7 @@ export class BooleanNodeImpl extends NodeImpl<BooleanNode> {
     return {
       ['value' as PortId]: {
         type: 'boolean',
-        value: value,
+        value,
       },
     };
   }

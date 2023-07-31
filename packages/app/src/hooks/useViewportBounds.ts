@@ -12,7 +12,7 @@ interface ViewportBounds {
 export function useViewportBounds(): ViewportBounds {
   const { clientToCanvasPosition } = useCanvasPositioning();
 
-  let [{ innerWidth, innerHeight }, setWindowSize] = useState({
+  const [{ innerWidth, innerHeight }, setWindowSize] = useState({
     innerWidth: window.innerWidth,
     innerHeight: window.innerHeight,
   });

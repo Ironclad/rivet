@@ -43,6 +43,7 @@ export class EventSourceResponse extends Response {
   }
 
   private async raceWithTimeout<T>(promise: Promise<T>, timeout = 5000): Promise<T> {
+    // eslint-disable-next-line no-async-promise-executor -- Error handled correctly
     return new Promise(async (resolve, reject) => {
       const timer = setTimeout(() => {
         reject(new Error('Timeout: API response took too long.'));

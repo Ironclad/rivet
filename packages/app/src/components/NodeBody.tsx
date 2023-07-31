@@ -33,7 +33,7 @@ const UnknownNodeBodyWrapper = styled.div<{
 const UnknownNodeBody: FC<{ node: ChartNode }> = ({ node }) => {
   const body = useMemo(() => createUnknownNodeInstance(node).getBody(), [node]);
 
-  let bodySpec: NodeBodySpec | NodeBodySpec[] | undefined =
+  const bodySpec: NodeBodySpec | NodeBodySpec[] | undefined =
     typeof body === 'string' ? { type: 'plain', text: body } : body;
   let allSpecs = bodySpec ? (Array.isArray(bodySpec) ? bodySpec : [bodySpec]) : [];
 

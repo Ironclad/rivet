@@ -11,12 +11,7 @@ import {
 } from '@ironclad/rivet-core';
 import { IOProvider } from './IOProvider.js';
 import { isInTauri } from '../utils/tauri.js';
-import {
-  SerializedTrivetData,
-  TrivetData,
-  deserializeTrivetData,
-  serializeTrivetData,
-} from '@ironclad/trivet';
+import { SerializedTrivetData, TrivetData, deserializeTrivetData, serializeTrivetData } from '@ironclad/trivet';
 
 export class TauriIOProvider implements IOProvider {
   static isSupported(): boolean {
@@ -80,7 +75,7 @@ export class TauriIOProvider implements IOProvider {
 
     await writeFile({
       contents: data,
-      path: path,
+      path,
     });
   }
 
@@ -186,7 +181,7 @@ export class TauriIOProvider implements IOProvider {
     if (path) {
       await writeFile({
         contents: content,
-        path: path,
+        path,
       });
     }
   }
