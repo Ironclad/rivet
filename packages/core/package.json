@@ -1,7 +1,7 @@
 {
   "name": "@ironclad/rivet-core",
   "repository": "https://github.com/ironclad/rivet",
-  "version": "0.14.1",
+  "version": "0.14.2",
   "packageManager": "yarn@3.5.0",
   "main": "dist/cjs/bundle.cjs",
   "module": "dist/esm/index.js",
