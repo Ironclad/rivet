@@ -117,7 +117,20 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
     const externalContext = omit(context, ['setGlobal']);
 
     if (!fn) {
-      throw new Error(`Function ${functionName} not was not defined using setExternalCall`);
+      if (this.data.useErrorOutput) {
+        return {
+          ['result' as PortId]: {
+            type: 'control-flow-excluded',
+            value: undefined,
+          },
+          ['error' as PortId]: {
+            type: 'string',
+            value: `Function ${functionName} not was not defined using setExternalCall`,
+          },
+        };
+      } else {
+        throw new Error(`Function ${functionName} not was not defined using setExternalCall`);
+      }
     }
 
     if (this.data.useErrorOutput) {
