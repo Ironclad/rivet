@@ -113,6 +113,23 @@ const fullscreenOutputButtonsCss = css`
   .prompt-designer-button:hover {
     opacity: 1;
   }
+
+  .copy-json-button {
+    opacity: 0.2;
+    cursor: pointer;
+    user-select: none;
+    text-transform: uppercase;
+    font-size: 10px;
+    transition: opacity 0.2s;
+    z-index: 1;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 `;
 
 const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
@@ -163,6 +180,13 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
     } else {
       copyToClipboard(JSON.stringify(outputValue, null, 2));
     }
+  });
+
+  const handleCopyToClipboardJson = useStableCallback(() => {
+    if (!data) {
+      return;
+    }
+    copyToClipboard(JSON.stringify(data.outputData, null, 2));
   });
 
   const prevPage = useStableCallback(() => {
@@ -249,6 +273,9 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
         <div css={fullscreenOutputButtonsCss}>
           <div className="copy-button" onClick={handleCopyToClipboard}>
             <CopyIcon />
+          </div>
+          <div className="copy-json-button" onClick={handleCopyToClipboardJson}>
+            JSON
           </div>
           {node.type === 'chat' && (
             <div className="prompt-designer-button" onClick={handleOpenPromptDesigner}>
