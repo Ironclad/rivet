@@ -8,7 +8,7 @@ import {
   GraphOutputNode,
   inferType,
 } from '@ironclad/rivet-core';
-import { keyBy, mapValues } from 'lodash-es';
+import { cloneDeep, keyBy, mapValues } from 'lodash-es';
 import { TrivetGraphRunner, TrivetOpts, TrivetResults, TrivetTestCaseResult } from './trivetTypes.js';
 
 const TRUTHY_STRINGS = new Set(['true', 'TRUE']);
@@ -61,12 +61,13 @@ export function createTestGraphRunner(opts: { openAiKey: string }): TrivetGraphR
 }
 
 export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
-  const { project, testSuites, runGraph, onUpdate } = opts;
+  const { project, testSuites, runGraph, onUpdate, iterationCount = 1 } = opts;
 
   const graphsById = keyBy(project.graphs, (g) => g.metadata?.id ?? '');
 
   const trivetResults: TrivetResults = {
     testSuiteResults: [],
+    iterationCount,
   };
 
   for (const testSuite of testSuites) {
@@ -105,85 +106,83 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
     });
 
     for (const testCase of testSuite.testCases) {
-      try {
-        const resolvedInputs: Record<string, DataValue> = mapValues(testCase.input, inferType);
-        const outputs = await runGraph(project, testGraph.metadata!.id!, resolvedInputs);
+      for (let i = 0; i < iterationCount; i++) {
+        try {
+          const resolvedInputs: Record<string, DataValue> = mapValues(testCase.input, inferType);
+          const outputs = await runGraph(project, testGraph.metadata!.id!, resolvedInputs);
 
-        console.log('ran test graph', outputs);
+          console.log('ran test graph', outputs);
 
-        const validationInputs: Record<string, DataValue> = {
-          input: {
-            type: 'object',
-            value: testCase.input,
-          },
-          expectedOutput: {
-            type: 'object',
-            value: testCase.expectedOutput,
-          },
-          output: {
-            type: 'object',
-            value: mapValues(outputs, (dataValue) => dataValue.value),
-          },
-        };
-
-        console.log('running validation graph', validationInputs);
-
-        const validationOutputs = await runGraph(project, validationGraph.metadata!.id!, validationInputs);
-
-        console.dir({ validationOutputs });
-        const validationResults = Object.entries(validationOutputs).map(([outputId, result]) => {
-          const node = validationOutputNodesById[outputId];
-          if (node === undefined) {
-            throw new Error('Missing node for validation');
-          }
-          const valid = validateOutput(result);
-          return {
-            id: node.id,
-            title: node.title ?? 'Validation',
-            description: node.description ?? 'It should be valid.',
-            valid,
+          const validationInputs: Record<string, DataValue> = {
+            input: {
+              type: 'object',
+              value: testCase.input,
+            },
+            expectedOutput: {
+              type: 'object',
+              value: testCase.expectedOutput,
+            },
+            output: {
+              type: 'object',
+              value: mapValues(outputs, (dataValue) => dataValue.value),
+            },
           };
-        });
-        testCaseResults.push({
-          id: testCase.id,
-          passing: validationResults.every((r) => r.valid),
-          message: validationResults.find((r) => !r.valid)?.description ?? 'PASS',
-          outputs: mapValues(outputs, (dataValue) => dataValue.value),
-        });
-      } catch (err) {
-        testCaseResults.push({
-          id: testCase.id,
-          passing: false,
-          message: 'An error occurred',
-          outputs: {},
-          error: err,
-        });
-      }
-      onUpdate?.({
-        ...trivetResults,
-        testSuiteResults: [
-          ...trivetResults.testSuiteResults,
-          {
+
+          console.log('running validation graph', validationInputs);
+
+          const validationOutputs = await runGraph(project, validationGraph.metadata!.id!, validationInputs);
+
+          console.dir({ validationOutputs });
+          const validationResults = Object.entries(validationOutputs).map(([outputId, result]) => {
+            const node = validationOutputNodesById[outputId];
+            if (node === undefined) {
+              throw new Error('Missing node for validation');
+            }
+            const valid = validateOutput(result);
+            return {
+              id: node.id,
+              title: node.title ?? 'Validation',
+              description: node.description ?? 'It should be valid.',
+              valid,
+            };
+          });
+          testCaseResults.push({
+            id: testCase.id,
+            iteration: i + 1,
+            passing: validationResults.every((r) => r.valid),
+            message: validationResults.find((r) => !r.valid)?.description ?? 'PASS',
+            outputs: mapValues(outputs, (dataValue) => dataValue.value),
+          });
+        } catch (err) {
+          testCaseResults.push({
+            id: testCase.id,
+            iteration: i + 1,
+            passing: false,
+            message: 'An error occurred',
+            outputs: {},
+            error: err,
+          });
+        }
+
+        let existingTestSuite = trivetResults.testSuiteResults.find((ts) => ts.id === testSuite.id);
+        if (existingTestSuite == null) {
+          existingTestSuite = {
             id: testSuite.id,
             testGraph: testSuite.testGraph,
             validationGraph: testSuite.validationGraph,
             name: testSuite.name ?? 'Test',
             description: testSuite.description ?? 'It should pass.',
-            testCaseResults: testCaseResults.slice(),
-            passing: testCaseResults.every((r) => r.passing),
-          },
-        ],
-      });
+            testCaseResults: [],
+            passing: false,
+          };
+          trivetResults.testSuiteResults.push(existingTestSuite);
+        }
+        existingTestSuite.testCaseResults = testCaseResults.slice();
+        existingTestSuite.passing = testCaseResults.every((r) => r.passing);
+
+        onUpdate?.(cloneDeep(trivetResults));
+      }
     }
-    trivetResults.testSuiteResults.push({
-      id: testSuite.id,
-      testGraph: testSuite.testGraph,
-      validationGraph: testSuite.validationGraph,
-      name: testSuite.name ?? 'Test',
-      description: testSuite.description ?? 'It should pass.',
-      testCaseResults,
-      passing: testCaseResults.every((r) => r.passing),
-    });
   }
   return trivetResults;
 }

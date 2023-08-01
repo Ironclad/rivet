@@ -1,1 +1,3 @@
-export type TryRunTests = (options: { testSuiteIds?: string[], testCaseIds?: string[] } | undefined) => Promise<void>;
+export type TryRunTests = (
+  options: { testSuiteIds?: string[]; testCaseIds?: string[]; iterationCount?: number } | undefined,
+) => Promise<void>;

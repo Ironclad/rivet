@@ -5,6 +5,10 @@ export type TrivetGraphRunner = (project: Project, graphId: GraphId, inputs: Gra
 export interface TrivetOpts {
   project: Project;
   testSuites: TrivetTestSuite[];
+
+  /** Runs each test in each suite N times. Defaults to just 1. A test passes if all iterations pass. */
+  iterationCount?: number;
+
   runGraph: TrivetGraphRunner;
   onUpdate?: (results: TrivetResults) => void;
 }
@@ -26,6 +30,7 @@ export interface TrivetTestCase {
 
 export interface TrivetResults {
   testSuiteResults: TrivetTestSuiteResult[];
+  iterationCount: number;
 }
 
 export interface TrivetTestSuiteResult {
@@ -40,6 +45,7 @@ export interface TrivetTestSuiteResult {
 
 export interface TrivetTestCaseResult {
   id: string;
+  iteration: number;
   passing: boolean;
   message: string;
   outputs: Record<string, unknown>;

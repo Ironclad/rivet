@@ -1,7 +1,7 @@
 import { NodeId, PortId, ProcessEvents, ProcessId, coerceTypeOptional } from '@ironclad/rivet-core';
 import { produce } from 'immer';
 import { cloneDeep } from 'lodash-es';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   NodeRunData,
   graphPausedState,
@@ -12,6 +12,8 @@ import {
 } from '../state/dataFlow';
 import { ProcessQuestions, userInputModalQuestionsState } from '../state/userInput';
 import { lastRecordingState } from '../state/execution';
+import { trivetTestsRunningState } from '../state/trivet';
+import { useLatest } from 'ahooks';
 
 export function useCurrentExecution() {
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
@@ -21,6 +23,8 @@ export function useCurrentExecution() {
   const setGraphPaused = useSetRecoilState(graphPausedState);
   const setRunningGraphsState = useSetRecoilState(runningGraphsState);
   const setLastRecordingState = useSetRecoilState(lastRecordingState);
+  const trivetRunning = useRecoilValue(trivetTestsRunningState);
+  const trivetRunningLatest = useLatest(trivetRunning);
 
   const setDataForNode = (nodeId: NodeId, processId: ProcessId, data: Partial<NodeRunData>) => {
     setLastRunData((prev) =>
@@ -79,6 +83,18 @@ export function useCurrentExecution() {
   };
 
   function onStart() {
+    setLastRecordingState(undefined);
+    setUserInputQuestions({});
+    setGraphRunning(true);
+
+    // Don't clear the last run data if we're running trivet tests, so you can see both the
+    // test graph and the validation graph in the results.
+    if (!trivetRunningLatest.current) {
+      setLastRunData({});
+    }
+  }
+
+  function onTrivetStart() {
     setLastRecordingState(undefined);
     setUserInputQuestions({});
     setGraphRunning(true);
@@ -237,5 +253,6 @@ export function useCurrentExecution() {
     onPause,
     onResume,
     onNodeOutputsCleared,
+    onTrivetStart,
   };
 }

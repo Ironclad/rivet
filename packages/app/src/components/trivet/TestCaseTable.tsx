@@ -1,4 +1,4 @@
-import { FC, useMemo, MouseEvent } from 'react';
+import { FC, useMemo, MouseEvent, useState } from 'react';
 import Button from '@atlaskit/button';
 import clsx from 'clsx';
 import { css } from '@emotion/react';
@@ -11,6 +11,8 @@ import Portal from '@atlaskit/portal';
 import { DropdownItem } from '@atlaskit/dropdown-menu';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
 import { ReactComponent as PlayIcon } from 'majesticons/line/play-circle-line.svg';
+import Popup from '@atlaskit/popup';
+import TextField from '@atlaskit/textfield';
 
 const styles = css`
   display: grid;
@@ -94,6 +96,13 @@ const contextMenuStyles = css`
   min-width: max-content;
 `;
 
+const runWithIterationPopupStyles = css`
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
 export type TestCaseTableProps = {
   testCases: TrivetTestCase[];
   editingTestCaseId: string | undefined;
@@ -102,7 +111,7 @@ export type TestCaseTableProps = {
   onAddTestCase: () => void;
   onDeleteTestCase: (id: string) => void;
   onSetEditingTestCase: (id: string | undefined) => void;
-  onRunTestCase: (id: string) => void;
+  onRunTestCase: (id: string, iterationCount?: number) => void;
   onDuplicateTestCase: (id: string) => void;
 };
 
@@ -117,7 +126,6 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
   onRunTestCase,
   onDuplicateTestCase,
 }) => {
-  const testCaseResultsById = useMemo(() => keyBy(testCaseResults, (tcr) => tcr.id), [testCaseResults]);
   function toggleSelected(id: string) {
     if (editingTestCaseId === id) {
       onSetEditingTestCase(undefined);
@@ -137,6 +145,19 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
     ? contextMenuData.data?.element.dataset.testcaseid
     : undefined;
 
+  const [showingIterationPopupState, setShowingIterationPopupState] = useState<
+    | {
+        testCaseId: string;
+        iterationCount: number;
+      }
+    | undefined
+  >();
+
+  const runWithIterationCount = (testCaseId: string) => () => {
+    onRunTestCase(testCaseId, showingIterationPopupState?.iterationCount);
+    setShowingIterationPopupState(undefined);
+  };
+
   return (
     <div onContextMenu={handleSidebarContextMenu} data-contextmenutype="test-case-table" ref={contextMenuRef}>
       <div css={styles}>
@@ -151,6 +172,33 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
               <button className="run-test-button" onClick={() => onRunTestCase(testCase.id)}>
                 <PlayIcon />
               </button>
+
+              <Popup
+                isOpen={showingIterationPopupState?.testCaseId === testCase.id}
+                trigger={(props) => <div {...props} style={{ height: '24px', width: '1px' }} />}
+                content={(props) => (
+                  <div {...props} css={runWithIterationPopupStyles}>
+                    <TextField
+                      type="number"
+                      value={showingIterationPopupState?.iterationCount}
+                      autoFocus
+                      onChange={(e) =>
+                        setShowingIterationPopupState((state) => ({
+                          ...state!,
+                          iterationCount: (e.target as HTMLInputElement).valueAsNumber ?? 1,
+                        }))
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          runWithIterationCount(testCase.id)();
+                        }
+                      }}
+                    />
+                    <Button onClick={runWithIterationCount(testCase.id)}>Run</Button>
+                    <Button onClick={() => setShowingIterationPopupState(undefined)}>Cancel</Button>
+                  </div>
+                )}
+              />
             </div>
             <div
               key={testCase.id}
@@ -160,7 +208,7 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
               data-testcaseid={testCase.id}
             >
               <div className="cell status-icon">
-                <TestCaseStatusIcon result={testCaseResultsById[testCase.id]} running={running} />
+                <TestCaseStatusIcon results={testCaseResults.filter((r) => r.id === testCase.id)} running={running} />
               </div>
               <div className="cell">
                 <DisplayInputsOrOutputs data={testCase.input} />
@@ -205,6 +253,14 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
               Run Test Case
             </DropdownItem>
             <DropdownItem
+              onClick={() =>
+                selectedTestCaseIdForContextMenu &&
+                setShowingIterationPopupState({ testCaseId: selectedTestCaseIdForContextMenu, iterationCount: 1 })
+              }
+            >
+              Run With Iteration Count...
+            </DropdownItem>
+            <DropdownItem
               onClick={() => selectedTestCaseIdForContextMenu && onDuplicateTestCase(selectedTestCaseIdForContextMenu)}
             >
               Duplicate
@@ -244,14 +300,16 @@ const DisplayInputsOrOutputs: FC<{ data: Record<string, unknown> }> = ({ data })
   return JSON.stringify(data);
 };
 
-const TestCaseStatusIcon: FC<{ result?: TrivetTestCaseResult; running: boolean }> = ({ result, running }) => {
-  if (result == null) {
+const TestCaseStatusIcon: FC<{ results?: TrivetTestCaseResult[]; running: boolean }> = ({ results, running }) => {
+  const passing = results?.every((r) => r.passing) ?? false;
+
+  if (results == null || results.length === 0) {
     if (running) {
       return <LoadingSpinner />;
     } else {
       return <div />;
     }
   } else {
-    return <div className={result.passing ? 'passing' : 'failing'}>{result.passing ? '✓' : <MultiplyIcon />}</div>;
+    return <div className={passing ? 'passing' : 'failing'}>{passing ? '✓' : <MultiplyIcon />}</div>;
   }
 };

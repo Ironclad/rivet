@@ -175,13 +175,14 @@ export const TestSuite: FC<{ tryRunTests: TryRunTests }> = ({ tryRunTests }) => 
   }, [graphsById, testSuite?.validationGraph]);
 
   const runTestCase = useCallback(
-    (id: string) => {
+    (id: string, iterationCount?: number) => {
       if (selectedTestSuiteId == null) {
         return;
       }
       tryRunTests({
         testSuiteIds: [selectedTestSuiteId],
         testCaseIds: [id],
+        iterationCount: iterationCount ?? 1,
       });
     },
     [tryRunTests, selectedTestSuiteId],
