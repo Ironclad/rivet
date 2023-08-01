@@ -10,41 +10,39 @@ import { useStableCallback } from '../../hooks/useStableCallback';
 import Portal from '@atlaskit/portal';
 import { DropdownItem } from '@atlaskit/dropdown-menu';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
+import { ReactComponent as PlayIcon } from 'majesticons/line/play-circle-line.svg';
 
 const styles = css`
   display: grid;
-  grid-template-columns: 36px 1fr 1fr;
+  grid-template-columns: auto 36px 1fr 1fr;
   padding-top: 20px;
 
-  tr,
-  thead,
-  tbody {
-    display: contents;
-  }
-
-  td {
+  .cell {
     padding: 8px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     user-select: none;
+    display: flex;
+    align-items: center;
   }
 
   .test-case-row {
     cursor: pointer;
+    display: contents;
 
-    &:hover td {
+    &:hover .cell:not(.nobg) {
       background-color: var(--grey-darkish);
     }
   }
 
   .test-case-row.selected {
-    td {
+    .cell:not(.nobg) {
       background-color: var(--primary);
       color: var(--grey-dark);
     }
 
-    &:hover td {
+    &:hover .cell:not(.nobg) {
       background-color: var(--primary-dark);
     }
   }
@@ -63,7 +61,28 @@ const styles = css`
   }
 
   .add-test-case {
-    grid-column: span 3;
+    grid-column: 2 / span 3;
+    margin-top: 8px;
+  }
+
+  .run-test-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 0;
+    background-color: transparent;
+    color: var(--foreground);
+    border: 0;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--grey-darkish);
+      color: var(--primary);
+    }
   }
 `;
 
@@ -77,31 +96,33 @@ const contextMenuStyles = css`
 
 export type TestCaseTableProps = {
   testCases: TrivetTestCase[];
-  addTestCase: () => void;
-  deleteTestCase: (id: string) => void;
-  setEditingTestCase: (id: string | undefined) => void;
   editingTestCaseId: string | undefined;
   testCaseResults: TrivetTestCaseResult[];
   running: boolean;
-  runTestCase: (id: string) => void;
+  onAddTestCase: () => void;
+  onDeleteTestCase: (id: string) => void;
+  onSetEditingTestCase: (id: string | undefined) => void;
+  onRunTestCase: (id: string) => void;
+  onDuplicateTestCase: (id: string) => void;
 };
 
 export const TestCaseTable: FC<TestCaseTableProps> = ({
   testCases,
-  addTestCase,
-  setEditingTestCase,
   editingTestCaseId,
-  deleteTestCase,
   testCaseResults,
   running,
-  runTestCase,
+  onAddTestCase,
+  onSetEditingTestCase,
+  onDeleteTestCase,
+  onRunTestCase,
+  onDuplicateTestCase,
 }) => {
   const testCaseResultsById = useMemo(() => keyBy(testCaseResults, (tcr) => tcr.id), [testCaseResults]);
   function toggleSelected(id: string) {
     if (editingTestCaseId === id) {
-      setEditingTestCase(undefined);
+      onSetEditingTestCase(undefined);
     } else {
-      setEditingTestCase(id);
+      onSetEditingTestCase(id);
     }
   }
 
@@ -118,41 +139,42 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
 
   return (
     <div onContextMenu={handleSidebarContextMenu} data-contextmenutype="test-case-table" ref={contextMenuRef}>
-      <table css={styles}>
-        <thead>
-          <tr>
-            <th />
-            <th>Inputs</th>
-            <th>Outputs</th>
-          </tr>
-        </thead>
-        <tbody>
-          {testCases.map((testCase) => (
-            <tr
+      <div css={styles}>
+        <div className="cell" />
+        <div className="cell" />
+        <div className="cell">Inputs</div>
+        <div className="cell">Outputs</div>
+
+        {testCases.map((testCase) => (
+          <>
+            <div className="cell nobg">
+              <button className="run-test-button" onClick={() => onRunTestCase(testCase.id)}>
+                <PlayIcon />
+              </button>
+            </div>
+            <div
               key={testCase.id}
               className={clsx('test-case-row', { selected: editingTestCaseId === testCase.id })}
               onClick={() => toggleSelected(testCase.id)}
               data-contextmenutype="test-case-item"
               data-testcaseid={testCase.id}
             >
-              <td className="status-icon">
+              <div className="cell status-icon">
                 <TestCaseStatusIcon result={testCaseResultsById[testCase.id]} running={running} />
-              </td>
-              <td>
+              </div>
+              <div className="cell">
                 <DisplayInputsOrOutputs data={testCase.input} />
-              </td>
-              <td>
+              </div>
+              <div className="cell">
                 <DisplayInputsOrOutputs data={testCase.expectedOutput} />
-              </td>
-            </tr>
-          ))}
-          <tr>
-            <td className="add-test-case">
-              <Button onClick={addTestCase}>Add Test Case</Button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </div>
+            </div>
+          </>
+        ))}
+        <div className="add-test-case">
+          <Button onClick={onAddTestCase}>Add Test Case</Button>
+        </div>
+      </div>
       <Portal>
         {showContextMenu && contextMenuData.data?.type === 'test-case-table' && (
           <div
@@ -164,7 +186,7 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
               top: contextMenuData.y,
             }}
           >
-            <DropdownItem onClick={addTestCase}>New Test Case</DropdownItem>
+            <DropdownItem onClick={onAddTestCase}>New Test Case</DropdownItem>
           </div>
         )}
         {showContextMenu && contextMenuData.data?.type === 'test-case-item' && (
@@ -178,12 +200,17 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
             }}
           >
             <DropdownItem
-              onClick={() => selectedTestCaseIdForContextMenu && runTestCase(selectedTestCaseIdForContextMenu)}
+              onClick={() => selectedTestCaseIdForContextMenu && onRunTestCase(selectedTestCaseIdForContextMenu)}
             >
               Run Test Case
             </DropdownItem>
             <DropdownItem
-              onClick={() => selectedTestCaseIdForContextMenu && deleteTestCase(selectedTestCaseIdForContextMenu)}
+              onClick={() => selectedTestCaseIdForContextMenu && onDuplicateTestCase(selectedTestCaseIdForContextMenu)}
+            >
+              Duplicate
+            </DropdownItem>
+            <DropdownItem
+              onClick={() => selectedTestCaseIdForContextMenu && onDeleteTestCase(selectedTestCaseIdForContextMenu)}
             >
               Delete
             </DropdownItem>

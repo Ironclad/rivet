@@ -142,7 +142,7 @@ export const TestCaseEditor: FC = () => {
         <div className="testCaseError">
           <label>Error</label>
           <pre>
-            {testCaseResults.error.message ?? testCaseResults.error}
+            {testCaseResults.error.message ?? testCaseResults.error?.toString()}
             {testCaseResults.error.stack ?? ''}
           </pre>
         </div>

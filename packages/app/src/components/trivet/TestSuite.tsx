@@ -18,6 +18,7 @@ import {
 import { trivetState } from '../../state/trivet';
 import Button from '@atlaskit/button';
 import { TryRunTests } from './api';
+import { useStableCallback } from '../../hooks/useStableCallback';
 
 const styles = css`
   min-height: 100%;
@@ -100,6 +101,20 @@ export const TestSuite: FC<{ tryRunTests: TryRunTests }> = ({ tryRunTests }) => 
     },
     [setState, selectedTestSuiteId],
   );
+
+  const duplicateTestCase = useStableCallback((id: string) => {
+    if (testSuite == null) {
+      return;
+    }
+    const testCase = testSuite.testCases.find((tc) => tc.id === id);
+    if (testCase == null) {
+      return;
+    }
+    updateTestSuite({
+      ...testSuite,
+      testCases: [...testSuite.testCases, { ...testCase, id: nanoid() }],
+    });
+  });
 
   const latestResult = useMemo(
     () => recentTestResults?.testSuiteResults.find((tsr) => tsr.id === selectedTestSuiteId),
@@ -264,13 +279,14 @@ export const TestSuite: FC<{ tryRunTests: TryRunTests }> = ({ tryRunTests }) => 
           )}
           <TestCaseTable
             testCases={testSuite.testCases}
-            addTestCase={addTestCase}
-            setEditingTestCase={setEditingTestCase}
             editingTestCaseId={editingTestCaseId}
-            deleteTestCase={deleteTestCase}
             running={runningTests}
             testCaseResults={latestResult?.testCaseResults ?? []}
-            runTestCase={runTestCase}
+            onAddTestCase={addTestCase}
+            onSetEditingTestCase={setEditingTestCase}
+            onDeleteTestCase={deleteTestCase}
+            onRunTestCase={runTestCase}
+            onDuplicateTestCase={duplicateTestCase}
           />
         </div>
       </div>
