@@ -403,7 +403,9 @@ export const addContextMenuGroups = [
           description: dedent`
             Creates an object from input values and a JSON template, escaping the input values and inserting them into the template.
 
-            Useful for creating objects from multiple string inputs.
+            Use double-quotes around the input values to escape them. String values are automatically escaped.
+
+            Useful for creating objects from multiple inputs.
           `,
         },
       },
