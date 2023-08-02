@@ -29,8 +29,8 @@ export const NodePorts: FC<{
   });
 
   const handlePortMouseUp = useStableCallback((event: MouseEvent<HTMLDivElement>, port: PortId) => {
-    event.stopPropagation();
-    event.preventDefault();
+    // event.stopPropagation();
+    // event.preventDefault();
     onWireEndDrag?.(event, node.id, port);
   });
 

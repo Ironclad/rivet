@@ -28,6 +28,7 @@ import { graphMetadataState } from '../state/graph.js';
 import { useViewportBounds } from '../hooks/useViewportBounds.js';
 import { nanoid } from 'nanoid';
 import { useGlobalHotkey } from '../hooks/useGlobalHotkey.js';
+import { useWireDragScrolling } from '../hooks/useWireDragScrolling';
 
 const styles = css`
   width: 100vw;
@@ -165,6 +166,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   const { draggingNodes, onNodeStartDrag, onNodeDragged } = useDraggingNode(onNodesChanged);
   const { draggingWire, onWireStartDrag, onWireEndDrag } = useDraggingWire(onConnectionsChanged);
+  useWireDragScrolling();
 
   const {
     contextMenuRef,
@@ -198,7 +200,6 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   );
 
   const canvasMouseDown = useStableCallback((e: React.MouseEvent) => {
-    console.dir({ e });
     if (e.button !== 0) {
       return;
     }
