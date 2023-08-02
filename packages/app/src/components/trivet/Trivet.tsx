@@ -4,10 +4,11 @@ import { FC, useCallback, useMemo } from 'react';
 import { css } from '@emotion/react';
 import Button from '@atlaskit/button';
 import { TestSuiteList } from './TestSuiteList';
-import { TestSuite } from './TestSuite';
+import { TestSuiteRenderer } from './TestSuite';
 import { nanoid } from 'nanoid';
 import { TryRunTests } from './api';
 import { overlayOpenState } from '../../state/ui';
+import { NoTestSuitesSplash } from './NoTestSuitesSplash';
 
 const styles = css`
   position: fixed;
@@ -62,10 +63,14 @@ export const TrivetContainer: FC<TrivetContainerProps> = ({ tryRunTests, onClose
     [testSuites, selectedTestSuiteId],
   );
   const createNewTestSuite = useCallback(() => {
-    setState((s) => ({
-      ...s,
-      testSuites: [...s.testSuites, { id: nanoid(), testCases: [], testGraph: 'a', validationGraph: 'a' }],
-    }));
+    setState((s) => {
+      const newSuiteId = nanoid();
+      return {
+        ...s,
+        testSuites: [...s.testSuites, { id: newSuiteId, testCases: [], testGraph: 'a', validationGraph: 'a' }],
+        selectedTestSuiteId: newSuiteId,
+      };
+    });
   }, [setState]);
   const deleteTestSuite = useCallback(
     (id: string) => {
@@ -110,7 +115,11 @@ export const TrivetContainer: FC<TrivetContainerProps> = ({ tryRunTests, onClose
           />
         </div>
         <div className="test-case-column">
-          <TestSuite tryRunTests={tryRunTests} />
+          {testSuites.length === 0 ? (
+            <NoTestSuitesSplash onCreateTestSuite={createNewTestSuite} />
+          ) : (
+            <TestSuiteRenderer tryRunTests={tryRunTests} />
+          )}
         </div>
       </div>
     </div>

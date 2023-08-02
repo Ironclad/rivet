@@ -161,7 +161,14 @@ export const OverlayTabs: FC = () => {
       <div className="left-menu">
         {!isInTauri() && (
           <div className="menu-item file-menu">
-            <button className="dropdown-button" onMouseDown={() => setFileMenuOpen((open) => !open)}>
+            <button
+              className="dropdown-button"
+              onMouseDown={(e) => {
+                if (e.button === 0) {
+                  setFileMenuOpen((open) => !open);
+                }
+              }}
+            >
               File
             </button>
             <div className={clsx('file-dropdown', { open: fileMenuOpen })}>
@@ -178,7 +185,11 @@ export const OverlayTabs: FC = () => {
         <div className="menu-item prompt-designer-menu">
           <button
             className={clsx('dropdown-item', { active: openOverlay === 'promptDesigner' })}
-            onMouseDown={() => setOpenOverlay((s) => (s === 'promptDesigner' ? undefined : 'promptDesigner'))}
+            onMouseDown={(e) => {
+              if (e.button === 0) {
+                setOpenOverlay((s) => (s === 'promptDesigner' ? undefined : 'promptDesigner'));
+              }
+            }}
           >
             Prompt Designer
           </button>
@@ -186,7 +197,11 @@ export const OverlayTabs: FC = () => {
         <div className="menu-item trivet-menu">
           <button
             className={clsx('dropdown-item', { active: openOverlay === 'trivet' })}
-            onMouseDown={() => setOpenOverlay((s) => (s === 'trivet' ? undefined : 'trivet'))}
+            onMouseDown={(e) => {
+              if (e.button === 0) {
+                setOpenOverlay((s) => (s === 'trivet' ? undefined : 'trivet'));
+              }
+            }}
           >
             Trivet Tests
             {trivet.runningTests && (
@@ -199,7 +214,11 @@ export const OverlayTabs: FC = () => {
         <div className="menu-item chat-viewer-menu">
           <button
             className={clsx('dropdown-item', { active: openOverlay === 'chatViewer' })}
-            onMouseDown={() => setOpenOverlay((s) => (s === 'chatViewer' ? undefined : 'chatViewer'))}
+            onMouseDown={(e) => {
+              if (e.button === 0) {
+                setOpenOverlay((s) => (s === 'chatViewer' ? undefined : 'chatViewer'));
+              }
+            }}
           >
             Chat Viewer
           </button>

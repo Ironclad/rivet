@@ -19,6 +19,7 @@ import Select from '@atlaskit/select';
 import Portal from '@atlaskit/portal';
 import { debuggerPanelOpenState } from '../state/ui';
 import { ActionBarMoreMenu } from './ActionBarMoreMenu';
+import { useCurrentExecution } from '../hooks/useCurrentExecution';
 
 const styles = css`
   position: fixed;
@@ -216,7 +217,16 @@ export const ActionBar: FC<ActionBarProps> = ({
         content={() => <ActionBarMoreMenu onClose={() => setMenuIsOpen(false)} />}
         placement="bottom-end"
         trigger={(triggerProps) => (
-          <button className="more-menu" {...triggerProps} onClick={() => setMenuIsOpen(!menuIsOpen)}>
+          <button
+            className="more-menu"
+            {...triggerProps}
+            onMouseDown={(e) => {
+              if (e.button === 0) {
+                setMenuIsOpen(!menuIsOpen);
+                e.preventDefault();
+              }
+            }}
+          >
             <MoreMenuVerticalIcon />
           </button>
         )}

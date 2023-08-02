@@ -10,6 +10,8 @@ export interface Settings {
 
   pineconeApiKey?: string;
   anthropicApiKey?: string;
+
+  recordingPlaybackLatency?: number;
 }
 
 export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['type']> {

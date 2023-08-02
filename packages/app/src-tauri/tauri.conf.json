@@ -21,6 +21,7 @@
       },
       "shell": {
         "sidecar": true,
+        "open": true,
         "scope": [{ "name": "../../app-executor/dist/app-executor", "sidecar": true }]
       },
       "window": {

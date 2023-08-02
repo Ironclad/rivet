@@ -45,7 +45,13 @@ const sidebars = {
       label: 'Testing',
       collapsible: true,
       collapsed: false,
-      items: ['user-guide/node-testing', 'user-guide/graph-testing'],
+      items: [
+        'trivet',
+        'user-guide/trivet-getting-started',
+        'user-guide/trivet-validation-graphs',
+        'user-guide/trivet-tutorial',
+        'user-guide/trivet-library',
+      ],
     },
     {
       type: 'category',

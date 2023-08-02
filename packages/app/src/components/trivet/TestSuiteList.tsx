@@ -14,15 +14,15 @@ const styles = css`
   border-right: 1px solid var(--grey);
 
   .test-suite-list {
-    margin: 10px 0;
-    width: 100%;
+    margin: 10px -10px;
+    flex: 1 1 auto;
   }
 
   .test-suite-item {
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 4px 8px;
+    padding: 4px 16px;
     margin-top: 8px;
     cursor: pointer;
 
@@ -117,10 +117,10 @@ export const TestSuiteList: FC<TestSuiteListProps> = ({
                 data-contextmenutype="test-suite-item"
                 data-testsuiteid={testSuite.id}
               >
+                <div className="test-suite-name">{testSuite.name ?? 'Untitled Test Suite'}</div>
                 <div className="test-suite-status spinner">
                   {runningTestSuiteId === testSuite.id && <LoadingSpinner />}
                 </div>
-                <div className="test-suite-name">{testSuite.name ?? 'Untitled Test Suite'}</div>
               </div>
             ))}
           </div>

@@ -17,6 +17,7 @@ const styles = css`
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
+    min-height: 200px;
   }
 
   .close-button {
@@ -26,13 +27,9 @@ const styles = css`
     cursor: pointer;
   }
 
-  .editor,
-  .editor-container {
-    height: 100%;
-  }
-
   .editor {
     position: relative;
+    flex: 1 1 auto;
   }
 
   .editor-container {
@@ -168,11 +165,15 @@ const InputOutputEditor: FC<{
   json: unknown;
   setJson?: (json: Record<string, unknown>) => void;
 }> = ({ json, setJson }) => {
-  const [text, setText] = useState(JSON.stringify(json, null, 2));
   const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
 
+  const text = useMemo(() => JSON.stringify(json, null, 2), [json]);
+
   const handleChange = (newText: string) => {
-    setText(newText);
+    if (newText === text) {
+      return;
+    }
+
     try {
       const updatedJson = JSON.parse(newText);
       setJson?.(updatedJson);
@@ -182,19 +183,15 @@ const InputOutputEditor: FC<{
   };
 
   useEffect(() => {
-    let obj: Record<string, unknown> | undefined;
-    try {
-      obj = JSON.parse(text);
-    } catch (err) {
-      obj = undefined;
+    const text = JSON.stringify(json, null, 2);
+    const currentValue = editorInstance.current?.getValue();
+
+    if (currentValue === text) {
+      return;
     }
-    if (!isEqual(obj, json)) {
-      const text = JSON.stringify(json, null, 2);
-      setText(text);
-      editorInstance.current?.setValue(text);
-      editorInstance.current?.layout();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    editorInstance.current?.setValue(text);
+    editorInstance.current?.layout();
   }, [json]);
 
   return (

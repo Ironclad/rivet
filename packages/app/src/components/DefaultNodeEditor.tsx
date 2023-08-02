@@ -65,17 +65,20 @@ export const defaultEditorContainerStyles = css`
   }
 
   .editor-wrapper-wrapper {
-    min-height: 0;
+    min-height: 300px;
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
+    position: relative;
     /* height: 100%; */
   }
 
   .editor-wrapper {
-    min-height: 0;
-    flex: 1 1 auto;
-    /* height: 100%; */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
 
   .editor-container {
@@ -509,7 +512,6 @@ export const DefaultCodeEditor: FC<{
             language={editorDef.language}
             isReadonly={isReadonly}
           />
-          <div ref={editorContainer} className="editor-container" />
         </div>
       </div>
     </Suspense>

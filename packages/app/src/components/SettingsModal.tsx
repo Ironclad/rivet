@@ -27,6 +27,20 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
             <ModalTitle>Settings</ModalTitle>
           </ModalHeader>
           <ModalBody>
+            <Field name="recording-speed" label="Recording delay between chats (ms)">
+              {() => (
+                <TextField
+                  type="number"
+                  value={settings.recordingPlaybackLatency}
+                  onChange={(e) =>
+                    setSettings((s) => ({
+                      ...s,
+                      recordingPlaybackLatency: (e.target as HTMLInputElement).valueAsNumber,
+                    }))
+                  }
+                />
+              )}
+            </Field>
             <Field name="api-key" label="OpenAI API Key">
               {() => (
                 <TextField

@@ -30,6 +30,7 @@
     ]
   },
   "dependencies": {
+    "@atlaskit/banner": "^12.1.15",
     "@atlaskit/button": "^16.8.2",
     "@atlaskit/checkbox": "^12.6.7",
     "@atlaskit/css-reset": "^6.5.4",

@@ -229,6 +229,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@atlaskit/banner@npm:^12.1.15":
+  version: 12.1.15
+  resolution: "@atlaskit/banner@npm:12.1.15"
+  dependencies:
+    "@atlaskit/primitives": "npm:^1.0.6"
+    "@atlaskit/theme": "npm:^12.5.0"
+    "@atlaskit/tokens": "npm:^1.13.0"
+    "@babel/runtime": "npm:^7.0.0"
+    "@emotion/react": "npm:^11.7.1"
+  peerDependencies:
+    react: ^16.8.0
+  checksum: 3856b3b6f7267f25ea4c71d27804dfbb1606cf67ff78ec5af5be04e92a39161a490b383c254766199e7e47c9c253cb9720d9795beaee41719cd6358075f865c5
+  languageName: node
+  linkType: hard
+
 "@atlaskit/blanket@npm:^12.4.0":
   version: 12.4.3
   resolution: "@atlaskit/blanket@npm:12.4.3"
@@ -627,6 +642,22 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: c411c0b48d1db81c5f8a80ed0f8fe55f19cc5ce4864b57935a90a323ea407a30864b172be91fe11706956354e9015031c0846d14c6fe2a05062c64c58a269af2
+  languageName: node
+  linkType: hard
+
+"@atlaskit/primitives@npm:^1.0.6":
+  version: 1.0.8
+  resolution: "@atlaskit/primitives@npm:1.0.8"
+  dependencies:
+    "@atlaskit/focus-ring": "npm:^1.3.0"
+    "@atlaskit/tokens": "npm:^1.13.0"
+    "@babel/runtime": "npm:^7.0.0"
+    "@emotion/react": "npm:^11.7.1"
+    "@emotion/serialize": "npm:^1.1.0"
+    bind-event-listener: "npm:^2.1.1"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 903765494bb1f9e007c535c9e6ca9ce665e6e8f628c67cf88c85705426f4a586137076000773a2d45b2fef0ba4d4092edb180caf04235a37952c2a1412ac9208
   languageName: node
   linkType: hard
 
@@ -3966,6 +3997,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ironclad/rivet-app@workspace:packages/app"
   dependencies:
+    "@atlaskit/banner": "npm:^12.1.15"
     "@atlaskit/button": "npm:^16.8.2"
     "@atlaskit/checkbox": "npm:^12.6.7"
     "@atlaskit/css-reset": "npm:^6.5.4"

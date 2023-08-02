@@ -14,10 +14,19 @@ import { ReactComponent as PlayIcon } from 'majesticons/line/play-circle-line.sv
 import Popup from '@atlaskit/popup';
 import TextField from '@atlaskit/textfield';
 
+const containerStyles = css`
+  h3 {
+    margin-top: 32px;
+    margin-bottom: 0;
+    padding: 0;
+    font-size: 16px;
+  }
+`;
+
 const styles = css`
   display: grid;
-  grid-template-columns: auto 36px 1fr 1fr;
-  padding-top: 20px;
+  grid-template-columns: 8px auto 36px 1fr 1fr;
+  padding-top: 10px;
 
   .cell {
     padding: 8px;
@@ -27,6 +36,7 @@ const styles = css`
     user-select: none;
     display: flex;
     align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   .test-case-row {
@@ -39,14 +49,14 @@ const styles = css`
   }
 
   .test-case-row.selected {
-    .cell:not(.nobg) {
+    /* .cell:not(.nobg) {
       background-color: var(--primary);
       color: var(--grey-dark);
     }
 
     &:hover .cell:not(.nobg) {
       background-color: var(--primary-dark);
-    }
+    } */
   }
 
   .status-icon {
@@ -85,6 +95,44 @@ const styles = css`
       background-color: var(--grey-darkish);
       color: var(--primary);
     }
+  }
+
+  .header-cell {
+    border-bottom: 1px solid var(--grey);
+  }
+
+  .input-or-output-pair {
+    display: flex;
+    gap: 8px;
+
+    .key {
+      color: var(--primary);
+    }
+
+    .json {
+      font-family: var(--font-family-monospace);
+    }
+  }
+
+  .inputs-or-outputs {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .test-case-row-container {
+    display: contents;
+
+    &.selected {
+      .cell.selected-cell-indicator {
+        background-color: var(--primary);
+        border-radius: 4px;
+      }
+    }
+  }
+
+  .cell.outputs {
+    padding-left: 16px;
   }
 `;
 
@@ -159,15 +207,21 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
   };
 
   return (
-    <div onContextMenu={handleSidebarContextMenu} data-contextmenutype="test-case-table" ref={contextMenuRef}>
+    <div
+      onContextMenu={handleSidebarContextMenu}
+      data-contextmenutype="test-case-table"
+      ref={contextMenuRef}
+      css={containerStyles}
+    >
+      <h3>Test Cases</h3>
       <div css={styles}>
-        <div className="cell" />
-        <div className="cell" />
-        <div className="cell">Inputs</div>
-        <div className="cell">Outputs</div>
+        <div className="cell header-cell" style={{ gridColumn: 'span 3' }} />
+        <div className="cell header-cell">Inputs</div>
+        <div className="cell header-cell">Outputs</div>
 
         {testCases.map((testCase) => (
-          <>
+          <div className={clsx('test-case-row-container', { selected: editingTestCaseId === testCase.id })}>
+            <div className="cell selected-cell-indicator" />
             <div className="cell nobg">
               <button className="run-test-button" onClick={() => onRunTestCase(testCase.id)}>
                 <PlayIcon />
@@ -210,14 +264,14 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
               <div className="cell status-icon">
                 <TestCaseStatusIcon results={testCaseResults.filter((r) => r.id === testCase.id)} running={running} />
               </div>
-              <div className="cell">
+              <div className="cell inputs">
                 <DisplayInputsOrOutputs data={testCase.input} />
               </div>
-              <div className="cell">
+              <div className="cell outputs">
                 <DisplayInputsOrOutputs data={testCase.expectedOutput} />
               </div>
             </div>
-          </>
+          </div>
         ))}
         <div className="add-test-case">
           <Button onClick={onAddTestCase}>Add Test Case</Button>
@@ -288,16 +342,28 @@ const DisplayInputsOrOutputs: FC<{ data: Record<string, unknown> }> = ({ data })
     return '(Empty)';
   }
 
-  if (keys.length === 1) {
-    const value = data[keys[0]!];
+  const displayValue = (value: unknown) => {
+    if (value == null) {
+      return 'null';
+    }
+
     if (typeof value === 'string') {
       return value;
     }
 
-    return JSON.stringify(value);
-  }
+    return <span className="json">{JSON.stringify(value)}</span>;
+  };
 
-  return JSON.stringify(data);
+  return (
+    <div className="inputs-or-outputs">
+      {keys.map((key) => (
+        <div className="input-or-output-pair" key={key}>
+          <div className="key">{key}</div>
+          <div className="value">{displayValue(data[key])}</div>
+        </div>
+      ))}
+    </div>
+  );
 };
 
 const TestCaseStatusIcon: FC<{ results?: TrivetTestCaseResult[]; running: boolean }> = ({ results, running }) => {
