@@ -92,7 +92,7 @@ export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
 
   async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
     const inputMap = Object.keys(inputs).reduce((acc, key) => {
-      acc[key] = (inputs[key] as any).value;
+      acc[key] = (inputs[key] as any)?.value;
       return acc;
     }, {} as Record<string, any>);
 
