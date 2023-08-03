@@ -119,5 +119,14 @@ describe('ObjectNodeImpl', () => {
         obj: { hello: 'world' },
       },
     });
-  })
+  });
+
+  it('supports fully undefined inputs', async () => {
+    const node = createNode({ jsonTemplate: `{"key": "{{input}}"}` });
+    const inputs: Record<string, DataValue> = {
+      input: undefined as any, // I believe this can happen when a split node has arrays of different lengths.
+    };
+    const result = await node.process(inputs);
+    assert.deepStrictEqual(result['output'].value, { key: null });
+  });
 })
