@@ -61,6 +61,15 @@
         "ideas",
         "bug"
       ]
+    },
+    {
+      "login": "ankrgyl",
+      "name": "Ankur Goyal",
+      "avatar_url": "https://avatars.githubusercontent.com/u/565363?v=4",
+      "profile": "https://github.com/ankrgyl",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
