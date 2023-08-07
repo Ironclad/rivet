@@ -1,4 +1,4 @@
-import { max, range, uniqBy } from 'lodash-es';
+import { max, range, sum, uniqBy } from 'lodash-es';
 import { ControlFlowExcluded, ControlFlowExcludedPort } from '../utils/symbols.js';
 import {
   DataValue,
@@ -659,6 +659,15 @@ export class GraphProcessor {
         }
 
         throw error;
+      }
+
+      if (this.#graphOutputs['cost' as PortId] == null) {
+        const totalCost = sum(this.#graph.nodes.filter((node) => node.type === 'chat' || node.type === 'subGraph')
+          .map((node) => this.#nodeResults.get(node.id)?.['cost' as PortId]?.value ?? 0));
+        this.#graphOutputs['cost' as PortId] = {
+          type: 'number',
+          value: totalCost,
+        };
       }
 
       const outputValues = this.#graphOutputs;
