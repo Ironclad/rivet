@@ -23,7 +23,7 @@ const styles = css`
   padding: 0;
   z-index: 50;
   border-right: 1px solid var(--grey);
-  height: calc(100vh - 32px);
+  height: 100vh;
 
   .panel {
     display: flex;
