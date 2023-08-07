@@ -1,8 +1,10 @@
 import { FC } from 'react';
 import { useRecoilValue } from 'recoil';
 import { projectState } from '../../state/savedGraphs.js';
-import { SubGraphNode } from '@ironclad/rivet-core';
+import { Outputs, PortId, SubGraphNode, coerceTypeOptional } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
+import { RenderDataOutputs } from '../RenderDataValue.js';
+import { omit } from 'lodash-es';
 
 export const SubGraphNodeBody: FC<{
   node: SubGraphNode;
@@ -18,6 +20,32 @@ export const SubGraphNodeBody: FC<{
   );
 };
 
+export const SubGraphNodeOutputSimple: FC<{
+  outputs: Outputs;
+}> = ({ outputs }) => {
+  const cost = coerceTypeOptional(outputs['cost' as PortId], 'number');
+  const duration = coerceTypeOptional(outputs['duration' as PortId], 'number');
+
+  return <div>
+    <div className="metaInfo">
+      {(cost ?? 0) > 0 && (
+        <div>
+          <em>${cost!.toFixed(3)}</em>
+        </div>
+      )}
+      {(duration ?? 0) > 0 && (
+        <div>
+          <em>Duration: {duration}ms</em>
+        </div>
+      )}
+    </div>
+    <div>
+      <RenderDataOutputs outputs={omit(outputs, ['cost', 'duration'])!} />
+    </div>
+  </div>;
+};
+
 export const subgraphNodeDescriptor: NodeComponentDescriptor<'subGraph'> = {
   Body: SubGraphNodeBody,
+  OutputSimple: SubGraphNodeOutputSimple,
 };
