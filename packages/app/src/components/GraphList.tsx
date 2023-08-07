@@ -284,7 +284,7 @@ export const GraphList: FC = () => {
       graph.metadata!.name = i === 1 ? `Untitled Graph` : `Untitled Graph ${i}`;
     }
     loadGraph(graph);
-    setSavedGraphs([...savedGraphs, graph]);
+    setSavedGraphs((savedGraphs) => [...savedGraphs, graph]);
     startRename(graph.metadata!.name!);
   });
 
