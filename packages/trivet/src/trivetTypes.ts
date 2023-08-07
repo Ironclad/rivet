@@ -49,6 +49,7 @@ export interface TrivetTestCaseResult {
   passing: boolean;
   message: string;
   outputs: Record<string, unknown>;
+  duration: number;
   error?: Error | string | any;
 }
 

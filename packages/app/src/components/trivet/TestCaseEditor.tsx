@@ -3,7 +3,7 @@ import { trivetState } from '../../state/trivet';
 import { useRecoilState } from 'recoil';
 import Button from '@atlaskit/button';
 import { css } from '@emotion/react';
-import { isEqual } from 'lodash-es';
+import { isEqual, mean } from 'lodash-es';
 import { LazyCodeEditor } from '../LazyComponents';
 import type { monaco } from '../../utils/monaco';
 
@@ -75,6 +75,7 @@ export const TestCaseEditor: FC = () => {
   );
 
   const passing = testCaseResults?.every((res) => res.passing);
+  const durationAvg = mean(testCaseResults?.map((res) => res.duration).filter((d) => d > 0));
 
   function onClose() {
     setState((s) => ({ ...s, editingTestCaseId: undefined }));
@@ -139,6 +140,7 @@ export const TestCaseEditor: FC = () => {
               : `Test Results Outputs (${testCaseResults.filter((r) => r.passing).length}/${
                   testCaseResults.length
                 } passing)`}
+            {durationAvg != null && ` (${(durationAvg / 1000).toFixed(2)}s avg)`}
           </label>
           <InputOutputEditor
             json={testCaseResults.length === 1 ? testCaseResults[0]!.outputs : testCaseResults.map((r) => r.outputs)}

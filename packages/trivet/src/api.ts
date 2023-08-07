@@ -110,7 +110,9 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
       for (let i = 0; i < iterationCount; i++) {
         try {
           const resolvedInputs: Record<string, DataValue> = mapValues(testCase.input, inferType);
+          const startTime = Date.now();
           const outputs = await runGraph(project, testGraph.metadata!.id!, resolvedInputs);
+          const duration = Date.now() - startTime;
 
           console.log('ran test graph', outputs);
 
@@ -153,6 +155,7 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
             passing: validationResults.every((r) => r.valid),
             message: validationResults.find((r) => !r.valid)?.description ?? 'PASS',
             outputs: mapValues(outputs, (dataValue) => dataValue.value),
+            duration,
           });
         } catch (err) {
           testCaseResults.push({
@@ -161,6 +164,7 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
             passing: false,
             message: 'An error occurred',
             outputs: {},
+            duration: 0,
             error: err,
           });
         }
