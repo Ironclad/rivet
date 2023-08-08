@@ -187,6 +187,7 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
             openAiOrganization: options.openAiOrganization ?? '',
             pineconeApiKey: options.pineconeApiKey ?? '',
             anthropicApiKey: options.anthropicApiKey ?? '',
+            braintrustApiKey: options.braintrustApiKey ?? '',
             recordingPlaybackLatency: 1000,
           } satisfies Required<Settings>,
         },

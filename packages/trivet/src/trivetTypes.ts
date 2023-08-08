@@ -11,6 +11,8 @@ export interface TrivetOpts {
 
   runGraph: TrivetGraphRunner;
   onUpdate?: (results: TrivetResults) => void;
+
+  braintrustApiKey?: string;
 }
 
 export interface TrivetTestSuite {

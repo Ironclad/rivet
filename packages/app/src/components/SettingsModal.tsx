@@ -80,6 +80,17 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
                 />
               )}
             </Field>
+            <Field name="braintrustApiKey" label="BrainTrust API Key">
+              {() => (
+                <TextField
+                  type="password"
+                  value={settings.braintrustApiKey}
+                  onChange={(e) =>
+                    setSettings((s) => ({ ...s, braintrustApiKey: (e.target as HTMLInputElement).value }))
+                  }
+                />
+              )}
+            </Field>
           </ModalBody>
           <ModalFooter>
             <Button appearance="primary" onClick={closeModal}>

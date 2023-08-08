@@ -144,6 +144,7 @@ export function useLocalExecutor() {
             }))
         : testSuites;
       try {
+        const settings = await fillMissingSettingsFromEnvironmentVariables(savedSettings);
         const result = await runTrivet({
           project,
           iterationCount: options.iterationCount,
@@ -159,12 +160,13 @@ export function useLocalExecutor() {
             attachGraphEvents(processor);
             return processor.processGraph(
               {
-                settings: await fillMissingSettingsFromEnvironmentVariables(savedSettings),
+                settings,
                 nativeApi: new TauriNativeApi(),
               },
               inputs,
             );
           },
+          braintrustApiKey: settings.braintrustApiKey,
         });
         setTrivetState((s) => ({
           ...s,

@@ -25,6 +25,7 @@ export async function fillMissingSettingsFromEnvironmentVariables(settings: Part
     openAiOrganization: (settings.openAiOrganization || (await getEnvVar('OPENAI_ORG_ID'))) ?? '',
     pineconeApiKey: (settings.pineconeApiKey || (await getEnvVar('PINECONE_API_KEY'))) ?? '',
     anthropicApiKey: (settings.anthropicApiKey || (await getEnvVar('ANTHROPIC_API_KEY'))) ?? '',
+    braintrustApiKey: (settings.braintrustApiKey || (await getEnvVar('BRAINTRUST_API_KEY'))) ?? '',
   };
 
   return fullSettings;

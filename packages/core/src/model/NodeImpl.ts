@@ -10,6 +10,7 @@ export interface Settings {
 
   pineconeApiKey?: string;
   anthropicApiKey?: string;
+  braintrustApiKey?: string;
 
   recordingPlaybackLatency?: number;
 }

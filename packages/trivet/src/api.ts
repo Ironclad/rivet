@@ -10,6 +10,7 @@ import {
 } from '@ironclad/rivet-core';
 import { cloneDeep, keyBy, mapValues } from 'lodash-es';
 import { TrivetGraphRunner, TrivetOpts, TrivetResults, TrivetTestCaseResult } from './trivetTypes.js';
+import * as braintrust from 'braintrust';
 
 const TRUTHY_STRINGS = new Set(['true', 'TRUE']);
 
@@ -39,7 +40,7 @@ export class DummyNativeApi implements NativeApi {
   }
 }
 
-export function createTestGraphRunner(opts: { openAiKey: string }): TrivetGraphRunner {
+export function createTestGraphRunner(opts: { openAiKey: string; braintrustApiKey?: string }): TrivetGraphRunner {
   return async (project, graphId, inputs) => {
     const processor = new GraphProcessor(project, graphId);
     const resolvedContextValues: Record<string, DataValue> = {};
@@ -51,6 +52,7 @@ export function createTestGraphRunner(opts: { openAiKey: string }): TrivetGraphR
           openAiOrganization: '',
           pineconeApiKey: '',
           anthropicApiKey: '',
+          braintrustApiKey: opts.braintrustApiKey ?? '',
           recordingPlaybackLatency: 1000,
         } satisfies Required<Settings>,
       },
@@ -106,6 +108,15 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
       ],
     });
 
+    let experiment = null;
+    if (opts.braintrustApiKey) {
+      experiment = await braintrust.init(testSuite.name ?? `Test Suite ${testSuite.id}`, {
+        experiment: `trivet-${Date.now()}`, // TODO: We are planning to rework how experiment name generation works
+        apiKey: opts.braintrustApiKey,
+        apiUrl: 'http://localhost:3000', // XXX REMOVE
+      });
+    }
+
     for (const testCase of testSuite.testCases) {
       for (let i = 0; i < iterationCount; i++) {
         try {
@@ -149,6 +160,34 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
               valid,
             };
           });
+
+          if (experiment) {
+            experiment.log({
+              input: testCase.input,
+              expected: testCase.expectedOutput,
+              output: validationInputs.output!.value,
+              scores: {
+                ...validationResults.reduce(
+                  (acc, r) => ({
+                    ...acc,
+                    [r.title]: r.valid ? 1 : 0,
+                  }),
+                  {},
+                ),
+                no_error: 1,
+              },
+              metadata: {
+                testSuite: testSuite.id,
+                testCase: testCase.id,
+                iteration: i + 1,
+                duration,
+                passing: validationResults.every((r) => r.valid),
+                message: validationResults.find((r) => !r.valid)?.description ?? 'PASS',
+                outputs: mapValues(outputs, (dataValue) => dataValue.value),
+              },
+            });
+          }
+
           testCaseResults.push({
             id: testCase.id,
             iteration: i + 1,
@@ -158,6 +197,22 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
             duration,
           });
         } catch (err) {
+          if (experiment) {
+            experiment.log({
+              input: testCase.input,
+              expected: testCase.expectedOutput,
+              output: null,
+              scores: {
+                no_error: 0,
+              },
+              metadata: {
+                testSuite: testSuite.id,
+                testCase: testCase.id,
+                iteration: i + 1,
+              },
+            });
+          }
+
           testCaseResults.push({
             id: testCase.id,
             iteration: i + 1,
@@ -187,6 +242,10 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
 
         onUpdate?.(cloneDeep(trivetResults));
       }
+    }
+
+    if (experiment) {
+      console.log(await experiment.summarize());
     }
   }
   return trivetResults;

@@ -39,13 +39,18 @@
   },
   "dependencies": {
     "@ironclad/rivet-core": "workspace:^",
+    "axios": "^1.4.0",
+    "braintrust": "portal:../../../braintrust/sdk/js/",
     "lodash-es": "^4.17.21",
+    "uuid": "^9.0.0",
     "yaml": "^2.3.1"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/eslint": "^8.44.1",
     "@types/lodash-es": "^4.17.8",
     "@types/node": "^20.4.5",
+    "@types/uuid": "^9.0.2",
     "@types/yaml": "^1.9.7",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "eslint": "^8.46.0",
