@@ -17,6 +17,7 @@ import {
 } from '@ironclad/trivet';
 import { trivetState } from '../../state/trivet';
 import Button from '@atlaskit/button';
+
 import { TryRunTests } from './api';
 import { useStableCallback } from '../../hooks/useStableCallback';
 import { useOpenUrl } from '../../hooks/useOpenUrl';
@@ -135,7 +136,7 @@ export const TestSuiteRenderer: FC<{ tryRunTests: TryRunTests }> = ({ tryRunTest
 };
 
 export const TestSuite: FC<{ testSuite: TrivetTestSuite; tryRunTests: TryRunTests }> = ({ testSuite, tryRunTests }) => {
-  const [{ selectedTestSuiteId, editingTestCaseId, recentTestResults, runningTests }, setState] =
+  const [{ selectedTestSuiteId, editingTestCaseId, recentTestResults, runningTests, brainTrustSummaries }, setState] =
     useRecoilState(trivetState);
   const savedGraphs = useRecoilValue(savedGraphsState);
 
@@ -298,6 +299,7 @@ export const TestSuite: FC<{ testSuite: TrivetTestSuite; tryRunTests: TryRunTest
   }, [testCaseValidationResults, testSuite, updateTestSuite]);
 
   const viewDocumentation = useOpenUrl('https://rivet.ironcladapp.com/trivet');
+  const brainTrustSummary = brainTrustSummaries && brainTrustSummaries[testSuite.id];
 
   return (
     <div css={styles}>
@@ -370,6 +372,18 @@ export const TestSuite: FC<{ testSuite: TrivetTestSuite; tryRunTests: TryRunTest
                 <Button appearance="primary" onClick={() => tryRunTests({ testSuiteIds: [testSuite.id] })}>
                   Run Test Suite
                 </Button>
+
+                {brainTrustSummary &&
+                  <div style={{ marginLeft: 10 }}>
+                    <Button
+                      appearance="primary"
+                      onClick={useOpenUrl(brainTrustSummary.experimentUrl)}
+                    >
+                      View results in BrainTrust ({brainTrustSummary.experimentName})
+                    </Button>
+                  </div>
+                }
+
               </div>
               <TestCaseTable
                 testCases={testSuite.testCases}

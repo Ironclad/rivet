@@ -1,6 +1,8 @@
 import { GraphId, GraphInputs, GraphOutputs, Project } from '@ironclad/rivet-core';
+import { ExperimentSummary as BTExperimentSummary } from 'braintrust';
 
 export type TrivetGraphRunner = (project: Project, graphId: GraphId, inputs: GraphInputs) => Promise<GraphOutputs>;
+export type ExperimentSummary = BTExperimentSummary;
 
 export interface TrivetOpts {
   project: Project;
@@ -13,6 +15,7 @@ export interface TrivetOpts {
   onUpdate?: (results: TrivetResults) => void;
 
   braintrustApiKey?: string;
+  setBrainTrustSummary?: (id: string, summary?: ExperimentSummary) => void;
 }
 
 export interface TrivetTestSuite {

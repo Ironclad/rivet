@@ -1,4 +1,4 @@
-import { TrivetResults, TrivetTestSuite } from '@ironclad/trivet';
+import { ExperimentSummary, TrivetResults, TrivetTestSuite } from '@ironclad/trivet';
 import { atom, selector } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 
@@ -10,6 +10,7 @@ export type TrivetState = {
   editingTestCaseId?: string;
   recentTestResults?: TrivetResults;
   runningTests: boolean;
+  brainTrustSummaries?: Record<string, ExperimentSummary>;
 };
 
 export const trivetState = atom<TrivetState>({

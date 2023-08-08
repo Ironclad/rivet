@@ -167,6 +167,12 @@ export function useLocalExecutor() {
             );
           },
           braintrustApiKey: settings.braintrustApiKey,
+          setBrainTrustSummary: (id, summary) => {
+            setTrivetState((s) => ({
+              ...s,
+              brainTrustSummaries: { ...s.brainTrustSummaries, [id]: summary },
+            }));
+          }
         });
         setTrivetState((s) => ({
           ...s,

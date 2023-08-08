@@ -115,6 +115,9 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
         apiKey: opts.braintrustApiKey,
         apiUrl: 'http://localhost:3000', // XXX REMOVE
       });
+
+      const summary = await experiment.summarize({ summarizeScores: false });
+      opts.setBrainTrustSummary?.(testSuite.id, summary);
     }
 
     for (const testCase of testSuite.testCases) {
@@ -245,7 +248,8 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
     }
 
     if (experiment) {
-      console.log(await experiment.summarize());
+      const summary = await experiment.summarize({ summarizeScores: false });
+      opts.setBrainTrustSummary?.(testSuite.id, summary);
     }
   }
   return trivetResults;
