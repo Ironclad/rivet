@@ -16,7 +16,7 @@ body:
       value: "A bug happened!"
     validations:
       required: true
-    - type: textarea
+  - type: textarea
     id: expected-functionality 
     attributes:
       label: What was the expected functionality?
@@ -25,7 +25,7 @@ body:
       value: "Rivet did not work as expected!"
     validations:
       required: true
-    - type: textarea
+  - type: textarea
     id: environment 
     attributes:
       label: Describe your environment
