@@ -111,9 +111,9 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
     let experiment = null;
     if (opts.braintrustApiKey) {
       experiment = await braintrust.init(testSuite.name ?? `Test Suite ${testSuite.id}`, {
-        experiment: `trivet-${Date.now()}`, // TODO: We are planning to rework how experiment name generation works
+        // TODO: It would be good to include the current user's name
+        experiment: `trivet-${Date.now()}`,
         apiKey: opts.braintrustApiKey,
-        apiUrl: 'http://localhost:3000', // XXX REMOVE
       });
 
       const summary = await experiment.summarize({ summarizeScores: false });

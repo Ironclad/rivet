@@ -6936,7 +6936,7 @@ const RAW_RUNTIME_STATE =
           ["@types/yaml", "npm:1.9.7"],\
           ["@typescript-eslint/eslint-plugin", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:5.62.0"],\
           ["axios", "npm:1.4.0"],\
-          ["braintrust", "portal:../../../braintrust/sdk/js/::locator=%40ironclad%2Ftrivet%40workspace%3Apackages%2Ftrivet"],\
+          ["braintrust", "npm:0.0.28"],\
           ["eslint", "npm:8.46.0"],\
           ["eslint-config-standard-with-typescript", "virtual:74fcc7b6256f60a89945acc6b1c62e6158616c0dcf2312663cfe08ceda598b7d943e5de97f39a415e4491198cfa92535d8e40310ec84839b8241ca342059e353#npm:37.0.0"],\
           ["eslint-plugin-import", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:2.28.0"],\
@@ -10573,16 +10573,16 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["autoevals", [\
-      ["file:../autoevals#../autoevals::hash=4f7cb5&locator=braintrust%40portal%3A..%2F..%2F..%2Fbraintrust%2Fsdk%2Fjs%2F%3A%3Alocator%3D%2540ironclad%252Ftrivet%2540workspace%253Apackages%252Ftrivet", {\
-        "packageLocation": "./.yarn/unplugged/autoevals-file-a513755f6c/node_modules/autoevals/",\
+      ["npm:0.0.8", {\
+        "packageLocation": "./.yarn/cache/autoevals-npm-0.0.8-ccb77ffa3d-2e83b91f20.zip/node_modules/autoevals/",\
         "packageDependencies": [\
-          ["autoevals", "file:../autoevals#../autoevals::hash=4f7cb5&locator=braintrust%40portal%3A..%2F..%2F..%2Fbraintrust%2Fsdk%2Fjs%2F%3A%3Alocator%3D%2540ironclad%252Ftrivet%2540workspace%253Apackages%252Ftrivet"],\
+          ["autoevals", "npm:0.0.8"],\
           ["@types/node", "npm:20.4.8"],\
           ["js-levenshtein", "npm:1.1.6"],\
           ["js-yaml", "npm:4.1.0"],\
           ["mustache", "npm:4.2.0"],\
           ["openai", "npm:3.3.0"],\
-          ["sqlite3", "virtual:a513755f6c07430a1f4bad93f568538c70b8160538a49f92ba3f9362b513d7e9de9995817007ab29c4a9c377e484ffe59e07e2893fddfbc3553e9bf39521a47e#npm:5.1.6"]\
+          ["sqlite3", "virtual:ccb77ffa3ddc5c8af10abb2c86e9805c2568e81cdaf475b638d77d9e4ea2f9d13a7ec0c1949dd1f900c599bba72f8f2ab0290c8b64c3496832250f32beae52bc#npm:5.1.6"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11053,12 +11053,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["braintrust", [\
-      ["portal:../../../braintrust/sdk/js/::locator=%40ironclad%2Ftrivet%40workspace%3Apackages%2Ftrivet", {\
-        "packageLocation": "../braintrust/sdk/js/",\
+      ["npm:0.0.28", {\
+        "packageLocation": "./.yarn/cache/braintrust-npm-0.0.28-47a1a51022-2d884ca7f7.zip/node_modules/braintrust/",\
         "packageDependencies": [\
-          ["braintrust", "portal:../../../braintrust/sdk/js/::locator=%40ironclad%2Ftrivet%40workspace%3Apackages%2Ftrivet"],\
+          ["braintrust", "npm:0.0.28"],\
           ["argparse", "npm:2.0.1"],\
-          ["autoevals", "file:../autoevals#../autoevals::hash=4f7cb5&locator=braintrust%40portal%3A..%2F..%2F..%2Fbraintrust%2Fsdk%2Fjs%2F%3A%3Alocator%3D%2540ironclad%252Ftrivet%2540workspace%253Apackages%252Ftrivet"],\
+          ["autoevals", "npm:0.0.8"],\
           ["axios", "npm:1.4.0"],\
           ["chalk", "npm:4.1.2"],\
           ["graceful-fs", "npm:4.2.11"],\
@@ -11068,7 +11068,7 @@ const RAW_RUNTIME_STATE =
           ["simple-git", "npm:3.19.1"],\
           ["uuid", "npm:9.0.0"]\
         ],\
-        "linkType": "SOFT"\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["browserslist", [\
@@ -22197,16 +22197,16 @@ const RAW_RUNTIME_STATE =
     ]],\
     ["sqlite3", [\
       ["npm:5.1.6", {\
-        "packageLocation": "./.yarn/unplugged/sqlite3-virtual-af70b68bb3/node_modules/sqlite3/",\
+        "packageLocation": "./.yarn/unplugged/sqlite3-virtual-86329f549a/node_modules/sqlite3/",\
         "packageDependencies": [\
           ["sqlite3", "npm:5.1.6"]\
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:a513755f6c07430a1f4bad93f568538c70b8160538a49f92ba3f9362b513d7e9de9995817007ab29c4a9c377e484ffe59e07e2893fddfbc3553e9bf39521a47e#npm:5.1.6", {\
-        "packageLocation": "./.yarn/unplugged/sqlite3-virtual-af70b68bb3/node_modules/sqlite3/",\
+      ["virtual:ccb77ffa3ddc5c8af10abb2c86e9805c2568e81cdaf475b638d77d9e4ea2f9d13a7ec0c1949dd1f900c599bba72f8f2ab0290c8b64c3496832250f32beae52bc#npm:5.1.6", {\
+        "packageLocation": "./.yarn/unplugged/sqlite3-virtual-86329f549a/node_modules/sqlite3/",\
         "packageDependencies": [\
-          ["sqlite3", "virtual:a513755f6c07430a1f4bad93f568538c70b8160538a49f92ba3f9362b513d7e9de9995817007ab29c4a9c377e484ffe59e07e2893fddfbc3553e9bf39521a47e#npm:5.1.6"],\
+          ["sqlite3", "virtual:ccb77ffa3ddc5c8af10abb2c86e9805c2568e81cdaf475b638d77d9e4ea2f9d13a7ec0c1949dd1f900c599bba72f8f2ab0290c8b64c3496832250f32beae52bc#npm:5.1.6"],\
           ["@mapbox/node-pre-gyp", "npm:1.0.11"],\
           ["@types/node-gyp", null],\
           ["node-addon-api", "npm:4.3.0"],\

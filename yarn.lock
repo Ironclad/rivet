@@ -4214,7 +4214,7 @@ __metadata:
     "@types/yaml": "npm:^1.9.7"
     "@typescript-eslint/eslint-plugin": "npm:^5.50.0"
     axios: "npm:^1.4.0"
-    braintrust: "portal:../../../braintrust/sdk/js/"
+    braintrust: "npm:^0.0.28"
     eslint: "npm:^8.46.0"
     eslint-config-standard-with-typescript: "npm:^37.0.0"
     eslint-plugin-import: "npm:^2.28.0"
@@ -6984,9 +6984,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoevals@file:../autoevals::locator=braintrust%40portal%3A..%2F..%2F..%2Fbraintrust%2Fsdk%2Fjs%2F%3A%3Alocator%3D%2540ironclad%252Ftrivet%2540workspace%253Apackages%252Ftrivet":
-  version: 0.0.0
-  resolution: "autoevals@file:../autoevals#../autoevals::hash=4f7cb5&locator=braintrust%40portal%3A..%2F..%2F..%2Fbraintrust%2Fsdk%2Fjs%2F%3A%3Alocator%3D%2540ironclad%252Ftrivet%2540workspace%253Apackages%252Ftrivet"
+"autoevals@npm:^0.0.8":
+  version: 0.0.8
+  resolution: "autoevals@npm:0.0.8"
   dependencies:
     "@types/node": "npm:^20.4.4"
     js-levenshtein: "npm:^1.1.6"
@@ -6994,7 +6994,7 @@ __metadata:
     mustache: "npm:^4.2.0"
     openai: "npm:^3.3.0"
     sqlite3: "npm:^5.1.6"
-  checksum: 6a1d2ceff728569abf167d74fe9653cee197b5215fe9546d96160383a33c26ea7b91768fc830a06635bd2593c10b4980325bb14500bea53901ae214fc2d84dfc
+  checksum: 2e83b91f2057b5d1bc91213b59ee18c3d420b2d635c88acee94fcf2e940195608b5eb67b7fa5a27470ebb17b510b58162fe3c546d20356005071324fdc4dd64f
   languageName: node
   linkType: hard
 
@@ -7357,12 +7357,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"braintrust@portal:../../../braintrust/sdk/js/::locator=%40ironclad%2Ftrivet%40workspace%3Apackages%2Ftrivet":
-  version: 0.0.0-use.local
-  resolution: "braintrust@portal:../../../braintrust/sdk/js/::locator=%40ironclad%2Ftrivet%40workspace%3Apackages%2Ftrivet"
+"braintrust@npm:^0.0.28":
+  version: 0.0.28
+  resolution: "braintrust@npm:0.0.28"
   dependencies:
     argparse: "npm:^2.0.1"
-    autoevals: "file:../autoevals"
+    autoevals: "npm:^0.0.8"
     axios: "npm:^1.4.0"
     chalk: "npm:^4.1.2"
     graceful-fs: "npm:^4.2.11"
@@ -7372,9 +7372,10 @@ __metadata:
     simple-git: "npm:^3.19.1"
     uuid: "npm:^9.0.0"
   bin:
-    braintrust: ./dist/cli.js
+    braintrust: dist/cli.js
+  checksum: 2d884ca7f74d8124599adf3263a1fad0d2b0f5866c82afc979141943d4882d35fbbf4c2613770664afae5086e71e36c89ac1505d8bd9f8e4f15af82fd9bbd364
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "browserslist@npm:^4.0.0, browserslist@npm:^4.14.5, browserslist@npm:^4.18.1, browserslist@npm:^4.21.4, browserslist@npm:^4.21.9":
   version: 4.21.9

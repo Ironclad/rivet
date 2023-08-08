@@ -40,7 +40,7 @@
   "dependencies": {
     "@ironclad/rivet-core": "workspace:^",
     "axios": "^1.4.0",
-    "braintrust": "portal:../../../braintrust/sdk/js/",
+    "braintrust": "^0.0.28",
     "lodash-es": "^4.17.21",
     "uuid": "^9.0.0",
     "yaml": "^2.3.1"
