@@ -3,7 +3,8 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-Rivet is an IDE for making LLM prompt chains, AI agents, and complex interconnected LLM interations. It features a node-based editor with an integrated debugger.
+Rivet is an IDE for making LLM prompt chains, AI agents, and complex interconnected LLM interations. It features a node-based editor with an integrated debugger. Currently, Rivet integrates with OpenAI's API and Anthropic.
+
 
 ## Getting Started
 
