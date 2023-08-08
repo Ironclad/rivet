@@ -71,6 +71,22 @@
         "doc",
         "code"
       ]
+    },
+    {
+      "login": "abrenneke",
+      "name": "Andy Brenneke",
+      "avatar_url": "https://avatars.githubusercontent.com/u/342540?v=4",
+      "profile": "https://github.com/abrenneke",
+      "contributions": [
+        "code",
+        "ideas",
+        "research",
+        "test",
+        "tool",
+        "review",
+        "question",
+        "mentoring"
+      ]
     }
   ],
   "contributorsPerLine": 7,
