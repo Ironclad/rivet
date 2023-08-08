@@ -1,6 +1,6 @@
 # Rivet
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Rivet is an IDE for making LLM prompt chains, AI agents, and complex interconnected LLM interations. It features a node-based editor with an integrated debugger.
@@ -56,6 +56,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/a-rothwell"><img src="https://avatars.githubusercontent.com/u/12634659?v=4?s=100" width="100px;" alt="Andrew Rothwell"/><br /><sub><b>Andrew Rothwell</b></sub></a><br /><a href="#tutorial-a-rothwell" title="Tutorials">✅</a> <a href="https://github.com/Ironclad/rivet/commits?author=a-rothwell" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://twitter.com/dominiccooney"><img src="https://avatars.githubusercontent.com/u/55120?v=4?s=100" width="100px;" alt="Dominic Cooney"/><br /><sub><b>Dominic Cooney</b></sub></a><br /><a href="#ideas-dominiccooney" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/Ironclad/rivet/issues?q=author%3Adominiccooney" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ankrgyl"><img src="https://avatars.githubusercontent.com/u/565363?v=4?s=100" width="100px;" alt="Ankur Goyal"/><br /><sub><b>Ankur Goyal</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=ankrgyl" title="Documentation">📖</a> <a href="https://github.com/Ironclad/rivet/commits?author=ankrgyl" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/abrenneke"><img src="https://avatars.githubusercontent.com/u/342540?v=4?s=100" width="100px;" alt="Andy Brenneke"/><br /><sub><b>Andy Brenneke</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=abrenneke" title="Code">💻</a> <a href="#ideas-abrenneke" title="Ideas, Planning, & Feedback">🤔</a> <a href="#research-abrenneke" title="Research">🔬</a> <a href="https://github.com/Ironclad/rivet/commits?author=abrenneke" title="Tests">⚠️</a> <a href="#tool-abrenneke" title="Tools">🔧</a> <a href="https://github.com/Ironclad/rivet/pulls?q=is%3Apr+reviewed-by%3Aabrenneke" title="Reviewed Pull Requests">👀</a> <a href="#question-abrenneke" title="Answering Questions">💬</a> <a href="#mentoring-abrenneke" title="Mentoring">🧑‍🏫</a></td>
     </tr>
   </tbody>
 </table>
