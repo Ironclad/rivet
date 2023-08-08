@@ -124,20 +124,31 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
       throw new Error('SubGraphNode requires a project to be set in the context.');
     }
 
-    const subGraphProcessor = context.createSubProcessor(this.data.graphId);
+    const subGraphProcessor = context.createSubProcessor(this.data.graphId, { signal: context.signal });
 
     try {
+      const startTime = Date.now();
+
       const outputs = await subGraphProcessor.processGraph(
         context,
         inputs as Record<string, DataValue>,
         context.contextValues,
       );
 
+      const duration = Date.now() - startTime;
+
       if (this.data.useErrorOutput) {
         outputs['error' as PortId] = {
           type: 'control-flow-excluded',
           value: undefined,
         };
+      }
+
+      if (outputs['duration' as PortId] == null) {
+        outputs['duration' as PortId] = {
+          type: 'number',
+          value: duration,
+        }
       }
 
       return outputs;

@@ -1,7 +1,7 @@
 {
   "name": "@ironclad/rivet-node",
   "repository": "https://github.com/ironclad/rivet",
-  "version": "0.12.0",
+  "version": "0.14.3",
   "main": "dist/cjs/bundle.cjs",
   "module": "dist/esm/index.js",
   "src": "src/index.ts",
@@ -34,32 +34,40 @@
     "build:esm": "rm -rf dist/esm dist/types dist/tsconfig.tsbuildinfo && tsc -b --verbose",
     "build:cjs": "rm -rf dist/cjs && tsx ../core/bundle.esbuild.ts",
     "prepack": "yarn build && cp -r ../../LICENSE ../../README.md .",
-    "publish": "yarn npm publish"
+    "publish": "yarn npm publish",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx ./src"
   },
   "dependencies": {
     "@ironclad/rivet-core": "workspace:^",
-    "@zilliz/milvus2-sdk-node": "^2.2.16",
+    "@zilliz/milvus2-sdk-node": "^2.2.21",
     "emittery": "^1.0.1",
     "emittery-0-13": "npm:emittery@^0.13.1",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
-    "minimatch": "^9.0.1",
+    "minimatch": "^9.0.3",
     "nanoid": "^3.3.6",
-    "ts-pattern": "^5.0.1",
-    "type-fest": "^3.11.1",
+    "ts-pattern": "^5.0.4",
+    "type-fest": "^4.0.0",
     "ws": "^8.13.0"
   },
   "devDependencies": {
-    "@swc/core": "^1.3.68",
-    "@types/lodash": "^4",
-    "@types/lodash-es": "^4.17.7",
+    "@swc/core": "^1.3.71",
+    "@types/eslint": "^8.44.1",
+    "@types/lodash": "^4.14.196",
+    "@types/lodash-es": "^4.17.8",
     "@types/minimatch": "^5.1.2",
-    "@types/node": "^20.3.1",
+    "@types/node": "^20.4.5",
     "@types/ws": "^8.5.5",
-    "esbuild": "^0.18.11",
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "esbuild": "^0.18.17",
+    "eslint": "^8.46.0",
+    "eslint-config-standard-with-typescript": "^37.0.0",
+    "eslint-plugin-import": "^2.28.0",
+    "eslint-plugin-n": "^16.0.1",
+    "eslint-plugin-promise": "^6.1.1",
     "ts-node": "^10.9.1",
     "tsx": "^3.12.7",
-    "typescript": "^5.1.3"
+    "typescript": "^5.1.6"
   },
   "volta": {
     "node": "20.4.0"

@@ -1,5 +1,5 @@
 import { useLatest } from 'ahooks';
-import { FC, useEffect, useRef } from 'react';
+import { FC, MutableRefObject, useEffect, useRef } from 'react';
 import { monaco } from '../utils/monaco.js';
 
 export const CodeEditor: FC<{
@@ -10,7 +10,9 @@ export const CodeEditor: FC<{
   theme?: string;
   autoFocus?: boolean;
   onKeyDown?: (e: monaco.IKeyboardEvent) => void;
-}> = ({ text, isReadonly, onChange, language, theme, autoFocus, onKeyDown }) => {
+  editorRef?: MutableRefObject<monaco.editor.IStandaloneCodeEditor | undefined>;
+  scrollBeyondLastLine?: boolean;
+}> = ({ text, isReadonly, onChange, language, theme, autoFocus, onKeyDown, editorRef, scrollBeyondLastLine }) => {
   const editorContainer = useRef<HTMLDivElement>(null);
   const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
 
@@ -27,24 +29,39 @@ export const CodeEditor: FC<{
       glyphMargin: false,
       folding: false,
       lineNumbersMinChars: 2,
-      language: language,
+      language,
       minimap: {
         enabled: false,
       },
       wordWrap: 'on',
       readOnly: isReadonly,
       value: text,
-      automaticLayout: true,
+      scrollBeyondLastLine,
     });
+
+    const onResize = () => {
+      editor.layout();
+    };
+
+    editor.layout();
+
+    window.addEventListener('resize', onResize);
 
     editor.onDidChangeModelContent(() => {
       onChangeLatest.current?.(editor.getValue());
     });
 
     editorInstance.current = editor;
+    if (editorRef) {
+      editorRef.current = editor;
+    }
+
+    const latestBeforeDispose = onChangeLatest.current;
 
     return () => {
+      latestBeforeDispose?.(editor.getValue());
       editor.dispose();
+      window.removeEventListener('resize', onResize);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -66,3 +83,5 @@ export const CodeEditor: FC<{
 
   return <div ref={editorContainer} className="editor-container" />;
 };
+
+export default CodeEditor;

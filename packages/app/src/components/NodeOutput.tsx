@@ -14,6 +14,7 @@ import { RenderDataOutputs } from './RenderDataValue.js';
 import { entries } from '../utils/typeSafety.js';
 import { orderBy } from 'lodash-es';
 import { promptDesignerAttachedChatNodeState, promptDesignerState } from '../state/promptDesigner.js';
+import { overlayOpenState } from '../state/ui';
 
 export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -112,15 +113,32 @@ const fullscreenOutputButtonsCss = css`
   .prompt-designer-button:hover {
     opacity: 1;
   }
+
+  .copy-json-button {
+    opacity: 0.2;
+    cursor: pointer;
+    user-select: none;
+    text-transform: uppercase;
+    font-size: 10px;
+    transition: opacity 0.2s;
+    z-index: 1;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 `;
 
 const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
   const output = useRecoilValue(lastRunData(node.id));
-  let [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
+  const [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
 
   const { FullscreenOutput, Output, OutputSimple, FullscreenOutputSimple } = useUnknownNodeComponentDescriptorFor(node);
 
-  const setPromptDesignerState = useSetRecoilState(promptDesignerState);
+  const setOverlayOpen = useSetRecoilState(overlayOpenState);
   const setPromptDesignerAttachedNode = useSetRecoilState(promptDesignerAttachedChatNodeState);
 
   const { data, processId } = useMemo(() => {
@@ -136,7 +154,7 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
   }, [output, selectedPage]);
 
   const handleOpenPromptDesigner = () => {
-    setPromptDesignerState((s) => ({ ...s, isOpen: true }));
+    setOverlayOpen('promptDesigner');
     setPromptDesignerAttachedNode({
       nodeId: node.id,
       processId: processId!,
@@ -162,6 +180,13 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
     } else {
       copyToClipboard(JSON.stringify(outputValue, null, 2));
     }
+  });
+
+  const handleCopyToClipboardJson = useStableCallback(() => {
+    if (!data) {
+      return;
+    }
+    copyToClipboard(JSON.stringify(data.outputData, null, 2));
   });
 
   const prevPage = useStableCallback(() => {
@@ -249,6 +274,9 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
           <div className="copy-button" onClick={handleCopyToClipboard}>
             <CopyIcon />
           </div>
+          <div className="copy-json-button" onClick={handleCopyToClipboardJson}>
+            JSON
+          </div>
           {node.type === 'chat' && (
             <div className="prompt-designer-button" onClick={handleOpenPromptDesigner}>
               <FlaskIcon />
@@ -301,11 +329,11 @@ const NodeOutputSingleProcess: FC<{
 }> = ({ node, data, processId, onOpenFullscreenModal }) => {
   const { Output, OutputSimple } = useUnknownNodeComponentDescriptorFor(node);
 
-  const setPromptDesignerState = useSetRecoilState(promptDesignerState);
+  const setOverlayOpen = useSetRecoilState(overlayOpenState);
   const setPromptDesignerAttachedNode = useSetRecoilState(promptDesignerAttachedChatNodeState);
 
   const handleOpenPromptDesigner = () => {
-    setPromptDesignerState((s) => ({ ...s, isOpen: true }));
+    setOverlayOpen('promptDesigner');
     setPromptDesignerAttachedNode({
       nodeId: node.id,
       processId: processId!,
@@ -407,7 +435,7 @@ const NodeOutputMultiProcess: FC<{
   data: ProcessDataForNode[];
   onOpenFullscreenModal?: () => void;
 }> = ({ node, data, onOpenFullscreenModal }) => {
-  let [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
+  const [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
 
   const prevPage = useStableCallback(() => {
     setSelectedPage((page) => {

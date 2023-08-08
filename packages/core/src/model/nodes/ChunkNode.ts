@@ -2,9 +2,11 @@ import { ChartNode, NodeId } from '../../model/NodeBase.js';
 import { EditorDefinition, NodeImpl, nodeDefinition } from '../../model/NodeImpl.js';
 import { NodeInputDefinition, NodeOutputDefinition, PortId } from '../../model/NodeBase.js';
 import { DataValue } from '../../model/DataValue.js';
-import { SupportedModels, chunkStringByTokenCount, modelOptions, openaiModels } from '../../utils/tokenizer.js';
+import { SupportedModels, chunkStringByTokenCount } from '../../utils/tokenizer.js';
 import { nanoid } from 'nanoid';
 import { coerceType } from '../../utils/coerceType.js';
+import { dedent } from 'ts-dedent';
+import { openAiModelOptions, openaiModels } from '../../utils/openai.js';
 
 export type ChunkNodeData = {
   numTokensPerChunk: number;
@@ -85,7 +87,7 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
         type: 'dropdown',
         label: 'Model',
         dataKey: 'model',
-        options: modelOptions,
+        options: openAiModelOptions,
         useInputToggleDataKey: 'useModelInput',
       },
       {
@@ -105,6 +107,14 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
         step: 1,
       },
     ];
+  }
+
+  getBody(): string | undefined {
+    return dedent`
+      Model: ${this.data.model}
+      Token Count: ${this.data.numTokensPerChunk.toLocaleString()}
+      ${this.data.overlap ? `Overlap: ${this.data.overlap}%` : ''}
+    `;
   }
 
   async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {

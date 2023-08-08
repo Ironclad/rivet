@@ -9,13 +9,13 @@ import { WireLayer } from './WireLayer.js';
 import { useContextMenu } from '../hooks/useContextMenu.js';
 import { useDraggingNode } from '../hooks/useDraggingNode.js';
 import { useDraggingWire } from '../hooks/useDraggingWire.js';
-import { ChartNode, GraphId, NodeConnection, NodeId, NodeType } from '@ironclad/rivet-core';
+import { ChartNode, CommentNode, GraphId, NodeConnection, NodeId, NodeType } from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   CanvasPosition,
   canvasPositionState,
   editingNodeState,
-  lastCanvasPositionForGraphState,
+  lastCanvasPositionByGraphState,
   lastMousePositionState,
   selectedNodesState,
 } from '../state/graphBuilder';
@@ -28,6 +28,7 @@ import { graphMetadataState } from '../state/graph.js';
 import { useViewportBounds } from '../hooks/useViewportBounds.js';
 import { nanoid } from 'nanoid';
 import { useGlobalHotkey } from '../hooks/useGlobalHotkey.js';
+import { useWireDragScrolling } from '../hooks/useWireDragScrolling';
 
 const styles = css`
   width: 100vw;
@@ -144,9 +145,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const [canvasPosition, setCanvasPosition] = useRecoilState(canvasPositionState);
   const selectedGraphMetadata = useRecoilValue(graphMetadataState);
 
-  const setLastSavedCanvasPosition = useSetRecoilState(
-    lastCanvasPositionForGraphState(selectedGraphMetadata?.id ?? (nanoid() as GraphId)),
-  );
+  const setLastSavedCanvasPosition = useSetRecoilState(lastCanvasPositionByGraphState);
 
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, canvasStartX: 0, canvasStartY: 0 });
@@ -167,6 +166,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   const { draggingNodes, onNodeStartDrag, onNodeDragged } = useDraggingNode(onNodesChanged);
   const { draggingWire, onWireStartDrag, onWireEndDrag } = useDraggingWire(onConnectionsChanged);
+  useWireDragScrolling();
 
   const {
     contextMenuRef,
@@ -282,7 +282,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           zoom: canvasPosition.zoom,
         };
         setCanvasPosition(position);
-        setLastSavedCanvasPosition(position);
+        setLastSavedCanvasPosition((saved) => ({ ...saved, [selectedGraphMetadata!.id!]: position }));
       }
     },
     { wait: 10 },
@@ -331,12 +331,15 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         y: newY - currentMousePosCanvas.y,
       };
 
-      // Step 7: Update the canvas position and zoom value
-      setCanvasPosition((pos) => ({
-        x: pos.x + diff.x,
-        y: pos.y + diff.y,
+      const position: CanvasPosition = {
+        x: canvasPosition.x + diff.x,
+        y: canvasPosition.y + diff.y,
         zoom: newZoom,
-      }));
+      };
+
+      setCanvasPosition(position);
+
+      setLastSavedCanvasPosition((saved) => ({ ...saved, [selectedGraphMetadata!.id!]: position }));
     },
     { wait: 25 },
   );
@@ -369,12 +372,16 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     }
   };
 
-  const onNodeWidthChanged = useStableCallback((node: ChartNode, width: number) => {
+  const onNodeSizeChanged = useStableCallback((node: ChartNode, width: number, height: number) => {
     onNodesChanged(
       produce(nodes, (draft) => {
         const foundNode = draft.find((n) => n.id === node.id);
         if (foundNode) {
           foundNode.visualData.width = width;
+        }
+
+        if (foundNode?.type === 'comment') {
+          (foundNode as CommentNode).data.height = height;
         }
       }),
     );
@@ -502,7 +509,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
                   onWireEndDrag={onWireEndDrag}
                   onNodeSelected={nodeSelected}
                   onNodeStartEditing={nodeStartEditing}
-                  onNodeWidthChanged={onNodeWidthChanged}
+                  onNodeSizeChanged={onNodeSizeChanged}
                   onMouseOver={onNodeMouseOver}
                   onMouseOut={onNodeMouseOut}
                 />

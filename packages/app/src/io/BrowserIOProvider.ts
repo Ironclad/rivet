@@ -8,6 +8,7 @@ import {
   serializeProject,
 } from '@ironclad/rivet-core';
 import { IOProvider } from './IOProvider.js';
+import { SerializedTrivetData, TrivetData, deserializeTrivetData, serializeTrivetData } from '@ironclad/trivet';
 
 export class BrowserIOProvider implements IOProvider {
   static isSupported(): boolean {
@@ -21,15 +22,15 @@ export class BrowserIOProvider implements IOProvider {
     await writable.close();
   }
 
-  async saveProjectData(project: Project): Promise<string | undefined> {
+  async saveProjectData(project: Project, testData: TrivetData): Promise<string | undefined> {
     const fileHandle = await window.showSaveFilePicker();
     const writable = await fileHandle.createWritable();
-    await writable.write(serializeProject(project) as string);
+    await writable.write(serializeProject(project, { trivet: serializeTrivetData(testData) }) as string);
     await writable.close();
     return fileHandle.name;
   }
 
-  async saveProjectDataNoPrompt(project: Project, path: string): Promise<void> {
+  async saveProjectDataNoPrompt(project: Project, testData: TrivetData, path: string): Promise<void> {
     throw new Error('Function not supported in the browser');
   }
 
@@ -40,11 +41,20 @@ export class BrowserIOProvider implements IOProvider {
     callback(deserializeGraph(text));
   }
 
-  async loadProjectData(callback: (data: { project: Project; path: string }) => void): Promise<void> {
+  async loadProjectData(
+    callback: (data: { project: Project; testData: TrivetData; path: string }) => void,
+  ): Promise<void> {
     const [fileHandle] = await window.showOpenFilePicker();
     const file = await fileHandle.getFile();
     const text = await file.text();
-    callback({ project: deserializeProject(text), path: fileHandle.name });
+
+    const [project, attachedData] = deserializeProject(text);
+
+    const testData = attachedData?.trivet
+      ? deserializeTrivetData(attachedData.trivet as SerializedTrivetData)
+      : { testSuites: [] };
+
+    callback({ project, testData, path: fileHandle.name });
   }
 
   async loadRecordingData(callback: (data: { recorder: ExecutionRecorder; path: string }) => void): Promise<void> {

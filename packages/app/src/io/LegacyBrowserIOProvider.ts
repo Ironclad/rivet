@@ -8,6 +8,13 @@ import {
   serializeProject,
 } from '@ironclad/rivet-core';
 import { IOProvider } from './IOProvider.js';
+import {
+  SerializedTrivetData,
+  TrivetData,
+  TrivetTestSuite,
+  deserializeTrivetData,
+  serializeTrivetData,
+} from '@ironclad/trivet';
 
 export class LegacyBrowserIOProvider implements IOProvider {
   async saveGraphData(graphData: NodeGraph): Promise<void> {
@@ -20,8 +27,8 @@ export class LegacyBrowserIOProvider implements IOProvider {
     link.click();
   }
 
-  async saveProjectData(project: Project): Promise<string | undefined> {
-    const serializedData = serializeProject(project);
+  async saveProjectData(project: Project, testData: TrivetData): Promise<string | undefined> {
+    const serializedData = serializeProject(project, { trivet: serializeTrivetData(testData) });
     const blob = new Blob([serializedData as string], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -31,7 +38,7 @@ export class LegacyBrowserIOProvider implements IOProvider {
     return link.download;
   }
 
-  async saveProjectDataNoPrompt(project: Project, path: string): Promise<void> {
+  async saveProjectDataNoPrompt(_project: Project, _testData: TrivetData, _path: string): Promise<void> {
     throw new Error('Function not supported in the browser');
   }
 
@@ -47,14 +54,23 @@ export class LegacyBrowserIOProvider implements IOProvider {
     input.click();
   }
 
-  async loadProjectData(callback: (data: { project: Project; path: string }) => void): Promise<void> {
+  async loadProjectData(
+    callback: (data: { project: Project; testData: TrivetData; path: string }) => void,
+  ): Promise<void> {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.rivet-project';
     input.onchange = async (event) => {
       const file = (event.target as HTMLInputElement)!.files![0]!;
       const text = await file.text();
-      callback({ project: deserializeProject(text), path: file.name });
+
+      const [project, attachedData] = deserializeProject(text);
+
+      const testData = attachedData?.trivet
+        ? deserializeTrivetData(attachedData.trivet as SerializedTrivetData)
+        : { testSuites: [] };
+
+      callback({ project, testData, path: file.name });
     };
     input.click();
   }

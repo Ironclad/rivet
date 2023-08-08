@@ -49,6 +49,11 @@ const toRecordedEventMap: {
     processId,
   }),
   abort: ({ successful, error }) => ({ successful, error: typeof error === 'string' ? error : error?.stack }),
+  graphAbort: ({ successful, error, graph }) => ({
+    successful,
+    error: typeof error === 'string' ? error : error?.stack,
+    graphId: graph.metadata!.id!,
+  }),
   nodeExcluded: ({ node, processId }) => ({
     nodeId: node.id,
     processId,

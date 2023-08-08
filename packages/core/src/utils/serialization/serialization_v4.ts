@@ -13,7 +13,7 @@ import {
 import stableStringify from 'safe-stable-stringify';
 // @ts-ignore
 import * as yaml from 'yaml';
-import { doubleCheckProject } from './serializationUtils.js';
+import { AttachedData, doubleCheckProject } from './serializationUtils.js';
 import { entries } from '../typeSafety.js';
 
 type SerializedProject = {
@@ -24,6 +24,8 @@ type SerializedProject = {
   };
 
   graphs: Record<GraphId, SerializedGraph>;
+
+  attachedData?: AttachedData;
 };
 
 type SerializedGraph = {
@@ -53,7 +55,7 @@ type SerializedVisualData = `${string}/${string}/${string}/${string}`;
 // portId->nodeId/portId
 type SerializedNodeConnection = `${string}->"${string}" ${string}/${string}`;
 
-export function projectV4Deserializer(data: unknown): Project {
+export function projectV4Deserializer(data: unknown): [Project, AttachedData] {
   if (typeof data !== 'string') {
     throw new Error('Project v4 deserializer requires a string');
   }
@@ -64,11 +66,11 @@ export function projectV4Deserializer(data: unknown): Project {
     throw new Error('Project v4 deserializer requires a version 4 project');
   }
 
-  const project = fromSerializedProject(serializedProject.data);
+  const [project, attachedData] = fromSerializedProject(serializedProject.data);
 
   doubleCheckProject(project);
 
-  return project;
+  return [project, attachedData];
 }
 
 export function graphV4Deserializer(data: unknown): NodeGraph {
@@ -85,9 +87,9 @@ export function graphV4Deserializer(data: unknown): NodeGraph {
   return fromSerializedGraph(serializedGraph.data);
 }
 
-export function projectV4Serializer(project: Project): unknown {
+export function projectV4Serializer(project: Project, attachedData?: AttachedData): unknown {
   // Make sure all data is ordered deterministically first
-  const stabilized = JSON.parse(stableStringify(toSerializedProject(project)));
+  const stabilized = JSON.parse(stableStringify(toSerializedProject(project, attachedData)));
 
   const serialized = yaml.stringify(
     {
@@ -121,18 +123,22 @@ export function graphV4Serializer(graph: NodeGraph): unknown {
   return serialized;
 }
 
-function toSerializedProject(project: Project): SerializedProject {
+function toSerializedProject(project: Project, attachedData?: AttachedData): SerializedProject {
   return {
     metadata: project.metadata,
     graphs: mapValues(project.graphs, (graph) => toSerializedGraph(graph)),
+    attachedData,
   };
 }
 
-function fromSerializedProject(serializedProject: SerializedProject): Project {
-  return {
-    metadata: serializedProject.metadata,
-    graphs: mapValues(serializedProject.graphs, (graph) => fromSerializedGraph(graph)) as Record<GraphId, NodeGraph>,
-  };
+function fromSerializedProject(serializedProject: SerializedProject): [Project, AttachedData] {
+  return [
+    {
+      metadata: serializedProject.metadata,
+      graphs: mapValues(serializedProject.graphs, (graph) => fromSerializedGraph(graph)) as Record<GraphId, NodeGraph>,
+    },
+    serializedProject.attachedData ?? {},
+  ];
 }
 
 function toSerializedGraph(graph: NodeGraph): SerializedGraph {

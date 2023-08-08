@@ -1,15 +1,7 @@
 import { FC } from 'react';
-import { LoopControllerNode, Outputs, PortId } from '@ironclad/rivet-core';
+import { Outputs, PortId } from '@ironclad/rivet-core';
 import { RenderDataValue } from '../RenderDataValue.js';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
-
-type LoopControllerNodeBodyProps = {
-  node: LoopControllerNode;
-};
-
-export const LoopControllerNodeBody: FC<LoopControllerNodeBodyProps> = ({ node }) => {
-  return null;
-};
 
 export const LoopControllerNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
   const outputKeys = Object.keys(outputs).filter((key) => key.startsWith('output'));
@@ -35,6 +27,5 @@ export const LoopControllerNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) 
 };
 
 export const loopControllerNodeDescriptor: NodeComponentDescriptor<'loopController'> = {
-  Body: LoopControllerNodeBody,
   OutputSimple: LoopControllerNodeOutput,
 };

@@ -10,7 +10,7 @@ export function useSaveCurrentGraph() {
   const setSavedGraphs = useSetRecoilState(savedGraphsState);
 
   return () => {
-    let currentGraph = produce(graphData, (draft) => {
+    const currentGraph = produce(graphData, (draft) => {
       if (!draft.metadata) {
         draft.metadata = {
           id: nanoid() as GraphId,
@@ -27,7 +27,7 @@ export function useSaveCurrentGraph() {
     setGraphData(currentGraph);
 
     setSavedGraphs((savedGraphs) => {
-      let existingGraph = savedGraphs.find((g) => g.metadata?.id === currentGraph.metadata?.id);
+      const existingGraph = savedGraphs.find((g) => g.metadata?.id === currentGraph.metadata?.id);
       if (existingGraph) {
         return savedGraphs.map((g) => (g.metadata?.id === currentGraph.metadata?.id ? currentGraph : g));
       } else {

@@ -1,7 +1,91 @@
+import { TiktokenModel } from '@dqbd/tiktoken';
 import fetchEventSource from './fetchEventSource.js';
 import { SupportedModels } from './tokenizer.js';
 
 // https://github.com/openai/openai-node/issues/18#issuecomment-1518715285
+
+export type OpenAIModel = {
+  maxTokens: number;
+  tiktokenModel: TiktokenModel;
+  cost: {
+    prompt: number;
+    completion: number;
+  };
+  displayName: string;
+};
+
+export const openaiModels = {
+  'gpt-4': {
+    maxTokens: 8192,
+    tiktokenModel: 'gpt-4',
+    cost: {
+      prompt: 0.03,
+      completion: 0.06,
+    },
+    displayName: 'GPT-4',
+  },
+  'gpt-4-32k': {
+    maxTokens: 32768,
+    tiktokenModel: 'gpt-4-32k',
+    cost: {
+      prompt: 0.06,
+      completion: 0.12,
+    },
+    displayName: 'GPT-4 32k',
+  },
+  'gpt-4-0613': {
+    maxTokens: 8192,
+    tiktokenModel: 'gpt-4',
+    cost: {
+      prompt: 0.03,
+      completion: 0.06,
+    },
+    displayName: 'GPT-4 (v0613)',
+  },
+  'gpt-4-32k-0613': {
+    maxTokens: 32768,
+    tiktokenModel: 'gpt-4',
+    cost: {
+      prompt: 0.06,
+      completion: 0.12,
+    },
+    displayName: 'GPT-4 32k (v0613)',
+  },
+  'gpt-3.5-turbo': {
+    maxTokens: 4096,
+    tiktokenModel: 'gpt-3.5-turbo',
+    cost: {
+      prompt: 0.002,
+      completion: 0.002,
+    },
+    displayName: 'GPT-3.5 Turbo',
+  },
+
+  'gpt-3.5-turbo-0613': {
+    maxTokens: 16384,
+    tiktokenModel: 'gpt-3.5-turbo',
+    cost: {
+      prompt: 0.002,
+      completion: 0.002,
+    },
+    displayName: 'GPT-3.5 (v0613)',
+  },
+
+  'gpt-3.5-turbo-16k-0613': {
+    maxTokens: 16384,
+    tiktokenModel: 'gpt-3.5-turbo',
+    cost: {
+      prompt: 0.003,
+      completion: 0.004,
+    },
+    displayName: 'GPT-3.5 16k (v0613)',
+  },
+} satisfies Record<string, OpenAIModel>;
+
+export const openAiModelOptions = Object.entries(openaiModels).map(([id, { displayName }]) => ({
+  value: id,
+  label: displayName,
+}));
 
 export class OpenAIError extends Error {
   constructor(readonly status: number, readonly responseJson: any) {

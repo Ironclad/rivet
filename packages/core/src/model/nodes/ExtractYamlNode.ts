@@ -1,17 +1,20 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
-// @ts-ignore
 import yaml from 'yaml';
 import { expectType } from '../../utils/expectType.js';
 import { JSONPath } from 'jsonpath-plus';
+import { dedent } from 'ts-dedent';
+import { coerceType } from '../../index.js';
 
 export type ExtractYamlNode = ChartNode<'extractYaml', ExtractYamlNodeData>;
 
 export type ExtractYamlNodeData = {
   rootPropertyName: string;
+  useRootPropertyNameInput?: boolean;
   objectPath?: string;
+  useObjectPathInput?: boolean;
 };
 
 export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
@@ -27,6 +30,9 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
       },
       data: {
         rootPropertyName: 'yamlDocument',
+        useRootPropertyNameInput: false,
+        useObjectPathInput: false,
+        objectPath: undefined,
       },
     };
 
@@ -34,7 +40,7 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
   }
 
   getInputDefinitions(): NodeInputDefinition[] {
-    return [
+    const inputs: NodeInputDefinition[] = [
       {
         id: 'input' as PortId,
         title: 'Input',
@@ -42,6 +48,26 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
         required: true,
       },
     ];
+
+    if (this.data.useRootPropertyNameInput) {
+      inputs.push({
+        id: 'rootPropertyName' as PortId,
+        title: 'Root Property Name',
+        dataType: 'string',
+        required: true,
+      });
+    }
+
+    if (this.data.useObjectPathInput) {
+      inputs.push({
+        id: 'objectPath' as PortId,
+        title: 'Object Path',
+        dataType: 'string',
+        required: true,
+      });
+    }
+
+    return inputs;
   }
 
   getOutputDefinitions(): NodeOutputDefinition[] {
@@ -70,20 +96,43 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
         type: 'string',
         label: 'Root Property Name',
         dataKey: 'rootPropertyName',
+        useInputToggleDataKey: 'useRootPropertyNameInput',
       },
       {
         type: 'code',
         label: 'Object Path',
         dataKey: 'objectPath',
         language: 'jsonpath',
+        useInputToggleDataKey: 'useObjectPathInput',
       },
     ];
+  }
+
+  getBody(): string | NodeBodySpec | undefined {
+    return dedent`
+      Root: ${this.data.useRootPropertyNameInput ? '(Using Input)' : this.data.rootPropertyName}
+      ${
+        this.data.useObjectPathInput
+          ? 'Path: (Using Input)'
+          : this.data.objectPath
+          ? `Path: ${this.data.objectPath}`
+          : ``
+      }
+    `;
   }
 
   async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {
     const inputString = expectType(inputs['input' as PortId], 'string');
 
-    const match = new RegExp(`^${this.data.rootPropertyName}:`, 'm').exec(inputString);
+    const rootPropertyName = this.data.useRootPropertyNameInput
+      ? coerceType(inputs['rootPropertyName' as PortId], 'string')
+      : this.data.rootPropertyName;
+
+    const objectPath = this.data.useObjectPathInput
+      ? coerceType(inputs['objectPath' as PortId], 'string')
+      : this.data.objectPath;
+
+    const match = new RegExp(`^${rootPropertyName}:`, 'm').exec(inputString);
     const rootPropertyStart = match?.index ?? -1;
 
     const nextLines = inputString.slice(rootPropertyStart).split('\n');
@@ -111,7 +160,7 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
       };
     }
 
-    if (!yamlObject?.hasOwnProperty(this.data.rootPropertyName)) {
+    if (!yamlObject?.hasOwnProperty(rootPropertyName)) {
       return {
         ['noMatch' as PortId]: {
           type: 'string',
@@ -126,9 +175,9 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
 
     let matches: unknown[] = [];
 
-    if (this.data.objectPath) {
+    if (objectPath) {
       try {
-        const extractedValue = JSONPath({ json: yamlObject, path: this.data.objectPath.trim() });
+        const extractedValue = JSONPath({ json: yamlObject, path: objectPath.trim() });
         matches = extractedValue;
         yamlObject = extractedValue.length > 0 ? extractedValue[0] : undefined;
       } catch (err) {

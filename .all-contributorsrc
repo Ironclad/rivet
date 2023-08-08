@@ -1,0 +1,82 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "gogwilt",
+      "name": "Cai GoGwilt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/448108?v=4",
+      "profile": "https://github.com/gogwilt",
+      "contributions": [
+        "code",
+        "business",
+        "ideas",
+        "maintenance",
+        "promotion",
+        "review",
+        "bug"
+      ]
+    },
+    {
+      "login": "teddycoleman",
+      "name": "Teddy Coleman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15386324?v=4",
+      "profile": "https://github.com/teddycoleman",
+      "contributions": [
+        "code",
+        "bug"
+      ]
+    },
+    {
+      "login": "tberman",
+      "name": "Todd Berman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/183738?v=4",
+      "profile": "https://github.com/tberman",
+      "contributions": [
+        "code",
+        "bug"
+      ]
+    },
+    {
+      "login": "a-rothwell",
+      "name": "Andrew Rothwell",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12634659?v=4",
+      "profile": "https://github.com/a-rothwell",
+      "contributions": [
+        "tutorial",
+        "doc"
+      ]
+    },
+    {
+      "login": "dominiccooney",
+      "name": "Dominic Cooney",
+      "avatar_url": "https://avatars.githubusercontent.com/u/55120?v=4",
+      "profile": "http://twitter.com/dominiccooney",
+      "contributions": [
+        "ideas",
+        "bug"
+      ]
+    },
+    {
+      "login": "ankrgyl",
+      "name": "Ankur Goyal",
+      "avatar_url": "https://avatars.githubusercontent.com/u/565363?v=4",
+      "profile": "https://github.com/ankrgyl",
+      "contributions": [
+        "doc",
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "rivet",
+  "projectOwner": "Ironclad"
+}

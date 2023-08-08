@@ -1,9 +1,9 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState, MouseEvent } from 'react';
 import { NodeCanvas } from './NodeCanvas.js';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { connectionsState, nodesByIdState } from '../state/graph.js';
+import { connectionsState, graphState, nodesByIdState } from '../state/graph.js';
 import { nodesState } from '../state/graph.js';
-import { editingNodeState, selectedNodesState } from '../state/graphBuilder.js';
+import { editingNodeState, graphNavigationStackState, selectedNodesState } from '../state/graphBuilder.js';
 import { NodeEditorRenderer } from './NodeEditor.js';
 import styled from '@emotion/styled';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
@@ -29,6 +29,7 @@ import { loadedRecordingState } from '../state/execution.js';
 import { useLoadGraph } from '../hooks/useLoadGraph.js';
 import { projectState } from '../state/savedGraphs.js';
 import { ContextMenuContext } from './ContextMenu.js';
+import { useGraphHistoryNavigation } from '../hooks/useGraphHistoryNavigation';
 
 const Container = styled.div`
   position: relative;
@@ -41,13 +42,14 @@ const Container = styled.div`
   }
 
   .recording-border {
-    border: 3px solid var(--warning-dark);
     position: absolute;
-    top: 32px;
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     pointer-events: none;
+    z-index: 100;
+    box-shadow: inset 0 0 2px 3px var(--warning-dark);
   }
 `;
 
@@ -60,6 +62,8 @@ export const GraphBuilder: FC = () => {
   const loadedRecording = useRecoilValue(loadedRecordingState);
   const loadGraph = useLoadGraph();
   const project = useRecoilValue(projectState);
+  const [graphNavigationStack, setGraphNavigationStack] = useRecoilState(graphNavigationStackState);
+  const historyNav = useGraphHistoryNavigation();
 
   const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {
     setNodes?.(newNodes);
@@ -120,7 +124,7 @@ export const GraphBuilder: FC = () => {
         }
 
         const newNode = nodeFactory(node.type);
-        newNode.data = { ...node.data };
+        newNode.data = { ...(node.data as object) };
         newNode.visualData = {
           ...node.visualData,
           x: node.visualData.x,
@@ -211,6 +215,18 @@ export const GraphBuilder: FC = () => {
     }
   }, [firstNodeQuestions]);
 
+  const containerMouseDown = useStableCallback((e: MouseEvent<HTMLDivElement>) => {
+    if (e.buttons === 8) {
+      e.preventDefault();
+      // Mouse Back
+      historyNav.navigateBack();
+    } else if (e.buttons === 16) {
+      e.preventDefault();
+      // Mouse Forward
+      historyNav.navigateForward();
+    }
+  });
+
   const [, questions] = firstNodeQuestions ? firstNodeQuestions : [undefined, [] as ProcessQuestions[]];
   const lastQuestions = questions.at(-1)?.questions ?? [];
 
@@ -220,7 +236,7 @@ export const GraphBuilder: FC = () => {
   );
 
   return (
-    <Container>
+    <Container onMouseDown={containerMouseDown}>
       <ErrorBoundary fallback={<div>Failed to render GraphBuilder</div>}>
         <NodeCanvas
           nodes={nodes}

@@ -3,7 +3,7 @@ import * as yaml from 'yaml';
 import { graphV3Deserializer, projectV3Deserializer } from './serialization_v3.js';
 import { Project, NodeGraph } from '../../index.js';
 import { getError } from '../errors.js';
-import { yamlProblem } from './serializationUtils.js';
+import { AttachedData, yamlProblem } from './serializationUtils.js';
 import {
   graphV4Deserializer,
   graphV4Serializer,
@@ -13,11 +13,11 @@ import {
 import { graphV2Deserializer, projectV2Deserializer } from './serialization_v2.js';
 import { graphV1Deserializer, projectV1Deserializer } from './serialization_v1.js';
 
-export function serializeProject(project: Project): unknown {
-  return projectV4Serializer(project);
+export function serializeProject(project: Project, attachedData?: AttachedData): unknown {
+  return projectV4Serializer(project, attachedData);
 }
 
-export function deserializeProject(serializedProject: unknown): Project {
+export function deserializeProject(serializedProject: unknown): [Project, AttachedData] {
   try {
     return projectV4Deserializer(serializedProject);
   } catch (err) {
@@ -27,7 +27,8 @@ export function deserializeProject(serializedProject: unknown): Project {
     console.warn(`Failed to deserialize project v4: ${getError(err).stack}`);
 
     try {
-      return projectV3Deserializer(serializedProject);
+      const project = projectV3Deserializer(serializedProject);
+      return [project, {}];
     } catch (err) {
       if (err instanceof yaml.YAMLError) {
         yamlProblem(err);
@@ -35,7 +36,8 @@ export function deserializeProject(serializedProject: unknown): Project {
       console.warn(`Failed to deserialize project v3: ${getError(err).stack}`);
 
       try {
-        return projectV2Deserializer(serializedProject);
+        const project = projectV2Deserializer(serializedProject);
+        return [project, {}];
       } catch (err) {
         if (err instanceof yaml.YAMLError) {
           yamlProblem(err);
@@ -43,7 +45,8 @@ export function deserializeProject(serializedProject: unknown): Project {
         console.warn(`Failed to deserialize project v2: ${getError(err).stack}`);
 
         try {
-          return projectV1Deserializer(serializedProject);
+          const project = projectV1Deserializer(serializedProject);
+          return [project, {}];
         } catch (err) {
           console.warn(`Failed to deserialize project v1: ${getError(err).stack}`);
           throw new Error('Could not deserialize project');

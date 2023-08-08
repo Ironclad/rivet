@@ -1,8 +1,9 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs, coerceType } from '../../index.js';
 import { mapValues } from 'lodash-es';
+import { dedent } from 'ts-dedent';
 
 export type PromptNode = ChartNode<'prompt', PromptNodeData>;
 
@@ -123,7 +124,24 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
         type: 'code',
         label: 'Prompt Text',
         dataKey: 'promptText',
-        language: 'prompt-interpolation',
+        language: 'prompt-interpolation-markdown',
+        theme: 'prompt-interpolation',
+      },
+    ];
+  }
+
+  getBody(): string | NodeBodySpec | NodeBodySpec[] | undefined {
+    return [
+      {
+        type: 'markdown',
+        text: dedent`
+          _${typeDisplay[this.data.type]}${this.data.name ? ` (${this.data.name})` : ''}_
+      `,
+      },
+      {
+        type: 'colorized',
+        text: this.data.promptText.split('\n').slice(0, 15).join('\n').trim(),
+        language: 'prompt-interpolation-markdown',
         theme: 'prompt-interpolation',
       },
     ];
@@ -157,3 +175,10 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
 }
 
 export const promptNode = nodeDefinition(PromptNodeImpl, 'Prompt');
+
+const typeDisplay: Record<PromptNodeData['type'], string> = {
+  assistant: 'Assistant',
+  system: 'System',
+  user: 'User',
+  function: 'Function',
+};

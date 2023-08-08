@@ -15,6 +15,7 @@ import { RivetDebuggerServer } from './debugger.js';
 import { PascalCase } from 'type-fest';
 import { NodeNativeApi } from './native/NodeNativeApi.js';
 import { mapValues } from 'lodash-es';
+import { AttachedData } from '../../core/src/utils/serialization/serializationUtils.js';
 
 export async function loadProjectFromFile(path: string): Promise<Project> {
   const content = await readFile(path, { encoding: 'utf8' });
@@ -22,6 +23,16 @@ export async function loadProjectFromFile(path: string): Promise<Project> {
 }
 
 export function loadProjectFromString(content: string): Project {
+  const [project] = deserializeProject(content);
+  return project;
+}
+
+export async function loadProjectAndAttachedDataFromFile(path: string): Promise<[Project, AttachedData]> {
+  const content = await readFile(path, { encoding: 'utf8' });
+  return loadProjectAndAttachedDataFromString(content);
+}
+
+export function loadProjectAndAttachedDataFromString(content: string): [Project, AttachedData] {
   return deserializeProject(content);
 }
 
@@ -103,6 +114,10 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
     processor.on('abort', options.onAbort);
   }
 
+  if (options.onGraphAbort) {
+    processor.on('graphAbort', options.onGraphAbort);
+  }
+
   if (options.onTrace) {
     processor.on('trace', options.onTrace);
   }
@@ -171,6 +186,8 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
             openAiKey: options.openAiKey,
             openAiOrganization: options.openAiOrganization ?? '',
             pineconeApiKey: options.pineconeApiKey ?? '',
+            anthropicApiKey: options.anthropicApiKey ?? '',
+            recordingPlaybackLatency: 1000,
           } satisfies Required<Settings>,
         },
         resolvedInputs,

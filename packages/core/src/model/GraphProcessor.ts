@@ -1,4 +1,4 @@
-import { max, range, uniqBy } from 'lodash-es';
+import { max, range, sum, uniqBy } from 'lodash-es';
 import { ControlFlowExcluded, ControlFlowExcludedPort } from '../utils/symbols.js';
 import {
   DataValue,
@@ -46,6 +46,9 @@ export type ProcessEvents = {
 
   /** Called when a graph or a subgraph has finished. */
   graphFinish: { graph: NodeGraph; outputs: GraphOutputs };
+
+  /** Called when a graph has been aborted. */
+  graphAbort: { successful: boolean; graph: NodeGraph; error?: Error | string };
 
   /** Called when a node has started processing, with the input values for the node. */
   nodeStart: { node: ChartNode; inputs: Inputs; processId: ProcessId };
@@ -107,7 +110,9 @@ export type NodeResults = Map<NodeId, Outputs>;
 export type Inputs = Record<PortId, DataValue | undefined>;
 export type Outputs = Record<PortId, DataValue | undefined>;
 
-export type ExternalFunction = (...args: unknown[]) => Promise<DataValue>;
+export type ExternalFunctionProcessContext = Omit<InternalProcessContext, 'setGlobal'>;
+
+export type ExternalFunction = (context: ExternalFunctionProcessContext, ...args: unknown[]) => Promise<DataValue>;
 
 type RaceId = Opaque<string, 'RaceId'>;
 
@@ -317,7 +322,7 @@ export class GraphProcessor {
     this.#scc = this.#tarjanSCC();
     this.#nodesNotInCycle = this.#scc.filter((cycle) => cycle.length === 1).flat();
 
-    this.setExternalFunction('echo', async (value) => ({ type: 'any', value: value } satisfies DataValue));
+    this.setExternalFunction('echo', async (value) => ({ type: 'any', value } satisfies DataValue));
 
     this.#emitter.on('globalSet', ({ id, value }) => {
       this.#emitter.emit(`globalSet:${id}`, value);
@@ -365,14 +370,19 @@ export class GraphProcessor {
   }
 
   async abort(successful: boolean = false, error?: Error | string): Promise<void> {
-    if (!this.#running) {
+    if (!this.#running || this.#aborted) {
       return Promise.resolve();
     }
 
     this.#abortController.abort();
     this.#abortSuccessfully = successful;
     this.#abortError = error;
-    this.#emitter.emit('abort', { successful, error });
+
+    this.#emitter.emit('graphAbort', { successful, error, graph: this.#graph });
+
+    if (!this.#isSubProcessor) {
+      this.#emitter.emit('abort', { successful, error });
+    }
 
     await this.#processingQueue.onIdle();
   }
@@ -481,6 +491,13 @@ export class GraphProcessor {
           this.#emitter.emit('graphError', {
             graph: getGraph(data.graphId),
             error: data.error,
+          });
+        })
+        .with({ type: 'graphAbort' }, ({ data }) => {
+          this.#emitter.emit('graphAbort', {
+            graph: getGraph(data.graphId),
+            error: data.error,
+            successful: data.successful,
           });
         })
         .with({ type: 'nodeStart' }, async ({ data }) => {
@@ -644,6 +661,15 @@ export class GraphProcessor {
         throw error;
       }
 
+      if (this.#graphOutputs['cost' as PortId] == null) {
+        const totalCost = sum(this.#graph.nodes.filter((node) => node.type === 'chat' || node.type === 'subGraph')
+          .map((node) => this.#nodeResults.get(node.id)?.['cost' as PortId]?.value ?? 0));
+        this.#graphOutputs['cost' as PortId] = {
+          type: 'number',
+          value: totalCost,
+        };
+      }
+
       const outputValues = this.#graphOutputs;
 
       this.#running = false;
@@ -700,7 +726,7 @@ export class GraphProcessor {
         const inputNodeAttachedData = this.#getAttachedDataTo(inputNode);
         const raceIds = new Set<RaceId>([...(attachedData.races?.raceIds ?? ([] as RaceId[]))]);
 
-        if (node.type == 'raceInputs') {
+        if (node.type === 'raceInputs') {
           raceIds.add(`race-${node.id}` as RaceId);
         }
 
@@ -756,7 +782,7 @@ export class GraphProcessor {
 
     // Check if all required inputs have connections and if the connected output nodes have been visited
     const connections = this.#connections[node.id] ?? [];
-    let inputsReady = this.#definitions[node.id]!.inputs.every((input) => {
+    const inputsReady = this.#definitions[node.id]!.inputs.every((input) => {
       const connectionToInput = connections?.find((conn) => conn.inputId === input.id && conn.inputNodeId === node.id);
       return connectionToInput || !input.required;
     });
@@ -911,9 +937,10 @@ export class GraphProcessor {
         // We want to be able to clear every node that _potentially_ could run in the loop
         nodes: childLoopInfo?.nodes ?? new Set(),
 
-        // TODO loop controller max iterations
         iterationCount: (childLoopInfo?.iterationCount ?? 0) + 1,
       };
+
+      attachedData.loopInfo = childLoopInfo; // Not 100% sure if this is right - sets the childLoopInfo on the loop controller itself, probably fine?
 
       if (childLoopInfo.iterationCount > (node.data.maxIterations ?? 100)) {
         this.#nodeErrored(
@@ -927,11 +954,6 @@ export class GraphProcessor {
 
     for (const { node: outputNode, connections: connectionsToOutputNode } of outputNodes.connectionsToNodes) {
       const outputNodeAttachedData = this.#getAttachedDataTo(outputNode);
-
-      // Hacky? Need to bootstrap the propagation somewhere
-      if (childLoopInfo) {
-        outputNodeAttachedData.loopInfo = childLoopInfo;
-      }
 
       const propagatedAttachedData = Object.entries(attachedData).filter(([, value]): boolean => {
         if (!value) {
@@ -1236,7 +1258,7 @@ export class GraphProcessor {
         await this.getRootProcessor().#emitter.once(`globalSet:${id}`);
         return this.#globals.get(id)!;
       },
-      createSubProcessor: (subGraphId: GraphId) => {
+      createSubProcessor: (subGraphId: GraphId, { signal }: { signal?: AbortSignal } = {}) => {
         const processor = new GraphProcessor(this.#project, subGraphId);
         processor.#isSubProcessor = true;
         processor.#executionCache = this.#executionCache;
@@ -1254,16 +1276,17 @@ export class GraphProcessor {
         processor.on('partialOutput', (e) => this.#emitter.emit('partialOutput', e));
         processor.on('nodeExcluded', (e) => this.#emitter.emit('nodeExcluded', e));
         processor.on('nodeStart', (e) => this.#emitter.emit('nodeStart', e));
+        processor.on('graphAbort', (e) => this.#emitter.emit('graphAbort', e));
         processor.on('userInput', (e) => this.#emitter.emit('userInput', e)); // TODO!
         processor.on('graphStart', (e) => this.#emitter.emit('graphStart', e));
         processor.on('graphFinish', (e) => this.#emitter.emit('graphFinish', e));
         processor.on('globalSet', (e) => this.#emitter.emit('globalSet', e));
-        processor.on('pause', (e) => {
+        processor.on('pause', () => {
           if (!this.#isPaused) {
             this.pause();
           }
         });
-        processor.on('resume', (e) => {
+        processor.on('resume', () => {
           if (this.#isPaused) {
             this.resume();
           }
@@ -1277,8 +1300,12 @@ export class GraphProcessor {
 
         this.#subprocessors.add(processor);
 
+        if (signal) {
+          signal.addEventListener('abort', () => processor.abort());
+        }
+
         // If parent is aborted, abort subgraph with error (it's fine, success state is on the parent)
-        this.on('abort', () => processor.abort());
+        this.#abortController.signal.addEventListener('abort', () => processor.abort());
 
         this.on('pause', () => processor.pause());
         this.on('resume', () => processor.resume());

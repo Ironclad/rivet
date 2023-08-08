@@ -9,6 +9,9 @@ export interface Settings {
   openAiOrganization?: string;
 
   pineconeApiKey?: string;
+  anthropicApiKey?: string;
+
+  recordingPlaybackLatency?: number;
 }
 
 export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['type']> {
@@ -56,7 +59,7 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
     return [];
   }
 
-  getBody(): string | undefined {
+  getBody(): string | NodeBodySpec | NodeBodySpec[] | undefined {
     return undefined;
   }
 }
@@ -173,6 +176,14 @@ export type CodeEditorDefinition<T extends ChartNode> = {
   theme?: string;
 };
 
+export type ColorEditorDefinition<T extends ChartNode> = {
+  type: 'color';
+  label: string;
+
+  dataKey: DataOfType<T, string>;
+  useInputToggleDataKey?: DataOfType<T, boolean>;
+};
+
 export type EditorDefinition<T extends ChartNode> =
   | StringEditorDefinition<T>
   | ToggleEditorDefinition<T>
@@ -181,4 +192,29 @@ export type EditorDefinition<T extends ChartNode> =
   | DropdownEditorDefinition<T>
   | NumberEditorDefinition<T>
   | CodeEditorDefinition<T>
-  | GraphSelectorEditorDefinition<T>;
+  | GraphSelectorEditorDefinition<T>
+  | ColorEditorDefinition<T>;
+
+export type NodeBodySpecBase = {
+  fontSize?: number;
+  fontFamily?: 'monospace' | 'sans-serif';
+};
+
+export type PlainNodeBodySpec = {
+  type: 'plain';
+  text: string;
+};
+
+export type MarkdownNodeBodySpec = {
+  type: 'markdown';
+  text: string;
+};
+
+export type ColorizedNodeBodySpec = {
+  type: 'colorized';
+  language: string;
+  text: string;
+  theme?: string;
+};
+
+export type NodeBodySpec = NodeBodySpecBase & (PlainNodeBodySpec | MarkdownNodeBodySpec | ColorizedNodeBodySpec);

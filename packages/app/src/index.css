@@ -35,3 +35,9 @@ code {
 .atlaskit-portal {
   z-index: 500;
 }
+
+:root {
+  --font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  --font-family-monospace: 'Roboto Mono', monospace;
+}

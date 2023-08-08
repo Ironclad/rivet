@@ -1,7 +1,6 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
 import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { coerceTypeOptional } from '../../utils/coerceType.js';
 import { DataValue } from '../DataValue.js';
 
 export type ObjectNode = ChartNode<'object', ObjectNodeData>;
@@ -12,7 +11,7 @@ export type ObjectNodeData = {
 
 const DEFAULT_JSON_TEMPLATE = `{
   "key": "{{input}}"
-}`
+}`;
 
 export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
   static create(): ObjectNode {
@@ -72,22 +71,35 @@ export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
   }
 
   interpolate(baseString: string, values: Record<string, any>): string {
-    return baseString.replace(/"?\{\{([^}]+)\}\}"?/g, (_m, p1) => {
-      const value = values[p1];
-      return value !== undefined ? value.toString() : '';
+    return baseString.replace(/("?)\{\{([^}]+)\}\}("?)/g, (_m, openQuote, key, _closeQuote) => {
+      const isQuoted = Boolean(openQuote);
+      const value = values[key];
+      if (value == null) {
+        return 'null';
+      }
+      if (isQuoted && typeof value === 'string') {
+        // Adds double-quotes back.
+        return JSON.stringify(value);
+      }
+      if (isQuoted) {
+        // Non-strings require a double-stringify, first to turn them into a string, then to escape that string and add quotes.
+        return JSON.stringify(JSON.stringify(value));
+      }
+      // Otherwise, it was not quoted, so no need to double-stringify
+      return JSON.stringify(value);
     });
   }
 
   async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
     const inputMap = Object.keys(inputs).reduce((acc, key) => {
-      const stringValue = coerceTypeOptional(inputs[key], 'string');
-
-      // Make string JSON-safe.
-      acc[key] = stringValue != null ? JSON.stringify(stringValue) : undefined;
+      acc[key] = (inputs[key] as any)?.value;
       return acc;
-    }, {} as Record<string, string | undefined>);
+    }, {} as Record<string, any>);
 
-    const outputValue = JSON.parse(this.interpolate(this.chartNode.data.jsonTemplate, inputMap)) as Record<string, unknown>;
+    const outputValue = JSON.parse(this.interpolate(this.chartNode.data.jsonTemplate, inputMap)) as Record<
+      string,
+      unknown
+    >;
 
     return {
       output: {

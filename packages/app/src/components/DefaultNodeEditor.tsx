@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useRef } from 'react';
+import { FC, Suspense, useEffect, useMemo, useRef } from 'react';
 import {
   AnyDataEditorDefinition,
   ChartNode,
@@ -26,13 +26,15 @@ import TextField from '@atlaskit/textfield';
 import Select from '@atlaskit/select';
 import Checkbox from '@atlaskit/checkbox';
 import { useDebounceFn, useLatest } from 'ahooks';
-import { monaco } from '../utils/monaco.js';
+import type { monaco } from '../utils/monaco.js';
 import clsx from 'clsx';
 import { projectState } from '../state/savedGraphs.js';
 import { useRecoilValue } from 'recoil';
 import { orderBy } from 'lodash-es';
 import { values } from '../utils/typeSafety.js';
 import { nanoid } from 'nanoid';
+import { LazyCodeEditor, LazyTripleBarColorPicker } from './LazyComponents';
+import { CodeEditor } from './CodeEditor';
 
 export const defaultEditorContainerStyles = css`
   display: flex;
@@ -63,17 +65,20 @@ export const defaultEditorContainerStyles = css`
   }
 
   .editor-wrapper-wrapper {
-    min-height: 0;
+    min-height: 300px;
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
+    position: relative;
     /* height: 100%; */
   }
 
   .editor-wrapper {
-    min-height: 0;
-    flex: 1 1 auto;
-    /* height: 100%; */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
 
   .editor-container {
@@ -150,6 +155,7 @@ const DefaultNodeEditorField: FC<{
     .with({ type: 'number' }, (editor) => <DefaultNumberEditor {...sharedProps} editor={editor} />)
     .with({ type: 'code' }, (editor) => <DefaultCodeEditor {...sharedProps} editor={editor} />)
     .with({ type: 'graphSelector' }, (editor) => <DefaultGraphSelectorEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'color' }, (editor) => <DefaultColorEditor {...sharedProps} editor={editor} />)
     .exhaustive();
 
   const toggle = editor.useInputToggleDataKey ? (
@@ -467,62 +473,15 @@ export const DefaultCodeEditor: FC<{
 
   const debouncedOnChange = useDebounceFn<(node: ChartNode) => void>(onChange, { wait: 100 });
 
-  useEffect(() => {
-    if (!editorContainer.current) {
-      return;
-    }
-
-    const editor = monaco.editor.create(editorContainer.current, {
-      theme: editorDef.theme ?? 'vs-dark',
-      lineNumbers: 'on',
-      glyphMargin: false,
-      folding: false,
-      lineNumbersMinChars: 2,
-      language: editorDef.language,
-      minimap: {
-        enabled: false,
+  const onEditorChange = (newText: string) => {
+    debouncedOnChange.run({
+      ...nodeLatest.current,
+      data: {
+        ...(nodeLatest.current?.data as Record<string, unknown> | undefined),
+        [editorDef.dataKey]: newText,
       },
-      wordWrap: 'on',
-      readOnly: isReadonly,
-      value: (nodeLatest.current?.data as Record<string, unknown>)[editorDef.dataKey] as string | undefined,
-      scrollBeyondLastLine: false,
     });
-    editor.onDidChangeModelContent(() => {
-      debouncedOnChange.run({
-        ...nodeLatest.current,
-        data: {
-          ...(nodeLatest.current?.data as Record<string, unknown> | undefined),
-          [editorDef.dataKey]: editor.getValue(),
-        },
-      });
-    });
-
-    const onResize = () => {
-      editor.layout();
-    };
-
-    editor.layout();
-
-    window.addEventListener('resize', onResize);
-
-    editorInstance.current = editor;
-
-    return () => {
-      // Final commit on unmount
-      onChange?.({
-        ...nodeLatest.current,
-        data: {
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-          ...(nodeLatest.current?.data as Record<string, unknown> | undefined),
-          [editorDef.dataKey]: editor.getValue(),
-        },
-      });
-
-      editor.dispose();
-      window.removeEventListener('resize', onResize);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
 
   useEffect(() => {
     if (editorInstance.current) {
@@ -539,11 +498,63 @@ export const DefaultCodeEditor: FC<{
   }, [node.id, isReadonly]);
 
   return (
-    <div className="editor-wrapper-wrapper">
-      <Label htmlFor="">{editorDef.label}</Label>
-      <div className="editor-wrapper">
-        <div ref={editorContainer} className="editor-container" />
+    <Suspense fallback={<div />}>
+      <div className="editor-wrapper-wrapper">
+        <Label htmlFor="">{editorDef.label}</Label>
+        <div className="editor-wrapper">
+          <LazyCodeEditor
+            editorRef={editorInstance}
+            text={
+              ((nodeLatest.current?.data as Record<string, unknown>)[editorDef.dataKey] as string | undefined) ?? ''
+            }
+            onChange={onEditorChange}
+            theme={editorDef.theme}
+            language={editorDef.language}
+            isReadonly={isReadonly}
+          />
+        </div>
       </div>
-    </div>
+    </Suspense>
+  );
+};
+
+export const DefaultColorEditor: FC<{
+  node: ChartNode;
+  isReadonly: boolean;
+  onChange: (changed: ChartNode) => void;
+  editor: EditorDefinition<ChartNode>;
+}> = ({ node, onChange, editor }) => {
+  const data = node.data as Record<string, unknown>;
+
+  const parsed = /rgba\((?<rStr>\d+),(?<gStr>\d+),(?<bStr>\d+),(?<aStr>[\d.]+)\)/.exec(data[editor.dataKey] as string);
+
+  const { rStr, gStr, bStr, aStr } = parsed ? parsed.groups! : { rStr: '0', gStr: '0', bStr: '0', aStr: '0' };
+
+  const { r, g, b, a } = {
+    r: parseInt(rStr!, 10),
+    g: parseInt(gStr!, 10),
+    b: parseInt(bStr!, 10),
+    a: parseFloat(aStr!),
+  };
+
+  return (
+    <Suspense fallback={<div />}>
+      <Field name={editor.dataKey} label={editor.label}>
+        {() => (
+          <LazyTripleBarColorPicker
+            color={{ r, g, b, a }}
+            onChange={(newColor) => {
+              onChange({
+                ...node,
+                data: {
+                  ...data,
+                  [editor.dataKey]: `rgba(${newColor.rgb.r},${newColor.rgb.g},${newColor.rgb.b},${newColor.rgb.a})`,
+                },
+              });
+            }}
+          />
+        )}
+      </Field>
+    </Suspense>
   );
 };

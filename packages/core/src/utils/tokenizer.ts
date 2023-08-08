@@ -1,85 +1,11 @@
 import { encoding_for_model, TiktokenModel } from '@dqbd/tiktoken';
-import { ChatCompletionRequestMessage } from './openai.js';
+import { ChatCompletionRequestMessage, openaiModels } from './openai.js';
+import { anthropicModels } from './anthropic.js';
 
-type OpenAIModel = {
-  maxTokens: number;
-  tiktokenModel: TiktokenModel;
-  cost: {
-    prompt: number;
-    completion: number;
-  };
-  displayName: string;
-};
-
-export const openaiModels = {
-  'gpt-4': {
-    maxTokens: 8192,
-    tiktokenModel: 'gpt-4',
-    cost: {
-      prompt: 0.03,
-      completion: 0.06,
-    },
-    displayName: 'GPT-4',
-  },
-  'gpt-4-32k': {
-    maxTokens: 32768,
-    tiktokenModel: 'gpt-4-32k',
-    cost: {
-      prompt: 0.06,
-      completion: 0.12,
-    },
-    displayName: 'GPT-4 32k',
-  },
-  'gpt-4-0613': {
-    maxTokens: 8192,
-    tiktokenModel: 'gpt-4',
-    cost: {
-      prompt: 0.03,
-      completion: 0.06,
-    },
-    displayName: 'GPT-4 (v0613)',
-  },
-  'gpt-4-32k-0613': {
-    maxTokens: 32768,
-    tiktokenModel: 'gpt-4',
-    cost: {
-      prompt: 0.06,
-      completion: 0.12,
-    },
-    displayName: 'GPT-4 32k (v0613)',
-  },
-  'gpt-3.5-turbo': {
-    maxTokens: 4096,
-    tiktokenModel: 'gpt-3.5-turbo',
-    cost: {
-      prompt: 0.002,
-      completion: 0.002,
-    },
-    displayName: 'GPT-3.5 Turbo',
-  },
-
-  'gpt-3.5-turbo-0613': {
-    maxTokens: 16384,
-    tiktokenModel: 'gpt-3.5-turbo',
-    cost: {
-      prompt: 0.002,
-      completion: 0.002,
-    },
-    displayName: 'GPT-3.5 (v0613)',
-  },
-
-  'gpt-3.5-turbo-16k-0613': {
-    maxTokens: 16384,
-    tiktokenModel: 'gpt-3.5-turbo',
-    cost: {
-      prompt: 0.003,
-      completion: 0.004,
-    },
-    displayName: 'GPT-3.5 16k (v0613)',
-  },
-} satisfies Record<string, OpenAIModel>;
-
-export const supportedModels = Object.keys(openaiModels) as (keyof typeof openaiModels)[];
+export const supportedModels = [...Object.keys(openaiModels), ...Object.keys(anthropicModels)] as (
+  | keyof typeof openaiModels
+  | keyof typeof anthropicModels
+)[];
 export type SupportedModels = keyof typeof openaiModels;
 
 export function getTokenCountForString(input: string, model: TiktokenModel): number {
@@ -137,8 +63,3 @@ export function getCostForPrompt(messages: ChatCompletionRequestMessage[], model
   const tokenCount = getTokenCountForMessages(messages, openaiModels[model].tiktokenModel);
   return getCostForTokens(tokenCount, 'prompt', model);
 }
-
-export const modelOptions = Object.entries(openaiModels).map(([id, { displayName }]) => ({
-  value: id,
-  label: displayName,
-}));

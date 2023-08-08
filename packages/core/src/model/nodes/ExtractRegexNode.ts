@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
 import { expectType, expectTypeOptional } from '../../utils/expectType.js';
 
@@ -111,6 +111,10 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
         language: 'regex',
       },
     ];
+  }
+
+  getBody(): string | NodeBodySpec | undefined {
+    return this.data.useRegexInput ? '(Using regex input)' : this.data.regex;
   }
 
   async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {

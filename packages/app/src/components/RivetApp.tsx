@@ -1,5 +1,5 @@
 import { GraphBuilder } from './GraphBuilder.js';
-import { MenuBar } from './MenuBar.js';
+import { OverlayTabs } from './OverlayTabs.js';
 import { FC } from 'react';
 import { css } from '@emotion/react';
 import { SettingsModal } from './SettingsModal.js';
@@ -10,6 +10,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import { PromptDesignerRenderer } from './PromptDesigner.js';
 import { useGraphExecutor } from '../hooks/useGraphExecutor.js';
 import { useMenuCommands } from '../hooks/useMenuCommands.js';
+import { TrivetRenderer } from './trivet/Trivet.js';
+import { ActionBar } from './ActionBar';
+import { DebuggerPanelRenderer } from './DebuggerConnectPanel';
+import { ChatViewerRenderer } from './ChatViewer';
 
 const styles = css`
   overflow: hidden;
@@ -20,7 +24,7 @@ setGlobalTheme({
 });
 
 export const RivetApp: FC = () => {
-  const { tryRunGraph, tryAbortGraph, tryPauseGraph, tryResumeGraph } = useGraphExecutor();
+  const { tryRunGraph, tryRunTests, tryAbortGraph, tryPauseGraph, tryResumeGraph } = useGraphExecutor();
 
   useMenuCommands({
     onRunGraph: tryRunGraph,
@@ -28,16 +32,21 @@ export const RivetApp: FC = () => {
 
   return (
     <div className="app" css={styles}>
-      <MenuBar
+      <OverlayTabs />
+      <ActionBar
         onRunGraph={tryRunGraph}
+        onRunTests={tryRunTests}
         onAbortGraph={tryAbortGraph}
         onPauseGraph={tryPauseGraph}
         onResumeGraph={tryResumeGraph}
       />
+      <DebuggerPanelRenderer />
       <LeftSidebar />
       <GraphBuilder />
       <SettingsModal />
       <PromptDesignerRenderer />
+      <TrivetRenderer tryRunTests={tryRunTests} />
+      <ChatViewerRenderer />
       <ToastContainer position="bottom-right" hideProgressBar newestOnTop />
     </div>
   );

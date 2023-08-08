@@ -1,5 +1,5 @@
 import { atom } from 'recoil';
-import { ChatMessage, ChatNodeConfigData, ChatNodeData, NodeId, ProcessId } from '@ironclad/rivet-core';
+import { ChatMessage, ChatNodeConfigData, NodeId, ProcessId } from '@ironclad/rivet-core';
 
 export type PromptDesignerMessagesState = {
   messages: ChatMessage[];
@@ -49,14 +49,12 @@ export const promptDesignerAttachedChatNodeState = atom<
 });
 
 export type PromptDesignerState = {
-  isOpen: boolean;
   samples: number;
 };
 
 export const promptDesignerState = atom<PromptDesignerState>({
   key: 'promptDesignerState',
   default: {
-    isOpen: false,
     samples: 10,
   },
 });

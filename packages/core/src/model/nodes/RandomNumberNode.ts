@@ -86,11 +86,11 @@ export class RandomNumberNodeImpl extends NodeImpl<RandomNumberNode> {
   }
 
   async process(inputs: Inputs): Promise<Outputs> {
-    let min = this.data.useMinInput
+    const min = this.data.useMinInput
       ? coerceTypeOptional(inputs['min' as PortId], 'number') ?? this.data.min ?? 0
       : this.data.min ?? 0;
 
-    let max = this.data.useMaxInput
+    const max = this.data.useMaxInput
       ? coerceTypeOptional(inputs['max' as PortId], 'number') ?? this.data.max ?? 1
       : this.data.max ?? 1;
 
@@ -106,7 +106,7 @@ export class RandomNumberNodeImpl extends NodeImpl<RandomNumberNode> {
     return {
       ['value' as PortId]: {
         type: 'number',
-        value: value,
+        value,
       },
     };
   }

@@ -1,5 +1,26 @@
 version: 4
 data:
+  attachedData:
+    trivet:
+      testSuites:
+        - id: MaoXCgibUQDV5fCN_oy2e
+          name: Graph to Test
+          testCases:
+            - expectedOutput:
+                has_mission: YES
+                mission_statement: Ironclad is on a mission to power the world's contracts.
+              id: hxRYlHF68ZmmpMT0lo037
+              input:
+                statement: Ironclad is on a mission to power the world's contracts.
+            - expectedOutput:
+                has_mission: NO
+                mission_statement: Not applicable
+              id: ngJC1XL42jQCTRZW5fhRG
+              input:
+                statement: Ironclad is a contract lifecycle management system
+          testGraph: rUcgbRwgkovsnv8X5xyVF
+          validationGraph: fVykgHFjTZ8dWoJmnxEha
+      version: 1
   graphs:
     D0TnEZI8WPm1ZjZyhYfeQ:
       metadata:
@@ -159,6 +180,12 @@ data:
             dataType: string[]
             id: output
           visualData: 2047/494/300/6
+    IvK_QwNE4hAUoFaGPElUA:
+      metadata:
+        description: ""
+        id: IvK_QwNE4hAUoFaGPElUA
+        name: Untitled Graph
+      nodes: {}
     QgeLNyhpAsVJ_Ktlbm3FR:
       metadata:
         description: ""
@@ -185,13 +212,13 @@ data:
             useTopP: false
             useTopPInput: false
             useUseTopPInput: false
-          visualData: 1560.7519469872752/458.52427722611264/339.8759458625623/9
+          visualData: 1560.7519469872752/458.52427722611264/274.59222479817527/9
         '[GH1F0s0SnAEH-mMgTKyYU]:text "Text"':
           data:
             text: Hello, what is the typical lifecycle of a simple business contract?
           outgoingConnections:
             - output->"Chat" 6dZUAsYq2jnPmBXm9BpL4/prompt
-          visualData: 989.0684344169144/509.2751921306057/389/10
+          visualData: 1109.8410018316115/523.6327700750103/295.1514952133798/8
     VOQ6sZ_rTNDo34KdiUBU9:
       metadata:
         description: ""
@@ -221,11 +248,13 @@ data:
           isSplitRun: true
           outgoingConnections:
             - response->"Text" lwGi_tSI52oRwN3ejDSiW/response
+          splitRunMax: 10
           visualData: 1622/525/200/15
         '[DAvEDA4VwuxJPO7hfg24l]:subGraph "5.2 Generate Contract From Name"':
           data:
             graphId: Eg64hugBjOEWIexE8WTTL
           isSplitRun: true
+          splitRunMax: 10
           visualData: 1285.9119571683518/1039.711481261154/300/26
         '[Hqq8aptRlHylVtshquDd2]:text "Text"':
           data:
@@ -255,6 +284,7 @@ data:
           isSplitRun: true
           outgoingConnections:
             - output->"Chat" 8Jz3xEu_AjnFIKaqH3dm_/prompt
+          splitRunMax: 10
           visualData: 1248/524/300/14
         '[bqet1InKJKVBNVJUa-Et2]:chunk "Chunk"':
           data:
@@ -300,6 +330,7 @@ data:
           isSplitRun: true
           outgoingConnections:
             - output->"Text" Hqq8aptRlHylVtshquDd2/input
+          splitRunMax: 10
           visualData: 1903.9637120761452/534.8191552647233/300/18
         '[mA3U5L01VtG93L8jXiytR]:subGraph "5.1 Generate Contract Names"':
           data:
@@ -391,6 +422,60 @@ data:
             - response->"Loop Controller" CbTQrNMACOxrr_GJqBQni/input1
             - response->"Prompt" KEgT2C3VQqLFR7ynVkL_c/input
           visualData: 2263/381/200/33
+    fVykgHFjTZ8dWoJmnxEha:
+      metadata:
+        description: ""
+        id: fVykgHFjTZ8dWoJmnxEha
+        name: 8. Testing Graphs/Validator - Mission Equals
+      nodes:
+        '[6E6yFuxK66-qmP-8UoCxY]:graphOutput "has_mission matches"':
+          data:
+            dataType: string
+            id: output
+          description: has_mission should match the original answer
+          visualData: 1600/647/300/6
+        '[F3aa9qh9iEEqFKugriJAK]:graphInput "Graph Input"':
+          data:
+            dataType: object
+            id: output
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Extract Object Path" Ze__xKy4jtZZfbwFhvk3C/object
+          visualData: 534/773/300/3
+        '[U-ioiOl27qUJnCz7mR6lc]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $.has_mission
+            usePathInput: false
+          outgoingConnections:
+            - match->"Compare" pW_Q9CMUAzOnp0VhWYtGm/a
+          visualData: 981/583/250/4
+        '[XSgYfFEkh3T1BfYS-TAQ7]:graphInput "Graph Input"':
+          data:
+            dataType: object
+            id: input
+            useDefaultValueInput: false
+          visualData: 532/373/300/null
+        '[Ze__xKy4jtZZfbwFhvk3C]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $.has_mission
+            usePathInput: false
+          outgoingConnections:
+            - match->"Compare" pW_Q9CMUAzOnp0VhWYtGm/b
+          visualData: 981/783/250/4
+        '[ey2CAjcC_cDSekdEx-3ma]:graphInput "Graph Input"':
+          data:
+            dataType: object
+            id: expectedOutput
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Extract Object Path" U-ioiOl27qUJnCz7mR6lc/object
+          visualData: 535/565/300/1
+        '[pW_Q9CMUAzOnp0VhWYtGm]:compare "Compare"':
+          data:
+            comparisonFunction: ==
+          outgoingConnections:
+            - output->"has_mission matches" 6E6yFuxK66-qmP-8UoCxY/value
+          visualData: 1346/672/160/5
     hiEyYlH301i1i5f_Cb-H6:
       metadata:
         description: ""
@@ -516,7 +601,7 @@ data:
             - output->"Chat" F2FpT27oVpfKnsxVht6d7/systemPrompt
             - output->"Chat" Wzh9TCggdASIrUTKhTphE/systemPrompt
             - output->"Chat" lZDsm-nZ1kdG2934rDFvU/systemPrompt
-          visualData: 733.4440748319256/419.4304054004698/300/27
+          visualData: 789/442/300/null
         '[wqB87yxrgwoH5ThFJ34qO]:userInput "User Input"':
           data:
             prompt: This is an example question?
@@ -690,6 +775,116 @@ data:
           outgoingConnections:
             - match->"Text" r0_Xfe9Ibvalmrc0HK7A_/favorite_food
           visualData: 1734/1238/250/18
+    rUcgbRwgkovsnv8X5xyVF:
+      metadata:
+        description: ""
+        id: rUcgbRwgkovsnv8X5xyVF
+        name: 8. Testing Graphs/Graph to Test
+      nodes:
+        '[F3p7D1IkzN_1gWplMHfXj]:text "Text"':
+          data:
+            text: |-
+              {{input}}
+
+              Based on the text above, what is the company's mission?
+          outgoingConnections:
+            - output->"Chat" L1zqqOtd6l0S8zhTlMjCy/prompt
+          visualData: 1202.831121932729/586.255821477281/300/null
+        '[IqZpo_N0QLQbHdtrx14cc]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: mission_statement
+          visualData: 1870.150555087616/587.4825116117569/300/8
+        '[L1zqqOtd6l0S8zhTlMjCy]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            presencePenalty: 0
+            stop: ""
+            temperature: 0
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Graph Output" IqZpo_N0QLQbHdtrx14cc/value
+          visualData: 1601.5054156373951/583.8024412083291/200/6
+        '[LmPob-xavvr3oj4TUQ1K_]:text "Text"':
+          data:
+            text: >-
+              ABOUT IRONCLAD
+
+
+              We're on a mission to power the world's contracts.
+
+
+              Ironclad is a Contract Lifecycle Management (CLM) platform that helps business and legal teams manage every aspect of the contracting process.
+          outgoingConnections:
+            - output->"Graph Input" hiGbJvedGXiOex0h93GDN/default
+          visualData: 373/319/300/null
+        '[MjPGAG0CiUARtVbB0tnXX]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: has_mission
+          visualData: 1860.2380178509513/363.374672110798/300/5
+        '[cykKF3gfFLeM9bQ6K7X6v]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo-0613
+            presencePenalty: 0
+            stop: ""
+            temperature: 0
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Graph Output" MjPGAG0CiUARtVbB0tnXX/value
+          visualData: 1566.5841494194358/353.83822393282753/200/3
+        '[hiGbJvedGXiOex0h93GDN]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: statement
+            useDefaultValueInput: true
+          outgoingConnections:
+            - data->"Text" F3p7D1IkzN_1gWplMHfXj/input
+            - data->"Text" nUF-DuERfQB3tj6gG94zc/input
+          visualData: 777.4988999043496/334.739345282144/300/1
+        '[nUF-DuERfQB3tj6gG94zc]:text "Text"':
+          data:
+            text: |-
+              Answer YES or NO.
+
+              {{input}}
+
+              Based on the text above, does the company have a mission?
+          outgoingConnections:
+            - output->"Chat" cykKF3gfFLeM9bQ6K7X6v/prompt
+          visualData: 1194.6586178008602/331.723732863615/300/2
     tt5rzcZT15dZ9Jr8B0d4E:
       metadata:
         description: ""

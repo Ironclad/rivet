@@ -7,6 +7,8 @@ export const settingsState = atom<Settings>({
   default: {
     openAiKey: '',
     openAiOrganization: '',
+    anthropicApiKey: '',
+    recordingPlaybackLatency: 1000,
   },
   effects_UNSTABLE: [persistAtom],
 });

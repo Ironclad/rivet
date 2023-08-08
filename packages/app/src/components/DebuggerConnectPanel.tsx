@@ -3,17 +3,50 @@ import TextField from '@atlaskit/textfield';
 import { css } from '@emotion/react';
 import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
 import { Field } from '@atlaskit/form';
+import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
+import { useGlobalShortcut } from '../hooks/useGlobalShortcut';
+import { useRecoilState } from 'recoil';
+import { debuggerPanelOpenState } from '../state/ui';
+
+export const DebuggerPanelRenderer: FC = () => {
+  const [debuggerPanelOpen, setDebuggerPanelOpen] = useRecoilState(debuggerPanelOpenState);
+
+  const { remoteDebuggerState: remoteDebugger, connect, disconnect } = useRemoteDebugger();
+
+  const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
+
+  useGlobalShortcut('CmdOrCtrl+Shift+D', () => {
+    if (isActuallyRemoteDebugging || remoteDebugger.reconnecting) {
+      disconnect();
+    } else {
+      setDebuggerPanelOpen(true);
+    }
+  });
+
+  function handleConnectRemoteDebugger(url: string) {
+    setDebuggerPanelOpen(false);
+    connect(url);
+  }
+
+  if (!debuggerPanelOpen) {
+    return null;
+  }
+
+  return <DebuggerConnectPanel onConnect={handleConnectRemoteDebugger} onCancel={() => setDebuggerPanelOpen(false)} />;
+};
 
 const styles = css`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  position: absolute;
-  top: calc(100% + 8px);
+  position: fixed;
+  top: 48px;
+  left: 256px;
   background: var(--grey-darker);
   padding: 16px;
   box-shadow: 0 8px 16px var(--shadow-dark);
   width: 400px;
+  z-index: 50;
 
   .inputs {
   }

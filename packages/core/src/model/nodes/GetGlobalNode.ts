@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import {
   FunctionDataValues,
   ScalarDataType,
@@ -13,6 +13,7 @@ import {
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { coerceType } from '../../utils/coerceType.js';
 import { InternalProcessContext } from '../ProcessContext.js';
+import { dedent } from 'ts-dedent';
 
 export type GetGlobalNode = ChartNode<'getGlobal', GetGlobalNodeData>;
 
@@ -104,6 +105,14 @@ export class GetGlobalNodeImpl extends NodeImpl<GetGlobalNode> {
         dataKey: 'wait',
       },
     ];
+  }
+
+  getBody(): string | NodeBodySpec | undefined {
+    return dedent`
+      ${this.data.id}
+      Type: ${this.data.dataType}
+      ${this.data.wait ? 'Waits for available data' : ''}
+    `;
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

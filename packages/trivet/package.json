@@ -1,0 +1,63 @@
+{
+  "name": "@ironclad/trivet",
+  "repository": "https://github.com/ironclad/rivet",
+  "version": "0.1.0",
+  "main": "dist/cjs/bundle.cjs",
+  "module": "dist/esm/index.js",
+  "src": "src/index.ts",
+  "types": "dist/types/index.d.ts",
+  "type": "module",
+  "exports": {
+    "node": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/bundle.cjs"
+    },
+    "browser": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/bundle.cjs"
+    },
+    "default": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/bundle.cjs"
+    }
+  },
+  "files": [
+    "dist/cjs/**",
+    "dist/esm/**",
+    "dist/types/**"
+  ],
+  "scripts": {
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "rm -rf dist/esm dist/types dist/tsconfig.tsbuildinfo && tsc -b --verbose",
+    "build:cjs": "rm -rf dist/cjs && tsx ../core/bundle.esbuild.ts",
+    "prepublishOnly": "yarn build && cp -r ../../LICENSE ../../README.md .",
+    "publish": "yarn npm publish",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx ./src"
+  },
+  "dependencies": {
+    "@ironclad/rivet-core": "workspace:^",
+    "lodash-es": "^4.17.21",
+    "yaml": "^2.3.1"
+  },
+  "devDependencies": {
+    "@types/eslint": "^8.44.1",
+    "@types/lodash-es": "^4.17.8",
+    "@types/node": "^20.4.5",
+    "@types/yaml": "^1.9.7",
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "eslint": "^8.46.0",
+    "eslint-config-standard-with-typescript": "^37.0.0",
+    "eslint-plugin-import": "^2.28.0",
+    "eslint-plugin-n": "^16.0.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "ts-node": "^10.9.1",
+    "tsx": "^3.12.7",
+    "typescript": "^5.1.6"
+  },
+  "volta": {
+    "node": "20.4.0"
+  }
+}

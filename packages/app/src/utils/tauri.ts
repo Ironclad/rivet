@@ -24,9 +24,8 @@ export async function fillMissingSettingsFromEnvironmentVariables(settings: Part
     openAiKey: (settings.openAiKey || (await getEnvVar('OPENAI_API_KEY'))) ?? '',
     openAiOrganization: (settings.openAiOrganization || (await getEnvVar('OPENAI_ORG_ID'))) ?? '',
     pineconeApiKey: (settings.pineconeApiKey || (await getEnvVar('PINECONE_API_KEY'))) ?? '',
+    anthropicApiKey: (settings.anthropicApiKey || (await getEnvVar('ANTHROPIC_API_KEY'))) ?? '',
   };
-
-  console.dir({ fullSettings });
 
   return fullSettings;
 }

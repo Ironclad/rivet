@@ -22,9 +22,9 @@ export const canvasPositionState = atom<CanvasPosition>({
   default: { x: 0, y: 0, zoom: 1 },
 });
 
-export const lastCanvasPositionForGraphState = atomFamily<CanvasPosition | undefined, GraphId>({
-  key: 'lastCanvasPositionForGraph',
-  default: undefined,
+export const lastCanvasPositionByGraphState = atom<Record<GraphId, CanvasPosition | undefined>>({
+  key: 'lastCanvasPositionByGraph',
+  default: {},
   effects_UNSTABLE: [persistAtom],
 });
 
@@ -58,4 +58,15 @@ export const isDraggingWireState = selector<boolean>({
 export const draggingWireClosestPortState = atom<{ nodeId: NodeId; portId: PortId } | undefined>({
   key: 'draggingWireClosestPort',
   default: undefined,
+});
+
+export const graphNavigationStackState = atom<{
+  stack: GraphId[];
+  index?: number;
+}>({
+  key: 'graphNavigationStack',
+  default: {
+    stack: [],
+    index: undefined,
+  },
 });

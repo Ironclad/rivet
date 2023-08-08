@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
 
 export type GptFunctionNode = ChartNode<'gptFunction', GptFunctionNodeData>;
@@ -68,6 +68,10 @@ export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
         language: 'json',
       },
     ];
+  }
+
+  getBody(): string | NodeBodySpec | undefined {
+    return `!markdown_${this.data.name}_: ${this.data.description}`;
   }
 
   async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {

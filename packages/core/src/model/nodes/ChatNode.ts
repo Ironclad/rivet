@@ -8,8 +8,6 @@ import {
   getCostForTokens,
   getTokenCountForMessages,
   getTokenCountForString,
-  modelOptions,
-  openaiModels,
 } from '../../utils/tokenizer.js';
 import { addWarning } from '../../utils/outputs.js';
 import {
@@ -17,6 +15,8 @@ import {
   ChatCompletionOptions,
   ChatCompletionRequestMessage,
   OpenAIError,
+  openAiModelOptions,
+  openaiModels,
   streamChatCompletions,
 } from '../../utils/openai.js';
 import retry from 'p-retry';
@@ -260,7 +260,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         label: 'Model',
         dataKey: 'model',
         useInputToggleDataKey: 'useModelInput',
-        options: modelOptions,
+        options: openAiModelOptions,
       },
       {
         type: 'number',
@@ -460,8 +460,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             ...options,
           });
 
-          let responseChoicesParts: string[][] = [];
-          let functionCalls: object[] = [];
+          const responseChoicesParts: string[][] = [];
+          const functionCalls: object[] = [];
 
           for await (const chunk of chunks) {
             if (!chunk.choices) {
@@ -550,6 +550,10 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           signal: context.signal,
           onFailedAttempt(err) {
             context.trace(`ChatNode failed, retrying: ${err.toString()}`);
+
+            if (context.signal.aborted) {
+              throw new Error('Aborted');
+            }
 
             const { retriesLeft } = err;
 

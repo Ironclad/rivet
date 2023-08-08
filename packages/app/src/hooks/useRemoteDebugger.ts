@@ -1,6 +1,8 @@
 import { useLatest } from 'ahooks';
 import { useRecoilState } from 'recoil';
 import { remoteDebuggerState } from '../state/execution.js';
+import { useRef, useState } from 'react';
+import { set } from 'lodash-es';
 
 let currentDebuggerMessageHandler: ((message: string, data: unknown) => void) | null = null;
 
@@ -15,8 +17,12 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
   const [remoteDebugger, setRemoteDebuggerState] = useRecoilState(remoteDebuggerState);
   const onConnectLatest = useLatest(options.onConnect ?? (() => {}));
   const onDisconnectLatest = useLatest(options.onDisconnect ?? (() => {}));
+  const [retryDelay, setRetryDelay] = useState(0);
 
-  const connect = (url: string) => {
+  const connectRef = useRef<((url: string) => void) | undefined>();
+  const reconnectingTimeout = useRef<ReturnType<typeof setTimeout> | undefined>();
+
+  connectRef.current = (url: string) => {
     if (!url) {
       url = `ws://localhost:21888`;
     }
@@ -28,7 +34,7 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
       socket,
       started: true,
       url,
-      isInternalExecutor: url === 'ws://localhost:21889',
+      isInternalExecutor: url === 'ws://localhost:21889/internal',
     }));
 
     socket.onopen = () => {
@@ -36,6 +42,7 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
         ...prevState,
         reconnecting: false,
       }));
+      setRetryDelay(0);
     };
 
     socket.onclose = () => {
@@ -53,9 +60,12 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
           reconnecting: true,
         }));
 
-        setTimeout(() => {
-          connect(url);
-        }, 2000);
+        // Exponential backoff, max 2s
+        setRetryDelay((delay) => Math.min(2000, (delay + 100) * 1.5));
+
+        reconnectingTimeout.current = setTimeout(() => {
+          connectRef.current?.(url);
+        }, retryDelay);
       }
     };
 
@@ -78,7 +88,8 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
     remoteDebuggerState: remoteDebugger,
     connect: (url: string) => {
       manuallyDisconnecting = false;
-      connect(url);
+      setRetryDelay(0);
+      connectRef.current?.(url);
     },
     disconnect: () => {
       setRemoteDebuggerState((prevState) => ({
@@ -87,6 +98,10 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
         reconnecting: false,
       }));
       manuallyDisconnecting = true;
+
+      if (reconnectingTimeout.current) {
+        clearTimeout(reconnectingTimeout.current);
+      }
 
       if (remoteDebugger.socket) {
         remoteDebugger.socket?.close?.();

@@ -6,32 +6,6 @@ import { ChartNode, Outputs, PortId, ReadDirectoryNode, expectType } from '@iron
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 import { ioProvider } from '../../utils/globals.js';
 
-type ReadDirectoryNodeBodyProps = {
-  node: ReadDirectoryNode;
-};
-
-export const ReadDirectoryNodeBody: FC<ReadDirectoryNodeBodyProps> = ({ node }) => {
-  return (
-    <div>
-      <div>Path: {node.data.usePathInput ? '(Input)' : node.data.path}</div>
-      <div>Recursive: {node.data.useRecursiveInput ? '(Input)' : node.data.recursive ? 'Yes' : 'No'}</div>
-      <div>
-        Include Directories:{' '}
-        {node.data.useIncludeDirectoriesInput ? '(Input)' : node.data.includeDirectories ? 'Yes' : 'No'}
-      </div>
-      <div>Relative: {node.data.useRelativeInput ? '(Input)' : node.data.relative ? 'Yes' : 'No'}</div>
-      <div>
-        Filters:{' '}
-        {node.data.useFilterGlobsInput
-          ? '(Input)'
-          : node.data.filterGlobs.length > 0
-          ? node.data.filterGlobs.join(', ')
-          : 'None'}
-      </div>
-    </div>
-  );
-};
-
 export const ReadDirectoryNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
   const outputPaths = expectType(outputs['paths' as PortId], 'string[]');
   return (
@@ -260,7 +234,6 @@ export const ReadDirectoryNodeEditor: FC<ReadDirectoryNodeEditorProps> = ({ node
 };
 
 export const readDirectoryNodeDescriptor: NodeComponentDescriptor<'readDirectory'> = {
-  Body: ReadDirectoryNodeBody,
   OutputSimple: ReadDirectoryNodeOutput,
   Editor: ReadDirectoryNodeEditor,
 };

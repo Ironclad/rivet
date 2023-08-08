@@ -20,6 +20,12 @@ export const nodeStyles = css`
     transform-origin: top left;
   }
 
+  .node.isComment {
+    background-color: rgba(46, 46, 46, 0.1);
+    pointer-events: none;
+    padding: 0;
+  }
+
   .node.zoomedOut {
     min-width: 200px;
   }
@@ -31,15 +37,15 @@ export const nodeStyles = css`
     box-shadow: 10px 10px 16px rgba(0, 0, 0, 0.4), 0 0 10px var(--shadow-primary);
   }
 
-  .node:hover,
-  .node.selected {
+  .node:hover:not(.isComment),
+  .node.selected:not(.isComment) {
     border-color: var(--primary);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 0 10px var(--shadow-primary);
     z-index: 1000 !important;
   }
 
   .node-title {
-    background-color: var(--grey-darkish);
+    background-color: #3d3d3d;
     color: var(--foreground-bright);
     padding: 12px;
     margin: -12px -12px 8px -12px;
@@ -51,6 +57,13 @@ export const nodeStyles = css`
     overflow: hidden;
     word-break: break-word;
     hyphens: auto;
+  }
+
+  .node.node.isComment .node-title {
+    padding: 4px;
+    background-color: rgba(61, 61, 61, 0.5);
+    pointer-events: all;
+    margin: 0;
   }
 
   .node.zoomedOut .node-title {
@@ -77,6 +90,10 @@ export const nodeStyles = css`
     font-weight: bold;
     font-size: 14px;
     text-transform: uppercase;
+  }
+
+  .node.isComment .title-text {
+    display: none;
   }
 
   .node.zoomedOut .title-text {
@@ -126,6 +143,13 @@ export const nodeStyles = css`
     }
   }
 
+  .node.isComment .title-controls {
+    .success,
+    .error {
+      display: none;
+    }
+  }
+
   .node.zoomedOut .title-controls {
     position: absolute;
     right: 10px;
@@ -137,6 +161,10 @@ export const nodeStyles = css`
     font-size: 12px;
     margin-bottom: 12px;
     line-height: 1.4;
+  }
+
+  .node.isComment .node-body {
+    height: 100%;
   }
 
   .node-ports {
@@ -262,6 +290,10 @@ export const nodeStyles = css`
   .node-output {
     position: relative;
     z-index: 0;
+  }
+
+  .node.isComment .node-output {
+    display: none;
   }
 
   .node-output-inner,
@@ -416,6 +448,13 @@ export const nodeStyles = css`
     right: 0;
     border-top-left-radius: 100px;
     border-bottom-right-radius: 50px;
+  }
+
+  .node.isComment .resize-handle {
+    cursor: nwse-resize;
+    pointer-events: all;
+    width: 20px;
+    height: 20px;
   }
 
   .node.running {

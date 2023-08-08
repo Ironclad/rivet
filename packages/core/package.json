@@ -1,7 +1,7 @@
 {
   "name": "@ironclad/rivet-core",
   "repository": "https://github.com/ironclad/rivet",
-  "version": "0.12.0",
+  "version": "0.14.3",
   "packageManager": "yarn@3.5.0",
   "main": "dist/cjs/bundle.cjs",
   "module": "dist/esm/index.js",
@@ -35,7 +35,9 @@
     "build:esm": "rm -rf dist/esm dist/types dist/tsconfig.tsbuildinfo && tsc -b --verbose",
     "build:cjs": "rm -rf dist/cjs && tsx bundle.esbuild.ts",
     "prepack": "yarn build && cp -r ../../LICENSE ../../README.md .",
-    "publish": "yarn npm publish"
+    "publish": "yarn npm publish",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx ./src",
+    "test": "tsx --test test/**/*.ts"
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",
@@ -44,7 +46,7 @@
     "emittery-0-13": "npm:emittery@^0.13.1",
     "jsonpath-plus": "^7.2.0",
     "lodash-es": "^4.17.21",
-    "minimatch": "^9.0.1",
+    "minimatch": "^9.0.3",
     "nanoid": "^3.3.6",
     "openai": "^3.3.0",
     "p-queue": "^7.3.4",
@@ -53,22 +55,28 @@
     "p-retry-4": "npm:p-retry@^4.0.0",
     "safe-stable-stringify": "^2.4.3",
     "ts-dedent": "^2.2.0",
-    "ts-pattern": "^5.0.1",
-    "type-fest": "^3.11.1",
+    "ts-pattern": "^5.0.4",
+    "type-fest": "^4.0.0",
     "yaml": "^2.3.1"
   },
   "devDependencies": {
-    "@swc/core": "^1.3.68",
+    "@swc/core": "^1.3.71",
     "@types/crypto-js": "^4.1.1",
+    "@types/eslint": "^8.44.1",
     "@types/jsonpath-plus": "^5.0.2",
-    "@types/lodash": "^4",
-    "@types/lodash-es": "^4.17.7",
+    "@types/lodash": "^4.14.196",
+    "@types/lodash-es": "^4.17.8",
     "@types/yaml": "^1.9.7",
-    "esbuild": "^0.18.11",
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "esbuild": "^0.18.17",
+    "eslint": "^8.46.0",
+    "eslint-plugin-import": "^2.28.0",
+    "eslint-plugin-n": "^16.0.1",
+    "eslint-plugin-promise": "^6.1.1",
     "lodash": "^4.17.21",
     "ts-node": "^10.9.1",
     "tsx": "^3.12.7",
-    "typescript": "^5.1.3"
+    "typescript": "^5.1.6"
   },
   "volta": {
     "node": "20.4.0"

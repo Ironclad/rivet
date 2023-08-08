@@ -149,6 +149,12 @@ export * from './nodes/RandomNumberNode.js';
 import { shuffleNode } from './nodes/ShuffleNode.js';
 export * from './nodes/ShuffleNode.js';
 
+import { chatAnthropicNode } from './nodes/ChatAnthropicNode.js';
+export * from './nodes/ChatAnthropicNode.js';
+
+import { commentNode } from './nodes/CommentNode.js';
+export * from './nodes/CommentNode.js';
+
 const register = new NodeRegistration()
   .register(toYamlNode)
   .register(userInputNode)
@@ -198,7 +204,9 @@ const register = new NodeRegistration()
   .register(evaluateNode)
   .register(numberNode)
   .register(randomNumberNode)
-  .register(shuffleNode);
+  .register(shuffleNode)
+  .register(chatAnthropicNode)
+  .register(commentNode);
 
 export type Nodes = typeof register.NodesType;
 
@@ -214,6 +222,10 @@ export function createUnknownNodeInstance(node: ChartNode): NodeImpl<ChartNode> 
 
 export function nodeFactory<T extends NodeType>(type: T): Extract<Nodes, { type: T }> {
   return register.create(type);
+}
+
+export function getNodeTypes(): NodeType[] {
+  return register.getNodeTypes();
 }
 
 export type NodeOfType<T extends NodeType> = Extract<Nodes, { type: T }>;

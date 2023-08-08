@@ -1,25 +1,28 @@
 {
   "name": "@ironclad/rivet-app-executor",
   "repository": "https://github.com/ironclad/rivet",
-  "version": "0.12.0",
+  "version": "0.14.3",
   "bin": "./bin/executor-bundle.js",
   "scripts": {
     "bundle": "tsx bundle.esbuild.ts",
     "package": "pkg . --out-path dist --targets node18-linux-x64,node18-macos-x64,node18-win-x64",
     "package-rename": "/bin/sh -c \"cp dist/rivet-app-executor-macos dist/app-executor-`rustc -Vv | grep host | cut -f2 -d' '`\"",
-    "build": "yarn bundle && yarn package && yarn package-rename"
+    "build": "yarn bundle && yarn package && yarn package-rename",
+    "start": "yarn bundle && node bin/executor-bundle.js"
   },
   "devDependencies": {
     "@ironclad/rivet-node": "workspace:^",
-    "@swc/core": "^1.3.68",
-    "esbuild": "^0.18.2",
+    "@swc/core": "^1.3.71",
+    "@types/yargs": "^17.0.24",
+    "esbuild": "^0.18.17",
     "esbuild-plugin-copy": "^2.1.1",
     "pkg": "^5.8.1",
     "tsx": "^3.12.7",
-    "typescript": "^5.1.3"
+    "typescript": "^5.1.6"
   },
   "dependencies": {
-    "@dqbd/tiktoken": "^1.0.7"
+    "@dqbd/tiktoken": "^1.0.7",
+    "yargs": "^17.7.2"
   },
   "pkg": {
     "assets": [

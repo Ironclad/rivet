@@ -27,6 +27,20 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
             <ModalTitle>Settings</ModalTitle>
           </ModalHeader>
           <ModalBody>
+            <Field name="recording-speed" label="Recording delay between chats (ms)">
+              {() => (
+                <TextField
+                  type="number"
+                  value={settings.recordingPlaybackLatency}
+                  onChange={(e) =>
+                    setSettings((s) => ({
+                      ...s,
+                      recordingPlaybackLatency: (e.target as HTMLInputElement).valueAsNumber,
+                    }))
+                  }
+                />
+              )}
+            </Field>
             <Field name="api-key" label="OpenAI API Key">
               {() => (
                 <TextField
@@ -52,6 +66,17 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
                   type="password"
                   value={settings.pineconeApiKey}
                   onChange={(e) => setSettings((s) => ({ ...s, pineconeApiKey: (e.target as HTMLInputElement).value }))}
+                />
+              )}
+            </Field>
+            <Field name="anthropicApiKey" label="Anthropic API Key">
+              {() => (
+                <TextField
+                  type="password"
+                  value={settings.anthropicApiKey}
+                  onChange={(e) =>
+                    setSettings((s) => ({ ...s, anthropicApiKey: (e.target as HTMLInputElement).value }))
+                  }
                 />
               )}
             </Field>

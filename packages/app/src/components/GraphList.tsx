@@ -257,15 +257,36 @@ export const GraphList: FC = () => {
 
   const duplicateGraph = useDuplicateGraph();
 
-  function handleNew(folderPath?: string) {
+  const handleNew = useStableCallback((folderPath?: string) => {
     const graph = emptyNodeGraph();
+    let i = 1;
     if (folderPath) {
-      graph.metadata!.name = `${folderPath}/${graph.metadata!.name}`;
+      if (savedGraphs.some((g) => g.metadata?.name === `${folderPath}/Untitled Graph`)) {
+        i++;
+      }
+
+      // eslint-disable-next-line no-loop-func
+      while (savedGraphs.some((g) => g.metadata?.name === `${folderPath}/Untitled Graph ${i}`)) {
+        i++;
+      }
+
+      graph.metadata!.name = i === 1 ? `${folderPath}/Untitled Graph` : `${folderPath}/Untitled Graph ${i}`;
+    } else {
+      if (savedGraphs.some((g) => g.metadata?.name === 'Untitled Graph')) {
+        i++;
+      }
+
+      // eslint-disable-next-line no-loop-func
+      while (savedGraphs.some((g) => g.metadata?.name === `Untitled Graph ${i}`)) {
+        i++;
+      }
+
+      graph.metadata!.name = i === 1 ? `Untitled Graph` : `Untitled Graph ${i}`;
     }
     loadGraph(graph);
-    setSavedGraphs([...savedGraphs, graph]);
+    setSavedGraphs((savedGraphs) => [...savedGraphs, graph]);
     startRename(graph.metadata!.name!);
-  }
+  });
 
   function handleNewFolder(parentPath?: string) {
     const newFolderPath = parentPath ? `${parentPath}/New Folder` : 'New Folder';
@@ -302,7 +323,6 @@ export const GraphList: FC = () => {
     }
 
     if (savedGraphs.some((g) => g.metadata?.name === newFullPath) || folderNames.includes(newFullPath)) {
-      console.dir({ fullPath, newFullPath, savedGraphs: savedGraphs.map((g) => g.metadata?.name), folderNames });
       toast.error('A graph or folder with that name already exists.');
       return;
     }

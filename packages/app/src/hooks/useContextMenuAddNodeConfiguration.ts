@@ -185,6 +185,17 @@ export const addContextMenuGroups = [
     items: [
       chatNode,
       {
+        label: 'Chat (Anthropic)',
+        data: 'chatAnthropic',
+        id: 'add-node:chatAnthropic',
+        infoBox: {
+          title: 'Chat (Anthropic) Node',
+          description: dedent`
+            Makes a call to an Anthropic chat model. The settings contains many options for tweaking the model's behavior.
+          `,
+        },
+      },
+      {
         label: 'Assemble Prompt',
         data: 'assemblePrompt',
         id: 'add-node:assemblePrompt',
@@ -392,7 +403,9 @@ export const addContextMenuGroups = [
           description: dedent`
             Creates an object from input values and a JSON template, escaping the input values and inserting them into the template.
 
-            Useful for creating objects from multiple string inputs.
+            Use double-quotes around the input values to escape them. String values are automatically escaped.
+
+            Useful for creating objects from multiple inputs.
           `,
         },
       },
@@ -667,6 +680,17 @@ export const addContextMenuGroups = [
           image: subgraphNodeImage,
           description: dedent`
             Executes another graph. Inputs and outputs are defined by Graph Input and Graph Output nodes within the subgraph.
+          `,
+        },
+      },
+      {
+        label: 'Comment',
+        data: 'comment',
+        id: 'add-node:comment',
+        infoBox: {
+          title: 'Comment Node',
+          description: dedent`
+            A comment node is a node that does nothing. It is useful for adding notes to a graph.
           `,
         },
       },

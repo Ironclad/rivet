@@ -1,11 +1,12 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import { AnyDataValue, ArrayDataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { coerceType } from '../../utils/coerceType.js';
 import { getError } from '../../utils/errors.js';
 import { InternalProcessContext } from '../ProcessContext.js';
+import { omit } from 'lodash-es';
 
 export type ExternalCallNode = ChartNode<'externalCall', ExternalCallNodeData>;
 
@@ -86,12 +87,16 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
     ];
   }
 
+  getBody(): string | NodeBodySpec | undefined {
+    return this.data.useFunctionNameInput ? '(Using Input)' : this.data.functionName;
+  }
+
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const functionName = this.chartNode.data.useFunctionNameInput
       ? coerceType(inputs['functionName' as PortId], 'string')
       : this.chartNode.data.functionName;
 
-    let args = inputs['arguments' as PortId];
+    const args = inputs['arguments' as PortId];
     let arrayArgs: ArrayDataValue<AnyDataValue> = {
       type: 'any[]',
       value: [],
@@ -109,14 +114,28 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
     }
 
     const fn = context.externalFunctions[functionName];
+    const externalContext = omit(context, ['setGlobal']);
 
     if (!fn) {
-      throw new Error(`Function ${functionName} not was not defined using setExternalCall`);
+      if (this.data.useErrorOutput) {
+        return {
+          ['result' as PortId]: {
+            type: 'control-flow-excluded',
+            value: undefined,
+          },
+          ['error' as PortId]: {
+            type: 'string',
+            value: `Function ${functionName} not was not defined using setExternalCall`,
+          },
+        };
+      } else {
+        throw new Error(`Function ${functionName} not was not defined using setExternalCall`);
+      }
     }
 
     if (this.data.useErrorOutput) {
       try {
-        const result = await fn(...arrayArgs.value);
+        const result = await fn(externalContext, ...arrayArgs.value);
         return {
           ['result' as PortId]: result,
           ['error' as PortId]: {
@@ -137,7 +156,7 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
         };
       }
     }
-    const result = await fn(...arrayArgs.value);
+    const result = await fn(externalContext, ...arrayArgs.value);
     return {
       ['result' as PortId]: result,
     };
