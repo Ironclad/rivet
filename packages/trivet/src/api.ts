@@ -118,6 +118,8 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
 
       const summary = await experiment.summarize({ summarizeScores: false });
       opts.setBrainTrustSummary?.(testSuite.id, summary);
+    } else {
+      opts.setBrainTrustSummary?.(testSuite.id, undefined);
     }
 
     for (const testCase of testSuite.testCases) {
