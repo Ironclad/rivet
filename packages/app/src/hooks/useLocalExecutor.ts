@@ -167,12 +167,20 @@ export function useLocalExecutor() {
             );
           },
           braintrustApiKey: settings.braintrustApiKey,
-          setBrainTrustSummary: (id, summary) => {
-            setTrivetState((s) => ({
+          setBrainTrustSummary: (id, summary) => 
+            setTrivetState((s) => {
+              let brainTrustSummaries = s.brainTrustSummaries;
+              if (summary === undefined) {
+                const { [id]: _, ...rest } = s.brainTrustSummaries || {};
+                brainTrustSummaries = rest;
+              } else {
+                brainTrustSummaries = { ...s.brainTrustSummaries, [id]: summary };
+              }
+              return ({
               ...s,
-              brainTrustSummaries: { ...s.brainTrustSummaries, [id]: summary },
-            }));
-          }
+              brainTrustSummaries,
+            });
+          })
         });
         setTrivetState((s) => ({
           ...s,
