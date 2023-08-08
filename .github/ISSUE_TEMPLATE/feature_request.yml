@@ -10,7 +10,7 @@ body:
   - type: textarea
     id: feature-request
     attributes:
-      label: New Feature?
+      label: Feature Request
       description: Describe your new feature request?
       placeholder: Rivet should do this!
       value: "..."
