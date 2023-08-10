@@ -10,13 +10,12 @@ import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import {
   ArrayDataValue,
+  BuiltInNodes,
   ChartNode,
   GraphId,
   NodeId,
-  NodeType,
-  Nodes,
   StringDataValue,
-  nodeFactory,
+  globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
 import { ProcessQuestions, userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput.js';
 import { entries } from '../utils/typeSafety.js';
@@ -69,8 +68,8 @@ export const GraphBuilder: FC = () => {
     setNodes?.(newNodes);
   });
 
-  const addNode = useStableCallback((nodeType: NodeType, position: { x: number; y: number }) => {
-    const newNode = nodeFactory(nodeType);
+  const addNode = useStableCallback((nodeType: string, position: { x: number; y: number }) => {
+    const newNode = globalRivetNodeRegistry.createDynamic(nodeType);
 
     newNode.visualData.x = position.x;
     newNode.visualData.y = position.y;
@@ -101,7 +100,7 @@ export const GraphBuilder: FC = () => {
   const contextMenuItemSelected = useStableCallback(
     (menuItemId: string, data: unknown, context: ContextMenuContext, meta: { x: number; y: number }) => {
       if (menuItemId.startsWith('add-node:')) {
-        const nodeType = data as NodeType;
+        const nodeType = data as string;
         addNode(nodeType, clientToCanvasPosition(meta.x, meta.y));
         return;
       }
@@ -124,13 +123,13 @@ export const GraphBuilder: FC = () => {
 
       if (menuItemId === 'node-duplicate') {
         const { nodeId } = context.data as { nodeId: NodeId };
-        const node = nodesById[nodeId] as Nodes;
+        const node = nodesById[nodeId];
 
         if (!node) {
           return;
         }
 
-        const newNode = nodeFactory(node.type);
+        const newNode = globalRivetNodeRegistry.createDynamic(node.type);
         newNode.data = { ...(node.data as object) };
         newNode.visualData = {
           ...node.visualData,
@@ -158,7 +157,7 @@ export const GraphBuilder: FC = () => {
 
       if (menuItemId === 'node-go-to-subgraph') {
         const { nodeId } = context.data as { nodeId: NodeId };
-        const node = nodesById[nodeId] as Nodes;
+        const node = nodesById[nodeId] as BuiltInNodes;
 
         if (node?.type !== 'subGraph') {
           return;

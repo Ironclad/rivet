@@ -111,6 +111,15 @@ export class NodeRegistration<
     return this.#displayNames[type];
   }
 
+  getDynamicDisplayName(type: string) {
+    const displayName = this.#dynamicDisplayNames[type];
+    if (!displayName) {
+      throw new Error(`Unknown node type: ${type}`);
+    }
+
+    return displayName;
+  }
+
   isRegistered(type: NodeTypes): boolean {
     return this.#impls[type] !== undefined;
   }

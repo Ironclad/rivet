@@ -135,6 +135,7 @@ function fromSerializedProject(serializedProject: SerializedProject): Project {
   return {
     metadata: serializedProject.metadata,
     graphs: mapValues(serializedProject.graphs, (graph) => fromSerializedGraph(graph)) as Record<GraphId, NodeGraph>,
+    plugins: [],
   };
 }
 

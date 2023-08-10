@@ -18,6 +18,7 @@ export const projectState = atom<Project>({
       title: 'Untitled Project',
     },
     graphs: {},
+    plugins: [],
   },
   effects_UNSTABLE: [persistAtom],
 });

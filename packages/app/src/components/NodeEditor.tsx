@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { nodesByIdState, nodesState } from '../state/graph.js';
 import styled from '@emotion/styled';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
-import { NodeType, getNodeDisplayName, ChartNode, NodeTestGroup, GraphId } from '@ironclad/rivet-core';
+import { ChartNode, NodeTestGroup, GraphId, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import { produce } from 'immer';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
@@ -343,7 +343,7 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
       <div className="tabs">
         <Tabs id="node-editor-tabs">
           <TabList>
-            <Tab>{getNodeDisplayName(selectedNode.type as NodeType)} Node</Tab>
+            <Tab>{globalRivetNodeRegistry.getDynamicDisplayName(selectedNode.type)} Node</Tab>
             <Tab>Test Cases</Tab>
           </TabList>
           <TabPanel>

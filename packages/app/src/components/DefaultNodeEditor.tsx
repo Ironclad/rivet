@@ -12,9 +12,9 @@ import {
   NumberEditorDefinition,
   StringEditorDefinition,
   ToggleEditorDefinition,
-  createUnknownNodeInstance,
   dataTypeDisplayNames,
   getScalarTypeOf,
+  globalRivetNodeRegistry,
   isArrayDataType,
   scalarTypes,
 } from '@ironclad/rivet-core';
@@ -117,7 +117,7 @@ export const DefaultNodeEditor: FC<{
   isReadonly: boolean;
   onChange: (changed: ChartNode) => void;
 }> = ({ node, onChange, isReadonly }) => {
-  const editors = useMemo(() => createUnknownNodeInstance(node).getEditors(), [node]);
+  const editors = useMemo(() => globalRivetNodeRegistry.createDynamicImpl(node).getEditors(), [node]);
 
   return (
     <div css={defaultEditorContainerStyles}>

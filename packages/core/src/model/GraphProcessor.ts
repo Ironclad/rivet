@@ -14,7 +14,6 @@ import {
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase.js';
 import { GraphId, NodeGraph } from './NodeGraph.js';
 import { NodeImpl } from './NodeImpl.js';
-import { NodeType, Nodes, createUnknownNodeInstance } from './Nodes.js';
 import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode.js';
 import PQueueImport from 'p-queue';
 import { getError } from '../utils/errors.js';
@@ -27,6 +26,7 @@ import { InternalProcessContext, ProcessContext, ProcessId } from './ProcessCont
 import { ExecutionRecorder } from '../recording/ExecutionRecorder.js';
 import { P, match } from 'ts-pattern';
 import { Opaque } from 'type-fest';
+import { BuiltInNodeType, BuiltInNodes, globalRivetNodeRegistry } from './Nodes.js';
 
 // CJS compatibility, gets default.default for whatever reason
 let PQueue = PQueueImport;
@@ -162,6 +162,8 @@ export class GraphProcessor {
   #parent: GraphProcessor | undefined;
   id = nanoid();
 
+  registry = globalRivetNodeRegistry;
+
   /** The node that is executing this graph, almost always a subgraph node. Undefined for root. */
   #executor:
     | {
@@ -227,7 +229,7 @@ export class GraphProcessor {
 
     // Create node instances and store them in a lookup table
     for (const node of this.#graph.nodes) {
-      this.#nodeInstances[node.id] = createUnknownNodeInstance(node as Nodes);
+      this.#nodeInstances[node.id] = this.registry.createDynamicImpl(node);
       this.#nodesById[node.id] = node;
     }
 
@@ -636,7 +638,7 @@ export class GraphProcessor {
 
       for (const nodeWithoutOutputs of nodesWithoutOutputs) {
         this.#processingQueue.add(async () => {
-          await this.#fetchNodeDataAndProcessNode(nodeWithoutOutputs as Nodes);
+          await this.#fetchNodeDataAndProcessNode(nodeWithoutOutputs);
         });
       }
 
@@ -668,8 +670,11 @@ export class GraphProcessor {
       }
 
       if (this.#graphOutputs['cost' as PortId] == null) {
-        const totalCost = sum(this.#graph.nodes.filter((node) => node.type === 'chat' || node.type === 'subGraph')
-          .map((node) => this.#nodeResults.get(node.id)?.['cost' as PortId]?.value ?? 0));
+        const totalCost = sum(
+          this.#graph.nodes
+            .filter((node) => node.type === 'chat' || node.type === 'subGraph')
+            .map((node) => this.#nodeResults.get(node.id)?.['cost' as PortId]?.value ?? 0),
+        );
         this.#graphOutputs['cost' as PortId] = {
           type: 'number',
           value: totalCost,
@@ -692,7 +697,7 @@ export class GraphProcessor {
     }
   }
 
-  async #fetchNodeDataAndProcessNode(node: Nodes): Promise<void> {
+  async #fetchNodeDataAndProcessNode(node: ChartNode): Promise<void> {
     if (this.#currentlyProcessing.has(node.id) || this.#queuedNodes.has(node.id)) {
       return;
     }
@@ -750,7 +755,7 @@ export class GraphProcessor {
       inputNodes.map((inputNode) => {
         return async () => {
           this.#emitter.emit('trace', `Fetching required data for node ${inputNode.title} (${inputNode.id})`);
-          await this.#fetchNodeDataAndProcessNode(inputNode as Nodes);
+          await this.#fetchNodeDataAndProcessNode(inputNode);
         };
       }),
     );
@@ -759,7 +764,9 @@ export class GraphProcessor {
   }
 
   /** If all inputs are present, all conditions met, processes the node. */
-  async #processNodeIfAllInputsAvailable(node: Nodes): Promise<void> {
+  async #processNodeIfAllInputsAvailable(node: ChartNode): Promise<void> {
+    const builtInNode = node as BuiltInNodes;
+
     if (this.#currentlyProcessing.has(node.id)) {
       this.#emitter.emit('trace', `Node ${node.title} is already being processed`);
       return;
@@ -859,7 +866,7 @@ export class GraphProcessor {
       return;
     }
 
-    const processId = await this.#processNode(node as Nodes);
+    const processId = await this.#processNode(node);
 
     if (this.slowMode) {
       await new Promise((resolve) => setTimeout(resolve, 250));
@@ -921,8 +928,8 @@ export class GraphProcessor {
     }
 
     let childLoopInfo = attachedData.loopInfo;
-    if (node.type === 'loopController') {
-      if (childLoopInfo != null && childLoopInfo.loopControllerId !== node.id) {
+    if (builtInNode.type === 'loopController') {
+      if (childLoopInfo != null && childLoopInfo.loopControllerId !== builtInNode.id) {
         this.#nodeErrored(node, new Error('Nested loops are not supported'), processId);
         return;
       }
@@ -948,10 +955,12 @@ export class GraphProcessor {
 
       attachedData.loopInfo = childLoopInfo; // Not 100% sure if this is right - sets the childLoopInfo on the loop controller itself, probably fine?
 
-      if (childLoopInfo.iterationCount > (node.data.maxIterations ?? 100)) {
+      if (childLoopInfo.iterationCount > (builtInNode.data.maxIterations ?? 100)) {
         this.#nodeErrored(
           node,
-          new Error(`Loop controller ${node.title} has exceeded max iterations of ${node.data.maxIterations ?? 100}`),
+          new Error(
+            `Loop controller ${node.title} has exceeded max iterations of ${builtInNode.data.maxIterations ?? 100}`,
+          ),
           processId,
         );
         return;
@@ -986,7 +995,7 @@ export class GraphProcessor {
           `Trying to run output node from ${node.title}: ${outputNode.title} (${outputNode.id})`,
         );
 
-        await this.#processNodeIfAllInputsAvailable(outputNode as Nodes);
+        await this.#processNodeIfAllInputsAvailable(outputNode);
       }),
     );
   }
@@ -1001,8 +1010,9 @@ export class GraphProcessor {
     return nodeData;
   }
 
-  async #processNode(node: Nodes) {
+  async #processNode(node: ChartNode) {
     const processId = nanoid() as ProcessId;
+    const builtInNode = node as BuiltInNodes;
 
     if (this.#abortController.signal.aborted) {
       this.#nodeErrored(node, new Error('Processing aborted'), processId);
@@ -1032,7 +1042,7 @@ export class GraphProcessor {
     return processId;
   }
 
-  #isNodeOfType<T extends Nodes['type']>(type: T, node: ChartNode): node is Extract<Nodes, { type: T }> {
+  #isNodeOfType<T extends BuiltInNodes['type']>(type: T, node: ChartNode): node is Extract<BuiltInNodes, { type: T }> {
     return node.type === type;
   }
 
@@ -1370,10 +1380,16 @@ export class GraphProcessor {
 
     const isWaitingForLoop = controlFlowExcludedValues.some((value) => value?.value === 'loop-not-broken');
 
-    const nodesAllowedToConsumeExcludedValue: NodeType[] = ['if', 'ifElse', 'coalesce', 'graphOutput', 'raceInputs'];
+    const nodesAllowedToConsumeExcludedValue: BuiltInNodeType[] = [
+      'if',
+      'ifElse',
+      'coalesce',
+      'graphOutput',
+      'raceInputs',
+    ];
 
     const allowedToConsumedExcludedValue =
-      nodesAllowedToConsumeExcludedValue.includes(node.type as NodeType) && !isWaitingForLoop;
+      nodesAllowedToConsumeExcludedValue.includes(node.type as BuiltInNodeType) && !isWaitingForLoop;
 
     if ((inputIsExcludedValue || anyOutputIsExcludedValue) && !allowedToConsumedExcludedValue) {
       if (!isWaitingForLoop) {

@@ -1,4 +1,4 @@
-import { NodeOfType, NodeType, Outputs, getNodeTypes } from '@ironclad/rivet-core';
+import { NodeOfType, BuiltInNodeType, Outputs, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { FC } from 'react';
 import { ChartNode } from '@ironclad/rivet-core';
 import { chatNodeDescriptor } from '../components/nodes/ChatNode.js';
@@ -20,7 +20,7 @@ export type UnknownNodeComponentDescriptor = {
   FullscreenOutputSimple?: FC<{ outputs: Outputs }>;
 };
 
-export type NodeComponentDescriptor<T extends NodeType> = {
+export type NodeComponentDescriptor<T extends BuiltInNodeType> = {
   Body?: FC<{ node: NodeOfType<T> }>;
   Output?: FC<{ node: NodeOfType<T> }>;
   Editor?: FC<{ node: NodeOfType<T>; onChange?: (node: NodeOfType<T>) => void }>;
@@ -30,7 +30,7 @@ export type NodeComponentDescriptor<T extends NodeType> = {
 };
 
 export type NodeComponentDescriptors = {
-  [P in NodeType]: NodeComponentDescriptor<P>;
+  [P in BuiltInNodeType]: NodeComponentDescriptor<P>;
 };
 
 const overriddenDescriptors: Partial<NodeComponentDescriptors> = {
@@ -46,7 +46,7 @@ const overriddenDescriptors: Partial<NodeComponentDescriptors> = {
 };
 
 export function useNodeTypes(): NodeComponentDescriptors {
-  const allNodeTypes = getNodeTypes();
+  const allNodeTypes = globalRivetNodeRegistry.getNodeTypes();
 
   return Object.fromEntries(
     allNodeTypes.map((nodeType) => {
@@ -59,5 +59,5 @@ export function useNodeTypes(): NodeComponentDescriptors {
 export function useUnknownNodeComponentDescriptorFor(node: ChartNode) {
   const descriptors = useNodeTypes();
 
-  return (descriptors[node.type as NodeType] ?? {}) as UnknownNodeComponentDescriptor;
+  return (descriptors[node.type as BuiltInNodeType] ?? {}) as UnknownNodeComponentDescriptor;
 }
