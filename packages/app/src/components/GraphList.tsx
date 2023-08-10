@@ -601,6 +601,7 @@ export const FolderItem: FC<{
                 renameFolderItem={renameFolderItem}
                 dragOverFolderName={dragOverFolderName}
                 depth={virtualDepth + 1}
+                draggingItemFolder={draggingItemFolder}
               />
             ))}
           </div>
