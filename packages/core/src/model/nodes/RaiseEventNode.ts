@@ -1,10 +1,11 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
 import { Inputs } from '../GraphProcessor.js';
 import { coerceType } from '../../utils/coerceType.js';
 import { InternalProcessContext } from '../ProcessContext.js';
+import { dedent } from 'ts-dedent';
 
 export type RaiseEventNode = ChartNode<'raiseEvent', RaiseEventNodeData>;
 
@@ -70,6 +71,17 @@ export class RaiseEventNodeImpl extends NodeImpl<RaiseEventNode> {
 
   getBody(): string | NodeBodySpec | undefined {
     return this.data.useEventNameInput ? '(Using Input)' : this.data.eventName;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Raises an event that the host project or a 'Wait For Event' node can listen for.
+      `,
+      infoBoxTitle: 'Raise Event Node',
+      contextMenuTitle: 'Raise Event',
+      group: ['Advanced'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Record<string, DataValue>> {

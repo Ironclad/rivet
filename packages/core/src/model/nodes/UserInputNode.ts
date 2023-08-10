@@ -1,9 +1,10 @@
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
 import { DataValue, ArrayDataValue, StringDataValue } from '../DataValue.js';
 import { zip } from 'lodash-es';
 import { Outputs, Inputs, expectType } from '../../index.js';
+import { dedent } from 'ts-dedent';
 
 export type UserInputNode = ChartNode<'userInput', UserInputNodeData>;
 
@@ -74,6 +75,17 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
 
   getBody(): string | NodeBodySpec | undefined {
     return this.data.useInput ? '(Using input)' : this.data.prompt;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Prompts the user for input during the execution of the graph. The user's response becomes the output of this node.
+      `,
+      infoBoxTitle: 'User Input Node',
+      contextMenuTitle: 'User Input',
+      group: ['Input/Output'],
+    };
   }
 
   async process(): Promise<Outputs> {

@@ -1,9 +1,10 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { DataValue, coerceType } from '../../index.js';
 import { zip } from 'lodash-es';
+import { dedent } from 'ts-dedent';
 
 export type FilterNode = ChartNode<'filter', FilterNodeData>;
 
@@ -51,6 +52,17 @@ export class FilterNodeImpl extends NodeImpl<FilterNode> {
         dataType: 'any[]',
       },
     ];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Takes in both an array of values, and an array of booleans of the same length, and filters the array where the corresponding boolean is true.
+      `,
+      infoBoxTitle: 'Filter Node',
+      contextMenuTitle: 'Filter',
+      group: ['Lists'],
+    };
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

@@ -64,10 +64,20 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
   }
 }
 
+export type NodeUIData = {
+  contextMenuTitle?: string;
+  infoBoxTitle?: string;
+  infoBoxBody?: string;
+  infoBoxImageUri?: string;
+  group?: string | string[];
+};
+
 export type NodeImplConstructor<T extends ChartNode> = {
   new (chartNode: T): NodeImpl<T>;
 
   create(): T;
+
+  getUIData(): NodeUIData;
 };
 
 export type NodeDefinition<T extends ChartNode> = {

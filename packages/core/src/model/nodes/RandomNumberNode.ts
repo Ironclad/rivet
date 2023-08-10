@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { coerceTypeOptional } from '../../index.js';
 import { dedent } from 'ts-dedent';
@@ -83,6 +83,19 @@ export class RandomNumberNodeImpl extends NodeImpl<RandomNumberNode> {
       ${this.data.integers ? 'Integers' : 'Floats'}
       ${this.data.maxInclusive ? 'Max Inclusive' : 'Max Exclusive'}
     `;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Outputs a random number between the configured min and max values.
+
+        Can be configured to output only integers, and whether the max value is inclusive or exclusive.
+      `,
+      infoBoxTitle: 'RNG Node',
+      contextMenuTitle: 'RNG',
+      group: ['Numbers'],
+    };
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

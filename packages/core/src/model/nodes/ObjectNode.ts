@@ -1,7 +1,8 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
+import { dedent } from 'ts-dedent';
 
 export type ObjectNode = ChartNode<'object', ObjectNodeData>;
 
@@ -68,6 +69,21 @@ export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
         theme: 'prompt-interpolation',
       },
     ];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Creates an object from input values and a JSON template, escaping the input values and inserting them into the template.
+
+        Use double-quotes around the input values to escape them. String values are automatically escaped.
+
+        Useful for creating objects from multiple inputs.
+      `,
+      infoBoxTitle: 'Object Node',
+      contextMenuTitle: 'Object',
+      group: ['Objects'],
+    };
   }
 
   interpolate(baseString: string, values: Record<string, any>): string {

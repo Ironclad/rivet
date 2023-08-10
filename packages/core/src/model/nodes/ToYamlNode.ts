@@ -1,10 +1,11 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { NodeDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 // @ts-ignore
 import yaml from 'yaml';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { coerceType } from '../../index.js';
+import { dedent } from 'ts-dedent';
 
 export type ToYamlNode = ChartNode<'toYaml', ToYamlNodeData>;
 
@@ -46,6 +47,17 @@ export class ToYamlNodeImpl extends NodeImpl<ToYamlNode> {
         dataType: 'string',
       },
     ];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Turns the input object into YAML text.
+      `,
+      infoBoxTitle: 'To YAML Node',
+      contextMenuTitle: 'To YAML',
+      group: ['Text'],
+    };
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

@@ -1,7 +1,8 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
+import { dedent } from 'ts-dedent';
 
 export type GptFunctionNode = ChartNode<'gptFunction', GptFunctionNodeData>;
 
@@ -72,6 +73,17 @@ export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
 
   getBody(): string | NodeBodySpec | undefined {
     return `!markdown_${this.data.name}_: ${this.data.description}`;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Defines a GPT function, which is a method that the LLM can call in its responses.
+      `,
+      infoBoxTitle: 'GPT Function Node',
+      contextMenuTitle: 'GPT Function',
+      group: ['AI'],
+    };
   }
 
   async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {

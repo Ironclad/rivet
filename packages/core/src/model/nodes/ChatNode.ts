@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { ChatMessage, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue.js';
 import {
   assertValidModel,
@@ -26,6 +26,7 @@ import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 import { InternalProcessContext } from '../ProcessContext.js';
 import { expectTypeOptional, getError } from '../../index.js';
 import { merge } from 'lodash-es';
+import { dedent } from 'ts-dedent';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 
@@ -251,6 +252,21 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     }
 
     return outputs;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Makes a call to an LLM chat model. Currently only supports GPT. The settings contains many options for tweaking the model's behavior.
+
+        The \`System Prompt\` input specifies a system prompt as the first message to the model. This is useful for providing context to the model.
+
+        The \`Prompt\` input takes one or more strings or chat-messages (from a Prompt node) to send to the model.
+      `,
+      contextMenuTitle: 'Chat',
+      infoBoxTitle: 'Chat Node',
+      group: ['Common', 'AI'],
+    };
   }
 
   getEditors(): EditorDefinition<ChatNode>[] {

@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs, coerceType } from '../../index.js';
 import { mapValues } from 'lodash-es';
 import { dedent } from 'ts-dedent';
@@ -145,6 +145,21 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
         theme: 'prompt-interpolation',
       },
     ];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Outputs a chat message, which is a string of text with an attached "type" saying who sent the message (User, Assistant, System) and optionally an attached "name".
+
+        Also provides the same <span style="color: var(--primary)">{{interpolation}}</span> capabilities as a Text node.
+
+        Can change one chat message type into another chat message type. For example, changing a User message into a System message.
+      `,
+      infoBoxTitle: 'Prompt Node',
+      contextMenuTitle: 'Prompt',
+      group: ['Text'],
+    };
   }
 
   interpolate(baseString: string, values: Record<string, string>): string {

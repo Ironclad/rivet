@@ -1,9 +1,10 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition, NodeConnection } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataType, DataValue } from '../DataValue.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { InternalProcessContext } from '../ProcessContext.js';
+import { dedent } from 'ts-dedent';
 
 export type RaceInputsNode = ChartNode<'raceInputs', RaceInputsNodeData>;
 
@@ -70,6 +71,17 @@ export class RaceInputsNodeImpl extends NodeImpl<RaceInputsNode> {
 
   getEditors(): EditorDefinition<RaceInputsNode>[] {
     return [];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Takes in multiple inputs and outputs the value of the first one to finish. The other inputs are cancelled.
+      `,
+      infoBoxTitle: 'Race Inputs Node',
+      contextMenuTitle: 'Race Inputs',
+      group: ['Logic'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

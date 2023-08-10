@@ -1,7 +1,8 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
+import { dedent } from 'ts-dedent';
 
 export type CommentNode = ChartNode<'comment', CommentNodeData>;
 
@@ -62,6 +63,17 @@ export class CommentNodeImpl extends NodeImpl<CommentNode> {
         theme: 'vs-dark',
       },
     ];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        A comment node is a node that does nothing. It is useful for adding notes to a graph.
+      `,
+      infoBoxTitle: 'Comment Node',
+      contextMenuTitle: 'Comment',
+      group: ['Advanced'],
+    };
   }
 
   async process(): Promise<Record<string, DataValue>> {

@@ -1,10 +1,11 @@
 import { ChartNode, NodeId, PortId } from '../NodeBase.js';
 import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
 import { DataValue } from '../DataValue.js';
-import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { nanoid } from 'nanoid';
 import { expectType } from '../../index.js';
 import { InternalProcessContext } from '../ProcessContext.js';
+import { dedent } from 'ts-dedent';
 
 export type ReadFileNode = ChartNode<'readFile', ReadFileNodeData>;
 
@@ -52,6 +53,17 @@ export class ReadFileNodeImpl extends NodeImpl<ReadFileNode> {
         dataType: 'string',
       },
     ];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Reads the contents of the specified file and outputs it as a string.
+      `,
+      infoBoxTitle: 'Read File Node',
+      contextMenuTitle: 'Read File',
+      group: ['Input/Output'],
+    };
   }
 
   async process(

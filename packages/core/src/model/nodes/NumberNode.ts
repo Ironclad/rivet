@@ -1,8 +1,9 @@
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { coerceTypeOptional } from '../../index.js';
+import { dedent } from 'ts-dedent';
 
 export type NumberNode = ChartNode<'number', NumberNodeData>;
 
@@ -66,6 +67,19 @@ export class NumberNodeImpl extends NodeImpl<NumberNode> {
 
   getBody(): string | undefined {
     return this.data.useValueInput ? `(Input to number)` : (this.data.value ?? 0).toLocaleString();
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Outputs a number constant, or converts an input value into a number.
+
+        Can be configured to round the number to a certain number of decimal places.
+      `,
+      infoBoxTitle: 'Number Node',
+      contextMenuTitle: 'Number',
+      group: ['Numbers'],
+    };
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

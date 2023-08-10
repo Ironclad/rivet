@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeOutputDefinition, PortId, NodeInputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { InternalProcessContext } from '../ProcessContext.js';
 import { coerceTypeOptional } from '../../index.js';
@@ -89,6 +89,19 @@ export class AbortGraphNodeImpl extends NodeImpl<AbortGraphNode> {
           : 'Error Abort'
       }
     `;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Aborts the execution of the entire graph immediately.
+
+        Can either "successfully" abort the graph (early-exit), or "error" abort the graph.
+      `,
+      infoBoxTitle: 'Abort Graph Node',
+      contextMenuTitle: 'Abort Graph',
+      group: ['Logic'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

@@ -1,5 +1,5 @@
 import { ChartNode, NodeImplConstructor, NodeDefinition, NodeImpl } from '../index.js';
-import { keys } from '../utils/typeSafety.js';
+import { keys, values } from '../utils/typeSafety.js';
 
 export class NodeRegistration<
   NodeTypes extends string = never,
@@ -13,6 +13,7 @@ export class NodeRegistration<
 
   #impls = {} as Impls;
   #displayNames = {} as Record<NodeTypes, string>;
+  #dynamicRegistered = [] as string[];
 
   register<T extends ChartNode>(
     definition: NodeDefinition<T>,
@@ -38,6 +39,24 @@ export class NodeRegistration<
     return newRegistration;
   }
 
+  get #dynamicImpls() {
+    return this.#impls as unknown as Record<string, NodeImplConstructor<ChartNode>>;
+  }
+
+  get #dynamicDisplayNames() {
+    return this.#displayNames as Record<string, string>;
+  }
+
+  registerDynamic(definition: NodeDefinition<ChartNode>): this {
+    const typeStr = definition.impl.create().type;
+
+    this.#dynamicImpls[typeStr] = definition.impl as any;
+    this.#dynamicDisplayNames[typeStr] = definition.displayName;
+    this.#dynamicRegistered.push(typeStr);
+
+    return this;
+  }
+
   create<T extends NodeTypes>(type: T): Extract<Nodes, { type: T }> {
     const implClass = this.#impls[type];
     if (!implClass) {
@@ -45,6 +64,14 @@ export class NodeRegistration<
     }
 
     return implClass.create() as unknown as Extract<Nodes, { type: T }>;
+  }
+
+  createDynamic(type: string): ChartNode {
+    const implClass = this.#dynamicImpls[type];
+    if (!implClass) {
+      throw new Error(`Unknown node type: ${type}`);
+    }
+    return implClass.create();
   }
 
   createImpl<T extends Nodes>(node: T): NodeImpl<T> {
@@ -64,6 +91,22 @@ export class NodeRegistration<
     return impl;
   }
 
+  createDynamicImpl(node: ChartNode): NodeImpl<ChartNode> {
+    const { type } = node;
+    const ImplClass = this.#dynamicImpls[type];
+
+    if (!ImplClass) {
+      throw new Error(`Unknown node type: ${type}`);
+    }
+
+    const impl = new ImplClass(node) as unknown as NodeImpl<ChartNode>;
+    if (!impl) {
+      throw new Error(`Unknown node type: ${type}`);
+    }
+
+    return impl;
+  }
+
   getDisplayName<T extends NodeTypes>(type: T): string {
     return this.#displayNames[type];
   }
@@ -74,5 +117,9 @@ export class NodeRegistration<
 
   getNodeTypes(): NodeTypes[] {
     return keys(this.#impls);
+  }
+
+  getNodeConstructors(): NodeImplConstructor<ChartNode>[] {
+    return values(this.#impls) as unknown as NodeImplConstructor<ChartNode>[];
   }
 }

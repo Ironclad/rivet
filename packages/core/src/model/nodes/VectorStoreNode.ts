@@ -1,5 +1,5 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { InternalProcessContext } from '../ProcessContext.js';
@@ -113,6 +113,17 @@ export class VectorStoreNodeImpl extends NodeImpl<VectorStoreNode> {
       ${this.data.useIntegrationInput ? '(Integration using input)' : this.data.integration}
       ${this.data.useCollectionIdInput ? '(using input)' : this.data.collectionId}
     `;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Takes in a vector, as well as data to store with the vector. This data is stored in the configured vector DB integration for later retrieval.
+      `,
+      infoBoxTitle: 'Vector Store Node',
+      contextMenuTitle: 'Vector Store',
+      group: ['Input/Output'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

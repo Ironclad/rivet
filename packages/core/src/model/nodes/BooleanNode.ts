@@ -1,8 +1,9 @@
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { coerceTypeOptional } from '../../index.js';
+import { dedent } from 'ts-dedent';
 
 export type BooleanNode = ChartNode<'boolean', BooleanNodeData>;
 
@@ -58,6 +59,17 @@ export class BooleanNodeImpl extends NodeImpl<BooleanNode> {
 
   getBody(): string | undefined {
     return this.data.useValueInput ? `(Input to bool)` : (this.data.value ?? false).toString();
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Outputs a boolean constant, or converts an input value into a boolean.
+      `,
+      infoBoxTitle: 'Bool Node',
+      contextMenuTitle: 'Bool',
+      group: ['Data'],
+    };
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

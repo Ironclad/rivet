@@ -1,7 +1,8 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
+import { dedent } from 'ts-dedent';
 
 export type CodeNode = ChartNode<'code', CodeNodeData>;
 
@@ -86,6 +87,17 @@ return { output: inputs.input };`,
       language: 'javascript',
       fontSize: 12,
       fontFamily: 'monospace',
+    };
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Executes a piece of JavaScript code. Documentation for the inputs and outputs is available in the default code.
+      `,
+      infoBoxTitle: 'Code Node',
+      contextMenuTitle: 'Code',
+      group: ['Advanced'],
     };
   }
 

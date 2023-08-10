@@ -1,7 +1,8 @@
-import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor.js';
+import { dedent } from 'ts-dedent';
 
 export type PassthroughNode = ChartNode<'passthrough', PassthroughNodeData>;
 
@@ -51,6 +52,17 @@ export class PassthroughNodeImpl extends NodeImpl<PassthroughNode> {
     }
 
     return outputs;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Simply passes the input value to the output without any modifications.
+      `,
+      infoBoxTitle: 'Passthrough Node',
+      contextMenuTitle: 'Passthrough',
+      group: ['Logic'],
+    };
   }
 
   #getInputPortCount(connections: NodeConnection[]): number {

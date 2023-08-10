@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { ChatMessage, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue.js';
 import { assertValidModel, getTokenCountForString } from '../../utils/tokenizer.js';
 import { addWarning } from '../../utils/outputs.js';
@@ -17,6 +17,7 @@ import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 import { InternalProcessContext } from '../ProcessContext.js';
 import { expectTypeOptional, getError } from '../../index.js';
 import { anthropicModelOptions } from '../../utils/anthropic.js';
+import { dedent } from 'ts-dedent';
 
 export type ChatAnthropicNode = ChartNode<'chatAnthropic', ChatAnthropicNodeData>;
 
@@ -223,6 +224,17 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
         dataKey: 'useAsGraphPartialOutput',
       },
     ];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Makes a call to an Anthropic chat model. The settings contains many options for tweaking the model's behavior.
+      `,
+      infoBoxTitle: 'Chat (Anthropic) Node',
+      contextMenuTitle: 'Chat (Anthropic)',
+      group: ['AI'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

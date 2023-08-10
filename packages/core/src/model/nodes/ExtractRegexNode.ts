@@ -1,8 +1,9 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
 import { expectType, expectTypeOptional } from '../../utils/expectType.js';
+import { dedent } from 'ts-dedent';
 
 export type ExtractRegexNode = ChartNode<'extractRegex', ExtractRegexNodeData>;
 
@@ -115,6 +116,19 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
 
   getBody(): string | NodeBodySpec | undefined {
     return this.data.useRegexInput ? '(Using regex input)' : this.data.regex;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Extracts data from the input text using the configured regular expression. The regular expression can contain capture groups to extract specific parts of the text.
+
+        Each capture group corresponds to an output port of the node.
+      `,
+      infoBoxTitle: 'Extract With Regex Node',
+      contextMenuTitle: 'Extract With Regex',
+      group: ['Text'],
+    };
   }
 
   async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {

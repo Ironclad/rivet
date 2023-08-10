@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataType, DataValue } from '../DataValue.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { InternalProcessContext } from '../ProcessContext.js';
@@ -79,6 +79,17 @@ export class ContextNodeImpl extends NodeImpl<ContextNode> {
       ${this.data.id}
       Type: ${this.data.dataType}
     `;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Retrieves a value from the graph's context using a configured id. The context serves as a "global graph input", allowing the same values to be accessible from any graph or subgraph.
+      `,
+      infoBoxTitle: 'Context Node',
+      contextMenuTitle: 'Context',
+      group: ['Advanced'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

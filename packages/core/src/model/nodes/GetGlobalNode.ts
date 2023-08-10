@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, NodeBodySpec, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import {
   FunctionDataValues,
   ScalarDataType,
@@ -113,6 +113,17 @@ export class GetGlobalNodeImpl extends NodeImpl<GetGlobalNode> {
       Type: ${this.data.dataType}
       ${this.data.wait ? 'Waits for available data' : ''}
     `;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Retrieves a global value that is shared across all graphs and subgraphs. The id of the global value is configured in this node.
+      `,
+      infoBoxTitle: 'Get Global Node',
+      contextMenuTitle: 'Get Global',
+      group: ['Advanced'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
