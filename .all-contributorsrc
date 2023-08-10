@@ -8,6 +8,22 @@
   "commitConvention": "angular",
   "contributors": [
     {
+      "login": "abrenneke",
+      "name": "Andy Brenneke",
+      "avatar_url": "https://avatars.githubusercontent.com/u/342540?v=4",
+      "profile": "https://github.com/abrenneke",
+      "contributions": [
+        "code",
+        "ideas",
+        "research",
+        "test",
+        "tool",
+        "review",
+        "question",
+        "mentoring"
+      ]
+    },
+    {
       "login": "gogwilt",
       "name": "Cai GoGwilt",
       "avatar_url": "https://avatars.githubusercontent.com/u/448108?v=4",
@@ -70,22 +86,6 @@
       "contributions": [
         "doc",
         "code"
-      ]
-    },
-    {
-      "login": "abrenneke",
-      "name": "Andy Brenneke",
-      "avatar_url": "https://avatars.githubusercontent.com/u/342540?v=4",
-      "profile": "https://github.com/abrenneke",
-      "contributions": [
-        "code",
-        "ideas",
-        "research",
-        "test",
-        "tool",
-        "review",
-        "question",
-        "mentoring"
       ]
     },
     {
