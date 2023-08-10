@@ -79,16 +79,19 @@ export const GraphBuilder: FC = () => {
     // setSelectedNode(newNode.id);
   });
 
-  const removeNode = useStableCallback((nodeId: NodeId) => {
-    const nodeIndex = nodes.findIndex((n) => n.id === nodeId);
-    if (nodeIndex >= 0) {
-      const newNodes = [...nodes];
-      newNodes.splice(nodeIndex, 1);
-      nodesChanged?.(newNodes);
-    }
+  const removeNodes = useStableCallback((...nodeIds: NodeId[]) => {
+    const newNodes = [...nodes];
+    let newConnections = [...connections];
+    for (const nodeId of nodeIds) {
+      const nodeIndex = newNodes.findIndex((n) => n.id === nodeId);
+      if (nodeIndex >= 0) {
+        newNodes.splice(nodeIndex, 1);
+      }
 
-    // Remove all connections associated with the node
-    const newConnections = connections.filter((c) => c.inputNodeId !== nodeId && c.outputNodeId !== nodeId);
+      // Remove all connections associated with the node
+      newConnections = newConnections.filter((c) => c.inputNodeId !== nodeId && c.outputNodeId !== nodeId);
+    }
+    nodesChanged?.(newNodes);
     setConnections?.(newConnections);
   });
 
@@ -104,8 +107,12 @@ export const GraphBuilder: FC = () => {
       }
 
       if (menuItemId === 'node-delete') {
-        const { nodeId } = context.data as { nodeId: NodeId };
-        removeNode(nodeId);
+        if (selectedNodeIds.length === 0) {
+          const { nodeId } = context.data as { nodeId: NodeId };
+          removeNodes(nodeId);
+        } else {
+          removeNodes(...selectedNodeIds);
+        }
         return;
       }
 
