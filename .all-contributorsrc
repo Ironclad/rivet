@@ -87,6 +87,16 @@
         "question",
         "mentoring"
       ]
+    },
+    {
+      "login": "scottbessler",
+      "name": "Scott Bessler",
+      "avatar_url": "https://avatars.githubusercontent.com/u/293802?v=4",
+      "profile": "https://github.com/scottbessler",
+      "contributions": [
+        "example",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
