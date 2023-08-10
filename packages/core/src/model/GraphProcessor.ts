@@ -418,148 +418,154 @@ export class GraphProcessor {
 
     this.#initProcessState();
 
-    const nodesByIdAllGraphs: Record<NodeId, ChartNode> = {};
-    for (const graph of Object.values(this.#project.graphs)) {
-      for (const node of graph.nodes) {
-        nodesByIdAllGraphs[node.id] = node;
-      }
-    }
-
-    const getGraph = (graphId: GraphId) => {
-      const graph = this.#project.graphs[graphId];
-      if (!graph) {
-        throw new Error(`Mismatch between project and recording: graph ${graphId} not found in project`);
-      }
-      return graph;
-    };
-
-    const getNode = (nodeId: NodeId) => {
-      const node = nodesByIdAllGraphs[nodeId];
-
-      if (!node) {
-        throw new Error(`Mismatch between project and recording: node ${nodeId} not found in any graph in project`);
+    try {
+      const nodesByIdAllGraphs: Record<NodeId, ChartNode> = {};
+      for (const graph of Object.values(this.#project.graphs)) {
+        for (const node of graph.nodes) {
+          nodesByIdAllGraphs[node.id] = node;
+        }
       }
 
-      return node;
-    };
+      const getGraph = (graphId: GraphId) => {
+        const graph = this.#project.graphs[graphId];
+        if (!graph) {
+          throw new Error(`Mismatch between project and recording: graph ${graphId} not found in project`);
+        }
+        return graph;
+      };
 
-    for (const event of events) {
-      await this.#waitUntilUnpaused();
+      const getNode = (nodeId: NodeId) => {
+        const node = nodesByIdAllGraphs[nodeId];
 
-      await match(event)
-        .with({ type: 'start' }, ({ data }) => {
-          this.#emitter.emit('start', {
-            project: this.#project,
-            contextValues: data.contextValues,
-            inputs: data.inputs,
-          });
-          this.#contextValues = data.contextValues;
-          this.#graphInputs = data.inputs;
-        })
-        .with({ type: 'abort' }, ({ data }) => {
-          this.#emitter.emit('abort', data);
-        })
-        .with({ type: 'pause' }, () => {})
-        .with({ type: 'resume' }, () => {})
-        .with({ type: 'done' }, ({ data }) => {
-          this.#emitter.emit('done', data);
-          this.#graphOutputs = data.results;
-          this.#running = false;
-        })
-        .with({ type: 'error' }, ({ data }) => {
-          this.#emitter.emit('error', data);
-        })
-        .with({ type: 'globalSet' }, ({ data }) => {
-          this.#emitter.emit('globalSet', data);
-        })
-        .with({ type: 'trace' }, ({ data }) => {
-          this.#emitter.emit('trace', data);
-        })
-        .with({ type: 'graphStart' }, ({ data }) => {
-          this.#emitter.emit('graphStart', {
-            graph: getGraph(data.graphId),
-            inputs: data.inputs,
-          });
-        })
-        .with({ type: 'graphFinish' }, ({ data }) => {
-          this.#emitter.emit('graphFinish', {
-            graph: getGraph(data.graphId),
-            outputs: data.outputs,
-          });
-        })
-        .with({ type: 'graphError' }, ({ data }) => {
-          this.#emitter.emit('graphError', {
-            graph: getGraph(data.graphId),
-            error: data.error,
-          });
-        })
-        .with({ type: 'graphAbort' }, ({ data }) => {
-          this.#emitter.emit('graphAbort', {
-            graph: getGraph(data.graphId),
-            error: data.error,
-            successful: data.successful,
-          });
-        })
-        .with({ type: 'nodeStart' }, async ({ data }) => {
-          const node = getNode(data.nodeId);
-          this.#emitter.emit('nodeStart', {
-            node: getNode(data.nodeId),
-            inputs: data.inputs,
-            processId: data.processId,
-          });
+        if (!node) {
+          throw new Error(`Mismatch between project and recording: node ${nodeId} not found in any graph in project`);
+        }
 
-          // Every time a chat node starts, we wait for the playback interval
-          if (node.type === 'chat') {
-            await new Promise((resolve) => setTimeout(resolve, this.recordingPlaybackChatLatency));
-          }
-        })
-        .with({ type: 'nodeFinish' }, ({ data }) => {
-          const node = getNode(data.nodeId);
-          this.#emitter.emit('nodeFinish', {
-            node,
-            outputs: data.outputs,
-            processId: data.processId,
-          });
+        return node;
+      };
 
-          this.#nodeResults.set(data.nodeId, data.outputs);
-          this.#visitedNodes.add(data.nodeId);
-        })
-        .with({ type: 'nodeError' }, ({ data }) => {
-          this.#emitter.emit('nodeError', {
-            node: getNode(data.nodeId),
-            error: data.error,
-            processId: data.processId,
-          });
+      for (const event of events) {
+        await this.#waitUntilUnpaused();
 
-          this.#erroredNodes.set(data.nodeId, data.error);
-          this.#visitedNodes.add(data.nodeId);
-        })
-        .with({ type: 'nodeExcluded' }, ({ data }) => {
-          this.#emitter.emit('nodeExcluded', {
-            node: getNode(data.nodeId),
-            processId: data.processId,
-          });
+        await match(event)
+          .with({ type: 'start' }, ({ data }) => {
+            this.#emitter.emit('start', {
+              project: this.#project,
+              contextValues: data.contextValues,
+              inputs: data.inputs,
+            });
+            this.#contextValues = data.contextValues;
+            this.#graphInputs = data.inputs;
+          })
+          .with({ type: 'abort' }, ({ data }) => {
+            this.#emitter.emit('abort', data);
+          })
+          .with({ type: 'pause' }, () => {})
+          .with({ type: 'resume' }, () => {})
+          .with({ type: 'done' }, ({ data }) => {
+            this.#emitter.emit('done', data);
+            this.#graphOutputs = data.results;
+            this.#running = false;
+          })
+          .with({ type: 'error' }, ({ data }) => {
+            this.#emitter.emit('error', data);
+          })
+          .with({ type: 'globalSet' }, ({ data }) => {
+            this.#emitter.emit('globalSet', data);
+          })
+          .with({ type: 'trace' }, ({ data }) => {
+            this.#emitter.emit('trace', data);
+          })
+          .with({ type: 'graphStart' }, ({ data }) => {
+            this.#emitter.emit('graphStart', {
+              graph: getGraph(data.graphId),
+              inputs: data.inputs,
+            });
+          })
+          .with({ type: 'graphFinish' }, ({ data }) => {
+            this.#emitter.emit('graphFinish', {
+              graph: getGraph(data.graphId),
+              outputs: data.outputs,
+            });
+          })
+          .with({ type: 'graphError' }, ({ data }) => {
+            this.#emitter.emit('graphError', {
+              graph: getGraph(data.graphId),
+              error: data.error,
+            });
+          })
+          .with({ type: 'graphAbort' }, ({ data }) => {
+            this.#emitter.emit('graphAbort', {
+              graph: getGraph(data.graphId),
+              error: data.error,
+              successful: data.successful,
+            });
+          })
+          .with({ type: 'nodeStart' }, async ({ data }) => {
+            const node = getNode(data.nodeId);
+            this.#emitter.emit('nodeStart', {
+              node: getNode(data.nodeId),
+              inputs: data.inputs,
+              processId: data.processId,
+            });
 
-          this.#visitedNodes.add(data.nodeId);
-        })
-        .with({ type: 'nodeOutputsCleared' }, () => {})
-        .with({ type: 'partialOutput' }, () => {})
-        .with({ type: 'userInput' }, ({ data }) => {
-          this.#emitter.emit('userInput', {
-            callback: undefined!,
-            inputs: data.inputs,
-            node: getNode(data.nodeId) as UserInputNode,
-            processId: data.processId,
-          });
-        })
-        .with({ type: P.string.startsWith('globalSet:') }, ({ type, data }) => {
-          this.#emitter.emit(type, data);
-        })
-        .with({ type: P.string.startsWith('userEvent:') }, ({ type, data }) => {
-          this.#emitter.emit(type, data);
-        })
-        .with(undefined, () => {})
-        .exhaustive();
+            // Every time a chat node starts, we wait for the playback interval
+            if (node.type === 'chat') {
+              await new Promise((resolve) => setTimeout(resolve, this.recordingPlaybackChatLatency));
+            }
+          })
+          .with({ type: 'nodeFinish' }, ({ data }) => {
+            const node = getNode(data.nodeId);
+            this.#emitter.emit('nodeFinish', {
+              node,
+              outputs: data.outputs,
+              processId: data.processId,
+            });
+
+            this.#nodeResults.set(data.nodeId, data.outputs);
+            this.#visitedNodes.add(data.nodeId);
+          })
+          .with({ type: 'nodeError' }, ({ data }) => {
+            this.#emitter.emit('nodeError', {
+              node: getNode(data.nodeId),
+              error: data.error,
+              processId: data.processId,
+            });
+
+            this.#erroredNodes.set(data.nodeId, data.error);
+            this.#visitedNodes.add(data.nodeId);
+          })
+          .with({ type: 'nodeExcluded' }, ({ data }) => {
+            this.#emitter.emit('nodeExcluded', {
+              node: getNode(data.nodeId),
+              processId: data.processId,
+            });
+
+            this.#visitedNodes.add(data.nodeId);
+          })
+          .with({ type: 'nodeOutputsCleared' }, () => {})
+          .with({ type: 'partialOutput' }, () => {})
+          .with({ type: 'userInput' }, ({ data }) => {
+            this.#emitter.emit('userInput', {
+              callback: undefined!,
+              inputs: data.inputs,
+              node: getNode(data.nodeId) as UserInputNode,
+              processId: data.processId,
+            });
+          })
+          .with({ type: P.string.startsWith('globalSet:') }, ({ type, data }) => {
+            this.#emitter.emit(type, data);
+          })
+          .with({ type: P.string.startsWith('userEvent:') }, ({ type, data }) => {
+            this.#emitter.emit(type, data);
+          })
+          .with(undefined, () => {})
+          .exhaustive();
+      }
+    } catch (err) {
+      this.#emitter.emit('error', { error: getError(err) });
+    } finally {
+      this.#running = false;
     }
 
     return this.#graphOutputs;
