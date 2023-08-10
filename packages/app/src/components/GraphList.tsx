@@ -1,4 +1,4 @@
-import { DndContext, DragEndEvent, DragOverEvent, useDraggable, useDroppable } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragOverEvent, DragStartEvent, useDraggable, useDroppable } from '@dnd-kit/core';
 import { css } from '@emotion/react';
 import { CSSProperties, FC, useState, useMemo, FocusEvent, MouseEvent, KeyboardEvent, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -243,7 +243,10 @@ export const GraphList: FC = () => {
   const [savedGraphs, setSavedGraphs] = useRecoilState(savedGraphsState);
 
   // Track the graph that is being renamed, so that we can update the name when the user is done.
-  const [renamingItemFullPath, setRenamingItemFullPath] = useState<string>();
+  const [renamingItemFullPath, setRenamingItemFullPath] = useState<string | undefined>();
+
+  const [draggingItemFullPath, setDraggingItemFullPath] = useState<string | undefined>();
+  const draggingItemFolder = draggingItemFullPath?.split('/').slice(0, -1).join('/');
 
   // Track folders on deletion or creation, so that empty folders aren't automatically deleted.
   const [folderNames, setFolderNames] = useState<string[]>([]);
@@ -356,6 +359,11 @@ export const GraphList: FC = () => {
     setRenamingItemFullPath(undefined);
   }
 
+  function handleDragStart(drag: DragStartEvent) {
+    const activeFullPath = drag.active?.id as string;
+    setDraggingItemFullPath(activeFullPath);
+  }
+
   function handleDragEnd(dragResult: DragEndEvent) {
     setDragOverFolderName(undefined);
     const activeFullPath = dragResult.active?.id as string;
@@ -400,10 +408,12 @@ export const GraphList: FC = () => {
     ? contextMenuData.data?.element.dataset.folderpath
     : undefined;
 
+  console.dir({ dragOverFolderName, draggingItemFolder });
+
   return (
     <div css={styles} ref={contextMenuRef} onContextMenu={handleSidebarContextMenu}>
-      <div className={clsx('graph-list', { 'dragging-over': dragOverFolderName === '' })}>
-        <DndContext onDragEnd={handleDragEnd} onDragOver={handleDragOver}>
+      <div className={clsx('graph-list', { 'dragging-over': dragOverFolderName === '' && draggingItemFolder !== '' })}>
+        <DndContext onDragEnd={handleDragEnd} onDragOver={handleDragOver} onDragStart={handleDragStart}>
           {folderedGraphs.map((item) => (
             <FolderItem
               key={item.type === 'graph' ? item.graph.metadata?.id : item.fullPath}
@@ -414,6 +424,7 @@ export const GraphList: FC = () => {
               loadGraph={loadGraph}
               renameFolderItem={renameFolderItem}
               dragOverFolderName={dragOverFolderName}
+              draggingItemFolder={draggingItemFolder}
               depth={0}
             />
           ))}
@@ -488,14 +499,26 @@ export const FolderItem: FC<{
   renameFolderItem: (fullPath: string, newFullPath: string) => void;
   depth: number;
   dragOverFolderName: string | undefined;
-}> = ({ item, runningGraphs, renamingItemFullPath, graph, loadGraph, renameFolderItem, depth, dragOverFolderName }) => {
+  draggingItemFolder: string | undefined;
+}> = ({
+  item,
+  runningGraphs,
+  renamingItemFullPath,
+  graph,
+  loadGraph,
+  renameFolderItem,
+  depth,
+  dragOverFolderName,
+  draggingItemFolder,
+}) => {
   const [isExpanded, setExpanded] = useState(true);
   const savedGraph = item.type === 'graph' ? item.graph : undefined;
   const graphIsRunning = savedGraph && runningGraphs.includes(savedGraph.metadata?.id ?? ('' as GraphId));
   const fullPath = item.type === 'folder' ? item.fullPath : item.graph.metadata?.name ?? 'Untitled Graph';
   const isRenaming = renamingItemFullPath === fullPath;
   const isSelected = graph.metadata?.id === savedGraph?.metadata?.id;
-  const isDraggingOver = item.type === 'folder' && dragOverFolderName === fullPath;
+  const isDraggingOver =
+    item.type === 'folder' && dragOverFolderName === fullPath && draggingItemFolder !== dragOverFolderName;
 
   const handleRenameSaved = useStableCallback((newName: string) => {
     renameFolderItem(fullPath, fullPath.replace(/[^/]+$/, newName));
