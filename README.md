@@ -24,6 +24,10 @@ None are available yet.
 3. Start the app in development mode by running `yarn dev`
 4. Make sure your OpenAI key and organization are set up in the Settings window.
 
+### Using in an IDE
+
+Rivet makes use of yarn pnp, so you'll need to follow these instructions to get yarn setup in your IDE: https://yarnpkg.com/getting-started/editor-sdks
+
 ## Project Structure
 
 The project is a monorepo with 3 packages:

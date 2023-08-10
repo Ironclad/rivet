@@ -90,17 +90,17 @@ export class RandomNumberNodeImpl extends NodeImpl<RandomNumberNode> {
       ? coerceTypeOptional(inputs['min' as PortId], 'number') ?? this.data.min ?? 0
       : this.data.min ?? 0;
 
-    const max = this.data.useMaxInput
+    let max = this.data.useMaxInput
       ? coerceTypeOptional(inputs['max' as PortId], 'number') ?? this.data.max ?? 1
       : this.data.max ?? 1;
 
+    if (this.data.integers && this.data.maxInclusive) {
+      max += 1;
+    }
     let value = Math.random() * (max - min) + min;
 
     if (this.data.integers) {
       value = Math.floor(value);
-      if (this.data.maxInclusive && value === max) {
-        value = Math.floor(Math.random() * (max - min + 1) + min);
-      }
     }
 
     return {

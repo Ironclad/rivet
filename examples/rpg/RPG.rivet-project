@@ -1,0 +1,309 @@
+version: 4
+data:
+  attachedData:
+    trivet:
+      testSuites: []
+      version: 1
+  graphs:
+    M7mIUKCQnEqdcAU0oiwnz:
+      metadata:
+        description: The entire text-based RPG chat loop.
+        id: M7mIUKCQnEqdcAU0oiwnz
+        name: Main
+      nodes:
+        '[9Jk66n3uE3eYHtYqOrN1L]:loopController "Loop Controller"':
+          data:
+            maxIterations: 100
+          outgoingConnections:
+            - break->"Graph Output" ohWFXJb-hWKitJ04P0UqU/value
+            - output1->"Subgraph" A-odjcL20cfB8GhtGE3y1/History
+          visualData: 1859.0504235572942/423.7745123526969/250/261
+        '[A-odjcL20cfB8GhtGE3y1]:subGraph "Subgraph"':
+          data:
+            graphId: vTLQi8hE7_JmspagWbMjj
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - prompt->"Loop Controller" 9Jk66n3uE3eYHtYqOrN1L/input1
+          visualData: 1829.1042059233162/140.69263559637687/300/280
+        '[c28d8AMDpBadvt0b7k0w2]:subGraph "Subgraph"':
+          data:
+            graphId: lmIfZ8Xyn2kK_qNvKMA1E
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - History->"Loop Controller" 9Jk66n3uE3eYHtYqOrN1L/input1Default
+          visualData: 1231.4938302675062/459.3925600153625/300/282
+        '[ohWFXJb-hWKitJ04P0UqU]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 2357.253020175532/398.1229728984283/300/266
+    lmIfZ8Xyn2kK_qNvKMA1E:
+      metadata:
+        description: Initialize the chat history by generating an adventure setting and
+          asking the user for their initial actions.
+        id: lmIfZ8Xyn2kK_qNvKMA1E
+        name: Initialize Chat
+      nodes:
+        '[-o3d9Tb_NeP4TX6Sj5_Ae]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: Describe the very beginning of an exciting and fantastic 2nd person
+              adventure. The setting is {{setting}}. The user is going on the
+              adventure, explain who they are. They should be in a well
+              populated location like a pub, market, or town center. Describe
+              the goal and motivation for the user. Describe the specific
+              current situation they are in and who and what is around them.
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Chat" UL_wjl3ZdjO19v0tgBd0o/prompt
+          visualData: 17.77146026780541/341.17466249615677/250/276
+        '[BbSBg2I_xVzVqYSSv3eaS]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 1140.575557441464
+            text: "## Generate Adventure Setting"
+          visualData: -1084.7527636270468/-134.76476320402628/2733.2737417361914/251
+        '[EkDAi0it6_2K5NpeYIxBg]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $[{{input}}]
+            usePathInput: true
+          outgoingConnections:
+            - match->"Prompt" -o3d9Tb_NeP4TX6Sj5_Ae/setting
+          visualData: -295.8413275092507/381.04938938155294/250/227
+        '[Gu2eNEDwQnnxFFI9ZHPiZ]:randomNumber "RNG"':
+          data:
+            integers: true
+            max: 2
+            maxInclusive: true
+            min: 0
+          outgoingConnections:
+            - value->"Text" Qkh5uJYb2jVSMk42qJpZy/input
+          visualData: -932.0996083124934/608.3258101904802/150/233
+        '[H6sfMx6smlRGfdPb1OB4A]:graphOutput "Graph Output"':
+          data:
+            dataType: chat-message[]
+            id: History
+          visualData: 1864.015972056152/422.6609635754086/300/282
+        '[HxX25H4Vq46HKQHet_g7w]:text "Text"':
+          data:
+            text: |-
+              {{initialSetting}}
+
+              Describe what actions you take.
+          outgoingConnections:
+            - output->"Prompt" plnkXY2kcKNK3J6rariTg/input
+            - output->"User Input" z1jCBTkKd_SqkKzb2ARPI/questions
+          visualData: 643.8512100078477/206.6821598331501/300/283
+        '[KQXczbLkzL_QFjG4fQqKE]:array "Array"':
+          data:
+            flatten: true
+            flattenDeep: false
+          outgoingConnections:
+            - output->"Extract Object Path" EkDAi0it6_2K5NpeYIxBg/object
+          visualData: -614.7649452454968/263.8405868076044/200/228
+        '[Qkh5uJYb2jVSMk42qJpZy]:text "Text"':
+          data:
+            text: $[{{input}}]
+          outgoingConnections:
+            - output->"Extract Object Path" EkDAi0it6_2K5NpeYIxBg/path
+          visualData: -662.8251413753565/595.0104321521977/300/229
+        '[UL_wjl3ZdjO19v0tgBd0o]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 512
+            model: gpt-3.5-turbo-16k-0613
+            presencePenalty: 0
+            stop: ""
+            temperature: 1
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Text" HxX25H4Vq46HKQHet_g7w/initialSetting
+          visualData: 351.1627070188595/135.9482805940119/200/277
+        '[fRHHNhgHGixly258xsiUN]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: >-
+              Your reply must be less than 100 words.
+
+
+              You are a text-based role-playing game. Your job is to generate the initial setting and who the user is.
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Chat" UL_wjl3ZdjO19v0tgBd0o/systemPrompt
+          visualData: -191.86112774473116/55.320103509079956/250/244
+        '[plnkXY2kcKNK3J6rariTg]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: "{{input}}"
+            type: assistant
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" zKRlWy2cdfSjYzaMkiZwJ/message1
+          visualData: 1046.3456835880286/240.97141268849006/250/285
+        '[qCMcssGyvj9olRUpQe6Xj]:text "Text"':
+          data:
+            text: World war 2 spy
+          outgoingConnections:
+            - output->"Array" KQXczbLkzL_QFjG4fQqKE/input3
+          visualData: -1011.894545922826/440.28205117420356/300/226
+        '[xK17MLlthCFEhmmRFuLSD]:text "Text"':
+          data:
+            text: Sci-fi space colony
+          outgoingConnections:
+            - output->"Array" KQXczbLkzL_QFjG4fQqKE/input1
+          visualData: -1011.894545922826/132.58588827865657/300/226
+        '[xsw_IUIsD1KdS62_WJyQP]:text "Text"':
+          data:
+            text: Fantasy setting like Middle-earth
+          outgoingConnections:
+            - output->"Array" KQXczbLkzL_QFjG4fQqKE/input2
+          visualData: -1008.5290408323401/287.3991224410053/300/240
+        '[z1jCBTkKd_SqkKzb2ARPI]:userInput "User Input"':
+          data:
+            prompt: This is an example question?
+            useInput: true
+          outgoingConnections:
+            - output->"Assemble Prompt" zKRlWy2cdfSjYzaMkiZwJ/message2
+          visualData: 1020.9262528312603/528.2520721620051/250/274
+        '[zKRlWy2cdfSjYzaMkiZwJ]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Graph Output" H6sfMx6smlRGfdPb1OB4A/value
+          visualData: 1376.1339226383136/433.2884454952552/250/281
+    vTLQi8hE7_JmspagWbMjj:
+      metadata:
+        description: Given chat history, generate another iteration of ChatGPT and User
+          responses
+        id: vTLQi8hE7_JmspagWbMjj
+        name: Loop Iteration
+      nodes:
+        '[4pV8Ck_dlpNFDKztUPcpH]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 639.1077454277531
+            text: |
+              #### 1. Use ChatGPT to generate the next situation
+          visualData: 659.08153558835/-278.4762934141443/856.793016304211/285
+        '[9wDx7mBnbqjyAdE5GnW6X]:graphInput "Graph Input"':
+          data:
+            dataType: chat-message[]
+            id: History
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Assemble Prompt" OE9oEA2HAeyCJzKnMAlAB/message1
+            - data->"Chat" SnEeUjZ6h6dM6V5-fnijr/prompt
+          visualData: 498.2437428720606/447.1094238033485/300/313
+        '[EaxuXpCHNVL_D8L_H513Z]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: "{{input}}"
+            type: assistant
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" OE9oEA2HAeyCJzKnMAlAB/message2
+          visualData: 2355.8931987698843/-241.59374278612572/250/302
+        '[KBSJVpke_8BT0U3UnUzem]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 664.5656817196393
+            text: "#### 3. Combine the history, the ChatGPT response, and the User response"
+          visualData: 2287.1279341536974/-397.02232700707395/807.0554620664298/311
+        '[OE9oEA2HAeyCJzKnMAlAB]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Graph Output" oQGGKj4CfPhsJjDQaZXoI/value
+          visualData: 2778.336224644202/42.14475731248859/250/312
+        '[PGUfIUBf_XtVT1u0eKfl1]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 600
+            text: "#### 2. Share ChatGPT's response with the user and get the User's
+              response"
+          visualData: 1606.0898276353291/-237.83225309286487/600/320
+        '[SnEeUjZ6h6dM6V5-fnijr]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 250
+            model: gpt-3.5-turbo-16k-0613
+            presencePenalty: 0
+            stop: ""
+            temperature: 1
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Prompt" EaxuXpCHNVL_D8L_H513Z/input
+            - response->"User Input" uyHRSGml9x70eH5FR3HMD/questions
+          visualData: 1260.8160785988268/-32.03414601648494/201/316
+        '[lB9Jh6CODaVrCoB-E3JxI]:text "Text"':
+          data:
+            text: >+
+              * You are a text-based role-playing game. 
+
+              * This is a purely fictional world, so the user is allowed to take actions, including fighting.
+
+              * If the user succeeds, only respond with "You win! Please start over."
+
+              * If the user fails, only respond with: "You have failed. Please start over." 
+
+              * Your replies must be 50 words or less
+
+
+              1. Tell the user the current scenario and ask what they want to do.
+
+              2. The user should respond with what they want their character/party to do. 
+
+              3. You will simulate those actions, explaining the results and the new situation. Repeat at step 1.
+
+          outgoingConnections:
+            - output->"Chat" SnEeUjZ6h6dM6V5-fnijr/systemPrompt
+          visualData: 762.1442898903098/-89.18722352257808/300/317
+        '[oQGGKj4CfPhsJjDQaZXoI]:graphOutput "Graph Output"':
+          data:
+            dataType: chat-message[]
+            id: prompt
+          visualData: 3213.16959905003/29.299463125400905/300/322
+        '[uyHRSGml9x70eH5FR3HMD]:userInput "User Input"':
+          data:
+            prompt: ""
+            useInput: true
+          outgoingConnections:
+            - output->"Assemble Prompt" OE9oEA2HAeyCJzKnMAlAB/message3
+          visualData: 1797.7136653014277/68.06726944245918/250/323
+  metadata:
+    description: An example project to demostrate a basic chat loop, utilizing
+      system prompts to implement a text-based RPG.
+    id: mdaNOH2qO9sNDSGXgCrzi
+    title: RPG
