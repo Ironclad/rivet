@@ -4,14 +4,23 @@ import { useStableCallback } from './useStableCallback.js';
 import { ChartNode, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { projectState } from '../state/savedGraphs.js';
 import { useDependsOnPlugins } from './useDependsOnPlugins';
+import { useNodeTypes } from './useNodeTypes';
 
 export function useGetNodeIO() {
   const project = useRecoilValue(projectState);
   const nodesById = useRecoilValue(nodesByIdState);
   const connectionsForNode = useRecoilValue(connectionsForNodeState);
   useDependsOnPlugins();
+  const nodeTypes = useNodeTypes();
 
   return useStableCallback((node: ChartNode) => {
+    if (!(node.type in nodeTypes)) {
+      return {
+        inputDefinitions: [],
+        outputDefinitions: [],
+      };
+    }
+
     const tempImpl = globalRivetNodeRegistry.createDynamicImpl(node);
 
     const inputDefinitions = tempImpl.getInputDefinitions(connectionsForNode[node.id] ?? [], nodesById, project);
