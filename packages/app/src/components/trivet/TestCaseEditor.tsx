@@ -76,6 +76,7 @@ export const TestCaseEditor: FC = () => {
 
   const passing = testCaseResults?.every((res) => res.passing);
   const durationAvg = mean(testCaseResults?.map((res) => res.duration).filter((d) => d > 0));
+  const costAvg = mean(testCaseResults?.map((res) => res.cost).filter((c) => c > 0));
 
   function onClose() {
     setState((s) => ({ ...s, editingTestCaseId: undefined }));
@@ -141,6 +142,7 @@ export const TestCaseEditor: FC = () => {
                   testCaseResults.length
                 } passing)`}
             {durationAvg != null && ` (${(durationAvg / 1000).toFixed(2)}s avg)`}
+            {costAvg != null && ` ($${costAvg.toFixed(3)} avg)`}
           </label>
           <InputOutputEditor
             json={testCaseResults.length === 1 ? testCaseResults[0]!.outputs : testCaseResults.map((r) => r.outputs)}
