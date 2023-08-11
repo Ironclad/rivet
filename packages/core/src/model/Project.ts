@@ -11,7 +11,7 @@ export type Project = {
     description: string;
   };
 
-  plugins: PluginLoadSpec[];
+  plugins?: PluginLoadSpec[];
 
   graphs: Record<GraphId, NodeGraph>;
 };

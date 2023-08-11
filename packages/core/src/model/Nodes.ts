@@ -149,9 +149,6 @@ export * from './nodes/RandomNumberNode.js';
 import { shuffleNode } from './nodes/ShuffleNode.js';
 export * from './nodes/ShuffleNode.js';
 
-import { chatAnthropicNode } from './nodes/ChatAnthropicNode.js';
-export * from './nodes/ChatAnthropicNode.js';
-
 import { commentNode } from './nodes/CommentNode.js';
 export * from './nodes/CommentNode.js';
 
@@ -206,14 +203,20 @@ export const registerBuiltInNodes = (registry: NodeRegistration) => {
     .register(numberNode)
     .register(randomNumberNode)
     .register(shuffleNode)
-    .register(chatAnthropicNode)
     .register(commentNode);
 };
 
-export const globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());
+let globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());
+
+export { globalRivetNodeRegistry };
 
 export type BuiltInNodes = typeof globalRivetNodeRegistry.NodesType;
 
 export type BuiltInNodeType = typeof globalRivetNodeRegistry.NodeTypesType;
 
 export type NodeOfType<T extends BuiltInNodeType> = Extract<BuiltInNodes, { type: T }>;
+
+/** Resets the global node registry to a fresh one with only built-in nodes registered. */
+export function resetGlobalRivetNodeRegistry() {
+  globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());
+}

@@ -103,3 +103,18 @@ export const savedGraphsState = selector<NodeGraph[]>({
     set(projectState, newProject);
   },
 });
+
+export const projectPluginsState = selector({
+  key: 'projectPluginsState',
+  get: ({ get }) => {
+    return get(projectState).plugins ?? [];
+  },
+  set: ({ set }, newValue) => {
+    set(projectState, (oldValue) => {
+      return {
+        ...oldValue,
+        plugins: newValue instanceof DefaultValue ? blankProject().plugins : newValue,
+      };
+    });
+  },
+});

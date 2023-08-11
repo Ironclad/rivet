@@ -71,8 +71,6 @@ export function useContextMenuAddNodeConfiguration() {
     return { type, uiData };
   });
 
-  console.dir({ constructors, uiData });
-
   const groupsWithItems = useMemo(() => {
     const groups = addContextMenuGroups.map((group) => {
       const items = uiData
@@ -87,6 +85,7 @@ export function useContextMenuAddNodeConfiguration() {
           return {
             id: `add-node:${type}`,
             label: item.uiData.contextMenuTitle ?? type,
+            data: type,
             infoBox: {
               title: item.uiData.infoBoxTitle ?? type,
               description: item.uiData.infoBoxBody ?? '',

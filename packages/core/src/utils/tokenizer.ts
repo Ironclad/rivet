@@ -1,11 +1,7 @@
 import { encoding_for_model, TiktokenModel } from '@dqbd/tiktoken';
 import { ChatCompletionRequestMessage, openaiModels } from './openai.js';
-import { anthropicModels } from './anthropic.js';
 
-export const supportedModels = [...Object.keys(openaiModels), ...Object.keys(anthropicModels)] as (
-  | keyof typeof openaiModels
-  | keyof typeof anthropicModels
-)[];
+export const supportedModels = [...Object.keys(openaiModels)] as (keyof typeof openaiModels)[];
 export type SupportedModels = keyof typeof openaiModels;
 
 export function getTokenCountForString(input: string, model: TiktokenModel): number {
@@ -26,12 +22,6 @@ export function getTokenCountForMessages(messages: ChatCompletionRequestMessage[
   encoding.free();
 
   return tokenCount;
-}
-
-export function assertValidModel(model: string): asserts model is SupportedModels {
-  if (!supportedModels.includes(model as any)) {
-    throw new Error(`Invalid model: ${model}`);
-  }
 }
 
 export function chunkStringByTokenCount(

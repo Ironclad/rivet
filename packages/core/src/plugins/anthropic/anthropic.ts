@@ -1,4 +1,4 @@
-import { TiktokenModel } from '@dqbd/tiktoken';
+import { TiktokenModel } from '@dqbd/tiktoken'; // TODO anthropic released their own package for tokenization
 import fetchEventSource from './fetchEventSource.js';
 
 export type AnthropicModel = {

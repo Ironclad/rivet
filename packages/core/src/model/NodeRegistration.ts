@@ -1,5 +1,6 @@
 import { ChartNode, NodeImplConstructor, NodeDefinition, NodeImpl } from '../index.js';
 import { keys, values } from '../utils/typeSafety.js';
+import { RivetPlugin } from './RivetPlugin.js';
 
 export class NodeRegistration<
   NodeTypes extends string = never,
@@ -14,6 +15,7 @@ export class NodeRegistration<
   #impls = {} as Impls;
   #displayNames = {} as Record<NodeTypes, string>;
   #dynamicRegistered = [] as string[];
+  #plugins = [] as RivetPlugin[];
 
   register<T extends ChartNode>(
     definition: NodeDefinition<T>,
@@ -55,6 +57,11 @@ export class NodeRegistration<
     this.#dynamicRegistered.push(typeStr);
 
     return this;
+  }
+
+  registerPlugin(plugin: RivetPlugin) {
+    plugin.register(this as unknown as NodeRegistration);
+    this.#plugins.push(plugin);
   }
 
   create<T extends NodeTypes>(type: T): Extract<Nodes, { type: T }> {

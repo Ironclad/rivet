@@ -1,23 +1,38 @@
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { ChatMessage, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue.js';
-import { assertValidModel, getTokenCountForString } from '../../utils/tokenizer.js';
-import { addWarning } from '../../utils/outputs.js';
+import {
+  ChartNode,
+  ChatMessage,
+  EditorDefinition,
+  Inputs,
+  InternalProcessContext,
+  NodeId,
+  NodeImpl,
+  NodeInputDefinition,
+  NodeOutputDefinition,
+  NodeUIData,
+  Outputs,
+  PortId,
+  ScalarDataValue,
+  addWarning,
+  coerceType,
+  coerceTypeOptional,
+  expectTypeOptional,
+  getError,
+  getScalarTypeOf,
+  getTokenCountForString,
+  isArrayDataValue,
+  nodeDefinition,
+} from '@ironclad/rivet-core';
 import {
   AnthropicModels,
   ChatCompletionOptions,
+  anthropicModelOptions,
   anthropicModels,
   streamChatCompletions,
-} from '../../utils/anthropic.js';
-import retry from 'p-retry';
-import { Inputs, Outputs } from '../GraphProcessor.js';
-import { match } from 'ts-pattern';
-import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
-import { InternalProcessContext } from '../ProcessContext.js';
-import { expectTypeOptional, getError } from '../../index.js';
-import { anthropicModelOptions } from '../../utils/anthropic.js';
+} from '../anthropic.js';
+import { nanoid } from 'nanoid';
 import { dedent } from 'ts-dedent';
+import retry from 'p-retry';
+import { match } from 'ts-pattern';
 
 export type ChatAnthropicNode = ChartNode<'chatAnthropic', ChatAnthropicNodeData>;
 
@@ -243,8 +258,6 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
     const rawModel = this.data.useModelInput
       ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? this.data.model
       : this.data.model;
-
-    assertValidModel(rawModel);
 
     const model = rawModel as AnthropicModels;
 

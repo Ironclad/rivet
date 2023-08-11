@@ -4174,6 +4174,35 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@ironclad/rivet-plugin-openai@workspace:packages/plugin-anthropic":
+  version: 0.0.0-use.local
+  resolution: "@ironclad/rivet-plugin-openai@workspace:packages/plugin-anthropic"
+  dependencies:
+    "@dqbd/tiktoken": "npm:^1.0.7"
+    "@ironclad/rivet-core": "workspace:^"
+    "@types/eslint": "npm:^8.44.1"
+    "@types/lodash-es": "npm:^4.17.8"
+    "@types/node": "npm:^20.4.5"
+    "@types/yaml": "npm:^1.9.7"
+    "@typescript-eslint/eslint-plugin": "npm:^5.50.0"
+    eslint: "npm:^8.46.0"
+    eslint-config-standard-with-typescript: "npm:^37.0.0"
+    eslint-plugin-import: "npm:^2.28.0"
+    eslint-plugin-n: "npm:^16.0.1"
+    eslint-plugin-promise: "npm:^6.1.1"
+    lodash-es: "npm:^4.17.21"
+    nanoid: "npm:^4.0.2"
+    p-retry: "npm:^5.1.2"
+    p-retry-4: "npm:p-retry@^4.0.0"
+    ts-dedent: "npm:^2.2.0"
+    ts-node: "npm:^10.9.1"
+    ts-pattern: "npm:^5.0.5"
+    tsx: "npm:^3.12.7"
+    typescript: "npm:^5.1.6"
+    yaml: "npm:^2.3.1"
+  languageName: unknown
+  linkType: soft
+
 "@ironclad/rivet@workspace:.":
   version: 0.0.0-use.local
   resolution: "@ironclad/rivet@workspace:."
@@ -12694,6 +12723,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nanoid@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "nanoid@npm:4.0.2"
+  bin:
+    nanoid: bin/nanoid.js
+  checksum: 0e28bade6b10396bc0936980c7569e9710341b3dd8775bcd0645b7d23f59ff64e59c4413f48836bc336711ef1cc4f61f6453946a3bf69c4c235fab9d221f9216
+  languageName: node
+  linkType: hard
+
 "napi-build-utils@npm:^1.0.1":
   version: 1.0.2
   resolution: "napi-build-utils@npm:1.0.2"
@@ -16393,6 +16431,13 @@ __metadata:
   version: 5.0.4
   resolution: "ts-pattern@npm:5.0.4"
   checksum: a02515728baae9c9b32513b4cf381998f04e58d2ebb8828c95f83876a7e6877de7c92c4b5e0f44bbb7cd5a0c65136d6e61239b27ea964e57a9c919054c7338e1
+  languageName: node
+  linkType: hard
+
+"ts-pattern@npm:^5.0.5":
+  version: 5.0.5
+  resolution: "ts-pattern@npm:5.0.5"
+  checksum: 9c15bd67de7a802aad813ac7e80cf58e9229cd07b9ed193f8dc1a945494f46045fecbc0525bc299c8cfceb32c5b2f6ebdca6bb8085e83ad92e1fc9ea825a6814
   languageName: node
   linkType: hard
 

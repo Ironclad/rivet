@@ -3,7 +3,6 @@ import { nanoid } from 'nanoid';
 import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { ChatMessage, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue.js';
 import {
-  assertValidModel,
   getCostForPrompt,
   getCostForTokens,
   getTokenCountForMessages,
@@ -15,6 +14,7 @@ import {
   ChatCompletionOptions,
   ChatCompletionRequestMessage,
   OpenAIError,
+  OpenAIModel,
   openAiModelOptions,
   openaiModels,
   streamChatCompletions,
@@ -376,8 +376,6 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? this.data.model
       : this.data.model;
 
-    assertValidModel(model);
-
     const temperature = this.data.useTemperatureInput
       ? coerceTypeOptional(inputs['temperature' as PortId], 'number') ?? this.data.temperature
       : this.data.temperature;
@@ -421,22 +419,24 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
     let { maxTokens } = this.data;
 
-    const tokenCount = getTokenCountForMessages(completionMessages, openaiModels[model].tiktokenModel);
+    const openaiModel = openaiModels[model as keyof typeof openaiModels];
 
-    if (tokenCount >= openaiModels[model].maxTokens) {
+    const tokenCount = getTokenCountForMessages(completionMessages, openaiModel.tiktokenModel);
+
+    if (tokenCount >= openaiModel.maxTokens) {
       throw new Error(
-        `The model ${model} can only handle ${openaiModels[model].maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`,
+        `The model ${model} can only handle ${openaiModel.maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`,
       );
     }
 
-    if (tokenCount + maxTokens > openaiModels[model].maxTokens) {
+    if (tokenCount + maxTokens > openaiModel.maxTokens) {
       const message = `The model can only handle a maximum of ${
-        openaiModels[model].maxTokens
+        openaiModel.maxTokens
       } tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${
-        openaiModels[model].maxTokens - tokenCount
+        openaiModel.maxTokens - tokenCount
       }.`;
       addWarning(output, message);
-      maxTokens = Math.floor((openaiModels[model].maxTokens - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
+      maxTokens = Math.floor((openaiModel.maxTokens - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
     }
 
     const isMultiResponse = this.data.useNumberOfChoicesInput || (this.data.numberOfChoices ?? 1) > 1;
@@ -446,7 +446,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         async () => {
           const options: Omit<ChatCompletionOptions, 'auth' | 'signal'> = {
             messages: completionMessages,
-            model,
+            model: model as keyof typeof openaiModels,
             temperature: useTopP ? undefined : temperature,
             top_p: useTopP ? topP : undefined,
             max_tokens: maxTokens,
@@ -532,17 +532,18 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             throw new Error('No response from OpenAI');
           }
 
-          const requestTokenCount = getTokenCountForMessages(completionMessages, openaiModels[model].tiktokenModel);
+          const requestTokenCount = getTokenCountForMessages(completionMessages, openaiModel.tiktokenModel);
           output['requestTokens' as PortId] = { type: 'number', value: requestTokenCount * numberOfChoices };
 
           const responseTokenCount = responseChoicesParts
-            .map((choiceParts) => getTokenCountForString(choiceParts.join(), openaiModels[model].tiktokenModel))
+            .map((choiceParts) => getTokenCountForString(choiceParts.join(), openaiModel.tiktokenModel))
             .reduce((a, b) => a + b, 0);
 
           output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
 
           const cost =
-            getCostForPrompt(completionMessages, model) + getCostForTokens(responseTokenCount, 'completion', model);
+            getCostForPrompt(completionMessages, model as keyof typeof openaiModels) +
+            getCostForTokens(responseTokenCount, 'completion', model as keyof typeof openaiModels);
 
           output['cost' as PortId] = { type: 'number', value: cost };
 

@@ -101,7 +101,6 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     waitForEvent: waitForEventNodeImage,
 
     // TODO
-    chatAnthropic: '',
     comment: '',
     object: '',
   };

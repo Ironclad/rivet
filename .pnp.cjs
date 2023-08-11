@@ -34,6 +34,10 @@ const RAW_RUNTIME_STATE =
       "reference": "workspace:packages/node"\
     },\
     {\
+      "name": "@ironclad/rivet-plugin-openai",\
+      "reference": "workspace:packages/plugin-anthropic"\
+    },\
+    {\
       "name": "@ironclad/trivet",\
       "reference": "workspace:packages/trivet"\
     }\
@@ -46,6 +50,7 @@ const RAW_RUNTIME_STATE =
     ["@ironclad/rivet-app-executor", ["workspace:packages/app-executor"]],\
     ["@ironclad/rivet-core", ["workspace:packages/core"]],\
     ["@ironclad/rivet-node", ["workspace:packages/node"]],\
+    ["@ironclad/rivet-plugin-openai", ["workspace:packages/plugin-anthropic"]],\
     ["@ironclad/trivet", ["workspace:packages/trivet"]],\
     ["docs", ["workspace:packages/docs"]]\
   ],\
@@ -6918,6 +6923,40 @@ const RAW_RUNTIME_STATE =
           ["type-fest", "npm:4.0.0"],\
           ["typescript", "patch:typescript@npm%3A5.1.6#optional!builtin<compat/typescript>::version=5.1.6&hash=5da071"],\
           ["ws", "virtual:74fcc7b6256f60a89945acc6b1c62e6158616c0dcf2312663cfe08ceda598b7d943e5de97f39a415e4491198cfa92535d8e40310ec84839b8241ca342059e353#npm:8.13.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }]\
+    ]],\
+    ["@ironclad/rivet-plugin-openai", [\
+      ["workspace:packages/plugin-anthropic", {\
+        "packageLocation": "./packages/plugin-anthropic/",\
+        "packageDependencies": [\
+          ["@ironclad/rivet-plugin-openai", "workspace:packages/plugin-anthropic"],\
+          ["@dqbd/tiktoken", "npm:1.0.7"],\
+          ["@ironclad/rivet-core", "workspace:packages/core"],\
+          ["@types/eslint", "npm:8.44.1"],\
+          ["@types/lodash-es", "npm:4.17.8"],\
+          ["@types/node", "npm:20.4.5"],\
+          ["@types/yaml", "npm:1.9.7"],\
+          ["@typescript-eslint/eslint-plugin", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:5.62.0"],\
+          ["eslint", "npm:8.46.0"],\
+          ["eslint-config-standard-with-typescript", "virtual:74fcc7b6256f60a89945acc6b1c62e6158616c0dcf2312663cfe08ceda598b7d943e5de97f39a415e4491198cfa92535d8e40310ec84839b8241ca342059e353#npm:37.0.0"],\
+          ["eslint-plugin-import", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:2.28.0"],\
+          ["eslint-plugin-n", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:16.0.1"],\
+          ["eslint-plugin-promise", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:6.1.1"],\
+          ["lodash-es", "npm:4.17.21"],\
+          ["nanoid", "npm:4.0.2"],\
+          ["p-retry", "npm:5.1.2"],\
+          ["p-retry-4", [\
+            "p-retry",\
+            "npm:4.6.2"\
+          ]],\
+          ["ts-dedent", "npm:2.2.0"],\
+          ["ts-node", "virtual:763b5751e0360e14ffc929bbc0bd7578f8f57d8885d5b4f58aaa162c104e4df8cde06b85f86472c72428047754184723fb46f2f667ad4920b095b26bc8ed2f66#npm:10.9.1"],\
+          ["ts-pattern", "npm:5.0.5"],\
+          ["tsx", "npm:3.12.7"],\
+          ["typescript", "patch:typescript@npm%3A5.1.6#optional!builtin<compat/typescript>::version=5.1.6&hash=5da071"],\
+          ["yaml", "npm:2.3.1"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -17576,6 +17615,13 @@ const RAW_RUNTIME_STATE =
           ["nanoid", "npm:3.3.6"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:4.0.2", {\
+        "packageLocation": "./.yarn/cache/nanoid-npm-4.0.2-ae010cad86-0e28bade6b.zip/node_modules/nanoid/",\
+        "packageDependencies": [\
+          ["nanoid", "npm:4.0.2"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["napi-build-utils", [\
@@ -22605,6 +22651,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/ts-pattern-npm-5.0.4-d2a6e83a0c-a02515728b.zip/node_modules/ts-pattern/",\
         "packageDependencies": [\
           ["ts-pattern", "npm:5.0.4"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:5.0.5", {\
+        "packageLocation": "./.yarn/cache/ts-pattern-npm-5.0.5-0b6de45345-9c15bd67de.zip/node_modules/ts-pattern/",\
+        "packageDependencies": [\
+          ["ts-pattern", "npm:5.0.5"]\
         ],\
         "linkType": "HARD"\
       }]\

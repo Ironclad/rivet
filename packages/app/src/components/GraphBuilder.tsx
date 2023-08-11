@@ -29,6 +29,7 @@ import { useLoadGraph } from '../hooks/useLoadGraph.js';
 import { projectState } from '../state/savedGraphs.js';
 import { ContextMenuContext } from './ContextMenu.js';
 import { useGraphHistoryNavigation } from '../hooks/useGraphHistoryNavigation';
+import { useProjectPlugins } from '../hooks/useProjectPlugins';
 
 const Container = styled.div`
   position: relative;
@@ -63,6 +64,7 @@ export const GraphBuilder: FC = () => {
   const project = useRecoilValue(projectState);
   const [graphNavigationStack, setGraphNavigationStack] = useRecoilState(graphNavigationStackState);
   const historyNav = useGraphHistoryNavigation();
+  useProjectPlugins();
 
   const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {
     setNodes?.(newNodes);

@@ -23,6 +23,8 @@ export * from './integrations/EmbeddingGenerator.js';
 export * from './integrations/LLMProvider.js';
 export * from './recording/ExecutionRecorder.js';
 export * from './recording/RecordedEvents.js';
+export * from './model/RivetPlugin.js';
+export * from './plugins.js';
 
 import * as openai from './utils/openai.js';
 export { openai };
