@@ -5,8 +5,10 @@ import { useGetNodeIO } from '../hooks/useGetNodeIO.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { draggingWireState, lastMousePositionState } from '../state/graphBuilder.js';
 import { Port } from './Port.js';
+import { useIsKnownNodeType } from '../hooks/useIsKnownNodeType';
+import { ErrorBoundary } from 'react-error-boundary';
 
-export const NodePorts: FC<{
+export type NodePortsProps = {
   node: ChartNode;
   connections: NodeConnection[];
   zoomedOut?: boolean;
@@ -17,7 +19,22 @@ export const NodePorts: FC<{
     isInput: boolean,
   ) => void;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
-}> = ({ node, connections, zoomedOut, onWireStartDrag, onWireEndDrag }) => {
+};
+
+export const NodePortsRenderer: FC<NodePortsProps> = ({ ...props }) => {
+  const isKnownNodeType = useIsKnownNodeType(props.node.type);
+  if (!isKnownNodeType) {
+    return null;
+  }
+
+  return (
+    <ErrorBoundary fallback={<div />}>
+      <NodePorts {...props} />
+    </ErrorBoundary>
+  );
+};
+
+export const NodePorts: FC<NodePortsProps> = ({ node, connections, zoomedOut, onWireStartDrag, onWireEndDrag }) => {
   const getIO = useGetNodeIO();
   const { inputDefinitions, outputDefinitions } = getIO(node);
   const draggingWire = useRecoilValue(draggingWireState);
@@ -36,6 +53,12 @@ export const NodePorts: FC<{
 
   // Force rerender on mouse move to update position 🤷‍♂️
   useRecoilValue(lastMousePositionState);
+
+  const isKnownNodeType = useIsKnownNodeType(node.type);
+
+  if (!isKnownNodeType) {
+    return null;
+  }
 
   return (
     <div className="node-ports">

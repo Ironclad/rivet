@@ -12,9 +12,11 @@ import { useMarkdown } from '../hooks/useMarkdown';
 import { match } from 'ts-pattern';
 import styled from '@emotion/styled';
 import { LazyColorizedPreformattedText } from './LazyComponents';
+import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 
 export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
   const { Body } = useUnknownNodeComponentDescriptorFor(node);
+  useDependsOnPlugins();
 
   const body = Body ? <Body node={node} /> : <UnknownNodeBody node={node} />;
 

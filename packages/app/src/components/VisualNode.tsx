@@ -14,7 +14,10 @@ import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { LoadingSpinner } from './LoadingSpinner.js';
 import { ErrorBoundary } from 'react-error-boundary';
-import { NodePorts } from './NodePorts.js';
+import { NodePorts, NodePortsRenderer } from './NodePorts.js';
+import { useNodeTypes } from '../hooks/useNodeTypes';
+import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
+import { useIsKnownNodeType } from '../hooks/useIsKnownNodeType';
 
 export type VisualNodeProps = {
   node: ChartNode;
@@ -75,6 +78,7 @@ export const VisualNode = memo(
       const lastRun = useRecoilValue(lastRunData(node.id));
       const processPage = useRecoilValue(selectedProcessPage(node.id));
       const isComment = node.type === 'comment';
+      useDependsOnPlugins();
 
       const {
         canvasPosition: { zoom },
@@ -171,6 +175,7 @@ const ZoomedOutVisualNodeContent: FC<{
   ({ node, connections = [], handleAttributes, onSelectNode, onStartEditing, onWireStartDrag, onWireEndDrag }) => {
     const lastRun = useRecoilValue(lastRunData(node.id));
     const processPage = useRecoilValue(selectedProcessPage(node.id));
+    useDependsOnPlugins();
 
     const handleEditClick = useStableCallback((event: MouseEvent<HTMLButtonElement>) => {
       event.stopPropagation();
@@ -228,7 +233,7 @@ const ZoomedOutVisualNodeContent: FC<{
             </button>
           </div>
         </div>
-        <NodePorts
+        <NodePortsRenderer
           node={node}
           connections={connections}
           zoomedOut
@@ -268,6 +273,7 @@ const NormalVisualNodeContent: FC<{
     const isComment = node.type === 'comment';
     const lastRun = useRecoilValue(lastRunData(node.id));
     const processPage = useRecoilValue(selectedProcessPage(node.id));
+    useDependsOnPlugins();
 
     const [initialHeight, setInitialHeight] = useState<number | undefined>();
     const [initialWidth, setInitialWidth] = useState<number | undefined>();
@@ -352,6 +358,8 @@ const NormalVisualNodeContent: FC<{
       onSelectNode?.(event.shiftKey);
     });
 
+    const isKnownNodeType = useIsKnownNodeType(node.type);
+
     return (
       <>
         <div className="node-title" onMouseMove={watchShift}>
@@ -393,16 +401,18 @@ const NormalVisualNodeContent: FC<{
           </div>
         </div>
         <ErrorBoundary fallback={<div>Error rendering node body</div>}>
-          <NodeBody node={node} />
+          {isKnownNodeType ? (
+            <NodeBody node={node} />
+          ) : (
+            <div>Unknown node type {node.type} - are you missing a plugin?</div>
+          )}
         </ErrorBoundary>
-        <ErrorBoundary fallback={<></>}>
-          <NodePorts
-            node={node}
-            connections={connections}
-            onWireStartDrag={onWireStartDrag}
-            onWireEndDrag={onWireEndDrag}
-          />
-        </ErrorBoundary>
+        <NodePortsRenderer
+          node={node}
+          connections={connections}
+          onWireStartDrag={onWireStartDrag}
+          onWireEndDrag={onWireEndDrag}
+        />
 
         <ErrorBoundary fallback={<div>Error rendering node output</div>}>
           <NodeOutput node={node} />

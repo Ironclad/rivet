@@ -5,16 +5,13 @@ import { graphState } from '../state/graph.js';
 import { loadedProjectState, projectPluginsState, projectState, savedGraphsState } from '../state/savedGraphs.js';
 import { ReactComponent as ExpandLeftIcon } from 'majesticons/line/menu-expand-left-line.svg';
 import { ReactComponent as ExpandRightIcon } from 'majesticons/line/menu-expand-right-line.svg';
-import { ReactComponent as PlusIcon } from 'majesticons/line/plus-line.svg';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { NodeGraph } from '@ironclad/rivet-core';
 import { sidebarOpenState } from '../state/graphBuilder.js';
 import { appWindow } from '@tauri-apps/api/window';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import { GraphList } from './GraphList.js';
-import { Label } from '@atlaskit/form';
-import TextField from '@atlaskit/textfield';
-import { produce } from 'immer';
+import { ProjectPluginsConfiguration } from './ProjectPluginConfiguration';
 
 const styles = css`
   position: fixed;
@@ -70,49 +67,6 @@ const styles = css`
   .tabs,
   .tabs > div {
     height: 100%;
-  }
-
-  .plugins-config {
-    .label {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      .add-plugin {
-        cursor: pointer;
-        font-size: 16px;
-        color: var(--grey);
-        transition: color 0.2s ease;
-        border: 1px solid var(--grey);
-        border-radius: 4px;
-        width: 24px;
-        height: 24px;
-        background: transparent;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        line-height: 0;
-        padding: 0;
-
-        &:hover {
-          color: var(--foreground-bright);
-        }
-      }
-    }
-  }
-
-  .plugins-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin: 0;
-    padding: 0;
-    margin-top: 8px;
-
-    li {
-      margin: 0;
-      padding: 0;
-    }
   }
 `;
 
@@ -217,39 +171,6 @@ export const LeftSidebar: FC = () => {
           </TabPanel>
         </Tabs>
       </div>
-    </div>
-  );
-};
-
-const ProjectPluginsConfiguration: FC = () => {
-  const [pluginSpecs, setPluginSpecs] = useRecoilState(projectPluginsState);
-
-  return (
-    <div className="plugins-config">
-      <div className="label">
-        <Label htmlFor="">Plugins</Label>
-        <button
-          className="add-plugin"
-          onClick={() => setPluginSpecs((specs) => [...specs, { id: 'unknown', uri: '' }])}
-        >
-          <PlusIcon />
-        </button>
-      </div>
-      <ul className="plugins-list">
-        {pluginSpecs.map((spec, i) => (
-          <TextField
-            key={`plugin-${i}`}
-            defaultValue={spec.uri}
-            onBlur={(e) => {
-              setPluginSpecs((specs) =>
-                produce(specs, (draft) => {
-                  draft[i]!.uri = (e.target as HTMLInputElement).value;
-                }),
-              );
-            }}
-          />
-        ))}
-      </ul>
     </div>
   );
 };

@@ -3,11 +3,13 @@ import { connectionsForNodeState, nodesByIdState } from '../state/graph.js';
 import { useStableCallback } from './useStableCallback.js';
 import { ChartNode, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { projectState } from '../state/savedGraphs.js';
+import { useDependsOnPlugins } from './useDependsOnPlugins';
 
 export function useGetNodeIO() {
   const project = useRecoilValue(projectState);
   const nodesById = useRecoilValue(nodesByIdState);
   const connectionsForNode = useRecoilValue(connectionsForNodeState);
+  useDependsOnPlugins();
 
   return useStableCallback((node: ChartNode) => {
     const tempImpl = globalRivetNodeRegistry.createDynamicImpl(node);

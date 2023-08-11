@@ -15,9 +15,11 @@ import { entries } from '../utils/typeSafety.js';
 import { orderBy } from 'lodash-es';
 import { promptDesignerAttachedChatNodeState, promptDesignerState } from '../state/promptDesigner.js';
 import { overlayOpenState } from '../state/ui';
+import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 
 export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  useDependsOnPlugins();
 
   const handleScroll = useStableCallback((e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     e.stopPropagation();
