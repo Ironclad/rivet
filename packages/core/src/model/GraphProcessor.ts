@@ -27,6 +27,7 @@ import { InternalProcessContext, ProcessContext, ProcessId } from './ProcessCont
 import { ExecutionRecorder } from '../recording/ExecutionRecorder.js';
 import { P, match } from 'ts-pattern';
 import { Opaque } from 'type-fest';
+import { coerceTypeOptional } from '../utils/coerceType.js';
 
 // CJS compatibility, gets default.default for whatever reason
 let PQueue = PQueueImport;
@@ -197,6 +198,7 @@ export class GraphProcessor {
   #aborted = false;
   #abortSuccessfully = false;
   #abortError: Error | string | undefined = undefined;
+  #totalCost: number = 0;
 
   #nodeAbortControllers = new Map<`${NodeId}-${ProcessId}`, AbortController>();
 
@@ -668,11 +670,9 @@ export class GraphProcessor {
       }
 
       if (this.#graphOutputs['cost' as PortId] == null) {
-        const totalCost = sum(this.#graph.nodes.filter((node) => node.type === 'chat' || node.type === 'subGraph')
-          .map((node) => this.#nodeResults.get(node.id)?.['cost' as PortId]?.value ?? 0));
         this.#graphOutputs['cost' as PortId] = {
           type: 'number',
-          value: totalCost,
+          value: this.#totalCost,
         };
       }
 
@@ -1143,6 +1143,7 @@ export class GraphProcessor {
 
       this.#nodeResults.set(node.id, aggregateResults);
       this.#visitedNodes.add(node.id);
+      this.#totalCost += sum(results.map((r) => coerceTypeOptional(r.output?.['cost' as PortId], 'number') ?? 0));
       this.#emitter.emit('nodeFinish', { node, outputs: aggregateResults, processId });
     } catch (error) {
       this.#nodeErrored(node, error, processId);
@@ -1170,6 +1171,9 @@ export class GraphProcessor {
 
       this.#nodeResults.set(node.id, outputValues);
       this.#visitedNodes.add(node.id);
+      if (outputValues['cost' as PortId]?.type === 'number') {
+        this.#totalCost += coerceTypeOptional(outputValues['cost' as PortId], 'number') ?? 0;
+      }
       this.#emitter.emit('nodeFinish', { node, outputs: outputValues, processId });
     } catch (error) {
       this.#nodeErrored(node, error, processId);
