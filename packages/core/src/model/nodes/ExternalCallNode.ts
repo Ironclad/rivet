@@ -138,6 +138,10 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
         const result = await fn(externalContext, ...arrayArgs.value);
         return {
           ['result' as PortId]: result,
+          ['cost' as PortId]: {
+            type: 'number',
+            value: result.cost ?? 0,
+          },
           ['error' as PortId]: {
             type: 'control-flow-excluded',
             value: undefined,
