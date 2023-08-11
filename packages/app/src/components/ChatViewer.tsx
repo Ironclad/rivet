@@ -70,7 +70,7 @@ const styles = css`
 
     border: 1px solid var(--primary);
     border-radius: 10px;
-    box-shadow: 0 0 10px var(--shadow-orange);
+    box-shadow: 0 0 10px var(--shadow-primary);
 
     &.complete {
       border: 1px solid var(--success);

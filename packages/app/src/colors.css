@@ -15,18 +15,18 @@
   --foreground-muted: #8d8d8d;
 
   /* Primary colors */
-  --primary: #ff9900;
-  --primary-dark: #cc6600;
-  --primary-light: #ffb545;
+  --primary: #00ca88;
+  --primary-dark: #006c47;
+  --primary-light: #c4f4c4;
 
   /* Tertiary colors */
-  --tertiary: #444;
-  --tertiary-light: #4444446e;
+  --tertiary: #0fa7f8;
+  --tertiary-light: #a9defe;
 
   /* Accent colors */
-  --accent: #30c9c3;
-  --accent-dark: #249a9a;
-  --accent-light: #58d3d1;
+  --accent: #e8d398;
+  --accent-dark: #825117;
+  --accent-light: #f1e0b4;
 
   --success: #00b74c;
   --success-dark: #009624;
@@ -51,5 +51,5 @@
   /* Gradient */
   --grey-subtle-accent: rgba(255, 255, 255, 0.02);
 
-  --shadow-orange: rgba(255, 140, 0, 0.8);
+  --shadow-primary: rgba(0, 108, 71, 0.8);
 }

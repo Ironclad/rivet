@@ -458,7 +458,7 @@ export const nodeStyles = css`
   }
 
   .node.running {
-    box-shadow: 0 0 16px var(--shadow-orange), 0 8px 16px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 16px var(--shadow-primary), 0 8px 16px rgba(0, 0, 0, 0.4);
   }
 
   .split-output {
