@@ -113,7 +113,7 @@ export type Outputs = Record<PortId, DataValue | undefined>;
 
 export type ExternalFunctionProcessContext = Omit<InternalProcessContext, 'setGlobal'>;
 
-export type ExternalFunction = (context: ExternalFunctionProcessContext, ...args: unknown[]) => Promise<DataValue>;
+export type ExternalFunction = (context: ExternalFunctionProcessContext, ...args: unknown[]) => Promise<DataValue & { cost?: number }>;
 
 type RaceId = Opaque<string, 'RaceId'>;
 
