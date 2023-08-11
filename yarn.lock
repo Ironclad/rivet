@@ -3774,6 +3774,7 @@ __metadata:
     esbuild: "npm:^0.18.17"
     esbuild-plugin-copy: "npm:^2.1.1"
     pkg: "npm:^5.8.1"
+    ts-pattern: "npm:^5.0.5"
     tsx: "npm:^3.12.7"
     typescript: "npm:^5.1.6"
     yargs: "npm:^17.7.2"
@@ -15698,6 +15699,13 @@ __metadata:
   version: 5.0.4
   resolution: "ts-pattern@npm:5.0.4"
   checksum: a02515728baae9c9b32513b4cf381998f04e58d2ebb8828c95f83876a7e6877de7c92c4b5e0f44bbb7cd5a0c65136d6e61239b27ea964e57a9c919054c7338e1
+  languageName: node
+  linkType: hard
+
+"ts-pattern@npm:^5.0.5":
+  version: 5.0.5
+  resolution: "ts-pattern@npm:5.0.5"
+  checksum: 9c15bd67de7a802aad813ac7e80cf58e9229cd07b9ed193f8dc1a945494f46045fecbc0525bc299c8cfceb32c5b2f6ebdca6bb8085e83ad92e1fc9ea825a6814
   languageName: node
   linkType: hard
 

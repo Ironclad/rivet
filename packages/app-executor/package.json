@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",
+    "ts-pattern": "^5.0.5",
     "yargs": "^17.7.2"
   },
   "pkg": {

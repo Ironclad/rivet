@@ -27,6 +27,7 @@ import { ExecutionRecorder } from '../recording/ExecutionRecorder.js';
 import { P, match } from 'ts-pattern';
 import { Opaque } from 'type-fest';
 import { BuiltInNodeType, BuiltInNodes, globalRivetNodeRegistry } from './Nodes.js';
+import { NodeRegistration } from './NodeRegistration.js';
 
 // CJS compatibility, gets default.default for whatever reason
 let PQueue = PQueueImport;
@@ -162,8 +163,6 @@ export class GraphProcessor {
   #parent: GraphProcessor | undefined;
   id = nanoid();
 
-  registry = globalRivetNodeRegistry;
-
   /** The node that is executing this graph, almost always a subgraph node. Undefined for root. */
   #executor:
     | {
@@ -212,7 +211,7 @@ export class GraphProcessor {
     return this.#running;
   }
 
-  constructor(project: Project, graphId: GraphId) {
+  constructor(project: Project, graphId: GraphId, registry?: NodeRegistration) {
     this.#project = project;
     const graph = project.graphs[graphId];
 
@@ -224,12 +223,13 @@ export class GraphProcessor {
     this.#nodeInstances = {};
     this.#connections = {};
     this.#nodesById = {};
+    registry ??= globalRivetNodeRegistry as unknown as NodeRegistration;
 
     this.#emitter.bindMethods(this as any, ['on', 'off', 'once', 'onAny', 'offAny']);
 
     // Create node instances and store them in a lookup table
     for (const node of this.#graph.nodes) {
-      this.#nodeInstances[node.id] = this.registry.createDynamicImpl(node);
+      this.#nodeInstances[node.id] = registry.createDynamicImpl(node);
       this.#nodesById[node.id] = node;
     }
 

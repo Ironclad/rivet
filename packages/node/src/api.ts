@@ -4,10 +4,12 @@ import {
   GraphId,
   GraphProcessor,
   NativeApi,
+  NodeRegistration,
   ProcessEvents,
   Project,
   Settings,
   deserializeProject,
+  globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
 
 import { readFile } from 'node:fs/promises';
@@ -51,6 +53,7 @@ export type RunGraphOptions = {
     [key: string]: (data: DataValue | undefined) => void;
   };
   abortSignal?: AbortSignal;
+  registry?: NodeRegistration;
 } & {
   [P in keyof ProcessEvents as `on${PascalCase<P>}`]?: (params: ProcessEvents[P]) => void;
 } & Settings;
@@ -61,7 +64,7 @@ export async function runGraphInFile(path: string, options: RunGraphOptions): Pr
 }
 
 export function createProcessor(project: Project, options: RunGraphOptions) {
-  const { graph, inputs = {}, context = {} } = options;
+  const { graph, inputs = {}, context = {}, registry } = options;
 
   const graphId =
     graph in project.graphs
@@ -72,7 +75,7 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
     throw new Error('Graph not found');
   }
 
-  const processor = new GraphProcessor(project, graphId as GraphId);
+  const processor = new GraphProcessor(project, graphId as GraphId, options.registry);
 
   if (options.remoteDebugger) {
     options.remoteDebugger.attach(processor);
