@@ -103,5 +103,7 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     // TODO
     comment: '',
     object: '',
+    audio: '',
+    image: '',
   };
 };

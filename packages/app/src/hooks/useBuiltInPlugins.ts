@@ -7,6 +7,10 @@ const builtInPlugins = [
     label: 'Autoevals',
     value: 'autoevals',
   },
+  {
+    label: 'Assembly AI',
+    value: 'assemblyAi',
+  },
 ] as const;
 
 export function useBuiltInPlugins() {

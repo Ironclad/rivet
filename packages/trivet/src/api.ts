@@ -51,6 +51,7 @@ export function createTestGraphRunner(opts: { openAiKey: string }): TrivetGraphR
           openAiOrganization: '',
           pineconeApiKey: '',
           anthropicApiKey: '',
+          assemblyAiApiKey: '',
           recordingPlaybackLatency: 1000,
         } satisfies Required<Settings>,
       },

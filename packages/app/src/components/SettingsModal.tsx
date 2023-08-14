@@ -80,6 +80,17 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
                 />
               )}
             </Field>
+            <Field name="assemblyAiApiKey" label="Assembly AI API Key">
+              {() => (
+                <TextField
+                  type="password"
+                  value={settings.assemblyAiApiKey}
+                  onChange={(e) =>
+                    setSettings((s) => ({ ...s, assemblyAiApiKey: (e.target as HTMLInputElement).value }))
+                  }
+                />
+              )}
+            </Field>
           </ModalBody>
           <ModalFooter>
             <Button appearance="primary" onClick={closeModal}>

@@ -66,6 +66,21 @@ const scalarRenderers: {
     );
   },
   binary: ({ value }) => <>Binary (length {value.value.length.toLocaleString()})</>,
+  audio: ({ value }) => {
+    const {
+      value: { data },
+    } = value;
+
+    const dataUri = `data:audio/mp4;base64,${data}`;
+
+    return (
+      <div>
+        <audio controls>
+          <source src={dataUri} />
+        </audio>
+      </div>
+    );
+  },
 };
 
 export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number }> = ({ value, depth }) => {

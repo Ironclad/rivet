@@ -6,6 +6,7 @@ import { css } from '@emotion/react';
 import clsx from 'clsx';
 import {
   BuiltInNodes,
+  ChartNode,
   DataValue,
   NodeId,
   PortId,
@@ -155,7 +156,7 @@ export const ChatViewer: FC<{
 
   const chatNodes = useMemo(() => {
     const allNodes = Object.values(project.graphs).flatMap((g) => g.nodes) as BuiltInNodes[];
-    const nodes = allNodes.filter((node) => node.type === 'chat' || node.type === 'chatAnthropic');
+    const nodes = (allNodes as ChartNode[]).filter((node) => node.type === 'chat' || node.type === 'chatAnthropic');
     if (graphFilter === '') {
       return nodes;
     }

@@ -190,6 +190,7 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
             openAiOrganization: options.openAiOrganization ?? '',
             pineconeApiKey: options.pineconeApiKey ?? '',
             anthropicApiKey: options.anthropicApiKey ?? '',
+            assemblyAiApiKey: options.assemblyAiApiKey ?? '',
             recordingPlaybackLatency: 1000,
           } satisfies Required<Settings>,
         },
