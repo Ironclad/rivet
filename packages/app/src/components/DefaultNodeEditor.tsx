@@ -7,8 +7,10 @@ import {
   DataTypeSelectorEditorDefinition,
   DropdownEditorDefinition,
   EditorDefinition,
+  FileBrowserEditorDefinition,
   GraphId,
   GraphSelectorEditorDefinition,
+  ImageBrowserEditorDefinition,
   NumberEditorDefinition,
   StringEditorDefinition,
   ToggleEditorDefinition,
@@ -17,6 +19,7 @@ import {
   globalRivetNodeRegistry,
   isArrayDataType,
   scalarTypes,
+  uint8ArrayToBase64,
 } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { Field, Label } from '@atlaskit/form';
@@ -35,6 +38,8 @@ import { values } from '../utils/typeSafety.js';
 import { nanoid } from 'nanoid';
 import { LazyCodeEditor, LazyTripleBarColorPicker } from './LazyComponents';
 import { CodeEditor } from './CodeEditor';
+import { ioProvider } from '../utils/globals';
+import Button from '@atlaskit/button';
 
 export const defaultEditorContainerStyles = css`
   display: flex;
@@ -156,6 +161,8 @@ const DefaultNodeEditorField: FC<{
     .with({ type: 'code' }, (editor) => <DefaultCodeEditor {...sharedProps} editor={editor} />)
     .with({ type: 'graphSelector' }, (editor) => <DefaultGraphSelectorEditor {...sharedProps} editor={editor} />)
     .with({ type: 'color' }, (editor) => <DefaultColorEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'fileBrowser' }, (editor) => <DefaultFileBrowserEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'imageBrowser' }, (editor) => <DefaultImageBrowserEditor {...sharedProps} editor={editor} />)
     .exhaustive();
 
   const toggle = editor.useInputToggleDataKey ? (
@@ -556,5 +563,81 @@ export const DefaultColorEditor: FC<{
         )}
       </Field>
     </Suspense>
+  );
+};
+
+export const DefaultFileBrowserEditor: FC<{
+  node: ChartNode;
+  isReadonly: boolean;
+  onChange: (changed: ChartNode) => void;
+  editor: FileBrowserEditorDefinition<ChartNode>;
+}> = ({ node, isReadonly, onChange, editor }) => {
+  const data = node.data as Record<string, unknown>;
+
+  const pickFile = async () => {
+    await ioProvider.readFileAsBinary(async (data) => {
+      onChange({
+        ...node,
+        data: {
+          ...data,
+          [editor.dataKey]: await uint8ArrayToBase64(data),
+        },
+      });
+    });
+  };
+
+  const b64Data = data[editor.dataKey] as string | undefined;
+
+  const dataUri = b64Data ? `data:base64,${b64Data}` : undefined;
+  const dataByteLength = b64Data ? Math.round(b64Data.length * 0.75) : undefined;
+
+  return (
+    <Field name={editor.dataKey} label={editor.label}>
+      {() => (
+        <div>
+          <Button onClick={pickFile}>Pick File</Button>
+          <div className="current">{dataUri && <span>Data (length {dataByteLength})</span>}</div>
+        </div>
+      )}
+    </Field>
+  );
+};
+
+export const DefaultImageBrowserEditor: FC<{
+  node: ChartNode;
+  isReadonly: boolean;
+  onChange: (changed: ChartNode) => void;
+  editor: ImageBrowserEditorDefinition<ChartNode>;
+}> = ({ node, isReadonly, onChange, editor }) => {
+  const data = node.data as Record<string, unknown>;
+
+  const pickFile = async () => {
+    await ioProvider.readFileAsBinary(async (data) => {
+      onChange({
+        ...node,
+        data: {
+          ...data,
+          [editor.dataKey]: await uint8ArrayToBase64(data),
+        },
+      });
+    });
+  };
+
+  const b64Data = data[editor.dataKey] as string | undefined;
+  const mediaType = data[editor.mediaTypeDataKey] as string | undefined;
+
+  const dataUri = b64Data ? `data:${mediaType ?? 'image/png'};base64,${b64Data}` : undefined;
+
+  return (
+    <Field name={editor.dataKey} label={editor.label}>
+      {() => (
+        <div>
+          <Button onClick={pickFile}>Pick Image</Button>
+          <div className="current">
+            <img src={dataUri} alt="" />
+          </div>
+        </div>
+      )}
+    </Field>
   );
 };

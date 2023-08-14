@@ -69,7 +69,7 @@ export class BrowserIOProvider implements IOProvider {
     return dirHandle.name;
   }
 
-  async openFile(): Promise<string> {
+  async openFilePath(): Promise<string> {
     const [fileHandle] = await window.showOpenFilePicker();
     return fileHandle.name;
   }
@@ -79,5 +79,19 @@ export class BrowserIOProvider implements IOProvider {
     const writable = await fileHandle.createWritable();
     await writable.write(content);
     await writable.close();
+  }
+
+  async readFileAsString(callback: (data: string) => void): Promise<void> {
+    const [fileHandle] = await window.showOpenFilePicker();
+    const file = await fileHandle.getFile();
+    const text = await file.text();
+    callback(text);
+  }
+
+  async readFileAsBinary(callback: (data: Uint8Array) => void): Promise<void> {
+    const [fileHandle] = await window.showOpenFilePicker();
+    const file = await fileHandle.getFile();
+    const arrayBuffer = await file.arrayBuffer();
+    callback(new Uint8Array(arrayBuffer));
   }
 }

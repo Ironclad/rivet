@@ -26,6 +26,7 @@ export * from './recording/RecordedEvents.js';
 export * from './model/RivetPlugin.js';
 export * from './plugins.js';
 export * from './model/NodeRegistration.js';
+export * from './utils/base64.js';
 
 import * as openai from './utils/openai.js';
 export { openai };

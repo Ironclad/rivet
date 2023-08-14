@@ -152,6 +152,12 @@ export * from './nodes/ShuffleNode.js';
 import { commentNode } from './nodes/CommentNode.js';
 export * from './nodes/CommentNode.js';
 
+import { imageNode } from './nodes/ImageNode.js';
+export * from './nodes/ImageNode.js';
+
+import { audioNode } from './nodes/AudioNode.js';
+export * from './nodes/AudioNode.js';
+
 export const registerBuiltInNodes = (registry: NodeRegistration) => {
   return registry
     .register(toYamlNode)
@@ -203,7 +209,9 @@ export const registerBuiltInNodes = (registry: NodeRegistration) => {
     .register(numberNode)
     .register(randomNumberNode)
     .register(shuffleNode)
-    .register(commentNode);
+    .register(commentNode)
+    .register(imageNode)
+    .register(audioNode);
 };
 
 let globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());

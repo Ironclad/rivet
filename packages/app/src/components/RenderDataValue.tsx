@@ -51,6 +51,21 @@ const scalarRenderers: {
     </>
   ),
   vector: ({ value }) => <>Vector (length {value.value.length})</>,
+  image: ({ value }) => {
+    const {
+      value: { data, mediaType },
+    } = value;
+
+    const blob = new Blob([data], { type: mediaType });
+    const imageUrl = URL.createObjectURL(blob);
+
+    return (
+      <div>
+        <img src={imageUrl} alt="" />
+      </div>
+    );
+  },
+  binary: ({ value }) => <>Binary (length {value.value.length.toLocaleString()})</>,
 };
 
 export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number }> = ({ value, depth }) => {

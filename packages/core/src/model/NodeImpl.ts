@@ -194,6 +194,25 @@ export type ColorEditorDefinition<T extends ChartNode> = {
   useInputToggleDataKey?: DataOfType<T, boolean>;
 };
 
+export type FileBrowserEditorDefinition<T extends ChartNode> = {
+  type: 'fileBrowser';
+  label: string;
+
+  dataKey: DataOfType<T, string>;
+  useInputToggleDataKey?: DataOfType<T, boolean>;
+
+  accept?: string;
+};
+
+export type ImageBrowserEditorDefinition<T extends ChartNode> = {
+  type: 'imageBrowser';
+  label: string;
+
+  dataKey: DataOfType<T, string>;
+  mediaTypeDataKey: DataOfType<T, string>;
+  useInputToggleDataKey?: DataOfType<T, boolean>;
+};
+
 export type EditorDefinition<T extends ChartNode> =
   | StringEditorDefinition<T>
   | ToggleEditorDefinition<T>
@@ -203,7 +222,10 @@ export type EditorDefinition<T extends ChartNode> =
   | NumberEditorDefinition<T>
   | CodeEditorDefinition<T>
   | GraphSelectorEditorDefinition<T>
-  | ColorEditorDefinition<T>;
+  | ColorEditorDefinition<T>
+  | GraphSelectorEditorDefinition<T>
+  | FileBrowserEditorDefinition<T>
+  | ImageBrowserEditorDefinition<T>;
 
 export type NodeBodySpecBase = {
   fontSize?: number;

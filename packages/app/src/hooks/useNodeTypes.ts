@@ -10,6 +10,8 @@ import { subgraphNodeDescriptor } from '../components/nodes/SubGraphNode.js';
 import { userInputNodeDescriptor } from '../components/nodes/UserInputNode.js';
 import { ObjectNodeDescriptor } from '../components/nodes/ObjectNode.js';
 import { commentNodeDescriptor } from '../components/nodes/CommentNode';
+import { imageNodeDescriptor } from '../components/nodes/ImageNode';
+import { audioNodeDescriptor } from '../components/nodes/AudioNode';
 
 export type UnknownNodeComponentDescriptor = {
   Body?: FC<{ node: ChartNode }>;
@@ -43,6 +45,8 @@ const overriddenDescriptors: Partial<NodeComponentDescriptors> = {
   userInput: userInputNodeDescriptor,
   object: ObjectNodeDescriptor,
   comment: commentNodeDescriptor,
+  image: imageNodeDescriptor,
+  audio: audioNodeDescriptor,
 };
 
 export function useNodeTypes(): NodeComponentDescriptors {
