@@ -4055,7 +4055,7 @@ __metadata:
     "@types/lodash-es": "npm:^4.17.8"
     "@types/yaml": "npm:^1.9.7"
     "@typescript-eslint/eslint-plugin": "npm:^5.50.0"
-    autoevals: "npm:^0.0.8"
+    autoevals: "github:abrenneke/autoevals#abrenneke/isomorphic-deploy"
     crypto-js: "npm:^4.1.1"
     emittery: "npm:^1.0.1"
     emittery-0-13: "npm:emittery@^0.13.1"
@@ -6596,9 +6596,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoevals@portal:/Users/shared/ironclad/github/autoevals::locator=%40ironclad%2Frivet%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "autoevals@portal:/Users/shared/ironclad/github/autoevals::locator=%40ironclad%2Frivet%40workspace%3A."
+"autoevals@github:abrenneke/autoevals#abrenneke/isomorphic-deploy":
+  version: 0.0.0
+  resolution: "autoevals@https://github.com/abrenneke/autoevals.git#commit=43156295401eef3245406fe3333afb4cbd02bd52"
   dependencies:
     "@types/node": "npm:^20.4.4"
     esbuild: "npm:^0.19.1"
@@ -6607,8 +6607,9 @@ __metadata:
     mustache: "npm:^4.2.0"
     openai: "npm:^3.3.0"
     tsx: "npm:^3.12.7"
+  checksum: 26715ef28f62054c330e292aece2b968da9b46895ba22c0accf47304b96a372641742bbb54cbaf1cc36f5f69c2ea55a21b69bb02759d3fb094361a06b3b20f2a
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "autoprefixer@npm:^10.4.12, autoprefixer@npm:^10.4.7":
   version: 10.4.14

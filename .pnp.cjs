@@ -6765,7 +6765,7 @@ const RAW_RUNTIME_STATE =
           ["@types/lodash-es", "npm:4.17.8"],\
           ["@types/yaml", "npm:1.9.7"],\
           ["@typescript-eslint/eslint-plugin", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:5.62.0"],\
-          ["autoevals", "portal:/Users/shared/ironclad/github/autoevals::locator=%40ironclad%2Frivet%40workspace%3A."],\
+          ["autoevals", "https://github.com/abrenneke/autoevals.git#commit=43156295401eef3245406fe3333afb4cbd02bd52"],\
           ["crypto-js", "npm:4.1.1"],\
           ["emittery", "npm:1.0.1"],\
           ["emittery-0-13", [\
@@ -10156,10 +10156,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["autoevals", [\
-      ["portal:/Users/shared/ironclad/github/autoevals::locator=%40ironclad%2Frivet%40workspace%3A.", {\
-        "packageLocation": "../../../shared/ironclad/github/autoevals/",\
+      ["https://github.com/abrenneke/autoevals.git#commit=43156295401eef3245406fe3333afb4cbd02bd52", {\
+        "packageLocation": "./.yarn/cache/autoevals-https-c74b2db819-26715ef28f.zip/node_modules/autoevals/",\
         "packageDependencies": [\
-          ["autoevals", "portal:/Users/shared/ironclad/github/autoevals::locator=%40ironclad%2Frivet%40workspace%3A."],\
+          ["autoevals", "https://github.com/abrenneke/autoevals.git#commit=43156295401eef3245406fe3333afb4cbd02bd52"],\
           ["@types/node", "npm:20.4.10"],\
           ["esbuild", "npm:0.19.1"],\
           ["js-levenshtein", "npm:1.1.6"],\
@@ -10168,7 +10168,7 @@ const RAW_RUNTIME_STATE =
           ["openai", "npm:3.3.0"],\
           ["tsx", "npm:3.12.7"]\
         ],\
-        "linkType": "SOFT"\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["autoprefixer", [\
