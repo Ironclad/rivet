@@ -1,0 +1,34 @@
+version: 4
+data:
+  attachedData:
+    trivet:
+      testSuites: []
+      version: 1
+  graphs:
+    9ilbaCrzWHBbEzmHZLMno:
+      metadata:
+        description: ""
+        id: 9ilbaCrzWHBbEzmHZLMno
+        name: Race Input Test
+      nodes:
+        '[JSa_us_WmxdvOEOFl9PoD]:raceInputs "Race Inputs"':
+          visualData: 771/278/300/4
+        '[OQHQHvRHxSxHnW4TIfP6Q]:text "Text"':
+          data:
+            text: Test
+          outgoingConnections:
+            - output->"External Call" xxce_OYKA3nWRQrcMevP_/arguments
+            - output->"Race Inputs" JSa_us_WmxdvOEOFl9PoD/input2
+          visualData: -205/279/300/2
+        '[xxce_OYKA3nWRQrcMevP_]:externalCall "External Call"':
+          data:
+            functionName: wait
+            useErrorOutput: false
+            useFunctionNameInput: false
+          outgoingConnections:
+            - result->"Race Inputs" JSa_us_WmxdvOEOFl9PoD/input1
+          visualData: 374/168/150/5
+  metadata:
+    description: ""
+    id: vBl2lCqPRsM10D0Tfta4J
+    title: Untitled Project

@@ -7,6 +7,7 @@ import { coerceType } from '../../utils/coerceType.js';
 import { getError } from '../../utils/errors.js';
 import { InternalProcessContext } from '../ProcessContext.js';
 import { omit } from 'lodash-es';
+import { abortablePromise } from '../../utils/promises.js';
 
 export type ExternalCallNode = ChartNode<'externalCall', ExternalCallNodeData>;
 
@@ -92,78 +93,80 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
-    const functionName = this.chartNode.data.useFunctionNameInput
-      ? coerceType(inputs['functionName' as PortId], 'string')
-      : this.chartNode.data.functionName;
-
-    const args = inputs['arguments' as PortId];
-    let arrayArgs: ArrayDataValue<AnyDataValue> = {
-      type: 'any[]',
-      value: [],
-    };
-
-    if (args) {
-      if (args.type.endsWith('[]') === false) {
-        arrayArgs = {
-          type: 'any[]',
-          value: [args.value],
-        };
-      } else {
-        arrayArgs = args as ArrayDataValue<AnyDataValue>;
+    return abortablePromise(async () => {
+      const functionName = this.chartNode.data.useFunctionNameInput
+        ? coerceType(inputs['functionName' as PortId], 'string')
+        : this.chartNode.data.functionName;
+  
+      const args = inputs['arguments' as PortId];
+      let arrayArgs: ArrayDataValue<AnyDataValue> = {
+        type: 'any[]',
+        value: [],
+      };
+  
+      if (args) {
+        if (args.type.endsWith('[]') === false) {
+          arrayArgs = {
+            type: 'any[]',
+            value: [args.value],
+          };
+        } else {
+          arrayArgs = args as ArrayDataValue<AnyDataValue>;
+        }
       }
-    }
-
-    const fn = context.externalFunctions[functionName];
-    const externalContext = omit(context, ['setGlobal']);
-
-    if (!fn) {
+  
+      const fn = context.externalFunctions[functionName];
+      const externalContext = omit(context, ['setGlobal']);
+  
+      if (!fn) {
+        if (this.data.useErrorOutput) {
+          return {
+            ['result' as PortId]: {
+              type: 'control-flow-excluded',
+              value: undefined,
+            },
+            ['error' as PortId]: {
+              type: 'string',
+              value: `Function ${functionName} not was not defined using setExternalCall`,
+            },
+          };
+        } else {
+          throw new Error(`Function ${functionName} not was not defined using setExternalCall`);
+        }
+      }
+  
       if (this.data.useErrorOutput) {
-        return {
-          ['result' as PortId]: {
-            type: 'control-flow-excluded',
-            value: undefined,
-          },
-          ['error' as PortId]: {
-            type: 'string',
-            value: `Function ${functionName} not was not defined using setExternalCall`,
-          },
-        };
-      } else {
-        throw new Error(`Function ${functionName} not was not defined using setExternalCall`);
+        try {
+          const result = await fn(externalContext, ...arrayArgs.value);
+          return {
+            ['result' as PortId]: result,
+            ['cost' as PortId]: {
+              type: 'number',
+              value: result.cost ?? 0,
+            },
+            ['error' as PortId]: {
+              type: 'control-flow-excluded',
+              value: undefined,
+            },
+          };
+        } catch (error) {
+          return {
+            ['result' as PortId]: {
+              type: 'control-flow-excluded',
+              value: undefined,
+            },
+            ['error' as PortId]: {
+              type: 'string',
+              value: getError(error).message,
+            },
+          };
+        }
       }
-    }
-
-    if (this.data.useErrorOutput) {
-      try {
-        const result = await fn(externalContext, ...arrayArgs.value);
-        return {
-          ['result' as PortId]: result,
-          ['cost' as PortId]: {
-            type: 'number',
-            value: result.cost ?? 0,
-          },
-          ['error' as PortId]: {
-            type: 'control-flow-excluded',
-            value: undefined,
-          },
-        };
-      } catch (error) {
-        return {
-          ['result' as PortId]: {
-            type: 'control-flow-excluded',
-            value: undefined,
-          },
-          ['error' as PortId]: {
-            type: 'string',
-            value: getError(error).message,
-          },
-        };
-      }
-    }
-    const result = await fn(externalContext, ...arrayArgs.value);
-    return {
-      ['result' as PortId]: result,
-    };
+      const result = await fn(externalContext, ...arrayArgs.value);
+      return {
+        ['result' as PortId]: result,
+      };
+    }, context.signal);
   }
 }
 
