@@ -1,8 +1,9 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
 import { dedent } from 'ts-dedent';
+import { EditorDefinition } from '../EditorDefinition.js';
 
 export type ObjectNode = ChartNode<'object', ObjectNodeData>;
 

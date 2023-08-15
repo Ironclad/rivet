@@ -1,10 +1,11 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { coerceType } from '../../utils/coerceType.js';
 import { InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
+import { EditorDefinition } from '../../index.js';
 
 export type LoopControllerNode = ChartNode<'loopController', LoopControllerNodeData>;
 

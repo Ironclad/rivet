@@ -18,7 +18,6 @@ import {
   globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
 import { ProcessQuestions, userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput.js';
-import { entries } from '../utils/typeSafety.js';
 import { UserInputModal } from './UserInputModal.js';
 import Button from '@atlaskit/button';
 import { isNotNull } from '../utils/genericUtilFunctions.js';
@@ -30,6 +29,7 @@ import { projectState } from '../state/savedGraphs.js';
 import { ContextMenuContext } from './ContextMenu.js';
 import { useGraphHistoryNavigation } from '../hooks/useGraphHistoryNavigation';
 import { useProjectPlugins } from '../hooks/useProjectPlugins';
+import { entries } from '../../../core/src/utils/typeSafety';
 
 const Container = styled.div`
   position: relative;

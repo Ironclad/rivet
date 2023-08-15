@@ -2,7 +2,6 @@ import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } 
 import { nanoid } from 'nanoid';
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
-import { expectType } from '../../utils/expectType.js';
 import { coerceType } from '../../index.js';
 import { dedent } from 'ts-dedent';
 

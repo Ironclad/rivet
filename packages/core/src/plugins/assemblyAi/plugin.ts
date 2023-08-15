@@ -1,9 +1,18 @@
 import { RivetPlugin } from '../../index.js';
-import { leMURNode } from './LeMURNode.js';
+import { transcribeAudioNode } from './TranscribeAudioNode.js';
 
 export const assemblyAiPlugin: RivetPlugin = {
   id: 'assemblyAi',
-  register: (registry) => {
-    registry.register(leMURNode);
+  register: (register) => {
+    register(transcribeAudioNode);
+  },
+
+  configSpec: {
+    assemblyAiApiKey: {
+      type: 'string',
+      label: 'AssemblyAI API Key',
+      description: 'The API key for the AssemblyAI service.',
+      pullEnvironmentVariable: 'ASSEMBLYAI_API_KEY',
+    },
   },
 };

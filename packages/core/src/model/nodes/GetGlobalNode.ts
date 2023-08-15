@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import {
   FunctionDataValues,
   ScalarDataType,
@@ -14,6 +14,7 @@ import { Inputs, Outputs } from '../GraphProcessor.js';
 import { coerceType } from '../../utils/coerceType.js';
 import { InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
+import { EditorDefinition, NodeBodySpec } from '../../index.js';
 
 export type GetGlobalNode = ChartNode<'getGlobal', GetGlobalNodeData>;
 

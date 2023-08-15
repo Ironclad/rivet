@@ -28,6 +28,7 @@ import { P, match } from 'ts-pattern';
 import { Opaque } from 'type-fest';
 import { BuiltInNodeType, BuiltInNodes, globalRivetNodeRegistry } from './Nodes.js';
 import { NodeRegistration } from './NodeRegistration.js';
+import { StringPluginConfigurationSpec } from './RivetPlugin.js';
 
 // CJS compatibility, gets default.default for whatever reason
 let PQueue = PQueueImport;
@@ -161,6 +162,7 @@ export class GraphProcessor {
   slowMode = false;
   #isPaused = false;
   #parent: GraphProcessor | undefined;
+  #registry: NodeRegistration;
   id = nanoid();
 
   /** The node that is executing this graph, almost always a subgraph node. Undefined for root. */
@@ -223,13 +225,13 @@ export class GraphProcessor {
     this.#nodeInstances = {};
     this.#connections = {};
     this.#nodesById = {};
-    registry ??= globalRivetNodeRegistry as unknown as NodeRegistration;
+    this.#registry = registry ?? (globalRivetNodeRegistry as unknown as NodeRegistration);
 
     this.#emitter.bindMethods(this as any, ['on', 'off', 'once', 'onAny', 'offAny']);
 
     // Create node instances and store them in a lookup table
     for (const node of this.#graph.nodes) {
-      this.#nodeInstances[node.id] = registry.createDynamicImpl(node);
+      this.#nodeInstances[node.id] = this.#registry.createDynamicImpl(node);
       this.#nodesById[node.id] = node;
     }
 
@@ -1224,6 +1226,8 @@ export class GraphProcessor {
       nodeAbortController.abort();
     });
 
+    const plugin = this.#registry.getPluginFor(node.type);
+
     const context: InternalProcessContext = {
       ...this.#context,
       project: this.#project,
@@ -1333,6 +1337,36 @@ export class GraphProcessor {
       },
       abortGraph: (error) => {
         this.abort(error === undefined, error);
+      },
+      getPluginConfig: (name) => {
+        if (!plugin) {
+          return undefined;
+        }
+
+        const configSpec = plugin?.configSpec?.[name];
+
+        if (!configSpec) {
+          return undefined;
+        }
+
+        const pluginSettings = this.#context.settings.pluginSettings?.[plugin.id];
+        if (pluginSettings) {
+          const value = pluginSettings[name];
+          if (!value || typeof value !== 'string') {
+            return undefined;
+          }
+
+          return value;
+        }
+
+        const envFallback = (configSpec as StringPluginConfigurationSpec).pullEnvironmentVariable;
+        const envFallbackName = envFallback === true ? name : envFallback;
+
+        if (envFallbackName && this.#context.settings.pluginEnv?.[envFallbackName]) {
+          return this.#context.settings.pluginEnv[envFallbackName];
+        }
+
+        return undefined;
       },
     };
 

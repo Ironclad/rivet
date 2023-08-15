@@ -1,5 +1,5 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { EditorDefinition, NodeBodySpec, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { AnyDataValue, ArrayDataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor.js';
@@ -8,6 +8,8 @@ import { getError } from '../../utils/errors.js';
 import { InternalProcessContext } from '../ProcessContext.js';
 import { omit } from 'lodash-es';
 import { dedent } from 'ts-dedent';
+import { EditorDefinition } from '../EditorDefinition.js';
+import { NodeBodySpec } from '../NodeBodySpec.js';
 
 export type ExternalCallNode = ChartNode<'externalCall', ExternalCallNodeData>;
 

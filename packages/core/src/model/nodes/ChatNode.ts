@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { ChatMessage, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue.js';
 import {
   getCostForPrompt,
@@ -10,11 +10,9 @@ import {
 } from '../../utils/tokenizer.js';
 import { addWarning } from '../../utils/outputs.js';
 import {
-  ChatCompletionFunction,
   ChatCompletionOptions,
   ChatCompletionRequestMessage,
   OpenAIError,
-  OpenAIModel,
   openAiModelOptions,
   openaiModels,
   streamChatCompletions,
@@ -24,7 +22,7 @@ import { Inputs, Outputs } from '../GraphProcessor.js';
 import { match } from 'ts-pattern';
 import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 import { InternalProcessContext } from '../ProcessContext.js';
-import { expectTypeOptional, getError } from '../../index.js';
+import { EditorDefinition, expectTypeOptional, getError } from '../../index.js';
 import { merge } from 'lodash-es';
 import { dedent } from 'ts-dedent';
 

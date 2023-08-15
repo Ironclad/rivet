@@ -17,15 +17,15 @@ import {
   nodeDefinition,
 } from '../../index.js';
 
-export type LeMURNode = ChartNode<'leMUR', LeMURNodeData>;
+export type TranscribeAudioNode = ChartNode<'assemblyAiTranscribeAudio', TranscribeAudioNodeData>;
 
-export type LeMURNodeData = {};
+export type TranscribeAudioNodeData = {};
 
-export class LeMURNodeImpl extends NodeImpl<LeMURNode> {
-  static create(): LeMURNode {
-    const chartNode: LeMURNode = {
-      type: 'leMUR',
-      title: 'LeMUR',
+export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
+  static create(): TranscribeAudioNode {
+    const chartNode: TranscribeAudioNode = {
+      type: 'assemblyAiTranscribeAudio',
+      title: 'Transcribe Audio',
       id: nanoid() as NodeId,
       visualData: {
         x: 0,
@@ -58,7 +58,7 @@ export class LeMURNodeImpl extends NodeImpl<LeMURNode> {
     ];
   }
 
-  getEditors(): EditorDefinition<LeMURNode>[] {
+  getEditors(): EditorDefinition<TranscribeAudioNode>[] {
     return [];
   }
 
@@ -68,9 +68,9 @@ export class LeMURNodeImpl extends NodeImpl<LeMURNode> {
 
   static getUIData(): NodeUIData {
     return {
-      infoBoxBody: dedent`Use LeMUR to transcribe audio`,
-      infoBoxTitle: 'LeMUR Node',
-      contextMenuTitle: 'LeMUR',
+      infoBoxBody: dedent`Use Assembly AI to transcribe audio`,
+      infoBoxTitle: 'Transcribe Audio Node',
+      contextMenuTitle: 'Transcribe Audio',
       group: 'AI',
     };
   }
@@ -78,12 +78,14 @@ export class LeMURNodeImpl extends NodeImpl<LeMURNode> {
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const audio = coerceType(inputs['audio' as PortId], 'audio');
 
-    if (!context.settings.assemblyAiApiKey) {
+    const apiKey = context.getPluginConfig('assemblyAiApiKey');
+
+    if (!apiKey) {
       throw new Error('AssemblyAI API key not set');
     }
 
-    const uploadUrl = await uploadData(context.settings.assemblyAiApiKey, audio);
-    const { text } = await transcribeAudio(context.settings.assemblyAiApiKey, uploadUrl);
+    const uploadUrl = await uploadData(apiKey, audio);
+    const { text } = await transcribeAudio(apiKey, uploadUrl);
 
     return {
       ['transcribed' as PortId]: {
@@ -150,16 +152,14 @@ async function transcribeAudio(apiToken: string, audioUrl: string) {
     // If the transcription is complete, return the transcript object
     if (transcriptionResult.status === 'completed') {
       return transcriptionResult;
-    }
-    // If the transcription has failed, throw an error with the error message
-    else if (transcriptionResult.status === 'error') {
+    } else if (transcriptionResult.status === 'error') {
+      // If the transcription has failed, throw an error with the error message
       throw new Error(`Transcription failed: ${transcriptionResult.error}`);
-    }
-    // If the transcription is still in progress, wait for a few seconds before polling again
-    else {
+    } else {
+      // If the transcription is still in progress, wait for a few seconds before polling again
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
 }
 
-export const leMURNode = nodeDefinition(LeMURNodeImpl, 'Autoevals');
+export const transcribeAudioNode = nodeDefinition(TranscribeAudioNodeImpl, 'Transcribe Audio');

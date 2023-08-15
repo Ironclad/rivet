@@ -1,12 +1,12 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
 import yaml from 'yaml';
 import { expectType } from '../../utils/expectType.js';
 import { JSONPath } from 'jsonpath-plus';
 import { dedent } from 'ts-dedent';
-import { coerceType } from '../../index.js';
+import { EditorDefinition, NodeBodySpec, coerceType } from '../../index.js';
 
 export type ExtractYamlNode = ChartNode<'extractYaml', ExtractYamlNodeData>;
 

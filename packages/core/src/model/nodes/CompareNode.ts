@@ -1,8 +1,8 @@
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
-import { coerceType, coerceTypeOptional } from '../../index.js';
+import { EditorDefinition, coerceType, coerceTypeOptional } from '../../index.js';
 import { isEqual } from 'lodash-es';
 import { match } from 'ts-pattern';
 import { dedent } from 'ts-dedent';

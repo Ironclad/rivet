@@ -1,5 +1,5 @@
 import { ChartNode, NodeId } from '../../model/NodeBase.js';
-import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../../model/NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../../model/NodeImpl.js';
 import { NodeInputDefinition, NodeOutputDefinition, PortId } from '../../model/NodeBase.js';
 import { DataValue } from '../../model/DataValue.js';
 import { SupportedModels, chunkStringByTokenCount } from '../../utils/tokenizer.js';
@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid';
 import { coerceType } from '../../utils/coerceType.js';
 import { dedent } from 'ts-dedent';
 import { openAiModelOptions, openaiModels } from '../../utils/openai.js';
+import { EditorDefinition } from '../../index.js';
 
 export type ChunkNodeData = {
   numTokensPerChunk: number;

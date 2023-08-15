@@ -1,11 +1,13 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { EditorDefinition, NodeBodySpec, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
 import { Inputs } from '../GraphProcessor.js';
 import { coerceType } from '../../utils/coerceType.js';
 import { InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
+import { EditorDefinition } from '../EditorDefinition.js';
+import { NodeBodySpec } from '../NodeBodySpec.js';
 
 export type RaiseEventNode = ChartNode<'raiseEvent', RaiseEventNodeData>;
 

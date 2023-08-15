@@ -1,8 +1,10 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
 import { dedent } from 'ts-dedent';
+import { EditorDefinition } from '../EditorDefinition.js';
+import { NodeBodySpec } from '../NodeBodySpec.js';
 
 export type GptFunctionNode = ChartNode<'gptFunction', GptFunctionNodeData>;
 

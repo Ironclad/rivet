@@ -1,5 +1,5 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { GraphId } from '../NodeGraph.js';
 import { nanoid } from 'nanoid';
@@ -8,7 +8,7 @@ import { GraphInputNode } from './GraphInputNode.js';
 import { GraphOutputNode } from './GraphOutputNode.js';
 import { ControlFlowExcludedDataValue, DataValue } from '../DataValue.js';
 import { InternalProcessContext } from '../ProcessContext.js';
-import { getError } from '../../index.js';
+import { EditorDefinition, getError } from '../../index.js';
 import { dedent } from 'ts-dedent';
 
 export type SubGraphNode = ChartNode & {

@@ -336,8 +336,10 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
 
           const startTime = Date.now();
 
+          const apiKey = context.getPluginConfig('anthropicApiKey');
+
           const chunks = streamChatCompletions({
-            apiKey: context.settings.anthropicApiKey ?? '',
+            apiKey: apiKey ?? '',
             signal: context.signal,
             ...options,
           });

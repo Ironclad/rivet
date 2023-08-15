@@ -1,15 +1,7 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import {
-  ArrayDataValue,
-  ChatMessage,
-  DataType,
-  DataValue,
-  ScalarDataValue,
-  arrayizeDataValue,
-  unwrapDataValue,
-} from '../DataValue.js';
+import { ChatMessage, arrayizeDataValue, unwrapDataValue } from '../DataValue.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { orderBy } from 'lodash-es';
 import { coerceType } from '../../index.js';

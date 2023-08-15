@@ -1,7 +1,7 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { Inputs, Outputs, coerceType, expectType } from '../../index.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, Inputs, Outputs, coerceType } from '../../index.js';
 import * as crypto from 'crypto-js';
 import { match } from 'ts-pattern';
 import { dedent } from 'ts-dedent';

@@ -1,76 +1,65 @@
 import { ChartNode, NodeImplConstructor, NodeDefinition, NodeImpl } from '../index.js';
-import { keys, values } from '../utils/typeSafety.js';
+import { keys, mapValues, values } from '../utils/typeSafety.js';
 import { RivetPlugin } from './RivetPlugin.js';
 
-export class NodeRegistration<
-  NodeTypes extends string = never,
-  Nodes extends ChartNode = never,
-  Impls extends {
-    [P in NodeTypes]: NodeImplConstructor<Extract<Nodes, { type: P }>>;
-  } = never,
-> {
+export class NodeRegistration<NodeTypes extends string = never, Nodes extends ChartNode = never> {
   NodesType: Nodes = undefined!;
   NodeTypesType: NodeTypes = undefined!;
 
-  #impls = {} as Impls;
-  #displayNames = {} as Record<NodeTypes, string>;
+  #infos = {} as {
+    [P in NodeTypes]: {
+      displayName: string;
+      impl: NodeImplConstructor<Extract<Nodes, { type: P }>>;
+      plugin?: RivetPlugin;
+    };
+  };
+
   #dynamicRegistered = [] as string[];
   #plugins = [] as RivetPlugin[];
 
   register<T extends ChartNode>(
     definition: NodeDefinition<T>,
-  ): NodeRegistration<
-    NodeTypes | T['type'],
-    Nodes | T,
-    {
-      [P in NodeTypes | T['type']]: NodeImplConstructor<Extract<Nodes | T, { type: P }>>;
-    }
-  > {
-    const newRegistration = this as NodeRegistration<
-      NodeTypes | T['type'],
-      Nodes | T,
-      {
-        [P in NodeTypes | T['type']]: NodeImplConstructor<Extract<Nodes | T, { type: P }>>;
-      }
-    >;
+    plugin?: RivetPlugin,
+  ): NodeRegistration<NodeTypes | T['type'], Nodes | T> {
+    const newRegistration = this as NodeRegistration<NodeTypes | T['type'], Nodes | T>;
 
     const typeStr = definition.impl.create().type as T['type'];
-    newRegistration.#impls[typeStr] = definition.impl as any;
-    newRegistration.#displayNames[typeStr] = definition.displayName;
+
+    if (newRegistration.#infos[typeStr]) {
+      throw new Error(`Duplicate node type: ${typeStr}`);
+    }
+
+    newRegistration.#infos[typeStr] = {
+      displayName: definition.displayName,
+      impl: definition.impl as any,
+      plugin,
+    };
 
     return newRegistration;
   }
 
-  get #dynamicImpls() {
-    return this.#impls as unknown as Record<string, NodeImplConstructor<ChartNode>>;
+  get #dynamicImpls(): Record<string, NodeImplConstructor<ChartNode>> {
+    const implsMap = mapValues(this.#infos, (info) => info.impl);
+    return implsMap as unknown as Record<string, NodeImplConstructor<ChartNode>>;
   }
 
-  get #dynamicDisplayNames() {
-    return this.#displayNames as Record<string, string>;
-  }
-
-  registerDynamic(definition: NodeDefinition<ChartNode>): this {
-    const typeStr = definition.impl.create().type;
-
-    this.#dynamicImpls[typeStr] = definition.impl as any;
-    this.#dynamicDisplayNames[typeStr] = definition.displayName;
-    this.#dynamicRegistered.push(typeStr);
-
-    return this;
+  get #dynamicDisplayNames(): Record<string, string> {
+    const displayNameMap = mapValues(this.#infos, (info) => info.displayName);
+    return displayNameMap as Record<string, string>;
   }
 
   registerPlugin(plugin: RivetPlugin) {
-    plugin.register(this as unknown as NodeRegistration);
+    plugin.register((definition) => this.register(definition, plugin));
     this.#plugins.push(plugin);
   }
 
   create<T extends NodeTypes>(type: T): Extract<Nodes, { type: T }> {
-    const implClass = this.#impls[type];
-    if (!implClass) {
+    const info = this.#infos[type];
+    if (!info) {
       throw new Error(`Unknown node type: ${type}`);
     }
 
-    return implClass.create() as unknown as Extract<Nodes, { type: T }>;
+    return info.impl.create() as unknown as Extract<Nodes, { type: T }>;
   }
 
   createDynamic(type: string): ChartNode {
@@ -84,11 +73,13 @@ export class NodeRegistration<
   createImpl<T extends Nodes>(node: T): NodeImpl<T> {
     const type = node.type as Extract<NodeTypes, T['type']>;
 
-    const ImplClass = this.#impls[type];
+    const info = this.#infos[type];
 
-    if (!ImplClass) {
+    if (!info) {
       throw new Error(`Unknown node type: ${type}`);
     }
+
+    const { impl: ImplClass } = info;
 
     const impl = new ImplClass(node as any) as unknown as NodeImpl<T>;
     if (!impl) {
@@ -115,7 +106,13 @@ export class NodeRegistration<
   }
 
   getDisplayName<T extends NodeTypes>(type: T): string {
-    return this.#displayNames[type];
+    const info = this.#infos[type];
+
+    if (!info) {
+      throw new Error(`Unknown node type: ${type}`);
+    }
+
+    return info.displayName;
   }
 
   getDynamicDisplayName(type: string) {
@@ -128,14 +125,28 @@ export class NodeRegistration<
   }
 
   isRegistered(type: NodeTypes): boolean {
-    return this.#impls[type] !== undefined;
+    return this.#infos[type] !== undefined;
   }
 
   getNodeTypes(): NodeTypes[] {
-    return keys(this.#impls);
+    return keys(this.#infos);
   }
 
   getNodeConstructors(): NodeImplConstructor<ChartNode>[] {
-    return values(this.#impls) as unknown as NodeImplConstructor<ChartNode>[];
+    return values(this.#dynamicImpls);
+  }
+
+  getPluginFor(type: string): RivetPlugin | undefined {
+    const info = this.#infos[type as NodeTypes];
+
+    if (!info) {
+      throw new Error(`Unknown node type: ${type}`);
+    }
+
+    return info.plugin;
+  }
+
+  getPlugins() {
+    return this.#plugins;
   }
 }

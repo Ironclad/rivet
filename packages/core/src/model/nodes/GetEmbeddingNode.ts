@@ -1,10 +1,10 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { InternalProcessContext } from '../ProcessContext.js';
 import * as openai from 'openai';
-import { coerceType, getIntegration } from '../../index.js';
+import { EditorDefinition, coerceType, getIntegration } from '../../index.js';
 import { dedent } from 'ts-dedent';
 
 export type GetEmbeddingNode = ChartNode<'getEmbedding', GetEmbeddingNodeData>;

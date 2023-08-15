@@ -34,12 +34,11 @@ import clsx from 'clsx';
 import { projectState } from '../state/savedGraphs.js';
 import { useRecoilValue } from 'recoil';
 import { orderBy } from 'lodash-es';
-import { values } from '../utils/typeSafety.js';
 import { nanoid } from 'nanoid';
 import { LazyCodeEditor, LazyTripleBarColorPicker } from './LazyComponents';
-import { CodeEditor } from './CodeEditor';
 import { ioProvider } from '../utils/globals';
 import Button from '@atlaskit/button';
+import { values } from '../../../core/src/utils/typeSafety';
 
 export const defaultEditorContainerStyles = css`
   display: flex;

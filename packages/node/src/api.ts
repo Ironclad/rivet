@@ -8,6 +8,7 @@ import {
   ProcessEvents,
   Project,
   Settings,
+  StringPluginConfigurationSpec,
   deserializeProject,
   globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
@@ -177,6 +178,12 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
     return value;
   });
 
+  let pluginEnv = options.pluginEnv;
+  if (!pluginEnv) {
+    // If unset, use process.env
+    pluginEnv = getPluginEnvFromProcessEnv(registry);
+  }
+
   return {
     processor,
     inputs: resolvedInputs,
@@ -188,9 +195,8 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
           settings: {
             openAiKey: options.openAiKey,
             openAiOrganization: options.openAiOrganization ?? '',
-            pineconeApiKey: options.pineconeApiKey ?? '',
-            anthropicApiKey: options.anthropicApiKey ?? '',
-            assemblyAiApiKey: options.assemblyAiApiKey ?? '',
+            pluginEnv: options.pluginEnv ?? {},
+            pluginSettings: options.pluginSettings ?? {},
             recordingPlaybackLatency: 1000,
           } satisfies Required<Settings>,
         },
@@ -206,4 +212,28 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
 export async function runGraph(project: Project, options: RunGraphOptions): Promise<Record<string, DataValue>> {
   const processorInfo = createProcessor(project, options);
   return processorInfo.run();
+}
+
+function getPluginEnvFromProcessEnv(registry?: NodeRegistration) {
+  const pluginEnv: Record<string, string> = {};
+  for (const plugin of (registry ?? globalRivetNodeRegistry).getPlugins() ?? []) {
+    const configs = Object.entries(plugin.configSpec ?? {}).filter(([, c]) => c.type === 'string') as [
+      string,
+      StringPluginConfigurationSpec,
+    ][];
+    for (const [configName, config] of configs) {
+      if (config.pullEnvironmentVariable) {
+        const envVarName =
+          typeof config.pullEnvironmentVariable === 'string'
+            ? config.pullEnvironmentVariable
+            : config.pullEnvironmentVariable === true
+            ? configName
+            : undefined;
+        if (envVarName) {
+          pluginEnv[envVarName] = process.env[envVarName] ?? '';
+        }
+      }
+    }
+  }
+  return pluginEnv;
 }

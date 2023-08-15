@@ -1,8 +1,8 @@
 import { ChartNode, NodeId, PortId } from '../NodeBase.js';
 import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
-import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { nanoid } from 'nanoid';
-import { Inputs, Outputs, base64ToUint8Array, expectType } from '../../index.js';
+import { EditorDefinition, Inputs, Outputs, base64ToUint8Array, expectType } from '../../index.js';
 
 export type AudioNode = ChartNode<'audio', AudioNodeData>;
 

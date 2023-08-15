@@ -1,7 +1,7 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { Inputs, Outputs, coerceType } from '../../index.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, Inputs, NodeBodySpec, Outputs, coerceType } from '../../index.js';
 import { mapValues } from 'lodash-es';
 import { dedent } from 'ts-dedent';
 

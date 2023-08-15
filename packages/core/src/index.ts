@@ -27,6 +27,9 @@ export * from './model/RivetPlugin.js';
 export * from './plugins.js';
 export * from './model/NodeRegistration.js';
 export * from './utils/base64.js';
+export type * from './model/Settings.js';
+export * from './model/EditorDefinition.js';
+export * from './model/NodeBodySpec.js';
 
 import * as openai from './utils/openai.js';
 export { openai };

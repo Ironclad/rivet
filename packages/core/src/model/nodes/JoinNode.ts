@@ -1,10 +1,11 @@
-import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { isArrayDataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
 import { coerceType, coerceTypeOptional, inferType } from '../../utils/coerceType.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { dedent } from 'ts-dedent';
+import { EditorDefinition } from '../EditorDefinition.js';
 
 export type JoinNode = ChartNode<'join', JoinNodeData>;
 

@@ -1,9 +1,9 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { InternalProcessContext } from '../ProcessContext.js';
-import { DataValue, VectorDataValue, coerceTypeOptional, getIntegration } from '../../index.js';
+import { DataValue, EditorDefinition, VectorDataValue, coerceTypeOptional, getIntegration } from '../../index.js';
 import { dedent } from 'ts-dedent';
 
 export type VectorNearestNeighborsNode = ChartNode<'vectorNearestNeighbors', VectorNearestNeighborsNodeData>;

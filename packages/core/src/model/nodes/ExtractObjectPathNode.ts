@@ -1,10 +1,10 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
 import { JSONPath } from 'jsonpath-plus';
 import { expectType } from '../../utils/expectType.js';
-import { coerceTypeOptional } from '../../index.js';
+import { EditorDefinition, NodeBodySpec, coerceTypeOptional } from '../../index.js';
 import { dedent } from 'ts-dedent';
 
 export type ExtractObjectPathNode = ChartNode<'extractObjectPath', ExtractObjectPathNodeData>;

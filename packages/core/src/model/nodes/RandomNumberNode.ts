@@ -1,8 +1,8 @@
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
-import { coerceTypeOptional } from '../../index.js';
+import { EditorDefinition, coerceTypeOptional } from '../../index.js';
 import { dedent } from 'ts-dedent';
 
 export type RandomNumberNode = ChartNode<'randomNumber', RandomNumberNodeData>;
