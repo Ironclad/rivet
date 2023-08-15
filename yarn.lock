@@ -4055,7 +4055,7 @@ __metadata:
     "@types/lodash-es": "npm:^4.17.8"
     "@types/yaml": "npm:^1.9.7"
     "@typescript-eslint/eslint-plugin": "npm:^5.50.0"
-    autoevals: "github:abrenneke/autoevals#abrenneke/isomorphic-deploy"
+    autoevals: "github:abrenneke/autoevals#eb743f57312c92aa56f07ab9ef64258d7a026480"
     crypto-js: "npm:^4.1.1"
     emittery: "npm:^1.0.1"
     emittery-0-13: "npm:emittery@^0.13.1"
@@ -6596,9 +6596,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoevals@github:abrenneke/autoevals#abrenneke/isomorphic-deploy":
+"autoevals@github:abrenneke/autoevals#eb743f57312c92aa56f07ab9ef64258d7a026480":
   version: 0.0.0
-  resolution: "autoevals@https://github.com/abrenneke/autoevals.git#commit=43156295401eef3245406fe3333afb4cbd02bd52"
+  resolution: "autoevals@https://github.com/abrenneke/autoevals.git#commit=eb743f57312c92aa56f07ab9ef64258d7a026480"
   dependencies:
     "@types/node": "npm:^20.4.4"
     esbuild: "npm:^0.19.1"
@@ -6607,7 +6607,7 @@ __metadata:
     mustache: "npm:^4.2.0"
     openai: "npm:^3.3.0"
     tsx: "npm:^3.12.7"
-  checksum: 26715ef28f62054c330e292aece2b968da9b46895ba22c0accf47304b96a372641742bbb54cbaf1cc36f5f69c2ea55a21b69bb02759d3fb094361a06b3b20f2a
+  checksum: 34ea614a3e09839705d6202b6d3bcdf3e038c85e02aea81b69b464bf5798e7d14bbe44ffce4fe41979c8cc2252bfeca632cf70de8824201219bed021937df874
   languageName: node
   linkType: hard
 

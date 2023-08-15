@@ -1,6 +1,17 @@
 import { nanoid } from 'nanoid';
 import { dedent } from 'ts-dedent';
-import { Battle, ClosedQA, Factuality, Humor, Possible, Security, Summary, Translation, templates } from 'autoevals';
+import {
+  Battle,
+  ClosedQA,
+  Factuality,
+  Humor,
+  Possible,
+  Security,
+  Summary,
+  Translation,
+  Sql,
+  templates,
+} from 'autoevals';
 import {
   ChartNode,
   EditorDefinition,
@@ -33,6 +44,7 @@ const options = [
   { label: 'Translation', value: 'translation' },
   { label: 'Battle', value: 'battle' },
   { label: 'Closed Q&A', value: 'closed_q_a' },
+  { label: 'SQL', value: 'sql' },
 ];
 
 export class AutoEvalsNodeImpl extends NodeImpl<AutoEvalsNode> {
@@ -121,6 +133,13 @@ export class AutoEvalsNodeImpl extends NodeImpl<AutoEvalsNode> {
           id: 'language' as PortId,
           dataType: 'string',
           title: 'Language',
+        },
+      ])
+      .with('sql', (): NodeInputDefinition[] => [
+        {
+          id: 'input' as PortId,
+          dataType: 'string',
+          title: 'Input',
         },
       ])
       .with(undefined, (): NodeInputDefinition[] => [])
@@ -220,6 +239,10 @@ export class AutoEvalsNodeImpl extends NodeImpl<AutoEvalsNode> {
         const input = coerceType(inputs['input' as PortId], 'string');
         const language = coerceType(inputs['language' as PortId], 'string');
         return Translation({ ...baseArgs, input, language });
+      })
+      .with('sql', () => {
+        const input = coerceType(inputs['input' as PortId], 'string');
+        return Sql({ ...baseArgs, input });
       })
       .with(undefined, () => {
         throw new Error('Evaluator name is undefined');

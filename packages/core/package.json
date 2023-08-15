@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",
-    "autoevals": "github:abrenneke/autoevals#abrenneke/isomorphic-deploy",
+    "autoevals": "github:abrenneke/autoevals#eb743f57312c92aa56f07ab9ef64258d7a026480",
     "crypto-js": "^4.1.1",
     "emittery": "^1.0.1",
     "emittery-0-13": "npm:emittery@^0.13.1",
