@@ -86,7 +86,7 @@ const Container = styled.div`
     top: 20px;
     background-color: var(--primary);
     border: none;
-    color: var(--grey-dark);
+    color: var(--foreground-on-primary);
     cursor: pointer;
     font-size: 20px;
     padding: 5px 10px;
@@ -142,7 +142,7 @@ const Container = styled.div`
   }
 
   .unknown-node {
-    color: var(--primary);
+    color: var(--primary-text);
   }
 
   .split-controls {

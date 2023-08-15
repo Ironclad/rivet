@@ -80,7 +80,7 @@ const styles = css`
 
   .selected {
     background-color: var(--primary);
-    color: var(--grey-dark);
+    color: var(--foreground-on-primary);
 
     &:hover {
       background-color: var(--primary-dark);
@@ -88,7 +88,7 @@ const styles = css`
   }
 
   .selected .spinner svg {
-    color: var(--grey-dark);
+    color: var(--foreground-on-primary);
   }
 
   .dragger {

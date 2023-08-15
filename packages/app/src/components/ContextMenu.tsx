@@ -290,7 +290,7 @@ export const ContextMenuItemDiv = styled.div<{ hasSubmenu?: boolean }>`
   &:hover,
   &.active {
     background-color: var(--tertiary-light);
-    color: var(--primary);
+    color: var(--primary-text);
   }
 
   ${(props) =>

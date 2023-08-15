@@ -139,7 +139,7 @@ export const nodeStyles = css`
     }
 
     button:hover {
-      color: var(--primary);
+      color: var(--primary-text);
     }
   }
 
@@ -270,7 +270,7 @@ export const nodeStyles = css`
   }
 
   .port.connected .port-label {
-    color: var(--primary);
+    color: var(--primary-text);
   }
 
   .port.connected .port-label {

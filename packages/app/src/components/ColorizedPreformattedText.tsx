@@ -1,5 +1,7 @@
 import { FC, useLayoutEffect, useRef } from 'react';
 import { monaco } from '../utils/monaco';
+import { useRecoilValue } from 'recoil';
+import { themeState } from '../state/settings';
 
 export const ColorizedPreformattedText: FC<{ text: string; language: string; theme?: string }> = ({
   text,
@@ -7,10 +9,12 @@ export const ColorizedPreformattedText: FC<{ text: string; language: string; the
   theme,
 }) => {
   const bodyRef = useRef<HTMLPreElement>(null);
+  const appTheme = useRecoilValue(themeState);
+  const actualTheme = theme === 'prompt-interpolation' ? `prompt-interpolation-${appTheme}` : theme;
 
   useLayoutEffect(() => {
     monaco.editor.colorizeElement(bodyRef.current!, {
-      theme: theme ?? 'vs-dark',
+      theme: actualTheme ?? 'vs-dark',
     });
   }, [text, theme]);
 

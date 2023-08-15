@@ -45,7 +45,7 @@ const styles = css`
 
     &.active {
       background-color: var(--primary);
-      color: var(--grey-dark);
+      color: var(--foreground-on-primary);
 
       &:hover {
         background-color: var(--primary-light);
@@ -105,7 +105,7 @@ const styles = css`
 
     &:hover {
       background-color: var(--tertiary-light);
-      color: var(--primary);
+      color: var(--primary-text);
     }
   }
 
@@ -118,7 +118,7 @@ const styles = css`
 
     &:hover {
       background-color: var(--grey);
-      color: var(--primary);
+      color: var(--primary-text);
     }
   }
 

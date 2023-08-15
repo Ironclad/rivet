@@ -8,7 +8,7 @@ const spinnerCss = css`
   align-items: center;
 
   svg {
-    color: var(--primary);
+    color: var(--primary-text);
     animation: spin 1s linear infinite;
   }
 

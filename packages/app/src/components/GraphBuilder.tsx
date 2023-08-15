@@ -36,8 +36,8 @@ const Container = styled.div`
 
   .user-input-modal-open {
     position: absolute;
-    top: 48px;
-    right: 0;
+    top: 62px;
+    right: 16px;
     z-index: 100;
   }
 

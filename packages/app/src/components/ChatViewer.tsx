@@ -93,7 +93,7 @@ const styles = css`
       justify-content: space-between;
 
       .graph-name {
-        color: var(--primary);
+        color: var(--primary-text);
       }
 
       .go-to-node {
@@ -106,7 +106,7 @@ const styles = css`
         padding: 0 15px;
 
         &:hover {
-          color: var(--primary);
+          color: var(--primary-text);
         }
       }
     }
