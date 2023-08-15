@@ -51,7 +51,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     color: var(--foreground);
-    background-color: rgba(40, 44, 52, 0.8);
+    background-color: var(--grey-dark-bluish-seethrough);
     backdrop-filter: blur(2px);
     font-family: 'Roboto Mono', monospace;
     width: 100%;

@@ -28,7 +28,7 @@ const styles = css`
 
   .menu-item > button {
     background-color: transparent;
-    color: #ffffff;
+    color: var(--grey-lightest);
     border: none;
     padding: 0.5rem 1rem;
     cursor: pointer;
@@ -37,7 +37,7 @@ const styles = css`
     border-top: 0;
 
     border-radius: 0 0 8px 8px;
-    background: #2b2b2b;
+    background: var(--grey-darkerish);
 
     &:hover {
       background-color: var(--grey);
@@ -55,7 +55,7 @@ const styles = css`
 
   .dropdown-menu .dropdown-button {
     background-color: transparent;
-    color: #ffffff;
+    color: var(--grey-lightest);
     border: none;
     padding: 0.5rem 1rem;
     cursor: pointer;
@@ -104,14 +104,14 @@ const styles = css`
     transition: background-color 0.1s ease-out, color 0.1s ease-out;
 
     &:hover {
-      background-color: #4444446e;
+      background-color: var(--tertiary-light);
       color: var(--primary);
     }
   }
 
   .dropdown-button {
     background-color: transparent;
-    color: #ffffff;
+    color: var(--grey-lightest);
     border: none;
     padding: 0.5rem 1rem;
     cursor: pointer;

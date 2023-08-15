@@ -19,7 +19,7 @@ const styles = css`
   left: 0;
   bottom: 0;
   width: 250px; // Adjust the width of the sidebar as needed
-  background-color: rgba(46, 46, 46, 0.35);
+  background-color: var(--grey-dark-seethrougher);
   backdrop-filter: blur(2px);
   padding: 0;
   z-index: 50;

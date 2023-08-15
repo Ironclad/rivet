@@ -55,7 +55,7 @@ const styles = css`
 
   .run-button button {
     background-color: var(--success);
-    color: #ffffff;
+    color: var(--grey-lightest);
 
     &:hover {
       background-color: var(--success-dark);
@@ -91,7 +91,7 @@ const styles = css`
 
   .run-test-button button {
     background-color: var(--grey-darkish);
-    color: #ffffff;
+    color: var(--grey-lightest);
 
     &:hover {
       background-color: var(--grey);

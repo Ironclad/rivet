@@ -15,3 +15,26 @@ export const settingsState = atom<Settings>({
   },
   effects_UNSTABLE: [persistAtom],
 });
+
+export const themes = [
+  {
+    label: 'Molten',
+    value: 'molten',
+  },
+  {
+    label: 'Grapefruit',
+    value: 'grapefruit',
+  },
+  {
+    label: 'Taffy',
+    value: 'taffy',
+  },
+] as const;
+
+export type Theme = (typeof themes)[number]['value'];
+
+export const themeState = atom<Theme>({
+  key: 'theme',
+  default: 'molten',
+  effects_UNSTABLE: [persistAtom],
+});
