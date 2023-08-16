@@ -5,6 +5,9 @@ import Modal, { ModalTransition, ModalHeader, ModalTitle, ModalBody, ModalFooter
 import TextField from '@atlaskit/textfield';
 import Button from '@atlaskit/button';
 import { Field } from '@atlaskit/form';
+import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
+import { entries } from '../../../core/src/utils/typeSafety';
+import { match } from 'ts-pattern';
 
 interface SettingsModalProps {}
 
@@ -16,6 +19,8 @@ export const settingsModalOpenState = atom({
 export const SettingsModal: FC<SettingsModalProps> = () => {
   const [isOpen, setIsOpen] = useRecoilState(settingsModalOpenState);
   const [settings, setSettings] = useRecoilState(settingsState);
+
+  const plugins = useDependsOnPlugins();
 
   const closeModal = () => setIsOpen(false);
 
@@ -60,26 +65,36 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
                 />
               )}
             </Field>
-            <Field name="pineconeApiKey" label="Pinecone API Key">
-              {() => (
-                <TextField
-                  type="password"
-                  value={settings.pineconeApiKey}
-                  onChange={(e) => setSettings((s) => ({ ...s, pineconeApiKey: (e.target as HTMLInputElement).value }))}
-                />
-              )}
-            </Field>
-            <Field name="anthropicApiKey" label="Anthropic API Key">
-              {() => (
-                <TextField
-                  type="password"
-                  value={settings.anthropicApiKey}
-                  onChange={(e) =>
-                    setSettings((s) => ({ ...s, anthropicApiKey: (e.target as HTMLInputElement).value }))
-                  }
-                />
-              )}
-            </Field>
+            {plugins.map((plugin) => {
+              const configOptions = entries(plugin.configSpec ?? {});
+              return configOptions.map(([key, config]) => {
+                return (
+                  <Field name={`plugin-${plugin.id}-${key}`} label={`${config.label} (${plugin.id})`}>
+                    {() =>
+                      match(config)
+                        .with({ type: 'string' }, () => (
+                          <TextField
+                            value={(settings.pluginSettings?.[plugin.id]?.[key] as string | undefined) ?? ''}
+                            onChange={(e) =>
+                              setSettings((s) => ({
+                                ...s,
+                                pluginSettings: {
+                                  ...s.pluginSettings,
+                                  [plugin.id]: {
+                                    ...s.pluginSettings?.[plugin.id],
+                                    [key]: (e.target as HTMLInputElement).value,
+                                  },
+                                },
+                              }))
+                            }
+                          />
+                        ))
+                        .otherwise(() => null)
+                    }
+                  </Field>
+                );
+              });
+            })}
           </ModalBody>
           <ModalFooter>
             <Button appearance="primary" onClick={closeModal}>

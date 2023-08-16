@@ -15,6 +15,7 @@ import clsx from 'clsx';
 import { nodePortPositionCache } from './VisualNode.js';
 import { lineCrossesViewport } from '../utils/lineClipping.js';
 import { ErrorBoundary } from 'react-error-boundary';
+import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 
 type WireProps = {
   connection: NodeConnection | PartialConnection;
@@ -32,6 +33,7 @@ export type PartialConnection = {
 export function useWireStartEnd(connection: NodeConnection | PartialConnection) {
   const nodesById = useRecoilValue(nodesByIdState);
   const getIO = useGetNodeIO();
+  useDependsOnPlugins();
 
   const possibleNodes = 'toX' in connection ? [connection.nodeId] : [connection.inputNodeId, connection.outputNodeId];
 
@@ -123,6 +125,7 @@ export const Wire: FC<{
   selected: boolean;
   highlighted: boolean;
 }> = memo(({ sx, sy, ex, ey, selected, highlighted }) => {
+  useDependsOnPlugins();
   const deltaX = Math.abs(ex - sx);
   const handleDistance = sx <= ex ? deltaX * 0.5 : Math.abs(ey - sy) * 0.6;
 

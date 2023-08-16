@@ -149,91 +149,82 @@ export * from './nodes/RandomNumberNode.js';
 import { shuffleNode } from './nodes/ShuffleNode.js';
 export * from './nodes/ShuffleNode.js';
 
-import { chatAnthropicNode } from './nodes/ChatAnthropicNode.js';
-export * from './nodes/ChatAnthropicNode.js';
-
 import { commentNode } from './nodes/CommentNode.js';
 export * from './nodes/CommentNode.js';
 
-const register = new NodeRegistration()
-  .register(toYamlNode)
-  .register(userInputNode)
-  .register(textNode)
-  .register(chatNode)
-  .register(promptNode)
-  .register(extractRegexNode)
-  .register(codeNode)
-  .register(matchNode)
-  .register(ifNode)
-  .register(readDirectoryNode)
-  .register(readFileNode)
-  .register(ifElseNode)
-  .register(chunkNode)
-  .register(graphInputNode)
-  .register(graphOutputNode)
-  .register(subGraphNode)
-  .register(arrayNode)
-  .register(extractJsonNode)
-  .register(assemblePromptNode)
-  .register(loopControllerNode)
-  .register(trimChatMessagesNode)
-  .register(extractYamlNode)
-  .register(externalCallNode)
-  .register(extractObjectPathNode)
-  .register(raiseEventNode)
-  .register(contextNode)
-  .register(coalesceNode)
-  .register(passthroughNode)
-  .register(popNode)
-  .register(setGlobalNode)
-  .register(getGlobalNode)
-  .register(waitForEventNode)
-  .register(gptFunctionNode)
-  .register(getEmbeddingNode)
-  .register(vectorStoreNode)
-  .register(vectorNearestNeighborsNode)
-  .register(hashNode)
-  .register(abortGraphNode)
-  .register(raceInputsNode)
-  .register(toJsonNode)
-  .register(joinNode)
-  .register(filterNode)
-  .register(objectNode)
-  .register(booleanNode)
-  .register(compareNode)
-  .register(evaluateNode)
-  .register(numberNode)
-  .register(randomNumberNode)
-  .register(shuffleNode)
-  .register(chatAnthropicNode)
-  .register(commentNode);
+import { imageNode } from './nodes/ImageNode.js';
+export * from './nodes/ImageNode.js';
 
-export type Nodes = typeof register.NodesType;
+import { audioNode } from './nodes/AudioNode.js';
+export * from './nodes/AudioNode.js';
 
-export type NodeType = typeof register.NodeTypesType;
-
-export const createNodeInstance = <T extends Nodes>(node: T): NodeImpl<T> => {
-  return register.createImpl(node);
+export const registerBuiltInNodes = (registry: NodeRegistration) => {
+  return registry
+    .register(toYamlNode)
+    .register(userInputNode)
+    .register(textNode)
+    .register(chatNode)
+    .register(promptNode)
+    .register(extractRegexNode)
+    .register(codeNode)
+    .register(matchNode)
+    .register(ifNode)
+    .register(readDirectoryNode)
+    .register(readFileNode)
+    .register(ifElseNode)
+    .register(chunkNode)
+    .register(graphInputNode)
+    .register(graphOutputNode)
+    .register(subGraphNode)
+    .register(arrayNode)
+    .register(extractJsonNode)
+    .register(assemblePromptNode)
+    .register(loopControllerNode)
+    .register(trimChatMessagesNode)
+    .register(extractYamlNode)
+    .register(externalCallNode)
+    .register(extractObjectPathNode)
+    .register(raiseEventNode)
+    .register(contextNode)
+    .register(coalesceNode)
+    .register(passthroughNode)
+    .register(popNode)
+    .register(setGlobalNode)
+    .register(getGlobalNode)
+    .register(waitForEventNode)
+    .register(gptFunctionNode)
+    .register(getEmbeddingNode)
+    .register(vectorStoreNode)
+    .register(vectorNearestNeighborsNode)
+    .register(hashNode)
+    .register(abortGraphNode)
+    .register(raceInputsNode)
+    .register(toJsonNode)
+    .register(joinNode)
+    .register(filterNode)
+    .register(objectNode)
+    .register(booleanNode)
+    .register(compareNode)
+    .register(evaluateNode)
+    .register(numberNode)
+    .register(randomNumberNode)
+    .register(shuffleNode)
+    .register(commentNode)
+    .register(imageNode)
+    .register(audioNode);
 };
 
-export function createUnknownNodeInstance(node: ChartNode): NodeImpl<ChartNode> {
-  return createNodeInstance(node as Nodes) as NodeImpl<ChartNode>;
-}
+let globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());
 
-export function nodeFactory<T extends NodeType>(type: T): Extract<Nodes, { type: T }> {
-  return register.create(type);
-}
+export { globalRivetNodeRegistry };
 
-export function getNodeTypes(): NodeType[] {
-  return register.getNodeTypes();
-}
+export type BuiltInNodes = typeof globalRivetNodeRegistry.NodesType;
 
-export type NodeOfType<T extends NodeType> = Extract<Nodes, { type: T }>;
+export type BuiltInNodeType = typeof globalRivetNodeRegistry.NodeTypesType;
 
-export function getNodeDisplayName<T extends NodeType>(type: T): string {
-  return register.getDisplayName(type);
-}
+export type NodeOfType<T extends BuiltInNodeType> = Extract<BuiltInNodes, { type: T }>;
 
-export function isRegisteredNodeType(type: NodeType): boolean {
-  return register.isRegistered(type);
+/** Resets the global node registry to a fresh one with only built-in nodes registered. */
+export function resetGlobalRivetNodeRegistry() {
+  globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());
 }

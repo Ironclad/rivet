@@ -1,8 +1,8 @@
 import { ChartNode, NodeId, PortId, NodeInputDefinition, NodeOutputDefinition } from '../../model/NodeBase.js';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../../model/NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../../model/NodeImpl.js';
 import { SupportedModels, getTokenCountForMessages } from '../../utils/tokenizer.js';
 import { nanoid } from 'nanoid';
-import { Inputs, Outputs, expectType } from '../../index.js';
+import { EditorDefinition, Inputs, NodeBodySpec, Outputs, expectType } from '../../index.js';
 import { ChatCompletionRequestMessage, openAiModelOptions, openaiModels } from '../../utils/openai.js';
 import { dedent } from 'ts-dedent';
 
@@ -81,6 +81,19 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
       Max Token Count: ${this.data.maxTokenCount}
       Remove From Beginning: ${this.data.removeFromBeginning ? 'Yes' : 'No'}
     `;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Takes an array of chat messages, and slices messages from the beginning or the end of the list until the total length of the messages is under the configured token length.
+
+        Useful for setting up infinite message chains that stay under the LLM context limit.
+      `,
+      infoBoxTitle: 'Trim Chat Messages Node',
+      contextMenuTitle: 'Trim Chat Messages',
+      group: ['AI'],
+    };
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

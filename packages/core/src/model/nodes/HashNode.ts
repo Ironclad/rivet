@@ -1,9 +1,10 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { Inputs, Outputs, coerceType, expectType } from '../../index.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, Inputs, Outputs, coerceType } from '../../index.js';
 import * as crypto from 'crypto-js';
 import { match } from 'ts-pattern';
+import { dedent } from 'ts-dedent';
 
 const { SHA256, SHA512, MD5, SHA1 } = crypto;
 
@@ -71,6 +72,17 @@ export class HashNodeImpl extends NodeImpl<HashNode> {
 
   getBody(): string | undefined {
     return algorithmDisplayName[this.data.algorithm];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Computes a hash of the input value using the configured hash function.
+      `,
+      infoBoxTitle: 'Hash Node',
+      contextMenuTitle: 'Hash',
+      group: ['Data'],
+    };
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

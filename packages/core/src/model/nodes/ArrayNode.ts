@@ -1,9 +1,11 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { entries } from '../../utils/typeSafety.js';
 import { flattenDeep } from 'lodash-es';
+import { dedent } from 'ts-dedent';
+import { EditorDefinition } from '../EditorDefinition.js';
 
 export type ArrayNode = ChartNode<'array', ArrayNodeData>;
 
@@ -93,6 +95,21 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
     }
 
     return maxInputNumber + 1;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Creates an array from the input values. By default, flattens any arrays which are inputs into a single array. Can be configured to keep the arrays separate, or deeply flatten arrays.
+
+        Useful for both creating and merging arrays.
+
+        The number of inputs is dynamic based on the number of connections.
+      `,
+      infoBoxTitle: 'Array Node',
+      contextMenuTitle: 'Array',
+      group: ['Lists'],
+    };
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

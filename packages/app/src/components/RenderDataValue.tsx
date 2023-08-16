@@ -11,7 +11,7 @@ import {
   isFunctionDataValue,
 } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
-import { keys } from '../utils/typeSafety.js';
+import { keys } from '../../../core/src/utils/typeSafety';
 
 const multiOutput = css`
   display: flex;
@@ -51,6 +51,36 @@ const scalarRenderers: {
     </>
   ),
   vector: ({ value }) => <>Vector (length {value.value.length})</>,
+  image: ({ value }) => {
+    const {
+      value: { data, mediaType },
+    } = value;
+
+    const blob = new Blob([data], { type: mediaType });
+    const imageUrl = URL.createObjectURL(blob);
+
+    return (
+      <div>
+        <img src={imageUrl} alt="" />
+      </div>
+    );
+  },
+  binary: ({ value }) => <>Binary (length {value.value.length.toLocaleString()})</>,
+  audio: ({ value }) => {
+    const {
+      value: { data },
+    } = value;
+
+    const dataUri = `data:audio/mp4;base64,${data}`;
+
+    return (
+      <div>
+        <audio controls>
+          <source src={dataUri} />
+        </audio>
+      </div>
+    );
+  },
 };
 
 export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number }> = ({ value, depth }) => {

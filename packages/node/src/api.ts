@@ -4,10 +4,13 @@ import {
   GraphId,
   GraphProcessor,
   NativeApi,
+  NodeRegistration,
   ProcessEvents,
   Project,
   Settings,
+  StringPluginConfigurationSpec,
   deserializeProject,
+  globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
 
 import { readFile } from 'node:fs/promises';
@@ -51,6 +54,7 @@ export type RunGraphOptions = {
     [key: string]: (data: DataValue | undefined) => void;
   };
   abortSignal?: AbortSignal;
+  registry?: NodeRegistration;
 } & {
   [P in keyof ProcessEvents as `on${PascalCase<P>}`]?: (params: ProcessEvents[P]) => void;
 } & Settings;
@@ -61,7 +65,7 @@ export async function runGraphInFile(path: string, options: RunGraphOptions): Pr
 }
 
 export function createProcessor(project: Project, options: RunGraphOptions) {
-  const { graph, inputs = {}, context = {} } = options;
+  const { graph, inputs = {}, context = {}, registry } = options;
 
   const graphId =
     graph in project.graphs
@@ -72,7 +76,7 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
     throw new Error('Graph not found');
   }
 
-  const processor = new GraphProcessor(project, graphId as GraphId);
+  const processor = new GraphProcessor(project, graphId as GraphId, options.registry);
 
   if (options.remoteDebugger) {
     options.remoteDebugger.attach(processor);
@@ -174,6 +178,12 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
     return value;
   });
 
+  let pluginEnv = options.pluginEnv;
+  if (!pluginEnv) {
+    // If unset, use process.env
+    pluginEnv = getPluginEnvFromProcessEnv(registry);
+  }
+
   return {
     processor,
     inputs: resolvedInputs,
@@ -185,8 +195,8 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
           settings: {
             openAiKey: options.openAiKey,
             openAiOrganization: options.openAiOrganization ?? '',
-            pineconeApiKey: options.pineconeApiKey ?? '',
-            anthropicApiKey: options.anthropicApiKey ?? '',
+            pluginEnv: options.pluginEnv ?? {},
+            pluginSettings: options.pluginSettings ?? {},
             recordingPlaybackLatency: 1000,
           } satisfies Required<Settings>,
         },
@@ -202,4 +212,28 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
 export async function runGraph(project: Project, options: RunGraphOptions): Promise<Record<string, DataValue>> {
   const processorInfo = createProcessor(project, options);
   return processorInfo.run();
+}
+
+function getPluginEnvFromProcessEnv(registry?: NodeRegistration) {
+  const pluginEnv: Record<string, string> = {};
+  for (const plugin of (registry ?? globalRivetNodeRegistry).getPlugins() ?? []) {
+    const configs = Object.entries(plugin.configSpec ?? {}).filter(([, c]) => c.type === 'string') as [
+      string,
+      StringPluginConfigurationSpec,
+    ][];
+    for (const [configName, config] of configs) {
+      if (config.pullEnvironmentVariable) {
+        const envVarName =
+          typeof config.pullEnvironmentVariable === 'string'
+            ? config.pullEnvironmentVariable
+            : config.pullEnvironmentVariable === true
+            ? configName
+            : undefined;
+        if (envVarName) {
+          pluginEnv[envVarName] = process.env[envVarName] ?? '';
+        }
+      }
+    }
+  }
+  return pluginEnv;
 }

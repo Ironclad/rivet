@@ -5,10 +5,13 @@ import { Settings } from '@ironclad/rivet-core';
 export const settingsState = atom<Settings>({
   key: 'settings',
   default: {
+    recordingPlaybackLatency: 1000,
+
     openAiKey: '',
     openAiOrganization: '',
-    anthropicApiKey: '',
-    recordingPlaybackLatency: 1000,
+
+    pluginEnv: {},
+    pluginSettings: {},
   },
   effects_UNSTABLE: [persistAtom],
 });

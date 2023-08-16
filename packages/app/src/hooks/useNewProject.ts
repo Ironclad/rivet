@@ -13,6 +13,7 @@ export function blankProject(): Project {
       title: 'Untitled Project',
       description: '',
     },
+    plugins: [],
   };
 }
 

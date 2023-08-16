@@ -82,7 +82,7 @@ const container = css`
 
 export const ReadFileNodeEditor: FC<ReadFileNodeEditorProps> = ({ node, onChange }) => {
   const handleBrowseClick = async () => {
-    const path = await ioProvider.openFile();
+    const path = await ioProvider.openFilePath();
     if (path) {
       onChange?.({
         ...node,

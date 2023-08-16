@@ -67,4 +67,7 @@ export type InternalProcessContext = ProcessContext & {
 
   /** Aborts the current graph, if there is an error, the graph is error aborted, and if undefined, then it is simply early-exited. */
   abortGraph: (error?: Error | string) => void;
+
+  /** Gets a string plugin config value from the settings, falling back to a specified environment variable if set. */
+  getPluginConfig(name: string): string | undefined;
 };

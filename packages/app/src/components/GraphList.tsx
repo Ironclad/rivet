@@ -408,8 +408,6 @@ export const GraphList: FC = () => {
     ? contextMenuData.data?.element.dataset.folderpath
     : undefined;
 
-  console.dir({ dragOverFolderName, draggingItemFolder });
-
   return (
     <div css={styles} ref={contextMenuRef} onContextMenu={handleSidebarContextMenu}>
       <div className={clsx('graph-list', { 'dragging-over': dragOverFolderName === '' && draggingItemFolder !== '' })}>

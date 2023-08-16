@@ -1,7 +1,8 @@
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
+import { dedent } from 'ts-dedent';
 
 export type PopNode = ChartNode<'pop', {}>;
 
@@ -45,6 +46,19 @@ export class PopNodeImpl extends NodeImpl<PopNode> {
         title: 'Rest',
       },
     ];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Pops the last value off the input array and outputs the new array and the popped value.
+
+        Can also be used to just extract the last value from an array.
+      `,
+      infoBoxTitle: 'Pop Node',
+      contextMenuTitle: 'Pop',
+      group: ['Lists'],
+    };
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

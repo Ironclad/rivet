@@ -5,9 +5,10 @@ import { overlayOpenState } from '../state/ui';
 import { css } from '@emotion/react';
 import clsx from 'clsx';
 import {
+  BuiltInNodes,
+  ChartNode,
   DataValue,
   NodeId,
-  Nodes,
   PortId,
   ProcessId,
   ScalarOrArrayDataValue,
@@ -154,8 +155,8 @@ export const ChatViewer: FC<{
   }, [project.graphs]);
 
   const chatNodes = useMemo(() => {
-    const allNodes = Object.values(project.graphs).flatMap((g) => g.nodes) as Nodes[];
-    const nodes = allNodes.filter((node) => node.type === 'chat' || node.type === 'chatAnthropic');
+    const allNodes = Object.values(project.graphs).flatMap((g) => g.nodes) as BuiltInNodes[];
+    const nodes = (allNodes as ChartNode[]).filter((node) => node.type === 'chat' || node.type === 'chatAnthropic');
     if (graphFilter === '') {
       return nodes;
     }

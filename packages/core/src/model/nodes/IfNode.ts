@@ -1,8 +1,9 @@
-import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { ControlFlowExcludedDataValue, ScalarDataValue, ArrayDataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor.js';
+import { dedent } from 'ts-dedent';
 
 export type IfNode = ChartNode<'if', IfNodeData>;
 
@@ -46,6 +47,17 @@ export class IfNodeImpl extends NodeImpl<IfNode> {
         dataType: 'string',
       },
     ];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Takes in a condition and a value. If the condition is truthy, the value is passed through the output port. If the condition is not truthy, the output port is not ran.
+      `,
+      infoBoxTitle: 'If Node',
+      contextMenuTitle: 'If',
+      group: ['Logic'],
+    };
   }
 
   async process(inputData: Inputs): Promise<Outputs> {

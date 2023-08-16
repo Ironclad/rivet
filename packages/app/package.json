@@ -37,6 +37,7 @@
     "@atlaskit/dropdown-menu": "^11.11.0",
     "@atlaskit/form": "^8.11.8",
     "@atlaskit/inline-edit": "^12.3.5",
+    "@atlaskit/menu": "^1.9.7",
     "@atlaskit/modal-dialog": "^12.6.4",
     "@atlaskit/popup": "^1.9.0",
     "@atlaskit/portal": "^4.3.4",

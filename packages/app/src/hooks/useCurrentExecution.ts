@@ -124,8 +124,9 @@ export function useCurrentExecution() {
     // nothing right now
   }
 
-  function onError(_data: ProcessEvents['error']) {
+  function onError(data: ProcessEvents['error']) {
     stopAll();
+    console.error(data.error);
   }
 
   const onUserInput = ({ node, inputs, processId }: ProcessEvents['userInput']) => {

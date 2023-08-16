@@ -1,4 +1,4 @@
-import { NodeOfType, NodeType, Outputs, getNodeTypes } from '@ironclad/rivet-core';
+import { NodeOfType, BuiltInNodeType, Outputs, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { FC } from 'react';
 import { ChartNode } from '@ironclad/rivet-core';
 import { chatNodeDescriptor } from '../components/nodes/ChatNode.js';
@@ -10,6 +10,8 @@ import { subgraphNodeDescriptor } from '../components/nodes/SubGraphNode.js';
 import { userInputNodeDescriptor } from '../components/nodes/UserInputNode.js';
 import { ObjectNodeDescriptor } from '../components/nodes/ObjectNode.js';
 import { commentNodeDescriptor } from '../components/nodes/CommentNode';
+import { imageNodeDescriptor } from '../components/nodes/ImageNode';
+import { audioNodeDescriptor } from '../components/nodes/AudioNode';
 
 export type UnknownNodeComponentDescriptor = {
   Body?: FC<{ node: ChartNode }>;
@@ -20,7 +22,7 @@ export type UnknownNodeComponentDescriptor = {
   FullscreenOutputSimple?: FC<{ outputs: Outputs }>;
 };
 
-export type NodeComponentDescriptor<T extends NodeType> = {
+export type NodeComponentDescriptor<T extends BuiltInNodeType> = {
   Body?: FC<{ node: NodeOfType<T> }>;
   Output?: FC<{ node: NodeOfType<T> }>;
   Editor?: FC<{ node: NodeOfType<T>; onChange?: (node: NodeOfType<T>) => void }>;
@@ -30,7 +32,7 @@ export type NodeComponentDescriptor<T extends NodeType> = {
 };
 
 export type NodeComponentDescriptors = {
-  [P in NodeType]: NodeComponentDescriptor<P>;
+  [P in BuiltInNodeType]: NodeComponentDescriptor<P>;
 };
 
 const overriddenDescriptors: Partial<NodeComponentDescriptors> = {
@@ -43,10 +45,12 @@ const overriddenDescriptors: Partial<NodeComponentDescriptors> = {
   userInput: userInputNodeDescriptor,
   object: ObjectNodeDescriptor,
   comment: commentNodeDescriptor,
+  image: imageNodeDescriptor,
+  audio: audioNodeDescriptor,
 };
 
 export function useNodeTypes(): NodeComponentDescriptors {
-  const allNodeTypes = getNodeTypes();
+  const allNodeTypes = globalRivetNodeRegistry.getNodeTypes();
 
   return Object.fromEntries(
     allNodeTypes.map((nodeType) => {
@@ -59,5 +63,5 @@ export function useNodeTypes(): NodeComponentDescriptors {
 export function useUnknownNodeComponentDescriptorFor(node: ChartNode) {
   const descriptors = useNodeTypes();
 
-  return (descriptors[node.type as NodeType] ?? {}) as UnknownNodeComponentDescriptor;
+  return (descriptors[node.type as BuiltInNodeType] ?? {}) as UnknownNodeComponentDescriptor;
 }

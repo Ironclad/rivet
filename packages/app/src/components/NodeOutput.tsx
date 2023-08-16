@@ -11,13 +11,15 @@ import { ReactComponent as ExpandIcon } from 'majesticons/line/maximize-line.svg
 import { ReactComponent as FlaskIcon } from 'majesticons/line/flask-line.svg';
 import { FullScreenModal } from './FullScreenModal.js';
 import { RenderDataOutputs } from './RenderDataValue.js';
-import { entries } from '../utils/typeSafety.js';
 import { orderBy } from 'lodash-es';
 import { promptDesignerAttachedChatNodeState, promptDesignerState } from '../state/promptDesigner.js';
 import { overlayOpenState } from '../state/ui';
+import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
+import { entries } from '../../../core/src/utils/typeSafety';
 
 export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  useDependsOnPlugins();
 
   const handleScroll = useStableCallback((e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     e.stopPropagation();

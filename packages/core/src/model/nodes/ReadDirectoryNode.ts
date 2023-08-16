@@ -1,9 +1,9 @@
 import { ChartNode, NodeId, PortId } from '../NodeBase.js';
 import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
-import { NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor.js';
-import { expectType } from '../../index.js';
+import { NodeBodySpec, expectType } from '../../index.js';
 import { InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
 
@@ -133,6 +133,17 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
           : 'None'
       }
     `;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Reads the contents of the specified directory and outputs an array of filenames.
+      `,
+      infoBoxTitle: 'Read Directory Node',
+      contextMenuTitle: 'Read Directory',
+      group: ['Input/Output'],
+    };
   }
 
   async process(inputData: Inputs, context: InternalProcessContext): Promise<Outputs> {

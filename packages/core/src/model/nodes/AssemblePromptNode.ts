@@ -1,18 +1,11 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import {
-  ArrayDataValue,
-  ChatMessage,
-  DataType,
-  DataValue,
-  ScalarDataValue,
-  arrayizeDataValue,
-  unwrapDataValue,
-} from '../DataValue.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { ChatMessage, arrayizeDataValue, unwrapDataValue } from '../DataValue.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { orderBy } from 'lodash-es';
 import { coerceType } from '../../index.js';
+import { dedent } from 'ts-dedent';
 
 export type AssemblePromptNode = ChartNode<'assemblePrompt', AssemblePromptNodeData>;
 
@@ -75,6 +68,21 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
     }
 
     return maxMessageNumber + 1;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Assembles an array of chat messages for use with a Chat node. The inputs can be strings or chat messages.
+
+        The number of inputs is dynamic based on the number of connections.
+
+        Strings are converted to User type chat messages.
+      `,
+      infoBoxTitle: 'Assemble Prompt Node',
+      contextMenuTitle: 'Assemble Prompt',
+      group: ['AI'],
+    };
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

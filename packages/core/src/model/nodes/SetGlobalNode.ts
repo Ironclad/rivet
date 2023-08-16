@@ -1,6 +1,6 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import {
   DataType,
   ScalarDataValue,
@@ -13,6 +13,8 @@ import { Inputs, Outputs } from '../GraphProcessor.js';
 import { coerceType } from '../../utils/coerceType.js';
 import { InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
+import { EditorDefinition } from '../EditorDefinition.js';
+import { NodeBodySpec } from '../NodeBodySpec.js';
 
 export type SetGlobalNode = ChartNode<'setGlobal', SetGlobalNodeData>;
 
@@ -100,6 +102,17 @@ export class SetGlobalNodeImpl extends NodeImpl<SetGlobalNode> {
       ${this.data.id}
       Type: ${this.data.dataType}
     `;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Sets a global value that is shared across all graphs and subgraphs. The id of the global value and the value itself are configured in this node.
+      `,
+      infoBoxTitle: 'Set Global Node',
+      contextMenuTitle: 'Set Global',
+      group: ['Advanced'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

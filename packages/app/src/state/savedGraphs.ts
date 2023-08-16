@@ -1,10 +1,10 @@
 import { DefaultValue, atom, selector } from 'recoil';
 import { nanoid } from 'nanoid';
-import { entries, values } from '../utils/typeSafety.js';
 import { produce } from 'immer';
 import { GraphId, NodeGraph, Project, ProjectId } from '@ironclad/rivet-core';
 import { blankProject } from '../hooks/useNewProject.js';
 import { recoilPersist } from 'recoil-persist';
+import { entries, values } from '../../../core/src/utils/typeSafety';
 
 const { persistAtom } = recoilPersist({ key: 'project' });
 
@@ -18,6 +18,7 @@ export const projectState = atom<Project>({
       title: 'Untitled Project',
     },
     graphs: {},
+    plugins: [],
   },
   effects_UNSTABLE: [persistAtom],
 });
@@ -100,5 +101,20 @@ export const savedGraphsState = selector<NodeGraph[]>({
     });
 
     set(projectState, newProject);
+  },
+});
+
+export const projectPluginsState = selector({
+  key: 'projectPluginsState',
+  get: ({ get }) => {
+    return get(projectState).plugins ?? [];
+  },
+  set: ({ set }, newValue) => {
+    set(projectState, (oldValue) => {
+      return {
+        ...oldValue,
+        plugins: newValue instanceof DefaultValue ? blankProject().plugins : newValue,
+      };
+    });
   },
 });

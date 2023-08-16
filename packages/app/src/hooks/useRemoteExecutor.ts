@@ -1,4 +1,10 @@
-import { GraphOutputs, NodeId, ProcessEvents, StringArrayDataValue } from '@ironclad/rivet-core';
+import {
+  GraphOutputs,
+  NodeId,
+  ProcessEvents,
+  StringArrayDataValue,
+  globalRivetNodeRegistry,
+} from '@ironclad/rivet-core';
 import { useCurrentExecution } from './useCurrentExecution';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { graphState } from '../state/graph';
@@ -12,6 +18,7 @@ import { trivetState } from '../state/trivet';
 import { runTrivet } from '@ironclad/trivet';
 import { produce } from 'immer';
 import { userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
+import { pluginsState } from '../state/plugins';
 
 // TODO: This allows us to retrieve the GraphOutputs from the remote debugger.
 // If the remote debugger events had a unique ID for each run, this would feel a lot less hacky.
@@ -126,7 +133,10 @@ export function useRemoteExecutor() {
               [graph.metadata!.id!]: graph,
             },
           },
-          settings: await fillMissingSettingsFromEnvironmentVariables(savedSettings),
+          settings: await fillMissingSettingsFromEnvironmentVariables(
+            savedSettings,
+            globalRivetNodeRegistry.getPlugins(),
+          ),
         });
       }
 
@@ -181,7 +191,10 @@ export function useRemoteExecutor() {
                     [graph.metadata!.id!]: graph,
                   },
                 },
-                settings: await fillMissingSettingsFromEnvironmentVariables(savedSettings),
+                settings: await fillMissingSettingsFromEnvironmentVariables(
+                  savedSettings,
+                  globalRivetNodeRegistry.getPlugins(),
+                ),
               });
             }
 

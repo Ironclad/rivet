@@ -14,7 +14,6 @@ import {
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase.js';
 import { GraphId, NodeGraph } from './NodeGraph.js';
 import { NodeImpl } from './NodeImpl.js';
-import { NodeType, Nodes, createUnknownNodeInstance } from './Nodes.js';
 import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode.js';
 import PQueueImport from 'p-queue';
 import { getError } from '../utils/errors.js';
@@ -28,6 +27,9 @@ import { ExecutionRecorder } from '../recording/ExecutionRecorder.js';
 import { P, match } from 'ts-pattern';
 import { Opaque } from 'type-fest';
 import { coerceTypeOptional } from '../utils/coerceType.js';
+import { BuiltInNodeType, BuiltInNodes, globalRivetNodeRegistry } from './Nodes.js';
+import { NodeRegistration } from './NodeRegistration.js';
+import { StringPluginConfigurationSpec } from './RivetPlugin.js';
 
 // CJS compatibility, gets default.default for whatever reason
 let PQueue = PQueueImport;
@@ -161,6 +163,7 @@ export class GraphProcessor {
   slowMode = false;
   #isPaused = false;
   #parent: GraphProcessor | undefined;
+  #registry: NodeRegistration;
   id = nanoid();
 
   /** The node that is executing this graph, almost always a subgraph node. Undefined for root. */
@@ -212,7 +215,7 @@ export class GraphProcessor {
     return this.#running;
   }
 
-  constructor(project: Project, graphId: GraphId) {
+  constructor(project: Project, graphId: GraphId, registry?: NodeRegistration) {
     this.#project = project;
     const graph = project.graphs[graphId];
 
@@ -224,12 +227,13 @@ export class GraphProcessor {
     this.#nodeInstances = {};
     this.#connections = {};
     this.#nodesById = {};
+    this.#registry = registry ?? (globalRivetNodeRegistry as unknown as NodeRegistration);
 
     this.#emitter.bindMethods(this as any, ['on', 'off', 'once', 'onAny', 'offAny']);
 
     // Create node instances and store them in a lookup table
     for (const node of this.#graph.nodes) {
-      this.#nodeInstances[node.id] = createUnknownNodeInstance(node as Nodes);
+      this.#nodeInstances[node.id] = this.#registry.createDynamicImpl(node);
       this.#nodesById[node.id] = node;
     }
 
@@ -638,7 +642,7 @@ export class GraphProcessor {
 
       for (const nodeWithoutOutputs of nodesWithoutOutputs) {
         this.#processingQueue.add(async () => {
-          await this.#fetchNodeDataAndProcessNode(nodeWithoutOutputs as Nodes);
+          await this.#fetchNodeDataAndProcessNode(nodeWithoutOutputs);
         });
       }
 
@@ -692,7 +696,7 @@ export class GraphProcessor {
     }
   }
 
-  async #fetchNodeDataAndProcessNode(node: Nodes): Promise<void> {
+  async #fetchNodeDataAndProcessNode(node: ChartNode): Promise<void> {
     if (this.#currentlyProcessing.has(node.id) || this.#queuedNodes.has(node.id)) {
       return;
     }
@@ -750,7 +754,7 @@ export class GraphProcessor {
       inputNodes.map((inputNode) => {
         return async () => {
           this.#emitter.emit('trace', `Fetching required data for node ${inputNode.title} (${inputNode.id})`);
-          await this.#fetchNodeDataAndProcessNode(inputNode as Nodes);
+          await this.#fetchNodeDataAndProcessNode(inputNode);
         };
       }),
     );
@@ -759,7 +763,9 @@ export class GraphProcessor {
   }
 
   /** If all inputs are present, all conditions met, processes the node. */
-  async #processNodeIfAllInputsAvailable(node: Nodes): Promise<void> {
+  async #processNodeIfAllInputsAvailable(node: ChartNode): Promise<void> {
+    const builtInNode = node as BuiltInNodes;
+
     if (this.#currentlyProcessing.has(node.id)) {
       this.#emitter.emit('trace', `Node ${node.title} is already being processed`);
       return;
@@ -859,7 +865,7 @@ export class GraphProcessor {
       return;
     }
 
-    const processId = await this.#processNode(node as Nodes);
+    const processId = await this.#processNode(node);
 
     if (this.slowMode) {
       await new Promise((resolve) => setTimeout(resolve, 250));
@@ -921,8 +927,8 @@ export class GraphProcessor {
     }
 
     let childLoopInfo = attachedData.loopInfo;
-    if (node.type === 'loopController') {
-      if (childLoopInfo != null && childLoopInfo.loopControllerId !== node.id) {
+    if (builtInNode.type === 'loopController') {
+      if (childLoopInfo != null && childLoopInfo.loopControllerId !== builtInNode.id) {
         this.#nodeErrored(node, new Error('Nested loops are not supported'), processId);
         return;
       }
@@ -948,10 +954,12 @@ export class GraphProcessor {
 
       attachedData.loopInfo = childLoopInfo; // Not 100% sure if this is right - sets the childLoopInfo on the loop controller itself, probably fine?
 
-      if (childLoopInfo.iterationCount > (node.data.maxIterations ?? 100)) {
+      if (childLoopInfo.iterationCount > (builtInNode.data.maxIterations ?? 100)) {
         this.#nodeErrored(
           node,
-          new Error(`Loop controller ${node.title} has exceeded max iterations of ${node.data.maxIterations ?? 100}`),
+          new Error(
+            `Loop controller ${node.title} has exceeded max iterations of ${builtInNode.data.maxIterations ?? 100}`,
+          ),
           processId,
         );
         return;
@@ -986,7 +994,7 @@ export class GraphProcessor {
           `Trying to run output node from ${node.title}: ${outputNode.title} (${outputNode.id})`,
         );
 
-        await this.#processNodeIfAllInputsAvailable(outputNode as Nodes);
+        await this.#processNodeIfAllInputsAvailable(outputNode);
       }),
     );
   }
@@ -1001,8 +1009,9 @@ export class GraphProcessor {
     return nodeData;
   }
 
-  async #processNode(node: Nodes) {
+  async #processNode(node: ChartNode) {
     const processId = nanoid() as ProcessId;
+    const builtInNode = node as BuiltInNodes;
 
     if (this.#abortController.signal.aborted) {
       this.#nodeErrored(node, new Error('Processing aborted'), processId);
@@ -1032,7 +1041,7 @@ export class GraphProcessor {
     return processId;
   }
 
-  #isNodeOfType<T extends Nodes['type']>(type: T, node: ChartNode): node is Extract<Nodes, { type: T }> {
+  #isNodeOfType<T extends BuiltInNodes['type']>(type: T, node: ChartNode): node is Extract<BuiltInNodes, { type: T }> {
     return node.type === type;
   }
 
@@ -1218,6 +1227,8 @@ export class GraphProcessor {
       nodeAbortController.abort();
     });
 
+    const plugin = this.#registry.getPluginFor(node.type);
+
     const context: InternalProcessContext = {
       ...this.#context,
       project: this.#project,
@@ -1328,6 +1339,36 @@ export class GraphProcessor {
       abortGraph: (error) => {
         this.abort(error === undefined, error);
       },
+      getPluginConfig: (name) => {
+        if (!plugin) {
+          return undefined;
+        }
+
+        const configSpec = plugin?.configSpec?.[name];
+
+        if (!configSpec) {
+          return undefined;
+        }
+
+        const pluginSettings = this.#context.settings.pluginSettings?.[plugin.id];
+        if (pluginSettings) {
+          const value = pluginSettings[name];
+          if (!value || typeof value !== 'string') {
+            return undefined;
+          }
+
+          return value;
+        }
+
+        const envFallback = (configSpec as StringPluginConfigurationSpec).pullEnvironmentVariable;
+        const envFallbackName = envFallback === true ? name : envFallback;
+
+        if (envFallbackName && this.#context.settings.pluginEnv?.[envFallbackName]) {
+          return this.#context.settings.pluginEnv[envFallbackName];
+        }
+
+        return undefined;
+      },
     };
 
     await this.#waitUntilUnpaused();
@@ -1374,10 +1415,16 @@ export class GraphProcessor {
 
     const isWaitingForLoop = controlFlowExcludedValues.some((value) => value?.value === 'loop-not-broken');
 
-    const nodesAllowedToConsumeExcludedValue: NodeType[] = ['if', 'ifElse', 'coalesce', 'graphOutput', 'raceInputs'];
+    const nodesAllowedToConsumeExcludedValue: BuiltInNodeType[] = [
+      'if',
+      'ifElse',
+      'coalesce',
+      'graphOutput',
+      'raceInputs',
+    ];
 
     const allowedToConsumedExcludedValue =
-      nodesAllowedToConsumeExcludedValue.includes(node.type as NodeType) && !isWaitingForLoop;
+      nodesAllowedToConsumeExcludedValue.includes(node.type as BuiltInNodeType) && !isWaitingForLoop;
 
     if ((inputIsExcludedValue || anyOutputIsExcludedValue) && !allowedToConsumedExcludedValue) {
       if (!isWaitingForLoop) {

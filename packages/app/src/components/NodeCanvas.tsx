@@ -9,7 +9,7 @@ import { WireLayer } from './WireLayer.js';
 import { useContextMenu } from '../hooks/useContextMenu.js';
 import { useDraggingNode } from '../hooks/useDraggingNode.js';
 import { useDraggingWire } from '../hooks/useDraggingWire.js';
-import { ChartNode, CommentNode, GraphId, NodeConnection, NodeId, NodeType } from '@ironclad/rivet-core';
+import { ChartNode, CommentNode, GraphId, NodeConnection, NodeId } from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   CanvasPosition,
@@ -440,7 +440,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   const hydratedContextMenuData = useMemo((): ContextMenuContext | null => {
     if (contextMenuData.data?.type.startsWith('node-')) {
-      const nodeType = contextMenuData.data.type.replace('node-', '') as NodeType;
+      const nodeType = contextMenuData.data.type.replace('node-', '');
       const nodeId = contextMenuData.data.element.dataset.nodeid as NodeId;
       return {
         type: 'node',

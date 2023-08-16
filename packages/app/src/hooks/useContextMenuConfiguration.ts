@@ -3,7 +3,7 @@ import { useContextMenuAddNodeConfiguration } from './useContextMenuAddNodeConfi
 import { ReactComponent as DeleteIcon } from 'majesticons/line/delete-bin-line.svg';
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
 import { ReactComponent as DuplicateIcon } from 'majesticons/line/image-multiple-line.svg';
-import { NodeId, NodeType } from '@ironclad/rivet-core';
+import { NodeId } from '@ironclad/rivet-core';
 import { useRecoilValue } from 'recoil';
 import { selectedNodesState } from '../state/graphBuilder.js';
 import { useContextMenuCommands } from './useContextMenuCommands.js';
@@ -53,7 +53,7 @@ export function useContextMenuConfiguration() {
         contexts: {
           node: {
             contextType: type<{
-              nodeType: NodeType;
+              nodeType: string;
               nodeId: NodeId;
             }>(),
             items: [
@@ -62,7 +62,7 @@ export function useContextMenuConfiguration() {
                 label: 'Go To Subgraph',
                 icon: SettingsCogIcon,
                 conditional: (context) => {
-                  const { nodeType } = context as { nodeType: NodeType };
+                  const { nodeType } = context as { nodeType: string };
                   return nodeType === 'subGraph';
                 },
               },
