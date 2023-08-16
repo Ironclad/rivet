@@ -45,7 +45,7 @@ export const nodeStyles = css`
   }
 
   .node-title {
-    background-color: #3d3d3d;
+    background-color: var(--grey-darkish);
     color: var(--foreground-bright);
     padding: 12px;
     margin: -12px -12px 8px -12px;
@@ -61,7 +61,7 @@ export const nodeStyles = css`
 
   .node.node.isComment .node-title {
     padding: 4px;
-    background-color: rgba(61, 61, 61, 0.5);
+    background-color: var(--grey-darkish-seethrough);
     pointer-events: all;
     margin: 0;
   }
@@ -139,7 +139,7 @@ export const nodeStyles = css`
     }
 
     button:hover {
-      color: var(--primary);
+      color: var(--primary-text);
     }
   }
 
@@ -270,7 +270,7 @@ export const nodeStyles = css`
   }
 
   .port.connected .port-label {
-    color: var(--primary);
+    color: var(--primary-text);
   }
 
   .port.connected .port-label {
@@ -458,7 +458,7 @@ export const nodeStyles = css`
   }
 
   .node.running {
-    box-shadow: 0 0 16px var(--shadow-orange), 0 8px 16px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 16px var(--shadow-primary-bright), 0 8px 16px rgba(0, 0, 0, 0.4);
   }
 
   .split-output {

@@ -160,7 +160,7 @@ const styles = css`
     outline: none;
     padding: 10px;
     &:focus {
-      border: solid 1px #fff;
+      border: solid 1px var(--grey-lightest);
     }
 
     &:hover {

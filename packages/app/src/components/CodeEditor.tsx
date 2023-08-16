@@ -1,6 +1,8 @@
 import { useLatest } from 'ahooks';
 import { FC, MutableRefObject, useEffect, useRef } from 'react';
 import { monaco } from '../utils/monaco.js';
+import { useRecoilValue } from 'recoil';
+import { themeState } from '../state/settings';
 
 export const CodeEditor: FC<{
   text: string;
@@ -18,13 +20,16 @@ export const CodeEditor: FC<{
 
   const onChangeLatest = useLatest(onChange);
 
+  const appTheme = useRecoilValue(themeState);
+  const actualTheme = theme === 'prompt-interpolation' ? `prompt-interpolation-${appTheme}` : theme;
+
   useEffect(() => {
     if (!editorContainer.current) {
       return;
     }
 
     const editor = monaco.editor.create(editorContainer.current, {
-      theme: theme ?? 'vs-dark',
+      theme: actualTheme ?? 'vs-dark',
       lineNumbers: 'on',
       glyphMargin: false,
       folding: false,
@@ -65,6 +70,14 @@ export const CodeEditor: FC<{
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (editorInstance.current && actualTheme) {
+      editorInstance.current.updateOptions({
+        theme: actualTheme,
+      });
+    }
+  }, [actualTheme]);
 
   useEffect(() => {
     if (onKeyDown) {

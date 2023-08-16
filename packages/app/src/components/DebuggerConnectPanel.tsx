@@ -59,7 +59,7 @@ const styles = css`
 
     .connect {
       background-color: var(--primary);
-      color: var(--grey-dark) !important;
+      color: var(--foreground-on-primary) !important;
     }
   }
 `;

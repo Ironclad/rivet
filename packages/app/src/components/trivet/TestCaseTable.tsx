@@ -93,7 +93,7 @@ const styles = css`
 
     &:hover {
       background-color: var(--grey-darkish);
-      color: var(--primary);
+      color: var(--primary-text);
     }
   }
 
@@ -106,7 +106,7 @@ const styles = css`
     gap: 8px;
 
     .key {
-      color: var(--primary);
+      color: var(--primary-text);
     }
 
     .json {
@@ -220,7 +220,10 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
         <div className="cell header-cell">Outputs</div>
 
         {testCases.map((testCase) => (
-          <div key={testCase.id} className={clsx('test-case-row-container', { selected: editingTestCaseId === testCase.id })}>
+          <div
+            key={testCase.id}
+            className={clsx('test-case-row-container', { selected: editingTestCaseId === testCase.id })}
+          >
             <div className="cell selected-cell-indicator" />
             <div className="cell nobg">
               <button className="run-test-button" onClick={() => onRunTestCase(testCase.id)}>

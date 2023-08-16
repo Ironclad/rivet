@@ -26,7 +26,7 @@ const styles = css`
   }
 
   h1 {
-    color: var(--primary);
+    color: var(--primary-text);
   }
 
   .buttons {

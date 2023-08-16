@@ -131,7 +131,7 @@ const ChatNodeOutputContainer = styled.div`
     text-decoration: none;
     font-size: 12px;
     font-weight: normal;
-    color: var(--primary);
+    color: var(--primary-text);
   }
 
   .markdown-toggle {

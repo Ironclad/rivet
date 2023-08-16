@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { atom, useRecoilState } from 'recoil';
-import { settingsState } from '../state/settings.js';
+import { settingsState, themeState, themes } from '../state/settings.js';
 import Modal, { ModalTransition, ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
 import TextField from '@atlaskit/textfield';
 import Button from '@atlaskit/button';
@@ -8,6 +8,7 @@ import { Field } from '@atlaskit/form';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { entries } from '../../../core/src/utils/typeSafety';
 import { match } from 'ts-pattern';
+import Select from '@atlaskit/select';
 
 interface SettingsModalProps {}
 
@@ -19,6 +20,7 @@ export const settingsModalOpenState = atom({
 export const SettingsModal: FC<SettingsModalProps> = () => {
   const [isOpen, setIsOpen] = useRecoilState(settingsModalOpenState);
   const [settings, setSettings] = useRecoilState(settingsState);
+  const [theme, setTheme] = useRecoilState(themeState);
 
   const plugins = useDependsOnPlugins();
 
@@ -32,6 +34,15 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
             <ModalTitle>Settings</ModalTitle>
           </ModalHeader>
           <ModalBody>
+            <Field name="theme" label="Theme">
+              {() => (
+                <Select
+                  value={themes.find((o) => o.value === theme)}
+                  onChange={(e) => e && setTheme(e.value as any)}
+                  options={themes}
+                />
+              )}
+            </Field>
             <Field name="recording-speed" label="Recording delay between chats (ms)">
               {() => (
                 <TextField

@@ -14,7 +14,7 @@ const currentPathCss = css`
   white-space: pre-wrap;
   word-wrap: break-word;
   font-family: 'Roboto mono', monospace;
-  color: var(--primary);
+  color: var(--primary-text);
 `;
 
 export const ReadFileNodeBody: FC<ReadFileNodeBodyProps> = ({ node }) => {

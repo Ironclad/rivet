@@ -51,7 +51,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     color: var(--foreground);
-    background-color: rgba(40, 44, 52, 0.8);
+    background-color: var(--grey-dark-bluish-seethrough);
     backdrop-filter: blur(2px);
     font-family: 'Roboto Mono', monospace;
     width: 100%;
@@ -86,7 +86,7 @@ const Container = styled.div`
     top: 20px;
     background-color: var(--primary);
     border: none;
-    color: var(--grey-dark);
+    color: var(--foreground-on-primary);
     cursor: pointer;
     font-size: 20px;
     padding: 5px 10px;
@@ -142,7 +142,7 @@ const Container = styled.div`
   }
 
   .unknown-node {
-    color: var(--primary);
+    color: var(--primary-text);
   }
 
   .split-controls {

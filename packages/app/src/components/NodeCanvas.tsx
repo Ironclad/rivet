@@ -110,7 +110,7 @@ const styles = css`
   .selection-box {
     position: absolute;
     border: 2px dashed var(--primary);
-    background-color: rgba(255, 153, 0, 0.05); /* --primary color with 20% opacity */
+    background-color: var(--primary-5percent);
     z-index: 2000;
   }
 

@@ -14,6 +14,9 @@ import { TrivetRenderer } from './trivet/Trivet.js';
 import { ActionBar } from './ActionBar';
 import { DebuggerPanelRenderer } from './DebuggerConnectPanel';
 import { ChatViewerRenderer } from './ChatViewer';
+import { useRecoilValue } from 'recoil';
+import { themeState } from '../state/settings';
+import clsx from 'clsx';
 
 const styles = css`
   overflow: hidden;
@@ -25,13 +28,14 @@ setGlobalTheme({
 
 export const RivetApp: FC = () => {
   const { tryRunGraph, tryRunTests, tryAbortGraph, tryPauseGraph, tryResumeGraph } = useGraphExecutor();
+  const theme = useRecoilValue(themeState);
 
   useMenuCommands({
     onRunGraph: tryRunGraph,
   });
 
   return (
-    <div className="app" css={styles}>
+    <div className={clsx('app', theme ? `theme-${theme}` : 'theme-default')} css={styles}>
       <OverlayTabs />
       <ActionBar
         onRunGraph={tryRunGraph}
