@@ -18,8 +18,8 @@ const RAW_RUNTIME_STATE =
       "reference": "workspace:packages/app"\
     },\
     {\
-      "name": "@ironclad/rivet-app-executor",\
-      "reference": "workspace:packages/app-executor"\
+      "name": "@ironclad/rivet-cli",\
+      "reference": "workspace:packages/cli"\
     },\
     {\
       "name": "@ironclad/rivet-core",\
@@ -43,7 +43,7 @@ const RAW_RUNTIME_STATE =
   "fallbackExclusionList": [\
     ["@ironclad/rivet", ["workspace:."]],\
     ["@ironclad/rivet-app", ["workspace:packages/app"]],\
-    ["@ironclad/rivet-app-executor", ["workspace:packages/app-executor"]],\
+    ["@ironclad/rivet-cli", ["workspace:packages/cli"]],\
     ["@ironclad/rivet-core", ["workspace:packages/core"]],\
     ["@ironclad/rivet-node", ["workspace:packages/node"]],\
     ["@ironclad/trivet", ["workspace:packages/trivet"]],\
@@ -6731,17 +6731,17 @@ const RAW_RUNTIME_STATE =
         "linkType": "SOFT"\
       }]\
     ]],\
-    ["@ironclad/rivet-app-executor", [\
-      ["workspace:packages/app-executor", {\
-        "packageLocation": "./packages/app-executor/",\
+    ["@ironclad/rivet-cli", [\
+      ["workspace:packages/cli", {\
+        "packageLocation": "./packages/cli/",\
         "packageDependencies": [\
-          ["@ironclad/rivet-app-executor", "workspace:packages/app-executor"],\
+          ["@ironclad/rivet-cli", "workspace:packages/cli"],\
           ["@dqbd/tiktoken", "npm:1.0.7"],\
           ["@ironclad/rivet-node", "workspace:packages/node"],\
           ["@swc/core", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:1.3.71"],\
           ["@types/yargs", "npm:17.0.24"],\
           ["esbuild", "npm:0.18.17"],\
-          ["esbuild-plugin-copy", "virtual:f9fb339f6b948da33dabfb081667f976e95ec9e5a804a6ae723484b48758a3c6b4ae83d894110dcf0bece688b8e216d48353a446d7ad8694a8b19291cba8d0a8#npm:2.1.1"],\
+          ["esbuild-plugin-copy", "virtual:bbd91125264a56425cb84647dbdb3897ebf3aa2cdf8c02bff68076c228ddd912fb3bb6659c03fbe9e3e3898d8847f372ce79bb07d1395c306ae5ef774f9a7fa3#npm:2.1.1"],\
           ["pkg", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.8.1"],\
           ["ts-pattern", "npm:5.0.5"],\
           ["tsx", "npm:3.12.7"],\
@@ -12739,10 +12739,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:f9fb339f6b948da33dabfb081667f976e95ec9e5a804a6ae723484b48758a3c6b4ae83d894110dcf0bece688b8e216d48353a446d7ad8694a8b19291cba8d0a8#npm:2.1.1", {\
-        "packageLocation": "./.yarn/__virtual__/esbuild-plugin-copy-virtual-8da28c346c/0/cache/esbuild-plugin-copy-npm-2.1.1-ba42aff336-2ab73c447b.zip/node_modules/esbuild-plugin-copy/",\
+      ["virtual:bbd91125264a56425cb84647dbdb3897ebf3aa2cdf8c02bff68076c228ddd912fb3bb6659c03fbe9e3e3898d8847f372ce79bb07d1395c306ae5ef774f9a7fa3#npm:2.1.1", {\
+        "packageLocation": "./.yarn/__virtual__/esbuild-plugin-copy-virtual-6f76cbb49b/0/cache/esbuild-plugin-copy-npm-2.1.1-ba42aff336-2ab73c447b.zip/node_modules/esbuild-plugin-copy/",\
         "packageDependencies": [\
-          ["esbuild-plugin-copy", "virtual:f9fb339f6b948da33dabfb081667f976e95ec9e5a804a6ae723484b48758a3c6b4ae83d894110dcf0bece688b8e216d48353a446d7ad8694a8b19291cba8d0a8#npm:2.1.1"],\
+          ["esbuild-plugin-copy", "virtual:bbd91125264a56425cb84647dbdb3897ebf3aa2cdf8c02bff68076c228ddd912fb3bb6659c03fbe9e3e3898d8847f372ce79bb07d1395c306ae5ef774f9a7fa3#npm:2.1.1"],\
           ["@types/esbuild", null],\
           ["chalk", "npm:4.1.2"],\
           ["chokidar", "npm:3.5.3"],\

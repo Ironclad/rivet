@@ -9,7 +9,7 @@ async function runSidecar(abortSignal: AbortSignal) {
       await sidecarProcess.kill();
     }
 
-    const command = Command.sidecar('../../app-executor/dist/app-executor');
+    const command = Command.sidecar('../../cli/dist/cli');
 
     // TODO better API
     const proc = await command.spawn();

@@ -1,14 +1,14 @@
 {
-  "name": "@ironclad/rivet-app-executor",
+  "name": "@ironclad/rivet-cli",
   "repository": "https://github.com/ironclad/rivet",
   "version": "0.15.0",
   "bin": "./bin/executor-bundle.js",
   "scripts": {
     "bundle": "tsx bundle.esbuild.ts",
     "package": "pkg . --out-path dist --targets node18-linux-x64,node18-macos-x64,node18-win-x64",
-    "package-rename": "/bin/sh -c \"cp dist/rivet-app-executor-macos dist/app-executor-`rustc -Vv | grep host | cut -f2 -d' '`\"",
+    "package-rename": "/bin/sh -c \"cp dist/rivet-cli-macos dist/cli-`rustc -Vv | grep host | cut -f2 -d' '`\"",
     "build": "yarn bundle && yarn package && yarn package-rename",
-    "start": "yarn bundle && node bin/executor-bundle.js"
+    "rivet": "yarn bundle && node bin/executor-bundle.js"
   },
   "devDependencies": {
     "@ironclad/rivet-node": "workspace:^",

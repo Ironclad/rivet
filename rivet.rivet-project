@@ -404,7 +404,7 @@ data:
               Each instance of this node represents an individual output of the graph. The value passed into this node becomes part of the overall output of the graph. The `id` data of this specifies the name of the output.
 
 
-              #### Graph Input Node 
+              #### Graph Input Node
 
 
               Defines an input for the graph which can be passed in when the graph is called, or defines one of the input ports when the graph is a subgraph. The `id` data of this specifies the name of the input.
@@ -425,7 +425,7 @@ data:
               #### External Call Node
 
 
-              Calls a function in the external library that is executing Rivet. 
+              Calls a function in the external library that is executing Rivet.
 
 
               #### Code Node
@@ -1006,7 +1006,7 @@ data:
         '[Dl9zJxgRRBk7hQ43xWhZv]:text "Text"':
           data:
             text: >-
-              
+
 
               Please give me a a list of the top level exported names/functions/etc from this part of the file. Put the items in bullet points.
 
@@ -3110,7 +3110,7 @@ data:
               - "**/node_modules/**"
               - "**/src-tauri/**"
               - "**/dist/**"
-              - "**/app-executor/bin/**"
+              - "**/cli/bin/**"
               - "**/*.wasm"
             includeDirectories: false
             path: /Users/Shared/ironclad/rivet/packages
@@ -3555,7 +3555,7 @@ data:
         '[6P04DpTqBQMOYpBfJuurJ]:text "Text"':
           data:
             text: |-
-              
+
               SYSTEM_MESSAGE:
 
               You ran this command:
