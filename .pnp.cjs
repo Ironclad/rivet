@@ -6765,7 +6765,7 @@ const RAW_RUNTIME_STATE =
           ["@types/lodash-es", "npm:4.17.8"],\
           ["@types/yaml", "npm:1.9.7"],\
           ["@typescript-eslint/eslint-plugin", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:5.62.0"],\
-          ["autoevals", "npm:0.0.9"],\
+          ["autoevals", "portal:/Users/Shared/ironclad/github/autoevals::locator=%40ironclad%2Frivet%40workspace%3A."],\
           ["crypto-js", "npm:4.1.1"],\
           ["emittery", "npm:1.0.1"],\
           ["emittery-0-13", [\
@@ -6773,6 +6773,7 @@ const RAW_RUNTIME_STATE =
             "npm:0.13.1"\
           ]],\
           ["esbuild", "npm:0.18.17"],\
+          ["esbuild-plugin-wasm", "npm:1.1.0"],\
           ["eslint", "npm:8.46.0"],\
           ["eslint-plugin-import", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:2.28.0"],\
           ["eslint-plugin-n", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:16.0.1"],\
@@ -10156,10 +10157,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["autoevals", [\
-      ["npm:0.0.9", {\
-        "packageLocation": "./.yarn/cache/autoevals-npm-0.0.9-6fbea32f22-b325f573ba.zip/node_modules/autoevals/",\
+      ["portal:/Users/Shared/ironclad/github/autoevals::locator=%40ironclad%2Frivet%40workspace%3A.", {\
+        "packageLocation": "../github/autoevals/",\
         "packageDependencies": [\
-          ["autoevals", "npm:0.0.9"],\
+          ["autoevals", "portal:/Users/Shared/ironclad/github/autoevals::locator=%40ironclad%2Frivet%40workspace%3A."],\
           ["@types/node", "npm:20.4.10"],\
           ["esbuild", "npm:0.19.1"],\
           ["js-levenshtein", "npm:1.1.6"],\
@@ -10168,7 +10169,7 @@ const RAW_RUNTIME_STATE =
           ["openai", "npm:3.3.0"],\
           ["tsx", "npm:3.12.7"]\
         ],\
-        "linkType": "HARD"\
+        "linkType": "SOFT"\
       }]\
     ]],\
     ["autoprefixer", [\
@@ -12753,6 +12754,15 @@ const RAW_RUNTIME_STATE =
         "packagePeers": [\
           "@types/esbuild",\
           "esbuild"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["esbuild-plugin-wasm", [\
+      ["npm:1.1.0", {\
+        "packageLocation": "./.yarn/cache/esbuild-plugin-wasm-npm-1.1.0-2fa409b3be-aebe5a7cc5.zip/node_modules/esbuild-plugin-wasm/",\
+        "packageDependencies": [\
+          ["esbuild-plugin-wasm", "npm:1.1.0"]\
         ],\
         "linkType": "HARD"\
       }]\

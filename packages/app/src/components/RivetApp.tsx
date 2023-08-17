@@ -1,6 +1,6 @@
 import { GraphBuilder } from './GraphBuilder.js';
 import { OverlayTabs } from './OverlayTabs.js';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { css } from '@emotion/react';
 import { SettingsModal } from './SettingsModal.js';
 import { setGlobalTheme } from '@atlaskit/tokens';
@@ -17,6 +17,7 @@ import { ChatViewerRenderer } from './ChatViewer';
 import { useRecoilValue } from 'recoil';
 import { themeState } from '../state/settings';
 import clsx from 'clsx';
+import { setRecentProjectFiles } from '../utils/tauri';
 
 const styles = css`
   overflow: hidden;
@@ -33,6 +34,12 @@ export const RivetApp: FC = () => {
   useMenuCommands({
     onRunGraph: tryRunGraph,
   });
+
+  useEffect(() => {
+    (async () => {
+      setRecentProjectFiles(['a.rivet-project', 'b.rivet-project']);
+    })();
+  }, []);
 
   return (
     <div className={clsx('app', theme ? `theme-${theme}` : 'theme-default')} css={styles}>

@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "@ironclad/rivet-python"
+version = "0.1.0"
+description = "Python bindings for Rivet"
+authors = ["Andy Brenneke <andy.brenneke@ironcladhq.com>"]
+readme = "README.md"
+packages = [{include = "@ironclad"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pythonmonkey = "^0.2.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

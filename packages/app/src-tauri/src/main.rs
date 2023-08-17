@@ -3,13 +3,23 @@
     windows_subsystem = "windows"
 )]
 
-use tauri::{CustomMenuItem, Menu, MenuItem, Submenu};
+use tauri::{CustomMenuItem, Manager, Menu, MenuItem, Submenu};
+
+#[tauri::command]
+fn set_recent_project_files(recent_files: Vec<&str>, window: tauri::Window) {
+    let menu = window.menu_handle();
+    let item = menu.get_item("new_project");
+    dbg!(menu);
+}
 
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_persisted_scope::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
-        .invoke_handler(tauri::generate_handler![get_environment_variable])
+        .invoke_handler(tauri::generate_handler![
+            get_environment_variable,
+            set_recent_project_files
+        ])
         .menu(create_menu())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -67,39 +77,44 @@ fn create_menu() -> Menu {
         Menu::new().add_item(CustomMenuItem::new("Learn More", "Learn More")),
     );
 
+    let open_recent = Submenu::new("Open Recent", Menu::new());
+
+    let file_menu = Submenu::new(
+        "File",
+        Menu::new()
+            .add_item(
+                CustomMenuItem::new("new_project".to_string(), "New Project")
+                    .accelerator("CmdOrCtrl+N"),
+            )
+            .add_native_item(MenuItem::Separator)
+            .add_item(
+                CustomMenuItem::new("open_project".to_string(), "Open Project...")
+                    .accelerator("CmdOrCtrl+O"),
+            )
+            .add_submenu(open_recent)
+            .add_native_item(MenuItem::Separator)
+            .add_item(
+                CustomMenuItem::new("save_project".to_string(), "Save Project")
+                    .accelerator("CmdOrCtrl+S"),
+            )
+            .add_item(
+                CustomMenuItem::new("save_project_as".to_string(), "Save Project As...")
+                    .accelerator("CmdOrCtrl+Shift+S"),
+            )
+            .add_native_item(MenuItem::Separator)
+            .add_item(
+                CustomMenuItem::new("export_graph".to_string(), "Export Graph...")
+                    .accelerator("CmdOrCtrl+Shift+E"),
+            )
+            .add_item(
+                CustomMenuItem::new("import_graph".to_string(), "Import Graph...")
+                    .accelerator("CmdOrCtrl+Shift+I"),
+            ),
+    );
+
     Menu::new()
         .add_submenu(about_menu)
-        .add_submenu(Submenu::new(
-            "File",
-            Menu::new()
-                .add_item(
-                    CustomMenuItem::new("new_project".to_string(), "New Project")
-                        .accelerator("CmdOrCtrl+N"),
-                )
-                .add_native_item(MenuItem::Separator)
-                .add_item(
-                    CustomMenuItem::new("open_project".to_string(), "Open Project...")
-                        .accelerator("CmdOrCtrl+O"),
-                )
-                .add_native_item(MenuItem::Separator)
-                .add_item(
-                    CustomMenuItem::new("save_project".to_string(), "Save Project")
-                        .accelerator("CmdOrCtrl+S"),
-                )
-                .add_item(
-                    CustomMenuItem::new("save_project_as".to_string(), "Save Project As...")
-                        .accelerator("CmdOrCtrl+Shift+S"),
-                )
-                .add_native_item(MenuItem::Separator)
-                .add_item(
-                    CustomMenuItem::new("export_graph".to_string(), "Export Graph...")
-                        .accelerator("CmdOrCtrl+Shift+E"),
-                )
-                .add_item(
-                    CustomMenuItem::new("import_graph".to_string(), "Import Graph...")
-                        .accelerator("CmdOrCtrl+Shift+I"),
-                ),
-        ))
+        .add_submenu(file_menu)
         .add_submenu(edit_menu)
         .add_submenu(Submenu::new(
             "Run",

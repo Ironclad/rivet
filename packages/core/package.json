@@ -37,11 +37,11 @@
     "prepack": "yarn build && cp -r ../../LICENSE ../../README.md .",
     "publish": "yarn npm publish",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx ./src",
-    "test": "tsx --test test/**/*.ts"
+    "test": "tsx --test test/**/*.{ts,mts}"
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",
-    "autoevals": "^0.0.9",
+    "autoevals": "^0.0.10",
     "crypto-js": "^4.1.1",
     "emittery": "^1.0.1",
     "emittery-0-13": "npm:emittery@^0.13.1",
@@ -70,6 +70,7 @@
     "@types/yaml": "^1.9.7",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "esbuild": "^0.18.17",
+    "esbuild-plugin-wasm": "^1.1.0",
     "eslint": "^8.46.0",
     "eslint-plugin-import": "^2.28.0",
     "eslint-plugin-n": "^16.0.1",

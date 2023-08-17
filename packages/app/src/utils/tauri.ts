@@ -53,3 +53,7 @@ export async function fillMissingSettingsFromEnvironmentVariables(settings: Part
 
   return fullSettings;
 }
+
+export async function setRecentProjectFiles(recentFiles: string[]) {
+  await invoke('set_recent_project_files', { recentFiles });
+}

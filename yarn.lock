@@ -4055,11 +4055,12 @@ __metadata:
     "@types/lodash-es": "npm:^4.17.8"
     "@types/yaml": "npm:^1.9.7"
     "@typescript-eslint/eslint-plugin": "npm:^5.50.0"
-    autoevals: "npm:^0.0.9"
+    autoevals: "npm:^0.0.10"
     crypto-js: "npm:^4.1.1"
     emittery: "npm:^1.0.1"
     emittery-0-13: "npm:emittery@^0.13.1"
     esbuild: "npm:^0.18.17"
+    esbuild-plugin-wasm: "npm:^1.1.0"
     eslint: "npm:^8.46.0"
     eslint-plugin-import: "npm:^2.28.0"
     eslint-plugin-n: "npm:^16.0.1"
@@ -6596,9 +6597,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoevals@npm:^0.0.9":
-  version: 0.0.9
-  resolution: "autoevals@npm:0.0.9"
+"autoevals@portal:/Users/Shared/ironclad/github/autoevals::locator=%40ironclad%2Frivet%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "autoevals@portal:/Users/Shared/ironclad/github/autoevals::locator=%40ironclad%2Frivet%40workspace%3A."
   dependencies:
     "@types/node": "npm:^20.4.4"
     esbuild: "npm:^0.19.1"
@@ -6607,9 +6608,8 @@ __metadata:
     mustache: "npm:^4.2.0"
     openai: "npm:^3.3.0"
     tsx: "npm:^3.12.7"
-  checksum: b325f573bada4e1acb02d944991878f52b8e14cb409bec1d7f5018b38a6c519a383397c06419d7a4ae5ba1da764be039e5c9812cf0a78b581fd875142fb4f196
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "autoprefixer@npm:^10.4.12, autoprefixer@npm:^10.4.7":
   version: 10.4.14
@@ -8654,6 +8654,13 @@ __metadata:
   peerDependencies:
     esbuild: ">= 0.14.0"
   checksum: 2ab73c447b3f7ff7c71f345d944727fb3f4ed09bb979588e540318170cc447a8c9cf1877c245c956eb0cc58c0bcc2f017607341c77f1496d13fb666c997708db
+  languageName: node
+  linkType: hard
+
+"esbuild-plugin-wasm@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "esbuild-plugin-wasm@npm:1.1.0"
+  checksum: aebe5a7cc577d8352c54ffcce9059471cb7b558359727a3c63040d2ecdf1a59777cd093ce0d7e23735e28f3c3a147908d251af5c9c8aec9a8d26f839b248b324
   languageName: node
   linkType: hard
 

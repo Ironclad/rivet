@@ -14,5 +14,9 @@
   "rust-analyzer.linkedProjects": ["packages/app/src-tauri/Cargo.toml"],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
-  }
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "python.formatting.provider": "none"
 }
