@@ -26,7 +26,11 @@ export class EventSourceResponse extends Response {
         yield value;
       }
     } finally {
-      reader.releaseLock();
+      try {
+        reader.releaseLock();
+      } catch (err) {
+        console.error(`Failed to release lock on readable stream!`);
+      }
     }
   }
 }
