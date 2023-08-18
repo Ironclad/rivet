@@ -32,8 +32,14 @@ const config = {
       'classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
-        docs: {
+        pages: {
+          path: 'src/pages',
           routeBasePath: '/',
+          include: ['**/*.{js,jsx,ts,tsx,md,mdx}'],
+          exclude: ['**/_*.{js,jsx,ts,tsx,md,mdx}', '**/_*/**', '**/*.test.{js,jsx,ts,tsx}', '**/__tests__/**'],
+        },
+        docs: {
+          routeBasePath: '/docs/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/ironclad/rivet/tree/main/packages/docs',
         },
