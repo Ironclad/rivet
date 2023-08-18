@@ -1,5 +1,0 @@
----
-title: 'Chunk'
----
-
-# Chunk Node

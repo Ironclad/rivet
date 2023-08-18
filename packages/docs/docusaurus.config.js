@@ -8,7 +8,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'Rivet',
   tagline: 'IDE and Library for Creating AI Agents',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/favicon.png',
   noIndex: true, // Restrict search engine indexing. Remove once Rivet is publicly open-sourced.
 
   url: 'https://rivet.ironcladapp.com',
@@ -32,8 +32,14 @@ const config = {
       'classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
-        docs: {
+        pages: {
+          path: 'src/pages',
           routeBasePath: '/',
+          include: ['**/*.{js,jsx,ts,tsx,md,mdx}'],
+          exclude: ['**/_*.{js,jsx,ts,tsx,md,mdx}', '**/_*/**', '**/*.test.{js,jsx,ts,tsx}', '**/__tests__/**'],
+        },
+        docs: {
+          routeBasePath: '/docs/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/ironclad/rivet/tree/main/packages/docs',
         },
@@ -56,7 +62,7 @@ const config = {
         title: 'Rivet',
         logo: {
           alt: 'Rivet Logo',
-          src: 'img/Square150x150Logo.png',
+          src: 'img/logo.svg',
         },
         items: [
           {

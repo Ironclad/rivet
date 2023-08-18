@@ -634,12 +634,12 @@ export function getChatNodeMessages(inputs: Inputs) {
           .map((v) => ({ type: 'user', message: v, function_call: undefined }));
       }
 
-      const coercedMessage = coerceType(p, 'chat-message');
+      const coercedMessage = coerceTypeOptional(p, 'chat-message');
       if (coercedMessage != null) {
         return [coercedMessage];
       }
 
-      const coercedString = coerceType(p, 'string');
+      const coercedString = coerceTypeOptional(p, 'string');
       return coercedString != null
         ? [{ type: 'user', message: coerceType(p, 'string'), function_call: undefined }]
         : [];
