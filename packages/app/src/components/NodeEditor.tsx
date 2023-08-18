@@ -473,23 +473,25 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
             </div>
           </TabPanel>
           <TabPanel>
-            <div className="panel">
-              <Label htmlFor="">Tests</Label>
-              <Button appearance="link" onClick={handleAddTestGroup}>
-                Add Test Group
-              </Button>
-              <div className="test-groups">
-                {(selectedNode.tests ?? []).map((test, index) => (
-                  <div className="test-group" key={index}>
-                    <GraphSelector
-                      label="Evaluator Graph"
-                      value={test.evaluatorGraphId}
-                      onChange={(selected) => updateTestGroupGraph(test, selected as GraphId)}
-                      isReadonly={false}
-                      name={`evaluator-graph-${index}`}
-                    />
-                  </div>
-                ))}
+            <div className="panel-container">
+              <div className="panel">
+                <Label htmlFor="">Tests</Label>
+                <Button appearance="link" onClick={handleAddTestGroup}>
+                  Add Test Group
+                </Button>
+                <div className="test-groups">
+                  {(selectedNode.tests ?? []).map((test, index) => (
+                    <div className="test-group" key={index}>
+                      <GraphSelector
+                        label="Evaluator Graph"
+                        value={test.evaluatorGraphId}
+                        onChange={(selected) => updateTestGroupGraph(test, selected as GraphId)}
+                        isReadonly={false}
+                        name={`evaluator-graph-${index}`}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </TabPanel>
