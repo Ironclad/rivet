@@ -34,7 +34,7 @@ import clsx from 'clsx';
 import { projectState } from '../state/savedGraphs.js';
 import { useRecoilValue } from 'recoil';
 import { orderBy } from 'lodash-es';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { LazyCodeEditor, LazyTripleBarColorPicker } from './LazyComponents';
 import { ioProvider } from '../utils/globals';
 import Button from '@atlaskit/button';

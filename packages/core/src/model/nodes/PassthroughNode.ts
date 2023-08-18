@@ -1,6 +1,6 @@
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { dedent } from 'ts-dedent';
 

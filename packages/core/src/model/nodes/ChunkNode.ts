@@ -2,11 +2,11 @@ import { ChartNode, NodeId } from '../../model/NodeBase.js';
 import { NodeImpl, NodeUIData, nodeDefinition } from '../../model/NodeImpl.js';
 import { NodeInputDefinition, NodeOutputDefinition, PortId } from '../../model/NodeBase.js';
 import { DataValue } from '../../model/DataValue.js';
-import { SupportedModels, chunkStringByTokenCount } from '../../utils/tokenizer.js';
-import { nanoid } from 'nanoid';
+import { chunkStringByTokenCount, defaultTokenizer } from '../../utils/tokenizer.js';
+import { nanoid } from 'nanoid/non-secure';
 import { coerceType } from '../../utils/coerceType.js';
 import { dedent } from 'ts-dedent';
-import { openAiModelOptions, openaiModels } from '../../utils/openai.js';
+import { openAiModelOptions } from '../../utils/openai.js';
 import { EditorDefinition } from '../../index.js';
 
 export type ChunkNodeData = {
@@ -139,9 +139,9 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
     const overlapPercent = this.chartNode.data.overlap / 100;
 
     const chunked = chunkStringByTokenCount(
+      defaultTokenizer,
       input,
       this.chartNode.data.numTokensPerChunk,
-      openaiModels[this.chartNode.data.model as SupportedModels].tiktokenModel,
       overlapPercent,
     );
 

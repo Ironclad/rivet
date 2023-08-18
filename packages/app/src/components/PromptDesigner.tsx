@@ -39,7 +39,7 @@ import { Field } from '@atlaskit/form';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import Select from '@atlaskit/select';
 import Toggle from '@atlaskit/toggle';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { TauriNativeApi } from '../model/native/TauriNativeApi.js';
 import { settingsState } from '../state/settings.js';
 import { GraphSelector } from './DefaultNodeEditor.js';

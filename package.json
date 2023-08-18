@@ -37,7 +37,8 @@
     "zx": "^7.2.3"
   },
   "resolutions": {
-    "jest-mock": "^28.1.0"
+    "jest-mock": "^28.1.0",
+    "autoevals": "portal:/Users/Shared/ironclad/github/autoevals"
   },
   "volta": {
     "node": "20.4.0",

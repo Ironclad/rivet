@@ -1,39 +1,29 @@
-import { encoding_for_model, TiktokenModel } from '@dqbd/tiktoken';
-import { ChatCompletionRequestMessage, openaiModels } from './openai.js';
+import { FakeTokenizer } from './FakeTokenizer.js';
+import { ChatCompletionRequestMessage } from './openai.js';
 
-export const supportedModels = [...Object.keys(openaiModels)] as (keyof typeof openaiModels)[];
-export type SupportedModels = keyof typeof openaiModels;
+export type LLMCost = {
+  prompt: number;
+  completion: number;
+};
 
-export function getTokenCountForString(input: string, model: TiktokenModel): number {
-  const encoding = encoding_for_model(model);
-  const encoded = encoding.encode(input);
-  encoding.free();
-  return encoded.length;
+export interface LLMTokenizer {
+  getTokenCountForString(input: string): number;
+
+  getTokenCountForMessages(messages: ChatCompletionRequestMessage[]): number;
 }
 
-export function getTokenCountForMessages(messages: ChatCompletionRequestMessage[], model: TiktokenModel): number {
-  const encoding = encoding_for_model(model);
-
-  const tokenCount = messages.reduce((sum, message) => {
-    const encoded = encoding.encode(JSON.stringify(message));
-    return sum + encoded.length;
-  }, 0);
-
-  encoding.free();
-
-  return tokenCount;
-}
+export const defaultTokenizer = FakeTokenizer;
 
 export function chunkStringByTokenCount(
+  tokenizer: LLMTokenizer,
   input: string,
   targetTokenCount: number,
-  model: TiktokenModel,
   overlapPercent: number,
 ) {
   overlapPercent = Number.isNaN(overlapPercent) ? 0 : Math.max(0, Math.min(1, overlapPercent));
 
   const chunks: string[] = [];
-  const guess = Math.floor(targetTokenCount * (input.length / getTokenCountForString(input, model)));
+  const guess = Math.floor(targetTokenCount * (input.length / tokenizer.getTokenCountForString(input)));
   let remaining = input;
 
   while (remaining.length > 0) {
@@ -44,12 +34,11 @@ export function chunkStringByTokenCount(
   return chunks;
 }
 
-export function getCostForTokens(tokenCount: number, type: 'prompt' | 'completion', model: SupportedModels) {
-  const costPerThousand = openaiModels[model].cost[type];
-  return (tokenCount / 1000) * costPerThousand;
+export function getCostForTokens(tokenCount: number, type: 'prompt' | 'completion', cost: LLMCost) {
+  return (tokenCount / 1000) * cost.prompt;
 }
 
-export function getCostForPrompt(messages: ChatCompletionRequestMessage[], model: SupportedModels) {
-  const tokenCount = getTokenCountForMessages(messages, openaiModels[model].tiktokenModel);
-  return getCostForTokens(tokenCount, 'prompt', model);
+export function getCostForPrompt(tokenizer: LLMTokenizer, messages: ChatCompletionRequestMessage[], cost: LLMCost) {
+  const tokenCount = tokenizer.getTokenCountForMessages(messages);
+  return getCostForTokens(tokenCount, 'prompt', cost);
 }

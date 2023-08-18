@@ -1,5 +1,5 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { EditorDefinition, Inputs, NodeBodySpec, Outputs, coerceType } from '../../index.js';
 import { mapValues } from 'lodash-es';

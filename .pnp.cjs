@@ -6763,9 +6763,10 @@ const RAW_RUNTIME_STATE =
           ["@types/jsonpath-plus", "npm:5.0.2"],\
           ["@types/lodash", "npm:4.14.196"],\
           ["@types/lodash-es", "npm:4.17.8"],\
+          ["@types/whatwg-fetch", "npm:0.0.33"],\
           ["@types/yaml", "npm:1.9.7"],\
           ["@typescript-eslint/eslint-plugin", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:5.62.0"],\
-          ["autoevals", "npm:0.0.9"],\
+          ["autoevals", "portal:/Users/Shared/ironclad/github/autoevals::locator=%40ironclad%2Frivet%40workspace%3A."],\
           ["crypto-js", "npm:4.1.1"],\
           ["emittery", "npm:1.0.1"],\
           ["emittery-0-13", [\
@@ -6773,10 +6774,12 @@ const RAW_RUNTIME_STATE =
             "npm:0.13.1"\
           ]],\
           ["esbuild", "npm:0.18.17"],\
+          ["esbuild-plugin-wasm", "npm:1.1.0"],\
           ["eslint", "npm:8.46.0"],\
           ["eslint-plugin-import", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:2.28.0"],\
           ["eslint-plugin-n", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:16.0.1"],\
           ["eslint-plugin-promise", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:6.1.1"],\
+          ["gpt-tokenizer", "npm:2.1.1"],\
           ["jsonpath-plus", "npm:7.2.0"],\
           ["lodash", "npm:4.17.21"],\
           ["lodash-es", "npm:4.17.21"],\
@@ -6800,6 +6803,7 @@ const RAW_RUNTIME_STATE =
           ["tsx", "npm:3.12.7"],\
           ["type-fest", "npm:4.0.0"],\
           ["typescript", "patch:typescript@npm%3A5.1.6#optional!builtin<compat/typescript>::version=5.1.6&hash=5da071"],\
+          ["whatwg-fetch", "npm:3.6.17"],\
           ["yaml", "npm:2.3.1"]\
         ],\
         "linkType": "SOFT"\
@@ -8822,6 +8826,25 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@types/whatwg-fetch", [\
+      ["npm:0.0.33", {\
+        "packageLocation": "./.yarn/cache/@types-whatwg-fetch-npm-0.0.33-6130610c0a-7191607437.zip/node_modules/@types/whatwg-fetch/",\
+        "packageDependencies": [\
+          ["@types/whatwg-fetch", "npm:0.0.33"],\
+          ["@types/whatwg-streams", "npm:0.0.7"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@types/whatwg-streams", [\
+      ["npm:0.0.7", {\
+        "packageLocation": "./.yarn/cache/@types-whatwg-streams-npm-0.0.7-dbc55a36b5-85e664d160.zip/node_modules/@types/whatwg-streams/",\
+        "packageDependencies": [\
+          ["@types/whatwg-streams", "npm:0.0.7"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@types/which", [\
       ["npm:3.0.0", {\
         "packageLocation": "./.yarn/cache/@types-which-npm-3.0.0-3d41ceeb57-601467cc37.zip/node_modules/@types/which/",\
@@ -10156,10 +10179,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["autoevals", [\
-      ["npm:0.0.9", {\
-        "packageLocation": "./.yarn/cache/autoevals-npm-0.0.9-6fbea32f22-b325f573ba.zip/node_modules/autoevals/",\
+      ["portal:/Users/Shared/ironclad/github/autoevals::locator=%40ironclad%2Frivet%40workspace%3A.", {\
+        "packageLocation": "../github/autoevals/",\
         "packageDependencies": [\
-          ["autoevals", "npm:0.0.9"],\
+          ["autoevals", "portal:/Users/Shared/ironclad/github/autoevals::locator=%40ironclad%2Frivet%40workspace%3A."],\
           ["@types/node", "npm:20.4.10"],\
           ["esbuild", "npm:0.19.1"],\
           ["js-levenshtein", "npm:1.1.6"],\
@@ -10168,7 +10191,7 @@ const RAW_RUNTIME_STATE =
           ["openai", "npm:3.3.0"],\
           ["tsx", "npm:3.12.7"]\
         ],\
-        "linkType": "HARD"\
+        "linkType": "SOFT"\
       }]\
     ]],\
     ["autoprefixer", [\
@@ -12757,6 +12780,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["esbuild-plugin-wasm", [\
+      ["npm:1.1.0", {\
+        "packageLocation": "./.yarn/cache/esbuild-plugin-wasm-npm-1.1.0-2fa409b3be-aebe5a7cc5.zip/node_modules/esbuild-plugin-wasm/",\
+        "packageDependencies": [\
+          ["esbuild-plugin-wasm", "npm:1.1.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["escalade", [\
       ["npm:3.1.1", {\
         "packageLocation": "./.yarn/cache/escalade-npm-3.1.1-e02da076aa-37f3535f99.zip/node_modules/escalade/",\
@@ -14773,6 +14805,16 @@ const RAW_RUNTIME_STATE =
           ["p-cancelable", "npm:1.1.0"],\
           ["to-readable-stream", "npm:1.0.0"],\
           ["url-parse-lax", "npm:3.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["gpt-tokenizer", [\
+      ["npm:2.1.1", {\
+        "packageLocation": "./.yarn/cache/gpt-tokenizer-npm-2.1.1-0c2e857fb9-2fc1ab811b.zip/node_modules/gpt-tokenizer/",\
+        "packageDependencies": [\
+          ["gpt-tokenizer", "npm:2.1.1"],\
+          ["rfc4648", "npm:1.5.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -20690,6 +20732,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["rfc4648", [\
+      ["npm:1.5.2", {\
+        "packageLocation": "./.yarn/cache/rfc4648-npm-1.5.2-b5df48e84c-96ef88d246.zip/node_modules/rfc4648/",\
+        "packageDependencies": [\
+          ["rfc4648", "npm:1.5.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["rimraf", [\
       ["npm:3.0.2", {\
         "packageLocation": "./.yarn/cache/rimraf-npm-3.0.2-2cb7dac69a-b786c9ad52.zip/node_modules/rimraf/",\
@@ -23467,6 +23518,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/websocket-extensions-npm-0.1.4-be839a9e56-19457f99cd.zip/node_modules/websocket-extensions/",\
         "packageDependencies": [\
           ["websocket-extensions", "npm:0.1.4"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["whatwg-fetch", [\
+      ["npm:3.6.17", {\
+        "packageLocation": "./.yarn/cache/whatwg-fetch-npm-3.6.17-1115589b78-59de97afaa.zip/node_modules/whatwg-fetch/",\
+        "packageDependencies": [\
+          ["whatwg-fetch", "npm:3.6.17"]\
         ],\
         "linkType": "HARD"\
       }]\

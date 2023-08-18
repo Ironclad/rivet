@@ -2,7 +2,7 @@ import { FC, useCallback, useMemo } from 'react';
 import { TestCaseTable } from './TestCaseTable';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { GraphSelector } from '../DefaultNodeEditor';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { savedGraphsState } from '../../state/savedGraphs';
 import { keyBy } from 'lodash-es';
