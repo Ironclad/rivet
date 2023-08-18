@@ -73,8 +73,8 @@
   --primary-5percent: rgba(255, 136, 98, 0.05);
 
   /* Tertiary colors */
-  --tertiary: #ffaa80;
-  --tertiary-light: #ffb399;
+  --tertiary: #444;
+  --tertiary-light: #4444446e;
 
   /* Accent colors */
   --accent: #ff704d;
@@ -113,8 +113,8 @@
   --primary-5percent: rgba(165, 95, 255, 0.05);
 
   /* Tertiary colors */
-  --tertiary: #bfa5ff;
-  --tertiary-light: #d6c2ff;
+  --tertiary: #444;
+  --tertiary-light: #4444446e;
 
   /* Accent colors */
   --accent: #c774ff;
