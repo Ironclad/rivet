@@ -1,13 +1,8 @@
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { ChatMessage, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue.js';
-import {
-  getCostForPrompt,
-  getCostForTokens,
-  getTokenCountForMessages,
-  getTokenCountForString,
-} from '../../utils/tokenizer.js';
+import { defaultTokenizer, getCostForPrompt, getCostForTokens } from '../../utils/tokenizer.js';
 import { addWarning } from '../../utils/outputs.js';
 import {
   ChatCompletionOptions,
@@ -419,7 +414,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
     const openaiModel = openaiModels[model as keyof typeof openaiModels];
 
-    const tokenCount = getTokenCountForMessages(completionMessages, openaiModel.tiktokenModel);
+    const tokenCount = defaultTokenizer.getTokenCountForMessages(completionMessages);
 
     if (tokenCount >= openaiModel.maxTokens) {
       throw new Error(
@@ -530,18 +525,22 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             throw new Error('No response from OpenAI');
           }
 
-          const requestTokenCount = getTokenCountForMessages(completionMessages, openaiModel.tiktokenModel);
+          const requestTokenCount = defaultTokenizer.getTokenCountForMessages(completionMessages);
           output['requestTokens' as PortId] = { type: 'number', value: requestTokenCount * numberOfChoices };
 
           const responseTokenCount = responseChoicesParts
-            .map((choiceParts) => getTokenCountForString(choiceParts.join(), openaiModel.tiktokenModel))
+            .map((choiceParts) => defaultTokenizer.getTokenCountForString(choiceParts.join()))
             .reduce((a, b) => a + b, 0);
 
           output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
 
           const cost =
-            getCostForPrompt(completionMessages, model as keyof typeof openaiModels) +
-            getCostForTokens(responseTokenCount, 'completion', model as keyof typeof openaiModels);
+            getCostForPrompt(
+              defaultTokenizer,
+              completionMessages,
+              openaiModels[model as keyof typeof openaiModels].cost,
+            ) +
+            getCostForTokens(responseTokenCount, 'completion', openaiModels[model as keyof typeof openaiModels].cost);
 
           output['cost' as PortId] = { type: 'number', value: cost };
 

@@ -26,7 +26,7 @@ import { useThrottleFn } from 'ahooks';
 import { produce } from 'immer';
 import { graphMetadataState } from '../state/graph.js';
 import { useViewportBounds } from '../hooks/useViewportBounds.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { useGlobalHotkey } from '../hooks/useGlobalHotkey.js';
 import { useWireDragScrolling } from '../hooks/useWireDragScrolling';
 

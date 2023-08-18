@@ -15,13 +15,13 @@ import {
   addWarning,
   coerceType,
   coerceTypeOptional,
+  defaultTokenizer,
   expectTypeOptional,
   getError,
   getScalarTypeOf,
-  getTokenCountForString,
   isArrayDataValue,
   nodeDefinition,
-} from '@ironclad/rivet-core';
+} from '../../../index.js';
 import {
   AnthropicModels,
   ChatCompletionOptions,
@@ -29,7 +29,7 @@ import {
   anthropicModels,
   streamChatCompletions,
 } from '../anthropic.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
 import retry from 'p-retry';
 import { match } from 'ts-pattern';
@@ -296,7 +296,7 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
 
     let { maxTokens } = this.data;
 
-    const tokenCount = getTokenCountForString(prompt, anthropicModels[model].tiktokenModel);
+    const tokenCount = defaultTokenizer.getTokenCountForString(prompt);
 
     if (tokenCount >= anthropicModels[model].maxTokens) {
       throw new Error(
@@ -368,13 +368,10 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
             throw new Error('No response from Anthropic');
           }
 
-          const requestTokenCount = getTokenCountForString(prompt, anthropicModels[model].tiktokenModel);
+          const requestTokenCount = defaultTokenizer.getTokenCountForString(prompt);
           output['requestTokens' as PortId] = { type: 'number', value: requestTokenCount };
 
-          const responseTokenCount = getTokenCountForString(
-            responseParts.join(''),
-            anthropicModels[model].tiktokenModel,
-          );
+          const responseTokenCount = defaultTokenizer.getTokenCountForString(responseParts.join(''));
           output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
 
           // TODO

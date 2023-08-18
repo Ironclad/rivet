@@ -1,6 +1,6 @@
 import { useSetRecoilState } from 'recoil';
 import { loadedProjectState, projectState } from '../state/savedGraphs.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { Project, ProjectId, emptyNodeGraph } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph.js';
 import { trivetState } from '../state/trivet';

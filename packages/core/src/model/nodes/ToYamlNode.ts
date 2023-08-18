@@ -1,5 +1,5 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { NodeDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 // @ts-ignore
 import yaml from 'yaml';

@@ -1,15 +1,14 @@
 import { ChartNode, NodeId, PortId, NodeInputDefinition, NodeOutputDefinition } from '../../model/NodeBase.js';
 import { NodeImpl, NodeUIData, nodeDefinition } from '../../model/NodeImpl.js';
-import { SupportedModels, getTokenCountForMessages } from '../../utils/tokenizer.js';
-import { nanoid } from 'nanoid';
-import { EditorDefinition, Inputs, NodeBodySpec, Outputs, expectType } from '../../index.js';
+import { nanoid } from 'nanoid/non-secure';
+import { EditorDefinition, Inputs, NodeBodySpec, Outputs, defaultTokenizer, expectType } from '../../index.js';
 import { ChatCompletionRequestMessage, openAiModelOptions, openaiModels } from '../../utils/openai.js';
 import { dedent } from 'ts-dedent';
 
 export type TrimChatMessagesNodeData = {
   maxTokenCount: number;
   removeFromBeginning: boolean;
-  model: SupportedModels;
+  model: keyof typeof openaiModels;
 };
 
 export type TrimChatMessagesNode = ChartNode<'trimChatMessages', TrimChatMessagesNodeData>;
@@ -101,16 +100,14 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
     const maxTokenCount = this.chartNode.data.maxTokenCount;
     const removeFromBeginning = this.chartNode.data.removeFromBeginning;
 
-    const model = 'gpt-3.5-turbo' as SupportedModels; // You can change this to a configurable model if needed
-    const tiktokenModel = openaiModels[model].tiktokenModel;
+    const model = 'gpt-3.5-turbo' as keyof typeof openaiModels;
 
     const trimmedMessages = [...input];
 
-    let tokenCount = getTokenCountForMessages(
+    let tokenCount = defaultTokenizer.getTokenCountForMessages(
       trimmedMessages.map(
         (message): ChatCompletionRequestMessage => ({ content: message.message, role: message.type }),
       ),
-      tiktokenModel,
     );
 
     while (tokenCount > maxTokenCount) {
@@ -119,7 +116,7 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
       } else {
         trimmedMessages.pop();
       }
-      tokenCount = getTokenCountForMessages(
+      tokenCount = defaultTokenizer.getTokenCountForMessages(
         trimmedMessages.map(
           (message): ChatCompletionRequestMessage => ({
             content: message.message,
@@ -127,7 +124,6 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
             function_call: message.function_call,
           }),
         ),
-        tiktokenModel,
       );
     }
 

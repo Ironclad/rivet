@@ -215,14 +215,14 @@ var require_eventemitter3 = __commonJS({
 // ../../.yarn/cache/retry-npm-0.13.1-89eb100ab6-e26ac69380.zip/node_modules/retry/lib/retry_operation.js
 var require_retry_operation = __commonJS({
   "../../.yarn/cache/retry-npm-0.13.1-89eb100ab6-e26ac69380.zip/node_modules/retry/lib/retry_operation.js"(exports2, module2) {
-    function RetryOperation(timeouts, options3) {
-      if (typeof options3 === "boolean") {
-        options3 = { forever: options3 };
+    function RetryOperation(timeouts, options2) {
+      if (typeof options2 === "boolean") {
+        options2 = { forever: options2 };
       }
       this._originalTimeouts = JSON.parse(JSON.stringify(timeouts));
       this._timeouts = timeouts;
-      this._options = options3 || {};
-      this._maxRetryTime = options3 && options3.maxRetryTime || Infinity;
+      this._options = options2 || {};
+      this._maxRetryTime = options2 && options2.maxRetryTime || Infinity;
       this._fn = null;
       this._errors = [];
       this._attempts = 1;
@@ -351,17 +351,17 @@ var require_retry_operation = __commonJS({
 var require_retry = __commonJS({
   "../../.yarn/cache/retry-npm-0.13.1-89eb100ab6-e26ac69380.zip/node_modules/retry/lib/retry.js"(exports2) {
     var RetryOperation = require_retry_operation();
-    exports2.operation = function(options3) {
-      var timeouts = exports2.timeouts(options3);
+    exports2.operation = function(options2) {
+      var timeouts = exports2.timeouts(options2);
       return new RetryOperation(timeouts, {
-        forever: options3 && (options3.forever || options3.retries === Infinity),
-        unref: options3 && options3.unref,
-        maxRetryTime: options3 && options3.maxRetryTime
+        forever: options2 && (options2.forever || options2.retries === Infinity),
+        unref: options2 && options2.unref,
+        maxRetryTime: options2 && options2.maxRetryTime
       });
     };
-    exports2.timeouts = function(options3) {
-      if (options3 instanceof Array) {
-        return [].concat(options3);
+    exports2.timeouts = function(options2) {
+      if (options2 instanceof Array) {
+        return [].concat(options2);
       }
       var opts = {
         retries: 10,
@@ -370,8 +370,8 @@ var require_retry = __commonJS({
         maxTimeout: Infinity,
         randomize: false
       };
-      for (var key in options3) {
-        opts[key] = options3[key];
+      for (var key in options2) {
+        opts[key] = options2[key];
       }
       if (opts.minTimeout > opts.maxTimeout) {
         throw new Error("minTimeout is greater than maxTimeout");
@@ -380,7 +380,7 @@ var require_retry = __commonJS({
       for (var i2 = 0; i2 < opts.retries; i2++) {
         timeouts.push(this.createTimeout(i2, opts));
       }
-      if (options3 && options3.forever && !timeouts.length) {
+      if (options2 && options2.forever && !timeouts.length) {
         timeouts.push(this.createTimeout(i2, opts));
       }
       timeouts.sort(function(a2, b2) {
@@ -394,10 +394,10 @@ var require_retry = __commonJS({
       timeout = Math.min(timeout, opts.maxTimeout);
       return timeout;
     };
-    exports2.wrap = function(obj, options3, methods) {
-      if (options3 instanceof Array) {
-        methods = options3;
-        options3 = null;
+    exports2.wrap = function(obj, options2, methods) {
+      if (options2 instanceof Array) {
+        methods = options2;
+        options2 = null;
       }
       if (!methods) {
         methods = [];
@@ -411,7 +411,7 @@ var require_retry = __commonJS({
         var method = methods[i2];
         var original = obj[method];
         obj[method] = function retryWrapper(original2) {
-          var op = exports2.operation(options3);
+          var op = exports2.operation(options2);
           var args = Array.prototype.slice.call(arguments, 1);
           var callback = args.pop();
           args.push(function(err) {
@@ -427,7 +427,7 @@ var require_retry = __commonJS({
             original2.apply(obj, args);
           });
         }.bind(obj, original);
-        obj[method].options = options3;
+        obj[method].options = options2;
       }
     };
   }
@@ -459,39 +459,39 @@ var require_core = __commonJS({
       }
     })(exports2, function() {
       var CryptoJS = CryptoJS || function(Math2, undefined2) {
-        var crypto4;
+        var crypto2;
         if (typeof window !== "undefined" && window.crypto) {
-          crypto4 = window.crypto;
+          crypto2 = window.crypto;
         }
         if (typeof self !== "undefined" && self.crypto) {
-          crypto4 = self.crypto;
+          crypto2 = self.crypto;
         }
         if (typeof globalThis !== "undefined" && globalThis.crypto) {
-          crypto4 = globalThis.crypto;
+          crypto2 = globalThis.crypto;
         }
-        if (!crypto4 && typeof window !== "undefined" && window.msCrypto) {
-          crypto4 = window.msCrypto;
+        if (!crypto2 && typeof window !== "undefined" && window.msCrypto) {
+          crypto2 = window.msCrypto;
         }
-        if (!crypto4 && typeof global !== "undefined" && global.crypto) {
-          crypto4 = global.crypto;
+        if (!crypto2 && typeof global !== "undefined" && global.crypto) {
+          crypto2 = global.crypto;
         }
-        if (!crypto4 && typeof require === "function") {
+        if (!crypto2 && typeof require === "function") {
           try {
-            crypto4 = require_crypto();
+            crypto2 = require_crypto();
           } catch (err) {
           }
         }
         var cryptoSecureRandomInt = function() {
-          if (crypto4) {
-            if (typeof crypto4.getRandomValues === "function") {
+          if (crypto2) {
+            if (typeof crypto2.getRandomValues === "function") {
               try {
-                return crypto4.getRandomValues(new Uint32Array(1))[0];
+                return crypto2.getRandomValues(new Uint32Array(1))[0];
               } catch (err) {
               }
             }
-            if (typeof crypto4.randomBytes === "function") {
+            if (typeof crypto2.randomBytes === "function") {
               try {
-                return crypto4.randomBytes(4).readInt32LE();
+                return crypto2.randomBytes(4).readInt32LE();
               } catch (err) {
               }
             }
@@ -1719,7 +1719,7 @@ var require_md5 = __commonJS({
             T2[i2] = Math2.abs(Math2.sin(i2 + 1)) * 4294967296 | 0;
           }
         })();
-        var MD53 = C_algo.MD5 = Hasher.extend({
+        var MD52 = C_algo.MD5 = Hasher.extend({
           _doReset: function() {
             this._hash = new WordArray.init([
               1732584193,
@@ -1866,8 +1866,8 @@ var require_md5 = __commonJS({
           var n2 = a2 + (c2 ^ (b2 | ~d2)) + x2 + t2;
           return (n2 << s2 | n2 >>> 32 - s2) + b2;
         }
-        C2.MD5 = Hasher._createHelper(MD53);
-        C2.HmacMD5 = Hasher._createHmacHelper(MD53);
+        C2.MD5 = Hasher._createHelper(MD52);
+        C2.HmacMD5 = Hasher._createHmacHelper(MD52);
       })(Math);
       return CryptoJS.MD5;
     });
@@ -1893,7 +1893,7 @@ var require_sha1 = __commonJS({
         var Hasher = C_lib.Hasher;
         var C_algo = C2.algo;
         var W2 = [];
-        var SHA13 = C_algo.SHA1 = Hasher.extend({
+        var SHA12 = C_algo.SHA1 = Hasher.extend({
           _doReset: function() {
             this._hash = new WordArray.init([
               1732584193,
@@ -1957,8 +1957,8 @@ var require_sha1 = __commonJS({
             return clone;
           }
         });
-        C2.SHA1 = Hasher._createHelper(SHA13);
-        C2.HmacSHA1 = Hasher._createHmacHelper(SHA13);
+        C2.SHA1 = Hasher._createHelper(SHA12);
+        C2.HmacSHA1 = Hasher._createHmacHelper(SHA12);
       })();
       return CryptoJS.SHA1;
     });
@@ -2012,7 +2012,7 @@ var require_sha256 = __commonJS({
           }
         })();
         var W2 = [];
-        var SHA2563 = C_algo.SHA256 = Hasher.extend({
+        var SHA2562 = C_algo.SHA256 = Hasher.extend({
           _doReset: function() {
             this._hash = new WordArray.init(H2.slice(0));
           },
@@ -2078,8 +2078,8 @@ var require_sha256 = __commonJS({
             return clone;
           }
         });
-        C2.SHA256 = Hasher._createHelper(SHA2563);
-        C2.HmacSHA256 = Hasher._createHmacHelper(SHA2563);
+        C2.SHA256 = Hasher._createHelper(SHA2562);
+        C2.HmacSHA256 = Hasher._createHmacHelper(SHA2562);
       })(Math);
       return CryptoJS.SHA256;
     });
@@ -2103,8 +2103,8 @@ var require_sha224 = __commonJS({
         var C_lib = C2.lib;
         var WordArray = C_lib.WordArray;
         var C_algo = C2.algo;
-        var SHA2563 = C_algo.SHA256;
-        var SHA224 = C_algo.SHA224 = SHA2563.extend({
+        var SHA2562 = C_algo.SHA256;
+        var SHA224 = C_algo.SHA224 = SHA2562.extend({
           _doReset: function() {
             this._hash = new WordArray.init([
               3238371032,
@@ -2118,13 +2118,13 @@ var require_sha224 = __commonJS({
             ]);
           },
           _doFinalize: function() {
-            var hash = SHA2563._doFinalize.call(this);
+            var hash = SHA2562._doFinalize.call(this);
             hash.sigBytes -= 4;
             return hash;
           }
         });
-        C2.SHA224 = SHA2563._createHelper(SHA224);
-        C2.HmacSHA224 = SHA2563._createHmacHelper(SHA224);
+        C2.SHA224 = SHA2562._createHelper(SHA224);
+        C2.HmacSHA224 = SHA2562._createHmacHelper(SHA224);
       })();
       return CryptoJS.SHA224;
     });
@@ -2242,7 +2242,7 @@ var require_sha512 = __commonJS({
             W2[i2] = X64Word_create();
           }
         })();
-        var SHA5123 = C_algo.SHA512 = Hasher.extend({
+        var SHA5122 = C_algo.SHA512 = Hasher.extend({
           _doReset: function() {
             this._hash = new X64WordArray.init([
               new X64Word.init(1779033703, 4089235720),
@@ -2405,8 +2405,8 @@ var require_sha512 = __commonJS({
           },
           blockSize: 1024 / 32
         });
-        C2.SHA512 = Hasher._createHelper(SHA5123);
-        C2.HmacSHA512 = Hasher._createHmacHelper(SHA5123);
+        C2.SHA512 = Hasher._createHelper(SHA5122);
+        C2.HmacSHA512 = Hasher._createHmacHelper(SHA5122);
       })();
       return CryptoJS.SHA512;
     });
@@ -2431,8 +2431,8 @@ var require_sha384 = __commonJS({
         var X64Word = C_x64.Word;
         var X64WordArray = C_x64.WordArray;
         var C_algo = C2.algo;
-        var SHA5123 = C_algo.SHA512;
-        var SHA384 = C_algo.SHA384 = SHA5123.extend({
+        var SHA5122 = C_algo.SHA512;
+        var SHA384 = C_algo.SHA384 = SHA5122.extend({
           _doReset: function() {
             this._hash = new X64WordArray.init([
               new X64Word.init(3418070365, 3238371032),
@@ -2446,13 +2446,13 @@ var require_sha384 = __commonJS({
             ]);
           },
           _doFinalize: function() {
-            var hash = SHA5123._doFinalize.call(this);
+            var hash = SHA5122._doFinalize.call(this);
             hash.sigBytes -= 16;
             return hash;
           }
         });
-        C2.SHA384 = SHA5123._createHelper(SHA384);
-        C2.HmacSHA384 = SHA5123._createHmacHelper(SHA384);
+        C2.SHA384 = SHA5122._createHelper(SHA384);
+        C2.HmacSHA384 = SHA5122._createHmacHelper(SHA384);
       })();
       return CryptoJS.SHA384;
     });
@@ -3257,7 +3257,7 @@ var require_pbkdf2 = __commonJS({
         var Base = C_lib.Base;
         var WordArray = C_lib.WordArray;
         var C_algo = C2.algo;
-        var SHA13 = C_algo.SHA1;
+        var SHA12 = C_algo.SHA1;
         var HMAC = C_algo.HMAC;
         var PBKDF2 = C_algo.PBKDF2 = Base.extend({
           /**
@@ -3269,7 +3269,7 @@ var require_pbkdf2 = __commonJS({
            */
           cfg: Base.extend({
             keySize: 128 / 32,
-            hasher: SHA13,
+            hasher: SHA12,
             iterations: 1
           }),
           /**
@@ -3355,7 +3355,7 @@ var require_evpkdf = __commonJS({
         var Base = C_lib.Base;
         var WordArray = C_lib.WordArray;
         var C_algo = C2.algo;
-        var MD53 = C_algo.MD5;
+        var MD52 = C_algo.MD5;
         var EvpKDF = C_algo.EvpKDF = Base.extend({
           /**
            * Configuration options.
@@ -3366,7 +3366,7 @@ var require_evpkdf = __commonJS({
            */
           cfg: Base.extend({
             keySize: 128 / 32,
-            hasher: MD53,
+            hasher: MD52,
             iterations: 1
           }),
           /**
@@ -5854,9 +5854,9 @@ var require_safe_stable_stringify = __commonJS({
       }
       return res;
     }
-    function getCircularValueOption(options3) {
-      if (hasOwnProperty14.call(options3, "circularValue")) {
-        const circularValue = options3.circularValue;
+    function getCircularValueOption(options2) {
+      if (hasOwnProperty14.call(options2, "circularValue")) {
+        const circularValue = options2.circularValue;
         if (typeof circularValue === "string") {
           return `"${circularValue}"`;
         }
@@ -5874,20 +5874,20 @@ var require_safe_stable_stringify = __commonJS({
       }
       return '"[Circular]"';
     }
-    function getBooleanOption(options3, key) {
+    function getBooleanOption(options2, key) {
       let value;
-      if (hasOwnProperty14.call(options3, key)) {
-        value = options3[key];
+      if (hasOwnProperty14.call(options2, key)) {
+        value = options2[key];
         if (typeof value !== "boolean") {
           throw new TypeError(`The "${key}" argument must be of type boolean`);
         }
       }
       return value === void 0 ? true : value;
     }
-    function getPositiveIntegerOption(options3, key) {
+    function getPositiveIntegerOption(options2, key) {
       let value;
-      if (hasOwnProperty14.call(options3, key)) {
-        value = options3[key];
+      if (hasOwnProperty14.call(options2, key)) {
+        value = options2[key];
         if (typeof value !== "number") {
           throw new TypeError(`The "${key}" argument must be of type number`);
         }
@@ -5915,9 +5915,9 @@ var require_safe_stable_stringify = __commonJS({
       }
       return replacerSet;
     }
-    function getStrictOption(options3) {
-      if (hasOwnProperty14.call(options3, "strict")) {
-        const value = options3.strict;
+    function getStrictOption(options2) {
+      if (hasOwnProperty14.call(options2, "strict")) {
+        const value = options2.strict;
         if (typeof value !== "boolean") {
           throw new TypeError('The "strict" argument must be of type boolean');
         }
@@ -5931,22 +5931,22 @@ var require_safe_stable_stringify = __commonJS({
         }
       }
     }
-    function configure2(options3) {
-      options3 = { ...options3 };
-      const fail = getStrictOption(options3);
+    function configure2(options2) {
+      options2 = { ...options2 };
+      const fail = getStrictOption(options2);
       if (fail) {
-        if (options3.bigint === void 0) {
-          options3.bigint = false;
+        if (options2.bigint === void 0) {
+          options2.bigint = false;
         }
-        if (!("circularValue" in options3)) {
-          options3.circularValue = Error;
+        if (!("circularValue" in options2)) {
+          options2.circularValue = Error;
         }
       }
-      const circularValue = getCircularValueOption(options3);
-      const bigint = getBooleanOption(options3, "bigint");
-      const deterministic = getBooleanOption(options3, "deterministic");
-      const maximumDepth = getPositiveIntegerOption(options3, "maximumDepth");
-      const maximumBreadth = getPositiveIntegerOption(options3, "maximumBreadth");
+      const circularValue = getCircularValueOption(options2);
+      const bigint = getBooleanOption(options2, "bigint");
+      const deterministic = getBooleanOption(options2, "deterministic");
+      const maximumDepth = getPositiveIntegerOption(options2, "maximumDepth");
+      const maximumBreadth = getPositiveIntegerOption(options2, "maximumBreadth");
       function stringifyFnReplacer(key, parent2, stack, replacer, spacer, indentation) {
         let value = parent2[key];
         if (typeof value === "object" && value !== null && typeof value.toJSON === "function") {
@@ -6001,8 +6001,8 @@ ${originalIndentation}`;
               stack.pop();
               return `[${res}]`;
             }
-            let keys4 = Object.keys(value);
-            const keyLength = keys4.length;
+            let keys3 = Object.keys(value);
+            const keyLength = keys3.length;
             if (keyLength === 0) {
               return "{}";
             }
@@ -6019,11 +6019,11 @@ ${indentation}`;
             }
             const maximumPropertiesToStringify = Math.min(keyLength, maximumBreadth);
             if (deterministic && !isTypedArrayWithEntries(value)) {
-              keys4 = insertSort(keys4);
+              keys3 = insertSort(keys3);
             }
             stack.push(value);
             for (let i2 = 0; i2 < maximumPropertiesToStringify; i2++) {
-              const key2 = keys4[i2];
+              const key2 = keys3[i2];
               const tmp = stringifyFnReplacer(key2, value, stack, replacer, spacer, indentation);
               if (tmp !== void 0) {
                 res += `${separator}${strEscape(key2)}:${whitespace}${tmp}`;
@@ -6199,8 +6199,8 @@ ${originalIndentation}`;
               stack.pop();
               return `[${res2}]`;
             }
-            let keys4 = Object.keys(value);
-            const keyLength = keys4.length;
+            let keys3 = Object.keys(value);
+            const keyLength = keys3.length;
             if (keyLength === 0) {
               return "{}";
             }
@@ -6215,16 +6215,16 @@ ${indentation}`;
             let maximumPropertiesToStringify = Math.min(keyLength, maximumBreadth);
             if (isTypedArrayWithEntries(value)) {
               res += stringifyTypedArray(value, join, maximumBreadth);
-              keys4 = keys4.slice(value.length);
+              keys3 = keys3.slice(value.length);
               maximumPropertiesToStringify -= value.length;
               separator = join;
             }
             if (deterministic) {
-              keys4 = insertSort(keys4);
+              keys3 = insertSort(keys3);
             }
             stack.push(value);
             for (let i2 = 0; i2 < maximumPropertiesToStringify; i2++) {
-              const key2 = keys4[i2];
+              const key2 = keys3[i2];
               const tmp = stringifyIndent(key2, value[key2], stack, spacer, indentation);
               if (tmp !== void 0) {
                 res += `${separator}${strEscape(key2)}: ${tmp}`;
@@ -6303,8 +6303,8 @@ ${originalIndentation}`;
               stack.pop();
               return `[${res}]`;
             }
-            let keys4 = Object.keys(value);
-            const keyLength = keys4.length;
+            let keys3 = Object.keys(value);
+            const keyLength = keys3.length;
             if (keyLength === 0) {
               return "{}";
             }
@@ -6315,16 +6315,16 @@ ${originalIndentation}`;
             let maximumPropertiesToStringify = Math.min(keyLength, maximumBreadth);
             if (isTypedArrayWithEntries(value)) {
               res += stringifyTypedArray(value, ",", maximumBreadth);
-              keys4 = keys4.slice(value.length);
+              keys3 = keys3.slice(value.length);
               maximumPropertiesToStringify -= value.length;
               separator = ",";
             }
             if (deterministic) {
-              keys4 = insertSort(keys4);
+              keys3 = insertSort(keys3);
             }
             stack.push(value);
             for (let i2 = 0; i2 < maximumPropertiesToStringify; i2++) {
-              const key2 = keys4[i2];
+              const key2 = keys3[i2];
               const tmp = stringifySimple(key2, value[key2], stack);
               if (tmp !== void 0) {
                 res += `${separator}${strEscape(key2)}:${tmp}`;
@@ -6607,12 +6607,12 @@ var require_InterceptorManager = __commonJS({
     function InterceptorManager() {
       this.handlers = [];
     }
-    InterceptorManager.prototype.use = function use(fulfilled, rejected, options3) {
+    InterceptorManager.prototype.use = function use(fulfilled, rejected, options2) {
       this.handlers.push({
         fulfilled,
         rejected,
-        synchronous: options3 ? options3.synchronous : false,
-        runWhen: options3 ? options3.runWhen : null
+        synchronous: options2 ? options2.synchronous : false,
+        runWhen: options2 ? options2.runWhen : null
       });
       return this.handlers.length - 1;
     };
@@ -7403,18 +7403,18 @@ var require_validator = __commonJS({
         return validator ? validator(value, opt, opts) : true;
       };
     };
-    function assertOptions(options3, schema5, allowUnknown) {
-      if (typeof options3 !== "object") {
+    function assertOptions(options2, schema5, allowUnknown) {
+      if (typeof options2 !== "object") {
         throw new TypeError("options must be an object");
       }
-      var keys4 = Object.keys(options3);
-      var i2 = keys4.length;
+      var keys3 = Object.keys(options2);
+      var i2 = keys3.length;
       while (i2-- > 0) {
-        var opt = keys4[i2];
+        var opt = keys3[i2];
         var validator = schema5[opt];
         if (validator) {
-          var value = options3[opt];
-          var result = value === void 0 || validator(value, opt, options3);
+          var value = options2[opt];
+          var result = value === void 0 || validator(value, opt, options2);
           if (result !== true) {
             throw new TypeError("option " + opt + " must be " + result);
           }
@@ -7901,7 +7901,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        cancelFineTune: (fineTuneId, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        cancelFineTune: (fineTuneId, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("cancelFineTune", "fineTuneId", fineTuneId);
           const localVarPath = `/fine-tunes/{fine_tune_id}/cancel`.replace(`{${"fine_tune_id"}}`, encodeURIComponent(String(fineTuneId)));
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -7909,12 +7909,12 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           return {
             url: common_1.toPathString(localVarUrlObj),
             options: localVarRequestOptions
@@ -7928,7 +7928,7 @@ var require_api = __commonJS({
          * @deprecated
          * @throws {RequiredError}
          */
-        createAnswer: (createAnswerRequest, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        createAnswer: (createAnswerRequest, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("createAnswer", "createAnswerRequest", createAnswerRequest);
           const localVarPath = `/answers`;
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -7936,13 +7936,13 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           localVarHeaderParameter["Content-Type"] = "application/json";
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           localVarRequestOptions.data = common_1.serializeDataIfNeeded(createAnswerRequest, localVarRequestOptions, configuration);
           return {
             url: common_1.toPathString(localVarUrlObj),
@@ -7956,7 +7956,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createChatCompletion: (createChatCompletionRequest, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        createChatCompletion: (createChatCompletionRequest, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("createChatCompletion", "createChatCompletionRequest", createChatCompletionRequest);
           const localVarPath = `/chat/completions`;
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -7964,13 +7964,13 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           localVarHeaderParameter["Content-Type"] = "application/json";
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           localVarRequestOptions.data = common_1.serializeDataIfNeeded(createChatCompletionRequest, localVarRequestOptions, configuration);
           return {
             url: common_1.toPathString(localVarUrlObj),
@@ -7985,7 +7985,7 @@ var require_api = __commonJS({
          * @deprecated
          * @throws {RequiredError}
          */
-        createClassification: (createClassificationRequest, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        createClassification: (createClassificationRequest, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("createClassification", "createClassificationRequest", createClassificationRequest);
           const localVarPath = `/classifications`;
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -7993,13 +7993,13 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           localVarHeaderParameter["Content-Type"] = "application/json";
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           localVarRequestOptions.data = common_1.serializeDataIfNeeded(createClassificationRequest, localVarRequestOptions, configuration);
           return {
             url: common_1.toPathString(localVarUrlObj),
@@ -8013,7 +8013,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createCompletion: (createCompletionRequest, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        createCompletion: (createCompletionRequest, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("createCompletion", "createCompletionRequest", createCompletionRequest);
           const localVarPath = `/completions`;
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -8021,13 +8021,13 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           localVarHeaderParameter["Content-Type"] = "application/json";
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           localVarRequestOptions.data = common_1.serializeDataIfNeeded(createCompletionRequest, localVarRequestOptions, configuration);
           return {
             url: common_1.toPathString(localVarUrlObj),
@@ -8041,7 +8041,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createEdit: (createEditRequest, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        createEdit: (createEditRequest, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("createEdit", "createEditRequest", createEditRequest);
           const localVarPath = `/edits`;
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -8049,13 +8049,13 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           localVarHeaderParameter["Content-Type"] = "application/json";
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           localVarRequestOptions.data = common_1.serializeDataIfNeeded(createEditRequest, localVarRequestOptions, configuration);
           return {
             url: common_1.toPathString(localVarUrlObj),
@@ -8069,7 +8069,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createEmbedding: (createEmbeddingRequest, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        createEmbedding: (createEmbeddingRequest, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("createEmbedding", "createEmbeddingRequest", createEmbeddingRequest);
           const localVarPath = `/embeddings`;
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -8077,13 +8077,13 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           localVarHeaderParameter["Content-Type"] = "application/json";
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           localVarRequestOptions.data = common_1.serializeDataIfNeeded(createEmbeddingRequest, localVarRequestOptions, configuration);
           return {
             url: common_1.toPathString(localVarUrlObj),
@@ -8098,7 +8098,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFile: (file, purpose, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        createFile: (file, purpose, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("createFile", "file", file);
           common_1.assertParamExists("createFile", "purpose", purpose);
           const localVarPath = `/files`;
@@ -8107,7 +8107,7 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           const localVarFormParams = new (configuration && configuration.formDataCtor || FormData)();
@@ -8120,7 +8120,7 @@ var require_api = __commonJS({
           localVarHeaderParameter["Content-Type"] = "multipart/form-data";
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), localVarFormParams.getHeaders()), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), localVarFormParams.getHeaders()), headersFromBaseOptions), options2.headers);
           localVarRequestOptions.data = localVarFormParams;
           return {
             url: common_1.toPathString(localVarUrlObj),
@@ -8134,7 +8134,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFineTune: (createFineTuneRequest, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        createFineTune: (createFineTuneRequest, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("createFineTune", "createFineTuneRequest", createFineTuneRequest);
           const localVarPath = `/fine-tunes`;
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -8142,13 +8142,13 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           localVarHeaderParameter["Content-Type"] = "application/json";
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           localVarRequestOptions.data = common_1.serializeDataIfNeeded(createFineTuneRequest, localVarRequestOptions, configuration);
           return {
             url: common_1.toPathString(localVarUrlObj),
@@ -8162,7 +8162,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createImage: (createImageRequest, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        createImage: (createImageRequest, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("createImage", "createImageRequest", createImageRequest);
           const localVarPath = `/images/generations`;
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -8170,13 +8170,13 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           localVarHeaderParameter["Content-Type"] = "application/json";
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           localVarRequestOptions.data = common_1.serializeDataIfNeeded(createImageRequest, localVarRequestOptions, configuration);
           return {
             url: common_1.toPathString(localVarUrlObj),
@@ -8196,7 +8196,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createImageEdit: (image, prompt, mask, n2, size, responseFormat, user, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        createImageEdit: (image, prompt, mask, n2, size, responseFormat, user, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("createImageEdit", "image", image);
           common_1.assertParamExists("createImageEdit", "prompt", prompt);
           const localVarPath = `/images/edits`;
@@ -8205,7 +8205,7 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           const localVarFormParams = new (configuration && configuration.formDataCtor || FormData)();
@@ -8233,7 +8233,7 @@ var require_api = __commonJS({
           localVarHeaderParameter["Content-Type"] = "multipart/form-data";
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), localVarFormParams.getHeaders()), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), localVarFormParams.getHeaders()), headersFromBaseOptions), options2.headers);
           localVarRequestOptions.data = localVarFormParams;
           return {
             url: common_1.toPathString(localVarUrlObj),
@@ -8251,7 +8251,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createImageVariation: (image, n2, size, responseFormat, user, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        createImageVariation: (image, n2, size, responseFormat, user, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("createImageVariation", "image", image);
           const localVarPath = `/images/variations`;
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -8259,7 +8259,7 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           const localVarFormParams = new (configuration && configuration.formDataCtor || FormData)();
@@ -8281,7 +8281,7 @@ var require_api = __commonJS({
           localVarHeaderParameter["Content-Type"] = "multipart/form-data";
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), localVarFormParams.getHeaders()), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), localVarFormParams.getHeaders()), headersFromBaseOptions), options2.headers);
           localVarRequestOptions.data = localVarFormParams;
           return {
             url: common_1.toPathString(localVarUrlObj),
@@ -8295,7 +8295,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createModeration: (createModerationRequest, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        createModeration: (createModerationRequest, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("createModeration", "createModerationRequest", createModerationRequest);
           const localVarPath = `/moderations`;
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -8303,13 +8303,13 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           localVarHeaderParameter["Content-Type"] = "application/json";
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           localVarRequestOptions.data = common_1.serializeDataIfNeeded(createModerationRequest, localVarRequestOptions, configuration);
           return {
             url: common_1.toPathString(localVarUrlObj),
@@ -8325,7 +8325,7 @@ var require_api = __commonJS({
          * @deprecated
          * @throws {RequiredError}
          */
-        createSearch: (engineId, createSearchRequest, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        createSearch: (engineId, createSearchRequest, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("createSearch", "engineId", engineId);
           common_1.assertParamExists("createSearch", "createSearchRequest", createSearchRequest);
           const localVarPath = `/engines/{engine_id}/search`.replace(`{${"engine_id"}}`, encodeURIComponent(String(engineId)));
@@ -8334,13 +8334,13 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           localVarHeaderParameter["Content-Type"] = "application/json";
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           localVarRequestOptions.data = common_1.serializeDataIfNeeded(createSearchRequest, localVarRequestOptions, configuration);
           return {
             url: common_1.toPathString(localVarUrlObj),
@@ -8359,7 +8359,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createTranscription: (file, model, prompt, responseFormat, temperature, language, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        createTranscription: (file, model, prompt, responseFormat, temperature, language, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("createTranscription", "file", file);
           common_1.assertParamExists("createTranscription", "model", model);
           const localVarPath = `/audio/transcriptions`;
@@ -8368,7 +8368,7 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           const localVarFormParams = new (configuration && configuration.formDataCtor || FormData)();
@@ -8393,7 +8393,7 @@ var require_api = __commonJS({
           localVarHeaderParameter["Content-Type"] = "multipart/form-data";
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), localVarFormParams.getHeaders()), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), localVarFormParams.getHeaders()), headersFromBaseOptions), options2.headers);
           localVarRequestOptions.data = localVarFormParams;
           return {
             url: common_1.toPathString(localVarUrlObj),
@@ -8411,7 +8411,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createTranslation: (file, model, prompt, responseFormat, temperature, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        createTranslation: (file, model, prompt, responseFormat, temperature, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("createTranslation", "file", file);
           common_1.assertParamExists("createTranslation", "model", model);
           const localVarPath = `/audio/translations`;
@@ -8420,7 +8420,7 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "POST" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           const localVarFormParams = new (configuration && configuration.formDataCtor || FormData)();
@@ -8442,7 +8442,7 @@ var require_api = __commonJS({
           localVarHeaderParameter["Content-Type"] = "multipart/form-data";
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), localVarFormParams.getHeaders()), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), localVarFormParams.getHeaders()), headersFromBaseOptions), options2.headers);
           localVarRequestOptions.data = localVarFormParams;
           return {
             url: common_1.toPathString(localVarUrlObj),
@@ -8456,7 +8456,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteFile: (fileId, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        deleteFile: (fileId, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("deleteFile", "fileId", fileId);
           const localVarPath = `/files/{file_id}`.replace(`{${"file_id"}}`, encodeURIComponent(String(fileId)));
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -8464,12 +8464,12 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "DELETE" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "DELETE" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           return {
             url: common_1.toPathString(localVarUrlObj),
             options: localVarRequestOptions
@@ -8482,7 +8482,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteModel: (model, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        deleteModel: (model, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("deleteModel", "model", model);
           const localVarPath = `/models/{model}`.replace(`{${"model"}}`, encodeURIComponent(String(model)));
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -8490,12 +8490,12 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "DELETE" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "DELETE" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           return {
             url: common_1.toPathString(localVarUrlObj),
             options: localVarRequestOptions
@@ -8508,7 +8508,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        downloadFile: (fileId, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        downloadFile: (fileId, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("downloadFile", "fileId", fileId);
           const localVarPath = `/files/{file_id}/content`.replace(`{${"file_id"}}`, encodeURIComponent(String(fileId)));
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -8516,12 +8516,12 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           return {
             url: common_1.toPathString(localVarUrlObj),
             options: localVarRequestOptions
@@ -8534,19 +8534,19 @@ var require_api = __commonJS({
          * @deprecated
          * @throws {RequiredError}
          */
-        listEngines: (options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        listEngines: (options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           const localVarPath = `/engines`;
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
           let baseOptions;
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           return {
             url: common_1.toPathString(localVarUrlObj),
             options: localVarRequestOptions
@@ -8558,19 +8558,19 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listFiles: (options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        listFiles: (options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           const localVarPath = `/files`;
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
           let baseOptions;
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           return {
             url: common_1.toPathString(localVarUrlObj),
             options: localVarRequestOptions
@@ -8584,7 +8584,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listFineTuneEvents: (fineTuneId, stream, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        listFineTuneEvents: (fineTuneId, stream, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("listFineTuneEvents", "fineTuneId", fineTuneId);
           const localVarPath = `/fine-tunes/{fine_tune_id}/events`.replace(`{${"fine_tune_id"}}`, encodeURIComponent(String(fineTuneId)));
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -8592,7 +8592,7 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           if (stream !== void 0) {
@@ -8600,7 +8600,7 @@ var require_api = __commonJS({
           }
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           return {
             url: common_1.toPathString(localVarUrlObj),
             options: localVarRequestOptions
@@ -8612,19 +8612,19 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listFineTunes: (options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        listFineTunes: (options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           const localVarPath = `/fine-tunes`;
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
           let baseOptions;
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           return {
             url: common_1.toPathString(localVarUrlObj),
             options: localVarRequestOptions
@@ -8636,19 +8636,19 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listModels: (options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        listModels: (options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           const localVarPath = `/models`;
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
           let baseOptions;
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           return {
             url: common_1.toPathString(localVarUrlObj),
             options: localVarRequestOptions
@@ -8662,7 +8662,7 @@ var require_api = __commonJS({
          * @deprecated
          * @throws {RequiredError}
          */
-        retrieveEngine: (engineId, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        retrieveEngine: (engineId, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("retrieveEngine", "engineId", engineId);
           const localVarPath = `/engines/{engine_id}`.replace(`{${"engine_id"}}`, encodeURIComponent(String(engineId)));
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -8670,12 +8670,12 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           return {
             url: common_1.toPathString(localVarUrlObj),
             options: localVarRequestOptions
@@ -8688,7 +8688,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieveFile: (fileId, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        retrieveFile: (fileId, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("retrieveFile", "fileId", fileId);
           const localVarPath = `/files/{file_id}`.replace(`{${"file_id"}}`, encodeURIComponent(String(fileId)));
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -8696,12 +8696,12 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           return {
             url: common_1.toPathString(localVarUrlObj),
             options: localVarRequestOptions
@@ -8714,7 +8714,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieveFineTune: (fineTuneId, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        retrieveFineTune: (fineTuneId, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("retrieveFineTune", "fineTuneId", fineTuneId);
           const localVarPath = `/fine-tunes/{fine_tune_id}`.replace(`{${"fine_tune_id"}}`, encodeURIComponent(String(fineTuneId)));
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -8722,12 +8722,12 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           return {
             url: common_1.toPathString(localVarUrlObj),
             options: localVarRequestOptions
@@ -8740,7 +8740,7 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieveModel: (model, options3 = {}) => __awaiter(this, void 0, void 0, function* () {
+        retrieveModel: (model, options2 = {}) => __awaiter(this, void 0, void 0, function* () {
           common_1.assertParamExists("retrieveModel", "model", model);
           const localVarPath = `/models/{model}`.replace(`{${"model"}}`, encodeURIComponent(String(model)));
           const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -8748,12 +8748,12 @@ var require_api = __commonJS({
           if (configuration) {
             baseOptions = configuration.baseOptions;
           }
-          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options3);
+          const localVarRequestOptions = Object.assign(Object.assign({ method: "GET" }, baseOptions), options2);
           const localVarHeaderParameter = {};
           const localVarQueryParameter = {};
           common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
           let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options3.headers);
+          localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options2.headers);
           return {
             url: common_1.toPathString(localVarUrlObj),
             options: localVarRequestOptions
@@ -8771,9 +8771,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        cancelFineTune(fineTuneId, options3) {
+        cancelFineTune(fineTuneId, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.cancelFineTune(fineTuneId, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.cancelFineTune(fineTuneId, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -8785,9 +8785,9 @@ var require_api = __commonJS({
          * @deprecated
          * @throws {RequiredError}
          */
-        createAnswer(createAnswerRequest, options3) {
+        createAnswer(createAnswerRequest, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.createAnswer(createAnswerRequest, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.createAnswer(createAnswerRequest, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -8798,9 +8798,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createChatCompletion(createChatCompletionRequest, options3) {
+        createChatCompletion(createChatCompletionRequest, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.createChatCompletion(createChatCompletionRequest, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.createChatCompletion(createChatCompletionRequest, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -8812,9 +8812,9 @@ var require_api = __commonJS({
          * @deprecated
          * @throws {RequiredError}
          */
-        createClassification(createClassificationRequest, options3) {
+        createClassification(createClassificationRequest, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.createClassification(createClassificationRequest, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.createClassification(createClassificationRequest, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -8825,9 +8825,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createCompletion(createCompletionRequest, options3) {
+        createCompletion(createCompletionRequest, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.createCompletion(createCompletionRequest, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.createCompletion(createCompletionRequest, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -8838,9 +8838,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createEdit(createEditRequest, options3) {
+        createEdit(createEditRequest, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.createEdit(createEditRequest, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.createEdit(createEditRequest, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -8851,9 +8851,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createEmbedding(createEmbeddingRequest, options3) {
+        createEmbedding(createEmbeddingRequest, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.createEmbedding(createEmbeddingRequest, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.createEmbedding(createEmbeddingRequest, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -8865,9 +8865,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFile(file, purpose, options3) {
+        createFile(file, purpose, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.createFile(file, purpose, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.createFile(file, purpose, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -8878,9 +8878,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFineTune(createFineTuneRequest, options3) {
+        createFineTune(createFineTuneRequest, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.createFineTune(createFineTuneRequest, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.createFineTune(createFineTuneRequest, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -8891,9 +8891,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createImage(createImageRequest, options3) {
+        createImage(createImageRequest, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.createImage(createImageRequest, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.createImage(createImageRequest, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -8910,9 +8910,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createImageEdit(image, prompt, mask, n2, size, responseFormat, user, options3) {
+        createImageEdit(image, prompt, mask, n2, size, responseFormat, user, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.createImageEdit(image, prompt, mask, n2, size, responseFormat, user, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.createImageEdit(image, prompt, mask, n2, size, responseFormat, user, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -8927,9 +8927,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createImageVariation(image, n2, size, responseFormat, user, options3) {
+        createImageVariation(image, n2, size, responseFormat, user, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.createImageVariation(image, n2, size, responseFormat, user, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.createImageVariation(image, n2, size, responseFormat, user, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -8940,9 +8940,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createModeration(createModerationRequest, options3) {
+        createModeration(createModerationRequest, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.createModeration(createModerationRequest, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.createModeration(createModerationRequest, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -8955,9 +8955,9 @@ var require_api = __commonJS({
          * @deprecated
          * @throws {RequiredError}
          */
-        createSearch(engineId, createSearchRequest, options3) {
+        createSearch(engineId, createSearchRequest, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.createSearch(engineId, createSearchRequest, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.createSearch(engineId, createSearchRequest, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -8973,9 +8973,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createTranscription(file, model, prompt, responseFormat, temperature, language, options3) {
+        createTranscription(file, model, prompt, responseFormat, temperature, language, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.createTranscription(file, model, prompt, responseFormat, temperature, language, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.createTranscription(file, model, prompt, responseFormat, temperature, language, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -8990,9 +8990,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createTranslation(file, model, prompt, responseFormat, temperature, options3) {
+        createTranslation(file, model, prompt, responseFormat, temperature, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.createTranslation(file, model, prompt, responseFormat, temperature, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.createTranslation(file, model, prompt, responseFormat, temperature, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -9003,9 +9003,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteFile(fileId, options3) {
+        deleteFile(fileId, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.deleteFile(fileId, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.deleteFile(fileId, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -9016,9 +9016,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteModel(model, options3) {
+        deleteModel(model, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.deleteModel(model, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.deleteModel(model, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -9029,9 +9029,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        downloadFile(fileId, options3) {
+        downloadFile(fileId, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.downloadFile(fileId, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.downloadFile(fileId, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -9042,9 +9042,9 @@ var require_api = __commonJS({
          * @deprecated
          * @throws {RequiredError}
          */
-        listEngines(options3) {
+        listEngines(options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.listEngines(options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.listEngines(options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -9054,9 +9054,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listFiles(options3) {
+        listFiles(options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.listFiles(options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.listFiles(options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -9068,9 +9068,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listFineTuneEvents(fineTuneId, stream, options3) {
+        listFineTuneEvents(fineTuneId, stream, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.listFineTuneEvents(fineTuneId, stream, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.listFineTuneEvents(fineTuneId, stream, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -9080,9 +9080,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listFineTunes(options3) {
+        listFineTunes(options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.listFineTunes(options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.listFineTunes(options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -9092,9 +9092,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listModels(options3) {
+        listModels(options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.listModels(options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.listModels(options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -9106,9 +9106,9 @@ var require_api = __commonJS({
          * @deprecated
          * @throws {RequiredError}
          */
-        retrieveEngine(engineId, options3) {
+        retrieveEngine(engineId, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.retrieveEngine(engineId, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.retrieveEngine(engineId, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -9119,9 +9119,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieveFile(fileId, options3) {
+        retrieveFile(fileId, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.retrieveFile(fileId, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.retrieveFile(fileId, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -9132,9 +9132,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieveFineTune(fineTuneId, options3) {
+        retrieveFineTune(fineTuneId, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.retrieveFineTune(fineTuneId, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.retrieveFineTune(fineTuneId, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         },
@@ -9145,9 +9145,9 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieveModel(model, options3) {
+        retrieveModel(model, options2) {
           return __awaiter(this, void 0, void 0, function* () {
-            const localVarAxiosArgs = yield localVarAxiosParamCreator.retrieveModel(model, options3);
+            const localVarAxiosArgs = yield localVarAxiosParamCreator.retrieveModel(model, options2);
             return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
           });
         }
@@ -9163,8 +9163,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        cancelFineTune(fineTuneId, options3) {
-          return localVarFp.cancelFineTune(fineTuneId, options3).then((request) => request(axios, basePath));
+        cancelFineTune(fineTuneId, options2) {
+          return localVarFp.cancelFineTune(fineTuneId, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9174,8 +9174,8 @@ var require_api = __commonJS({
          * @deprecated
          * @throws {RequiredError}
          */
-        createAnswer(createAnswerRequest, options3) {
-          return localVarFp.createAnswer(createAnswerRequest, options3).then((request) => request(axios, basePath));
+        createAnswer(createAnswerRequest, options2) {
+          return localVarFp.createAnswer(createAnswerRequest, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9184,8 +9184,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createChatCompletion(createChatCompletionRequest, options3) {
-          return localVarFp.createChatCompletion(createChatCompletionRequest, options3).then((request) => request(axios, basePath));
+        createChatCompletion(createChatCompletionRequest, options2) {
+          return localVarFp.createChatCompletion(createChatCompletionRequest, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9195,8 +9195,8 @@ var require_api = __commonJS({
          * @deprecated
          * @throws {RequiredError}
          */
-        createClassification(createClassificationRequest, options3) {
-          return localVarFp.createClassification(createClassificationRequest, options3).then((request) => request(axios, basePath));
+        createClassification(createClassificationRequest, options2) {
+          return localVarFp.createClassification(createClassificationRequest, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9205,8 +9205,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createCompletion(createCompletionRequest, options3) {
-          return localVarFp.createCompletion(createCompletionRequest, options3).then((request) => request(axios, basePath));
+        createCompletion(createCompletionRequest, options2) {
+          return localVarFp.createCompletion(createCompletionRequest, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9215,8 +9215,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createEdit(createEditRequest, options3) {
-          return localVarFp.createEdit(createEditRequest, options3).then((request) => request(axios, basePath));
+        createEdit(createEditRequest, options2) {
+          return localVarFp.createEdit(createEditRequest, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9225,8 +9225,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createEmbedding(createEmbeddingRequest, options3) {
-          return localVarFp.createEmbedding(createEmbeddingRequest, options3).then((request) => request(axios, basePath));
+        createEmbedding(createEmbeddingRequest, options2) {
+          return localVarFp.createEmbedding(createEmbeddingRequest, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9236,8 +9236,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFile(file, purpose, options3) {
-          return localVarFp.createFile(file, purpose, options3).then((request) => request(axios, basePath));
+        createFile(file, purpose, options2) {
+          return localVarFp.createFile(file, purpose, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9246,8 +9246,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFineTune(createFineTuneRequest, options3) {
-          return localVarFp.createFineTune(createFineTuneRequest, options3).then((request) => request(axios, basePath));
+        createFineTune(createFineTuneRequest, options2) {
+          return localVarFp.createFineTune(createFineTuneRequest, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9256,8 +9256,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createImage(createImageRequest, options3) {
-          return localVarFp.createImage(createImageRequest, options3).then((request) => request(axios, basePath));
+        createImage(createImageRequest, options2) {
+          return localVarFp.createImage(createImageRequest, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9272,8 +9272,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createImageEdit(image, prompt, mask, n2, size, responseFormat, user, options3) {
-          return localVarFp.createImageEdit(image, prompt, mask, n2, size, responseFormat, user, options3).then((request) => request(axios, basePath));
+        createImageEdit(image, prompt, mask, n2, size, responseFormat, user, options2) {
+          return localVarFp.createImageEdit(image, prompt, mask, n2, size, responseFormat, user, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9286,8 +9286,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createImageVariation(image, n2, size, responseFormat, user, options3) {
-          return localVarFp.createImageVariation(image, n2, size, responseFormat, user, options3).then((request) => request(axios, basePath));
+        createImageVariation(image, n2, size, responseFormat, user, options2) {
+          return localVarFp.createImageVariation(image, n2, size, responseFormat, user, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9296,8 +9296,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createModeration(createModerationRequest, options3) {
-          return localVarFp.createModeration(createModerationRequest, options3).then((request) => request(axios, basePath));
+        createModeration(createModerationRequest, options2) {
+          return localVarFp.createModeration(createModerationRequest, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9308,8 +9308,8 @@ var require_api = __commonJS({
          * @deprecated
          * @throws {RequiredError}
          */
-        createSearch(engineId, createSearchRequest, options3) {
-          return localVarFp.createSearch(engineId, createSearchRequest, options3).then((request) => request(axios, basePath));
+        createSearch(engineId, createSearchRequest, options2) {
+          return localVarFp.createSearch(engineId, createSearchRequest, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9323,8 +9323,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createTranscription(file, model, prompt, responseFormat, temperature, language, options3) {
-          return localVarFp.createTranscription(file, model, prompt, responseFormat, temperature, language, options3).then((request) => request(axios, basePath));
+        createTranscription(file, model, prompt, responseFormat, temperature, language, options2) {
+          return localVarFp.createTranscription(file, model, prompt, responseFormat, temperature, language, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9337,8 +9337,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createTranslation(file, model, prompt, responseFormat, temperature, options3) {
-          return localVarFp.createTranslation(file, model, prompt, responseFormat, temperature, options3).then((request) => request(axios, basePath));
+        createTranslation(file, model, prompt, responseFormat, temperature, options2) {
+          return localVarFp.createTranslation(file, model, prompt, responseFormat, temperature, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9347,8 +9347,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteFile(fileId, options3) {
-          return localVarFp.deleteFile(fileId, options3).then((request) => request(axios, basePath));
+        deleteFile(fileId, options2) {
+          return localVarFp.deleteFile(fileId, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9357,8 +9357,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteModel(model, options3) {
-          return localVarFp.deleteModel(model, options3).then((request) => request(axios, basePath));
+        deleteModel(model, options2) {
+          return localVarFp.deleteModel(model, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9367,8 +9367,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        downloadFile(fileId, options3) {
-          return localVarFp.downloadFile(fileId, options3).then((request) => request(axios, basePath));
+        downloadFile(fileId, options2) {
+          return localVarFp.downloadFile(fileId, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9377,8 +9377,8 @@ var require_api = __commonJS({
          * @deprecated
          * @throws {RequiredError}
          */
-        listEngines(options3) {
-          return localVarFp.listEngines(options3).then((request) => request(axios, basePath));
+        listEngines(options2) {
+          return localVarFp.listEngines(options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9386,8 +9386,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listFiles(options3) {
-          return localVarFp.listFiles(options3).then((request) => request(axios, basePath));
+        listFiles(options2) {
+          return localVarFp.listFiles(options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9397,8 +9397,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listFineTuneEvents(fineTuneId, stream, options3) {
-          return localVarFp.listFineTuneEvents(fineTuneId, stream, options3).then((request) => request(axios, basePath));
+        listFineTuneEvents(fineTuneId, stream, options2) {
+          return localVarFp.listFineTuneEvents(fineTuneId, stream, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9406,8 +9406,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listFineTunes(options3) {
-          return localVarFp.listFineTunes(options3).then((request) => request(axios, basePath));
+        listFineTunes(options2) {
+          return localVarFp.listFineTunes(options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9415,8 +9415,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listModels(options3) {
-          return localVarFp.listModels(options3).then((request) => request(axios, basePath));
+        listModels(options2) {
+          return localVarFp.listModels(options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9426,8 +9426,8 @@ var require_api = __commonJS({
          * @deprecated
          * @throws {RequiredError}
          */
-        retrieveEngine(engineId, options3) {
-          return localVarFp.retrieveEngine(engineId, options3).then((request) => request(axios, basePath));
+        retrieveEngine(engineId, options2) {
+          return localVarFp.retrieveEngine(engineId, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9436,8 +9436,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieveFile(fileId, options3) {
-          return localVarFp.retrieveFile(fileId, options3).then((request) => request(axios, basePath));
+        retrieveFile(fileId, options2) {
+          return localVarFp.retrieveFile(fileId, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9446,8 +9446,8 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieveFineTune(fineTuneId, options3) {
-          return localVarFp.retrieveFineTune(fineTuneId, options3).then((request) => request(axios, basePath));
+        retrieveFineTune(fineTuneId, options2) {
+          return localVarFp.retrieveFineTune(fineTuneId, options2).then((request) => request(axios, basePath));
         },
         /**
          *
@@ -9456,12 +9456,12 @@ var require_api = __commonJS({
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieveModel(model, options3) {
-          return localVarFp.retrieveModel(model, options3).then((request) => request(axios, basePath));
+        retrieveModel(model, options2) {
+          return localVarFp.retrieveModel(model, options2).then((request) => request(axios, basePath));
         }
       };
     };
-    var OpenAIApi4 = class extends base_1.BaseAPI {
+    var OpenAIApi3 = class extends base_1.BaseAPI {
       /**
        *
        * @summary Immediately cancel a fine-tune job.
@@ -9470,8 +9470,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      cancelFineTune(fineTuneId, options3) {
-        return exports2.OpenAIApiFp(this.configuration).cancelFineTune(fineTuneId, options3).then((request) => request(this.axios, this.basePath));
+      cancelFineTune(fineTuneId, options2) {
+        return exports2.OpenAIApiFp(this.configuration).cancelFineTune(fineTuneId, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9482,8 +9482,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      createAnswer(createAnswerRequest, options3) {
-        return exports2.OpenAIApiFp(this.configuration).createAnswer(createAnswerRequest, options3).then((request) => request(this.axios, this.basePath));
+      createAnswer(createAnswerRequest, options2) {
+        return exports2.OpenAIApiFp(this.configuration).createAnswer(createAnswerRequest, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9493,8 +9493,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      createChatCompletion(createChatCompletionRequest, options3) {
-        return exports2.OpenAIApiFp(this.configuration).createChatCompletion(createChatCompletionRequest, options3).then((request) => request(this.axios, this.basePath));
+      createChatCompletion(createChatCompletionRequest, options2) {
+        return exports2.OpenAIApiFp(this.configuration).createChatCompletion(createChatCompletionRequest, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9505,8 +9505,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      createClassification(createClassificationRequest, options3) {
-        return exports2.OpenAIApiFp(this.configuration).createClassification(createClassificationRequest, options3).then((request) => request(this.axios, this.basePath));
+      createClassification(createClassificationRequest, options2) {
+        return exports2.OpenAIApiFp(this.configuration).createClassification(createClassificationRequest, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9516,8 +9516,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      createCompletion(createCompletionRequest, options3) {
-        return exports2.OpenAIApiFp(this.configuration).createCompletion(createCompletionRequest, options3).then((request) => request(this.axios, this.basePath));
+      createCompletion(createCompletionRequest, options2) {
+        return exports2.OpenAIApiFp(this.configuration).createCompletion(createCompletionRequest, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9527,8 +9527,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      createEdit(createEditRequest, options3) {
-        return exports2.OpenAIApiFp(this.configuration).createEdit(createEditRequest, options3).then((request) => request(this.axios, this.basePath));
+      createEdit(createEditRequest, options2) {
+        return exports2.OpenAIApiFp(this.configuration).createEdit(createEditRequest, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9538,8 +9538,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      createEmbedding(createEmbeddingRequest, options3) {
-        return exports2.OpenAIApiFp(this.configuration).createEmbedding(createEmbeddingRequest, options3).then((request) => request(this.axios, this.basePath));
+      createEmbedding(createEmbeddingRequest, options2) {
+        return exports2.OpenAIApiFp(this.configuration).createEmbedding(createEmbeddingRequest, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9550,8 +9550,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      createFile(file, purpose, options3) {
-        return exports2.OpenAIApiFp(this.configuration).createFile(file, purpose, options3).then((request) => request(this.axios, this.basePath));
+      createFile(file, purpose, options2) {
+        return exports2.OpenAIApiFp(this.configuration).createFile(file, purpose, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9561,8 +9561,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      createFineTune(createFineTuneRequest, options3) {
-        return exports2.OpenAIApiFp(this.configuration).createFineTune(createFineTuneRequest, options3).then((request) => request(this.axios, this.basePath));
+      createFineTune(createFineTuneRequest, options2) {
+        return exports2.OpenAIApiFp(this.configuration).createFineTune(createFineTuneRequest, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9572,8 +9572,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      createImage(createImageRequest, options3) {
-        return exports2.OpenAIApiFp(this.configuration).createImage(createImageRequest, options3).then((request) => request(this.axios, this.basePath));
+      createImage(createImageRequest, options2) {
+        return exports2.OpenAIApiFp(this.configuration).createImage(createImageRequest, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9589,8 +9589,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      createImageEdit(image, prompt, mask, n2, size, responseFormat, user, options3) {
-        return exports2.OpenAIApiFp(this.configuration).createImageEdit(image, prompt, mask, n2, size, responseFormat, user, options3).then((request) => request(this.axios, this.basePath));
+      createImageEdit(image, prompt, mask, n2, size, responseFormat, user, options2) {
+        return exports2.OpenAIApiFp(this.configuration).createImageEdit(image, prompt, mask, n2, size, responseFormat, user, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9604,8 +9604,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      createImageVariation(image, n2, size, responseFormat, user, options3) {
-        return exports2.OpenAIApiFp(this.configuration).createImageVariation(image, n2, size, responseFormat, user, options3).then((request) => request(this.axios, this.basePath));
+      createImageVariation(image, n2, size, responseFormat, user, options2) {
+        return exports2.OpenAIApiFp(this.configuration).createImageVariation(image, n2, size, responseFormat, user, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9615,8 +9615,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      createModeration(createModerationRequest, options3) {
-        return exports2.OpenAIApiFp(this.configuration).createModeration(createModerationRequest, options3).then((request) => request(this.axios, this.basePath));
+      createModeration(createModerationRequest, options2) {
+        return exports2.OpenAIApiFp(this.configuration).createModeration(createModerationRequest, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9628,8 +9628,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      createSearch(engineId, createSearchRequest, options3) {
-        return exports2.OpenAIApiFp(this.configuration).createSearch(engineId, createSearchRequest, options3).then((request) => request(this.axios, this.basePath));
+      createSearch(engineId, createSearchRequest, options2) {
+        return exports2.OpenAIApiFp(this.configuration).createSearch(engineId, createSearchRequest, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9644,8 +9644,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      createTranscription(file, model, prompt, responseFormat, temperature, language, options3) {
-        return exports2.OpenAIApiFp(this.configuration).createTranscription(file, model, prompt, responseFormat, temperature, language, options3).then((request) => request(this.axios, this.basePath));
+      createTranscription(file, model, prompt, responseFormat, temperature, language, options2) {
+        return exports2.OpenAIApiFp(this.configuration).createTranscription(file, model, prompt, responseFormat, temperature, language, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9659,8 +9659,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      createTranslation(file, model, prompt, responseFormat, temperature, options3) {
-        return exports2.OpenAIApiFp(this.configuration).createTranslation(file, model, prompt, responseFormat, temperature, options3).then((request) => request(this.axios, this.basePath));
+      createTranslation(file, model, prompt, responseFormat, temperature, options2) {
+        return exports2.OpenAIApiFp(this.configuration).createTranslation(file, model, prompt, responseFormat, temperature, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9670,8 +9670,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      deleteFile(fileId, options3) {
-        return exports2.OpenAIApiFp(this.configuration).deleteFile(fileId, options3).then((request) => request(this.axios, this.basePath));
+      deleteFile(fileId, options2) {
+        return exports2.OpenAIApiFp(this.configuration).deleteFile(fileId, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9681,8 +9681,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      deleteModel(model, options3) {
-        return exports2.OpenAIApiFp(this.configuration).deleteModel(model, options3).then((request) => request(this.axios, this.basePath));
+      deleteModel(model, options2) {
+        return exports2.OpenAIApiFp(this.configuration).deleteModel(model, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9692,8 +9692,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      downloadFile(fileId, options3) {
-        return exports2.OpenAIApiFp(this.configuration).downloadFile(fileId, options3).then((request) => request(this.axios, this.basePath));
+      downloadFile(fileId, options2) {
+        return exports2.OpenAIApiFp(this.configuration).downloadFile(fileId, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9703,8 +9703,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      listEngines(options3) {
-        return exports2.OpenAIApiFp(this.configuration).listEngines(options3).then((request) => request(this.axios, this.basePath));
+      listEngines(options2) {
+        return exports2.OpenAIApiFp(this.configuration).listEngines(options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9713,8 +9713,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      listFiles(options3) {
-        return exports2.OpenAIApiFp(this.configuration).listFiles(options3).then((request) => request(this.axios, this.basePath));
+      listFiles(options2) {
+        return exports2.OpenAIApiFp(this.configuration).listFiles(options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9725,8 +9725,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      listFineTuneEvents(fineTuneId, stream, options3) {
-        return exports2.OpenAIApiFp(this.configuration).listFineTuneEvents(fineTuneId, stream, options3).then((request) => request(this.axios, this.basePath));
+      listFineTuneEvents(fineTuneId, stream, options2) {
+        return exports2.OpenAIApiFp(this.configuration).listFineTuneEvents(fineTuneId, stream, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9735,8 +9735,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      listFineTunes(options3) {
-        return exports2.OpenAIApiFp(this.configuration).listFineTunes(options3).then((request) => request(this.axios, this.basePath));
+      listFineTunes(options2) {
+        return exports2.OpenAIApiFp(this.configuration).listFineTunes(options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9745,8 +9745,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      listModels(options3) {
-        return exports2.OpenAIApiFp(this.configuration).listModels(options3).then((request) => request(this.axios, this.basePath));
+      listModels(options2) {
+        return exports2.OpenAIApiFp(this.configuration).listModels(options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9757,8 +9757,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      retrieveEngine(engineId, options3) {
-        return exports2.OpenAIApiFp(this.configuration).retrieveEngine(engineId, options3).then((request) => request(this.axios, this.basePath));
+      retrieveEngine(engineId, options2) {
+        return exports2.OpenAIApiFp(this.configuration).retrieveEngine(engineId, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9768,8 +9768,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      retrieveFile(fileId, options3) {
-        return exports2.OpenAIApiFp(this.configuration).retrieveFile(fileId, options3).then((request) => request(this.axios, this.basePath));
+      retrieveFile(fileId, options2) {
+        return exports2.OpenAIApiFp(this.configuration).retrieveFile(fileId, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9779,8 +9779,8 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      retrieveFineTune(fineTuneId, options3) {
-        return exports2.OpenAIApiFp(this.configuration).retrieveFineTune(fineTuneId, options3).then((request) => request(this.axios, this.basePath));
+      retrieveFineTune(fineTuneId, options2) {
+        return exports2.OpenAIApiFp(this.configuration).retrieveFineTune(fineTuneId, options2).then((request) => request(this.axios, this.basePath));
       }
       /**
        *
@@ -9790,11 +9790,11 @@ var require_api = __commonJS({
        * @throws {RequiredError}
        * @memberof OpenAIApi
        */
-      retrieveModel(model, options3) {
-        return exports2.OpenAIApiFp(this.configuration).retrieveModel(model, options3).then((request) => request(this.axios, this.basePath));
+      retrieveModel(model, options2) {
+        return exports2.OpenAIApiFp(this.configuration).retrieveModel(model, options2).then((request) => request(this.axios, this.basePath));
       }
     };
-    exports2.OpenAIApi = OpenAIApi4;
+    exports2.OpenAIApi = OpenAIApi3;
   }
 });
 
@@ -9849,7 +9849,7 @@ var require_configuration = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.Configuration = void 0;
     var packageJson = require_package();
-    var Configuration4 = class {
+    var Configuration3 = class {
       constructor(param = {}) {
         this.apiKey = param.apiKey;
         this.organization = param.organization;
@@ -9885,7 +9885,7 @@ var require_configuration = __commonJS({
         return mime !== null && (jsonMime.test(mime) || mime.toLowerCase() === "application/json-patch+json");
       }
     };
-    exports2.Configuration = Configuration4;
+    exports2.Configuration = Configuration3;
   }
 });
 
@@ -10063,15 +10063,15 @@ __export(src_exports, {
   WaitForEventNodeImpl: () => WaitForEventNodeImpl,
   abortGraphNode: () => abortGraphNode,
   addWarning: () => addWarning,
-  anthropicPlugin: () => anthropic_default2,
+  anthropicPlugin: () => anthropic_default,
   arrayNode: () => arrayNode,
   arrayTypeToScalarType: () => arrayTypeToScalarType,
   arrayizeDataValue: () => arrayizeDataValue,
   assemblePromptNode: () => assemblePromptNode,
-  assemblyAiPlugin: () => assemblyAi_default2,
+  assemblyAiPlugin: () => assemblyAi_default,
   assertBaseDir: () => assertBaseDir,
   audioNode: () => audioNode,
-  autoevalsPlugin: () => autoevals_default2,
+  autoevalsPlugin: () => autoevals_default,
   base64ToUint8Array: () => base64ToUint8Array,
   baseDirs: () => baseDirs,
   booleanNode: () => booleanNode,
@@ -10087,6 +10087,7 @@ __export(src_exports, {
   contextNode: () => contextNode,
   dataTypeDisplayNames: () => dataTypeDisplayNames,
   dataTypes: () => dataTypes,
+  defaultTokenizer: () => defaultTokenizer,
   deserializeGraph: () => deserializeGraph,
   deserializeProject: () => deserializeProject,
   emptyNodeGraph: () => emptyNodeGraph,
@@ -10109,8 +10110,6 @@ __export(src_exports, {
   getGlobalNode: () => getGlobalNode,
   getIntegration: () => getIntegration,
   getScalarTypeOf: () => getScalarTypeOf,
-  getTokenCountForMessages: () => getTokenCountForMessages,
-  getTokenCountForString: () => getTokenCountForString,
   getWarnings: () => getWarnings,
   globalRivetNodeRegistry: () => globalRivetNodeRegistry,
   gptFunctionNode: () => gptFunctionNode,
@@ -10154,7 +10153,6 @@ __export(src_exports, {
   setGlobalNode: () => setGlobalNode,
   shuffleNode: () => shuffleNode,
   subGraphNode: () => subGraphNode,
-  supportedModels: () => supportedModels,
   textNode: () => textNode,
   toJsonNode: () => toJsonNode,
   toYamlNode: () => toYamlNode,
@@ -10993,11 +10991,11 @@ function hashSet(key, value) {
 var hashSet_default = hashSet;
 
 // ../../.yarn/cache/lodash-es-npm-4.17.21-b45832dfce-d1c3ee9411.zip/node_modules/lodash-es/_Hash.js
-function Hash(entries3) {
-  var index = -1, length = entries3 == null ? 0 : entries3.length;
+function Hash(entries2) {
+  var index = -1, length = entries2 == null ? 0 : entries2.length;
   this.clear();
   while (++index < length) {
-    var entry = entries3[index];
+    var entry = entries2[index];
     this.set(entry[0], entry[1]);
   }
 }
@@ -11073,11 +11071,11 @@ function listCacheSet(key, value) {
 var listCacheSet_default = listCacheSet;
 
 // ../../.yarn/cache/lodash-es-npm-4.17.21-b45832dfce-d1c3ee9411.zip/node_modules/lodash-es/_ListCache.js
-function ListCache(entries3) {
-  var index = -1, length = entries3 == null ? 0 : entries3.length;
+function ListCache(entries2) {
+  var index = -1, length = entries2 == null ? 0 : entries2.length;
   this.clear();
   while (++index < length) {
-    var entry = entries3[index];
+    var entry = entries2[index];
     this.set(entry[0], entry[1]);
   }
 }
@@ -11147,11 +11145,11 @@ function mapCacheSet(key, value) {
 var mapCacheSet_default = mapCacheSet;
 
 // ../../.yarn/cache/lodash-es-npm-4.17.21-b45832dfce-d1c3ee9411.zip/node_modules/lodash-es/_MapCache.js
-function MapCache(entries3) {
-  var index = -1, length = entries3 == null ? 0 : entries3.length;
+function MapCache(entries2) {
+  var index = -1, length = entries2 == null ? 0 : entries2.length;
   this.clear();
   while (++index < length) {
-    var entry = entries3[index];
+    var entry = entries2[index];
     this.set(entry[0], entry[1]);
   }
 }
@@ -11169,12 +11167,12 @@ function memoize(func, resolver) {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   var memoized = function() {
-    var args = arguments, key = resolver ? resolver.apply(this, args) : args[0], cache5 = memoized.cache;
-    if (cache5.has(key)) {
-      return cache5.get(key);
+    var args = arguments, key = resolver ? resolver.apply(this, args) : args[0], cache3 = memoized.cache;
+    if (cache3.has(key)) {
+      return cache3.get(key);
     }
     var result = func.apply(this, args);
-    memoized.cache = cache5.set(key, result) || cache5;
+    memoized.cache = cache3.set(key, result) || cache3;
     return result;
   };
   memoized.cache = new (memoize.Cache || MapCache_default)();
@@ -11187,12 +11185,12 @@ var memoize_default = memoize;
 var MAX_MEMOIZE_SIZE = 500;
 function memoizeCapped(func) {
   var result = memoize_default(func, function(key) {
-    if (cache5.size === MAX_MEMOIZE_SIZE) {
-      cache5.clear();
+    if (cache3.size === MAX_MEMOIZE_SIZE) {
+      cache3.clear();
     }
     return key;
   });
-  var cache5 = result.cache;
+  var cache3 = result.cache;
   return result;
 }
 var memoizeCapped_default = memoizeCapped;
@@ -11257,10 +11255,10 @@ function get(object, path, defaultValue) {
 var get_default = get;
 
 // ../../.yarn/cache/lodash-es-npm-4.17.21-b45832dfce-d1c3ee9411.zip/node_modules/lodash-es/_arrayPush.js
-function arrayPush(array, values4) {
-  var index = -1, length = values4.length, offset = array.length;
+function arrayPush(array, values3) {
+  var index = -1, length = values3.length, offset = array.length;
   while (++index < length) {
-    array[offset + index] = values4[index];
+    array[offset + index] = values3[index];
   }
   return array;
 }
@@ -11398,8 +11396,8 @@ function stackSet(key, value) {
 var stackSet_default = stackSet;
 
 // ../../.yarn/cache/lodash-es-npm-4.17.21-b45832dfce-d1c3ee9411.zip/node_modules/lodash-es/_Stack.js
-function Stack(entries3) {
-  var data = this.__data__ = new ListCache_default(entries3);
+function Stack(entries2) {
+  var data = this.__data__ = new ListCache_default(entries2);
   this.size = data.size;
 }
 Stack.prototype.clear = stackClear_default;
@@ -11812,11 +11810,11 @@ function setCacheHas(value) {
 var setCacheHas_default = setCacheHas;
 
 // ../../.yarn/cache/lodash-es-npm-4.17.21-b45832dfce-d1c3ee9411.zip/node_modules/lodash-es/_SetCache.js
-function SetCache(values4) {
-  var index = -1, length = values4 == null ? 0 : values4.length;
+function SetCache(values3) {
+  var index = -1, length = values3 == null ? 0 : values3.length;
   this.__data__ = new MapCache_default();
   while (++index < length) {
-    this.add(values4[index]);
+    this.add(values3[index]);
   }
 }
 SetCache.prototype.add = SetCache.prototype.push = setCacheAdd_default;
@@ -11836,8 +11834,8 @@ function arraySome(array, predicate) {
 var arraySome_default = arraySome;
 
 // ../../.yarn/cache/lodash-es-npm-4.17.21-b45832dfce-d1c3ee9411.zip/node_modules/lodash-es/_cacheHas.js
-function cacheHas(cache5, key) {
-  return cache5.has(key);
+function cacheHas(cache3, key) {
+  return cache3.has(key);
 }
 var cacheHas_default = cacheHas;
 
@@ -12710,8 +12708,8 @@ var sum_default = sum;
 
 // ../../.yarn/cache/lodash-es-npm-4.17.21-b45832dfce-d1c3ee9411.zip/node_modules/lodash-es/_createSet.js
 var INFINITY5 = 1 / 0;
-var createSet = !(Set_default && 1 / setToArray_default(new Set_default([, -0]))[1] == INFINITY5) ? noop_default : function(values4) {
-  return new Set_default(values4);
+var createSet = !(Set_default && 1 / setToArray_default(new Set_default([, -0]))[1] == INFINITY5) ? noop_default : function(values3) {
+  return new Set_default(values3);
 };
 var createSet_default = createSet;
 
@@ -13068,7 +13066,7 @@ var getAbortedReason = (signal) => {
   const reason = signal.reason === void 0 ? getDOMException("This operation was aborted.") : signal.reason;
   return reason instanceof Error ? reason : getDOMException(reason);
 };
-function pTimeout(promise, milliseconds, fallback, options3) {
+function pTimeout(promise, milliseconds, fallback, options2) {
   let timer;
   const cancelablePromise = new Promise((resolve, reject) => {
     if (typeof milliseconds !== "number" || Math.sign(milliseconds) !== 1) {
@@ -13078,12 +13076,12 @@ function pTimeout(promise, milliseconds, fallback, options3) {
       resolve(promise);
       return;
     }
-    options3 = {
+    options2 = {
       customTimers: { setTimeout, clearTimeout },
-      ...options3
+      ...options2
     };
-    if (options3.signal) {
-      const { signal } = options3;
+    if (options2.signal) {
+      const { signal } = options2;
       if (signal.aborted) {
         reject(getAbortedReason(signal));
       }
@@ -13091,7 +13089,7 @@ function pTimeout(promise, milliseconds, fallback, options3) {
         reject(getAbortedReason(signal));
       });
     }
-    timer = options3.customTimers.setTimeout.call(void 0, () => {
+    timer = options2.customTimers.setTimeout.call(void 0, () => {
       if (typeof fallback === "function") {
         try {
           resolve(fallback());
@@ -13113,7 +13111,7 @@ function pTimeout(promise, milliseconds, fallback, options3) {
       } catch (error) {
         reject(error);
       } finally {
-        options3.customTimers.clearTimeout.call(void 0, timer);
+        options2.customTimers.clearTimeout.call(void 0, timer);
       }
     })();
   });
@@ -13154,16 +13152,16 @@ var PriorityQueue = class {
   constructor() {
     _PriorityQueue_queue.set(this, []);
   }
-  enqueue(run, options3) {
-    options3 = {
+  enqueue(run, options2) {
+    options2 = {
       priority: 0,
-      ...options3
+      ...options2
     };
     const element = {
-      priority: options3.priority,
+      priority: options2.priority,
       run
     };
-    if (this.size && __classPrivateFieldGet(this, _PriorityQueue_queue, "f")[this.size - 1].priority >= options3.priority) {
+    if (this.size && __classPrivateFieldGet(this, _PriorityQueue_queue, "f")[this.size - 1].priority >= options2.priority) {
       __classPrivateFieldGet(this, _PriorityQueue_queue, "f").push(element);
       return;
     }
@@ -13174,8 +13172,8 @@ var PriorityQueue = class {
     const item = __classPrivateFieldGet(this, _PriorityQueue_queue, "f").shift();
     return item === null || item === void 0 ? void 0 : item.run;
   }
-  filter(options3) {
-    return __classPrivateFieldGet(this, _PriorityQueue_queue, "f").filter((element) => element.priority === options3.priority).map((element) => element.run);
+  filter(options2) {
+    return __classPrivateFieldGet(this, _PriorityQueue_queue, "f").filter((element) => element.priority === options2.priority).map((element) => element.run);
   }
   get size() {
     return __classPrivateFieldGet(this, _PriorityQueue_queue, "f").length;
@@ -13230,7 +13228,7 @@ var AbortError2 = class extends Error {
 };
 var PQueue = class extends import_eventemitter3.default {
   // TODO: The `throwOnTimeout` option should affect the return types of `add()` and `addAll()`
-  constructor(options3) {
+  constructor(options2) {
     var _a, _b, _c, _d;
     super();
     _PQueue_instances.add(this);
@@ -13254,31 +13252,31 @@ var PQueue = class extends import_eventemitter3.default {
       writable: true,
       value: void 0
     });
-    options3 = {
+    options2 = {
       carryoverConcurrencyCount: false,
       intervalCap: Number.POSITIVE_INFINITY,
       interval: 0,
       concurrency: Number.POSITIVE_INFINITY,
       autoStart: true,
       queueClass: PriorityQueue,
-      ...options3
+      ...options2
     };
-    if (!(typeof options3.intervalCap === "number" && options3.intervalCap >= 1)) {
-      throw new TypeError(`Expected \`intervalCap\` to be a number from 1 and up, got \`${(_b = (_a = options3.intervalCap) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : ""}\` (${typeof options3.intervalCap})`);
+    if (!(typeof options2.intervalCap === "number" && options2.intervalCap >= 1)) {
+      throw new TypeError(`Expected \`intervalCap\` to be a number from 1 and up, got \`${(_b = (_a = options2.intervalCap) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : ""}\` (${typeof options2.intervalCap})`);
     }
-    if (options3.interval === void 0 || !(Number.isFinite(options3.interval) && options3.interval >= 0)) {
-      throw new TypeError(`Expected \`interval\` to be a finite number >= 0, got \`${(_d = (_c = options3.interval) === null || _c === void 0 ? void 0 : _c.toString()) !== null && _d !== void 0 ? _d : ""}\` (${typeof options3.interval})`);
+    if (options2.interval === void 0 || !(Number.isFinite(options2.interval) && options2.interval >= 0)) {
+      throw new TypeError(`Expected \`interval\` to be a finite number >= 0, got \`${(_d = (_c = options2.interval) === null || _c === void 0 ? void 0 : _c.toString()) !== null && _d !== void 0 ? _d : ""}\` (${typeof options2.interval})`);
     }
-    __classPrivateFieldSet(this, _PQueue_carryoverConcurrencyCount, options3.carryoverConcurrencyCount, "f");
-    __classPrivateFieldSet(this, _PQueue_isIntervalIgnored, options3.intervalCap === Number.POSITIVE_INFINITY || options3.interval === 0, "f");
-    __classPrivateFieldSet(this, _PQueue_intervalCap, options3.intervalCap, "f");
-    __classPrivateFieldSet(this, _PQueue_interval, options3.interval, "f");
-    __classPrivateFieldSet(this, _PQueue_queue, new options3.queueClass(), "f");
-    __classPrivateFieldSet(this, _PQueue_queueClass, options3.queueClass, "f");
-    this.concurrency = options3.concurrency;
-    this.timeout = options3.timeout;
-    __classPrivateFieldSet(this, _PQueue_throwOnTimeout, options3.throwOnTimeout === true, "f");
-    __classPrivateFieldSet(this, _PQueue_isPaused, options3.autoStart === false, "f");
+    __classPrivateFieldSet(this, _PQueue_carryoverConcurrencyCount, options2.carryoverConcurrencyCount, "f");
+    __classPrivateFieldSet(this, _PQueue_isIntervalIgnored, options2.intervalCap === Number.POSITIVE_INFINITY || options2.interval === 0, "f");
+    __classPrivateFieldSet(this, _PQueue_intervalCap, options2.intervalCap, "f");
+    __classPrivateFieldSet(this, _PQueue_interval, options2.interval, "f");
+    __classPrivateFieldSet(this, _PQueue_queue, new options2.queueClass(), "f");
+    __classPrivateFieldSet(this, _PQueue_queueClass, options2.queueClass, "f");
+    this.concurrency = options2.concurrency;
+    this.timeout = options2.timeout;
+    __classPrivateFieldSet(this, _PQueue_throwOnTimeout, options2.throwOnTimeout === true, "f");
+    __classPrivateFieldSet(this, _PQueue_isPaused, options2.autoStart === false, "f");
   }
   get concurrency() {
     return __classPrivateFieldGet2(this, _PQueue_concurrency, "f");
@@ -13290,11 +13288,11 @@ var PQueue = class extends import_eventemitter3.default {
     __classPrivateFieldSet(this, _PQueue_concurrency, newConcurrency, "f");
     __classPrivateFieldGet2(this, _PQueue_instances, "m", _PQueue_processQueue).call(this);
   }
-  async add(function_, options3 = {}) {
-    options3 = {
+  async add(function_, options2 = {}) {
+    options2 = {
       timeout: this.timeout,
       throwOnTimeout: __classPrivateFieldGet2(this, _PQueue_throwOnTimeout, "f"),
-      ...options3
+      ...options2
     };
     return new Promise((resolve, reject) => {
       __classPrivateFieldGet2(this, _PQueue_queue, "f").enqueue(async () => {
@@ -13303,21 +13301,21 @@ var PQueue = class extends import_eventemitter3.default {
         __classPrivateFieldSet(this, _PQueue_pending, (_b = __classPrivateFieldGet2(this, _PQueue_pending, "f"), _b++, _b), "f");
         __classPrivateFieldSet(this, _PQueue_intervalCount, (_c = __classPrivateFieldGet2(this, _PQueue_intervalCount, "f"), _c++, _c), "f");
         try {
-          if ((_a = options3.signal) === null || _a === void 0 ? void 0 : _a.aborted) {
+          if ((_a = options2.signal) === null || _a === void 0 ? void 0 : _a.aborted) {
             throw new AbortError2("The task was aborted.");
           }
-          let operation = function_({ signal: options3.signal });
-          if (options3.timeout) {
-            operation = pTimeout(Promise.resolve(operation), options3.timeout);
+          let operation = function_({ signal: options2.signal });
+          if (options2.timeout) {
+            operation = pTimeout(Promise.resolve(operation), options2.timeout);
           }
-          if (options3.signal) {
-            operation = Promise.race([operation, __classPrivateFieldGet2(this, _PQueue_instances, "m", _PQueue_throwOnAbort).call(this, options3.signal)]);
+          if (options2.signal) {
+            operation = Promise.race([operation, __classPrivateFieldGet2(this, _PQueue_instances, "m", _PQueue_throwOnAbort).call(this, options2.signal)]);
           }
           const result = await operation;
           resolve(result);
           this.emit("completed", result);
         } catch (error) {
-          if (error instanceof TimeoutError && !options3.throwOnTimeout) {
+          if (error instanceof TimeoutError && !options2.throwOnTimeout) {
             resolve();
             return;
           }
@@ -13326,13 +13324,13 @@ var PQueue = class extends import_eventemitter3.default {
         } finally {
           __classPrivateFieldGet2(this, _PQueue_instances, "m", _PQueue_next).call(this);
         }
-      }, options3);
+      }, options2);
       this.emit("add");
       __classPrivateFieldGet2(this, _PQueue_instances, "m", _PQueue_tryToStartAnother).call(this);
     });
   }
-  async addAll(functions, options3) {
-    return Promise.all(functions.map(async (function_) => this.add(function_, options3)));
+  async addAll(functions, options2) {
+    return Promise.all(functions.map(async (function_) => this.add(function_, options2)));
   }
   /**
   Start (or resume) executing enqueued tasks within concurrency limit. No need to call this if queue is not paused (via `options.autoStart = false` or by `.pause()` method.)
@@ -13403,8 +13401,8 @@ var PQueue = class extends import_eventemitter3.default {
   
       For example, this can be used to find the number of items remaining in the queue with a specific priority level.
       */
-  sizeBy(options3) {
-    return __classPrivateFieldGet2(this, _PQueue_queue, "f").filter(options3).length;
+  sizeBy(options2) {
+    return __classPrivateFieldGet2(this, _PQueue_queue, "f").filter(options2).length;
   }
   /**
   Number of running items (no longer in the queue).
@@ -13708,12 +13706,12 @@ var Emittery = class _Emittery {
   static set isDebugEnabled(newValue) {
     isGlobalDebugEnabled = newValue;
   }
-  constructor(options3 = {}) {
+  constructor(options2 = {}) {
     anyMap.set(this, /* @__PURE__ */ new Set());
     eventsMap.set(this, /* @__PURE__ */ new Map());
     producersMap.set(this, /* @__PURE__ */ new Map());
     producersMap.get(this).set(anyProducer, /* @__PURE__ */ new Set());
-    this.debug = options3.debug ?? {};
+    this.debug = options2.debug ?? {};
     if (this.debug.enabled === void 0) {
       this.debug.enabled = false;
     }
@@ -13956,20 +13954,16 @@ function mapValues2(o2, fn) {
   return Object.fromEntries(Object.entries(o2).map(([key, value]) => [key, fn(value)]));
 }
 
-// ../../.yarn/cache/nanoid-npm-3.3.6-e6d6ae7e71-c6f3fad3b9.zip/node_modules/nanoid/index.browser.js
-var nanoid = (size = 21) => crypto.getRandomValues(new Uint8Array(size)).reduce((id, byte) => {
-  byte &= 63;
-  if (byte < 36) {
-    id += byte.toString(36);
-  } else if (byte < 62) {
-    id += (byte - 26).toString(36).toUpperCase();
-  } else if (byte > 62) {
-    id += "-";
-  } else {
-    id += "_";
+// ../../.yarn/cache/nanoid-npm-3.3.6-e6d6ae7e71-c6f3fad3b9.zip/node_modules/nanoid/non-secure/index.js
+var urlAlphabet = "useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict";
+var nanoid = (size = 21) => {
+  let id = "";
+  let i2 = size;
+  while (i2--) {
+    id += urlAlphabet[Math.random() * 64 | 0];
   }
   return id;
-}, "");
+};
 
 // ../../.yarn/cache/ts-pattern-npm-5.0.4-d2a6e83a0c-a02515728b.zip/node_modules/ts-pattern/dist/index.js
 var t = Symbol.for("@ts-pattern/matcher");
@@ -14620,9 +14614,9 @@ function nodeDefinition(impl, displayName) {
 
 // ../../.yarn/cache/ts-dedent-npm-2.2.0-00389a0e6b-66108854b9.zip/node_modules/ts-dedent/esm/index.js
 function dedent(templ) {
-  var values4 = [];
+  var values3 = [];
   for (var _i = 1; _i < arguments.length; _i++) {
-    values4[_i - 1] = arguments[_i];
+    values3[_i - 1] = arguments[_i];
   }
   var strings = Array.from(typeof templ === "string" ? [templ] : templ);
   strings[strings.length - 1] = strings[strings.length - 1].replace(/\r?\n([\t ]*)$/, "");
@@ -14644,7 +14638,7 @@ function dedent(templ) {
   }
   strings[0] = strings[0].replace(/^\r?\n/, "");
   var string2 = strings[0];
-  values4.forEach(function(value, i2) {
+  values3.forEach(function(value, i2) {
     var endentations = string2.match(/(?:^|\n)( *)$/);
     var endentation = endentations ? endentations[1] : "";
     var indentedValue = value;
@@ -14807,9 +14801,9 @@ var TextNodeImpl = class extends NodeImpl {
       text: truncated
     };
   }
-  interpolate(baseString, values4) {
+  interpolate(baseString, values3) {
     return baseString.replace(/\{\{([^}]+)\}\}/g, (_m, p1) => {
-      const value = values4[p1];
+      const value = values3[p1];
       return value !== void 0 ? value.toString() : "";
     });
   }
@@ -14842,8 +14836,49 @@ var TextNodeImpl = class extends NodeImpl {
 };
 var textNode = nodeDefinition(TextNodeImpl, "Text");
 
-// stub-namespace:/Users/Shared/ironclad/rivet/packages/core/stub.js
-function encoding_for_model() {
+// src/utils/FakeTokenizer.ts
+var FakeTokenizer = {
+  getTokenCountForString: function(_input) {
+    return _input.split(" ").length * 2;
+  },
+  getTokenCountForMessages: function(_messages) {
+    return _messages.reduce((sum2, message) => message.content.split(" ").length * 2 + sum2, 0);
+  }
+};
+
+// src/utils/tokenizer.ts
+var defaultTokenizer = FakeTokenizer;
+function chunkStringByTokenCount(tokenizer, input, targetTokenCount, overlapPercent) {
+  overlapPercent = Number.isNaN(overlapPercent) ? 0 : Math.max(0, Math.min(1, overlapPercent));
+  const chunks = [];
+  const guess = Math.floor(targetTokenCount * (input.length / tokenizer.getTokenCountForString(input)));
+  let remaining = input;
+  while (remaining.length > 0) {
+    chunks.push(remaining.slice(0, guess));
+    remaining = remaining.slice(guess - Math.floor(guess * overlapPercent));
+  }
+  return chunks;
+}
+function getCostForTokens(tokenCount, type2, cost) {
+  return tokenCount / 1e3 * cost.prompt;
+}
+function getCostForPrompt(tokenizer, messages, cost) {
+  const tokenCount = tokenizer.getTokenCountForMessages(messages);
+  return getCostForTokens(tokenCount, "prompt", cost);
+}
+
+// src/utils/outputs.ts
+function addWarning(outputs, warning) {
+  if (!outputs[WarningsPort]) {
+    outputs[WarningsPort] = { type: "string[]", value: [] };
+  }
+  outputs[WarningsPort].value.push(warning);
+}
+function getWarnings(outputs) {
+  if (!outputs?.[WarningsPort]) {
+    return void 0;
+  }
+  return expectType(outputs[WarningsPort], "string[]");
 }
 
 // src/utils/openai.ts
@@ -14854,118 +14889,9 @@ __export(openai_exports, {
   openaiModels: () => openaiModels,
   streamChatCompletions: () => streamChatCompletions
 });
-
-// src/utils/fetchEventSource.ts
-var EventSourceResponse = class extends Response {
-  name;
-  streams;
-  constructor(body, init) {
-    if (body == null) {
-      super(null, init);
-      this.name = "EventSourceResponse";
-      this.streams = null;
-      return;
-    }
-    const [bodyForString, bodyForEvents] = body.tee();
-    const streams = createEventStream(bodyForEvents);
-    super(bodyForString, init);
-    this.name = "EventSourceResponse";
-    this.streams = streams;
-  }
-  async *events() {
-    if (this.streams == null) {
-      return;
-    }
-    const reader = this.streams.eventStream.getReader();
-    try {
-      while (true) {
-        const { done, value } = await this.raceWithTimeout(reader.read());
-        if (done) {
-          break;
-        }
-        yield value;
-      }
-    } finally {
-      try {
-        reader.releaseLock();
-      } catch (err) {
-        console.error(`Failed to release read lock on event source: ${getError(err).toString()}`);
-      }
-    }
-  }
-  async raceWithTimeout(promise, timeout = 5e3) {
-    return new Promise(async (resolve, reject) => {
-      const timer = setTimeout(() => {
-        reject(new Error("Timeout: API response took too long."));
-      }, timeout);
-      try {
-        const result = await promise;
-        clearTimeout(timer);
-        resolve(result);
-      } catch (error) {
-        clearTimeout(timer);
-        reject(error);
-      }
-    });
-  }
-};
-async function fetchEventSource(url, init) {
-  const headers = {
-    ...init?.headers,
-    accept: "text/event-stream"
-  };
-  const response = await fetch(url, {
-    ...init,
-    headers
-  });
-  return new EventSourceResponse(response.body, response);
-}
-var lineSplitter = new class {
-  constructor(separator = /\n+/) {
-    this.separator = separator;
-  }
-  buffer = "";
-  transform(chunk, controller) {
-    this.buffer += chunk;
-    const lines = this.buffer.split(this.separator);
-    this.buffer = lines.pop() ?? "";
-    for (const line of lines) {
-      controller.enqueue(line);
-    }
-  }
-  flush(controller) {
-    if (this.buffer.length > 0) {
-      controller.enqueue(this.buffer);
-      this.buffer = "";
-    }
-  }
-}();
-function createEventStream(body) {
-  if (body == null) {
-    return null;
-  }
-  const textStream = body.pipeThrough(new TextDecoderStream());
-  const eventStream = textStream.pipeThrough(new TransformStream(lineSplitter)).pipeThrough(
-    new TransformStream({
-      transform(line, controller) {
-        if (line.startsWith("data: ")) {
-          const data = line.slice(6).trim();
-          controller.enqueue(data);
-        } else if (line.startsWith("event: ")) {
-          const event = line.slice(7).trim();
-          controller.enqueue(`[${event}]`);
-        }
-      }
-    })
-  );
-  return { eventStream, textStream };
-}
-
-// src/utils/openai.ts
 var openaiModels = {
   "gpt-4": {
     maxTokens: 8192,
-    tiktokenModel: "gpt-4",
     cost: {
       prompt: 0.03,
       completion: 0.06
@@ -14974,7 +14900,6 @@ var openaiModels = {
   },
   "gpt-4-32k": {
     maxTokens: 32768,
-    tiktokenModel: "gpt-4-32k",
     cost: {
       prompt: 0.06,
       completion: 0.12
@@ -14983,7 +14908,6 @@ var openaiModels = {
   },
   "gpt-4-0613": {
     maxTokens: 8192,
-    tiktokenModel: "gpt-4",
     cost: {
       prompt: 0.03,
       completion: 0.06
@@ -14992,7 +14916,6 @@ var openaiModels = {
   },
   "gpt-4-32k-0613": {
     maxTokens: 32768,
-    tiktokenModel: "gpt-4",
     cost: {
       prompt: 0.06,
       completion: 0.12
@@ -15001,7 +14924,6 @@ var openaiModels = {
   },
   "gpt-3.5-turbo": {
     maxTokens: 4096,
-    tiktokenModel: "gpt-3.5-turbo",
     cost: {
       prompt: 2e-3,
       completion: 2e-3
@@ -15010,7 +14932,6 @@ var openaiModels = {
   },
   "gpt-3.5-turbo-0613": {
     maxTokens: 16384,
-    tiktokenModel: "gpt-3.5-turbo",
     cost: {
       prompt: 2e-3,
       completion: 2e-3
@@ -15019,7 +14940,6 @@ var openaiModels = {
   },
   "gpt-3.5-turbo-16k-0613": {
     maxTokens: 16384,
-    tiktokenModel: "gpt-3.5-turbo",
     cost: {
       prompt: 3e-3,
       completion: 4e-3
@@ -15044,90 +14964,7 @@ async function* streamChatCompletions({
   signal,
   ...rest
 }) {
-  const abortSignal = signal ?? new AbortController().signal;
-  const response = await fetchEventSource("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${auth.apiKey}`,
-      ...auth.organization ? { "OpenAI-Organization": auth.organization } : {}
-    },
-    body: JSON.stringify({
-      ...rest,
-      stream: true
-    }),
-    signal: abortSignal
-  });
-  let hadChunks = false;
-  for await (const chunk of response.events()) {
-    hadChunks = true;
-    if (chunk === "[DONE]" || abortSignal?.aborted) {
-      return;
-    }
-    let data;
-    try {
-      data = JSON.parse(chunk);
-    } catch (err) {
-      console.error("JSON parse failed on chunk: ", chunk);
-      throw err;
-    }
-    yield data;
-  }
-  if (!hadChunks) {
-    const responseJson = await response.json();
-    throw new OpenAIError(response.status, responseJson);
-  }
-}
-
-// src/utils/tokenizer.ts
-var supportedModels = [...Object.keys(openaiModels)];
-function getTokenCountForString(input, model) {
-  const encoding = encoding_for_model(model);
-  const encoded = encoding.encode(input);
-  encoding.free();
-  return encoded.length;
-}
-function getTokenCountForMessages(messages, model) {
-  const encoding = encoding_for_model(model);
-  const tokenCount = messages.reduce((sum2, message) => {
-    const encoded = encoding.encode(JSON.stringify(message));
-    return sum2 + encoded.length;
-  }, 0);
-  encoding.free();
-  return tokenCount;
-}
-function chunkStringByTokenCount(input, targetTokenCount, model, overlapPercent) {
-  overlapPercent = Number.isNaN(overlapPercent) ? 0 : Math.max(0, Math.min(1, overlapPercent));
-  const chunks = [];
-  const guess = Math.floor(targetTokenCount * (input.length / getTokenCountForString(input, model)));
-  let remaining = input;
-  while (remaining.length > 0) {
-    chunks.push(remaining.slice(0, guess));
-    remaining = remaining.slice(guess - Math.floor(guess * overlapPercent));
-  }
-  return chunks;
-}
-function getCostForTokens(tokenCount, type2, model) {
-  const costPerThousand = openaiModels[model].cost[type2];
-  return tokenCount / 1e3 * costPerThousand;
-}
-function getCostForPrompt(messages, model) {
-  const tokenCount = getTokenCountForMessages(messages, openaiModels[model].tiktokenModel);
-  return getCostForTokens(tokenCount, "prompt", model);
-}
-
-// src/utils/outputs.ts
-function addWarning(outputs, warning) {
-  if (!outputs[WarningsPort]) {
-    outputs[WarningsPort] = { type: "string[]", value: [] };
-  }
-  outputs[WarningsPort].value.push(warning);
-}
-function getWarnings(outputs) {
-  if (!outputs?.[WarningsPort]) {
-    return void 0;
-  }
-  return expectType(outputs[WarningsPort], "string[]");
+  throw new Error("Not implemented yet");
 }
 
 // ../../.yarn/cache/p-retry-npm-5.1.2-5426d97d26-c1c8a1ceb5.zip/node_modules/p-retry/index.js
@@ -15158,23 +14995,23 @@ var AbortError3 = class extends Error {
     this.message = message;
   }
 };
-var decorateErrorWithCounts = (error, attemptNumber, options3) => {
-  const retriesLeft = options3.retries - (attemptNumber - 1);
+var decorateErrorWithCounts = (error, attemptNumber, options2) => {
+  const retriesLeft = options2.retries - (attemptNumber - 1);
   error.attemptNumber = attemptNumber;
   error.retriesLeft = retriesLeft;
   return error;
 };
 var isNetworkError = (errorMessage) => networkErrorMsgs.has(errorMessage);
 var getDOMException2 = (errorMessage) => globalThis.DOMException === void 0 ? new Error(errorMessage) : new DOMException(errorMessage);
-async function pRetry(input, options3) {
+async function pRetry(input, options2) {
   return new Promise((resolve, reject) => {
-    options3 = {
+    options2 = {
       onFailedAttempt() {
       },
       retries: 10,
-      ...options3
+      ...options2
     };
-    const operation = import_retry.default.operation(options3);
+    const operation = import_retry.default.operation(options2);
     operation.attempt(async (attemptNumber) => {
       try {
         resolve(await input(attemptNumber));
@@ -15190,9 +15027,9 @@ async function pRetry(input, options3) {
           operation.stop();
           reject(error);
         } else {
-          decorateErrorWithCounts(error, attemptNumber, options3);
+          decorateErrorWithCounts(error, attemptNumber, options2);
           try {
-            await options3.onFailedAttempt(error);
+            await options2.onFailedAttempt(error);
           } catch (error2) {
             reject(error2);
             return;
@@ -15203,10 +15040,10 @@ async function pRetry(input, options3) {
         }
       }
     });
-    if (options3.signal && !options3.signal.aborted) {
-      options3.signal.addEventListener("abort", () => {
+    if (options2.signal && !options2.signal.aborted) {
+      options2.signal.addEventListener("abort", () => {
         operation.stop();
-        const reason = options3.signal.reason === void 0 ? getDOMException2("The operation was aborted.") : options3.signal.reason;
+        const reason = options2.signal.reason === void 0 ? getDOMException2("The operation was aborted.") : options2.signal.reason;
         reject(reason instanceof Error ? reason : getDOMException2(reason));
       }, {
         once: true
@@ -15505,7 +15342,7 @@ var ChatNodeImpl = class extends NodeImpl {
     );
     let { maxTokens } = this.data;
     const openaiModel = openaiModels[model];
-    const tokenCount = getTokenCountForMessages(completionMessages, openaiModel.tiktokenModel);
+    const tokenCount = defaultTokenizer.getTokenCountForMessages(completionMessages);
     if (tokenCount >= openaiModel.maxTokens) {
       throw new Error(
         `The model ${model} can only handle ${openaiModel.maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`
@@ -15520,7 +15357,7 @@ var ChatNodeImpl = class extends NodeImpl {
     try {
       return await pRetry(
         async () => {
-          const options3 = {
+          const options2 = {
             messages: completionMessages,
             model,
             temperature: useTopP ? void 0 : temperature,
@@ -15532,7 +15369,7 @@ var ChatNodeImpl = class extends NodeImpl {
             stop: stop || void 0,
             functions: functions?.length === 0 ? void 0 : functions
           };
-          const cacheKey = JSON.stringify(options3);
+          const cacheKey = JSON.stringify(options2);
           if (this.data.cache) {
             const cached = cache.get(cacheKey);
             if (cached) {
@@ -15546,7 +15383,7 @@ var ChatNodeImpl = class extends NodeImpl {
               organization: context.settings.openAiOrganization
             },
             signal: context.signal,
-            ...options3
+            ...options2
           });
           const responseChoicesParts = [];
           const functionCalls = [];
@@ -15594,11 +15431,15 @@ var ChatNodeImpl = class extends NodeImpl {
           if (responseChoicesParts.length === 0 && functionCalls.length === 0) {
             throw new Error("No response from OpenAI");
           }
-          const requestTokenCount = getTokenCountForMessages(completionMessages, openaiModel.tiktokenModel);
+          const requestTokenCount = defaultTokenizer.getTokenCountForMessages(completionMessages);
           output["requestTokens"] = { type: "number", value: requestTokenCount * numberOfChoices };
-          const responseTokenCount = responseChoicesParts.map((choiceParts) => getTokenCountForString(choiceParts.join(), openaiModel.tiktokenModel)).reduce((a2, b2) => a2 + b2, 0);
+          const responseTokenCount = responseChoicesParts.map((choiceParts) => defaultTokenizer.getTokenCountForString(choiceParts.join())).reduce((a2, b2) => a2 + b2, 0);
           output["responseTokens"] = { type: "number", value: responseTokenCount };
-          const cost = getCostForPrompt(completionMessages, model) + getCostForTokens(responseTokenCount, "completion", model);
+          const cost = getCostForPrompt(
+            defaultTokenizer,
+            completionMessages,
+            openaiModels[model].cost
+          ) + getCostForTokens(responseTokenCount, "completion", openaiModels[model].cost);
           output["cost"] = { type: "number", value: cost };
           const duration = endTime - startTime;
           output["duration"] = { type: "number", value: duration };
@@ -15815,9 +15656,9 @@ var PromptNodeImpl = class extends NodeImpl {
       group: ["Text"]
     };
   }
-  interpolate(baseString, values4) {
+  interpolate(baseString, values3) {
     return baseString.replace(/\{\{([^}]+)\}\}/g, (_m, p1) => {
-      const value = values4[p1];
+      const value = values3[p1];
       return value !== void 0 ? value : "";
     });
   }
@@ -16712,9 +16553,9 @@ var ChunkNodeImpl = class extends NodeImpl {
     const input = coerceType(inputs["input"], "string");
     const overlapPercent = this.chartNode.data.overlap / 100;
     const chunked = chunkStringByTokenCount(
+      defaultTokenizer,
       input,
       this.chartNode.data.numTokensPerChunk,
-      openaiModels[this.chartNode.data.model].tiktokenModel,
       overlapPercent
     );
     return {
@@ -18626,7 +18467,7 @@ function stringifyString(item, ctx, onComment, onChompKeep) {
 }
 
 // ../../.yarn/cache/yaml-npm-2.3.1-743f5688d1-f33e26b726.zip/node_modules/yaml/browser/dist/stringify/stringify.js
-function createStringifyContext(doc, options3) {
+function createStringifyContext(doc, options2) {
   const opt = Object.assign({
     blockQuote: true,
     commentString: stringifyComment,
@@ -18645,7 +18486,7 @@ function createStringifyContext(doc, options3) {
     singleQuote: null,
     trueStr: "true",
     verifyAliasOrder: true
-  }, doc.schema.toStringOptions, options3);
+  }, doc.schema.toStringOptions, options2);
   let inFlow;
   switch (opt.collectionStyle) {
     case "block":
@@ -18979,10 +18820,10 @@ var Pair = class _Pair {
 };
 
 // ../../.yarn/cache/yaml-npm-2.3.1-743f5688d1-f33e26b726.zip/node_modules/yaml/browser/dist/stringify/stringifyCollection.js
-function stringifyCollection(collection, ctx, options3) {
+function stringifyCollection(collection, ctx, options2) {
   const flow = ctx.inFlow ?? collection.flow;
   const stringify4 = flow ? stringifyFlowCollection : stringifyBlockCollection;
-  return stringify4(collection, ctx, options3);
+  return stringify4(collection, ctx, options2);
 }
 function stringifyBlockCollection({ comment, items }, ctx, { blockItemPrefix, flowChars, itemIndent, onChompKeep, onComment }) {
   const { indent, options: { commentString } } = ctx;
@@ -19688,9 +19529,9 @@ function createPairs(schema5, iterable, ctx) {
         } else
           throw new TypeError(`Expected [key, value] tuple: ${it}`);
       } else if (it && it instanceof Object) {
-        const keys4 = Object.keys(it);
-        if (keys4.length === 1) {
-          key = keys4[0];
+        const keys3 = Object.keys(it);
+        if (keys3.length === 1) {
+          key = keys3[0];
           value = it[key];
         } else
           throw new TypeError(`Expected { key: value } tuple: ${it}`);
@@ -20129,8 +19970,8 @@ function getTags(customTags, schemaName) {
     if (Array.isArray(customTags))
       tags = [];
     else {
-      const keys4 = Array.from(schemas.keys()).filter((key) => key !== "yaml11").map((key) => JSON.stringify(key)).join(", ");
-      throw new Error(`Unknown schema "${schemaName}"; use one of ${keys4} or define customTags array`);
+      const keys3 = Array.from(schemas.keys()).filter((key) => key !== "yaml11").map((key) => JSON.stringify(key)).join(", ");
+      throw new Error(`Unknown schema "${schemaName}"; use one of ${keys3} or define customTags array`);
     }
   }
   if (Array.isArray(customTags)) {
@@ -20145,8 +19986,8 @@ function getTags(customTags, schemaName) {
     const tagObj = tagsByName[tag];
     if (tagObj)
       return tagObj;
-    const keys4 = Object.keys(tagsByName).map((key) => JSON.stringify(key)).join(", ");
-    throw new Error(`Unknown custom tag "${tag}"; use one of ${keys4}`);
+    const keys3 = Object.keys(tagsByName).map((key) => JSON.stringify(key)).join(", ");
+    throw new Error(`Unknown custom tag "${tag}"; use one of ${keys3}`);
   });
 }
 
@@ -20173,10 +20014,10 @@ var Schema = class _Schema {
 };
 
 // ../../.yarn/cache/yaml-npm-2.3.1-743f5688d1-f33e26b726.zip/node_modules/yaml/browser/dist/stringify/stringifyDocument.js
-function stringifyDocument(doc, options3) {
+function stringifyDocument(doc, options2) {
   const lines = [];
-  let hasDirectives = options3.directives === true;
-  if (options3.directives !== false && doc.directives) {
+  let hasDirectives = options2.directives === true;
+  if (options2.directives !== false && doc.directives) {
     const dir = doc.directives.toString(doc);
     if (dir) {
       lines.push(dir);
@@ -20186,7 +20027,7 @@ function stringifyDocument(doc, options3) {
   }
   if (hasDirectives)
     lines.push("---");
-  const ctx = createStringifyContext(doc, options3);
+  const ctx = createStringifyContext(doc, options2);
   const { commentString } = ctx.options;
   if (doc.commentBefore) {
     if (lines.length !== 1)
@@ -20245,7 +20086,7 @@ function stringifyDocument(doc, options3) {
 
 // ../../.yarn/cache/yaml-npm-2.3.1-743f5688d1-f33e26b726.zip/node_modules/yaml/browser/dist/doc/Document.js
 var Document = class _Document {
-  constructor(value, replacer, options3) {
+  constructor(value, replacer, options2) {
     this.commentBefore = null;
     this.comment = null;
     this.errors = [];
@@ -20254,8 +20095,8 @@ var Document = class _Document {
     let _replacer = null;
     if (typeof replacer === "function" || Array.isArray(replacer)) {
       _replacer = replacer;
-    } else if (options3 === void 0 && replacer) {
-      options3 = replacer;
+    } else if (options2 === void 0 && replacer) {
+      options2 = replacer;
       replacer = void 0;
     }
     const opt = Object.assign({
@@ -20266,17 +20107,17 @@ var Document = class _Document {
       strict: true,
       uniqueKeys: true,
       version: "1.2"
-    }, options3);
+    }, options2);
     this.options = opt;
     let { version } = opt;
-    if (options3?._directives) {
-      this.directives = options3._directives.atDocument();
+    if (options2?._directives) {
+      this.directives = options2._directives.atDocument();
       if (this.directives.yaml.explicit)
         version = this.directives.yaml.version;
     } else
       this.directives = new Directives({ version });
-    this.setSchema(version, options3);
-    this.contents = value === void 0 ? null : this.createNode(value, _replacer, options3);
+    this.setSchema(version, options2);
+    this.contents = value === void 0 ? null : this.createNode(value, _replacer, options2);
   }
   /**
    * Create a deep copy of this Document and its contents.
@@ -20327,7 +20168,7 @@ var Document = class _Document {
     }
     return new Alias(node.anchor);
   }
-  createNode(value, replacer, options3) {
+  createNode(value, replacer, options2) {
     let _replacer = void 0;
     if (typeof replacer === "function") {
       value = replacer.call({ "": value }, "", value);
@@ -20338,11 +20179,11 @@ var Document = class _Document {
       if (asStr.length > 0)
         replacer = replacer.concat(asStr);
       _replacer = replacer;
-    } else if (options3 === void 0 && replacer) {
-      options3 = replacer;
+    } else if (options2 === void 0 && replacer) {
+      options2 = replacer;
       replacer = void 0;
     }
-    const { aliasDuplicateObjects, anchorPrefix, flow, keepUndefined, onTagObj, tag } = options3 ?? {};
+    const { aliasDuplicateObjects, anchorPrefix, flow, keepUndefined, onTagObj, tag } = options2 ?? {};
     const { onAnchor, setAnchors, sourceObjects } = createNodeAnchors(
       this,
       // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
@@ -20367,9 +20208,9 @@ var Document = class _Document {
    * Convert a key and a value into a `Pair` using the current schema,
    * recursively wrapping all values as `Scalar` or `Collection` nodes.
    */
-  createPair(key, value, options3 = {}) {
-    const k2 = this.createNode(key, null, options3);
-    const v2 = this.createNode(value, null, options3);
+  createPair(key, value, options2 = {}) {
+    const k2 = this.createNode(key, null, options2);
+    const v2 = this.createNode(value, null, options2);
     return new Pair(k2, v2);
   }
   /**
@@ -20455,7 +20296,7 @@ var Document = class _Document {
    *
    * Overrides all previously set schema options.
    */
-  setSchema(version, options3 = {}) {
+  setSchema(version, options2 = {}) {
     if (typeof version === "number")
       version = String(version);
     let opt;
@@ -20485,10 +20326,10 @@ var Document = class _Document {
         throw new Error(`Expected '1.1', '1.2' or null as first argument, but found: ${sv}`);
       }
     }
-    if (options3.schema instanceof Object)
-      this.schema = options3.schema;
+    if (options2.schema instanceof Object)
+      this.schema = options2.schema;
     else if (opt)
-      this.schema = new Schema(Object.assign(opt, options3));
+      this.schema = new Schema(Object.assign(opt, options2));
     else
       throw new Error(`With a null YAML version, the { schema: Schema } option is required`);
   }
@@ -20518,14 +20359,14 @@ var Document = class _Document {
     return this.toJS({ json: true, jsonArg, mapAsMap: false, onAnchor });
   }
   /** A YAML representation of the document. */
-  toString(options3 = {}) {
+  toString(options2 = {}) {
     if (this.errors.length > 0)
       throw new Error("Document with errors cannot be stringified");
-    if ("indent" in options3 && (!Number.isInteger(options3.indent) || Number(options3.indent) <= 0)) {
-      const s2 = JSON.stringify(options3.indent);
+    if ("indent" in options2 && (!Number.isInteger(options2.indent) || Number(options2.indent) <= 0)) {
+      const s2 = JSON.stringify(options2.indent);
       throw new Error(`"indent" option must be a positive integer, not ${s2}`);
     }
-    return stringifyDocument(this, options3);
+    return stringifyDocument(this, options2);
   }
 };
 function assertCollection(contents) {
@@ -21671,14 +21512,14 @@ function composeEmptyNode(ctx, offset, before, pos, { spaceBefore, comment, anch
   }
   return node;
 }
-function composeAlias({ options: options3 }, { offset, source, end }, onError) {
+function composeAlias({ options: options2 }, { offset, source, end }, onError) {
   const alias = new Alias(source.substring(1));
   if (alias.source === "")
     onError(offset, "BAD_ALIAS", "Alias cannot be an empty string");
   if (alias.source.endsWith(":"))
     onError(offset + source.length - 1, "BAD_ALIAS", "Alias ending in : is ambiguous", true);
   const valueEnd = offset + source.length;
-  const re = resolveEnd(end, valueEnd, options3.strict, onError);
+  const re = resolveEnd(end, valueEnd, options2.strict, onError);
   alias.range = [offset, valueEnd, re.offset];
   if (re.comment)
     alias.comment = re.comment;
@@ -21686,8 +21527,8 @@ function composeAlias({ options: options3 }, { offset, source, end }, onError) {
 }
 
 // ../../.yarn/cache/yaml-npm-2.3.1-743f5688d1-f33e26b726.zip/node_modules/yaml/browser/dist/compose/compose-doc.js
-function composeDoc(options3, directives, { offset, start, value, end }, onError) {
-  const opts = Object.assign({ _directives: directives }, options3);
+function composeDoc(options2, directives, { offset, start, value, end }, onError) {
+  const opts = Object.assign({ _directives: directives }, options2);
   const doc = new Document(void 0, opts);
   const ctx = {
     atRoot: true,
@@ -21751,7 +21592,7 @@ function parsePrelude(prelude) {
   return { comment, afterEmptyLine };
 }
 var Composer = class {
-  constructor(options3 = {}) {
+  constructor(options2 = {}) {
     this.doc = null;
     this.atDirectives = false;
     this.prelude = [];
@@ -21764,8 +21605,8 @@ var Composer = class {
       else
         this.errors.push(new YAMLParseError(pos, code, message));
     };
-    this.directives = new Directives({ version: options3.version || "1.2" });
-    this.options = options3;
+    this.directives = new Directives({ version: options2.version || "1.2" });
+    this.options = options2;
   }
   decorate(doc, afterDoc) {
     const { comment, afterEmptyLine } = parsePrelude(this.prelude);
@@ -23712,15 +23553,15 @@ var Parser = class {
 };
 
 // ../../.yarn/cache/yaml-npm-2.3.1-743f5688d1-f33e26b726.zip/node_modules/yaml/browser/dist/public-api.js
-function parseOptions(options3) {
-  const prettyErrors = options3.prettyErrors !== false;
-  const lineCounter = options3.lineCounter || prettyErrors && new LineCounter() || null;
+function parseOptions(options2) {
+  const prettyErrors = options2.prettyErrors !== false;
+  const lineCounter = options2.lineCounter || prettyErrors && new LineCounter() || null;
   return { lineCounter, prettyErrors };
 }
-function parseAllDocuments(source, options3 = {}) {
-  const { lineCounter, prettyErrors } = parseOptions(options3);
+function parseAllDocuments(source, options2 = {}) {
+  const { lineCounter, prettyErrors } = parseOptions(options2);
   const parser = new Parser(lineCounter?.addNewLine);
-  const composer = new Composer(options3);
+  const composer = new Composer(options2);
   const docs = Array.from(composer.compose(parser.parse(source)));
   if (prettyErrors && lineCounter)
     for (const doc of docs) {
@@ -23731,10 +23572,10 @@ function parseAllDocuments(source, options3 = {}) {
     return docs;
   return Object.assign([], { empty: true }, composer.streamInfo());
 }
-function parseDocument(source, options3 = {}) {
-  const { lineCounter, prettyErrors } = parseOptions(options3);
+function parseDocument(source, options2 = {}) {
+  const { lineCounter, prettyErrors } = parseOptions(options2);
   const parser = new Parser(lineCounter?.addNewLine);
-  const composer = new Composer(options3);
+  const composer = new Composer(options2);
   let doc = null;
   for (const _doc of composer.compose(parser.parse(source), true, source.length)) {
     if (!doc)
@@ -23750,14 +23591,14 @@ function parseDocument(source, options3 = {}) {
   }
   return doc;
 }
-function parse(src, reviver, options3) {
+function parse(src, reviver, options2) {
   let _reviver = void 0;
   if (typeof reviver === "function") {
     _reviver = reviver;
-  } else if (options3 === void 0 && reviver && typeof reviver === "object") {
-    options3 = reviver;
+  } else if (options2 === void 0 && reviver && typeof reviver === "object") {
+    options2 = reviver;
   }
-  const doc = parseDocument(src, options3);
+  const doc = parseDocument(src, options2);
   if (!doc)
     return null;
   doc.warnings.forEach((warning) => warn(doc.options.logLevel, warning));
@@ -23767,27 +23608,27 @@ function parse(src, reviver, options3) {
     else
       doc.errors = [];
   }
-  return doc.toJS(Object.assign({ reviver: _reviver }, options3));
+  return doc.toJS(Object.assign({ reviver: _reviver }, options2));
 }
-function stringify3(value, replacer, options3) {
+function stringify3(value, replacer, options2) {
   let _replacer = null;
   if (typeof replacer === "function" || Array.isArray(replacer)) {
     _replacer = replacer;
-  } else if (options3 === void 0 && replacer) {
-    options3 = replacer;
+  } else if (options2 === void 0 && replacer) {
+    options2 = replacer;
   }
-  if (typeof options3 === "string")
-    options3 = options3.length;
-  if (typeof options3 === "number") {
-    const indent = Math.round(options3);
-    options3 = indent < 1 ? void 0 : indent > 8 ? { indent: 8 } : { indent };
+  if (typeof options2 === "string")
+    options2 = options2.length;
+  if (typeof options2 === "number") {
+    const indent = Math.round(options2);
+    options2 = indent < 1 ? void 0 : indent > 8 ? { indent: 8 } : { indent };
   }
   if (value === void 0) {
-    const { keepUndefined } = options3 ?? replacer ?? {};
+    const { keepUndefined } = options2 ?? replacer ?? {};
     if (!keepUndefined)
       return void 0;
   }
-  return new Document(value, _replacer, options3).toString(options3);
+  return new Document(value, _replacer, options2).toString(options2);
 }
 
 // ../../.yarn/cache/yaml-npm-2.3.1-743f5688d1-f33e26b726.zip/node_modules/yaml/browser/index.js
@@ -24449,9 +24290,9 @@ JSONPath.toPointer = function(pointer) {
   return p2;
 };
 JSONPath.toPathArray = function(expr) {
-  var cache5 = JSONPath.cache;
-  if (cache5[expr]) {
-    return cache5[expr].concat();
+  var cache3 = JSONPath.cache;
+  if (cache3[expr]) {
+    return cache3[expr].concat();
   }
   var subx = [];
   var normalized = expr.replace(/@(?:null|boolean|number|string|integer|undefined|nonFinite|scalar|array|object|function|other)\(\)/g, ";$&;").replace(/['\[](\??\((?:[\0-\t\x0B\f\x0E-\u2027\u202A-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*?\))['\]]/g, function($0, $1) {
@@ -24465,8 +24306,8 @@ JSONPath.toPathArray = function(expr) {
     var match = exp.match(/#([0-9]+)/);
     return !match || !match[1] ? exp : subx[match[1]];
   });
-  cache5[expr] = exprList;
-  return cache5[expr].concat();
+  cache3[expr] = exprList;
+  return cache3[expr].concat();
 };
 var moveToAnotherArray = function moveToAnotherArray2(source, target, conditionCb) {
   var il = source.length;
@@ -24486,12 +24327,12 @@ var Script = /* @__PURE__ */ function() {
     key: "runInNewContext",
     value: function runInNewContext(context) {
       var expr = this.code;
-      var keys4 = Object.keys(context);
+      var keys3 = Object.keys(context);
       var funcs = [];
-      moveToAnotherArray(keys4, funcs, function(key) {
+      moveToAnotherArray(keys3, funcs, function(key) {
         return typeof context[key] === "function";
       });
-      var values4 = keys4.map(function(vr, i2) {
+      var values3 = keys3.map(function(vr, i2) {
         return context[vr];
       });
       var funcString = funcs.reduce(function(s2, func) {
@@ -24502,13 +24343,13 @@ var Script = /* @__PURE__ */ function() {
         return "var " + func + "=" + fString + ";" + s2;
       }, "");
       expr = funcString + expr;
-      if (!/(["'])use strict\1/.test(expr) && !keys4.includes("arguments")) {
+      if (!/(["'])use strict\1/.test(expr) && !keys3.includes("arguments")) {
         expr = "var arguments = undefined;" + expr;
       }
       expr = expr.replace(/;[\t-\r \xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]*$/, "");
       var lastStatementEnd = expr.lastIndexOf(";");
       var code = lastStatementEnd > -1 ? expr.slice(0, lastStatementEnd + 1) + " return " + expr.slice(lastStatementEnd + 1) : " return " + expr;
-      return _construct(Function, keys4.concat([code])).apply(void 0, _toConsumableArray(values4));
+      return _construct(Function, keys3.concat([code])).apply(void 0, _toConsumableArray(values3));
     }
   }]);
   return Script2;
@@ -24943,13 +24784,11 @@ var TrimChatMessagesNodeImpl = class extends NodeImpl {
     const maxTokenCount = this.chartNode.data.maxTokenCount;
     const removeFromBeginning = this.chartNode.data.removeFromBeginning;
     const model = "gpt-3.5-turbo";
-    const tiktokenModel = openaiModels[model].tiktokenModel;
     const trimmedMessages = [...input];
-    let tokenCount = getTokenCountForMessages(
+    let tokenCount = defaultTokenizer.getTokenCountForMessages(
       trimmedMessages.map(
         (message) => ({ content: message.message, role: message.type })
-      ),
-      tiktokenModel
+      )
     );
     while (tokenCount > maxTokenCount) {
       if (removeFromBeginning) {
@@ -24957,15 +24796,14 @@ var TrimChatMessagesNodeImpl = class extends NodeImpl {
       } else {
         trimmedMessages.pop();
       }
-      tokenCount = getTokenCountForMessages(
+      tokenCount = defaultTokenizer.getTokenCountForMessages(
         trimmedMessages.map(
           (message) => ({
             content: message.message,
             role: message.type,
             function_call: message.function_call
           })
-        ),
-        tiktokenModel
+        )
       );
     }
     return {
@@ -26441,8 +26279,8 @@ var VectorNearestNeighborsNodeImpl = class extends NodeImpl {
 var vectorNearestNeighborsNode = nodeDefinition(VectorNearestNeighborsNodeImpl, "Vector KNN");
 
 // src/model/nodes/HashNode.ts
-var crypto2 = __toESM(require_crypto_js(), 1);
-var { SHA256, SHA512, MD5, SHA1 } = crypto2;
+var crypto = __toESM(require_crypto_js(), 1);
+var { SHA256, SHA512, MD5, SHA1 } = crypto;
 var HashNodeImpl = class extends NodeImpl {
   static create() {
     const chartNode = {
@@ -27015,10 +26853,10 @@ var ObjectNodeImpl = class extends NodeImpl {
       group: ["Objects"]
     };
   }
-  interpolate(baseString, values4) {
+  interpolate(baseString, values3) {
     return baseString.replace(/("?)\{\{([^}]+)\}\}("?)/g, (_m, openQuote, key, _closeQuote) => {
       const isQuoted = Boolean(openQuote);
-      const value = values4[key];
+      const value = values3[key];
       if (value == null) {
         return "null";
       }
@@ -27972,14 +27810,14 @@ var GraphProcessor = class _GraphProcessor {
     const internalHandler = this.#onUserEventHandlers.get(listener);
     this.#emitter.offAny(internalHandler);
   }
-  userInput(nodeId, values4) {
+  userInput(nodeId, values3) {
     const pending = this.#pendingUserInputs[nodeId];
     if (pending) {
-      pending.resolve(values4);
+      pending.resolve(values3);
       delete this.#pendingUserInputs[nodeId];
     }
     for (const processor of this.#subprocessors) {
-      processor.userInput(nodeId, values4);
+      processor.userInput(nodeId, values3);
     }
   }
   setExternalFunction(name, fn) {
@@ -28803,24 +28641,24 @@ var GraphProcessor = class _GraphProcessor {
   }
   #getInputValuesForNode(node) {
     const connections = this.#connections[node.id];
-    return this.#definitions[node.id].inputs.reduce((values4, input) => {
+    return this.#definitions[node.id].inputs.reduce((values3, input) => {
       if (!connections) {
-        return values4;
+        return values3;
       }
       const connection = connections.find((conn) => conn.inputId === input.id && conn.inputNodeId === node.id);
       if (connection) {
         const outputNode = this.#nodeInstances[connection.outputNodeId].chartNode;
         const outputNodeOutputs = this.#nodeResults.get(outputNode.id);
         const outputResult = outputNodeOutputs?.[connection.outputId];
-        values4[input.id] = outputResult;
+        values3[input.id] = outputResult;
         if (outputNodeOutputs?.[ControlFlowExcludedPort]) {
-          values4[ControlFlowExcludedPort] = {
+          values3[ControlFlowExcludedPort] = {
             type: "control-flow-excluded",
             value: void 0
           };
         }
       }
-      return values4;
+      return values3;
     }, {});
   }
   /** Gets the nodes that are inputting to the given node. */
@@ -29470,8 +29308,8 @@ var ExecutionRecorder = class _ExecutionRecorder {
   recordingId;
   #emitter;
   #options;
-  constructor(options3 = {}) {
-    this.#options = options3;
+  constructor(options2 = {}) {
+    this.#options = options2;
     this.#emitter = new Emittery();
     this.#emitter.bindMethods(this, ["on", "off", "once"]);
   }
@@ -29525,6480 +29363,12 @@ var ExecutionRecorder = class _ExecutionRecorder {
   }
 };
 
-// dist/esm/utils/symbols.js
-var ControlFlowExcluded2 = "__internalPort_ControlFlowExcluded";
-var ControlFlowExcludedPort2 = ControlFlowExcluded2;
-var Warnings2 = "__internalPort_Warnings";
-var WarningsPort2 = Warnings2;
-
-// dist/esm/utils/genericUtilFunctions.js
-var exhaustiveTuple2 = () => (
-  // impressive inference from TS: it knows when the condition and the true branch can't both be satisfied
-  (...x2) => x2
-);
-
-// dist/esm/model/DataValue.js
-var dataTypes2 = exhaustiveTuple2()("any", "any[]", "boolean", "boolean[]", "string", "string[]", "number", "number[]", "date", "date[]", "time", "time[]", "datetime", "datetime[]", "chat-message", "chat-message[]", "control-flow-excluded", "control-flow-excluded[]", "object", "object[]", "fn<string>", "fn<number>", "fn<boolean>", "fn<date>", "fn<time>", "fn<datetime>", "fn<any>", "fn<object>", "fn<chat-message>", "fn<control-flow-excluded>", "fn<string[]>", "fn<number[]>", "fn<boolean[]>", "fn<date[]>", "fn<time[]>", "fn<datetime[]>", "fn<any[]>", "fn<object[]>", "fn<chat-message[]>", "fn<control-flow-excluded[]>", "gpt-function", "gpt-function[]", "fn<gpt-function[]>", "fn<gpt-function>", "vector", "vector[]", "fn<vector>", "fn<vector[]>", "image", "image[]", "fn<image>", "fn<image[]>", "binary", "binary[]", "fn<binary>", "fn<binary[]>", "audio", "audio[]", "fn<audio>", "fn<audio[]>");
-var scalarTypes2 = exhaustiveTuple2()("any", "boolean", "string", "number", "date", "time", "datetime", "chat-message", "control-flow-excluded", "object", "gpt-function", "vector", "image", "binary", "audio");
-function isScalarDataValue2(value) {
-  if (!value) {
-    return false;
-  }
-  return !isArrayDataType2(value.type) && !isFunctionDataType2(value.type);
-}
-function isScalarDataType2(type2) {
-  return !isArrayDataType2(type2) && !isFunctionDataType2(type2);
-}
-function isArrayDataValue2(value) {
-  if (!value) {
-    return false;
-  }
-  return isArrayDataType2(value.type) || (value.type === "any" || value.type === "object") && Array.isArray(value.value);
-}
-function isArrayDataType2(type2) {
-  return type2.endsWith("[]");
-}
-function isFunctionDataType2(type2) {
-  return type2.startsWith("fn<");
-}
-function isFunctionDataValue2(value) {
-  if (!value) {
-    return false;
-  }
-  return isFunctionDataType2(value.type) || value.type === "any" && typeof value.value === "function";
-}
-function functionTypeToScalarType2(functionType) {
-  return functionType.slice(3, -1);
-}
-function arrayTypeToScalarType2(arrayType) {
-  return arrayType.slice(0, -2);
-}
-function getScalarTypeOf2(type2) {
-  if (isArrayDataType2(type2)) {
-    return arrayTypeToScalarType2(type2);
-  }
-  if (isFunctionDataType2(type2)) {
-    return functionTypeToScalarType2(type2);
-  }
-  return type2;
-}
-function unwrapDataValue2(value) {
-  if (!value) {
-    return void 0;
-  }
-  if (isFunctionDataValue2(value)) {
-    return { type: functionTypeToScalarType2(value.type), value: value.value() };
-  }
-  return value;
-}
-var arrayizeDataValue2 = (value) => {
-  const isArray3 = value.type.endsWith("[]") || (value.type === "any" || value.type === "object") && Array.isArray(value.value);
-  if (!isArray3) {
-    return [value];
-  }
-  const unwrappedType = value.type.endsWith("[]") ? value.type.slice(0, -2) : value.type;
-  return value.value.map((v2) => ({ type: unwrappedType, value: v2 }));
-};
-var scalarDefaults2 = {
-  string: "",
-  number: 0,
-  boolean: false,
-  any: void 0,
-  "chat-message": {
-    type: "user",
-    message: "",
-    function_call: void 0
-  },
-  "control-flow-excluded": void 0,
-  date: (/* @__PURE__ */ new Date()).toISOString(),
-  time: (/* @__PURE__ */ new Date()).toISOString(),
-  datetime: (/* @__PURE__ */ new Date()).toISOString(),
-  object: {},
-  "gpt-function": {
-    name: "unknown",
-    description: "",
-    parameters: {},
-    namespace: void 0
-  },
-  vector: [],
-  image: {
-    mediaType: "image/jpeg",
-    data: new Uint8Array()
-  },
-  binary: new Uint8Array(),
-  audio: { data: new Uint8Array() }
-};
-function getDefaultValue2(type2) {
-  if (isArrayDataType2(type2)) {
-    return [];
-  }
-  if (isFunctionDataType2(type2)) {
-    return () => scalarDefaults2[getScalarTypeOf2(type2)];
-  }
-  return scalarDefaults2[getScalarTypeOf2(type2)];
-}
-
-// dist/esm/utils/errors.js
-function getError2(error) {
-  const errorInstance = typeof error === "object" && error instanceof Error ? error : new Error(error != null ? error.toString() : "Unknown error");
-  return errorInstance;
-}
-
-// dist/esm/utils/typeSafety.js
-var entries2 = (object) => object == null ? [] : Object.entries(object);
-function keys3(o2) {
-  return Object.keys(o2);
-}
-function values3(o2) {
-  return Object.values(o2);
-}
-function mapValues3(o2, fn) {
-  return Object.fromEntries(Object.entries(o2).map(([key, value]) => [key, fn(value)]));
-}
-
-// dist/esm/utils/expectType.js
-function expectType2(value, type2) {
-  if (isArrayDataType2(type2) && isScalarDataValue2(value) && getScalarTypeOf2(type2) === value.type) {
-    return [value.value];
-  }
-  if (type2 === "any" || type2 === "any[]" || value?.type === "any" || value?.type === "any[]") {
-    return value?.value;
-  }
-  if (isFunctionDataType2(type2) && value?.type === `fn<${type2}>` || type2 === "fn<any>") {
-    return () => value.value;
-  }
-  if (value?.type !== type2) {
-    throw new Error(`Expected value of type ${type2} but got ${value?.type}`);
-  }
-  return value.value;
-}
-function expectTypeOptional2(value, type2) {
-  if (value === void 0) {
-    return void 0;
-  }
-  if (isArrayDataType2(type2) && isScalarDataValue2(value) && getScalarTypeOf2(type2) === value.type) {
-    return [value.value];
-  }
-  if (isFunctionDataType2(value.type) && value.type === `fn<${type2}>`) {
-    value = unwrapDataValue2(value);
-  }
-  if (value.type !== type2) {
-    throw new Error(`Expected value of type ${type2} but got ${value?.type}`);
-  }
-  return value.value;
-}
-
-// dist/esm/utils/coerceType.js
-function coerceTypeOptional2(wrapped, type2) {
-  const value = wrapped ? unwrapDataValue2(wrapped) : void 0;
-  if (isArrayDataType2(type2) && !isArrayDataValue2(value)) {
-    const coerced = coerceTypeOptional2(value, getScalarTypeOf2(type2));
-    if (coerced === void 0) {
-      return void 0;
-    }
-    return [coerced];
-  }
-  if (isArrayDataType2(type2) && isArrayDataValue2(value) && getScalarTypeOf2(type2) !== getScalarTypeOf2(value.type)) {
-    return value.value.map((v2) => coerceTypeOptional2(inferType2(v2), getScalarTypeOf2(type2)));
-  }
-  const result = R(type2).with("string", () => coerceToString2(value)).with("boolean", () => coerceToBoolean2(value)).with("chat-message", () => coerceToChatMessage2(value)).with("number", () => coerceToNumber2(value)).with("object", () => coerceToObject2(value)).otherwise(() => {
-    if (!value) {
-      return value;
-    }
-    if (getScalarTypeOf2(value.type) === "any" || getScalarTypeOf2(type2) === "any") {
-      return value.value;
-    }
-    return expectTypeOptional2(value, type2);
-  });
-  return result;
-}
-function coerceType2(value, type2) {
-  const result = coerceTypeOptional2(value, type2);
-  if (result === void 0) {
-    throw new Error(`Expected value of type ${type2} but got undefined`);
-  }
-  return result;
-}
-function inferType2(value) {
-  if (value === void 0) {
-    return { type: "any", value: void 0 };
-  }
-  if (value === null) {
-    return { type: "any", value: null };
-  }
-  if (typeof value === "function") {
-    return { type: "fn<any>", value };
-  }
-  if (typeof value === "string") {
-    return { type: "string", value };
-  }
-  if (typeof value === "boolean") {
-    return { type: "boolean", value };
-  }
-  if (typeof value === "number") {
-    return { type: "number", value };
-  }
-  if (value instanceof Date) {
-    return { type: "datetime", value: value.toISOString() };
-  }
-  if (typeof value === "object") {
-    return { type: "object", value };
-  }
-  throw new Error(`Cannot infer type of value: ${value}`);
-}
-function coerceToString2(value) {
-  if (!value) {
-    return "";
-  }
-  if (isArrayDataValue2(value)) {
-    return value.value.map((v2) => coerceTypeOptional2({ type: getScalarTypeOf2(value.type), value: v2 }, "string")).join("\n");
-  }
-  if (value.type === "string") {
-    return value.value;
-  }
-  if (value.type === "boolean") {
-    return value.value.toString();
-  }
-  if (value.type === "number") {
-    return value.value.toString();
-  }
-  if (value.type === "date") {
-    return value.value;
-  }
-  if (value.type === "time") {
-    return value.value;
-  }
-  if (value.type === "datetime") {
-    return value.value;
-  }
-  if (value.type === "chat-message") {
-    return value.value.message;
-  }
-  if (value.value === void 0) {
-    return void 0;
-  }
-  if (value.value === null) {
-    return void 0;
-  }
-  if (value.type === "any") {
-    const inferred = inferType2(value.value);
-    return coerceTypeOptional2(inferred, "string");
-  }
-  return JSON.stringify(value.value);
-}
-function coerceToChatMessage2(value) {
-  if (!value || value.value == null) {
-    return void 0;
-  }
-  if (value.type === "chat-message") {
-    return value.value;
-  }
-  if (value.type === "string") {
-    return { type: "user", message: value.value, function_call: void 0 };
-  }
-  if (value.type === "object" && "type" in value.value && "message" in value.value && typeof value.value.type === "string" && typeof value.value.message === "string") {
-    return value.value;
-  }
-  if (value.type === "any") {
-    const inferred = inferType2(value.value);
-    return coerceTypeOptional2(inferred, "chat-message");
-  }
-}
-function coerceToBoolean2(value) {
-  if (!value || !value.value) {
-    return false;
-  }
-  if (isArrayDataValue2(value)) {
-    return value.value.map((v2) => coerceTypeOptional2({ type: value.type.replace("[]", ""), value: v2 }, "boolean")).every((v2) => v2);
-  }
-  if (value.type === "string") {
-    return value.value.length > 0 && value.value !== "false";
-  }
-  if (value.type === "boolean") {
-    return value.value;
-  }
-  if (value.type === "number") {
-    return value.value !== 0;
-  }
-  if (value.type === "date") {
-    return true;
-  }
-  if (value.type === "time") {
-    return true;
-  }
-  if (value.type === "datetime") {
-    return true;
-  }
-  if (value.type === "chat-message") {
-    return value.value.message.length > 0;
-  }
-  return !!value.value;
-}
-function coerceToNumber2(value) {
-  if (!value || value.value == null) {
-    return void 0;
-  }
-  if (isArrayDataValue2(value)) {
-    return void 0;
-  }
-  if (value.type === "string") {
-    return parseFloat(value.value);
-  }
-  if (value.type === "boolean") {
-    return value.value ? 1 : 0;
-  }
-  if (value.type === "number") {
-    return value.value;
-  }
-  if (value.type === "date") {
-    return new Date(value.value).valueOf();
-  }
-  if (value.type === "time") {
-    return new Date(value.value).valueOf();
-  }
-  if (value.type === "datetime") {
-    return new Date(value.value).valueOf();
-  }
-  if (value.type === "chat-message") {
-    return parseFloat(value.value.message);
-  }
-  if (value.type === "any") {
-    const inferred = inferType2(value.value);
-    return coerceTypeOptional2(inferred, "number");
-  }
-  if (value.type === "object") {
-    const inferred = inferType2(value.value);
-    return coerceTypeOptional2(inferred, "number");
-  }
-  return void 0;
-}
-function coerceToObject2(value) {
-  if (!value || value.value == null) {
-    return void 0;
-  }
-  return value.value;
-}
-
-// dist/esm/model/NodeRegistration.js
-var NodeRegistration2 = class {
-  NodesType = void 0;
-  NodeTypesType = void 0;
-  #infos = {};
-  #dynamicRegistered = [];
-  #plugins = [];
-  register(definition, plugin) {
-    const newRegistration = this;
-    const typeStr2 = definition.impl.create().type;
-    if (newRegistration.#infos[typeStr2]) {
-      throw new Error(`Duplicate node type: ${typeStr2}`);
-    }
-    newRegistration.#infos[typeStr2] = {
-      displayName: definition.displayName,
-      impl: definition.impl,
-      plugin
-    };
-    return newRegistration;
-  }
-  get #dynamicImpls() {
-    const implsMap = mapValues3(this.#infos, (info) => info.impl);
-    return implsMap;
-  }
-  get #dynamicDisplayNames() {
-    const displayNameMap = mapValues3(this.#infos, (info) => info.displayName);
-    return displayNameMap;
-  }
-  registerPlugin(plugin) {
-    plugin.register((definition) => this.register(definition, plugin));
-    this.#plugins.push(plugin);
-  }
-  create(type2) {
-    const info = this.#infos[type2];
-    if (!info) {
-      throw new Error(`Unknown node type: ${type2}`);
-    }
-    return info.impl.create();
-  }
-  createDynamic(type2) {
-    const implClass = this.#dynamicImpls[type2];
-    if (!implClass) {
-      throw new Error(`Unknown node type: ${type2}`);
-    }
-    return implClass.create();
-  }
-  createImpl(node) {
-    const type2 = node.type;
-    const info = this.#infos[type2];
-    if (!info) {
-      throw new Error(`Unknown node type: ${type2}`);
-    }
-    const { impl: ImplClass } = info;
-    const impl = new ImplClass(node);
-    if (!impl) {
-      throw new Error(`Unknown node type: ${type2}`);
-    }
-    return impl;
-  }
-  createDynamicImpl(node) {
-    const { type: type2 } = node;
-    const ImplClass = this.#dynamicImpls[type2];
-    if (!ImplClass) {
-      throw new Error(`Unknown node type: ${type2}`);
-    }
-    const impl = new ImplClass(node);
-    if (!impl) {
-      throw new Error(`Unknown node type: ${type2}`);
-    }
-    return impl;
-  }
-  getDisplayName(type2) {
-    const info = this.#infos[type2];
-    if (!info) {
-      throw new Error(`Unknown node type: ${type2}`);
-    }
-    return info.displayName;
-  }
-  getDynamicDisplayName(type2) {
-    const displayName = this.#dynamicDisplayNames[type2];
-    if (!displayName) {
-      throw new Error(`Unknown node type: ${type2}`);
-    }
-    return displayName;
-  }
-  isRegistered(type2) {
-    return this.#infos[type2] !== void 0;
-  }
-  getNodeTypes() {
-    return keys3(this.#infos);
-  }
-  getNodeConstructors() {
-    return values3(this.#dynamicImpls);
-  }
-  getPluginFor(type2) {
-    const info = this.#infos[type2];
-    if (!info) {
-      throw new Error(`Unknown node type: ${type2}`);
-    }
-    return info.plugin;
-  }
-  getPlugins() {
-    return this.#plugins;
-  }
-};
-
-// dist/esm/model/NodeImpl.js
-var NodeImpl2 = class {
-  chartNode;
-  constructor(chartNode) {
-    this.chartNode = chartNode;
-  }
-  get id() {
-    return this.chartNode.id;
-  }
-  get type() {
-    return this.chartNode.type;
-  }
-  get title() {
-    return this.chartNode.title;
-  }
-  get visualData() {
-    return this.chartNode.visualData;
-  }
-  get data() {
-    return this.chartNode.data;
-  }
-  getEditors() {
-    return [];
-  }
-  getBody() {
-    return void 0;
-  }
-};
-function nodeDefinition2(impl, displayName) {
-  return {
-    impl,
-    displayName
-  };
-}
-
-// dist/esm/model/nodes/UserInputNode.js
-var UserInputNodeImpl2 = class extends NodeImpl2 {
-  static create(prompt = "This is an example question?") {
-    const chartNode = {
-      type: "userInput",
-      title: "User Input",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 250
-      },
-      data: {
-        prompt,
-        useInput: false
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    if (this.chartNode.data.useInput) {
-      return [
-        {
-          dataType: "string[]",
-          id: "questions",
-          title: "Questions"
-        }
-      ];
-    }
-    return [];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        dataType: "string[]",
-        id: "output",
-        title: "Answers Only"
-      },
-      {
-        dataType: "string[]",
-        id: "questionsAndAnswers",
-        title: "Q & A"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "code",
-        label: "Prompt",
-        dataKey: "prompt",
-        useInputToggleDataKey: "useInput",
-        language: "plain-text"
-      }
-    ];
-  }
-  getBody() {
-    return this.data.useInput ? "(Using input)" : this.data.prompt;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Prompts the user for input during the execution of the graph. The user's response becomes the output of this node.
-      `,
-      infoBoxTitle: "User Input Node",
-      contextMenuTitle: "User Input",
-      group: ["Input/Output"]
-    };
-  }
-  async process() {
-    return {
-      ["output"]: void 0,
-      ["questionsAndAnswers"]: void 0
-    };
-  }
-  getOutputValuesFromUserInput(questions, answers) {
-    const questionsList = this.data.useInput ? expectType2(questions["questions"], "string[]") : [this.data.prompt];
-    return {
-      ["output"]: answers,
-      ["questionsAndAnswers"]: {
-        type: "string[]",
-        value: zip_default(questionsList, answers.value).map(([q2, a2]) => `${q2}
-${a2}`)
-      }
-    };
-  }
-};
-var userInputNode2 = nodeDefinition2(UserInputNodeImpl2, "User Input");
-
-// dist/esm/model/nodes/TextNode.js
-var TextNodeImpl2 = class extends NodeImpl2 {
-  static create(text = "{{input}}") {
-    const chartNode = {
-      type: "text",
-      title: "Text",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 300
-      },
-      data: {
-        text
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    const inputNames = [...new Set(this.chartNode.data.text.match(/\{\{([^}]+)\}\}/g))];
-    return inputNames?.map((inputName) => {
-      return {
-        type: "string",
-        // id and title should not have the {{ and }}
-        id: inputName.slice(2, -2),
-        title: inputName.slice(2, -2),
-        dataType: "string",
-        required: false
-      };
-    }) ?? [];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "output",
-        title: "Output",
-        dataType: "string"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "code",
-        label: "Text",
-        dataKey: "text",
-        language: "prompt-interpolation-markdown",
-        theme: "prompt-interpolation"
-      }
-    ];
-  }
-  getBody() {
-    const truncated = this.data.text.split("\n").slice(0, 15).join("\n").trim();
-    return {
-      type: "colorized",
-      language: "prompt-interpolation-markdown",
-      theme: "prompt-interpolation",
-      text: truncated
-    };
-  }
-  interpolate(baseString, values4) {
-    return baseString.replace(/\{\{([^}]+)\}\}/g, (_m, p1) => {
-      const value = values4[p1];
-      return value !== void 0 ? value.toString() : "";
-    });
-  }
-  async process(inputs) {
-    const inputMap = Object.keys(inputs).reduce((acc, key) => {
-      const stringValue = coerceTypeOptional2(inputs[key], "string") ?? "";
-      acc[key] = stringValue;
-      return acc;
-    }, {});
-    const outputValue = this.interpolate(this.chartNode.data.text, inputMap);
-    return {
-      output: {
-        type: "string",
-        value: outputValue
-      }
-    };
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Outputs a string of text. It can also interpolate values using <span style="color: var(--primary)">{{tags}}</span>.
-
-        The inputs are dynamic based on the interpolation tags.
-      `,
-      contextMenuTitle: "Text",
-      infoBoxTitle: "Text Node",
-      group: ["Common", "Text"]
-    };
-  }
-};
-var textNode2 = nodeDefinition2(TextNodeImpl2, "Text");
-
-// dist/esm/utils/fetchEventSource.js
-var EventSourceResponse2 = class extends Response {
-  name;
-  streams;
-  constructor(body, init) {
-    if (body == null) {
-      super(null, init);
-      this.name = "EventSourceResponse";
-      this.streams = null;
-      return;
-    }
-    const [bodyForString, bodyForEvents] = body.tee();
-    const streams = createEventStream2(bodyForEvents);
-    super(bodyForString, init);
-    this.name = "EventSourceResponse";
-    this.streams = streams;
-  }
-  async *events() {
-    if (this.streams == null) {
-      return;
-    }
-    const reader = this.streams.eventStream.getReader();
-    try {
-      while (true) {
-        const { done, value } = await this.raceWithTimeout(reader.read());
-        if (done) {
-          break;
-        }
-        yield value;
-      }
-    } finally {
-      try {
-        reader.releaseLock();
-      } catch (err) {
-        console.error(`Failed to release read lock on event source: ${getError2(err).toString()}`);
-      }
-    }
-  }
-  async raceWithTimeout(promise, timeout = 5e3) {
-    return new Promise(async (resolve, reject) => {
-      const timer = setTimeout(() => {
-        reject(new Error("Timeout: API response took too long."));
-      }, timeout);
-      try {
-        const result = await promise;
-        clearTimeout(timer);
-        resolve(result);
-      } catch (error) {
-        clearTimeout(timer);
-        reject(error);
-      }
-    });
-  }
-};
-async function fetchEventSource2(url, init) {
-  const headers = {
-    ...init?.headers,
-    accept: "text/event-stream"
-  };
-  const response = await fetch(url, {
-    ...init,
-    headers
-  });
-  return new EventSourceResponse2(response.body, response);
-}
-var lineSplitter2 = new class {
-  separator;
-  buffer = "";
-  constructor(separator = /\n+/) {
-    this.separator = separator;
-  }
-  transform(chunk, controller) {
-    this.buffer += chunk;
-    const lines = this.buffer.split(this.separator);
-    this.buffer = lines.pop() ?? "";
-    for (const line of lines) {
-      controller.enqueue(line);
-    }
-  }
-  flush(controller) {
-    if (this.buffer.length > 0) {
-      controller.enqueue(this.buffer);
-      this.buffer = "";
-    }
-  }
-}();
-function createEventStream2(body) {
-  if (body == null) {
-    return null;
-  }
-  const textStream = body.pipeThrough(new TextDecoderStream());
-  const eventStream = textStream.pipeThrough(new TransformStream(lineSplitter2)).pipeThrough(new TransformStream({
-    transform(line, controller) {
-      if (line.startsWith("data: ")) {
-        const data = line.slice(6).trim();
-        controller.enqueue(data);
-      } else if (line.startsWith("event: ")) {
-        const event = line.slice(7).trim();
-        controller.enqueue(`[${event}]`);
-      }
-    }
-  }));
-  return { eventStream, textStream };
-}
-
-// dist/esm/utils/openai.js
-var openaiModels2 = {
-  "gpt-4": {
-    maxTokens: 8192,
-    tiktokenModel: "gpt-4",
-    cost: {
-      prompt: 0.03,
-      completion: 0.06
-    },
-    displayName: "GPT-4"
-  },
-  "gpt-4-32k": {
-    maxTokens: 32768,
-    tiktokenModel: "gpt-4-32k",
-    cost: {
-      prompt: 0.06,
-      completion: 0.12
-    },
-    displayName: "GPT-4 32k"
-  },
-  "gpt-4-0613": {
-    maxTokens: 8192,
-    tiktokenModel: "gpt-4",
-    cost: {
-      prompt: 0.03,
-      completion: 0.06
-    },
-    displayName: "GPT-4 (v0613)"
-  },
-  "gpt-4-32k-0613": {
-    maxTokens: 32768,
-    tiktokenModel: "gpt-4",
-    cost: {
-      prompt: 0.06,
-      completion: 0.12
-    },
-    displayName: "GPT-4 32k (v0613)"
-  },
-  "gpt-3.5-turbo": {
-    maxTokens: 4096,
-    tiktokenModel: "gpt-3.5-turbo",
-    cost: {
-      prompt: 2e-3,
-      completion: 2e-3
-    },
-    displayName: "GPT-3.5 Turbo"
-  },
-  "gpt-3.5-turbo-0613": {
-    maxTokens: 16384,
-    tiktokenModel: "gpt-3.5-turbo",
-    cost: {
-      prompt: 2e-3,
-      completion: 2e-3
-    },
-    displayName: "GPT-3.5 (v0613)"
-  },
-  "gpt-3.5-turbo-16k-0613": {
-    maxTokens: 16384,
-    tiktokenModel: "gpt-3.5-turbo",
-    cost: {
-      prompt: 3e-3,
-      completion: 4e-3
-    },
-    displayName: "GPT-3.5 16k (v0613)"
-  }
-};
-var openAiModelOptions2 = Object.entries(openaiModels2).map(([id, { displayName }]) => ({
-  value: id,
-  label: displayName
-}));
-var OpenAIError2 = class extends Error {
-  status;
-  responseJson;
-  constructor(status, responseJson) {
-    super(`OpenAIError: ${status} ${JSON.stringify(responseJson)}`);
-    this.status = status;
-    this.responseJson = responseJson;
-    this.name = "OpenAIError";
-  }
-};
-async function* streamChatCompletions2({ auth, signal, ...rest }) {
-  const abortSignal = signal ?? new AbortController().signal;
-  const response = await fetchEventSource2("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${auth.apiKey}`,
-      ...auth.organization ? { "OpenAI-Organization": auth.organization } : {}
-    },
-    body: JSON.stringify({
-      ...rest,
-      stream: true
-    }),
-    signal: abortSignal
-  });
-  let hadChunks = false;
-  for await (const chunk of response.events()) {
-    hadChunks = true;
-    if (chunk === "[DONE]" || abortSignal?.aborted) {
-      return;
-    }
-    let data;
-    try {
-      data = JSON.parse(chunk);
-    } catch (err) {
-      console.error("JSON parse failed on chunk: ", chunk);
-      throw err;
-    }
-    yield data;
-  }
-  if (!hadChunks) {
-    const responseJson = await response.json();
-    throw new OpenAIError2(response.status, responseJson);
-  }
-}
-
-// dist/esm/utils/tokenizer.js
-var supportedModels2 = [...Object.keys(openaiModels2)];
-function getTokenCountForString2(input, model) {
-  const encoding = encoding_for_model(model);
-  const encoded = encoding.encode(input);
-  encoding.free();
-  return encoded.length;
-}
-function getTokenCountForMessages2(messages, model) {
-  const encoding = encoding_for_model(model);
-  const tokenCount = messages.reduce((sum2, message) => {
-    const encoded = encoding.encode(JSON.stringify(message));
-    return sum2 + encoded.length;
-  }, 0);
-  encoding.free();
-  return tokenCount;
-}
-function chunkStringByTokenCount2(input, targetTokenCount, model, overlapPercent) {
-  overlapPercent = Number.isNaN(overlapPercent) ? 0 : Math.max(0, Math.min(1, overlapPercent));
-  const chunks = [];
-  const guess = Math.floor(targetTokenCount * (input.length / getTokenCountForString2(input, model)));
-  let remaining = input;
-  while (remaining.length > 0) {
-    chunks.push(remaining.slice(0, guess));
-    remaining = remaining.slice(guess - Math.floor(guess * overlapPercent));
-  }
-  return chunks;
-}
-function getCostForTokens2(tokenCount, type2, model) {
-  const costPerThousand = openaiModels2[model].cost[type2];
-  return tokenCount / 1e3 * costPerThousand;
-}
-function getCostForPrompt2(messages, model) {
-  const tokenCount = getTokenCountForMessages2(messages, openaiModels2[model].tiktokenModel);
-  return getCostForTokens2(tokenCount, "prompt", model);
-}
-
-// dist/esm/utils/outputs.js
-function addWarning2(outputs, warning) {
-  if (!outputs[WarningsPort2]) {
-    outputs[WarningsPort2] = { type: "string[]", value: [] };
-  }
-  outputs[WarningsPort2].value.push(warning);
-}
-
-// dist/esm/model/nodes/ChatNode.js
-var cache2 = /* @__PURE__ */ new Map();
-var ChatNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "chat",
-      title: "Chat",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 200
-      },
-      data: {
-        model: "gpt-3.5-turbo",
-        useModelInput: false,
-        temperature: 0.5,
-        useTemperatureInput: false,
-        top_p: 1,
-        useTopPInput: false,
-        useTopP: false,
-        useUseTopPInput: false,
-        maxTokens: 1024,
-        useMaxTokensInput: false,
-        useStop: false,
-        stop: "",
-        useStopInput: false,
-        presencePenalty: 0,
-        usePresencePenaltyInput: false,
-        frequencyPenalty: 0,
-        useFrequencyPenaltyInput: false,
-        user: void 0,
-        useUserInput: false,
-        enableFunctionUse: false,
-        cache: false,
-        useAsGraphPartialOutput: true
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    const inputs = [];
-    inputs.push({
-      id: "systemPrompt",
-      title: "System Prompt",
-      dataType: "string",
-      required: false
-    });
-    if (this.data.useModelInput) {
-      inputs.push({
-        id: "model",
-        title: "Model",
-        dataType: "string",
-        required: false
-      });
-    }
-    if (this.data.useTemperatureInput) {
-      inputs.push({
-        dataType: "number",
-        id: "temperature",
-        title: "Temperature"
-      });
-    }
-    if (this.data.useTopPInput) {
-      inputs.push({
-        dataType: "number",
-        id: "top_p",
-        title: "Top P"
-      });
-    }
-    if (this.data.useUseTopPInput) {
-      inputs.push({
-        dataType: "boolean",
-        id: "useTopP",
-        title: "Use Top P"
-      });
-    }
-    if (this.data.useMaxTokensInput) {
-      inputs.push({
-        dataType: "number",
-        id: "maxTokens",
-        title: "Max Tokens"
-      });
-    }
-    if (this.data.useStopInput) {
-      inputs.push({
-        dataType: "string",
-        id: "stop",
-        title: "Stop"
-      });
-    }
-    if (this.data.usePresencePenaltyInput) {
-      inputs.push({
-        dataType: "number",
-        id: "presencePenalty",
-        title: "Presence Penalty"
-      });
-    }
-    if (this.data.useFrequencyPenaltyInput) {
-      inputs.push({
-        dataType: "number",
-        id: "frequencyPenalty",
-        title: "Frequency Penalty"
-      });
-    }
-    if (this.data.useUserInput) {
-      inputs.push({
-        dataType: "string",
-        id: "user",
-        title: "User"
-      });
-    }
-    if (this.data.useNumberOfChoicesInput) {
-      inputs.push({
-        dataType: "number",
-        id: "numberOfChoices",
-        title: "Number of Choices"
-      });
-    }
-    inputs.push({
-      dataType: ["chat-message", "chat-message[]"],
-      id: "prompt",
-      title: "Prompt"
-    });
-    if (this.data.enableFunctionUse) {
-      inputs.push({
-        dataType: ["gpt-function", "gpt-function[]"],
-        id: "functions",
-        title: "Functions"
-      });
-    }
-    return inputs;
-  }
-  getOutputDefinitions() {
-    const outputs = [];
-    if (this.data.useNumberOfChoicesInput || (this.data.numberOfChoices ?? 1) > 1) {
-      outputs.push({
-        dataType: "string[]",
-        id: "response",
-        title: "Responses"
-      });
-    } else {
-      outputs.push({
-        dataType: "string",
-        id: "response",
-        title: "Response"
-      });
-    }
-    if (this.data.enableFunctionUse) {
-      outputs.push({
-        dataType: "object",
-        id: "function-call",
-        title: "Function Call"
-      });
-    }
-    return outputs;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Makes a call to an LLM chat model. Currently only supports GPT. The settings contains many options for tweaking the model's behavior.
-
-        The \`System Prompt\` input specifies a system prompt as the first message to the model. This is useful for providing context to the model.
-
-        The \`Prompt\` input takes one or more strings or chat-messages (from a Prompt node) to send to the model.
-      `,
-      contextMenuTitle: "Chat",
-      infoBoxTitle: "Chat Node",
-      group: ["Common", "AI"]
-    };
-  }
-  getEditors() {
-    return [
-      {
-        type: "dropdown",
-        label: "Model",
-        dataKey: "model",
-        useInputToggleDataKey: "useModelInput",
-        options: openAiModelOptions2
-      },
-      {
-        type: "number",
-        label: "Temperature",
-        dataKey: "temperature",
-        useInputToggleDataKey: "useTemperatureInput",
-        min: 0,
-        max: 2,
-        step: 0.1
-      },
-      {
-        type: "number",
-        label: "Top P",
-        dataKey: "top_p",
-        useInputToggleDataKey: "useTopPInput",
-        min: 0,
-        max: 1,
-        step: 0.1
-      },
-      {
-        type: "toggle",
-        label: "Use Top P",
-        dataKey: "useTopP",
-        useInputToggleDataKey: "useUseTopPInput"
-      },
-      {
-        type: "number",
-        label: "Max Tokens",
-        dataKey: "maxTokens",
-        useInputToggleDataKey: "useMaxTokensInput",
-        min: 0,
-        max: Number.MAX_SAFE_INTEGER,
-        step: 1
-      },
-      {
-        type: "string",
-        label: "Stop",
-        dataKey: "stop",
-        useInputToggleDataKey: "useStopInput"
-      },
-      {
-        type: "number",
-        label: "Presence Penalty",
-        dataKey: "presencePenalty",
-        useInputToggleDataKey: "usePresencePenaltyInput",
-        min: 0,
-        max: 2,
-        step: 0.1
-      },
-      {
-        type: "number",
-        label: "Frequency Penalty",
-        dataKey: "frequencyPenalty",
-        useInputToggleDataKey: "useFrequencyPenaltyInput",
-        min: 0,
-        max: 2,
-        step: 0.1
-      },
-      {
-        type: "string",
-        label: "User",
-        dataKey: "user",
-        useInputToggleDataKey: "useUserInput"
-      },
-      {
-        type: "number",
-        label: "Number of Choices",
-        dataKey: "numberOfChoices",
-        useInputToggleDataKey: "useNumberOfChoicesInput",
-        min: 1,
-        max: 10,
-        step: 1,
-        defaultValue: 1
-      },
-      {
-        type: "toggle",
-        label: "Enable Function Use",
-        dataKey: "enableFunctionUse"
-      },
-      {
-        type: "toggle",
-        label: "Cache (same inputs, same outputs)",
-        dataKey: "cache"
-      },
-      {
-        type: "toggle",
-        label: "Use for subgraph partial output",
-        dataKey: "useAsGraphPartialOutput"
-      }
-    ];
-  }
-  async process(inputs, context) {
-    const output = {};
-    const model = this.data.useModelInput ? coerceTypeOptional2(inputs["model"], "string") ?? this.data.model : this.data.model;
-    const temperature = this.data.useTemperatureInput ? coerceTypeOptional2(inputs["temperature"], "number") ?? this.data.temperature : this.data.temperature;
-    const topP = this.data.useTopPInput ? coerceTypeOptional2(inputs["top_p"], "number") ?? this.data.top_p : this.data.top_p;
-    const useTopP = this.data.useUseTopPInput ? coerceTypeOptional2(inputs["useTopP"], "boolean") ?? this.data.useTopP : this.data.useTopP;
-    const stop = this.data.useStopInput ? this.data.useStop ? coerceTypeOptional2(inputs["stop"], "string") ?? this.data.stop : void 0 : this.data.stop;
-    const presencePenalty = this.data.usePresencePenaltyInput ? coerceTypeOptional2(inputs["presencePenalty"], "number") ?? this.data.presencePenalty : this.data.presencePenalty;
-    const frequencyPenalty = this.data.useFrequencyPenaltyInput ? coerceTypeOptional2(inputs["frequencyPenalty"], "number") ?? this.data.frequencyPenalty : this.data.frequencyPenalty;
-    const numberOfChoices = this.data.useNumberOfChoicesInput ? coerceTypeOptional2(inputs["numberOfChoices"], "number") ?? this.data.numberOfChoices ?? 1 : this.data.numberOfChoices ?? 1;
-    const functions = expectTypeOptional2(inputs["functions"], "gpt-function[]");
-    const { messages } = getChatNodeMessages2(inputs);
-    const completionMessages = messages.map((message) => ({
-      content: message.message,
-      role: message.type
-    }));
-    let { maxTokens } = this.data;
-    const openaiModel = openaiModels2[model];
-    const tokenCount = getTokenCountForMessages2(completionMessages, openaiModel.tiktokenModel);
-    if (tokenCount >= openaiModel.maxTokens) {
-      throw new Error(`The model ${model} can only handle ${openaiModel.maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`);
-    }
-    if (tokenCount + maxTokens > openaiModel.maxTokens) {
-      const message = `The model can only handle a maximum of ${openaiModel.maxTokens} tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${openaiModel.maxTokens - tokenCount}.`;
-      addWarning2(output, message);
-      maxTokens = Math.floor((openaiModel.maxTokens - tokenCount) * 0.95);
-    }
-    const isMultiResponse = this.data.useNumberOfChoicesInput || (this.data.numberOfChoices ?? 1) > 1;
-    try {
-      return await pRetry(async () => {
-        const options3 = {
-          messages: completionMessages,
-          model,
-          temperature: useTopP ? void 0 : temperature,
-          top_p: useTopP ? topP : void 0,
-          max_tokens: maxTokens,
-          n: numberOfChoices,
-          frequency_penalty: frequencyPenalty,
-          presence_penalty: presencePenalty,
-          stop: stop || void 0,
-          functions: functions?.length === 0 ? void 0 : functions
-        };
-        const cacheKey = JSON.stringify(options3);
-        if (this.data.cache) {
-          const cached = cache2.get(cacheKey);
-          if (cached) {
-            return cached;
-          }
-        }
-        const startTime = Date.now();
-        const chunks = streamChatCompletions2({
-          auth: {
-            apiKey: context.settings.openAiKey,
-            organization: context.settings.openAiOrganization
-          },
-          signal: context.signal,
-          ...options3
-        });
-        const responseChoicesParts = [];
-        const functionCalls = [];
-        for await (const chunk of chunks) {
-          if (!chunk.choices) {
-            continue;
-          }
-          for (const { delta, index } of chunk.choices) {
-            if (delta.content != null) {
-              responseChoicesParts[index] ??= [];
-              responseChoicesParts[index].push(delta.content);
-            }
-            if (delta.function_call) {
-              functionCalls[index] ??= {};
-              functionCalls[index] = merge_default(functionCalls[index], delta.function_call);
-            }
-          }
-          if (isMultiResponse) {
-            output["response"] = {
-              type: "string[]",
-              value: responseChoicesParts.map((parts) => parts.join(""))
-            };
-          } else {
-            output["response"] = {
-              type: "string",
-              value: responseChoicesParts[0]?.join("") ?? ""
-            };
-          }
-          if (functionCalls.length > 0) {
-            if (isMultiResponse) {
-              output["function-call"] = {
-                type: "object[]",
-                value: functionCalls
-              };
-            } else {
-              output["function-call"] = {
-                type: "object",
-                value: functionCalls[0]
-              };
-            }
-          }
-          context.onPartialOutputs?.(output);
-        }
-        const endTime = Date.now();
-        if (responseChoicesParts.length === 0 && functionCalls.length === 0) {
-          throw new Error("No response from OpenAI");
-        }
-        const requestTokenCount = getTokenCountForMessages2(completionMessages, openaiModel.tiktokenModel);
-        output["requestTokens"] = { type: "number", value: requestTokenCount * numberOfChoices };
-        const responseTokenCount = responseChoicesParts.map((choiceParts) => getTokenCountForString2(choiceParts.join(), openaiModel.tiktokenModel)).reduce((a2, b2) => a2 + b2, 0);
-        output["responseTokens"] = { type: "number", value: responseTokenCount };
-        const cost = getCostForPrompt2(completionMessages, model) + getCostForTokens2(responseTokenCount, "completion", model);
-        output["cost"] = { type: "number", value: cost };
-        const duration = endTime - startTime;
-        output["duration"] = { type: "number", value: duration };
-        Object.freeze(output);
-        cache2.set(cacheKey, output);
-        return output;
-      }, {
-        forever: true,
-        retries: 1e4,
-        maxRetryTime: 1e3 * 60 * 5,
-        factor: 2.5,
-        minTimeout: 500,
-        maxTimeout: 5e3,
-        randomize: true,
-        signal: context.signal,
-        onFailedAttempt(err) {
-          context.trace(`ChatNode failed, retrying: ${err.toString()}`);
-          if (context.signal.aborted) {
-            throw new Error("Aborted");
-          }
-          const { retriesLeft } = err;
-          if (!(err instanceof OpenAIError2)) {
-            return;
-          }
-          if (err.status === 429) {
-            if (retriesLeft) {
-              context.onPartialOutputs?.({
-                ["response"]: {
-                  type: "string",
-                  value: "OpenAI API rate limit exceeded, retrying..."
-                }
-              });
-              return;
-            }
-          }
-          if (err.status >= 400 && err.status < 500) {
-            throw new Error(err.message);
-          }
-        }
-      });
-    } catch (error) {
-      context.trace(getError2(error).stack ?? "Missing stack");
-      throw new Error(`Error processing ChatNode: ${error.message}`);
-    }
-  }
-};
-var chatNode2 = nodeDefinition2(ChatNodeImpl2, "Chat");
-function getChatNodeMessages2(inputs) {
-  const prompt = inputs["prompt"];
-  if (!prompt) {
-    throw new Error("Prompt is required");
-  }
-  let messages = R(prompt).with({ type: "chat-message" }, (p2) => [p2.value]).with({ type: "chat-message[]" }, (p2) => p2.value).with({ type: "string" }, (p2) => [{ type: "user", message: p2.value, function_call: void 0 }]).with({ type: "string[]" }, (p2) => p2.value.map((v2) => ({ type: "user", message: v2, function_call: void 0 }))).otherwise((p2) => {
-    if (isArrayDataValue2(p2)) {
-      const stringValues = p2.value.map((v2) => coerceType2({
-        type: getScalarTypeOf2(p2.type),
-        value: v2
-      }, "string"));
-      return stringValues.filter((v2) => v2 != null).map((v2) => ({ type: "user", message: v2, function_call: void 0 }));
-    }
-    const coercedMessage = coerceType2(p2, "chat-message");
-    if (coercedMessage != null) {
-      return [coercedMessage];
-    }
-    const coercedString = coerceType2(p2, "string");
-    return coercedString != null ? [{ type: "user", message: coerceType2(p2, "string"), function_call: void 0 }] : [];
-  });
-  const systemPrompt = inputs["systemPrompt"];
-  if (systemPrompt) {
-    messages = [{ type: "system", message: coerceType2(systemPrompt, "string"), function_call: void 0 }, ...messages];
-  }
-  return { messages, systemPrompt };
-}
-
-// dist/esm/model/nodes/PromptNode.js
-var PromptNodeImpl2 = class extends NodeImpl2 {
-  static create(promptText = "{{input}}") {
-    const chartNode = {
-      type: "prompt",
-      title: "Prompt",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 250
-      },
-      data: {
-        type: "user",
-        useTypeInput: false,
-        promptText,
-        enableFunctionCall: false
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    let inputs = [];
-    if (this.data.enableFunctionCall) {
-      inputs.push({
-        id: "function-call",
-        title: "Function Call",
-        dataType: "object"
-      });
-    }
-    if (this.data.useTypeInput) {
-      inputs.push({
-        id: "type",
-        title: "Type",
-        dataType: "string"
-      });
-    }
-    if (this.data.useNameInput) {
-      inputs.push({
-        id: "name",
-        title: "Name",
-        dataType: "string"
-      });
-    }
-    const inputNames = this.chartNode.data.promptText.match(/\{\{([^}]+)\}\}/g);
-    inputs = [
-      ...inputs,
-      ...inputNames?.map((inputName) => {
-        return {
-          // id and title should not have the {{ and }}
-          id: inputName.slice(2, -2),
-          title: inputName.slice(2, -2),
-          dataType: "string",
-          required: false
-        };
-      }) ?? []
-    ];
-    return inputs;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "output",
-        title: "Output",
-        dataType: "chat-message"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "dropdown",
-        label: "Type",
-        options: [
-          { value: "system", label: "System" },
-          { value: "user", label: "User" },
-          { value: "assistant", label: "Assistant" },
-          { value: "function", label: "Function" }
-        ],
-        dataKey: "type",
-        useInputToggleDataKey: "useTypeInput"
-      },
-      {
-        type: "string",
-        label: "Name",
-        dataKey: "name",
-        useInputToggleDataKey: "useNameInput"
-      },
-      {
-        type: "toggle",
-        label: "Enable Function Call",
-        dataKey: "enableFunctionCall"
-      },
-      {
-        type: "code",
-        label: "Prompt Text",
-        dataKey: "promptText",
-        language: "prompt-interpolation-markdown",
-        theme: "prompt-interpolation"
-      }
-    ];
-  }
-  getBody() {
-    return [
-      {
-        type: "markdown",
-        text: dedent`
-          _${typeDisplay2[this.data.type]}${this.data.name ? ` (${this.data.name})` : ""}_
-      `
-      },
-      {
-        type: "colorized",
-        text: this.data.promptText.split("\n").slice(0, 15).join("\n").trim(),
-        language: "prompt-interpolation-markdown",
-        theme: "prompt-interpolation"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Outputs a chat message, which is a string of text with an attached "type" saying who sent the message (User, Assistant, System) and optionally an attached "name".
-
-        Also provides the same <span style="color: var(--primary)">{{interpolation}}</span> capabilities as a Text node.
-
-        Can change one chat message type into another chat message type. For example, changing a User message into a System message.
-      `,
-      infoBoxTitle: "Prompt Node",
-      contextMenuTitle: "Prompt",
-      group: ["Text"]
-    };
-  }
-  interpolate(baseString, values4) {
-    return baseString.replace(/\{\{([^}]+)\}\}/g, (_m, p1) => {
-      const value = values4[p1];
-      return value !== void 0 ? value : "";
-    });
-  }
-  async process(inputs) {
-    const inputMap = mapValues_default(inputs, (input) => coerceType2(input, "string"));
-    const outputValue = this.interpolate(this.chartNode.data.promptText, inputMap);
-    return {
-      ["output"]: {
-        type: "chat-message",
-        value: {
-          type: this.chartNode.data.type,
-          message: outputValue,
-          function_call: this.data.enableFunctionCall ? coerceType2(inputs["function-call"], "object") : void 0
-        }
-      }
-    };
-  }
-};
-var promptNode2 = nodeDefinition2(PromptNodeImpl2, "Prompt");
-var typeDisplay2 = {
-  assistant: "Assistant",
-  system: "System",
-  user: "User",
-  function: "Function"
-};
-
-// dist/esm/model/nodes/ExtractRegexNode.js
-var ExtractRegexNodeImpl2 = class extends NodeImpl2 {
-  static create(regex = "([a-zA-Z]+)") {
-    const chartNode = {
-      type: "extractRegex",
-      title: "Extract Regex",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 250
-      },
-      data: {
-        regex,
-        useRegexInput: false,
-        errorOnFailed: false
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    const inputs = [
-      {
-        id: "input",
-        title: "Input",
-        dataType: "string",
-        required: true
-      }
-    ];
-    if (this.chartNode.data.useRegexInput) {
-      inputs.push({
-        id: "regex",
-        title: "Regex",
-        dataType: "string",
-        required: false
-      });
-    }
-    return inputs;
-  }
-  getOutputDefinitions() {
-    const regex = this.chartNode.data.regex;
-    try {
-      const regExp = new RegExp(regex, "g");
-      const captureGroupCount = countCaptureGroups2(regExp);
-      const outputs = [];
-      for (let i2 = 0; i2 < captureGroupCount; i2++) {
-        outputs.push({
-          id: `output${i2 + 1}`,
-          title: `Output ${i2 + 1}`,
-          dataType: "string"
-        });
-      }
-      outputs.push({
-        id: "matches",
-        title: "Matches",
-        dataType: "string[]"
-      });
-      outputs.push({
-        id: "succeeded",
-        title: "Succeeded",
-        dataType: "boolean"
-      }, {
-        id: "failed",
-        title: "Failed",
-        dataType: "boolean"
-      });
-      return outputs;
-    } catch (err) {
-      return [];
-    }
-  }
-  getEditors() {
-    return [
-      {
-        type: "toggle",
-        label: "Error on failed",
-        dataKey: "errorOnFailed"
-      },
-      {
-        type: "code",
-        label: "Regex",
-        dataKey: "regex",
-        useInputToggleDataKey: "useRegexInput",
-        language: "regex"
-      }
-    ];
-  }
-  getBody() {
-    return this.data.useRegexInput ? "(Using regex input)" : this.data.regex;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Extracts data from the input text using the configured regular expression. The regular expression can contain capture groups to extract specific parts of the text.
-
-        Each capture group corresponds to an output port of the node.
-      `,
-      infoBoxTitle: "Extract With Regex Node",
-      contextMenuTitle: "Extract With Regex",
-      group: ["Text"]
-    };
-  }
-  async process(inputs) {
-    const inputString = expectType2(inputs["input"], "string");
-    const regex = expectTypeOptional2(inputs["regex"], "string") ?? this.chartNode.data.regex;
-    const regExp = new RegExp(regex, "g");
-    let matches = [];
-    let match;
-    let firstMatch;
-    while ((match = regExp.exec(inputString)) !== null) {
-      if (!firstMatch) {
-        firstMatch = match;
-      }
-      matches.push(match[1]);
-    }
-    matches = matches.filter((m2) => m2);
-    if (matches.length === 0 && this.chartNode.data.errorOnFailed) {
-      throw new Error(`No match found for regex ${regex}`);
-    }
-    const outputArray = {
-      type: "string[]",
-      value: matches
-    };
-    if (!firstMatch) {
-      if (this.chartNode.data.errorOnFailed) {
-        throw new Error(`No match found for regex ${regex}`);
-      }
-      return {
-        ["succeeded"]: {
-          type: "boolean",
-          value: false
-        },
-        ["failed"]: {
-          type: "boolean",
-          value: true
-        }
-      };
-    }
-    const output = {
-      ["succeeded"]: {
-        type: "boolean",
-        value: true
-      },
-      ["failed"]: {
-        type: "boolean",
-        value: false
-      }
-    };
-    output["matches"] = outputArray;
-    for (let i2 = 1; i2 < firstMatch.length; i2++) {
-      output[`output${i2}`] = {
-        type: "string",
-        value: firstMatch[i2]
-      };
-    }
-    return output;
-  }
-};
-function countCaptureGroups2(regex) {
-  const regexSource = regex.source;
-  let count = 0;
-  let inCharacterClass = false;
-  for (let i2 = 0; i2 < regexSource.length; i2++) {
-    const currentChar = regexSource[i2];
-    const prevChar = i2 > 0 ? regexSource[i2 - 1] : null;
-    if (currentChar === "[" && prevChar !== "\\") {
-      inCharacterClass = true;
-    } else if (currentChar === "]" && prevChar !== "\\") {
-      inCharacterClass = false;
-    } else if (currentChar === "(" && prevChar !== "\\" && !inCharacterClass) {
-      if (regexSource[i2 + 1] !== "?" || regexSource[i2 + 2] === ":") {
-        count++;
-      }
-    }
-  }
-  return count;
-}
-var extractRegexNode2 = nodeDefinition2(ExtractRegexNodeImpl2, "Extract Regex");
-
-// dist/esm/model/nodes/CodeNode.js
-var CodeNodeImpl2 = class extends NodeImpl2 {
-  static create(code = `// This is a code node, you can write and JS in here and it will be executed.
-// Inputs are accessible via an object \`inputs\` and data is typed (i.e. inputs.foo.type, inputs.foo.value)
-// Return an object with named outputs that match the output names specified in the node's config.
-// Output values must by typed as well (e.g. { bar: { type: 'string', value: 'bar' } }
-return { output: inputs.input };`, inputNames = "input", outputNames = "output") {
-    const chartNode = {
-      type: "code",
-      title: "Code",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0
-      },
-      data: {
-        code,
-        inputNames,
-        outputNames
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    return this.chartNode.data.inputNames.split(",").map((inputName) => {
-      return {
-        type: "string",
-        id: inputName.trim(),
-        title: inputName.trim(),
-        dataType: "string",
-        required: false
-      };
-    });
-  }
-  getOutputDefinitions() {
-    return this.chartNode.data.outputNames.split(",").map((outputName) => {
-      return {
-        id: outputName.trim(),
-        title: outputName.trim(),
-        dataType: "string"
-      };
-    });
-  }
-  getEditors() {
-    return [
-      {
-        type: "code",
-        label: "Code",
-        dataKey: "code",
-        language: "javascript"
-      }
-    ];
-  }
-  getBody() {
-    const trimmed = this.data.code.split("\n").slice(0, 15).map((line) => line.length > 50 ? line.slice(0, 50) + "..." : line).join("\n").trim();
-    return {
-      type: "colorized",
-      text: trimmed,
-      language: "javascript",
-      fontSize: 12,
-      fontFamily: "monospace"
-    };
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Executes a piece of JavaScript code. Documentation for the inputs and outputs is available in the default code.
-      `,
-      infoBoxTitle: "Code Node",
-      contextMenuTitle: "Code",
-      group: ["Advanced"]
-    };
-  }
-  async process(inputs) {
-    const codeFunction = new Function("inputs", this.chartNode.data.code);
-    const outputs = codeFunction(inputs);
-    return outputs;
-  }
-};
-var codeNode2 = nodeDefinition2(CodeNodeImpl2, "Code");
-
-// dist/esm/model/nodes/MatchNode.js
-var MatchNodeImpl2 = class extends NodeImpl2 {
-  static create(caseCount = 2, cases = ["YES", "NO"]) {
-    const chartNode = {
-      type: "match",
-      title: "Match",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 250
-      },
-      data: {
-        caseCount,
-        cases
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    const inputs = [
-      {
-        id: "input",
-        title: "Input",
-        dataType: "string",
-        required: true
-      }
-    ];
-    return inputs;
-  }
-  getOutputDefinitions() {
-    const outputs = [];
-    for (let i2 = 0; i2 < this.chartNode.data.caseCount; i2++) {
-      outputs.push({
-        id: `case${i2 + 1}`,
-        title: `Case ${i2 + 1}`,
-        dataType: "string"
-      });
-    }
-    outputs.push({
-      id: "unmatched",
-      title: "Unmatched",
-      dataType: "string"
-    });
-    return outputs;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Any number of regular expressions can be configured, each corresponding to an output of the node. The output port of the first matching regex will be ran, and all other output ports will not be ran.
-      `,
-      infoBoxTitle: "Match Node",
-      contextMenuTitle: "Match",
-      group: ["Logic"]
-    };
-  }
-  async process(inputs) {
-    const inputString = coerceType2(inputs.input, "string");
-    const cases = this.chartNode.data.cases;
-    let matched = false;
-    const output = {};
-    for (let i2 = 0; i2 < cases.length; i2++) {
-      const regExp = new RegExp(cases[i2]);
-      const match = regExp.test(inputString);
-      if (match) {
-        matched = true;
-        output[`case${i2 + 1}`] = {
-          type: "string",
-          value: inputString
-        };
-      } else {
-        output[`case${i2 + 1}`] = {
-          type: "control-flow-excluded",
-          value: void 0
-        };
-      }
-    }
-    if (!matched) {
-      output.unmatched = {
-        type: "string",
-        value: inputString
-      };
-    } else {
-      output.unmatched = {
-        type: "control-flow-excluded",
-        value: void 0
-      };
-    }
-    return output;
-  }
-};
-var matchNode2 = nodeDefinition2(MatchNodeImpl2, "Match");
-
-// dist/esm/model/nodes/IfNode.js
-var IfNodeImpl2 = class extends NodeImpl2 {
-  static create = () => {
-    const chartNode = {
-      type: "if",
-      title: "If",
-      id: nanoid(),
-      data: {},
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 125
-      }
-    };
-    return chartNode;
-  };
-  getInputDefinitions() {
-    return [
-      {
-        id: "if",
-        title: "If",
-        dataType: "string"
-      },
-      {
-        id: "value",
-        title: "Value",
-        dataType: "string"
-      }
-    ];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "output",
-        title: "Output",
-        dataType: "string"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Takes in a condition and a value. If the condition is truthy, the value is passed through the output port. If the condition is not truthy, the output port is not ran.
-      `,
-      infoBoxTitle: "If Node",
-      contextMenuTitle: "If",
-      group: ["Logic"]
-    };
-  }
-  async process(inputData) {
-    const ifValue = inputData["if"];
-    const value = inputData["value"] ?? { type: "any", value: void 0 };
-    const excluded = {
-      output: {
-        type: "control-flow-excluded",
-        value: void 0
-      }
-    };
-    if (!ifValue) {
-      return excluded;
-    }
-    if (ifValue.type === "control-flow-excluded") {
-      return excluded;
-    }
-    if (ifValue.type === "string" && !ifValue.value) {
-      return excluded;
-    }
-    if (ifValue.type === "boolean" && !ifValue.value) {
-      return excluded;
-    }
-    if (ifValue.type.endsWith("[]")) {
-      const value2 = ifValue;
-      if (!value2.value || value2.value.length === 0) {
-        return excluded;
-      }
-    }
-    return {
-      ["output"]: value
-    };
-  }
-};
-var ifNode2 = nodeDefinition2(IfNodeImpl2, "If");
-
-// dist/esm/model/nodes/ReadDirectoryNode.js
-var ReadDirectoryNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    return {
-      id: nanoid(),
-      type: "readDirectory",
-      title: "Read Directory",
-      visualData: { x: 0, y: 0 },
-      data: {
-        path: "examples",
-        recursive: false,
-        usePathInput: false,
-        useRecursiveInput: false,
-        includeDirectories: false,
-        useIncludeDirectoriesInput: false,
-        filterGlobs: [],
-        useFilterGlobsInput: false,
-        relative: false,
-        useRelativeInput: false,
-        ignores: [],
-        useIgnoresInput: false
-      }
-    };
-  }
-  getInputDefinitions() {
-    const inputDefinitions = [];
-    if (this.chartNode.data.usePathInput) {
-      inputDefinitions.push({
-        id: "path",
-        title: "Path",
-        dataType: "string",
-        required: true
-      });
-    }
-    if (this.chartNode.data.useRecursiveInput) {
-      inputDefinitions.push({
-        id: "recursive",
-        title: "Recursive",
-        dataType: "boolean",
-        required: true
-      });
-    }
-    if (this.chartNode.data.useIncludeDirectoriesInput) {
-      inputDefinitions.push({
-        id: "includeDirectories",
-        title: "Include Directories",
-        dataType: "boolean",
-        required: true
-      });
-    }
-    if (this.chartNode.data.useFilterGlobsInput) {
-      inputDefinitions.push({
-        id: "filterGlobs",
-        title: "Filter Globs",
-        dataType: "string[]",
-        required: true
-      });
-    }
-    if (this.chartNode.data.useRelativeInput) {
-      inputDefinitions.push({
-        id: "relative",
-        title: "Relative",
-        dataType: "boolean",
-        required: true
-      });
-    }
-    return inputDefinitions;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "rootPath",
-        title: "Root Path",
-        dataType: "string"
-      },
-      {
-        id: "paths",
-        title: "Paths",
-        dataType: "string[]"
-      }
-    ];
-  }
-  getBody() {
-    return dedent`
-      Path: ${this.data.usePathInput ? "(Input)" : this.data.path}
-      Recursive: ${this.data.useRecursiveInput ? "(Input)" : this.data.recursive}
-      Include Directories: ${this.data.useIncludeDirectoriesInput ? "(Input)" : this.data.includeDirectories}
-      Relative: ${this.data.useRelativeInput ? "(Input)" : this.data.relative}
-      Filters: ${this.data.useFilterGlobsInput ? "(Input)" : this.data.filterGlobs.length > 0 ? this.data.filterGlobs.join(", ") : "None"}
-    `;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Reads the contents of the specified directory and outputs an array of filenames.
-      `,
-      infoBoxTitle: "Read Directory Node",
-      contextMenuTitle: "Read Directory",
-      group: ["Input/Output"]
-    };
-  }
-  async process(inputData, context) {
-    const path = this.chartNode.data.usePathInput ? expectType2(inputData["path"], "string") : this.chartNode.data.path;
-    const recursive = this.chartNode.data.useRecursiveInput ? expectType2(inputData["recursive"], "boolean") : this.chartNode.data.recursive;
-    const includeDirectories = this.chartNode.data.useIncludeDirectoriesInput ? expectType2(inputData["includeDirectories"], "boolean") : this.chartNode.data.includeDirectories;
-    const filterGlobs = this.chartNode.data.useFilterGlobsInput ? expectType2(inputData["filterGlobs"], "string[]") : this.chartNode.data.filterGlobs;
-    const relative = this.chartNode.data.useRelativeInput ? expectType2(inputData["relative"], "boolean") : this.chartNode.data.relative;
-    const ignores = this.chartNode.data.useIgnoresInput ? expectType2(inputData["ignores"], "string[]") : this.chartNode.data.ignores;
-    const cacheKey = `ReadDirectoryNode-${path}-${recursive}-${includeDirectories}-${filterGlobs.join()}-${relative}-${ignores?.join()}`;
-    const cached = context.executionCache.get(cacheKey);
-    if (cached) {
-      return cached;
-    }
-    try {
-      const files = await context.nativeApi.readdir(path, void 0, {
-        recursive,
-        includeDirectories,
-        filterGlobs,
-        relative,
-        ignores
-      });
-      const outputs = {
-        ["paths"]: { type: "string[]", value: files },
-        ["rootPath"]: { type: "string", value: path }
-      };
-      context.executionCache.set(cacheKey, outputs);
-      return outputs;
-    } catch (err) {
-      const outputs = {
-        ["paths"]: { type: "string[]", value: ["(no such path)"] },
-        ["rootPath"]: { type: "string", value: path }
-      };
-      return outputs;
-    }
-  }
-};
-var readDirectoryNode2 = nodeDefinition2(ReadDirectoryNodeImpl2, "Read Directory");
-
-// dist/esm/model/nodes/ReadFileNode.js
-var ReadFileNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    return {
-      id: nanoid(),
-      type: "readFile",
-      title: "Read File",
-      visualData: { x: 0, y: 0, width: 250 },
-      data: {
-        path: "",
-        usePathInput: true,
-        errorOnMissingFile: false
-      }
-    };
-  }
-  getInputDefinitions() {
-    const inputDefinitions = [];
-    if (this.chartNode.data.usePathInput) {
-      inputDefinitions.push({
-        id: "path",
-        title: "Path",
-        dataType: "string"
-      });
-    }
-    return inputDefinitions;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "content",
-        title: "Content",
-        dataType: "string"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Reads the contents of the specified file and outputs it as a string.
-      `,
-      infoBoxTitle: "Read File Node",
-      contextMenuTitle: "Read File",
-      group: ["Input/Output"]
-    };
-  }
-  async process(inputData, context) {
-    const path = this.chartNode.data.usePathInput ? expectType2(inputData["path"], "string") : this.chartNode.data.path;
-    try {
-      const content = await context.nativeApi.readTextFile(path, void 0);
-      return {
-        ["content"]: { type: "string", value: content }
-      };
-    } catch (err) {
-      if (this.chartNode.data.errorOnMissingFile) {
-        throw err;
-      } else {
-        return {
-          ["content"]: { type: "string", value: "(file does not exist)" }
-        };
-      }
-    }
-  }
-};
-var readFileNode2 = nodeDefinition2(ReadFileNodeImpl2, "Read File");
-
-// dist/esm/model/nodes/IfElseNode.js
-var IfElseNodeImpl2 = class extends NodeImpl2 {
-  static create = () => {
-    const chartNode = {
-      type: "ifElse",
-      title: "If/Else",
-      id: nanoid(),
-      data: {},
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 175
-      }
-    };
-    return chartNode;
-  };
-  getInputDefinitions() {
-    return [
-      {
-        id: "if",
-        title: "If",
-        dataType: "any"
-      },
-      {
-        id: "true",
-        title: "True",
-        dataType: "any"
-      },
-      {
-        id: "false",
-        title: "False",
-        dataType: "any"
-      }
-    ];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "output",
-        title: "Output",
-        dataType: "any"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Takes in three inputs: a condition, a true value, and a false value. If the condition is truthy, the true value is passed through the output port. If the condition is not truthy, the false value is passed through the output port.
-
-        This node can "consume" a \`Not Ran\` to continue a graph from that point.
-      `,
-      infoBoxTitle: "If/Else Node",
-      contextMenuTitle: "If/Else",
-      group: ["Logic"]
-    };
-  }
-  async process(inputData) {
-    const ifValue = inputData["if"];
-    const trueValue = inputData["true"] ?? { type: "any", value: void 0 };
-    const falseValue = inputData["false"] ?? { type: "any", value: void 0 };
-    if (!(trueValue || falseValue)) {
-      return {
-        ["output"]: {
-          type: "control-flow-excluded",
-          value: void 0
-        }
-      };
-    }
-    if (ifValue?.type === "control-flow-excluded") {
-      return {
-        ["output"]: falseValue
-      };
-    }
-    if (inputData[ControlFlowExcludedPort2]) {
-      return {
-        ["output"]: falseValue
-      };
-    }
-    if (ifValue?.value == null) {
-      return {
-        ["output"]: falseValue
-      };
-    }
-    if (ifValue?.type && ifValue.type === "boolean") {
-      return {
-        ["output"]: ifValue.value ? trueValue : falseValue
-      };
-    }
-    if (ifValue?.type === "string") {
-      return {
-        ["output"]: ifValue.value.length > 0 ? trueValue : falseValue
-      };
-    }
-    if (ifValue?.type === "chat-message") {
-      return {
-        ["output"]: ifValue.value.message.length > 0 ? trueValue : falseValue
-      };
-    }
-    if (ifValue?.type.endsWith("[]")) {
-      return {
-        ["output"]: ifValue.value.length > 0 ? trueValue : falseValue
-      };
-    }
-    if (ifValue?.type === "any" || ifValue?.type === "object") {
-      return {
-        ["output"]: !!ifValue.value ? trueValue : falseValue
-      };
-    }
-    return {
-      ["output"]: falseValue
-    };
-  }
-};
-var ifElseNode2 = nodeDefinition2(IfElseNodeImpl2, "If/Else");
-
-// dist/esm/model/nodes/ChunkNode.js
-var ChunkNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "chunk",
-      title: "Chunk",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 200
-      },
-      data: {
-        model: "gpt-3.5-turbo",
-        useModelInput: false,
-        numTokensPerChunk: 1024,
-        overlap: 0
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    return [
-      {
-        id: "input",
-        title: "Input",
-        dataType: "string"
-      }
-    ];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "chunks",
-        title: "Chunks",
-        dataType: "string[]"
-      },
-      {
-        id: "first",
-        title: "First",
-        dataType: "string"
-      },
-      {
-        id: "last",
-        title: "Last",
-        dataType: "string"
-      },
-      {
-        id: "indexes",
-        title: "Indexes",
-        dataType: "number[]"
-      },
-      {
-        id: "count",
-        title: "Count",
-        dataType: "number"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "dropdown",
-        label: "Model",
-        dataKey: "model",
-        options: openAiModelOptions2,
-        useInputToggleDataKey: "useModelInput"
-      },
-      {
-        type: "number",
-        label: "Number of tokens per chunk",
-        dataKey: "numTokensPerChunk",
-        min: 1,
-        max: 32768,
-        step: 1
-      },
-      {
-        type: "number",
-        label: "Overlap (in %)",
-        dataKey: "overlap",
-        min: 0,
-        max: 100,
-        step: 1
-      }
-    ];
-  }
-  getBody() {
-    return dedent`
-      Model: ${this.data.model}
-      Token Count: ${this.data.numTokensPerChunk.toLocaleString()}
-      ${this.data.overlap ? `Overlap: ${this.data.overlap}%` : ""}
-    `;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-          Splits the input text into an array of chunks based on an approximate GPT token count per chunk.
-
-          The "overlap" setting allows you to partially overlap the chunks for redundancy.
-
-          Can also be used for string length truncation by only using the \`First\` or \`Last\` outputs of the node.
-        `,
-      infoBoxTitle: "Chunk Node",
-      contextMenuTitle: "Chunk",
-      group: ["Text"]
-    };
-  }
-  async process(inputs) {
-    const input = coerceType2(inputs["input"], "string");
-    const overlapPercent = this.chartNode.data.overlap / 100;
-    const chunked = chunkStringByTokenCount2(input, this.chartNode.data.numTokensPerChunk, openaiModels2[this.chartNode.data.model].tiktokenModel, overlapPercent);
-    return {
-      ["chunks"]: {
-        type: "string[]",
-        value: chunked
-      },
-      ["first"]: {
-        type: "string",
-        value: chunked[0]
-      },
-      ["last"]: {
-        type: "string",
-        value: chunked.at(-1)
-      },
-      ["indexes"]: {
-        type: "number[]",
-        value: chunked.map((_2, i2) => i2 + 1)
-      },
-      ["count"]: {
-        type: "number",
-        value: chunked.length
-      }
-    };
-  }
-};
-var chunkNode2 = nodeDefinition2(ChunkNodeImpl2, "Chunk");
-
-// dist/esm/model/nodes/GraphInputNode.js
-var GraphInputNodeImpl2 = class extends NodeImpl2 {
-  static create(id = "input", dataType = "string") {
-    const chartNode = {
-      type: "graphInput",
-      title: "Graph Input",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 300
-      },
-      data: {
-        id,
-        dataType,
-        defaultValue: void 0,
-        useDefaultValueInput: false
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    if (this.data.useDefaultValueInput) {
-      return [
-        {
-          id: "default",
-          title: "Default Value",
-          dataType: this.chartNode.data.dataType
-        }
-      ];
-    }
-    return [];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "data",
-        title: this.data.id,
-        dataType: this.chartNode.data.dataType
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "string",
-        label: "ID",
-        dataKey: "id"
-      },
-      {
-        type: "dataTypeSelector",
-        label: "Data Type",
-        dataKey: "dataType"
-      },
-      {
-        type: "anyData",
-        label: "Default Value",
-        dataKey: "defaultValue",
-        useInputToggleDataKey: "useDefaultValueInput"
-      }
-    ];
-  }
-  getBody() {
-    return dedent`
-      ${this.data.id}
-      Type: ${this.data.dataType}
-    `;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Defines an input for the graph which can be passed in when the graph is called, or defines one of the input ports when the graph is a subgraph.
-      `,
-      infoBoxTitle: "Graph Input Node",
-      contextMenuTitle: "Graph Input",
-      group: ["Input/Output"]
-    };
-  }
-  async process(inputs, context) {
-    let inputValue = context.graphInputs[this.data.id] == null ? void 0 : coerceTypeOptional2(context.graphInputs[this.data.id], this.data.dataType);
-    if (inputValue == null && this.data.useDefaultValueInput) {
-      inputValue = coerceTypeOptional2(inputs["default"], this.data.dataType);
-    }
-    if (inputValue == null) {
-      inputValue = coerceTypeOptional2(inferType2(this.data.defaultValue), this.data.dataType) || getDefaultValue2(this.data.dataType);
-    }
-    if (inputValue == null && isArrayDataType2(this.data.dataType)) {
-      inputValue = { type: this.data.dataType, value: [] };
-    }
-    const value = {
-      type: this.data.dataType,
-      value: inputValue
-    };
-    return { ["data"]: value };
-  }
-};
-var graphInputNode2 = nodeDefinition2(GraphInputNodeImpl2, "Graph Input");
-
-// dist/esm/model/nodes/GraphOutputNode.js
-var GraphOutputNodeImpl2 = class extends NodeImpl2 {
-  static create(id = "output", dataType = "string") {
-    const chartNode = {
-      type: "graphOutput",
-      title: "Graph Output",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 300
-      },
-      data: {
-        id,
-        dataType
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    return [
-      {
-        id: "value",
-        title: this.data.id,
-        dataType: this.chartNode.data.dataType
-      }
-    ];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "valueOutput",
-        title: this.data.id,
-        dataType: this.chartNode.data.dataType
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "string",
-        label: "ID",
-        dataKey: "id"
-      },
-      {
-        type: "dataTypeSelector",
-        label: "Data Type",
-        dataKey: "dataType"
-      }
-    ];
-  }
-  getBody() {
-    return dedent`
-      ${this.data.id}
-      Type: ${this.data.dataType}
-    `;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Each instance of this node represents an individual output of the graph. The value passed into this node becomes part of the overall output of the graph.
-      `,
-      infoBoxTitle: "Graph Output Node",
-      contextMenuTitle: "Graph Output",
-      group: ["Input/Output"]
-    };
-  }
-  async process(inputs, context) {
-    const value = inputs["value"] ?? { type: "any", value: void 0 };
-    const isExcluded = value.type === "control-flow-excluded" || inputs[ControlFlowExcludedPort2] != null;
-    if (isExcluded && context.graphOutputs[this.data.id] == null) {
-      context.graphOutputs[this.data.id] = {
-        type: "control-flow-excluded",
-        value: void 0
-      };
-    } else if (context.graphOutputs[this.data.id] == null || context.graphOutputs[this.data.id]?.type === "control-flow-excluded") {
-      context.graphOutputs[this.data.id] = value;
-    }
-    if (isExcluded) {
-      return {
-        ["valueOutput"]: {
-          type: "control-flow-excluded",
-          value: void 0
-        }
-      };
-    }
-    return inputs;
-  }
-};
-var graphOutputNode2 = nodeDefinition2(GraphOutputNodeImpl2, "Graph Output");
-
-// dist/esm/model/nodes/SubGraphNode.js
-var SubGraphNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "subGraph",
-      title: "Subgraph",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 300
-      },
-      data: {
-        graphId: "",
-        useErrorOutput: false,
-        useAsGraphPartialOutput: false
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions(_connections, _nodes, project) {
-    const graph = project.graphs[this.data.graphId];
-    if (!graph) {
-      return [];
-    }
-    const inputNodes = graph.nodes.filter((node) => node.type === "graphInput");
-    const inputIds = [...new Set(inputNodes.map((node) => node.data.id))].sort();
-    return inputIds.map((id) => ({
-      id,
-      title: id,
-      dataType: inputNodes.find((node) => node.data.id === id).data.dataType
-    }));
-  }
-  getGraphOutputs(project) {
-    const graph = project.graphs[this.data.graphId];
-    if (!graph) {
-      return [];
-    }
-    const outputNodes = graph.nodes.filter((node) => node.type === "graphOutput");
-    const outputIds = [...new Set(outputNodes.map((node) => node.data.id))].sort();
-    const outputs = outputIds.map((id) => ({
-      id,
-      title: id,
-      dataType: outputNodes.find((node) => node.data.id === id).data.dataType
-    }));
-    return outputs;
-  }
-  getOutputDefinitions(_connections, _nodes, project) {
-    const outputs = [];
-    outputs.push(...this.getGraphOutputs(project));
-    if (this.data.useErrorOutput) {
-      outputs.push({
-        id: "error",
-        title: "Error",
-        dataType: "string"
-      });
-    }
-    return outputs;
-  }
-  getEditors() {
-    return [
-      {
-        type: "graphSelector",
-        label: "Graph",
-        dataKey: "graphId"
-      },
-      {
-        type: "toggle",
-        label: "Use Error Output",
-        dataKey: "useErrorOutput"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Executes another graph. Inputs and outputs are defined by Graph Input and Graph Output nodes within the subgraph.
-      `,
-      infoBoxTitle: "Subgraph Node",
-      contextMenuTitle: "Subgraph",
-      group: ["Advanced"]
-    };
-  }
-  async process(inputs, context) {
-    const { project } = context;
-    if (!project) {
-      throw new Error("SubGraphNode requires a project to be set in the context.");
-    }
-    const subGraphProcessor = context.createSubProcessor(this.data.graphId, { signal: context.signal });
-    try {
-      const startTime = Date.now();
-      const outputs = await subGraphProcessor.processGraph(context, inputs, context.contextValues);
-      const duration = Date.now() - startTime;
-      if (this.data.useErrorOutput) {
-        outputs["error"] = {
-          type: "control-flow-excluded",
-          value: void 0
-        };
-      }
-      if (outputs["duration"] == null) {
-        outputs["duration"] = {
-          type: "number",
-          value: duration
-        };
-      }
-      return outputs;
-    } catch (err) {
-      if (!this.data.useErrorOutput) {
-        throw err;
-      }
-      const outputs = this.getGraphOutputs(context.project).reduce((obj, output) => ({
-        ...obj,
-        [output.id]: {
-          type: "control-flow-excluded",
-          value: void 0
-        }
-      }), {});
-      outputs["error"] = {
-        type: "string",
-        value: getError2(err).message
-      };
-      return outputs;
-    }
-  }
-};
-var subGraphNode2 = nodeDefinition2(SubGraphNodeImpl2, "Subgraph");
-
-// dist/esm/model/nodes/ArrayNode.js
-var ArrayNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "array",
-      title: "Array",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 200
-      },
-      data: {
-        flatten: true,
-        flattenDeep: false
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions(connections) {
-    const inputs = [];
-    const inputCount = this.#getInputPortCount(connections);
-    for (let i2 = 1; i2 <= inputCount; i2++) {
-      inputs.push({
-        dataType: "any",
-        id: `input${i2}`,
-        title: `Input ${i2}`
-      });
-    }
-    return inputs;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        dataType: "any[]",
-        id: "output",
-        title: "Output"
-      },
-      {
-        dataType: "number[]",
-        id: "indices",
-        title: "Indices"
-      },
-      {
-        dataType: "number",
-        id: "length",
-        title: "Length"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      { type: "toggle", label: "Flatten", dataKey: "flatten" },
-      {
-        type: "toggle",
-        label: "Deep",
-        dataKey: "flattenDeep"
-      }
-    ];
-  }
-  #getInputPortCount(connections) {
-    const inputNodeId = this.chartNode.id;
-    const inputConnections = connections.filter((connection) => connection.inputNodeId === inputNodeId && connection.inputId.startsWith("input"));
-    let maxInputNumber = 0;
-    for (const connection of inputConnections) {
-      const inputNumber = parseInt(connection.inputId.replace("input", ""));
-      if (inputNumber > maxInputNumber) {
-        maxInputNumber = inputNumber;
-      }
-    }
-    return maxInputNumber + 1;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Creates an array from the input values. By default, flattens any arrays which are inputs into a single array. Can be configured to keep the arrays separate, or deeply flatten arrays.
-
-        Useful for both creating and merging arrays.
-
-        The number of inputs is dynamic based on the number of connections.
-      `,
-      infoBoxTitle: "Array Node",
-      contextMenuTitle: "Array",
-      group: ["Lists"]
-    };
-  }
-  async process(inputs) {
-    const outputArray = [];
-    for (const [key, input] of entries2(inputs)) {
-      if (key.startsWith("input")) {
-        if (this.data.flatten) {
-          if (Array.isArray(input?.value)) {
-            for (const value of input?.value ?? []) {
-              if (this.data.flattenDeep) {
-                outputArray.push(...Array.isArray(value) ? flattenDeep_default(value) : [value]);
-              } else {
-                outputArray.push(value);
-              }
-            }
-          } else {
-            outputArray.push(input?.value);
-          }
-        } else {
-          outputArray.push(input?.value);
-        }
-      }
-    }
-    return {
-      ["output"]: {
-        type: "any[]",
-        value: outputArray
-      },
-      ["indices"]: {
-        type: "number[]",
-        value: outputArray.map((_2, index) => index)
-      },
-      ["length"]: {
-        type: "number",
-        value: outputArray.length
-      }
-    };
-  }
-};
-var arrayNode2 = nodeDefinition2(ArrayNodeImpl2, "Array");
-
-// dist/esm/model/nodes/ExtractJsonNode.js
-var ExtractJsonNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "extractJson",
-      title: "Extract JSON",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 250
-      },
-      data: {}
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    return [
-      {
-        id: "input",
-        title: "Input",
-        dataType: "string",
-        required: true
-      }
-    ];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "output",
-        title: "Output",
-        dataType: "object"
-      },
-      {
-        id: "noMatch",
-        title: "No Match",
-        dataType: "string"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Finds and parses the first JSON object in the input text.
-
-        Outputs the parsed object.
-      `,
-      infoBoxTitle: "Extract JSON Node",
-      contextMenuTitle: "Extract JSON",
-      group: ["Objects"]
-    };
-  }
-  async process(inputs) {
-    const inputString = expectType2(inputs["input"], "string");
-    const firstBracket = inputString.indexOf("{");
-    const lastBracket = inputString.lastIndexOf("}");
-    const firstSquareBracket = inputString.indexOf("[");
-    const lastSquareBracket = inputString.lastIndexOf("]");
-    const firstIndex = Math.min(firstBracket, firstSquareBracket);
-    const lastIndex = Math.max(lastBracket, lastSquareBracket);
-    const substring = inputString.substring(firstIndex, lastIndex + 1);
-    let jsonObject = void 0;
-    try {
-      jsonObject = JSON.parse(substring);
-    } catch (err) {
-      return {
-        ["noMatch"]: {
-          type: "string",
-          value: inputString
-        },
-        ["output"]: {
-          type: "control-flow-excluded",
-          value: void 0
-        }
-      };
-    }
-    return {
-      ["output"]: {
-        type: "object",
-        value: jsonObject
-      },
-      ["noMatch"]: {
-        type: "control-flow-excluded",
-        value: void 0
-      }
-    };
-  }
-};
-var extractJsonNode2 = nodeDefinition2(ExtractJsonNodeImpl2, "Extract JSON");
-
-// dist/esm/model/nodes/AssemblePromptNode.js
-var AssemblePromptNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "assemblePrompt",
-      title: "Assemble Prompt",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 250
-      },
-      data: {}
-    };
-    return chartNode;
-  }
-  getInputDefinitions(connections) {
-    const inputs = [];
-    const messageCount = this.#getMessagePortCount(connections);
-    for (let i2 = 1; i2 <= messageCount; i2++) {
-      inputs.push({
-        dataType: ["chat-message", "chat-message[]"],
-        id: `message${i2}`,
-        title: `Message ${i2}`
-      });
-    }
-    return inputs;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        dataType: "chat-message[]",
-        id: "prompt",
-        title: "Prompt"
-      }
-    ];
-  }
-  #getMessagePortCount(connections) {
-    const inputNodeId = this.chartNode.id;
-    const messageConnections = connections.filter((connection) => connection.inputNodeId === inputNodeId && connection.inputId.startsWith("message"));
-    let maxMessageNumber = 0;
-    for (const connection of messageConnections) {
-      const messageNumber = parseInt(connection.inputId.replace("message", ""));
-      if (messageNumber > maxMessageNumber) {
-        maxMessageNumber = messageNumber;
-      }
-    }
-    return maxMessageNumber + 1;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Assembles an array of chat messages for use with a Chat node. The inputs can be strings or chat messages.
-
-        The number of inputs is dynamic based on the number of connections.
-
-        Strings are converted to User type chat messages.
-      `,
-      infoBoxTitle: "Assemble Prompt Node",
-      contextMenuTitle: "Assemble Prompt",
-      group: ["AI"]
-    };
-  }
-  async process(inputs) {
-    const output = {};
-    const outMessages = [];
-    const inputMessages = orderBy_default(Object.entries(inputs).filter(([key]) => key.startsWith("message")), ([key]) => key, "asc");
-    for (const [, inputMessage] of inputMessages) {
-      if (!inputMessage || inputMessage.type === "control-flow-excluded" || !inputMessage.value) {
-        continue;
-      }
-      const inMessages = arrayizeDataValue2(unwrapDataValue2(inputMessage));
-      for (const message of inMessages) {
-        if (message.type === "chat-message") {
-          outMessages.push(message.value);
-        } else {
-          const coerced = coerceType2(message, "chat-message");
-          if (coerced) {
-            outMessages.push(coerced);
-          }
-        }
-      }
-    }
-    output["prompt"] = {
-      type: "chat-message[]",
-      value: outMessages
-    };
-    return output;
-  }
-};
-var assemblePromptNode2 = nodeDefinition2(AssemblePromptNodeImpl2, "Assemble Prompt");
-
-// dist/esm/model/nodes/ExtractYamlNode.js
-var ExtractYamlNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "extractYaml",
-      title: "Extract YAML",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 250
-      },
-      data: {
-        rootPropertyName: "yamlDocument",
-        useRootPropertyNameInput: false,
-        useObjectPathInput: false,
-        objectPath: void 0
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    const inputs = [
-      {
-        id: "input",
-        title: "Input",
-        dataType: "string",
-        required: true
-      }
-    ];
-    if (this.data.useRootPropertyNameInput) {
-      inputs.push({
-        id: "rootPropertyName",
-        title: "Root Property Name",
-        dataType: "string",
-        required: true
-      });
-    }
-    if (this.data.useObjectPathInput) {
-      inputs.push({
-        id: "objectPath",
-        title: "Object Path",
-        dataType: "string",
-        required: true
-      });
-    }
-    return inputs;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "output",
-        title: "Output",
-        dataType: "object"
-      },
-      {
-        id: "matches",
-        title: "Matches",
-        dataType: "any[]"
-      },
-      {
-        id: "noMatch",
-        title: "No Match",
-        dataType: "string"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "string",
-        label: "Root Property Name",
-        dataKey: "rootPropertyName",
-        useInputToggleDataKey: "useRootPropertyNameInput"
-      },
-      {
-        type: "code",
-        label: "Object Path",
-        dataKey: "objectPath",
-        language: "jsonpath",
-        useInputToggleDataKey: "useObjectPathInput"
-      }
-    ];
-  }
-  getBody() {
-    return dedent`
-      Root: ${this.data.useRootPropertyNameInput ? "(Using Input)" : this.data.rootPropertyName}
-      ${this.data.useObjectPathInput ? "Path: (Using Input)" : this.data.objectPath ? `Path: ${this.data.objectPath}` : ``}
-    `;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Finds and parses a YAML object in the input text with a predefined root property name (configurable).
-
-        Defaults to \`yamlDocument\`, which means the input text must have a \`yamlDocument:\` root node somewhere in it. All indented text after that is considered part of the YAML.
-
-        Outputs the parsed object.
-      `,
-      infoBoxTitle: "Extract YAML Node",
-      contextMenuTitle: "Extract YAML",
-      group: ["Objects"]
-    };
-  }
-  async process(inputs) {
-    const inputString = expectType2(inputs["input"], "string");
-    const rootPropertyName = this.data.useRootPropertyNameInput ? coerceType2(inputs["rootPropertyName"], "string") : this.data.rootPropertyName;
-    const objectPath = this.data.useObjectPathInput ? coerceType2(inputs["objectPath"], "string") : this.data.objectPath;
-    const match = new RegExp(`^${rootPropertyName}:`, "m").exec(inputString);
-    const rootPropertyStart = match?.index ?? -1;
-    const nextLines = inputString.slice(rootPropertyStart).split("\n");
-    const yamlLines = [nextLines.shift()];
-    while (nextLines[0]?.startsWith(" ") || nextLines[0]?.startsWith("	") || nextLines[0] === "") {
-      yamlLines.push(nextLines.shift());
-    }
-    const potentialYaml = yamlLines.join("\n");
-    let yamlObject = void 0;
-    try {
-      yamlObject = browser_default.parse(potentialYaml);
-    } catch (err) {
-      return {
-        ["noMatch"]: {
-          type: "string",
-          value: potentialYaml
-        },
-        ["output"]: {
-          type: "control-flow-excluded",
-          value: void 0
-        }
-      };
-    }
-    if (!yamlObject?.hasOwnProperty(rootPropertyName)) {
-      return {
-        ["noMatch"]: {
-          type: "string",
-          value: potentialYaml
-        },
-        ["output"]: {
-          type: "control-flow-excluded",
-          value: void 0
-        }
-      };
-    }
-    let matches = [];
-    if (objectPath) {
-      try {
-        const extractedValue = JSONPath({ json: yamlObject, path: objectPath.trim() });
-        matches = extractedValue;
-        yamlObject = extractedValue.length > 0 ? extractedValue[0] : void 0;
-      } catch (err) {
-        return {
-          ["noMatch"]: {
-            type: "string",
-            value: potentialYaml
-          },
-          ["output"]: {
-            type: "control-flow-excluded",
-            value: void 0
-          },
-          ["matches"]: {
-            type: "control-flow-excluded",
-            value: void 0
-          }
-        };
-      }
-    }
-    return {
-      ["output"]: yamlObject === void 0 ? {
-        type: "control-flow-excluded",
-        value: void 0
-      } : this.data.objectPath ? {
-        type: "any",
-        value: yamlObject
-      } : {
-        type: "object",
-        value: yamlObject
-      },
-      ["noMatch"]: {
-        type: "control-flow-excluded",
-        value: void 0
-      },
-      ["matches"]: {
-        type: "any[]",
-        value: matches
-      }
-    };
-  }
-};
-var extractYamlNode2 = nodeDefinition2(ExtractYamlNodeImpl2, "Extract YAML");
-
-// dist/esm/model/nodes/LoopControllerNode.js
-var LoopControllerNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "loopController",
-      title: "Loop Controller",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 250
-      },
-      data: {
-        maxIterations: 100
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions(connections, nodes) {
-    const inputs = [];
-    const messageCount = this.#getInputPortCount(connections);
-    inputs.push({
-      dataType: "any",
-      id: "continue",
-      title: "Continue"
-    });
-    let i2 = 1;
-    for (; i2 <= messageCount + 1; i2++) {
-      const input = {
-        dataType: "any",
-        id: `input${i2}`,
-        title: `Input ${i2}`
-      };
-      const inputConnection = connections.find((connection) => connection.inputId === input.id && connection.inputNodeId === this.id);
-      if (inputConnection && nodes[inputConnection.outputNodeId]) {
-        input.title = nodes[inputConnection.outputNodeId].title;
-      }
-      const inputDefault = {
-        dataType: "any",
-        id: `input${i2}Default`,
-        title: `Input ${i2} Default`
-      };
-      const inputDefaultConnection = connections.find((connection) => connection.inputId === inputDefault.id && connection.inputNodeId === this.id);
-      if (inputDefaultConnection && nodes[inputDefaultConnection.outputNodeId]) {
-        inputDefault.title = nodes[inputDefaultConnection.outputNodeId].title;
-      }
-      inputs.push(input);
-      inputs.push(inputDefault);
-    }
-    return inputs;
-  }
-  getOutputDefinitions(connections, nodes) {
-    const messageCount = this.#getInputPortCount(connections);
-    const outputs = [];
-    outputs.push({
-      dataType: "any",
-      id: "break",
-      title: "Break"
-    });
-    for (let i2 = 1; i2 <= messageCount; i2++) {
-      const output = {
-        dataType: "any",
-        id: `output${i2}`,
-        title: `Output ${i2}`
-      };
-      const inputConnection = connections.find((connection) => connection.inputId === `input${i2}` && connection.inputNodeId === this.id);
-      if (inputConnection && nodes[inputConnection.outputNodeId]) {
-        output.title = `${nodes[inputConnection.outputNodeId].title}?`;
-      }
-      outputs.push(output);
-    }
-    return outputs;
-  }
-  getEditors() {
-    return [
-      {
-        type: "number",
-        label: "Max Iterations",
-        dataKey: "maxIterations"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Defines the entry point for a loop. Values from inside the loop should be passed back through the "Input" ports, and their corresponding "Default" values can be specified on the input ports as well.
-
-        If the "continue" input is falsey, then the "break" output will run.
-      `,
-      infoBoxTitle: "Loop Controller Node",
-      contextMenuTitle: "Loop Controller",
-      group: ["Logic"]
-    };
-  }
-  #getInputPortCount(connections) {
-    const inputNodeId = this.chartNode.id;
-    const messageConnections = connections.filter((connection) => connection.inputNodeId === inputNodeId && connection.inputId.startsWith("input"));
-    let maxMessageNumber = 0;
-    for (const connection of messageConnections) {
-      const messageNumber = parseInt(connection.inputId.replace("input", ""));
-      if (messageNumber > maxMessageNumber) {
-        maxMessageNumber = messageNumber;
-      }
-    }
-    return maxMessageNumber;
-  }
-  async process(inputs, context) {
-    const output = {};
-    let continueValue = false;
-    if (inputs["continue"] === void 0) {
-      continueValue = true;
-    } else {
-      const continueDataValue = inputs["continue"];
-      if (continueDataValue.type === "control-flow-excluded") {
-        continueValue = false;
-      } else {
-        continueValue = coerceType2(continueDataValue, "boolean");
-      }
-    }
-    const inputCount = Object.keys(inputs).filter((key) => key.startsWith("input") && !key.endsWith("Default")).length;
-    if (continueValue) {
-      output["break"] = { type: "control-flow-excluded", value: "loop-not-broken" };
-    } else {
-      const inputValues = [];
-      for (let i2 = 1; i2 <= inputCount; i2++) {
-        inputValues.push(inputs[`input${i2}`]?.value);
-      }
-      output["break"] = { type: "any[]", value: inputValues };
-    }
-    for (let i2 = 1; i2 <= inputCount; i2++) {
-      if (continueValue) {
-        const inputId = `input${i2}`;
-        const outputId = `output${i2}`;
-        if (inputs[inputId]) {
-          output[outputId] = inputs[inputId];
-        } else {
-          output[outputId] = inputs[`${inputId}Default`];
-        }
-      } else {
-        output[`output${i2}`] = { type: "control-flow-excluded", value: void 0 };
-      }
-    }
-    return output;
-  }
-};
-var loopControllerNode2 = nodeDefinition2(LoopControllerNodeImpl2, "Loop Controller");
-
-// dist/esm/model/nodes/TrimChatMessagesNode.js
-var TrimChatMessagesNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "trimChatMessages",
-      title: "Trim Chat Messages",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 200
-      },
-      data: {
-        maxTokenCount: 4096,
-        removeFromBeginning: true,
-        model: "gpt-3.5-turbo"
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    return [
-      {
-        id: "input",
-        title: "Input",
-        dataType: "chat-message[]"
-      }
-    ];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "trimmed",
-        title: "Trimmed",
-        dataType: "chat-message[]"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "number",
-        label: "Max Token Count",
-        dataKey: "maxTokenCount"
-      },
-      {
-        type: "toggle",
-        label: "Remove From Beginning",
-        dataKey: "removeFromBeginning"
-      },
-      {
-        type: "dropdown",
-        label: "Model",
-        dataKey: "model",
-        options: openAiModelOptions2
-      }
-    ];
-  }
-  getBody() {
-    return dedent`
-      Max Token Count: ${this.data.maxTokenCount}
-      Remove From Beginning: ${this.data.removeFromBeginning ? "Yes" : "No"}
-    `;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Takes an array of chat messages, and slices messages from the beginning or the end of the list until the total length of the messages is under the configured token length.
-
-        Useful for setting up infinite message chains that stay under the LLM context limit.
-      `,
-      infoBoxTitle: "Trim Chat Messages Node",
-      contextMenuTitle: "Trim Chat Messages",
-      group: ["AI"]
-    };
-  }
-  async process(inputs) {
-    const input = expectType2(inputs["input"], "chat-message[]");
-    const maxTokenCount = this.chartNode.data.maxTokenCount;
-    const removeFromBeginning = this.chartNode.data.removeFromBeginning;
-    const model = "gpt-3.5-turbo";
-    const tiktokenModel = openaiModels2[model].tiktokenModel;
-    const trimmedMessages = [...input];
-    let tokenCount = getTokenCountForMessages2(trimmedMessages.map((message) => ({ content: message.message, role: message.type })), tiktokenModel);
-    while (tokenCount > maxTokenCount) {
-      if (removeFromBeginning) {
-        trimmedMessages.shift();
-      } else {
-        trimmedMessages.pop();
-      }
-      tokenCount = getTokenCountForMessages2(trimmedMessages.map((message) => ({
-        content: message.message,
-        role: message.type,
-        function_call: message.function_call
-      })), tiktokenModel);
-    }
-    return {
-      ["trimmed"]: {
-        type: "chat-message[]",
-        value: trimmedMessages
-      }
-    };
-  }
-};
-var trimChatMessagesNode2 = nodeDefinition2(TrimChatMessagesNodeImpl2, "Trim Chat Messages");
-
-// dist/esm/model/nodes/ExternalCallNode.js
-var ExternalCallNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    return {
-      id: nanoid(),
-      type: "externalCall",
-      title: "External Call",
-      visualData: { x: 0, y: 0, width: 150 },
-      data: {
-        functionName: "",
-        useFunctionNameInput: false,
-        useErrorOutput: false
-      }
-    };
-  }
-  getInputDefinitions() {
-    const inputDefinitions = [];
-    if (this.chartNode.data.useFunctionNameInput) {
-      inputDefinitions.push({
-        id: "functionName",
-        title: "Function Name",
-        dataType: "string"
-      });
-    }
-    inputDefinitions.push({
-      id: "arguments",
-      title: "Arguments",
-      dataType: "any[]"
-    });
-    return inputDefinitions;
-  }
-  getOutputDefinitions() {
-    const outputs = [
-      {
-        id: "result",
-        title: "Result",
-        dataType: "any"
-      }
-    ];
-    if (this.chartNode.data.useErrorOutput) {
-      outputs.push({
-        id: "error",
-        title: "Error",
-        dataType: "string"
-      });
-    }
-    return outputs;
-  }
-  getEditors() {
-    return [
-      {
-        type: "string",
-        label: "Function Name",
-        dataKey: "functionName",
-        useInputToggleDataKey: "useFunctionNameInput"
-      },
-      {
-        type: "toggle",
-        label: "Use Error Output",
-        dataKey: "useErrorOutput"
-      }
-    ];
-  }
-  getBody() {
-    return this.data.useFunctionNameInput ? "(Using Input)" : this.data.functionName;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Provides a way to call into the host project from inside a Rivet graph when Rivet graphs are integrated into another project.
-      `,
-      infoBoxTitle: "External Call Node",
-      contextMenuTitle: "External Call",
-      group: ["Advanced"]
-    };
-  }
-  async process(inputs, context) {
-    const functionName = this.chartNode.data.useFunctionNameInput ? coerceType2(inputs["functionName"], "string") : this.chartNode.data.functionName;
-    const args = inputs["arguments"];
-    let arrayArgs = {
-      type: "any[]",
-      value: []
-    };
-    if (args) {
-      if (args.type.endsWith("[]") === false) {
-        arrayArgs = {
-          type: "any[]",
-          value: [args.value]
-        };
-      } else {
-        arrayArgs = args;
-      }
-    }
-    const fn = context.externalFunctions[functionName];
-    const externalContext = omit_default(context, ["setGlobal"]);
-    if (!fn) {
-      if (this.data.useErrorOutput) {
-        return {
-          ["result"]: {
-            type: "control-flow-excluded",
-            value: void 0
-          },
-          ["error"]: {
-            type: "string",
-            value: `Function ${functionName} not was not defined using setExternalCall`
-          }
-        };
-      } else {
-        throw new Error(`Function ${functionName} not was not defined using setExternalCall`);
-      }
-    }
-    if (this.data.useErrorOutput) {
-      try {
-        const result2 = await fn(externalContext, ...arrayArgs.value);
-        return {
-          ["result"]: result2,
-          ["cost"]: {
-            type: "number",
-            value: result2.cost ?? 0
-          },
-          ["error"]: {
-            type: "control-flow-excluded",
-            value: void 0
-          }
-        };
-      } catch (error) {
-        return {
-          ["result"]: {
-            type: "control-flow-excluded",
-            value: void 0
-          },
-          ["error"]: {
-            type: "string",
-            value: getError2(error).message
-          }
-        };
-      }
-    }
-    const result = await fn(externalContext, ...arrayArgs.value);
-    return {
-      ["result"]: result
-    };
-  }
-};
-var externalCallNode2 = nodeDefinition2(ExternalCallNodeImpl2, "External Call");
-
-// dist/esm/model/nodes/ExtractObjectPathNode.js
-var ExtractObjectPathNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "extractObjectPath",
-      title: "Extract Object Path",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 250
-      },
-      data: {
-        path: "$",
-        usePathInput: false
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    const inputDefinitions = [
-      {
-        id: "object",
-        title: "Object",
-        dataType: "object",
-        required: true
-      }
-    ];
-    if (this.chartNode.data.usePathInput) {
-      inputDefinitions.push({
-        id: "path",
-        title: "Path",
-        dataType: "string",
-        required: true
-      });
-    }
-    return inputDefinitions;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "match",
-        title: "Match",
-        dataType: "any"
-      },
-      {
-        id: "all_matches",
-        title: "All Matches",
-        dataType: "any[]"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "code",
-        label: "Path",
-        dataKey: "path",
-        language: "jsonpath",
-        useInputToggleDataKey: "usePathInput"
-      }
-    ];
-  }
-  getBody() {
-    return this.data.usePathInput ? "(Using Input)" : this.data.path;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Extracts the value at the specified path from the input value. The path uses JSONPath notation to navigate through the value.
-      `,
-      infoBoxTitle: "Extract Object Path Node",
-      contextMenuTitle: "Extract Object Path",
-      group: ["Objects"]
-    };
-  }
-  async process(inputs) {
-    const inputObject = coerceTypeOptional2(inputs["object"], "object");
-    const inputPath = this.chartNode.data.usePathInput ? expectType2(inputs["path"], "string") : this.chartNode.data.path;
-    if (!inputPath) {
-      throw new Error("Path input is not provided");
-    }
-    let matches;
-    try {
-      matches = JSONPath({ json: inputObject ?? null, path: inputPath.trim() });
-    } catch (err) {
-      matches = [];
-    }
-    if (matches.length === 0) {
-      return {
-        ["match"]: {
-          type: "control-flow-excluded",
-          value: void 0
-        },
-        ["all_matches"]: {
-          type: "any[]",
-          value: []
-        }
-      };
-    }
-    return {
-      ["match"]: {
-        type: "any",
-        value: matches[0]
-      },
-      ["all_matches"]: {
-        type: "any[]",
-        value: matches
-      }
-    };
-  }
-};
-var extractObjectPathNode2 = nodeDefinition2(ExtractObjectPathNodeImpl2, "Extract Object Path");
-
-// dist/esm/model/nodes/RaiseEventNode.js
-var RaiseEventNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    return {
-      id: nanoid(),
-      type: "raiseEvent",
-      title: "Raise Event",
-      visualData: { x: 0, y: 0, width: 150 },
-      data: {
-        eventName: "toast",
-        useEventNameInput: false
-      }
-    };
-  }
-  getInputDefinitions() {
-    const inputDefinitions = [];
-    if (this.chartNode.data.useEventNameInput) {
-      inputDefinitions.push({
-        id: "eventName",
-        title: "Event Name",
-        dataType: "string"
-      });
-    }
-    inputDefinitions.push({
-      id: "data",
-      title: "Data",
-      dataType: "any"
-    });
-    return inputDefinitions;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "result",
-        title: "Result",
-        dataType: "any"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "string",
-        label: "Event Name",
-        dataKey: "eventName",
-        useInputToggleDataKey: "useEventNameInput"
-      }
-    ];
-  }
-  getBody() {
-    return this.data.useEventNameInput ? "(Using Input)" : this.data.eventName;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Raises an event that the host project or a 'Wait For Event' node can listen for.
-      `,
-      infoBoxTitle: "Raise Event Node",
-      contextMenuTitle: "Raise Event",
-      group: ["Advanced"]
-    };
-  }
-  async process(inputs, context) {
-    const eventName = this.chartNode.data.useEventNameInput ? coerceType2(inputs["eventName"], "string") : this.chartNode.data.eventName;
-    const eventData = inputs["data"];
-    context.raiseEvent(eventName, eventData);
-    return {
-      result: eventData
-    };
-  }
-};
-var raiseEventNode2 = nodeDefinition2(RaiseEventNodeImpl2, "Raise Event");
-
-// dist/esm/model/nodes/ContextNode.js
-var ContextNodeImpl2 = class extends NodeImpl2 {
-  static create(id = "input", dataType = "string") {
-    const chartNode = {
-      type: "context",
-      title: "Context",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 300
-      },
-      data: {
-        id,
-        dataType,
-        defaultValue: void 0,
-        useDefaultValueInput: false
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    if (this.data.useDefaultValueInput) {
-      return [
-        {
-          id: "default",
-          title: "Default Value",
-          dataType: this.chartNode.data.dataType
-        }
-      ];
-    }
-    return [];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "data",
-        title: this.data.id,
-        dataType: this.chartNode.data.dataType
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      { type: "string", label: "ID", dataKey: "id" },
-      { type: "dataTypeSelector", label: "Data Type", dataKey: "dataType" },
-      {
-        type: "anyData",
-        label: "Default Value",
-        dataKey: "defaultValue",
-        useInputToggleDataKey: "useDefaultValueInput"
-      }
-    ];
-  }
-  getBody() {
-    return dedent`
-      ${this.data.id}
-      Type: ${this.data.dataType}
-    `;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Retrieves a value from the graph's context using a configured id. The context serves as a "global graph input", allowing the same values to be accessible from any graph or subgraph.
-      `,
-      infoBoxTitle: "Context Node",
-      contextMenuTitle: "Context",
-      group: ["Advanced"]
-    };
-  }
-  async process(inputs, context) {
-    const contextValue = context.contextValues[this.data.id];
-    if (contextValue !== void 0) {
-      return {
-        ["data"]: contextValue
-      };
-    }
-    let defaultValue;
-    if (this.data.useDefaultValueInput) {
-      defaultValue = inputs["default"];
-    } else {
-      defaultValue = { type: this.data.dataType, value: this.data.defaultValue };
-    }
-    return {
-      ["data"]: defaultValue
-    };
-  }
-};
-var contextNode2 = nodeDefinition2(ContextNodeImpl2, "Context");
-
-// dist/esm/model/nodes/CoalesceNode.js
-var CoalesceNodeImpl2 = class extends NodeImpl2 {
-  static create = () => {
-    const chartNode = {
-      type: "coalesce",
-      title: "Coalesce",
-      id: nanoid(),
-      data: {},
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 150
-      }
-    };
-    return chartNode;
-  };
-  getInputDefinitions(connections) {
-    const inputs = [];
-    const inputCount = this.#getInputPortCount(connections);
-    inputs.push({
-      dataType: "boolean",
-      id: "conditional",
-      title: "Conditional"
-    });
-    for (let i2 = 1; i2 <= inputCount; i2++) {
-      inputs.push({
-        dataType: "any",
-        id: `input${i2}`,
-        title: `Input ${i2}`
-      });
-    }
-    return inputs;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        dataType: "any",
-        id: "output",
-        title: "Output"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Takes in any number of inputs and outputs the first value that exists. Useful for consolidating branches after a Match node. This node can also "consume" the "Not Ran" value.
-      `,
-      infoBoxTitle: "Coalesce Node",
-      contextMenuTitle: "Coalesce",
-      group: ["Logic"]
-    };
-  }
-  #getInputPortCount(connections) {
-    const inputNodeId = this.chartNode.id;
-    const inputConnections = connections.filter((connection) => connection.inputNodeId === inputNodeId && connection.inputId.startsWith("input"));
-    let maxInputNumber = 0;
-    for (const connection of inputConnections) {
-      const messageNumber = parseInt(connection.inputId.replace("input", ""), 10);
-      if (messageNumber > maxInputNumber) {
-        maxInputNumber = messageNumber;
-      }
-    }
-    return maxInputNumber + 1;
-  }
-  async process(inputData) {
-    const conditional = inputData["conditional"];
-    if (conditional?.type === "control-flow-excluded") {
-      return {
-        ["output"]: {
-          type: "control-flow-excluded",
-          value: void 0
-        }
-      };
-    }
-    const inputCount = Object.keys(inputData).filter((key) => key.startsWith("input")).length;
-    const okInputValues = [];
-    for (let i2 = 1; i2 <= inputCount; i2++) {
-      const inputValue = inputData[`input${i2}`];
-      if (inputValue && inputValue.type !== "control-flow-excluded" && unwrapDataValue2(inputValue) != null) {
-        okInputValues.push(inputValue);
-      }
-    }
-    if (okInputValues.length === 0) {
-      return {
-        ["output"]: {
-          type: "control-flow-excluded",
-          value: void 0
-        }
-      };
-    }
-    return {
-      ["output"]: okInputValues[0]
-    };
-  }
-};
-var coalesceNode2 = nodeDefinition2(CoalesceNodeImpl2, "Coalesce");
-
-// dist/esm/model/nodes/PassthroughNode.js
-var PassthroughNodeImpl2 = class extends NodeImpl2 {
-  static create = () => {
-    const chartNode = {
-      type: "passthrough",
-      title: "Passthrough",
-      id: nanoid(),
-      data: {},
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 175
-      }
-    };
-    return chartNode;
-  };
-  getInputDefinitions(connections) {
-    const inputs = [];
-    const inputCount = this.#getInputPortCount(connections);
-    for (let i2 = 1; i2 <= inputCount; i2++) {
-      inputs.push({
-        dataType: "any",
-        id: `input${i2}`,
-        title: `Input ${i2}`
-      });
-    }
-    return inputs;
-  }
-  getOutputDefinitions(connections) {
-    const outputs = [];
-    const inputCount = this.#getInputPortCount(connections);
-    for (let i2 = 1; i2 <= inputCount - 1; i2++) {
-      outputs.push({
-        dataType: "any",
-        id: `output${i2}`,
-        title: `Output ${i2}`
-      });
-    }
-    return outputs;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Simply passes the input value to the output without any modifications.
-      `,
-      infoBoxTitle: "Passthrough Node",
-      contextMenuTitle: "Passthrough",
-      group: ["Logic"]
-    };
-  }
-  #getInputPortCount(connections) {
-    const inputNodeId = this.chartNode.id;
-    const inputConnections = connections.filter((connection) => connection.inputNodeId === inputNodeId && connection.inputId.startsWith("input"));
-    let maxInputNumber = 0;
-    for (const connection of inputConnections) {
-      const messageNumber = parseInt(connection.inputId.replace("input", ""), 10);
-      if (messageNumber > maxInputNumber) {
-        maxInputNumber = messageNumber;
-      }
-    }
-    return maxInputNumber + 1;
-  }
-  async process(inputData) {
-    const inputCount = Object.keys(inputData).filter((key) => key.startsWith("input")).length;
-    const outputs = {};
-    for (let i2 = 1; i2 <= inputCount; i2++) {
-      const input = inputData[`input${i2}`];
-      outputs[`output${i2}`] = input;
-    }
-    return outputs;
-  }
-};
-var passthroughNode2 = nodeDefinition2(PassthroughNodeImpl2, "Passthrough");
-
-// dist/esm/model/nodes/PopNode.js
-var PopNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const baseNode = {
-      type: "pop",
-      title: "Pop",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 200
-      },
-      data: {}
-    };
-    return baseNode;
-  }
-  getInputDefinitions() {
-    return [
-      {
-        dataType: "any[]",
-        id: "array",
-        title: "Array"
-      }
-    ];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        dataType: "any",
-        id: "lastItem",
-        title: "Last"
-      },
-      {
-        dataType: "any",
-        id: "restOfArray",
-        title: "Rest"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Pops the last value off the input array and outputs the new array and the popped value.
-
-        Can also be used to just extract the last value from an array.
-      `,
-      infoBoxTitle: "Pop Node",
-      contextMenuTitle: "Pop",
-      group: ["Lists"]
-    };
-  }
-  async process(inputs) {
-    const inputArray = inputs["array"]?.value;
-    if (!Array.isArray(inputArray) || inputArray.length === 0) {
-      throw new Error("Input array is empty or not an array");
-    }
-    const lastItem = inputArray[inputArray.length - 1];
-    const rest = inputArray.slice(0, inputArray.length - 1);
-    return {
-      ["lastItem"]: {
-        type: "any",
-        value: lastItem
-      },
-      ["restOfArray"]: {
-        type: "any[]",
-        value: rest
-      }
-    };
-  }
-};
-var popNode2 = nodeDefinition2(PopNodeImpl2, "Pop");
-
-// dist/esm/model/nodes/SetGlobalNode.js
-var SetGlobalNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "setGlobal",
-      title: "Set Global",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 200
-      },
-      data: {
-        id: "variable-name",
-        dataType: "string",
-        useIdInput: false
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    const inputs = [
-      {
-        id: "value",
-        title: "Value",
-        dataType: this.chartNode.data.dataType
-      }
-    ];
-    if (this.data.useIdInput) {
-      inputs.push({
-        id: "id",
-        title: "Variable ID",
-        dataType: "string"
-      });
-    }
-    return inputs;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "saved-value",
-        title: "Value",
-        dataType: this.data.dataType
-      },
-      {
-        id: "previous-value",
-        title: "Previous Value",
-        dataType: this.data.dataType
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "string",
-        dataKey: "id",
-        useInputToggleDataKey: "useIdInput",
-        label: "ID"
-      },
-      {
-        type: "dataTypeSelector",
-        dataKey: "dataType",
-        label: "Data Type",
-        useInputToggleDataKey: "useIdInput"
-      }
-    ];
-  }
-  getBody() {
-    return dedent`
-      ${this.data.id}
-      Type: ${this.data.dataType}
-    `;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Sets a global value that is shared across all graphs and subgraphs. The id of the global value and the value itself are configured in this node.
-      `,
-      infoBoxTitle: "Set Global Node",
-      contextMenuTitle: "Set Global",
-      group: ["Advanced"]
-    };
-  }
-  async process(inputs, context) {
-    const rawValue2 = inputs["value"];
-    if (!rawValue2) {
-      return {};
-    }
-    const id = this.data.useIdInput ? coerceType2(inputs["id"], "string") : this.data.id;
-    if (!id) {
-      throw new Error("Missing variable ID");
-    }
-    let previousValue = context.getGlobal(this.data.id);
-    if (!previousValue && isArrayDataType2(this.data.dataType)) {
-      previousValue = { type: this.data.dataType, value: [] };
-    } else if (!previousValue && isScalarDataType2(this.data.dataType)) {
-      previousValue = { type: this.data.dataType, value: scalarDefaults2[this.data.dataType] };
-    }
-    const value = unwrapDataValue2(rawValue2);
-    context.setGlobal(id, value);
-    return {
-      ["saved-value"]: value,
-      ["previous-value"]: previousValue
-    };
-  }
-};
-var setGlobalNode2 = nodeDefinition2(SetGlobalNodeImpl2, "Set Global");
-
-// dist/esm/model/nodes/GetGlobalNode.js
-var GetGlobalNodeImpl2 = class extends NodeImpl2 {
-  static create(id = "variable-name") {
-    const chartNode = {
-      type: "getGlobal",
-      title: "Get Global",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 200
-      },
-      data: {
-        id,
-        dataType: "string",
-        onDemand: true,
-        useIdInput: false,
-        wait: false
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    if (this.data.useIdInput) {
-      return [
-        {
-          id: "id",
-          title: "Variable ID",
-          dataType: this.data.dataType
-        }
-      ];
-    }
-    return [];
-  }
-  getOutputDefinitions() {
-    const { onDemand, dataType } = this.chartNode.data;
-    return [
-      {
-        id: "value",
-        title: "Value",
-        dataType: onDemand ? `fn<${dataType}>` : dataType
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "string",
-        label: "Variable ID",
-        dataKey: "id",
-        useInputToggleDataKey: "useIdInput"
-      },
-      {
-        type: "dataTypeSelector",
-        label: "Data Type",
-        dataKey: "dataType"
-      },
-      {
-        type: "toggle",
-        label: "On Demand",
-        dataKey: "onDemand"
-      },
-      {
-        type: "toggle",
-        label: "Wait",
-        dataKey: "wait"
-      }
-    ];
-  }
-  getBody() {
-    return dedent`
-      ${this.data.id}
-      Type: ${this.data.dataType}
-      ${this.data.wait ? "Waits for available data" : ""}
-    `;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Retrieves a global value that is shared across all graphs and subgraphs. The id of the global value is configured in this node.
-      `,
-      infoBoxTitle: "Get Global Node",
-      contextMenuTitle: "Get Global",
-      group: ["Advanced"]
-    };
-  }
-  async process(inputs, context) {
-    if (this.data.onDemand) {
-      if (this.data.wait) {
-        throw new Error("Cannot use onDemand and wait together");
-      }
-      return {
-        ["value"]: {
-          type: `fn<${this.data.dataType}>`,
-          value: () => {
-            const id2 = this.data.useIdInput ? coerceType2(inputs["id"], "string") : this.data.id;
-            const value2 = context.getGlobal(id2);
-            if (value2) {
-              return value2.value;
-            }
-            if (isArrayDataType2(this.data.dataType)) {
-              return [];
-            }
-            return scalarDefaults2[this.data.dataType];
-          }
-        }
-      };
-    }
-    const id = this.data.useIdInput ? coerceType2(inputs["id"], "string") : this.data.id;
-    let value = this.data.wait ? await context.waitForGlobal(id) : context.getGlobal(id);
-    if (!value && isArrayDataType2(this.data.dataType)) {
-      value = { type: this.data.dataType, value: [] };
-    }
-    if (!value && isScalarDataType2(this.data.dataType)) {
-      value = { type: this.data.dataType, value: scalarDefaults2[this.data.dataType] };
-    }
-    return {
-      ["value"]: value
-    };
-  }
-};
-var getGlobalNode2 = nodeDefinition2(GetGlobalNodeImpl2, "Get Global");
-
-// dist/esm/model/nodes/WaitForEventNode.js
-var WaitForEventNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    return {
-      id: nanoid(),
-      type: "waitForEvent",
-      title: "Wait For Event",
-      visualData: { x: 0, y: 0, width: 150 },
-      data: {
-        eventName: "continue",
-        useEventNameInput: false
-      }
-    };
-  }
-  getInputDefinitions() {
-    const inputDefinitions = [];
-    if (this.chartNode.data.useEventNameInput) {
-      inputDefinitions.push({
-        id: "eventName",
-        title: "Event Name",
-        dataType: "string"
-      });
-    }
-    inputDefinitions.push({
-      id: "inputData",
-      title: "Data",
-      dataType: "any"
-    });
-    return inputDefinitions;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "outputData",
-        title: "Data",
-        dataType: "any"
-      },
-      {
-        id: "eventData",
-        title: "Event Data",
-        dataType: "any"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "string",
-        label: "Event Name",
-        dataKey: "eventName",
-        useInputToggleDataKey: "useEventNameInput"
-      }
-    ];
-  }
-  getBody() {
-    return this.data.useEventNameInput ? "(Using Input)" : this.data.eventName;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Waits for a specific event to be raised by a 'Raise Event' node or the host project. The event name can be configured.
-      `,
-      infoBoxTitle: "Wait For Event Node",
-      contextMenuTitle: "Wait For Event",
-      group: ["Advanced"]
-    };
-  }
-  async process(inputs, context) {
-    const eventName = this.chartNode.data.useEventNameInput ? coerceType2(inputs["eventName"], "string") : this.chartNode.data.eventName;
-    const eventData = await context.waitEvent(eventName);
-    return {
-      ["outputData"]: inputs["inputData"],
-      ["eventData"]: eventData
-    };
-  }
-};
-var waitForEventNode2 = nodeDefinition2(WaitForEventNodeImpl2, "Wait For Event");
-
-// dist/esm/model/nodes/GptFunctionNode.js
-var GptFunctionNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "gptFunction",
-      title: "GPT Function",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 250
-      },
-      data: {
-        name: "newFunction",
-        description: "No description provided",
-        schema: `{
-  "type": "object",
-  "properties": {}
-}`
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    return [];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "function",
-        title: "Function",
-        dataType: "gpt-function"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "string",
-        label: "Name",
-        dataKey: "name"
-      },
-      {
-        type: "string",
-        label: "Description",
-        dataKey: "description"
-      },
-      {
-        type: "code",
-        label: "Schema",
-        dataKey: "schema",
-        language: "json"
-      }
-    ];
-  }
-  getBody() {
-    return `!markdown_${this.data.name}_: ${this.data.description}`;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Defines a GPT function, which is a method that the LLM can call in its responses.
-      `,
-      infoBoxTitle: "GPT Function Node",
-      contextMenuTitle: "GPT Function",
-      group: ["AI"]
-    };
-  }
-  async process(inputs) {
-    const parsedSchema = JSON.parse(this.data.schema);
-    return {
-      ["function"]: {
-        type: "gpt-function",
-        value: {
-          name: this.data.name,
-          description: this.data.description,
-          parameters: parsedSchema
-        }
-      }
-    };
-  }
-};
-var gptFunctionNode2 = nodeDefinition2(GptFunctionNodeImpl2, "GPT Function");
-
-// dist/esm/model/nodes/ToYamlNode.js
-var ToYamlNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "toYaml",
-      title: "To YAML",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 175
-      },
-      data: {}
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    return [
-      {
-        id: "object",
-        title: "Object",
-        dataType: "object",
-        required: true
-      }
-    ];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "yaml",
-        title: "YAML",
-        dataType: "string"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Turns the input object into YAML text.
-      `,
-      infoBoxTitle: "To YAML Node",
-      contextMenuTitle: "To YAML",
-      group: ["Text"]
-    };
-  }
-  async process(inputs) {
-    const object = coerceType2(inputs["object"], "object");
-    const toYaml = browser_default.stringify(object, null, {
-      indent: 2,
-      aliasDuplicateObjects: false
-    });
-    return {
-      ["yaml"]: {
-        type: "string",
-        value: toYaml
-      }
-    };
-  }
-};
-var toYamlNode2 = nodeDefinition2(ToYamlNodeImpl2, "To YAML");
-
-// dist/esm/model/nodes/GetEmbeddingNode.js
-var GetEmbeddingNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    return {
-      id: nanoid(),
-      type: "getEmbedding",
-      title: "Get Embedding",
-      visualData: { x: 0, y: 0, width: 200 },
-      data: {
-        integration: "openai",
-        useIntegrationInput: false
-      }
-    };
-  }
-  getInputDefinitions() {
-    const inputDefinitions = [];
-    inputDefinitions.push({
-      id: "input",
-      title: "Input",
-      dataType: "string",
-      required: true
-    });
-    if (this.data.useIntegrationInput) {
-      inputDefinitions.push({
-        id: "integration",
-        title: "Integration",
-        dataType: "string",
-        required: true
-      });
-    }
-    return inputDefinitions;
-  }
-  getOutputDefinitions() {
-    const outputs = [
-      {
-        id: "embedding",
-        title: "Embedding",
-        dataType: "vector"
-      }
-    ];
-    return outputs;
-  }
-  getEditors() {
-    return [
-      {
-        type: "dropdown",
-        label: "Integration",
-        dataKey: "integration",
-        options: [{ label: "OpenAI", value: "openai" }],
-        useInputToggleDataKey: "useIntegrationInput"
-      }
-    ];
-  }
-  getBody() {
-    return `Using ${this.data.useIntegrationInput ? "(input)" : this.data.integration}`;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Gets a OpenAI vector embedding for the input text provided.
-
-        Can be used with the Vector Store and Vector KNN nodes.
-      `,
-      infoBoxTitle: "Get Embedding Node",
-      contextMenuTitle: "Get Embedding",
-      group: ["AI"]
-    };
-  }
-  async process(inputs, context) {
-    const input = coerceType2(inputs["input"], "string");
-    const integrationName = this.data.useIntegrationInput ? coerceType2(inputs["integration"], "string") : this.data.integration;
-    const embeddingGenerator = getIntegration2("embeddingGenerator", integrationName, context);
-    const embedding = await embeddingGenerator.generateEmbedding(input);
-    return {
-      ["embedding"]: {
-        type: "vector",
-        value: embedding
-      }
-    };
-  }
-};
-var getEmbeddingNode2 = nodeDefinition2(GetEmbeddingNodeImpl2, "Get Embedding");
-
-// dist/esm/model/nodes/VectorStoreNode.js
-var VectorStoreNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    return {
-      id: nanoid(),
-      type: "vectorStore",
-      title: "Vector Store",
-      visualData: { x: 0, y: 0, width: 200 },
-      data: {
-        integration: "pinecone",
-        collectionId: ""
-      }
-    };
-  }
-  getInputDefinitions() {
-    const inputDefinitions = [];
-    inputDefinitions.push({
-      id: "vector",
-      title: "Vector",
-      dataType: "vector",
-      required: true
-    });
-    if (this.data.useCollectionIdInput) {
-      inputDefinitions.push({
-        id: "collectionId",
-        title: "Collection ID",
-        dataType: "string",
-        required: true
-      });
-    }
-    inputDefinitions.push({
-      id: "data",
-      title: "Data",
-      dataType: "any",
-      required: true
-    });
-    if (this.data.useIntegrationInput) {
-      inputDefinitions.push({
-        id: "integration",
-        title: "Integration",
-        dataType: "string",
-        required: true
-      });
-    }
-    inputDefinitions.push({
-      id: "id",
-      title: "ID",
-      dataType: "string",
-      required: false
-    });
-    return inputDefinitions;
-  }
-  getOutputDefinitions() {
-    const outputs = [
-      {
-        id: "complete",
-        title: "Complete",
-        dataType: "boolean"
-      }
-    ];
-    return outputs;
-  }
-  getEditors() {
-    return [
-      {
-        type: "dropdown",
-        label: "Integration",
-        dataKey: "integration",
-        options: [
-          { label: "Pinecone", value: "pinecone" },
-          { label: "Milvus", value: "milvus" }
-        ],
-        useInputToggleDataKey: "useIntegrationInput"
-      },
-      {
-        type: "string",
-        label: "Collection ID",
-        dataKey: "collectionId",
-        useInputToggleDataKey: "useCollectionIdInput"
-      }
-    ];
-  }
-  getBody() {
-    return dedent`
-      ${this.data.useIntegrationInput ? "(Integration using input)" : this.data.integration}
-      ${this.data.useCollectionIdInput ? "(using input)" : this.data.collectionId}
-    `;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Takes in a vector, as well as data to store with the vector. This data is stored in the configured vector DB integration for later retrieval.
-      `,
-      infoBoxTitle: "Vector Store Node",
-      contextMenuTitle: "Vector Store",
-      group: ["Input/Output"]
-    };
-  }
-  async process(inputs, context) {
-    const integration = this.data.useIntegrationInput ? coerceTypeOptional2(inputs["integration"], "string") ?? this.data.integration : this.data.integration;
-    const vectorDb = getIntegration2("vectorDatabase", integration, context);
-    if (inputs["vector"]?.type !== "vector") {
-      throw new Error(`Expected vector input, got ${inputs["vector"]?.type}`);
-    }
-    await vectorDb.store({ type: "string", value: this.data.collectionId }, inputs["vector"], inputs["data"], {
-      id: coerceTypeOptional2(inputs["id"], "string")
-    });
-    return {
-      ["complete"]: {
-        type: "boolean",
-        value: true
-      }
-    };
-  }
-};
-var vectorStoreNode2 = nodeDefinition2(VectorStoreNodeImpl2, "Vector Store");
-
-// dist/esm/model/nodes/VectorNearestNeighborsNode.js
-var VectorNearestNeighborsNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    return {
-      id: nanoid(),
-      type: "vectorNearestNeighbors",
-      title: "Vector KNN",
-      visualData: { x: 0, y: 0, width: 200 },
-      data: {
-        k: 10,
-        integration: "pinecone",
-        collectionId: ""
-      }
-    };
-  }
-  getInputDefinitions() {
-    const inputDefinitions = [];
-    inputDefinitions.push({
-      id: "vector",
-      title: "Vector",
-      dataType: "vector",
-      required: true
-    });
-    if (this.data.useIntegrationInput) {
-      inputDefinitions.push({
-        id: "integration",
-        title: "Integration",
-        dataType: "string",
-        required: true
-      });
-    }
-    if (this.data.useCollectionIdInput) {
-      inputDefinitions.push({
-        id: "collectionId",
-        title: "Collection ID",
-        dataType: "string",
-        required: true
-      });
-    }
-    if (this.data.useKInput) {
-      inputDefinitions.push({
-        id: "k",
-        title: "K",
-        dataType: "number",
-        required: true
-      });
-    }
-    if (this.data.useCollectionIdInput) {
-      inputDefinitions.push({
-        id: "collectionId",
-        title: "Collection ID",
-        dataType: "string",
-        required: true
-      });
-    }
-    return inputDefinitions;
-  }
-  getOutputDefinitions() {
-    const outputs = [
-      {
-        id: "results",
-        title: "Results",
-        dataType: "any[]"
-      }
-    ];
-    return outputs;
-  }
-  getEditors() {
-    return [
-      {
-        type: "dropdown",
-        label: "Integration",
-        dataKey: "integration",
-        options: [
-          { label: "Pinecone", value: "pinecone" },
-          { label: "Milvus", value: "milvus" }
-        ],
-        useInputToggleDataKey: "useIntegrationInput"
-      },
-      {
-        type: "number",
-        label: "K",
-        dataKey: "k",
-        min: 1,
-        max: 100,
-        step: 1,
-        defaultValue: 10,
-        useInputToggleDataKey: "useKInput"
-      },
-      {
-        type: "string",
-        label: "Collection ID",
-        dataKey: "collectionId",
-        useInputToggleDataKey: "useCollectionIdInput"
-      }
-    ];
-  }
-  getBody() {
-    return dedent`
-      ${this.data.useIntegrationInput ? "(Integration using input)" : this.data.integration}
-      k: ${this.data.useKInput ? "(using input)" : this.data.k}
-      ${this.data.useCollectionIdInput ? "(using input)" : this.data.collectionId}
-    `;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Performs a k-nearest neighbors search on the vectors stored in the configured vector DB integration. Takes in a vector and returns the k closest vectors and their corresponding data.
-      `,
-      infoBoxTitle: "Vector KNN Node",
-      contextMenuTitle: "Vector KNN",
-      group: ["Input/Output"]
-    };
-  }
-  async process(inputs, context) {
-    const integration = this.data.useIntegrationInput ? coerceTypeOptional2(inputs["integration"], "string") ?? this.data.integration : this.data.integration;
-    const vectorDb = getIntegration2("vectorDatabase", integration, context);
-    const k2 = this.data.useKInput ? coerceTypeOptional2(inputs["k"], "number") ?? this.data.k : this.data.k;
-    if (inputs["vector"]?.type !== "vector") {
-      throw new Error(`Expected vector input, got ${inputs["vector"]?.type}`);
-    }
-    const results = await vectorDb.nearestNeighbors({ type: "string", value: this.data.collectionId }, inputs["vector"], k2);
-    return {
-      ["results"]: results
-    };
-  }
-};
-var vectorNearestNeighborsNode2 = nodeDefinition2(VectorNearestNeighborsNodeImpl2, "Vector KNN");
-
-// dist/esm/model/nodes/HashNode.js
-var crypto3 = __toESM(require_crypto_js(), 1);
-var { SHA256: SHA2562, SHA512: SHA5122, MD5: MD52, SHA1: SHA12 } = crypto3;
-var HashNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "hash",
-      title: "Hash",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 250
-      },
-      data: {
-        algorithm: "sha256"
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    return [
-      {
-        id: "input",
-        title: "Input",
-        dataType: "string",
-        required: true
-      }
-    ];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "hash",
-        title: "Hash",
-        dataType: "string"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "dropdown",
-        label: "Algorithm",
-        dataKey: "algorithm",
-        options: [
-          { value: "md5", label: "MD5" },
-          { value: "sha1", label: "SHA1" },
-          { value: "sha256", label: "SHA256" },
-          { value: "sha512", label: "SHA512" }
-        ]
-      }
-    ];
-  }
-  getBody() {
-    return algorithmDisplayName2[this.data.algorithm];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Computes a hash of the input value using the configured hash function.
-      `,
-      infoBoxTitle: "Hash Node",
-      contextMenuTitle: "Hash",
-      group: ["Data"]
-    };
-  }
-  async process(inputs) {
-    const inputText = coerceType2(inputs["input"], "string");
-    const hash = R(this.data.algorithm).with("md5", () => MD52(inputText).toString()).with("sha1", () => SHA12(inputText).toString()).with("sha256", () => SHA2562(inputText).toString()).with("sha512", () => SHA5122(inputText).toString()).exhaustive();
-    return {
-      ["hash"]: {
-        type: "string",
-        value: hash
-      }
-    };
-  }
-};
-var algorithmDisplayName2 = {
-  md5: "MD5",
-  sha1: "SHA-1",
-  sha256: "SHA-256",
-  sha512: "SHA-512"
-};
-var hashNode2 = nodeDefinition2(HashNodeImpl2, "Hash");
-
-// dist/esm/model/nodes/AbortGraphNode.js
-var AbortGraphNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "abortGraph",
-      title: "Abort Graph",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 200
-      },
-      data: {
-        successfully: true,
-        errorMessage: ""
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    const inputs = [
-      {
-        id: "data",
-        title: "Data or Error",
-        dataType: "any"
-      }
-    ];
-    if (this.data.useSuccessfullyInput) {
-      inputs.push({
-        id: "successfully",
-        title: "Successfully",
-        dataType: "boolean"
-      });
-    }
-    return inputs;
-  }
-  getOutputDefinitions() {
-    return [];
-  }
-  getEditors() {
-    return [
-      {
-        type: "toggle",
-        label: "Successfully Abort",
-        dataKey: "successfully",
-        useInputToggleDataKey: "useSuccessfullyInput"
-      },
-      {
-        type: "string",
-        label: "Error Message (if not successfully aborting)",
-        dataKey: "errorMessage"
-      }
-    ];
-  }
-  getBody() {
-    return dedent`
-      ${this.data.useSuccessfullyInput ? "Success depends on input" : this.data.successfully ? "Successfully Abort" : this.data.errorMessage ? `Error Abort: ${this.data.errorMessage}` : "Error Abort"}
-    `;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Aborts the execution of the entire graph immediately.
-
-        Can either "successfully" abort the graph (early-exit), or "error" abort the graph.
-      `,
-      infoBoxTitle: "Abort Graph Node",
-      contextMenuTitle: "Abort Graph",
-      group: ["Logic"]
-    };
-  }
-  async process(inputs, context) {
-    const successfully = this.data.useSuccessfullyInput ? coerceTypeOptional2(inputs["successfully"], "boolean") ?? this.data.successfully : this.data.successfully;
-    if (successfully) {
-      context.abortGraph();
-    } else {
-      const errorMessage = coerceTypeOptional2(inputs["data"], "string")?.trim() || this.data.errorMessage || "Graph aborted with error";
-      context.abortGraph(errorMessage);
-    }
-    return {};
-  }
-};
-var abortGraphNode2 = nodeDefinition2(AbortGraphNodeImpl2, "Abort Graph");
-
-// dist/esm/model/nodes/RaceInputsNode.js
-var RaceInputsNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "raceInputs",
-      title: "Race Inputs",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 300
-      },
-      data: {}
-    };
-    return chartNode;
-  }
-  #getInputPortCount(connections) {
-    const inputNodeId = this.chartNode.id;
-    const inputConnections = connections.filter((connection) => connection.inputNodeId === inputNodeId && connection.inputId.startsWith("input"));
-    let maxInputNumber = 0;
-    for (const connection of inputConnections) {
-      const messageNumber = parseInt(connection.inputId.replace("input", ""), 10);
-      if (messageNumber > maxInputNumber) {
-        maxInputNumber = messageNumber;
-      }
-    }
-    return maxInputNumber + 1;
-  }
-  getInputDefinitions(connections) {
-    const inputs = [];
-    const inputCount = this.#getInputPortCount(connections);
-    for (let i2 = 1; i2 <= inputCount; i2++) {
-      inputs.push({
-        dataType: "any",
-        id: `input${i2}`,
-        title: `Input ${i2}`
-      });
-    }
-    return inputs;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "result",
-        title: "Result",
-        dataType: "any"
-      }
-    ];
-  }
-  getEditors() {
-    return [];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Takes in multiple inputs and outputs the value of the first one to finish. The other inputs are cancelled.
-      `,
-      infoBoxTitle: "Race Inputs Node",
-      contextMenuTitle: "Race Inputs",
-      group: ["Logic"]
-    };
-  }
-  async process(inputs, context) {
-    const value = Object.entries(inputs).find(([key, value2]) => key.startsWith("input") && value2 !== void 0 && value2.type !== "control-flow-excluded");
-    if (!value) {
-      return {
-        ["result"]: {
-          type: "control-flow-excluded",
-          value: void 0
-        }
-      };
-    }
-    return {
-      ["result"]: value[1]
-    };
-  }
-};
-var raceInputsNode2 = nodeDefinition2(RaceInputsNodeImpl2, "Race Inputs");
-
-// dist/esm/model/nodes/ToJsonNode.js
-var ToJsonNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "toJson",
-      title: "To JSON",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 175
-      },
-      data: {
-        indented: true
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    return [
-      {
-        id: "data",
-        title: "Data",
-        dataType: "any",
-        required: true
-      }
-    ];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "json",
-        title: "JSON",
-        dataType: "string"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "toggle",
-        label: "Indented",
-        dataKey: "indented"
-      }
-    ];
-  }
-  getBody() {
-    return this.data.indented ? "Indented" : "Not indented";
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Turns the input value into its JSON equivalent (stringifies the value).
-      `,
-      infoBoxTitle: "To JSON Node",
-      contextMenuTitle: "To JSON",
-      group: ["Text"]
-    };
-  }
-  async process(inputs) {
-    const data = coerceType2(inputs["data"], "any");
-    const toJson = this.data.indented ? JSON.stringify(data, null, 2) : JSON.stringify(data);
-    return {
-      ["json"]: {
-        type: "string",
-        value: toJson
-      }
-    };
-  }
-};
-var toJsonNode2 = nodeDefinition2(ToJsonNodeImpl2, "To JSON");
-
-// dist/esm/model/nodes/JoinNode.js
-var JoinNodeImpl2 = class extends NodeImpl2 {
-  static create = () => {
-    const chartNode = {
-      type: "join",
-      title: "Join",
-      id: nanoid(),
-      data: {
-        flatten: true,
-        joinString: "\n"
-      },
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 150
-      }
-    };
-    return chartNode;
-  };
-  getInputDefinitions(connections) {
-    const inputs = [];
-    const inputCount = this.#getInputPortCount(connections);
-    if (this.data.useJoinStringInput) {
-      inputs.push({
-        dataType: "string",
-        id: "joinString",
-        title: "Join String"
-      });
-    }
-    for (let i2 = 1; i2 <= inputCount; i2++) {
-      inputs.push({
-        dataType: "string",
-        id: `input${i2}`,
-        title: `Input ${i2}`
-      });
-    }
-    return inputs;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        dataType: "string",
-        id: "output",
-        title: "Joined"
-      }
-    ];
-  }
-  #getInputPortCount(connections) {
-    const inputNodeId = this.chartNode.id;
-    const inputConnections = connections.filter((connection) => connection.inputNodeId === inputNodeId && connection.inputId.startsWith("input"));
-    let maxInputNumber = 0;
-    for (const connection of inputConnections) {
-      const messageNumber = parseInt(connection.inputId.replace("input", ""), 10);
-      if (messageNumber > maxInputNumber) {
-        maxInputNumber = messageNumber;
-      }
-    }
-    return maxInputNumber + 1;
-  }
-  getEditors() {
-    return [
-      {
-        type: "toggle",
-        label: "Flatten",
-        dataKey: "flatten"
-      },
-      {
-        type: "code",
-        label: "Join String",
-        dataKey: "joinString",
-        useInputToggleDataKey: "useJoinStringInput",
-        language: "plaintext"
-      }
-    ];
-  }
-  getBody() {
-    return this.data.useJoinStringInput ? "(Join value is input)" : this.data.joinString === "\n" ? "(New line)" : this.data.joinString === "	" ? "(Tab)" : this.data.joinString === " " ? "(Space)" : this.data.joinString;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Takes an array of strings, and joins them using the configured delimiter.
-
-        Defaults to a newline.
-      `,
-      infoBoxTitle: "Join Node",
-      contextMenuTitle: "Join",
-      group: ["Text"]
-    };
-  }
-  async process(inputs) {
-    const joinString = this.data.useJoinStringInput ? coerceTypeOptional2(inputs["joinString"], "string") ?? this.data.joinString : this.data.joinString;
-    const inputKeys = Object.keys(inputs).filter((key) => key.startsWith("input"));
-    const inputValueStrings = [];
-    for (let i2 = 1; i2 <= inputKeys.length; i2++) {
-      const inputValue = inputs[`input${i2}`];
-      if (isArrayDataValue2(inputValue) && this.data.flatten) {
-        for (const value of inputValue.value) {
-          inputValueStrings.push(coerceType2(inferType2(value), "string"));
-        }
-      } else if (inputValue) {
-        inputValueStrings.push(coerceType2(inputValue, "string"));
-      }
-    }
-    const outputValue = inputValueStrings.join(joinString);
-    return {
-      ["output"]: {
-        type: "string",
-        value: outputValue
-      }
-    };
-  }
-};
-var joinNode2 = nodeDefinition2(JoinNodeImpl2, "Coalesce");
-
-// dist/esm/model/nodes/FilterNode.js
-var FilterNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "filter",
-      title: "Filter",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 175
-      },
-      data: {}
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    return [
-      {
-        id: "array",
-        title: "Array",
-        dataType: "any[]",
-        required: true
-      },
-      {
-        id: "include",
-        title: "Include",
-        dataType: "boolean[]",
-        required: true
-      }
-    ];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "filtered",
-        title: "Filtered",
-        dataType: "any[]"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Takes in both an array of values, and an array of booleans of the same length, and filters the array where the corresponding boolean is true.
-      `,
-      infoBoxTitle: "Filter Node",
-      contextMenuTitle: "Filter",
-      group: ["Lists"]
-    };
-  }
-  async process(inputs) {
-    const array = coerceType2(inputs["array"], "any[]");
-    const include = coerceType2(inputs["include"], "boolean[]");
-    const zipped = zip_default(array, include);
-    const filtered = zipped.filter(([_2, include2]) => include2).map(([value, _2]) => value);
-    return {
-      ["filtered"]: {
-        type: inputs["array"]?.type ?? "any",
-        value: filtered
-      }
-    };
-  }
-};
-var filterNode2 = nodeDefinition2(FilterNodeImpl2, "Filter");
-
-// dist/esm/model/nodes/ObjectNode.js
-var DEFAULT_JSON_TEMPLATE2 = `{
-  "key": "{{input}}"
-}`;
-var ObjectNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "object",
-      title: "Object",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 200
-      },
-      data: {
-        jsonTemplate: DEFAULT_JSON_TEMPLATE2
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions(connections) {
-    const inputNames = [...new Set(this.chartNode.data.jsonTemplate.match(/\{\{([^}]+)\}\}/g))];
-    return inputNames?.map((inputName) => {
-      return {
-        // id and title should not have the {{ and }}
-        id: inputName.slice(2, -2),
-        title: inputName.slice(2, -2),
-        dataType: "any",
-        required: false
-      };
-    }) ?? [];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        dataType: "object",
-        id: "output",
-        title: "Output"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "code",
-        label: "JSON Template",
-        dataKey: "jsonTemplate",
-        language: "json",
-        theme: "prompt-interpolation"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Creates an object from input values and a JSON template, escaping the input values and inserting them into the template.
-
-        Use double-quotes around the input values to escape them. String values are automatically escaped.
-
-        Useful for creating objects from multiple inputs.
-      `,
-      infoBoxTitle: "Object Node",
-      contextMenuTitle: "Object",
-      group: ["Objects"]
-    };
-  }
-  interpolate(baseString, values4) {
-    return baseString.replace(/("?)\{\{([^}]+)\}\}("?)/g, (_m, openQuote, key, _closeQuote) => {
-      const isQuoted = Boolean(openQuote);
-      const value = values4[key];
-      if (value == null) {
-        return "null";
-      }
-      if (isQuoted && typeof value === "string") {
-        return JSON.stringify(value);
-      }
-      if (isQuoted) {
-        return JSON.stringify(JSON.stringify(value));
-      }
-      return JSON.stringify(value);
-    });
-  }
-  async process(inputs) {
-    const inputMap = Object.keys(inputs).reduce((acc, key) => {
-      acc[key] = inputs[key]?.value;
-      return acc;
-    }, {});
-    const outputValue = JSON.parse(this.interpolate(this.chartNode.data.jsonTemplate, inputMap));
-    return {
-      output: {
-        type: "object",
-        value: outputValue
-      }
-    };
-  }
-};
-var objectNode2 = nodeDefinition2(ObjectNodeImpl2, "Object");
-
-// dist/esm/model/nodes/BooleanNode.js
-var BooleanNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "boolean",
-      title: "Bool",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 130
-      },
-      data: {
-        value: false
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    return this.data.useValueInput ? [
-      {
-        dataType: "any",
-        id: "input",
-        title: "Input"
-      }
-    ] : [];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        dataType: "boolean",
-        id: "value",
-        title: "Value"
-      }
-    ];
-  }
-  getEditors() {
-    return [{ type: "toggle", label: "Value", dataKey: "value", useInputToggleDataKey: "useValueInput" }];
-  }
-  getBody() {
-    return this.data.useValueInput ? `(Input to bool)` : (this.data.value ?? false).toString();
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Outputs a boolean constant, or converts an input value into a boolean.
-      `,
-      infoBoxTitle: "Bool Node",
-      contextMenuTitle: "Bool",
-      group: ["Data"]
-    };
-  }
-  async process(inputs) {
-    const value = this.data.useValueInput ? coerceTypeOptional2(inputs["input"], "boolean") ?? this.data.value ?? false : this.data.value ?? false;
-    return {
-      ["value"]: {
-        type: "boolean",
-        value
-      }
-    };
-  }
-};
-var booleanNode2 = nodeDefinition2(BooleanNodeImpl2, "Boolean");
-
-// dist/esm/model/nodes/CompareNode.js
-var CompareNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "compare",
-      title: "Compare",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 160
-      },
-      data: {
-        comparisonFunction: "=="
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    const inputs = [
-      {
-        dataType: "any",
-        id: "a",
-        title: "A"
-      },
-      {
-        dataType: "any",
-        id: "b",
-        title: "B"
-      }
-    ];
-    if (this.data.useComparisonFunctionInput) {
-      inputs.push({
-        dataType: "string",
-        id: "comparisonFunction",
-        title: "Comparison Function"
-      });
-    }
-    return inputs;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        dataType: "boolean",
-        id: "output",
-        title: "Output"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "dropdown",
-        label: "Comparison Function",
-        dataKey: "comparisonFunction",
-        options: [
-          { label: "==", value: "==" },
-          { label: "!=", value: "!=" },
-          { label: "<", value: "<" },
-          { label: "<=", value: "<=" },
-          { label: ">", value: ">" },
-          { label: ">=", value: ">=" }
-        ],
-        useInputToggleDataKey: "useComparisonFunctionInput"
-      }
-    ];
-  }
-  getBody() {
-    return this.data.useComparisonFunctionInput ? "A (Comparison Function) B" : `A ${this.data.comparisonFunction} B`;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Compares two values using the configured operator and outputs the result.
-
-        If the data types of the values do not match, then the B value is converted to the type of the A value.
-      `,
-      infoBoxTitle: "Compare Node",
-      contextMenuTitle: "Compare",
-      group: ["Logic"]
-    };
-  }
-  async process(inputs) {
-    const comparisonFunction = this.data.useComparisonFunctionInput ? coerceType2(inputs["comparisonFunction"], "string") : this.data.comparisonFunction;
-    const inputA = inputs["a"];
-    const inputB = inputs["b"];
-    if (!inputA) {
-      return {
-        ["output"]: {
-          type: "boolean",
-          value: R(comparisonFunction).with("==", () => !inputB).with("!=", () => !!inputB).otherwise(() => false)
-        }
-      };
-    }
-    const value1 = inputA.value;
-    const value2 = inputB?.type !== inputA.type ? coerceTypeOptional2(inputB, inputA.type) : inputB.value;
-    return {
-      ["output"]: {
-        type: "boolean",
-        value: R(comparisonFunction).with("==", () => isEqual_default(value1, value2)).with("!=", () => !isEqual_default(value1, value2)).with("<", () => value1 < value2).with(">", () => value1 > value2).with("<=", () => value1 <= value2).with(">=", () => value1 >= value2).exhaustive()
-      }
-    };
-  }
-};
-var compareNode2 = nodeDefinition2(CompareNodeImpl2, "Compare");
-
-// dist/esm/model/nodes/EvaluateNode.js
-var unaryOperation2 = ["abs", "negate"];
-var isUnaryOp2 = (operation) => unaryOperation2.includes(operation);
-var EvaluateNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "evaluate",
-      title: "Evaluate",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 175
-      },
-      data: {
-        operation: "+"
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    const inputs = [
-      {
-        dataType: "number",
-        id: "a",
-        title: "A"
-      }
-    ];
-    const isUnary = !this.data.useOperationInput && isUnaryOp2(this.data.operation);
-    if (!isUnary) {
-      inputs.push({
-        dataType: "number",
-        id: "b",
-        title: "B"
-      });
-    }
-    if (this.data.useOperationInput) {
-      inputs.push({
-        dataType: "string",
-        id: "operation",
-        title: "Operation"
-      });
-    }
-    return inputs;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        dataType: "number",
-        id: "output",
-        title: "Output"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "dropdown",
-        label: "Operation",
-        dataKey: "operation",
-        options: [
-          { label: "+", value: "+" },
-          { label: "-", value: "-" },
-          { label: "*", value: "*" },
-          { label: "/", value: "/" },
-          { label: "^", value: "^" },
-          { label: "%", value: "%" },
-          { label: "abs", value: "abs" },
-          { label: "negate", value: "negate" }
-        ],
-        useInputToggleDataKey: "useOperationInput"
-      }
-    ];
-  }
-  getBody() {
-    const isUnary = !this.data.useOperationInput && isUnaryOp2(this.data.operation);
-    if (isUnary) {
-      return R(this.data.operation).with("abs", () => "abs(A)").with("negate", () => "-A").exhaustive();
-    }
-    if (this.data.operation === "^") {
-      return "!markdownA<sup>B</sup>";
-    }
-    return this.data.useOperationInput ? "A (Operation) B" : `A ${this.data.operation} B`;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Evaluates the configured mathematical operation on the input values and outputs the result.
-
-        For more complex operations, you should use the \`Code\` node.
-      `,
-      infoBoxTitle: "Evaluate Node",
-      contextMenuTitle: "Evaluate",
-      group: ["Logic"]
-    };
-  }
-  async process(inputs) {
-    const operation = this.data.useOperationInput ? coerceType2(inputs["operation"], "string") : this.data.operation;
-    const inputA = coerceTypeOptional2(inputs["a"], "number");
-    const inputB = coerceTypeOptional2(inputs["b"], "number");
-    if (isUnaryOp2(operation) && inputA) {
-      return {
-        ["output"]: {
-          type: "number",
-          value: R(operation).with("abs", () => Math.abs(inputA)).with("negate", () => -inputA).exhaustive()
-        }
-      };
-    }
-    if (inputA == null || inputB == null) {
-      throw new Error("Missing input");
-    }
-    return {
-      ["output"]: {
-        type: "number",
-        value: R(operation).with("+", () => inputA + inputB).with("-", () => inputA - inputB).with("*", () => inputA * inputB).with("/", () => inputA / inputB).with("^", () => Math.pow(inputA, inputB)).with("%", () => inputA % inputB).exhaustive()
-      }
-    };
-  }
-};
-var evaluateNode2 = nodeDefinition2(EvaluateNodeImpl2, "Evaluate");
-
-// dist/esm/model/nodes/NumberNode.js
-var NumberNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "number",
-      title: "Number",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 150
-      },
-      data: {
-        value: 0,
-        round: false,
-        roundTo: 0
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    return this.data.useValueInput ? [
-      {
-        dataType: "any",
-        id: "input",
-        title: "Input"
-      }
-    ] : [];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        dataType: "number",
-        id: "value",
-        title: "Value"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      { type: "number", label: "Value", dataKey: "value", useInputToggleDataKey: "useValueInput" },
-      { type: "toggle", label: "Round", dataKey: "round" },
-      { type: "number", label: "Round To", dataKey: "roundTo" }
-    ];
-  }
-  getBody() {
-    return this.data.useValueInput ? `(Input to number)` : (this.data.value ?? 0).toLocaleString();
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Outputs a number constant, or converts an input value into a number.
-
-        Can be configured to round the number to a certain number of decimal places.
-      `,
-      infoBoxTitle: "Number Node",
-      contextMenuTitle: "Number",
-      group: ["Numbers"]
-    };
-  }
-  async process(inputs) {
-    let value = this.data.useValueInput ? coerceTypeOptional2(inputs["input"], "number") ?? this.data.value ?? 0 : this.data.value ?? 0;
-    const { roundTo = 0, round = false } = this.data;
-    if (round) {
-      value = Math.round(value * Math.pow(10, roundTo)) / Math.pow(10, roundTo);
-    }
-    return {
-      ["value"]: {
-        type: "number",
-        value
-      }
-    };
-  }
-};
-var numberNode2 = nodeDefinition2(NumberNodeImpl2, "Number");
-
-// dist/esm/model/nodes/RandomNumberNode.js
-var RandomNumberNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "randomNumber",
-      title: "RNG",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 150
-      },
-      data: {
-        min: 0,
-        max: 1,
-        integers: false,
-        maxInclusive: false
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    const inputs = [];
-    if (this.data.useMinInput) {
-      inputs.push({
-        dataType: "number",
-        id: "min",
-        title: "Min"
-      });
-    }
-    if (this.data.useMaxInput) {
-      inputs.push({
-        dataType: "number",
-        id: "max",
-        title: "Max"
-      });
-    }
-    return inputs;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        dataType: "number",
-        id: "value",
-        title: "Value"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      { type: "number", label: "Min", dataKey: "min", useInputToggleDataKey: "useMinInput" },
-      { type: "number", label: "Max", dataKey: "max", useInputToggleDataKey: "useMaxInput" },
-      { type: "toggle", label: "Integers", dataKey: "integers" },
-      { type: "toggle", label: "Max Inclusive", dataKey: "maxInclusive" }
-    ];
-  }
-  getBody() {
-    return dedent`
-      Min: ${this.data.useMinInput ? "(Input)" : this.data.min ?? 0}
-      Max: ${this.data.useMaxInput ? "(Input)" : this.data.max ?? 1}
-      ${this.data.integers ? "Integers" : "Floats"}
-      ${this.data.maxInclusive ? "Max Inclusive" : "Max Exclusive"}
-    `;
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Outputs a random number between the configured min and max values.
-
-        Can be configured to output only integers, and whether the max value is inclusive or exclusive.
-      `,
-      infoBoxTitle: "RNG Node",
-      contextMenuTitle: "RNG",
-      group: ["Numbers"]
-    };
-  }
-  async process(inputs) {
-    const min = this.data.useMinInput ? coerceTypeOptional2(inputs["min"], "number") ?? this.data.min ?? 0 : this.data.min ?? 0;
-    let max2 = this.data.useMaxInput ? coerceTypeOptional2(inputs["max"], "number") ?? this.data.max ?? 1 : this.data.max ?? 1;
-    if (this.data.integers && this.data.maxInclusive) {
-      max2 += 1;
-    }
-    let value = Math.random() * (max2 - min) + min;
-    if (this.data.integers) {
-      value = Math.floor(value);
-    }
-    return {
-      ["value"]: {
-        type: "number",
-        value
-      }
-    };
-  }
-};
-var randomNumberNode2 = nodeDefinition2(RandomNumberNodeImpl2, "Random Number");
-
-// dist/esm/model/nodes/ShuffleNode.js
-var ShuffleNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "shuffle",
-      title: "Shuffle",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 175
-      },
-      data: {}
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    return [
-      {
-        dataType: "any[]",
-        id: "array",
-        title: "Array"
-      }
-    ];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        dataType: "any[]",
-        id: "shuffled",
-        title: "Shuffled"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Shuffles the input array. Outputs the shuffled array.
-      `,
-      infoBoxTitle: "Shuffle Node",
-      contextMenuTitle: "Shuffle",
-      group: ["Lists"]
-    };
-  }
-  async process(inputs) {
-    const input = inputs["array"];
-    const items = input ? isArrayDataValue2(input) ? input.value : [input.value] : [];
-    const shuffled = shuffle_default(items);
-    return {
-      ["shuffled"]: {
-        type: inputs["array"]?.type ?? "any[]",
-        value: shuffled
-      }
-    };
-  }
-};
-var shuffleNode2 = nodeDefinition2(ShuffleNodeImpl2, "Shuffle");
-
-// dist/esm/model/nodes/CommentNode.js
-var CommentNodeImpl2 = class extends NodeImpl2 {
-  static create(text = "") {
-    const chartNode = {
-      type: "comment",
-      title: "Comment",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 600
-      },
-      data: {
-        text,
-        height: 600,
-        color: "rgba(255,255,255,1)",
-        backgroundColor: "rgba(0,0,0,0.05)"
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    return [];
-  }
-  getOutputDefinitions() {
-    return [];
-  }
-  getEditors() {
-    return [
-      {
-        type: "color",
-        label: "Color",
-        dataKey: "color"
-      },
-      {
-        type: "color",
-        label: "Background Color",
-        dataKey: "backgroundColor"
-      },
-      {
-        type: "code",
-        label: "Text",
-        dataKey: "text",
-        language: "markdown",
-        theme: "vs-dark"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        A comment node is a node that does nothing. It is useful for adding notes to a graph.
-      `,
-      infoBoxTitle: "Comment Node",
-      contextMenuTitle: "Comment",
-      group: ["Advanced"]
-    };
-  }
-  async process() {
-    return {};
-  }
-};
-var commentNode2 = nodeDefinition2(CommentNodeImpl2, "Comment");
-
-// dist/esm/model/nodes/ImageNode.js
-var ImageNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    return {
-      id: nanoid(),
-      type: "image",
-      title: "Image",
-      visualData: { x: 0, y: 0, width: 250 },
-      data: {
-        data: "",
-        useDataInput: false,
-        mediaType: "image/png",
-        useMediaTypeInput: false
-      }
-    };
-  }
-  getInputDefinitions() {
-    const inputDefinitions = [];
-    if (this.chartNode.data.useDataInput) {
-      inputDefinitions.push({
-        id: "data",
-        title: "Data",
-        dataType: "string"
-      });
-    }
-    if (this.chartNode.data.useMediaTypeInput) {
-      inputDefinitions.push({
-        id: "mediaType",
-        title: "Media Type",
-        dataType: "string"
-      });
-    }
-    return inputDefinitions;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "image",
-        title: "Image",
-        dataType: "image"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "dropdown",
-        label: "Media Type",
-        dataKey: "mediaType",
-        options: [
-          { value: "image/png", label: "PNG" },
-          { value: "image/jpeg", label: "JPEG" },
-          { value: "image/gif", label: "GIF" }
-        ],
-        useInputToggleDataKey: "useMediaTypeInput"
-      },
-      {
-        type: "imageBrowser",
-        label: "Image",
-        dataKey: "data",
-        useInputToggleDataKey: "useDataInput",
-        mediaTypeDataKey: "mediaType"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      contextMenuTitle: "Image",
-      group: "Data",
-      infoBoxTitle: "Image Node",
-      infoBoxBody: "Defines a static image for use with other nodes. Can convert a binary type into an image type."
-    };
-  }
-  async process(inputData) {
-    let data;
-    if (this.chartNode.data.useDataInput) {
-      data = expectType2(inputData["data"], "binary");
-    } else {
-      const encodedData = this.data.data;
-      data = base64ToUint8Array2(encodedData);
-    }
-    const mediaType = this.chartNode.data.useMediaTypeInput ? expectType2(inputData["mediaType"], "string") : this.chartNode.data.mediaType;
-    return {
-      ["image"]: {
-        type: "image",
-        value: { mediaType, data }
-      }
-    };
-  }
-};
-var imageNode2 = nodeDefinition2(ImageNodeImpl2, "Image");
-
-// dist/esm/model/nodes/AudioNode.js
-var AudioNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    return {
-      id: nanoid(),
-      type: "audio",
-      title: "Audio",
-      visualData: { x: 0, y: 0, width: 300 },
-      data: {
-        data: "",
-        useDataInput: false
-      }
-    };
-  }
-  getInputDefinitions() {
-    const inputDefinitions = [];
-    if (this.chartNode.data.useDataInput) {
-      inputDefinitions.push({
-        id: "data",
-        title: "Data",
-        dataType: "string"
-      });
-    }
-    return inputDefinitions;
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        id: "data",
-        title: "Audio Data",
-        dataType: "audio"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "fileBrowser",
-        label: "Audio File",
-        dataKey: "data",
-        useInputToggleDataKey: "useDataInput",
-        accept: "audio/*"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      contextMenuTitle: "Audio",
-      group: "Data",
-      infoBoxTitle: "Audio Node",
-      infoBoxBody: "Defines an audio sample for use with other nodes. Can convert a binary type into an audio type."
-    };
-  }
-  async process(inputData) {
-    let data;
-    if (this.chartNode.data.useDataInput) {
-      data = expectType2(inputData["data"], "binary");
-    } else {
-      const encodedData = this.data.data;
-      data = base64ToUint8Array2(encodedData);
-    }
-    return {
-      ["data"]: {
-        type: "audio",
-        value: { data }
-      }
-    };
-  }
-};
-var audioNode2 = nodeDefinition2(AudioNodeImpl2, "Image");
-
-// dist/esm/model/Nodes.js
-var registerBuiltInNodes2 = (registry) => {
-  return registry.register(toYamlNode2).register(userInputNode2).register(textNode2).register(chatNode2).register(promptNode2).register(extractRegexNode2).register(codeNode2).register(matchNode2).register(ifNode2).register(readDirectoryNode2).register(readFileNode2).register(ifElseNode2).register(chunkNode2).register(graphInputNode2).register(graphOutputNode2).register(subGraphNode2).register(arrayNode2).register(extractJsonNode2).register(assemblePromptNode2).register(loopControllerNode2).register(trimChatMessagesNode2).register(extractYamlNode2).register(externalCallNode2).register(extractObjectPathNode2).register(raiseEventNode2).register(contextNode2).register(coalesceNode2).register(passthroughNode2).register(popNode2).register(setGlobalNode2).register(getGlobalNode2).register(waitForEventNode2).register(gptFunctionNode2).register(getEmbeddingNode2).register(vectorStoreNode2).register(vectorNearestNeighborsNode2).register(hashNode2).register(abortGraphNode2).register(raceInputsNode2).register(toJsonNode2).register(joinNode2).register(filterNode2).register(objectNode2).register(booleanNode2).register(compareNode2).register(evaluateNode2).register(numberNode2).register(randomNumberNode2).register(shuffleNode2).register(commentNode2).register(imageNode2).register(audioNode2);
-};
-var globalRivetNodeRegistry2 = registerBuiltInNodes2(new NodeRegistration2());
-
-// dist/esm/model/GraphProcessor.js
-var PQueue3 = PQueue;
-if (typeof PQueue3 !== "function") {
-  PQueue3 = PQueue.default;
-}
-
-// dist/esm/integrations/integrations.js
-var registeredIntegrations2 = {
-  vectorDatabase: /* @__PURE__ */ new Map(),
-  llmProvider: /* @__PURE__ */ new Map(),
-  embeddingGenerator: /* @__PURE__ */ new Map()
-};
-function registerIntegration2(type2, integrationKey, factory) {
-  registeredIntegrations2[type2].set(integrationKey, factory);
-}
-function getIntegration2(type2, integrationKey, context) {
-  const factory = registeredIntegrations2[type2].get(integrationKey);
-  if (!factory) {
-    throw new Error(`Integration ${integrationKey} not found`);
-  }
-  return factory(context);
-}
-
-// dist/esm/integrations/openai/OpenAIEmbeddingGenerator.js
-var openai2 = __toESM(require_dist(), 1);
-var OpenAIEmbeddingGenerator2 = class {
-  #settings;
-  constructor(settings) {
-    this.#settings = settings;
-  }
-  async generateEmbedding(text) {
-    const config = new openai2.Configuration({
-      apiKey: this.#settings.openAiKey,
-      organization: this.#settings.openAiOrganization
-    });
-    const api = new openai2.OpenAIApi(config);
-    const response = await api.createEmbedding({
-      input: text,
-      model: "text-embedding-ada-002"
-    });
-    const { embedding } = response.data.data[0];
-    return embedding;
-  }
-};
-
-// dist/esm/integrations/enableIntegrations.js
-registerIntegration2("embeddingGenerator", "openai", (context) => new OpenAIEmbeddingGenerator2(context.settings));
-
-// dist/esm/plugins/anthropic/fetchEventSource.js
-var EventSourceResponse3 = class extends Response {
-  name;
-  streams;
-  constructor(body, init) {
-    if (body == null) {
-      super(null, init);
-      this.name = "EventSourceResponse";
-      this.streams = null;
-      return;
-    }
-    const [bodyForString, bodyForEvents] = body.tee();
-    const streams = createEventStream3(bodyForEvents);
-    super(bodyForString, init);
-    this.name = "EventSourceResponse";
-    this.streams = streams;
-  }
-  async *events() {
-    if (this.streams == null) {
-      return;
-    }
-    const reader = this.streams.eventStream.getReader();
-    try {
-      while (true) {
-        const { done, value } = await this.raceWithTimeout(reader.read());
-        if (done) {
-          break;
-        }
-        yield value;
-      }
-    } finally {
-      reader.releaseLock();
-    }
-  }
-  async raceWithTimeout(promise, timeout = 5e3) {
-    return new Promise(async (resolve, reject) => {
-      const timer = setTimeout(() => {
-        reject(new Error("Timeout: API response took too long."));
-      }, timeout);
-      try {
-        const result = await promise;
-        clearTimeout(timer);
-        resolve(result);
-      } catch (error) {
-        clearTimeout(timer);
-        reject(error);
-      }
-    });
-  }
-};
-async function fetchEventSource3(url, init) {
-  const headers = {
-    ...init?.headers,
-    accept: "text/event-stream"
-  };
-  const response = await fetch(url, {
-    ...init,
-    headers
-  });
-  return new EventSourceResponse3(response.body, response);
-}
-var lineSplitter3 = new class {
-  separator;
-  buffer = "";
-  constructor(separator = /\n+/) {
-    this.separator = separator;
-  }
-  transform(chunk, controller) {
-    this.buffer += chunk;
-    const lines = this.buffer.split(this.separator);
-    this.buffer = lines.pop() ?? "";
-    for (const line of lines) {
-      controller.enqueue(line);
-    }
-  }
-  flush(controller) {
-    if (this.buffer.length > 0) {
-      controller.enqueue(this.buffer);
-      this.buffer = "";
-    }
-  }
-}();
-function createEventStream3(body) {
-  if (body == null) {
-    return null;
-  }
-  const textStream = body.pipeThrough(new TextDecoderStream());
-  const eventStream = textStream.pipeThrough(new TransformStream(lineSplitter3)).pipeThrough(new TransformStream({
-    transform(line, controller) {
-      if (line.startsWith("data: ")) {
-        const data = line.slice(6).trim();
-        controller.enqueue(data);
-      } else if (line.startsWith("event: ")) {
-        const event = line.slice(7).trim();
-        controller.enqueue(`[${event}]`);
-      }
-    }
-  }));
-  return { eventStream, textStream };
-}
-
-// dist/esm/plugins/anthropic/anthropic.js
+// src/plugins/anthropic/anthropic.ts
 var anthropicModels = {
   "claude-instant": {
     maxTokens: 1e5,
     tiktokenModel: "gpt-3.5-turbo",
+    // 🤷‍♂️
     cost: {
       prompt: 163e-5,
       completion: 551e-5
@@ -36008,6 +29378,7 @@ var anthropicModels = {
   "claude-2": {
     maxTokens: 1e5,
     tiktokenModel: "gpt-4",
+    // 🤷‍♂️
     cost: {
       prompt: 0.01102,
       completion: 0.03268
@@ -36019,49 +29390,17 @@ var anthropicModelOptions = Object.entries(anthropicModels).map(([id, { displayN
   value: id,
   label: displayName
 }));
-async function* streamChatCompletions3({ apiKey, signal, ...rest }) {
-  const defaultSignal = new AbortController().signal;
-  const response = await fetchEventSource3("https://api.anthropic.com/v1/complete", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01"
-    },
-    body: JSON.stringify({
-      ...rest,
-      stream: true
-    }),
-    signal: signal ?? defaultSignal
-  });
-  let hadChunks = false;
-  let nextDataType;
-  for await (const chunk of response.events()) {
-    hadChunks = true;
-    if (chunk === "[DONE]") {
-      return;
-    } else if (/\[\w+\]/.test(chunk)) {
-      nextDataType = chunk.slice(1, -1);
-      continue;
-    }
-    let data;
-    try {
-      data = JSON.parse(chunk);
-    } catch (err) {
-      console.error("JSON parse failed on chunk: ", chunk);
-      throw err;
-    }
-    yield data;
-  }
-  if (!hadChunks) {
-    const responseJson = await response.json();
-    throw new Error(`No chunks received. Response: ${JSON.stringify(responseJson)}`);
-  }
+async function* streamChatCompletions2({
+  apiKey,
+  signal,
+  ...rest
+}) {
+  throw new Error("Not implemented yet.");
 }
 
-// dist/esm/plugins/anthropic/nodes/ChatAnthropicNode.js
-var cache3 = /* @__PURE__ */ new Map();
-var ChatAnthropicNodeImpl = class extends NodeImpl2 {
+// src/plugins/anthropic/nodes/ChatAnthropicNode.ts
+var cache2 = /* @__PURE__ */ new Map();
+var ChatAnthropicNodeImpl = class extends NodeImpl {
   static create() {
     const chartNode = {
       type: "chatAnthropic",
@@ -36227,13 +29566,13 @@ var ChatAnthropicNodeImpl = class extends NodeImpl2 {
   }
   async process(inputs, context) {
     const output = {};
-    const rawModel = this.data.useModelInput ? coerceTypeOptional2(inputs["model"], "string") ?? this.data.model : this.data.model;
+    const rawModel = this.data.useModelInput ? coerceTypeOptional(inputs["model"], "string") ?? this.data.model : this.data.model;
     const model = rawModel;
-    const temperature = this.data.useTemperatureInput ? coerceTypeOptional2(inputs["temperature"], "number") ?? this.data.temperature : this.data.temperature;
-    const topP = this.data.useTopPInput ? coerceTypeOptional2(inputs["top_p"], "number") ?? this.data.top_p : this.data.top_p;
-    const useTopP = this.data.useUseTopPInput ? coerceTypeOptional2(inputs["useTopP"], "boolean") ?? this.data.useTopP : this.data.useTopP;
-    const stop = this.data.useStopInput ? this.data.useStop ? coerceTypeOptional2(inputs["stop"], "string") ?? this.data.stop : void 0 : this.data.stop;
-    const functions = expectTypeOptional2(inputs["functions"], "gpt-function[]");
+    const temperature = this.data.useTemperatureInput ? coerceTypeOptional(inputs["temperature"], "number") ?? this.data.temperature : this.data.temperature;
+    const topP = this.data.useTopPInput ? coerceTypeOptional(inputs["top_p"], "number") ?? this.data.top_p : this.data.top_p;
+    const useTopP = this.data.useUseTopPInput ? coerceTypeOptional(inputs["useTopP"], "boolean") ?? this.data.useTopP : this.data.useTopP;
+    const stop = this.data.useStopInput ? this.data.useStop ? coerceTypeOptional(inputs["stop"], "string") ?? this.data.stop : void 0 : this.data.stop;
+    const functions = expectTypeOptional(inputs["functions"], "gpt-function[]");
     const { messages } = getChatAnthropicNodeMessages(inputs);
     let prompt = messages.reduce((acc, message) => {
       if (message.type === "user") {
@@ -36249,110 +29588,142 @@ Assistant: ${message.message}`;
     }, "");
     prompt += "\n\nAssistant:";
     let { maxTokens } = this.data;
-    const tokenCount = getTokenCountForString2(prompt, anthropicModels[model].tiktokenModel);
+    const tokenCount = defaultTokenizer.getTokenCountForString(prompt);
     if (tokenCount >= anthropicModels[model].maxTokens) {
-      throw new Error(`The model ${model} can only handle ${anthropicModels[model].maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`);
+      throw new Error(
+        `The model ${model} can only handle ${anthropicModels[model].maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`
+      );
     }
     if (tokenCount + maxTokens > anthropicModels[model].maxTokens) {
       const message = `The model can only handle a maximum of ${anthropicModels[model].maxTokens} tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${anthropicModels[model].maxTokens - tokenCount}.`;
-      addWarning2(output, message);
+      addWarning(output, message);
       maxTokens = Math.floor((anthropicModels[model].maxTokens - tokenCount) * 0.95);
     }
     try {
-      return await pRetry(async () => {
-        const options3 = {
-          prompt,
-          model,
-          temperature: useTopP ? void 0 : temperature,
-          top_p: useTopP ? topP : void 0,
-          max_tokens_to_sample: maxTokens,
-          stop_sequences: stop ? [stop] : void 0
-        };
-        const cacheKey = JSON.stringify(options3);
-        if (this.data.cache) {
-          const cached = cache3.get(cacheKey);
-          if (cached) {
-            return cached;
-          }
-        }
-        const startTime = Date.now();
-        const apiKey = context.getPluginConfig("anthropicApiKey");
-        const chunks = streamChatCompletions3({
-          apiKey: apiKey ?? "",
-          signal: context.signal,
-          ...options3
-        });
-        const responseParts = [];
-        for await (const chunk of chunks) {
-          if (!chunk.completion) {
-            continue;
-          }
-          responseParts.push(chunk.completion);
-          output["response"] = {
-            type: "string",
-            value: responseParts.join("").trim()
+      return await pRetry(
+        async () => {
+          const options2 = {
+            prompt,
+            model,
+            temperature: useTopP ? void 0 : temperature,
+            top_p: useTopP ? topP : void 0,
+            max_tokens_to_sample: maxTokens,
+            stop_sequences: stop ? [stop] : void 0
           };
-          context.onPartialOutputs?.(output);
-        }
-        const endTime = Date.now();
-        if (responseParts.length === 0) {
-          throw new Error("No response from Anthropic");
-        }
-        const requestTokenCount = getTokenCountForString2(prompt, anthropicModels[model].tiktokenModel);
-        output["requestTokens"] = { type: "number", value: requestTokenCount };
-        const responseTokenCount = getTokenCountForString2(responseParts.join(""), anthropicModels[model].tiktokenModel);
-        output["responseTokens"] = { type: "number", value: responseTokenCount };
-        const duration = endTime - startTime;
-        output["duration"] = { type: "number", value: duration };
-        Object.freeze(output);
-        cache3.set(cacheKey, output);
-        return output;
-      }, {
-        forever: true,
-        retries: 1e4,
-        maxRetryTime: 1e3 * 60 * 5,
-        factor: 2.5,
-        minTimeout: 500,
-        maxTimeout: 5e3,
-        randomize: true,
-        signal: context.signal,
-        onFailedAttempt(err) {
-          context.trace(`ChatAnthropicNode failed, retrying: ${err.toString()}`);
-          if (context.signal.aborted) {
-            throw new Error("Aborted");
+          const cacheKey = JSON.stringify(options2);
+          if (this.data.cache) {
+            const cached = cache2.get(cacheKey);
+            if (cached) {
+              return cached;
+            }
           }
-          const { retriesLeft } = err;
+          const startTime = Date.now();
+          const apiKey = context.getPluginConfig("anthropicApiKey");
+          const chunks = streamChatCompletions2({
+            apiKey: apiKey ?? "",
+            signal: context.signal,
+            ...options2
+          });
+          const responseParts = [];
+          for await (const chunk of chunks) {
+            if (!chunk.completion) {
+              continue;
+            }
+            responseParts.push(chunk.completion);
+            output["response"] = {
+              type: "string",
+              value: responseParts.join("").trim()
+            };
+            context.onPartialOutputs?.(output);
+          }
+          const endTime = Date.now();
+          if (responseParts.length === 0) {
+            throw new Error("No response from Anthropic");
+          }
+          const requestTokenCount = defaultTokenizer.getTokenCountForString(prompt);
+          output["requestTokens"] = { type: "number", value: requestTokenCount };
+          const responseTokenCount = defaultTokenizer.getTokenCountForString(responseParts.join(""));
+          output["responseTokens"] = { type: "number", value: responseTokenCount };
+          const duration = endTime - startTime;
+          output["duration"] = { type: "number", value: duration };
+          Object.freeze(output);
+          cache2.set(cacheKey, output);
+          return output;
+        },
+        {
+          forever: true,
+          retries: 1e4,
+          maxRetryTime: 1e3 * 60 * 5,
+          factor: 2.5,
+          minTimeout: 500,
+          maxTimeout: 5e3,
+          randomize: true,
+          signal: context.signal,
+          onFailedAttempt(err) {
+            context.trace(`ChatAnthropicNode failed, retrying: ${err.toString()}`);
+            if (context.signal.aborted) {
+              throw new Error("Aborted");
+            }
+            const { retriesLeft } = err;
+          }
         }
-      });
+      );
     } catch (error) {
-      context.trace(getError2(error).stack ?? "Missing stack");
+      context.trace(getError(error).stack ?? "Missing stack");
       throw new Error(`Error processing ChatAnthropicNode: ${error.message}`);
     }
   }
 };
-var chatAnthropicNode = nodeDefinition2(ChatAnthropicNodeImpl, "Chat");
+var chatAnthropicNode = nodeDefinition(ChatAnthropicNodeImpl, "Chat");
 function getChatAnthropicNodeMessages(inputs) {
   const prompt = inputs["prompt"];
   if (!prompt) {
     throw new Error("Prompt is required");
   }
-  const messages = R(prompt).with({ type: "chat-message" }, (p2) => [p2.value]).with({ type: "chat-message[]" }, (p2) => p2.value).with({ type: "string" }, (p2) => [{ type: "user", message: p2.value, function_call: void 0 }]).with({ type: "string[]" }, (p2) => p2.value.map((v2) => ({ type: "user", message: v2, function_call: void 0 }))).otherwise((p2) => {
-    if (isArrayDataValue2(p2)) {
-      const stringValues = p2.value.map((v2) => coerceType2({
-        type: getScalarTypeOf2(p2.type),
-        value: v2
-      }, "string"));
+  const messages = R(prompt).with({ type: "chat-message" }, (p2) => [p2.value]).with({ type: "chat-message[]" }, (p2) => p2.value).with({ type: "string" }, (p2) => [{ type: "user", message: p2.value, function_call: void 0 }]).with(
+    { type: "string[]" },
+    (p2) => p2.value.map((v2) => ({ type: "user", message: v2, function_call: void 0 }))
+  ).otherwise((p2) => {
+    if (isArrayDataValue(p2)) {
+      const stringValues = p2.value.map(
+        (v2) => coerceType(
+          {
+            type: getScalarTypeOf(p2.type),
+            value: v2
+          },
+          "string"
+        )
+      );
       return stringValues.filter((v2) => v2 != null).map((v2) => ({ type: "user", message: v2, function_call: void 0 }));
     }
-    const coercedMessage = coerceType2(p2, "chat-message");
+    const coercedMessage = coerceType(p2, "chat-message");
     if (coercedMessage != null) {
       return [coercedMessage];
     }
-    const coercedString = coerceType2(p2, "string");
-    return coercedString != null ? [{ type: "user", message: coerceType2(p2, "string"), function_call: void 0 }] : [];
+    const coercedString = coerceType(p2, "string");
+    return coercedString != null ? [{ type: "user", message: coerceType(p2, "string"), function_call: void 0 }] : [];
   });
   return { messages };
 }
+
+// src/plugins/anthropic/plugin.ts
+var anthropicPlugin = {
+  id: "anthropic",
+  register: (register) => {
+    register(chatAnthropicNode);
+  },
+  configSpec: {
+    anthropicApiKey: {
+      type: "string",
+      label: "Anthropic API Key",
+      description: "The API key for the Anthropic service.",
+      pullEnvironmentVariable: "ANTHROPIC_API_KEY"
+    }
+  }
+};
+
+// src/plugins/anthropic/index.ts
+var anthropic_default = anthropicPlugin;
 
 // ../../.yarn/cache/js-yaml-npm-4.1.0-3606f32312-03ab64a100.zip/node_modules/js-yaml/dist/js-yaml.mjs
 function isNothing(subject) {
@@ -36455,18 +29826,18 @@ function getLine(buffer, lineStart, lineEnd, position, maxLineLength) {
 function padStart(string2, max2) {
   return common.repeat(" ", max2 - string2.length) + string2;
 }
-function makeSnippet(mark, options3) {
-  options3 = Object.create(options3 || null);
+function makeSnippet(mark, options2) {
+  options2 = Object.create(options2 || null);
   if (!mark.buffer)
     return null;
-  if (!options3.maxLength)
-    options3.maxLength = 79;
-  if (typeof options3.indent !== "number")
-    options3.indent = 1;
-  if (typeof options3.linesBefore !== "number")
-    options3.linesBefore = 3;
-  if (typeof options3.linesAfter !== "number")
-    options3.linesAfter = 2;
+  if (!options2.maxLength)
+    options2.maxLength = 79;
+  if (typeof options2.indent !== "number")
+    options2.indent = 1;
+  if (typeof options2.linesBefore !== "number")
+    options2.linesBefore = 3;
+  if (typeof options2.linesAfter !== "number")
+    options2.linesAfter = 2;
   var re = /\r?\n|\r|\0/g;
   var lineStarts = [0];
   var lineEnds = [];
@@ -36482,9 +29853,9 @@ function makeSnippet(mark, options3) {
   if (foundLineNo < 0)
     foundLineNo = lineStarts.length - 1;
   var result = "", i2, line;
-  var lineNoLength = Math.min(mark.line + options3.linesAfter, lineEnds.length).toString().length;
-  var maxLineLength = options3.maxLength - (options3.indent + lineNoLength + 3);
-  for (i2 = 1; i2 <= options3.linesBefore; i2++) {
+  var lineNoLength = Math.min(mark.line + options2.linesAfter, lineEnds.length).toString().length;
+  var maxLineLength = options2.maxLength - (options2.indent + lineNoLength + 3);
+  for (i2 = 1; i2 <= options2.linesBefore; i2++) {
     if (foundLineNo - i2 < 0)
       break;
     line = getLine(
@@ -36494,12 +29865,12 @@ function makeSnippet(mark, options3) {
       mark.position - (lineStarts[foundLineNo] - lineStarts[foundLineNo - i2]),
       maxLineLength
     );
-    result = common.repeat(" ", options3.indent) + padStart((mark.line - i2 + 1).toString(), lineNoLength) + " | " + line.str + "\n" + result;
+    result = common.repeat(" ", options2.indent) + padStart((mark.line - i2 + 1).toString(), lineNoLength) + " | " + line.str + "\n" + result;
   }
   line = getLine(mark.buffer, lineStarts[foundLineNo], lineEnds[foundLineNo], mark.position, maxLineLength);
-  result += common.repeat(" ", options3.indent) + padStart((mark.line + 1).toString(), lineNoLength) + " | " + line.str + "\n";
-  result += common.repeat("-", options3.indent + lineNoLength + 3 + line.pos) + "^\n";
-  for (i2 = 1; i2 <= options3.linesAfter; i2++) {
+  result += common.repeat(" ", options2.indent) + padStart((mark.line + 1).toString(), lineNoLength) + " | " + line.str + "\n";
+  result += common.repeat("-", options2.indent + lineNoLength + 3 + line.pos) + "^\n";
+  for (i2 = 1; i2 <= options2.linesAfter; i2++) {
     if (foundLineNo + i2 >= lineEnds.length)
       break;
     line = getLine(
@@ -36509,7 +29880,7 @@ function makeSnippet(mark, options3) {
       mark.position - (lineStarts[foundLineNo] - lineStarts[foundLineNo + i2]),
       maxLineLength
     );
-    result += common.repeat(" ", options3.indent) + padStart((mark.line + i2 + 1).toString(), lineNoLength) + " | " + line.str + "\n";
+    result += common.repeat(" ", options2.indent) + padStart((mark.line + i2 + 1).toString(), lineNoLength) + " | " + line.str + "\n";
   }
   return result.replace(/\n$/, "");
 }
@@ -36542,29 +29913,29 @@ function compileStyleAliases(map3) {
   }
   return result;
 }
-function Type$1(tag, options3) {
-  options3 = options3 || {};
-  Object.keys(options3).forEach(function(name) {
+function Type$1(tag, options2) {
+  options2 = options2 || {};
+  Object.keys(options2).forEach(function(name) {
     if (TYPE_CONSTRUCTOR_OPTIONS.indexOf(name) === -1) {
       throw new exception('Unknown option "' + name + '" is met in definition of "' + tag + '" YAML type.');
     }
   });
-  this.options = options3;
+  this.options = options2;
   this.tag = tag;
-  this.kind = options3["kind"] || null;
-  this.resolve = options3["resolve"] || function() {
+  this.kind = options2["kind"] || null;
+  this.resolve = options2["resolve"] || function() {
     return true;
   };
-  this.construct = options3["construct"] || function(data) {
+  this.construct = options2["construct"] || function(data) {
     return data;
   };
-  this.instanceOf = options3["instanceOf"] || null;
-  this.predicate = options3["predicate"] || null;
-  this.represent = options3["represent"] || null;
-  this.representName = options3["representName"] || null;
-  this.defaultStyle = options3["defaultStyle"] || null;
-  this.multi = options3["multi"] || false;
-  this.styleAliases = compileStyleAliases(options3["styleAliases"] || null);
+  this.instanceOf = options2["instanceOf"] || null;
+  this.predicate = options2["predicate"] || null;
+  this.represent = options2["represent"] || null;
+  this.representName = options2["representName"] || null;
+  this.defaultStyle = options2["defaultStyle"] || null;
+  this.multi = options2["multi"] || false;
+  this.styleAliases = compileStyleAliases(options2["styleAliases"] || null);
   if (YAML_NODE_KINDS.indexOf(this.kind) === -1) {
     throw new exception('Unknown kind "' + this.kind + '" is specified for "' + tag + '" YAML type.');
   }
@@ -37142,28 +30513,28 @@ var _toString$1 = Object.prototype.toString;
 function resolveYamlPairs(data) {
   if (data === null)
     return true;
-  var index, length, pair, keys4, result, object = data;
+  var index, length, pair, keys3, result, object = data;
   result = new Array(object.length);
   for (index = 0, length = object.length; index < length; index += 1) {
     pair = object[index];
     if (_toString$1.call(pair) !== "[object Object]")
       return false;
-    keys4 = Object.keys(pair);
-    if (keys4.length !== 1)
+    keys3 = Object.keys(pair);
+    if (keys3.length !== 1)
       return false;
-    result[index] = [keys4[0], pair[keys4[0]]];
+    result[index] = [keys3[0], pair[keys3[0]]];
   }
   return true;
 }
 function constructYamlPairs(data) {
   if (data === null)
     return [];
-  var index, length, pair, keys4, result, object = data;
+  var index, length, pair, keys3, result, object = data;
   result = new Array(object.length);
   for (index = 0, length = object.length; index < length; index += 1) {
     pair = object[index];
-    keys4 = Object.keys(pair);
-    result[index] = [keys4[0], pair[keys4[0]]];
+    keys3 = Object.keys(pair);
+    result[index] = [keys3[0], pair[keys3[0]]];
   }
   return result;
 }
@@ -37281,14 +30652,14 @@ for (i2 = 0; i2 < 256; i2++) {
   simpleEscapeMap[i2] = simpleEscapeSequence(i2);
 }
 var i2;
-function State$1(input, options3) {
+function State$1(input, options2) {
   this.input = input;
-  this.filename = options3["filename"] || null;
-  this.schema = options3["schema"] || _default;
-  this.onWarning = options3["onWarning"] || null;
-  this.legacy = options3["legacy"] || false;
-  this.json = options3["json"] || false;
-  this.listener = options3["listener"] || null;
+  this.filename = options2["filename"] || null;
+  this.schema = options2["schema"] || _default;
+  this.onWarning = options2["onWarning"] || null;
+  this.legacy = options2["legacy"] || false;
+  this.json = options2["json"] || false;
+  this.listener = options2["listener"] || null;
   this.implicitTypes = this.schema.compiledImplicit;
   this.typeMap = this.schema.compiledTypeMap;
   this.length = input.length;
@@ -38311,9 +31682,9 @@ function readDocument(state) {
     return;
   }
 }
-function loadDocuments(input, options3) {
+function loadDocuments(input, options2) {
   input = String(input);
-  options3 = options3 || {};
+  options2 = options2 || {};
   if (input.length !== 0) {
     if (input.charCodeAt(input.length - 1) !== 10 && input.charCodeAt(input.length - 1) !== 13) {
       input += "\n";
@@ -38322,7 +31693,7 @@ function loadDocuments(input, options3) {
       input = input.slice(1);
     }
   }
-  var state = new State$1(input, options3);
+  var state = new State$1(input, options2);
   var nullpos = input.indexOf("\0");
   if (nullpos !== -1) {
     state.position = nullpos;
@@ -38338,12 +31709,12 @@ function loadDocuments(input, options3) {
   }
   return state.documents;
 }
-function loadAll$1(input, iterator2, options3) {
-  if (iterator2 !== null && typeof iterator2 === "object" && typeof options3 === "undefined") {
-    options3 = iterator2;
+function loadAll$1(input, iterator2, options2) {
+  if (iterator2 !== null && typeof iterator2 === "object" && typeof options2 === "undefined") {
+    options2 = iterator2;
     iterator2 = null;
   }
-  var documents = loadDocuments(input, options3);
+  var documents = loadDocuments(input, options2);
   if (typeof iterator2 !== "function") {
     return documents;
   }
@@ -38351,8 +31722,8 @@ function loadAll$1(input, iterator2, options3) {
     iterator2(documents[index]);
   }
 }
-function load$1(input, options3) {
-  var documents = loadDocuments(input, options3);
+function load$1(input, options2) {
+  var documents = loadDocuments(input, options2);
   if (documents.length === 0) {
     return void 0;
   } else if (documents.length === 1) {
@@ -38429,13 +31800,13 @@ var DEPRECATED_BOOLEANS_SYNTAX = [
 ];
 var DEPRECATED_BASE60_SYNTAX = /^[-+]?[0-9_]+(?::[0-9_]+)+(?:\.[0-9_]*)?$/;
 function compileStyleMap(schema5, map3) {
-  var result, keys4, index, length, tag, style, type2;
+  var result, keys3, index, length, tag, style, type2;
   if (map3 === null)
     return {};
   result = {};
-  keys4 = Object.keys(map3);
-  for (index = 0, length = keys4.length; index < length; index += 1) {
-    tag = keys4[index];
+  keys3 = Object.keys(map3);
+  for (index = 0, length = keys3.length; index < length; index += 1) {
+    tag = keys3[index];
     style = String(map3[tag]);
     if (tag.slice(0, 2) === "!!") {
       tag = "tag:yaml.org,2002:" + tag.slice(2);
@@ -38467,21 +31838,21 @@ function encodeHex(character) {
 }
 var QUOTING_TYPE_SINGLE = 1;
 var QUOTING_TYPE_DOUBLE = 2;
-function State(options3) {
-  this.schema = options3["schema"] || _default;
-  this.indent = Math.max(1, options3["indent"] || 2);
-  this.noArrayIndent = options3["noArrayIndent"] || false;
-  this.skipInvalid = options3["skipInvalid"] || false;
-  this.flowLevel = common.isNothing(options3["flowLevel"]) ? -1 : options3["flowLevel"];
-  this.styleMap = compileStyleMap(this.schema, options3["styles"] || null);
-  this.sortKeys = options3["sortKeys"] || false;
-  this.lineWidth = options3["lineWidth"] || 80;
-  this.noRefs = options3["noRefs"] || false;
-  this.noCompatMode = options3["noCompatMode"] || false;
-  this.condenseFlow = options3["condenseFlow"] || false;
-  this.quotingType = options3["quotingType"] === '"' ? QUOTING_TYPE_DOUBLE : QUOTING_TYPE_SINGLE;
-  this.forceQuotes = options3["forceQuotes"] || false;
-  this.replacer = typeof options3["replacer"] === "function" ? options3["replacer"] : null;
+function State(options2) {
+  this.schema = options2["schema"] || _default;
+  this.indent = Math.max(1, options2["indent"] || 2);
+  this.noArrayIndent = options2["noArrayIndent"] || false;
+  this.skipInvalid = options2["skipInvalid"] || false;
+  this.flowLevel = common.isNothing(options2["flowLevel"]) ? -1 : options2["flowLevel"];
+  this.styleMap = compileStyleMap(this.schema, options2["styles"] || null);
+  this.sortKeys = options2["sortKeys"] || false;
+  this.lineWidth = options2["lineWidth"] || 80;
+  this.noRefs = options2["noRefs"] || false;
+  this.noCompatMode = options2["noCompatMode"] || false;
+  this.condenseFlow = options2["condenseFlow"] || false;
+  this.quotingType = options2["quotingType"] === '"' ? QUOTING_TYPE_DOUBLE : QUOTING_TYPE_SINGLE;
+  this.forceQuotes = options2["forceQuotes"] || false;
+  this.replacer = typeof options2["replacer"] === "function" ? options2["replacer"] : null;
   this.implicitTypes = this.schema.compiledImplicit;
   this.explicitTypes = this.schema.compiledExplicit;
   this.tag = null;
@@ -38982,9 +32353,9 @@ function inspectNode(object, objects, duplicatesIndexes) {
     }
   }
 }
-function dump$1(input, options3) {
-  options3 = options3 || {};
-  var state = new State(options3);
+function dump$1(input, options2) {
+  options2 = options2 || {};
+  var state = new State(options2);
   if (!state.noRefs)
     getDuplicateReferences(input, state);
   var value = input;
@@ -39248,10 +32619,10 @@ Context.prototype.push = function push2(view) {
   return new Context(view, this);
 };
 Context.prototype.lookup = function lookup(name) {
-  var cache5 = this.cache;
+  var cache3 = this.cache;
   var value;
-  if (cache5.hasOwnProperty(name)) {
-    value = cache5[name];
+  if (cache3.hasOwnProperty(name)) {
+    value = cache3[name];
   } else {
     var context = this, intermediateValue, names, index, lookupHit = false;
     while (context) {
@@ -39274,7 +32645,7 @@ Context.prototype.lookup = function lookup(name) {
       }
       context = context.parent;
     }
-    cache5[name] = value;
+    cache3[name] = value;
   }
   if (isFunction2(value))
     value = value.call(this.view);
@@ -39300,13 +32671,13 @@ Writer.prototype.clearCache = function clearCache() {
   }
 };
 Writer.prototype.parse = function parse2(template, tags) {
-  var cache5 = this.templateCache;
+  var cache3 = this.templateCache;
   var cacheKey = template + ":" + (tags || mustache.tags).join(":");
-  var isCacheEnabled = typeof cache5 !== "undefined";
-  var tokens = isCacheEnabled ? cache5.get(cacheKey) : void 0;
+  var isCacheEnabled = typeof cache3 !== "undefined";
+  var tokens = isCacheEnabled ? cache3.get(cacheKey) : void 0;
   if (tokens == void 0) {
     tokens = parseTemplate(template, tags);
-    isCacheEnabled && cache5.set(cacheKey, tokens);
+    isCacheEnabled && cache3.set(cacheKey, tokens);
   }
   return tokens;
 };
@@ -39444,8 +32815,8 @@ var mustache = {
    * object with set, get and clear methods. This can also be used to disable
    * the cache by setting it to the literal `undefined`.
    */
-  set templateCache(cache5) {
-    defaultWriter.templateCache = cache5;
+  set templateCache(cache3) {
+    defaultWriter.templateCache = cache3;
   },
   /**
    * Gets the default or overridden caching object from the default writer.
@@ -39474,7 +32845,7 @@ mustache.Writer = Writer;
 var mustache_default = mustache;
 
 // ../../../github/autoevals/jsdist/bundle.js
-var import_openai9 = __toESM(require_dist(), 1);
+var import_openai4 = __toESM(require_dist(), 1);
 var import_js_levenshtein = __toESM(require_js_levenshtein(), 1);
 var __defProp2 = Object.defineProperty;
 var __defProps = Object.defineProperties;
@@ -39510,23 +32881,23 @@ var __objRest = (source, exclude) => {
 var Env = {
   OPENAI_API_KEY: void 0
 };
-async function cachedChatCompletion(params, options3) {
-  const { cache: cache5, openAiApiKey, openAiOrganizationId } = options3;
-  const cached = await (cache5 == null ? void 0 : cache5.get(params));
+async function cachedChatCompletion(params, options2) {
+  const { cache: cache3, openAiApiKey, openAiOrganizationId } = options2;
+  const cached = await (cache3 == null ? void 0 : cache3.get(params));
   if (cached) {
     return cached;
   }
-  const config = new import_openai9.Configuration({
+  const config = new import_openai4.Configuration({
     apiKey: openAiApiKey || Env.OPENAI_API_KEY,
     organization: openAiOrganizationId
   });
-  const openai3 = new import_openai9.OpenAIApi(config);
-  if (openai3 === null) {
+  const openai2 = new import_openai4.OpenAIApi(config);
+  if (openai2 === null) {
     throw new Error("OPENAI_API_KEY not set");
   }
-  const completion = await openai3.createChatCompletion(params);
+  const completion = await openai2.createChatCompletion(params);
   const data = completion.data;
-  await (cache5 == null ? void 0 : cache5.set(params, data));
+  await (cache3 == null ? void 0 : cache3.set(params, data));
   return data;
 }
 var battle_default = 'prompt: |-\n  You are comparing responses to the following instructions.\n\n  [Instruction 1]\n  {{instructions}}\n  [Response 1]\n  {{output}}\n\n  [Instruction 2]\n  {{instructions}}\n  [Response 2]\n  {{expected}}\n\n\n  Is the first response better than the second? You must provide one answer based on your subjective view.\nchoice_scores:\n  "Yes": 1.0\n  "No": 0.0\n';
@@ -39622,7 +32993,7 @@ async function OpenAIClassifier(args) {
     choiceScores,
     maxTokens,
     temperature,
-    cache: cache5,
+    cache: cache3,
     openAiApiKey,
     openAiOrganizationId
   } = _a, remainingRenderArgs = __objRest(_a, [
@@ -39669,7 +33040,7 @@ async function OpenAIClassifier(args) {
         messages
       }, extraArgs),
       {
-        cache: cache5,
+        cache: cache3,
         openAiApiKey,
         openAiOrganizationId
       }
@@ -39803,7 +33174,7 @@ var Sql = buildLLMClassifier("Sql");
 var Summary = buildLLMClassifier("Summary");
 var Translation = buildLLMClassifier("Translation");
 
-// dist/esm/plugins/autoevals/AutoEvalsNode.js
+// src/plugins/autoevals/AutoEvalsNode.ts
 var options = [
   { label: "Factuality", value: "factuality" },
   { label: "Humor", value: "humor" },
@@ -39815,7 +33186,7 @@ var options = [
   { label: "Closed Q&A", value: "closed_q_a" },
   { label: "SQL", value: "sql" }
 ];
-var AutoEvalsNodeImpl = class extends NodeImpl2 {
+var AutoEvalsNodeImpl = class extends NodeImpl {
   static create() {
     const chartNode = {
       type: "autoevals",
@@ -39944,8 +33315,8 @@ var AutoEvalsNodeImpl = class extends NodeImpl2 {
   }
   async process(inputs, context) {
     const evaluatorName = this.data.evaluatorName;
-    const output = coerceType2(inputs["output"], "string");
-    const expected = coerceType2(inputs["expected"], "string");
+    const output = coerceType(inputs["output"], "string");
+    const expected = coerceType(inputs["expected"], "string");
     const baseArgs = {
       output,
       expected,
@@ -39953,31 +33324,31 @@ var AutoEvalsNodeImpl = class extends NodeImpl2 {
       openAiOrganizationId: context.settings.openAiOrganization
     };
     const result = await R(evaluatorName).with("factuality", () => {
-      const input = coerceType2(inputs["input"], "string");
+      const input = coerceType(inputs["input"], "string");
       return Factuality({ ...baseArgs, input });
     }).with("battle", () => {
-      const instructions = coerceType2(inputs["instructions"], "string");
+      const instructions = coerceType(inputs["instructions"], "string");
       return Battle({ ...baseArgs, instructions });
     }).with("closed_q_a", () => {
-      const input = coerceType2(inputs["input"], "string");
-      const criteria = coerceType2(inputs["criteria"], "string");
+      const input = coerceType(inputs["input"], "string");
+      const criteria = coerceType(inputs["criteria"], "string");
       return ClosedQA({ ...baseArgs, input, criteria });
     }).with("humor", () => {
       return Humor({ ...baseArgs });
     }).with("possible", () => {
-      const input = coerceType2(inputs["input"], "string");
+      const input = coerceType(inputs["input"], "string");
       return Possible({ ...baseArgs, input });
     }).with("security", () => {
       return Security({ ...baseArgs });
     }).with("summary", () => {
-      const input = coerceType2(inputs["input"], "string");
+      const input = coerceType(inputs["input"], "string");
       return Summary({ ...baseArgs, input });
     }).with("translation", () => {
-      const input = coerceType2(inputs["input"], "string");
-      const language = coerceType2(inputs["language"], "string");
+      const input = coerceType(inputs["input"], "string");
+      const language = coerceType(inputs["language"], "string");
       return Translation({ ...baseArgs, input, language });
     }).with("sql", () => {
-      const input = coerceType2(inputs["input"], "string");
+      const input = coerceType(inputs["input"], "string");
       return Sql({ ...baseArgs, input });
     }).with(void 0, () => {
       throw new Error("Evaluator name is undefined");
@@ -39998,10 +33369,21 @@ var AutoEvalsNodeImpl = class extends NodeImpl2 {
     };
   }
 };
-var autoEvalsNode = nodeDefinition2(AutoEvalsNodeImpl, "Autoevals");
+var autoEvalsNode = nodeDefinition(AutoEvalsNodeImpl, "Autoevals");
 
-// dist/esm/plugins/assemblyAi/TranscribeAudioNode.js
-var TranscribeAudioNodeImpl = class extends NodeImpl2 {
+// src/plugins/autoevals/plugin.ts
+var autoevalsPlugin = {
+  id: "autoevals",
+  register: (register) => {
+    register(autoEvalsNode);
+  }
+};
+
+// src/plugins/autoevals/index.ts
+var autoevals_default = autoevalsPlugin;
+
+// src/plugins/assemblyAi/TranscribeAudioNode.ts
+var TranscribeAudioNodeImpl = class extends NodeImpl {
   static create() {
     const chartNode = {
       type: "assemblyAiTranscribeAudio",
@@ -40049,7 +33431,7 @@ var TranscribeAudioNodeImpl = class extends NodeImpl2 {
     };
   }
   async process(inputs, context) {
-    const audio = coerceType2(inputs["audio"], "audio");
+    const audio = coerceType(inputs["audio"], "audio");
     const apiKey = context.getPluginConfig("assemblyAiApiKey");
     if (!apiKey) {
       throw new Error("AssemblyAI API key not set");
@@ -40107,844 +33489,13 @@ async function transcribeAudio(apiToken, audioUrl) {
     }
   }
 }
-var transcribeAudioNode = nodeDefinition2(TranscribeAudioNodeImpl, "Transcribe Audio");
-
-// dist/esm/utils/base64.js
-function base64ToUint8Array2(base64) {
-  const binaryString = atob(base64);
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-  for (let i2 = 0; i2 < len; i2++) {
-    bytes[i2] = binaryString.charCodeAt(i2);
-  }
-  return bytes;
-}
-
-// src/plugins/anthropic/fetchEventSource.ts
-var EventSourceResponse4 = class extends Response {
-  name;
-  streams;
-  constructor(body, init) {
-    if (body == null) {
-      super(null, init);
-      this.name = "EventSourceResponse";
-      this.streams = null;
-      return;
-    }
-    const [bodyForString, bodyForEvents] = body.tee();
-    const streams = createEventStream4(bodyForEvents);
-    super(bodyForString, init);
-    this.name = "EventSourceResponse";
-    this.streams = streams;
-  }
-  async *events() {
-    if (this.streams == null) {
-      return;
-    }
-    const reader = this.streams.eventStream.getReader();
-    try {
-      while (true) {
-        const { done, value } = await this.raceWithTimeout(reader.read());
-        if (done) {
-          break;
-        }
-        yield value;
-      }
-    } finally {
-      reader.releaseLock();
-    }
-  }
-  async raceWithTimeout(promise, timeout = 5e3) {
-    return new Promise(async (resolve, reject) => {
-      const timer = setTimeout(() => {
-        reject(new Error("Timeout: API response took too long."));
-      }, timeout);
-      try {
-        const result = await promise;
-        clearTimeout(timer);
-        resolve(result);
-      } catch (error) {
-        clearTimeout(timer);
-        reject(error);
-      }
-    });
-  }
-};
-async function fetchEventSource4(url, init) {
-  const headers = {
-    ...init?.headers,
-    accept: "text/event-stream"
-  };
-  const response = await fetch(url, {
-    ...init,
-    headers
-  });
-  return new EventSourceResponse4(response.body, response);
-}
-var lineSplitter4 = new class {
-  constructor(separator = /\n+/) {
-    this.separator = separator;
-  }
-  buffer = "";
-  transform(chunk, controller) {
-    this.buffer += chunk;
-    const lines = this.buffer.split(this.separator);
-    this.buffer = lines.pop() ?? "";
-    for (const line of lines) {
-      controller.enqueue(line);
-    }
-  }
-  flush(controller) {
-    if (this.buffer.length > 0) {
-      controller.enqueue(this.buffer);
-      this.buffer = "";
-    }
-  }
-}();
-function createEventStream4(body) {
-  if (body == null) {
-    return null;
-  }
-  const textStream = body.pipeThrough(new TextDecoderStream());
-  const eventStream = textStream.pipeThrough(new TransformStream(lineSplitter4)).pipeThrough(
-    new TransformStream({
-      transform(line, controller) {
-        if (line.startsWith("data: ")) {
-          const data = line.slice(6).trim();
-          controller.enqueue(data);
-        } else if (line.startsWith("event: ")) {
-          const event = line.slice(7).trim();
-          controller.enqueue(`[${event}]`);
-        }
-      }
-    })
-  );
-  return { eventStream, textStream };
-}
-
-// src/plugins/anthropic/anthropic.ts
-var anthropicModels2 = {
-  "claude-instant": {
-    maxTokens: 1e5,
-    tiktokenModel: "gpt-3.5-turbo",
-    // 🤷‍♂️
-    cost: {
-      prompt: 163e-5,
-      completion: 551e-5
-    },
-    displayName: "Claude Instant"
-  },
-  "claude-2": {
-    maxTokens: 1e5,
-    tiktokenModel: "gpt-4",
-    // 🤷‍♂️
-    cost: {
-      prompt: 0.01102,
-      completion: 0.03268
-    },
-    displayName: "Claude 2"
-  }
-};
-var anthropicModelOptions2 = Object.entries(anthropicModels2).map(([id, { displayName }]) => ({
-  value: id,
-  label: displayName
-}));
-async function* streamChatCompletions4({
-  apiKey,
-  signal,
-  ...rest
-}) {
-  const defaultSignal = new AbortController().signal;
-  const response = await fetchEventSource4("https://api.anthropic.com/v1/complete", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01"
-    },
-    body: JSON.stringify({
-      ...rest,
-      stream: true
-    }),
-    signal: signal ?? defaultSignal
-  });
-  let hadChunks = false;
-  let nextDataType;
-  for await (const chunk of response.events()) {
-    hadChunks = true;
-    if (chunk === "[DONE]") {
-      return;
-    } else if (/\[\w+\]/.test(chunk)) {
-      nextDataType = chunk.slice(1, -1);
-      continue;
-    }
-    let data;
-    try {
-      data = JSON.parse(chunk);
-    } catch (err) {
-      console.error("JSON parse failed on chunk: ", chunk);
-      throw err;
-    }
-    yield data;
-  }
-  if (!hadChunks) {
-    const responseJson = await response.json();
-    throw new Error(`No chunks received. Response: ${JSON.stringify(responseJson)}`);
-  }
-}
-
-// src/plugins/anthropic/nodes/ChatAnthropicNode.ts
-var cache4 = /* @__PURE__ */ new Map();
-var ChatAnthropicNodeImpl2 = class extends NodeImpl2 {
-  static create() {
-    const chartNode = {
-      type: "chatAnthropic",
-      title: "Chat (Anthropic)",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 275
-      },
-      data: {
-        model: "claude-2",
-        useModelInput: false,
-        temperature: 0.5,
-        useTemperatureInput: false,
-        top_p: 1,
-        useTopPInput: false,
-        top_k: void 0,
-        useTopKInput: false,
-        useTopP: false,
-        useUseTopPInput: false,
-        maxTokens: 1024,
-        useMaxTokensInput: false,
-        useStop: false,
-        stop: "",
-        useStopInput: false,
-        cache: false,
-        useAsGraphPartialOutput: true
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    const inputs = [];
-    if (this.data.useModelInput) {
-      inputs.push({
-        id: "model",
-        title: "Model",
-        dataType: "string",
-        required: false
-      });
-    }
-    if (this.data.useTemperatureInput) {
-      inputs.push({
-        dataType: "number",
-        id: "temperature",
-        title: "Temperature"
-      });
-    }
-    if (this.data.useTopPInput) {
-      inputs.push({
-        dataType: "number",
-        id: "top_p",
-        title: "Top P"
-      });
-    }
-    if (this.data.useUseTopPInput) {
-      inputs.push({
-        dataType: "boolean",
-        id: "useTopP",
-        title: "Use Top P"
-      });
-    }
-    if (this.data.useMaxTokensInput) {
-      inputs.push({
-        dataType: "number",
-        id: "maxTokens",
-        title: "Max Tokens"
-      });
-    }
-    if (this.data.useStopInput) {
-      inputs.push({
-        dataType: "string",
-        id: "stop",
-        title: "Stop"
-      });
-    }
-    inputs.push({
-      dataType: ["chat-message", "chat-message[]"],
-      id: "prompt",
-      title: "Prompt"
-    });
-    return inputs;
-  }
-  getOutputDefinitions() {
-    const outputs = [];
-    outputs.push({
-      dataType: "string",
-      id: "response",
-      title: "Response"
-    });
-    return outputs;
-  }
-  getEditors() {
-    return [
-      {
-        type: "dropdown",
-        label: "Model",
-        dataKey: "model",
-        useInputToggleDataKey: "useModelInput",
-        options: anthropicModelOptions2
-      },
-      {
-        type: "number",
-        label: "Temperature",
-        dataKey: "temperature",
-        useInputToggleDataKey: "useTemperatureInput",
-        min: 0,
-        max: 2,
-        step: 0.1
-      },
-      {
-        type: "number",
-        label: "Top P",
-        dataKey: "top_p",
-        useInputToggleDataKey: "useTopPInput",
-        min: 0,
-        max: 1,
-        step: 0.1
-      },
-      {
-        type: "toggle",
-        label: "Use Top P",
-        dataKey: "useTopP",
-        useInputToggleDataKey: "useUseTopPInput"
-      },
-      {
-        type: "number",
-        label: "Max Tokens",
-        dataKey: "maxTokens",
-        useInputToggleDataKey: "useMaxTokensInput",
-        min: 0,
-        max: Number.MAX_SAFE_INTEGER,
-        step: 1
-      },
-      {
-        type: "string",
-        label: "Stop",
-        dataKey: "stop",
-        useInputToggleDataKey: "useStopInput"
-      },
-      {
-        type: "toggle",
-        label: "Cache (same inputs, same outputs)",
-        dataKey: "cache"
-      },
-      {
-        type: "toggle",
-        label: "Use for subgraph partial output",
-        dataKey: "useAsGraphPartialOutput"
-      }
-    ];
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Makes a call to an Anthropic chat model. The settings contains many options for tweaking the model's behavior.
-      `,
-      infoBoxTitle: "Chat (Anthropic) Node",
-      contextMenuTitle: "Chat (Anthropic)",
-      group: ["AI"]
-    };
-  }
-  async process(inputs, context) {
-    const output = {};
-    const rawModel = this.data.useModelInput ? coerceTypeOptional2(inputs["model"], "string") ?? this.data.model : this.data.model;
-    const model = rawModel;
-    const temperature = this.data.useTemperatureInput ? coerceTypeOptional2(inputs["temperature"], "number") ?? this.data.temperature : this.data.temperature;
-    const topP = this.data.useTopPInput ? coerceTypeOptional2(inputs["top_p"], "number") ?? this.data.top_p : this.data.top_p;
-    const useTopP = this.data.useUseTopPInput ? coerceTypeOptional2(inputs["useTopP"], "boolean") ?? this.data.useTopP : this.data.useTopP;
-    const stop = this.data.useStopInput ? this.data.useStop ? coerceTypeOptional2(inputs["stop"], "string") ?? this.data.stop : void 0 : this.data.stop;
-    const functions = expectTypeOptional2(inputs["functions"], "gpt-function[]");
-    const { messages } = getChatAnthropicNodeMessages2(inputs);
-    let prompt = messages.reduce((acc, message) => {
-      if (message.type === "user") {
-        return `${acc}
-
-Human: ${message.message}`;
-      } else if (message.type === "assistant") {
-        return `${acc}
-
-Assistant: ${message.message}`;
-      }
-      return acc;
-    }, "");
-    prompt += "\n\nAssistant:";
-    let { maxTokens } = this.data;
-    const tokenCount = getTokenCountForString2(prompt, anthropicModels2[model].tiktokenModel);
-    if (tokenCount >= anthropicModels2[model].maxTokens) {
-      throw new Error(
-        `The model ${model} can only handle ${anthropicModels2[model].maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`
-      );
-    }
-    if (tokenCount + maxTokens > anthropicModels2[model].maxTokens) {
-      const message = `The model can only handle a maximum of ${anthropicModels2[model].maxTokens} tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${anthropicModels2[model].maxTokens - tokenCount}.`;
-      addWarning2(output, message);
-      maxTokens = Math.floor((anthropicModels2[model].maxTokens - tokenCount) * 0.95);
-    }
-    try {
-      return await pRetry(
-        async () => {
-          const options3 = {
-            prompt,
-            model,
-            temperature: useTopP ? void 0 : temperature,
-            top_p: useTopP ? topP : void 0,
-            max_tokens_to_sample: maxTokens,
-            stop_sequences: stop ? [stop] : void 0
-          };
-          const cacheKey = JSON.stringify(options3);
-          if (this.data.cache) {
-            const cached = cache4.get(cacheKey);
-            if (cached) {
-              return cached;
-            }
-          }
-          const startTime = Date.now();
-          const apiKey = context.getPluginConfig("anthropicApiKey");
-          const chunks = streamChatCompletions4({
-            apiKey: apiKey ?? "",
-            signal: context.signal,
-            ...options3
-          });
-          const responseParts = [];
-          for await (const chunk of chunks) {
-            if (!chunk.completion) {
-              continue;
-            }
-            responseParts.push(chunk.completion);
-            output["response"] = {
-              type: "string",
-              value: responseParts.join("").trim()
-            };
-            context.onPartialOutputs?.(output);
-          }
-          const endTime = Date.now();
-          if (responseParts.length === 0) {
-            throw new Error("No response from Anthropic");
-          }
-          const requestTokenCount = getTokenCountForString2(prompt, anthropicModels2[model].tiktokenModel);
-          output["requestTokens"] = { type: "number", value: requestTokenCount };
-          const responseTokenCount = getTokenCountForString2(
-            responseParts.join(""),
-            anthropicModels2[model].tiktokenModel
-          );
-          output["responseTokens"] = { type: "number", value: responseTokenCount };
-          const duration = endTime - startTime;
-          output["duration"] = { type: "number", value: duration };
-          Object.freeze(output);
-          cache4.set(cacheKey, output);
-          return output;
-        },
-        {
-          forever: true,
-          retries: 1e4,
-          maxRetryTime: 1e3 * 60 * 5,
-          factor: 2.5,
-          minTimeout: 500,
-          maxTimeout: 5e3,
-          randomize: true,
-          signal: context.signal,
-          onFailedAttempt(err) {
-            context.trace(`ChatAnthropicNode failed, retrying: ${err.toString()}`);
-            if (context.signal.aborted) {
-              throw new Error("Aborted");
-            }
-            const { retriesLeft } = err;
-          }
-        }
-      );
-    } catch (error) {
-      context.trace(getError2(error).stack ?? "Missing stack");
-      throw new Error(`Error processing ChatAnthropicNode: ${error.message}`);
-    }
-  }
-};
-var chatAnthropicNode2 = nodeDefinition2(ChatAnthropicNodeImpl2, "Chat");
-function getChatAnthropicNodeMessages2(inputs) {
-  const prompt = inputs["prompt"];
-  if (!prompt) {
-    throw new Error("Prompt is required");
-  }
-  const messages = R(prompt).with({ type: "chat-message" }, (p2) => [p2.value]).with({ type: "chat-message[]" }, (p2) => p2.value).with({ type: "string" }, (p2) => [{ type: "user", message: p2.value, function_call: void 0 }]).with(
-    { type: "string[]" },
-    (p2) => p2.value.map((v2) => ({ type: "user", message: v2, function_call: void 0 }))
-  ).otherwise((p2) => {
-    if (isArrayDataValue2(p2)) {
-      const stringValues = p2.value.map(
-        (v2) => coerceType2(
-          {
-            type: getScalarTypeOf2(p2.type),
-            value: v2
-          },
-          "string"
-        )
-      );
-      return stringValues.filter((v2) => v2 != null).map((v2) => ({ type: "user", message: v2, function_call: void 0 }));
-    }
-    const coercedMessage = coerceType2(p2, "chat-message");
-    if (coercedMessage != null) {
-      return [coercedMessage];
-    }
-    const coercedString = coerceType2(p2, "string");
-    return coercedString != null ? [{ type: "user", message: coerceType2(p2, "string"), function_call: void 0 }] : [];
-  });
-  return { messages };
-}
-
-// src/plugins/anthropic/plugin.ts
-var anthropicPlugin2 = {
-  id: "anthropic",
-  register: (register) => {
-    register(chatAnthropicNode2);
-  },
-  configSpec: {
-    anthropicApiKey: {
-      type: "string",
-      label: "Anthropic API Key",
-      description: "The API key for the Anthropic service.",
-      pullEnvironmentVariable: "ANTHROPIC_API_KEY"
-    }
-  }
-};
-
-// src/plugins/anthropic/index.ts
-var anthropic_default2 = anthropicPlugin2;
-
-// src/plugins/autoevals/AutoEvalsNode.ts
-var options2 = [
-  { label: "Factuality", value: "factuality" },
-  { label: "Humor", value: "humor" },
-  { label: "Security", value: "security" },
-  { label: "Possible", value: "possible" },
-  { label: "Summary", value: "summary" },
-  { label: "Translation", value: "translation" },
-  { label: "Battle", value: "battle" },
-  { label: "Closed Q&A", value: "closed_q_a" },
-  { label: "SQL", value: "sql" }
-];
-var AutoEvalsNodeImpl2 = class extends NodeImpl {
-  static create() {
-    const chartNode = {
-      type: "autoevals",
-      title: "Autoevals",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 250
-      },
-      data: {
-        evaluatorName: "factuality"
-      }
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    const base = [
-      {
-        id: "output",
-        dataType: "string",
-        title: "Output"
-      },
-      {
-        id: "expected",
-        dataType: "string",
-        title: "Expected"
-      }
-    ];
-    const forEvaluator = R(this.data.evaluatorName).with("factuality", () => [
-      {
-        id: "input",
-        dataType: "string",
-        title: "Input"
-      }
-    ]).with("battle", () => [
-      {
-        id: "instructions",
-        dataType: "string",
-        title: "Instructions"
-      }
-    ]).with("closed_q_a", () => [
-      {
-        id: "input",
-        dataType: "string",
-        title: "Input"
-      },
-      {
-        id: "criteria",
-        dataType: "string",
-        title: "Criteria"
-      }
-    ]).with("humor", () => []).with("possible", () => [
-      {
-        id: "input",
-        dataType: "string",
-        title: "Input"
-      }
-    ]).with("security", () => []).with("summary", () => [
-      {
-        id: "input",
-        dataType: "string",
-        title: "Input"
-      }
-    ]).with("translation", () => [
-      {
-        id: "input",
-        dataType: "string",
-        title: "Input"
-      },
-      {
-        id: "language",
-        dataType: "string",
-        title: "Language"
-      }
-    ]).with("sql", () => [
-      {
-        id: "input",
-        dataType: "string",
-        title: "Input"
-      }
-    ]).with(void 0, () => []).exhaustive();
-    return [...forEvaluator, ...base];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        dataType: "number",
-        id: "score",
-        title: "Score"
-      },
-      {
-        dataType: "string",
-        id: "rationale",
-        title: "Rationale"
-      },
-      {
-        dataType: "object",
-        id: "metadata",
-        title: "Metadata"
-      }
-    ];
-  }
-  getEditors() {
-    return [
-      {
-        type: "dropdown",
-        dataKey: "evaluatorName",
-        label: "Evaluator",
-        options: options2
-      }
-    ];
-  }
-  getBody() {
-    return options2.find((option) => option.value === this.data.evaluatorName)?.label ?? "None";
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`
-        Evaluates the validity of a response using the autoevals library.
-      `,
-      infoBoxTitle: "Autoevals Node",
-      contextMenuTitle: "Autoevals",
-      group: "Custom"
-    };
-  }
-  async process(inputs, context) {
-    const evaluatorName = this.data.evaluatorName;
-    const output = coerceType(inputs["output"], "string");
-    const expected = coerceType(inputs["expected"], "string");
-    const baseArgs = {
-      output,
-      expected,
-      openAiApiKey: context.settings.openAiKey,
-      openAiOrganizationId: context.settings.openAiOrganization
-    };
-    const result = await R(evaluatorName).with("factuality", () => {
-      const input = coerceType(inputs["input"], "string");
-      return Factuality({ ...baseArgs, input });
-    }).with("battle", () => {
-      const instructions = coerceType(inputs["instructions"], "string");
-      return Battle({ ...baseArgs, instructions });
-    }).with("closed_q_a", () => {
-      const input = coerceType(inputs["input"], "string");
-      const criteria = coerceType(inputs["criteria"], "string");
-      return ClosedQA({ ...baseArgs, input, criteria });
-    }).with("humor", () => {
-      return Humor({ ...baseArgs });
-    }).with("possible", () => {
-      const input = coerceType(inputs["input"], "string");
-      return Possible({ ...baseArgs, input });
-    }).with("security", () => {
-      return Security({ ...baseArgs });
-    }).with("summary", () => {
-      const input = coerceType(inputs["input"], "string");
-      return Summary({ ...baseArgs, input });
-    }).with("translation", () => {
-      const input = coerceType(inputs["input"], "string");
-      const language = coerceType(inputs["language"], "string");
-      return Translation({ ...baseArgs, input, language });
-    }).with("sql", () => {
-      const input = coerceType(inputs["input"], "string");
-      return Sql({ ...baseArgs, input });
-    }).with(void 0, () => {
-      throw new Error("Evaluator name is undefined");
-    }).exhaustive();
-    return {
-      ["score"]: {
-        type: "number",
-        value: result.score
-      },
-      ["rationale"]: {
-        type: "string",
-        value: result.metadata?.rationale ?? ""
-      },
-      ["metadata"]: {
-        type: "object",
-        value: result.metadata
-      }
-    };
-  }
-};
-var autoEvalsNode2 = nodeDefinition(AutoEvalsNodeImpl2, "Autoevals");
-
-// src/plugins/autoevals/plugin.ts
-var autoevalsPlugin2 = {
-  id: "autoevals",
-  register: (register) => {
-    register(autoEvalsNode2);
-  }
-};
-
-// src/plugins/autoevals/index.ts
-var autoevals_default2 = autoevalsPlugin2;
-
-// src/plugins/assemblyAi/TranscribeAudioNode.ts
-var TranscribeAudioNodeImpl2 = class extends NodeImpl {
-  static create() {
-    const chartNode = {
-      type: "assemblyAiTranscribeAudio",
-      title: "Transcribe Audio",
-      id: nanoid(),
-      visualData: {
-        x: 0,
-        y: 0,
-        width: 250
-      },
-      data: {}
-    };
-    return chartNode;
-  }
-  getInputDefinitions() {
-    return [
-      {
-        id: "audio",
-        dataType: "audio",
-        title: "Audio"
-      }
-    ];
-  }
-  getOutputDefinitions() {
-    return [
-      {
-        dataType: "string",
-        id: "transcribed",
-        title: "Transcribed"
-      }
-    ];
-  }
-  getEditors() {
-    return [];
-  }
-  getBody() {
-    return "";
-  }
-  static getUIData() {
-    return {
-      infoBoxBody: dedent`Use Assembly AI to transcribe audio`,
-      infoBoxTitle: "Transcribe Audio Node",
-      contextMenuTitle: "Transcribe Audio",
-      group: "AI"
-    };
-  }
-  async process(inputs, context) {
-    const audio = coerceType(inputs["audio"], "audio");
-    const apiKey = context.getPluginConfig("assemblyAiApiKey");
-    if (!apiKey) {
-      throw new Error("AssemblyAI API key not set");
-    }
-    const uploadUrl = await uploadData2(apiKey, audio);
-    const { text } = await transcribeAudio2(apiKey, uploadUrl);
-    return {
-      ["transcribed"]: {
-        type: "string",
-        value: text
-      }
-    };
-  }
-};
-async function uploadData2(apiToken, data) {
-  const url = "https://api.assemblyai.com/v2/upload";
-  const blob = new Blob([data.data], { type: "audio/mp4" });
-  const response = await fetch(url, {
-    method: "POST",
-    body: blob,
-    headers: {
-      "Content-Type": "application/octet-stream",
-      Authorization: apiToken
-    }
-  });
-  if (response.status === 200) {
-    const responseData = await response.json();
-    return responseData.upload_url;
-  } else {
-    throw new Error(`Error: ${response.status} - ${response.statusText}`);
-  }
-}
-async function transcribeAudio2(apiToken, audioUrl) {
-  const headers = {
-    authorization: apiToken,
-    "content-type": "application/json"
-  };
-  const response = await fetch("https://api.assemblyai.com/v2/transcript", {
-    method: "POST",
-    body: JSON.stringify({ audio_url: audioUrl }),
-    headers
-  });
-  const responseData = await response.json();
-  const transcriptId = responseData.id;
-  const pollingEndpoint = `https://api.assemblyai.com/v2/transcript/${transcriptId}`;
-  while (true) {
-    const pollingResponse = await fetch(pollingEndpoint, { headers });
-    const transcriptionResult = await pollingResponse.json();
-    if (transcriptionResult.status === "completed") {
-      return transcriptionResult;
-    } else if (transcriptionResult.status === "error") {
-      throw new Error(`Transcription failed: ${transcriptionResult.error}`);
-    } else {
-      await new Promise((resolve) => setTimeout(resolve, 1e3));
-    }
-  }
-}
-var transcribeAudioNode2 = nodeDefinition(TranscribeAudioNodeImpl2, "Transcribe Audio");
+var transcribeAudioNode = nodeDefinition(TranscribeAudioNodeImpl, "Transcribe Audio");
 
 // src/plugins/assemblyAi/plugin.ts
-var assemblyAiPlugin2 = {
+var assemblyAiPlugin = {
   id: "assemblyAi",
   register: (register) => {
-    register(transcribeAudioNode2);
+    register(transcribeAudioNode);
   },
   configSpec: {
     assemblyAiApiKey: {
@@ -40957,13 +33508,13 @@ var assemblyAiPlugin2 = {
 };
 
 // src/plugins/assemblyAi/index.ts
-var assemblyAi_default2 = assemblyAiPlugin2;
+var assemblyAi_default = assemblyAiPlugin;
 
 // src/plugins.ts
 var plugins = {
-  anthropic: anthropic_default2,
-  autoevals: autoevals_default2,
-  assemblyAi: assemblyAi_default2
+  anthropic: anthropic_default,
+  autoevals: autoevals_default,
+  assemblyAi: assemblyAi_default
 };
 
 // src/utils/base64.ts

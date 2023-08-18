@@ -4053,6 +4053,7 @@ __metadata:
     "@types/jsonpath-plus": "npm:^5.0.2"
     "@types/lodash": "npm:^4.14.196"
     "@types/lodash-es": "npm:^4.17.8"
+    "@types/whatwg-fetch": "npm:^0.0.33"
     "@types/yaml": "npm:^1.9.7"
     "@typescript-eslint/eslint-plugin": "npm:^5.50.0"
     autoevals: "npm:^0.0.10"
@@ -4065,6 +4066,7 @@ __metadata:
     eslint-plugin-import: "npm:^2.28.0"
     eslint-plugin-n: "npm:^16.0.1"
     eslint-plugin-promise: "npm:^6.1.1"
+    gpt-tokenizer: "npm:^2.1.1"
     jsonpath-plus: "npm:^7.2.0"
     lodash: "npm:^4.17.21"
     lodash-es: "npm:^4.17.21"
@@ -4082,6 +4084,7 @@ __metadata:
     tsx: "npm:^3.12.7"
     type-fest: "npm:^4.0.0"
     typescript: "npm:^5.1.6"
+    whatwg-fetch: "npm:^3.6.17"
     yaml: "npm:^2.3.1"
   languageName: unknown
   linkType: soft
@@ -5677,6 +5680,22 @@ __metadata:
   version: 2.0.6
   resolution: "@types/unist@npm:2.0.6"
   checksum: 4731b678e9d9ab41386b48bf67a5da9000705c6ae84cd4fc866f774004f5e8190a33117dbff95efc54b44404deaa08a421b646823b01c57db3eeb0652cdc71a9
+  languageName: node
+  linkType: hard
+
+"@types/whatwg-fetch@npm:^0.0.33":
+  version: 0.0.33
+  resolution: "@types/whatwg-fetch@npm:0.0.33"
+  dependencies:
+    "@types/whatwg-streams": "npm:*"
+  checksum: 719160743759fa3b0670379774b238b952ee97ac7097f292c2010368234a41643f7361e18d0376b4b0923a6d321c54d2c281382834c76c2a4beb53d49fb73273
+  languageName: node
+  linkType: hard
+
+"@types/whatwg-streams@npm:*":
+  version: 0.0.7
+  resolution: "@types/whatwg-streams@npm:0.0.7"
+  checksum: 85e664d160a45ac443cd4126edf76e7be31a1ff68460d038edffcef5fb51605866a29a3743847487e4bf3654e11470358a9ebdd4230fa8b7d60a97b58af42f3a
   languageName: node
   linkType: hard
 
@@ -10259,6 +10278,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"gpt-tokenizer@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "gpt-tokenizer@npm:2.1.1"
+  dependencies:
+    rfc4648: "npm:^1.5.2"
+  checksum: 2fc1ab811bb4e96127bd6f91518ade0b6d5accbc5bd3858d2ed9b9e751655d1dea626ff4e3111f9d19d4ba952355d8c5bd007c225348be13ecfae394d3a79929
+  languageName: node
+  linkType: hard
+
 "graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6, graceful-fs@npm:^4.2.9":
   version: 4.2.11
   resolution: "graceful-fs@npm:4.2.11"
@@ -14754,6 +14782,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rfc4648@npm:^1.5.2":
+  version: 1.5.2
+  resolution: "rfc4648@npm:1.5.2"
+  checksum: 96ef88d246ea65f1b268c388801b2c7fc5d7d0d75875e949bfb692476fc4c94b6edf50606b245ddc1a25b2e0ef2c83261b56267e47f29401ba91da24cb9ca1f9
+  languageName: node
+  linkType: hard
+
 "rimraf@npm:^3.0.2":
   version: 3.0.2
   resolution: "rimraf@npm:3.0.2"
@@ -16973,6 +17008,13 @@ __metadata:
   version: 0.1.4
   resolution: "websocket-extensions@npm:0.1.4"
   checksum: 19457f99cd1521033a8f6fc1e23695ac1e310ff5615cf07eadeed4453e14c4ef36105ef7a1f55ff94caa76fd09c058e6543edfd2a26267a5a0ac523d6275c6b3
+  languageName: node
+  linkType: hard
+
+"whatwg-fetch@npm:^3.6.17":
+  version: 3.6.17
+  resolution: "whatwg-fetch@npm:3.6.17"
+  checksum: 59de97afaa3238edd03d2bd4edede51ee971d51603fb2e7f9777975cae12c1ab316059096e3c372d8027bcef117a0622881db62e0fb80ef976a455e9046f9596
   languageName: node
   linkType: hard
 

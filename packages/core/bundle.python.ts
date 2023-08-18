@@ -1,8 +1,9 @@
 import * as esbuild from 'esbuild';
 import { wasmLoader } from 'esbuild-plugin-wasm';
+import { writeFileSync } from 'fs';
 import { resolve } from 'path';
 
-const stubModulePlugin = {
+const stubModulePlugin: esbuild.Plugin = {
   name: 'stub-module',
   setup(build) {
     build.onResolve({ filter: /^@dqbd\/tiktoken$/ }, () => {
@@ -20,11 +21,14 @@ const stubModulePlugin = {
     });
   },
 };
-esbuild.build({
+const result = await esbuild.build({
   entryPoints: ['src/index.ts'],
   bundle: true,
   platform: 'browser',
   outfile: '../python/rivet.bundle.cjs',
   format: 'cjs',
+  metafile: true,
   plugins: [stubModulePlugin],
 });
+
+writeFileSync('meta.json', JSON.stringify(result.metafile));
