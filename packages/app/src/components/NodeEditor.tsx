@@ -7,6 +7,7 @@ import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.s
 import { ChartNode, NodeTestGroup, GraphId, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import { produce } from 'immer';
+import { useHotkeys } from 'react-hotkeys-hook'; 
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import Toggle from '@atlaskit/toggle';
 import { useStableCallback } from '../hooks/useStableCallback.js';
@@ -247,19 +248,7 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
     <DefaultNodeEditor node={nodeForEditor} isReadonly={isVariant} onChange={isVariant ? () => {} : updateNode} />
   );
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onDeselect?.();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [onDeselect]);
+  useHotkeys('esc', onDeselect, [onDeselect]);
 
   const nodeDescriptionChanged = useStableCallback((description: string) => {
     updateNode({ ...selectedNode, description });
