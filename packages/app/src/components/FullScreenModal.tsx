@@ -1,10 +1,9 @@
-import { FC, ReactNode, useRef } from 'react';
+import { FC, ReactNode } from 'react';
 import { css } from '@emotion/react';
 import Modal, {
   ModalBody,
   ModalTransition,
 } from '@atlaskit/modal-dialog';
-import { useStableCallback } from '../hooks/useStableCallback';
 
 interface FullScreenModalProps {
   isOpen: boolean;

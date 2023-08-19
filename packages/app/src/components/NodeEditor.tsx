@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState, MouseEvent } from 'react';
+import { FC, useMemo, useState, MouseEvent } from 'react';
 import { editingNodeState } from '../state/graphBuilder.js';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { nodesByIdState, nodesState } from '../state/graph.js';
