@@ -6705,6 +6705,7 @@ const RAW_RUNTIME_STATE =
           ["react-dnd-html5-backend", "npm:16.0.1"],\
           ["react-dom", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:18.2.0"],\
           ["react-error-boundary", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.0.10"],\
+          ["react-hotkeys-hook", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.4.1"],\
           ["react-refresh", "npm:0.14.0"],\
           ["react-toastify", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:9.1.3"],\
           ["react-transition-group", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.4.5"],\
@@ -19739,6 +19740,32 @@ const RAW_RUNTIME_STATE =
           ["react-dom", "virtual:de4bf54a777135b8d60a2c1bc2cf7d39bd0fa16a9131c1af77548d129c9a717e7f375cc137473742e792217a8989b7749d6c0934ca8eca0d7787e968286b7135#npm:18.2.0"],\
           ["react-fast-compare", "npm:3.2.1"],\
           ["shallowequal", "npm:1.1.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/react-dom",\
+          "@types/react",\
+          "react-dom",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["react-hotkeys-hook", [\
+      ["npm:4.4.1", {\
+        "packageLocation": "./.yarn/cache/react-hotkeys-hook-npm-4.4.1-3c6fa3b808-109571690d.zip/node_modules/react-hotkeys-hook/",\
+        "packageDependencies": [\
+          ["react-hotkeys-hook", "npm:4.4.1"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.4.1", {\
+        "packageLocation": "./.yarn/__virtual__/react-hotkeys-hook-virtual-1785f52e55/0/cache/react-hotkeys-hook-npm-4.4.1-3c6fa3b808-109571690d.zip/node_modules/react-hotkeys-hook/",\
+        "packageDependencies": [\
+          ["react-hotkeys-hook", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.4.1"],\
+          ["@types/react", "npm:18.2.17"],\
+          ["@types/react-dom", "npm:18.2.7"],\
+          ["react", "npm:18.2.0"],\
+          ["react-dom", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:18.2.0"]\
         ],\
         "packagePeers": [\
           "@types/react-dom",\

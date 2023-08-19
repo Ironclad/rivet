@@ -1,13 +1,10 @@
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useRef } from 'react';
 import { css } from '@emotion/react';
-import { useHotkeys } from 'react-hotkeys-hook';
 import Modal, {
   ModalBody,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
   ModalTransition,
 } from '@atlaskit/modal-dialog';
+import { useStableCallback } from '../hooks/useStableCallback';
 
 interface FullScreenModalProps {
   isOpen: boolean;
@@ -16,25 +13,22 @@ interface FullScreenModalProps {
 }
 
 const styles = css`
-  background-color: var(--grey-darker);
-  overflow: auto;
-  padding: 1rem;
-  position: relative;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-  overscroll-behavior: contain;
+  padding: 16px 0;
+  height: 100%;
+  width: 100%;
 `;
 
 export const FullScreenModal: FC<FullScreenModalProps> = ({ isOpen, onClose, children }) => {
 
   return (
     <ModalTransition>
-      {isOpen && <Modal onClose={onClose} width="100%">
-        <div css={styles} className="modal-content" onClick={(e) => e.stopPropagation()}>
-          {children}
-        </div>
+      {isOpen && <Modal onClose={onClose} width="100%" height="100%">
+        <ModalBody>
+          <div css={styles} onWheel={(e) => e.stopPropagation()}>
+            {children}
+          </div>
+        </ModalBody>
       </Modal>}
-
     </ModalTransition>
   );
 };

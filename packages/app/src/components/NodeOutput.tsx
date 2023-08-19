@@ -21,16 +21,12 @@ export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   useDependsOnPlugins();
 
-  const handleScroll = useStableCallback((e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    e.stopPropagation();
-  });
-
   return (
     <div className="node-output-outer">
       <FullScreenModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <NodeFullscreenOutput node={node} />
       </FullScreenModal>
-      <div onScroll={handleScroll}>
+      <div onWheel={(e) => e.stopPropagation()}>
         <NodeOutputBase node={node} onOpenFullscreenModal={() => setIsModalOpen(true)} />
       </div>
     </div>
