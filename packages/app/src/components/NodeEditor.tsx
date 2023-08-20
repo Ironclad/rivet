@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState, MouseEvent } from 'react';
+import { FC, useMemo, useState, MouseEvent } from 'react';
 import { editingNodeState } from '../state/graphBuilder.js';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { nodesByIdState, nodesState } from '../state/graph.js';
@@ -7,6 +7,7 @@ import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.s
 import { ChartNode, NodeTestGroup, GraphId, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import { produce } from 'immer';
+import { useHotkeys } from 'react-hotkeys-hook'; 
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import Toggle from '@atlaskit/toggle';
 import { useStableCallback } from '../hooks/useStableCallback.js';
@@ -247,19 +248,7 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
     <DefaultNodeEditor node={nodeForEditor} isReadonly={isVariant} onChange={isVariant ? () => {} : updateNode} />
   );
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onDeselect?.();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [onDeselect]);
+  useHotkeys('esc', onDeselect, [onDeselect]);
 
   const nodeDescriptionChanged = useStableCallback((description: string) => {
     updateNode({ ...selectedNode, description });
@@ -473,23 +462,25 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
             </div>
           </TabPanel>
           <TabPanel>
-            <div className="panel">
-              <Label htmlFor="">Tests</Label>
-              <Button appearance="link" onClick={handleAddTestGroup}>
-                Add Test Group
-              </Button>
-              <div className="test-groups">
-                {(selectedNode.tests ?? []).map((test, index) => (
-                  <div className="test-group" key={index}>
-                    <GraphSelector
-                      label="Evaluator Graph"
-                      value={test.evaluatorGraphId}
-                      onChange={(selected) => updateTestGroupGraph(test, selected as GraphId)}
-                      isReadonly={false}
-                      name={`evaluator-graph-${index}`}
-                    />
-                  </div>
-                ))}
+            <div className="panel-container">
+              <div className="panel">
+                <Label htmlFor="">Tests</Label>
+                <Button appearance="link" onClick={handleAddTestGroup}>
+                  Add Test Group
+                </Button>
+                <div className="test-groups">
+                  {(selectedNode.tests ?? []).map((test, index) => (
+                    <div className="test-group" key={index}>
+                      <GraphSelector
+                        label="Evaluator Graph"
+                        value={test.evaluatorGraphId}
+                        onChange={(selected) => updateTestGroupGraph(test, selected as GraphId)}
+                        isReadonly={false}
+                        name={`evaluator-graph-${index}`}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </TabPanel>
