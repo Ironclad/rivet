@@ -187,6 +187,20 @@
   padding: 0 20px;
 }
 
+#video-container {
+  position: relative;
+  padding-bottom: 64.63%;
+  height: 0;
+
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
 @media screen and (max-width: 1024px) {
   * {
     --page-padding-side: 40px;

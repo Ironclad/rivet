@@ -20,9 +20,7 @@ export default function Home() {
                   </a>
                 </li>
                 <li id={styles['nav-documentation']}>
-                  <a href="https://rivet.ironcladapp.com" target="_blank">
-                    Documentation
-                  </a>
+                  <a href="/docs">Documentation</a>
                 </li>
                 <li id={styles['nav-get-started']}>
                   <a className="primary" href="#get-started">
@@ -61,10 +59,75 @@ export default function Home() {
 
       <section id={styles.features}>
         <div className={styles.sectionContent}>
-          <h2>Features</h2>
-          <ul>
-            <li>Visual, graph-based programming</li>
-          </ul>
+          <h2>Why Rivet?</h2>
+          <div className={styles['card-grid']}>
+            <div className={styles['card-3']}>
+              <h3>Visualize and Build</h3>
+              <p>Visualize and build complex chains to create applications for production — not just prototyping.</p>
+            </div>
+            <div className={styles['card-3']}>
+              <h3>Debug Remotely</h3>
+              <p>
+                See what's under the hood and observe the execution of prompt chains in your application, in real-time.
+              </p>
+            </div>
+            <div className={styles['card-3']}>
+              <h3>Collaborate</h3>
+              <p>
+                Rivet graphs are just YAML files, so you can version them in your team's repository, and review them
+                using your favorite code review tools.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id={styles['demo-video']}>
+        <div className={styles.sectionContent}>
+          <h2>See it in Action</h2>
+          <div id={styles['video-container']}>
+            <iframe
+              src="https://www.loom.com/embed/081c206893434b2e9d55020da5beedde?sid=0b389a29-6244-4309-80a8-71202e11c9ef"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
+      </section>
+
+      <section id={styles['use-cases']}>
+        <div className={styles.sectionContent}>
+          <h2>What the Community is Saying</h2>
+          <div className={styles['card-grid']}>
+            <div className={styles['card-3']}>
+              <p className={styles.quote}>
+                Rivet's visual programming environment feels like a game-changer. You have to experience it to believe
+                it.
+              </p>
+              <p className="quote-attribution">Todd Berman, CTO at Attentive</p>
+            </div>
+            <div className={styles['card-3']}>
+              <p className={styles.quote}>
+                Rivet is awesome! We're loving Rivet, and figuring out when we can put it out into the wild.
+              </p>
+              <p className="quote-attribution">Teddy Coleman, CTO at Willow Servicing</p>
+            </div>
+            <div className={styles['card-3']}>
+              <p className={styles.quote}>Rivet made it super easy to prototype our Bento AI builder experience.</p>
+              <p className="quote-attribution">Emily Wang, CEO at Bento</p>
+            </div>
+            <div className={styles['card-3']}>
+              <p className={styles.quote}>
+                We're excited to see Rivet making audio prompt chains easy to prototype and deploy!
+              </p>
+              <p className="quote-attribution">Domenic Donato, VP of Technology at AssemblyAI</p>
+            </div>
+            <div className={styles['card-3']}>
+              <p className={styles.quote}>
+                We've had fun experimenting with Rivet, and are excited to natively integrate it with Braintrust!
+              </p>
+              <p className="quote-attribution">Ankur Goyal, CEO at Braintrust</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -75,16 +138,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section id={styles.example}>
-        <div className={styles.sectionContent}>
-          <h2>Example</h2>
-          <div id="example-video"></div>
-        </div>
-      </section>
-
       <footer>
         <div className={styles.sectionContent}>
-          <p>&copy; 2023 Rivet. All rights reserved.</p>
+          <p>&copy; 2023 Ironclad, Inc. All rights reserved.</p>
         </div>
       </footer>
 
