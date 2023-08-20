@@ -141,7 +141,21 @@
   background-color: var(--orange-1);
 }
 
+#what-is-rivet {
+  background-color: var(--white-1);
+  color: var(--black-0);
+}
+
+#what-is-rivet p {
+  text-align: left;
+}
+
 #features {
+  background-color: var(--orange-1);
+  color: var(--black-0);
+}
+
+#demo-video {
   background-color: var(--white-1);
   color: var(--black-0);
 }
@@ -151,18 +165,61 @@
   color: var(--black-0);
 }
 
-#example {
+#use-cases {
   background-color: var(--black-0);
   color: var(--white-1);
 }
 
+.quote {
+  font-style: italic;
+}
+
+.card-grid {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.card-3 {
+  box-sizing: border-box;
+  text-align: left;
+  width: calc(100% / 3);
+  padding: 0 20px;
+}
+
 @media screen and (max-width: 1024px) {
   * {
-    --page-padding-side: 120px;
+    --page-padding-side: 40px;
+  }
+
+  .main header {
+    padding: 0 20px;
   }
 
   #hero div {
     --margin-top: 40px;
+  }
+
+  #hero h1 {
+    font-size: 35px;
+  }
+
+  #rivet-graph-img {
+    height: 150px;
+  }
+
+  #logo-word-mark {
+    display: none;
+  }
+
+  #nav-about,
+  #nav-get-started {
+    display: none;
+  }
+
+  .card-3 {
+    width: 100%;
+    padding: 0;
   }
 }
 

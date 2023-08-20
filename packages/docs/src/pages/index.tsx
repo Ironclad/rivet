@@ -11,30 +11,51 @@ export default function Home() {
             <nav id={styles['main-nav']}>
               <a href="/" id={styles.logo}>
                 <img width="40" height="40" src="img/logo.svg" alt="Rivet App Logo" />
-                <span>Rivet</span>
+                <span id={styles['logo-word-mark']}>Rivet</span>
               </a>
               <ul>
-                <li>
-                  <a href="#about">About</a>
+                <li id={styles['nav-about']}>
+                  <a href="https://github.com/Ironclad/rivet" target="_blank">
+                    Github
+                  </a>
                 </li>
-                <li>
-                  <a href="/docs">Documentation</a>
+                <li id={styles['nav-documentation']}>
+                  <a href="https://rivet.ironcladapp.com" target="_blank">
+                    Documentation
+                  </a>
                 </li>
-                <li>
+                <li id={styles['nav-get-started']}>
                   <a className="primary" href="#get-started">
-                    Start Here
+                    Download
                   </a>
                 </li>
               </ul>
             </nav>
           </header>
-          <h1>An Open-Source Visual AI Programming Environment</h1>
+          <h1>The Open-Source Visual AI Programming Environment</h1>
           <a id={styles['start-button']} href="#get-started">
-            Start Here
+            Download
           </a>
           <div>
-            <img height="300px" src="img/graph.png" alt="Rivet Graph" />
+            <img height="300px" src="img/graph.png" alt="Rivet Graph" id={styles['rivet-graph-img']} />
           </div>
+        </div>
+      </section>
+
+      <section id={styles['what-is-rivet']}>
+        <div className={styles.sectionContent}>
+          <h2>What is Rivet?</h2>
+          <p>
+            Rivet is a visual programming environment for building AI agents with LLMs. Iterate on your prompt graphs in
+            Rivet, then run them directly in your application. With Rivet, teams can effectively design, debug, and
+            collaborate on complex LLM prompt graphs, and deploy them in their own environment.
+          </p>
+          <p>
+            At Ironclad, we struggled to build AI agents programmatically. Rivet's visual environment, easy debugger,
+            and remote executor unlocked our team's ability to collaborate on increasingly complex and powerful LLM
+            prompt graphs.
+          </p>
+          <p>Built and used by Ironclad Research.</p>
         </div>
       </section>
 
