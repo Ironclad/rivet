@@ -164,7 +164,7 @@ function coerceToChatMessage(value: DataValue | undefined): ChatMessage | undefi
   }
 
   if (value.type === 'string') {
-    return { type: 'user', message: value.value, function_call: undefined };
+    return { type: 'user', message: value.value, function_call: undefined, name: undefined };
   }
 
   if (

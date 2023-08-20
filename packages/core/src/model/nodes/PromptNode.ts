@@ -180,6 +180,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
         value: {
           type: this.chartNode.data.type,
           message: outputValue,
+          name: this.data.name,
           function_call: this.data.enableFunctionCall
             ? coerceType(inputs['function-call' as PortId], 'object')
             : undefined,

@@ -412,6 +412,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       (message): ChatCompletionRequestMessage => ({
         content: message.message,
         role: message.type,
+        name: message.name?.trim() || undefined,
+        function_call: message.function_call,
       }),
     );
 
@@ -613,9 +615,11 @@ export function getChatNodeMessages(inputs: Inputs) {
   let messages: ChatMessage[] = match(prompt)
     .with({ type: 'chat-message' }, (p) => [p.value])
     .with({ type: 'chat-message[]' }, (p) => p.value)
-    .with({ type: 'string' }, (p): ChatMessage[] => [{ type: 'user', message: p.value, function_call: undefined }])
+    .with({ type: 'string' }, (p): ChatMessage[] => [
+      { type: 'user', message: p.value, function_call: undefined, name: undefined },
+    ])
     .with({ type: 'string[]' }, (p): ChatMessage[] =>
-      p.value.map((v) => ({ type: 'user', message: v, function_call: undefined })),
+      p.value.map((v) => ({ type: 'user', message: v, function_call: undefined, name: undefined })),
     )
     .otherwise((p): ChatMessage[] => {
       if (isArrayDataValue(p)) {
@@ -631,7 +635,7 @@ export function getChatNodeMessages(inputs: Inputs) {
 
         return stringValues
           .filter((v) => v != null)
-          .map((v) => ({ type: 'user', message: v, function_call: undefined }));
+          .map((v) => ({ type: 'user', message: v, function_call: undefined, name: undefined }));
       }
 
       const coercedMessage = coerceTypeOptional(p, 'chat-message');
@@ -641,13 +645,16 @@ export function getChatNodeMessages(inputs: Inputs) {
 
       const coercedString = coerceTypeOptional(p, 'string');
       return coercedString != null
-        ? [{ type: 'user', message: coerceType(p, 'string'), function_call: undefined }]
+        ? [{ type: 'user', message: coerceType(p, 'string'), function_call: undefined, name: undefined }]
         : [];
     });
 
   const systemPrompt = inputs['systemPrompt' as PortId];
   if (systemPrompt) {
-    messages = [{ type: 'system', message: coerceType(systemPrompt, 'string'), function_call: undefined }, ...messages];
+    messages = [
+      { type: 'system', message: coerceType(systemPrompt, 'string'), function_call: undefined, name: undefined },
+      ...messages,
+    ];
   }
 
   return { messages, systemPrompt };

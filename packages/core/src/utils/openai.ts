@@ -102,7 +102,9 @@ export type ChatCompletionRequestMessage = {
   /** The content of the message. */
   content: string;
 
-  function_call?: object;
+  name: string | undefined;
+
+  function_call: object | undefined;
 };
 
 // https://platform.openai.com/docs/api-reference/chat/create

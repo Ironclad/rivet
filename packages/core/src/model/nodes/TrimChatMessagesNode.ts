@@ -108,7 +108,12 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
 
     let tokenCount = getTokenCountForMessages(
       trimmedMessages.map(
-        (message): ChatCompletionRequestMessage => ({ content: message.message, role: message.type }),
+        (message): ChatCompletionRequestMessage => ({
+          content: message.message,
+          role: message.type,
+          name: message.name,
+          function_call: message.function_call,
+        }),
       ),
       tiktokenModel,
     );
@@ -125,6 +130,7 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
             content: message.message,
             role: message.type,
             function_call: message.function_call,
+            name: message.name,
           }),
         ),
         tiktokenModel,
