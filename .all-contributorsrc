@@ -98,6 +98,16 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "meeow",
+      "name": "Brandon Hong",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18222559?v=4",
+      "profile": "https://github.com/meeow",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
