@@ -42,9 +42,9 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
     return [
       {
         id: 'audio' as PortId,
-        dataType: 'audio',
+        dataType: ['audio', 'string'],
         title: 'Audio',
-      },
+      }
     ];
   }
 
@@ -68,7 +68,7 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
 
   static getUIData(): NodeUIData {
     return {
-      infoBoxBody: dedent`Use Assembly AI to transcribe audio`,
+      infoBoxBody: dedent`Use AssemblyAI to transcribe audio`,
       infoBoxTitle: 'Transcribe Audio Node',
       contextMenuTitle: 'Transcribe Audio',
       group: 'AI',
@@ -76,7 +76,22 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
-    const audio = coerceType(inputs['audio' as PortId], 'audio');
+    const input = inputs['audio' as PortId];
+    if (!input) throw new Error('Audio input must be an audio file or a URL');
+
+    let audio: { data: Uint8Array } | null = null;
+    let audioUrl: string | null = null;
+    try {
+      audio = coerceType(inputs['audio' as PortId], 'audio');
+    } catch { }
+
+    if (!audio) {
+      try {
+        audioUrl = coerceType(inputs['audio' as PortId], 'string');
+      } catch { 
+        throw new Error('Audio input must be an audio file or a URL');
+      }
+    }
 
     const apiKey = context.getPluginConfig('assemblyAiApiKey');
 
@@ -84,8 +99,8 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
       throw new Error('AssemblyAI API key not set');
     }
 
-    const uploadUrl = await uploadData(apiKey, audio);
-    const { text } = await transcribeAudio(apiKey, uploadUrl);
+    if (!audioUrl) audioUrl = await uploadData(apiKey, audio as { data: Uint8Array });
+    const { text } = await transcribeAudio(apiKey, audioUrl as string);
 
     return {
       ['transcribed' as PortId]: {
@@ -100,7 +115,7 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
 async function uploadData(apiToken: string, data: { data: Uint8Array }) {
   const url = 'https://api.assemblyai.com/v2/upload';
 
-  const blob = new Blob([data.data], { type: 'audio/mp4' });
+  const blob = new Blob([data.data]);
 
   // Send a POST request to the API to upload the file, passing in the headers and the file data
   const response = await fetch(url, {

@@ -9,6 +9,7 @@ import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { entries } from '../../../core/src/utils/typeSafety';
 import { match } from 'ts-pattern';
 import Select from '@atlaskit/select';
+import { SecretPluginConfigurationSpec, StringPluginConfigurationSpec } from '../../../core/src/index.js';
 
 interface SettingsModalProps {}
 
@@ -83,9 +84,13 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
                   <Field name={`plugin-${plugin.id}-${key}`} label={`${config.label} (${plugin.id})`}>
                     {() =>
                       match(config)
-                        .with({ type: 'string' }, () => (
+                        .with(
+                          { type: 'string' }, 
+                          { type: 'secret' }, 
+                          (config: StringPluginConfigurationSpec | SecretPluginConfigurationSpec) => (
                           <TextField
                             value={(settings.pluginSettings?.[plugin.id]?.[key] as string | undefined) ?? ''}
+                            type={config.type === 'secret' ? 'password' : 'text'}
                             onChange={(e) =>
                               setSettings((s) => ({
                                 ...s,
