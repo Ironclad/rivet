@@ -77,30 +77,27 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const input = inputs['audio' as PortId];
-    if (!input) throw new Error('Audio input must be an audio file or a URL');
-
-    let audio: { data: Uint8Array } | null = null;
-    let audioUrl: string | null = null;
-    try {
-      audio = coerceType(inputs['audio' as PortId], 'audio');
-    } catch { }
-
-    if (!audio) {
-      try {
-        audioUrl = coerceType(inputs['audio' as PortId], 'string');
-      } catch { 
-        throw new Error('Audio input must be an audio file or a URL');
-      }
-    }
+    if (!input) throw new Error('Audio input is required.');
 
     const apiKey = context.getPluginConfig('assemblyAiApiKey');
 
     if (!apiKey) {
-      throw new Error('AssemblyAI API key not set');
+      throw new Error('AssemblyAI API key not set.');
     }
 
-    if (!audioUrl) audioUrl = await uploadData(apiKey, audio as { data: Uint8Array });
-    const { text } = await transcribeAudio(apiKey, audioUrl as string);
+    let audioUrl: string;
+    if (input.type === 'audio') {
+      const audio = coerceType(inputs['audio' as PortId], 'audio');
+      audioUrl = await uploadData(apiKey, audio as { data: Uint8Array });
+    } else if (input.type === 'string') {
+      audioUrl = coerceType(inputs['audio' as PortId], 'string');
+    } else {
+      throw new Error('Audio input must be audio or string containing the audio URL.');
+    }
+
+    validateUrl(audioUrl);
+
+    const { text } = await transcribeAudio(apiKey, audioUrl);
 
     return {
       ['transcribed' as PortId]: {
@@ -174,6 +171,22 @@ async function transcribeAudio(apiToken: string, audioUrl: string) {
       // If the transcription is still in progress, wait for a few seconds before polling again
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
+  }
+}
+
+function validateUrl(audioUrl: string) {
+  if (audioUrl === null) throw new Error('Audio URL cannot be null.');
+  if (audioUrl === undefined) throw new Error('Audio URL cannot be undefined.');
+  if (audioUrl === '') throw new Error('Audio URL is cannot be empty.');
+  try {
+    const url = new URL(audioUrl);
+    if (url.protocol === 'http:' || url.protocol === 'https:') {
+      return true;
+    } else {
+      throw new Error('Audio URL must start with http:// or https://');
+    }
+  } catch {
+    throw new Error('Audio URL is invalid.');
   }
 }
 
