@@ -297,7 +297,7 @@ export const TestSuite: FC<{ testSuite: TrivetTestSuite; tryRunTests: TryRunTest
     });
   }, [testCaseValidationResults, testSuite, updateTestSuite]);
 
-  const viewDocumentation = useOpenUrl('https://rivet.ironcladapp.com/trivet');
+  const viewDocumentation = useOpenUrl('https://rivet.ironcladapp.com/docs/trivet');
 
   return (
     <div css={styles}>
