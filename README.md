@@ -99,6 +99,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/scottbessler"><img src="https://avatars.githubusercontent.com/u/293802?v=4?s=100" width="100px;" alt="Scott Bessler"/><br /><sub><b>Scott Bessler</b></sub></a><br /><a href="#example-scottbessler" title="Examples">💡</a> <a href="https://github.com/Ironclad/rivet/commits?author=scottbessler" title="Code">💻</a> <a href="https://github.com/Ironclad/rivet/issues?q=author%3Ascottbessler" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/meeow"><img src="https://avatars.githubusercontent.com/u/18222559?v=4?s=100" width="100px;" alt="Brandon Hong"/><br /><sub><b>Brandon Hong</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=meeow" title="Code">💻</a> <a href="https://github.com/Ironclad/rivet/issues?q=author%3Ameeow" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://swimburger.net"><img src="https://avatars.githubusercontent.com/u/3382717?v=4?s=100" width="100px;" alt="Niels Swimberghe"/><br /><sub><b>Niels Swimberghe</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=Swimburger" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
