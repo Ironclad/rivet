@@ -20,6 +20,9 @@ export default defineConfig({
       '@ironclad/trivet': resolve('../trivet/src/index.ts'),
     },
   },
+  build: {
+    chunkSizeWarningLimit: 10000,
+  },
   plugins: [
     react(),
     viteTsconfigPaths(),
