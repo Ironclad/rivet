@@ -9,7 +9,7 @@ export const assemblyAiPlugin: RivetPlugin = {
 
   configSpec: {
     assemblyAiApiKey: {
-      type: 'string',
+      type: 'secret',
       label: 'AssemblyAI API Key',
       description: 'The API key for the AssemblyAI service.',
       pullEnvironmentVariable: 'ASSEMBLYAI_API_KEY',

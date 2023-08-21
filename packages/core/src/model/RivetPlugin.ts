@@ -34,7 +34,16 @@ export type StringPluginConfigurationSpec = {
   pullEnvironmentVariable?: true | string;
 };
 
+export type SecretPluginConfigurationSpec = {
+  type: 'secret';
+  default?: string;
+  label: string;
+  description?: string;
+  pullEnvironmentVariable?: true | string;
+};
+
 export type PluginConfigurationSpec =
   | StringPluginConfigurationSpec
+  | SecretPluginConfigurationSpec
   | PluginConfigurationSpecBase<number>
   | PluginConfigurationSpecBase<boolean>;
