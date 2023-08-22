@@ -1,0 +1,67 @@
+.header {
+  background-color: var(--black-0);
+  color: var(--white-0);
+  margin: 0;
+  padding: 40px 60px;
+}
+
+.nav {
+  align-items: center;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.logo {
+  align-items: center;
+  color: var(--white-0);
+  display: flex;
+  font-size: 40px;
+  gap: 12px;
+  line-height: 1;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.navList {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin: 0;
+  padding: 0;
+}
+
+.navLink {
+  color: var(--white-0);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.navLink:hover {
+  color: var(--white-1);
+  text-decoration: none;
+}
+
+.navLink.primary {
+  color: var(--orange-0);
+}
+
+.navLink.primary:hover {
+  color: var(--orange-1);
+}
+
+@media screen and (max-width: 1024px) {
+  .header {
+    padding: 20px 32px;
+  }
+
+  .logoText {
+    display: none;
+  }
+
+  #github,
+  #download {
+    display: none;
+  }
+}

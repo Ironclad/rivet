@@ -1,0 +1,24 @@
+.contentWrapper {
+  position: relative;
+  z-index: 2;
+}
+
+.cardGrid {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.card3 {
+  box-sizing: border-box;
+  text-align: left;
+  width: calc(100% / 3);
+  padding: 0 20px;
+}
+
+@media screen and (max-width: 1024px) {
+  .card3 {
+    width: 100%;
+    padding: 0;
+  }
+}

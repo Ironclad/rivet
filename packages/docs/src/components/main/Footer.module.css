@@ -1,0 +1,16 @@
+.footer {
+  background-color: var(--black-0);
+  color: var(--white-1);
+  padding: 20px 0;
+  text-align: center;
+}
+
+@media screen and (max-width: 1024px) {
+  .footer {
+    padding: 20px 32px;
+  }
+
+  .footer .text {
+    font-size: 14px;
+  }
+}

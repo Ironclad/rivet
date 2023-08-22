@@ -7,7 +7,7 @@
   --orange-0: #ff8862;
   --orange-1: #c67d63;
 
-  --page-padding-side: 240px;
+  --page-padding-side: 40px;
 }
 
 .main {
@@ -36,233 +36,66 @@
   pointer-events: none;
 }
 
-.sectionContent {
-  z-index: 2;
-  text-align: center;
-  padding: 40px var(--page-padding-side);
-  overflow: hidden;
-  z-index: 2;
-  position: relative;
-}
-
-.main header {
-  margin: 0 calc(-1 * var(--page-padding-side));
-  padding: 0 60px;
-}
-
-#main-nav {
-  align-items: center;
-  display: flex;
-  gap: 20px;
-  justify-content: space-between;
-}
-
-#logo {
-  align-items: center;
-  color: var(--white-0);
-  display: flex;
-  font-size: 40px;
-  gap: 12px;
-  line-height: 1;
-  justify-content: center;
-  text-decoration: none;
-}
-
-#logo img {
-  max-width: 100px;
-  height: auto;
-  color: var(--orange-0);
-}
-
-#main-nav ul {
-  list-style: none;
-  display: flex;
-  align-items: center;
-  gap: 32px;
-}
-
-#main-nav ul a {
-  color: var(--white-0);
-  font-size: 20px;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-#main-nav ul a:hover {
-  color: var(--white-1);
-}
-
-#main-nav ul .primary {
-  color: var(--orange-0);
-}
-
-#main-nav ul .primary:hover {
-  color: var(--orange-1);
-}
-
-#hero {
-  background-color: var(--black-0);
-  color: var(--white-0);
-}
-
-#hero h1 {
-  margin-top: 80px;
-}
-
-#hero .sectionContent div {
-  --margin-top: 80px;
-  --mask-image: linear-gradient(
-    to right,
-    transparent calc(0.7 * var(--page-padding-side)),
-    rgba(0, 0, 0, 1) calc(1.1 * var(--page-padding-side)),
-    rgba(0, 0, 0, 1) calc(100% - 1.1 * var(--page-padding-side)),
-    transparent calc(100% - 0.7 * var(--page-padding-side))
-  );
-  display: flex;
-  justify-content: center;
-  margin: var(--margin-top) calc(-1 * var(--page-padding-side)) 0;
-  -webkit-mask-image: var(--mask-image);
-  mask-image: var(--mask-image);
-}
-
-#start-button {
-  background-color: var(--orange-0);
-  border-radius: 4px;
-  border: none;
-  color: var(--black-0);
-  font-size: 20px;
-  margin-top: 20px;
-  padding: 16px 48px;
-  text-decoration: none;
-  transition: background-color 0.3s;
-}
-
-#start-button:hover {
-  background-color: var(--orange-1);
-}
-
-#what-is-rivet {
-  background-color: var(--white-1);
-  color: var(--black-0);
-}
-
-#what-is-rivet p {
-  text-align: left;
-}
-
-#features {
-  background-color: var(--orange-1);
-  color: var(--black-0);
-}
-
-#demo-video {
-  background-color: var(--white-1);
-  color: var(--black-0);
-}
-
-#get-started {
-  background-color: var(--orange-0);
-  color: var(--black-0);
-}
-
-#use-cases {
-  background-color: var(--black-0);
-  color: var(--white-1);
-}
-
-.quote {
-  font-style: italic;
-}
-
-.card-grid {
-  display: flex;
-  width: 100%;
-  flex-wrap: wrap;
-}
-
-.card-3 {
-  box-sizing: border-box;
-  text-align: left;
-  width: calc(100% / 3);
-  padding: 0 20px;
-}
-
-#video-container {
-  position: relative;
-  padding-bottom: 64.63%;
-  height: 0;
-
-  iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-}
-
-@media screen and (max-width: 1024px) {
-  * {
-    --page-padding-side: 40px;
-  }
-
-  .main header {
-    padding: 0 20px;
-  }
-
-  #hero div {
-    --margin-top: 40px;
-  }
-
-  #hero h1 {
-    font-size: 35px;
-  }
-
-  #rivet-graph-img {
-    height: 150px;
-  }
-
-  #logo-word-mark {
-    display: none;
-  }
-
-  #nav-about,
-  #nav-get-started {
-    display: none;
-  }
-
-  .card-3 {
-    width: 100%;
-    padding: 0;
-  }
-}
-
-.main h1 {
-  font-size: 44px;
-  font-weight: 400;
+h1 {
+  font-size: 36px;
   margin-bottom: 20px;
 }
 
-.main h2 {
-  font-size: 28px;
+h2 {
+  font-size: 24px;
+  margin-bottom: 32px;
+}
+
+p {
   margin-bottom: 20px;
 }
 
-.main p {
-  font-size: 18px;
-  margin-bottom: 30px;
+@media screen and (min-width: 768px) {
+  .main {
+    --page-padding-side: 120px;
+  }
+
+  h1 {
+    font-size: 40px;
+    margin-bottom: 32px;
+  }
+
+  h2 {
+    font-size: 28px;
+  }
+
+  p {
+    font-size: 20px;
+  }
+
+  a,
+  button {
+    font-size: 20px;
+  }
 }
 
-.main ul {
-  list-style-type: disc;
-  margin-left: 40px;
-  font-size: 18px;
-  text-align: left;
-}
+@media screen and (min-width: 1024px) {
+  .main {
+    --page-padding-side: 240px;
+  }
 
-.main footer {
-  background-color: var(--black-0);
-  color: var(--white-1);
-  padding: 20px 0;
-  text-align: center;
+  h1 {
+    font-size: 44px;
+    margin-bottom: 40px;
+  }
+
+  h2 {
+    font-size: 28px;
+    margin-bottom: 48px;
+  }
+
+  p {
+    font-size: 20px;
+    margin-bottom: 32px;
+  }
+
+  a,
+  button {
+    font-size: 20px;
+  }
 }
