@@ -1,6 +1,8 @@
+import { fetch, Body } from '@tauri-apps/api/http';
 import { nanoid } from 'nanoid';
 import { dedent } from 'ts-dedent';
 import {
+  AnyDataValue,
   AudioDataValue,
   ChartNode,
   EditorDefinition,
@@ -13,6 +15,7 @@ import {
   NodeUIData,
   Outputs,
   PortId,
+  StringDataValue,
   coerceType,
   nodeDefinition,
 } from '../../index.js';
@@ -52,9 +55,14 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
     return [
       {
         dataType: 'string',
-        id: 'transcribed' as PortId,
-        title: 'Transcribed',
+        id: 'text' as PortId,
+        title: 'Transcript text',
       },
+      {
+        dataType: 'object',
+        id: 'transcript' as PortId,
+        title: 'Transcript object',
+      }
     ];
   }
 
@@ -76,7 +84,7 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
-    const input = inputs['audio' as PortId];
+    const input = inputs['audio' as PortId] as AudioDataValue | StringDataValue | AnyDataValue;
     if (!input) throw new Error('Audio input is required.');
 
     const apiKey = context.getPluginConfig('assemblyAiApiKey');
@@ -89,7 +97,7 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
     if (input.type === 'audio') {
       const audio = coerceType(inputs['audio' as PortId], 'audio');
       audioUrl = await uploadData(apiKey, audio as { data: Uint8Array });
-    } else if (input.type === 'string') {
+    } else if (input.type === 'string' || input.type === 'any') {
       audioUrl = coerceType(inputs['audio' as PortId], 'string');
     } else {
       throw new Error('Audio input must be audio or string containing the audio URL.');
@@ -97,12 +105,16 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
 
     validateUrl(audioUrl);
 
-    const { text } = await transcribeAudio(apiKey, audioUrl);
+    const transcript = await transcribeAudio(apiKey, audioUrl);
 
     return {
-      ['transcribed' as PortId]: {
+      ['text' as PortId]: {
         type: 'string',
-        value: text,
+        value: transcript.text,
+      },
+      ['transcript' as PortId]: {
+        type: 'object',
+        value: transcript,
       },
     };
   }
@@ -112,25 +124,22 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
 async function uploadData(apiToken: string, data: { data: Uint8Array }) {
   const url = 'https://api.assemblyai.com/v2/upload';
 
-  const blob = new Blob([data.data]);
-
   // Send a POST request to the API to upload the file, passing in the headers and the file data
-  const response = await fetch(url, {
+  const response = await fetch<{ upload_url: string } | { error: string }>(url, {
     method: 'POST',
-    body: blob,
+    body: Body.bytes(data.data),
     headers: {
       'Content-Type': 'application/octet-stream',
       Authorization: apiToken,
     },
   });
 
-  // If the response is successful, return the upload URL
-  if (response.status === 200) {
-    const responseData = await response.json();
-    return responseData.upload_url;
-  } else {
-    throw new Error(`Error: ${response.status} - ${response.statusText}`);
+  if (response.status !== 200) {
+    if ('error' in response.data) throw new Error(response.data.error);
+    throw new Error(`Upload failed with status ${response.status}`);
   }
+
+  return (response.data as { upload_url: string }).upload_url;
 }
 
 // Async function that sends a request to the AssemblyAI transcription API and retrieves the transcript
@@ -142,15 +151,18 @@ async function transcribeAudio(apiToken: string, audioUrl: string) {
   };
 
   // Send a POST request to the transcription API with the audio URL in the request body
-  const response = await fetch('https://api.assemblyai.com/v2/transcript', {
+  const response = await fetch<any>('https://api.assemblyai.com/v2/transcript', {
     method: 'POST',
-    body: JSON.stringify({ audio_url: audioUrl }),
+    body: Body.json({ audio_url: audioUrl }),
     headers,
   });
 
-  // Retrieve the ID of the transcript from the response data
-  const responseData = await response.json();
-  const transcriptId = responseData.id;
+  if (response.status !== 200) {
+    if ('error' in response.data) throw new Error(response.data.error);
+    throw new Error(`Create transcript failed with status ${response.status}`);
+  }
+
+  const transcriptId = response.data.id;
 
   // Construct the polling endpoint URL using the transcript ID
   const pollingEndpoint = `https://api.assemblyai.com/v2/transcript/${transcriptId}`;
@@ -158,15 +170,19 @@ async function transcribeAudio(apiToken: string, audioUrl: string) {
   // Poll the transcription API until the transcript is ready
   while (true) {
     // Send a GET request to the polling endpoint to retrieve the status of the transcript
-    const pollingResponse = await fetch(pollingEndpoint, { headers });
-    const transcriptionResult = await pollingResponse.json();
+    const pollingResponse = await fetch<any>(pollingEndpoint, { method: 'GET', headers });
+
+    if (pollingResponse.status !== 200) {
+      if ('error' in pollingResponse.data) throw new Error(pollingResponse.data.error);
+      throw new Error(`Get transcript failed with status ${pollingResponse.status}`);
+    }
 
     // If the transcription is complete, return the transcript object
-    if (transcriptionResult.status === 'completed') {
-      return transcriptionResult;
-    } else if (transcriptionResult.status === 'error') {
+    if (pollingResponse.data.status === 'completed') {
+      return pollingResponse.data;
+    } else if (pollingResponse.data.status === 'error') {
       // If the transcription has failed, throw an error with the error message
-      throw new Error(`Transcription failed: ${transcriptionResult.error}`);
+      throw new Error(`Transcription failed: ${pollingResponse.data.error}`);
     } else {
       // If the transcription is still in progress, wait for a few seconds before polling again
       await new Promise((resolve) => setTimeout(resolve, 1000));

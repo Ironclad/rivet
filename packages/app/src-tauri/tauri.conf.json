@@ -29,6 +29,11 @@
       },
       "globalShortcut": {
         "all": true
+      },
+      "http": {
+        "all": true,
+        "request": true,
+        "scope": ["https://api.assemblyai.com/*"]
       }
     },
     "bundle": {
