@@ -5,7 +5,7 @@
   --black-0: #1c212b;
   --black-1: #333;
   --orange-0: #ff8862;
-  --orange-1: #c67d63;
+  --orange-1: #e0744d;
 
   --page-padding-side: 40px;
 }
@@ -48,6 +48,17 @@ h2 {
 
 p {
   margin-bottom: 20px;
+}
+
+a,
+button {
+  text-decoration: none;
+}
+
+a:hover,
+button:hover {
+  text-decoration: none;
+  color: unset; /* inherit color from default element */
 }
 
 @media screen and (min-width: 768px) {

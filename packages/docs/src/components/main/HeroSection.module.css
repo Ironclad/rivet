@@ -1,3 +1,7 @@
+.container {
+  height: calc(100vh - 80px);
+}
+
 .title {
   display: block;
   font-weight: 400;
@@ -23,44 +27,58 @@
 }
 
 .imgContainer {
-  --margin-top: 80px;
-  --mask-image: linear-gradient(
-    to right,
-    transparent calc(0.7 * var(--page-padding-side)),
-    rgba(0, 0, 0, 1) calc(1.1 * var(--page-padding-side)),
-    rgba(0, 0, 0, 1) calc(100% - 1.1 * var(--page-padding-side)),
-    transparent calc(100% - 0.7 * var(--page-padding-side))
-  );
-  display: flex;
-  justify-content: center;
-  margin: var(--margin-top) calc(-1 * var(--page-padding-side)) 0;
-  -webkit-mask-image: var(--mask-image);
-  mask-image: var(--mask-image);
+  margin-top: 100px;
+}
+
+.scrollIcon {
+  opacity: 0.5;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: 600;
+  bottom: 20px;
+  font-size: 24px;
+  animation: bob 0.5s infinite alternate;
+}
+
+@keyframes bob {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-10px);
+  }
 }
 
 .img {
-  width: 300%;
-  max-width: 1083px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
   height: auto;
-  margin: 0 auto;
+}
+
+@media screen and (min-width: 768px) {
+  .container {
+    height: unset;
+    padding-bottom: 80px;
+  }
+
+  .title {
+    padding: 0;
+    margin-top: 80px;
+  }
+
+  .imgContainer {
+    margin: 120px calc(-1 * var(--page-padding-side) / 2);
+  }
+
+  .scrollIcon {
+    display: none;
+  }
 }
 
 @media screen and (min-width: 1024px) {
   .title {
     padding: 0 92px;
-  }
-
-  .imgContainer {
-    --margin-top: 40px;
-  }
-}
-
-@media screen and (min-width: 768px) {
-  .title {
-    padding: 0;
-  }
-
-  .imgContainer {
-    --margin-top: 40px;
   }
 }

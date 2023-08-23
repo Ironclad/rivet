@@ -2,7 +2,13 @@
   background-color: var(--black-0);
   color: var(--white-0);
   margin: 0;
-  padding: 40px 60px;
+  padding: 20px 32px;
+}
+
+.header.menuOpen {
+  position: sticky;
+  top: 0;
+  z-index: 3;
 }
 
 .nav {
@@ -14,33 +20,94 @@
 
 .logo {
   align-items: center;
-  color: var(--white-0);
   display: flex;
-  font-size: 40px;
   gap: 12px;
-  line-height: 1;
   justify-content: center;
+  z-index: 4;
+}
+
+.logoText {
   text-decoration: none;
+  color: var(--white-0);
+  display: none;
+  font-size: 40px;
+  line-height: 1;
+}
+
+.hamburger {
+  background-color: var(--white-0);
+  background-clip: padding-box;
+  border: 19px solid transparent;
+  border-left: none;
+  border-right: none;
+  cursor: pointer;
+  height: 40px;
+  transition: background-color 0.2s;
+  width: 40px;
+  position: relative;
+  z-index: 4;
+}
+
+.hamburger::before,
+.hamburger::after {
+  background-color: var(--white-0);
+  content: '';
+  display: block;
+  height: 100%;
+  transform: translate(0, -10px);
+  position: absolute;
+  width: 100%;
+  transition: transform 0.2s;
+}
+
+.hamburger::after {
+  transform: translate(0, 10px);
+}
+
+.hamburger.menuOpen {
+  background-color: transparent;
+}
+
+.hamburger.menuOpen:before {
+  transform: translate(0, 0) rotate(45deg);
+}
+
+.hamburger.menuOpen:after {
+  transform: translate(0, 0) rotate(-45deg);
 }
 
 .navList {
+  background-color: var(--black-0);
   list-style: none;
-  display: flex;
-  align-items: center;
-  gap: 32px;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 100%;
+  opacity: 0;
+  transition: left 0.2s, opacity 0.2s;
+}
+
+.navList.menuOpen {
+  left: 0;
+  opacity: 1;
 }
 
 .navLink {
   color: var(--white-0);
-  text-decoration: none;
+  font-size: 24px;
   transition: color 0.2s;
 }
 
 .navLink:hover {
   color: var(--white-1);
-  text-decoration: none;
 }
 
 .navLink.primary {
@@ -51,17 +118,38 @@
   color: var(--orange-1);
 }
 
-@media screen and (max-width: 1024px) {
-  .header {
-    padding: 20px 32px;
-  }
-
+@media screen and (min-width: 768px) {
   .logoText {
+    display: block;
+  }
+
+  .hamburger {
     display: none;
   }
 
-  #github,
-  #download {
-    display: none;
+  .navList {
+    background-color: transparent;
+    flex-direction: row;
+    position: static;
+    height: unset;
+    width: unset;
+    top: 0;
+    left: 100%;
+    opacity: 1;
+    transition: left 0.2s, opacity 0.2s;
+  }
+
+  .navLink {
+    font-size: 20px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .header {
+    padding: 40px 60px;
+  }
+
+  .navLink {
+    font-size: 24px;
   }
 }
