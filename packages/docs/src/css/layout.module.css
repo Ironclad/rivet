@@ -1,4 +1,6 @@
 .contentWrapper {
+  display: flex;
+  flex-direction: column;
   position: relative;
   z-index: 2;
   width: 100%;

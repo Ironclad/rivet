@@ -9,11 +9,11 @@
 }
 
 .downloadButton {
+  align-self: center;
   background-color: var(--orange-0);
   border-radius: 4px;
   border: none;
   color: var(--black-0);
-  display: inline-block;
   margin-top: 20px;
   padding: 16px 48px;
   text-decoration: none;
@@ -31,12 +31,13 @@
 }
 
 .scrollIcon {
+  display: block;
   opacity: 0.5;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   font-weight: 600;
-  bottom: 20px;
+  bottom: 0;
   font-size: 24px;
   animation: bob 0.5s infinite alternate;
 }
@@ -51,10 +52,15 @@
 }
 
 .img {
-  display: flex;
-  justify-content: center;
   width: 100%;
   height: auto;
+}
+
+/* scroll icon should not overlap the rest of the hero section */
+@media screen and (max-height: 720px) {
+  .scrollIcon {
+    display: none;
+  }
 }
 
 @media screen and (min-width: 768px) {
