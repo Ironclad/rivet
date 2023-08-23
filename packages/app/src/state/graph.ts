@@ -1,6 +1,19 @@
-import { DefaultValue, atom, selector } from 'recoil';
-import { ChartNode, NodeConnection, NodeGraph, NodeId, emptyNodeGraph } from '@ironclad/rivet-core';
+import { DefaultValue, atom, selector, selectorFamily } from 'recoil';
+import {
+  ChartNode,
+  NodeConnection,
+  NodeGraph,
+  NodeId,
+  NodeImpl,
+  NodeInputDefinition,
+  NodeOutputDefinition,
+  PortId,
+  emptyNodeGraph,
+  globalRivetNodeRegistry,
+} from '@ironclad/rivet-core';
 import { recoilPersist } from 'recoil-persist';
+import { mapValues } from 'lodash-es';
+import { projectState } from './savedGraphs';
 
 const { persistAtom } = recoilPersist({ key: 'graph' });
 
@@ -88,4 +101,89 @@ export const connectionsForNodeState = selector({
       return acc;
     }, {} as Record<NodeId, NodeConnection[]>);
   },
+});
+
+/** Gets connections attached to a single node */
+export const connectionsForSingleNodeState = selectorFamily({
+  key: 'connectionsForSingleNodeSelector',
+  get:
+    (nodeId: NodeId) =>
+    ({ get }) => {
+      return get(connectionsForNodeState)[nodeId];
+    },
+});
+
+/** Gets a single node by its ID */
+export const nodeByIdState = selectorFamily<ChartNode | undefined, NodeId>({
+  key: 'nodeByIdSelector',
+  get:
+    (nodeId) =>
+    ({ get }) => {
+      return get(nodesByIdState)[nodeId];
+    },
+});
+
+/** Node instances by node ID */
+export const nodeInstancesState = selector<Record<NodeId, NodeImpl<ChartNode, string>>>({
+  key: 'nodeInstances',
+  get: ({ get }) => {
+    const nodesById = get(nodesByIdState);
+
+    return mapValues(nodesById, (node) => globalRivetNodeRegistry.createDynamicImpl(node));
+  },
+});
+
+/** Gets a single node instance by a node ID */
+export const nodeInstanceByIdState = selectorFamily<NodeImpl<ChartNode, string> | undefined, NodeId>({
+  key: 'nodeInstanceById',
+  get:
+    (nodeId) =>
+    ({ get }) => {
+      return get(nodeInstancesState)[nodeId];
+    },
+});
+
+export const ioDefinitionsState = selector<
+  Record<
+    NodeId,
+    {
+      inputDefinitions: NodeInputDefinition[];
+      outputDefinitions: NodeOutputDefinition[];
+    }
+  >
+>({
+  key: 'ioDefinitions',
+  get: ({ get }) => {
+    const nodeInstances = get(nodeInstancesState);
+    const connectionsForNode = get(connectionsForNodeState);
+    const nodesById = get(nodesByIdState);
+    const project = get(projectState);
+
+    return mapValues(nodesById, (node) => {
+      const connections = connectionsForNode[node.id] ?? [];
+
+      const inputDefinitions = nodeInstances[node.id]!.getInputDefinitions(connections, nodesById, project);
+      const outputDefinitions = nodeInstances[node.id]!.getOutputDefinitions(connections, nodesById, project);
+
+      return {
+        inputDefinitions,
+        outputDefinitions,
+      };
+    });
+  },
+});
+
+export const ioDefinitionsForNodeState = selectorFamily<
+  {
+    inputDefinitions: NodeInputDefinition[];
+    outputDefinitions: NodeOutputDefinition[];
+  },
+  NodeId | undefined
+>({
+  key: 'ioDefinitionsForNode',
+  get:
+    (nodeId) =>
+    ({ get }) => {
+      return nodeId ? get(ioDefinitionsState)[nodeId]! : { inputDefinitions: [], outputDefinitions: [] };
+    },
 });

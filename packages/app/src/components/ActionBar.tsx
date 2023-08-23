@@ -20,6 +20,8 @@ import Portal from '@atlaskit/portal';
 import { debuggerPanelOpenState } from '../state/ui';
 import { ActionBarMoreMenu } from './ActionBarMoreMenu';
 import { useCurrentExecution } from '../hooks/useCurrentExecution';
+import { CopyAsTestCaseModal } from './CopyAsTestCaseModal';
+import { useToggle } from 'ahooks';
 
 const styles = css`
   position: fixed;
@@ -145,10 +147,11 @@ export const ActionBar: FC<ActionBarProps> = ({
 
   const loadedRecording = useRecoilValue(loadedRecordingState);
   const { unloadRecording } = useLoadRecording();
-  const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const [menuIsOpen, toggleMenuIsOpen] = useToggle();
 
   const { remoteDebuggerState: remoteDebugger, disconnect } = useRemoteDebugger();
   const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
+  const [copyAsTestCaseModalOpen, toggleCopyAsTestCaseModalOpen] = useToggle();
 
   return (
     <div css={styles}>
@@ -213,8 +216,13 @@ export const ActionBar: FC<ActionBarProps> = ({
       </div>
       <Popup
         isOpen={menuIsOpen}
-        onClose={() => setMenuIsOpen(false)}
-        content={() => <ActionBarMoreMenu onClose={() => setMenuIsOpen(false)} />}
+        onClose={toggleMenuIsOpen.setLeft}
+        content={() => (
+          <ActionBarMoreMenu
+            onClose={toggleMenuIsOpen.setLeft}
+            onCopyAsTestCase={toggleCopyAsTestCaseModalOpen.setRight}
+          />
+        )}
         placement="bottom-end"
         trigger={(triggerProps) => (
           <button
@@ -222,7 +230,7 @@ export const ActionBar: FC<ActionBarProps> = ({
             {...triggerProps}
             onMouseDown={(e) => {
               if (e.button === 0) {
-                setMenuIsOpen(!menuIsOpen);
+                toggleMenuIsOpen.toggle();
                 e.preventDefault();
               }
             }}
@@ -231,6 +239,7 @@ export const ActionBar: FC<ActionBarProps> = ({
           </button>
         )}
       />
+      <CopyAsTestCaseModal open={copyAsTestCaseModalOpen} onClose={toggleCopyAsTestCaseModalOpen.setLeft} />
     </div>
   );
 };
