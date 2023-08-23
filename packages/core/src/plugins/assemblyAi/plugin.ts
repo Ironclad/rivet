@@ -17,4 +17,11 @@ export const assemblyAiPlugin: RivetPlugin = {
       pullEnvironmentVariable: 'ASSEMBLYAI_API_KEY',
     },
   },
+
+  contextMenuGroups: [
+    {
+      id: 'add-node-group:assemblyai',
+      label: 'AssemblyAI',
+    }
+  ]
 };

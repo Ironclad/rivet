@@ -78,7 +78,7 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
       infoBoxBody: dedent`Use AssemblyAI to transcribe audio`,
       infoBoxTitle: 'Transcribe Audio Node',
       contextMenuTitle: 'Transcribe Audio',
-      group: 'AI',
+      group: ['AI', 'AssemblyAI'],
     };
   }
 

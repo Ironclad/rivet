@@ -8,6 +8,11 @@ export type RivetPlugin = {
 
   /** The available configuration items and their specification, for configuring a plugin in the UI. */
   configSpec?: RivetPluginConfigSpecs;
+
+  contextMenuGroups?: Array<{
+    id: string;
+    label: string;
+  }>;
 };
 
 export type RivetPluginConfigSpecs = Record<string, PluginConfigurationSpec>;

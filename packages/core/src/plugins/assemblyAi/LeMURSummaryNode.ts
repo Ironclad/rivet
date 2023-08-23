@@ -110,7 +110,7 @@ export class LeMURSummaryNodeImpl extends NodeImpl<LeMURSummaryNode> {
       infoBoxBody: dedent`Use AssemblyAI LeMUR Summary to apply LLM tasks to audio`,
       infoBoxTitle: 'Use AssemblyAI LeMUR Summary',
       contextMenuTitle: 'LeMUR Summary',
-      group: 'AI',
+      group: ['AI', 'AssemblyAI'],
     };
   }
 
