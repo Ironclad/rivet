@@ -101,6 +101,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/meeow"><img src="https://avatars.githubusercontent.com/u/18222559?v=4?s=100" width="100px;" alt="Brandon Hong"/><br /><sub><b>Brandon Hong</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=meeow" title="Code">💻</a> <a href="https://github.com/Ironclad/rivet/issues?q=author%3Ameeow" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://swimburger.net"><img src="https://avatars.githubusercontent.com/u/3382717?v=4?s=100" width="100px;" alt="Niels Swimberghe"/><br /><sub><b>Niels Swimberghe</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=Swimburger" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/tcgj"><img src="https://avatars.githubusercontent.com/u/7994529?v=4?s=100" width="100px;" alt="Terence C"/><br /><sub><b>Terence C</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=tcgj" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/tbrodahl-ironclad"><img src="https://avatars.githubusercontent.com/u/142630410?v=4?s=100" width="100px;" alt="Thomas Brodahl"/><br /><sub><b>Thomas Brodahl</b></sub></a><br /><a href="#design-tbrodahl-ironclad" title="Design">🎨</a></td>
     </tr>
   </tbody>
 </table>
