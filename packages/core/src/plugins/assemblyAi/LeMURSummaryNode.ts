@@ -1,4 +1,3 @@
-import { getClient, Body, ResponseType } from '@tauri-apps/api/http';
 import { nanoid } from 'nanoid';
 import { dedent } from 'ts-dedent';
 import {
@@ -168,23 +167,22 @@ async function runLeMURSummary(
   apiToken: string,
   params: object
 ) {
-  const client = await getClient();
-  const response = await client.post<{ response: string } | { error: string }>(
-    'https://api.assemblyai.com/lemur/v3/generate/summary',
-    Body.json(params),
+  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/summary',
     {
+      method: 'POST',
+      body: JSON.stringify(params),
       headers: {
         authorization: apiToken
-      },
-      responseType: ResponseType.JSON,
+      }
     }
   );
+  const body = await response.json();
   if (response.status !== 200) {
-    if ('error' in response.data) throw new Error(response.data.error);
+    if ('error' in body) throw new Error(body.error);
     throw new Error(`LeMUR Summary failed with status ${response.status}`);
   }
 
-  return response.data as { response: string };
+  return body as { response: string };
 }
 
 export const leMURSummaryNode = nodeDefinition(LeMURSummaryNodeImpl, 'LeMUR Summary');

@@ -1,4 +1,3 @@
-import { fetch, Body } from '@tauri-apps/api/http';
 import { nanoid } from 'nanoid';
 import { dedent } from 'ts-dedent';
 import {
@@ -125,21 +124,22 @@ async function uploadData(apiToken: string, data: { data: Uint8Array }) {
   const url = 'https://api.assemblyai.com/v2/upload';
 
   // Send a POST request to the API to upload the file, passing in the headers and the file data
-  const response = await fetch<{ upload_url: string } | { error: string }>(url, {
+  const response = await fetch(url, {
     method: 'POST',
-    body: Body.bytes(data.data),
+    body: new Blob([data.data]),
     headers: {
       'Content-Type': 'application/octet-stream',
       Authorization: apiToken,
     },
   });
+  const body = await response.json();
 
   if (response.status !== 200) {
-    if ('error' in response.data) throw new Error(response.data.error);
-    throw new Error(`Upload failed with status ${response.status}`);
+    if ('error' in body) throw new Error(body.error);
+    throw new Error(`Upload failed with status ${response.status} - ${response.statusText}`);
   }
 
-  return (response.data as { upload_url: string }).upload_url;
+  return body.upload_url;
 }
 
 // Async function that sends a request to the AssemblyAI transcription API and retrieves the transcript
@@ -151,18 +151,19 @@ async function transcribeAudio(apiToken: string, audioUrl: string) {
   };
 
   // Send a POST request to the transcription API with the audio URL in the request body
-  const response = await fetch<any>('https://api.assemblyai.com/v2/transcript', {
+  const response = await fetch('https://api.assemblyai.com/v2/transcript', {
     method: 'POST',
-    body: Body.json({ audio_url: audioUrl }),
+    body: JSON.stringify({ audio_url: audioUrl }),
     headers,
   });
+  const body = await response.json();
 
   if (response.status !== 200) {
-    if ('error' in response.data) throw new Error(response.data.error);
-    throw new Error(`Create transcript failed with status ${response.status}`);
+    if ('error' in body) throw new Error(body.error);
+    throw new Error(`Create transcript failed with status ${response.status} - ${response.statusText}}`);
   }
 
-  const transcriptId = response.data.id;
+  const transcriptId = body.id;
 
   // Construct the polling endpoint URL using the transcript ID
   const pollingEndpoint = `https://api.assemblyai.com/v2/transcript/${transcriptId}`;
@@ -170,19 +171,20 @@ async function transcribeAudio(apiToken: string, audioUrl: string) {
   // Poll the transcription API until the transcript is ready
   while (true) {
     // Send a GET request to the polling endpoint to retrieve the status of the transcript
-    const pollingResponse = await fetch<any>(pollingEndpoint, { method: 'GET', headers });
+    const pollingResponse = await fetch(pollingEndpoint, { method: 'GET', headers });
+    const pollingBody = await pollingResponse.json();
 
     if (pollingResponse.status !== 200) {
-      if ('error' in pollingResponse.data) throw new Error(pollingResponse.data.error);
+      if ('error' in pollingBody) throw new Error(pollingBody.error);
       throw new Error(`Get transcript failed with status ${pollingResponse.status}`);
     }
 
     // If the transcription is complete, return the transcript object
-    if (pollingResponse.data.status === 'completed') {
-      return pollingResponse.data;
-    } else if (pollingResponse.data.status === 'error') {
+    if (pollingBody.status === 'completed') {
+      return pollingBody;
+    } else if (pollingBody.status === 'error') {
       // If the transcription has failed, throw an error with the error message
-      throw new Error(`Transcription failed: ${pollingResponse.data.error}`);
+      throw new Error(`Transcription failed: ${pollingBody.error}`);
     } else {
       // If the transcription is still in progress, wait for a few seconds before polling again
       await new Promise((resolve) => setTimeout(resolve, 1000));
