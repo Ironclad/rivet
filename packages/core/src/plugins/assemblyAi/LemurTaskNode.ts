@@ -12,21 +12,22 @@ import {
   NodeUIData,
   Outputs,
   PortId,
+  coerceTypeOptional,
   nodeDefinition,
 } from '../../index.js';
 import { LemurNodeData, LemurParams, getApiKey, getLemurParams, lemurEditorDefinitions } from './lemurHelpers.js';
 
-export type LemurSummaryNode = ChartNode<'assemblyAiLemurSummary', LemurSummaryNodeData>;
+export type LemurTaskNode = ChartNode<'assemblyAiLemurTask', LemurTaskNodeData>;
 
-export type LemurSummaryNodeData = LemurNodeData & {
-  answer_format?: string;
+export type LemurTaskNodeData = LemurNodeData & {
+  prompt?: string;
 };
 
-export class LemurSummaryNodeImpl extends NodeImpl<LemurSummaryNode> {
-  static create(): LemurSummaryNode {
-    const chartNode: LemurSummaryNode = {
-      type: 'assemblyAiLemurSummary',
-      title: 'LeMUR Summary',
+export class LemurTaskNodeImpl extends NodeImpl<LemurTaskNode> {
+  static create(): LemurTaskNode {
+    const chartNode: LemurTaskNode = {
+      type: 'assemblyAiLemurTask',
+      title: 'LeMUR Task',
       id: nanoid() as NodeId,
       visualData: {
         x: 0,
@@ -49,9 +50,9 @@ export class LemurSummaryNodeImpl extends NodeImpl<LemurSummaryNode> {
         title: 'Transcript IDs',
       },
       {
-        id: 'context' as PortId,
+        id: 'prompt' as PortId,
         dataType: 'string',
-        title: 'Context',
+        title: 'Prompt',
       }
     ];
   }
@@ -66,14 +67,14 @@ export class LemurSummaryNodeImpl extends NodeImpl<LemurSummaryNode> {
     ];
   }
 
-  getEditors(): EditorDefinition<LemurSummaryNode>[] {
+  getEditors(): EditorDefinition<LemurTaskNode>[] {
     return [
       {
         type: 'string',
-        label: 'Context',
-        dataKey: 'context'
+        label: 'Prompt',
+        dataKey: 'prompt'
       },
-      ...lemurEditorDefinitions as unknown as EditorDefinition<LemurSummaryNode>[]
+      ...lemurEditorDefinitions as unknown as EditorDefinition<LemurTaskNode>[]
     ];
   }
 
@@ -83,24 +84,24 @@ export class LemurSummaryNodeImpl extends NodeImpl<LemurSummaryNode> {
 
   static getUIData(): NodeUIData {
     return {
-      infoBoxBody: dedent`Use AssemblyAI LeMUR Summary to summarize transcripts`,
-      infoBoxTitle: 'Use AssemblyAI LeMUR Summary',
-      contextMenuTitle: 'LeMUR Summary',
+      infoBoxBody: dedent`Use AssemblyAI LeMUR Custom Task to ask anything.`,
+      infoBoxTitle: 'Use AssemblyAI LeMUR Custom Task',
+      contextMenuTitle: 'LeMUR Custom Task',
       group: ['AI', 'AssemblyAI'],
     };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const apiKey = getApiKey(context);
-    const params: LemurParams & {
-      answer_format?: string,
-    } = getLemurParams(inputs, this.chartNode.data);
+    const params: Omit<LemurParams, 'context'> & {
+      prompt: string,
+    } = {
+      prompt: coerceTypeOptional(inputs['prompt' as PortId], 'string') || this.chartNode.data.prompt || '',
+      ...getLemurParams(inputs, this.chartNode.data)
+    };
+    if (!params.prompt) throw new Error('Prompt must be provided.');
 
-    if (this.chartNode.data.answer_format) {
-      params.answer_format = this.chartNode.data.answer_format;
-    }
-
-    const { response } = await runLemurSummary(apiKey, params);
+    const { response } = await runLemurTask(apiKey, params);
 
     return {
       ['response' as PortId]: {
@@ -111,11 +112,11 @@ export class LemurSummaryNodeImpl extends NodeImpl<LemurSummaryNode> {
   }
 }
 
-async function runLemurSummary(
+async function runLemurTask(
   apiToken: string,
   params: object
 ) {
-  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/summary',
+  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/task',
     {
       method: 'POST',
       body: JSON.stringify(params),
@@ -127,10 +128,10 @@ async function runLemurSummary(
   const body = await response.json();
   if (response.status !== 200) {
     if ('error' in body) throw new Error(body.error);
-    throw new Error(`LeMUR Summary failed with status ${response.status}`);
+    throw new Error(`LeMUR Task failed with status ${response.status}`);
   }
 
   return body as { response: string };
 }
 
-export const lemurSummaryNode = nodeDefinition(LemurSummaryNodeImpl, 'LeMUR Summary');
+export const lemurTaskNode = nodeDefinition(LemurTaskNodeImpl, 'LeMUR Task');

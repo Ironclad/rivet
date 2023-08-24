@@ -16,17 +16,17 @@ import {
 } from '../../index.js';
 import { LemurNodeData, LemurParams, getApiKey, getLemurParams, lemurEditorDefinitions } from './lemurHelpers.js';
 
-export type LemurSummaryNode = ChartNode<'assemblyAiLemurSummary', LemurSummaryNodeData>;
+export type LemurActionItemsNode = ChartNode<'assemblyAiLemurActionItems', LemurActionItemsNodeData>;
 
-export type LemurSummaryNodeData = LemurNodeData & {
+export type LemurActionItemsNodeData = LemurNodeData & {
   answer_format?: string;
 };
 
-export class LemurSummaryNodeImpl extends NodeImpl<LemurSummaryNode> {
-  static create(): LemurSummaryNode {
-    const chartNode: LemurSummaryNode = {
-      type: 'assemblyAiLemurSummary',
-      title: 'LeMUR Summary',
+export class LemurActionItemsNodeImpl extends NodeImpl<LemurActionItemsNode> {
+  static create(): LemurActionItemsNode {
+    const chartNode: LemurActionItemsNode = {
+      type: 'assemblyAiLemurActionItems',
+      title: 'LeMUR Action Items',
       id: nanoid() as NodeId,
       visualData: {
         x: 0,
@@ -66,14 +66,14 @@ export class LemurSummaryNodeImpl extends NodeImpl<LemurSummaryNode> {
     ];
   }
 
-  getEditors(): EditorDefinition<LemurSummaryNode>[] {
+  getEditors(): EditorDefinition<LemurActionItemsNode>[] {
     return [
       {
         type: 'string',
         label: 'Context',
         dataKey: 'context'
       },
-      ...lemurEditorDefinitions as unknown as EditorDefinition<LemurSummaryNode>[]
+      ...lemurEditorDefinitions as unknown as EditorDefinition<LemurActionItemsNode>[]
     ];
   }
 
@@ -83,9 +83,9 @@ export class LemurSummaryNodeImpl extends NodeImpl<LemurSummaryNode> {
 
   static getUIData(): NodeUIData {
     return {
-      infoBoxBody: dedent`Use AssemblyAI LeMUR Summary to summarize transcripts`,
-      infoBoxTitle: 'Use AssemblyAI LeMUR Summary',
-      contextMenuTitle: 'LeMUR Summary',
+      infoBoxBody: dedent`Use AssemblyAI LeMUR Action Items to extract action items`,
+      infoBoxTitle: 'Use AssemblyAI LeMUR Action Items',
+      contextMenuTitle: 'LeMUR Action Items',
       group: ['AI', 'AssemblyAI'],
     };
   }
@@ -100,7 +100,7 @@ export class LemurSummaryNodeImpl extends NodeImpl<LemurSummaryNode> {
       params.answer_format = this.chartNode.data.answer_format;
     }
 
-    const { response } = await runLemurSummary(apiKey, params);
+    const { response } = await runLemurActionItems(apiKey, params);
 
     return {
       ['response' as PortId]: {
@@ -111,11 +111,11 @@ export class LemurSummaryNodeImpl extends NodeImpl<LemurSummaryNode> {
   }
 }
 
-async function runLemurSummary(
+async function runLemurActionItems(
   apiToken: string,
   params: object
 ) {
-  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/summary',
+  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/action-items',
     {
       method: 'POST',
       body: JSON.stringify(params),
@@ -127,10 +127,10 @@ async function runLemurSummary(
   const body = await response.json();
   if (response.status !== 200) {
     if ('error' in body) throw new Error(body.error);
-    throw new Error(`LeMUR Summary failed with status ${response.status}`);
+    throw new Error(`LeMUR Action Items failed with status ${response.status}`);
   }
 
   return body as { response: string };
 }
 
-export const lemurSummaryNode = nodeDefinition(LemurSummaryNodeImpl, 'LeMUR Summary');
+export const lemurActionItemsNode = nodeDefinition(LemurActionItemsNodeImpl, 'LeMUR Action Items');
