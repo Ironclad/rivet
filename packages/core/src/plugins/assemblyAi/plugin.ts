@@ -1,12 +1,18 @@
 import { RivetPlugin } from '../../index.js';
+import { lemurQaNode } from './LemurQaNode.js';
 import { transcribeAudioNode } from './TranscribeAudioNode.js';
-import { leMURSummaryNode } from './LeMURSummaryNode.js';
+import { lemurSummaryNode } from './LemurSummaryNode.js';
+import { lemurTaskNode } from './LemurTaskNode.js';
+import { lemurActionItemsNode } from './LemurActionItemsNode.js';
 
 export const assemblyAiPlugin: RivetPlugin = {
   id: 'assemblyAi',
   register: (register) => {
     register(transcribeAudioNode);
-    register(leMURSummaryNode);
+    register(lemurSummaryNode);
+    register(lemurQaNode);
+    register(lemurTaskNode);
+    register(lemurActionItemsNode);
   },
 
   configSpec: {
