@@ -31,7 +31,8 @@ export default defineConfig({
         icon: true,
       },
     }),
-    monacoEditorPlugin({}),
+    // Bad ESM
+    (monacoEditorPlugin as any).default({}),
     wasm(),
     topLevelAwait(),
   ],
