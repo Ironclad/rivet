@@ -1,11 +1,14 @@
 import * as React from 'react';
+import { useState } from 'react';
 import clsx from 'clsx';
 
 import layout from '../../css/layout.module.css';
 import styles from './Header.module.css';
+import { useDownloadUrl } from './useDownloadUrl';
 
 export const Header: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const downloadUrl = useDownloadUrl();
 
   return (
     <header className={clsx(styles.header, { [styles.menuOpen]: isMenuOpen })}>
@@ -31,7 +34,7 @@ export const Header: React.FC = () => {
               </a>
             </li>
             <li className={styles.download}>
-              <a className={clsx(styles.navLink, styles.primary)} href="#download">
+              <a className={clsx(styles.navLink, styles.primary)} href={downloadUrl}>
                 Download
               </a>
             </li>
