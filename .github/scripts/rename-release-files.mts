@@ -24,27 +24,46 @@ const { data: assets } = await octokit.repos.listReleaseAssets({
 
 for (const asset of assets) {
   const file = asset.name;
-  const url = asset.browser_download_url;
 
   if (/[Rr]ivet_.*_(universal\.dmg|amd64\.AppImage|amd64\.deb)$/.test(file)) {
-    const response = await fetch(url);
-    const blob = await response.blob();
+    console.log(`Downloading ${file}...`);
+
+    const assetResponse = await octokit.repos.getReleaseAsset({
+      owner,
+      repo,
+      asset_id: asset.id,
+      headers: {
+        accept: 'application/octet-stream',
+      },
+    });
+    const assetData = assetResponse.data as Buffer;
 
     const newFileName = file.replace(/_.*/, '') + '.' + file.split('.').pop();
 
     console.log(`Renamed ${file} to ${newFileName}`);
 
+    const existingWithName = assets.find((a) => a.name === newFileName);
+    if (existingWithName) {
+      console.log(`Deleting existing asset ${newFileName}...`);
+      await octokit.repos.deleteReleaseAsset({
+        owner,
+        repo,
+        asset_id: existingWithName.id,
+      });
+    }
+
     try {
+      console.log(`Uploading ${newFileName}...`);
       await octokit.repos.uploadReleaseAsset({
         owner,
         repo,
         release_id: parseInt(GITHUB_RELEASE_ID!, 10),
         headers: {
-          'content-length': blob.length,
+          'content-length': assetData.length,
           'content-type': 'application/octet-stream',
         },
         name: newFileName,
-        data: Buffer.from(await blob.arrayBuffer()) as unknown as string,
+        data: assetData as unknown as string,
       });
     } catch (err) {
       console.error(`Failed to upload asset ${newFileName}: ${err.message}`);
