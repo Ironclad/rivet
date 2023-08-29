@@ -12,27 +12,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Get list of release assets
-        id: assets
-        run: |
-          assets=$(curl --header "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            --url https://api.github.com/repos/${{ github.repository }}/releases/${{ github.event.release.id }}/assets \
-            | jq -r '.[] | .browser_download_url')
-          echo "urls=$assets" >> $GITHUB_OUTPUT
-
-      - name: Download, rename and re-upload release assets
-        run: |
-          for url in ${{ steps.assets.outputs.urls }}; do
-            file=$(basename $url)
-            case $file in
-              Rivet_*_universal.dmg|Rivet_*_amd64.AppImage|Rivet_*_amd64.deb)
-                wget --header="Authorization: token ${{ secrets.GITHUB_TOKEN }}" $url
-                new_file=$(echo $file | sed 's/_.*//').${file##*.}
-                mv $file $new_file
-                gh release upload ${{ github.event.release.tag_name }} $new_file --clobber
-                ;;
-            esac
-          done
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Run yarn
+        run: yarn --immutable
+      - name: Run rename script
+        run: yarn tsx .github/scripts/rename-release-files.mts
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_RELEASE_ID: ${{ github.event.release.id }}

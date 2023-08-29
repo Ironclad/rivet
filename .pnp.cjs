@@ -58,6 +58,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@ironclad/rivet-core", "workspace:packages/core"],\
           ["@ironclad/rivet-node", "workspace:packages/node"],\
+          ["@octokit/rest", "npm:20.0.1"],\
           ["@swc/core", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:1.3.71"],\
           ["@types/eslint", "npm:8.44.1"],\
           ["@types/node", "npm:20.4.10"],\
@@ -73,6 +74,7 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-react-hooks", "virtual:4a4dfdd9a7df5ec5e275841a43fbecdb97f28d7f31447ab74c1dd2a4d56fe264664aa1dc4ad44cc92e46e533864e6b71f8d1474657f30ffd4d572a69c55bcf0b#npm:4.6.0"],\
           ["rollup", "npm:3.27.0"],\
           ["ts-node", "virtual:74fcc7b6256f60a89945acc6b1c62e6158616c0dcf2312663cfe08ceda598b7d943e5de97f39a415e4491198cfa92535d8e40310ec84839b8241ca342059e353#npm:10.9.1"],\
+          ["tsx", "npm:3.12.7"],\
           ["typescript", "patch:typescript@npm%3A5.1.6#optional!builtin<compat/typescript>::version=5.1.6&hash=5da071"],\
           ["yargs", "npm:17.7.2"],\
           ["zx", "npm:7.2.3"]\
@@ -6601,6 +6603,7 @@ const RAW_RUNTIME_STATE =
           ["@ironclad/rivet", "workspace:."],\
           ["@ironclad/rivet-core", "workspace:packages/core"],\
           ["@ironclad/rivet-node", "workspace:packages/node"],\
+          ["@octokit/rest", "npm:20.0.1"],\
           ["@swc/core", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:1.3.71"],\
           ["@types/eslint", "npm:8.44.1"],\
           ["@types/node", "npm:20.4.10"],\
@@ -6616,6 +6619,7 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-react-hooks", "virtual:4a4dfdd9a7df5ec5e275841a43fbecdb97f28d7f31447ab74c1dd2a4d56fe264664aa1dc4ad44cc92e46e533864e6b71f8d1474657f30ffd4d572a69c55bcf0b#npm:4.6.0"],\
           ["rollup", "npm:3.27.0"],\
           ["ts-node", "virtual:74fcc7b6256f60a89945acc6b1c62e6158616c0dcf2312663cfe08ceda598b7d943e5de97f39a415e4491198cfa92535d8e40310ec84839b8241ca342059e353#npm:10.9.1"],\
+          ["tsx", "npm:3.12.7"],\
           ["typescript", "patch:typescript@npm%3A5.1.6#optional!builtin<compat/typescript>::version=5.1.6&hash=5da071"],\
           ["yargs", "npm:17.7.2"],\
           ["zx", "npm:7.2.3"]\
@@ -7109,6 +7113,181 @@ const RAW_RUNTIME_STATE =
           ["@npmcli/move-file", "npm:2.0.1"],\
           ["mkdirp", "npm:1.0.4"],\
           ["rimraf", "npm:3.0.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@octokit/auth-token", [\
+      ["npm:4.0.0", {\
+        "packageLocation": "./.yarn/cache/@octokit-auth-token-npm-4.0.0-9ad78a752f-8ca9c462f3.zip/node_modules/@octokit/auth-token/",\
+        "packageDependencies": [\
+          ["@octokit/auth-token", "npm:4.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@octokit/core", [\
+      ["npm:5.0.0", {\
+        "packageLocation": "./.yarn/cache/@octokit-core-npm-5.0.0-c9003d20df-ab512bc1e2.zip/node_modules/@octokit/core/",\
+        "packageDependencies": [\
+          ["@octokit/core", "npm:5.0.0"],\
+          ["@octokit/auth-token", "npm:4.0.0"],\
+          ["@octokit/graphql", "npm:7.0.1"],\
+          ["@octokit/request", "npm:8.1.1"],\
+          ["@octokit/request-error", "npm:5.0.0"],\
+          ["@octokit/types", "npm:11.1.0"],\
+          ["before-after-hook", "npm:2.2.3"],\
+          ["universal-user-agent", "npm:6.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@octokit/endpoint", [\
+      ["npm:9.0.0", {\
+        "packageLocation": "./.yarn/cache/@octokit-endpoint-npm-9.0.0-0d4530e44e-f460da5d99.zip/node_modules/@octokit/endpoint/",\
+        "packageDependencies": [\
+          ["@octokit/endpoint", "npm:9.0.0"],\
+          ["@octokit/types", "npm:11.1.0"],\
+          ["is-plain-object", "npm:5.0.0"],\
+          ["universal-user-agent", "npm:6.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@octokit/graphql", [\
+      ["npm:7.0.1", {\
+        "packageLocation": "./.yarn/cache/@octokit-graphql-npm-7.0.1-5feff6ab44-c1ccfb190a.zip/node_modules/@octokit/graphql/",\
+        "packageDependencies": [\
+          ["@octokit/graphql", "npm:7.0.1"],\
+          ["@octokit/request", "npm:8.1.1"],\
+          ["@octokit/types", "npm:11.1.0"],\
+          ["universal-user-agent", "npm:6.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@octokit/openapi-types", [\
+      ["npm:18.0.0", {\
+        "packageLocation": "./.yarn/cache/@octokit-openapi-types-npm-18.0.0-1586e405d6-116aced8bf.zip/node_modules/@octokit/openapi-types/",\
+        "packageDependencies": [\
+          ["@octokit/openapi-types", "npm:18.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@octokit/plugin-paginate-rest", [\
+      ["npm:8.0.0", {\
+        "packageLocation": "./.yarn/cache/@octokit-plugin-paginate-rest-npm-8.0.0-3e517c8a85-2aca9727a3.zip/node_modules/@octokit/plugin-paginate-rest/",\
+        "packageDependencies": [\
+          ["@octokit/plugin-paginate-rest", "npm:8.0.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:2d22cbfdae79b6abda987ead10a6368dc31e51658d98cd91aca4675883fef819131199263a4351eff81d45812b3ca94b5dd076cdea3272270e08dcc4f909733d#npm:8.0.0", {\
+        "packageLocation": "./.yarn/__virtual__/@octokit-plugin-paginate-rest-virtual-d92d641765/0/cache/@octokit-plugin-paginate-rest-npm-8.0.0-3e517c8a85-2aca9727a3.zip/node_modules/@octokit/plugin-paginate-rest/",\
+        "packageDependencies": [\
+          ["@octokit/plugin-paginate-rest", "virtual:2d22cbfdae79b6abda987ead10a6368dc31e51658d98cd91aca4675883fef819131199263a4351eff81d45812b3ca94b5dd076cdea3272270e08dcc4f909733d#npm:8.0.0"],\
+          ["@octokit/core", "npm:5.0.0"],\
+          ["@octokit/types", "npm:11.1.0"],\
+          ["@types/octokit__core", null]\
+        ],\
+        "packagePeers": [\
+          "@octokit/core",\
+          "@types/octokit__core"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@octokit/plugin-request-log", [\
+      ["npm:4.0.0", {\
+        "packageLocation": "./.yarn/cache/@octokit-plugin-request-log-npm-4.0.0-49c2f6ee8b-b9725f42f4.zip/node_modules/@octokit/plugin-request-log/",\
+        "packageDependencies": [\
+          ["@octokit/plugin-request-log", "npm:4.0.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:2d22cbfdae79b6abda987ead10a6368dc31e51658d98cd91aca4675883fef819131199263a4351eff81d45812b3ca94b5dd076cdea3272270e08dcc4f909733d#npm:4.0.0", {\
+        "packageLocation": "./.yarn/__virtual__/@octokit-plugin-request-log-virtual-10c47d1e96/0/cache/@octokit-plugin-request-log-npm-4.0.0-49c2f6ee8b-b9725f42f4.zip/node_modules/@octokit/plugin-request-log/",\
+        "packageDependencies": [\
+          ["@octokit/plugin-request-log", "virtual:2d22cbfdae79b6abda987ead10a6368dc31e51658d98cd91aca4675883fef819131199263a4351eff81d45812b3ca94b5dd076cdea3272270e08dcc4f909733d#npm:4.0.0"],\
+          ["@octokit/core", "npm:5.0.0"],\
+          ["@types/octokit__core", null]\
+        ],\
+        "packagePeers": [\
+          "@octokit/core",\
+          "@types/octokit__core"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@octokit/plugin-rest-endpoint-methods", [\
+      ["npm:9.0.0", {\
+        "packageLocation": "./.yarn/cache/@octokit-plugin-rest-endpoint-methods-npm-9.0.0-4d91ef0f8a-593bb296a2.zip/node_modules/@octokit/plugin-rest-endpoint-methods/",\
+        "packageDependencies": [\
+          ["@octokit/plugin-rest-endpoint-methods", "npm:9.0.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:2d22cbfdae79b6abda987ead10a6368dc31e51658d98cd91aca4675883fef819131199263a4351eff81d45812b3ca94b5dd076cdea3272270e08dcc4f909733d#npm:9.0.0", {\
+        "packageLocation": "./.yarn/__virtual__/@octokit-plugin-rest-endpoint-methods-virtual-4f5f2bef5c/0/cache/@octokit-plugin-rest-endpoint-methods-npm-9.0.0-4d91ef0f8a-593bb296a2.zip/node_modules/@octokit/plugin-rest-endpoint-methods/",\
+        "packageDependencies": [\
+          ["@octokit/plugin-rest-endpoint-methods", "virtual:2d22cbfdae79b6abda987ead10a6368dc31e51658d98cd91aca4675883fef819131199263a4351eff81d45812b3ca94b5dd076cdea3272270e08dcc4f909733d#npm:9.0.0"],\
+          ["@octokit/core", "npm:5.0.0"],\
+          ["@octokit/types", "npm:11.1.0"],\
+          ["@types/octokit__core", null]\
+        ],\
+        "packagePeers": [\
+          "@octokit/core",\
+          "@types/octokit__core"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@octokit/request", [\
+      ["npm:8.1.1", {\
+        "packageLocation": "./.yarn/cache/@octokit-request-npm-8.1.1-404934a724-e72265cb06.zip/node_modules/@octokit/request/",\
+        "packageDependencies": [\
+          ["@octokit/request", "npm:8.1.1"],\
+          ["@octokit/endpoint", "npm:9.0.0"],\
+          ["@octokit/request-error", "npm:5.0.0"],\
+          ["@octokit/types", "npm:11.1.0"],\
+          ["is-plain-object", "npm:5.0.0"],\
+          ["universal-user-agent", "npm:6.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@octokit/request-error", [\
+      ["npm:5.0.0", {\
+        "packageLocation": "./.yarn/cache/@octokit-request-error-npm-5.0.0-262908a2c1-551ffbdbc1.zip/node_modules/@octokit/request-error/",\
+        "packageDependencies": [\
+          ["@octokit/request-error", "npm:5.0.0"],\
+          ["@octokit/types", "npm:11.1.0"],\
+          ["deprecation", "npm:2.3.1"],\
+          ["once", "npm:1.4.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@octokit/rest", [\
+      ["npm:20.0.1", {\
+        "packageLocation": "./.yarn/cache/@octokit-rest-npm-20.0.1-2d22cbfdae-542bac9901.zip/node_modules/@octokit/rest/",\
+        "packageDependencies": [\
+          ["@octokit/rest", "npm:20.0.1"],\
+          ["@octokit/core", "npm:5.0.0"],\
+          ["@octokit/plugin-paginate-rest", "virtual:2d22cbfdae79b6abda987ead10a6368dc31e51658d98cd91aca4675883fef819131199263a4351eff81d45812b3ca94b5dd076cdea3272270e08dcc4f909733d#npm:8.0.0"],\
+          ["@octokit/plugin-request-log", "virtual:2d22cbfdae79b6abda987ead10a6368dc31e51658d98cd91aca4675883fef819131199263a4351eff81d45812b3ca94b5dd076cdea3272270e08dcc4f909733d#npm:4.0.0"],\
+          ["@octokit/plugin-rest-endpoint-methods", "virtual:2d22cbfdae79b6abda987ead10a6368dc31e51658d98cd91aca4675883fef819131199263a4351eff81d45812b3ca94b5dd076cdea3272270e08dcc4f909733d#npm:9.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@octokit/types", [\
+      ["npm:11.1.0", {\
+        "packageLocation": "./.yarn/cache/@octokit-types-npm-11.1.0-668299c1c7-010631bcb2.zip/node_modules/@octokit/types/",\
+        "packageDependencies": [\
+          ["@octokit/types", "npm:11.1.0"],\
+          ["@octokit/openapi-types", "npm:18.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10500,6 +10679,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["before-after-hook", [\
+      ["npm:2.2.3", {\
+        "packageLocation": "./.yarn/cache/before-after-hook-npm-2.2.3-d79e3d6608-b4606e993c.zip/node_modules/before-after-hook/",\
+        "packageDependencies": [\
+          ["before-after-hook", "npm:2.2.3"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["big.js", [\
       ["npm:5.2.2", {\
         "packageLocation": "./.yarn/cache/big.js-npm-5.2.2-e147c30820-1c63accd17.zip/node_modules/big.js/",\
@@ -12090,6 +12278,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/depd-npm-2.0.0-b6c51a4b43-170e90bfa9.zip/node_modules/depd/",\
         "packageDependencies": [\
           ["depd", "npm:2.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["deprecation", [\
+      ["npm:2.3.1", {\
+        "packageLocation": "./.yarn/cache/deprecation-npm-2.3.1-e19c92d6e7-4bea606289.zip/node_modules/deprecation/",\
+        "packageDependencies": [\
+          ["deprecation", "npm:2.3.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -15945,6 +16142,13 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["is-plain-object", "npm:2.0.4"],\
           ["isobject", "npm:3.0.1"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:5.0.0", {\
+        "packageLocation": "./.yarn/cache/is-plain-object-npm-5.0.0-285b70faa3-fd152d0cad.zip/node_modules/is-plain-object/",\
+        "packageDependencies": [\
+          ["is-plain-object", "npm:5.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -22736,6 +22940,15 @@ const RAW_RUNTIME_STATE =
           ["unist-util-visit-parents", "npm:3.1.1"],\
           ["@types/unist", "npm:2.0.6"],\
           ["unist-util-is", "npm:4.1.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["universal-user-agent", [\
+      ["npm:6.0.0", {\
+        "packageLocation": "./.yarn/cache/universal-user-agent-npm-6.0.0-b148fb997a-c014b4d3bc.zip/node_modules/universal-user-agent/",\
+        "packageDependencies": [\
+          ["universal-user-agent", "npm:6.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
