@@ -8,7 +8,7 @@ import { ReactComponent as ExpandRightIcon } from 'majesticons/line/menu-expand-
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { NodeGraph } from '@ironclad/rivet-core';
 import { sidebarOpenState } from '../state/graphBuilder.js';
-import { appWindow } from '@tauri-apps/api/window';
+import { getCurrent } from '@tauri-apps/plugin-window';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import { GraphList } from './GraphList.js';
 import { ProjectPluginsConfiguration } from './ProjectPluginConfiguration';
@@ -86,7 +86,7 @@ export const LeftSidebar: FC = () => {
   useEffect(() => {
     (async () => {
       try {
-        await appWindow.setTitle(`Rivet - ${project.metadata.title} (${loadedProject.path})`);
+        await getCurrent().setTitle(`Rivet - ${project.metadata.title} (${loadedProject.path})`);
       } catch (err) {
         console.warn(`Failed to set window title, likely not running in Tauri: ${err}`);
       }

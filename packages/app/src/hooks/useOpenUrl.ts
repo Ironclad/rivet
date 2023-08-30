@@ -1,4 +1,4 @@
-import { open } from '@tauri-apps/api/shell';
+import { open } from '@tauri-apps/plugin-shell';
 import { isInTauri } from '../utils/tauri';
 import { toast } from 'react-toastify';
 

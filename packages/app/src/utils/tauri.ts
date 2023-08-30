@@ -1,11 +1,11 @@
 import { RivetPlugin, Settings, StringPluginConfigurationSpec } from '@ironclad/rivet-core';
-import { window } from '@tauri-apps/api';
+import * as tauriWindow from '@tauri-apps/plugin-window';
 import { invoke } from '@tauri-apps/api/tauri';
 import { entries, values } from '../../../core/src/utils/typeSafety';
 
 export function isInTauri(): boolean {
   try {
-    window.getCurrent();
+    tauriWindow.getCurrent();
     return true;
   } catch (err) {
     return false;

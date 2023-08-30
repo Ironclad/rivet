@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSaveProject } from './useSaveProject.js';
-import { window } from '@tauri-apps/api';
+import * as tauriWindow from '@tauri-apps/plugin-window';
 import { match } from 'ts-pattern';
 import { useNewProject } from './useNewProject.js';
 import { useLoadProject } from './useLoadProject.js';
@@ -8,9 +8,8 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { settingsModalOpenState } from '../components/SettingsModal.js';
 import { graphState } from '../state/graph.js';
 import { useLoadRecording } from './useLoadRecording.js';
-import { WebviewWindow } from '@tauri-apps/api/window';
+import { Window } from '@tauri-apps/plugin-window';
 import { ioProvider } from '../utils/globals.js';
-import { debuggerPanelOpenState } from '../state/ui';
 import { useToggleRemoteDebugger } from '../components/DebuggerConnectPanel';
 
 type MenuIds =
@@ -30,11 +29,12 @@ const handlerState: {
   handler: (e: { payload: MenuIds }) => void;
 } = { handler: () => {} };
 
-let mainWindow: WebviewWindow;
+let mainWindow: Window;
 
 try {
-  mainWindow = window.getCurrent();
+  mainWindow = tauriWindow.getCurrent();
   mainWindow.onMenuClicked((e) => {
+    console.dir(e);
     handlerState.handler(e as { payload: MenuIds });
   });
 } catch (err) {

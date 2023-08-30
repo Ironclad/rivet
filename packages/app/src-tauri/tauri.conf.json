@@ -10,32 +10,6 @@
     "version": "0.3.1"
   },
   "tauri": {
-    "allowlist": {
-      "all": false,
-      "fs": {
-        "all": true,
-        "scope": []
-      },
-      "dialog": {
-        "all": true
-      },
-      "shell": {
-        "sidecar": true,
-        "open": true,
-        "scope": [
-          {
-            "name": "../../app-executor/dist/app-executor",
-            "sidecar": true
-          }
-        ]
-      },
-      "window": {
-        "all": true
-      },
-      "globalShortcut": {
-        "all": true
-      }
-    },
     "bundle": {
       "active": true,
       "category": "DeveloperTool",
@@ -65,12 +39,6 @@
     },
     "security": {
       "csp": null
-    },
-    "updater": {
-      "active": true,
-      "endpoints": ["https://github.com/Ironclad/rivet/releases/latest/download/latest.json"],
-      "dialog": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDQwRTgxNDEzODJDREJDNzkKUldSNXZNMkNFeFRvUU5VK0NXdEIwNlc3NTREUWpNSmpaeGFwWjFwc21ZT0U5cFlzcy81QndDOXYK"
     },
     "windows": [
       {

@@ -1,5 +1,4 @@
 export const baseDirs = {
-  app: 'app',
   appCache: 'appCache',
   appConfig: 'appConfig',
   appData: 'appData',
@@ -16,7 +15,6 @@ export const baseDirs = {
   font: 'font',
   home: 'home',
   localData: 'localData',
-  log: 'log',
   picture: 'picture',
   public: 'public',
   resource: 'resource',

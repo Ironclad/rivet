@@ -1,10 +1,9 @@
-import { readDir, BaseDirectory, readTextFile, readBinaryFile, writeFile, FileEntry } from '@tauri-apps/api/fs';
+import { readDir, BaseDirectory, readTextFile, readBinaryFile, writeFile, FileEntry } from '@tauri-apps/plugin-fs';
 import { BaseDir, NativeApi, ReadDirOptions } from '@ironclad/rivet-core';
 
 import { minimatch } from 'minimatch';
 
 const baseDirToBaseDirectoryMap: Record<BaseDir, BaseDirectory> = {
-  app: BaseDirectory.App,
   appCache: BaseDirectory.AppCache,
   appConfig: BaseDirectory.AppConfig,
   appData: BaseDirectory.AppData,
@@ -21,7 +20,6 @@ const baseDirToBaseDirectoryMap: Record<BaseDir, BaseDirectory> = {
   font: BaseDirectory.Font,
   home: BaseDirectory.Home,
   localData: BaseDirectory.LocalData,
-  log: BaseDirectory.Log,
   picture: BaseDirectory.Picture,
   public: BaseDirectory.Public,
   resource: BaseDirectory.Resource,
