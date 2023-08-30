@@ -211,6 +211,11 @@ const ZoomedOutVisualNodeContent: FC<{
                       <LoadingSpinner />
                     </div>
                   ))
+                  .with({ type: 'interrupted' }, () => (
+                    <div className="interrupted">
+                      <SendIcon />
+                    </div>
+                  ))
                   .exhaustive()
               ) : (
                 <></>
@@ -385,6 +390,11 @@ const NormalVisualNodeContent: FC<{
                   .with({ type: 'running' }, () => (
                     <div className="running">
                       <LoadingSpinner />
+                    </div>
+                  ))
+                  .with({ type: 'interrupted' }, () => (
+                    <div className="interrupted">
+                      <SendIcon />
                     </div>
                   ))
                   .exhaustive()
