@@ -22,7 +22,8 @@ export type UnknownNodeComponentDescriptor = {
   Editor?: FC<{ node: ChartNode; onChange?: (node: ChartNode) => void }>;
   FullscreenOutput?: FC<{ node: ChartNode }>;
   OutputSimple?: FC<{ outputs: Outputs }>;
-  FullscreenOutputSimple?: FC<{ outputs: Outputs }>;
+  FullscreenOutputSimple?: FC<{ outputs: Outputs; renderMarkdown: boolean }>;
+  defaultRenderMarkdown?: boolean;
 };
 
 export type NodeComponentDescriptor<T extends BuiltInNodeType> = {
@@ -31,7 +32,8 @@ export type NodeComponentDescriptor<T extends BuiltInNodeType> = {
   Editor?: FC<{ node: NodeOfType<T>; onChange?: (node: NodeOfType<T>) => void }>;
   FullscreenOutput?: FC<{ node: NodeOfType<T> }>;
   OutputSimple?: FC<{ outputs: Outputs }>;
-  FullscreenOutputSimple?: FC<{ outputs: Outputs }>;
+  FullscreenOutputSimple?: FC<{ outputs: Outputs; renderMarkdown: boolean }>;
+  defaultRenderMarkdown?: boolean;
 };
 
 export type NodeComponentDescriptors = {

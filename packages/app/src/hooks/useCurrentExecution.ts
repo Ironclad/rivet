@@ -14,6 +14,7 @@ import { ProcessQuestions, userInputModalQuestionsState } from '../state/userInp
 import { lastRecordingState } from '../state/execution';
 import { trivetTestsRunningState } from '../state/trivet';
 import { useLatest } from 'ahooks';
+import { keys } from '../../../core/src/utils/typeSafety';
 
 export function useCurrentExecution() {
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
@@ -106,6 +107,23 @@ export function useCurrentExecution() {
     setGraphPaused(false);
     setUserInputQuestions({});
     setRunningGraphsState([]);
+
+    // Mark all currently running nodes as
+    setLastRunData((lastRun) =>
+      produce(lastRun, (draft) => {
+        keys(draft).forEach((nodeId) => {
+          draft[nodeId] = draft[nodeId]!.map((process) => ({
+            ...process,
+            data: {
+              ...process.data,
+              status: {
+                type: 'interrupted',
+              },
+            },
+          }));
+        });
+      }),
+    );
   };
 
   function onStop() {
