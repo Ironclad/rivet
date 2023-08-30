@@ -8,7 +8,7 @@ import {
   GraphOutputs,
   globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
-import { current, produce } from 'immer';
+import { produce } from 'immer';
 import { useRef } from 'react';
 import { toast } from 'react-toastify';
 import { TauriNativeApi } from '../model/native/TauriNativeApi';

@@ -62,7 +62,14 @@ fn create_menu() -> Menu {
 
     let debug_menu = Submenu::new(
         "Debug",
-        Menu::new().add_item(CustomMenuItem::new("load_recording", "Load Recording...")),
+        Menu::new()
+            .add_item(
+                CustomMenuItem::new("remote_debugger", "Remote Debugger...").accelerator("F5"),
+            )
+            .add_item(
+                CustomMenuItem::new("load_recording", "Load Recording...")
+                    .accelerator("CmdOrCtrl+Shift+O"),
+            ),
     );
 
     let window_menu = Submenu::new(
