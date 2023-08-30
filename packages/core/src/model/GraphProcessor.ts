@@ -115,7 +115,10 @@ export type Outputs = Record<PortId, DataValue | undefined>;
 
 export type ExternalFunctionProcessContext = Omit<InternalProcessContext, 'setGlobal'>;
 
-export type ExternalFunction = (context: ExternalFunctionProcessContext, ...args: unknown[]) => Promise<DataValue & { cost?: number }>;
+export type ExternalFunction = (
+  context: ExternalFunctionProcessContext,
+  ...args: unknown[]
+) => Promise<DataValue & { cost?: number }>;
 
 type RaceId = Opaque<string, 'RaceId'>;
 
@@ -451,6 +454,10 @@ export class GraphProcessor {
       };
 
       for (const event of events) {
+        if (this.#aborted) {
+          break;
+        }
+
         await this.#waitUntilUnpaused();
 
         await match(event)
