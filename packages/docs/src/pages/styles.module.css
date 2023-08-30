@@ -36,27 +36,27 @@
   pointer-events: none;
 }
 
-h1 {
+.main h1 {
   font-size: 36px;
   margin-bottom: 20px;
 }
 
-h2 {
+.main h2 {
   font-size: 24px;
   margin-bottom: 32px;
 }
 
-p {
+.main p {
   margin-bottom: 20px;
 }
 
-a,
-button {
+.main a,
+.main button {
   text-decoration: none;
 }
 
-a:hover,
-button:hover {
+.main a:hover,
+.main button:hover {
   text-decoration: none;
   color: unset; /* inherit color from default element */
 }
@@ -66,21 +66,21 @@ button:hover {
     --page-padding-side: 120px;
   }
 
-  h1 {
+  .main h1 {
     font-size: 40px;
     margin-bottom: 32px;
   }
 
-  h2 {
+  .main h2 {
     font-size: 28px;
   }
 
-  p {
+  .main p {
     font-size: 20px;
   }
 
-  a,
-  button {
+  .main a,
+  .main button {
     font-size: 20px;
   }
 }
@@ -90,23 +90,23 @@ button:hover {
     --page-padding-side: 240px;
   }
 
-  h1 {
+  .main h1 {
     font-size: 44px;
     margin-bottom: 40px;
   }
 
-  h2 {
+  .main h2 {
     font-size: 28px;
     margin-bottom: 48px;
   }
 
-  p {
+  .main p {
     font-size: 20px;
     margin-bottom: 32px;
   }
 
-  a,
-  button {
+  .main a,
+  .main button {
     font-size: 20px;
   }
 }

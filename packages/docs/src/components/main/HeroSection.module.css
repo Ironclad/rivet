@@ -26,6 +26,13 @@
   text-decoration: none;
 }
 
+.latestRelease.latestRelease {
+  font-size: 12px;
+  color: #aaa;
+  font-weight: normal;
+  margin-top: 8px;
+}
+
 .imgContainer {
   margin-top: 100px;
 }
@@ -87,11 +94,4 @@
   .title {
     padding: 0 92px;
   }
-}
-
-.latestRelease {
-  font-size: 12px;
-  color: #aaa;
-  font-weight: normal;
-  margin-top: 8px;
 }
