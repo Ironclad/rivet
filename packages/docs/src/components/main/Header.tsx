@@ -4,11 +4,11 @@ import clsx from 'clsx';
 
 import layout from '../../css/layout.module.css';
 import styles from './Header.module.css';
-import { useDownloadUrl } from './useDownloadUrl';
+import { useDownloadUrl } from '../../hooks/useDownloadUrl';
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const downloadUrl = useDownloadUrl();
+  const { downloadUrl } = useDownloadUrl();
 
   return (
     <header className={clsx(styles.header, { [styles.menuOpen]: isMenuOpen })}>

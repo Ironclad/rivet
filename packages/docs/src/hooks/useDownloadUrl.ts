@@ -1,8 +1,13 @@
+import useIsBrowser from '@docusaurus/useIsBrowser';
 import { useMemo } from 'react';
 
+export type Platform = 'mac' | 'windows' | 'linux' | 'unknown' | 'server';
+
 export function useDownloadUrl() {
-  const platform = useMemo(() => {
-    if (typeof window === 'undefined') {
+  const isBrowser = useIsBrowser();
+
+  const platform = useMemo((): Platform => {
+    if (!isBrowser || typeof window === 'undefined') {
       return 'server';
     }
     if (window.navigator.userAgent.includes('Mac OS X')) {
@@ -15,7 +20,7 @@ export function useDownloadUrl() {
       return 'linux';
     }
     return 'unknown';
-  }, []);
+  }, [isBrowser]);
 
   const downloadUrl = useMemo(() => {
     switch (platform) {
@@ -30,5 +35,8 @@ export function useDownloadUrl() {
     }
   }, [platform]);
 
-  return downloadUrl;
+  return useMemo(() => ({
+    platform,
+    downloadUrl,
+  }));
 }
