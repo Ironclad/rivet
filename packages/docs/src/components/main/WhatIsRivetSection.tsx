@@ -18,7 +18,7 @@ export const WhatIsRivetSection: React.FC<{ id?: string }> = ({ id }) => {
           remote executor unlocked our team's ability to collaborate on increasingly complex and powerful LLM prompt
           graphs.
         </p>
-        <p>Built and used by Ironclad Research.</p>
+        <p>Built and used by <img className={styles.inlineLogo} src="img/ironclad-logo.png" height="20px" /> Research.</p>
       </div>
     </Section>
   );

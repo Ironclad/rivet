@@ -38,7 +38,33 @@
 }
 
 .imgContainer {
-  margin-top: 100px;
+  margin-top: 60px;
+}
+
+.builtByIronclad {
+  margin-top: 40px;
+  font-size: 24px !important;
+}
+
+.builtByIroncladText {
+  display: inline-block;
+  position: relative;
+  top: 8px;
+  padding-bottom: 10px;
+}
+
+.ironcladLink {
+  display: inline-block;
+  background-image: url('/static/img/ironclad-logo-white.png');
+  background-size: contain;
+  color: transparent;
+  margin: 0 16px;
+  width: 209px;
+  height: 40px;
+}
+
+.ironcladLink:hover {
+  color: transparent !important;
 }
 
 .scrollIcon {
@@ -82,11 +108,11 @@
 
   .title {
     padding: 0;
-    margin-top: 80px;
+    margin-top: 60px;
   }
 
   .imgContainer {
-    margin: 120px calc(-1 * var(--page-padding-side) / 2);
+    margin: 100px calc(-1 * var(--page-padding-side) / 2);
   }
 
   .scrollIcon {
