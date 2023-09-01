@@ -18,7 +18,17 @@ export const WhatIsRivetSection: React.FC<{ id?: string }> = ({ id }) => {
           remote executor unlocked our team's ability to collaborate on increasingly complex and powerful LLM prompt
           graphs.
         </p>
-        <p>Built and used by <img className={styles.inlineLogo} src="img/ironclad-logo.png" height="20px" /> Research.</p>
+        <p>
+          <img className={styles.inlineLogo} src="img/ironclad-logo.png" height="20px" /> is the leading digital
+          contracting platform.
+          {' '}
+          <a href="https://ironcladapp.com/product/ai-based-contract-management/" target="_blank">Ironclad AI</a>
+          {' '}
+          helps legal teams with everything from reviewing contracts faster to answering questions about their obligations.
+          {' '}
+          Learn more at <a href="https://www.ironcladapp.com/" target="_blank">ironcladapp.com</a>.
+        </p>
+        <p>Rivet is built and used by <img className={styles.inlineLogo} src="img/ironclad-logo.png" height="20px" /> Research.</p>
       </div>
     </Section>
   );
