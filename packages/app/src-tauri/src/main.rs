@@ -3,13 +3,25 @@
     windows_subsystem = "windows"
 )]
 
+use std::sync::{Arc, Mutex};
+
 use tauri::{CustomMenuItem, Menu, MenuItem, Submenu};
+use wavy::{Microphone, MicrophoneStream};
+
+lazy_static::lazy_static! {
+    static ref MICROPHONE: Arc<Mutex<Option<Microphone>>> = Arc::new(Mutex::new(None));
+}
 
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_persisted_scope::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
-        .invoke_handler(tauri::generate_handler![get_environment_variable])
+        .invoke_handler(tauri::generate_handler![
+            get_environment_variable,
+            start_recording_audio,
+            stop_recording_audio,
+            list_recording_devices
+        ])
         .menu(create_menu())
         .on_menu_event(|event| match event.menu_item_id() {
             "toggle_devtools" => {
@@ -28,6 +40,30 @@ fn main() {
 #[tauri::command]
 fn get_environment_variable(name: &str) -> String {
     std::env::var(name).unwrap_or_default()
+}
+
+#[tauri::command]
+fn start_recording_audio() {
+    let mut microphone_ref = MICROPHONE.lock().unwrap();
+    let mut microphone = Microphone::default();
+
+    *microphone_ref = Some(microphone);
+}
+
+#[tauri::command]
+fn stop_recording_audio() {
+    let mut microphone_ref = MICROPHONE.lock().unwrap();
+
+    if let Some(microphone) = microphone_ref.take() {
+        println!("stop recording audio");
+    }
+}
+
+#[tauri::command]
+fn list_recording_devices() -> String {
+    println!("list audio devices");
+
+    "list audio devices".to_string()
 }
 
 fn create_menu() -> Menu {

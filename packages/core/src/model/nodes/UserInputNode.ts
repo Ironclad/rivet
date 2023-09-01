@@ -1,7 +1,7 @@
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { DataValue, ArrayDataValue, StringDataValue } from '../DataValue.js';
+import { DataValue, StringArrayDataValue } from '../DataValue.js';
 import { zip } from 'lodash-es';
 import { Outputs, Inputs, expectType, EditorDefinition, NodeBodySpec } from '../../index.js';
 import { dedent } from 'ts-dedent';
@@ -10,6 +10,8 @@ export type UserInputNode = ChartNode<'userInput', UserInputNodeData>;
 
 export type UserInputNodeData = {
   prompt: string;
+
+  type: 'string' | 'audio';
   useInput: boolean;
 };
 
@@ -26,6 +28,7 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
       },
       data: {
         prompt,
+        type: 'string',
         useInput: false,
       },
     };
@@ -47,22 +50,41 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
   }
 
   getOutputDefinitions(): NodeOutputDefinition[] {
-    return [
-      {
-        dataType: 'string[]',
-        id: 'output' as PortId,
-        title: 'Answers Only',
-      },
-      {
-        dataType: 'string[]',
-        id: 'questionsAndAnswers' as PortId,
-        title: 'Q & A',
-      },
-    ];
+    if (this.data.type === 'string') {
+      return [
+        {
+          dataType: 'string[]',
+          id: 'output' as PortId,
+          title: 'Answers Only',
+        },
+        {
+          dataType: 'string[]',
+          id: 'questionsAndAnswers' as PortId,
+          title: 'Q & A',
+        },
+      ];
+    } else {
+      return [
+        {
+          dataType: 'audio',
+          id: 'output' as PortId,
+          title: 'Audio',
+        },
+      ];
+    }
   }
 
   getEditors(): EditorDefinition<UserInputNode>[] {
     return [
+      {
+        type: 'dropdown',
+        label: 'Type',
+        dataKey: 'type',
+        options: [
+          { value: 'string', label: 'String' },
+          { value: 'audio', label: 'Audio' },
+        ],
+      },
       {
         type: 'code',
         label: 'Prompt',
@@ -74,7 +96,11 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
   }
 
   getBody(): string | NodeBodySpec | undefined {
-    return this.data.useInput ? '(Using input)' : this.data.prompt;
+    return dedent`
+      ${this.data.type === 'string' ? '' : 'Audio\n'}${this.data.useInput ? 'Questions:' : 'Prompt:'} ${
+      this.data.prompt
+    }
+    `;
   }
 
   static getUIData(): NodeUIData {
@@ -95,18 +121,26 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
     };
   }
 
-  getOutputValuesFromUserInput(questions: Inputs, answers: ArrayDataValue<StringDataValue>): Outputs {
+  getOutputValuesFromUserInput(questions: Inputs, answers: DataValue): Outputs {
     const questionsList = this.data.useInput
       ? expectType(questions['questions' as PortId], 'string[]')
       : [this.data.prompt];
 
-    return {
-      ['output' as PortId]: answers,
-      ['questionsAndAnswers' as PortId]: {
-        type: 'string[]',
-        value: zip(questionsList, answers.value).map(([q, a]) => `${q}\n${a}`),
-      },
-    };
+    if (this.data.type === 'string') {
+      return {
+        ['output' as PortId]: answers,
+        ['questionsAndAnswers' as PortId]: {
+          type: 'string[]',
+          value: zip(questionsList, (answers as StringArrayDataValue).value).map(([q, a]) => `${q}\n${a}`),
+        },
+      };
+    } else if (this.data.type === 'audio') {
+      return {
+        ['output' as PortId]: answers,
+      };
+    }
+
+    throw new Error(`Unknown type: ${this.data.type}`);
   }
 }
 

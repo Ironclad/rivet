@@ -1,6 +1,6 @@
 import { FC, Suspense, useEffect, useRef, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { ArrayDataValue, StringDataValue } from '@ironclad/rivet-core';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { ArrayDataValue, DataValue, NodeId, StringDataValue, UserInputNode } from '@ironclad/rivet-core';
 import { lastAnswersState } from '../state/userInput.js';
 import Modal, { ModalBody, ModalFooter, ModalHeader, ModalTitle, ModalTransition } from '@atlaskit/modal-dialog';
 import Button from '@atlaskit/button';
@@ -9,6 +9,8 @@ import { css } from '@emotion/react';
 import type { monaco } from '../utils/monaco.js';
 import { useMarkdown } from '../hooks/useMarkdown.js';
 import { LazyCodeEditor } from './LazyComponents';
+import { nodeByIdState } from '../state/graph';
+import { invoke } from '@tauri-apps/api';
 
 const styles = css`
   .question {
@@ -34,19 +36,27 @@ const styles = css`
 type UserInputModalProps = {
   open: boolean;
   questions: string[];
-  onSubmit: (answers: ArrayDataValue<StringDataValue>) => void;
+  nodeId?: NodeId;
+  onSubmit: (answers: DataValue) => void;
   onClose?: () => void;
 };
 
-export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, onSubmit, onClose }) => {
-  const [answers, setAnswers] = useState<string[]>([]);
+export const UserInputModal: FC<UserInputModalProps> = ({
+  open,
+  questions,
+  nodeId = '' as NodeId,
+  onSubmit,
+  onClose,
+}) => {
+  const [answers, setAnswers] = useState<unknown[]>([]);
   const [lastAnswers, setLastAnswers] = useRecoilState(lastAnswersState);
+  const node = useRecoilValue(nodeByIdState(nodeId));
 
   useEffect(() => {
     setAnswers(questions.map((question) => lastAnswers[question] ?? ''));
   }, [open, lastAnswers, questions]);
 
-  const handleChange = (index: number, value: string) => {
+  const handleChange = (index: number, value: unknown) => {
     const newAnswers = [...answers];
     newAnswers[index] = value;
     setAnswers(newAnswers);
@@ -59,7 +69,7 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, onSub
     });
     setLastAnswers(newLastAnswers);
 
-    const results: ArrayDataValue<StringDataValue> = { type: 'string[]', value: answers };
+    const results: DataValue = { type: 'string[]', value: answers };
     onSubmit(results);
   };
 
@@ -72,16 +82,20 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, onSub
           </ModalHeader>
           <ModalBody>
             <div css={styles}>
-              {questions.map((question, index) => (
-                <UserInputModalQuestion
-                  index={index}
-                  key={`question-${index}`}
-                  question={question}
-                  answer={answers?.[index]}
-                  onChange={handleChange}
-                  onSubmit={handleSubmit}
-                />
-              ))}
+              {questions.map((question, index) =>
+                (node as UserInputNode).data.type === 'audio' ? (
+                  <AudioUserInputModalQuestion index={index} key={`question-${index}`} question={question} />
+                ) : (
+                  <UserInputModalQuestion
+                    index={index}
+                    key={`question-${index}`}
+                    question={question}
+                    answer={answers?.[index]}
+                    onChange={handleChange}
+                    onSubmit={handleSubmit}
+                  />
+                ),
+              )}
             </div>
           </ModalBody>
           <ModalFooter>
@@ -90,6 +104,45 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, onSub
         </Modal>
       )}
     </ModalTransition>
+  );
+};
+
+const AudioUserInputModalQuestion: FC<{
+  index: number;
+  question: string;
+  onRecorded: (index: number, blob: Blob) => void;
+}> = ({ question, index, onRecorded }) => {
+  const [recording, setRecording] = useState(false);
+
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  const startRecording = async () => {
+    await invoke('start_recording_audio');
+    setRecording(true);
+  };
+
+  const stopRecording = async () => {
+    await invoke('stop_recording_audio');
+    setRecording(false);
+  };
+
+  return (
+    <Field name={`question-${index}`} label={`Question ${index + 1}`}>
+      {() => (
+        <div>
+          <div className="question">{question}</div>
+          <div className="audio-controls">
+            <Button onClick={startRecording} isDisabled={recording}>
+              Record
+            </Button>
+            <Button onClick={stopRecording} isDisabled={!recording}>
+              Stop
+            </Button>
+          </div>
+          <audio ref={audioRef} controls></audio>
+        </div>
+      )}
+    </Field>
   );
 };
 

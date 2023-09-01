@@ -12,6 +12,7 @@ import {
   ArrayDataValue,
   BuiltInNodes,
   ChartNode,
+  DataValue,
   GraphId,
   NodeId,
   StringDataValue,
@@ -211,7 +212,7 @@ export const GraphBuilder: FC = () => {
     setUserInputModalOpen(true);
   };
 
-  const handleSubmitUserInputModal = (answers: ArrayDataValue<StringDataValue>) => {
+  const handleSubmitUserInputModal = (answers: DataValue) => {
     // Handle the submission of the user input
     setUserInputModalOpen(false);
     userInputModalSubmit.submit(firstNodeQuestions![0], answers);
@@ -237,6 +238,7 @@ export const GraphBuilder: FC = () => {
 
   const [, questions] = firstNodeQuestions ? firstNodeQuestions : [undefined, [] as ProcessQuestions[]];
   const lastQuestions = questions.at(-1)?.questions ?? [];
+  const lastQuestionsNodeId = questions.at(-1)?.nodeId;
 
   const selectedNodes = useMemo(
     () => selectedNodeIds.map((nodeId) => nodesById[nodeId]).filter(isNotNull),
@@ -266,6 +268,7 @@ export const GraphBuilder: FC = () => {
         <UserInputModal
           open={isUserInputModalOpen}
           questions={lastQuestions}
+          nodeId={lastQuestionsNodeId}
           onSubmit={handleSubmitUserInputModal}
           onClose={handleCloseUserInputModal}
         />

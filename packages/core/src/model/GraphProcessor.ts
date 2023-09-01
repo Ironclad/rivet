@@ -209,10 +209,8 @@ export class GraphProcessor {
   #nodeAbortControllers = new Map<`${NodeId}-${ProcessId}`, AbortController>();
 
   /** User input nodes that are pending user input. */
-  #pendingUserInputs: Record<
-    NodeId,
-    { resolve: (values: StringArrayDataValue) => void; reject: (error: unknown) => void }
-  > = undefined!;
+  #pendingUserInputs: Record<NodeId, { resolve: (values: DataValue) => void; reject: (error: unknown) => void }> =
+    undefined!;
 
   get isRunning() {
     return this.#running;
@@ -362,15 +360,15 @@ export class GraphProcessor {
     this.#emitter.offAny(internalHandler as any);
   }
 
-  userInput(nodeId: NodeId, values: StringArrayDataValue): void {
+  userInput(nodeId: NodeId, value: DataValue): void {
     const pending = this.#pendingUserInputs[nodeId];
     if (pending) {
-      pending.resolve(values as StringArrayDataValue);
+      pending.resolve(value as DataValue);
       delete this.#pendingUserInputs[nodeId];
     }
 
     for (const processor of this.#subprocessors) {
-      processor.userInput(nodeId, values);
+      processor.userInput(nodeId, value);
     }
   }
 
@@ -1061,7 +1059,7 @@ export class GraphProcessor {
 
       this.#emitter.emit('nodeStart', { node, inputs: inputValues, processId });
 
-      const results = await new Promise<StringArrayDataValue>((resolve, reject) => {
+      const results = await new Promise<DataValue>((resolve, reject) => {
         this.#pendingUserInputs[node.id] = {
           resolve,
           reject,

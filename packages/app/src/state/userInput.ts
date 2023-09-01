@@ -1,5 +1,5 @@
 import { atom } from 'recoil';
-import { ArrayDataValue, NodeId, ProcessId, StringDataValue } from '@ironclad/rivet-core';
+import { DataValue, NodeId, ProcessId } from '@ironclad/rivet-core';
 import { recoilPersist } from 'recoil-persist';
 
 const { persistAtom } = recoilPersist({ key: 'userInput' });
@@ -21,7 +21,7 @@ export const userInputModalQuestionsState = atom<Record<NodeId, ProcessQuestions
 });
 
 export const userInputModalSubmitState = atom<{
-  submit: (nodeId: NodeId, answers: ArrayDataValue<StringDataValue>) => void;
+  submit: (nodeId: NodeId, answers: DataValue) => void;
 }>({
   key: 'userInputModalSubmitState',
   default: { submit: () => {} },
