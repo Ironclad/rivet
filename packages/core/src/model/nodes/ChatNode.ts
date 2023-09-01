@@ -537,13 +537,14 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               url: 'https://api.openai.com/v1/chat/completions',
               method: 'POST',
               headers: {
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${context.settings.openAiKey}`,
                 ...(context.settings.openAiOrganization
                   ? { 'OpenAI-Organization': context.settings.openAiOrganization }
                   : {}),
               },
               signal: context.signal,
-              body: { ...options },
+              body: JSON.stringify(options),
             });
 
             if (response.ok) {
@@ -602,7 +603,9 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           randomize: true,
           signal: context.signal,
           onFailedAttempt(err) {
-            context.trace(`ChatNode failed, retrying: ${err.toString()}`);
+            const error = getError(err);
+
+            context.trace(`ChatNode failed, retrying: ${error.toString()}`);
 
             if (context.signal.aborted) {
               throw new Error('Aborted');
@@ -633,7 +636,6 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                 return;
               }
             }
-            console.dir({ err, status: err.status });
 
             // We did something wrong (besides rate limit)
             if (err.status >= 400 && err.status < 500) {

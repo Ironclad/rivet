@@ -29,3 +29,12 @@ esbuild.build({
     aliasModule('p-retry', 'p-retry-4'),
   ],
 });
+
+esbuild.build({
+  entryPoints: ['src/FetchHttpProvider.ts'],
+  bundle: false,
+  platform: 'node',
+  outfile: 'dist/cjs/FetchHttpProvider.cjs',
+  format: 'cjs',
+  target: 'node16',
+});

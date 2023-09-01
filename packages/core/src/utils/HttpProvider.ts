@@ -1,7 +1,7 @@
-export interface SimplifiedRequest<T> {
+export interface SimplifiedRequest {
   url: string;
   method?: string;
-  body?: T;
+  body?: string;
   headers?: Record<string, string>;
   signal?: AbortSignal;
 }
@@ -22,7 +22,19 @@ export interface SimplifiedStreamingEvent {
 export interface HttpProvider {
   supportsStreaming: boolean;
 
-  fetch<Res = unknown, Req = unknown>(request: SimplifiedRequest<Req>): Promise<SimplifiedResponse<Res>>;
+  fetch<Res = unknown, Req = unknown>(request: SimplifiedRequest): Promise<SimplifiedResponse<Res>>;
 
-  streamEvents<Req = unknown>(request: SimplifiedRequest<Req>): AsyncGenerator<SimplifiedStreamingEvent>;
+  streamEvents<Req = unknown>(request: SimplifiedRequest): AsyncGenerator<SimplifiedStreamingEvent>;
+}
+
+export class FakeHttpProvider implements HttpProvider {
+  supportsStreaming = false;
+
+  async fetch<Res = unknown, Req = unknown>(request: SimplifiedRequest): Promise<SimplifiedResponse<Res>> {
+    throw new Error('FakeHttpProvider does not support fetch');
+  }
+
+  async *streamEvents<Req = unknown>(request: SimplifiedRequest): AsyncGenerator<SimplifiedStreamingEvent> {
+    throw new Error('FakeHttpProvider does not support streamEvents');
+  }
 }

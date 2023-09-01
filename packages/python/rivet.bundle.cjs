@@ -10017,6 +10017,7 @@ __export(src_exports, {
   CommentNodeImpl: () => CommentNodeImpl,
   CompareNodeImpl: () => CompareNodeImpl,
   ContextNodeImpl: () => ContextNodeImpl,
+  DummyNativeApi: () => DummyNativeApi,
   EvaluateNodeImpl: () => EvaluateNodeImpl,
   ExecutionRecorder: () => ExecutionRecorder,
   ExternalCallNodeImpl: () => ExternalCallNodeImpl,
@@ -10024,6 +10025,7 @@ __export(src_exports, {
   ExtractObjectPathNodeImpl: () => ExtractObjectPathNodeImpl,
   ExtractRegexNodeImpl: () => ExtractRegexNodeImpl,
   ExtractYamlNodeImpl: () => ExtractYamlNodeImpl,
+  FakeHttpProvider: () => FakeHttpProvider,
   FilterNodeImpl: () => FilterNodeImpl,
   GetEmbeddingNodeImpl: () => GetEmbeddingNodeImpl,
   GetGlobalNodeImpl: () => GetGlobalNodeImpl,
@@ -14959,12 +14961,37 @@ var OpenAIError = class extends Error {
     this.name = "OpenAIError";
   }
 };
-async function* streamChatCompletions({
-  auth,
-  signal,
-  ...rest
-}) {
-  throw new Error("Not implemented yet");
+async function* streamChatCompletions(httpProvider, { auth, signal, ...rest }) {
+  if (!httpProvider.supportsStreaming) {
+    throw new Error("httpProvider does not support streaming");
+  }
+  const abortSignal = signal ?? new AbortController().signal;
+  for await (const chunk of httpProvider.streamEvents({
+    url: "https://api.openai.com/v1/chat/completions",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${auth.apiKey}`,
+      ...auth.organization ? { "OpenAI-Organization": auth.organization } : {}
+    },
+    body: JSON.stringify({
+      ...rest,
+      stream: true
+    }),
+    signal: abortSignal
+  })) {
+    if (chunk.data === "[DONE]" || abortSignal?.aborted) {
+      return;
+    }
+    let data;
+    try {
+      data = JSON.parse(chunk.data);
+    } catch (err) {
+      console.error("JSON parse failed on chunk: ", chunk);
+      throw err;
+    }
+    yield data;
+  }
 }
 
 // ../../.yarn/cache/p-retry-npm-5.1.2-5426d97d26-c1c8a1ceb5.zip/node_modules/p-retry/index.js
@@ -15324,6 +15351,7 @@ var ChatNodeImpl = class extends NodeImpl {
   }
   async process(inputs, context) {
     const output = {};
+    const { httpProvider } = context;
     const model = this.data.useModelInput ? coerceTypeOptional(inputs["model"], "string") ?? this.data.model : this.data.model;
     const temperature = this.data.useTemperatureInput ? coerceTypeOptional(inputs["temperature"], "number") ?? this.data.temperature : this.data.temperature;
     const topP = this.data.useTopPInput ? coerceTypeOptional(inputs["top_p"], "number") ?? this.data.top_p : this.data.top_p;
@@ -15377,63 +15405,97 @@ var ChatNodeImpl = class extends NodeImpl {
             }
           }
           const startTime = Date.now();
-          const chunks = streamChatCompletions({
-            auth: {
-              apiKey: context.settings.openAiKey,
-              organization: context.settings.openAiOrganization
-            },
-            signal: context.signal,
-            ...options2
-          });
-          const responseChoicesParts = [];
-          const functionCalls = [];
-          for await (const chunk of chunks) {
-            if (!chunk.choices) {
-              continue;
-            }
-            for (const { delta, index } of chunk.choices) {
-              if (delta.content != null) {
-                responseChoicesParts[index] ??= [];
-                responseChoicesParts[index].push(delta.content);
+          let responseTokenCount = 0;
+          if (httpProvider.supportsStreaming) {
+            const chunks = streamChatCompletions(httpProvider, {
+              auth: {
+                apiKey: context.settings.openAiKey,
+                organization: context.settings.openAiOrganization
+              },
+              signal: context.signal,
+              ...options2
+            });
+            const responseChoicesParts = [];
+            const functionCalls = [];
+            for await (const chunk of chunks) {
+              if (!chunk.choices) {
+                continue;
               }
-              if (delta.function_call) {
-                functionCalls[index] ??= {};
-                functionCalls[index] = merge_default(functionCalls[index], delta.function_call);
+              for (const { delta, index } of chunk.choices) {
+                if (delta.content != null) {
+                  responseChoicesParts[index] ??= [];
+                  responseChoicesParts[index].push(delta.content);
+                }
+                if (delta.function_call) {
+                  functionCalls[index] ??= {};
+                  functionCalls[index] = merge_default(functionCalls[index], delta.function_call);
+                }
               }
-            }
-            if (isMultiResponse) {
-              output["response"] = {
-                type: "string[]",
-                value: responseChoicesParts.map((parts) => parts.join(""))
-              };
-            } else {
-              output["response"] = {
-                type: "string",
-                value: responseChoicesParts[0]?.join("") ?? ""
-              };
-            }
-            if (functionCalls.length > 0) {
               if (isMultiResponse) {
-                output["function-call"] = {
-                  type: "object[]",
-                  value: functionCalls
+                output["response"] = {
+                  type: "string[]",
+                  value: responseChoicesParts.map((parts) => parts.join(""))
                 };
               } else {
-                output["function-call"] = {
-                  type: "object",
-                  value: functionCalls[0]
+                output["response"] = {
+                  type: "string",
+                  value: responseChoicesParts[0]?.join("") ?? ""
                 };
               }
+              if (functionCalls.length > 0) {
+                if (isMultiResponse) {
+                  output["function-call"] = {
+                    type: "object[]",
+                    value: functionCalls
+                  };
+                } else {
+                  output["function-call"] = {
+                    type: "object",
+                    value: functionCalls[0]
+                  };
+                }
+              }
+              context.onPartialOutputs?.(output);
             }
-            context.onPartialOutputs?.(output);
+            if (responseChoicesParts.length === 0 && functionCalls.length === 0) {
+              throw new Error("No response from OpenAI");
+            }
+            responseTokenCount = responseChoicesParts.map((choiceParts) => defaultTokenizer.getTokenCountForString(choiceParts.join())).reduce((a2, b2) => a2 + b2, 0);
+          } else {
+            const response = await httpProvider.fetch({
+              url: "https://api.openai.com/v1/chat/completions",
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${context.settings.openAiKey}`,
+                ...context.settings.openAiOrganization ? { "OpenAI-Organization": context.settings.openAiOrganization } : {}
+              },
+              signal: context.signal,
+              body: JSON.stringify(options2)
+            });
+            if (response.ok) {
+              const { body } = response;
+              if (isMultiResponse) {
+                const choices = body.choices;
+                const responseChoicesParts = choices.map((choice) => choice.message.content);
+                output["response"] = {
+                  type: "string[]",
+                  value: responseChoicesParts
+                };
+              } else {
+                const choice = body.choices[0];
+                output["response"] = {
+                  type: "string",
+                  value: choice.message.content
+                };
+              }
+            } else {
+              throw new OpenAIError(response.status, response.body);
+            }
           }
           const endTime = Date.now();
-          if (responseChoicesParts.length === 0 && functionCalls.length === 0) {
-            throw new Error("No response from OpenAI");
-          }
           const requestTokenCount = defaultTokenizer.getTokenCountForMessages(completionMessages);
           output["requestTokens"] = { type: "number", value: requestTokenCount * numberOfChoices };
-          const responseTokenCount = responseChoicesParts.map((choiceParts) => defaultTokenizer.getTokenCountForString(choiceParts.join())).reduce((a2, b2) => a2 + b2, 0);
           output["responseTokens"] = { type: "number", value: responseTokenCount };
           const cost = getCostForPrompt(
             defaultTokenizer,
@@ -15457,12 +15519,20 @@ var ChatNodeImpl = class extends NodeImpl {
           randomize: true,
           signal: context.signal,
           onFailedAttempt(err) {
-            context.trace(`ChatNode failed, retrying: ${err.toString()}`);
+            const error = getError(err);
+            context.trace(`ChatNode failed, retrying: ${error.toString()}`);
             if (context.signal.aborted) {
               throw new Error("Aborted");
             }
             const { retriesLeft } = err;
             if (!(err instanceof OpenAIError)) {
+              const httpErrorMatch = /HTTP (\d+)/.exec(err.message);
+              if (httpErrorMatch) {
+                const status = Number(httpErrorMatch[1]);
+                if (status >= 400 && status < 500) {
+                  throw new Error(err.message);
+                }
+              }
               return;
             }
             if (err.status === 429) {
@@ -28793,6 +28863,22 @@ function assertBaseDir(baseDir) {
   }
 }
 
+// src/native/NativeApi.ts
+var DummyNativeApi = class {
+  readdir(path, baseDir, options2) {
+    throw new Error("Method not implemented.");
+  }
+  readTextFile(path, baseDir) {
+    throw new Error("Method not implemented.");
+  }
+  readBinaryFile(path, baseDir) {
+    throw new Error("Method not implemented.");
+  }
+  writeTextFile(path, data, baseDir) {
+    throw new Error("Method not implemented.");
+  }
+};
+
 // src/native/BrowserNativeApi.ts
 var BrowserNativeApi = class {
   readdir(_path, _baseDir) {
@@ -33536,6 +33622,17 @@ function base64ToUint8Array(base64) {
   }
   return bytes;
 }
+
+// src/utils/HttpProvider.ts
+var FakeHttpProvider = class {
+  supportsStreaming = false;
+  async fetch(request) {
+    throw new Error("FakeHttpProvider does not support fetch");
+  }
+  async *streamEvents(request) {
+    throw new Error("FakeHttpProvider does not support streamEvents");
+  }
+};
 /*! Bundled license information:
 
 crypto-js/ripemd160.js:

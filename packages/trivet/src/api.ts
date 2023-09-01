@@ -10,7 +10,8 @@ import {
 } from '@ironclad/rivet-core';
 import { cloneDeep, keyBy, mapValues, omit } from 'lodash-es';
 import { TrivetGraphRunner, TrivetOpts, TrivetResults, TrivetTestCaseResult } from './trivetTypes.js';
-import { FetchHttpProvider } from './FetchHttpProvider.js';
+import { FetchHttpProvider } from '@ironclad/rivet-core/FetchHttpProvider';
+import { DummyNativeApi } from '@ironclad/rivet-core';
 
 const TRUTHY_STRINGS = new Set(['true', 'TRUE']);
 
@@ -22,21 +23,6 @@ function validateOutput(v: DataValue) {
       return TRUTHY_STRINGS.has(v.value);
     default:
       throw new Error(`Unexpected output type: ${v.type}`);
-  }
-}
-
-export class DummyNativeApi implements NativeApi {
-  readdir(path: string, baseDir?: BaseDir | undefined, options?: ReadDirOptions | undefined): Promise<string[]> {
-    throw new Error('Method not implemented.');
-  }
-  readTextFile(path: string, baseDir?: BaseDir | undefined): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  readBinaryFile(path: string, baseDir?: BaseDir | undefined): Promise<Blob> {
-    throw new Error('Method not implemented.');
-  }
-  writeTextFile(path: string, data: string, baseDir?: BaseDir | undefined): Promise<void> {
-    throw new Error('Method not implemented.');
   }
 }
 

@@ -16,6 +16,7 @@ export default defineConfig({
     preserveSymlinks: true,
 
     alias: {
+      '@ironclad/rivet-core/FetchHttpProvider': resolve('../core/src/FetchHttpProvider.ts'),
       '@ironclad/rivet-core': resolve('../core/src/index.ts'),
       '@ironclad/trivet': resolve('../trivet/src/index.ts'),
     },

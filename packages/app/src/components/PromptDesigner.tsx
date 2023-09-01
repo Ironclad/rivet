@@ -50,7 +50,7 @@ import { useStableCallback } from '../hooks/useStableCallback.js';
 import { toast } from 'react-toastify';
 import { produce } from 'immer';
 import { overlayOpenState } from '../state/ui';
-import { FetchHttpProvider } from '../utils/FetchHttpProvider';
+import { FetchHttpProvider } from '@ironclad/rivet-core/FetchHttpProvider';
 
 const styles = css`
   position: fixed;

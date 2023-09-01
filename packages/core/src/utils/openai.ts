@@ -173,13 +173,14 @@ export async function* streamChatCompletions(
     url: 'https://api.openai.com/v1/chat/completions',
     method: 'POST',
     headers: {
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${auth.apiKey}`,
       ...(auth.organization ? { 'OpenAI-Organization': auth.organization } : {}),
     },
-    body: {
+    body: JSON.stringify({
       ...rest,
       stream: true,
-    },
+    }),
     signal: abortSignal,
   })) {
     if (chunk.data === '[DONE]' || abortSignal?.aborted) {

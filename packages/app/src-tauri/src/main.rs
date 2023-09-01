@@ -9,7 +9,6 @@ use tauri::{CustomMenuItem, Manager, Menu, MenuItem, Submenu};
 fn set_recent_project_files(recent_files: Vec<&str>, window: tauri::Window) {
     let menu = window.menu_handle();
     let item = menu.get_item("new_project");
-    dbg!(menu);
 }
 
 fn main() {

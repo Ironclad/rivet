@@ -12,6 +12,7 @@ import {
   deserializeProject,
   globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
+import { FetchHttpProvider } from '@ironclad/rivet-core/FetchHttpProvider';
 
 import { readFile } from 'node:fs/promises';
 import { RivetDebuggerServer } from './debugger.js';
@@ -199,6 +200,7 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
             pluginSettings: options.pluginSettings ?? {},
             recordingPlaybackLatency: 1000,
           } satisfies Required<Settings>,
+          httpProvider: new FetchHttpProvider(),
         },
         resolvedInputs,
         resolvedContextValues,

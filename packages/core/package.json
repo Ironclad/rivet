@@ -9,20 +9,39 @@
   "type": "module",
   "types": "dist/types/index.d.ts",
   "exports": {
-    "node": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/bundle.cjs"
+    "./FetchHttpProvider": {
+      "node": {
+        "types": "./dist/types/FetchHttpProvider.d.ts",
+        "import": "./dist/esm/FetchHttpProvider.js",
+        "require": "./dist/cjs/FetchHttpProvider.cjs"
+      },
+      "browser": {
+        "types": "./dist/types/FetchHttpProvider.d.ts",
+        "import": "./dist/esm/FetchHttpProvider.js",
+        "require": "./dist/cjs/FetchHttpProvider.cjs"
+      },
+      "default": {
+        "types": "./dist/types/FetchHttpProvider.d.ts",
+        "import": "./dist/esm/FetchHttpProvider.js",
+        "require": "./dist/cjs/FetchHttpProvider.cjs"
+      }
     },
-    "browser": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/bundle.cjs"
-    },
-    "default": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/bundle.cjs"
+    ".": {
+      "node": {
+        "types": "./dist/types/index.d.ts",
+        "import": "./dist/esm/index.js",
+        "require": "./dist/cjs/bundle.cjs"
+      },
+      "browser": {
+        "types": "./dist/types/index.d.ts",
+        "import": "./dist/esm/index.js",
+        "require": "./dist/cjs/bundle.cjs"
+      },
+      "default": {
+        "types": "./dist/types/index.d.ts",
+        "import": "./dist/esm/index.js",
+        "require": "./dist/cjs/bundle.cjs"
+      }
     }
   },
   "files": [

@@ -9,14 +9,13 @@ import {
 export class FetchHttpProvider implements HttpProvider {
   supportsStreaming = true;
 
-  async fetch<Res = unknown, Req = unknown>(request: SimplifiedRequest<Req>): Promise<SimplifiedResponse<Res>> {
+  async fetch<Res = unknown, Req = unknown>(request: SimplifiedRequest): Promise<SimplifiedResponse<Res>> {
     const response = await fetch(request.url, {
       method: request.method || 'GET',
       headers: {
-        'Content-Type': 'application/json',
         ...request.headers,
       },
-      body: JSON.stringify(request.body),
+      body: request.body,
       signal: request.signal,
     });
 
@@ -36,15 +35,13 @@ export class FetchHttpProvider implements HttpProvider {
     };
   }
 
-  async *streamEvents<Req = unknown>(request: SimplifiedRequest<Req>): AsyncGenerator<SimplifiedStreamingEvent> {
-    console.dir({ request });
+  async *streamEvents(request: SimplifiedRequest): AsyncGenerator<SimplifiedStreamingEvent> {
     const response = await fetchEventSource(request.url, {
       method: request.method || 'GET',
       headers: {
-        'Content-Type': 'application/json',
         ...request.headers,
       },
-      body: JSON.stringify(request.body),
+      body: request.body,
       signal: request.signal,
     });
 

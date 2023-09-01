@@ -24,7 +24,7 @@ import { lastRecordingState, loadedRecordingState } from '../state/execution';
 import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
 import { trivetState } from '../state/trivet';
 import { runTrivet } from '@ironclad/trivet';
-import { FetchHttpProvider } from '../utils/FetchHttpProvider';
+import { FetchHttpProvider } from '@ironclad/rivet-core/FetchHttpProvider';
 
 export function useLocalExecutor() {
   const project = useRecoilValue(projectState);
