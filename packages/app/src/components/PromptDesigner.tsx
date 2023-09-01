@@ -50,6 +50,7 @@ import { useStableCallback } from '../hooks/useStableCallback.js';
 import { toast } from 'react-toastify';
 import { produce } from 'immer';
 import { overlayOpenState } from '../state/ui';
+import { FetchHttpProvider } from '../utils/FetchHttpProvider';
 
 const styles = css`
   position: fixed;
@@ -981,6 +982,7 @@ async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
         },
       },
       {
+        httpProvider: new FetchHttpProvider(),
         contextValues: {},
         createSubProcessor: undefined!,
         settings,
@@ -1042,6 +1044,7 @@ function useRunTestGroup() {
       {
         nativeApi: new TauriNativeApi(),
         settings,
+        httpProvider: new FetchHttpProvider(),
       },
       {
         ['conditions' as PortId]: {

@@ -30,6 +30,7 @@ import { coerceTypeOptional } from '../utils/coerceType.js';
 import { BuiltInNodeType, BuiltInNodes, globalRivetNodeRegistry } from './Nodes.js';
 import { NodeRegistration } from './NodeRegistration.js';
 import { StringPluginConfigurationSpec } from './RivetPlugin.js';
+import { HttpProvider } from '../utils/HttpProvider.js';
 
 // CJS compatibility, gets default.default for whatever reason
 let PQueue = PQueueImport;

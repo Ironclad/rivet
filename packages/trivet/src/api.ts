@@ -10,6 +10,7 @@ import {
 } from '@ironclad/rivet-core';
 import { cloneDeep, keyBy, mapValues, omit } from 'lodash-es';
 import { TrivetGraphRunner, TrivetOpts, TrivetResults, TrivetTestCaseResult } from './trivetTypes.js';
+import { FetchHttpProvider } from './FetchHttpProvider.js';
 
 const TRUTHY_STRINGS = new Set(['true', 'TRUE']);
 
@@ -46,6 +47,7 @@ export function createTestGraphRunner(opts: { openAiKey: string }): TrivetGraphR
     const outputs = await processor.processGraph(
       {
         nativeApi: new DummyNativeApi(),
+        httpProvider: new FetchHttpProvider(),
         settings: {
           openAiKey: opts.openAiKey,
           openAiOrganization: '',
@@ -141,41 +143,40 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
           );
 
           console.dir({ validationOutputs });
-          const validationResults = Object.entries(validationOutputs)
-            .map(([outputId, result]) => {
-              const node = validationOutputNodesById[outputId];
-              if (node === undefined) {
-                throw new Error('Missing node for validation');
-              }
-              const valid = validateOutput(result);
-              return {
-                id: node.id,
-                title: node.title ?? 'Validation',
-                description: node.description ?? 'It should be valid.',
-                valid,
-              };
-            });
-            testCaseResults.push({
-              id: testCase.id,
-              iteration: i + 1,
-              passing: validationResults.every((r) => r.valid),
-              message: validationResults.find((r) => !r.valid)?.description ?? 'PASS',
-              outputs: mapValues(omit(outputs, 'cost'), (dataValue) => dataValue.value),
-              duration,
-              cost,
-            });
-          } catch (err) {
-            testCaseResults.push({
-              id: testCase.id,
-              iteration: i + 1,
-              passing: false,
-              message: 'An error occurred',
-              outputs: {},
-              duration: 0,
-              cost: 0,
-              error: err,
-            });
-          }
+          const validationResults = Object.entries(validationOutputs).map(([outputId, result]) => {
+            const node = validationOutputNodesById[outputId];
+            if (node === undefined) {
+              throw new Error('Missing node for validation');
+            }
+            const valid = validateOutput(result);
+            return {
+              id: node.id,
+              title: node.title ?? 'Validation',
+              description: node.description ?? 'It should be valid.',
+              valid,
+            };
+          });
+          testCaseResults.push({
+            id: testCase.id,
+            iteration: i + 1,
+            passing: validationResults.every((r) => r.valid),
+            message: validationResults.find((r) => !r.valid)?.description ?? 'PASS',
+            outputs: mapValues(omit(outputs, 'cost'), (dataValue) => dataValue.value),
+            duration,
+            cost,
+          });
+        } catch (err) {
+          testCaseResults.push({
+            id: testCase.id,
+            iteration: i + 1,
+            passing: false,
+            message: 'An error occurred',
+            outputs: {},
+            duration: 0,
+            cost: 0,
+            error: err,
+          });
+        }
 
         let existingTestSuite = trivetResults.testSuiteResults.find((ts) => ts.id === testSuite.id);
         if (existingTestSuite == null) {

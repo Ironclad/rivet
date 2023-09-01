@@ -7,6 +7,7 @@ import { addWarning } from '../../utils/outputs.js';
 import {
   ChatCompletionOptions,
   ChatCompletionRequestMessage,
+  ChatCompletionResponse,
   OpenAIError,
   openAiModelOptions,
   openaiModels,
@@ -365,6 +366,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const output: Outputs = {};
 
+    const { httpProvider } = context;
+
     const model = this.data.useModelInput
       ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? this.data.model
       : this.data.model;
@@ -460,78 +463,114 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
           const startTime = Date.now();
 
-          const chunks = streamChatCompletions({
-            auth: {
-              apiKey: context.settings.openAiKey,
-              organization: context.settings.openAiOrganization,
-            },
-            signal: context.signal,
-            ...options,
-          });
+          let responseTokenCount = 0;
 
-          const responseChoicesParts: string[][] = [];
-          const functionCalls: object[] = [];
+          if (httpProvider.supportsStreaming) {
+            const chunks = streamChatCompletions(httpProvider, {
+              auth: {
+                apiKey: context.settings.openAiKey,
+                organization: context.settings.openAiOrganization,
+              },
+              signal: context.signal,
+              ...options,
+            });
 
-          for await (const chunk of chunks) {
-            if (!chunk.choices) {
-              // Could be error for some reason 🤷‍♂️ but ignoring has worked for me so far.
-              continue;
-            }
+            const responseChoicesParts: string[][] = [];
+            const functionCalls: object[] = [];
 
-            for (const { delta, index } of chunk.choices) {
-              if (delta.content != null) {
-                responseChoicesParts[index] ??= [];
-                responseChoicesParts[index]!.push(delta.content);
+            for await (const chunk of chunks) {
+              if (!chunk.choices) {
+                // Could be error for some reason 🤷‍♂️ but ignoring has worked for me so far.
+                continue;
               }
 
-              if (delta.function_call) {
-                functionCalls[index] ??= {};
-                functionCalls[index] = merge(functionCalls[index], delta.function_call);
+              for (const { delta, index } of chunk.choices) {
+                if (delta.content != null) {
+                  responseChoicesParts[index] ??= [];
+                  responseChoicesParts[index]!.push(delta.content);
+                }
+
+                if (delta.function_call) {
+                  functionCalls[index] ??= {};
+                  functionCalls[index] = merge(functionCalls[index], delta.function_call);
+                }
               }
-            }
 
-            if (isMultiResponse) {
-              output['response' as PortId] = {
-                type: 'string[]',
-                value: responseChoicesParts.map((parts) => parts.join('')),
-              };
-            } else {
-              output['response' as PortId] = {
-                type: 'string',
-                value: responseChoicesParts[0]?.join('') ?? '',
-              };
-            }
-
-            if (functionCalls.length > 0) {
               if (isMultiResponse) {
-                output['function-call' as PortId] = {
-                  type: 'object[]',
-                  value: functionCalls as Record<string, unknown>[],
+                output['response' as PortId] = {
+                  type: 'string[]',
+                  value: responseChoicesParts.map((parts) => parts.join('')),
                 };
               } else {
-                output['function-call' as PortId] = {
-                  type: 'object',
-                  value: functionCalls[0] as Record<string, unknown>,
+                output['response' as PortId] = {
+                  type: 'string',
+                  value: responseChoicesParts[0]?.join('') ?? '',
                 };
               }
+
+              if (functionCalls.length > 0) {
+                if (isMultiResponse) {
+                  output['function-call' as PortId] = {
+                    type: 'object[]',
+                    value: functionCalls as Record<string, unknown>[],
+                  };
+                } else {
+                  output['function-call' as PortId] = {
+                    type: 'object',
+                    value: functionCalls[0] as Record<string, unknown>,
+                  };
+                }
+              }
+
+              context.onPartialOutputs?.(output);
             }
 
-            context.onPartialOutputs?.(output);
+            if (responseChoicesParts.length === 0 && functionCalls.length === 0) {
+              throw new Error('No response from OpenAI');
+            }
+
+            responseTokenCount = responseChoicesParts
+              .map((choiceParts) => defaultTokenizer.getTokenCountForString(choiceParts.join()))
+              .reduce((a, b) => a + b, 0);
+          } else {
+            const response = await httpProvider.fetch<ChatCompletionResponse>({
+              url: 'https://api.openai.com/v1/chat/completions',
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${context.settings.openAiKey}`,
+                ...(context.settings.openAiOrganization
+                  ? { 'OpenAI-Organization': context.settings.openAiOrganization }
+                  : {}),
+              },
+              signal: context.signal,
+              body: { ...options },
+            });
+
+            if (response.ok) {
+              const { body } = response;
+              if (isMultiResponse) {
+                const choices = body.choices;
+                const responseChoicesParts = choices.map((choice) => choice.message.content);
+                output['response' as PortId] = {
+                  type: 'string[]',
+                  value: responseChoicesParts,
+                };
+              } else {
+                const choice = body.choices[0]!;
+                output['response' as PortId] = {
+                  type: 'string',
+                  value: choice.message.content,
+                };
+              }
+            } else {
+              throw new OpenAIError(response.status, response.body);
+            }
           }
 
           const endTime = Date.now();
 
-          if (responseChoicesParts.length === 0 && functionCalls.length === 0) {
-            throw new Error('No response from OpenAI');
-          }
-
           const requestTokenCount = defaultTokenizer.getTokenCountForMessages(completionMessages);
           output['requestTokens' as PortId] = { type: 'number', value: requestTokenCount * numberOfChoices };
-
-          const responseTokenCount = responseChoicesParts
-            .map((choiceParts) => defaultTokenizer.getTokenCountForString(choiceParts.join()))
-            .reduce((a, b) => a + b, 0);
-
           output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
 
           const cost =
@@ -572,6 +611,14 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             const { retriesLeft } = err;
 
             if (!(err instanceof OpenAIError)) {
+              const httpErrorMatch = /HTTP (\d+)/.exec(err.message);
+              if (httpErrorMatch) {
+                const status = Number(httpErrorMatch[1]);
+                if (status >= 400 && status < 500) {
+                  throw new Error(err.message);
+                }
+              }
+
               return; // Just retry?
             }
 
@@ -586,6 +633,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                 return;
               }
             }
+            console.dir({ err, status: err.status });
 
             // We did something wrong (besides rate limit)
             if (err.status >= 400 && err.status < 500) {

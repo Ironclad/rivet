@@ -24,6 +24,7 @@ import { lastRecordingState, loadedRecordingState } from '../state/execution';
 import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
 import { trivetState } from '../state/trivet';
 import { runTrivet } from '@ironclad/trivet';
+import { FetchHttpProvider } from '../utils/FetchHttpProvider';
 
 export function useLocalExecutor() {
   const project = useRecoilValue(projectState);
@@ -113,6 +114,7 @@ export function useLocalExecutor() {
             globalRivetNodeRegistry.getPlugins(),
           ),
           nativeApi: new TauriNativeApi(),
+          httpProvider: new FetchHttpProvider(),
         });
       }
 
@@ -168,6 +170,7 @@ export function useLocalExecutor() {
                   globalRivetNodeRegistry.getPlugins(),
                 ),
                 nativeApi: new TauriNativeApi(),
+                httpProvider: new FetchHttpProvider(),
               },
               inputs,
             );

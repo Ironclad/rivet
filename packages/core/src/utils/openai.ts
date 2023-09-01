@@ -1,5 +1,7 @@
 // https://github.com/openai/openai-node/issues/18#issuecomment-1518715285
 
+import { HttpProvider } from './HttpProvider.js';
+
 export type OpenAIModel = {
   maxTokens: number;
   cost: {
@@ -157,55 +159,40 @@ export type ChatCompletionFunction = {
   parameters: object;
 };
 
-export async function* streamChatCompletions({
-  auth,
-  signal,
-  ...rest
-}: ChatCompletionOptions): AsyncGenerator<ChatCompletionChunk> {
-  throw new Error('Not implemented yet');
+export async function* streamChatCompletions(
+  httpProvider: HttpProvider,
+  { auth, signal, ...rest }: ChatCompletionOptions,
+): AsyncGenerator<ChatCompletionChunk> {
+  if (!httpProvider.supportsStreaming) {
+    throw new Error('httpProvider does not support streaming');
+  }
+
+  const abortSignal = signal ?? new AbortController().signal;
+
+  for await (const chunk of httpProvider.streamEvents({
+    url: 'https://api.openai.com/v1/chat/completions',
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${auth.apiKey}`,
+      ...(auth.organization ? { 'OpenAI-Organization': auth.organization } : {}),
+    },
+    body: {
+      ...rest,
+      stream: true,
+    },
+    signal: abortSignal,
+  })) {
+    if (chunk.data === '[DONE]' || abortSignal?.aborted) {
+      return;
+    }
+    let data: ChatCompletionChunk;
+    try {
+      data = JSON.parse(chunk.data);
+    } catch (err) {
+      console.error('JSON parse failed on chunk: ', chunk);
+      throw err;
+    }
+
+    yield data;
+  }
 }
-
-// export async function* streamChatCompletions({
-//   auth,
-//   signal,
-//   ...rest
-// }: ChatCompletionOptions): AsyncGenerator<ChatCompletionChunk> {
-//   const abortSignal = signal ?? new AbortController().signal;
-//   const response = await fetchEventSource('https://api.openai.com/v1/chat/completions', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       Authorization: `Bearer ${auth.apiKey}`,
-//       ...(auth.organization ? { 'OpenAI-Organization': auth.organization } : {}),
-//     },
-//     body: JSON.stringify({
-//       ...rest,
-//       stream: true,
-//     }),
-//     signal: abortSignal,
-//   });
-
-//   let hadChunks = false;
-
-//   for await (const chunk of response.events()) {
-//     hadChunks = true;
-
-//     if (chunk === '[DONE]' || abortSignal?.aborted) {
-//       return;
-//     }
-//     let data: ChatCompletionChunk;
-//     try {
-//       data = JSON.parse(chunk);
-//     } catch (err) {
-//       console.error('JSON parse failed on chunk: ', chunk);
-//       throw err;
-//     }
-
-//     yield data;
-//   }
-
-//   if (!hadChunks) {
-//     const responseJson = await response.json();
-//     throw new OpenAIError(response.status, responseJson);
-//   }
-// }

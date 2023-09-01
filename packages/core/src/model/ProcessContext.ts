@@ -9,11 +9,13 @@ import {
   GraphId,
   GraphProcessor,
   ScalarOrArrayDataValue,
+  HttpProvider,
 } from '../index.js';
 
 export type ProcessContext = {
   settings: Settings;
   nativeApi: NativeApi;
+  httpProvider: HttpProvider;
 };
 
 export type ProcessId = Opaque<string, 'ProcessId'>;
@@ -70,4 +72,6 @@ export type InternalProcessContext = ProcessContext & {
 
   /** Gets a string plugin config value from the settings, falling back to a specified environment variable if set. */
   getPluginConfig(name: string): string | undefined;
+
+  httpProvider: HttpProvider;
 };

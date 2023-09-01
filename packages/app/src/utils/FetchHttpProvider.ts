@@ -1,4 +1,65 @@
-import { getError } from './errors.js';
+import {
+  HttpProvider,
+  SimplifiedRequest,
+  SimplifiedResponse,
+  SimplifiedStreamingEvent,
+  getError,
+} from '@ironclad/rivet-core';
+
+export class FetchHttpProvider implements HttpProvider {
+  supportsStreaming = true;
+
+  async fetch<Res = unknown, Req = unknown>(request: SimplifiedRequest<Req>): Promise<SimplifiedResponse<Res>> {
+    const response = await fetch(request.url, {
+      method: request.method || 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        ...request.headers,
+      },
+      body: JSON.stringify(request.body),
+      signal: request.signal,
+    });
+
+    const body = await response.json();
+
+    const responseHeaders: Record<string, string> = {};
+    response.headers.forEach((value, key) => {
+      responseHeaders[key] = value;
+    });
+
+    return {
+      ok: response.ok,
+      status: response.status,
+      statusText: response.statusText,
+      body,
+      headers: responseHeaders,
+    };
+  }
+
+  async *streamEvents<Req = unknown>(request: SimplifiedRequest<Req>): AsyncGenerator<SimplifiedStreamingEvent> {
+    console.dir({ request });
+    const response = await fetchEventSource(request.url, {
+      method: request.method || 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        ...request.headers,
+      },
+      body: JSON.stringify(request.body),
+      signal: request.signal,
+    });
+
+    let hadChunks = false;
+
+    for await (const event of response.events()) {
+      hadChunks = true;
+      yield { type: 'data', data: event };
+    }
+
+    if (!hadChunks) {
+      throw new Error(`HTTP ${response.status}: ${JSON.stringify(await response.json())}`);
+    }
+  }
+}
 
 // https://github.com/openai/openai-node/issues/18#issuecomment-1518715285
 export class EventSourceResponse extends Response {
@@ -67,7 +128,7 @@ export class EventSourceResponse extends Response {
   }
 }
 
-export default async function fetchEventSource(url: string, init?: RequestInit): Promise<EventSourceResponse> {
+async function fetchEventSource(url: string, init?: RequestInit): Promise<EventSourceResponse> {
   const headers = {
     ...init?.headers,
     accept: 'text/event-stream',

@@ -1,13 +1,12 @@
-// Simplified version of the Request interface
-interface SimplifiedRequest<T> {
+export interface SimplifiedRequest<T> {
   url: string;
   method?: string;
   body?: T;
   headers?: Record<string, string>;
+  signal?: AbortSignal;
 }
 
-// Simplified version of the Response interface
-interface SimplifiedResponse<T> {
+export interface SimplifiedResponse<T> {
   ok: boolean;
   status: number;
   statusText: string;
@@ -15,14 +14,15 @@ interface SimplifiedResponse<T> {
   headers: Record<string, string>;
 }
 
-// Event interface
-interface SimplifiedEvent<T> {
+export interface SimplifiedStreamingEvent {
   type: string;
-  data: T;
+  data: string;
 }
 
-// HttpProvider interface
-interface HttpProvider {
+export interface HttpProvider {
+  supportsStreaming: boolean;
+
   fetch<Res = unknown, Req = unknown>(request: SimplifiedRequest<Req>): Promise<SimplifiedResponse<Res>>;
-  streamEvents<Res = unknown, Req = unknown>(request: SimplifiedRequest<Req>): AsyncGenerator<SimplifiedEvent<Req>>;
+
+  streamEvents<Req = unknown>(request: SimplifiedRequest<Req>): AsyncGenerator<SimplifiedStreamingEvent>;
 }
