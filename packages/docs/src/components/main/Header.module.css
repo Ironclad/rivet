@@ -149,7 +149,7 @@
     padding: 40px 60px;
   }
 
-  .navLink {
+  .navLink.navLink {
     font-size: 24px;
   }
 }

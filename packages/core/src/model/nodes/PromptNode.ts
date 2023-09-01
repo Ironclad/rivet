@@ -68,7 +68,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
     }
 
     // Extract inputs from promptText, everything like {{input}}
-    const inputNames = this.chartNode.data.promptText.match(/\{\{([^}]+)\}\}/g);
+    const inputNames = [...new Set(this.chartNode.data.promptText.match(/\{\{([^}]+)\}\}/g))];
     inputs = [
       ...inputs,
       ...(inputNames?.map((inputName): NodeInputDefinition => {

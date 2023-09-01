@@ -107,20 +107,18 @@ export function useCurrentExecution() {
     setGraphPaused(false);
     setUserInputQuestions({});
     setRunningGraphsState([]);
+  };
 
-    // Mark all currently running nodes as
+  const interruptAll = () => {
+    // Mark all currently running nodes as interrupted
     setLastRunData((lastRun) =>
       produce(lastRun, (draft) => {
         keys(draft).forEach((nodeId) => {
-          draft[nodeId] = draft[nodeId]!.map((process) => ({
-            ...process,
-            data: {
-              ...process.data,
-              status: {
-                type: 'interrupted',
-              },
-            },
-          }));
+          draft[nodeId]!.forEach((process) => {
+            if (process.data.status?.type === 'running') {
+              process.data.status = { type: 'interrupted' };
+            }
+          });
         });
       }),
     );
@@ -136,6 +134,7 @@ export function useCurrentExecution() {
 
   function onAbort(_data: ProcessEvents['abort']) {
     stopAll();
+    interruptAll();
   }
 
   function onGraphAbort(_data: ProcessEvents['graphAbort']) {

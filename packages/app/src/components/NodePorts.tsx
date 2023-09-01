@@ -84,7 +84,7 @@ export const NodePorts: FC<NodePortsProps> = ({
               connected={connected}
               key={`output-${output.id}`}
               nodeId={node.id}
-              canDragTo={draggingWire ? draggingWire.startPortIsInput : true}
+              canDragTo={draggingWire ? draggingWire.startPortIsInput : false}
               closest={closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === output.id}
               onMouseDown={handlePortMouseDown}
               onMouseUp={handlePortMouseUp}
