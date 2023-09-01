@@ -33,6 +33,12 @@ export const UseCasesSection: React.FC<{ id?: string }> = ({ id }) => {
           </p>
           <p className={styles.quoteAttribution}>Domenic Donato, VP of Technology at <a href="https://www.assemblyai.com/" target="_blank">AssemblyAI</a></p>
         </div>
+        <div className={layout.card3}>
+          <p className={styles.quote}>
+            Rivet is a super slick and compelling tool for prompt construction and LLM composition, particularly when you're trying to combine AI with many existing tools and APIs. I can see this becoming a popular tool for those working on robust and reliable AI applications.
+          </p>
+          <p className={styles.quoteAttribution}>Beyang Liu, CTO at <a href="https://www.sourcegraph.com/" target="_blank">Sourcegraph</a></p>
+        </div>
       </div>
     </Section>
   );
