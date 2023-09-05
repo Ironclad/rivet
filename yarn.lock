@@ -4164,7 +4164,7 @@ __metadata:
     "@types/lodash-es": "npm:^4.17.8"
     "@types/yaml": "npm:^1.9.7"
     "@typescript-eslint/eslint-plugin": "npm:^5.50.0"
-    autoevals: "npm:^0.0.11"
+    autoevals: "npm:^0.0.16"
     crypto-js: "npm:^4.1.1"
     emittery: "npm:^1.0.1"
     emittery-0-13: "npm:emittery@^0.13.1"
@@ -6841,9 +6841,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoevals@npm:^0.0.11":
-  version: 0.0.11
-  resolution: "autoevals@npm:0.0.11"
+"autoevals@npm:^0.0.16":
+  version: 0.0.16
+  resolution: "autoevals@npm:0.0.16"
   dependencies:
     "@types/node": "npm:^20.4.4"
     esbuild: "npm:^0.19.1"
@@ -6852,7 +6852,7 @@ __metadata:
     mustache: "npm:^4.2.0"
     openai: "npm:^3.3.0"
     tsx: "npm:^3.12.7"
-  checksum: 804dc993229c1d31c64f35e48e1577f375a1c648825c510f9ef4a7c4a40d4c729b50e8c75f1fd99da30ecabc2a3de6c00aa4e40a7238e05f772b3428b10916da
+  checksum: 9b78df43a2751d1087fddff33b2b7422fcdf0150d09d1011a79722f039a2b450e5e8140f51a46d07dc1dd35e4aece29a8db93c3d1e2b5b56b1b425c56992a943
   languageName: node
   linkType: hard
 
