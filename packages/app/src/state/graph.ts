@@ -124,12 +124,18 @@ export const nodeByIdState = selectorFamily<ChartNode | undefined, NodeId>({
 });
 
 /** Node instances by node ID */
-export const nodeInstancesState = selector<Record<NodeId, NodeImpl<ChartNode, string>>>({
+export const nodeInstancesState = selector<Record<NodeId, NodeImpl<ChartNode, string> | undefined>>({
   key: 'nodeInstances',
   get: ({ get }) => {
     const nodesById = get(nodesByIdState);
 
-    return mapValues(nodesById, (node) => globalRivetNodeRegistry.createDynamicImpl(node));
+    return mapValues(nodesById, (node) => {
+      try {
+        return globalRivetNodeRegistry.createDynamicImpl(node);
+      } catch (err) {
+        return undefined;
+      }
+    });
   },
 });
 
@@ -139,7 +145,7 @@ export const nodeInstanceByIdState = selectorFamily<NodeImpl<ChartNode, string> 
   get:
     (nodeId) =>
     ({ get }) => {
-      return get(nodeInstancesState)[nodeId];
+      return get(nodeInstancesState)?.[nodeId];
     },
 });
 
@@ -162,13 +168,15 @@ export const ioDefinitionsState = selector<
     return mapValues(nodesById, (node) => {
       const connections = connectionsForNode[node.id] ?? [];
 
-      const inputDefinitions = nodeInstances[node.id]!.getInputDefinitions(connections, nodesById, project);
-      const outputDefinitions = nodeInstances[node.id]!.getOutputDefinitions(connections, nodesById, project);
+      const inputDefinitions = nodeInstances[node.id]?.getInputDefinitions(connections, nodesById, project);
+      const outputDefinitions = nodeInstances[node.id]?.getOutputDefinitions(connections, nodesById, project);
 
-      return {
-        inputDefinitions,
-        outputDefinitions,
-      };
+      return inputDefinitions && outputDefinitions
+        ? {
+            inputDefinitions,
+            outputDefinitions,
+          }
+        : { inputDefinitions: [], outputDefinitions: [] };
     });
   },
 });
