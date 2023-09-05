@@ -1,14 +1,13 @@
 import { useCallback, useEffect } from 'react';
 import { NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
-import { useGetNodeIO } from './useGetNodeIO.js';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { connectionsState, nodesByIdState } from '../state/graph.js';
+import { connectionsState, ioDefinitionsState, nodesByIdState } from '../state/graph.js';
 import { draggingWireClosestPortState, draggingWireState } from '../state/graphBuilder.js';
 import { useLatest } from 'ahooks';
 
 export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnection[]) => void) => {
   const [draggingWire, setDraggingWire] = useRecoilState(draggingWireState);
-  const getIO = useGetNodeIO();
+  const ioByNode = useRecoilValue(ioDefinitionsState);
   const connections = useRecoilValue(connectionsState);
   const nodesById = useRecoilValue(nodesByIdState);
   const closestPortToDraggingWire = useRecoilValue(draggingWireClosestPortState);
@@ -75,8 +74,8 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
       let inputNode = nodesById[endNodeId];
       let outputNode = nodesById[draggingWire.startNodeId];
 
-      let inputNodeIO = inputNode ? getIO(inputNode) : null;
-      let outputNodeIO = outputNode ? getIO(outputNode) : null;
+      let inputNodeIO = inputNode ? ioByNode[inputNode.id]! : null;
+      let outputNodeIO = outputNode ? ioByNode[outputNode.id]! : null;
 
       let input = inputNode ? inputNodeIO?.inputDefinitions.find((i) => i.id === endPortId) : null;
       let output = outputNode ? outputNodeIO?.outputDefinitions.find((o) => o.id === draggingWire.startPortId) : null;
@@ -86,8 +85,8 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
         inputNode = outputNode;
         outputNode = tmp;
 
-        inputNodeIO = inputNode ? getIO(inputNode) : null;
-        outputNodeIO = outputNode ? getIO(outputNode) : null;
+        inputNodeIO = inputNode ? ioByNode[inputNode.id]! : null;
+        outputNodeIO = outputNode ? ioByNode[outputNode.id]! : null;
 
         input = inputNode ? inputNodeIO?.inputDefinitions.find((i) => i.id === endPortId) : null;
         output = outputNode ? outputNodeIO?.outputDefinitions.find((o) => o.id === draggingWire.startPortId) : null;
@@ -122,7 +121,7 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
 
       setDraggingWire(undefined);
     },
-    [draggingWire, connections, nodesById, onConnectionsChanged, getIO, setDraggingWire],
+    [draggingWire, connections, nodesById, onConnectionsChanged, ioByNode, setDraggingWire],
   );
 
   useEffect(() => {

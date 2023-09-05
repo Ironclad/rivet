@@ -18,6 +18,7 @@ import { NodePorts, NodePortsRenderer } from './NodePorts.js';
 import { useNodeTypes } from '../hooks/useNodeTypes';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { useIsKnownNodeType } from '../hooks/useIsKnownNodeType';
+import { draggingWireClosestPortState, draggingWireState } from '../state/graphBuilder';
 
 export type VisualNodeProps = {
   node: ChartNode;
@@ -44,12 +45,6 @@ export type VisualNodeProps = {
   nodeAttributes?: HTMLAttributes<HTMLDivElement>;
   handleAttributes?: HTMLAttributes<HTMLDivElement>;
 };
-
-export const nodeElementCache: Record<NodeId, HTMLDivElement | null> = {};
-
-export const nodePortCache: Record<NodeId, Record<PortId, HTMLDivElement | null>> = {};
-
-export const nodePortPositionCache: Record<NodeId, Record<PortId, { x: number; y: number }>> = {};
 
 export const VisualNode = memo(
   forwardRef<HTMLDivElement, VisualNodeProps>(
@@ -98,18 +93,7 @@ export const VisualNode = memo(
         } else if (ref) {
           ref.current = refValue;
         }
-
-        nodeElementCache[node.id] = refValue!;
       };
-
-      useEffect(() => {
-        const nodeId = node.id;
-
-        return () => {
-          nodeElementCache[nodeId] = null;
-          nodePortCache[nodeId] = {};
-        };
-      }, [node.id]);
 
       const isZoomedOut = !isComment && zoom < 0.4;
 
@@ -197,6 +181,10 @@ const ZoomedOutVisualNodeContent: FC<{
       onSelectNode?.(event.shiftKey);
     });
 
+    const draggingWire = useRecoilValue(draggingWireState);
+    const closestPortToDraggingWire = useRecoilValue(draggingWireClosestPortState);
+    const isKnownNodeType = useIsKnownNodeType(node.type);
+
     return (
       <>
         <div className="node-title">
@@ -223,6 +211,11 @@ const ZoomedOutVisualNodeContent: FC<{
                       <LoadingSpinner />
                     </div>
                   ))
+                  .with({ type: 'interrupted' }, () => (
+                    <div className="interrupted">
+                      <SendIcon />
+                    </div>
+                  ))
                   .exhaustive()
               ) : (
                 <></>
@@ -233,13 +226,18 @@ const ZoomedOutVisualNodeContent: FC<{
             </button>
           </div>
         </div>
-        <NodePortsRenderer
-          node={node}
-          connections={connections}
-          zoomedOut
-          onWireStartDrag={onWireStartDrag}
-          onWireEndDrag={onWireEndDrag}
-        />
+
+        {isKnownNodeType && (
+          <NodePortsRenderer
+            node={node}
+            connections={connections}
+            zoomedOut
+            onWireStartDrag={onWireStartDrag}
+            onWireEndDrag={onWireEndDrag}
+            draggingWire={draggingWire}
+            closestPortToDraggingWire={closestPortToDraggingWire}
+          />
+        )}
       </>
     );
   },
@@ -360,6 +358,10 @@ const NormalVisualNodeContent: FC<{
 
     const isKnownNodeType = useIsKnownNodeType(node.type);
 
+    const { canvasPosition } = useCanvasPositioning();
+    const draggingWire = useRecoilValue(draggingWireState);
+    const closestPortToDraggingWire = useRecoilValue(draggingWireClosestPortState);
+
     return (
       <>
         <div className="node-title" onMouseMove={watchShift}>
@@ -390,6 +392,11 @@ const NormalVisualNodeContent: FC<{
                       <LoadingSpinner />
                     </div>
                   ))
+                  .with({ type: 'interrupted' }, () => (
+                    <div className="interrupted">
+                      <SendIcon />
+                    </div>
+                  ))
                   .exhaustive()
               ) : (
                 <></>
@@ -407,12 +414,17 @@ const NormalVisualNodeContent: FC<{
             <div>Unknown node type {node.type} - are you missing a plugin?</div>
           )}
         </ErrorBoundary>
-        <NodePortsRenderer
-          node={node}
-          connections={connections}
-          onWireStartDrag={onWireStartDrag}
-          onWireEndDrag={onWireEndDrag}
-        />
+
+        {isKnownNodeType && (
+          <NodePortsRenderer
+            node={node}
+            connections={connections}
+            onWireStartDrag={onWireStartDrag}
+            onWireEndDrag={onWireEndDrag}
+            draggingWire={draggingWire}
+            closestPortToDraggingWire={closestPortToDraggingWire}
+          />
+        )}
 
         <ErrorBoundary fallback={<div>Error rendering node output</div>}>
           <NodeOutput node={node} />

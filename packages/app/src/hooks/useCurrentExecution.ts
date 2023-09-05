@@ -14,6 +14,7 @@ import { ProcessQuestions, userInputModalQuestionsState } from '../state/userInp
 import { lastRecordingState } from '../state/execution';
 import { trivetTestsRunningState } from '../state/trivet';
 import { useLatest } from 'ahooks';
+import { keys } from '../../../core/src/utils/typeSafety';
 
 export function useCurrentExecution() {
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
@@ -108,6 +109,21 @@ export function useCurrentExecution() {
     setRunningGraphsState([]);
   };
 
+  const interruptAll = () => {
+    // Mark all currently running nodes as interrupted
+    setLastRunData((lastRun) =>
+      produce(lastRun, (draft) => {
+        keys(draft).forEach((nodeId) => {
+          draft[nodeId]!.forEach((process) => {
+            if (process.data.status?.type === 'running') {
+              process.data.status = { type: 'interrupted' };
+            }
+          });
+        });
+      }),
+    );
+  };
+
   function onStop() {
     stopAll();
   }
@@ -118,6 +134,7 @@ export function useCurrentExecution() {
 
   function onAbort(_data: ProcessEvents['abort']) {
     stopAll();
+    interruptAll();
   }
 
   function onGraphAbort(_data: ProcessEvents['graphAbort']) {

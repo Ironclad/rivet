@@ -104,15 +104,15 @@ const config = {
             items: [
               {
                 label: 'Getting Started',
-                to: '/getting-started/installation',
+                to: '/docs/getting-started/installation',
               },
               {
                 label: 'User Guide',
-                to: '/',
+                to: '/docs',
               },
               {
                 label: 'API Reference',
-                to: '/api-reference',
+                to: '/docs/api-reference',
               },
             ],
           },

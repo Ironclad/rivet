@@ -108,6 +108,42 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "Swimburger",
+      "name": "Niels Swimberghe",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3382717?v=4",
+      "profile": "https://swimburger.net",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "tcgj",
+      "name": "Terence C",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7994529?v=4",
+      "profile": "https://github.com/tcgj",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "tbrodahl-ironclad",
+      "name": "Thomas Brodahl",
+      "avatar_url": "https://avatars.githubusercontent.com/u/142630410?v=4",
+      "profile": "https://github.com/tbrodahl-ironclad",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "Jkwok0714",
+      "name": "Justin Kwok",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28716303?v=4",
+      "profile": "https://github.com/Jkwok0714",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
