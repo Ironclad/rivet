@@ -55,7 +55,9 @@ export class NodeRegistration<NodeTypes extends string = never, Nodes extends Ch
   }
 
   registerPlugin(plugin: RivetPlugin) {
-    plugin.register((definition) => this.register(definition, plugin));
+    if (plugin.register) {
+      plugin.register((definition) => this.register(definition, plugin));
+    }
     this.#plugins.push(plugin);
   }
 
