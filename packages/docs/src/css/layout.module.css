@@ -20,8 +20,20 @@
   padding: 10px 20px;
 }
 
+.card2 {
+  box-sizing: border-box;
+  text-align: left;
+  width: calc(100% / 2);
+  padding: 10px 20px;
+}
+
 @media screen and (max-width: 1024px) {
   .card3 {
+    width: 100%;
+    padding: 10px 0;
+  }
+
+  .card2 {
     width: 100%;
     padding: 10px 0;
   }

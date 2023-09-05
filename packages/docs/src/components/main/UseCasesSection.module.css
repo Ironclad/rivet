@@ -1,3 +1,27 @@
 .quote {
   font-style: italic;
 }
+
+.quoteImageContainer {
+  width: 80px;
+  float: left;
+  margin-right: 16px;
+}
+
+.quoteProfile {
+  border-radius: 16px;
+}
+
+.quoteAttribution {
+  margin-bottom: 10px !important;
+}
+
+.quoteLogo {
+  padding: 10px 0;
+  height: 40px
+}
+
+.quoteLogoLink {
+  display: block;
+  margin-bottom: 20px;
+}
