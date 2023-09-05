@@ -36,7 +36,7 @@ Rivet currently has LLM support for:
 
 - [OpenAI GPT-3.5 and GPT-4](https://openai.com/gpt-4)
 - [Anthropic Claude Instant and Claude 2](https://www.anthropic.com/index/claude-2)
-- [AssemblyAI LeMUR framework](https://www.assemblyai.com/models/lemur)
+- [AssemblyAI LeMUR framework for voice data](https://www.assemblyai.com/models/lemur)
 
 Rivet has embedding/vector database support for:
 
