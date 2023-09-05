@@ -180,6 +180,19 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
     return outputs;
   }
 
+  getBody(): string {
+    return dedent`
+      ${this.data.model === 'claude-2' ? 'Claude' : 'Claude Instant'}
+      ${
+        this.data.useTopP
+          ? `Top P: ${this.data.useTopPInput ? '(Using Input)' : this.data.top_p}`
+          : `Temperature: ${this.data.useTemperatureInput ? '(Using Input)' : this.data.temperature}`
+      }
+      Max Tokens: ${this.data.maxTokens}
+      ${this.data.useStop ? `Stop: ${this.data.useStopInput ? '(Using Input)' : this.data.stop}` : ''}
+    `;
+  }
+
   getEditors(): EditorDefinition<ChatAnthropicNode>[] {
     return [
       {
