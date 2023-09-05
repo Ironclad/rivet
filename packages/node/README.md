@@ -1,6 +1,6 @@
 <h1 align="center"><img src="https://rivet.ironcladapp.com/img/Square150x150Logo.png" alt="Rivet Logo" width="32"> Rivet</h1>
 
-![GitHub all releases](https://img.shields.io/github/downloads/ironclad/rivet/total) [![All Contributors](https://img.shields.io/github/all-contributors/Ironclad/rivet?color=ee8449&style=flat-square)](#contributors-) ![GitHub issues](https://img.shields.io/github/issues/yourusername/your-repo-name) ![GitHub pull requests](https://img.shields.io/github/issues-pr/yourusername/your-repo-name) ![License](https://img.shields.io/github/license/yourusername/your-repo-name)
+![GitHub all releases](https://img.shields.io/github/downloads/ironclad/rivet/total) [![All Contributors](https://img.shields.io/github/all-contributors/Ironclad/rivet?color=ee8449&style=flat-square)](#contributors-) ![GitHub issues](https://img.shields.io/github/issues/Ironclad/rivet) ![GitHub pull requests](https://img.shields.io/github/issues-pr/Ironclad/rivet) ![License](https://img.shields.io/github/license/Ironclad/rivet)
 
 <h3 align="center"><a href="https://github.com/Ironclad/rivet/releases">Download</a> | <a href="https://rivet.ironcladapp.com">Website</a> | <a href="https://rivet.ironcladapp.com">Documentation</a></h3>
 
