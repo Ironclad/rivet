@@ -1,6 +1,6 @@
 <h1 align="center"><img src="https://rivet.ironcladapp.com/img/Square150x150Logo.png" alt="Rivet Logo" width="32"> Rivet</h1>
 
-![GitHub all releases](https://img.shields.io/github/downloads/ironclad/rivet/total) [![All Contributors](https://img.shields.io/github/all-contributors/Ironclad/rivet?color=ee8449&style=flat-square)](#contributors-) ![GitHub issues](https://img.shields.io/github/issues/yourusername/your-repo-name) ![GitHub pull requests](https://img.shields.io/github/issues-pr/yourusername/your-repo-name) ![License](https://img.shields.io/github/license/yourusername/your-repo-name)
+![GitHub all releases](https://img.shields.io/github/downloads/ironclad/rivet/total) [![All Contributors](https://img.shields.io/github/all-contributors/Ironclad/rivet?color=ee8449&style=flat-square)](#contributors-) ![GitHub issues](https://img.shields.io/github/issues/Ironclad/rivet) ![GitHub pull requests](https://img.shields.io/github/issues-pr/Ironclad/rivet) ![License](https://img.shields.io/github/license/Ironclad/rivet)
 
 <h3 align="center"><a href="https://github.com/Ironclad/rivet/releases">Download</a> | <a href="https://rivet.ironcladapp.com">Website</a> | <a href="https://rivet.ironcladapp.com">Documentation</a></h3>
 
@@ -36,11 +36,15 @@ Rivet currently has LLM support for:
 
 - [OpenAI GPT-3.5 and GPT-4](https://openai.com/gpt-4)
 - [Anthropic Claude Instant and Claude 2](https://www.anthropic.com/index/claude-2)
+- [AssemblyAI LeMUR framework for voice data](https://www.assemblyai.com/models/lemur)
 
 Rivet has embedding/vector database support for:
 
 - [OpenAI Embeddings](https://platform.openai.com/docs/guides/embeddings)
 - [Pinecone](https://www.pinecone.io/)
+
+Rivet also supports these additional integrations:
+- [Audio Transcription from AssemblyAI](https://www.assemblyai.com/models/core-transcription)
 
 For more information on how to use the application and all of its capabilities, see [the documentation](https://rivet.ironcladapp.com)!
 
@@ -102,6 +106,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://swimburger.net"><img src="https://avatars.githubusercontent.com/u/3382717?v=4?s=100" width="100px;" alt="Niels Swimberghe"/><br /><sub><b>Niels Swimberghe</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=Swimburger" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/tcgj"><img src="https://avatars.githubusercontent.com/u/7994529?v=4?s=100" width="100px;" alt="Terence C"/><br /><sub><b>Terence C</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=tcgj" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/tbrodahl-ironclad"><img src="https://avatars.githubusercontent.com/u/142630410?v=4?s=100" width="100px;" alt="Thomas Brodahl"/><br /><sub><b>Thomas Brodahl</b></sub></a><br /><a href="#design-tbrodahl-ironclad" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Jkwok0714"><img src="https://avatars.githubusercontent.com/u/28716303?v=4?s=100" width="100px;" alt="Justin Kwok"/><br /><sub><b>Justin Kwok</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/issues?q=author%3AJkwok0714" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>

@@ -7,6 +7,8 @@ import { lemurActionItemsNode } from './LemurActionItemsNode.js';
 
 export const assemblyAiPlugin: RivetPlugin = {
   id: 'assemblyAi',
+  name: 'AssemblyAI',
+
   register: (register) => {
     register(transcribeAudioNode);
     register(lemurSummaryNode);
@@ -21,6 +23,7 @@ export const assemblyAiPlugin: RivetPlugin = {
       label: 'AssemblyAI API Key',
       description: 'The API key for the AssemblyAI service.',
       pullEnvironmentVariable: 'ASSEMBLYAI_API_KEY',
+      helperText: 'You may also set the ASSEMBLYAI_API_KEY environment variable.',
     },
   },
 
@@ -28,6 +31,6 @@ export const assemblyAiPlugin: RivetPlugin = {
     {
       id: 'add-node-group:assemblyai',
       label: 'AssemblyAI',
-    }
-  ]
+    },
+  ],
 };
