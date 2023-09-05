@@ -1,5 +1,6 @@
 {
   "name": "@ironclad/rivet-app-executor",
+  "license": "MIT",
   "repository": "https://github.com/ironclad/rivet",
   "version": "1.0.0",
   "bin": "./bin/executor-bundle.js",

@@ -1,5 +1,6 @@
 {
   "name": "@ironclad/rivet-core",
+  "license": "MIT",
   "repository": "https://github.com/ironclad/rivet",
   "version": "1.0.0",
   "packageManager": "yarn@3.5.0",
