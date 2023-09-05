@@ -1,5 +1,5 @@
 import { save, open } from '@tauri-apps/api/dialog';
-import { writeFile, readTextFile } from '@tauri-apps/api/fs';
+import { writeFile, readTextFile, readBinaryFile } from '@tauri-apps/api/fs';
 import {
   ExecutionRecorder,
   NodeGraph,
@@ -159,7 +159,7 @@ export class TauriIOProvider implements IOProvider {
     return path;
   }
 
-  async openFile() {
+  async openFilePath() {
     const path = await open({
       filters: [],
       multiple: false,
@@ -183,6 +183,28 @@ export class TauriIOProvider implements IOProvider {
         contents: content,
         path,
       });
+    }
+  }
+
+  async readFileAsString(callback: (data: string) => void): Promise<void> {
+    const path = await open({
+      multiple: false,
+    });
+
+    if (path) {
+      const contents = await readTextFile(path as string);
+      callback(contents);
+    }
+  }
+
+  async readFileAsBinary(callback: (data: Uint8Array) => void): Promise<void> {
+    const path = await open({
+      multiple: false,
+    });
+
+    if (path) {
+      const contents = await readBinaryFile(path as string);
+      callback(contents);
     }
   }
 }

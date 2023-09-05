@@ -5,9 +5,10 @@ import { overlayOpenState } from '../state/ui';
 import { css } from '@emotion/react';
 import clsx from 'clsx';
 import {
+  BuiltInNodes,
+  ChartNode,
   DataValue,
   NodeId,
-  Nodes,
   PortId,
   ProcessId,
   ScalarOrArrayDataValue,
@@ -70,7 +71,7 @@ const styles = css`
 
     border: 1px solid var(--primary);
     border-radius: 10px;
-    box-shadow: 0 0 10px var(--shadow-orange);
+    box-shadow: 0 0 10px var(--shadow-primary-bright);
 
     &.complete {
       border: 1px solid var(--success);
@@ -92,7 +93,7 @@ const styles = css`
       justify-content: space-between;
 
       .graph-name {
-        color: var(--primary);
+        color: var(--primary-text);
       }
 
       .go-to-node {
@@ -105,7 +106,7 @@ const styles = css`
         padding: 0 15px;
 
         &:hover {
-          color: var(--primary);
+          color: var(--primary-text);
         }
       }
     }
@@ -154,8 +155,8 @@ export const ChatViewer: FC<{
   }, [project.graphs]);
 
   const chatNodes = useMemo(() => {
-    const allNodes = Object.values(project.graphs).flatMap((g) => g.nodes) as Nodes[];
-    const nodes = allNodes.filter((node) => node.type === 'chat' || node.type === 'chatAnthropic');
+    const allNodes = Object.values(project.graphs).flatMap((g) => g.nodes) as BuiltInNodes[];
+    const nodes = (allNodes as ChartNode[]).filter((node) => node.type === 'chat' || node.type === 'chatAnthropic');
     if (graphFilter === '') {
       return nodes;
     }

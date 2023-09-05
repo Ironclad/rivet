@@ -10,16 +10,14 @@ import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import {
   ArrayDataValue,
+  BuiltInNodes,
   ChartNode,
   GraphId,
   NodeId,
-  NodeType,
-  Nodes,
   StringDataValue,
-  nodeFactory,
+  globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
 import { ProcessQuestions, userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput.js';
-import { entries } from '../utils/typeSafety.js';
 import { UserInputModal } from './UserInputModal.js';
 import Button from '@atlaskit/button';
 import { isNotNull } from '../utils/genericUtilFunctions.js';
@@ -30,14 +28,16 @@ import { useLoadGraph } from '../hooks/useLoadGraph.js';
 import { projectState } from '../state/savedGraphs.js';
 import { ContextMenuContext } from './ContextMenu.js';
 import { useGraphHistoryNavigation } from '../hooks/useGraphHistoryNavigation';
+import { useProjectPlugins } from '../hooks/useProjectPlugins';
+import { entries } from '../../../core/src/utils/typeSafety';
 
 const Container = styled.div`
   position: relative;
 
   .user-input-modal-open {
     position: absolute;
-    top: 48px;
-    right: 0;
+    top: 62px;
+    right: 16px;
     z-index: 100;
   }
 
@@ -64,13 +64,14 @@ export const GraphBuilder: FC = () => {
   const project = useRecoilValue(projectState);
   const [graphNavigationStack, setGraphNavigationStack] = useRecoilState(graphNavigationStackState);
   const historyNav = useGraphHistoryNavigation();
+  useProjectPlugins();
 
   const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {
     setNodes?.(newNodes);
   });
 
-  const addNode = useStableCallback((nodeType: NodeType, position: { x: number; y: number }) => {
-    const newNode = nodeFactory(nodeType);
+  const addNode = useStableCallback((nodeType: string, position: { x: number; y: number }) => {
+    const newNode = globalRivetNodeRegistry.createDynamic(nodeType);
 
     newNode.visualData.x = position.x;
     newNode.visualData.y = position.y;
@@ -79,16 +80,19 @@ export const GraphBuilder: FC = () => {
     // setSelectedNode(newNode.id);
   });
 
-  const removeNode = useStableCallback((nodeId: NodeId) => {
-    const nodeIndex = nodes.findIndex((n) => n.id === nodeId);
-    if (nodeIndex >= 0) {
-      const newNodes = [...nodes];
-      newNodes.splice(nodeIndex, 1);
-      nodesChanged?.(newNodes);
-    }
+  const removeNodes = useStableCallback((...nodeIds: NodeId[]) => {
+    const newNodes = [...nodes];
+    let newConnections = [...connections];
+    for (const nodeId of nodeIds) {
+      const nodeIndex = newNodes.findIndex((n) => n.id === nodeId);
+      if (nodeIndex >= 0) {
+        newNodes.splice(nodeIndex, 1);
+      }
 
-    // Remove all connections associated with the node
-    const newConnections = connections.filter((c) => c.inputNodeId !== nodeId && c.outputNodeId !== nodeId);
+      // Remove all connections associated with the node
+      newConnections = newConnections.filter((c) => c.inputNodeId !== nodeId && c.outputNodeId !== nodeId);
+    }
+    nodesChanged?.(newNodes);
     setConnections?.(newConnections);
   });
 
@@ -98,14 +102,18 @@ export const GraphBuilder: FC = () => {
   const contextMenuItemSelected = useStableCallback(
     (menuItemId: string, data: unknown, context: ContextMenuContext, meta: { x: number; y: number }) => {
       if (menuItemId.startsWith('add-node:')) {
-        const nodeType = data as NodeType;
+        const nodeType = data as string;
         addNode(nodeType, clientToCanvasPosition(meta.x, meta.y));
         return;
       }
 
       if (menuItemId === 'node-delete') {
-        const { nodeId } = context.data as { nodeId: NodeId };
-        removeNode(nodeId);
+        if (selectedNodeIds.length === 0) {
+          const { nodeId } = context.data as { nodeId: NodeId };
+          removeNodes(nodeId);
+        } else {
+          removeNodes(...selectedNodeIds);
+        }
         return;
       }
 
@@ -117,13 +125,13 @@ export const GraphBuilder: FC = () => {
 
       if (menuItemId === 'node-duplicate') {
         const { nodeId } = context.data as { nodeId: NodeId };
-        const node = nodesById[nodeId] as Nodes;
+        const node = nodesById[nodeId];
 
         if (!node) {
           return;
         }
 
-        const newNode = nodeFactory(node.type);
+        const newNode = globalRivetNodeRegistry.createDynamic(node.type);
         newNode.data = { ...(node.data as object) };
         newNode.visualData = {
           ...node.visualData,
@@ -151,7 +159,7 @@ export const GraphBuilder: FC = () => {
 
       if (menuItemId === 'node-go-to-subgraph') {
         const { nodeId } = context.data as { nodeId: NodeId };
-        const node = nodesById[nodeId] as Nodes;
+        const node = nodesById[nodeId] as BuiltInNodes;
 
         if (node?.type !== 'subGraph') {
           return;

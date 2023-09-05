@@ -8,13 +8,12 @@ import {
   VectorDatabase,
   coerceType,
 } from '@ironclad/rivet-core';
-import { nanoid } from 'nanoid';
 
 export class PineconeVectorDatabase implements VectorDatabase {
   #apiKey;
 
   constructor(settings: Settings) {
-    this.#apiKey = settings.pineconeApiKey;
+    this.#apiKey = settings.pluginSettings?.pinecone?.apiKey as string | undefined;
   }
 
   async store(collection: DataValue, vector: VectorDataValue, data: DataValue, { id }: { id?: string }): Promise<void> {

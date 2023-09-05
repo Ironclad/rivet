@@ -16,10 +16,12 @@ export const useDraggingNode = (onNodesChanged: (nodes: ChartNode[]) => void) =>
 
   const onNodeStartDrag = useCallback(
     (e: DragStartEvent) => {
+      const draggedNodeId = e.active.id as NodeId;
+
       const nodesToDrag =
         selectedNodeIds.length > 0
-          ? selectedNodeIds.map((id) => nodesById[id]).filter(isNotNull)
-          : [nodesById[e.active.id as NodeId]].filter(isNotNull);
+          ? [...new Set([...selectedNodeIds, draggedNodeId])].map((id) => nodesById[id]).filter(isNotNull)
+          : [nodesById[draggedNodeId]].filter(isNotNull);
 
       setDraggingNodes(nodesToDrag);
 

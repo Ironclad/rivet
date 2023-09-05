@@ -160,7 +160,7 @@ const styles = css`
     outline: none;
     padding: 10px;
     &:focus {
-      border: solid 1px #fff;
+      border: solid 1px var(--grey-lightest);
     }
 
     &:hover {
@@ -394,7 +394,7 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
   const addMessage = useStableCallback((index: number) => {
     setMessages((s) =>
       produce(s, (draft) => {
-        draft.messages.splice(index + 1, 0, { type: 'user', message: '', function_call: undefined });
+        draft.messages.splice(index + 1, 0, { type: 'user', message: '', function_call: undefined, name: undefined });
       }),
     );
   });
@@ -1005,6 +1005,7 @@ async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
           }
         },
         abortGraph: undefined!,
+        getPluginConfig: undefined!,
       } as InternalProcessContext,
     );
 

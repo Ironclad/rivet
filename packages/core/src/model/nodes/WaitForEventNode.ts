@@ -1,10 +1,13 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { coerceType } from '../../utils/coerceType.js';
 import { InternalProcessContext } from '../ProcessContext.js';
+import { dedent } from 'ts-dedent';
+import { EditorDefinition } from '../EditorDefinition.js';
+import { NodeBodySpec } from '../NodeBodySpec.js';
 
 export type WaitForEventNode = ChartNode<'waitForEvent', WaitForEventNodeData>;
 
@@ -75,6 +78,17 @@ export class WaitForEventNodeImpl extends NodeImpl<WaitForEventNode> {
 
   getBody(): string | NodeBodySpec | undefined {
     return this.data.useEventNameInput ? '(Using Input)' : this.data.eventName;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Waits for a specific event to be raised by a 'Raise Event' node or the host project. The event name can be configured.
+      `,
+      infoBoxTitle: 'Wait For Event Node',
+      contextMenuTitle: 'Wait For Event',
+      group: ['Advanced'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

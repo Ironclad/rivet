@@ -91,7 +91,7 @@ export class LegacyBrowserIOProvider implements IOProvider {
     throw new Error('Function not supported in the browser');
   }
 
-  async openFile(): Promise<string> {
+  async openFilePath(): Promise<string> {
     return new Promise((resolve) => {
       const input = document.createElement('input');
       input.type = 'file';
@@ -110,5 +110,30 @@ export class LegacyBrowserIOProvider implements IOProvider {
     link.href = url;
     link.download = defaultFileName;
     link.click();
+  }
+
+  async readFileAsString(callback: (data: string) => void): Promise<void> {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.onchange = async (event) => {
+      const file = (event.target as HTMLInputElement)!.files![0]!;
+      const text = await file.text();
+      callback(text);
+    };
+    input.click();
+  }
+
+  async readFileAsBinary(callback: (data: Uint8Array) => void): Promise<void> {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.onchange = async (event) => {
+      const file = (event.target as HTMLInputElement)!.files![0]!;
+      const reader = new FileReader();
+      reader.onload = () => {
+        callback(new Uint8Array(reader.result as ArrayBuffer));
+      };
+      reader.readAsArrayBuffer(file);
+    };
+    input.click();
   }
 }

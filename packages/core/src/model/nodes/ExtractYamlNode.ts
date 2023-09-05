@@ -1,12 +1,12 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
 import yaml from 'yaml';
 import { expectType } from '../../utils/expectType.js';
 import { JSONPath } from 'jsonpath-plus';
 import { dedent } from 'ts-dedent';
-import { coerceType } from '../../index.js';
+import { EditorDefinition, NodeBodySpec, coerceType } from '../../index.js';
 
 export type ExtractYamlNode = ChartNode<'extractYaml', ExtractYamlNodeData>;
 
@@ -119,6 +119,20 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
           : ``
       }
     `;
+  }
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Finds and parses a YAML object in the input text with a predefined root property name (configurable).
+
+        Defaults to \`yamlDocument\`, which means the input text must have a \`yamlDocument:\` root node somewhere in it. All indented text after that is considered part of the YAML.
+
+        Outputs the parsed object.
+      `,
+      infoBoxTitle: 'Extract YAML Node',
+      contextMenuTitle: 'Extract YAML',
+      group: ['Objects'],
+    };
   }
 
   async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {

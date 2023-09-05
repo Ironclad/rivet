@@ -1,8 +1,8 @@
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
-import { coerceTypeOptional } from '../../index.js';
+import { EditorDefinition, coerceTypeOptional } from '../../index.js';
 import { dedent } from 'ts-dedent';
 
 export type RandomNumberNode = ChartNode<'randomNumber', RandomNumberNodeData>;
@@ -85,22 +85,35 @@ export class RandomNumberNodeImpl extends NodeImpl<RandomNumberNode> {
     `;
   }
 
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Outputs a random number between the configured min and max values.
+
+        Can be configured to output only integers, and whether the max value is inclusive or exclusive.
+      `,
+      infoBoxTitle: 'RNG Node',
+      contextMenuTitle: 'RNG',
+      group: ['Numbers'],
+    };
+  }
+
   async process(inputs: Inputs): Promise<Outputs> {
     const min = this.data.useMinInput
       ? coerceTypeOptional(inputs['min' as PortId], 'number') ?? this.data.min ?? 0
       : this.data.min ?? 0;
 
-    const max = this.data.useMaxInput
+    let max = this.data.useMaxInput
       ? coerceTypeOptional(inputs['max' as PortId], 'number') ?? this.data.max ?? 1
       : this.data.max ?? 1;
 
+    if (this.data.integers && this.data.maxInclusive) {
+      max += 1;
+    }
     let value = Math.random() * (max - min) + min;
 
     if (this.data.integers) {
       value = Math.floor(value);
-      if (this.data.maxInclusive && value === max) {
-        value = Math.floor(Math.random() * (max - min + 1) + min);
-      }
     }
 
     return {

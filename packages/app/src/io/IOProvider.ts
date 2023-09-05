@@ -16,7 +16,11 @@ export interface IOProvider {
 
   openDirectory(): Promise<string | string[] | null>;
 
-  openFile(): Promise<string>;
+  openFilePath(): Promise<string>;
 
   saveString(content: string, defaultFileName: string): Promise<void>;
+
+  readFileAsString(callback: (data: string) => void): Promise<void>;
+
+  readFileAsBinary(callback: (data: Uint8Array) => void): Promise<void>;
 }

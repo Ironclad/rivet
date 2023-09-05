@@ -1,15 +1,16 @@
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
-import { coerceType, coerceTypeOptional } from '../../index.js';
+import { EditorDefinition, coerceType, coerceTypeOptional } from '../../index.js';
 import { isEqual } from 'lodash-es';
 import { match } from 'ts-pattern';
+import { dedent } from 'ts-dedent';
 
 export type CompareNode = ChartNode<'compare', CompareNodeData>;
 
 export type CompareNodeData = {
-  comparisonFunction: '==' | '<' | '>' | '<=' | '>=' | '!=';
+  comparisonFunction: '==' | '<' | '>' | '<=' | '>=' | '!=' | 'and' | 'or' | 'xor' | 'nand' | 'nor' | 'xnor';
   useComparisonFunctionInput?: boolean;
 };
 
@@ -80,6 +81,12 @@ export class CompareNodeImpl extends NodeImpl<CompareNode> {
           { label: '<=', value: '<=' },
           { label: '>', value: '>' },
           { label: '>=', value: '>=' },
+          { label: 'and', value: 'and' },
+          { label: 'or', value: 'or' },
+          { label: 'xor', value: 'xor' },
+          { label: 'nand', value: 'nand' },
+          { label: 'nor', value: 'nor' },
+          { label: 'xnor', value: 'xnor' },
         ],
         useInputToggleDataKey: 'useComparisonFunctionInput',
       },
@@ -88,6 +95,19 @@ export class CompareNodeImpl extends NodeImpl<CompareNode> {
 
   getBody(): string | undefined {
     return this.data.useComparisonFunctionInput ? 'A (Comparison Function) B' : `A ${this.data.comparisonFunction} B`;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Compares two values using the configured operator and outputs the result.
+
+        If the data types of the values do not match, then the B value is converted to the type of the A value.
+      `,
+      infoBoxTitle: 'Compare Node',
+      contextMenuTitle: 'Compare',
+      group: ['Logic'],
+    };
   }
 
   async process(inputs: Inputs): Promise<Outputs> {
@@ -125,6 +145,12 @@ export class CompareNodeImpl extends NodeImpl<CompareNode> {
           .with('>', () => (value1 as any) > (value2 as any))
           .with('<=', () => (value1 as any) <= (value2 as any))
           .with('>=', () => (value1 as any) >= (value2 as any))
+          .with('and', () => !!(value1 && value2))
+          .with('or', () => !!(value1 || value2))
+          .with('xor', () => !!(value1 ? !value2 : value2))
+          .with('nand', () => !(value1 && value2))
+          .with('nor', () => !(value1 || value2))
+          .with('xnor', () => !(value1 ? !value2 : value2))
           .exhaustive(),
       },
     };

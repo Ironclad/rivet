@@ -1,10 +1,10 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataType, DataValue, getDefaultValue, isArrayDataType } from '../DataValue.js';
 import { GraphInputs, Inputs, Outputs } from '../GraphProcessor.js';
 import { InternalProcessContext } from '../ProcessContext.js';
-import { coerceTypeOptional, inferType } from '../../index.js';
+import { EditorDefinition, NodeBodySpec, coerceTypeOptional, inferType } from '../../index.js';
 import { dedent } from 'ts-dedent';
 
 export type GraphInputNode = ChartNode<'graphInput', GraphInputNodeData>;
@@ -88,6 +88,17 @@ export class GraphInputNodeImpl extends NodeImpl<GraphInputNode> {
       ${this.data.id}
       Type: ${this.data.dataType}
     `;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Defines an input for the graph which can be passed in when the graph is called, or defines one of the input ports when the graph is a subgraph.
+      `,
+      infoBoxTitle: 'Graph Input Node',
+      contextMenuTitle: 'Graph Input',
+      group: ['Input/Output'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Record<string, DataValue>> {

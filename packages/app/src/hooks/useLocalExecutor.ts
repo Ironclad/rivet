@@ -6,8 +6,9 @@ import {
   coerceTypeOptional,
   ExecutionRecorder,
   GraphOutputs,
+  globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
-import { current, produce } from 'immer';
+import { produce } from 'immer';
 import { useRef } from 'react';
 import { toast } from 'react-toastify';
 import { TauriNativeApi } from '../model/native/TauriNativeApi';
@@ -107,7 +108,10 @@ export function useLocalExecutor() {
         results = await processor.replayRecording(loadedRecording.recorder);
       } else {
         results = await processor.processGraph({
-          settings: await fillMissingSettingsFromEnvironmentVariables(savedSettings),
+          settings: await fillMissingSettingsFromEnvironmentVariables(
+            savedSettings,
+            globalRivetNodeRegistry.getPlugins(),
+          ),
           nativeApi: new TauriNativeApi(),
         });
       }
@@ -160,7 +164,10 @@ export function useLocalExecutor() {
             attachGraphEvents(processor);
             return processor.processGraph(
               {
-                settings,
+                settings: await fillMissingSettingsFromEnvironmentVariables(
+                  savedSettings,
+                  globalRivetNodeRegistry.getPlugins(),
+                ),
                 nativeApi: new TauriNativeApi(),
               },
               inputs,

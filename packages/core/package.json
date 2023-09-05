@@ -1,7 +1,7 @@
 {
   "name": "@ironclad/rivet-core",
   "repository": "https://github.com/ironclad/rivet",
-  "version": "0.14.3",
+  "version": "0.15.2",
   "packageManager": "yarn@3.5.0",
   "main": "dist/cjs/bundle.cjs",
   "module": "dist/esm/index.js",
@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",
+    "autoevals": "^0.0.11",
     "crypto-js": "^4.1.1",
     "emittery": "^1.0.1",
     "emittery-0-13": "npm:emittery@^0.13.1",

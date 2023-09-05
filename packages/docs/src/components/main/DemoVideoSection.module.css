@@ -1,0 +1,13 @@
+.videoContainer {
+  height: 0;
+  position: relative;
+  padding-bottom: 64.63%;
+}
+
+.video {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}

@@ -1,3 +1,5 @@
+import { getError } from './errors.js';
+
 // https://github.com/openai/openai-node/issues/18#issuecomment-1518715285
 export class EventSourceResponse extends Response {
   name: string;
@@ -38,7 +40,11 @@ export class EventSourceResponse extends Response {
         yield value;
       }
     } finally {
-      reader.releaseLock();
+      try {
+        reader.releaseLock();
+      } catch (err) {
+        console.error(`Failed to release read lock on event source: ${getError(err).toString()}`);
+      }
     }
   }
 

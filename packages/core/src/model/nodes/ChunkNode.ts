@@ -1,5 +1,5 @@
 import { ChartNode, NodeId } from '../../model/NodeBase.js';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../../model/NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../../model/NodeImpl.js';
 import { NodeInputDefinition, NodeOutputDefinition, PortId } from '../../model/NodeBase.js';
 import { DataValue } from '../../model/DataValue.js';
 import { SupportedModels, chunkStringByTokenCount } from '../../utils/tokenizer.js';
@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid';
 import { coerceType } from '../../utils/coerceType.js';
 import { dedent } from 'ts-dedent';
 import { openAiModelOptions, openaiModels } from '../../utils/openai.js';
+import { EditorDefinition } from '../../index.js';
 
 export type ChunkNodeData = {
   numTokensPerChunk: number;
@@ -115,6 +116,21 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
       Token Count: ${this.data.numTokensPerChunk.toLocaleString()}
       ${this.data.overlap ? `Overlap: ${this.data.overlap}%` : ''}
     `;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+          Splits the input text into an array of chunks based on an approximate GPT token count per chunk.
+
+          The "overlap" setting allows you to partially overlap the chunks for redundancy.
+
+          Can also be used for string length truncation by only using the \`First\` or \`Last\` outputs of the node.
+        `,
+      infoBoxTitle: 'Chunk Node',
+      contextMenuTitle: 'Chunk',
+      group: ['Text'],
+    };
   }
 
   async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {

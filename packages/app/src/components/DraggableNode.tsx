@@ -1,8 +1,6 @@
 import { useDraggable } from '@dnd-kit/core';
 import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
 import { MouseEvent, FC } from 'react';
-import { useRecoilValue } from 'recoil';
-import { canvasPositionState } from '../state/graphBuilder.js';
 import { VisualNode } from './VisualNode.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -17,6 +15,7 @@ interface DraggableNodeProps {
     startPortId: PortId,
     isInput: boolean,
   ) => void;
+  canvasZoom: number;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
   onNodeSelected?: (node: ChartNode, multi: boolean) => void;
   onNodeStartEditing?: (node: ChartNode) => void;
@@ -29,6 +28,7 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
   node,
   connections = [],
   isSelected = false,
+  canvasZoom,
   onWireStartDrag,
   onWireEndDrag,
   onNodeSelected,
@@ -38,7 +38,6 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
   onMouseOut,
 }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: node.id });
-  const { zoom } = useRecoilValue(canvasPositionState);
 
   return (
     <ErrorBoundary fallback={<div>Failed to render node</div>}>
@@ -48,8 +47,8 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
         node={node}
         connections={connections}
         isDragging={isDragging}
-        xDelta={transform ? transform.x / zoom : 0}
-        yDelta={transform ? transform.y / zoom : 0}
+        xDelta={transform ? transform.x / canvasZoom : 0}
+        yDelta={transform ? transform.y / canvasZoom : 0}
         nodeAttributes={attributes}
         handleAttributes={listeners}
         onWireEndDrag={onWireEndDrag}

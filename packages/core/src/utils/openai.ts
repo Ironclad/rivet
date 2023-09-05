@@ -102,7 +102,9 @@ export type ChatCompletionRequestMessage = {
   /** The content of the message. */
   content: string;
 
-  function_call?: object;
+  name: string | undefined;
+
+  function_call: object | undefined;
 };
 
 // https://platform.openai.com/docs/api-reference/chat/create
@@ -174,7 +176,7 @@ export async function* streamChatCompletions({
   signal,
   ...rest
 }: ChatCompletionOptions): AsyncGenerator<ChatCompletionChunk> {
-  const defaultSignal = new AbortController().signal;
+  const abortSignal = signal ?? new AbortController().signal;
   const response = await fetchEventSource('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -186,7 +188,7 @@ export async function* streamChatCompletions({
       ...rest,
       stream: true,
     }),
-    signal: signal ?? defaultSignal,
+    signal: abortSignal,
   });
 
   let hadChunks = false;
@@ -194,7 +196,7 @@ export async function* streamChatCompletions({
   for await (const chunk of response.events()) {
     hadChunks = true;
 
-    if (chunk === '[DONE]') {
+    if (chunk === '[DONE]' || abortSignal?.aborted) {
       return;
     }
     let data: ChatCompletionChunk;

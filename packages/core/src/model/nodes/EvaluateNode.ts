@@ -1,9 +1,10 @@
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
-import { coerceType, coerceTypeOptional } from '../../index.js';
+import { EditorDefinition, coerceType, coerceTypeOptional } from '../../index.js';
 import { match } from 'ts-pattern';
+import { dedent } from 'ts-dedent';
 
 export type EvaluateNode = ChartNode<'evaluate', EvaluateNodeData>;
 
@@ -111,6 +112,19 @@ export class EvaluateNodeImpl extends NodeImpl<EvaluateNode> {
     }
 
     return this.data.useOperationInput ? 'A (Operation) B' : `A ${this.data.operation} B`;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Evaluates the configured mathematical operation on the input values and outputs the result.
+
+        For more complex operations, you should use the \`Code\` node.
+      `,
+      infoBoxTitle: 'Evaluate Node',
+      contextMenuTitle: 'Evaluate',
+      group: ['Logic'],
+    };
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

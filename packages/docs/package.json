@@ -1,6 +1,6 @@
 {
   "name": "docs",
-  "version": "0.14.3",
+  "version": "0.15.2",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "2.4.1",
+    "@docusaurus/types": "^2.4.1",
     "@tsconfig/docusaurus": "^1.0.7",
     "typescript": "^5.1.6"
   },

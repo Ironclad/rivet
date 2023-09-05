@@ -1,5 +1,5 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { AnyDataValue, ArrayDataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor.js';
@@ -7,6 +7,9 @@ import { coerceType } from '../../utils/coerceType.js';
 import { getError } from '../../utils/errors.js';
 import { InternalProcessContext } from '../ProcessContext.js';
 import { omit } from 'lodash-es';
+import { dedent } from 'ts-dedent';
+import { EditorDefinition } from '../EditorDefinition.js';
+import { NodeBodySpec } from '../NodeBodySpec.js';
 
 export type ExternalCallNode = ChartNode<'externalCall', ExternalCallNodeData>;
 
@@ -91,6 +94,17 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
     return this.data.useFunctionNameInput ? '(Using Input)' : this.data.functionName;
   }
 
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Provides a way to call into the host project from inside a Rivet graph when Rivet graphs are integrated into another project.
+      `,
+      infoBoxTitle: 'External Call Node',
+      contextMenuTitle: 'External Call',
+      group: ['Advanced'],
+    };
+  }
+
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const functionName = this.chartNode.data.useFunctionNameInput
       ? coerceType(inputs['functionName' as PortId], 'string')
@@ -138,6 +152,10 @@ export class ExternalCallNodeImpl extends NodeImpl<ExternalCallNode> {
         const result = await fn(externalContext, ...arrayArgs.value);
         return {
           ['result' as PortId]: result,
+          ['cost' as PortId]: {
+            type: 'number',
+            value: result.cost ?? 0,
+          },
           ['error' as PortId]: {
             type: 'control-flow-excluded',
             value: undefined,

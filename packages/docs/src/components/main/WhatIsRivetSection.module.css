@@ -1,0 +1,8 @@
+.text {
+  text-align: left;
+}
+
+.inlineLogo {
+  position: relative;
+  top: 2px;
+}

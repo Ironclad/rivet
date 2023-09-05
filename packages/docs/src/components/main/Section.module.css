@@ -1,0 +1,20 @@
+.section {
+  overflow: hidden;
+  padding: 40px var(--page-padding-side);
+  text-align: center;
+}
+
+.section:nth-of-type(3n + 1) {
+  background-color: var(--black-0);
+  color: var(--white-0);
+}
+
+.section:nth-of-type(3n + 2) {
+  background-color: var(--white-1);
+  color: var(--black-0);
+}
+
+.section:nth-of-type(3n) {
+  background-color: var(--orange-0);
+  color: var(--black-0);
+}

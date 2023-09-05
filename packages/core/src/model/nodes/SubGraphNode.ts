@@ -1,5 +1,5 @@
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { GraphId } from '../NodeGraph.js';
 import { nanoid } from 'nanoid';
@@ -8,7 +8,8 @@ import { GraphInputNode } from './GraphInputNode.js';
 import { GraphOutputNode } from './GraphOutputNode.js';
 import { ControlFlowExcludedDataValue, DataValue } from '../DataValue.js';
 import { InternalProcessContext } from '../ProcessContext.js';
-import { getError } from '../../index.js';
+import { EditorDefinition, getError } from '../../index.js';
+import { dedent } from 'ts-dedent';
 
 export type SubGraphNode = ChartNode & {
   type: 'subGraph';
@@ -117,6 +118,17 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
     ];
   }
 
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Executes another graph. Inputs and outputs are defined by Graph Input and Graph Output nodes within the subgraph.
+      `,
+      infoBoxTitle: 'Subgraph Node',
+      contextMenuTitle: 'Subgraph',
+      group: ['Advanced'],
+    };
+  }
+
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const { project } = context;
 
@@ -127,16 +139,27 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
     const subGraphProcessor = context.createSubProcessor(this.data.graphId, { signal: context.signal });
 
     try {
+      const startTime = Date.now();
+
       const outputs = await subGraphProcessor.processGraph(
         context,
         inputs as Record<string, DataValue>,
         context.contextValues,
       );
 
+      const duration = Date.now() - startTime;
+
       if (this.data.useErrorOutput) {
         outputs['error' as PortId] = {
           type: 'control-flow-excluded',
           value: undefined,
+        };
+      }
+
+      if (outputs['duration' as PortId] == null) {
+        outputs['duration' as PortId] = {
+          type: 'number',
+          value: duration,
         };
       }
 

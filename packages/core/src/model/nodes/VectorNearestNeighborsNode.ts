@@ -1,9 +1,9 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { nanoid } from 'nanoid';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { InternalProcessContext } from '../ProcessContext.js';
-import { DataValue, VectorDataValue, coerceTypeOptional, getIntegration } from '../../index.js';
+import { DataValue, EditorDefinition, VectorDataValue, coerceTypeOptional, getIntegration } from '../../index.js';
 import { dedent } from 'ts-dedent';
 
 export type VectorNearestNeighborsNode = ChartNode<'vectorNearestNeighbors', VectorNearestNeighborsNodeData>;
@@ -132,6 +132,17 @@ export class VectorNearestNeighborsNodeImpl extends NodeImpl<VectorNearestNeighb
       k: ${this.data.useKInput ? '(using input)' : this.data.k}
       ${this.data.useCollectionIdInput ? '(using input)' : this.data.collectionId}
     `;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Performs a k-nearest neighbors search on the vectors stored in the configured vector DB integration. Takes in a vector and returns the k closest vectors and their corresponding data.
+      `,
+      infoBoxTitle: 'Vector KNN Node',
+      contextMenuTitle: 'Vector KNN',
+      group: ['Input/Output'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

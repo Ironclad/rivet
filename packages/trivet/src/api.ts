@@ -8,7 +8,7 @@ import {
   GraphOutputNode,
   inferType,
 } from '@ironclad/rivet-core';
-import { cloneDeep, keyBy, mapValues } from 'lodash-es';
+import { cloneDeep, keyBy, mapValues, omit } from 'lodash-es';
 import { TrivetGraphRunner, TrivetOpts, TrivetResults, TrivetTestCaseResult } from './trivetTypes.js';
 import * as braintrust from 'braintrust';
 
@@ -50,9 +50,8 @@ export function createTestGraphRunner(opts: { openAiKey: string; braintrustApiKe
         settings: {
           openAiKey: opts.openAiKey,
           openAiOrganization: '',
-          pineconeApiKey: '',
-          anthropicApiKey: '',
-          braintrustApiKey: opts.braintrustApiKey ?? '',
+          pluginEnv: {},
+          pluginSettings: {},
           recordingPlaybackLatency: 1000,
         } satisfies Required<Settings>,
       },
@@ -129,6 +128,8 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
           const startTime = Date.now();
           const outputs = await runGraph(project, testGraph.metadata!.id!, resolvedInputs);
           const duration = Date.now() - startTime;
+          const costOutput = outputs.cost;
+          const cost = costOutput && costOutput.type === 'number' ? costOutput.value : 0;
 
           console.log('ran test graph', outputs);
 
@@ -149,7 +150,10 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
 
           console.log('running validation graph', validationInputs);
 
-          const validationOutputs = await runGraph(project, validationGraph.metadata!.id!, validationInputs);
+          const validationOutputs = omit(
+            await runGraph(project, validationGraph.metadata!.id!, validationInputs),
+            'cost',
+          );
 
           console.dir({ validationOutputs });
           const validationResults = Object.entries(validationOutputs).map(([outputId, result]) => {
@@ -198,8 +202,9 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
             iteration: i + 1,
             passing: validationResults.every((r) => r.valid),
             message: validationResults.find((r) => !r.valid)?.description ?? 'PASS',
-            outputs: mapValues(outputs, (dataValue) => dataValue.value),
+            outputs: mapValues(omit(outputs, 'cost'), (dataValue) => dataValue.value),
             duration,
+            cost,
           });
         } catch (err) {
           if (experiment) {
@@ -225,6 +230,7 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
             message: 'An error occurred',
             outputs: {},
             duration: 0,
+            cost: 0,
             error: err,
           });
         }

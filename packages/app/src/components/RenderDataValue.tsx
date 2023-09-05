@@ -11,7 +11,8 @@ import {
   isFunctionDataValue,
 } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
-import { keys } from '../utils/typeSafety.js';
+import { keys } from '../../../core/src/utils/typeSafety';
+import { useMarkdown } from '../hooks/useMarkdown';
 
 const multiOutput = css`
   display: flex;
@@ -20,29 +21,45 @@ const multiOutput = css`
 `;
 
 const scalarRenderers: {
-  [P in ScalarDataType]: FC<{ value: Extract<ScalarDataValue, { type: P }>; depth?: number }>;
+  [P in ScalarDataType]: FC<{ value: Extract<ScalarDataValue, { type: P }>; depth?: number; renderMarkdown?: boolean }>;
 } = {
   boolean: ({ value }) => <>{value.value ? 'true' : 'false'}</>,
   number: ({ value }) => <>{value.value}</>,
-  string: ({ value }) => <pre className="pre-wrap">{value.value}</pre>,
-  'chat-message': ({ value }) => (
-    <div>
+  string: ({ value, renderMarkdown }) => {
+    const markdownRendered = useMarkdown(value.value, renderMarkdown);
+
+    if (renderMarkdown) {
+      return <div dangerouslySetInnerHTML={markdownRendered} />;
+    }
+
+    return <pre className="pre-wrap">{value.value}</pre>;
+  },
+  'chat-message': ({ value, renderMarkdown }) => {
+    const markdownRendered = useMarkdown(value.value.message, renderMarkdown);
+
+    return (
       <div>
-        <em>{value.value.type}:</em>
+        <div>
+          <em>{value.value.type}:</em>
+        </div>
+        {renderMarkdown ? (
+          <div dangerouslySetInnerHTML={markdownRendered} />
+        ) : (
+          <pre className="pre-wrap">{value.value.message}</pre>
+        )}
       </div>
-      <pre className="pre-wrap">{value.value.message}</pre>
-    </div>
-  ),
+    );
+  },
   date: ({ value }) => <>{value.value}</>,
   time: ({ value }) => <>{value.value}</>,
   datetime: ({ value }) => <>{value.value}</>,
   'control-flow-excluded': () => <>Not ran</>,
-  any: ({ value, depth }) => {
+  any: ({ value, depth, renderMarkdown }) => {
     const inferred = inferType(value.value);
     if (inferred.type === 'any') {
       return <>{JSON.stringify(inferred.value)}</>;
     }
-    return <RenderDataValue value={inferred} depth={(depth ?? 0) + 1} />;
+    return <RenderDataValue value={inferred} depth={(depth ?? 0) + 1} renderMarkdown={renderMarkdown} />;
   },
   object: ({ value }) => <>{JSON.stringify(value.value)}</>,
   'gpt-function': ({ value }) => (
@@ -51,9 +68,43 @@ const scalarRenderers: {
     </>
   ),
   vector: ({ value }) => <>Vector (length {value.value.length})</>,
+  image: ({ value }) => {
+    const {
+      value: { data, mediaType },
+    } = value;
+
+    const blob = new Blob([data], { type: mediaType });
+    const imageUrl = URL.createObjectURL(blob);
+
+    return (
+      <div>
+        <img src={imageUrl} alt="" />
+      </div>
+    );
+  },
+  binary: ({ value }) => <>Binary (length {value.value.length.toLocaleString()})</>,
+  audio: ({ value }) => {
+    const {
+      value: { data },
+    } = value;
+
+    const dataUri = `data:audio/mp4;base64,${data}`;
+
+    return (
+      <div>
+        <audio controls>
+          <source src={dataUri} />
+        </audio>
+      </div>
+    );
+  },
 };
 
-export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number }> = ({ value, depth }) => {
+export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number; renderMarkdown?: boolean }> = ({
+  value,
+  depth,
+  renderMarkdown,
+}) => {
   if ((depth ?? 0) > 100) {
     return <>ERROR: FAILED TO RENDER {JSON.stringify(value)}</>;
   }
@@ -72,7 +123,7 @@ export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number 
       <div css={multiOutput}>
         {items.map((v, i) => (
           <div key={i}>
-            <RenderDataValue key={i} value={v} depth={(depth ?? 0) + 1} />
+            <RenderDataValue key={i} value={v} depth={(depth ?? 0) + 1} renderMarkdown={renderMarkdown} />
           </div>
         ))}
       </div>
@@ -88,18 +139,22 @@ export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number 
     );
   }
 
-  const Renderer = scalarRenderers[value.type as ScalarDataType] as FC<{ value: ScalarDataValue; depth?: number }>;
+  const Renderer = scalarRenderers[value.type as ScalarDataType] as FC<{
+    value: ScalarDataValue;
+    depth?: number;
+    renderMarkdown?: boolean;
+  }>;
 
-  return <Renderer value={value} depth={(depth ?? 0) + 1} />;
+  return <Renderer value={value} depth={(depth ?? 0) + 1} renderMarkdown={renderMarkdown} />;
 };
 
-export const RenderDataOutputs: FC<{ outputs: Outputs }> = ({ outputs }) => {
+export const RenderDataOutputs: FC<{ outputs: Outputs; renderMarkdown?: boolean }> = ({ outputs, renderMarkdown }) => {
   const outputPorts = keys(outputs);
 
   if (outputPorts.length === 1) {
     return (
       <div>
-        <RenderDataValue value={outputs[outputPorts[0]!]!} />
+        <RenderDataValue value={outputs[outputPorts[0]!]!} renderMarkdown={renderMarkdown} />
       </div>
     );
   }
@@ -111,7 +166,7 @@ export const RenderDataOutputs: FC<{ outputs: Outputs }> = ({ outputs }) => {
           <div>
             <em>{portId}:</em>
           </div>
-          <RenderDataValue value={outputs![portId]!} />
+          <RenderDataValue value={outputs![portId]!} renderMarkdown={renderMarkdown} />
         </div>
       ))}
     </div>

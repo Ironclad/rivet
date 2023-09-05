@@ -14,7 +14,7 @@ const currentPathCss = css`
   white-space: pre-wrap;
   word-wrap: break-word;
   font-family: 'Roboto mono', monospace;
-  color: var(--primary);
+  color: var(--primary-text);
 `;
 
 export const ReadFileNodeBody: FC<ReadFileNodeBodyProps> = ({ node }) => {
@@ -82,7 +82,7 @@ const container = css`
 
 export const ReadFileNodeEditor: FC<ReadFileNodeEditorProps> = ({ node, onChange }) => {
   const handleBrowseClick = async () => {
-    const path = await ioProvider.openFile();
+    const path = await ioProvider.openFilePath();
     if (path) {
       onChange?.({
         ...node,

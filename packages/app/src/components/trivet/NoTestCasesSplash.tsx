@@ -26,7 +26,7 @@ const styles = css`
   }
 
   h1 {
-    color: var(--primary);
+    color: var(--primary-text);
   }
 
   .buttons {
@@ -57,7 +57,7 @@ export const NoTestCasesSplash: FC<{
 }> = ({ onCreateNewTestCase }) => {
   const contentHtml = useMarkdown(content);
 
-  const viewDocumentation = useOpenUrl('https://rivet.ironcladapp.com/trivet');
+  const viewDocumentation = useOpenUrl('https://rivet.ironcladapp.com/docs/trivet');
 
   return (
     <div css={styles}>

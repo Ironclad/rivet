@@ -1,8 +1,9 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
-import { coerceType } from '../../index.js';
+import { EditorDefinition, coerceType } from '../../index.js';
+import { dedent } from 'ts-dedent';
 
 export type ToJsonNode = ChartNode<'toJson', ToJsonNodeData>;
 
@@ -62,6 +63,17 @@ export class ToJsonNodeImpl extends NodeImpl<ToJsonNode> {
 
   getBody(): string | undefined {
     return this.data.indented ? 'Indented' : 'Not indented';
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Turns the input value into its JSON equivalent (stringifies the value).
+      `,
+      infoBoxTitle: 'To JSON Node',
+      contextMenuTitle: 'To JSON',
+      group: ['Text'],
+    };
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

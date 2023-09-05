@@ -11,8 +11,8 @@ import {
   NodeId,
   PortId,
   ScalarOrArrayDataType,
-  createUnknownNodeInstance,
   emptyNodeGraph,
+  globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
 import { projectState } from '../state/savedGraphs.js';
 import { isNotNull } from '../utils/genericUtilFunctions.js';
@@ -50,13 +50,17 @@ export function useFactorIntoSubgraph() {
           return undefined;
         }
 
-        const inputDefs = createUnknownNodeInstance(inputNode).getInputDefinitions(connections, nodesById, project);
+        const inputDefs = globalRivetNodeRegistry
+          .createDynamicImpl(inputNode)
+          .getInputDefinitions(connections, nodesById, project);
 
         if (!inputDefs.find((d) => d.id === connection.inputId)) {
           return undefined;
         }
 
-        const outputDefs = createUnknownNodeInstance(outputNode).getOutputDefinitions(connections, nodesById, project);
+        const outputDefs = globalRivetNodeRegistry
+          .createDynamicImpl(outputNode)
+          .getOutputDefinitions(connections, nodesById, project);
 
         const outputDef = outputDefs.find((d) => d.id === connection.outputId);
 
@@ -107,14 +111,18 @@ export function useFactorIntoSubgraph() {
           return undefined;
         }
 
-        const outputDefs = createUnknownNodeInstance(outputNode).getOutputDefinitions(connections, nodesById, project);
+        const outputDefs = globalRivetNodeRegistry
+          .createDynamicImpl(outputNode)
+          .getOutputDefinitions(connections, nodesById, project);
         const outputDef = outputDefs.find((d) => d.id === connection.outputId);
 
         if (!outputDef) {
           return undefined;
         }
 
-        const inputDefs = createUnknownNodeInstance(inputNode).getInputDefinitions(connections, nodesById, project);
+        const inputDefs = globalRivetNodeRegistry
+          .createDynamicImpl(inputNode)
+          .getInputDefinitions(connections, nodesById, project);
         const inputDef = inputDefs.find((d) => d.id === connection.inputId);
 
         if (!inputDef) {

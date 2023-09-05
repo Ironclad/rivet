@@ -2,11 +2,10 @@ import { FC, useCallback, useMemo } from 'react';
 import { TestCaseTable } from './TestCaseTable';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { GraphSelector } from '../DefaultNodeEditor';
-import { nanoid } from 'nanoid';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { savedGraphsState } from '../../state/savedGraphs';
 import { keyBy } from 'lodash-es';
-import { GraphInputNode, GraphOutputNode, NodeGraph } from '@ironclad/rivet-core';
+import { NodeGraph } from '@ironclad/rivet-core';
 import { TestCaseEditor } from './TestCaseEditor';
 import { css } from '@emotion/react';
 import {
@@ -19,11 +18,11 @@ import { trivetState } from '../../state/trivet';
 import Button from '@atlaskit/button';
 
 import { TryRunTests } from './api';
-import { useStableCallback } from '../../hooks/useStableCallback';
 import { useOpenUrl } from '../../hooks/useOpenUrl';
 import { ReactComponent as BrowserLineIcon } from 'majesticons/line/browser-line.svg';
 import { ReactComponent as AlertCircleIcon } from 'majesticons/line/alert-circle-line.svg';
 import { NoTestCasesSplash } from './NoTestCasesSplash';
+import { useTestSuite } from '../../hooks/useTestSuite';
 
 const styles = css`
   min-height: 100%;
@@ -111,8 +110,7 @@ const styles = css`
 `;
 
 export const TestSuiteRenderer: FC<{ tryRunTests: TryRunTests }> = ({ tryRunTests }) => {
-  const [{ testSuites, selectedTestSuiteId, editingTestCaseId, recentTestResults, runningTests }, setState] =
-    useRecoilState(trivetState);
+  const { testSuites, selectedTestSuiteId } = useRecoilValue(trivetState);
 
   const testSuite = useMemo(
     () => testSuites.find((ts) => ts.id === selectedTestSuiteId),
@@ -140,54 +138,13 @@ export const TestSuite: FC<{ testSuite: TrivetTestSuite; tryRunTests: TryRunTest
     useRecoilState(trivetState);
   const savedGraphs = useRecoilValue(savedGraphsState);
 
+  const { addTestCase, updateTestSuite, testGraph, setEditingTestCase, deleteTestCase, duplicateTestCase } =
+    useTestSuite(testSuite.id);
+
   const isEditingTestCase = useMemo(
     () => Boolean(editingTestCaseId) && testSuite?.testCases.find((tc) => tc.id === editingTestCaseId) != null,
     [editingTestCaseId, testSuite],
   );
-  const updateTestSuite = useCallback(
-    (testSuite: TrivetTestSuite) => {
-      setState((s) => ({
-        ...s,
-        testSuites: s.testSuites.map((ts) => (ts.id === testSuite.id ? testSuite : ts)),
-      }));
-    },
-    [setState],
-  );
-
-  const setEditingTestCase = useCallback(
-    (id: string | undefined) => {
-      setState((s) => ({
-        ...s,
-        editingTestCaseId: id,
-      }));
-    },
-    [setState],
-  );
-  const deleteTestCase = useCallback(
-    (id: string) => {
-      setState((s) => ({
-        ...s,
-        testSuites: s.testSuites.map((ts) =>
-          ts.id === selectedTestSuiteId ? { ...ts, testCases: ts.testCases.filter((tc) => tc.id !== id) } : ts,
-        ),
-      }));
-    },
-    [setState, selectedTestSuiteId],
-  );
-
-  const duplicateTestCase = useStableCallback((id: string) => {
-    if (testSuite == null) {
-      return;
-    }
-    const testCase = testSuite.testCases.find((tc) => tc.id === id);
-    if (testCase == null) {
-      return;
-    }
-    updateTestSuite({
-      ...testSuite,
-      testCases: [...testSuite.testCases, { ...testCase, id: nanoid() }],
-    });
-  });
 
   const latestResult = useMemo(
     () => recentTestResults?.testSuiteResults.find((tsr) => tsr.id === selectedTestSuiteId),
@@ -198,43 +155,6 @@ export const TestSuite: FC<{ testSuite: TrivetTestSuite; tryRunTests: TryRunTest
     () => keyBy(savedGraphs, (g) => g.metadata?.id as string),
     [savedGraphs],
   );
-  const testGraph = useMemo(() => {
-    if (testSuite?.testGraph == null) {
-      return;
-    }
-    return graphsById[testSuite.testGraph];
-  }, [graphsById, testSuite?.testGraph]);
-
-  const addTestCase = useCallback(() => {
-    if (testSuite == null) {
-      return;
-    }
-    let input: Record<string, unknown> = {};
-    let output: Record<string, unknown> = {};
-    if (testGraph != null) {
-      input = Object.fromEntries(
-        testGraph.nodes
-          .filter((n): n is GraphInputNode => n.type === 'graphInput')
-          .map((n) => [n.data.id, n.data.dataType]),
-      );
-      output = Object.fromEntries(
-        testGraph.nodes
-          .filter((n): n is GraphOutputNode => n.type === 'graphOutput')
-          .map((n) => [n.data.id, n.data.dataType]),
-      );
-    }
-    updateTestSuite({
-      ...testSuite,
-      testCases: [
-        ...testSuite.testCases,
-        {
-          id: nanoid(),
-          input,
-          expectedOutput: output,
-        },
-      ],
-    });
-  }, [testGraph, testSuite, updateTestSuite]);
 
   const validationGraphValidationResults = useMemo(() => {
     if (testSuite?.validationGraph == null) {
@@ -298,7 +218,7 @@ export const TestSuite: FC<{ testSuite: TrivetTestSuite; tryRunTests: TryRunTest
     });
   }, [testCaseValidationResults, testSuite, updateTestSuite]);
 
-  const viewDocumentation = useOpenUrl('https://rivet.ironcladapp.com/trivet');
+  const viewDocumentation = useOpenUrl('https://rivet.ironcladapp.com/docs/trivet');
   const brainTrustSummary = brainTrustSummaries && brainTrustSummaries[testSuite.id];
 
   return (

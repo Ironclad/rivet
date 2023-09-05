@@ -1,4 +1,4 @@
-import { max, range, uniqBy } from 'lodash-es';
+import { max, range, sum, uniqBy } from 'lodash-es';
 import { ControlFlowExcluded, ControlFlowExcludedPort } from '../utils/symbols.js';
 import {
   DataValue,
@@ -14,7 +14,6 @@ import {
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase.js';
 import { GraphId, NodeGraph } from './NodeGraph.js';
 import { NodeImpl } from './NodeImpl.js';
-import { NodeType, Nodes, createUnknownNodeInstance } from './Nodes.js';
 import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode.js';
 import PQueueImport from 'p-queue';
 import { getError } from '../utils/errors.js';
@@ -27,6 +26,10 @@ import { InternalProcessContext, ProcessContext, ProcessId } from './ProcessCont
 import { ExecutionRecorder } from '../recording/ExecutionRecorder.js';
 import { P, match } from 'ts-pattern';
 import { Opaque } from 'type-fest';
+import { coerceTypeOptional } from '../utils/coerceType.js';
+import { BuiltInNodeType, BuiltInNodes, globalRivetNodeRegistry } from './Nodes.js';
+import { NodeRegistration } from './NodeRegistration.js';
+import { StringPluginConfigurationSpec } from './RivetPlugin.js';
 
 // CJS compatibility, gets default.default for whatever reason
 let PQueue = PQueueImport;
@@ -112,7 +115,10 @@ export type Outputs = Record<PortId, DataValue | undefined>;
 
 export type ExternalFunctionProcessContext = Omit<InternalProcessContext, 'setGlobal'>;
 
-export type ExternalFunction = (context: ExternalFunctionProcessContext, ...args: unknown[]) => Promise<DataValue>;
+export type ExternalFunction = (
+  context: ExternalFunctionProcessContext,
+  ...args: unknown[]
+) => Promise<DataValue & { cost?: number }>;
 
 type RaceId = Opaque<string, 'RaceId'>;
 
@@ -160,6 +166,7 @@ export class GraphProcessor {
   slowMode = false;
   #isPaused = false;
   #parent: GraphProcessor | undefined;
+  #registry: NodeRegistration;
   id = nanoid();
 
   /** The node that is executing this graph, almost always a subgraph node. Undefined for root. */
@@ -197,6 +204,7 @@ export class GraphProcessor {
   #aborted = false;
   #abortSuccessfully = false;
   #abortError: Error | string | undefined = undefined;
+  #totalCost: number = 0;
 
   #nodeAbortControllers = new Map<`${NodeId}-${ProcessId}`, AbortController>();
 
@@ -210,7 +218,7 @@ export class GraphProcessor {
     return this.#running;
   }
 
-  constructor(project: Project, graphId: GraphId) {
+  constructor(project: Project, graphId: GraphId, registry?: NodeRegistration) {
     this.#project = project;
     const graph = project.graphs[graphId];
 
@@ -222,12 +230,13 @@ export class GraphProcessor {
     this.#nodeInstances = {};
     this.#connections = {};
     this.#nodesById = {};
+    this.#registry = registry ?? (globalRivetNodeRegistry as unknown as NodeRegistration);
 
     this.#emitter.bindMethods(this as any, ['on', 'off', 'once', 'onAny', 'offAny']);
 
     // Create node instances and store them in a lookup table
     for (const node of this.#graph.nodes) {
-      this.#nodeInstances[node.id] = createUnknownNodeInstance(node as Nodes);
+      this.#nodeInstances[node.id] = this.#registry.createDynamicImpl(node);
       this.#nodesById[node.id] = node;
     }
 
@@ -418,148 +427,158 @@ export class GraphProcessor {
 
     this.#initProcessState();
 
-    const nodesByIdAllGraphs: Record<NodeId, ChartNode> = {};
-    for (const graph of Object.values(this.#project.graphs)) {
-      for (const node of graph.nodes) {
-        nodesByIdAllGraphs[node.id] = node;
-      }
-    }
-
-    const getGraph = (graphId: GraphId) => {
-      const graph = this.#project.graphs[graphId];
-      if (!graph) {
-        throw new Error(`Mismatch between project and recording: graph ${graphId} not found in project`);
-      }
-      return graph;
-    };
-
-    const getNode = (nodeId: NodeId) => {
-      const node = nodesByIdAllGraphs[nodeId];
-
-      if (!node) {
-        throw new Error(`Mismatch between project and recording: node ${nodeId} not found in any graph in project`);
+    try {
+      const nodesByIdAllGraphs: Record<NodeId, ChartNode> = {};
+      for (const graph of Object.values(this.#project.graphs)) {
+        for (const node of graph.nodes) {
+          nodesByIdAllGraphs[node.id] = node;
+        }
       }
 
-      return node;
-    };
+      const getGraph = (graphId: GraphId) => {
+        const graph = this.#project.graphs[graphId];
+        if (!graph) {
+          throw new Error(`Mismatch between project and recording: graph ${graphId} not found in project`);
+        }
+        return graph;
+      };
 
-    for (const event of events) {
-      await this.#waitUntilUnpaused();
+      const getNode = (nodeId: NodeId) => {
+        const node = nodesByIdAllGraphs[nodeId];
 
-      await match(event)
-        .with({ type: 'start' }, ({ data }) => {
-          this.#emitter.emit('start', {
-            project: this.#project,
-            contextValues: data.contextValues,
-            inputs: data.inputs,
-          });
-          this.#contextValues = data.contextValues;
-          this.#graphInputs = data.inputs;
-        })
-        .with({ type: 'abort' }, ({ data }) => {
-          this.#emitter.emit('abort', data);
-        })
-        .with({ type: 'pause' }, () => {})
-        .with({ type: 'resume' }, () => {})
-        .with({ type: 'done' }, ({ data }) => {
-          this.#emitter.emit('done', data);
-          this.#graphOutputs = data.results;
-          this.#running = false;
-        })
-        .with({ type: 'error' }, ({ data }) => {
-          this.#emitter.emit('error', data);
-        })
-        .with({ type: 'globalSet' }, ({ data }) => {
-          this.#emitter.emit('globalSet', data);
-        })
-        .with({ type: 'trace' }, ({ data }) => {
-          this.#emitter.emit('trace', data);
-        })
-        .with({ type: 'graphStart' }, ({ data }) => {
-          this.#emitter.emit('graphStart', {
-            graph: getGraph(data.graphId),
-            inputs: data.inputs,
-          });
-        })
-        .with({ type: 'graphFinish' }, ({ data }) => {
-          this.#emitter.emit('graphFinish', {
-            graph: getGraph(data.graphId),
-            outputs: data.outputs,
-          });
-        })
-        .with({ type: 'graphError' }, ({ data }) => {
-          this.#emitter.emit('graphError', {
-            graph: getGraph(data.graphId),
-            error: data.error,
-          });
-        })
-        .with({ type: 'graphAbort' }, ({ data }) => {
-          this.#emitter.emit('graphAbort', {
-            graph: getGraph(data.graphId),
-            error: data.error,
-            successful: data.successful,
-          });
-        })
-        .with({ type: 'nodeStart' }, async ({ data }) => {
-          const node = getNode(data.nodeId);
-          this.#emitter.emit('nodeStart', {
-            node: getNode(data.nodeId),
-            inputs: data.inputs,
-            processId: data.processId,
-          });
+        if (!node) {
+          throw new Error(`Mismatch between project and recording: node ${nodeId} not found in any graph in project`);
+        }
 
-          // Every time a chat node starts, we wait for the playback interval
-          if (node.type === 'chat') {
-            await new Promise((resolve) => setTimeout(resolve, this.recordingPlaybackChatLatency));
-          }
-        })
-        .with({ type: 'nodeFinish' }, ({ data }) => {
-          const node = getNode(data.nodeId);
-          this.#emitter.emit('nodeFinish', {
-            node,
-            outputs: data.outputs,
-            processId: data.processId,
-          });
+        return node;
+      };
 
-          this.#nodeResults.set(data.nodeId, data.outputs);
-          this.#visitedNodes.add(data.nodeId);
-        })
-        .with({ type: 'nodeError' }, ({ data }) => {
-          this.#emitter.emit('nodeError', {
-            node: getNode(data.nodeId),
-            error: data.error,
-            processId: data.processId,
-          });
+      for (const event of events) {
+        if (this.#aborted) {
+          break;
+        }
 
-          this.#erroredNodes.set(data.nodeId, data.error);
-          this.#visitedNodes.add(data.nodeId);
-        })
-        .with({ type: 'nodeExcluded' }, ({ data }) => {
-          this.#emitter.emit('nodeExcluded', {
-            node: getNode(data.nodeId),
-            processId: data.processId,
-          });
+        await this.#waitUntilUnpaused();
 
-          this.#visitedNodes.add(data.nodeId);
-        })
-        .with({ type: 'nodeOutputsCleared' }, () => {})
-        .with({ type: 'partialOutput' }, () => {})
-        .with({ type: 'userInput' }, ({ data }) => {
-          this.#emitter.emit('userInput', {
-            callback: undefined!,
-            inputs: data.inputs,
-            node: getNode(data.nodeId) as UserInputNode,
-            processId: data.processId,
-          });
-        })
-        .with({ type: P.string.startsWith('globalSet:') }, ({ type, data }) => {
-          this.#emitter.emit(type, data);
-        })
-        .with({ type: P.string.startsWith('userEvent:') }, ({ type, data }) => {
-          this.#emitter.emit(type, data);
-        })
-        .with(undefined, () => {})
-        .exhaustive();
+        await match(event)
+          .with({ type: 'start' }, ({ data }) => {
+            this.#emitter.emit('start', {
+              project: this.#project,
+              contextValues: data.contextValues,
+              inputs: data.inputs,
+            });
+            this.#contextValues = data.contextValues;
+            this.#graphInputs = data.inputs;
+          })
+          .with({ type: 'abort' }, ({ data }) => {
+            this.#emitter.emit('abort', data);
+          })
+          .with({ type: 'pause' }, () => {})
+          .with({ type: 'resume' }, () => {})
+          .with({ type: 'done' }, ({ data }) => {
+            this.#emitter.emit('done', data);
+            this.#graphOutputs = data.results;
+            this.#running = false;
+          })
+          .with({ type: 'error' }, ({ data }) => {
+            this.#emitter.emit('error', data);
+          })
+          .with({ type: 'globalSet' }, ({ data }) => {
+            this.#emitter.emit('globalSet', data);
+          })
+          .with({ type: 'trace' }, ({ data }) => {
+            this.#emitter.emit('trace', data);
+          })
+          .with({ type: 'graphStart' }, ({ data }) => {
+            this.#emitter.emit('graphStart', {
+              graph: getGraph(data.graphId),
+              inputs: data.inputs,
+            });
+          })
+          .with({ type: 'graphFinish' }, ({ data }) => {
+            this.#emitter.emit('graphFinish', {
+              graph: getGraph(data.graphId),
+              outputs: data.outputs,
+            });
+          })
+          .with({ type: 'graphError' }, ({ data }) => {
+            this.#emitter.emit('graphError', {
+              graph: getGraph(data.graphId),
+              error: data.error,
+            });
+          })
+          .with({ type: 'graphAbort' }, ({ data }) => {
+            this.#emitter.emit('graphAbort', {
+              graph: getGraph(data.graphId),
+              error: data.error,
+              successful: data.successful,
+            });
+          })
+          .with({ type: 'nodeStart' }, async ({ data }) => {
+            const node = getNode(data.nodeId);
+            this.#emitter.emit('nodeStart', {
+              node: getNode(data.nodeId),
+              inputs: data.inputs,
+              processId: data.processId,
+            });
+
+            // Every time a chat node starts, we wait for the playback interval
+            if (node.type === 'chat') {
+              await new Promise((resolve) => setTimeout(resolve, this.recordingPlaybackChatLatency));
+            }
+          })
+          .with({ type: 'nodeFinish' }, ({ data }) => {
+            const node = getNode(data.nodeId);
+            this.#emitter.emit('nodeFinish', {
+              node,
+              outputs: data.outputs,
+              processId: data.processId,
+            });
+
+            this.#nodeResults.set(data.nodeId, data.outputs);
+            this.#visitedNodes.add(data.nodeId);
+          })
+          .with({ type: 'nodeError' }, ({ data }) => {
+            this.#emitter.emit('nodeError', {
+              node: getNode(data.nodeId),
+              error: data.error,
+              processId: data.processId,
+            });
+
+            this.#erroredNodes.set(data.nodeId, data.error);
+            this.#visitedNodes.add(data.nodeId);
+          })
+          .with({ type: 'nodeExcluded' }, ({ data }) => {
+            this.#emitter.emit('nodeExcluded', {
+              node: getNode(data.nodeId),
+              processId: data.processId,
+            });
+
+            this.#visitedNodes.add(data.nodeId);
+          })
+          .with({ type: 'nodeOutputsCleared' }, () => {})
+          .with({ type: 'partialOutput' }, () => {})
+          .with({ type: 'userInput' }, ({ data }) => {
+            this.#emitter.emit('userInput', {
+              callback: undefined!,
+              inputs: data.inputs,
+              node: getNode(data.nodeId) as UserInputNode,
+              processId: data.processId,
+            });
+          })
+          .with({ type: P.string.startsWith('globalSet:') }, ({ type, data }) => {
+            this.#emitter.emit(type, data);
+          })
+          .with({ type: P.string.startsWith('userEvent:') }, ({ type, data }) => {
+            this.#emitter.emit(type, data);
+          })
+          .with(undefined, () => {})
+          .exhaustive();
+      }
+    } catch (err) {
+      this.#emitter.emit('error', { error: getError(err) });
+    } finally {
+      this.#running = false;
     }
 
     return this.#graphOutputs;
@@ -630,7 +649,7 @@ export class GraphProcessor {
 
       for (const nodeWithoutOutputs of nodesWithoutOutputs) {
         this.#processingQueue.add(async () => {
-          await this.#fetchNodeDataAndProcessNode(nodeWithoutOutputs as Nodes);
+          await this.#fetchNodeDataAndProcessNode(nodeWithoutOutputs);
         });
       }
 
@@ -661,6 +680,13 @@ export class GraphProcessor {
         throw error;
       }
 
+      if (this.#graphOutputs['cost' as PortId] == null) {
+        this.#graphOutputs['cost' as PortId] = {
+          type: 'number',
+          value: this.#totalCost,
+        };
+      }
+
       const outputValues = this.#graphOutputs;
 
       this.#running = false;
@@ -677,7 +703,7 @@ export class GraphProcessor {
     }
   }
 
-  async #fetchNodeDataAndProcessNode(node: Nodes): Promise<void> {
+  async #fetchNodeDataAndProcessNode(node: ChartNode): Promise<void> {
     if (this.#currentlyProcessing.has(node.id) || this.#queuedNodes.has(node.id)) {
       return;
     }
@@ -735,7 +761,7 @@ export class GraphProcessor {
       inputNodes.map((inputNode) => {
         return async () => {
           this.#emitter.emit('trace', `Fetching required data for node ${inputNode.title} (${inputNode.id})`);
-          await this.#fetchNodeDataAndProcessNode(inputNode as Nodes);
+          await this.#fetchNodeDataAndProcessNode(inputNode);
         };
       }),
     );
@@ -744,7 +770,9 @@ export class GraphProcessor {
   }
 
   /** If all inputs are present, all conditions met, processes the node. */
-  async #processNodeIfAllInputsAvailable(node: Nodes): Promise<void> {
+  async #processNodeIfAllInputsAvailable(node: ChartNode): Promise<void> {
+    const builtInNode = node as BuiltInNodes;
+
     if (this.#currentlyProcessing.has(node.id)) {
       this.#emitter.emit('trace', `Node ${node.title} is already being processed`);
       return;
@@ -844,7 +872,7 @@ export class GraphProcessor {
       return;
     }
 
-    const processId = await this.#processNode(node as Nodes);
+    const processId = await this.#processNode(node);
 
     if (this.slowMode) {
       await new Promise((resolve) => setTimeout(resolve, 250));
@@ -906,8 +934,8 @@ export class GraphProcessor {
     }
 
     let childLoopInfo = attachedData.loopInfo;
-    if (node.type === 'loopController') {
-      if (childLoopInfo != null && childLoopInfo.loopControllerId !== node.id) {
+    if (builtInNode.type === 'loopController') {
+      if (childLoopInfo != null && childLoopInfo.loopControllerId !== builtInNode.id) {
         this.#nodeErrored(node, new Error('Nested loops are not supported'), processId);
         return;
       }
@@ -933,10 +961,12 @@ export class GraphProcessor {
 
       attachedData.loopInfo = childLoopInfo; // Not 100% sure if this is right - sets the childLoopInfo on the loop controller itself, probably fine?
 
-      if (childLoopInfo.iterationCount > (node.data.maxIterations ?? 100)) {
+      if (childLoopInfo.iterationCount > (builtInNode.data.maxIterations ?? 100)) {
         this.#nodeErrored(
           node,
-          new Error(`Loop controller ${node.title} has exceeded max iterations of ${node.data.maxIterations ?? 100}`),
+          new Error(
+            `Loop controller ${node.title} has exceeded max iterations of ${builtInNode.data.maxIterations ?? 100}`,
+          ),
           processId,
         );
         return;
@@ -971,7 +1001,7 @@ export class GraphProcessor {
           `Trying to run output node from ${node.title}: ${outputNode.title} (${outputNode.id})`,
         );
 
-        await this.#processNodeIfAllInputsAvailable(outputNode as Nodes);
+        await this.#processNodeIfAllInputsAvailable(outputNode);
       }),
     );
   }
@@ -986,8 +1016,9 @@ export class GraphProcessor {
     return nodeData;
   }
 
-  async #processNode(node: Nodes) {
+  async #processNode(node: ChartNode) {
     const processId = nanoid() as ProcessId;
+    const builtInNode = node as BuiltInNodes;
 
     if (this.#abortController.signal.aborted) {
       this.#nodeErrored(node, new Error('Processing aborted'), processId);
@@ -1017,7 +1048,7 @@ export class GraphProcessor {
     return processId;
   }
 
-  #isNodeOfType<T extends Nodes['type']>(type: T, node: ChartNode): node is Extract<Nodes, { type: T }> {
+  #isNodeOfType<T extends BuiltInNodes['type']>(type: T, node: ChartNode): node is Extract<BuiltInNodes, { type: T }> {
     return node.type === type;
   }
 
@@ -1128,6 +1159,7 @@ export class GraphProcessor {
 
       this.#nodeResults.set(node.id, aggregateResults);
       this.#visitedNodes.add(node.id);
+      this.#totalCost += sum(results.map((r) => coerceTypeOptional(r.output?.['cost' as PortId], 'number') ?? 0));
       this.#emitter.emit('nodeFinish', { node, outputs: aggregateResults, processId });
     } catch (error) {
       this.#nodeErrored(node, error, processId);
@@ -1155,6 +1187,9 @@ export class GraphProcessor {
 
       this.#nodeResults.set(node.id, outputValues);
       this.#visitedNodes.add(node.id);
+      if (outputValues['cost' as PortId]?.type === 'number') {
+        this.#totalCost += coerceTypeOptional(outputValues['cost' as PortId], 'number') ?? 0;
+      }
       this.#emitter.emit('nodeFinish', { node, outputs: outputValues, processId });
     } catch (error) {
       this.#nodeErrored(node, error, processId);
@@ -1198,6 +1233,8 @@ export class GraphProcessor {
     this.#abortController.signal.addEventListener('abort', () => {
       nodeAbortController.abort();
     });
+
+    const plugin = this.#registry.getPluginFor(node.type);
 
     const context: InternalProcessContext = {
       ...this.#context,
@@ -1309,6 +1346,36 @@ export class GraphProcessor {
       abortGraph: (error) => {
         this.abort(error === undefined, error);
       },
+      getPluginConfig: (name) => {
+        if (!plugin) {
+          return undefined;
+        }
+
+        const configSpec = plugin?.configSpec?.[name];
+
+        if (!configSpec) {
+          return undefined;
+        }
+
+        const pluginSettings = this.#context.settings.pluginSettings?.[plugin.id];
+        if (pluginSettings) {
+          const value = pluginSettings[name];
+          if (!value || typeof value !== 'string') {
+            return undefined;
+          }
+
+          return value;
+        }
+
+        const envFallback = (configSpec as StringPluginConfigurationSpec).pullEnvironmentVariable;
+        const envFallbackName = envFallback === true ? name : envFallback;
+
+        if (envFallbackName && this.#context.settings.pluginEnv?.[envFallbackName]) {
+          return this.#context.settings.pluginEnv[envFallbackName];
+        }
+
+        return undefined;
+      },
     };
 
     await this.#waitUntilUnpaused();
@@ -1355,10 +1422,16 @@ export class GraphProcessor {
 
     const isWaitingForLoop = controlFlowExcludedValues.some((value) => value?.value === 'loop-not-broken');
 
-    const nodesAllowedToConsumeExcludedValue: NodeType[] = ['if', 'ifElse', 'coalesce', 'graphOutput', 'raceInputs'];
+    const nodesAllowedToConsumeExcludedValue: BuiltInNodeType[] = [
+      'if',
+      'ifElse',
+      'coalesce',
+      'graphOutput',
+      'raceInputs',
+    ];
 
     const allowedToConsumedExcludedValue =
-      nodesAllowedToConsumeExcludedValue.includes(node.type as NodeType) && !isWaitingForLoop;
+      nodesAllowedToConsumeExcludedValue.includes(node.type as BuiltInNodeType) && !isWaitingForLoop;
 
     if ((inputIsExcludedValue || anyOutputIsExcludedValue) && !allowedToConsumedExcludedValue) {
       if (!isWaitingForLoop) {

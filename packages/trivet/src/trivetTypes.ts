@@ -55,6 +55,7 @@ export interface TrivetTestCaseResult {
   message: string;
   outputs: Record<string, unknown>;
   duration: number;
+  cost: number;
   error?: Error | string | any;
 }
 

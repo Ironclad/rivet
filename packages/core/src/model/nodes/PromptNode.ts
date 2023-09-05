@@ -1,7 +1,7 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { Inputs, Outputs, coerceType } from '../../index.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { EditorDefinition, Inputs, NodeBodySpec, Outputs, coerceType } from '../../index.js';
 import { mapValues } from 'lodash-es';
 import { dedent } from 'ts-dedent';
 
@@ -68,7 +68,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
     }
 
     // Extract inputs from promptText, everything like {{input}}
-    const inputNames = this.chartNode.data.promptText.match(/\{\{([^}]+)\}\}/g);
+    const inputNames = [...new Set(this.chartNode.data.promptText.match(/\{\{([^}]+)\}\}/g))];
     inputs = [
       ...inputs,
       ...(inputNames?.map((inputName): NodeInputDefinition => {
@@ -147,6 +147,21 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
     ];
   }
 
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Outputs a chat message, which is a string of text with an attached "type" saying who sent the message (User, Assistant, System) and optionally an attached "name".
+
+        Also provides the same <span style="color: var(--primary)">{{interpolation}}</span> capabilities as a Text node.
+
+        Can change one chat message type into another chat message type. For example, changing a User message into a System message.
+      `,
+      infoBoxTitle: 'Prompt Node',
+      contextMenuTitle: 'Prompt',
+      group: ['Text'],
+    };
+  }
+
   interpolate(baseString: string, values: Record<string, string>): string {
     return baseString.replace(/\{\{([^}]+)\}\}/g, (_m, p1) => {
       const value = values[p1];
@@ -165,6 +180,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
         value: {
           type: this.chartNode.data.type,
           message: outputValue,
+          name: this.data.name,
           function_call: this.data.enableFunctionCall
             ? coerceType(inputs['function-call' as PortId], 'object')
             : undefined,

@@ -1,5 +1,0 @@
----
-title: 'Chat'
----
-
-# Chat Node

@@ -6,15 +6,17 @@ import {
   MarkdownNodeBodySpec,
   NodeBodySpec,
   PlainNodeBodySpec,
-  createUnknownNodeInstance,
+  globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
 import { useMarkdown } from '../hooks/useMarkdown';
 import { match } from 'ts-pattern';
 import styled from '@emotion/styled';
 import { LazyColorizedPreformattedText } from './LazyComponents';
+import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 
 export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
   const { Body } = useUnknownNodeComponentDescriptorFor(node);
+  useDependsOnPlugins();
 
   const body = Body ? <Body node={node} /> : <UnknownNodeBody node={node} />;
 
@@ -31,7 +33,7 @@ const UnknownNodeBodyWrapper = styled.div<{
 `;
 
 const UnknownNodeBody: FC<{ node: ChartNode }> = ({ node }) => {
-  const body = useMemo(() => createUnknownNodeInstance(node).getBody(), [node]);
+  const body = useMemo(() => globalRivetNodeRegistry.createDynamicImpl(node).getBody(), [node]);
 
   const bodySpec: NodeBodySpec | NodeBodySpec[] | undefined =
     typeof body === 'string' ? { type: 'plain', text: body } : body;

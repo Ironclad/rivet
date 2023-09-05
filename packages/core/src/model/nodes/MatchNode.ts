@@ -1,9 +1,9 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
-import { expectType } from '../../utils/expectType.js';
 import { coerceType } from '../../index.js';
+import { dedent } from 'ts-dedent';
 
 export type MatchNode = ChartNode<'match', MatchNodeData>;
 
@@ -63,6 +63,17 @@ export class MatchNodeImpl extends NodeImpl<MatchNode> {
     });
 
     return outputs;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Any number of regular expressions can be configured, each corresponding to an output of the node. The output port of the first matching regex will be ran, and all other output ports will not be ran.
+      `,
+      infoBoxTitle: 'Match Node',
+      contextMenuTitle: 'Match',
+      group: ['Logic'],
+    };
   }
 
   async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {

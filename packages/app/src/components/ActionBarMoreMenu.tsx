@@ -13,6 +13,9 @@ import { ReactComponent as LinkIcon } from 'majesticons/line/link-circle-line.sv
 import { ReactComponent as GearIcon } from 'majesticons/line/settings-cog-line.svg';
 import { ReactComponent as CpuIcon } from 'majesticons/line/cpu-line.svg';
 import { ReactComponent as ForwardCircleIcon } from 'majesticons/line/forward-circle-line.svg';
+import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-plus-line.svg';
+import { CopyAsTestCaseModal } from './CopyAsTestCaseModal';
+import { useToggle } from 'ahooks';
 
 const moreMenuStyles = css`
   background-color: var(--grey-darkish);
@@ -76,7 +79,8 @@ const executorOptions = isInTauri()
 
 export const ActionBarMoreMenu: FC<{
   onClose: () => void;
-}> = ({ onClose }) => {
+  onCopyAsTestCase: () => void;
+}> = ({ onClose, onCopyAsTestCase }) => {
   const dropdownTarget = useRef<HTMLDivElement>(null);
   const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
   const setDebuggerPanelOpen = useSetRecoilState(debuggerPanelOpenState);
@@ -132,6 +136,9 @@ export const ActionBarMoreMenu: FC<{
       </div>
       <div className="menu-item menu-item-button load-recording" onClick={doLoadRecording}>
         <ForwardCircleIcon /> Load Recording
+      </div>
+      <div className="menu-item menu-item-button copy-inputs-as-trivet-json" onClick={onCopyAsTestCase}>
+        <CopyIcon /> Copy Inputs for Trivet
       </div>
       <div className="menu-item menu-item-button settings" onClick={openSettings}>
         <GearIcon /> Settings

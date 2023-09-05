@@ -5,7 +5,6 @@ import { ChatNode, Outputs, PortId, coerceTypeOptional, inferType, isArrayDataVa
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 import styled from '@emotion/styled';
 import Toggle from '@atlaskit/toggle';
-import { useToggle } from 'ahooks';
 import { marked } from 'marked';
 import clsx from 'clsx';
 import { useMarkdown } from '../../hooks/useMarkdown.js';
@@ -57,7 +56,8 @@ export const ChatNodeBody: FC<ChatNodeBodyProps> = ({ node }) => {
 export const ChatNodeOutput: FC<{
   outputs: Outputs;
   fullscreen?: boolean;
-}> = ({ outputs, fullscreen }) => {
+  renderMarkdown?: boolean;
+}> = ({ outputs, fullscreen, renderMarkdown }) => {
   if (isArrayDataValue(outputs['response' as PortId]) || isArrayDataValue(outputs['requestTokens' as PortId])) {
     const outputTextAll = coerceTypeOptional(outputs['response' as PortId], 'string[]') ?? [];
 
@@ -91,6 +91,7 @@ export const ChatNodeOutput: FC<{
               duration={duration}
               functionCall={functionCall}
               fullscreen={fullscreen}
+              renderMarkdown={renderMarkdown}
             />
           );
         })}
@@ -119,31 +120,29 @@ export const ChatNodeOutput: FC<{
         functionCall={functionCall}
         duration={duration}
         fullscreen={fullscreen}
+        renderMarkdown={renderMarkdown}
       />
     );
   }
 };
 
 const ChatNodeOutputContainer = styled.div`
+  position: relative;
+
   .function-call h4 {
     margin-top: 0;
     margin-bottom: 0;
     text-decoration: none;
     font-size: 12px;
     font-weight: normal;
-    color: var(--primary);
-  }
-
-  .markdown-toggle {
-    display: flex;
-    align-items: center;
-    margin-right: 80px;
+    color: var(--primary-text);
   }
 
   .metaInfo {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    min-height: 40px;
   }
 
   &.fullscreen .metaInfo {
@@ -164,15 +163,14 @@ export const ChatNodeOutputSingle: FC<{
   cost: number | undefined;
   duration: number | undefined;
   fullscreen?: boolean;
-}> = ({ outputText, functionCall, requestTokens, responseTokens, cost, duration, fullscreen }) => {
-  const [renderMarkdown, toggleRenderMarkdown] = useToggle(fullscreen);
-
+  renderMarkdown?: boolean;
+}> = ({ outputText, functionCall, requestTokens, responseTokens, cost, duration, fullscreen, renderMarkdown }) => {
   const outputHtml = useMarkdown(outputText);
 
   return (
     <ChatNodeOutputContainer className={clsx({ fullscreen })}>
-      {(responseTokens != null || requestTokens != null || cost != null) && (
-        <div className="metaInfo">
+      <div className="metaInfo">
+        {(responseTokens != null || requestTokens != null || cost != null) && (
           <div style={{ marginBottom: 8 }}>
             {(requestTokens ?? 0) > 0 && (
               <div>
@@ -195,13 +193,8 @@ export const ChatNodeOutputSingle: FC<{
               </div>
             )}
           </div>
-          {fullscreen && (
-            <label className="markdown-toggle">
-              <Toggle isChecked={renderMarkdown} onChange={toggleRenderMarkdown.toggle} /> Render Markdown
-            </label>
-          )}
-        </div>
-      )}
+        )}
+      </div>
 
       <div className={clsx('outputText', { markdown: renderMarkdown })}>
         {renderMarkdown ? (
@@ -226,12 +219,14 @@ export const ChatNodeOutputSingle: FC<{
 
 const ChatNodeFullscreenOutput: FC<{
   outputs: Outputs;
-}> = ({ outputs }) => {
-  return <ChatNodeOutput outputs={outputs} fullscreen />;
+  renderMarkdown: boolean;
+}> = ({ outputs, renderMarkdown }) => {
+  return <ChatNodeOutput outputs={outputs} fullscreen renderMarkdown={renderMarkdown} />;
 };
 
 export const chatNodeDescriptor: NodeComponentDescriptor<'chat'> = {
   Body: ChatNodeBody,
   OutputSimple: ChatNodeOutput,
   FullscreenOutputSimple: ChatNodeFullscreenOutput,
+  defaultRenderMarkdown: true,
 };
