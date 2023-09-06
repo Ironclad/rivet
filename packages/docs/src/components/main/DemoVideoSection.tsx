@@ -8,11 +8,16 @@ export const DemoVideoSection: React.FC<{ id?: string }> = ({ id }) => {
     <Section id={id}>
       <h2>See it in Action</h2>
       <div className={styles.videoContainer}>
-        <iframe
-          className={styles.video}
-          src="https://www.loom.com/embed/081c206893434b2e9d55020da5beedde?sid=0b389a29-6244-4309-80a8-71202e11c9ef"
-          allowFullScreen
-        />
+      <iframe
+        className={styles.video}
+        width="560"
+        height="315"
+        src="https://www.youtube.com/embed/HhgM9MiShwA?si=ULy6PThLVtV7D-Ab&rel=0"
+        title="Rivet Demo"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      />
       </div>
     </Section>
   );
