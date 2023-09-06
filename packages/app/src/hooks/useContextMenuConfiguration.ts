@@ -3,6 +3,7 @@ import { useContextMenuAddNodeConfiguration } from './useContextMenuAddNodeConfi
 import { ReactComponent as DeleteIcon } from 'majesticons/line/delete-bin-line.svg';
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
 import { ReactComponent as DuplicateIcon } from 'majesticons/line/image-multiple-line.svg';
+import { ReactComponent as PlayIcon } from 'majesticons/line/play-circle-line.svg';
 import { NodeId } from '@ironclad/rivet-core';
 import { useRecoilValue } from 'recoil';
 import { selectedNodesState } from '../state/graphBuilder.js';
@@ -81,6 +82,11 @@ export function useContextMenuConfiguration() {
                 label: 'Create Subgraph',
                 icon: DuplicateIcon,
                 conditional: () => selectedNodeIds.length > 0,
+              },
+              {
+                id: 'node-run-to-here',
+                label: 'Run to Here',
+                icon: PlayIcon,
               },
               {
                 id: 'node-delete',
