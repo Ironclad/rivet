@@ -7,7 +7,7 @@ import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.s
 import { ChartNode, NodeTestGroup, GraphId, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import { produce } from 'immer';
-import { useHotkeys } from 'react-hotkeys-hook'; 
+import { useHotkeys } from 'react-hotkeys-hook';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import Toggle from '@atlaskit/toggle';
 import { useStableCallback } from '../hooks/useStableCallback.js';
@@ -20,6 +20,7 @@ import Button from '@atlaskit/button';
 import Popup from '@atlaskit/popup';
 import { orderBy } from 'lodash-es';
 import { nanoid } from 'nanoid';
+import { ErrorBoundary } from 'react-error-boundary';
 
 export const NodeEditorRenderer: FC = () => {
   const nodesById = useRecoilValue(nodesByIdState);
@@ -35,7 +36,11 @@ export const NodeEditorRenderer: FC = () => {
     return null;
   }
 
-  return <NodeEditor selectedNode={selectedNode} onDeselect={deselect} />;
+  return (
+    <ErrorBoundary fallback={null}>
+      <NodeEditor selectedNode={selectedNode} onDeselect={deselect} />
+    </ErrorBoundary>
+  );
 };
 
 const Container = styled.div`
@@ -333,7 +338,6 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
         <Tabs id="node-editor-tabs">
           <TabList>
             <Tab>{globalRivetNodeRegistry.getDynamicDisplayName(selectedNode.type)} Node</Tab>
-            <Tab>Test Cases</Tab>
           </TabList>
           <TabPanel>
             <div className="panel-container">
@@ -458,29 +462,6 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
                 <span className="node-id" onClick={selectText}>
                   {selectedNode.id}
                 </span>
-              </div>
-            </div>
-          </TabPanel>
-          <TabPanel>
-            <div className="panel-container">
-              <div className="panel">
-                <Label htmlFor="">Tests</Label>
-                <Button appearance="link" onClick={handleAddTestGroup}>
-                  Add Test Group
-                </Button>
-                <div className="test-groups">
-                  {(selectedNode.tests ?? []).map((test, index) => (
-                    <div className="test-group" key={index}>
-                      <GraphSelector
-                        label="Evaluator Graph"
-                        value={test.evaluatorGraphId}
-                        onChange={(selected) => updateTestGroupGraph(test, selected as GraphId)}
-                        isReadonly={false}
-                        name={`evaluator-graph-${index}`}
-                      />
-                    </div>
-                  ))}
-                </div>
               </div>
             </div>
           </TabPanel>

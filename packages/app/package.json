@@ -1,7 +1,7 @@
 {
   "name": "@ironclad/rivet-app",
   "repository": "https://github.com/ironclad/rivet",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "private": true,
   "license": "MIT",
   "type": "module",

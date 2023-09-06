@@ -102,7 +102,7 @@ export function useRemoteExecutor() {
     }
   });
 
-  const tryRunGraph = async () => {
+  const tryRunGraph = async (options: { to?: NodeId[] } = {}) => {
     if (
       !remoteDebugger.remoteDebuggerState.started ||
       remoteDebugger.remoteDebuggerState.socket?.readyState !== WebSocket.OPEN
@@ -140,7 +140,7 @@ export function useRemoteExecutor() {
         });
       }
 
-      remoteDebugger.send('run', { graphId: graph.metadata!.id! });
+      remoteDebugger.send('run', { graphId: graph.metadata!.id!, runToNodeIds: options.to });
     } catch (e) {
       console.error(e);
     }

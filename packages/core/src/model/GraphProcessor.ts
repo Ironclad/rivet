@@ -169,6 +169,9 @@ export class GraphProcessor {
   #registry: NodeRegistration;
   id = nanoid();
 
+  /** If set, specifies the node(s) that the graph will run TO, instead of the nodes without any dependents. */
+  runToNodeIds?: NodeId[];
+
   /** The node that is executing this graph, almost always a subgraph node. Undefined for root. */
   #executor:
     | {
@@ -205,6 +208,7 @@ export class GraphProcessor {
   #abortSuccessfully = false;
   #abortError: Error | string | undefined = undefined;
   #totalCost: number = 0;
+  #ignoreNodes: Set<NodeId> = undefined!;
 
   #nodeAbortControllers = new Map<`${NodeId}-${ProcessId}`, AbortController>();
 
@@ -600,6 +604,7 @@ export class GraphProcessor {
     this.#subprocessors = new Set();
     this.#attachedNodeData = new Map();
     this.#globals ??= new Map();
+    this.#ignoreNodes = new Set();
 
     this.#abortController = new AbortController();
     this.#abortController.signal.addEventListener('abort', () => {
@@ -643,14 +648,26 @@ export class GraphProcessor {
 
       this.#emitter.emit('graphStart', { graph: this.#graph, inputs: this.#graphInputs });
 
-      const nodesWithoutOutputs = this.#graph.nodes.filter((node) => this.#outputNodesFrom(node).nodes.length === 0);
+      const startNodes = this.runToNodeIds
+        ? this.#graph.nodes.filter((node) => this.runToNodeIds?.includes(node.id))
+        : this.#graph.nodes.filter((node) => this.#outputNodesFrom(node).nodes.length === 0);
 
       await this.#waitUntilUnpaused();
 
-      for (const nodeWithoutOutputs of nodesWithoutOutputs) {
+      for (const startNode of startNodes) {
         this.#processingQueue.add(async () => {
-          await this.#fetchNodeDataAndProcessNode(nodeWithoutOutputs);
+          await this.#fetchNodeDataAndProcessNode(startNode);
         });
+      }
+
+      // Anything not queued at this phase here should be ignored
+      if (this.runToNodeIds) {
+        // For safety, we'll only activate this if runToNodeIds is set, in case there are bugs in the first pass
+        for (const node of this.#graph.nodes) {
+          if (this.#queuedNodes.has(node.id) === false) {
+            this.#ignoreNodes.add(node.id);
+          }
+        }
       }
 
       await this.#processingQueue.onIdle();
@@ -772,6 +789,11 @@ export class GraphProcessor {
   /** If all inputs are present, all conditions met, processes the node. */
   async #processNodeIfAllInputsAvailable(node: ChartNode): Promise<void> {
     const builtInNode = node as BuiltInNodes;
+
+    if (this.#ignoreNodes.has(node.id)) {
+      this.#emitter.emit('trace', `Node ${node.title} is ignored`);
+      return;
+    }
 
     if (this.#currentlyProcessing.has(node.id)) {
       this.#emitter.emit('trace', `Node ${node.title} is already being processed`);

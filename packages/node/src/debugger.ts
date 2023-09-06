@@ -33,13 +33,22 @@ export const currentDebuggerState = {
   settings: undefined as Settings | undefined,
 };
 
+export type DynamicGraphRunOptions = {
+  client: WebSocket;
+  graphId: GraphId;
+  inputs?: GraphInputs;
+  runToNodeIds?: NodeId[];
+};
+
+export type DynamicGraphRun = (data: DynamicGraphRunOptions) => Promise<void>;
+
 export function startDebuggerServer(
   options: {
     getClientsForProcessor?: (processor: GraphProcessor, allClients: WebSocket[]) => WebSocket[];
     getProcessorsForClient?: (client: WebSocket, allProcessors: GraphProcessor[]) => GraphProcessor[];
     server?: WebSocketServer;
     port?: number;
-    dynamicGraphRun?: (data: { client: WebSocket; graphId: GraphId; inputs?: GraphInputs }) => Promise<void>;
+    dynamicGraphRun?: DynamicGraphRun;
     allowGraphUpload?: boolean;
   } = {},
 ): RivetDebuggerServer {
@@ -58,9 +67,13 @@ export function startDebuggerServer(
 
         await match(message)
           .with({ type: 'run' }, async () => {
-            const { graphId, inputs } = message.data as { graphId: GraphId; inputs: GraphInputs };
+            const { graphId, inputs, runToNodeIds } = message.data as {
+              graphId: GraphId;
+              inputs: GraphInputs;
+              runToNodeIds?: NodeId[];
+            };
 
-            await options.dynamicGraphRun?.({ client: socket, graphId, inputs });
+            await options.dynamicGraphRun?.({ client: socket, graphId, inputs, runToNodeIds });
           })
           .with({ type: 'set-dynamic-data' }, async () => {
             if (options.allowGraphUpload) {

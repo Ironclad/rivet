@@ -5,6 +5,7 @@ import { useStableCallback } from '../hooks/useStableCallback.js';
 import { Port } from './Port.js';
 import { ErrorBoundary } from 'react-error-boundary';
 import { WireDef } from './WireLayer';
+import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 
 export type NodePortsProps = {
   node: ChartNode;
@@ -48,6 +49,8 @@ export const NodePorts: FC<NodePortsProps> = ({
   const handlePortMouseUp = useStableCallback((event: MouseEvent<HTMLDivElement>, port: PortId) => {
     onWireEndDrag?.(event, node.id, port);
   });
+
+  useDependsOnPlugins();
 
   return (
     <div className="node-ports">

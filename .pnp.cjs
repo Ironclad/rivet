@@ -6942,7 +6942,7 @@ const RAW_RUNTIME_STATE =
           ["@types/lodash-es", "npm:4.17.8"],\
           ["@types/yaml", "npm:1.9.7"],\
           ["@typescript-eslint/eslint-plugin", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:5.62.0"],\
-          ["autoevals", "npm:0.0.11"],\
+          ["autoevals", "npm:0.0.16"],\
           ["crypto-js", "npm:4.1.1"],\
           ["emittery", "npm:1.0.1"],\
           ["emittery-0-13", [\
@@ -10517,10 +10517,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["autoevals", [\
-      ["npm:0.0.11", {\
-        "packageLocation": "./.yarn/cache/autoevals-npm-0.0.11-f1e0be55c0-804dc99322.zip/node_modules/autoevals/",\
+      ["npm:0.0.16", {\
+        "packageLocation": "./.yarn/cache/autoevals-npm-0.0.16-fcc9ac0c64-9b78df43a2.zip/node_modules/autoevals/",\
         "packageDependencies": [\
-          ["autoevals", "npm:0.0.11"],\
+          ["autoevals", "npm:0.0.16"],\
           ["@types/node", "npm:20.4.10"],\
           ["esbuild", "npm:0.19.1"],\
           ["js-levenshtein", "npm:1.1.6"],\
