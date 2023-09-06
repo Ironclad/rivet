@@ -18,4 +18,4 @@ This executor runs a separate Node.js process to execute graphs, and communicate
 
 This executor connects to a remote Rivet server to execute graphs. It requires the remote debugger to be set up on another application, and requires that `dynamicGraphRun` is implemented on the remote server, so that the graph shown in the Rivet application can be ran remotely. You may also enable `allowGraphUpload` on the remote executor to allow the graph to be uploaded to the remote server, and then ran there.
 
-To use the remote executor, connect via the **Remote Debugger** button in the menu bar.
+To use the remote executor, connect via the **Remote Debugger** option in the dropdown of the Rivet action bar.
