@@ -41,7 +41,7 @@ export const UseCasesSection: React.FC<{ id?: string }> = ({ id }) => {
             <img className={styles.quoteProfile} src="img/use-case-quotes/profile-emily-wang.jpeg" alt="Emily Wang" />
           </div>
           <p className={styles.quoteAttribution}>Emily Wang, CEO</p>
-          <a className={styles.quoteLogoLink} href="https://www.trybento.co/" target="_blank">
+          <a className={styles.quoteLogoLink} href="https://www.trybento.co/products/bentoai" target="_blank">
             <img className={styles.quoteLogo} src="img/use-case-quotes/logo-bento.svg" alt="Bento" />
           </a>
         </div>
