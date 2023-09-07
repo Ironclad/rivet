@@ -1,7 +1,7 @@
 import { FC, useMemo, useState, MouseEvent } from 'react';
 import { editingNodeState } from '../state/graphBuilder.js';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { nodesByIdState, nodesState } from '../state/graph.js';
+import { connectionsForSingleNodeState, connectionsState, nodesByIdState, nodesState } from '../state/graph.js';
 import styled from '@emotion/styled';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
 import { ChartNode, NodeTestGroup, GraphId, globalRivetNodeRegistry } from '@ironclad/rivet-core';
@@ -11,9 +11,9 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import Toggle from '@atlaskit/toggle';
 import { useStableCallback } from '../hooks/useStableCallback.js';
-import { DefaultNodeEditor, GraphSelector } from './DefaultNodeEditor.js';
+import { DefaultNodeEditor } from './DefaultNodeEditor.js';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
-import { Field, Label } from '@atlaskit/form';
+import { Field } from '@atlaskit/form';
 import TextField from '@atlaskit/textfield';
 import Select from '@atlaskit/select';
 import Button from '@atlaskit/button';
@@ -21,6 +21,7 @@ import Popup from '@atlaskit/popup';
 import { orderBy } from 'lodash-es';
 import { nanoid } from 'nanoid';
 import { ErrorBoundary } from 'react-error-boundary';
+import { projectState } from '../state/savedGraphs';
 
 export const NodeEditorRenderer: FC = () => {
   const nodesById = useRecoilValue(nodesByIdState);
@@ -229,13 +230,37 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
   const [addVariantPopupOpen, setAddVariantPopupOpen] = useState(false);
 
+  const nodesById = useRecoilValue(nodesByIdState);
+  const project = useRecoilValue(projectState);
+  const connectionsForNode = useRecoilValue(connectionsForSingleNodeState(selectedNode.id));
+  const setConnections = useSetRecoilState(connectionsState);
+
   const updateNode = useStableCallback((node: ChartNode) => {
+    // Update the node
     setNodes((nodes) =>
       produce(nodes, (draft) => {
         const index = draft.findIndex((n) => n.id === node.id);
         draft[index] = node;
       }),
     );
+
+    // Check for any invalid connections
+    const instance = globalRivetNodeRegistry.createDynamicImpl(node);
+
+    const inputDefs = instance.getInputDefinitions(connectionsForNode ?? [], nodesById, project);
+    const outputDefs = instance.getOutputDefinitions(connectionsForNode ?? [], nodesById, project);
+
+    const invalidConnections = connectionsForNode?.filter((connection) => {
+      if (connection.inputNodeId === node.id) {
+        return !inputDefs.find((def) => def.id === connection.inputId);
+      } else {
+        return !outputDefs.find((def) => def.id === connection.outputId);
+      }
+    });
+
+    if (invalidConnections?.length) {
+      setConnections((conns) => conns.filter((c) => !invalidConnections.includes(c)));
+    }
   });
 
   const isVariant = selectedVariant !== undefined;
