@@ -1,7 +1,8 @@
 {
   "name": "@ironclad/rivet-app-executor",
+  "license": "MIT",
   "repository": "https://github.com/ironclad/rivet",
-  "version": "0.15.2",
+  "version": "1.1.0",
   "bin": "./bin/executor-bundle.js",
   "scripts": {
     "build": "tsx scripts/build-executor.mts",

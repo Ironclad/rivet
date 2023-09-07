@@ -10,6 +10,10 @@ const builtInPlugins = orderBy(
       label: 'AssemblyAI',
       value: 'assemblyAi',
     },
+    {
+      label: 'Autoevals',
+      value: 'autoevals',
+    },
   ] as const,
   'label',
 );

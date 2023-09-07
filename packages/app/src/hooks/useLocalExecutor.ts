@@ -78,51 +78,61 @@ export function useLocalExecutor() {
     currentProcessor.current = processor;
   }
 
-  const tryRunGraph = useStableCallback(async () => {
-    try {
-      saveGraph();
+  const tryRunGraph = useStableCallback(
+    async (
+      options: {
+        to?: NodeId[];
+      } = {},
+    ) => {
+      try {
+        saveGraph();
 
-      if (currentProcessor.current?.isRunning) {
-        return;
+        if (currentProcessor.current?.isRunning) {
+          return;
+        }
+
+        const tempProject = {
+          ...project,
+          graphs: {
+            ...project.graphs,
+            [graph.metadata!.id!]: graph,
+          },
+        };
+
+        const recorder = new ExecutionRecorder();
+        const processor = new GraphProcessor(tempProject, graph.metadata!.id!);
+        processor.recordingPlaybackChatLatency = savedSettings.recordingPlaybackLatency ?? 1000;
+
+        if (options.to) {
+          processor.runToNodeIds = options.to;
+        }
+
+        recorder.record(processor);
+
+        attachGraphEvents(processor);
+
+        let results: GraphOutputs;
+
+        if (loadedRecording) {
+          results = await processor.replayRecording(loadedRecording.recorder);
+        } else {
+          results = await processor.processGraph({
+            settings: await fillMissingSettingsFromEnvironmentVariables(
+              savedSettings,
+              globalRivetNodeRegistry.getPlugins(),
+            ),
+            nativeApi: new TauriNativeApi(),
+          });
+        }
+
+        setLastRecordingState(recorder.serialize());
+
+        console.log(results);
+      } catch (e) {
+        console.log(e);
       }
-
-      const tempProject = {
-        ...project,
-        graphs: {
-          ...project.graphs,
-          [graph.metadata!.id!]: graph,
-        },
-      };
-
-      const recorder = new ExecutionRecorder();
-      const processor = new GraphProcessor(tempProject, graph.metadata!.id!);
-      processor.recordingPlaybackChatLatency = savedSettings.recordingPlaybackLatency ?? 1000;
-
-      recorder.record(processor);
-
-      attachGraphEvents(processor);
-
-      let results: GraphOutputs;
-
-      if (loadedRecording) {
-        results = await processor.replayRecording(loadedRecording.recorder);
-      } else {
-        results = await processor.processGraph({
-          settings: await fillMissingSettingsFromEnvironmentVariables(
-            savedSettings,
-            globalRivetNodeRegistry.getPlugins(),
-          ),
-          nativeApi: new TauriNativeApi(),
-        });
-      }
-
-      setLastRecordingState(recorder.serialize());
-
-      console.log(results);
-    } catch (e) {
-      console.log(e);
-    }
-  });
+    },
+  );
 
   const tryRunTests = useStableCallback(
     async (options: { testSuiteIds?: string[]; testCaseIds?: string[]; iterationCount?: number } = {}) => {

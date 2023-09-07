@@ -4,6 +4,10 @@
   text-align: center;
 }
 
+.section p {
+  text-align: left;
+}
+
 .section:nth-of-type(3n + 1) {
   background-color: var(--black-0);
   color: var(--white-0);
@@ -17,4 +21,14 @@
 .section:nth-of-type(3n) {
   background-color: var(--orange-0);
   color: var(--black-0);
+
+}
+
+.section:nth-of-type(3n) a {
+  color: var(--white-1);
+}
+
+.section:nth-of-type(3n) a:hover {
+  color: var(--white-1);
+  text-decoration: underline;
 }

@@ -95,6 +95,11 @@
   transition: left 0.2s, opacity 0.2s;
 }
 
+.navList > li {
+  display: flex;
+  align-items: center;
+}
+
 .navList.menuOpen {
   left: 0;
   opacity: 1;
@@ -104,6 +109,14 @@
   color: var(--white-0);
   font-size: 24px;
   transition: color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navLink svg {
+  height: 24px;
+  width: 24px;
 }
 
 .navLink:hover {

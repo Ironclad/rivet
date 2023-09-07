@@ -155,8 +155,8 @@ export const OpenAiSettingsPage: FC = () => {
               onChange={(e) => setSettings((s) => ({ ...s, openAiOrganization: (e.target as HTMLInputElement).value }))}
             />
             <HelperMessage>
-              You may also set the OPENAI_ORGANIZATION environment variable. This is only required if you are a member
-              of a shared organization.
+              You may also set the OPENAI_ORG_ID environment variable. This is only required if you are a member of a
+              shared organization.
             </HelperMessage>
           </>
         )}

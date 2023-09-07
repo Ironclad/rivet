@@ -9,58 +9,19 @@ Welcome to the starting guide for integrating Rivet into your application! Curre
 
 ## Installation
 
-First, you'll need to setup your environment to authenticate with our private GitHub NPM registry.
-
-### Getting GitHub Access Token
-
-You need to get a GitHub access token (classic) for the account that has access to Rivet.
-
-### Setting Up the Environment
+Install using your preferred package manager:
 
 <Tabs
-defaultValue="yarn2"
+defaultValue="yarn"
 values={[
-{label: 'Yarn 2', value: 'yarn2'},
-{label: 'Yarn 1', value: 'yarn1'},
+{label: 'Yarn', value: 'yarn'},
 {label: 'NPM', value: 'npm'},
+{label: 'pnpm', value: 'pnpm'},
 ]}>
 
-<TabItem value="yarn2">
+<TabItem value="yarn">
 
-For Yarn 2, create or update a `~/.yarnrc.yml` file with the following contents:
-
-```yaml
-npmScopes:
-  ironclad:
-    npmRegistryServer: https://npm.pkg.github.com/ironclad
-    npmAuthToken: YOUR_AUTH_TOKEN
-    npmAlwaysAuth: true
-```
-
-Install using Yarn 2:
-
-```bash
-yarn add @ironclad/rivet-node
-```
-
-</TabItem>
-
-<TabItem value="yarn1">
-
-For Yarn 1, you need to create or update a `~/.npmrc` file with:
-
-```bash
-//npm.ironclad/:_authToken=YOUR_AUTH_TOKEN
-@ironclad:registry=https://npm.pkg.github.com/ironclad
-```
-
-And also a `~/.yarnrc` with:
-
-```bash
-"@ironclad:registry" "https://npm.pkg.github.com/ironclad"
-```
-
-Install using Yarn 1:
+Install using Yarn:
 
 ```bash
 yarn add @ironclad/rivet-node
@@ -70,13 +31,6 @@ yarn add @ironclad/rivet-node
 
 <TabItem value="npm">
 
-For NPM, create or update a `~/.npmrc` file with:
-
-```bash
-//npm.ironclad/:_authToken=YOUR_AUTH_TOKEN
-@ironclad:registry=https://npm.pkg.github.com/ironclad
-```
-
 Install using NPM:
 
 ```bash
@@ -85,17 +39,21 @@ npm install @ironclad/rivet-node
 
 </TabItem>
 
+<TabItem value="pnpm">
+
+Install using pnpm:
+
+```bash
+pnpm add @ironclad/rivet-node
+```
+
+</TabItem>
+
 </Tabs>
-
-:::tip
-
-Remember to replace `YOUR_AUTH_TOKEN` with your GitHub access token.
-
-:::
 
 ## Getting Started
 
-Once Rivet is installed, you can import it into your application using the following code:
+Once Rivet is installed, you can import it into your application:
 
 ```javascript
 import * as Rivet from '@ironclad/rivet-node';
