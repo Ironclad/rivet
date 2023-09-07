@@ -119,7 +119,10 @@ const config = {
           {
             title: 'Community',
             items: [
-              // Add any relevant community links here
+              {
+                label: 'Discord',
+                href: 'https://discord.gg/QE2tJKHX',
+              },
             ],
           },
           {
@@ -132,7 +135,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Rivet. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Ironclad. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,

@@ -1,8 +1,8 @@
 <h1 align="center"><img src="https://rivet.ironcladapp.com/img/Square150x150Logo.png" alt="Rivet Logo" width="32"> Rivet</h1>
 
-![GitHub all releases](https://img.shields.io/github/downloads/ironclad/rivet/total) [![All Contributors](https://img.shields.io/github/all-contributors/Ironclad/rivet?color=ee8449&style=flat-square)](#contributors-) ![GitHub issues](https://img.shields.io/github/issues/Ironclad/rivet) ![GitHub pull requests](https://img.shields.io/github/issues-pr/Ironclad/rivet) ![License](https://img.shields.io/github/license/Ironclad/rivet)
+![GitHub all releases](https://img.shields.io/github/downloads/ironclad/rivet/total) [![All Contributors](https://img.shields.io/github/all-contributors/Ironclad/rivet?color=ee8449&style=flat-square)](#contributors-) ![GitHub issues](https://img.shields.io/github/issues/Ironclad/rivet) ![GitHub pull requests](https://img.shields.io/github/issues-pr/Ironclad/rivet) ![License](https://img.shields.io/github/license/Ironclad/rivet) [![Discord](https://img.shields.io/discord/1149376303070466110?style=flat&logo=discord)](https://discord.gg/qT8B2gv9Mg)
 
-<h3 align="center"><a href="https://github.com/Ironclad/rivet/releases">Download</a> | <a href="https://rivet.ironcladapp.com">Website</a> | <a href="https://rivet.ironcladapp.com">Documentation</a></h3>
+<h3 align="center"><a href="https://github.com/Ironclad/rivet/releases">Download</a> | <a href="https://rivet.ironcladapp.com">Website</a> | <a href="https://rivet.ironcladapp.com/docs">Documentation</a></h3>
 
 <p align="center">
   <a href="https://rivet.ironcladapp.com">Rivet</a>, the IDE for creating complex AI agents and prompt chaining, and embedding it in your application.
@@ -13,14 +13,20 @@
   <a href="https://github.com/Ironclad/rivet/issues">Request Feature</a>
   ·
   <a href="https://github.com/Ironclad/rivet/discussions">Disussions</a>
+  ·
+  <a href="https://discord.gg/qT8B2gv9Mg">Chat</a>
 </p>
+
+Have a question? Need some help? Check out the Rivet [Discord server](https://discord.gg/qT8B2gv9Mg)!
 
 - [About Rivet](#about-rivet)
   - [Rivet Application](#rivet-application)
   - [Rivet Core](#rivet-core)
 - [Getting Started](#getting-started)
   - [Prebuilt Binaries](#prebuilt-binaries)
-  - [Building from Source](#building-from-source)
+    - [Latest downloads](#latest-downloads)
+    - [All Releases](#all-releases)
+  - [Running from Source](#running-from-source)
 - [Contributing](#contributing)
   - [Code of Conduct](#code-of-conduct)
 - [Troubleshooting](#troubleshooting)
@@ -44,25 +50,37 @@ Rivet has embedding/vector database support for:
 - [Pinecone](https://www.pinecone.io/)
 
 Rivet also supports these additional integrations:
+
 - [Audio Transcription from AssemblyAI](https://www.assemblyai.com/models/core-transcription)
 
-For more information on how to use the application and all of its capabilities, see [the documentation](https://rivet.ironcladapp.com)!
+For more information on how to use the application and all of its capabilities, see [the documentation](https://rivet.ironcladapp.com/docs)!
 
 ### Rivet Core
 
 Rivet core is a TypeScript library for running graphs created in Rivet. It is used by the Rivet application, but can also be used in your own applications, so that Rivet can call into your own application's code, and your application can call into Rivet graphs.
 
-For more information on using Rivet Core, see the [Rivet Integration Getting Started](https://rivet.ironcladapp.com/api-reference/getting-started-integration) page and the related API documentation.
+For more information on using Rivet Core, see the [Rivet Integration Getting Started](https://rivet.ironcladapp.com/docs/api-reference/getting-started-integration) page and the related API documentation.
+
+Rivet core is available on NPM as `@ironclad/rivet-core`. Rivet node is available as `@ironclad/rivet-node`. Documentation for each is available on the [Rivet website](https://rivet.ironcladapp.com/docs/api-reference).
 
 ## Getting Started
 
 ### Prebuilt Binaries
 
-Prebuilt binaries of Rivet are available on the [Releases](https://github.com/Ironclad/rivet/releases) page, or on the [main Rivet site](https://rivet.ironcladapp.com).
+#### Latest downloads
 
-### Building from Source
+- **[Download for MacOS](https://github.com/Ironclad/rivet/releases/latest/download/Rivet.dmg)**
+- **[Download for Linux (AppImage)](https://github.com/Ironclad/rivet/releases/latest/download/Rivet.AppImage)**
+- **[Download for Linux (dmg)](https://github.com/Ironclad/rivet/releases/latest/download/Rivet.dmg)**
+- Download for Windows (Coming soon! Run from source for now)
 
-See [Contributing.md](./CONTRIBUTING.md) for information on building Rivet from source.
+#### All Releases
+
+Check out the [releases page](https://github.com/Ironclad/rivet/releases) for all available releases.
+
+### Running from Source
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for information on building and running Rivet from source.
 
 ## Contributing
 
