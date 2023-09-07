@@ -6,6 +6,9 @@ import layout from '../../css/layout.module.css';
 import styles from './Header.module.css';
 import { useDownloadUrl } from '../../hooks/useDownloadUrl';
 
+import GithubLogo from './logos/github-mark-white.svg';
+import DiscordLogo from './logos/discord-mark-white.svg';
+
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { downloadUrl } = useDownloadUrl();
@@ -23,9 +26,14 @@ export const Header: React.FC = () => {
             onClick={() => setIsMenuOpen((prev) => !prev)}
           />
           <ul className={clsx(styles.navList, { [styles.menuOpen]: isMenuOpen })}>
+            <li className={styles.discord}>
+              <a className={styles.navLink} href="https://discord.gg/2u3t8jW" target="_blank">
+                <DiscordLogo viewBox="0 0 127 96" />
+              </a>
+            </li>
             <li className={styles.github}>
               <a className={styles.navLink} href="https://github.com/Ironclad/rivet" target="_blank">
-                GitHub
+                <GithubLogo viewBox="0 0 100 100" /> GitHub
               </a>
             </li>
             <li className={styles.documentation}>

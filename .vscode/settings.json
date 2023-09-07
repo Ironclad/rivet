@@ -2,7 +2,9 @@
   "search.exclude": {
     "**/.yarn": true,
     "**/.pnp.*": true,
-    "**/*-bundle.js": true
+    "**/*-bundle.js": true,
+    "**/.docusaurus": true,
+    "packages/docs/build": true
   },
   "eslint.nodePath": ".yarn/sdks",
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
