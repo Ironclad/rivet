@@ -23,6 +23,8 @@ import { ReactComponent as BrowserLineIcon } from 'majesticons/line/browser-line
 import { ReactComponent as AlertCircleIcon } from 'majesticons/line/alert-circle-line.svg';
 import { NoTestCasesSplash } from './NoTestCasesSplash';
 import { useTestSuite } from '../../hooks/useTestSuite';
+import { braintrustSummariesState } from '../../state/plugins/braintrust';
+import { useIsPluginEnabled } from '../../hooks/useIsPluginEnabled';
 
 const styles = css`
   min-height: 100%;
@@ -134,8 +136,12 @@ export const TestSuiteRenderer: FC<{ tryRunTests: TryRunTests }> = ({ tryRunTest
 };
 
 export const TestSuite: FC<{ testSuite: TrivetTestSuite; tryRunTests: TryRunTests }> = ({ testSuite, tryRunTests }) => {
-  const [{ selectedTestSuiteId, editingTestCaseId, recentTestResults, runningTests, brainTrustSummaries }, setState] =
+  const [{ selectedTestSuiteId, editingTestCaseId, recentTestResults, runningTests }, setState] =
     useRecoilState(trivetState);
+  const [{ brainTrustSummaries }, setBrainTrustSummariesState] = useRecoilState(braintrustSummariesState);
+
+  const brainTrustEnabled = useIsPluginEnabled('braintrust');
+
   const savedGraphs = useRecoilValue(savedGraphsState);
 
   const { addTestCase, updateTestSuite, testGraph, setEditingTestCase, deleteTestCase, duplicateTestCase } =
@@ -219,7 +225,7 @@ export const TestSuite: FC<{ testSuite: TrivetTestSuite; tryRunTests: TryRunTest
   }, [testCaseValidationResults, testSuite, updateTestSuite]);
 
   const viewDocumentation = useOpenUrl('https://rivet.ironcladapp.com/docs/trivet');
-  const brainTrustSummary = brainTrustSummaries && brainTrustSummaries[testSuite.id];
+  const brainTrustSummary = brainTrustEnabled && brainTrustSummaries?.[testSuite.id];
 
   return (
     <div css={styles}>
@@ -293,17 +299,13 @@ export const TestSuite: FC<{ testSuite: TrivetTestSuite; tryRunTests: TryRunTest
                   Run Test Suite
                 </Button>
 
-                {brainTrustSummary &&
+                {brainTrustSummary && (
                   <div style={{ marginLeft: 10 }}>
-                    <Button
-                      appearance="primary"
-                      onClick={useOpenUrl(brainTrustSummary.experimentUrl)}
-                    >
+                    <Button appearance="primary" onClick={useOpenUrl(brainTrustSummary.experimentUrl)}>
                       View results in BrainTrust ({brainTrustSummary.experimentName})
                     </Button>
                   </div>
-                }
-
+                )}
               </div>
               <TestCaseTable
                 testCases={testSuite.testCases}

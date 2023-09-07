@@ -24,6 +24,7 @@ import { lastRecordingState, loadedRecordingState } from '../state/execution';
 import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
 import { trivetState } from '../state/trivet';
 import { runTrivet } from '@ironclad/trivet';
+import { useDependsOnPlugins } from './useDependsOnPlugins';
 
 export function useLocalExecutor() {
   const project = useRecoilValue(projectState);
@@ -134,6 +135,8 @@ export function useLocalExecutor() {
     },
   );
 
+  const plugins = useDependsOnPlugins();
+
   const tryRunTests = useStableCallback(
     async (options: { testSuiteIds?: string[]; testCaseIds?: string[]; iterationCount?: number } = {}) => {
       toast.info(
@@ -158,7 +161,7 @@ export function useLocalExecutor() {
             }))
         : testSuites;
       try {
-        const settings = await fillMissingSettingsFromEnvironmentVariables(savedSettings);
+        const settings = await fillMissingSettingsFromEnvironmentVariables(savedSettings, plugins);
         const result = await runTrivet({
           project,
           iterationCount: options.iterationCount,
@@ -183,21 +186,21 @@ export function useLocalExecutor() {
               inputs,
             );
           },
-          braintrustApiKey: settings.braintrustApiKey,
-          setBrainTrustSummary: (id, summary) => 
-            setTrivetState((s) => {
-              let brainTrustSummaries = s.brainTrustSummaries;
-              if (summary === undefined) {
-                const { [id]: _, ...rest } = s.brainTrustSummaries || {};
-                brainTrustSummaries = rest;
-              } else {
-                brainTrustSummaries = { ...s.brainTrustSummaries, [id]: summary };
-              }
-              return ({
-              ...s,
-              brainTrustSummaries,
-            });
-          })
+          // braintrustApiKey: settings.braintrustApiKey,
+          // setBrainTrustSummary: (id, summary) =>
+          //   setTrivetState((s) => {
+          //     let brainTrustSummaries = s.brainTrustSummaries;
+          //     if (summary === undefined) {
+          //       const { [id]: _, ...rest } = s.brainTrustSummaries || {};
+          //       brainTrustSummaries = rest;
+          //     } else {
+          //       brainTrustSummaries = { ...s.brainTrustSummaries, [id]: summary };
+          //     }
+          //     return {
+          //       ...s,
+          //       brainTrustSummaries,
+          //     };
+          //   }),
         });
         setTrivetState((s) => ({
           ...s,
