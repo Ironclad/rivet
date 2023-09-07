@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Section } from './Section';
 
+import styles from './IroncladContractAiSection.module.css';
+
 export const IroncladContractAiSection: React.FC<{ id?: string }> = ({ id }) => {
   React.useEffect(() => {
     const script = document.createElement('script');
@@ -19,7 +21,7 @@ export const IroncladContractAiSection: React.FC<{ id?: string }> = ({ id }) => 
   const wistiaSwatch = React.useRef();
   return (
     <Section id={id}>
-      <h2>Ironclad Contract AI</h2>
+      <h2 className={styles.title}><img className={styles.inlineLogo} src="img/ironclad-logo-white.png" height="28px" /> Contract AI</h2>
       <p>
         Ironclad Contract AI (CAI) is a virtual contract assistant, powered by AI agents, and developed with Rivet. CAI is capable of answering diverse questions about every stage of the contract lifecycle, directly using Ironclad's existing capabilities, like contract search, workflow process, and data visualization.
       </p>
