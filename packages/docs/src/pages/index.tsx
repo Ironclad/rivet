@@ -5,6 +5,7 @@ import { WhatIsRivetSection } from '../components/main/WhatIsRivetSection';
 import { FeaturesSection } from '../components/main/FeaturesSection';
 import { DemoVideoSection } from '../components/main/DemoVideoSection';
 import { UseCasesSection } from '../components/main/UseCasesSection';
+import { IroncladContractAiSection } from '../components/main/IroncladContractAiSection';
 import { GetStartedSection } from '../components/main/GetStartedSection';
 import { Footer } from '../components/main/Footer';
 
@@ -20,6 +21,7 @@ export default function Home() {
       <FeaturesSection id="features" />
       <DemoVideoSection id="demo-video" />
       <UseCasesSection id="use-cases" />
+      <IroncladContractAiSection id="ironclad-contract-ai" />
       <GetStartedSection id="get-started" />
 
       <Footer />
