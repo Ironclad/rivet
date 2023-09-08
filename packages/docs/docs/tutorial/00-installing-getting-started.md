@@ -1,16 +1,16 @@
 ---
-title: 00 - Installing & Overview
+sidebar_label: 00 - Installing & Overview
 ---
 
 # Installing & Overview
 
 This Tutorial will walk you through the basic building blocks of Rivet.
 
-### Prerequisites
+## Prerequisites
 
 - Complete the getting started steps [here](../getting-started/installation)
 
-### Open the Tutorial
+## Open the Tutorial
 
 - Open Rivet
 - Click File > Open Project

@@ -4,7 +4,7 @@ sidebar_label: 01 - Simple Graph
 
 # Simple Graph
 
-In the sidebar you should see the graphs tab with a list of 7 graphs in folders. These are the graphs that are included in the tutorial project.
+In the sidebar you should see the graphs tab with a list of numbered folders with graphs. These are the graphs that are included in the tutorial project.
 
 Inside the `1. Simple Graph` folder you should see a `Simple Graph` graph. Click on the graph to open it.
 

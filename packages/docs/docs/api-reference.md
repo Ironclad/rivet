@@ -19,3 +19,7 @@ Rivet node is a Node.js binding for Rivet core. It includes helper APIs to load 
 You will most likely want to use Rivet node in your application. All types from Rivet core are re-exported from Rivet node, so you can use Rivet node as a drop-in replacement for Rivet core.
 
 See the [Rivet node overview](./api-reference/node/overview.mdx) for more information.
+
+### Requirements
+
+Rivet node requires Node.js 16 or later.

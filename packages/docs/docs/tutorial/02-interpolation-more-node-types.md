@@ -4,7 +4,7 @@ sidebar_label: 02 - Interpolation & More Node Types
 
 # Interpolation & More Node Types
 
-In the sidebar you should see the graphs tab with a list of 7 graphs in folders. These are the graphs that are included in the tutorial project.
+In the sidebar you should see the graphs tab with a list of numbered folders with graphs. These are the graphs that are included in the tutorial project.
 
 Inside the `2. Interpolation` folder you should see an `Interpolation` graph. Click on the graph to open it.
 
