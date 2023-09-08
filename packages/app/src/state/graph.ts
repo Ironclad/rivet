@@ -14,6 +14,7 @@ import {
 import { recoilPersist } from 'recoil-persist';
 import { mapValues } from 'lodash-es';
 import { projectState } from './savedGraphs';
+import { pluginRefreshCounterState } from './plugins';
 
 const { persistAtom } = recoilPersist({ key: 'graph' });
 
@@ -128,6 +129,7 @@ export const nodeInstancesState = selector<Record<NodeId, NodeImpl<ChartNode, st
   key: 'nodeInstances',
   get: ({ get }) => {
     const nodesById = get(nodesByIdState);
+    get(pluginRefreshCounterState);
 
     return mapValues(nodesById, (node) => {
       try {
