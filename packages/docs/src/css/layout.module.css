@@ -2,39 +2,29 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  z-index: 2;
+  z-index: 1;
   width: 100%;
   height: 100%;
 }
 
-.cardGrid {
-  display: flex;
-  width: 100%;
-  flex-wrap: wrap;
-}
-
+.card2,
 .card3 {
-  box-sizing: border-box;
-  text-align: left;
-  width: calc(100% / 3);
-  padding: 10px 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
 }
 
-.card2 {
+.card2 > *,
+.card3 > * {
   box-sizing: border-box;
-  text-align: left;
-  width: calc(100% / 2);
-  padding: 10px 20px;
 }
 
-@media screen and (max-width: 1024px) {
-  .card3 {
-    width: 100%;
-    padding: 10px 0;
+@media screen and (min-width: 1280px) {
+  .card2 {
+    grid-template-columns: 1fr 1fr;
   }
 
-  .card2 {
-    width: 100%;
-    padding: 10px 0;
+  .card3 {
+    grid-template-columns: 1fr 1fr 1fr;
   }
 }

@@ -23,7 +23,7 @@
   display: flex;
   gap: 12px;
   justify-content: center;
-  z-index: 4;
+  z-index: 3;
 }
 
 .logoText {
@@ -45,7 +45,7 @@
   transition: background-color 0.2s;
   width: 40px;
   position: relative;
-  z-index: 4;
+  z-index: 3;
 }
 
 .hamburger::before,
@@ -111,16 +111,11 @@
   transition: color 0.2s;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
 }
 
-.navLink svg {
-  height: 24px;
-  width: 24px;
-}
-
-.navLink:hover {
-  color: var(--white-1);
+.navLink.navLink:hover {
+  color: var(--white-2);
 }
 
 .navLink.primary {
@@ -131,12 +126,23 @@
   color: var(--orange-1);
 }
 
+.navLink svg {
+  height: 24px;
+  width: 24px;
+}
+
 @media screen and (min-width: 768px) {
+  .header.menuOpen {
+    position: static;
+    z-index: unset;
+  }
+
   .logoText {
     display: block;
   }
 
-  .hamburger {
+  .hamburger,
+  .menuText {
     display: none;
   }
 

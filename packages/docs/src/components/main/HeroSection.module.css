@@ -8,7 +8,7 @@
   margin-top: 40px;
 }
 
-.downloadButton.downloadButton {
+.downloadButton.downloadButton.downloadButton {
   align-self: center;
   background-color: var(--orange-0);
   border-radius: 4px;
@@ -19,7 +19,7 @@
   transition: background-color 0.3s;
 }
 
-.downloadButton.downloadButton:hover {
+.downloadButton.downloadButton.downloadButton:hover {
   background-color: var(--orange-1);
   color: var(--black-0);
   text-decoration: none;
@@ -30,41 +30,38 @@
   font-size: 0.8em;
 }
 
-.latestRelease.latestRelease {
+.latestRelease.latestRelease.latestRelease {
   font-size: 12px;
   color: #aaa;
   font-weight: normal;
   margin-top: 8px;
 }
 
+.latestRelease.latestRelease.latestRelease:hover {
+  color: var(--white-2);
+}
+
 .imgContainer {
   margin-top: 60px;
 }
 
-.builtByIronclad {
+.builtByIronclad.builtByIronclad {
   margin-top: 40px;
-  font-size: 24px !important;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
 }
 
 .builtByIroncladText {
-  display: inline-block;
-  position: relative;
-  top: 8px;
-  padding-bottom: 10px;
+  display: block;
 }
 
 .ironcladLink {
-  display: inline-block;
-  background-image: url('/static/img/ironclad-logo-white.png');
-  background-size: contain;
-  color: transparent;
-  margin: 0 16px;
-  width: 209px;
-  height: 40px;
-}
-
-.ironcladLink:hover {
-  color: transparent !important;
+  display: block;
+  line-height: 1;
 }
 
 .scrollIcon {
@@ -120,7 +117,13 @@
   }
 }
 
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 938px) {
+  .title {
+    padding: 0 48px;
+  }
+}
+
+@media screen and (min-width: 1280px) {
   .title {
     padding: 0 92px;
   }

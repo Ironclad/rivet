@@ -2,16 +2,16 @@
 .main {
   --white-0: #fff;
   --white-1: #f9f9f7;
+  --white-2: #f2f2f2;
   --black-0: #1c212b;
   --black-1: #333;
   --orange-0: #ff8862;
-  --orange-1: #e0744d;
+  --orange-1: #e17047;
 
   --page-padding-side: 40px;
 }
 
 .main {
-  /* background-color: var(--orange-0); */
   color: var(--black-1);
   font-family: Circular Std, 'Helvetica Neue', sans-serif;
   font-size: 16px;
@@ -23,12 +23,12 @@
 }
 
 .lines {
-  z-index: 1;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  background-color: var(--black-0);
   background-image: url('/static/img/lines.svg');
   background-position: center top;
   background-repeat: no-repeat;
@@ -50,15 +50,22 @@
   margin-bottom: 20px;
 }
 
-.main a,
+.main a {
+  color: var(--white-0);
+  text-decoration: none;
+}
+
 .main button {
   text-decoration: none;
 }
 
-.main a:hover,
+.main a:hover {
+  color: var(--white-1);
+  text-decoration: none;
+}
+
 .main button:hover {
   text-decoration: none;
-  color: unset; /* inherit color from default element */
 }
 
 @media screen and (min-width: 768px) {
@@ -75,10 +82,8 @@
     font-size: 28px;
   }
 
-  .main p {
-    font-size: 20px;
-  }
-
+  .main p,
+  .main li,
   .main a,
   .main button {
     font-size: 20px;
@@ -105,6 +110,7 @@
     margin-bottom: 32px;
   }
 
+  .main li,
   .main a,
   .main button {
     font-size: 20px;
