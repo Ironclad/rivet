@@ -2,6 +2,8 @@ name: Release
 
 on:
   push:
+    branches:
+      - windows-builds
     tags:
       - app-v*
 jobs:
@@ -9,7 +11,8 @@ jobs:
     runs-on: ${{ matrix.platform }}
     strategy:
       matrix:
-        platform: [macos-latest, ubuntu-20.04]
+        # platform: [macos-latest, ubuntu-20.04]
+        platform: [windows-latest]
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
