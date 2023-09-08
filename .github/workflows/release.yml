@@ -2,9 +2,8 @@ name: Release
 
 on:
   push:
-    branches:
-      - app-release
-      - abrenneke/test-release-workflow
+    tags:
+      - app-v*
 jobs:
   build-release:
     runs-on: ${{ matrix.platform }}
