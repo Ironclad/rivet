@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { CSSProperties, FC, HTMLAttributes, MouseEvent, forwardRef, memo, useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { match } from 'ts-pattern';
 import { ChartNode, CommentNode, NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
 import { lastRunData, selectedProcessPage } from '../state/dataFlow.js';
@@ -9,6 +9,8 @@ import { NodeOutput } from './NodeOutput.js';
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
 import { ReactComponent as SendIcon } from 'majesticons/solid/send.svg';
 import { ReactComponent as GitForkLine } from 'majesticons/line/git-fork-line.svg';
+import { ReactComponent as PinIcon } from 'majesticons/line/pin-line.svg';
+import { ReactComponent as PinSolidIcon } from 'majesticons/solid/pin.svg';
 import { ResizeHandle } from './ResizeHandle.js';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
@@ -18,7 +20,12 @@ import { NodePorts, NodePortsRenderer } from './NodePorts.js';
 import { useNodeTypes } from '../hooks/useNodeTypes';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { useIsKnownNodeType } from '../hooks/useIsKnownNodeType';
-import { draggingWireClosestPortState, draggingWireState } from '../state/graphBuilder';
+import {
+  draggingWireClosestPortState,
+  draggingWireState,
+  isPinnedState,
+  pinnedNodesState,
+} from '../state/graphBuilder';
 
 export type VisualNodeProps = {
   node: ChartNode;
@@ -72,6 +79,8 @@ export const VisualNode = memo(
     ) => {
       const lastRun = useRecoilValue(lastRunData(node.id));
       const processPage = useRecoilValue(selectedProcessPage(node.id));
+      const isPinned = useRecoilValue(isPinnedState(node.id));
+
       const isComment = node.type === 'comment';
       useDependsOnPlugins();
 
@@ -112,6 +121,7 @@ export const VisualNode = memo(
             running: selectedProcessRun?.status?.type === 'running',
             zoomedOut: isZoomedOut,
             isComment,
+            isPinned,
           })}
           ref={nodeRef}
           style={style}
@@ -362,6 +372,19 @@ const NormalVisualNodeContent: FC<{
     const draggingWire = useRecoilValue(draggingWireState);
     const closestPortToDraggingWire = useRecoilValue(draggingWireClosestPortState);
 
+    const isPinned = useRecoilValue(isPinnedState(node.id));
+    const setPinnedNodes = useSetRecoilState(pinnedNodesState);
+
+    const togglePinned = useStableCallback(() => {
+      setPinnedNodes((prev) => {
+        if (prev.includes(node.id)) {
+          return prev.filter((n) => n !== node.id);
+        } else {
+          return [...prev, node.id];
+        }
+      });
+    });
+
     return (
       <>
         <div className="node-title" onMouseMove={watchShift}>
@@ -374,6 +397,9 @@ const NormalVisualNodeContent: FC<{
             <div className="title-text">{node.title}</div>
           </div>
           <div className="title-controls">
+            <button className={clsx('pin-button', { pinned: isPinned })} onClick={togglePinned}>
+              {isPinned ? <PinSolidIcon /> : <PinIcon />}
+            </button>
             <div className="last-run-status">
               {selectedProcessRun?.status ? (
                 match(selectedProcessRun.status)

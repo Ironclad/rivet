@@ -1,4 +1,4 @@
-import { atom, atomFamily, selector } from 'recoil';
+import { atom, atomFamily, selector, selectorFamily } from 'recoil';
 import { ChartNode, GraphId, NodeId, NodeImpl, NodeInputDefinition, PortId } from '@ironclad/rivet-core';
 import { recoilPersist } from 'recoil-persist';
 import { WireDef } from '../components/WireLayer.js';
@@ -70,4 +70,17 @@ export const graphNavigationStackState = atom<{
     stack: [],
     index: undefined,
   },
+});
+
+export const pinnedNodesState = atom<NodeId[]>({
+  key: 'pinnedNodes',
+  default: [],
+});
+
+export const isPinnedState = selectorFamily<boolean, NodeId>({
+  key: 'isPinned',
+  get:
+    (nodeId) =>
+    ({ get }) =>
+      get(pinnedNodesState).includes(nodeId),
 });
