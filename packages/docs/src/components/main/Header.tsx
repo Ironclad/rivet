@@ -27,7 +27,7 @@ export const Header: React.FC = () => {
           />
           <ul className={clsx(styles.navList, { [styles.menuOpen]: isMenuOpen })}>
             <li className={styles.discord}>
-              <a className={styles.navLink} href="https://discord.gg/2u3t8jW" target="_blank">
+              <a className={styles.navLink} href="https://discord.gg/qT8B2gv9Mg" target="_blank">
                 <DiscordLogo viewBox="0 0 127 96" />
               </a>
             </li>
