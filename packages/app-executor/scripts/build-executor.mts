@@ -71,7 +71,7 @@ let { from: sourceFrom, to } = {
   },
   win32: {
     from: 'dist/rivet-app-executor.exe',
-    to: undefined,
+    to: ['dist/app-executor-x86_64-pc-windows-msvc.exe'],
   },
 }[process.platform];
 
