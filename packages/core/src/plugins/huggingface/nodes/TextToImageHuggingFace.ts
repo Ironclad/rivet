@@ -5,7 +5,6 @@ import {
   Inputs,
   InternalProcessContext,
   NodeBodySpec,
-  NodeConnection,
   NodeId,
   NodeImpl,
   NodeInputDefinition,
@@ -13,12 +12,11 @@ import {
   NodeUIData,
   Outputs,
   PortId,
-  Project,
   coerceType,
   getInputOrData,
   nodeDefinition,
 } from '../../../index.js';
-import { HfInference } from '@huggingface/inference';
+import { HfInference, HfInferenceEndpoint } from '@huggingface/inference';
 import { dedent } from 'ts-dedent';
 
 export type TextToImageHuggingFaceNode = ChartNode<'textToImageHuggingFace', TextToImageHuggingFaceNodeData>;
@@ -26,6 +24,9 @@ export type TextToImageHuggingFaceNode = ChartNode<'textToImageHuggingFace', Tex
 export type TextToImageHuggingFaceNodeData = {
   model: string;
   useModelInput?: boolean;
+
+  endpoint?: string;
+  useEndpointInput?: boolean;
 
   width: number;
   useWidthInput?: boolean;
@@ -74,11 +75,7 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
     };
   }
 
-  getInputDefinitions(
-    connections: NodeConnection[],
-    nodes: Record<NodeId, ChartNode>,
-    project: Project,
-  ): NodeInputDefinition[] {
+  getInputDefinitions(): NodeInputDefinition[] {
     const inputs: NodeInputDefinition[] = [];
 
     inputs.push({
@@ -93,6 +90,14 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
         id: 'model' as PortId,
         dataType: 'string',
         title: 'Model',
+      });
+    }
+
+    if (this.data.useEndpointInput) {
+      inputs.push({
+        id: 'endpoint' as PortId,
+        dataType: 'string',
+        title: 'Endpoint',
       });
     }
 
@@ -138,11 +143,7 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
 
     return inputs;
   }
-  getOutputDefinitions(
-    connections: NodeConnection[],
-    nodes: Record<NodeId, ChartNode>,
-    project: Project,
-  ): NodeOutputDefinition[] {
+  getOutputDefinitions(): NodeOutputDefinition[] {
     return [
       {
         id: 'output' as PortId,
@@ -209,6 +210,7 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
     const accessToken = context.getPluginConfig('huggingFaceAccessToken');
 
     const prompt = coerceType(inputData['prompt' as PortId], 'string');
+    const endpoint = getInputOrData(this.data, inputData, 'endpoint');
 
     const model = getInputOrData(this.data, inputData, 'model');
     const width = getInputOrData(this.data, inputData, 'width', 'number');
@@ -217,7 +219,7 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
     const guidanceScale = getInputOrData(this.data, inputData, 'guidanceScale', 'number');
     const numInferenceSteps = getInputOrData(this.data, inputData, 'numInferenceSteps', 'number');
 
-    const hf = new HfInference(accessToken);
+    const hf = endpoint ? new HfInferenceEndpoint(endpoint, accessToken) : new HfInference(accessToken);
 
     const image = await hf.textToImage({
       inputs: prompt,
@@ -225,9 +227,9 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
       parameters: {
         width,
         height,
-        // negative_prompt: negativePrompt,
+        negative_prompt: negativePrompt,
         guidance_scale: guidanceScale,
-        // num_inference_steps: numInferenceSteps,
+        num_inference_steps: numInferenceSteps,
       },
     });
 

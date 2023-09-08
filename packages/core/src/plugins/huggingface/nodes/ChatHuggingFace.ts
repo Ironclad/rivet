@@ -5,7 +5,6 @@ import {
   Inputs,
   InternalProcessContext,
   NodeBodySpec,
-  NodeConnection,
   NodeId,
   NodeImpl,
   NodeInputDefinition,
@@ -13,12 +12,11 @@ import {
   NodeUIData,
   Outputs,
   PortId,
-  Project,
   coerceType,
   getInputOrData,
   nodeDefinition,
 } from '../../../index.js';
-import { HfInference } from '@huggingface/inference';
+import { HfInference, HfInferenceEndpoint } from '@huggingface/inference';
 import { dedent } from 'ts-dedent';
 
 export type ChatHuggingFaceNode = ChartNode<'chatHuggingFace', ChatHuggingFaceNodeData>;
@@ -26,6 +24,9 @@ export type ChatHuggingFaceNode = ChartNode<'chatHuggingFace', ChatHuggingFaceNo
 export type ChatHuggingFaceNodeData = {
   model: string;
   useModelInput?: boolean;
+
+  endpoint?: string;
+  useEndpointInput?: boolean;
 
   temperature?: number;
   useTemperatureInput?: boolean;
@@ -78,11 +79,7 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
     };
   }
 
-  getInputDefinitions(
-    connections: NodeConnection[],
-    nodes: Record<NodeId, ChartNode>,
-    project: Project,
-  ): NodeInputDefinition[] {
+  getInputDefinitions(): NodeInputDefinition[] {
     const inputs: NodeInputDefinition[] = [];
 
     inputs.push({
@@ -97,6 +94,14 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
         id: 'model' as PortId,
         dataType: 'string',
         title: 'Model',
+      });
+    }
+
+    if (this.data.useEndpointInput) {
+      inputs.push({
+        id: 'endpoint' as PortId,
+        dataType: 'string',
+        title: 'Endpoint',
       });
     }
 
@@ -158,11 +163,7 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
 
     return inputs;
   }
-  getOutputDefinitions(
-    connections: NodeConnection[],
-    nodes: Record<NodeId, ChartNode>,
-    project: Project,
-  ): NodeOutputDefinition[] {
+  getOutputDefinitions(): NodeOutputDefinition[] {
     return [
       {
         id: 'output' as PortId,
@@ -179,6 +180,12 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
         label: 'Model',
         dataKey: 'model',
         useInputToggleDataKey: 'useModelInput',
+      },
+      {
+        type: 'string',
+        label: 'Endpoint',
+        dataKey: 'endpoint',
+        useInputToggleDataKey: 'useEndpointInput',
       },
       {
         type: 'number',
@@ -236,7 +243,11 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
 
   getBody(): string | NodeBodySpec | NodeBodySpec[] | undefined {
     return dedent`
-      Model: ${this.data.useModelInput ? '(Using Input)' : this.data.model}
+      ${
+        this.data.endpoint || this.data.useEndpointInput
+          ? `Endpoint: ${this.data.useEndpointInput ? '(Using Input)' : 'Yes'}`
+          : `Model: ${this.data.useModelInput ? '(Using Input)' : this.data.model}`
+      }
       ${
         this.data.useTemperatureInput
           ? 'Temperature: (Using Input)'
@@ -252,6 +263,7 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
     const accessToken = context.getPluginConfig('huggingFaceAccessToken');
 
     const prompt = coerceType(inputData['prompt' as PortId], 'string');
+    const endpoint = getInputOrData(this.data, inputData, 'endpoint');
 
     const model = getInputOrData(this.data, inputData, 'model');
     const temperature = getInputOrData(this.data, inputData, 'temperature', 'number');
@@ -262,7 +274,7 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
     const topP = getInputOrData(this.data, inputData, 'topP', 'number');
     const topK = getInputOrData(this.data, inputData, 'topK', 'number');
 
-    const hf = new HfInference(accessToken);
+    const hf = endpoint ? new HfInferenceEndpoint(endpoint, accessToken) : new HfInference(accessToken);
 
     const generationStream = hf.textGenerationStream({
       inputs: prompt,
