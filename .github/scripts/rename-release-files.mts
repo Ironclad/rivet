@@ -25,7 +25,7 @@ const { data: assets } = await octokit.repos.listReleaseAssets({
 for (const asset of assets) {
   const file = asset.name;
 
-  if (/[Rr]ivet_.*_(universal\.dmg|amd64\.AppImage|amd64\.deb)$/.test(file)) {
+  if (/[Rr]ivet_.*_(universal\.dmg|amd64\.AppImage|amd64\.deb|x64-setup.exe)$/.test(file)) {
     console.log(`Downloading ${file}...`);
 
     const assetResponse = await octokit.repos.getReleaseAsset({
@@ -38,7 +38,12 @@ for (const asset of assets) {
     });
     const assetData = assetResponse.data as Buffer;
 
-    const newFileName = file.replace(/_.*/, '') + '.' + file.split('.').pop();
+    let newFileName = file.replace(/_.*/, '') + '.' + file.split('.').pop();
+
+    if (newFileName === 'Rivet.exe') {
+      // good enough
+      newFileName = 'Rivet-Setup.exe';
+    }
 
     console.log(`Renamed ${file} to ${newFileName}`);
 
