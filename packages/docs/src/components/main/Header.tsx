@@ -29,11 +29,13 @@ export const Header: React.FC = () => {
             <li className={styles.discord}>
               <a className={styles.navLink} href="https://discord.gg/qT8B2gv9Mg" target="_blank">
                 <DiscordLogo viewBox="0 0 127 96" />
+                <span className={styles.menuText}>Discord</span>
               </a>
             </li>
             <li className={styles.github}>
               <a className={styles.navLink} href="https://github.com/Ironclad/rivet" target="_blank">
-                <GithubLogo viewBox="0 0 100 100" /> GitHub
+                <GithubLogo viewBox="0 0 100 100" />
+                <span className={styles.menuText}>GitHub</span>
               </a>
             </li>
             <li className={styles.documentation}>
@@ -42,7 +44,7 @@ export const Header: React.FC = () => {
               </a>
             </li>
             <li className={styles.download}>
-              <a className={clsx(styles.navLink, styles.primary)} href={downloadUrl}>
+              <a className={clsx(styles.navLink, styles.primary)} href={downloadUrl} target="_blank">
                 Download
               </a>
             </li>
