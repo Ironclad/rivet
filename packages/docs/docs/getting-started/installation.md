@@ -18,8 +18,7 @@
 
 ### [Latest Release on GitHub](https://github.com/Ironclad/rivet/releases/latest)
 
-Download the latest release for your platform from the above link. Rivet is currently available for MacOS and Linux. Windows
-support is planned soon. Install the application and proceed to [Setup](./setup.md)!
+Download the latest release for your platform from the above link. Rivet is currently available for MacOS, Linux, and Windows.
 
 ## Building from Source
 

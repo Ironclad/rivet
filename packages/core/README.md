@@ -72,7 +72,7 @@ Rivet core is available on NPM as `@ironclad/rivet-core`. Rivet node is availabl
 - **[Download for MacOS](https://github.com/Ironclad/rivet/releases/latest/download/Rivet.dmg)**
 - **[Download for Linux (AppImage)](https://github.com/Ironclad/rivet/releases/latest/download/Rivet.AppImage)**
 - **[Download for Linux (dmg)](https://github.com/Ironclad/rivet/releases/latest/download/Rivet.dmg)**
-- Download for Windows (Coming soon! Run from source for now)
+- **[Download for Windows](https://github.com/Ironclad/rivet/releases/latest/download/Rivet-Setup.exe)**
 
 #### All Releases
 

@@ -27,7 +27,7 @@ export function useDownloadUrl() {
       case 'mac':
         return 'https://github.com/Ironclad/rivet/releases/latest/download/Rivet.dmg';
       case 'windows':
-        return 'https://github.com/Ironclad/rivet/releases/latest';
+        return 'https://github.com/Ironclad/rivet/releases/latest/download/Rivet-Setup.exe';
       case 'linux':
         return 'https://github.com/Ironclad/rivet/releases/latest/download/rivet.AppImage';
       default:
