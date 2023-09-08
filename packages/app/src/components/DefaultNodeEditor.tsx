@@ -451,15 +451,25 @@ export const DefaultNumberEditor: FC<{
           step={editor.step}
           {...fieldProps}
           defaultValue={(data[editor.dataKey] ?? editor.defaultValue) as number | undefined}
-          onChange={(e) =>
-            onChange({
-              ...node,
-              data: {
-                ...data,
-                [editor.dataKey]: (e.target as HTMLInputElement).valueAsNumber,
-              },
-            })
-          }
+          onChange={(e) => {
+            if (editor.allowEmpty && (e.target as HTMLInputElement).value === '') {
+              onChange({
+                ...node,
+                data: {
+                  ...data,
+                  [editor.dataKey]: undefined,
+                },
+              });
+            } else {
+              onChange({
+                ...node,
+                data: {
+                  ...data,
+                  [editor.dataKey]: (e.target as HTMLInputElement).valueAsNumber,
+                },
+              });
+            }
+          }}
         />
       )}
     </Field>
