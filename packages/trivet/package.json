@@ -40,6 +40,8 @@
   },
   "dependencies": {
     "@ironclad/rivet-core": "workspace:^",
+    "braintrust": "^0.0.41",
+    "eventemitter3": "^5.0.1",
     "lodash-es": "^4.17.21",
     "yaml": "^2.3.1"
   },
