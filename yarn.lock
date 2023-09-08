@@ -3981,6 +3981,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@huggingface/inference@npm:^2.6.1":
+  version: 2.6.1
+  resolution: "@huggingface/inference@npm:2.6.1"
+  checksum: d57d2678e8e5de6abe392f2a80d849495a9a368f882d8adad2af7473fdf770337bb795b7fd21e44c0f221d21db9beaf993aec2a71d546cd4e00fcf24267d4575
+  languageName: node
+  linkType: hard
+
 "@humanwhocodes/config-array@npm:^0.11.10":
   version: 0.11.10
   resolution: "@humanwhocodes/config-array@npm:0.11.10"
@@ -4066,6 +4073,7 @@ __metadata:
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
     "@floating-ui/react": "npm:^0.25.0"
+    "@huggingface/inference": "npm:^2.6.1"
     "@ironclad/rivet-core": "workspace:^"
     "@ironclad/trivet": "workspace:^"
     "@swc/core": "npm:^1.3.71"
@@ -4156,6 +4164,7 @@ __metadata:
   resolution: "@ironclad/rivet-core@workspace:packages/core"
   dependencies:
     "@dqbd/tiktoken": "npm:^1.0.7"
+    "@huggingface/inference": "npm:^2.6.1"
     "@swc/core": "npm:^1.3.71"
     "@types/crypto-js": "npm:^4.1.1"
     "@types/eslint": "npm:^8.44.1"

@@ -6707,6 +6707,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@huggingface/inference", [\
+      ["npm:2.6.1", {\
+        "packageLocation": "./.yarn/cache/@huggingface-inference-npm-2.6.1-1982658766-d57d2678e8.zip/node_modules/@huggingface/inference/",\
+        "packageDependencies": [\
+          ["@huggingface/inference", "npm:2.6.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@humanwhocodes/config-array", [\
       ["npm:0.11.10", {\
         "packageLocation": "./.yarn/cache/@humanwhocodes-config-array-npm-0.11.10-7b63df9e7f-d8b3afa90d.zip/node_modules/@humanwhocodes/config-array/",\
@@ -6820,6 +6829,7 @@ const RAW_RUNTIME_STATE =
           ["@emotion/react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:11.11.1"],\
           ["@emotion/styled", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:11.11.0"],\
           ["@floating-ui/react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:0.25.0"],\
+          ["@huggingface/inference", "npm:2.6.1"],\
           ["@ironclad/rivet-core", "workspace:packages/core"],\
           ["@ironclad/trivet", "workspace:packages/trivet"],\
           ["@swc/core", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:1.3.71"],\
@@ -6934,6 +6944,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@ironclad/rivet-core", "workspace:packages/core"],\
           ["@dqbd/tiktoken", "npm:1.0.7"],\
+          ["@huggingface/inference", "npm:2.6.1"],\
           ["@swc/core", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:1.3.71"],\
           ["@types/crypto-js", "npm:4.1.1"],\
           ["@types/eslint", "npm:8.44.1"],\

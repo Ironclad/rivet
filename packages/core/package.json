@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",
+    "@huggingface/inference": "^2.6.1",
     "autoevals": "^0.0.16",
     "crypto-js": "^4.1.1",
     "emittery": "^1.0.1",
