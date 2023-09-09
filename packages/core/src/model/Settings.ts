@@ -13,7 +13,6 @@ export interface Settings<PluginSettings = Record<string, Record<string, unknown
   openAiKey: string;
   openAiOrganization?: string;
 
-  // pineconeApiKey?: string;
   // anthropicApiKey?: string;
   // assemblyAiApiKey?: string;
 

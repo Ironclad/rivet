@@ -31,7 +31,7 @@ const modalBody = css`
   }
 
   main {
-    padding: 0 30px;
+    padding: 0 30px 30px 30px;
   }
 `;
 
