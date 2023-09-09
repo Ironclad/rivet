@@ -404,7 +404,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       ? coerceTypeOptional(inputs['numberOfChoices' as PortId], 'number') ?? this.data.numberOfChoices ?? 1
       : this.data.numberOfChoices ?? 1;
 
-    const functions = expectTypeOptional(inputs['functions' as PortId], 'gpt-function[]');
+    const functions = coerceTypeOptional(inputs['functions' as PortId], 'gpt-function[]');
 
     const { messages } = getChatNodeMessages(inputs);
 
