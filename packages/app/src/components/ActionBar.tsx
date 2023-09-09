@@ -187,11 +187,11 @@ export const ActionBar: FC<ActionBarProps> = ({
           </button>
         </div>
       )}
-      <div className={clsx('run-test-button', { running: graphRunning })}>
+      {/* <div className={clsx('run-test-button', { running: graphRunning })}>
         <button onClick={graphRunning ? onAbortGraph : onRunTests}>
           Run Test <ChevronRightIcon />
         </button>
-      </div>
+      </div> */}
       {lastRecording && (
         <div className={clsx('save-recording-button')}>
           <button onClick={saveRecording}>Save Recording</button>
