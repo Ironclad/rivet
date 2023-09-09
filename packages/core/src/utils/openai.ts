@@ -154,13 +154,23 @@ export type ChatCompletionChunk = {
   choices?: ChatCompletionChunkChoice[];
 };
 
+export type GptFunctionCall = {
+  name: string;
+  arguments: string;
+};
+
+export type GptFunctionCallDelta = {
+  name?: string;
+  arguments?: string;
+};
+
 export type ChatCompletionChunkChoice = {
   index: number;
   message_index: number;
   delta: {
     role?: 'assistant';
     content?: string;
-    function_call?: object;
+    function_call?: GptFunctionCallDelta;
   };
   finish_reason: null | 'stop' | 'length' | 'insufficient_tokens' | 'function_call';
 };
