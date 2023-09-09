@@ -838,9 +838,7 @@ export class GraphProcessor {
 
     // Excluded because control flow is still in a loop - difference between "will not execute" and "has not executed yet"
     const inputValues = this.#getInputValuesForNode(node);
-    if (node.title === 'Graph Output') {
-      this.#emitter.emit('trace', `Node ${node.title} has input values ${JSON.stringify(inputValues)}`);
-    }
+
     if (this.#excludedDueToControlFlow(node, inputValues, nanoid() as ProcessId, 'loop-not-broken')) {
       this.#emitter.emit('trace', `Node ${node.title} is excluded due to control flow`);
       return;
@@ -916,8 +914,6 @@ export class GraphProcessor {
         loopControllerResults['break' as PortId]?.type !== 'control-flow-excluded' ??
         this.#excludedDueToControlFlow(node, this.#getInputValuesForNode(node), nanoid() as ProcessId);
 
-      this.#emitter.emit('trace', JSON.stringify(this.#nodeResults.get(node.id)));
-
       if (!didBreak) {
         this.#emitter.emit('trace', `Loop controller ${node.title} did not break, so we're looping again`);
         for (const loopNodeId of attachedData.loopInfo?.nodes ?? []) {
@@ -927,7 +923,6 @@ export class GraphProcessor {
           this.#currentlyProcessing.delete(cycleNode.id);
           this.#remainingNodes.add(cycleNode.id);
           this.#nodeResults.delete(cycleNode.id);
-          // this.#emitter.emit('nodeOutputsCleared', { node: cycleNode });
         }
       }
     }

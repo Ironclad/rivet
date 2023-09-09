@@ -1,4 +1,13 @@
-import { NodeId, PortId, ProcessEvents, ProcessId, coerceTypeOptional } from '@ironclad/rivet-core';
+import {
+  DataValue,
+  Inputs,
+  NodeId,
+  Outputs,
+  PortId,
+  ProcessEvents,
+  ProcessId,
+  coerceTypeOptional,
+} from '@ironclad/rivet-core';
 import { produce } from 'immer';
 import { cloneDeep } from 'lodash-es';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -14,7 +23,37 @@ import { ProcessQuestions, userInputModalQuestionsState } from '../state/userInp
 import { lastRecordingState } from '../state/execution';
 import { trivetTestsRunningState } from '../state/trivet';
 import { useLatest } from 'ahooks';
-import { keys } from '../../../core/src/utils/typeSafety';
+import { entries, keys } from '../../../core/src/utils/typeSafety';
+import { match } from 'ts-pattern';
+
+function sanitizeDataValueForLength(value: DataValue | undefined) {
+  return match(value)
+    .with({ type: 'string' }, (value): DataValue => {
+      if (value.value.length > 300_000) {
+        return { type: 'string', value: `String (length ${value.value.length.toLocaleString()}` };
+      }
+
+      return value;
+    })
+    .with({ type: 'object' }, (value): DataValue => {
+      const stringified = JSON.stringify(value.value);
+
+      if (stringified.length > 300_000) {
+        return { type: 'string', value: `Object (length ${stringified.length.toLocaleString()}` };
+      }
+
+      return value;
+    })
+    .with({ type: 'any' }, (value): DataValue => {
+      const inferred = coerceTypeOptional(value, 'string');
+      if ((inferred?.length ?? 0) > 300_000) {
+        return { type: 'string', value: `Any (length ${inferred!.length.toLocaleString()}` };
+      }
+
+      return value;
+    })
+    .otherwise((value): DataValue | undefined => value);
+}
 
 export function useCurrentExecution() {
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
@@ -33,7 +72,6 @@ export function useCurrentExecution() {
         if (!draft[nodeId]) {
           draft[nodeId] = [];
         }
-
         const existingProcess = draft[nodeId]!.find((p) => p.processId === processId);
         if (existingProcess) {
           existingProcess.data = {
@@ -55,22 +93,30 @@ export function useCurrentExecution() {
   };
 
   const onNodeStart = ({ node, inputs, processId }: ProcessEvents['nodeStart']) => {
+    const sanitizedInputs: Inputs = {};
+    for (const [key, value] of entries(inputs)) {
+      sanitizedInputs[key] = sanitizeDataValueForLength(value) as DataValue;
+    }
+
     setDataForNode(node.id, processId, {
-      inputData: inputs,
+      inputData: sanitizedInputs,
       status: { type: 'running' },
       startedAt: Date.now(),
     });
-
     setSelectedNodePageLatest(node.id);
   };
 
   const onNodeFinish = ({ node, outputs, processId }: ProcessEvents['nodeFinish']) => {
+    const sanitizedOutputs: Outputs = {};
+    for (const [key, value] of entries(outputs)) {
+      sanitizedOutputs[key] = sanitizeDataValueForLength(value) as DataValue;
+    }
+
     setDataForNode(node.id, processId, {
-      outputData: outputs,
+      outputData: sanitizedOutputs,
       status: { type: 'ok' },
       finishedAt: Date.now(),
     });
-
     setSelectedNodePageLatest(node.id);
   };
 

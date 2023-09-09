@@ -18,7 +18,7 @@ import { useCurrentExecution } from './useCurrentExecution';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
 import { projectState } from '../state/savedGraphs';
-import { settingsState } from '../state/settings';
+import { recordExecutionsState, settingsState } from '../state/settings';
 import { graphState } from '../state/graph';
 import { lastRecordingState, loadedRecordingState } from '../state/execution';
 import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
@@ -37,6 +37,7 @@ export function useLocalExecutor() {
   const loadedRecording = useRecoilValue(loadedRecordingState);
   const setLastRecordingState = useSetRecoilState(lastRecordingState);
   const [{ testSuites }, setTrivetState] = useRecoilState(trivetState);
+  const recordExecutions = useRecoilValue(recordExecutionsState);
 
   function attachGraphEvents(processor: GraphProcessor) {
     processor.on('nodeStart', currentExecution.onNodeStart);
@@ -107,7 +108,9 @@ export function useLocalExecutor() {
           processor.runToNodeIds = options.to;
         }
 
-        recorder.record(processor);
+        if (recordExecutions) {
+          recorder.record(processor);
+        }
 
         attachGraphEvents(processor);
 
@@ -125,9 +128,9 @@ export function useLocalExecutor() {
           });
         }
 
-        setLastRecordingState(recorder.serialize());
-
-        console.log(results);
+        if (recordExecutions) {
+          setLastRecordingState(recorder.serialize());
+        }
       } catch (e) {
         console.log(e);
       }

@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import { atom, useRecoilState } from 'recoil';
-import { settingsState, themeState, themes } from '../state/settings.js';
+import { recordExecutionsState, settingsState, themeState, themes } from '../state/settings.js';
 import Modal, { ModalTransition, ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
 import TextField from '@atlaskit/textfield';
 import Button from '@atlaskit/button';
@@ -13,6 +13,8 @@ import { SecretPluginConfigurationSpec, StringPluginConfigurationSpec } from '..
 import { SideNavigation, NavigationHeader, ButtonItem, Header, NavigationContent } from '@atlaskit/side-navigation';
 import CrossIcon from '@atlaskit/icon/glyph/cross';
 import { css } from '@emotion/react';
+import Toggle from '@atlaskit/toggle';
+import { Label } from '@atlaskit/form';
 
 interface SettingsModalProps {}
 
@@ -31,7 +33,7 @@ const modalBody = css`
   }
 
   main {
-    padding: 0 30px;
+    padding: 0 30px 30px 30px;
   }
 `;
 
@@ -88,6 +90,7 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
 export const GeneralSettingsPage: FC = () => {
   const [settings, setSettings] = useRecoilState(settingsState);
   const [theme, setTheme] = useRecoilState(themeState);
+  const [recordExecutions, setRecordExecutions] = useRecoilState(recordExecutionsState);
 
   return (
     <div css={fields}>
@@ -117,6 +120,23 @@ export const GeneralSettingsPage: FC = () => {
               This is the delay between each chat message when playing back a recording. Lower values will play
               recordings back faster.
             </HelperMessage>
+          </>
+        )}
+      </Field>
+      <Field name="recordExecutions">
+        {() => (
+          <>
+            <Label htmlFor="recordExecutions" testId="recordExecutions">
+              Record local graph executions
+            </Label>
+            <div className="toggle-field">
+              <Toggle
+                id="recordExecutions"
+                isChecked={recordExecutions}
+                onChange={(e) => setRecordExecutions(e.target.checked)}
+              />
+            </div>
+            <HelperMessage>Disabling may help performance when dealing with very large data values</HelperMessage>
           </>
         )}
       </Field>
