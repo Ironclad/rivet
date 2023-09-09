@@ -127,6 +127,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Jkwok0714"><img src="https://avatars.githubusercontent.com/u/28716303?v=4?s=100" width="100px;" alt="Justin Kwok"/><br /><sub><b>Justin Kwok</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/issues?q=author%3AJkwok0714" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://meebleforp.com/"><img src="https://avatars.githubusercontent.com/u/445650?v=4?s=100" width="100px;" alt="Zhang Yi Jiang"/><br /><sub><b>Zhang Yi Jiang</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=ZhangYiJiang" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Crystalix007"><img src="https://avatars.githubusercontent.com/u/4603729?v=4?s=100" width="100px;" alt="Michael Kuc"/><br /><sub><b>Michael Kuc</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=Crystalix007" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
