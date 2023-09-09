@@ -27,19 +27,17 @@ export class PineconeVectorDatabase implements VectorDatabase {
   #apiKey;
 
   constructor(settings: Settings) {
-    this.#apiKey = settings.pluginSettings?.pinecone?.apiKey as string | undefined;
+    this.#apiKey = settings.pluginSettings?.pinecone?.pineconeApiKey as string | undefined;
   }
 
   async store(collection: DataValue, vector: VectorDataValue, data: DataValue, { id }: { id?: string }): Promise<void> {
-    const [indexId, namespace] = coerceType(collection, 'string').split('/');
-
-    const host = `https://${indexId}`;
+    const collectionDetails = getCollection(coerceType(collection, 'string'));
 
     if (!id) {
       id = await sha256(vector.value.join(','));
     }
 
-    const response = await fetch(`${host}/vectors/upsert`, {
+    const response = await fetch(`${collectionDetails.host}/vectors/upsert`, {
       method: 'POST',
       body: JSON.stringify({
         vectors: [
@@ -51,7 +49,7 @@ export class PineconeVectorDatabase implements VectorDatabase {
             },
           },
         ],
-        namespace,
+        ...collectionDetails.options,
       }),
       headers: {
         'Content-Type': 'application/json',
@@ -70,17 +68,15 @@ export class PineconeVectorDatabase implements VectorDatabase {
     vector: VectorDataValue,
     k: number,
   ): Promise<ArrayDataValue<ScalarDataValue>> {
-    const [indexId, namespace] = coerceType(collection, 'string').split('/');
+    const collectionDetails = getCollection(coerceType(collection, 'string'));
 
-    const host = `https://${indexId}`;
-
-    const response = await fetch(`${host}/query`, {
+    const response = await fetch(`${collectionDetails.host}/query`, {
       method: 'POST',
       body: JSON.stringify({
         vector: vector.value,
         topK: k,
-        namespace,
         includeMetadata: true,
+        ...collectionDetails.options,
       }),
       headers: {
         'Content-Type': 'application/json',
@@ -108,4 +104,33 @@ export class PineconeVectorDatabase implements VectorDatabase {
       value: matches.map(({ id, metadata }) => ({ id, data: metadata.data })),
     };
   }
+}
+
+interface CollectionDetails {
+  host: string;
+  options: { [option: string]: any };
+}
+
+function getCollection(collectionString: string): CollectionDetails {
+  let collectionURL: URL;
+
+  if (!collectionString.startsWith('http://') && !collectionString.startsWith('https://')) {
+    collectionString = `https://${collectionString}`;
+  }
+
+  try {
+    collectionURL = new URL(collectionString);
+  } catch (error) {
+    throw new Error(`Incorrectly formatted Pinecone collection: ${error}`);
+  }
+
+  const host = `${collectionURL.protocol}//${collectionURL.host}`;
+  const options: { [option: string]: any } = {};
+
+  if (collectionURL.pathname !== '/') {
+    // Chop off the leading slash.
+    options.namespace = collectionURL.pathname.slice(1);
+  }
+
+  return { host, options };
 }
