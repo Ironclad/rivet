@@ -153,6 +153,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "Crystalix007",
+      "name": "Michael Kuc",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4603729?v=4",
+      "profile": "https://github.com/Crystalix007",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
