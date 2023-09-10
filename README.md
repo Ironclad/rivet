@@ -96,7 +96,7 @@ The Rivet project is welcome to all contributors, and as such, we have a [Code o
 
 ## Troubleshooting
 
-If you have ran into any issues while running the Rivet application, or when integrating it into your code, please check the [Issues](https://github.com/Ironclad/rivet/issues) page for any existing issues, and if you can't find any, please open a new issue!
+If you have run into any issues while running the Rivet application, or when integrating it into your code, please check the [Issues](https://github.com/Ironclad/rivet/issues) page for any existing issues, and if you can't find any, please open a new issue!
 
 If you have any other questions on using Rivet, or have any other ideas, feel free to open a [discussion](https://github.com/Ironclad/rivet/discussions)!
 
