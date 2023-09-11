@@ -12,7 +12,7 @@
   ·
   <a href="https://github.com/Ironclad/rivet/issues">Request Feature</a>
   ·
-  <a href="https://github.com/Ironclad/rivet/discussions">Disussions</a>
+  <a href="https://github.com/Ironclad/rivet/discussions">Discussions</a>
   ·
   <a href="https://discord.gg/qT8B2gv9Mg">Chat</a>
 </p>
