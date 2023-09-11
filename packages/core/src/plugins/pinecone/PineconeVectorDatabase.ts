@@ -87,7 +87,7 @@ export class PineconeVectorDatabase implements VectorDatabase {
 
     return {
       type: 'object[]',
-      value: matches.map(({ id, metadata }) => ({ id, data: metadata.data })),
+      value: matches.map(({ id, metadata }) => ({ id, data: metadata.data, metadata })),
     };
   }
 }
