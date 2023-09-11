@@ -105,5 +105,6 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     object: '',
     audio: '',
     image: '',
+    httpCall: '',
   };
 };
