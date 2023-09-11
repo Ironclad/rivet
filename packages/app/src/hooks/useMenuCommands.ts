@@ -10,6 +10,8 @@ import { graphState } from '../state/graph.js';
 import { useLoadRecording } from './useLoadRecording.js';
 import { WebviewWindow } from '@tauri-apps/api/window';
 import { ioProvider } from '../utils/globals.js';
+import { debuggerPanelOpenState } from '../state/ui';
+import { useToggleRemoteDebugger } from '../components/DebuggerConnectPanel';
 
 type MenuIds =
   | 'settings'
@@ -21,7 +23,8 @@ type MenuIds =
   | 'export_graph'
   | 'import_graph'
   | 'run'
-  | 'load_recording';
+  | 'load_recording'
+  | 'remote_debugger';
 
 const handlerState: {
   handler: (e: { payload: MenuIds }) => void;
@@ -57,6 +60,7 @@ export function useMenuCommands(
   const loadProject = useLoadProject();
   const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
   const { loadRecording } = useLoadRecording();
+  const toggleRemoteDebugger = useToggleRemoteDebugger();
 
   useEffect(() => {
     const handler: (e: { payload: MenuIds }) => void = ({ payload }) => {
@@ -90,6 +94,9 @@ export function useMenuCommands(
         })
         .with('load_recording', () => {
           loadRecording();
+        })
+        .with('remote_debugger', () => {
+          toggleRemoteDebugger();
         })
         .exhaustive();
     };

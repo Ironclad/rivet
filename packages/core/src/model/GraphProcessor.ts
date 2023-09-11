@@ -115,7 +115,10 @@ export type Outputs = Record<PortId, DataValue | undefined>;
 
 export type ExternalFunctionProcessContext = Omit<InternalProcessContext, 'setGlobal'>;
 
-export type ExternalFunction = (context: ExternalFunctionProcessContext, ...args: unknown[]) => Promise<DataValue & { cost?: number }>;
+export type ExternalFunction = (
+  context: ExternalFunctionProcessContext,
+  ...args: unknown[]
+) => Promise<DataValue & { cost?: number }>;
 
 type RaceId = Opaque<string, 'RaceId'>;
 
@@ -166,6 +169,9 @@ export class GraphProcessor {
   #registry: NodeRegistration;
   id = nanoid();
 
+  /** If set, specifies the node(s) that the graph will run TO, instead of the nodes without any dependents. */
+  runToNodeIds?: NodeId[];
+
   /** The node that is executing this graph, almost always a subgraph node. Undefined for root. */
   #executor:
     | {
@@ -202,6 +208,7 @@ export class GraphProcessor {
   #abortSuccessfully = false;
   #abortError: Error | string | undefined = undefined;
   #totalCost: number = 0;
+  #ignoreNodes: Set<NodeId> = undefined!;
 
   #nodeAbortControllers = new Map<`${NodeId}-${ProcessId}`, AbortController>();
 
@@ -451,6 +458,10 @@ export class GraphProcessor {
       };
 
       for (const event of events) {
+        if (this.#aborted) {
+          break;
+        }
+
         await this.#waitUntilUnpaused();
 
         await match(event)
@@ -593,6 +604,7 @@ export class GraphProcessor {
     this.#subprocessors = new Set();
     this.#attachedNodeData = new Map();
     this.#globals ??= new Map();
+    this.#ignoreNodes = new Set();
 
     this.#abortController = new AbortController();
     this.#abortController.signal.addEventListener('abort', () => {
@@ -636,14 +648,26 @@ export class GraphProcessor {
 
       this.#emitter.emit('graphStart', { graph: this.#graph, inputs: this.#graphInputs });
 
-      const nodesWithoutOutputs = this.#graph.nodes.filter((node) => this.#outputNodesFrom(node).nodes.length === 0);
+      const startNodes = this.runToNodeIds
+        ? this.#graph.nodes.filter((node) => this.runToNodeIds?.includes(node.id))
+        : this.#graph.nodes.filter((node) => this.#outputNodesFrom(node).nodes.length === 0);
 
       await this.#waitUntilUnpaused();
 
-      for (const nodeWithoutOutputs of nodesWithoutOutputs) {
+      for (const startNode of startNodes) {
         this.#processingQueue.add(async () => {
-          await this.#fetchNodeDataAndProcessNode(nodeWithoutOutputs);
+          await this.#fetchNodeDataAndProcessNode(startNode);
         });
+      }
+
+      // Anything not queued at this phase here should be ignored
+      if (this.runToNodeIds) {
+        // For safety, we'll only activate this if runToNodeIds is set, in case there are bugs in the first pass
+        for (const node of this.#graph.nodes) {
+          if (this.#queuedNodes.has(node.id) === false) {
+            this.#ignoreNodes.add(node.id);
+          }
+        }
       }
 
       await this.#processingQueue.onIdle();
@@ -766,6 +790,11 @@ export class GraphProcessor {
   async #processNodeIfAllInputsAvailable(node: ChartNode): Promise<void> {
     const builtInNode = node as BuiltInNodes;
 
+    if (this.#ignoreNodes.has(node.id)) {
+      this.#emitter.emit('trace', `Node ${node.title} is ignored`);
+      return;
+    }
+
     if (this.#currentlyProcessing.has(node.id)) {
       this.#emitter.emit('trace', `Node ${node.title} is already being processed`);
       return;
@@ -809,9 +838,7 @@ export class GraphProcessor {
 
     // Excluded because control flow is still in a loop - difference between "will not execute" and "has not executed yet"
     const inputValues = this.#getInputValuesForNode(node);
-    if (node.title === 'Graph Output') {
-      this.#emitter.emit('trace', `Node ${node.title} has input values ${JSON.stringify(inputValues)}`);
-    }
+
     if (this.#excludedDueToControlFlow(node, inputValues, nanoid() as ProcessId, 'loop-not-broken')) {
       this.#emitter.emit('trace', `Node ${node.title} is excluded due to control flow`);
       return;
@@ -887,8 +914,6 @@ export class GraphProcessor {
         loopControllerResults['break' as PortId]?.type !== 'control-flow-excluded' ??
         this.#excludedDueToControlFlow(node, this.#getInputValuesForNode(node), nanoid() as ProcessId);
 
-      this.#emitter.emit('trace', JSON.stringify(this.#nodeResults.get(node.id)));
-
       if (!didBreak) {
         this.#emitter.emit('trace', `Loop controller ${node.title} did not break, so we're looping again`);
         for (const loopNodeId of attachedData.loopInfo?.nodes ?? []) {
@@ -898,7 +923,6 @@ export class GraphProcessor {
           this.#currentlyProcessing.delete(cycleNode.id);
           this.#remainingNodes.add(cycleNode.id);
           this.#nodeResults.delete(cycleNode.id);
-          // this.#emitter.emit('nodeOutputsCleared', { node: cycleNode });
         }
       }
     }

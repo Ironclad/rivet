@@ -3,7 +3,7 @@ import { Outputs, PortId } from '@ironclad/rivet-core';
 import { RenderDataValue } from '../RenderDataValue.js';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 
-export const LoopControllerNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
+export const LoopControllerNodeOutput: FC<{ outputs: Outputs; renderMarkdown?: boolean }> = ({ outputs }) => {
   const outputKeys = Object.keys(outputs).filter((key) => key.startsWith('output'));
 
   const breakLoop = outputs['break' as PortId]!.type !== 'control-flow-excluded';

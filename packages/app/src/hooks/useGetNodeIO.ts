@@ -1,34 +1,7 @@
 import { useRecoilValue } from 'recoil';
-import { connectionsForNodeState, nodesByIdState } from '../state/graph.js';
-import { useStableCallback } from './useStableCallback.js';
-import { ChartNode, globalRivetNodeRegistry } from '@ironclad/rivet-core';
-import { projectState } from '../state/savedGraphs.js';
-import { useDependsOnPlugins } from './useDependsOnPlugins';
-import { useNodeTypes } from './useNodeTypes';
+import { ioDefinitionsForNodeState } from '../state/graph.js';
+import { NodeId } from '@ironclad/rivet-core';
 
-export function useGetNodeIO() {
-  const project = useRecoilValue(projectState);
-  const nodesById = useRecoilValue(nodesByIdState);
-  const connectionsForNode = useRecoilValue(connectionsForNodeState);
-  useDependsOnPlugins();
-  const nodeTypes = useNodeTypes();
-
-  return useStableCallback((node: ChartNode) => {
-    if (!(node.type in nodeTypes)) {
-      return {
-        inputDefinitions: [],
-        outputDefinitions: [],
-      };
-    }
-
-    const tempImpl = globalRivetNodeRegistry.createDynamicImpl(node);
-
-    const inputDefinitions = tempImpl.getInputDefinitions(connectionsForNode[node.id] ?? [], nodesById, project);
-    const outputDefinitions = tempImpl.getOutputDefinitions(connectionsForNode[node.id] ?? [], nodesById, project);
-
-    return {
-      inputDefinitions,
-      outputDefinitions,
-    };
-  });
+export function useNodeIO(nodeId: NodeId | undefined) {
+  return useRecoilValue(ioDefinitionsForNodeState(nodeId));
 }

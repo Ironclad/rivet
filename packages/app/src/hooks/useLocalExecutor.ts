@@ -8,7 +8,7 @@ import {
   GraphOutputs,
   globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
-import { current, produce } from 'immer';
+import { produce } from 'immer';
 import { useRef } from 'react';
 import { toast } from 'react-toastify';
 import { TauriNativeApi } from '../model/native/TauriNativeApi';
@@ -18,7 +18,7 @@ import { useCurrentExecution } from './useCurrentExecution';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
 import { projectState } from '../state/savedGraphs';
-import { settingsState } from '../state/settings';
+import { recordExecutionsState, settingsState } from '../state/settings';
 import { graphState } from '../state/graph';
 import { lastRecordingState, loadedRecordingState } from '../state/execution';
 import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
@@ -37,6 +37,7 @@ export function useLocalExecutor() {
   const loadedRecording = useRecoilValue(loadedRecordingState);
   const setLastRecordingState = useSetRecoilState(lastRecordingState);
   const [{ testSuites }, setTrivetState] = useRecoilState(trivetState);
+  const recordExecutions = useRecoilValue(recordExecutionsState);
 
   function attachGraphEvents(processor: GraphProcessor) {
     processor.on('nodeStart', currentExecution.onNodeStart);
@@ -78,51 +79,63 @@ export function useLocalExecutor() {
     currentProcessor.current = processor;
   }
 
-  const tryRunGraph = useStableCallback(async () => {
-    try {
-      saveGraph();
+  const tryRunGraph = useStableCallback(
+    async (
+      options: {
+        to?: NodeId[];
+      } = {},
+    ) => {
+      try {
+        saveGraph();
 
-      if (currentProcessor.current?.isRunning) {
-        return;
+        if (currentProcessor.current?.isRunning) {
+          return;
+        }
+
+        const tempProject = {
+          ...project,
+          graphs: {
+            ...project.graphs,
+            [graph.metadata!.id!]: graph,
+          },
+        };
+
+        const recorder = new ExecutionRecorder();
+        const processor = new GraphProcessor(tempProject, graph.metadata!.id!);
+        processor.recordingPlaybackChatLatency = savedSettings.recordingPlaybackLatency ?? 1000;
+
+        if (options.to) {
+          processor.runToNodeIds = options.to;
+        }
+
+        if (recordExecutions) {
+          recorder.record(processor);
+        }
+
+        attachGraphEvents(processor);
+
+        let results: GraphOutputs;
+
+        if (loadedRecording) {
+          results = await processor.replayRecording(loadedRecording.recorder);
+        } else {
+          results = await processor.processGraph({
+            settings: await fillMissingSettingsFromEnvironmentVariables(
+              savedSettings,
+              globalRivetNodeRegistry.getPlugins(),
+            ),
+            nativeApi: new TauriNativeApi(),
+          });
+        }
+
+        if (recordExecutions) {
+          setLastRecordingState(recorder.serialize());
+        }
+      } catch (e) {
+        console.log(e);
       }
-
-      const tempProject = {
-        ...project,
-        graphs: {
-          ...project.graphs,
-          [graph.metadata!.id!]: graph,
-        },
-      };
-
-      const recorder = new ExecutionRecorder();
-      const processor = new GraphProcessor(tempProject, graph.metadata!.id!);
-      processor.recordingPlaybackChatLatency = savedSettings.recordingPlaybackLatency ?? 1000;
-
-      recorder.record(processor);
-
-      attachGraphEvents(processor);
-
-      let results: GraphOutputs;
-
-      if (loadedRecording) {
-        results = await processor.replayRecording(loadedRecording.recorder);
-      } else {
-        results = await processor.processGraph({
-          settings: await fillMissingSettingsFromEnvironmentVariables(
-            savedSettings,
-            globalRivetNodeRegistry.getPlugins(),
-          ),
-          nativeApi: new TauriNativeApi(),
-        });
-      }
-
-      setLastRecordingState(recorder.serialize());
-
-      console.log(results);
-    } catch (e) {
-      console.log(e);
-    }
-  });
+    },
+  );
 
   const tryRunTests = useStableCallback(
     async (options: { testSuiteIds?: string[]; testCaseIds?: string[]; iterationCount?: number } = {}) => {

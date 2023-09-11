@@ -30,7 +30,9 @@ export function coerceTypeOptional<T extends DataType>(
 
   // Coerce foo[] to bar[]
   if (isArrayDataType(type) && isArrayDataValue(value) && getScalarTypeOf(type) !== getScalarTypeOf(value.type)) {
-    return value.value.map((v) => coerceTypeOptional(inferType(v), getScalarTypeOf(type))) as any;
+    return value.value.map((v) =>
+      coerceTypeOptional({ type: getScalarTypeOf(value.type), value: v } as DataValue, getScalarTypeOf(type)),
+    ) as any;
   }
 
   const result = match(type as DataType)

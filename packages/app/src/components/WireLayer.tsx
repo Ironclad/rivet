@@ -1,26 +1,14 @@
 import { FC, useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
-import { ConditionallyRenderWire } from './Wire.js';
+import { ConditionallyRenderWire, PartialWire } from './Wire.js';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { draggingWireClosestPortState } from '../state/graphBuilder.js';
 import { orderBy } from 'lodash-es';
-
-export type WireDef = {
-  startNodeId: NodeId;
-  startPortId: PortId;
-  endNodeId?: NodeId;
-  endPortId?: PortId;
-  startPortIsInput: boolean;
-};
-
-type WireLayerProps = {
-  connections: NodeConnection[];
-  draggingWire?: WireDef;
-  highlightedNodes?: NodeId[];
-};
+import { nodesByIdState } from '../state/graph';
+import { PortPositions } from './NodeCanvas';
 
 const wiresStyles = css`
   width: 100%;
@@ -43,7 +31,22 @@ const wiresStyles = css`
   }
 `;
 
-export const WireLayer: FC<WireLayerProps> = ({ connections, draggingWire, highlightedNodes }) => {
+export type WireDef = {
+  startNodeId: NodeId;
+  startPortId: PortId;
+  endNodeId?: NodeId;
+  endPortId?: PortId;
+  startPortIsInput: boolean;
+};
+
+type WireLayerProps = {
+  connections: NodeConnection[];
+  draggingWire?: WireDef;
+  highlightedNodes?: NodeId[];
+  portPositions: PortPositions;
+};
+
+export const WireLayer: FC<WireLayerProps> = ({ connections, draggingWire, highlightedNodes, portPositions }) => {
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const setClosestPort = useSetRecoilState(draggingWireClosestPortState);
 
@@ -98,30 +101,37 @@ export const WireLayer: FC<WireLayerProps> = ({ connections, draggingWire, highl
   const { canvasPosition, clientToCanvasPosition } = useCanvasPositioning();
   const mousePositionCanvas = clientToCanvasPosition(mousePosition.x, mousePosition.y);
 
+  const nodesById = useRecoilValue(nodesByIdState);
+
   return (
     <svg css={wiresStyles}>
       <g transform={`scale(${canvasPosition.zoom}) translate(${canvasPosition.x}, ${canvasPosition.y})`}>
         {draggingWire && (
           <ErrorBoundary fallback={<></>} key="wire-inprogress">
-            <ConditionallyRenderWire
-              connection={
-                draggingWire.endNodeId && draggingWire.endPortId
-                  ? {
-                      outputNodeId: draggingWire.startNodeId,
-                      outputId: draggingWire.startPortId,
-                      inputNodeId: draggingWire.endNodeId,
-                      inputId: draggingWire.endPortId,
-                    }
-                  : {
-                      nodeId: draggingWire.startNodeId,
-                      portId: draggingWire.startPortId,
-                      toX: mousePositionCanvas.x,
-                      toY: mousePositionCanvas.y,
-                    }
-              }
-              selected={false}
-              highlighted={!!(draggingWire.endNodeId && draggingWire.endPortId)}
-            />
+            {draggingWire.endNodeId && draggingWire.endPortId ? (
+              <ConditionallyRenderWire
+                connection={{
+                  outputNodeId: draggingWire.startNodeId,
+                  outputId: draggingWire.startPortId,
+                  inputNodeId: draggingWire.endNodeId,
+                  inputId: draggingWire.endPortId,
+                }}
+                selected={false}
+                highlighted={!!(draggingWire.endNodeId && draggingWire.endPortId)}
+                nodesById={nodesById}
+                portPositions={portPositions}
+              />
+            ) : (
+              <PartialWire
+                connection={{
+                  nodeId: draggingWire.startNodeId,
+                  portId: draggingWire.startPortId,
+                  toX: mousePositionCanvas.x,
+                  toY: mousePositionCanvas.y,
+                }}
+                portPositions={portPositions}
+              />
+            )}
           </ErrorBoundary>
         )}
         {connections.map((connection) => {
@@ -129,7 +139,13 @@ export const WireLayer: FC<WireLayerProps> = ({ connections, draggingWire, highl
             highlightedNodes?.includes(connection.inputNodeId) || highlightedNodes?.includes(connection.outputNodeId);
           return (
             <ErrorBoundary fallback={<></>} key={`wire-${connection.inputId}-${connection.inputNodeId}`}>
-              <ConditionallyRenderWire connection={connection} selected={false} highlighted={!!highlighted} />
+              <ConditionallyRenderWire
+                connection={connection}
+                selected={false}
+                highlighted={!!highlighted}
+                nodesById={nodesById}
+                portPositions={portPositions}
+              />
             </ErrorBoundary>
           );
         })}

@@ -1,0 +1,23 @@
+﻿name: Build
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20.4.x'
+      - name: Install dependencies
+        run: yarn --immutable
+      - name: Build
+        run: yarn build
+      - name: Test
+        run: yarn test

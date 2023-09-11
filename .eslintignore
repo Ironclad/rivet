@@ -2,3 +2,4 @@ node_modules
 build
 coverage
 .eslintrc.cjs
+app-executor/bin/executor-bundle.js

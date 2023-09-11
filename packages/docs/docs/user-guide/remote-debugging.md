@@ -6,7 +6,7 @@ Remote debugging allows you to integrate the Rivet Core or Rivet Node libraries 
 
 ## Connecting the Remote Debugger
 
-Click the **Remote Debugger** button in the menu bar to open the remote debugger dialog. You must enter a WebSocket URI here to connect to. This URI must be a WebSocket server that uses `startRivetDebuggerServer`. This is a function exported by the Rivet Core and Rivet Node libraries. You can use this function to start a WebSocket server that will allow the Rivet application to connect to it.
+Select the **Remote Debugger** menu option in the Action Bar's menu dropdown, or press the **F5** key to open the remote debugger dialog. You must enter a WebSocket URI here to connect to. This URI must be a WebSocket server that uses `startRivetDebuggerServer`. This is a function exported by the Rivet Core and Rivet Node libraries. You can use this function to start a WebSocket server that will allow the Rivet application to connect to it.
 
 ![remote debugger](assets/remote-debugger.png)
 

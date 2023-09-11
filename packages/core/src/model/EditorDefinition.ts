@@ -68,7 +68,6 @@ export type NumberEditorDefinition<T extends ChartNode> = {
   type: 'number';
   label: string;
 
-  dataKey: DataOfType<T, number>;
   defaultValue?: number;
 
   useInputToggleDataKey?: DataOfType<T, boolean>;
@@ -76,7 +75,16 @@ export type NumberEditorDefinition<T extends ChartNode> = {
   min?: number;
   max?: number;
   step?: number;
-};
+} & (
+  | {
+      dataKey: DataOfType<T, number>;
+      allowEmpty?: false;
+    }
+  | {
+      dataKey: DataOfType<T, number | undefined>;
+      allowEmpty: true;
+    }
+);
 
 export type CodeEditorDefinition<T extends ChartNode> = {
   type: 'code';

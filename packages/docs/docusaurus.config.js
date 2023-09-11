@@ -9,7 +9,6 @@ const config = {
   title: 'Rivet',
   tagline: 'IDE and Library for Creating AI Agents',
   favicon: 'img/favicon.png',
-  noIndex: true, // Restrict search engine indexing. Remove once Rivet is publicly open-sourced.
 
   url: 'https://rivet.ironcladapp.com',
   baseUrl: '/',
@@ -53,8 +52,7 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
+      image: 'img/social-card.png',
       colorMode: {
         defaultMode: 'dark',
       },
@@ -104,22 +102,25 @@ const config = {
             items: [
               {
                 label: 'Getting Started',
-                to: '/getting-started/installation',
+                to: '/docs/getting-started/installation',
               },
               {
                 label: 'User Guide',
-                to: '/',
+                to: '/docs',
               },
               {
                 label: 'API Reference',
-                to: '/api-reference',
+                to: '/docs/api-reference',
               },
             ],
           },
           {
             title: 'Community',
             items: [
-              // Add any relevant community links here
+              {
+                label: 'Discord',
+                href: 'https://discord.gg/qT8B2gv9Mg',
+              },
             ],
           },
           {
@@ -132,7 +133,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Rivet. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Ironclad. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,

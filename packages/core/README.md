@@ -1,8 +1,8 @@
 <h1 align="center"><img src="https://rivet.ironcladapp.com/img/Square150x150Logo.png" alt="Rivet Logo" width="32"> Rivet</h1>
 
-![GitHub all releases](https://img.shields.io/github/downloads/ironclad/rivet/total) [![All Contributors](https://img.shields.io/github/all-contributors/Ironclad/rivet?color=ee8449&style=flat-square)](#contributors-) ![GitHub issues](https://img.shields.io/github/issues/yourusername/your-repo-name) ![GitHub pull requests](https://img.shields.io/github/issues-pr/yourusername/your-repo-name) ![License](https://img.shields.io/github/license/yourusername/your-repo-name)
+![GitHub all releases](https://img.shields.io/github/downloads/ironclad/rivet/total) [![All Contributors](https://img.shields.io/github/all-contributors/Ironclad/rivet?color=ee8449&style=flat-square)](#contributors-) ![GitHub issues](https://img.shields.io/github/issues/Ironclad/rivet) ![GitHub pull requests](https://img.shields.io/github/issues-pr/Ironclad/rivet) ![License](https://img.shields.io/github/license/Ironclad/rivet) [![Discord](https://img.shields.io/discord/1149376303070466110?style=flat&logo=discord)](https://discord.gg/qT8B2gv9Mg)
 
-<h3 align="center"><a href="https://github.com/Ironclad/rivet/releases">Download</a> | <a href="https://rivet.ironcladapp.com">Website</a> | <a href="https://rivet.ironcladapp.com">Documentation</a></h3>
+<h3 align="center"><a href="https://github.com/Ironclad/rivet/releases">Download</a> | <a href="https://rivet.ironcladapp.com">Website</a> | <a href="https://rivet.ironcladapp.com/docs">Documentation</a></h3>
 
 <p align="center">
   <a href="https://rivet.ironcladapp.com">Rivet</a>, the IDE for creating complex AI agents and prompt chaining, and embedding it in your application.
@@ -13,14 +13,20 @@
   <a href="https://github.com/Ironclad/rivet/issues">Request Feature</a>
   ·
   <a href="https://github.com/Ironclad/rivet/discussions">Disussions</a>
+  ·
+  <a href="https://discord.gg/qT8B2gv9Mg">Chat</a>
 </p>
+
+Have a question? Need some help? Check out the Rivet [Discord server](https://discord.gg/qT8B2gv9Mg)!
 
 - [About Rivet](#about-rivet)
   - [Rivet Application](#rivet-application)
   - [Rivet Core](#rivet-core)
 - [Getting Started](#getting-started)
   - [Prebuilt Binaries](#prebuilt-binaries)
-  - [Building from Source](#building-from-source)
+    - [Latest downloads](#latest-downloads)
+    - [All Releases](#all-releases)
+  - [Running from Source](#running-from-source)
 - [Contributing](#contributing)
   - [Code of Conduct](#code-of-conduct)
 - [Troubleshooting](#troubleshooting)
@@ -36,29 +42,45 @@ Rivet currently has LLM support for:
 
 - [OpenAI GPT-3.5 and GPT-4](https://openai.com/gpt-4)
 - [Anthropic Claude Instant and Claude 2](https://www.anthropic.com/index/claude-2)
+- [AssemblyAI LeMUR framework for voice data](https://www.assemblyai.com/models/lemur)
 
 Rivet has embedding/vector database support for:
 
 - [OpenAI Embeddings](https://platform.openai.com/docs/guides/embeddings)
 - [Pinecone](https://www.pinecone.io/)
 
-For more information on how to use the application and all of its capabilities, see [the documentation](https://rivet.ironcladapp.com)!
+Rivet also supports these additional integrations:
+
+- [Audio Transcription from AssemblyAI](https://www.assemblyai.com/models/core-transcription)
+
+For more information on how to use the application and all of its capabilities, see [the documentation](https://rivet.ironcladapp.com/docs)!
 
 ### Rivet Core
 
 Rivet core is a TypeScript library for running graphs created in Rivet. It is used by the Rivet application, but can also be used in your own applications, so that Rivet can call into your own application's code, and your application can call into Rivet graphs.
 
-For more information on using Rivet Core, see the [Rivet Integration Getting Started](https://rivet.ironcladapp.com/api-reference/getting-started-integration) page and the related API documentation.
+For more information on using Rivet Core, see the [Rivet Integration Getting Started](https://rivet.ironcladapp.com/docs/api-reference/getting-started-integration) page and the related API documentation.
+
+Rivet core is available on NPM as `@ironclad/rivet-core`. Rivet node is available as `@ironclad/rivet-node`. Documentation for each is available on the [Rivet website](https://rivet.ironcladapp.com/docs/api-reference).
 
 ## Getting Started
 
 ### Prebuilt Binaries
 
-Prebuilt binaries of Rivet are available on the [Releases](https://github.com/Ironclad/rivet/releases) page, or on the [main Rivet site](https://rivet.ironcladapp.com).
+#### Latest downloads
 
-### Building from Source
+- **[Download for MacOS](https://github.com/Ironclad/rivet/releases/latest/download/Rivet.dmg)**
+- **[Download for Linux (AppImage)](https://github.com/Ironclad/rivet/releases/latest/download/Rivet.AppImage)**
+- **[Download for Linux (dmg)](https://github.com/Ironclad/rivet/releases/latest/download/Rivet.dmg)**
+- **[Download for Windows](https://github.com/Ironclad/rivet/releases/latest/download/Rivet-Setup.exe)**
 
-See [Contributing.md](./CONTRIBUTING.md) for information on building Rivet from source.
+#### All Releases
+
+Check out the [releases page](https://github.com/Ironclad/rivet/releases) for all available releases.
+
+### Running from Source
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for information on building and running Rivet from source.
 
 ## Contributing
 
@@ -98,6 +120,15 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/scottbessler"><img src="https://avatars.githubusercontent.com/u/293802?v=4?s=100" width="100px;" alt="Scott Bessler"/><br /><sub><b>Scott Bessler</b></sub></a><br /><a href="#example-scottbessler" title="Examples">💡</a> <a href="https://github.com/Ironclad/rivet/commits?author=scottbessler" title="Code">💻</a> <a href="https://github.com/Ironclad/rivet/issues?q=author%3Ascottbessler" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/meeow"><img src="https://avatars.githubusercontent.com/u/18222559?v=4?s=100" width="100px;" alt="Brandon Hong"/><br /><sub><b>Brandon Hong</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=meeow" title="Code">💻</a> <a href="https://github.com/Ironclad/rivet/issues?q=author%3Ameeow" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://swimburger.net"><img src="https://avatars.githubusercontent.com/u/3382717?v=4?s=100" width="100px;" alt="Niels Swimberghe"/><br /><sub><b>Niels Swimberghe</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=Swimburger" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/tcgj"><img src="https://avatars.githubusercontent.com/u/7994529?v=4?s=100" width="100px;" alt="Terence C"/><br /><sub><b>Terence C</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=tcgj" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/tbrodahl-ironclad"><img src="https://avatars.githubusercontent.com/u/142630410?v=4?s=100" width="100px;" alt="Thomas Brodahl"/><br /><sub><b>Thomas Brodahl</b></sub></a><br /><a href="#design-tbrodahl-ironclad" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Jkwok0714"><img src="https://avatars.githubusercontent.com/u/28716303?v=4?s=100" width="100px;" alt="Justin Kwok"/><br /><sub><b>Justin Kwok</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/issues?q=author%3AJkwok0714" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://meebleforp.com/"><img src="https://avatars.githubusercontent.com/u/445650?v=4?s=100" width="100px;" alt="Zhang Yi Jiang"/><br /><sub><b>Zhang Yi Jiang</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=ZhangYiJiang" title="Documentation">📖</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Crystalix007"><img src="https://avatars.githubusercontent.com/u/4603729?v=4?s=100" width="100px;" alt="Michael Kuc"/><br /><sub><b>Michael Kuc</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=Crystalix007" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

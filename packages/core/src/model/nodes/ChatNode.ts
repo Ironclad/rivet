@@ -12,6 +12,7 @@ import { addWarning } from '../../utils/outputs.js';
 import {
   ChatCompletionOptions,
   ChatCompletionRequestMessage,
+  GptFunctionCall,
   OpenAIError,
   openAiModelOptions,
   openaiModels,
@@ -404,7 +405,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       ? coerceTypeOptional(inputs['numberOfChoices' as PortId], 'number') ?? this.data.numberOfChoices ?? 1
       : this.data.numberOfChoices ?? 1;
 
-    const functions = expectTypeOptional(inputs['functions' as PortId], 'gpt-function[]');
+    const functions = coerceTypeOptional(inputs['functions' as PortId], 'gpt-function[]');
 
     const { messages } = getChatNodeMessages(inputs);
 
@@ -477,7 +478,11 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           });
 
           const responseChoicesParts: string[][] = [];
-          const functionCalls: object[] = [];
+          const functionCalls: {
+            name: string;
+            arguments: string;
+            lastParsedArguments?: unknown;
+          }[] = [];
 
           for await (const chunk of chunks) {
             if (!chunk.choices) {
@@ -492,8 +497,25 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               }
 
               if (delta.function_call) {
-                functionCalls[index] ??= {};
-                functionCalls[index] = merge(functionCalls[index], delta.function_call);
+                functionCalls[index] ??= {
+                  name: '',
+                  arguments: '',
+                  lastParsedArguments: undefined,
+                };
+
+                if (delta.function_call.name) {
+                  functionCalls[index]!.name += delta.function_call.name;
+                }
+
+                if (delta.function_call.arguments) {
+                  functionCalls[index]!.arguments += delta.function_call.arguments;
+
+                  try {
+                    functionCalls[index]!.lastParsedArguments = JSON.parse(functionCalls[index]!.arguments);
+                  } catch (error) {
+                    // Ignore
+                  }
+                }
               }
             }
 
@@ -513,12 +535,18 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               if (isMultiResponse) {
                 output['function-call' as PortId] = {
                   type: 'object[]',
-                  value: functionCalls as Record<string, unknown>[],
+                  value: functionCalls.map((functionCall) => ({
+                    name: functionCall.name,
+                    arguments: functionCall.lastParsedArguments,
+                  })),
                 };
               } else {
                 output['function-call' as PortId] = {
                   type: 'object',
-                  value: functionCalls[0] as Record<string, unknown>,
+                  value: {
+                    name: functionCalls[0]!.name,
+                    arguments: functionCalls[0]!.lastParsedArguments,
+                  } as Record<string, unknown>,
                 };
               }
             }

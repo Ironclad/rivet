@@ -1,0 +1,30 @@
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.card2,
+.card3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.card2 > *,
+.card3 > * {
+  box-sizing: border-box;
+}
+
+@media screen and (min-width: 1280px) {
+  .card2 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .card3 {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}

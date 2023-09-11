@@ -30,6 +30,8 @@ import { ContextMenuContext } from './ContextMenu.js';
 import { useGraphHistoryNavigation } from '../hooks/useGraphHistoryNavigation';
 import { useProjectPlugins } from '../hooks/useProjectPlugins';
 import { entries } from '../../../core/src/utils/typeSafety';
+import { useCurrentExecution } from '../hooks/useCurrentExecution';
+import { useGraphExecutor } from '../hooks/useGraphExecutor';
 
 const Container = styled.div`
   position: relative;
@@ -65,6 +67,7 @@ export const GraphBuilder: FC = () => {
   const [graphNavigationStack, setGraphNavigationStack] = useRecoilState(graphNavigationStackState);
   const historyNav = useGraphHistoryNavigation();
   useProjectPlugins();
+  const { tryRunGraph } = useGraphExecutor();
 
   const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {
     setNodes?.(newNodes);
@@ -182,6 +185,12 @@ export const GraphBuilder: FC = () => {
         if (graph) {
           loadGraph(graph);
         }
+      }
+
+      if (menuItemId === 'node-run-to-here') {
+        const { nodeId } = context.data as { nodeId: NodeId };
+
+        tryRunGraph({ to: [nodeId] });
       }
     },
   );

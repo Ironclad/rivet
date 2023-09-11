@@ -1,5 +1,6 @@
 {
   "name": "@ironclad/trivet",
+  "license": "MIT",
   "repository": "https://github.com/ironclad/rivet",
   "version": "0.1.0",
   "main": "dist/cjs/bundle.cjs",

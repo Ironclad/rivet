@@ -69,7 +69,7 @@ export const defaultEditorContainerStyles = css`
   }
 
   .editor-wrapper-wrapper {
-    min-height: 300px;
+    min-height: 200px;
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
@@ -79,7 +79,7 @@ export const defaultEditorContainerStyles = css`
 
   .editor-wrapper {
     position: absolute;
-    top: 0;
+    top: 24px;
     left: 0;
     right: 0;
     bottom: 0;
@@ -90,7 +90,7 @@ export const defaultEditorContainerStyles = css`
   }
 
   .row.code {
-    min-height: 0;
+    min-height: min-content;
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
@@ -451,15 +451,25 @@ export const DefaultNumberEditor: FC<{
           step={editor.step}
           {...fieldProps}
           defaultValue={(data[editor.dataKey] ?? editor.defaultValue) as number | undefined}
-          onChange={(e) =>
-            onChange({
-              ...node,
-              data: {
-                ...data,
-                [editor.dataKey]: (e.target as HTMLInputElement).valueAsNumber,
-              },
-            })
-          }
+          onChange={(e) => {
+            if (editor.allowEmpty && (e.target as HTMLInputElement).value === '') {
+              onChange({
+                ...node,
+                data: {
+                  ...data,
+                  [editor.dataKey]: undefined,
+                },
+              });
+            } else {
+              onChange({
+                ...node,
+                data: {
+                  ...data,
+                  [editor.dataKey]: (e.target as HTMLInputElement).valueAsNumber,
+                },
+              });
+            }
+          }}
         />
       )}
     </Field>
@@ -472,7 +482,6 @@ export const DefaultCodeEditor: FC<{
   onChange: (changed: ChartNode) => void;
   editor: CodeEditorDefinition<ChartNode>;
 }> = ({ node, isReadonly, onChange, editor: editorDef }) => {
-  const editorContainer = useRef<HTMLDivElement>(null);
   const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
 
   const nodeLatest = useLatest(node);

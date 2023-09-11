@@ -1,0 +1,41 @@
+.cardGrid {
+  gap: 40px;
+}
+
+.message {
+  font-style: italic;
+}
+
+.attribution {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: auto;
+  margin-bottom: 20px;
+}
+
+.picture {
+  border-radius: 16px;
+  width: 80px;
+}
+
+.attributionWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.title.title {
+  margin: 0;
+  font-size: 18px;
+}
+
+.logoLink {
+  display: block;
+}
+
+.logo {
+  padding: 10px 0;
+  height: 40px;
+}
