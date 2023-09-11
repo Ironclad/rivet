@@ -12,7 +12,6 @@ import { ObjectNodeDescriptor } from '../components/nodes/ObjectNode.js';
 import { commentNodeDescriptor } from '../components/nodes/CommentNode';
 import { imageNodeDescriptor } from '../components/nodes/ImageNode';
 import { audioNodeDescriptor } from '../components/nodes/AudioNode';
-import { useDependsOnPlugins } from './useDependsOnPlugins';
 import { useRecoilValue } from 'recoil';
 import { pluginRefreshCounterState } from '../state/plugins';
 
