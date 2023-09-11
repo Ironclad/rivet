@@ -44,7 +44,7 @@ const testSuites = [...];
 
 You'll need to create a `TrivetOpts` object with your project, test suites, and a function to run the graph.
 
-As Trivet hooks in to your own graph running archetecture that might have external calls, it is up to you to create a `GraphProcessor` and execute it
+As Trivet hooks in to your own graph running architecture that might have external calls, it is up to you to create a `GraphProcessor` and execute it
 with the correct graph and inputs.
 
 For a basic example, you can do something like:

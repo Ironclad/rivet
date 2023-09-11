@@ -24,7 +24,7 @@ To delete a graph, right click on it and select "Delete Graph". This will delete
 
 :::caution
 
-There is no undo at this time! Deleting a graph is permanant! We recommend you store your rivet project files in source control.
+There is no undo at this time! Deleting a graph is permanent! We recommend you store your rivet project files in source control.
 
 :::
 
