@@ -36,7 +36,7 @@ Certain types of nodes are registered as able to "consume" a `control-flow-exclu
 Nodes that can consume `control-flow-excluded` values are:
 
 - [If/Else](../node-reference/if-else.mdx) - If the `control-flow-excluded` is passed into the `If` port, then the `Else` value will be passed through instead. If the `Else` value is not connected, then the result will again be `control-flow-excluded`.
-- [Coalesce](../node-reference/coalesce.mdx) - `control-flow-excluded` will be considered "falsey" for the sake of the Coalesce node. The values will be skipped over, and subsequent truthy values connected to the Coalesce node will be passed through instead.
+- [Coalesce](../node-reference/coalesce.mdx) - `control-flow-excluded` will be considered "falsy" for the sake of the Coalesce node. The values will be skipped over, and subsequent truthy values connected to the Coalesce node will be passed through instead.
 - [Race Inputs](../node-reference/race-inputs.mdx) - If one of the branches passed into the Race Inputs node returns `control-flow-excluded`, then that branch will simply be not considered for the race. Other branches may still execute and return a value, which will be passed through the output of the Race Inputs.
 - [Graph Output](../node-reference/graph-output.mdx) - A Graph Output's `control-flow-excluded` may pass out of the graph to become one of the outputs for a [Subgraph](../node-reference/subgraph.mdx) node. This way, some of the outputs of a Subgraph may not run, and others may run.
 - [Loop Controller](../node-reference/loop-controller.mdx) - A loop controller needs to consume `control-flow-excluded` values in order to run multiple times. Additionally, passing a `control-flow-excluded` to the `continue` port counts as a "successful" iteration of the loop, and will cause the loop to run again.
@@ -46,7 +46,7 @@ Nodes that can consume `control-flow-excluded` values are:
 The loop controller is special, however, in particular its `Break` port. The `Break` port will not pass a `control-flow-excluded` value to the next node
 until the loop has finished executing. Otherwise, the loop controller itself could not run multiple times before finally passing a value to the next node.
 
-If any other input port to the loop controller receives a `control-flow-excluded` value, then the loop controller will not run again, and will pass the `control-flow-excluded` value to the node connected to `Break`. Thus, it is important to use an [If/Else](../node-reference/if-else.mdx) or [Coalesce](../node-reference/coalesce.mdx) node inside your loop as a "null check" to make sure the loop controller never receieves a `control-flow-excluded` value unless you want it to.
+If any other input port to the loop controller receives a `control-flow-excluded` value, then the loop controller will not run again, and will pass the `control-flow-excluded` value to the node connected to `Break`. Thus, it is important to use an [If/Else](../node-reference/if-else.mdx) or [Coalesce](../node-reference/coalesce.mdx) node inside your loop as a "null check" to make sure the loop controller never receives a `control-flow-excluded` value unless you want it to.
 
 ## See Also
 

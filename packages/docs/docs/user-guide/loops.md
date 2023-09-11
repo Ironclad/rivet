@@ -20,7 +20,7 @@ The loop controller is the only node in Rivet that is allowed to contain cycles 
 
 The loop controller has one input `Continue` that will always be present. This is a `boolean` type (but the value passed into it will be coerced into a boolean).
 
-If the value passed into `Continue` is truthy (or `control-flow-excluded`! See [Control Flow](./control-flow.md)), then the loop will continue executing. If the value is falsey, then the loop will stop executing.
+If the value passed into `Continue` is truthy (or `control-flow-excluded`! See [Control Flow](./control-flow.md)), then the loop will continue executing. If the value is falsy, then the loop will stop executing.
 
 Next, the loop controller has a dynamic number of _pairs_ of values. Each pair consists of an **input** and a **default input**.
 
