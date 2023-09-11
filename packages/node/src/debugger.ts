@@ -8,6 +8,7 @@ import {
   GraphInputs,
   NodeId,
   StringArrayDataValue,
+  DataId,
 } from '@ironclad/rivet-core';
 import { match } from 'ts-pattern';
 import Emittery from 'emittery';
@@ -63,6 +64,18 @@ export function startDebuggerServer(
   server.on('connection', (socket) => {
     socket.on('message', async (data) => {
       try {
+        const stringData = data.toString();
+
+        if (stringData.startsWith('set-static-data:')) {
+          const [, id, value] = stringData.split(':');
+
+          if (currentDebuggerState.uploadedProject) {
+            currentDebuggerState.uploadedProject.data ??= {};
+            currentDebuggerState.uploadedProject.data![id as DataId] = value;
+          }
+          return;
+        }
+
         const message = JSON.parse(data.toString()) as { type: string; data: unknown };
 
         await match(message)

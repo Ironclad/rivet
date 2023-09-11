@@ -24,7 +24,7 @@ export function useLoadStaticData() {
       const dataObj = allData.reduce((acc, { id, data }) => {
         acc[id] = data;
         return acc;
-      }, {} as Record<DataId, unknown>);
+      }, {} as Record<DataId, string>);
 
       setProjectData((existingData) => ({
         ...existingData,

@@ -599,7 +599,7 @@ export const DefaultFileBrowserEditor: FC<{
           },
         },
         {
-          [dataId]: await uint8ArrayToBase64(binaryData),
+          [dataId]: (await uint8ArrayToBase64(binaryData)) ?? '',
         },
       );
     });
@@ -646,7 +646,7 @@ export const DefaultImageBrowserEditor: FC<{
           },
         },
         {
-          [dataId]: await uint8ArrayToBase64(binaryData),
+          [dataId]: (await uint8ArrayToBase64(binaryData)) ?? '',
         },
       );
     });

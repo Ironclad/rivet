@@ -17,5 +17,5 @@ export type Project = {
 
   graphs: Record<GraphId, NodeGraph>;
 
-  data?: Record<DataId, unknown>;
+  data?: Record<DataId, string>;
 };

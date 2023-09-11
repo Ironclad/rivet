@@ -226,7 +226,7 @@ const Container = styled.div`
 
 type NodeEditorProps = { selectedNode: ChartNode; onDeselect: () => void };
 
-export type NodeChanged = (changed: ChartNode, newData?: Record<DataId, unknown>) => void;
+export type NodeChanged = (changed: ChartNode, newData?: Record<DataId, string>) => void;
 
 export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) => {
   const setNodes = useSetRecoilState(nodesState);
@@ -239,7 +239,7 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
   const setConnections = useSetRecoilState(connectionsState);
   const setStaticData = useSetStaticData();
 
-  const updateNode = useStableCallback((node: ChartNode, newData?: Record<DataId, unknown>) => {
+  const updateNode = useStableCallback((node: ChartNode, newData?: Record<DataId, string>) => {
     // Update the node
     setNodes((nodes) =>
       produce(nodes, (draft) => {

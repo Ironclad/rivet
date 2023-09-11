@@ -55,8 +55,8 @@ export function useStaticDataDatabase() {
     await databaseLoadedPromise.current;
     const transaction = database.current!.transaction('data', 'readonly');
     const store = transaction.objectStore('data');
-    const request = store.getAll() as IDBRequest<{ id: DataId; data: unknown }[]>;
-    return new Promise<{ id: DataId; data: unknown }[]>((resolve, reject) => {
+    const request = store.getAll() as IDBRequest<{ id: DataId; data: string }[]>;
+    return new Promise<{ id: DataId; data: string }[]>((resolve, reject) => {
       request.addEventListener('success', () => {
         resolve(request.result);
       });

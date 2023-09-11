@@ -23,7 +23,7 @@ export const projectState = atom<Omit<Project, 'data'>>({
   effects_UNSTABLE: [persistAtom],
 });
 
-export const projectDataState = atom<Record<DataId, unknown> | undefined>({
+export const projectDataState = atom<Record<DataId, string> | undefined>({
   key: 'projectDataState',
   default: undefined,
 });

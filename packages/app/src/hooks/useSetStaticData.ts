@@ -8,7 +8,7 @@ export function useSetStaticData() {
   const setProjectData = useSetRecoilState(projectDataState);
   const database = useStaticDataDatabase();
 
-  return async (data: Record<DataId, unknown>) => {
+  return async (data: Record<DataId, string>) => {
     setProjectData((existingData) => ({
       ...existingData,
       ...data,
