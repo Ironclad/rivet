@@ -17,7 +17,7 @@ import { useSaveCurrentGraph } from './useSaveCurrentGraph';
 import { useCurrentExecution } from './useCurrentExecution';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
-import { projectState } from '../state/savedGraphs';
+import { projectDataState, projectState } from '../state/savedGraphs';
 import { recordExecutionsState, settingsState } from '../state/settings';
 import { graphState } from '../state/graph';
 import { lastRecordingState, loadedRecordingState } from '../state/execution';
@@ -38,6 +38,7 @@ export function useLocalExecutor() {
   const setLastRecordingState = useSetRecoilState(lastRecordingState);
   const [{ testSuites }, setTrivetState] = useRecoilState(trivetState);
   const recordExecutions = useRecoilValue(recordExecutionsState);
+  const projectData = useRecoilValue(projectDataState);
 
   function attachGraphEvents(processor: GraphProcessor) {
     processor.on('nodeStart', currentExecution.onNodeStart);
@@ -98,6 +99,7 @@ export function useLocalExecutor() {
             ...project.graphs,
             [graph.metadata!.id!]: graph,
           },
+          data: projectData,
         };
 
         const recorder = new ExecutionRecorder();

@@ -136,4 +136,12 @@ export class LegacyBrowserIOProvider implements IOProvider {
     };
     input.click();
   }
+
+  async readPathAsString(path: string): Promise<string> {
+    throw new Error('Function not supported in the browser');
+  }
+
+  async readPathAsBinary(path: string): Promise<Uint8Array> {
+    throw new Error('Function not supported in the browser');
+  }
 }

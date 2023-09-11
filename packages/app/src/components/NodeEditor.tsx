@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { connectionsForSingleNodeState, connectionsState, nodesByIdState, nodesState } from '../state/graph.js';
 import styled from '@emotion/styled';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
-import { ChartNode, NodeTestGroup, GraphId, globalRivetNodeRegistry } from '@ironclad/rivet-core';
+import { ChartNode, NodeTestGroup, GraphId, globalRivetNodeRegistry, DataId } from '@ironclad/rivet-core';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import { produce } from 'immer';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -21,7 +21,8 @@ import Popup from '@atlaskit/popup';
 import { orderBy } from 'lodash-es';
 import { nanoid } from 'nanoid';
 import { ErrorBoundary } from 'react-error-boundary';
-import { projectState } from '../state/savedGraphs';
+import { projectDataState, projectState } from '../state/savedGraphs';
+import { useSetStaticData } from '../hooks/useSetStaticData';
 
 export const NodeEditorRenderer: FC = () => {
   const nodesById = useRecoilValue(nodesByIdState);
@@ -225,6 +226,8 @@ const Container = styled.div`
 
 type NodeEditorProps = { selectedNode: ChartNode; onDeselect: () => void };
 
+export type NodeChanged = (changed: ChartNode, newData?: Record<DataId, string>) => void;
+
 export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) => {
   const setNodes = useSetRecoilState(nodesState);
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
@@ -234,8 +237,9 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
   const project = useRecoilValue(projectState);
   const connectionsForNode = useRecoilValue(connectionsForSingleNodeState(selectedNode.id));
   const setConnections = useSetRecoilState(connectionsState);
+  const setStaticData = useSetStaticData();
 
-  const updateNode = useStableCallback((node: ChartNode) => {
+  const updateNode = useStableCallback((node: ChartNode, newData?: Record<DataId, string>) => {
     // Update the node
     setNodes((nodes) =>
       produce(nodes, (draft) => {
@@ -243,6 +247,10 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
         draft[index] = node;
       }),
     );
+
+    if (newData) {
+      setStaticData(newData);
+    }
 
     // Check for any invalid connections
     const instance = globalRivetNodeRegistry.createDynamicImpl(node);

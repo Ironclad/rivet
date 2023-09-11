@@ -1304,7 +1304,7 @@ export class GraphProcessor {
         return this.#globals.get(id)!;
       },
       createSubProcessor: (subGraphId: GraphId, { signal }: { signal?: AbortSignal } = {}) => {
-        const processor = new GraphProcessor(this.#project, subGraphId);
+        const processor = new GraphProcessor(this.#project, subGraphId, this.#registry);
         processor.#isSubProcessor = true;
         processor.#executionCache = this.#executionCache;
         processor.#externalFunctions = this.#externalFunctions;

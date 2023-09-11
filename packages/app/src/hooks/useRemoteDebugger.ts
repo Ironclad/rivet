@@ -113,5 +113,10 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
         remoteDebugger.socket.send(JSON.stringify({ type, data }));
       }
     },
+    sendRaw(data: string) {
+      if (remoteDebugger.socket?.readyState === WebSocket.OPEN) {
+        remoteDebugger.socket.send(data);
+      }
+    },
   };
 }

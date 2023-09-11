@@ -11,7 +11,7 @@ import { graphState } from '../state/graph';
 import { settingsState } from '../state/settings';
 import { setCurrentDebuggerMessageHandler, useRemoteDebugger } from './useRemoteDebugger';
 import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
-import { projectState } from '../state/savedGraphs';
+import { projectDataState, projectState } from '../state/savedGraphs';
 import { useStableCallback } from './useStableCallback';
 import { toast } from 'react-toastify';
 import { trivetState } from '../state/trivet';
@@ -19,6 +19,7 @@ import { runTrivet } from '@ironclad/trivet';
 import { produce } from 'immer';
 import { userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
 import { pluginsState } from '../state/plugins';
+import { entries } from '../../../core/src/utils/typeSafety';
 
 // TODO: This allows us to retrieve the GraphOutputs from the remote debugger.
 // If the remote debugger events had a unique ID for each run, this would feel a lot less hacky.
@@ -34,6 +35,7 @@ export function useRemoteExecutor() {
   const graph = useRecoilValue(graphState);
   const savedSettings = useRecoilValue(settingsState);
   const project = useRecoilValue(projectState);
+  const projectData = useRecoilValue(projectDataState);
   const [{ testSuites }, setTrivetState] = useRecoilState(trivetState);
   const setUserInputModalSubmit = useSetRecoilState(userInputModalSubmitState);
   const setUserInputQuestions = useSetRecoilState(userInputModalQuestionsState);
@@ -138,6 +140,10 @@ export function useRemoteExecutor() {
             globalRivetNodeRegistry.getPlugins(),
           ),
         });
+
+        for (const [id, dataValue] of entries(projectData)) {
+          remoteDebugger.sendRaw(`set-static-data:${id}:${dataValue}`);
+        }
       }
 
       remoteDebugger.send('run', { graphId: graph.metadata!.id!, runToNodeIds: options.to });

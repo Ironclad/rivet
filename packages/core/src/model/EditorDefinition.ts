@@ -1,4 +1,4 @@
-import { ChartNode, DataType } from '../index.js';
+import { ChartNode, DataRef, DataType } from '../index.js';
 
 type ExcludeNeverValues<T> = Pick<
   T,
@@ -109,7 +109,7 @@ export type FileBrowserEditorDefinition<T extends ChartNode> = {
   type: 'fileBrowser';
   label: string;
 
-  dataKey: DataOfType<T, string>;
+  dataKey: DataOfType<T, DataRef>;
   useInputToggleDataKey?: DataOfType<T, boolean>;
 
   accept?: string;
@@ -119,7 +119,7 @@ export type ImageBrowserEditorDefinition<T extends ChartNode> = {
   type: 'imageBrowser';
   label: string;
 
-  dataKey: DataOfType<T, string>;
+  dataKey: DataOfType<T, DataRef>;
   mediaTypeDataKey: DataOfType<T, string>;
   useInputToggleDataKey?: DataOfType<T, boolean>;
 };

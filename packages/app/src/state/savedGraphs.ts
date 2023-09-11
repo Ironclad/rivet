@@ -1,7 +1,7 @@
 import { DefaultValue, atom, selector } from 'recoil';
 import { nanoid } from 'nanoid';
 import { produce } from 'immer';
-import { GraphId, NodeGraph, Project, ProjectId } from '@ironclad/rivet-core';
+import { DataId, GraphId, NodeGraph, Project, ProjectId } from '@ironclad/rivet-core';
 import { blankProject } from '../hooks/useNewProject.js';
 import { recoilPersist } from 'recoil-persist';
 import { entries, values } from '../../../core/src/utils/typeSafety';
@@ -9,7 +9,7 @@ import { entries, values } from '../../../core/src/utils/typeSafety';
 const { persistAtom } = recoilPersist({ key: 'project' });
 
 // What's the data of the last loaded project?
-export const projectState = atom<Project>({
+export const projectState = atom<Omit<Project, 'data'>>({
   key: 'projectState',
   default: {
     metadata: {
@@ -21,6 +21,11 @@ export const projectState = atom<Project>({
     plugins: [],
   },
   effects_UNSTABLE: [persistAtom],
+});
+
+export const projectDataState = atom<Record<DataId, string> | undefined>({
+  key: 'projectDataState',
+  default: undefined,
 });
 
 export const projectMetadataState = selector({

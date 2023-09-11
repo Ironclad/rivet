@@ -17,6 +17,7 @@ import { ChatViewerRenderer } from './ChatViewer';
 import { useRecoilValue } from 'recoil';
 import { themeState } from '../state/settings';
 import clsx from 'clsx';
+import { useLoadStaticData } from '../hooks/useLoadStaticData';
 
 const styles = css`
   overflow: hidden;
@@ -29,6 +30,8 @@ setGlobalTheme({
 export const RivetApp: FC = () => {
   const { tryRunGraph, tryRunTests, tryAbortGraph, tryPauseGraph, tryResumeGraph } = useGraphExecutor();
   const theme = useRecoilValue(themeState);
+
+  useLoadStaticData();
 
   useMenuCommands({
     onRunGraph: tryRunGraph,

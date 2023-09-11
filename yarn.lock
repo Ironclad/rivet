@@ -4044,6 +4044,7 @@ __metadata:
     p-retry: "npm:^5.1.2"
     pkg: "npm:^5.8.1"
     prettier: "npm:^2.8.8"
+    pretty-bytes: "npm:^6.1.1"
     react: "npm:^18.2.0"
     react-color: "npm:^2.19.3"
     react-dnd: "npm:^16.0.1"
@@ -13935,6 +13936,13 @@ __metadata:
   bin:
     prettier: bin-prettier.js
   checksum: 38b0a43ea17e83f54b904f8808f7d0fd1d9705ef9627bb40017ee276cbd6f5e7d15bcf816c4467b64cfe14ef109369a981ce61fad9c6022749d041f74a672188
+  languageName: node
+  linkType: hard
+
+"pretty-bytes@npm:^6.1.1":
+  version: 6.1.1
+  resolution: "pretty-bytes@npm:6.1.1"
+  checksum: 469c661738ce45281319361d4ebaa6579747832ffdc5bdb36c9d0104c24dbb386de0d706082db7f91827cf04df28de39cf9e04dac0ccf2b58ac67c01b511093a
   languageName: node
   linkType: hard
 
