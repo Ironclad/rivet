@@ -71,7 +71,7 @@ export function startDebuggerServer(
 
           if (currentDebuggerState.uploadedProject) {
             currentDebuggerState.uploadedProject.data ??= {};
-            currentDebuggerState.uploadedProject.data![id as DataId] = value;
+            currentDebuggerState.uploadedProject.data![id as DataId] = value!;
           }
           return;
         }
