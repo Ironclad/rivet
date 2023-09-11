@@ -351,7 +351,7 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
 
           const apiKey = context.getPluginConfig('anthropicApiKey');
 
-          const chunks = streamChatCompletions({
+          const chunks = streamChatCompletions(context.httpProvider, {
             apiKey: apiKey ?? '',
             signal: context.signal,
             ...options,

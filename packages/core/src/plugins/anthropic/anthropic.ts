@@ -1,8 +1,7 @@
-import { TiktokenModel } from '@dqbd/tiktoken'; // TODO anthropic released their own package for tokenization
+import { HttpProvider } from '../../index.js';
 
 export type AnthropicModel = {
   maxTokens: number;
-  tiktokenModel: TiktokenModel;
   cost: {
     prompt: number;
     completion: number;
@@ -13,7 +12,6 @@ export type AnthropicModel = {
 export const anthropicModels = {
   'claude-instant': {
     maxTokens: 100000,
-    tiktokenModel: 'gpt-3.5-turbo', // 🤷‍♂️
     cost: {
       prompt: 0.00163,
       completion: 0.00551,
@@ -22,7 +20,6 @@ export const anthropicModels = {
   },
   'claude-2': {
     maxTokens: 100000,
-    tiktokenModel: 'gpt-4', // 🤷‍♂️
     cost: {
       prompt: 0.01102,
       completion: 0.03268,
@@ -56,60 +53,52 @@ export type ChatCompletionChunk = {
   model: string;
 };
 
-export async function* streamChatCompletions({
-  apiKey,
-  signal,
-  ...rest
-}: ChatCompletionOptions): AsyncGenerator<ChatCompletionChunk> {
-  throw new Error('Not implemented yet.');
+export async function* streamChatCompletions(
+  httpProvider: HttpProvider,
+  { apiKey, signal, ...rest }: ChatCompletionOptions,
+): AsyncGenerator<ChatCompletionChunk> {
+  const defaultSignal = new AbortController().signal;
+
+  const responseEvents = httpProvider.streamEvents({
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+    },
+    url: 'https://api.anthropic.com/v1/complete',
+    body: JSON.stringify({
+      ...rest,
+      stream: true,
+    }),
+    signal: signal ?? defaultSignal,
+  });
+
+  let hadChunks = false;
+  let nextDataType: string | undefined;
+
+  for await (const chunk of responseEvents) {
+    hadChunks = true;
+
+    if (chunk.data === '[DONE]') {
+      return;
+    } else if (/\[\w+\]/.test(chunk.data)) {
+      nextDataType = chunk.data.slice(1, -1);
+      continue;
+    }
+
+    let data: ChatCompletionChunk;
+    try {
+      data = JSON.parse(chunk.data);
+    } catch (err) {
+      console.error('JSON parse failed on chunk: ', chunk);
+      throw err;
+    }
+
+    yield data;
+  }
+
+  if (!hadChunks) {
+    throw new Error(`No chunks received from Anthropic`);
+  }
 }
-
-// export async function* streamChatCompletions({
-//   apiKey,
-//   signal,
-//   ...rest
-// }: ChatCompletionOptions): AsyncGenerator<ChatCompletionChunk> {
-//   const defaultSignal = new AbortController().signal;
-//   const response = await fetchEventSource('https://api.anthropic.com/v1/complete', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       'x-api-key': apiKey,
-//       'anthropic-version': '2023-06-01',
-//     },
-//     body: JSON.stringify({
-//       ...rest,
-//       stream: true,
-//     }),
-//     signal: signal ?? defaultSignal,
-//   });
-
-//   let hadChunks = false;
-//   let nextDataType: string | undefined;
-
-//   for await (const chunk of response.events()) {
-//     hadChunks = true;
-
-//     if (chunk === '[DONE]') {
-//       return;
-//     } else if (/\[\w+\]/.test(chunk)) {
-//       nextDataType = chunk.slice(1, -1);
-//       continue;
-//     }
-
-//     let data: ChatCompletionChunk;
-//     try {
-//       data = JSON.parse(chunk);
-//     } catch (err) {
-//       console.error('JSON parse failed on chunk: ', chunk);
-//       throw err;
-//     }
-
-//     yield data;
-//   }
-
-//   if (!hadChunks) {
-//     const responseJson = await response.json();
-//     throw new Error(`No chunks received. Response: ${JSON.stringify(responseJson)}`);
-//   }
-// }

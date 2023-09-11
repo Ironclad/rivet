@@ -14,6 +14,13 @@ const resolveRivet: esbuild.Plugin = {
   setup(build) {
     build.onResolve({ filter: /^@ironclad\/rivet-/ }, (args) => {
       const rivetPackage = args.path.replace(/^@ironclad\/rivet-/, '');
+
+      if (rivetPackage.includes('FetchHttpProvider')) {
+        return {
+          path: resolve('../core/src/FetchHttpProvider.ts'),
+        };
+      }
+
       return {
         path: resolve(`../${rivetPackage}/src/index.ts`),
       };
