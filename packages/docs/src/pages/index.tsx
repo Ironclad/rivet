@@ -10,10 +10,26 @@ import { GetStartedSection } from '../components/main/GetStartedSection';
 import { Footer } from '../components/main/Footer';
 
 import styles from './styles.module.css';
+import Head from '@docusaurus/Head';
 
 export default function Home() {
   return (
     <main className={styles.main}>
+      <Head>
+        <meta property="og:title" content="Rivet" />
+        <meta
+          property="og:description"
+          content="An open-source AI programming environment using a visual, node-based graph editor"
+        />
+        <meta property="og:image" content="https://rivet.ironcladapp.com/img/social-card.png" />
+        <meta name="twitter:title" content="Rivet" />
+        <meta
+          name="twitter:description"
+          content="An open-source AI programming environment using a visual, node-based graph editor"
+        />
+        <meta name="twitter:image" content="https://rivet.ironcladapp.com/img/social-card.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Head>
       <Header />
 
       <HeroSection id="hero" />
