@@ -42,6 +42,7 @@ import { ioProvider } from '../utils/globals';
 import Button from '@atlaskit/button';
 import { values } from '../../../core/src/utils/typeSafety';
 import { NodeChanged } from './NodeEditor';
+import prettyBytes from 'pretty-bytes';
 
 export const defaultEditorContainerStyles = css`
   display: flex;
@@ -584,6 +585,7 @@ export const DefaultFileBrowserEditor: FC<{
   editor: FileBrowserEditorDefinition<ChartNode>;
 }> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
+  const projectData = useRecoilValue(projectDataState);
 
   const pickFile = async () => {
     await ioProvider.readFileAsBinary(async (binaryData) => {
@@ -605,7 +607,8 @@ export const DefaultFileBrowserEditor: FC<{
     });
   };
 
-  const b64Data = data[editor.dataKey] as string | undefined;
+  const dataRef = data[editor.dataKey] as DataRef | undefined;
+  const b64Data = dataRef ? projectData?.[dataRef.refId] : undefined;
 
   const dataUri = b64Data ? `data:base64,${b64Data}` : undefined;
   const dataByteLength = b64Data ? Math.round(b64Data.length * 0.75) : undefined;
@@ -615,7 +618,7 @@ export const DefaultFileBrowserEditor: FC<{
       {() => (
         <div>
           <Button onClick={pickFile}>Pick File</Button>
-          <div className="current">{dataUri && <span>Data (length {dataByteLength})</span>}</div>
+          <div className="current">{dataUri && <span>Data ({prettyBytes(dataByteLength ?? NaN)})</span>}</div>
         </div>
       )}
     </Field>

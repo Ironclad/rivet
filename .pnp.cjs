@@ -6772,6 +6772,7 @@ const RAW_RUNTIME_STATE =
           ["p-retry", "npm:5.1.2"],\
           ["pkg", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.8.1"],\
           ["prettier", "npm:2.8.8"],\
+          ["pretty-bytes", "npm:6.1.1"],\
           ["react", "npm:18.2.0"],\
           ["react-color", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.19.3"],\
           ["react-dnd", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:16.0.1"],\
@@ -19442,6 +19443,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/prettier-npm-2.8.8-430828a36c-38b0a43ea1.zip/node_modules/prettier/",\
         "packageDependencies": [\
           ["prettier", "npm:2.8.8"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["pretty-bytes", [\
+      ["npm:6.1.1", {\
+        "packageLocation": "./.yarn/cache/pretty-bytes-npm-6.1.1-d10304de8f-469c661738.zip/node_modules/pretty-bytes/",\
+        "packageDependencies": [\
+          ["pretty-bytes", "npm:6.1.1"]\
         ],\
         "linkType": "HARD"\
       }]\
