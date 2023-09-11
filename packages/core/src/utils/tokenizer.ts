@@ -1,4 +1,5 @@
 import { FakeTokenizer } from './FakeTokenizer.js';
+import { GptTokenizer } from './GptTokenizer.js';
 import { ChatCompletionRequestMessage } from './openai.js';
 
 export type LLMCost = {

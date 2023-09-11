@@ -6,7 +6,7 @@ import {
   VectorDataValue,
   VectorDatabase,
   coerceType,
-} from '@ironclad/rivet-core';
+} from '../../index.js';
 import * as CryptoJS from 'crypto-js';
 
 export class PineconeVectorDatabase implements VectorDatabase {

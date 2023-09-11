@@ -38,3 +38,5 @@ packages/app-executor/bin/executor-bundle.js
 .turbo
 
 .idea
+
+packages/python/rivet.bundle.cjs

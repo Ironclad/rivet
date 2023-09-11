@@ -1,4 +1,4 @@
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
 import {
   AnyDataValue,
@@ -18,7 +18,7 @@ import {
   coerceType,
   nodeDefinition,
   ObjectDataValue,
-  ArrayDataValue
+  ArrayDataValue,
 } from '../../index.js';
 import { LemurNodeData, LemurParams, getApiKey, getLemurParams, lemurEditorDefinitions } from './lemurHelpers.js';
 
@@ -42,7 +42,7 @@ export class LemurQaNodeImpl extends NodeImpl<LemurQaNode> {
         width: 250,
       },
       data: {
-        final_model: 'default'
+        final_model: 'default',
       },
     };
 
@@ -65,7 +65,7 @@ export class LemurQaNodeImpl extends NodeImpl<LemurQaNode> {
         id: 'context' as PortId,
         dataType: 'string',
         title: 'Context',
-      }
+      },
     ];
   }
 
@@ -84,24 +84,24 @@ export class LemurQaNodeImpl extends NodeImpl<LemurQaNode> {
       {
         type: 'string',
         label: 'Context',
-        dataKey: 'context'
+        dataKey: 'context',
       },
-      ...lemurEditorDefinitions as unknown as EditorDefinition<LemurQaNode>[],
+      ...(lemurEditorDefinitions as unknown as EditorDefinition<LemurQaNode>[]),
       {
         type: 'string',
         label: 'Questions Answer Format',
-        dataKey: 'questions_answer_format'
+        dataKey: 'questions_answer_format',
       },
       {
         type: 'string',
         label: 'Questions Context',
-        dataKey: 'questions_context'
+        dataKey: 'questions_context',
       },
       {
         type: 'string',
         label: 'Questions Answer Options',
-        dataKey: 'questions_answer_options'
-      }
+        dataKey: 'questions_answer_options',
+      },
     ];
   }
 
@@ -119,7 +119,8 @@ export class LemurQaNodeImpl extends NodeImpl<LemurQaNode> {
   }
 
   getQuestions(inputs: Inputs): Question[] {
-    const input = inputs['questions' as PortId] as StringDataValue
+    const input = inputs['questions' as PortId] as
+      | StringDataValue
       | StringArrayDataValue
       | AnyDataValue
       | ObjectDataValue
@@ -129,20 +130,23 @@ export class LemurQaNodeImpl extends NodeImpl<LemurQaNode> {
     if (!input) throw new Error('Transcript IDs are required.');
 
     if (input.type === 'string') {
-      return [{
-        question: coerceType(input, 'string')
-      }];
+      return [
+        {
+          question: coerceType(input, 'string'),
+        },
+      ];
     } else if (input.type === 'string[]') {
-      return coerceType(input, 'string[]')
-        .map(question => ({ question }));
+      return coerceType(input, 'string[]').map((question) => ({ question }));
     } else if (input.type === 'object') {
       return [coerceType(input, 'object')] as Question[];
     } else if (input.type === 'object[]') {
       return coerceType(input, 'object[]') as unknown as Question[];
     } else if (input.type === 'any' && typeof input.value === 'string') {
-      return [{
-        question: coerceType(input, 'string')
-      }];
+      return [
+        {
+          question: coerceType(input, 'string'),
+        },
+      ];
     } else if ((input.type === 'any' && Array.isArray(input.value)) || input.type === 'any[]') {
       return (input.value as any[]).map<Question>((question: any) => {
         if (typeof question === 'string') {
@@ -174,14 +178,13 @@ export class LemurQaNodeImpl extends NodeImpl<LemurQaNode> {
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const apiKey = getApiKey(context);
 
-    const questions = this.getQuestions(inputs)
-      .map(this.applyQuestionEditors.bind(this));
+    const questions = this.getQuestions(inputs).map(this.applyQuestionEditors.bind(this));
 
     const params: LemurParams & {
-      questions: Question[],
+      questions: Question[];
     } = {
       questions,
-      ...getLemurParams(inputs, this.chartNode.data)
+      ...getLemurParams(inputs, this.chartNode.data),
     };
 
     const { response } = await runLemurQa(apiKey, params);
@@ -194,19 +197,14 @@ export class LemurQaNodeImpl extends NodeImpl<LemurQaNode> {
   }
 }
 
-async function runLemurQa(
-  apiToken: string,
-  params: object
-) {
-  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/question-answer',
-    {
-      method: 'POST',
-      body: JSON.stringify(params),
-      headers: {
-        authorization: apiToken
-      }
-    }
-  );
+async function runLemurQa(apiToken: string, params: object) {
+  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/question-answer', {
+    method: 'POST',
+    body: JSON.stringify(params),
+    headers: {
+      authorization: apiToken,
+    },
+  });
   const body = await response.json();
   if (response.status !== 200) {
     if ('error' in body) throw new Error(body.error);

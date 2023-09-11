@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useStableCallback } from './useStableCallback';
 import { TrivetTestSuite } from '@ironclad/trivet';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { trivetState } from '../state/trivet';
 import { GraphInputNode, GraphOutputNode, NodeGraph } from '@ironclad/rivet-core';

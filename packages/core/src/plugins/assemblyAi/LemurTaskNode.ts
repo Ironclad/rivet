@@ -1,4 +1,4 @@
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
 import {
   ChartNode,
@@ -35,7 +35,7 @@ export class LemurTaskNodeImpl extends NodeImpl<LemurTaskNode> {
         width: 250,
       },
       data: {
-        final_model: 'default'
+        final_model: 'default',
       },
     };
 
@@ -53,7 +53,7 @@ export class LemurTaskNodeImpl extends NodeImpl<LemurTaskNode> {
         id: 'prompt' as PortId,
         dataType: 'string',
         title: 'Prompt',
-      }
+      },
     ];
   }
 
@@ -72,9 +72,9 @@ export class LemurTaskNodeImpl extends NodeImpl<LemurTaskNode> {
       {
         type: 'string',
         label: 'Prompt',
-        dataKey: 'prompt'
+        dataKey: 'prompt',
       },
-      ...lemurEditorDefinitions as unknown as EditorDefinition<LemurTaskNode>[]
+      ...(lemurEditorDefinitions as unknown as EditorDefinition<LemurTaskNode>[]),
     ];
   }
 
@@ -94,10 +94,10 @@ export class LemurTaskNodeImpl extends NodeImpl<LemurTaskNode> {
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const apiKey = getApiKey(context);
     const params: Omit<LemurParams, 'context'> & {
-      prompt: string,
+      prompt: string;
     } = {
       prompt: coerceTypeOptional(inputs['prompt' as PortId], 'string') || this.chartNode.data.prompt || '',
-      ...getLemurParams(inputs, this.chartNode.data)
+      ...getLemurParams(inputs, this.chartNode.data),
     };
     if (!params.prompt) throw new Error('Prompt must be provided.');
 
@@ -112,19 +112,14 @@ export class LemurTaskNodeImpl extends NodeImpl<LemurTaskNode> {
   }
 }
 
-async function runLemurTask(
-  apiToken: string,
-  params: object
-) {
-  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/task',
-    {
-      method: 'POST',
-      body: JSON.stringify(params),
-      headers: {
-        authorization: apiToken
-      }
-    }
-  );
+async function runLemurTask(apiToken: string, params: object) {
+  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/task', {
+    method: 'POST',
+    body: JSON.stringify(params),
+    headers: {
+      authorization: apiToken,
+    },
+  });
   const body = await response.json();
   if (response.status !== 200) {
     if ('error' in body) throw new Error(body.error);

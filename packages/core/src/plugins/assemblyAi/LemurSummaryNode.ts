@@ -1,4 +1,4 @@
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
 import {
   ChartNode,
@@ -34,7 +34,7 @@ export class LemurSummaryNodeImpl extends NodeImpl<LemurSummaryNode> {
         width: 250,
       },
       data: {
-        final_model: 'default'
+        final_model: 'default',
       },
     };
 
@@ -52,7 +52,7 @@ export class LemurSummaryNodeImpl extends NodeImpl<LemurSummaryNode> {
         id: 'context' as PortId,
         dataType: 'string',
         title: 'Context',
-      }
+      },
     ];
   }
 
@@ -71,9 +71,9 @@ export class LemurSummaryNodeImpl extends NodeImpl<LemurSummaryNode> {
       {
         type: 'string',
         label: 'Context',
-        dataKey: 'context'
+        dataKey: 'context',
       },
-      ...lemurEditorDefinitions as unknown as EditorDefinition<LemurSummaryNode>[]
+      ...(lemurEditorDefinitions as unknown as EditorDefinition<LemurSummaryNode>[]),
     ];
   }
 
@@ -93,7 +93,7 @@ export class LemurSummaryNodeImpl extends NodeImpl<LemurSummaryNode> {
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const apiKey = getApiKey(context);
     const params: LemurParams & {
-      answer_format?: string,
+      answer_format?: string;
     } = getLemurParams(inputs, this.chartNode.data);
 
     if (this.chartNode.data.answer_format) {
@@ -111,19 +111,14 @@ export class LemurSummaryNodeImpl extends NodeImpl<LemurSummaryNode> {
   }
 }
 
-async function runLemurSummary(
-  apiToken: string,
-  params: object
-) {
-  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/summary',
-    {
-      method: 'POST',
-      body: JSON.stringify(params),
-      headers: {
-        authorization: apiToken
-      }
-    }
-  );
+async function runLemurSummary(apiToken: string, params: object) {
+  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/summary', {
+    method: 'POST',
+    body: JSON.stringify(params),
+    headers: {
+      authorization: apiToken,
+    },
+  });
   const body = await response.json();
   if (response.status !== 200) {
     if ('error' in body) throw new Error(body.error);
