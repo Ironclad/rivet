@@ -12,7 +12,7 @@ This is the default executor. Rivet itself is a browser application running in a
 
 ## Node
 
-This executor runs a separate Node.js process to execute graphs, and communicates with it using the remote debugger protocol. This executor is more powerful than the browser executor, but can be more tempermental and does not support every feature of the browser executor yet.
+This executor runs a separate Node.js process to execute graphs, and communicates with it using the remote debugger protocol. This executor is more powerful than the browser executor, but can be more temperamental and does not support every feature of the browser executor yet.
 
 ## Remote
 

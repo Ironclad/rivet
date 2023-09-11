@@ -32,7 +32,7 @@ To build and run Rivet from source, you will need:
 
 ### Install
 
-A [blobless clone](https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/) is recommanded to download the repository more quickly. After cloning the repository, install the dependencies with `yarn`:
+A [blobless clone](https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/) is recommended to download the repository more quickly. After cloning the repository, install the dependencies with `yarn`:
 
 ```bash
 git clone --filter=blob:none git@github.com:Ironclad/rivet.git

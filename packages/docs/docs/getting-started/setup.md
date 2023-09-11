@@ -18,4 +18,4 @@ In the `OpenAI` page in Settings, you can set your OpenAI key and organization I
 
 ### Plugin Settings
 
-When a plugin is enabled in a project (see [Plugins](../user-guide/plugins.md)), the Plugins page may be popualted with additional settings to configure the plugin.If you enable a plugin, make sure to check the settings for any additional configuration that may be required. See the [Plugins](../user-guide/plugins.md) page and for more information about the supported plugins and how to configure them.
+When a plugin is enabled in a project (see [Plugins](../user-guide/plugins.md)), the Plugins page may be populated with additional settings to configure the plugin.If you enable a plugin, make sure to check the settings for any additional configuration that may be required. See the [Plugins](../user-guide/plugins.md) page and for more information about the supported plugins and how to configure them.
