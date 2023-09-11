@@ -6,7 +6,7 @@ When you first open Rivet you are presented with a blank canvas. This is where y
 
 ![Rivet blank canvas](assets/rivet-blank-canvas.png)
 
-Right click to open the **Add** menu, go into **Common**, and select a [Chat Node](../node-reference/chat). This will create a new Chat node where you right clicked.
+Right click (or press space!) to open the **Add** menu, go into **Common**, and select a [Chat Node](../node-reference/chat). This will create a new Chat node where you right clicked. You can also type "chat" into the search bar to find the Chat node.
 
 ![Rivet add chat node](assets/add-chat-node.png) ![Rivet chat node](assets/chat-node.png).
 

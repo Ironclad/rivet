@@ -8,8 +8,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'Rivet',
   tagline: 'IDE and Library for Creating AI Agents',
-  favicon: 'img/favicon.ico',
-  noIndex: true, // Restrict search engine indexing. Remove once Rivet is publicly open-sourced.
+  favicon: 'img/favicon.png',
 
   url: 'https://rivet.ironcladapp.com',
   baseUrl: '/',
@@ -32,8 +31,14 @@ const config = {
       'classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
-        docs: {
+        pages: {
+          path: 'src/pages',
           routeBasePath: '/',
+          include: ['**/*.{js,jsx,ts,tsx,md,mdx}'],
+          exclude: ['**/_*.{js,jsx,ts,tsx,md,mdx}', '**/_*/**', '**/*.test.{js,jsx,ts,tsx}', '**/__tests__/**'],
+        },
+        docs: {
+          routeBasePath: '/docs/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/ironclad/rivet/tree/main/packages/docs',
         },
@@ -47,8 +52,7 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
+      image: 'img/social-card.png',
       colorMode: {
         defaultMode: 'dark',
       },
@@ -56,7 +60,7 @@ const config = {
         title: 'Rivet',
         logo: {
           alt: 'Rivet Logo',
-          src: 'img/Square150x150Logo.png',
+          src: 'img/logo.svg',
         },
         items: [
           {
@@ -98,22 +102,25 @@ const config = {
             items: [
               {
                 label: 'Getting Started',
-                to: '/getting-started/installation',
+                to: '/docs/getting-started/installation',
               },
               {
                 label: 'User Guide',
-                to: '/',
+                to: '/docs',
               },
               {
                 label: 'API Reference',
-                to: '/api-reference',
+                to: '/docs/api-reference',
               },
             ],
           },
           {
             title: 'Community',
             items: [
-              // Add any relevant community links here
+              {
+                label: 'Discord',
+                href: 'https://discord.gg/qT8B2gv9Mg',
+              },
             ],
           },
           {
@@ -126,7 +133,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Rivet. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Ironclad. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,

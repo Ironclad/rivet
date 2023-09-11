@@ -277,7 +277,7 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
           </div>
         ))}
         <div className="add-test-case">
-          <Button onClick={onAddTestCase}>Add Test Case</Button>
+          <Button onClick={() => onAddTestCase()}>Add Test Case</Button>
         </div>
       </div>
       <Portal>
@@ -291,7 +291,7 @@ export const TestCaseTable: FC<TestCaseTableProps> = ({
               top: contextMenuData.y,
             }}
           >
-            <DropdownItem onClick={onAddTestCase}>New Test Case</DropdownItem>
+            <DropdownItem onClick={() => onAddTestCase()}>New Test Case</DropdownItem>
           </div>
         )}
         {showContextMenu && contextMenuData.data?.type === 'test-case-item' && (

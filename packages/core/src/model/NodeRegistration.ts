@@ -17,6 +17,9 @@ export class NodeRegistration<NodeTypes extends string = never, Nodes extends Ch
   #dynamicRegistered = [] as string[];
   #plugins = [] as RivetPlugin[];
 
+  #implsMap = {} as Record<string, NodeImplConstructor<ChartNode>>;
+  #nodeTypes = [] as NodeTypes[];
+
   register<T extends ChartNode>(
     definition: NodeDefinition<T>,
     plugin?: RivetPlugin,
@@ -35,12 +38,15 @@ export class NodeRegistration<NodeTypes extends string = never, Nodes extends Ch
       plugin,
     };
 
+    newRegistration.#implsMap[typeStr] = definition.impl as any;
+
+    newRegistration.#nodeTypes.push(typeStr);
+
     return newRegistration;
   }
 
   get #dynamicImpls(): Record<string, NodeImplConstructor<ChartNode>> {
-    const implsMap = mapValues(this.#infos, (info) => info.impl);
-    return implsMap as unknown as Record<string, NodeImplConstructor<ChartNode>>;
+    return this.#implsMap;
   }
 
   get #dynamicDisplayNames(): Record<string, string> {
@@ -49,7 +55,9 @@ export class NodeRegistration<NodeTypes extends string = never, Nodes extends Ch
   }
 
   registerPlugin(plugin: RivetPlugin) {
-    plugin.register((definition) => this.register(definition, plugin));
+    if (plugin.register) {
+      plugin.register((definition) => this.register(definition, plugin));
+    }
     this.#plugins.push(plugin);
   }
 
@@ -129,7 +137,7 @@ export class NodeRegistration<NodeTypes extends string = never, Nodes extends Ch
   }
 
   getNodeTypes(): NodeTypes[] {
-    return keys(this.#infos);
+    return this.#nodeTypes;
   }
 
   getNodeConstructors(): NodeImplConstructor<ChartNode>[] {

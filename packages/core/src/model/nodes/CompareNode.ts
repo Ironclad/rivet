@@ -10,7 +10,7 @@ import { dedent } from 'ts-dedent';
 export type CompareNode = ChartNode<'compare', CompareNodeData>;
 
 export type CompareNodeData = {
-  comparisonFunction: '==' | '<' | '>' | '<=' | '>=' | '!=';
+  comparisonFunction: '==' | '<' | '>' | '<=' | '>=' | '!=' | 'and' | 'or' | 'xor' | 'nand' | 'nor' | 'xnor';
   useComparisonFunctionInput?: boolean;
 };
 
@@ -81,6 +81,12 @@ export class CompareNodeImpl extends NodeImpl<CompareNode> {
           { label: '<=', value: '<=' },
           { label: '>', value: '>' },
           { label: '>=', value: '>=' },
+          { label: 'and', value: 'and' },
+          { label: 'or', value: 'or' },
+          { label: 'xor', value: 'xor' },
+          { label: 'nand', value: 'nand' },
+          { label: 'nor', value: 'nor' },
+          { label: 'xnor', value: 'xnor' },
         ],
         useInputToggleDataKey: 'useComparisonFunctionInput',
       },
@@ -139,6 +145,12 @@ export class CompareNodeImpl extends NodeImpl<CompareNode> {
           .with('>', () => (value1 as any) > (value2 as any))
           .with('<=', () => (value1 as any) <= (value2 as any))
           .with('>=', () => (value1 as any) >= (value2 as any))
+          .with('and', () => !!(value1 && value2))
+          .with('or', () => !!(value1 || value2))
+          .with('xor', () => !!(value1 ? !value2 : value2))
+          .with('nand', () => !(value1 && value2))
+          .with('nor', () => !(value1 || value2))
+          .with('xnor', () => !(value1 ? !value2 : value2))
           .exhaustive(),
       },
     };

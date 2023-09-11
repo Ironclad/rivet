@@ -1,0 +1,25 @@
+name: Rename Release Assets
+
+on:
+  release:
+    types:
+      - published
+      - edited
+
+jobs:
+  rename:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.4.x'
+      - name: Run yarn
+        run: yarn --immutable
+      - name: Run rename script
+        run: yarn tsx .github/scripts/rename-release-files.mts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_RELEASE_ID: ${{ github.event.release.id }}

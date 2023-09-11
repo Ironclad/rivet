@@ -4,9 +4,11 @@ title: 'Working with Nodes'
 
 ## Adding Nodes
 
-To add a node to the current graph, right click in the empty space on the graph, and enter the Add menu.
+To add a node to the current graph, right click in the empty space on the graph (or press space!), and enter the Add menu.
 
-![Add Menu](assets/add-menu.png)
+![Add Menu](./assets/add-menu.png)
+
+You can search for a node by starting to type after the menu is open.
 
 Nodes are grouped by their category. Selecting a node will add it to the graph where you right clicked.
 

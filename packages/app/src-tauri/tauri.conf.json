@@ -7,14 +7,14 @@
   },
   "package": {
     "productName": "Rivet",
-    "version": "0.1.0"
+    "version": "1.1.0"
   },
   "tauri": {
     "allowlist": {
       "all": false,
       "fs": {
         "all": true,
-        "scope": ["$DOCUMENT/**", "$HOME/**", "$TEMP/**", "$DESKTOP/**", "$DOWNLOAD/**"]
+        "scope": []
       },
       "dialog": {
         "all": true
@@ -22,7 +22,12 @@
       "shell": {
         "sidecar": true,
         "open": true,
-        "scope": [{ "name": "../../app-executor/dist/app-executor", "sidecar": true }]
+        "scope": [
+          {
+            "name": "../../app-executor/dist/app-executor",
+            "sidecar": true
+          }
+        ]
       },
       "window": {
         "all": true
@@ -43,7 +48,7 @@
       "identifier": "com.ironcladapp.rivet",
       "longDescription": "",
       "macOS": {
-        "entitlements": null,
+        "entitlements": "../entitlements.plist",
         "exceptionDomain": "",
         "frameworks": [],
         "providerShortName": null,
@@ -62,7 +67,10 @@
       "csp": null
     },
     "updater": {
-      "active": false
+      "active": true,
+      "endpoints": ["https://github.com/Ironclad/rivet/releases/latest/download/latest.json"],
+      "dialog": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDQwRTgxNDEzODJDREJDNzkKUldSNXZNMkNFeFRvUU5VK0NXdEIwNlc3NTREUWpNSmpaeGFwWjFwc21ZT0U5cFlzcy81QndDOXYK"
     },
     "windows": [
       {

@@ -1,7 +1,8 @@
 {
   "name": "@ironclad/rivet-core",
+  "license": "MIT",
   "repository": "https://github.com/ironclad/rivet",
-  "version": "0.15.0",
+  "version": "1.2.0",
   "packageManager": "yarn@3.5.0",
   "main": "dist/cjs/bundle.cjs",
   "module": "dist/esm/index.js",
@@ -54,13 +55,14 @@
     "build:esm": "rm -rf dist/esm dist/types dist/tsconfig.tsbuildinfo && tsc -b --verbose",
     "build:cjs": "rm -rf dist/cjs && tsx bundle.esbuild.ts",
     "prepack": "yarn build && cp -r ../../LICENSE ../../README.md .",
-    "publish": "yarn npm publish",
+    "publish": "yarn npm publish --access public",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx ./src",
     "test": "tsx --test test/**/*.{ts,mts}"
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",
-    "autoevals": "^0.0.10",
+    "@huggingface/inference": "^2.6.1",
+    "autoevals": "^0.0.16",
     "crypto-js": "^4.1.1",
     "emittery": "^1.0.1",
     "emittery-0-13": "npm:emittery@^0.13.1",

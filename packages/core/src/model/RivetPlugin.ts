@@ -4,10 +4,17 @@ import { NodeDefinition } from './NodeImpl.js';
 export type RivetPlugin = {
   id: string;
 
-  register: (register: <T extends ChartNode>(definition: NodeDefinition<T>) => void) => void;
+  name?: string;
+
+  register?: (register: <T extends ChartNode>(definition: NodeDefinition<T>) => void) => void;
 
   /** The available configuration items and their specification, for configuring a plugin in the UI. */
   configSpec?: RivetPluginConfigSpecs;
+
+  contextMenuGroups?: Array<{
+    id: string;
+    label: string;
+  }>;
 };
 
 export type RivetPluginConfigSpecs = Record<string, PluginConfigurationSpec>;
@@ -32,9 +39,20 @@ export type StringPluginConfigurationSpec = {
   label: string;
   description?: string;
   pullEnvironmentVariable?: true | string;
+  helperText?: string;
+};
+
+export type SecretPluginConfigurationSpec = {
+  type: 'secret';
+  default?: string;
+  label: string;
+  description?: string;
+  pullEnvironmentVariable?: true | string;
+  helperText?: string;
 };
 
 export type PluginConfigurationSpec =
   | StringPluginConfigurationSpec
+  | SecretPluginConfigurationSpec
   | PluginConfigurationSpecBase<number>
   | PluginConfigurationSpecBase<boolean>;

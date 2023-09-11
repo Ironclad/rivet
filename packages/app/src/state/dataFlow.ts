@@ -14,7 +14,7 @@ export type NodeRunData = {
   startedAt?: number;
   finishedAt?: number;
 
-  status?: { type: 'ok' } | { type: 'error'; error: string } | { type: 'running' };
+  status?: { type: 'ok' } | { type: 'error'; error: string } | { type: 'running' } | { type: 'interrupted' };
 
   inputData?: Inputs;
 

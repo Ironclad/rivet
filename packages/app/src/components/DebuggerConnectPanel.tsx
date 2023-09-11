@@ -4,24 +4,27 @@ import { css } from '@emotion/react';
 import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
 import { Field } from '@atlaskit/form';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
-import { useGlobalShortcut } from '../hooks/useGlobalShortcut';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { debuggerPanelOpenState } from '../state/ui';
 
-export const DebuggerPanelRenderer: FC = () => {
-  const [debuggerPanelOpen, setDebuggerPanelOpen] = useRecoilState(debuggerPanelOpenState);
-
+export function useToggleRemoteDebugger() {
+  const setDebuggerPanelOpen = useSetRecoilState(debuggerPanelOpenState);
   const { remoteDebuggerState: remoteDebugger, connect, disconnect } = useRemoteDebugger();
-
   const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
 
-  useGlobalShortcut('CmdOrCtrl+Shift+D', () => {
+  return () => {
     if (isActuallyRemoteDebugging || remoteDebugger.reconnecting) {
       disconnect();
     } else {
       setDebuggerPanelOpen(true);
     }
-  });
+  };
+}
+
+export const DebuggerPanelRenderer: FC = () => {
+  const [debuggerPanelOpen, setDebuggerPanelOpen] = useRecoilState(debuggerPanelOpenState);
+
+  const { connect } = useRemoteDebugger();
 
   function handleConnectRemoteDebugger(url: string) {
     setDebuggerPanelOpen(false);

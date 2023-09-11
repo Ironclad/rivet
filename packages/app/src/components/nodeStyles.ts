@@ -143,6 +143,10 @@ export const nodeStyles = css`
     }
   }
 
+  .node.isPinned .title-controls .pin-button {
+    color: var(--primary-text);
+  }
+
   .node.isComment .title-controls {
     .success,
     .error {
@@ -358,6 +362,11 @@ export const nodeStyles = css`
 
   .node:hover .node-output-inner {
     max-height: 500px;
+    overflow: auto;
+  }
+
+  .node.isPinned .node-output-inner {
+    max-height: unset;
     overflow: auto;
   }
 

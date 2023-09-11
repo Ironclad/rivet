@@ -3,7 +3,7 @@ import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } 
 import { nanoid } from 'nanoid/non-secure';
 import { DataValue, ArrayDataValue, StringDataValue } from '../DataValue.js';
 import { zip } from 'lodash-es';
-import { Outputs, Inputs, expectType, EditorDefinition, NodeBodySpec } from '../../index.js';
+import { Outputs, Inputs, expectType, EditorDefinition, NodeBodySpec, coerceType } from '../../index.js';
 import { dedent } from 'ts-dedent';
 
 export type UserInputNode = ChartNode<'userInput', UserInputNodeData>;
@@ -97,7 +97,7 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
 
   getOutputValuesFromUserInput(questions: Inputs, answers: ArrayDataValue<StringDataValue>): Outputs {
     const questionsList = this.data.useInput
-      ? expectType(questions['questions' as PortId], 'string[]')
+      ? coerceType(questions['questions' as PortId], 'string[]')
       : [this.data.prompt];
 
     return {

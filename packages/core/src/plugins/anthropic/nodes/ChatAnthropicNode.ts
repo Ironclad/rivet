@@ -180,6 +180,19 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
     return outputs;
   }
 
+  getBody(): string {
+    return dedent`
+      ${this.data.model === 'claude-2' ? 'Claude' : 'Claude Instant'}
+      ${
+        this.data.useTopP
+          ? `Top P: ${this.data.useTopPInput ? '(Using Input)' : this.data.top_p}`
+          : `Temperature: ${this.data.useTemperatureInput ? '(Using Input)' : this.data.temperature}`
+      }
+      Max Tokens: ${this.data.maxTokens}
+      ${this.data.useStop ? `Stop: ${this.data.useStopInput ? '(Using Input)' : this.data.stop}` : ''}
+    `;
+  }
+
   getEditors(): EditorDefinition<ChatAnthropicNode>[] {
     return [
       {
@@ -449,9 +462,11 @@ export function getChatAnthropicNodeMessages(inputs: Inputs) {
   const messages: ChatMessage[] = match(prompt)
     .with({ type: 'chat-message' }, (p) => [p.value])
     .with({ type: 'chat-message[]' }, (p) => p.value)
-    .with({ type: 'string' }, (p): ChatMessage[] => [{ type: 'user', message: p.value, function_call: undefined }])
+    .with({ type: 'string' }, (p): ChatMessage[] => [
+      { type: 'user', message: p.value, function_call: undefined, name: undefined },
+    ])
     .with({ type: 'string[]' }, (p): ChatMessage[] =>
-      p.value.map((v) => ({ type: 'user', message: v, function_call: undefined })),
+      p.value.map((v) => ({ type: 'user', message: v, function_call: undefined, name: undefined })),
     )
     .otherwise((p): ChatMessage[] => {
       if (isArrayDataValue(p)) {
@@ -467,7 +482,7 @@ export function getChatAnthropicNodeMessages(inputs: Inputs) {
 
         return stringValues
           .filter((v) => v != null)
-          .map((v) => ({ type: 'user', message: v, function_call: undefined }));
+          .map((v) => ({ type: 'user', message: v, function_call: undefined, name: undefined }));
       }
 
       const coercedMessage = coerceType(p, 'chat-message');
@@ -477,7 +492,7 @@ export function getChatAnthropicNodeMessages(inputs: Inputs) {
 
       const coercedString = coerceType(p, 'string');
       return coercedString != null
-        ? [{ type: 'user', message: coerceType(p, 'string'), function_call: undefined }]
+        ? [{ type: 'user', message: coerceType(p, 'string'), function_call: undefined, name: undefined }]
         : [];
     });
   return { messages };

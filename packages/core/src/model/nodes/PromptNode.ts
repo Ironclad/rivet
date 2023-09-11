@@ -68,7 +68,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
     }
 
     // Extract inputs from promptText, everything like {{input}}
-    const inputNames = this.chartNode.data.promptText.match(/\{\{([^}]+)\}\}/g);
+    const inputNames = [...new Set(this.chartNode.data.promptText.match(/\{\{([^}]+)\}\}/g))];
     inputs = [
       ...inputs,
       ...(inputNames?.map((inputName): NodeInputDefinition => {
@@ -180,6 +180,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
         value: {
           type: this.chartNode.data.type,
           message: outputValue,
+          name: this.data.name,
           function_call: this.data.enableFunctionCall
             ? coerceType(inputs['function-call' as PortId], 'object')
             : undefined,

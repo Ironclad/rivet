@@ -98,6 +98,10 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
 
     // Flatten the items into a single array
     const searchItems = useMemo(() => {
+      if (disabled) {
+        return [];
+      }
+
       const flattenItems = (
         items: readonly ContextMenuConfigItem[],
         path: string[] = [],
@@ -115,7 +119,7 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
       };
 
       return flattenItems(items);
-    }, [items, commands]);
+    }, [items, commands, disabled]);
 
     const searchRef = useRef<HTMLInputElement>(null);
 

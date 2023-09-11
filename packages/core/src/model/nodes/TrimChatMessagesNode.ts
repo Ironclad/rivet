@@ -106,7 +106,12 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
 
     let tokenCount = defaultTokenizer.getTokenCountForMessages(
       trimmedMessages.map(
-        (message): ChatCompletionRequestMessage => ({ content: message.message, role: message.type }),
+        (message): ChatCompletionRequestMessage => ({
+          content: message.message,
+          role: message.type,
+          name: message.name,
+          function_call: message.function_call,
+        }),
       ),
     );
 
@@ -122,6 +127,7 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
             content: message.message,
             role: message.type,
             function_call: message.function_call,
+            name: message.name,
           }),
         ),
       );

@@ -89,4 +89,4 @@ export class AudioNodeImpl extends NodeImpl<AudioNode> {
   }
 }
 
-export const audioNode = nodeDefinition(AudioNodeImpl, 'Image');
+export const audioNode = nodeDefinition(AudioNodeImpl, 'Audio');

@@ -1,5 +1,5 @@
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { nanoid } from 'nanoid/non-secure';
+import { nanoid } from 'nanoid';
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { ChatMessage, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue.js';
 import { defaultTokenizer, getCostForPrompt, getCostForTokens } from '../../utils/tokenizer.js';
@@ -8,6 +8,7 @@ import {
   ChatCompletionOptions,
   ChatCompletionRequestMessage,
   ChatCompletionResponse,
+  GptFunctionCall,
   OpenAIError,
   openAiModelOptions,
   openaiModels,
@@ -402,7 +403,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       ? coerceTypeOptional(inputs['numberOfChoices' as PortId], 'number') ?? this.data.numberOfChoices ?? 1
       : this.data.numberOfChoices ?? 1;
 
-    const functions = expectTypeOptional(inputs['functions' as PortId], 'gpt-function[]');
+    const functions = coerceTypeOptional(inputs['functions' as PortId], 'gpt-function[]');
 
     const { messages } = getChatNodeMessages(inputs);
 
@@ -410,6 +411,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       (message): ChatCompletionRequestMessage => ({
         content: message.message,
         role: message.type,
+        name: message.name?.trim() || undefined,
+        function_call: message.function_call,
       }),
     );
 
@@ -476,7 +479,11 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             });
 
             const responseChoicesParts: string[][] = [];
-            const functionCalls: object[] = [];
+            const functionCalls: {
+              name: string;
+              arguments: string;
+              lastParsedArguments?: unknown;
+            }[] = [];
 
             for await (const chunk of chunks) {
               if (!chunk.choices) {
@@ -491,8 +498,25 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                 }
 
                 if (delta.function_call) {
-                  functionCalls[index] ??= {};
-                  functionCalls[index] = merge(functionCalls[index], delta.function_call);
+                  functionCalls[index] ??= {
+                    name: '',
+                    arguments: '',
+                    lastParsedArguments: undefined,
+                  };
+
+                  if (delta.function_call.name) {
+                    functionCalls[index]!.name += delta.function_call.name;
+                  }
+
+                  if (delta.function_call.arguments) {
+                    functionCalls[index]!.arguments += delta.function_call.arguments;
+
+                    try {
+                      functionCalls[index]!.lastParsedArguments = JSON.parse(functionCalls[index]!.arguments);
+                    } catch (error) {
+                      // Ignore
+                    }
+                  }
                 }
               }
 
@@ -512,12 +536,18 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                 if (isMultiResponse) {
                   output['function-call' as PortId] = {
                     type: 'object[]',
-                    value: functionCalls as Record<string, unknown>[],
+                    value: functionCalls.map((functionCall) => ({
+                      name: functionCall.name,
+                      arguments: functionCall.lastParsedArguments,
+                    })),
                   };
                 } else {
                   output['function-call' as PortId] = {
                     type: 'object',
-                    value: functionCalls[0] as Record<string, unknown>,
+                    value: {
+                      name: functionCalls[0]!.name,
+                      arguments: functionCalls[0]!.lastParsedArguments,
+                    } as Record<string, unknown>,
                   };
                 }
               }
@@ -603,9 +633,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           randomize: true,
           signal: context.signal,
           onFailedAttempt(err) {
-            const error = getError(err);
-
-            context.trace(`ChatNode failed, retrying: ${error.toString()}`);
+            context.trace(`ChatNode failed, retrying: ${err.toString()}`);
 
             if (context.signal.aborted) {
               throw new Error('Aborted');
@@ -614,14 +642,6 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             const { retriesLeft } = err;
 
             if (!(err instanceof OpenAIError)) {
-              const httpErrorMatch = /HTTP (\d+)/.exec(err.message);
-              if (httpErrorMatch) {
-                const status = Number(httpErrorMatch[1]);
-                if (status >= 400 && status < 500) {
-                  throw new Error(err.message);
-                }
-              }
-
               return; // Just retry?
             }
 
@@ -662,9 +682,11 @@ export function getChatNodeMessages(inputs: Inputs) {
   let messages: ChatMessage[] = match(prompt)
     .with({ type: 'chat-message' }, (p) => [p.value])
     .with({ type: 'chat-message[]' }, (p) => p.value)
-    .with({ type: 'string' }, (p): ChatMessage[] => [{ type: 'user', message: p.value, function_call: undefined }])
+    .with({ type: 'string' }, (p): ChatMessage[] => [
+      { type: 'user', message: p.value, function_call: undefined, name: undefined },
+    ])
     .with({ type: 'string[]' }, (p): ChatMessage[] =>
-      p.value.map((v) => ({ type: 'user', message: v, function_call: undefined })),
+      p.value.map((v) => ({ type: 'user', message: v, function_call: undefined, name: undefined })),
     )
     .otherwise((p): ChatMessage[] => {
       if (isArrayDataValue(p)) {
@@ -680,23 +702,26 @@ export function getChatNodeMessages(inputs: Inputs) {
 
         return stringValues
           .filter((v) => v != null)
-          .map((v) => ({ type: 'user', message: v, function_call: undefined }));
+          .map((v) => ({ type: 'user', message: v, function_call: undefined, name: undefined }));
       }
 
-      const coercedMessage = coerceType(p, 'chat-message');
+      const coercedMessage = coerceTypeOptional(p, 'chat-message');
       if (coercedMessage != null) {
         return [coercedMessage];
       }
 
-      const coercedString = coerceType(p, 'string');
+      const coercedString = coerceTypeOptional(p, 'string');
       return coercedString != null
-        ? [{ type: 'user', message: coerceType(p, 'string'), function_call: undefined }]
+        ? [{ type: 'user', message: coerceType(p, 'string'), function_call: undefined, name: undefined }]
         : [];
     });
 
   const systemPrompt = inputs['systemPrompt' as PortId];
   if (systemPrompt) {
-    messages = [{ type: 'system', message: coerceType(systemPrompt, 'string'), function_call: undefined }, ...messages];
+    messages = [
+      { type: 'system', message: coerceType(systemPrompt, 'string'), function_call: undefined, name: undefined },
+      ...messages,
+    ];
   }
 
   return { messages, systemPrompt };

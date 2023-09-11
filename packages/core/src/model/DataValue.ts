@@ -12,6 +12,7 @@ export type BoolDataValue = DataValueDef<'boolean', boolean>;
 export type ChatMessage = {
   type: 'system' | 'user' | 'assistant' | 'function';
   message: string;
+  name: string | undefined;
   function_call: object | undefined;
 };
 
@@ -333,6 +334,7 @@ export const scalarDefaults: { [P in ScalarDataType]: Extract<ScalarDataValue, {
     type: 'user',
     message: '',
     function_call: undefined,
+    name: undefined,
   },
   'control-flow-excluded': undefined,
   date: new Date().toISOString(),

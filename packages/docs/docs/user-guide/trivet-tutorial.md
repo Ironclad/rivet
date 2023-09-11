@@ -4,7 +4,7 @@ sidebar_label: Tutorial
 
 # Trivet - Tutorial
 
-Suppose that we want to test a simple graph that executes a call against GPT-3.5, but that names the asssistant:
+Suppose that we want to test a simple graph that executes a call against GPT-3.5, but that names the assistant:
 
 ![Simple GPT-3.5 graph](assets/trivet-example-01.png)
 
@@ -60,7 +60,7 @@ Add a new test case with the following configuration:
 
 ![Trivet test case configuration](assets/trivet-example-04.png)
 
-Note that for the input, you are asking GPT to perform the validation on this output, instead of validating the output directly. This is a useful pattern because you can check many more things than you can check programattically, such as the tone and grammar strings!
+Note that for the input, you are asking GPT to perform the validation on this output, instead of validating the output directly. This is a useful pattern because you can check many more things than you can check programmatically, such as the tone and grammar strings!
 
 Next, click the `Run Test Suite` button. You should see something like the following output appear in the test case editor:
 

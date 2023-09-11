@@ -1,0 +1,118 @@
+/* Global variables */
+.main {
+  --white-0: #fff;
+  --white-1: #f9f9f7;
+  --white-2: #f2f2f2;
+  --black-0: #1c212b;
+  --black-1: #333;
+  --orange-0: #ff8862;
+  --orange-1: #e17047;
+
+  --page-padding-side: 40px;
+}
+
+.main {
+  color: var(--black-1);
+  font-family: Circular Std, 'Helvetica Neue', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+}
+
+.lines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--black-0);
+  background-image: url('/static/img/lines.svg');
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: max(100%, 1440px);
+  pointer-events: none;
+}
+
+.main h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.main h2 {
+  font-size: 24px;
+  margin-bottom: 32px;
+}
+
+.main p {
+  margin-bottom: 20px;
+}
+
+.main a {
+  color: var(--white-0);
+  text-decoration: none;
+}
+
+.main button {
+  text-decoration: none;
+}
+
+.main a:hover {
+  color: var(--white-1);
+  text-decoration: none;
+}
+
+.main button:hover {
+  text-decoration: none;
+}
+
+@media screen and (min-width: 768px) {
+  .main {
+    --page-padding-side: 120px;
+  }
+
+  .main h1 {
+    font-size: 40px;
+    margin-bottom: 32px;
+  }
+
+  .main h2 {
+    font-size: 28px;
+  }
+
+  .main p,
+  .main li,
+  .main a,
+  .main button {
+    font-size: 20px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .main {
+    --page-padding-side: 240px;
+  }
+
+  .main h1 {
+    font-size: 44px;
+    margin-bottom: 40px;
+  }
+
+  .main h2 {
+    font-size: 28px;
+    margin-bottom: 48px;
+  }
+
+  .main p {
+    font-size: 20px;
+    margin-bottom: 32px;
+  }
+
+  .main li,
+  .main a,
+  .main button {
+    font-size: 20px;
+  }
+}

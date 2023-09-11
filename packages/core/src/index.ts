@@ -30,6 +30,7 @@ export * from './utils/base64.js';
 export type * from './model/Settings.js';
 export * from './model/EditorDefinition.js';
 export * from './model/NodeBodySpec.js';
+export * from './utils/inputs.js';
 export * from './utils/HttpProvider.js';
 
 import * as openai from './utils/openai.js';

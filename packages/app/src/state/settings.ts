@@ -38,3 +38,9 @@ export const themeState = atom<Theme>({
   default: 'molten',
   effects_UNSTABLE: [persistAtom],
 });
+
+export const recordExecutionsState = atom<boolean>({
+  key: 'recordExecutions',
+  default: true,
+  effects_UNSTABLE: [persistAtom],
+});

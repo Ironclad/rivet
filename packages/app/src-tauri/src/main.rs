@@ -20,6 +20,16 @@ fn main() {
             set_recent_project_files
         ])
         .menu(create_menu())
+        .on_menu_event(|event| match event.menu_item_id() {
+            "toggle_devtools" => {
+                if event.window().is_devtools_open() {
+                    event.window().close_devtools();
+                } else {
+                    event.window().open_devtools();
+                }
+            }
+            _ => {}
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -37,7 +47,7 @@ fn create_menu() -> Menu {
             .add_native_item(MenuItem::HideOthers)
             .add_native_item(MenuItem::ShowAll)
             .add_native_item(MenuItem::Separator)
-            .add_item(CustomMenuItem::new("settings".to_string(), "Settings..."))
+            .add_item(CustomMenuItem::new("settings", "Settings..."))
             .add_native_item(MenuItem::Separator)
             .add_native_item(MenuItem::Quit),
     );
@@ -61,7 +71,14 @@ fn create_menu() -> Menu {
 
     let debug_menu = Submenu::new(
         "Debug",
-        Menu::new().add_item(CustomMenuItem::new("load_recording", "Load Recording...")),
+        Menu::new()
+            .add_item(
+                CustomMenuItem::new("remote_debugger", "Remote Debugger...").accelerator("F5"),
+            )
+            .add_item(
+                CustomMenuItem::new("load_recording", "Load Recording...")
+                    .accelerator("CmdOrCtrl+Shift+O"),
+            ),
     );
 
     let window_menu = Submenu::new(
@@ -73,7 +90,13 @@ fn create_menu() -> Menu {
 
     let help_menu = Submenu::new(
         "Help",
-        Menu::new().add_item(CustomMenuItem::new("Learn More", "Learn More")),
+        Menu::new()
+            .add_item(CustomMenuItem::new("Learn More", "Learn More"))
+            .add_native_item(MenuItem::Separator)
+            .add_item(CustomMenuItem::new(
+                "toggle_devtools",
+                "Toggle Developer Tools",
+            )),
     );
 
     let open_recent = Submenu::new("Open Recent", Menu::new());
@@ -117,9 +140,8 @@ fn create_menu() -> Menu {
         .add_submenu(edit_menu)
         .add_submenu(Submenu::new(
             "Run",
-            Menu::new().add_item(
-                CustomMenuItem::new("run".to_string(), "Run Graph").accelerator("CmdOrCtrl+Enter"),
-            ),
+            Menu::new()
+                .add_item(CustomMenuItem::new("run", "Run Graph").accelerator("CmdOrCtrl+Enter")),
         ))
         .add_submenu(view_menu)
         .add_submenu(debug_menu)

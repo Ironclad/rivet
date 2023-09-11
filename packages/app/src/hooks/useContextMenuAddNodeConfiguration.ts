@@ -2,6 +2,7 @@ import { NodeUIData, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { ContextMenuItem } from './useContextMenuConfiguration';
 import { useMemo } from 'react';
 import { useBuiltInNodeImages } from './useBuiltInNodeImages';
+import { useDependsOnPlugins } from './useDependsOnPlugins';
 
 export const addContextMenuGroups = [
   {
@@ -62,17 +63,21 @@ export function useContextMenuAddNodeConfiguration() {
     const uiData = constructor.getUIData
       ? constructor.getUIData()
       : ({
-          group: 'Custom',
-          contextMenuTitle: type,
-          infoBoxTitle: type,
-          infoBoxBody: '',
-        } satisfies NodeUIData);
+        group: 'Custom',
+        contextMenuTitle: type,
+        infoBoxTitle: type,
+        infoBoxBody: '',
+      } satisfies NodeUIData);
 
     return { type, uiData };
   });
 
+  const plugins = useDependsOnPlugins();
   const groupsWithItems = useMemo(() => {
-    const groups = addContextMenuGroups.map((group) => {
+    const groups = ([
+      ...addContextMenuGroups,
+      ...plugins.flatMap(plugin => plugin.contextMenuGroups ?? [])
+    ]).map((group) => {
       const items = uiData
         .filter((item) =>
           Array.isArray(item.uiData.group)
