@@ -94,4 +94,12 @@ export class BrowserIOProvider implements IOProvider {
     const arrayBuffer = await file.arrayBuffer();
     callback(new Uint8Array(arrayBuffer));
   }
+
+  async readPathAsString(path: string): Promise<string> {
+    throw new Error('Function not supported in the browser');
+  }
+
+  async readPathAsBinary(path: string): Promise<Uint8Array> {
+    throw new Error('Function not supported in the browser');
+  }
 }

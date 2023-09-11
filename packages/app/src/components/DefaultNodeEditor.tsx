@@ -3,6 +3,8 @@ import {
   AnyDataEditorDefinition,
   ChartNode,
   CodeEditorDefinition,
+  DataId,
+  DataRef,
   DataType,
   DataTypeSelectorEditorDefinition,
   DropdownEditorDefinition,
@@ -31,7 +33,7 @@ import Checkbox from '@atlaskit/checkbox';
 import { useDebounceFn, useLatest } from 'ahooks';
 import type { monaco } from '../utils/monaco.js';
 import clsx from 'clsx';
-import { projectState } from '../state/savedGraphs.js';
+import { projectDataState, projectState } from '../state/savedGraphs.js';
 import { useRecoilValue } from 'recoil';
 import { orderBy } from 'lodash-es';
 import { nanoid } from 'nanoid';
@@ -39,6 +41,7 @@ import { LazyCodeEditor, LazyTripleBarColorPicker } from './LazyComponents';
 import { ioProvider } from '../utils/globals';
 import Button from '@atlaskit/button';
 import { values } from '../../../core/src/utils/typeSafety';
+import { NodeChanged } from './NodeEditor';
 
 export const defaultEditorContainerStyles = css`
   display: flex;
@@ -119,7 +122,7 @@ export const defaultEditorContainerStyles = css`
 export const DefaultNodeEditor: FC<{
   node: ChartNode;
   isReadonly: boolean;
-  onChange: (changed: ChartNode) => void;
+  onChange: NodeChanged;
 }> = ({ node, onChange, isReadonly }) => {
   const editors = useMemo(() => globalRivetNodeRegistry.createDynamicImpl(node).getEditors(), [node]);
 
@@ -142,7 +145,7 @@ const validSelectableDataTypes = scalarTypes.filter((type) => type !== 'control-
 
 const DefaultNodeEditorField: FC<{
   node: ChartNode;
-  onChange: (changed: ChartNode) => void;
+  onChange: NodeChanged;
   editor: EditorDefinition<ChartNode>;
   isReadonly: boolean;
 }> = ({ node, onChange, editor, isReadonly }) => {
@@ -195,7 +198,7 @@ const DefaultNodeEditorField: FC<{
 export const DefaultStringEditor: FC<{
   node: ChartNode;
   isReadonly: boolean;
-  onChange: (changed: ChartNode) => void;
+  onChange: NodeChanged;
   editor: StringEditorDefinition<ChartNode>;
 }> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
@@ -225,7 +228,7 @@ export const DefaultToggleEditor: FC<{
   node: ChartNode;
   isReadonly: boolean;
 
-  onChange: (changed: ChartNode) => void;
+  onChange: NodeChanged;
   editor: ToggleEditorDefinition<ChartNode>;
 }> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
@@ -254,7 +257,7 @@ export const DefaultToggleEditor: FC<{
 export const DefaultDataTypeSelector: FC<{
   node: ChartNode;
   isReadonly: boolean;
-  onChange: (changed: ChartNode) => void;
+  onChange: NodeChanged;
   editor: DataTypeSelectorEditorDefinition<ChartNode>;
 }> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
@@ -317,7 +320,7 @@ export const DefaultDataTypeSelector: FC<{
 export const DefaultAnyDataEditor: FC<{
   node: ChartNode;
   isReadonly: boolean;
-  onChange: (changed: ChartNode) => void;
+  onChange: NodeChanged;
   editor: AnyDataEditorDefinition<ChartNode>;
 }> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
@@ -347,7 +350,7 @@ export const DefaultAnyDataEditor: FC<{
 export const DefaultDropdownEditor: FC<{
   node: ChartNode;
   isReadonly: boolean;
-  onChange: (changed: ChartNode) => void;
+  onChange: NodeChanged;
   editor: DropdownEditorDefinition<ChartNode>;
 }> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
@@ -376,7 +379,7 @@ export const DefaultDropdownEditor: FC<{
 export const DefaultGraphSelectorEditor: FC<{
   node: ChartNode;
   isReadonly: boolean;
-  onChange: (changed: ChartNode) => void;
+  onChange: NodeChanged;
   editor: GraphSelectorEditorDefinition<ChartNode>;
 }> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
@@ -436,7 +439,7 @@ export const GraphSelector: FC<{
 export const DefaultNumberEditor: FC<{
   node: ChartNode;
   isReadonly?: boolean;
-  onChange: (changed: ChartNode) => void;
+  onChange: NodeChanged;
   editor: NumberEditorDefinition<ChartNode>;
 }> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
@@ -479,7 +482,7 @@ export const DefaultNumberEditor: FC<{
 export const DefaultCodeEditor: FC<{
   node: ChartNode;
   isReadonly: boolean;
-  onChange: (changed: ChartNode) => void;
+  onChange: NodeChanged;
   editor: CodeEditorDefinition<ChartNode>;
 }> = ({ node, isReadonly, onChange, editor: editorDef }) => {
   const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
@@ -536,7 +539,7 @@ export const DefaultCodeEditor: FC<{
 export const DefaultColorEditor: FC<{
   node: ChartNode;
   isReadonly: boolean;
-  onChange: (changed: ChartNode) => void;
+  onChange: NodeChanged;
   editor: EditorDefinition<ChartNode>;
 }> = ({ node, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
@@ -577,20 +580,28 @@ export const DefaultColorEditor: FC<{
 export const DefaultFileBrowserEditor: FC<{
   node: ChartNode;
   isReadonly: boolean;
-  onChange: (changed: ChartNode) => void;
+  onChange: NodeChanged;
   editor: FileBrowserEditorDefinition<ChartNode>;
 }> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
 
   const pickFile = async () => {
-    await ioProvider.readFileAsBinary(async (data) => {
-      onChange({
-        ...node,
-        data: {
-          ...data,
-          [editor.dataKey]: await uint8ArrayToBase64(data),
+    await ioProvider.readFileAsBinary(async (binaryData) => {
+      const dataId = nanoid() as DataId;
+      onChange(
+        {
+          ...node,
+          data: {
+            ...data,
+            [editor.dataKey]: {
+              refId: dataId,
+            } satisfies DataRef,
+          },
         },
-      });
+        {
+          [dataId]: await uint8ArrayToBase64(binaryData),
+        },
+      );
     });
   };
 
@@ -614,25 +625,36 @@ export const DefaultFileBrowserEditor: FC<{
 export const DefaultImageBrowserEditor: FC<{
   node: ChartNode;
   isReadonly: boolean;
-  onChange: (changed: ChartNode) => void;
+  onChange: NodeChanged;
   editor: ImageBrowserEditorDefinition<ChartNode>;
 }> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
 
+  const dataState = useRecoilValue(projectDataState);
+
   const pickFile = async () => {
-    await ioProvider.readFileAsBinary(async (data) => {
-      onChange({
-        ...node,
-        data: {
-          ...data,
-          [editor.dataKey]: await uint8ArrayToBase64(data),
+    await ioProvider.readFileAsBinary(async (binaryData) => {
+      const dataId = nanoid() as DataId;
+      onChange(
+        {
+          ...node,
+          data: {
+            ...data,
+            [editor.dataKey]: {
+              refId: dataId,
+            } satisfies DataRef,
+          },
         },
-      });
+        {
+          [dataId]: await uint8ArrayToBase64(binaryData),
+        },
+      );
     });
   };
 
-  const b64Data = data[editor.dataKey] as string | undefined;
-  const mediaType = data[editor.mediaTypeDataKey] as string | undefined;
+  const dataRef = data[editor.dataKey] as DataRef | undefined;
+  const b64Data = dataRef ? dataState?.[dataRef.refId] : undefined;
+  const mediaType = b64Data ? (data[editor.mediaTypeDataKey] as string | undefined) : undefined;
 
   const dataUri = b64Data ? `data:${mediaType ?? 'image/png'};base64,${b64Data}` : undefined;
 

@@ -207,4 +207,14 @@ export class TauriIOProvider implements IOProvider {
       callback(contents);
     }
   }
+
+  async readPathAsString(path: string): Promise<string> {
+    const contents = await readTextFile(path);
+    return contents;
+  }
+
+  async readPathAsBinary(path: string): Promise<Uint8Array> {
+    const contents = await readBinaryFile(path);
+    return contents;
+  }
 }

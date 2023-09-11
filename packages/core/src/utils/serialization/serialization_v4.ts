@@ -11,7 +11,6 @@ import {
   ChartNodeVariant,
 } from '../../index.js';
 import stableStringify from 'safe-stable-stringify';
-// @ts-ignore
 import * as yaml from 'yaml';
 import { AttachedData, doubleCheckProject } from './serializationUtils.js';
 import { entries } from '../typeSafety.js';

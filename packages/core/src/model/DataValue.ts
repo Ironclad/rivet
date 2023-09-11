@@ -1,4 +1,5 @@
 import { exhaustiveTuple } from '../utils/genericUtilFunctions.js';
+import { DataId } from './Project.js';
 
 export type DataValueDef<Type extends string, RuntimeType> = {
   type: Type;
@@ -87,6 +88,11 @@ export type FunctionDataType = FunctionDataValues['type'];
 export type ScalarOrArrayDataType = ScalarOrArrayDataValue['type'];
 
 export type GetDataValue<Type extends DataType> = Extract<DataValue, { type: Type }>;
+
+/** A reference to large data stored outside the graphs themselves. */
+export type DataRef = {
+  refId: DataId;
+};
 
 export const dataTypes = exhaustiveTuple<DataType>()(
   'any',

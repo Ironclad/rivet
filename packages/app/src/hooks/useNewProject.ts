@@ -24,7 +24,9 @@ export function useNewProject() {
   const setTrivetData = useSetRecoilState(trivetState);
 
   return () => {
-    setProject(blankProject());
+    const { data: _data, ...project } = blankProject();
+
+    setProject(project);
     setLoadedProject({ loaded: false, path: '' });
     setGraphData(emptyNodeGraph());
     setTrivetData({

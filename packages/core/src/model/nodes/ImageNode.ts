@@ -2,12 +2,20 @@ import { ChartNode, NodeId, PortId } from '../NodeBase.js';
 import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { nanoid } from 'nanoid';
-import { EditorDefinition, Inputs, Outputs, base64ToUint8Array, expectType } from '../../index.js';
+import {
+  DataRef,
+  EditorDefinition,
+  Inputs,
+  InternalProcessContext,
+  Outputs,
+  base64ToUint8Array,
+  expectType,
+} from '../../index.js';
 
 export type ImageNode = ChartNode<'image', ImageNodeData>;
 
 type ImageNodeData = {
-  data: string;
+  data?: DataRef;
   useDataInput: boolean;
   mediaType: 'image/png' | 'image/jpeg' | 'image/gif';
   useMediaTypeInput: boolean;
@@ -21,7 +29,6 @@ export class ImageNodeImpl extends NodeImpl<ImageNode> {
       title: 'Image',
       visualData: { x: 0, y: 0, width: 250 },
       data: {
-        data: '',
         useDataInput: false,
         mediaType: 'image/png',
         useMediaTypeInput: false,
@@ -93,13 +100,23 @@ export class ImageNodeImpl extends NodeImpl<ImageNode> {
     };
   }
 
-  async process(inputData: Inputs): Promise<Outputs> {
+  async process(inputData: Inputs, context: InternalProcessContext): Promise<Outputs> {
     let data: Uint8Array;
 
     if (this.chartNode.data.useDataInput) {
       data = expectType(inputData['data' as PortId], 'binary');
     } else {
-      const encodedData = this.data.data;
+      const dataRef = this.data.data?.refId;
+      if (!dataRef) {
+        throw new Error('No data ref');
+      }
+
+      const encodedData = context.project.data?.[dataRef] as string;
+
+      if (!encodedData) {
+        throw new Error(`No data at ref ${dataRef}`);
+      }
+
       data = base64ToUint8Array(encodedData);
     }
 

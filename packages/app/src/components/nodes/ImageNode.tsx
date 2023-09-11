@@ -2,6 +2,8 @@ import { FC } from 'react';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 import { ImageNode } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
+import { useRecoilValue } from 'recoil';
+import { projectDataState } from '../../state/savedGraphs';
 
 const styles = css`
   img {
@@ -14,7 +16,10 @@ type ImageNodeBodyProps = {
 };
 
 export const ImageNodeBody: FC<ImageNodeBodyProps> = ({ node }) => {
-  const b64Data = node.data.data;
+  const projectData = useRecoilValue(projectDataState);
+
+  const dataRef = node.data.data;
+  const b64Data = dataRef ? projectData?.[dataRef.refId] : undefined;
   const mediaType = node.data.mediaType ?? 'image/png';
 
   const dataUri = `data:${mediaType};base64,${b64Data}`;

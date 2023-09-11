@@ -7,7 +7,6 @@ import {
   NodeImpl,
   NodeInputDefinition,
   NodeOutputDefinition,
-  PortId,
   emptyNodeGraph,
   globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
