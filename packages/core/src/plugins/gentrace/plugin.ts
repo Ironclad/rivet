@@ -1,5 +1,6 @@
 import { Pipeline, init, runTest } from '@gentrace/core';
 import {
+  ExecutionRecorder,
   GraphId,
   GraphProcessor,
   NativeApi,
@@ -51,16 +52,19 @@ export const runGentraceTests = async (
     const rivetFormattedInputs: Record<string, any> = {};
 
     Object.entries(testCase.inputs).forEach(([key, value]) => {
-      // TODO: modify to support many different value types
       rivetFormattedInputs[key] = {
-        type: 'string',
+        // TODO: this is too naïve
+        type: typeof value,
         value,
       };
     });
 
     console.log('rivetFormattedInputs', rivetFormattedInputs);
 
+    const recorder = new ExecutionRecorder();
     const processor = new GraphProcessor(project, graphId as GraphId);
+
+    recorder.record(processor);
     const outputs = await processor.processGraph(
       {
         settings,
@@ -69,20 +73,13 @@ export const runGentraceTests = async (
       rivetFormattedInputs,
     );
 
-    console.log('inputs/outputs', outputs);
+    const fullRecording = recorder.getRecording();
 
-    const result = await runner.measure(
-      async (a, b) => {
-        return a + b;
-      },
-      [1, 2],
-      {
-        modelParams: { b: 5 },
-        invocation: 'customAddition',
-      },
-    );
+    console.log('fullRecording', fullRecording);
 
-    return [result, runner];
+    // Get start and end nodes
+
+    return ['', runner];
   });
 };
 

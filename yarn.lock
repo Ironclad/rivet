@@ -3871,13 +3871,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gentrace/openai@npm:^4.0.16":
-  version: 4.0.16
-  resolution: "@gentrace/openai@npm:4.0.16"
+"@gentrace/openai@npm:^4.0.17":
+  version: 4.0.17
+  resolution: "@gentrace/openai@npm:4.0.17"
   dependencies:
     "@gentrace/core": "npm:^2.1.15"
     openai: "npm:^4.0.0"
-  checksum: 97ddbaab3ead073d658988f8f611c4f29a524055c0cd7f0f59428f8f13173f6887fa3f0d47caa85d63230f6903d8e6e79576e24ad4ed8e859339c4bc628fdb20
+  checksum: 5603c915d954b9d128ceb302e874857810d42156913468486d83f2e9e6f1063566f1e3012d75b49c4eeae9e3599211e9151ca0c9d39ce88df663ae42f897567c
   languageName: node
   linkType: hard
 
@@ -4116,7 +4116,7 @@ __metadata:
   dependencies:
     "@dqbd/tiktoken": "npm:^1.0.7"
     "@gentrace/core": "npm:^2.1.15"
-    "@gentrace/openai": "npm:^4.0.16"
+    "@gentrace/openai": "npm:^4.0.17"
     "@gentrace/pinecone": "npm:^1.0.1"
     "@huggingface/inference": "npm:^2.6.1"
     "@swc/core": "npm:^1.3.71"
