@@ -66,7 +66,7 @@ export const runGentraceTests = async (
     const processor = new GraphProcessor(project, graphId);
 
     recorder.record(processor);
-    const outputs = await processor.processGraph(
+    await processor.processGraph(
       {
         settings,
         nativeApi,
@@ -138,24 +138,46 @@ function convertRecordingToStepRuns(recording: Recording, project: Omit<Project,
     [processId: string]: SimplifiedNode;
   };
 
+  console.log('process start end pairs', processStartEndPairs);
+
   const selectedGraph = project.graphs[graphId];
 
   if (!selectedGraph) {
     return [];
   }
 
+  // Convert to step runs
+  const stepRuns: StepRun[] = [];
+
   for (const [, pair] of Object.entries(processStartEndPairs)) {
     const { nodeId } = pair;
 
     const relatedNode = selectedGraph.nodes.find((node) => node.id === nodeId);
 
-    if (relatedNode) {
-      pair.modelParams = relatedNode.data as Record<string, any>;
-    }
-  }
+    const nodeType = relatedNode?.type;
 
-  // Convert to step runs
-  const stepRuns: StepRun[] = [];
+    if (!nodeType || nodeType === 'graphInput' || nodeType === 'graphOutput') {
+      continue;
+    }
+
+    if (relatedNode) {
+      pair.modelParams = { ...(relatedNode.data as Record<string, any>), ...{ type: relatedNode?.type } };
+    }
+
+    stepRuns.push(
+      new StepRun(
+        'trivet',
+        'trivet_operation',
+        pair.end - pair.start,
+        new Date(pair.start).toISOString(),
+        new Date(pair.end).toISOString(),
+        pair.inputs,
+        pair.modelParams,
+        pair.outputs,
+        {},
+      ),
+    );
+  }
 
   return stepRuns;
 }
