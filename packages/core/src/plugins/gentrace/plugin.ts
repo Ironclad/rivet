@@ -10,6 +10,7 @@ import {
   SecretPluginConfigurationSpec,
   Settings,
 } from '../../index.js';
+import { OpenAICreateChatCompletionStepRun } from '@gentrace/openai';
 
 const apiKeyConfigSpec: SecretPluginConfigurationSpec = {
   type: 'secret',
@@ -47,8 +48,6 @@ export const runGentraceTests = async (
 
     const runner = pipeline.start();
 
-    console.log('project', project, testCase.inputs);
-
     // Transform inputs
     const rivetFormattedInputs: Record<string, any> = {};
 
@@ -59,8 +58,6 @@ export const runGentraceTests = async (
         value,
       };
     });
-
-    console.log('rivetFormattedInputs', rivetFormattedInputs);
 
     const recorder = new ExecutionRecorder();
     const processor = new GraphProcessor(project, graphId);
@@ -138,8 +135,6 @@ function convertRecordingToStepRuns(recording: Recording, project: Omit<Project,
     [processId: string]: SimplifiedNode;
   };
 
-  console.log('process start end pairs', processStartEndPairs);
-
   const selectedGraph = project.graphs[graphId];
 
   if (!selectedGraph) {
@@ -170,8 +165,68 @@ function convertRecordingToStepRuns(recording: Recording, project: Omit<Project,
       const modelName = nodeData.model ? nodeData.model : '';
 
       if (modelName.startsWith('gpt')) {
-        // Convert to OpenAI node
-        console.log('chat information', relatedNode);
+        // Convert to OpenAI Gentrace node
+        const gentraceOpenAIInputs: Record<string, any> = { ...pair.inputs };
+
+        gentraceOpenAIInputs.messages = [
+          {
+            content: pair.inputs.prompt.value,
+            role: 'user',
+          },
+        ];
+
+        const gentraceOpenAIModelParams: Record<string, any> = { ...pair.modelParams };
+
+        gentraceOpenAIModelParams.model = modelName;
+
+        gentraceOpenAIModelParams.frequency_penalty = pair.modelParams.frequencyPenalty || null;
+
+        gentraceOpenAIModelParams.max_tokens = pair.modelParams.maxTokens || undefined;
+
+        gentraceOpenAIModelParams.presence_penalty = pair.modelParams.presencePenalty || null;
+
+        gentraceOpenAIModelParams.stop = pair.modelParams.stop || null;
+
+        gentraceOpenAIModelParams.temperature = pair.modelParams.temperature || null;
+
+        gentraceOpenAIModelParams.top_p = pair.modelParams.top_p || null;
+
+        const gentraceOpenAIOutputs: Record<string, any> = { ...pair.outputs };
+
+        const outputValues: string[] = Array.isArray(pair.outputs.response.value)
+          ? pair.outputs.response.value
+          : [pair.outputs.response.value];
+
+        gentraceOpenAIOutputs.choices = outputValues.map((outputValue, index) => {
+          return {
+            index,
+            message: {
+              content: outputValue,
+              role: 'assistant',
+            },
+            usage: {
+              completion_tokens: pair.outputs.responseTokens.value,
+              prompt_tokens: pair.outputs.requestTokens.value,
+              total_tokens: pair.outputs.responseTokens.value + pair.outputs.requestTokens.value,
+            },
+          };
+        });
+
+        stepRuns.push(
+          new StepRun(
+            'openai',
+            'openai_createChatCompletion',
+            pair.end - pair.start,
+            new Date(pair.start).toISOString(),
+            new Date(pair.end).toISOString(),
+            gentraceOpenAIInputs,
+            gentraceOpenAIModelParams,
+            gentraceOpenAIOutputs,
+            {},
+          ),
+        );
+
+        continue;
       }
     }
 
