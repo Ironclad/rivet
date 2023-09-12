@@ -1,91 +1,48 @@
 import pythonmonkey as pm
 import asyncio
+from .api import load_project_from_file, create_processor
 import os
-import requests
-import json
 
-def fetch(request):
-    headers = getattr(request, 'headers', {})
-    if 'Content-Type' not in headers:
-        headers['Content-Type'] = 'application/json'
+# await pm.eval("""
+#  async (rivet, data) => {}
+# """)(runtime.rivet, data);
 
-    headers = { k : v for k, v in iter(headers) }
+# async def run_graph():
+#   output = await pm.eval("""
+#     async (rivet, data, httpProvider, env) => {
+#       const { GraphProcessor, deserializeProject, DummyNativeApi } = rivet;
 
-    response = requests.request(
-        request.method,
-        request.url,
-        headers=headers,
-        data=request.body
-    )
+#       const [project] = deserializeProject(data);
+#       const processor = new GraphProcessor(project, 'M-ulV32UCscvbW6q_qS7a');
 
-    return {
-        "ok": response.ok,
-        "status": response.status_code,
-        "statusText": response.reason,
-        "body": response.json(),  # assuming the response is JSON
-        "headers": dict(response.headers),
-    }
+#       const outputs = await processor.processGraph({
+#         settings: {
+#           openAiKey: env.OPENAI_API_KEY,
+#           openAiOrganization: env.OPENAI_ORGANIZATION_ID,
+#           pluginEnv: env,
+#           pluginSettings: {},
+#         },
+#         nativeApi: new DummyNativeApi(),
+#         httpProvider
+#       })
 
-def streamEvents(request):
-    raise NotImplementedError("Streaming is not supported.")
+#       return outputs['response']
+#     }
+#   """)(runtime.rivet, data, runtime.http_provider, runtime.env)
 
-http_provider = {
-    "supportsStreaming": False,
-    "fetch": fetch,
-    "streamEvents": streamEvents,
-}
+#   print(output.value)
 
-env = {
-  "OPENAI_API_KEY": os.environ.get("OPENAI_API_KEY"),
-  "OPENAI_ORGANIZATION_ID": os.environ.get("OPENAI_ORGANIZATION_ID"),
-}
+async def main():
+  project = await load_project_from_file("/Users/andy.brenneke/Desktop/Testing4.rivet-project")
+  openaiKey = os.environ.get("OPENAI_API_KEY")
+  openaiOrganization = os.environ.get("OPENAI_ORG_ID")
+  _, run = create_processor(project,
+    graph="M-ulV32UCscvbW6q_qS7a",
+    openAiKey=openaiKey,
+    openAiOrganization=openaiOrganization)
 
-async def run_graph():
-  rivet = pm.require('./rivet.bundle.cjs')
+  outputs = await run()
 
-  filepath = os.path.expanduser('~/Desktop/Testing4.rivet-project')
-  with open(filepath, 'r') as file:
-    data = file.read()
+  print(outputs.response.value)
 
-  pm.globalThis['AbortController'] = pm.eval("""
-    class AbortController {
-      constructor() {
-        this.signal = {
-          aborted: false,
-          addEventListener: () => {},
-          removeEventListener: () => {},
-        }
-      }
-      abort() {
-        this.signal.aborted = true;
-      }
-    }
-    AbortController
-  """)
-
-  output = await pm.eval("""
-    async (rivet, data, httpProvider, env) => {
-      const { GraphProcessor, deserializeProject, DummyNativeApi } = rivet;
-
-      const [project] = deserializeProject(data);
-      const processor = new GraphProcessor(project, 'M-ulV32UCscvbW6q_qS7a');
-
-      const outputs = await processor.processGraph({
-        settings: {
-          openAiKey: env.OPENAI_API_KEY,
-          openAiOrganization: env.OPENAI_ORGANIZATION_ID,
-          pluginEnv: env,
-          pluginSettings: {},
-        },
-        nativeApi: new DummyNativeApi(),
-        httpProvider
-      })
-
-      return outputs['response']
-    }
-  """)(rivet, data, http_provider, env)
-
-  print(output.value)
-
-
-asyncio.run(run_graph())
+asyncio.run(main())

@@ -40,3 +40,7 @@ packages/app-executor/bin/executor-bundle.js
 .idea
 
 packages/python/rivet.bundle.cjs
+
+packages/core/meta.json
+
+packages/python/__pycache__/
