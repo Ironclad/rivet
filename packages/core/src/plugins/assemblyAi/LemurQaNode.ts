@@ -126,7 +126,7 @@ export class LemurQaNodeImpl extends NodeImpl<LemurQaNode> {
       | ArrayDataValue<ObjectDataValue>
       | ArrayDataValue<AnyDataValue>;
 
-    if (!input) throw new Error('Transcript IDs are required.');
+    if (!input) throw new Error('Questions are required.');
 
     if (input.type === 'string') {
       return [{
