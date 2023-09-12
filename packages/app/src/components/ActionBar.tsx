@@ -219,6 +219,7 @@ export const ActionBar: FC<ActionBarProps> = ({
               return; 
             }
 
+            // TODO @gentrace: remove hardcoded pipeline id
             await runGentraceTests("testing-pipeline-id", gentraceApiKey, project, graph.metadata?.id);
           }}>
             Run Gentrace Tests

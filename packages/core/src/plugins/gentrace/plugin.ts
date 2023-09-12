@@ -1,5 +1,5 @@
-import { Project, RivetPlugin, SecretPluginConfigurationSpec, globalRivetNodeRegistry } from '../../index.js';
-import { getTestCases, init } from '@gentrace/core';
+import { Pipeline, getTestCases, init, runTest } from '@gentrace/core';
+import { Project, RivetPlugin, SecretPluginConfigurationSpec } from '../../index.js';
 
 const apiKeyConfigSpec: SecretPluginConfigurationSpec = {
   type: 'secret',
@@ -16,15 +16,35 @@ function initializeGentrace(gentraceApiKey: string) {
 }
 
 export const runGentraceTests = async (
-  gentracePipelineId: string,
+  gentracePipelineSlug: string,
   gentraceApiKey: string,
   project: Omit<Project, 'data'>,
   graphId: string,
 ) => {
   initializeGentrace(gentraceApiKey);
-  const cases = await getTestCases(gentracePipelineId);
+  await runTest(gentracePipelineSlug, async (testCase) => {
+    console.log('testCase', testCase);
+    const pipeline = new Pipeline({
+      slug: gentracePipelineSlug,
+    });
 
-  console.log('cases', cases, graphId, project);
+    const runner = pipeline.start();
+
+    // TODO: run graph processor and recorder
+
+    const result = await runner.measure(
+      async (a, b) => {
+        return a + b;
+      },
+      [1, 2],
+      {
+        modelParams: { b: 5 },
+        invocation: 'customAddition',
+      },
+    );
+
+    return [result, runner];
+  });
 };
 
 export const gentracePlugin: RivetPlugin = {
