@@ -1,4 +1,5 @@
-import { RivetPlugin, SecretPluginConfigurationSpec } from '../../index.js';
+import { Project, RivetPlugin, SecretPluginConfigurationSpec, globalRivetNodeRegistry } from '../../index.js';
+import { getTestCases, init } from '@gentrace/core';
 
 const apiKeyConfigSpec: SecretPluginConfigurationSpec = {
   type: 'secret',
@@ -6,6 +7,24 @@ const apiKeyConfigSpec: SecretPluginConfigurationSpec = {
   description: 'The API key for the Gentrace service.',
   pullEnvironmentVariable: 'GENTRACE_API_KEY',
   helperText: 'Create at https://gentrace.ai/settings/api-keys',
+};
+
+function initializeGentrace(gentraceApiKey: string) {
+  init({
+    apiKey: gentraceApiKey,
+  });
+}
+
+export const runGentraceTests = async (
+  gentracePipelineId: string,
+  gentraceApiKey: string,
+  project: Omit<Project, 'data'>,
+  graphId: string,
+) => {
+  initializeGentrace(gentraceApiKey);
+  const cases = await getTestCases(gentracePipelineId);
+
+  console.log('cases', cases, graphId, project);
 };
 
 export const gentracePlugin: RivetPlugin = {

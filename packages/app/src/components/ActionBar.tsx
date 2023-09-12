@@ -14,7 +14,7 @@ import { ReactComponent as MoreMenuVerticalIcon } from 'majesticons/line/more-me
 import Popup from '@atlaskit/popup';
 import { settingsModalOpenState } from './SettingsModal';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
-import { isInTauri } from '../utils/tauri';
+import { fillMissingSettingsFromEnvironmentVariables, isInTauri } from '../utils/tauri';
 import Select from '@atlaskit/select';
 import Portal from '@atlaskit/portal';
 import { debuggerPanelOpenState } from '../state/ui';
@@ -22,6 +22,12 @@ import { ActionBarMoreMenu } from './ActionBarMoreMenu';
 import { useCurrentExecution } from '../hooks/useCurrentExecution';
 import { CopyAsTestCaseModal } from './CopyAsTestCaseModal';
 import { useToggle } from 'ahooks';
+import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
+import { runGentraceTests } from '../../../core/src/plugins/gentrace/plugin';
+import { graphState } from '../state/graph';
+import { projectState } from '../state/savedGraphs.js';
+import { settingsState } from '../state/settings';
+import { globalRivetNodeRegistry } from '@ironclad/rivet-core';
 
 const styles = css`
   position: fixed;
@@ -42,6 +48,7 @@ const styles = css`
   .unload-recording-button button,
   .run-test-button button,
   .save-recording-button button,
+  .run-gentrace-button button,
   .more-menu,
   .remote-debugger-button button {
     border: none;
@@ -64,6 +71,7 @@ const styles = css`
     }
   }
 
+  .run-gentrace-button button,
   .pause-button button,
   .save-recording-button button {
     background-color: rgba(255, 255, 255, 0.1);
@@ -144,7 +152,11 @@ export const ActionBar: FC<ActionBarProps> = ({
 
   const graphRunning = useRecoilValue(graphRunningState);
   const graphPaused = useRecoilValue(graphPausedState);
-
+  
+  const project = useRecoilValue(projectState);
+  const graph = useRecoilValue(graphState);
+  
+  const savedSettings = useRecoilValue(settingsState);
   const loadedRecording = useRecoilValue(loadedRecordingState);
   const { unloadRecording } = useLoadRecording();
   const [menuIsOpen, toggleMenuIsOpen] = useToggle();
@@ -152,6 +164,11 @@ export const ActionBar: FC<ActionBarProps> = ({
   const { remoteDebuggerState: remoteDebugger, disconnect } = useRemoteDebugger();
   const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
   const [copyAsTestCaseModalOpen, toggleCopyAsTestCaseModalOpen] = useToggle();
+  
+  const plugins = useDependsOnPlugins();
+  
+  const gentracePlugin = plugins.find(plugin => plugin.id === 'gentrace');
+  const isGentracePluginEnabled = !!gentracePlugin;
 
   return (
     <div css={styles}>
@@ -187,11 +204,27 @@ export const ActionBar: FC<ActionBarProps> = ({
           </button>
         </div>
       )}
-      {/* <div className={clsx('run-test-button', { running: graphRunning })}>
-        <button onClick={graphRunning ? onAbortGraph : onRunTests}>
-          Run Test <ChevronRightIcon />
-        </button>
-      </div> */}
+
+     {isGentracePluginEnabled && (
+        <div className={clsx('run-gentrace-button')}>
+          <button onClick={async () => {
+            const settings = await fillMissingSettingsFromEnvironmentVariables(
+              savedSettings,
+              globalRivetNodeRegistry.getPlugins()
+            ); 
+            
+            const gentraceApiKey = savedSettings.pluginSettings?.gentrace?.gentraceApiKey as string | undefined;
+            
+            if (!gentraceApiKey || !graph.metadata?.id) {
+              return; 
+            }
+
+            await runGentraceTests("testing-pipeline-id", gentraceApiKey, project, graph.metadata?.id);
+          }}>
+            Run Gentrace Tests
+          </button>
+        </div>
+     )} 
       {lastRecording && (
         <div className={clsx('save-recording-button')}>
           <button onClick={saveRecording}>Save Recording</button>
@@ -214,6 +247,7 @@ export const ActionBar: FC<ActionBarProps> = ({
           )}
         </button>
       </div>
+     
       <Popup
         isOpen={menuIsOpen}
         onClose={toggleMenuIsOpen.setLeft}
