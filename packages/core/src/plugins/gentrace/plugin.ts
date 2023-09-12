@@ -161,13 +161,13 @@ function convertRecordingToStepRuns(recording: Recording, project: Omit<Project,
     }
 
     if (relatedNode) {
-      pair.modelParams = { ...(relatedNode.data as Record<string, any>), ...{ type: relatedNode?.type } };
+      pair.modelParams = { ...(relatedNode.data as Record<string, any>), ...{ type: nodeType } };
     }
 
     stepRuns.push(
       new StepRun(
-        'trivet',
-        'trivet_operation',
+        'rivet',
+        'rivet_operation',
         pair.end - pair.start,
         new Date(pair.start).toISOString(),
         new Date(pair.end).toISOString(),
