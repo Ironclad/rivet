@@ -161,6 +161,9 @@ export * from './nodes/AudioNode.js';
 import { httpCallNode } from './nodes/HttpCallNode.js';
 export * from './nodes/HttpCallNode.js';
 
+import { delayNode } from './nodes/DelayNode.js';
+export * from './nodes/DelayNode.js';
+
 export const registerBuiltInNodes = (registry: NodeRegistration) => {
   return registry
     .register(toYamlNode)
@@ -215,7 +218,8 @@ export const registerBuiltInNodes = (registry: NodeRegistration) => {
     .register(commentNode)
     .register(imageNode)
     .register(audioNode)
-    .register(httpCallNode);
+    .register(httpCallNode)
+    .register(delayNode);
 };
 
 let globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());
