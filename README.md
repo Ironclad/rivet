@@ -5,7 +5,7 @@
 <h3 align="center"><a href="https://github.com/Ironclad/rivet/releases">Download</a> | <a href="https://rivet.ironcladapp.com">Website</a> | <a href="https://rivet.ironcladapp.com/docs">Documentation</a></h3>
 
 <p align="center">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/2DWwwcPrejQ?si=GZQkIxosorHz1pZz" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+https://www.loom.com/share/e53f41cb68d34c869feec8e10f4b4e48
 </p>
 
 <p align="center">
