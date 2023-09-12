@@ -1,6 +1,6 @@
 <h1 align="center"><img src="https://rivet.ironcladapp.com/img/Square150x150Logo.png" alt="Rivet Logo" width="32"> Rivet</h1>
 
-![GitHub all releases](https://img.shields.io/github/downloads/ironclad/rivet/total) [![All Contributors](https://img.shields.io/github/all-contributors/Ironclad/rivet?color=ee8449&style=flat-square)](#contributors-) ![GitHub issues](https://img.shields.io/github/issues/Ironclad/rivet) ![GitHub pull requests](https://img.shields.io/github/issues-pr/Ironclad/rivet) ![License](https://img.shields.io/github/license/Ironclad/rivet) [![Discord](https://img.shields.io/discord/1149376303070466110?style=flat&logo=discord)](https://discord.gg/qT8B2gv9Mg)
+[![All Contributors](https://img.shields.io/github/all-contributors/Ironclad/rivet?color=ee8449&style=flat-square)](#contributors-) ![GitHub issues](https://img.shields.io/github/issues/Ironclad/rivet) ![GitHub pull requests](https://img.shields.io/github/issues-pr/Ironclad/rivet) ![License](https://img.shields.io/github/license/Ironclad/rivet) [![Discord](https://img.shields.io/discord/1149376303070466110?style=flat&logo=discord)](https://discord.gg/qT8B2gv9Mg)
 
 <h3 align="center"><a href="https://github.com/Ironclad/rivet/releases">Download</a> | <a href="https://rivet.ironcladapp.com">Website</a> | <a href="https://rivet.ironcladapp.com/docs">Documentation</a></h3>
 
@@ -12,7 +12,7 @@
   ·
   <a href="https://github.com/Ironclad/rivet/issues">Request Feature</a>
   ·
-  <a href="https://github.com/Ironclad/rivet/discussions">Disussions</a>
+  <a href="https://github.com/Ironclad/rivet/discussions">Discussions</a>
   ·
   <a href="https://discord.gg/qT8B2gv9Mg">Chat</a>
 </p>
@@ -96,7 +96,7 @@ The Rivet project is welcome to all contributors, and as such, we have a [Code o
 
 ## Troubleshooting
 
-If you have ran into any issues while running the Rivet application, or when integrating it into your code, please check the [Issues](https://github.com/Ironclad/rivet/issues) page for any existing issues, and if you can't find any, please open a new issue!
+If you have run into any issues while running the Rivet application, or when integrating it into your code, please check the [Issues](https://github.com/Ironclad/rivet/issues) page for any existing issues, and if you can't find any, please open a new issue!
 
 If you have any other questions on using Rivet, or have any other ideas, feel free to open a [discussion](https://github.com/Ironclad/rivet/discussions)!
 
@@ -121,7 +121,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/scottbessler"><img src="https://avatars.githubusercontent.com/u/293802?v=4?s=100" width="100px;" alt="Scott Bessler"/><br /><sub><b>Scott Bessler</b></sub></a><br /><a href="#example-scottbessler" title="Examples">💡</a> <a href="https://github.com/Ironclad/rivet/commits?author=scottbessler" title="Code">💻</a> <a href="https://github.com/Ironclad/rivet/issues?q=author%3Ascottbessler" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/meeow"><img src="https://avatars.githubusercontent.com/u/18222559?v=4?s=100" width="100px;" alt="Brandon Hong"/><br /><sub><b>Brandon Hong</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=meeow" title="Code">💻</a> <a href="https://github.com/Ironclad/rivet/issues?q=author%3Ameeow" title="Bug reports">🐛</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://swimburger.net"><img src="https://avatars.githubusercontent.com/u/3382717?v=4?s=100" width="100px;" alt="Niels Swimberghe"/><br /><sub><b>Niels Swimberghe</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=Swimburger" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://swimburger.net"><img src="https://avatars.githubusercontent.com/u/3382717?v=4?s=100" width="100px;" alt="Niels Swimberghe"/><br /><sub><b>Niels Swimberghe</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=Swimburger" title="Code">💻</a> <a href="https://github.com/Ironclad/rivet/commits?author=Swimburger" title="Documentation">📖</a> <a href="https://github.com/Ironclad/rivet/issues?q=author%3ASwimburger" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/tcgj"><img src="https://avatars.githubusercontent.com/u/7994529?v=4?s=100" width="100px;" alt="Terence C"/><br /><sub><b>Terence C</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=tcgj" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/tbrodahl-ironclad"><img src="https://avatars.githubusercontent.com/u/142630410?v=4?s=100" width="100px;" alt="Thomas Brodahl"/><br /><sub><b>Thomas Brodahl</b></sub></a><br /><a href="#design-tbrodahl-ironclad" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Jkwok0714"><img src="https://avatars.githubusercontent.com/u/28716303?v=4?s=100" width="100px;" alt="Justin Kwok"/><br /><sub><b>Justin Kwok</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/issues?q=author%3AJkwok0714" title="Bug reports">🐛</a></td>
@@ -129,6 +129,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Crystalix007"><img src="https://avatars.githubusercontent.com/u/4603729?v=4?s=100" width="100px;" alt="Michael Kuc"/><br /><sub><b>Michael Kuc</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=Crystalix007" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/eltociear"><img src="https://avatars.githubusercontent.com/u/22633385?v=4?s=100" width="100px;" alt="Ikko Eltociear Ashimine"/><br /><sub><b>Ikko Eltociear Ashimine</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=eltociear" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
