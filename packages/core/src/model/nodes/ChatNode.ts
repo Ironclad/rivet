@@ -478,7 +478,10 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           }
 
           const startTime = Date.now();
-
+          if (!context.settings.openAiKey) {
+            throw new Error("OpenAI key must be configured.");
+          }
+          
           const chunks = streamChatCompletions({
             auth: {
               apiKey: context.settings.openAiKey,
