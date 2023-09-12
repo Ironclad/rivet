@@ -28,6 +28,7 @@ import { graphState } from '../state/graph';
 import { projectState } from '../state/savedGraphs.js';
 import { settingsState } from '../state/settings';
 import { globalRivetNodeRegistry } from '@ironclad/rivet-core';
+import { TauriNativeApi } from '../model/native/TauriNativeApi';
 
 const styles = css`
   position: fixed;
@@ -212,15 +213,13 @@ export const ActionBar: FC<ActionBarProps> = ({
               savedSettings,
               globalRivetNodeRegistry.getPlugins()
             ); 
-            
-            const gentraceApiKey = savedSettings.pluginSettings?.gentrace?.gentraceApiKey as string | undefined;
-            
-            if (!gentraceApiKey || !graph.metadata?.id) {
+           
+            if (!graph.metadata?.id) {
               return; 
             }
 
             // TODO @gentrace: remove hardcoded pipeline id
-            await runGentraceTests("testing-pipeline-id", gentraceApiKey, project, graph.metadata?.id);
+            await runGentraceTests("testing-pipeline-id", settings, project, graph.metadata?.id, new TauriNativeApi());
           }}>
             Run Gentrace Tests
           </button>

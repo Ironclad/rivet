@@ -165,6 +165,7 @@ export function useLocalExecutor() {
             }))
         : testSuites;
       try {
+        console.log('trivet running entrypoint');
         const result = await runTrivet({
           project,
           iterationCount: options.iterationCount,
@@ -178,6 +179,8 @@ export function useLocalExecutor() {
           runGraph: async (project, graphId, inputs) => {
             const processor = new GraphProcessor(project, graphId);
             attachGraphEvents(processor);
+            
+            console.log('trivet running graph', inputs);
             return processor.processGraph(
               {
                 settings: await fillMissingSettingsFromEnvironmentVariables(
