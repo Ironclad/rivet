@@ -1,10 +1,11 @@
-import { Pipeline, init, runTest } from '@gentrace/core';
+import { Pipeline, StepRun, init, runTest } from '@gentrace/core';
 import {
   ExecutionRecorder,
   GraphId,
   GraphProcessor,
   NativeApi,
   Project,
+  Recording,
   RivetPlugin,
   SecretPluginConfigurationSpec,
   Settings,
@@ -28,7 +29,7 @@ export const runGentraceTests = async (
   gentracePipelineSlug: string,
   settings: Settings,
   project: Omit<Project, 'data'>,
-  graphId: string,
+  graphId: GraphId,
   nativeApi: NativeApi,
 ) => {
   const gentraceApiKey = settings.pluginSettings?.gentrace?.gentraceApiKey as string | undefined;
@@ -62,7 +63,7 @@ export const runGentraceTests = async (
     console.log('rivetFormattedInputs', rivetFormattedInputs);
 
     const recorder = new ExecutionRecorder();
-    const processor = new GraphProcessor(project, graphId as GraphId);
+    const processor = new GraphProcessor(project, graphId);
 
     recorder.record(processor);
     const outputs = await processor.processGraph(
@@ -75,13 +76,89 @@ export const runGentraceTests = async (
 
     const fullRecording = recorder.getRecording();
 
-    console.log('fullRecording', fullRecording);
+    const stepRuns = convertRecordingToStepRuns(fullRecording, project, graphId);
 
-    // Get start and end nodes
+    stepRuns.forEach((stepRun) => {
+      runner.addStepRunNode(stepRun);
+    });
 
     return ['', runner];
   });
 };
+
+type SimplifiedNode = {
+  nodeId: string;
+  start: number;
+  end: number;
+  modelParams: Record<string, any>;
+  inputs: Record<string, any>;
+  outputs: Record<string, any>;
+};
+
+function convertRecordingToStepRuns(recording: Recording, project: Omit<Project, 'data'>, graphId: GraphId): StepRun[] {
+  const partialProcessStartEndPairs: {
+    [processId: string]: Partial<SimplifiedNode>;
+  } = {};
+
+  recording.events.forEach((event) => {
+    const eventType = event?.type;
+
+    if (!eventType) {
+      return;
+    }
+
+    if (eventType === 'nodeStart' || eventType === 'nodeFinish') {
+      const processId = event?.data?.processId;
+      const nodeId = event?.data?.nodeId;
+
+      if (!processId) {
+        return;
+      }
+
+      let existingPair = partialProcessStartEndPairs[processId];
+
+      if (!existingPair) {
+        existingPair = {};
+        partialProcessStartEndPairs[processId] = existingPair;
+      }
+
+      existingPair.nodeId = nodeId;
+
+      if (eventType === 'nodeStart') {
+        existingPair.start = event.ts;
+        existingPair.inputs = event.data.inputs;
+      } else {
+        existingPair.end = event.ts;
+        existingPair.outputs = event.data.outputs;
+      }
+    }
+  });
+
+  const processStartEndPairs = partialProcessStartEndPairs as {
+    [processId: string]: SimplifiedNode;
+  };
+
+  const selectedGraph = project.graphs[graphId];
+
+  if (!selectedGraph) {
+    return [];
+  }
+
+  for (const [, pair] of Object.entries(processStartEndPairs)) {
+    const { nodeId } = pair;
+
+    const relatedNode = selectedGraph.nodes.find((node) => node.id === nodeId);
+
+    if (relatedNode) {
+      pair.modelParams = relatedNode.data as Record<string, any>;
+    }
+  }
+
+  // Convert to step runs
+  const stepRuns: StepRun[] = [];
+
+  return stepRuns;
+}
 
 export const gentracePlugin: RivetPlugin = {
   id: 'gentrace',
