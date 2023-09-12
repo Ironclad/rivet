@@ -58,6 +58,11 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
         title: 'Transcript text',
       },
       {
+        dataType: 'string',
+        id: 'id' as PortId,
+        title: 'Transcript ID',
+      },
+      {
         dataType: 'object',
         id: 'transcript' as PortId,
         title: 'Transcript object',
@@ -111,10 +116,14 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
         type: 'string',
         value: transcript.text,
       },
+      ['id' as PortId]: {
+        type: 'string',
+        value: transcript.id,
+      },
       ['transcript' as PortId]: {
         type: 'object',
         value: transcript,
-      },
+      }
     };
   }
 }
