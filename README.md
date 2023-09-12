@@ -5,10 +5,6 @@
 <h3 align="center"><a href="https://github.com/Ironclad/rivet/releases">Download</a> | <a href="https://rivet.ironcladapp.com">Website</a> | <a href="https://rivet.ironcladapp.com/docs">Documentation</a></h3>
 
 <p align="center">
-https://www.loom.com/share/e53f41cb68d34c869feec8e10f4b4e48
-</p>
-
-<p align="center">
   <a href="https://rivet.ironcladapp.com">Rivet</a>, the IDE for creating complex AI agents and prompt chaining, and embedding it in your application.
   <br />
   <br />
@@ -22,6 +18,8 @@ https://www.loom.com/share/e53f41cb68d34c869feec8e10f4b4e48
 </p>
 
 Have a question? Need some help? Check out the Rivet [Discord server](https://discord.gg/qT8B2gv9Mg)!
+
+https://github.com/Ironclad/rivet/assets/448108/ad1d5e74-fe05-444e-8da7-66a1fc5b6848
 
 - [About Rivet](#about-rivet)
   - [Rivet Application](#rivet-application)
