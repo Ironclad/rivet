@@ -6,12 +6,14 @@ import { loadedProjectState, projectPluginsState, projectState, savedGraphsState
 import { ReactComponent as ExpandLeftIcon } from 'majesticons/line/menu-expand-left-line.svg';
 import { ReactComponent as ExpandRightIcon } from 'majesticons/line/menu-expand-right-line.svg';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
+import TextField from '@atlaskit/textfield';
 import { NodeGraph } from '@ironclad/rivet-core';
 import { sidebarOpenState } from '../state/graphBuilder.js';
 import { appWindow } from '@tauri-apps/api/window';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import { GraphList } from './GraphList.js';
 import { ProjectPluginsConfiguration } from './ProjectPluginConfiguration';
+import { AttachedData } from '../../../core/src/utils/serialization/serializationUtils.js';
 
 const styles = css`
   position: fixed;
@@ -137,6 +139,8 @@ export const LeftSidebar: FC = () => {
                   }
                   readViewFitContainerWidth
                 />
+                
+                <GraphPluginData pluginData={graph?.metadata?.attachedData ?? {}} />
               </div>
             </div>
           </TabPanel>
@@ -173,4 +177,24 @@ export const LeftSidebar: FC = () => {
       </div>
     </div>
   );
+};
+
+const GraphPluginData = ({ pluginData }: { pluginData: AttachedData }) => {
+  if (Object.keys(pluginData).length === 0) {
+    return null;
+  }
+  
+  return <div>{
+    Object.entries(pluginData).map(([pluginKey, pluginData]) => {
+      return (
+        <div key={pluginKey}>
+          <TextField
+            label={pluginKey}
+            value={pluginData as string | number | readonly string[] | undefined}
+          /> 
+        </div>
+      );
+    })
+  }
+  </div>;
 };

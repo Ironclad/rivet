@@ -5,7 +5,7 @@ const apiKeyConfigSpec: SecretPluginConfigurationSpec = {
   label: 'Gentrace API Key',
   description: 'The API key for the Gentrace service.',
   pullEnvironmentVariable: 'GENTRACE_API_KEY',
-  helperText: 'You may also set the GENTRACE_API_KEY environment variable.',
+  helperText: 'Create at https://gentrace.ai/settings/api-keys',
 };
 
 export const gentracePlugin: RivetPlugin = {
