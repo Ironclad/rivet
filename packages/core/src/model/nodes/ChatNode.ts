@@ -12,7 +12,6 @@ import { addWarning } from '../../utils/outputs.js';
 import {
   ChatCompletionOptions,
   ChatCompletionRequestMessage,
-  GptFunctionCall,
   OpenAIError,
   openAiModelOptions,
   openaiModels,
@@ -23,8 +22,7 @@ import { Inputs, Outputs } from '../GraphProcessor.js';
 import { match } from 'ts-pattern';
 import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 import { InternalProcessContext } from '../ProcessContext.js';
-import { EditorDefinition, expectTypeOptional, getError } from '../../index.js';
-import { merge } from 'lodash-es';
+import { EditorDefinition, expectTypeOptional, getError, getInputOrData } from '../../index.js';
 import { dedent } from 'ts-dedent';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
@@ -41,6 +39,8 @@ export type ChatNodeConfigData = {
   enableFunctionUse?: boolean;
   user?: string;
   numberOfChoices?: number;
+  endpoint?: string;
+  overrideModel?: string;
 };
 
 export type ChatNodeData = ChatNodeConfigData & {
@@ -56,6 +56,7 @@ export type ChatNodeData = ChatNodeConfigData & {
   useFrequencyPenaltyInput: boolean;
   useUserInput?: boolean;
   useNumberOfChoicesInput?: boolean;
+  useEndpointInput?: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
@@ -66,6 +67,7 @@ export type ChatNodeData = ChatNodeConfigData & {
 // Temporary
 const cache = new Map<string, Outputs>();
 
+const DEFAULT_CHAT_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
 export class ChatNodeImpl extends NodeImpl<ChatNode> {
   static create(): ChatNode {
     const chartNode: ChatNode = {
@@ -118,6 +120,14 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
   getInputDefinitions(): NodeInputDefinition[] {
     const inputs: NodeInputDefinition[] = [];
+
+    if (this.data.useEndpointInput) {
+      inputs.push({
+        dataType: 'string',
+        id: 'endpoint' as PortId,
+        title: 'Endpoint',
+      });
+    }
 
     inputs.push({
       id: 'systemPrompt' as PortId,
@@ -272,7 +282,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     return [
       {
         type: 'dropdown',
-        label: 'Model',
+        label: 'GPT Model',
         dataKey: 'model',
         useInputToggleDataKey: 'useModelInput',
         options: openAiModelOptions,
@@ -356,6 +366,17 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataKey: 'enableFunctionUse',
       },
       {
+        type: 'string',
+        label: 'Endpoint',
+        dataKey: 'endpoint',
+        useInputToggleDataKey: 'useEndpointInput',
+      },
+      {
+        type: 'string',
+        label: 'Custom Model',
+        dataKey: 'overrideModel',
+      },
+      {
         type: 'toggle',
         label: 'Cache (same inputs, same outputs)',
         dataKey: 'cache',
@@ -371,39 +392,28 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const output: Outputs = {};
 
-    const model = this.data.useModelInput
-      ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? this.data.model
-      : this.data.model;
-
-    const temperature = this.data.useTemperatureInput
-      ? coerceTypeOptional(inputs['temperature' as PortId], 'number') ?? this.data.temperature
-      : this.data.temperature;
+    const model = getInputOrData(this.data, inputs, 'model');
+    const temperature = getInputOrData(this.data, inputs, 'temperature', 'number');
 
     const topP = this.data.useTopPInput
       ? coerceTypeOptional(inputs['top_p' as PortId], 'number') ?? this.data.top_p
       : this.data.top_p;
 
-    const useTopP = this.data.useUseTopPInput
-      ? coerceTypeOptional(inputs['useTopP' as PortId], 'boolean') ?? this.data.useTopP
-      : this.data.useTopP;
-
+    const useTopP = getInputOrData(this.data, inputs, 'useTopP', 'boolean');
     const stop = this.data.useStopInput
       ? this.data.useStop
         ? coerceTypeOptional(inputs['stop' as PortId], 'string') ?? this.data.stop
         : undefined
       : this.data.stop;
 
-    const presencePenalty = this.data.usePresencePenaltyInput
-      ? coerceTypeOptional(inputs['presencePenalty' as PortId], 'number') ?? this.data.presencePenalty
-      : this.data.presencePenalty;
+    const presencePenalty = getInputOrData(this.data, inputs, 'presencePenalty', 'number');
+    const frequencyPenalty = getInputOrData(this.data, inputs, 'frequencyPenalty', 'number');
+    const numberOfChoices = getInputOrData(this.data, inputs, 'numberOfChoices', 'number');
+    const endpoint = getInputOrData(this.data, inputs, 'endpoint');
+    const overrideModel = getInputOrData(this.data, inputs, 'overrideModel');
 
-    const frequencyPenalty = this.data.useFrequencyPenaltyInput
-      ? coerceTypeOptional(inputs['frequencyPenalty' as PortId], 'number') ?? this.data.frequencyPenalty
-      : this.data.frequencyPenalty;
-
-    const numberOfChoices = this.data.useNumberOfChoicesInput
-      ? coerceTypeOptional(inputs['numberOfChoices' as PortId], 'number') ?? this.data.numberOfChoices ?? 1
-      : this.data.numberOfChoices ?? 1;
+    // If using a model input, that's priority, otherwise override > main
+    const finalModel = this.data.useModelInput && inputs['model' as PortId] != null ? model : overrideModel || model;
 
     const functions = coerceTypeOptional(inputs['functions' as PortId], 'gpt-function[]');
 
@@ -447,7 +457,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         async () => {
           const options: Omit<ChatCompletionOptions, 'auth' | 'signal'> = {
             messages: completionMessages,
-            model: model as keyof typeof openaiModels,
+            model: finalModel,
             temperature: useTopP ? undefined : temperature,
             top_p: useTopP ? topP : undefined,
             max_tokens: maxTokens,
@@ -456,6 +466,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             presence_penalty: presencePenalty,
             stop: stop || undefined,
             functions: functions?.length === 0 ? undefined : functions,
+            endpoint: endpoint ?? DEFAULT_CHAT_ENDPOINT,
           };
           const cacheKey = JSON.stringify(options);
 

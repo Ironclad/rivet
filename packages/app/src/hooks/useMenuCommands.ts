@@ -24,7 +24,8 @@ type MenuIds =
   | 'import_graph'
   | 'run'
   | 'load_recording'
-  | 'remote_debugger';
+  | 'remote_debugger'
+  | 'toggle_devtools';
 
 const handlerState: {
   handler: (e: { payload: MenuIds }) => void;
@@ -98,6 +99,7 @@ export function useMenuCommands(
         .with('remote_debugger', () => {
           toggleRemoteDebugger();
         })
+        .with('toggle_devtools', () => {})
         .exhaustive();
     };
 

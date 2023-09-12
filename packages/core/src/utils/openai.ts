@@ -109,9 +109,10 @@ export type ChatCompletionRequestMessage = {
 
 // https://platform.openai.com/docs/api-reference/chat/create
 export type ChatCompletionOptions = {
+  endpoint: string;
   auth: { apiKey: string; organization?: string };
   signal?: AbortSignal;
-  model: SupportedModels;
+  model: string;
   messages: ChatCompletionRequestMessage[];
   temperature?: number;
   top_p?: number;
@@ -182,12 +183,13 @@ export type ChatCompletionFunction = {
 };
 
 export async function* streamChatCompletions({
+  endpoint,
   auth,
   signal,
   ...rest
 }: ChatCompletionOptions): AsyncGenerator<ChatCompletionChunk> {
   const abortSignal = signal ?? new AbortController().signal;
-  const response = await fetchEventSource('https://api.openai.com/v1/chat/completions', {
+  const response = await fetchEventSource(endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
