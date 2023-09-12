@@ -10,7 +10,7 @@ export interface Settings<PluginSettings = Record<string, Record<string, unknown
   };
 
   // TODO move to openai plugin
-  openAiKey: string;
+  openAiKey?: string;
   openAiOrganization?: string;
 
   // anthropicApiKey?: string;

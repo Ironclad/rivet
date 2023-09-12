@@ -56,8 +56,8 @@ export type RunGraphOptions = {
   abortSignal?: AbortSignal;
   registry?: NodeRegistration;
 } & {
-  [P in keyof ProcessEvents as `on${PascalCase<P>}`]?: (params: ProcessEvents[P]) => void;
-} & Settings;
+    [P in keyof ProcessEvents as `on${PascalCase<P>}`]?: (params: ProcessEvents[P]) => void;
+  } & Settings;
 
 export async function runGraphInFile(path: string, options: RunGraphOptions): Promise<Record<string, DataValue>> {
   const project = await loadProjectFromFile(path);
@@ -193,7 +193,7 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
         {
           nativeApi: options.nativeApi ?? new NodeNativeApi(),
           settings: {
-            openAiKey: options.openAiKey,
+            openAiKey: options.openAiKey ?? '',
             openAiOrganization: options.openAiOrganization ?? '',
             pluginEnv: options.pluginEnv ?? {},
             pluginSettings: options.pluginSettings ?? {},
@@ -227,8 +227,8 @@ function getPluginEnvFromProcessEnv(registry?: NodeRegistration) {
           typeof config.pullEnvironmentVariable === 'string'
             ? config.pullEnvironmentVariable
             : config.pullEnvironmentVariable === true
-            ? configName
-            : undefined;
+              ? configName
+              : undefined;
         if (envVarName) {
           pluginEnv[envVarName] = process.env[envVarName] ?? '';
         }
