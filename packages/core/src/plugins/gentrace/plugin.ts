@@ -156,12 +156,23 @@ function convertRecordingToStepRuns(recording: Recording, project: Omit<Project,
 
     const nodeType = relatedNode?.type;
 
-    if (!nodeType || nodeType === 'graphInput' || nodeType === 'graphOutput') {
+    if (!nodeType || !relatedNode.data || nodeType === 'graphInput' || nodeType === 'graphOutput') {
       continue;
     }
 
+    const nodeData = relatedNode.data as Record<string, any>;
+
     if (relatedNode) {
-      pair.modelParams = { ...(relatedNode.data as Record<string, any>), ...{ type: nodeType } };
+      pair.modelParams = { ...nodeData, ...{ type: nodeType } };
+    }
+
+    if (nodeType === 'chat') {
+      const modelName = nodeData.model ? nodeData.model : '';
+
+      if (modelName.startsWith('gpt')) {
+        // Convert to OpenAI node
+        console.log('chat information', relatedNode);
+      }
     }
 
     stepRuns.push(
