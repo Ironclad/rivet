@@ -1,0 +1,57 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.card {
+  position: relative;
+  width: 768px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--black-0);
+  background-image: url('/static/img/lines.svg');
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: max(100%, 1440px);
+  pointer-events: none;
+}
+
+.logo {
+  gap: 16px;
+  display: flex;
+  justify-content: center;
+  font-size: 50px;
+  line-height: 1;
+  color: white;
+}
+
+.tagLine {
+  color: #ddd;
+  width: 100%;
+  font-size: 50px;
+  max-width: 100%;
+  margin-top: 32px;
+  text-align: right;
+}
