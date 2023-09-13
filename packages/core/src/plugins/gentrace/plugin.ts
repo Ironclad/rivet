@@ -43,7 +43,7 @@ export const runGentraceTests = async (
 
   initializeGentrace(gentraceApiKey);
 
-  await runTest(gentracePipelineSlug, async (testCase) => {
+  const response = await runTest(gentracePipelineSlug, async (testCase) => {
     const pipeline = new Pipeline({
       slug: gentracePipelineSlug,
     });
@@ -83,6 +83,8 @@ export const runGentraceTests = async (
 
     return ['', runner];
   });
+
+  return response;
 };
 
 type SimplifiedNode = {

@@ -273,8 +273,25 @@ export const ActionBar: FC<ActionBarProps> = ({
             }
 
             toast.info(`Running Gentrace pipeline ${currentGentracePipelineSlug} tests ...`);
-            await runGentraceTests(currentGentracePipelineSlug, settings, project, graph.metadata?.id, new TauriNativeApi());
-            toast.info(`Gentrace pipeline ${currentGentracePipelineSlug} tests finished.`);
+            const testResponse = await runGentraceTests(currentGentracePipelineSlug, settings, project, graph.metadata?.id, new TauriNativeApi());
+            
+            const testResultId = testResponse.resultId;
+            
+            const url = `http://gentrace.ai/pipeline/${gentracePipelineSettings.id}/results/${testResultId}?size=compact`;
+
+            toast.info((
+              <div>
+                <div>
+                  Gentrace pipeline {currentGentracePipelineSlug} tests finished.
+                </div>
+                <div>
+                  View results here <a href={url} target="_blank" rel="noreferrer">{url}</a>
+                </div>
+              </div>
+            ), {
+              autoClose: false,
+              closeOnClick: false
+            });
           }}>
             <div>
               <img height={18} src={gentraceImage} alt="Gentrace" />
