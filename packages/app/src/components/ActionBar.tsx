@@ -316,12 +316,29 @@ type GentracePipelinePickerProps = {
 type ArrayType<T> = T extends Array<infer U> ? U : never;
 type GentracePipeline = ArrayType<Awaited<ReturnType<typeof getGentracePipelines>>>
 
+const pickerStyles = css`
+  background-color: var(--grey-darkish);
+  border-radius: 4px;
+  border: 1px solid var(--grey-dark);
+  box-shadow: 3px 1px 10px rgba(0, 0, 0, 0.5);
+  min-width: 400px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+
+  * {
+    font-family: 'Roboto', sans-serif;
+  }
+`;
+
 const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) => {
   const savedSettings = useRecoilValue(settingsState);
   
   const gentraceApiKey = savedSettings.pluginSettings?.gentrace?.gentraceApiKey as string | undefined;
  
   const [pipelines, setPipelines] = useState<GentracePipeline[]>([]);
+  
+  const [selectedPipeline, setSelectedPipeline] = useState<{ label: string, value: string } | null>(null);
   
   useEffect(() => {
     if (!gentraceApiKey) {
@@ -334,10 +351,23 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
     
   }, [gentraceApiKey]);
   
-  console.log('pipelines', pipelines);
+  const pipelineOptions = pipelines.map(p => ({
+    label: p.displayName ?? p.slug, 
+    value: p.slug
+  }));
+
+  const effectiveSelectedPipeline = selectedPipeline ?? pipelineOptions[0] ?? null;
 
   return (
-    <div>
+    <div css={pickerStyles}>
+      <Select
+        id="gentrace-pipeline-selector"
+        appearance="subtle"
+        options={pipelineOptions}
+        value={effectiveSelectedPipeline}
+        onChange={(selected) => setSelectedPipeline(selected)}
+        isSearchable={false}
+      />
     </div>
   );
 };
