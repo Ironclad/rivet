@@ -66,6 +66,33 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
   const currentOption = pipelineOptions.find(o => o.value === currentGentracePipelineSlug); 
 
   const effectiveSelectedPipeline = selectedPipelineOption ?? currentOption ?? pipelineOptions[0] ?? null;
+  
+  const onSave = () => {
+    if (!selectedPipelineOption) {
+      return;
+    }
+    
+    const selectedPipeline = pipelines.find(p => p.slug === selectedPipelineOption.value);
+    
+    if (!selectedPipeline) {
+      return;
+    }
+
+    setGraph({ 
+      ...graph, 
+      metadata: { 
+        ...graph.metadata, 
+        attachedData: { 
+          ...(graph.metadata?.attachedData ?? {}), 
+          gentracePipeline: selectedPipeline
+        } 
+      } 
+    });
+    
+    setSelectedPipeline(null);
+    
+    toast.info(`Saved Gentrace Pipeline: ${selectedPipelineOption.label}`, { autoClose: 4000 });
+  };
 
   return (
     <div css={pickerContainerStyles}>
@@ -109,32 +136,7 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
           height: 32px;
           border-radius: 5px;
           background: ${selectedPipelineOption ? "var(--success)" : "var(--grey-darker)"};
-        `} disabled={!selectedPipelineOption} onClick={() => {
-          if (!selectedPipelineOption) {
-            return;
-          }
-          
-          const selectedPipeline = pipelines.find(p => p.slug === selectedPipelineOption.value);
-          
-          if (!selectedPipeline) {
-            return;
-          }
-
-          setGraph({ 
-            ...graph, 
-            metadata: { 
-              ...graph.metadata, 
-              attachedData: { 
-                ...(graph.metadata?.attachedData ?? {}), 
-                gentracePipeline: selectedPipeline
-              } 
-            } 
-          });
-          
-          setSelectedPipeline(null);
-          
-          toast.info(`Saved Gentrace Pipeline: ${selectedPipelineOption.label}`, { autoClose: 4000 });
-        }}>
+        `} disabled={!selectedPipelineOption} onClick={onSave}>
           Save
         </button>
       </div>
