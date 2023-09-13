@@ -90,7 +90,7 @@ export class DelayNodeImpl extends NodeImpl<DelayNode> {
 
   getEditors(): EditorDefinition<DelayNode>[] {
     return [
-      { type: 'number', label: 'Delay (ms)', dataKey: 'delay' as never, defaultValue: 0 },
+      { type: 'number', label: 'Delay (ms)', dataKey: 'delay', defaultValue: 0 },
     ];
   }
 
