@@ -173,6 +173,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "hushaudio",
+      "name": "HU$H",
+      "avatar_url": "https://avatars.githubusercontent.com/u/54246375?v=4",
+      "profile": "http://ohshutit.com",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
