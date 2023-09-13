@@ -24,8 +24,6 @@ const apiKeyConfigSpec: SecretPluginConfigurationSpec = {
 function initializeGentrace(gentraceApiKey: string) {
   init({
     apiKey: gentraceApiKey,
-    // TODO: remov
-    basePath: 'http://localhost:3000/api/v1',
   });
 }
 
@@ -62,7 +60,7 @@ export const runGentraceTests = async (
 
     Object.entries(testCase.inputs).forEach(([key, value]) => {
       rivetFormattedInputs[key] = {
-        // TODO: this is too naïve
+        // Improve to fit Gentrace data types into the format that Rivet expects. Currently too naïve.
         type: typeof value,
         value,
       };
