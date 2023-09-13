@@ -183,6 +183,15 @@
         "code",
         "ideas"
       ]
+    },
+    {
+      "login": "kcwhite",
+      "name": "kcwhite",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3812801?v=4",
+      "profile": "https://github.com/kcwhite",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
