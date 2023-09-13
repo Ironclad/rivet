@@ -316,7 +316,7 @@ type GentracePipelinePickerProps = {
 type ArrayType<T> = T extends Array<infer U> ? U : never;
 type GentracePipeline = ArrayType<Awaited<ReturnType<typeof getGentracePipelines>>>
 
-const pickerStyles = css`
+const pickerContainerStyles = css`
   background-color: var(--grey-darkish);
   border-radius: 4px;
   border: 1px solid var(--grey-dark);
@@ -333,6 +333,10 @@ const pickerStyles = css`
 
 const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) => {
   const savedSettings = useRecoilValue(settingsState);
+  
+  const [graph, setGraph] = useRecoilState(graphState);
+  
+  console.log('graph metadata', graph?.metadata);
   
   const gentraceApiKey = savedSettings.pluginSettings?.gentrace?.gentraceApiKey as string | undefined;
  
@@ -351,6 +355,8 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
     
   }, [gentraceApiKey]);
   
+  const dropdownTarget = useRef<HTMLDivElement>(null);
+  
   const pipelineOptions = pipelines.map(p => ({
     label: p.displayName ?? p.slug, 
     value: p.slug
@@ -359,15 +365,54 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
   const effectiveSelectedPipeline = selectedPipeline ?? pipelineOptions[0] ?? null;
 
   return (
-    <div css={pickerStyles}>
-      <Select
-        id="gentrace-pipeline-selector"
-        appearance="subtle"
-        options={pipelineOptions}
-        value={effectiveSelectedPipeline}
-        onChange={(selected) => setSelectedPipeline(selected)}
-        isSearchable={false}
-      />
+    <div css={pickerContainerStyles}>
+      <Portal zIndex={1000}>
+        <div ref={dropdownTarget} />
+      </Portal>
+
+      <div style={{
+        marginBottom: 10,
+        fontWeight: 500,
+        fontSize: 15,
+      }}>
+        Select Gentrace Pipeline
+      </div>
+
+      <div style={{
+        marginBottom: 10
+      }}>
+        <Select
+          id="gentrace-pipeline-selector"
+          appearance="subtle"
+          options={pipelineOptions}
+          value={effectiveSelectedPipeline}
+          onChange={(selected) => setSelectedPipeline(selected)}
+          isSearchable={false}
+          menuPortalTarget={dropdownTarget.current}
+        />
+      </div>
+     
+      <div>
+        <button style={{
+          border: "none",
+          padding: "0.5rem 1rem",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem",
+          margin: 0,
+          height: "32px",
+          borderRadius: "5px",
+          background: "var(--grey-darker)"
+        }} disabled={!selectedPipeline} onClick={() => {
+          if (!selectedPipeline) {
+            return;
+          }
+          setGraph({ ...graph, metadata: { ...graph.metadata, attachedData: { ...(graph.metadata?.attachedData ?? {}), gentracePipelineSlug: selectedPipeline.value } } });
+        }}>
+          Save
+        </button>
+      </div>
     </div>
   );
 };
