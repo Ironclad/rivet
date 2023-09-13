@@ -24,10 +24,6 @@ const pickerContainerStyles = css`
   padding: 20px;
   display: flex;
   flex-direction: column;
-
-  * {
-    font-family: 'Roboto', sans-serif;
-  }
 `;
 
 const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) => {
@@ -49,9 +45,14 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
       return;
     }
     
-    getGentracePipelines(gentraceApiKey).then(ps => {
-      setPipelines(ps);
-    });
+    getGentracePipelines(gentraceApiKey)
+      .then(ps => {
+        setPipelines(ps);
+      })
+      .catch(e => {
+        const serverResult = e?.response?.data?.message ?? e?.message;
+        toast.error(`Error loading Gentrace pipelines: ${serverResult}`); 
+      });
     
   }, [gentraceApiKey]);
   
@@ -72,17 +73,17 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
         <div ref={dropdownTarget} />
       </Portal>
 
-      <div style={{
-        marginBottom: 10,
-        fontWeight: 500,
-        fontSize: 15,
-      }}>
+      <div css={css`
+        margin-bottom: 10px;
+        font-weight: 500;
+        font-size: 15px;
+      `}>
         Select Gentrace Pipeline
       </div>
 
-      <div style={{
-        marginBottom: 10
-      }}>
+      <div css={css`
+        margin-bottom: 10px;
+      `}>
         <Select
           id="gentrace-pipeline-selector"
           appearance="subtle"
@@ -94,21 +95,21 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
         />
       </div>
      
-      <div style={{
-        marginBottom: 20
-      }}>
-        <button style={{
-          border: "none",
-          padding: "0.5rem 1rem",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          gap: "0.5rem",
-          margin: 0,
-          height: "32px",
-          borderRadius: "5px",
-          background: selectedPipelineOption ? "var(--success)" : "var(--grey-darker)"
-        }} disabled={!selectedPipelineOption} onClick={() => {
+      <div css={css`
+        margin-bottom: 20px; 
+      `}>
+        <button css={css`
+          border: none;
+          padding: 0.5rem 1rem;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin: 0px;
+          height: 32px;
+          border-radius: 5px;
+          background: ${selectedPipelineOption ? "var(--success)" : "var(--grey-darker)"};
+        `} disabled={!selectedPipelineOption} onClick={() => {
           if (!selectedPipelineOption) {
             return;
           }

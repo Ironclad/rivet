@@ -19,7 +19,7 @@ import { useCurrentExecution } from '../hooks/useCurrentExecution';
 import { CopyAsTestCaseModal } from './CopyAsTestCaseModal';
 import { useToggle } from 'ahooks';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
-import GentraceInteractors from './gentrace/GentraceInteractors';
+import { GentraceInteractors } from './gentrace/GentraceInteractors';
 
 const styles = css`
   position: fixed;
