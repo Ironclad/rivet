@@ -14,6 +14,7 @@ import stableStringify from 'safe-stable-stringify';
 import * as yaml from 'yaml';
 import { AttachedData, doubleCheckProject } from './serializationUtils.js';
 import { entries } from '../typeSafety.js';
+import { PluginLoadSpec } from '../../model/PluginLoadSpec.js';
 
 type SerializedProject = {
   metadata: {
@@ -25,6 +26,7 @@ type SerializedProject = {
   graphs: Record<GraphId, SerializedGraph>;
 
   attachedData?: AttachedData;
+  plugins?: PluginLoadSpec[];
 };
 
 type SerializedGraph = {
@@ -127,6 +129,7 @@ function toSerializedProject(project: Project, attachedData?: AttachedData): Ser
     metadata: project.metadata,
     graphs: mapValues(project.graphs, (graph) => toSerializedGraph(graph)),
     attachedData,
+    plugins: project.plugins ?? [],
   };
 }
 
@@ -135,7 +138,7 @@ function fromSerializedProject(serializedProject: SerializedProject): [Project, 
     {
       metadata: serializedProject.metadata,
       graphs: mapValues(serializedProject.graphs, (graph) => fromSerializedGraph(graph)) as Record<GraphId, NodeGraph>,
-      plugins: [],
+      plugins: serializedProject.plugins ?? [],
     },
     serializedProject.attachedData ?? {},
   ];
