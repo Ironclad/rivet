@@ -176,7 +176,9 @@ export const ActionBar: FC<ActionBarProps> = ({
   
   const gentracePlugin = plugins.find(plugin => plugin.id === 'gentrace');
   const isGentracePluginEnabled = !!gentracePlugin;
-  const currentGentracePipelineSlug = graph?.metadata?.attachedData?.gentracePipelineSlug as string | undefined;
+
+  const gentracePipelineSettings = graph?.metadata?.attachedData?.gentracePipeline as GentracePipeline | undefined;
+  const currentGentracePipelineSlug = gentracePipelineSettings?.slug;
 
   return (
     <div css={styles}>
@@ -360,14 +362,15 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
   const savedSettings = useRecoilValue(settingsState);
   
   const [graph, setGraph] = useRecoilState(graphState);
-  
-  const currentGentracePipelineSlug = graph?.metadata?.attachedData?.gentracePipelineSlug as string | undefined;
+ 
+  const gentracePipelineSettings = graph?.metadata?.attachedData?.gentracePipeline as GentracePipeline | undefined;
+  const currentGentracePipelineSlug = gentracePipelineSettings?.slug;
 
   const gentraceApiKey = savedSettings.pluginSettings?.gentrace?.gentraceApiKey as string | undefined;
  
   const [pipelines, setPipelines] = useState<GentracePipeline[]>([]);
   
-  const [selectedPipeline, setSelectedPipeline] = useState<{ label: string, value: string } | null>(null);
+  const [selectedPipelineOption, setSelectedPipeline] = useState<{ label: string, value: string } | null>(null);
   
   useEffect(() => {
     if (!gentraceApiKey) {
@@ -389,7 +392,7 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
   
   const currentOption = pipelineOptions.find(o => o.value === currentGentracePipelineSlug); 
 
-  const effectiveSelectedPipeline = selectedPipeline ?? currentOption ?? pipelineOptions[0] ?? null;
+  const effectiveSelectedPipeline = selectedPipelineOption ?? currentOption ?? pipelineOptions[0] ?? null;
 
   return (
     <div css={pickerContainerStyles}>
@@ -430,8 +433,14 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
           margin: 0,
           height: "32px",
           borderRadius: "5px",
-          background: selectedPipeline ? "var(--success)" : "var(--grey-darker)"
-        }} disabled={!selectedPipeline} onClick={() => {
+          background: selectedPipelineOption ? "var(--success)" : "var(--grey-darker)"
+        }} disabled={!selectedPipelineOption} onClick={() => {
+          if (!selectedPipelineOption) {
+            return;
+          }
+          
+          const selectedPipeline = pipelines.find(p => p.slug === selectedPipelineOption.value);
+          
           if (!selectedPipeline) {
             return;
           }
@@ -442,14 +451,14 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
               ...graph.metadata, 
               attachedData: { 
                 ...(graph.metadata?.attachedData ?? {}), 
-                gentracePipelineSlug: selectedPipeline.value 
+                gentracePipeline: selectedPipeline
               } 
             } 
           });
           
           setSelectedPipeline(null);
           
-          toast.info(`Saved Gentrace Pipeline: ${selectedPipeline.label}`, { autoClose: 4000 });
+          toast.info(`Saved Gentrace Pipeline: ${selectedPipelineOption.label}`, { autoClose: 4000 });
         }}>
           Save
         </button>
