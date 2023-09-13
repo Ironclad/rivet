@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import clsx from 'clsx';
-import { FC, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useLoadRecording } from '../hooks/useLoadRecording';
 import { useSaveRecording } from '../hooks/useSaveRecording';
@@ -23,7 +23,7 @@ import { useCurrentExecution } from '../hooks/useCurrentExecution';
 import { CopyAsTestCaseModal } from './CopyAsTestCaseModal';
 import { useToggle } from 'ahooks';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
-import { runGentraceTests } from '../../../core/src/plugins/gentrace/plugin';
+import { getGentracePipelines, runGentraceTests } from '../../../core/src/plugins/gentrace/plugin';
 import { graphState } from '../state/graph';
 import { projectState } from '../state/savedGraphs.js';
 import { settingsState } from '../state/settings';
@@ -161,6 +161,8 @@ export const ActionBar: FC<ActionBarProps> = ({
   const loadedRecording = useRecoilValue(loadedRecordingState);
   const { unloadRecording } = useLoadRecording();
   const [menuIsOpen, toggleMenuIsOpen] = useToggle();
+  
+  const [gentracePipelineSelectorOpen, toggleGentracePipelineSelectorOpen] = useToggle(false);
 
   const { remoteDebuggerState: remoteDebugger, disconnect } = useRemoteDebugger();
   const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
@@ -205,6 +207,34 @@ export const ActionBar: FC<ActionBarProps> = ({
           </button>
         </div>
       )}
+     
+    {isGentracePluginEnabled && (
+      <Popup
+        isOpen={gentracePipelineSelectorOpen}
+        onClose={() => {
+          toggleGentracePipelineSelectorOpen.set(false);
+        }}
+        content={() => (
+          <GentracePipelinePicker onClose={toggleGentracePipelineSelectorOpen.setLeft} />
+        )}
+        placement="bottom-end"
+        trigger={(triggerProps) => (
+          <div className={clsx('run-gentrace-button')}>
+            <button
+              {...triggerProps}
+              onMouseDown={(e) => {
+                if (e.button === 0) {
+                  toggleGentracePipelineSelectorOpen.toggle();
+                  e.preventDefault();
+                }
+              }}
+            >
+              Add Gentrace Pipeline
+            </button>
+          </div>
+        )}
+      />
+    )}
 
      {isGentracePluginEnabled && (
         <div className={clsx('run-gentrace-button')}>
@@ -217,7 +247,7 @@ export const ActionBar: FC<ActionBarProps> = ({
             if (!graph.metadata?.id) {
               return; 
             }
-
+            
             // TODO @gentrace: remove hardcoded pipeline id
             await runGentraceTests("testing-pipeline-id", settings, project, graph.metadata?.id, new TauriNativeApi());
           }}>
@@ -225,6 +255,7 @@ export const ActionBar: FC<ActionBarProps> = ({
           </button>
         </div>
      )} 
+
       {lastRecording && (
         <div className={clsx('save-recording-button')}>
           <button onClick={saveRecording}>Save Recording</button>
@@ -274,6 +305,39 @@ export const ActionBar: FC<ActionBarProps> = ({
         )}
       />
       <CopyAsTestCaseModal open={copyAsTestCaseModalOpen} onClose={toggleCopyAsTestCaseModalOpen.setLeft} />
+    </div>
+  );
+};
+
+type GentracePipelinePickerProps = {
+  onClose: () => void;
+}
+
+type ArrayType<T> = T extends Array<infer U> ? U : never;
+type GentracePipeline = ArrayType<Awaited<ReturnType<typeof getGentracePipelines>>>
+
+const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) => {
+  const savedSettings = useRecoilValue(settingsState);
+  
+  const gentraceApiKey = savedSettings.pluginSettings?.gentrace?.gentraceApiKey as string | undefined;
+ 
+  const [pipelines, setPipelines] = useState<GentracePipeline[]>([]);
+  
+  useEffect(() => {
+    if (!gentraceApiKey) {
+      return;
+    }
+    
+    getGentracePipelines(gentraceApiKey).then(ps => {
+      setPipelines(ps);
+    });
+    
+  }, [gentraceApiKey]);
+  
+  console.log('pipelines', pipelines);
+
+  return (
+    <div>
     </div>
   );
 };

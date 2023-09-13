@@ -1,4 +1,5 @@
-import { Pipeline, StepRun, init, runTest } from '@gentrace/core';
+import { Pipeline, StepRun, init, runTest, getPipelines } from '@gentrace/core';
+
 import {
   ExecutionRecorder,
   GraphId,
@@ -10,7 +11,6 @@ import {
   SecretPluginConfigurationSpec,
   Settings,
 } from '../../index.js';
-import { OpenAICreateChatCompletionStepRun } from '@gentrace/openai';
 
 const apiKeyConfigSpec: SecretPluginConfigurationSpec = {
   type: 'secret',
@@ -23,6 +23,8 @@ const apiKeyConfigSpec: SecretPluginConfigurationSpec = {
 function initializeGentrace(gentraceApiKey: string) {
   init({
     apiKey: gentraceApiKey,
+    // TODO: remov
+    basePath: 'http://localhost:3000/api/v1',
   });
 }
 
@@ -233,6 +235,7 @@ function convertRecordingToStepRuns(recording: Recording, project: Omit<Project,
     stepRuns.push(
       new StepRun(
         'rivet',
+        // TODO: append node type to this string
         'rivet_operation',
         pair.end - pair.start,
         new Date(pair.start).toISOString(),
@@ -247,6 +250,11 @@ function convertRecordingToStepRuns(recording: Recording, project: Omit<Project,
 
   return stepRuns;
 }
+
+export const getGentracePipelines = async (gentraceApiKey: string) => {
+  initializeGentrace(gentraceApiKey);
+  return await getPipelines();
+};
 
 export const gentracePlugin: RivetPlugin = {
   id: 'gentrace',
