@@ -132,6 +132,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Crystalix007"><img src="https://avatars.githubusercontent.com/u/4603729?v=4?s=100" width="100px;" alt="Michael Kuc"/><br /><sub><b>Michael Kuc</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=Crystalix007" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/eltociear"><img src="https://avatars.githubusercontent.com/u/22633385?v=4?s=100" width="100px;" alt="Ikko Eltociear Ashimine"/><br /><sub><b>Ikko Eltociear Ashimine</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=eltociear" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://ohshutit.com"><img src="https://avatars.githubusercontent.com/u/54246375?v=4?s=100" width="100px;" alt="HU$H"/><br /><sub><b>HU$H</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=hushaudio" title="Code">💻</a> <a href="#ideas-hushaudio" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
 </table>
