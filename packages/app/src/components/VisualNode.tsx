@@ -130,6 +130,7 @@ export const VisualNode = memo(
           data-contextmenutype={`node-${node.type}`}
           onMouseOver={(event) => onMouseOver?.(event, node.id)}
           onMouseOut={(event) => onMouseOut?.(event, node.id)}
+          onDoubleClick={onStartEditing}
         >
           {isZoomedOut ? (
             <ZoomedOutVisualNodeContent
