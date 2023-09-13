@@ -12,7 +12,7 @@ import { graphState } from '../../state/graph';
 import { projectState } from '../../state/savedGraphs.js';
 import { settingsState } from '../../state/settings';
 import { fillMissingSettingsFromEnvironmentVariables } from '../../utils/tauri';
-import gentraceImage from '../../assets/node_images/gentrace.svg';
+import gentraceImage from '../../assets/vendor_logos/gentrace.svg';
 import GentracePipelinePicker, { GentracePipeline } from './GentracePipelinePicker';
 
 const GentraceInteractors = () => {
