@@ -13,9 +13,7 @@
   "typescript.preferences.importModuleSpecifier": "project-relative",
   "rust-analyzer.check.invocationLocation": "root",
   "rust-analyzer.cargo.buildScripts.invocationLocation": "root",
-  "rust-analyzer.linkedProjects": [
-    "packages/app/src-tauri/Cargo.toml"
-  ],
+  "rust-analyzer.linkedProjects": ["packages/app/src-tauri/Cargo.toml"],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   }
