@@ -276,7 +276,7 @@ export const ActionBar: FC<ActionBarProps> = ({
             let testResultId: string | null = null;
             
             try {
-              const testResponse = await runGentraceTests(currentGentracePipelineSlug, settings, project, graph.metadata?.id, new TauriNativeApi());
+              const testResponse = await runGentraceTests(currentGentracePipelineSlug, settings, project, graph, new TauriNativeApi());
               testResultId = testResponse.resultId;
             } catch (e: any) {
               console.log('Error running Gentrace pipeline tests', e,);
@@ -318,7 +318,8 @@ export const ActionBar: FC<ActionBarProps> = ({
               </div>
             ), {
               autoClose: false,
-              closeOnClick: false
+              closeOnClick: false,
+              draggable: false
             });
           }}>
             <div>
@@ -464,7 +465,7 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
           options={pipelineOptions}
           value={effectiveSelectedPipeline}
           onChange={(selected) => setSelectedPipeline(selected)}
-          isSearchable={false}
+          isSearchable={true}
           menuPortalTarget={dropdownTarget.current}
         />
       </div>

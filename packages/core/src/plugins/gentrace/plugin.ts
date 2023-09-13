@@ -5,6 +5,7 @@ import {
   GraphId,
   GraphProcessor,
   NativeApi,
+  NodeGraph,
   Project,
   Recording,
   RivetPlugin,
@@ -32,13 +33,19 @@ export const runGentraceTests = async (
   gentracePipelineSlug: string,
   settings: Settings,
   project: Omit<Project, 'data'>,
-  graphId: GraphId,
+  graph: NodeGraph,
   nativeApi: NativeApi,
 ) => {
   const gentraceApiKey = settings.pluginSettings?.gentrace?.gentraceApiKey as string | undefined;
 
   if (!gentraceApiKey) {
     throw new Error('Gentrace API key not set.');
+  }
+
+  const graphId = graph.metadata?.id;
+
+  if (!graphId) {
+    throw new Error('Graph ID not set.');
   }
 
   initializeGentrace(gentraceApiKey);
@@ -61,8 +68,16 @@ export const runGentraceTests = async (
       };
     });
 
+    const tempProject = {
+      ...project,
+      graphs: {
+        ...project.graphs,
+        [graph.metadata!.id!]: graph,
+      },
+    };
+
     const recorder = new ExecutionRecorder();
-    const processor = new GraphProcessor(project, graphId);
+    const processor = new GraphProcessor(tempProject, graphId);
 
     recorder.record(processor);
     await processor.processGraph(
@@ -237,8 +252,7 @@ function convertRecordingToStepRuns(recording: Recording, project: Omit<Project,
     stepRuns.push(
       new StepRun(
         'rivet',
-        // TODO: append node type to this string
-        'rivet_operation',
+        nodeType ? `rivet_operation_${nodeType}` : 'rivet_operation',
         pair.end - pair.start,
         new Date(pair.start).toISOString(),
         new Date(pair.end).toISOString(),
