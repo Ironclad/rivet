@@ -31,6 +31,8 @@ export type * from './model/Settings.js';
 export * from './model/EditorDefinition.js';
 export * from './model/NodeBodySpec.js';
 export * from './utils/inputs.js';
+export * from './utils/newId.js';
+export * from './utils/misc.js';
 
 import * as openai from './utils/openai.js';
 export { openai };
