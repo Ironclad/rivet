@@ -5,6 +5,32 @@ import { InternalProcessContext } from './ProcessContext.js';
 import { EditorDefinition } from './EditorDefinition.js';
 import { NodeBodySpec } from './NodeBodySpec.js';
 
+export interface PluginNodeImpl<T extends ChartNode> {
+  getInputDefinitions(
+    data: T['data'],
+    connections: NodeConnection[],
+    nodes: Record<NodeId, ChartNode>,
+    project: Project,
+  ): NodeInputDefinition[];
+
+  getOutputDefinitions(
+    data: T['data'],
+    connections: NodeConnection[],
+    nodes: Record<NodeId, ChartNode>,
+    project: Project,
+  ): NodeOutputDefinition[];
+
+  process(data: T['data'], inputData: Inputs, context: InternalProcessContext): Promise<Outputs>;
+
+  getEditors(data: T['data']): EditorDefinition<T>[] | Promise<EditorDefinition<T>[]>;
+
+  getBody(data: T['data']): string | NodeBodySpec | NodeBodySpec[] | undefined;
+
+  create(): T;
+
+  getUIData(): NodeUIData;
+}
+
 export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['type']> {
   readonly chartNode: T;
 
@@ -55,6 +81,43 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
   }
 }
 
+export class PluginNodeImplClass<T extends ChartNode, Type extends T['type'] = T['type']> extends NodeImpl<T, Type> {
+  readonly impl: PluginNodeImpl<T>;
+
+  constructor(chartNode: T, impl: PluginNodeImpl<T>) {
+    super(chartNode);
+    this.impl = impl;
+  }
+
+  getInputDefinitions(
+    connections: NodeConnection[],
+    nodes: Record<NodeId, ChartNode>,
+    project: Project,
+  ): NodeInputDefinition[] {
+    return this.impl.getInputDefinitions(this.data, connections, nodes, project);
+  }
+
+  getOutputDefinitions(
+    connections: NodeConnection[],
+    nodes: Record<NodeId, ChartNode>,
+    project: Project,
+  ): NodeOutputDefinition[] {
+    return this.impl.getOutputDefinitions(this.data, connections, nodes, project);
+  }
+
+  process(inputData: Inputs, context: InternalProcessContext): Promise<Outputs> {
+    return this.impl.process(this.data, inputData, context);
+  }
+
+  getEditors(): EditorDefinition<T>[] | Promise<EditorDefinition<T>[]> {
+    return this.impl.getEditors(this.data);
+  }
+
+  getBody(): string | NodeBodySpec | NodeBodySpec[] | undefined {
+    return this.impl.getBody(this.data);
+  }
+}
+
 export type NodeUIData = {
   contextMenuTitle?: string;
   infoBoxTitle?: string;
@@ -64,15 +127,20 @@ export type NodeUIData = {
 };
 
 export type NodeImplConstructor<T extends ChartNode> = {
-  new (chartNode: T): NodeImpl<T>;
+  new (chartNode: T, pluginImpl: PluginNodeImpl<T> | undefined): NodeImpl<T>;
 
-  create(): T;
+  create(pluginImpl?: PluginNodeImpl<T>): T;
 
-  getUIData(): NodeUIData;
+  getUIData(pluginImpl?: PluginNodeImpl<T>): NodeUIData;
 };
 
 export type NodeDefinition<T extends ChartNode> = {
   impl: NodeImplConstructor<T>;
+  displayName: string;
+};
+
+export type PluginNodeDefinition<T extends ChartNode> = {
+  impl: PluginNodeImpl<T>;
   displayName: string;
 };
 
@@ -82,6 +150,16 @@ export function nodeDefinition<T extends ChartNode>(
   impl: NodeImplConstructor<T>,
   displayName: string,
 ): NodeDefinition<T> {
+  return {
+    impl,
+    displayName,
+  };
+}
+
+export function pluginNodeDefinition<T extends ChartNode>(
+  impl: PluginNodeImpl<T>,
+  displayName: string,
+): PluginNodeDefinition<T> {
   return {
     impl,
     displayName,

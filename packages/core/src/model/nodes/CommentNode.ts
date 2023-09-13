@@ -15,7 +15,7 @@ export type CommentNodeData = {
 };
 
 export class CommentNodeImpl extends NodeImpl<CommentNode> {
-  static create(text: string = ''): CommentNode {
+  static create(): CommentNode {
     const chartNode: CommentNode = {
       type: 'comment',
       title: 'Comment',
@@ -26,7 +26,7 @@ export class CommentNodeImpl extends NodeImpl<CommentNode> {
         width: 600,
       },
       data: {
-        text,
+        text: '',
         height: 600,
         color: 'rgba(255,255,255,1)',
         backgroundColor: 'rgba(0,0,0,0.05)',

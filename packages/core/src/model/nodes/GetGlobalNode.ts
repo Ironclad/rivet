@@ -35,7 +35,7 @@ export type GetGlobalNodeData = {
 };
 
 export class GetGlobalNodeImpl extends NodeImpl<GetGlobalNode> {
-  static create(id: string = 'variable-name'): GetGlobalNode {
+  static create(): GetGlobalNode {
     const chartNode: GetGlobalNode = {
       type: 'getGlobal',
       title: 'Get Global',
@@ -46,7 +46,7 @@ export class GetGlobalNodeImpl extends NodeImpl<GetGlobalNode> {
         width: 200,
       },
       data: {
-        id,
+        id: 'variable-name',
         dataType: 'string',
         onDemand: true,
         useIdInput: false,

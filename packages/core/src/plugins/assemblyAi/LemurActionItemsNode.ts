@@ -11,8 +11,10 @@ import {
   NodeOutputDefinition,
   NodeUIData,
   Outputs,
+  PluginNodeImpl,
   PortId,
   nodeDefinition,
+  pluginNodeDefinition,
 } from '../../index.js';
 import { LemurNodeData, LemurParams, getApiKey, getLemurParams, lemurEditorDefinitions } from './lemurHelpers.js';
 
@@ -22,8 +24,8 @@ export type LemurActionItemsNodeData = LemurNodeData & {
   answer_format?: string;
 };
 
-export class LemurActionItemsNodeImpl extends NodeImpl<LemurActionItemsNode> {
-  static create(): LemurActionItemsNode {
+export const LemurActionItemsNodeImpl: PluginNodeImpl<LemurActionItemsNode> = {
+  create(): LemurActionItemsNode {
     const chartNode: LemurActionItemsNode = {
       type: 'assemblyAiLemurActionItems',
       title: 'LeMUR Action Items',
@@ -34,12 +36,12 @@ export class LemurActionItemsNodeImpl extends NodeImpl<LemurActionItemsNode> {
         width: 250,
       },
       data: {
-        final_model: 'default'
+        final_model: 'default',
       },
     };
 
     return chartNode;
-  }
+  },
 
   getInputDefinitions(): NodeInputDefinition[] {
     return [
@@ -52,9 +54,9 @@ export class LemurActionItemsNodeImpl extends NodeImpl<LemurActionItemsNode> {
         id: 'context' as PortId,
         dataType: 'string',
         title: 'Context',
-      }
+      },
     ];
-  }
+  },
 
   getOutputDefinitions(): NodeOutputDefinition[] {
     return [
@@ -64,40 +66,40 @@ export class LemurActionItemsNodeImpl extends NodeImpl<LemurActionItemsNode> {
         title: 'Response',
       },
     ];
-  }
+  },
 
   getEditors(): EditorDefinition<LemurActionItemsNode>[] {
     return [
       {
         type: 'string',
         label: 'Context',
-        dataKey: 'context'
+        dataKey: 'context',
       },
-      ...lemurEditorDefinitions as unknown as EditorDefinition<LemurActionItemsNode>[]
+      ...(lemurEditorDefinitions as unknown as EditorDefinition<LemurActionItemsNode>[]),
     ];
-  }
+  },
 
   getBody(): string | undefined {
     return '';
-  }
+  },
 
-  static getUIData(): NodeUIData {
+  getUIData(): NodeUIData {
     return {
       infoBoxBody: dedent`Use AssemblyAI LeMUR Action Items to extract action items`,
       infoBoxTitle: 'Use AssemblyAI LeMUR Action Items',
       contextMenuTitle: 'LeMUR Action Items',
       group: ['AI', 'AssemblyAI'],
     };
-  }
+  },
 
-  async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+  async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const apiKey = getApiKey(context);
     const params: LemurParams & {
-      answer_format?: string,
-    } = getLemurParams(inputs, this.chartNode.data);
+      answer_format?: string;
+    } = getLemurParams(inputs, data);
 
-    if (this.chartNode.data.answer_format) {
-      params.answer_format = this.chartNode.data.answer_format;
+    if (data.answer_format) {
+      params.answer_format = data.answer_format;
     }
 
     const { response } = await runLemurActionItems(apiKey, params);
@@ -108,22 +110,17 @@ export class LemurActionItemsNodeImpl extends NodeImpl<LemurActionItemsNode> {
         value: response,
       },
     };
-  }
-}
+  },
+};
 
-async function runLemurActionItems(
-  apiToken: string,
-  params: object
-) {
-  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/action-items',
-    {
-      method: 'POST',
-      body: JSON.stringify(params),
-      headers: {
-        authorization: apiToken
-      }
-    }
-  );
+async function runLemurActionItems(apiToken: string, params: object) {
+  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/action-items', {
+    method: 'POST',
+    body: JSON.stringify(params),
+    headers: {
+      authorization: apiToken,
+    },
+  });
   const body = await response.json();
   if (response.status !== 200) {
     if ('error' in body) throw new Error(body.error);
@@ -133,4 +130,4 @@ async function runLemurActionItems(
   return body as { response: string };
 }
 
-export const lemurActionItemsNode = nodeDefinition(LemurActionItemsNodeImpl, 'LeMUR Action Items');
+export const lemurActionItemsNode = pluginNodeDefinition(LemurActionItemsNodeImpl, 'LeMUR Action Items');

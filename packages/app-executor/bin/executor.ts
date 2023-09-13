@@ -4,9 +4,10 @@ import {
   createProcessor,
   NodeRegistration,
   plugins as rivetPlugins,
-  RivetPlugin,
   registerBuiltInNodes,
 } from '@ironclad/rivet-node';
+import * as Rivet from '@ironclad/rivet-core';
+import { RivetPluginInitializer } from '@ironclad/rivet-core';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { P, match } from 'ts-pattern';
@@ -47,11 +48,18 @@ const rivetDebugger = startDebuggerServer({
           }
         })
         .with({ type: 'uri' }, async (spec) => {
-          const plugin = ((await import(spec.uri)) as { default: RivetPlugin }).default;
-          if (!plugin?.id) {
+          const plugin = ((await import(spec.uri)) as { default: RivetPluginInitializer }).default;
+
+          if (typeof plugin !== 'function') {
+            throw new Error(`Plugin ${spec.id} is not a function`);
+          }
+
+          const initializedPlugin = plugin(Rivet);
+
+          if (!initializedPlugin?.id) {
             throw new Error(`Plugin ${spec.id} does not have an id`);
           }
-          registry.registerPlugin(plugin);
+          registry.registerPlugin(initializedPlugin);
         })
         .exhaustive();
       console.log(`Enabled plugin ${spec.id}.`);

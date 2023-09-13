@@ -17,7 +17,7 @@ export type GraphInputNodeData = {
 };
 
 export class GraphInputNodeImpl extends NodeImpl<GraphInputNode> {
-  static create(id: string = 'input', dataType: DataType = 'string'): GraphInputNode {
+  static create(): GraphInputNode {
     const chartNode: GraphInputNode = {
       type: 'graphInput',
       title: 'Graph Input',
@@ -28,8 +28,8 @@ export class GraphInputNodeImpl extends NodeImpl<GraphInputNode> {
         width: 300,
       },
       data: {
-        id,
-        dataType,
+        id: 'input',
+        dataType: 'string',
         defaultValue: undefined,
         useDefaultValueInput: false,
       },

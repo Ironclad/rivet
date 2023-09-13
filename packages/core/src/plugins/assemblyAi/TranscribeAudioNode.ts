@@ -13,18 +13,20 @@ import {
   NodeOutputDefinition,
   NodeUIData,
   Outputs,
+  PluginNodeImpl,
   PortId,
   StringDataValue,
   coerceType,
   nodeDefinition,
+  pluginNodeDefinition,
 } from '../../index.js';
 
 export type TranscribeAudioNode = ChartNode<'assemblyAiTranscribeAudio', TranscribeAudioNodeData>;
 
 export type TranscribeAudioNodeData = {};
 
-export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
-  static create(): TranscribeAudioNode {
+export const TranscribeAudioNodeImpl: PluginNodeImpl<TranscribeAudioNode> = {
+  create(): TranscribeAudioNode {
     const chartNode: TranscribeAudioNode = {
       type: 'assemblyAiTranscribeAudio',
       title: 'Transcribe Audio',
@@ -38,7 +40,7 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
     };
 
     return chartNode;
-  }
+  },
 
   getInputDefinitions(): NodeInputDefinition[] {
     return [
@@ -46,9 +48,9 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
         id: 'audio' as PortId,
         dataType: ['audio', 'string'],
         title: 'Audio',
-      }
+      },
     ];
-  }
+  },
 
   getOutputDefinitions(): NodeOutputDefinition[] {
     return [
@@ -66,28 +68,28 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
         dataType: 'object',
         id: 'transcript' as PortId,
         title: 'Transcript object',
-      }
+      },
     ];
-  }
+  },
 
   getEditors(): EditorDefinition<TranscribeAudioNode>[] {
     return [];
-  }
+  },
 
   getBody(): string | undefined {
     return '';
-  }
+  },
 
-  static getUIData(): NodeUIData {
+  getUIData(): NodeUIData {
     return {
       infoBoxBody: dedent`Use AssemblyAI to transcribe audio`,
       infoBoxTitle: 'Transcribe Audio Node',
       contextMenuTitle: 'Transcribe Audio',
       group: ['AI', 'AssemblyAI'],
     };
-  }
+  },
 
-  async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+  async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const input = inputs['audio' as PortId] as AudioDataValue | StringDataValue | AnyDataValue;
     if (!input) throw new Error('Audio input is required.');
 
@@ -123,10 +125,10 @@ export class TranscribeAudioNodeImpl extends NodeImpl<TranscribeAudioNode> {
       ['transcript' as PortId]: {
         type: 'object',
         value: transcript,
-      }
+      },
     };
-  }
-}
+  },
+};
 
 // Function to upload a local file to the AssemblyAI API
 async function uploadData(apiToken: string, data: { data: Uint8Array }) {
@@ -217,4 +219,4 @@ function validateUrl(audioUrl: string) {
   }
 }
 
-export const transcribeAudioNode = nodeDefinition(TranscribeAudioNodeImpl, 'Transcribe Audio');
+export const transcribeAudioNode = pluginNodeDefinition(TranscribeAudioNodeImpl, 'Transcribe Audio');

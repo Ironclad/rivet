@@ -1,12 +1,12 @@
 import { ChartNode } from './NodeBase.js';
-import { NodeDefinition } from './NodeImpl.js';
+import { PluginNodeDefinition } from './NodeImpl.js';
 
 export type RivetPlugin = {
   id: string;
 
   name?: string;
 
-  register?: (register: <T extends ChartNode>(definition: NodeDefinition<T>) => void) => void;
+  register?: (register: <T extends ChartNode>(definition: PluginNodeDefinition<T>) => void) => void;
 
   /** The available configuration items and their specification, for configuring a plugin in the UI. */
   configSpec?: RivetPluginConfigSpecs;
