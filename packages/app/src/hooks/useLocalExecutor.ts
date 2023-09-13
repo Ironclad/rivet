@@ -101,7 +101,7 @@ export function useLocalExecutor() {
           },
           data: projectData,
         };
-        
+
         const recorder = new ExecutionRecorder();
         const processor = new GraphProcessor(tempProject, graph.metadata!.id!);
         processor.recordingPlaybackChatLatency = savedSettings.recordingPlaybackLatency ?? 1000;
