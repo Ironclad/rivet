@@ -86,7 +86,6 @@ const GentraceInteractors = () => {
             const testResponse = await runGentraceTests(currentGentracePipelineSlug, settings, project, graph, new TauriNativeApi());
             testResultId = testResponse.resultId;
           } catch (e: any) {
-            console.log('Error running Gentrace pipeline tests', e,);
             const serverResult = e?.response?.data?.message ?? e?.message;
             toast.error((
               <div>
