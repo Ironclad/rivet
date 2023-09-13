@@ -161,6 +161,8 @@ export const ActionBar: FC<ActionBarProps> = ({
   const project = useRecoilValue(projectState);
   const graph = useRecoilValue(graphState);
   
+  console.log('graph', graph);
+  
   const savedSettings = useRecoilValue(settingsState);
   const loadedRecording = useRecoilValue(loadedRecordingState);
   const { unloadRecording } = useLoadRecording();
