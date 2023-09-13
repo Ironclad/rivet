@@ -1,4 +1,4 @@
-import { FC, Suspense, useEffect, useMemo, useRef } from 'react';
+import { FC, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import {
   AnyDataEditorDefinition,
   ChartNode,
@@ -125,7 +125,16 @@ export const DefaultNodeEditor: FC<{
   isReadonly: boolean;
   onChange: NodeChanged;
 }> = ({ node, onChange, isReadonly }) => {
-  const editors = useMemo(() => globalRivetNodeRegistry.createDynamicImpl(node).getEditors(), [node]);
+  
+  const [editors, setEditors] = useState<any[]>([]);
+  
+  useEffect(() => {
+    (async () => {
+      const dynamicImpl = globalRivetNodeRegistry.createDynamicImpl(node);
+      const loadedEditors = await dynamicImpl.getEditors();
+      setEditors(loadedEditors);
+    })();
+  }, [node]);
 
   return (
     <div css={defaultEditorContainerStyles}>
