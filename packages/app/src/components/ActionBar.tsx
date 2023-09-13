@@ -273,9 +273,37 @@ export const ActionBar: FC<ActionBarProps> = ({
             }
 
             toast.info(`Running Gentrace pipeline ${currentGentracePipelineSlug} tests ...`);
-            const testResponse = await runGentraceTests(currentGentracePipelineSlug, settings, project, graph.metadata?.id, new TauriNativeApi());
+            let testResultId: string | null = null;
             
-            const testResultId = testResponse.resultId;
+            try {
+              const testResponse = await runGentraceTests(currentGentracePipelineSlug, settings, project, graph.metadata?.id, new TauriNativeApi());
+              testResultId = testResponse.resultId;
+            } catch (e: any) {
+              console.log('Error running Gentrace pipeline tests', e,);
+              const serverResult = e?.response?.data?.message ?? e?.message;
+              toast.error((
+                <div>
+                  <div style={{
+                    marginBottom: 10
+                  }}>
+                    Error running Gentrace pipeline {currentGentracePipelineSlug} tests: 
+                  </div>
+                  
+                  <div>
+                    <code style={{
+                      fontSize: 12
+                    }}>
+                      {serverResult}
+                    </code>
+                  </div>
+                </div>
+              ), {
+                autoClose: false,
+                closeOnClick: false,
+                draggable: false
+              });
+              return;
+            }
             
             const url = `http://gentrace.ai/pipeline/${gentracePipelineSettings.id}/results/${testResultId}?size=compact`;
 
