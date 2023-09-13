@@ -10,9 +10,12 @@ import { ReactComponent as ChevronRightIcon } from 'majesticons/line/chevron-rig
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
 import { ReactComponent as PauseIcon } from 'majesticons/line/pause-circle-line.svg';
 import { ReactComponent as PlayIcon } from 'majesticons/line/play-circle-line.svg';
+import { ReactComponent as EditPen } from 'majesticons/line/edit-pen-2-line.svg';
+import { ReactComponent as TestTube } from 'majesticons/line/test-tube-filled-line.svg';
 import { ReactComponent as MoreMenuVerticalIcon } from 'majesticons/line/more-menu-vertical-line.svg';
 import Popup from '@atlaskit/popup';
 import { settingsModalOpenState } from './SettingsModal';
+import { toast } from 'react-toastify';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
 import { fillMissingSettingsFromEnvironmentVariables, isInTauri } from '../utils/tauri';
 import Select from '@atlaskit/select';
@@ -21,6 +24,7 @@ import { debuggerPanelOpenState } from '../state/ui';
 import { ActionBarMoreMenu } from './ActionBarMoreMenu';
 import { useCurrentExecution } from '../hooks/useCurrentExecution';
 import { CopyAsTestCaseModal } from './CopyAsTestCaseModal';
+import gentraceImage from '../assets/node_images/gentrace.svg';
 import { useToggle } from 'ahooks';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { getGentracePipelines, runGentraceTests } from '../../../core/src/plugins/gentrace/plugin';
@@ -172,6 +176,7 @@ export const ActionBar: FC<ActionBarProps> = ({
   
   const gentracePlugin = plugins.find(plugin => plugin.id === 'gentrace');
   const isGentracePluginEnabled = !!gentracePlugin;
+  const currentGentracePipelineSlug = graph?.metadata?.attachedData?.gentracePipelineSlug as string | undefined;
 
   return (
     <div css={styles}>
@@ -228,8 +233,18 @@ export const ActionBar: FC<ActionBarProps> = ({
                   e.preventDefault();
                 }
               }}
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
-              Add Gentrace Pipeline
+              <div>
+                <img height={18} src={gentraceImage} alt="Gentrace" />
+              </div>
+              {currentGentracePipelineSlug ? "Change" : "Add"} Gentrace Pipeline
+              <EditPen />
             </button>
           </div>
         )}
@@ -248,10 +263,20 @@ export const ActionBar: FC<ActionBarProps> = ({
               return; 
             }
             
-            // TODO @gentrace: remove hardcoded pipeline id
-            await runGentraceTests("testing-pipeline-id", settings, project, graph.metadata?.id, new TauriNativeApi());
+            if (!currentGentracePipelineSlug) {
+              toast.warn('No Gentrace pipeline selected.');
+              return;
+            }
+
+            toast.info(`Running Gentrace pipeline ${currentGentracePipelineSlug} tests ...`);
+            await runGentraceTests(currentGentracePipelineSlug, settings, project, graph.metadata?.id, new TauriNativeApi());
+            toast.info(`Gentrace pipeline ${currentGentracePipelineSlug} tests finished.`);
           }}>
+            <div>
+              <img height={18} src={gentraceImage} alt="Gentrace" />
+            </div>
             Run Gentrace Tests
+            <TestTube />
           </button>
         </div>
      )} 
@@ -423,6 +448,8 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
           });
           
           setSelectedPipeline(null);
+          
+          toast.info(`Saved Gentrace Pipeline: ${selectedPipeline.label}`, { autoClose: 4000 });
         }}>
           Save
         </button>
