@@ -96,6 +96,10 @@ export const runGentraceTests = async (
       runner.addStepRunNode(stepRun);
     });
 
+    if (stepRuns.length === 0) {
+      throw new Error('No Rivet steps found. You need operations which are not Graph Input or Graph Output nodes.');
+    }
+
     return ['', runner];
   });
 

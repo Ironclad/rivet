@@ -268,7 +268,7 @@ export const ActionBar: FC<ActionBarProps> = ({
             }
             
             if (!currentGentracePipelineSlug) {
-              toast.warn('No Gentrace pipeline selected.');
+              toast.warn('No Gentrace pipeline added.');
               return;
             }
 
