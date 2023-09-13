@@ -17,6 +17,7 @@ import {
   StringEditorDefinition,
   ToggleEditorDefinition,
   dataTypeDisplayNames,
+  getError,
   getScalarTypeOf,
   globalRivetNodeRegistry,
   isArrayDataType,
@@ -43,6 +44,7 @@ import Button from '@atlaskit/button';
 import { values } from '../../../core/src/utils/typeSafety';
 import { NodeChanged } from './NodeEditor';
 import prettyBytes from 'pretty-bytes';
+import { toast } from 'react-toastify';
 
 export const defaultEditorContainerStyles = css`
   display: flex;
@@ -125,14 +127,20 @@ export const DefaultNodeEditor: FC<{
   isReadonly: boolean;
   onChange: NodeChanged;
 }> = ({ node, onChange, isReadonly }) => {
-  
-  const [editors, setEditors] = useState<any[]>([]);
-  
+  const [editors, setEditors] = useState<EditorDefinition<ChartNode>[]>([]);
+
   useEffect(() => {
     (async () => {
-      const dynamicImpl = globalRivetNodeRegistry.createDynamicImpl(node);
-      const loadedEditors = await dynamicImpl.getEditors();
-      setEditors(loadedEditors);
+      try {
+        const dynamicImpl = globalRivetNodeRegistry.createDynamicImpl(node);
+
+        // eslint-disable-next-line @typescript-eslint/await-thenable -- Is is thenable you dummy
+        const loadedEditors = await dynamicImpl.getEditors();
+
+        setEditors(loadedEditors);
+      } catch (err) {
+        toast.error(`Failed to load editors for node ${node.id}: ${getError(err).message}`);
+      }
     })();
   }, [node]);
 

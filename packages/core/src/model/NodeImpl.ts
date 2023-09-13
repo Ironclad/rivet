@@ -46,7 +46,7 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
 
   abstract process(inputData: Inputs, context: InternalProcessContext): Promise<Outputs>;
 
-  getEditors(): EditorDefinition<T>[]|Promise<EditorDefinition<T>[]> {
+  getEditors(): EditorDefinition<T>[] | Promise<EditorDefinition<T>[]> {
     return [];
   }
 
