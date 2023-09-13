@@ -192,7 +192,6 @@ export const ActionBar: FC<ActionBarProps> = ({
           </button>
         </div>
       )}
-
       {/* <div className={clsx('run-test-button', { running: graphRunning })}>
         <button onClick={graphRunning ? onAbortGraph : onRunTests}>
           Run Test <ChevronRightIcon />
@@ -223,7 +222,6 @@ export const ActionBar: FC<ActionBarProps> = ({
           )}
         </button>
       </div>
-
       <Popup
         isOpen={menuIsOpen}
         onClose={toggleMenuIsOpen.setLeft}
