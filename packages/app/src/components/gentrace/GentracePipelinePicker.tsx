@@ -45,15 +45,16 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
       return;
     }
     
-    getGentracePipelines(gentraceApiKey)
-      .then(ps => {
-        setPipelines(ps);
-      })
-      .catch(e => {
+    (async () => {
+      try {
+        const pipelines = await getGentracePipelines(gentraceApiKey);
+        setPipelines(pipelines);
+      } catch (e: any) {
         const serverResult = e?.response?.data?.message ?? e?.message;
         toast.error(`Error loading Gentrace pipelines: ${serverResult}`); 
-      });
-    
+      }
+    })();
+   
   }, [gentraceApiKey]);
   
   const dropdownTarget = useRef<HTMLDivElement>(null);
