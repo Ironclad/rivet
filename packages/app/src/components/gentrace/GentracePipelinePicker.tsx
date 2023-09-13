@@ -94,7 +94,9 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
         />
       </div>
      
-      <div>
+      <div style={{
+        marginBottom: 20
+      }}>
         <button style={{
           border: "none",
           padding: "0.5rem 1rem",
@@ -134,6 +136,10 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
         }}>
           Save
         </button>
+      </div>
+      
+      <div>
+        Need a new pipeline? <a href="https://gentrace.ai/pipeline/new" target='_blank' rel="noreferrer">Create one here.</a>
       </div>
     </div>
   );
