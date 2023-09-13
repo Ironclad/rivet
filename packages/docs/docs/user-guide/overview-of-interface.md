@@ -96,7 +96,7 @@ Trivet allows you to set up test suites and test cases for your project. See the
 
 ### Chat Viewer
 
-The chat viewer overlay gives you a gives you a full screen view of every Chat node that has been performed, or is in-progress, in your project.
+The chat viewer overlay gives you a full screen view of every Chat node that has been performed, or is in-progress, in your project.
 
 This view can give you a quick overview of how your AI is performing, and what it is doing at any given time. It can also be used to debug issues with your AI.
 
