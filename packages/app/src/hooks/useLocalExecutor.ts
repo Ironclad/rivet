@@ -176,7 +176,6 @@ export function useLocalExecutor() {
           runGraph: async (project, graphId, inputs) => {
             const processor = new GraphProcessor(project, graphId);
             attachGraphEvents(processor);
-
             return processor.processGraph(
               {
                 settings: await fillMissingSettingsFromEnvironmentVariables(
