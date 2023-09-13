@@ -48,6 +48,7 @@ import userInputNodeImage from '../assets/node_images/user_input_node.png';
 import vectorKnnNodeImage from '../assets/node_images/vector_knn_node.png';
 import vectorStoreNodeImage from '../assets/node_images/vector_store_node.png';
 import waitForEventNodeImage from '../assets/node_images/wait_for_event_node.png';
+import delayNodeImage from '../assets/node_images/delay_node.png';
 
 export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
   return {
@@ -99,6 +100,7 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     vectorNearestNeighbors: vectorKnnNodeImage,
     vectorStore: vectorStoreNodeImage,
     waitForEvent: waitForEventNodeImage,
+    delay: delayNodeImage,
 
     // TODO
     comment: '',
