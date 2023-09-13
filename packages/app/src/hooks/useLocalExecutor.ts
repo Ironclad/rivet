@@ -129,7 +129,7 @@ export function useLocalExecutor() {
             nativeApi: new TauriNativeApi(),
           });
         }
-        
+
         if (recordExecutions) {
           setLastRecordingState(recorder.serialize());
         }
