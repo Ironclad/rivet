@@ -23,7 +23,7 @@ export class NumberNodeImpl extends NodeImpl<NumberNode> {
       visualData: {
         x: 0,
         y: 0,
-        width: 150,
+        width: 200,
       },
       data: {
         value: 0,

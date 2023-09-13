@@ -2,13 +2,14 @@ import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefin
 import { nanoid } from 'nanoid';
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
-import { EditorDefinition } from '../../index.js';
+import { EditorDefinition, getInputOrData } from '../../index.js';
 import { dedent } from 'ts-dedent';
 
 export type DelayNode = ChartNode<'delay', DelayNodeData>;
 
 export type DelayNodeData = {
   delay: number;
+  useDelayInput?: boolean;
 };
 
 export class DelayNodeImpl extends NodeImpl<DelayNode> {
@@ -20,7 +21,7 @@ export class DelayNodeImpl extends NodeImpl<DelayNode> {
       visualData: {
         x: 0,
         y: 0,
-        width: 150,
+        width: 175,
       },
       data: {
         delay: 0,
@@ -33,6 +34,14 @@ export class DelayNodeImpl extends NodeImpl<DelayNode> {
   getInputDefinitions(connections: NodeConnection[]): NodeInputDefinition[] {
     const inputs: NodeInputDefinition[] = [];
     const inputCount = this.#getInputPortCount(connections);
+
+    if (this.data.useDelayInput) {
+      inputs.push({
+        dataType: 'number',
+        id: 'delay' as PortId,
+        title: 'Delay (ms)',
+      });
+    }
 
     for (let i = 1; i <= inputCount; i++) {
       inputs.push({
@@ -90,16 +99,24 @@ export class DelayNodeImpl extends NodeImpl<DelayNode> {
 
   getEditors(): EditorDefinition<DelayNode>[] {
     return [
-      { type: 'number', label: 'Delay (ms)', dataKey: 'delay', defaultValue: 0 },
+      {
+        type: 'number',
+        label: 'Delay (ms)',
+        dataKey: 'delay',
+        useInputToggleDataKey: 'useDelayInput',
+        defaultValue: 0,
+      },
     ];
   }
 
   getBody(): string | undefined {
-    return `Delay ${this.chartNode.data.delay}ms`;
+    return `Delay ${this.data.useDelayInput ? '(Input ms)' : `${this.chartNode.data.delay}ms`}`;
   }
 
   async process(inputData: Inputs): Promise<Outputs> {
-    await new Promise((resolve) => setTimeout(resolve, this.chartNode.data.delay));
+    const delayAmount = getInputOrData(this.data, inputData, 'delay', 'number');
+
+    await new Promise((resolve) => setTimeout(resolve, delayAmount));
 
     const inputCount = Object.keys(inputData).filter((key) => key.startsWith('input')).length;
 
