@@ -336,8 +336,8 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
   
   const [graph, setGraph] = useRecoilState(graphState);
   
-  console.log('graph metadata', graph?.metadata);
-  
+  const currentGentracePipelineSlug = graph?.metadata?.attachedData?.gentracePipelineSlug as string | undefined;
+
   const gentraceApiKey = savedSettings.pluginSettings?.gentrace?.gentraceApiKey as string | undefined;
  
   const [pipelines, setPipelines] = useState<GentracePipeline[]>([]);
@@ -361,8 +361,10 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
     label: p.displayName ?? p.slug, 
     value: p.slug
   }));
+  
+  const currentOption = pipelineOptions.find(o => o.value === currentGentracePipelineSlug); 
 
-  const effectiveSelectedPipeline = selectedPipeline ?? pipelineOptions[0] ?? null;
+  const effectiveSelectedPipeline = selectedPipeline ?? currentOption ?? pipelineOptions[0] ?? null;
 
   return (
     <div css={pickerContainerStyles}>
@@ -403,12 +405,24 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
           margin: 0,
           height: "32px",
           borderRadius: "5px",
-          background: "var(--grey-darker)"
+          background: selectedPipeline ? "var(--success)" : "var(--grey-darker)"
         }} disabled={!selectedPipeline} onClick={() => {
           if (!selectedPipeline) {
             return;
           }
-          setGraph({ ...graph, metadata: { ...graph.metadata, attachedData: { ...(graph.metadata?.attachedData ?? {}), gentracePipelineSlug: selectedPipeline.value } } });
+
+          setGraph({ 
+            ...graph, 
+            metadata: { 
+              ...graph.metadata, 
+              attachedData: { 
+                ...(graph.metadata?.attachedData ?? {}), 
+                gentracePipelineSlug: selectedPipeline.value 
+              } 
+            } 
+          });
+          
+          setSelectedPipeline(null);
         }}>
           Save
         </button>
