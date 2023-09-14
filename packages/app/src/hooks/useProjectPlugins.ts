@@ -10,6 +10,7 @@ import { plugins as rivetPlugins } from '@ironclad/rivet-core';
 import { useBuiltInPlugins } from './useBuiltInPlugins';
 import { isNotNull } from '../utils/genericUtilFunctions';
 import { getError } from '../utils/errors';
+import * as Rivet from '@ironclad/rivet-core';
 
 export function useProjectPlugins() {
   const pluginSpecs = useRecoilValue(projectPluginsState);
@@ -34,11 +35,18 @@ export function useProjectPlugins() {
                 throw new Error(`Unknown built-in plugin ${name}.`);
               })
               .with({ type: 'uri' }, async (spec) => {
-                const plugin = ((await import(spec.uri)) as { default: RivetPlugin }).default;
-                if (!plugin?.id) {
+                const plugin = ((await import(spec.uri)) as { default: Rivet.RivetPluginInitializer }).default;
+
+                if (typeof plugin !== 'function') {
+                  throw new Error(`Plugin ${spec.id} is not a function`);
+                }
+
+                const initializedPlugin = plugin(Rivet);
+
+                if (!initializedPlugin?.id) {
                   throw new Error(`Plugin ${spec.id} does not have an id`);
                 }
-                return plugin;
+                return initializedPlugin;
               })
               .exhaustive();
 

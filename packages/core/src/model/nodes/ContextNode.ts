@@ -18,7 +18,7 @@ export type ContextNodeData = {
 };
 
 export class ContextNodeImpl extends NodeImpl<ContextNode> {
-  static create(id: string = 'input', dataType: DataType = 'string'): ContextNode {
+  static create(): ContextNode {
     const chartNode: ContextNode = {
       type: 'context',
       title: 'Context',
@@ -29,8 +29,8 @@ export class ContextNodeImpl extends NodeImpl<ContextNode> {
         width: 300,
       },
       data: {
-        id,
-        dataType,
+        id: 'input',
+        dataType: 'string',
         defaultValue: undefined,
         useDefaultValueInput: false,
       },

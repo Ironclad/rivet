@@ -11,10 +11,12 @@ import {
   NodeOutputDefinition,
   NodeUIData,
   Outputs,
+  PluginNodeImpl,
   PortId,
   coerceType,
   getInputOrData,
   nodeDefinition,
+  pluginNodeDefinition,
 } from '../../../index.js';
 import { HfInference, HfInferenceEndpoint } from '@huggingface/inference';
 import { dedent } from 'ts-dedent';
@@ -44,8 +46,8 @@ export type TextToImageHuggingFaceNodeData = {
   useNumInferenceStepsInput?: boolean;
 };
 
-export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingFaceNode> {
-  static create(): TextToImageHuggingFaceNode {
+export const TextToImageHuggingFaceNodeImpl: PluginNodeImpl<TextToImageHuggingFaceNode> = {
+  create(): TextToImageHuggingFaceNode {
     return {
       id: nanoid() as NodeId,
       type: 'textToImageHuggingFace',
@@ -64,18 +66,18 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
         width: 300,
       },
     };
-  }
+  },
 
-  static getUIData(): NodeUIData {
+  getUIData(): NodeUIData {
     return {
       group: ['AI', 'Hugging Face'],
       contextMenuTitle: 'Text-to-Image (Hugging Face)',
       infoBoxTitle: 'Text-to-Image (Hugging Face) Node',
       infoBoxBody: 'Use the Hugging Face API to generate an image from text.',
     };
-  }
+  },
 
-  getInputDefinitions(): NodeInputDefinition[] {
+  getInputDefinitions(data): NodeInputDefinition[] {
     const inputs: NodeInputDefinition[] = [];
 
     inputs.push({
@@ -85,7 +87,7 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
       required: true,
     });
 
-    if (this.data.useModelInput) {
+    if (data.useModelInput) {
       inputs.push({
         id: 'model' as PortId,
         dataType: 'string',
@@ -93,7 +95,7 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
       });
     }
 
-    if (this.data.useEndpointInput) {
+    if (data.useEndpointInput) {
       inputs.push({
         id: 'endpoint' as PortId,
         dataType: 'string',
@@ -101,7 +103,7 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
       });
     }
 
-    if (this.data.useWidthInput) {
+    if (data.useWidthInput) {
       inputs.push({
         id: 'width' as PortId,
         dataType: 'number',
@@ -109,7 +111,7 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
       });
     }
 
-    if (this.data.useHeightInput) {
+    if (data.useHeightInput) {
       inputs.push({
         id: 'height' as PortId,
         dataType: 'number',
@@ -117,7 +119,7 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
       });
     }
 
-    if (this.data.useNegativePromptInput) {
+    if (data.useNegativePromptInput) {
       inputs.push({
         id: 'negativePrompt' as PortId,
         dataType: 'string',
@@ -125,7 +127,7 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
       });
     }
 
-    if (this.data.useGuidanceScaleInput) {
+    if (data.useGuidanceScaleInput) {
       inputs.push({
         id: 'guidanceScale' as PortId,
         dataType: 'number',
@@ -133,7 +135,7 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
       });
     }
 
-    if (this.data.useNumInferenceStepsInput) {
+    if (data.useNumInferenceStepsInput) {
       inputs.push({
         id: 'numInferenceSteps' as PortId,
         dataType: 'number',
@@ -142,7 +144,8 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
     }
 
     return inputs;
-  }
+  },
+
   getOutputDefinitions(): NodeOutputDefinition[] {
     return [
       {
@@ -151,7 +154,7 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
         title: 'Output',
       },
     ];
-  }
+  },
 
   getEditors(): EditorDefinition<TextToImageHuggingFaceNode>[] {
     return [
@@ -198,26 +201,26 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
         step: 1,
       },
     ];
-  }
+  },
 
-  getBody(): string | NodeBodySpec | NodeBodySpec[] | undefined {
+  getBody(data): string | NodeBodySpec | NodeBodySpec[] | undefined {
     return dedent`
-      Model: ${this.data.useModelInput ? '(Using Input)' : this.data.model}
+      Model: ${data.useModelInput ? '(Using Input)' : data.model}
     `;
-  }
+  },
 
-  async process(inputData: Inputs, context: InternalProcessContext): Promise<Outputs> {
+  async process(data, inputData, context): Promise<Outputs> {
     const accessToken = context.getPluginConfig('huggingFaceAccessToken');
 
     const prompt = coerceType(inputData['prompt' as PortId], 'string');
-    const endpoint = getInputOrData(this.data, inputData, 'endpoint');
+    const endpoint = getInputOrData(data, inputData, 'endpoint');
 
-    const model = getInputOrData(this.data, inputData, 'model');
-    const width = getInputOrData(this.data, inputData, 'width', 'number');
-    const height = getInputOrData(this.data, inputData, 'height', 'number');
-    const negativePrompt = getInputOrData(this.data, inputData, 'negativePrompt') || undefined;
-    const guidanceScale = getInputOrData(this.data, inputData, 'guidanceScale', 'number');
-    const numInferenceSteps = getInputOrData(this.data, inputData, 'numInferenceSteps', 'number');
+    const model = getInputOrData(data, inputData, 'model');
+    const width = getInputOrData(data, inputData, 'width', 'number');
+    const height = getInputOrData(data, inputData, 'height', 'number');
+    const negativePrompt = getInputOrData(data, inputData, 'negativePrompt') || undefined;
+    const guidanceScale = getInputOrData(data, inputData, 'guidanceScale', 'number');
+    const numInferenceSteps = getInputOrData(data, inputData, 'numInferenceSteps', 'number');
 
     const hf = endpoint ? new HfInferenceEndpoint(endpoint, accessToken) : new HfInference(accessToken);
 
@@ -242,10 +245,10 @@ export class TextToImageHuggingFaceNodeImpl extends NodeImpl<TextToImageHuggingF
         },
       },
     };
-  }
-}
+  },
+};
 
-export const textToImageHuggingFaceNode = nodeDefinition(
+export const textToImageHuggingFaceNode = pluginNodeDefinition(
   TextToImageHuggingFaceNodeImpl,
   'Text-to-Image (Hugging Face)',
 );

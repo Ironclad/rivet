@@ -15,15 +15,7 @@ export type CodeNodeData = {
 };
 
 export class CodeNodeImpl extends NodeImpl<CodeNode> {
-  static create(
-    code: string = `// This is a code node, you can write and JS in here and it will be executed.
-// Inputs are accessible via an object \`inputs\` and data is typed (i.e. inputs.foo.type, inputs.foo.value)
-// Return an object with named outputs that match the output names specified in the node's config.
-// Output values must by typed as well (e.g. { bar: { type: 'string', value: 'bar' } }
-return { output: inputs.input };`,
-    inputNames: string = 'input',
-    outputNames: string = 'output',
-  ): CodeNode {
+  static create(): CodeNode {
     const chartNode: CodeNode = {
       type: 'code',
       title: 'Code',
@@ -33,9 +25,13 @@ return { output: inputs.input };`,
         y: 0,
       },
       data: {
-        code,
-        inputNames,
-        outputNames,
+        code: dedent`// This is a code node, you can write and JS in here and it will be executed.
+        // Inputs are accessible via an object \`inputs\` and data is typed (i.e. inputs.foo.type, inputs.foo.value)
+        // Return an object with named outputs that match the output names specified in the node's config.
+        // Output values must by typed as well (e.g. { bar: { type: 'string', value: 'bar' } }
+        return { output: inputs.input };`,
+        inputNames: 'input',
+        outputNames: 'output',
       },
     };
 

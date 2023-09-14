@@ -4,9 +4,10 @@ import {
   createProcessor,
   NodeRegistration,
   plugins as rivetPlugins,
-  RivetPlugin,
   registerBuiltInNodes,
 } from '@ironclad/rivet-node';
+import * as Rivet from '@ironclad/rivet-core';
+import { RivetPluginInitializer } from '@ironclad/rivet-core';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { P, match } from 'ts-pattern';
@@ -37,24 +38,35 @@ const rivetDebugger = startDebuggerServer({
     registerBuiltInNodes(registry);
 
     for (const spec of project.plugins ?? []) {
-      await match(spec)
-        .with({ type: 'built-in' }, async (spec) => {
-          const { name } = spec;
-          if (name in rivetPlugins) {
-            registry.registerPlugin(rivetPlugins[name as keyof typeof rivetPlugins]);
-          } else {
-            throw new Error(`Unknown built-in plugin ${name}.`);
-          }
-        })
-        .with({ type: 'uri' }, async (spec) => {
-          const plugin = ((await import(spec.uri)) as { default: RivetPlugin }).default;
-          if (!plugin?.id) {
-            throw new Error(`Plugin ${spec.id} does not have an id`);
-          }
-          registry.registerPlugin(plugin);
-        })
-        .exhaustive();
-      console.log(`Enabled plugin ${spec.id}.`);
+      try {
+        await match(spec)
+          .with({ type: 'built-in' }, async (spec) => {
+            const { name } = spec;
+            if (name in rivetPlugins) {
+              registry.registerPlugin(rivetPlugins[name as keyof typeof rivetPlugins]);
+            } else {
+              throw new Error(`Unknown built-in plugin ${name}.`);
+            }
+          })
+          .with({ type: 'uri' }, async (spec) => {
+            const plugin = ((await import(spec.uri)) as { default: RivetPluginInitializer }).default;
+
+            if (typeof plugin !== 'function') {
+              throw new Error(`Plugin ${spec.id} is not a function`);
+            }
+
+            const initializedPlugin = plugin(Rivet);
+
+            if (!initializedPlugin?.id) {
+              throw new Error(`Plugin ${spec.id} does not have an id`);
+            }
+            registry.registerPlugin(initializedPlugin);
+          })
+          .exhaustive();
+        console.log(`Enabled plugin ${spec.id}.`);
+      } catch (err) {
+        console.error(`Failed to enable plugin ${spec.id}.`, err);
+      }
     }
 
     try {

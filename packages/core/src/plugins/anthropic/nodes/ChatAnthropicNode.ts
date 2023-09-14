@@ -10,6 +10,7 @@ import {
   NodeOutputDefinition,
   NodeUIData,
   Outputs,
+  PluginNodeImpl,
   PortId,
   ScalarDataValue,
   addWarning,
@@ -21,6 +22,7 @@ import {
   getTokenCountForString,
   isArrayDataValue,
   nodeDefinition,
+  pluginNodeDefinition,
 } from '@ironclad/rivet-core';
 import {
   AnthropicModels,
@@ -65,8 +67,8 @@ export type ChatAnthropicNodeData = ChatAnthropicNodeConfigData & {
 // Temporary
 const cache = new Map<string, Outputs>();
 
-export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
-  static create(): ChatAnthropicNode {
+export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
+  create(): ChatAnthropicNode {
     const chartNode: ChatAnthropicNode = {
       type: 'chatAnthropic',
       title: 'Chat (Anthropic)',
@@ -105,12 +107,12 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
     };
 
     return chartNode;
-  }
+  },
 
-  getInputDefinitions(): NodeInputDefinition[] {
+  getInputDefinitions(data): NodeInputDefinition[] {
     const inputs: NodeInputDefinition[] = [];
 
-    if (this.data.useModelInput) {
+    if (data.useModelInput) {
       inputs.push({
         id: 'model' as PortId,
         title: 'Model',
@@ -119,7 +121,7 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
       });
     }
 
-    if (this.data.useTemperatureInput) {
+    if (data.useTemperatureInput) {
       inputs.push({
         dataType: 'number',
         id: 'temperature' as PortId,
@@ -127,7 +129,7 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
       });
     }
 
-    if (this.data.useTopPInput) {
+    if (data.useTopPInput) {
       inputs.push({
         dataType: 'number',
         id: 'top_p' as PortId,
@@ -135,7 +137,7 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
       });
     }
 
-    if (this.data.useUseTopPInput) {
+    if (data.useUseTopPInput) {
       inputs.push({
         dataType: 'boolean',
         id: 'useTopP' as PortId,
@@ -143,7 +145,7 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
       });
     }
 
-    if (this.data.useMaxTokensInput) {
+    if (data.useMaxTokensInput) {
       inputs.push({
         dataType: 'number',
         id: 'maxTokens' as PortId,
@@ -151,7 +153,7 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
       });
     }
 
-    if (this.data.useStopInput) {
+    if (data.useStopInput) {
       inputs.push({
         dataType: 'string',
         id: 'stop' as PortId,
@@ -166,9 +168,9 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
     });
 
     return inputs;
-  }
+  },
 
-  getOutputDefinitions(): NodeOutputDefinition[] {
+  getOutputDefinitions(_data): NodeOutputDefinition[] {
     const outputs: NodeOutputDefinition[] = [];
 
     outputs.push({
@@ -178,20 +180,20 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
     });
 
     return outputs;
-  }
+  },
 
-  getBody(): string {
+  getBody(data): string {
     return dedent`
-      ${this.data.model === 'claude-2' ? 'Claude' : 'Claude Instant'}
+      ${data.model === 'claude-2' ? 'Claude' : 'Claude Instant'}
       ${
-        this.data.useTopP
-          ? `Top P: ${this.data.useTopPInput ? '(Using Input)' : this.data.top_p}`
-          : `Temperature: ${this.data.useTemperatureInput ? '(Using Input)' : this.data.temperature}`
+        data.useTopP
+          ? `Top P: ${data.useTopPInput ? '(Using Input)' : data.top_p}`
+          : `Temperature: ${data.useTemperatureInput ? '(Using Input)' : data.temperature}`
       }
-      Max Tokens: ${this.data.maxTokens}
-      ${this.data.useStop ? `Stop: ${this.data.useStopInput ? '(Using Input)' : this.data.stop}` : ''}
+      Max Tokens: ${data.maxTokens}
+      ${data.useStop ? `Stop: ${data.useStopInput ? '(Using Input)' : data.stop}` : ''}
     `;
-  }
+  },
 
   getEditors(): EditorDefinition<ChatAnthropicNode>[] {
     return [
@@ -252,9 +254,9 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
         dataKey: 'useAsGraphPartialOutput',
       },
     ];
-  }
+  },
 
-  static getUIData(): NodeUIData {
+  getUIData(): NodeUIData {
     return {
       infoBoxBody: dedent`
         Makes a call to an Anthropic chat model. The settings contains many options for tweaking the model's behavior.
@@ -263,34 +265,32 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
       contextMenuTitle: 'Chat (Anthropic)',
       group: ['AI'],
     };
-  }
+  },
 
-  async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+  async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const output: Outputs = {};
 
-    const rawModel = this.data.useModelInput
-      ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? this.data.model
-      : this.data.model;
+    const rawModel = data.useModelInput
+      ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? data.model
+      : data.model;
 
     const model = rawModel as AnthropicModels;
 
-    const temperature = this.data.useTemperatureInput
-      ? coerceTypeOptional(inputs['temperature' as PortId], 'number') ?? this.data.temperature
-      : this.data.temperature;
+    const temperature = data.useTemperatureInput
+      ? coerceTypeOptional(inputs['temperature' as PortId], 'number') ?? data.temperature
+      : data.temperature;
 
-    const topP = this.data.useTopPInput
-      ? coerceTypeOptional(inputs['top_p' as PortId], 'number') ?? this.data.top_p
-      : this.data.top_p;
+    const topP = data.useTopPInput ? coerceTypeOptional(inputs['top_p' as PortId], 'number') ?? data.top_p : data.top_p;
 
-    const useTopP = this.data.useUseTopPInput
-      ? coerceTypeOptional(inputs['useTopP' as PortId], 'boolean') ?? this.data.useTopP
-      : this.data.useTopP;
+    const useTopP = data.useUseTopPInput
+      ? coerceTypeOptional(inputs['useTopP' as PortId], 'boolean') ?? data.useTopP
+      : data.useTopP;
 
-    const stop = this.data.useStopInput
-      ? this.data.useStop
-        ? coerceTypeOptional(inputs['stop' as PortId], 'string') ?? this.data.stop
+    const stop = data.useStopInput
+      ? data.useStop
+        ? coerceTypeOptional(inputs['stop' as PortId], 'string') ?? data.stop
         : undefined
-      : this.data.stop;
+      : data.stop;
 
     const functions = expectTypeOptional(inputs['functions' as PortId], 'gpt-function[]');
 
@@ -307,7 +307,7 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
 
     prompt += '\n\nAssistant:';
 
-    let { maxTokens } = this.data;
+    let { maxTokens } = data;
 
     const tokenCount = getTokenCountForString(prompt, anthropicModels[model].tiktokenModel);
 
@@ -340,7 +340,7 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
           };
           const cacheKey = JSON.stringify(options);
 
-          if (this.data.cache) {
+          if (data.cache) {
             const cached = cache.get(cacheKey);
             if (cached) {
               return cached;
@@ -451,10 +451,10 @@ export class ChatAnthropicNodeImpl extends NodeImpl<ChatAnthropicNode> {
       context.trace(getError(error).stack ?? 'Missing stack');
       throw new Error(`Error processing ChatAnthropicNode: ${(error as Error).message}`);
     }
-  }
-}
+  },
+};
 
-export const chatAnthropicNode = nodeDefinition(ChatAnthropicNodeImpl, 'Chat');
+export const chatAnthropicNode = pluginNodeDefinition(ChatAnthropicNodeImpl, 'Chat');
 
 export function getChatAnthropicNodeMessages(inputs: Inputs) {
   const prompt = inputs['prompt' as PortId];

@@ -52,9 +52,12 @@ const target = {
   win32: 'node18-win-x64',
 }[process.platform];
 
-await execaCommand(`yarn pkg . --out-path dist --targets ${target}`, {
-  stdio: 'inherit',
-});
+await execaCommand(
+  `yarn pkg . --out-path dist --no-bytecode --options experimental-network-imports --targets ${target}`,
+  {
+    stdio: 'inherit',
+  },
+);
 
 let { from: sourceFrom, to } = {
   darwin: {

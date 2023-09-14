@@ -23,9 +23,11 @@ import {
   NodeOutputDefinition,
   NodeUIData,
   Outputs,
+  PluginNodeImpl,
   PortId,
   coerceType,
   nodeDefinition,
+  pluginNodeDefinition,
 } from '../../index.js';
 import { match } from 'ts-pattern';
 
@@ -47,8 +49,8 @@ const options = [
   { label: 'SQL', value: 'sql' },
 ];
 
-export class AutoEvalsNodeImpl extends NodeImpl<AutoEvalsNode> {
-  static create(): AutoEvalsNode {
+export const AutoEvalsNodeImpl: PluginNodeImpl<AutoEvalsNode> = {
+  create(): AutoEvalsNode {
     const chartNode: AutoEvalsNode = {
       type: 'autoevals',
       title: 'Autoevals',
@@ -64,9 +66,9 @@ export class AutoEvalsNodeImpl extends NodeImpl<AutoEvalsNode> {
     };
 
     return chartNode;
-  }
+  },
 
-  getInputDefinitions(): NodeInputDefinition[] {
+  getInputDefinitions(data): NodeInputDefinition[] {
     const base: NodeInputDefinition[] = [
       {
         id: 'output' as PortId,
@@ -80,7 +82,7 @@ export class AutoEvalsNodeImpl extends NodeImpl<AutoEvalsNode> {
       },
     ];
 
-    const forEvaluator: NodeInputDefinition[] = match(this.data.evaluatorName)
+    const forEvaluator: NodeInputDefinition[] = match(data.evaluatorName)
       .with('factuality', (): NodeInputDefinition[] => [
         {
           id: 'input' as PortId,
@@ -146,7 +148,7 @@ export class AutoEvalsNodeImpl extends NodeImpl<AutoEvalsNode> {
       .exhaustive();
 
     return [...forEvaluator, ...base];
-  }
+  },
 
   getOutputDefinitions(): NodeOutputDefinition[] {
     return [
@@ -166,7 +168,7 @@ export class AutoEvalsNodeImpl extends NodeImpl<AutoEvalsNode> {
         title: 'Metadata',
       },
     ];
-  }
+  },
 
   getEditors(): EditorDefinition<AutoEvalsNode>[] {
     return [
@@ -177,13 +179,13 @@ export class AutoEvalsNodeImpl extends NodeImpl<AutoEvalsNode> {
         options,
       },
     ];
-  }
+  },
 
-  getBody(): string | undefined {
-    return options.find((option) => option.value === this.data.evaluatorName)?.label ?? 'None';
-  }
+  getBody(data): string | undefined {
+    return options.find((option) => option.value === data.evaluatorName)?.label ?? 'None';
+  },
 
-  static getUIData(): NodeUIData {
+  getUIData(): NodeUIData {
     return {
       infoBoxBody: dedent`
         Evaluates the validity of a response using the autoevals library.
@@ -192,10 +194,10 @@ export class AutoEvalsNodeImpl extends NodeImpl<AutoEvalsNode> {
       contextMenuTitle: 'Autoevals',
       group: 'Custom',
     };
-  }
+  },
 
-  async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
-    const evaluatorName = this.data.evaluatorName;
+  async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+    const evaluatorName = data.evaluatorName;
 
     const output = coerceType(inputs['output' as PortId], 'string');
     const expected = coerceType(inputs['expected' as PortId], 'string');
@@ -263,7 +265,7 @@ export class AutoEvalsNodeImpl extends NodeImpl<AutoEvalsNode> {
         value: result.metadata as Record<string, unknown>,
       },
     };
-  }
-}
+  },
+};
 
-export const autoEvalsNode = nodeDefinition(AutoEvalsNodeImpl, 'Autoevals');
+export const autoEvalsNode = pluginNodeDefinition(AutoEvalsNodeImpl, 'Autoevals');

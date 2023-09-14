@@ -14,7 +14,7 @@ export type UserInputNodeData = {
 };
 
 export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
-  static create(prompt = 'This is an example question?'): UserInputNode {
+  static create(): UserInputNode {
     const chartNode: UserInputNode = {
       type: 'userInput',
       title: 'User Input',
@@ -25,7 +25,7 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
         width: 250,
       },
       data: {
-        prompt,
+        prompt: 'This is an example question?',
         useInput: false,
       },
     };

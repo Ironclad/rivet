@@ -11,9 +11,11 @@ import {
   NodeOutputDefinition,
   NodeUIData,
   Outputs,
+  PluginNodeImpl,
   PortId,
   coerceTypeOptional,
   nodeDefinition,
+  pluginNodeDefinition,
 } from '../../index.js';
 import { LemurNodeData, LemurParams, getApiKey, getLemurParams, lemurEditorDefinitions } from './lemurHelpers.js';
 
@@ -23,8 +25,8 @@ export type LemurTaskNodeData = LemurNodeData & {
   prompt?: string;
 };
 
-export class LemurTaskNodeImpl extends NodeImpl<LemurTaskNode> {
-  static create(): LemurTaskNode {
+export const LemurTaskNodeImpl: PluginNodeImpl<LemurTaskNode> = {
+  create(): LemurTaskNode {
     const chartNode: LemurTaskNode = {
       type: 'assemblyAiLemurTask',
       title: 'LeMUR Task',
@@ -35,12 +37,12 @@ export class LemurTaskNodeImpl extends NodeImpl<LemurTaskNode> {
         width: 250,
       },
       data: {
-        final_model: 'default'
+        final_model: 'default',
       },
     };
 
     return chartNode;
-  }
+  },
 
   getInputDefinitions(): NodeInputDefinition[] {
     return [
@@ -53,9 +55,9 @@ export class LemurTaskNodeImpl extends NodeImpl<LemurTaskNode> {
         id: 'prompt' as PortId,
         dataType: 'string',
         title: 'Prompt',
-      }
+      },
     ];
-  }
+  },
 
   getOutputDefinitions(): NodeOutputDefinition[] {
     return [
@@ -65,39 +67,39 @@ export class LemurTaskNodeImpl extends NodeImpl<LemurTaskNode> {
         title: 'Response',
       },
     ];
-  }
+  },
 
   getEditors(): EditorDefinition<LemurTaskNode>[] {
     return [
       {
         type: 'string',
         label: 'Prompt',
-        dataKey: 'prompt'
+        dataKey: 'prompt',
       },
-      ...lemurEditorDefinitions as unknown as EditorDefinition<LemurTaskNode>[]
+      ...(lemurEditorDefinitions as unknown as EditorDefinition<LemurTaskNode>[]),
     ];
-  }
+  },
 
   getBody(): string | undefined {
     return '';
-  }
+  },
 
-  static getUIData(): NodeUIData {
+  getUIData(): NodeUIData {
     return {
       infoBoxBody: dedent`Use AssemblyAI LeMUR Custom Task to ask anything.`,
       infoBoxTitle: 'Use AssemblyAI LeMUR Custom Task',
       contextMenuTitle: 'LeMUR Custom Task',
       group: ['AI', 'AssemblyAI'],
     };
-  }
+  },
 
-  async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+  async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const apiKey = getApiKey(context);
     const params: Omit<LemurParams, 'context'> & {
-      prompt: string,
+      prompt: string;
     } = {
-      prompt: coerceTypeOptional(inputs['prompt' as PortId], 'string') || this.chartNode.data.prompt || '',
-      ...getLemurParams(inputs, this.chartNode.data)
+      prompt: coerceTypeOptional(inputs['prompt' as PortId], 'string') || data.prompt || '',
+      ...getLemurParams(inputs, data),
     };
     if (!params.prompt) throw new Error('Prompt must be provided.');
 
@@ -109,22 +111,17 @@ export class LemurTaskNodeImpl extends NodeImpl<LemurTaskNode> {
         value: response,
       },
     };
-  }
-}
+  },
+};
 
-async function runLemurTask(
-  apiToken: string,
-  params: object
-) {
-  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/task',
-    {
-      method: 'POST',
-      body: JSON.stringify(params),
-      headers: {
-        authorization: apiToken
-      }
-    }
-  );
+async function runLemurTask(apiToken: string, params: object) {
+  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/task', {
+    method: 'POST',
+    body: JSON.stringify(params),
+    headers: {
+      authorization: apiToken,
+    },
+  });
   const body = await response.json();
   if (response.status !== 200) {
     if ('error' in body) throw new Error(body.error);
@@ -134,4 +131,4 @@ async function runLemurTask(
   return body as { response: string };
 }
 
-export const lemurTaskNode = nodeDefinition(LemurTaskNodeImpl, 'LeMUR Task');
+export const lemurTaskNode = pluginNodeDefinition(LemurTaskNodeImpl, 'LeMUR Task');

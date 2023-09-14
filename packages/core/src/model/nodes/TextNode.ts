@@ -13,7 +13,7 @@ export type TextNodeData = {
 };
 
 export class TextNodeImpl extends NodeImpl<TextNode> {
-  static create(text: string = '{{input}}'): TextNode {
+  static create(): TextNode {
     const chartNode: TextNode = {
       type: 'text',
       title: 'Text',
@@ -24,7 +24,7 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
         width: 300,
       },
       data: {
-        text,
+        text: '{{input}}',
       },
     };
 

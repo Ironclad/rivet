@@ -16,7 +16,7 @@ export type ExtractRegexNodeData = {
 };
 
 export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
-  static create(regex: string = '([a-zA-Z]+)'): ExtractRegexNode {
+  static create(): ExtractRegexNode {
     const chartNode: ExtractRegexNode = {
       type: 'extractRegex',
       title: 'Extract Regex',
@@ -27,7 +27,7 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
         width: 250,
       },
       data: {
-        regex,
+        regex: '([a-zA-Z]+)',
         useRegexInput: false,
         errorOnFailed: false,
       },

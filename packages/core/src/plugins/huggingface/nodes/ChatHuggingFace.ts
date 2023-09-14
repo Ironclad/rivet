@@ -11,10 +11,12 @@ import {
   NodeOutputDefinition,
   NodeUIData,
   Outputs,
+  PluginNodeImpl,
   PortId,
   coerceType,
   getInputOrData,
   nodeDefinition,
+  pluginNodeDefinition,
 } from '../../../index.js';
 import { HfInference, HfInferenceEndpoint } from '@huggingface/inference';
 import { dedent } from 'ts-dedent';
@@ -50,8 +52,8 @@ export type ChatHuggingFaceNodeData = {
   useTopKInput?: boolean;
 };
 
-export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
-  static create(): ChatHuggingFaceNode {
+export const ChatHuggingFaceNodeImpl: PluginNodeImpl<ChatHuggingFaceNode> = {
+  create(): ChatHuggingFaceNode {
     return {
       id: nanoid() as NodeId,
       type: 'chatHuggingFace',
@@ -68,18 +70,18 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
         width: 300,
       },
     };
-  }
+  },
 
-  static getUIData(): NodeUIData {
+  getUIData(): NodeUIData {
     return {
       group: ['AI', 'Hugging Face'],
       contextMenuTitle: 'Chat (Hugging Face)',
       infoBoxTitle: 'Chat (Hugging Face) Node',
       infoBoxBody: 'Chat, using the hugging face inference API',
     };
-  }
+  },
 
-  getInputDefinitions(): NodeInputDefinition[] {
+  getInputDefinitions(data): NodeInputDefinition[] {
     const inputs: NodeInputDefinition[] = [];
 
     inputs.push({
@@ -89,7 +91,7 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
       required: true,
     });
 
-    if (this.data.useModelInput) {
+    if (data.useModelInput) {
       inputs.push({
         id: 'model' as PortId,
         dataType: 'string',
@@ -97,7 +99,7 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
       });
     }
 
-    if (this.data.useEndpointInput) {
+    if (data.useEndpointInput) {
       inputs.push({
         id: 'endpoint' as PortId,
         dataType: 'string',
@@ -105,7 +107,7 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
       });
     }
 
-    if (this.data.useTemperatureInput) {
+    if (data.useTemperatureInput) {
       inputs.push({
         id: 'temperature' as PortId,
         dataType: 'number',
@@ -113,7 +115,7 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
       });
     }
 
-    if (this.data.useMaxNewTokensInput) {
+    if (data.useMaxNewTokensInput) {
       inputs.push({
         id: 'maxNewTokens' as PortId,
         dataType: 'number',
@@ -121,7 +123,7 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
       });
     }
 
-    if (this.data.useDoSampleInput) {
+    if (data.useDoSampleInput) {
       inputs.push({
         id: 'doSample' as PortId,
         dataType: 'boolean',
@@ -129,7 +131,7 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
       });
     }
 
-    if (this.data.useMaxTimeInput) {
+    if (data.useMaxTimeInput) {
       inputs.push({
         id: 'maxTime' as PortId,
         dataType: 'number',
@@ -137,7 +139,7 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
       });
     }
 
-    if (this.data.useRepetitionPenaltyInput) {
+    if (data.useRepetitionPenaltyInput) {
       inputs.push({
         id: 'repetitionPenalty' as PortId,
         dataType: 'number',
@@ -145,7 +147,7 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
       });
     }
 
-    if (this.data.useTopPInput) {
+    if (data.useTopPInput) {
       inputs.push({
         id: 'topP' as PortId,
         dataType: 'number',
@@ -153,7 +155,7 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
       });
     }
 
-    if (this.data.useTopKInput) {
+    if (data.useTopKInput) {
       inputs.push({
         id: 'topK' as PortId,
         dataType: 'number',
@@ -162,7 +164,8 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
     }
 
     return inputs;
-  }
+  },
+
   getOutputDefinitions(): NodeOutputDefinition[] {
     return [
       {
@@ -171,7 +174,7 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
         title: 'Output',
       },
     ];
-  }
+  },
 
   getEditors(): EditorDefinition<ChatHuggingFaceNode>[] {
     return [
@@ -239,40 +242,40 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
         allowEmpty: true,
       },
     ];
-  }
+  },
 
-  getBody(): string | NodeBodySpec | NodeBodySpec[] | undefined {
+  getBody(data): string | NodeBodySpec | NodeBodySpec[] | undefined {
     return dedent`
       ${
-        this.data.endpoint || this.data.useEndpointInput
-          ? `Endpoint: ${this.data.useEndpointInput ? '(Using Input)' : 'Yes'}`
-          : `Model: ${this.data.useModelInput ? '(Using Input)' : this.data.model}`
+        data.endpoint || data.useEndpointInput
+          ? `Endpoint: ${data.useEndpointInput ? '(Using Input)' : 'Yes'}`
+          : `Model: ${data.useModelInput ? '(Using Input)' : data.model}`
       }
       ${
-        this.data.useTemperatureInput
+        data.useTemperatureInput
           ? 'Temperature: (Using Input)'
-          : this.data.temperature != null
-          ? `Temperature: ${this.data.temperature}`
+          : data.temperature != null
+          ? `Temperature: ${data.temperature}`
           : ''
       }
-      Max New Tokens: ${this.data.useMaxNewTokensInput ? '(Using Input)' : this.data.maxNewTokens}
+      Max New Tokens: ${data.useMaxNewTokensInput ? '(Using Input)' : data.maxNewTokens}
     `;
-  }
+  },
 
-  async process(inputData: Inputs, context: InternalProcessContext): Promise<Outputs> {
+  async process(data, inputData, context): Promise<Outputs> {
     const accessToken = context.getPluginConfig('huggingFaceAccessToken');
 
     const prompt = coerceType(inputData['prompt' as PortId], 'string');
-    const endpoint = getInputOrData(this.data, inputData, 'endpoint');
+    const endpoint = getInputOrData(data, inputData, 'endpoint');
 
-    const model = getInputOrData(this.data, inputData, 'model');
-    const temperature = getInputOrData(this.data, inputData, 'temperature', 'number');
-    const maxNewTokens = getInputOrData(this.data, inputData, 'maxNewTokens', 'number');
-    const doSample = getInputOrData(this.data, inputData, 'doSample', 'boolean');
-    const maxTime = getInputOrData(this.data, inputData, 'maxTime', 'number');
-    const repetitionPenalty = getInputOrData(this.data, inputData, 'repetitionPenalty', 'number');
-    const topP = getInputOrData(this.data, inputData, 'topP', 'number');
-    const topK = getInputOrData(this.data, inputData, 'topK', 'number');
+    const model = getInputOrData(data, inputData, 'model');
+    const temperature = getInputOrData(data, inputData, 'temperature', 'number');
+    const maxNewTokens = getInputOrData(data, inputData, 'maxNewTokens', 'number');
+    const doSample = getInputOrData(data, inputData, 'doSample', 'boolean');
+    const maxTime = getInputOrData(data, inputData, 'maxTime', 'number');
+    const repetitionPenalty = getInputOrData(data, inputData, 'repetitionPenalty', 'number');
+    const topP = getInputOrData(data, inputData, 'topP', 'number');
+    const topK = getInputOrData(data, inputData, 'topK', 'number');
 
     const hf = endpoint ? new HfInferenceEndpoint(endpoint, accessToken) : new HfInference(accessToken);
 
@@ -311,7 +314,7 @@ export class ChatHuggingFaceNodeImpl extends NodeImpl<ChatHuggingFaceNode> {
         value: parts.join(''),
       },
     };
-  }
-}
+  },
+};
 
-export const chatHuggingFaceNode = nodeDefinition(ChatHuggingFaceNodeImpl, 'Chat (Hugging Face)');
+export const chatHuggingFaceNode = pluginNodeDefinition(ChatHuggingFaceNodeImpl, 'Chat (Hugging Face)');

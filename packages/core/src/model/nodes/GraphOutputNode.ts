@@ -17,7 +17,7 @@ export type GraphOutputNodeData = {
 };
 
 export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
-  static create(id: string = 'output', dataType: DataType = 'string'): GraphOutputNode {
+  static create(): GraphOutputNode {
     const chartNode: GraphOutputNode = {
       type: 'graphOutput',
       title: 'Graph Output',
@@ -28,8 +28,8 @@ export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
         width: 300,
       },
       data: {
-        id,
-        dataType,
+        id: 'output',
+        dataType: 'string',
       },
     };
 
