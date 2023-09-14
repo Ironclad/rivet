@@ -1,4 +1,4 @@
-<h1 align="center"><img src="https://rivet.ironcladapp.com/img/Square150x150Logo.png" alt="Rivet Logo" width="32"> Rivet</h1>
+<h1 align="center"><img src="https://rivet.ironcladapp.com/img/logo-banner-wide.png" alt="Rivet Logo"></h1>
 
 [![All Contributors](https://img.shields.io/github/all-contributors/Ironclad/rivet?color=ee8449&style=flat-square)](#contributors-) ![GitHub issues](https://img.shields.io/github/issues/Ironclad/rivet) ![GitHub pull requests](https://img.shields.io/github/issues-pr/Ironclad/rivet) ![License](https://img.shields.io/github/license/Ironclad/rivet) [![Discord](https://img.shields.io/discord/1149376303070466110?style=flat&logo=discord)](https://discord.gg/qT8B2gv9Mg)
 
@@ -18,6 +18,8 @@
 </p>
 
 Have a question? Need some help? Check out the Rivet [Discord server](https://discord.gg/qT8B2gv9Mg)!
+
+https://github.com/Ironclad/rivet/assets/448108/ad1d5e74-fe05-444e-8da7-66a1fc5b6848
 
 - [About Rivet](#about-rivet)
   - [Rivet Application](#rivet-application)
@@ -130,6 +132,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Crystalix007"><img src="https://avatars.githubusercontent.com/u/4603729?v=4?s=100" width="100px;" alt="Michael Kuc"/><br /><sub><b>Michael Kuc</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=Crystalix007" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/eltociear"><img src="https://avatars.githubusercontent.com/u/22633385?v=4?s=100" width="100px;" alt="Ikko Eltociear Ashimine"/><br /><sub><b>Ikko Eltociear Ashimine</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=eltociear" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://ohshutit.com"><img src="https://avatars.githubusercontent.com/u/54246375?v=4?s=100" width="100px;" alt="HU$H"/><br /><sub><b>HU$H</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=hushaudio" title="Code">💻</a> <a href="#ideas-hushaudio" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kcwhite"><img src="https://avatars.githubusercontent.com/u/3812801?v=4?s=100" width="100px;" alt="kcwhite"/><br /><sub><b>kcwhite</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=kcwhite" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
