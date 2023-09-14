@@ -142,6 +142,11 @@ const contextMenuStyles = css`
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
   background: var(--grey-dark);
   min-width: max-content;
+
+  > button span {
+    // This fixes a bug in Ubuntu where the text is missing
+    overflow-x: visible !important;
+  }
 `;
 
 const runWithIterationPopupStyles = css`
