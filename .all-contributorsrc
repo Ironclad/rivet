@@ -219,6 +219,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "advisely",
+      "name": "HumanBot",
+      "avatar_url": "https://avatars.githubusercontent.com/u/29242247?v=4",
+      "profile": "https://github.com/advisely",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
