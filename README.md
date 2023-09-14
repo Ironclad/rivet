@@ -135,6 +135,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="http://ohshutit.com"><img src="https://avatars.githubusercontent.com/u/54246375?v=4?s=100" width="100px;" alt="HU$H"/><br /><sub><b>HU$H</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=hushaudio" title="Code">💻</a> <a href="#ideas-hushaudio" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/kcwhite"><img src="https://avatars.githubusercontent.com/u/3812801?v=4?s=100" width="100px;" alt="kcwhite"/><br /><sub><b>kcwhite</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=kcwhite" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://gentrace.ai"><img src="https://avatars.githubusercontent.com/u/1203039?v=4?s=100" width="100px;" alt="Vivek Nair"/><br /><sub><b>Vivek Nair</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=viveknair" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/CongYun22"><img src="https://avatars.githubusercontent.com/u/115971962?v=4?s=100" width="100px;" alt="丛云"/><br /><sub><b>丛云</b></sub></a><br /><a href="#ideas-CongYun22" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
 </table>
