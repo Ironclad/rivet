@@ -228,6 +228,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "bradstallion",
+      "name": "bradstallion",
+      "avatar_url": "https://avatars.githubusercontent.com/u/37795833?v=4",
+      "profile": "https://github.com/bradstallion",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
