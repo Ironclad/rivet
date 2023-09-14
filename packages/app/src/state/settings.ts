@@ -9,6 +9,7 @@ export const settingsState = atom<Settings>({
 
     openAiKey: '',
     openAiOrganization: '',
+    openAiEndpoint: '',
 
     pluginEnv: {},
     pluginSettings: {},

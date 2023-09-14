@@ -182,6 +182,8 @@ export type ChatCompletionFunction = {
   parameters: object;
 };
 
+export const DEFAULT_CHAT_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
+
 export async function* streamChatCompletions({
   endpoint,
   auth,
@@ -189,19 +191,27 @@ export async function* streamChatCompletions({
   ...rest
 }: ChatCompletionOptions): AsyncGenerator<ChatCompletionChunk> {
   const abortSignal = signal ?? new AbortController().signal;
-  const response = await fetchEventSource(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${auth.apiKey}`,
-      ...(auth.organization ? { 'OpenAI-Organization': auth.organization } : {}),
+
+  // Turn off timeout because local models can be slow, TODO configurable timeout
+  const timeout = endpoint === DEFAULT_CHAT_ENDPOINT ? 5000 : 10000000;
+
+  const response = await fetchEventSource(
+    endpoint,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${auth.apiKey}`,
+        ...(auth.organization ? { 'OpenAI-Organization': auth.organization } : {}),
+      },
+      body: JSON.stringify({
+        ...rest,
+        stream: true,
+      }),
+      signal: abortSignal,
     },
-    body: JSON.stringify({
-      ...rest,
-      stream: true,
-    }),
-    signal: abortSignal,
-  });
+    timeout,
+  );
 
   let hadChunks = false;
 

@@ -12,6 +12,7 @@ import { addWarning } from '../../utils/outputs.js';
 import {
   ChatCompletionOptions,
   ChatCompletionRequestMessage,
+  DEFAULT_CHAT_ENDPOINT,
   OpenAIError,
   openAiModelOptions,
   openaiModels,
@@ -67,7 +68,6 @@ export type ChatNodeData = ChatNodeConfigData & {
 // Temporary
 const cache = new Map<string, Outputs>();
 
-const DEFAULT_CHAT_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
 export class ChatNodeImpl extends NodeImpl<ChatNode> {
   static create(): ChatNode {
     const chartNode: ChatNode = {
@@ -466,7 +466,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             presence_penalty: presencePenalty,
             stop: stop || undefined,
             functions: functions?.length === 0 ? undefined : functions,
-            endpoint: endpoint ?? DEFAULT_CHAT_ENDPOINT,
+            endpoint: endpoint || context.settings.openAiEndpoint || DEFAULT_CHAT_ENDPOINT,
           };
           const cacheKey = JSON.stringify(options);
 
@@ -478,13 +478,10 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           }
 
           const startTime = Date.now();
-          if (!context.settings.openAiKey) {
-            throw new Error("OpenAI key must be configured.");
-          }
-          
+
           const chunks = streamChatCompletions({
             auth: {
-              apiKey: context.settings.openAiKey,
+              apiKey: context.settings.openAiKey ?? '',
               organization: context.settings.openAiOrganization,
             },
             signal: context.signal,

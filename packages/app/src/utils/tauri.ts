@@ -24,6 +24,7 @@ export async function fillMissingSettingsFromEnvironmentVariables(settings: Part
   const fullSettings: Settings = {
     openAiKey: (settings.openAiKey || (await getEnvVar('OPENAI_API_KEY'))) ?? '',
     openAiOrganization: (settings.openAiOrganization || (await getEnvVar('OPENAI_ORG_ID'))) ?? '',
+    openAiEndpoint: (settings.openAiEndpoint || (await getEnvVar('OPENAI_ENDPOINT'))) ?? '',
     pluginSettings: settings.pluginSettings,
     pluginEnv: {},
   };

@@ -167,7 +167,7 @@ export const OpenAiSettingsPage: FC = () => {
           </>
         )}
       </Field>
-      <Field name="organization" label="OpenAI Organization (optional)">
+      <Field name="organization" label="OpenAI Organization">
         {() => (
           <>
             <TextField
@@ -177,6 +177,20 @@ export const OpenAiSettingsPage: FC = () => {
             <HelperMessage>
               You may also set the OPENAI_ORG_ID environment variable. This is only required if you are a member of a
               shared organization.
+            </HelperMessage>
+          </>
+        )}
+      </Field>
+      <Field name="organization" label="OpenAI Endpoint">
+        {() => (
+          <>
+            <TextField
+              value={settings.openAiEndpoint}
+              onChange={(e) => setSettings((s) => ({ ...s, openAiEndpoint: (e.target as HTMLInputElement).value }))}
+            />
+            <HelperMessage>
+              Default endpoint to use for Chat nodes. Set to any OpenAI-compatible API endpoint. Leave blank to use
+              OpenAI itself. You may also set the OPENAI_API_ENDPOINT environment variable.
             </HelperMessage>
           </>
         )}
