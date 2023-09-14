@@ -3860,6 +3860,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gentrace/core@npm:^2.1.15":
+  version: 2.1.15
+  resolution: "@gentrace/core@npm:2.1.15"
+  dependencies:
+    axios: "npm:^1.4.0"
+    mustache: "npm:^4.2.0"
+    uuid: "npm:^9.0.0"
+  checksum: e66abcf9b6f499315e5ea21880fbd7452bd844de076f09443a62289f2741622bc788b459fddd930cc4f1583c44e6b50d5b162dd050d7806af65a8d2b4b1410ad
+  languageName: node
+  linkType: hard
+
 "@grpc/grpc-js@npm:1.8.17":
   version: 1.8.17
   resolution: "@grpc/grpc-js@npm:1.8.17"
@@ -4085,6 +4096,7 @@ __metadata:
   resolution: "@ironclad/rivet-core@workspace:packages/core"
   dependencies:
     "@dqbd/tiktoken": "npm:^1.0.7"
+    "@gentrace/core": "npm:^2.1.15"
     "@huggingface/inference": "npm:^2.6.1"
     "@swc/core": "npm:^1.3.71"
     "@types/crypto-js": "npm:^4.1.1"
@@ -6826,6 +6838,17 @@ __metadata:
   dependencies:
     follow-redirects: "npm:^1.14.8"
   checksum: ac969975b2e196b6e6075353688eeeb540c5cf8447c2914f90323165dfc43cd26cc31e601ed36f5711f5cd7dc76654a7c1b0db142c669152d5d600c9d3516307
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.4.0":
+  version: 1.5.0
+  resolution: "axios@npm:1.5.0"
+  dependencies:
+    follow-redirects: "npm:^1.15.0"
+    form-data: "npm:^4.0.0"
+    proxy-from-env: "npm:^1.1.0"
+  checksum: 39440528483b1eeaeac1913a96a9bedfcb477bc059f0cc690a8242f361ce5ed84b73206dca5ce2977b94cf6b8c2b0132602764fc2fa465765ee3729e5d3f2d6a
   languageName: node
   linkType: hard
 
@@ -9954,7 +9977,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.7, follow-redirects@npm:^1.14.8":
+"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.7, follow-redirects@npm:^1.14.8, follow-redirects@npm:^1.15.0":
   version: 1.15.2
   resolution: "follow-redirects@npm:1.15.2"
   peerDependenciesMeta:
@@ -14077,6 +14100,13 @@ __metadata:
     forwarded: "npm:0.2.0"
     ipaddr.js: "npm:1.9.1"
   checksum: c03f00d8f882b97636262d0ae7da0c502325474ea215f21b4f0664ad8f40f49d2071b52c18257d011338be3db21ca65a6e8cbc0d95fb23efc00516ce9ee37c27
+  languageName: node
+  linkType: hard
+
+"proxy-from-env@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "proxy-from-env@npm:1.1.0"
+  checksum: 0bba2ef7c8374b384e94e4477764e53df66fcdfa7d19e2c4a063cb39eea979c139ce13981970223665422e72b7d149609a927046e2e40ab340b84d91af082591
   languageName: node
   linkType: hard
 

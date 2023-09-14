@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import clsx from 'clsx';
-import { FC, useRef, useState } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { FC, useEffect, useRef, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { useLoadRecording } from '../hooks/useLoadRecording';
 import { useSaveRecording } from '../hooks/useSaveRecording';
 import { graphRunningState, graphPausedState } from '../state/dataFlow';
@@ -12,16 +12,14 @@ import { ReactComponent as PauseIcon } from 'majesticons/line/pause-circle-line.
 import { ReactComponent as PlayIcon } from 'majesticons/line/play-circle-line.svg';
 import { ReactComponent as MoreMenuVerticalIcon } from 'majesticons/line/more-menu-vertical-line.svg';
 import Popup from '@atlaskit/popup';
-import { settingsModalOpenState } from './SettingsModal';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
-import { isInTauri } from '../utils/tauri';
-import Select from '@atlaskit/select';
-import Portal from '@atlaskit/portal';
 import { debuggerPanelOpenState } from '../state/ui';
 import { ActionBarMoreMenu } from './ActionBarMoreMenu';
 import { useCurrentExecution } from '../hooks/useCurrentExecution';
 import { CopyAsTestCaseModal } from './CopyAsTestCaseModal';
 import { useToggle } from 'ahooks';
+import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
+import { GentraceInteractors } from './gentrace/GentraceInteractors';
 
 const styles = css`
   position: fixed;
@@ -42,6 +40,7 @@ const styles = css`
   .unload-recording-button button,
   .run-test-button button,
   .save-recording-button button,
+  .run-gentrace-button button,
   .more-menu,
   .remote-debugger-button button {
     border: none;
@@ -64,6 +63,7 @@ const styles = css`
     }
   }
 
+  .run-gentrace-button button,
   .pause-button button,
   .save-recording-button button {
     background-color: rgba(255, 255, 255, 0.1);
@@ -152,6 +152,11 @@ export const ActionBar: FC<ActionBarProps> = ({
   const { remoteDebuggerState: remoteDebugger, disconnect } = useRemoteDebugger();
   const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
   const [copyAsTestCaseModalOpen, toggleCopyAsTestCaseModalOpen] = useToggle();
+ 
+  const plugins = useDependsOnPlugins();
+ 
+  const gentracePlugin = plugins.find(plugin => plugin.id === 'gentrace');
+  const isGentracePluginEnabled = !!gentracePlugin;
 
   return (
     <div css={styles}>
@@ -192,6 +197,9 @@ export const ActionBar: FC<ActionBarProps> = ({
           Run Test <ChevronRightIcon />
         </button>
       </div> */}
+     
+      {isGentracePluginEnabled && <GentraceInteractors /> }
+
       {lastRecording && (
         <div className={clsx('save-recording-button')}>
           <button onClick={saveRecording}>Save Recording</button>
