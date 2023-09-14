@@ -221,6 +221,15 @@
       ]
     },
     {
+      "login": "advisely",
+      "name": "HumanBot",
+      "avatar_url": "https://avatars.githubusercontent.com/u/29242247?v=4",
+      "profile": "https://github.com/advisely",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
       "login": "bradstallion",
       "name": "bradstallion",
       "avatar_url": "https://avatars.githubusercontent.com/u/37795833?v=4",
