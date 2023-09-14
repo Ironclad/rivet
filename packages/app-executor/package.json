@@ -6,7 +6,7 @@
   "bin": "./bin/executor-bundle.js",
   "scripts": {
     "build": "tsx scripts/build-executor.mts",
-    "start": "yarn build && node bin/executor-bundle.js"
+    "start": "yarn build && node --experimental-network-imports bin/executor-bundle.js"
   },
   "devDependencies": {
     "@ironclad/rivet-core": "workspace:^",
