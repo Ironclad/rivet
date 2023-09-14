@@ -2,7 +2,7 @@ import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } 
 import { nanoid } from 'nanoid';
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataValue } from '../DataValue.js';
-import { coerceType } from '../../index.js';
+import { Inputs, Outputs, coerceType } from '../../index.js';
 import { dedent } from 'ts-dedent';
 
 export type MatchNode = ChartNode<'match', MatchNodeData>;
@@ -36,9 +36,14 @@ export class MatchNodeImpl extends NodeImpl<MatchNode> {
     const inputs: NodeInputDefinition[] = [
       {
         id: 'input' as PortId,
-        title: 'Input',
+        title: 'Test',
         dataType: 'string',
         required: true,
+      },
+      {
+        id: 'value' as PortId,
+        title: 'Value',
+        dataType: 'any',
       },
     ];
 
@@ -76,11 +81,16 @@ export class MatchNodeImpl extends NodeImpl<MatchNode> {
     };
   }
 
-  async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
-    const inputString = coerceType(inputs.input, 'string');
+  async process(inputs: Inputs): Promise<Outputs> {
+    const inputString = coerceType(inputs['input' as PortId], 'string');
+    const value = inputs['value' as PortId];
+
+    const outputType = value === undefined ? 'string' : value.type;
+    const outputValue = value === undefined ? inputString : value.value;
+
     const cases = this.chartNode.data.cases;
     let matched = false;
-    const output: Record<string, DataValue> = {};
+    const output: Outputs = {};
 
     for (let i = 0; i < cases.length; i++) {
       const regExp = new RegExp(cases[i]!);
@@ -88,12 +98,12 @@ export class MatchNodeImpl extends NodeImpl<MatchNode> {
 
       if (match) {
         matched = true;
-        output[`case${i + 1}`] = {
-          type: 'string',
-          value: inputString,
-        };
+        output[`case${i + 1}` as PortId] = {
+          type: outputType,
+          value: outputValue,
+        } as DataValue;
       } else {
-        output[`case${i + 1}`] = {
+        output[`case${i + 1}` as PortId] = {
           type: 'control-flow-excluded',
           value: undefined,
         };
@@ -101,12 +111,12 @@ export class MatchNodeImpl extends NodeImpl<MatchNode> {
     }
 
     if (!matched) {
-      output.unmatched = {
-        type: 'string',
-        value: inputString,
-      };
+      output['unmatched' as PortId] = {
+        type: outputType,
+        value: outputValue,
+      } as DataValue;
     } else {
-      output.unmatched = {
+      output['unmatched' as PortId] = {
         type: 'control-flow-excluded',
         value: undefined,
       };

@@ -122,11 +122,11 @@ export const defaultEditorContainerStyles = css`
   }
 `;
 
-export const DefaultNodeEditor: FC<{
-  node: ChartNode;
-  isReadonly: boolean;
-  onChange: NodeChanged;
-}> = ({ node, onChange, isReadonly }) => {
+export const DefaultNodeEditor: FC<
+  SharedProps & {
+    onClose?: () => void;
+  }
+> = ({ node, onChange, isReadonly, onClose }) => {
   const [editors, setEditors] = useState<EditorDefinition<ChartNode>[]>([]);
 
   useEffect(() => {
@@ -153,6 +153,7 @@ export const DefaultNodeEditor: FC<{
           onChange={onChange}
           editor={editor}
           isReadonly={isReadonly}
+          onClose={onClose}
         />
       ))}
     </div>
@@ -161,15 +162,21 @@ export const DefaultNodeEditor: FC<{
 
 const validSelectableDataTypes = scalarTypes.filter((type) => type !== 'control-flow-excluded');
 
-const DefaultNodeEditorField: FC<{
+type SharedProps = {
   node: ChartNode;
   onChange: NodeChanged;
-  editor: EditorDefinition<ChartNode>;
   isReadonly: boolean;
-}> = ({ node, onChange, editor, isReadonly }) => {
+  onClose?: () => void;
+};
+
+const DefaultNodeEditorField: FC<
+  SharedProps & {
+    editor: EditorDefinition<ChartNode>;
+  }
+> = ({ node, onChange, editor, isReadonly, onClose }) => {
   const data = node.data as Record<string, unknown>;
 
-  const sharedProps = { node, onChange, isReadonly };
+  const sharedProps: SharedProps = { node, onChange, isReadonly, onClose };
 
   const input = match(editor)
     .with({ type: 'string' }, (editor) => <DefaultStringEditor {...sharedProps} editor={editor} />)
@@ -213,12 +220,11 @@ const DefaultNodeEditorField: FC<{
   );
 };
 
-export const DefaultStringEditor: FC<{
-  node: ChartNode;
-  isReadonly: boolean;
-  onChange: NodeChanged;
-  editor: StringEditorDefinition<ChartNode>;
-}> = ({ node, isReadonly, onChange, editor }) => {
+export const DefaultStringEditor: FC<
+  SharedProps & {
+    editor: StringEditorDefinition<ChartNode>;
+  }
+> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
   return (
     <Field name={editor.dataKey} label={editor.label}>
@@ -242,13 +248,11 @@ export const DefaultStringEditor: FC<{
   );
 };
 
-export const DefaultToggleEditor: FC<{
-  node: ChartNode;
-  isReadonly: boolean;
-
-  onChange: NodeChanged;
-  editor: ToggleEditorDefinition<ChartNode>;
-}> = ({ node, isReadonly, onChange, editor }) => {
+export const DefaultToggleEditor: FC<
+  SharedProps & {
+    editor: ToggleEditorDefinition<ChartNode>;
+  }
+> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
   return (
     <Field name={editor.dataKey} label={editor.label}>
@@ -272,12 +276,11 @@ export const DefaultToggleEditor: FC<{
   );
 };
 
-export const DefaultDataTypeSelector: FC<{
-  node: ChartNode;
-  isReadonly: boolean;
-  onChange: NodeChanged;
-  editor: DataTypeSelectorEditorDefinition<ChartNode>;
-}> = ({ node, isReadonly, onChange, editor }) => {
+export const DefaultDataTypeSelector: FC<
+  SharedProps & {
+    editor: DataTypeSelectorEditorDefinition<ChartNode>;
+  }
+> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
   const dataType = data[editor.dataKey] as DataType | undefined;
 
@@ -335,12 +338,11 @@ export const DefaultDataTypeSelector: FC<{
   );
 };
 
-export const DefaultAnyDataEditor: FC<{
-  node: ChartNode;
-  isReadonly: boolean;
-  onChange: NodeChanged;
-  editor: AnyDataEditorDefinition<ChartNode>;
-}> = ({ node, isReadonly, onChange, editor }) => {
+export const DefaultAnyDataEditor: FC<
+  SharedProps & {
+    editor: AnyDataEditorDefinition<ChartNode>;
+  }
+> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
   // TODO
   return (
@@ -365,12 +367,11 @@ export const DefaultAnyDataEditor: FC<{
   );
 };
 
-export const DefaultDropdownEditor: FC<{
-  node: ChartNode;
-  isReadonly: boolean;
-  onChange: NodeChanged;
-  editor: DropdownEditorDefinition<ChartNode>;
-}> = ({ node, isReadonly, onChange, editor }) => {
+export const DefaultDropdownEditor: FC<
+  SharedProps & {
+    editor: DropdownEditorDefinition<ChartNode>;
+  }
+> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
   return (
     <Field name={editor.dataKey} label={editor.label} isDisabled={isReadonly}>
@@ -394,12 +395,11 @@ export const DefaultDropdownEditor: FC<{
   );
 };
 
-export const DefaultGraphSelectorEditor: FC<{
-  node: ChartNode;
-  isReadonly: boolean;
-  onChange: NodeChanged;
-  editor: GraphSelectorEditorDefinition<ChartNode>;
-}> = ({ node, isReadonly, onChange, editor }) => {
+export const DefaultGraphSelectorEditor: FC<
+  SharedProps & {
+    editor: GraphSelectorEditorDefinition<ChartNode>;
+  }
+> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
 
   return (
@@ -497,12 +497,11 @@ export const DefaultNumberEditor: FC<{
   );
 };
 
-export const DefaultCodeEditor: FC<{
-  node: ChartNode;
-  isReadonly: boolean;
-  onChange: NodeChanged;
-  editor: CodeEditorDefinition<ChartNode>;
-}> = ({ node, isReadonly, onChange, editor: editorDef }) => {
+export const DefaultCodeEditor: FC<
+  SharedProps & {
+    editor: CodeEditorDefinition<ChartNode>;
+  }
+> = ({ node, isReadonly, onChange, editor: editorDef, onClose }) => {
   const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
 
   const nodeLatest = useLatest(node);
@@ -533,6 +532,14 @@ export const DefaultCodeEditor: FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [node.id, isReadonly]);
 
+  const handleKeyDown = (e: monaco.IKeyboardEvent) => {
+    if (e.keyCode === 9 /* Escape */) {
+      e.preventDefault();
+      e.stopPropagation();
+      onClose?.();
+    }
+  };
+
   return (
     <Suspense fallback={<div />}>
       <div className="editor-wrapper-wrapper">
@@ -547,6 +554,7 @@ export const DefaultCodeEditor: FC<{
             theme={editorDef.theme}
             language={editorDef.language}
             isReadonly={isReadonly}
+            onKeyDown={handleKeyDown}
           />
         </div>
       </div>
@@ -554,12 +562,11 @@ export const DefaultCodeEditor: FC<{
   );
 };
 
-export const DefaultColorEditor: FC<{
-  node: ChartNode;
-  isReadonly: boolean;
-  onChange: NodeChanged;
-  editor: EditorDefinition<ChartNode>;
-}> = ({ node, onChange, editor }) => {
+export const DefaultColorEditor: FC<
+  SharedProps & {
+    editor: EditorDefinition<ChartNode>;
+  }
+> = ({ node, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
 
   const parsed = /rgba\((?<rStr>\d+),(?<gStr>\d+),(?<bStr>\d+),(?<aStr>[\d.]+)\)/.exec(data[editor.dataKey] as string);
@@ -595,12 +602,11 @@ export const DefaultColorEditor: FC<{
   );
 };
 
-export const DefaultFileBrowserEditor: FC<{
-  node: ChartNode;
-  isReadonly: boolean;
-  onChange: NodeChanged;
-  editor: FileBrowserEditorDefinition<ChartNode>;
-}> = ({ node, isReadonly, onChange, editor }) => {
+export const DefaultFileBrowserEditor: FC<
+  SharedProps & {
+    editor: FileBrowserEditorDefinition<ChartNode>;
+  }
+> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
   const projectData = useRecoilValue(projectDataState);
 
@@ -642,12 +648,11 @@ export const DefaultFileBrowserEditor: FC<{
   );
 };
 
-export const DefaultImageBrowserEditor: FC<{
-  node: ChartNode;
-  isReadonly: boolean;
-  onChange: NodeChanged;
-  editor: ImageBrowserEditorDefinition<ChartNode>;
-}> = ({ node, isReadonly, onChange, editor }) => {
+export const DefaultImageBrowserEditor: FC<
+  SharedProps & {
+    editor: ImageBrowserEditorDefinition<ChartNode>;
+  }
+> = ({ node, isReadonly, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
 
   const dataState = useRecoilValue(projectDataState);

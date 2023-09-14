@@ -283,7 +283,12 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
   const nodeEditor = Editor ? (
     <Editor node={nodeForEditor} onChange={isVariant ? () => {} : updateNode} />
   ) : (
-    <DefaultNodeEditor node={nodeForEditor} isReadonly={isVariant} onChange={isVariant ? () => {} : updateNode} />
+    <DefaultNodeEditor
+      node={nodeForEditor}
+      isReadonly={isVariant}
+      onChange={isVariant ? () => {} : updateNode}
+      onClose={onDeselect}
+    />
   );
 
   useHotkeys('esc', onDeselect, [onDeselect]);
