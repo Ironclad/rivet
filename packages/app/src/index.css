@@ -5,7 +5,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
-  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
