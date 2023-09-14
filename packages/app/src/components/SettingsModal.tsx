@@ -39,6 +39,13 @@ const modalBody = css`
 
 type Pages = 'general' | 'openai' | 'plugins';
 
+const buttonsContainer = css`
+  > button span {
+    // Fix invisible text on Ubuntu/Kubuntu
+    overflow-x: visible !important;
+  }
+`;
+
 export const SettingsModal: FC<SettingsModalProps> = () => {
   const [isOpen, setIsOpen] = useRecoilState(settingsModalOpenState);
   const [page, setPage] = useState<Pages>('general');
@@ -60,15 +67,17 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
               <nav>
                 <SideNavigation label="settings">
                   <NavigationContent>
-                    <ButtonItem isSelected={page === 'general'} onClick={() => setPage('general')}>
-                      General
-                    </ButtonItem>
-                    <ButtonItem isSelected={page === 'openai'} onClick={() => setPage('openai')}>
-                      OpenAI
-                    </ButtonItem>
-                    <ButtonItem isSelected={page === 'plugins'} onClick={() => setPage('plugins')}>
-                      Plugins
-                    </ButtonItem>
+                    <div css={buttonsContainer}>
+                      <ButtonItem isSelected={page === 'general'} onClick={() => setPage('general')}>
+                        General
+                      </ButtonItem>
+                      <ButtonItem isSelected={page === 'openai'} onClick={() => setPage('openai')}>
+                        OpenAI
+                      </ButtonItem>
+                      <ButtonItem isSelected={page === 'plugins'} onClick={() => setPage('plugins')}>
+                        Plugins
+                      </ButtonItem>
+                    </div>
                   </NavigationContent>
                 </SideNavigation>
               </nav>
