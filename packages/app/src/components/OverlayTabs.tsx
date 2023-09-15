@@ -223,6 +223,18 @@ export const OverlayTabs: FC = () => {
             Chat Viewer
           </button>
         </div>
+        <div className="menu-item data-studio">
+          <button
+            className={clsx('dropdown-item', { active: openOverlay === 'dataStudio' })}
+            onMouseDown={(e) => {
+              if (e.button === 0) {
+                setOpenOverlay((s) => (s === 'dataStudio' ? undefined : 'dataStudio'));
+              }
+            }}
+          >
+            Data Studio
+          </button>
+        </div>
       </div>
     </div>
   );
