@@ -107,6 +107,8 @@ export const AddPluginModal: FC<{
       setPluginUri('');
     } catch (err) {
       toast.error(`Failed to load plugin: ${err}`);
+    } finally {
+      toggleLoadingPlugin.setLeft();
     }
   };
 
