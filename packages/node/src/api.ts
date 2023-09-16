@@ -1,14 +1,25 @@
 import {
+  ArrayDataValue,
+  BoolDataValue,
   DataValue,
+  DateDataValue,
+  DateTimeDataValue,
   ExternalFunction,
   GraphId,
   GraphProcessor,
   NativeApi,
   NodeRegistration,
+  NodeGraph,
+  NumberDataValue,
+  ObjectDataValue,
+  ProcessContext,
   ProcessEvents,
   Project,
+  ProjectId,
   Settings,
   StringPluginConfigurationSpec,
+  StringDataValue,
+  VectorDataValue,
   deserializeProject,
   globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
@@ -19,6 +30,80 @@ import { PascalCase } from 'type-fest';
 import { NodeNativeApi } from './native/NodeNativeApi.js';
 import { mapValues } from 'lodash-es';
 import { AttachedData } from '../../core/src/utils/serialization/serializationUtils.js';
+
+export type LoosedDataValue<T extends DataValue> = T extends StringDataValue
+  ? StringDataValue | string
+  : T extends NumberDataValue
+  ? NumberDataValue | number
+  : T extends BoolDataValue
+  ? BoolDataValue | boolean
+  : T extends DateTimeDataValue
+  ? DateTimeDataValue | Date
+  : T extends ObjectDataValue
+  ? ObjectDataValue | Record<string, unknown>
+  : T extends ArrayDataValue<StringDataValue>
+  ? ArrayDataValue<StringDataValue> | string[]
+  : T extends ArrayDataValue<NumberDataValue>
+  ? ArrayDataValue<NumberDataValue> | number[]
+  : T extends ArrayDataValue<BoolDataValue>
+  ? ArrayDataValue<BoolDataValue> | boolean[]
+  : T extends ArrayDataValue<DateDataValue>
+  ? ArrayDataValue<DateDataValue> | Date[]
+  : T extends ArrayDataValue<ObjectDataValue>
+  ? ArrayDataValue<ObjectDataValue> | Record<string, unknown>[]
+  : DataValue;
+
+export function looseToDataValue(value: LoosedDataValue<DataValue>): DataValue {
+  if (typeof value === 'string') {
+    return { type: 'string', value };
+  }
+
+  if (typeof value === 'number') {
+    return { type: 'number', value };
+  }
+
+  if (typeof value === 'boolean') {
+    return { type: 'boolean', value };
+  }
+
+  if (value == null) {
+    return { type: 'any', value };
+  }
+
+  if ('type' in value && typeof value.type === 'string' && 'value' in value) {
+    return value as DataValue;
+  }
+
+  if (value instanceof Date) {
+    return { type: 'datetime', value: value.toISOString() };
+  }
+
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      return { type: 'any[]', value };
+    }
+
+    if (typeof value[0] === 'string') {
+      return { type: 'string[]', value: value as string[] };
+    }
+
+    if (typeof value[0] === 'number') {
+      return { type: 'number[]', value: value as number[] };
+    }
+
+    if (typeof value[0] === 'boolean') {
+      return { type: 'boolean[]', value: value as boolean[] };
+    }
+
+    if (value[0] instanceof Date) {
+      return { type: 'datetime[]', value: (value as Date[]).map((v) => v.toISOString()) };
+    }
+
+    return { type: 'any[]', value };
+  }
+
+  return { type: 'object', value };
+}
 
 export async function loadProjectFromFile(path: string): Promise<Project> {
   const content = await readFile(path, { encoding: 'utf8' });
@@ -39,12 +124,13 @@ export function loadProjectAndAttachedDataFromString(content: string): [Project,
   return deserializeProject(content);
 }
 
-export type LooseDataValue = DataValue | string | number | boolean;
-
-export type RunGraphOptions = {
-  graph: string;
-  inputs?: Record<string, LooseDataValue>;
-  context?: Record<string, LooseDataValue>;
+export type RunGraphOptions<
+  Inputs extends {} = Record<string, LoosedDataValue<DataValue>>,
+  GraphNameOrId extends string = string,
+> = {
+  graph: GraphNameOrId;
+  inputs?: Inputs;
+  context?: Record<string, LoosedDataValue<DataValue>>;
   remoteDebugger?: RivetDebuggerServer;
   nativeApi?: NativeApi;
   externalFunctions?: {
@@ -64,19 +150,59 @@ export async function runGraphInFile(path: string, options: RunGraphOptions): Pr
   return runGraph(project, options);
 }
 
-export function createProcessor(project: Project, options: RunGraphOptions) {
-  const { graph, inputs = {}, context = {}, registry } = options;
+type TypedProject = {
+  metadata: {
+    id: string;
+  };
+  graphs: {};
+};
+
+type TypedGraphInfo = {
+  metadata: {
+    id: string;
+    name: string;
+    description: string;
+  };
+
+  inputs: object;
+  outputs: object;
+};
+
+type TypedOptions<T extends TypedProject, GraphName extends keyof T['graphs'] = keyof T['graphs']> = Pick<
+  {
+    [P in keyof T['graphs']]: T['graphs'][P] extends TypedGraphInfo
+      ? RunGraphOptions<T['graphs'][P]['inputs'], T['graphs'][P]['metadata']['id'] | T['graphs'][P]['metadata']['name']>
+      : RunGraphOptions;
+  },
+  GraphName
+>[GraphName];
+
+type Outputs<T extends TypedProject, GraphName extends keyof T['graphs'] = keyof T['graphs']> = Pick<
+  {
+    [P in keyof T['graphs']]: T['graphs'][P] extends TypedGraphInfo
+      ? T['graphs'][P]['outputs']
+      : Record<string, DataValue>;
+  },
+  GraphName
+>[GraphName];
+
+export function createProcessor<T extends TypedProject, GraphName extends keyof T['graphs']>(
+  project: T,
+  options: TypedOptions<T, GraphName>,
+) {
+  const { graph, inputs = {}, context = {} } = options;
+  const asProject = project as unknown as Project;
 
   const graphId =
     graph in project.graphs
       ? graph
-      : Object.values(project.graphs).find((g) => g.metadata?.name === graph)?.metadata?.id;
+      : Object.values(asProject.graphs).find((g) => g.metadata?.name === graph)?.metadata?.id;
 
   if (!graphId) {
     throw new Error('Graph not found');
   }
 
-  const processor = new GraphProcessor(project, graphId as GraphId, options.registry);
+  const processor = new GraphProcessor(asProject, graphId as GraphId, options.registry);
 
   if (options.remoteDebugger) {
     options.remoteDebugger.attach(processor);
@@ -146,37 +272,8 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
     processor.abort();
   });
 
-  const resolvedInputs: Record<string, DataValue> = mapValues(inputs, (value): DataValue => {
-    if (typeof value === 'string') {
-      return { type: 'string', value };
-    }
-
-    if (typeof value === 'number') {
-      return { type: 'number', value };
-    }
-
-    if (typeof value === 'boolean') {
-      return { type: 'boolean', value };
-    }
-
-    return value;
-  });
-
-  const resolvedContextValues: Record<string, DataValue> = mapValues(context, (value): DataValue => {
-    if (typeof value === 'string') {
-      return { type: 'string', value };
-    }
-
-    if (typeof value === 'number') {
-      return { type: 'number', value };
-    }
-
-    if (typeof value === 'boolean') {
-      return { type: 'boolean', value };
-    }
-
-    return value;
-  });
+  const resolvedInputs: Record<string, DataValue> = mapValues(inputs, (value) => looseToDataValue(value as any));
+  const resolvedContextValues: Record<string, DataValue> = mapValues(context, (value) => looseToDataValue(value));
 
   let pluginEnv = options.pluginEnv;
   if (!pluginEnv) {
@@ -205,7 +302,7 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
         resolvedContextValues,
       );
 
-      return outputs;
+      return outputs as Outputs<T, GraphName>;
     },
   };
 }

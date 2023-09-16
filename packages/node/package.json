@@ -41,6 +41,7 @@
   "dependencies": {
     "@ironclad/rivet-core": "workspace:^",
     "@zilliz/milvus2-sdk-node": "^2.2.21",
+    "change-case": "^4.1.2",
     "emittery": "^1.0.1",
     "emittery-0-13": "npm:emittery@^0.13.1",
     "lodash": "^4.17.21",
