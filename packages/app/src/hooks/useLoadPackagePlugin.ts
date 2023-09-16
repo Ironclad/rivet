@@ -1,11 +1,12 @@
 import { PackagePluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
 import { appLocalDataDir, join } from '@tauri-apps/api/path';
-import { readDir, exists, readTextFile, writeBinaryFile, createDir } from '@tauri-apps/api/fs';
+import { readDir, exists, readTextFile, writeBinaryFile, createDir, removeDir } from '@tauri-apps/api/fs';
 import { ResponseType, fetch, getClient } from '@tauri-apps/api/http';
 import { RivetPlugin } from '@ironclad/rivet-core';
 import { invoke } from '@tauri-apps/api/tauri';
 import * as Rivet from '@ironclad/rivet-core';
 import semverGt from 'semver/functions/gt';
+import { Command } from '@tauri-apps/api/shell';
 
 export function useLoadPackagePlugin() {
   return async (spec: PackagePluginLoadSpec): Promise<RivetPlugin> => {
@@ -46,6 +47,10 @@ export function useLoadPackagePlugin() {
             console.log(`Plugin update available: ${spec.package}@${spec.tag} -> ${latestVersion}`);
             needsReinstall = true;
           }
+
+          // if (!(await exists(await join(pluginFilesPath, 'node_modules')))) {
+          //   needsReinstall = true;
+          // }
         }
       } else {
         needsReinstall = true;
@@ -54,8 +59,20 @@ export function useLoadPackagePlugin() {
       needsReinstall = true;
     }
 
-    if (!(await exists(pluginFilesPath))) {
-      console.log(`Plugin not found locally: ${spec.package}@${spec.tag}, downloading from NPM...`);
+    if (await exists(await join(pluginFilesPath, '.git'))) {
+      needsReinstall = false;
+      console.log(`Plugin is a git repository, skipping reinstall: ${spec.package}@${spec.tag}`);
+    }
+
+    if (needsReinstall) {
+      if (await exists(pluginDir)) {
+        console.log(`Removing existing plugin: ${spec.package}@${spec.tag}`);
+        await removeDir(pluginDir, {
+          recursive: true,
+        });
+      }
+
+      console.log(`Plugin not found locally or needs reinstall: ${spec.package}@${spec.tag}, downloading from NPM...`);
 
       // Download from NPM and install to plugins directory
       const npmPackageData = await fetch<any>(`https://registry.npmjs.org/${spec.package}/${spec.tag}`, {
@@ -100,6 +117,19 @@ export function useLoadPackagePlugin() {
       await invoke('extract_package_plugin_tarball', {
         path: tarDestination,
       });
+
+      // TODO not working
+      // console.log('Installing NPM dependencies...');
+
+      // const command = new Command('npm', ['install', '--omit=dev'], {
+      //   cwd: pluginFilesPath,
+      // });
+
+      // const result = await command.execute();
+
+      // if (result.code !== 0) {
+      //   throw new Error(`Error installing plugin dependencies: ${spec.package}@${spec.tag}: ${result.stderr}`);
+      // }
     }
 
     const files = await readDir(pluginFilesPath);

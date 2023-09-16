@@ -7,12 +7,17 @@ import { ReactComponent as PlusIcon } from 'majesticons/line/plus-line.svg';
 import { ReactComponent as MoreMenuVerticalIcon } from 'majesticons/line/more-menu-vertical-line.svg';
 import { ReactComponent as DeleteBinIcon } from 'majesticons/line/delete-bin-line.svg';
 import { ReactComponent as LightningIcon } from 'majesticons/line/lightning-bolt-line.svg';
+import { ReactComponent as InfoIcon } from 'majesticons/line/info-circle-line.svg';
 import { useToggle } from 'ahooks';
 import { PluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
 import { css } from '@emotion/react';
 import Popup from '@atlaskit/popup';
 import { MenuGroup, ButtonItem } from '@atlaskit/menu';
 import { AddPluginModal } from './AddPluginModal';
+import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
+import Modal, { ModalTransition, ModalHeader, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
+import { match } from 'ts-pattern';
+import Button from '@atlaskit/button';
 
 const styles = css`
   .label {
@@ -125,26 +130,64 @@ export const ProjectPluginsConfiguration: FC = () => {
   );
 };
 
+const pluginInfoModalBody = css`
+  dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 32px;
+    row-gap: 8px;
+    margin: 0;
+    padding: 0;
+
+    dt {
+      font-weight: bold;
+      margin: 0;
+      padding: 0;
+    }
+
+    dd {
+      margin: 0;
+      padding: 0;
+    }
+  }
+`;
+
 const PluginConfigurationItem: FC<{ spec: PluginLoadSpec; onDelete?: (spec: PluginLoadSpec) => void }> = ({
   spec,
   onDelete,
 }) => {
   const [isOpen, toggleOpen] = useToggle();
+  const [infoModalOpen, toggleInfoModal] = useToggle();
+
+  const loadedPlugins = useDependsOnPlugins();
+
+  const displayId = spec.type === 'package' ? spec.package : spec.id;
+  const loadedPlugin = loadedPlugins.find((p) => p.id === displayId);
+  const pluginName = loadedPlugins.find((p) => p.id === displayId)?.name ?? displayId;
 
   return (
     <li className="plugin">
       <div className="plugin-info">
         <div className="plugin-id">
           <LightningIcon style={{ flex: '0 0 auto' }} />
-          {spec.type === 'package' ? spec.package : spec.id}
+          {pluginName}
         </div>
-        <div className="plugin-type">{spec.type}</div>
       </div>
       <Popup
         isOpen={isOpen}
         onClose={toggleOpen.setLeft}
         content={() => (
           <MenuGroup>
+            <ButtonItem
+              iconBefore={<InfoIcon />}
+              onClick={() => {
+                toggleInfoModal.setRight();
+                toggleOpen.setLeft();
+              }}
+            >
+              Info
+            </ButtonItem>
+
             <ButtonItem
               iconBefore={<DeleteBinIcon />}
               onClick={() => {
@@ -163,6 +206,58 @@ const PluginConfigurationItem: FC<{ spec: PluginLoadSpec; onDelete?: (spec: Plug
           </button>
         )}
       />
+      <ModalTransition>
+        {infoModalOpen && (
+          <Modal onClose={toggleInfoModal.setLeft}>
+            <ModalHeader>
+              <h3>{pluginName}</h3>
+            </ModalHeader>
+            <ModalBody>
+              <div css={pluginInfoModalBody}>
+                {match(spec)
+                  .with({ type: 'built-in' }, (spec) => (
+                    <dl>
+                      <dt>Type</dt>
+                      <dd>Built-In</dd>
+                      <dt>Plugin</dt>
+                      <dd>{spec.id}</dd>
+                    </dl>
+                  ))
+                  .with({ type: 'uri' }, (spec) => (
+                    <dl>
+                      <dt>Type</dt>
+                      <dd>URI</dd>
+                      <dt>ID</dt>
+                      <dd>{loadedPlugin?.id ?? spec.id}</dd>
+                      <dt>URI</dt>
+                      <dd>{spec.uri}</dd>
+                      <dt>Name</dt>
+                      <dd>{loadedPlugin?.name ?? 'Unknown'}</dd>
+                    </dl>
+                  ))
+                  .with({ type: 'package' }, (spec) => (
+                    <dl>
+                      <dt>Type</dt>
+                      <dd>Package</dd>
+                      <dt>ID</dt>
+                      <dd>{loadedPlugin?.id ?? spec.id}</dd>
+                      <dt>Package</dt>
+                      <dd>{spec.package}</dd>
+                      <dt>Tag</dt>
+                      <dd>{spec.tag}</dd>
+                      <dt>Name</dt>
+                      <dd>{loadedPlugin?.name ?? 'Unknown'}</dd>
+                    </dl>
+                  ))
+                  .exhaustive()}
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <Button onClick={toggleInfoModal.setLeft}>Close</Button>
+            </ModalFooter>
+          </Modal>
+        )}
+      </ModalTransition>
     </li>
   );
 };

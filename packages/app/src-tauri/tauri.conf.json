@@ -14,7 +14,7 @@
       "all": false,
       "fs": {
         "all": true,
-        "scope": ["$APPLOCALDATA/**", "$TEMP/**"]
+        "scope": ["$APPLOCALDATA/**", "$APPLOCALDATA/**/.*", "$TEMP/**"]
       },
       "path": {
         "all": true
@@ -25,10 +25,17 @@
       "shell": {
         "sidecar": true,
         "open": true,
+        "execute": true,
         "scope": [
           {
             "name": "../../app-executor/dist/app-executor",
             "sidecar": true
+          },
+          {
+            "name": "npm",
+            "args": true,
+            "cmd": "npm",
+            "sidecar": false
           }
         ]
       },

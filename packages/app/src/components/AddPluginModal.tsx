@@ -167,6 +167,9 @@ export const AddPluginModal: FC<{
       package: pluginPackageName,
       tag,
     });
+
+    setPluginPackageName('');
+    setPluginTag('');
   };
 
   const goToDocs = useOpenUrl('https://rivet.ironcladapp.com/docs/'); // TODO
