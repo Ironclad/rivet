@@ -135,8 +135,8 @@ const PluginConfigurationItem: FC<{ spec: PluginLoadSpec; onDelete?: (spec: Plug
     <li className="plugin">
       <div className="plugin-info">
         <div className="plugin-id">
-          <LightningIcon />
-          {spec.id}
+          <LightningIcon style={{ flex: '0 0 auto' }} />
+          {spec.type === 'package' ? spec.package : spec.id}
         </div>
         <div className="plugin-type">{spec.type}</div>
       </div>

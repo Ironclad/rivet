@@ -3,6 +3,7 @@ import { lstatSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { BaseDir, NativeApi, ReadDirOptions } from '@ironclad/rivet-core';
 import { minimatch } from 'minimatch';
+import { exec } from 'child_process';
 
 async function* walk(dir: string): AsyncGenerator<string> {
   for await (const d of await opendir(dir)) {
@@ -68,5 +69,9 @@ export class NodeNativeApi implements NativeApi {
 
   async writeTextFile(path: string, data: string, baseDir?: BaseDir): Promise<void> {
     await writeFile(path, data, 'utf-8');
+  }
+
+  exec(command: string, args: string[], options?: { cwd?: string | undefined } | undefined): Promise<void> {
+    throw new Error('Not Implemented');
   }
 }

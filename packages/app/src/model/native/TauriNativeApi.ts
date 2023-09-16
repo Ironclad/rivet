@@ -83,4 +83,8 @@ export class TauriNativeApi implements NativeApi {
     const baseDirectory = baseDirToBaseDirectory(baseDir);
     await writeFile(path, data, { dir: baseDirectory });
   }
+
+  async exec(command: string, args: string[], options?: { cwd?: string | undefined } | undefined): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
 }

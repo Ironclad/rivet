@@ -76,6 +76,7 @@ export const runGentraceTests = async (
 
     const recorder = new ExecutionRecorder();
     const processor = new GraphProcessor(tempProject, graphId);
+    processor.executor = 'browser';
 
     recorder.record(processor);
     await processor.processGraph(

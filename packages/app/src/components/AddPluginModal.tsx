@@ -42,6 +42,24 @@ const addPluginBody = css`
       justify-content: flex-end;
     }
   }
+
+  .add-npm-plugin {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .inputs {
+      display: grid;
+      grid-template-columns: 3fr 1fr;
+      column-gap: 8px;
+    }
+
+    .buttons {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+  }
 `;
 
 export const AddPluginModal: FC<{
@@ -53,6 +71,8 @@ export const AddPluginModal: FC<{
   const [selectedBuiltInPlugin, setSelectedBuiltInPlugin] = useState<string | undefined>();
   const builtInPlugins = useBuiltInPlugins();
   const [loadingPlugin, toggleLoadingPlugin] = useToggle();
+  const [pluginPackageName, setPluginPackageName] = useState('');
+  const [pluginTag, setPluginTag] = useState('');
 
   const addBuiltInPlugin = () => {
     if (!selectedBuiltInPlugin) {
@@ -112,6 +132,21 @@ export const AddPluginModal: FC<{
     }
   };
 
+  const addPackagePlugin = () => {
+    if (!pluginPackageName.trim()) {
+      return;
+    }
+
+    const tag = pluginTag.trim() || 'latest';
+
+    onAddPlugin({
+      type: 'package',
+      id: `${pluginPackageName}@${tag}`,
+      package: pluginPackageName,
+      tag,
+    });
+  };
+
   const goToDocs = useOpenUrl('https://rivet.ironcladapp.com/docs/'); // TODO
 
   return (
@@ -143,6 +178,35 @@ export const AddPluginModal: FC<{
                         isDisabled={loadingPlugin || !pluginUri.trim()}
                       >
                         {loadingPlugin ? 'Loading...' : 'Add Remote Plugin'}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </Field>
+              <Field name="plugin" label="Add NPM Plugin">
+                {() => (
+                  <div className="add-npm-plugin">
+                    <div className="inputs">
+                      <TextField
+                        label="Package Name"
+                        value={pluginPackageName}
+                        placeholder="Package Name"
+                        onChange={(e) => setPluginPackageName((e.target as HTMLInputElement).value)}
+                      />
+                      <TextField
+                        label="Tag"
+                        value={pluginTag}
+                        placeholder="Tag (latest)"
+                        onChange={(e) => setPluginTag((e.target as HTMLInputElement).value)}
+                      />
+                    </div>
+                    <div className="buttons">
+                      <Button
+                        appearance="primary"
+                        onClick={addPackagePlugin}
+                        isDisabled={loadingPlugin || !pluginPackageName.trim()}
+                      >
+                        {loadingPlugin ? 'Loading...' : 'Add NPM Plugin'}
                       </Button>
                     </div>
                   </div>

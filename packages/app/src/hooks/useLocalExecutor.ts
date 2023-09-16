@@ -104,6 +104,7 @@ export function useLocalExecutor() {
 
         const recorder = new ExecutionRecorder();
         const processor = new GraphProcessor(tempProject, graph.metadata!.id!);
+        processor.executor = 'browser';
         processor.recordingPlaybackChatLatency = savedSettings.recordingPlaybackLatency ?? 1000;
 
         if (options.to) {
@@ -175,6 +176,7 @@ export function useLocalExecutor() {
           },
           runGraph: async (project, graphId, inputs) => {
             const processor = new GraphProcessor(project, graphId);
+            processor.executor = 'browser';
             attachGraphEvents(processor);
             return processor.processGraph(
               {

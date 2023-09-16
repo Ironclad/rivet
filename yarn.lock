@@ -3962,6 +3962,7 @@ __metadata:
     "@ironclad/rivet-node": "workspace:^"
     "@swc/core": "npm:^1.3.71"
     "@types/yargs": "npm:^17.0.24"
+    appdata-path: "npm:^1.0.0"
     chalk: "npm:^5.3.0"
     esbuild: "npm:^0.18.17"
     esbuild-plugin-copy: "npm:^2.1.1"
@@ -6565,6 +6566,13 @@ __metadata:
     normalize-path: "npm:^3.0.0"
     picomatch: "npm:^2.0.4"
   checksum: 0d50ce459783767bb68ce635c0a8f3e7de9843ebd6e6733accd59e13a49421a84944b8be5d68b5acecf74eca767a06229e07cae48151757744618e1a32dda0ed
+  languageName: node
+  linkType: hard
+
+"appdata-path@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "appdata-path@npm:1.0.0"
+  checksum: aa04e1355fa1c0ef2942701795c0a235e707c8957c842befba57bdb33238c10bdcb9f16dd7b51ddeb385c1b9410751fa6cb0f35edf9841fd74fbe5ed3d2e343c
   languageName: node
   linkType: hard
 

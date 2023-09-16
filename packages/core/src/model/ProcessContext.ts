@@ -19,6 +19,9 @@ export type ProcessContext = {
 export type ProcessId = Opaque<string, 'ProcessId'>;
 
 export type InternalProcessContext = ProcessContext & {
+  /** The executor that is running the current processor. */
+  executor: 'nodejs' | 'browser';
+
   /** The project being executed. */
   project: Project;
 

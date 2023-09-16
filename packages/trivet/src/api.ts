@@ -37,11 +37,15 @@ export class DummyNativeApi implements NativeApi {
   writeTextFile(path: string, data: string, baseDir?: BaseDir | undefined): Promise<void> {
     throw new Error('Method not implemented.');
   }
+  exec(command: string, args: string[], options?: { cwd?: string | undefined } | undefined): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
 }
 
-export function createTestGraphRunner(opts: { openAiKey: string }): TrivetGraphRunner {
+export function createTestGraphRunner(opts: { openAiKey: string; executor?: 'nodejs' | 'browser' }): TrivetGraphRunner {
   return async (project, graphId, inputs) => {
     const processor = new GraphProcessor(project, graphId);
+    processor.executor = opts.executor;
     const resolvedContextValues: Record<string, DataValue> = {};
     const outputs = await processor.processGraph(
       {

@@ -2,20 +2,20 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { projectPluginsState } from '../state/savedGraphs';
 import { useEffect } from 'react';
 import { globalRivetNodeRegistry, resetGlobalRivetNodeRegistry } from '@ironclad/rivet-core';
-import { RivetPlugin } from '../../../core/src/model/RivetPlugin';
 import { pluginRefreshCounterState, pluginsState } from '../state/plugins';
 import { produce } from 'immer';
 import { match } from 'ts-pattern';
 import { plugins as rivetPlugins } from '@ironclad/rivet-core';
-import { useBuiltInPlugins } from './useBuiltInPlugins';
 import { isNotNull } from '../utils/genericUtilFunctions';
 import { getError } from '../utils/errors';
 import * as Rivet from '@ironclad/rivet-core';
+import { useLoadPackagePlugin } from './useLoadPackagePlugin';
 
 export function useProjectPlugins() {
   const pluginSpecs = useRecoilValue(projectPluginsState);
   const [plugins, setPlugins] = useRecoilState(pluginsState);
   const setPluginRefreshCounter = useSetRecoilState(pluginRefreshCounterState);
+  const loadPackagePlugin = useLoadPackagePlugin();
 
   useEffect(() => {
     resetGlobalRivetNodeRegistry();
@@ -47,6 +47,15 @@ export function useProjectPlugins() {
                   throw new Error(`Plugin ${spec.id} does not have an id`);
                 }
                 return initializedPlugin;
+              })
+              .with({ type: 'package' }, async (spec) => {
+                const plugin = await loadPackagePlugin(spec);
+
+                if (!plugin?.id) {
+                  throw new Error(`Plugin ${spec.package} does not have an id`);
+                }
+
+                return plugin;
               })
               .exhaustive();
 

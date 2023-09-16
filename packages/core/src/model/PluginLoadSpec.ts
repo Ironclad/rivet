@@ -10,4 +10,11 @@ export type URIPluginLoadSpec = {
   uri: string;
 };
 
-export type PluginLoadSpec = URIPluginLoadSpec | BuiltInPluginLoadSpec;
+export type PackagePluginLoadSpec = {
+  type: 'package';
+  id: string;
+  package: string;
+  tag: string;
+};
+
+export type PluginLoadSpec = URIPluginLoadSpec | BuiltInPluginLoadSpec | PackagePluginLoadSpec;

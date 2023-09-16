@@ -169,6 +169,8 @@ export class GraphProcessor {
   #registry: NodeRegistration;
   id = nanoid();
 
+  executor?: 'nodejs' | 'browser';
+
   /** If set, specifies the node(s) that the graph will run TO, instead of the nodes without any dependents. */
   runToNodeIds?: NodeId[];
 
@@ -1255,6 +1257,7 @@ export class GraphProcessor {
 
     const context: InternalProcessContext = {
       ...this.#context,
+      executor: this.executor ?? 'nodejs',
       project: this.#project,
       executionCache: this.#executionCache,
       graphInputs: this.#graphInputs,
@@ -1305,6 +1308,7 @@ export class GraphProcessor {
       },
       createSubProcessor: (subGraphId: GraphId, { signal }: { signal?: AbortSignal } = {}) => {
         const processor = new GraphProcessor(this.#project, subGraphId, this.#registry);
+        processor.executor = this.executor;
         processor.#isSubProcessor = true;
         processor.#executionCache = this.#executionCache;
         processor.#externalFunctions = this.#externalFunctions;

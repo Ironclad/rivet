@@ -11,6 +11,9 @@ import { RivetPluginInitializer } from '@ironclad/rivet-core';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { P, match } from 'ts-pattern';
+import appdataPath from 'appdata-path';
+import { join } from 'node:path';
+import { access, readFile } from 'node:fs/promises';
 
 const { port } = yargs(hideBin(process.argv))
   .option('port', {
@@ -60,6 +63,39 @@ const rivetDebugger = startDebuggerServer({
             if (!initializedPlugin?.id) {
               throw new Error(`Plugin ${spec.id} does not have an id`);
             }
+            registry.registerPlugin(initializedPlugin);
+          })
+          .with({ type: 'package' }, async (spec) => {
+            const localDataDir = appdataPath('com.ironcladapp.rivet');
+            const pluginDir = join(localDataDir, `plugins/${spec.package}-${spec.tag}/package`);
+
+            const packageJsonPath = join(pluginDir, 'package.json');
+
+            try {
+              await access(packageJsonPath);
+            } catch (err) {
+              throw new Error(`Plugin ${spec.id} is not installed.`);
+            }
+
+            const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf-8'));
+
+            if (packageJson.name !== spec.package) {
+              throw new Error(`Plugin ${spec.id} is not installed.`);
+            }
+
+            const plugin = ((await import(join(pluginDir, packageJson.main))) as { default: RivetPluginInitializer })
+              .default;
+
+            if (typeof plugin !== 'function') {
+              throw new Error(`Plugin ${spec.id} is not a function`);
+            }
+
+            const initializedPlugin = plugin(Rivet);
+
+            if (!initializedPlugin?.id) {
+              throw new Error(`Plugin ${spec.id} does not have an id`);
+            }
+
             registry.registerPlugin(initializedPlugin);
           })
           .exhaustive();

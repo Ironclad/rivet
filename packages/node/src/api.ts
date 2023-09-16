@@ -77,6 +77,7 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
   }
 
   const processor = new GraphProcessor(project, graphId as GraphId, options.registry);
+  processor.executor = 'nodejs';
 
   if (options.remoteDebugger) {
     options.remoteDebugger.attach(processor);

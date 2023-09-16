@@ -4,12 +4,16 @@
 )]
 
 use tauri::{CustomMenuItem, Menu, MenuItem, Submenu};
+mod plugins;
 
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_persisted_scope::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
-        .invoke_handler(tauri::generate_handler![get_environment_variable])
+        .invoke_handler(tauri::generate_handler![
+            get_environment_variable,
+            plugins::extract_package_plugin_tarball
+        ])
         .menu(create_menu())
         .on_menu_event(|event| match event.menu_item_id() {
             "toggle_devtools" => {

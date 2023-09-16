@@ -1,6 +1,6 @@
 import { GraphBuilder } from './GraphBuilder.js';
 import { OverlayTabs } from './OverlayTabs.js';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { css } from '@emotion/react';
 import { SettingsModal } from './SettingsModal.js';
 import { setGlobalTheme } from '@atlaskit/tokens';

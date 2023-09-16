@@ -981,6 +981,7 @@ async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
         },
       },
       {
+        executor: 'browser',
         contextValues: {},
         createSubProcessor: undefined!,
         settings,
@@ -1029,6 +1030,7 @@ function useRunTestGroup() {
     const response = await runAdHocChat(messages, config);
 
     const processor = new GraphProcessor(project, testGroup.evaluatorGraphId);
+    processor.executor = 'browser';
 
     processor.on('trace', (value) => console.log(value));
 
