@@ -16,6 +16,5 @@ export function getInputOrData<Data extends object, T extends DataType = 'string
     data[useInputToggleDataKey] && inputs[inputAndDataKey as PortId] != null
       ? coerceTypeOptional(inputs[inputAndDataKey as PortId], type ?? 'string') ?? data[inputAndDataKey]
       : data[inputAndDataKey];
-  console.dir({ data, inputs, value, inputAndDataKey });
   return value as GetDataValue<T>['value'];
 }
