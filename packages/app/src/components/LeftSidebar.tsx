@@ -44,10 +44,11 @@ const styles = css`
 
   .toggle-tab {
     position: absolute;
-    top: 10px;
+    top: 0;
     right: -32px;
     background-color: var(--grey-dark);
     border: 1px solid var(--grey);
+    border-top: 0;
     border-left: 0;
     border-radius: 0 8px 8px 0;
     width: 32px;

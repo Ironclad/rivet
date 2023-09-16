@@ -8,49 +8,78 @@ import { useRunMenuCommand } from '../hooks/useMenuCommands.js';
 import { isInTauri } from '../utils/tauri.js';
 import { LoadingSpinner } from './LoadingSpinner.js';
 import { overlayOpenState } from '../state/ui';
+import { sidebarOpenState } from '../state/graphBuilder';
 
 const styles = css`
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   z-index: 100;
   position: absolute;
   top: 0;
   left: 300px;
-  height: 32px;
+  height: 40px;
 
   .left-menu {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    align-items: flex-start;
+    gap: 0;
     user-select: none;
   }
 
-  .menu-item > button {
+  .menu-item {
+    position: relative;
     background-color: transparent;
     color: var(--grey-lightest);
     border: none;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
+    transition: height 0.2s ease-out;
 
     border: 1px solid var(--grey);
-    border-top: 0;
+    border-top: none;
+    border-right: none;
+
+    margin: 0;
+    height: 24px;
 
     border-radius: 0 0 8px 8px;
     background: var(--grey-darkerish);
 
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+  }
+
+  .menu-item > button {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    color: inherit;
+  }
+
+  .menu-item.active {
+    height: 28px;
+  }
+
+  .menu-item:hover {
+    background-color: var(--grey);
+  }
+
+  .menu-item.active {
+    background-color: var(--primary);
+    color: var(--foreground-on-primary);
+    border-top: 1px solid var(--primary);
+
     &:hover {
-      background-color: var(--grey);
+      background-color: var(--primary-light);
     }
+  }
 
-    &.active {
-      background-color: var(--primary);
-      color: var(--foreground-on-primary);
-
-      &:hover {
-        background-color: var(--primary-light);
-      }
-    }
+  .menu-item:last-of-type {
+    border-right: 1px solid var(--grey);
   }
 
   .dropdown-menu .dropdown-button {
@@ -148,6 +177,7 @@ export const OverlayTabs: FC = () => {
   const [openOverlay, setOpenOverlay] = useRecoilState(overlayOpenState);
   const runMenuCommandImpl = useRunMenuCommand();
   const [fileMenuOpen, setFileMenuOpen] = useState(false);
+  const sidebarOpen = useRecoilValue(sidebarOpenState);
 
   const trivet = useRecoilValue(trivetState);
 
@@ -157,7 +187,7 @@ export const OverlayTabs: FC = () => {
   };
 
   return (
-    <div css={styles}>
+    <div css={styles} className={clsx({ 'sidebar-open': sidebarOpen })}>
       <div className="left-menu">
         {!isInTauri() && (
           <div className="menu-item file-menu">
@@ -182,9 +212,22 @@ export const OverlayTabs: FC = () => {
           </div>
         )}
 
-        <div className="menu-item prompt-designer-menu">
+        <div className={clsx('menu-item canvas-menu', { active: openOverlay === undefined })}>
           <button
-            className={clsx('dropdown-item', { active: openOverlay === 'promptDesigner' })}
+            className="dropdown-item"
+            onMouseDown={(e) => {
+              if (e.button === 0) {
+                setOpenOverlay(undefined);
+              }
+            }}
+          >
+            Canvas
+          </button>
+        </div>
+
+        <div className={clsx('menu-item prompt-designer-menu', { active: openOverlay === 'promptDesigner' })}>
+          <button
+            className="dropdown-item"
             onMouseDown={(e) => {
               if (e.button === 0) {
                 setOpenOverlay((s) => (s === 'promptDesigner' ? undefined : 'promptDesigner'));
@@ -194,9 +237,9 @@ export const OverlayTabs: FC = () => {
             Prompt Designer
           </button>
         </div>
-        <div className="menu-item trivet-menu">
+        <div className={clsx('menu-item trivet-menu', { active: openOverlay === 'trivet' })}>
           <button
-            className={clsx('dropdown-item', { active: openOverlay === 'trivet' })}
+            className="dropdown-item"
             onMouseDown={(e) => {
               if (e.button === 0) {
                 setOpenOverlay((s) => (s === 'trivet' ? undefined : 'trivet'));
@@ -211,9 +254,9 @@ export const OverlayTabs: FC = () => {
             )}
           </button>
         </div>
-        <div className="menu-item chat-viewer-menu">
+        <div className={clsx('menu-item chat-viewer-menu', { active: openOverlay === 'chatViewer' })}>
           <button
-            className={clsx('dropdown-item', { active: openOverlay === 'chatViewer' })}
+            className="dropdown-item"
             onMouseDown={(e) => {
               if (e.button === 0) {
                 setOpenOverlay((s) => (s === 'chatViewer' ? undefined : 'chatViewer'));
@@ -223,9 +266,9 @@ export const OverlayTabs: FC = () => {
             Chat Viewer
           </button>
         </div>
-        <div className="menu-item data-studio">
+        <div className={clsx('menu-item data-studio', { active: openOverlay === 'dataStudio' })}>
           <button
-            className={clsx('dropdown-item', { active: openOverlay === 'dataStudio' })}
+            className="dropdown-item"
             onMouseDown={(e) => {
               if (e.button === 0) {
                 setOpenOverlay((s) => (s === 'dataStudio' ? undefined : 'dataStudio'));
