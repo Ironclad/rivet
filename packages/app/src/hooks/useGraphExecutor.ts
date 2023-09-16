@@ -10,20 +10,20 @@ import { useRemoteExecutor } from './useRemoteExecutor';
  * can result in a subtle bug where the remote debugger will mysteriously disconnect when the
  * component dismounts.
  * TODO Refactor so that this doesn't happen.
- * @returns 
+ * @returns
  */
 export function useGraphExecutor() {
   const selectedExecutor = useRecoilValue(selectedExecutorState);
   const localExecutor = useLocalExecutor();
   const remoteExecutor = useRemoteExecutor();
 
-  useExecutorSidecar({ enabled: selectedExecutor === 'node' });
+  useExecutorSidecar({ enabled: selectedExecutor === 'nodejs' });
 
-  const executor = remoteExecutor.active ? remoteExecutor : localExecutor;
+  const executor = remoteExecutor.active || selectedExecutor === 'nodejs' ? remoteExecutor : localExecutor;
 
   useEffect(() => {
-    if (selectedExecutor === 'node') {
-      remoteExecutor.remoteDebugger.connect('ws://localhost:21889');
+    if (selectedExecutor === 'nodejs') {
+      remoteExecutor.remoteDebugger.connect('ws://localhost:21889/internal');
     } else {
       remoteExecutor.remoteDebugger.disconnect();
     }

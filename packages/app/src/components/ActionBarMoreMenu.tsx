@@ -16,6 +16,7 @@ import { ReactComponent as ForwardCircleIcon } from 'majesticons/line/forward-ci
 import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-plus-line.svg';
 import { CopyAsTestCaseModal } from './CopyAsTestCaseModal';
 import { useToggle } from 'ahooks';
+import { executorOptions } from '../state/settings';
 
 const moreMenuStyles = css`
   background-color: var(--grey-darkish);
@@ -69,13 +70,6 @@ const moreMenuStyles = css`
     }
   }
 `;
-
-const executorOptions = isInTauri()
-  ? ([
-      { label: 'Browser', value: 'browser' },
-      { label: 'Node', value: 'node' },
-    ] as const)
-  : ([{ label: 'Browser', value: 'browser' }] as const);
 
 export const ActionBarMoreMenu: FC<{
   onClose: () => void;

@@ -1,6 +1,7 @@
 import { atom } from 'recoil';
 import { persistAtom } from './persist.js';
 import { Settings } from '@ironclad/rivet-core';
+import { isInTauri } from '../utils/tauri';
 
 export const settingsState = atom<Settings>({
   key: 'settings',
@@ -45,3 +46,16 @@ export const recordExecutionsState = atom<boolean>({
   default: true,
   effects_UNSTABLE: [persistAtom],
 });
+
+export const defaultExecutorState = atom<'browser' | 'nodejs'>({
+  key: 'defaultExecutor',
+  default: 'browser',
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const executorOptions = isInTauri()
+  ? ([
+      { label: 'Browser', value: 'browser' },
+      { label: 'Node', value: 'nodejs' },
+    ] as const)
+  : ([{ label: 'Browser', value: 'browser' }] as const);

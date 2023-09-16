@@ -1,6 +1,7 @@
 import { atom } from 'recoil';
 import { ExecutionRecorder } from '@ironclad/rivet-core';
 import { recoilPersist } from 'recoil-persist';
+import { defaultExecutorState } from './settings';
 
 const { persistAtom } = recoilPersist({ key: 'execution' });
 
@@ -9,9 +10,9 @@ export const remoteUploadAllowedState = atom<boolean>({
   default: false,
 });
 
-export const selectedExecutorState = atom<'browser' | 'node'>({
+export const selectedExecutorState = atom<'browser' | 'nodejs'>({
   key: 'selectedExecutor',
-  default: 'browser',
+  default: defaultExecutorState,
 });
 
 export type RemoteDebuggerState = {

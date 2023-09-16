@@ -1,6 +1,13 @@
 import { FC, useState } from 'react';
 import { atom, useRecoilState } from 'recoil';
-import { recordExecutionsState, settingsState, themeState, themes } from '../state/settings.js';
+import {
+  defaultExecutorState,
+  executorOptions,
+  recordExecutionsState,
+  settingsState,
+  themeState,
+  themes,
+} from '../state/settings.js';
 import Modal, { ModalTransition, ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
 import TextField from '@atlaskit/textfield';
 import Button from '@atlaskit/button';
@@ -33,7 +40,7 @@ const modalBody = css`
   }
 
   main {
-    padding: 0 30px 30px 30px;
+    padding: 0 30px 100px 30px;
   }
 `;
 
@@ -100,6 +107,7 @@ export const GeneralSettingsPage: FC = () => {
   const [settings, setSettings] = useRecoilState(settingsState);
   const [theme, setTheme] = useRecoilState(themeState);
   const [recordExecutions, setRecordExecutions] = useRecoilState(recordExecutionsState);
+  const [defaultExecutor, setDefaultExecutor] = useRecoilState(defaultExecutorState);
 
   return (
     <div css={fields}>
@@ -146,6 +154,26 @@ export const GeneralSettingsPage: FC = () => {
               />
             </div>
             <HelperMessage>Disabling may help performance when dealing with very large data values</HelperMessage>
+          </>
+        )}
+      </Field>
+      <Field name="defaultExecutor">
+        {() => (
+          <>
+            <Label htmlFor="defaultExecutor" testId="defaultExecutor">
+              Default executor
+            </Label>
+            <div className="toggle-field">
+              <Select
+                value={executorOptions.find((o) => o.value === defaultExecutor)}
+                onChange={(e) => setDefaultExecutor(e!.value)}
+                options={executorOptions}
+              />
+            </div>
+            <HelperMessage>
+              The default executor to use when starting the application. The browser executor is more stable, but the
+              node executor is required for some features and plugins.
+            </HelperMessage>
           </>
         )}
       </Field>

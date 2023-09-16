@@ -20,6 +20,7 @@ import { produce } from 'immer';
 import { userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
 import { pluginsState } from '../state/plugins';
 import { entries } from '../../../core/src/utils/typeSafety';
+import { selectedExecutorState } from '../state/execution';
 
 // TODO: This allows us to retrieve the GraphOutputs from the remote debugger.
 // If the remote debugger events had a unique ID for each run, this would feel a lot less hacky.
@@ -39,10 +40,16 @@ export function useRemoteExecutor() {
   const [{ testSuites }, setTrivetState] = useRecoilState(trivetState);
   const setUserInputModalSubmit = useSetRecoilState(userInputModalSubmitState);
   const setUserInputQuestions = useSetRecoilState(userInputModalQuestionsState);
+  const selectedExecutor = useRecoilValue(selectedExecutorState);
 
   const remoteDebugger = useRemoteDebugger({
     onDisconnect: () => {
       currentExecution.onStop();
+
+      // If we're using the node executor, disconnecting means reconnecting to the internal executor
+      if (selectedExecutor === 'nodejs') {
+        remoteDebugger.connect('ws://localhost:21889/internal');
+      }
     },
   });
 

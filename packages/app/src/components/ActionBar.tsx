@@ -148,19 +148,22 @@ export const ActionBar: FC<ActionBarProps> = ({
   const loadedRecording = useRecoilValue(loadedRecordingState);
   const { unloadRecording } = useLoadRecording();
   const [menuIsOpen, toggleMenuIsOpen] = useToggle();
+  const selectedExecutor = useRecoilValue(selectedExecutorState);
 
   const { remoteDebuggerState: remoteDebugger, disconnect } = useRemoteDebugger();
   const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
   const [copyAsTestCaseModalOpen, toggleCopyAsTestCaseModalOpen] = useToggle();
- 
+
   const plugins = useDependsOnPlugins();
- 
-  const gentracePlugin = plugins.find(plugin => plugin.id === 'gentrace');
+
+  const gentracePlugin = plugins.find((plugin) => plugin.id === 'gentrace');
   const isGentracePluginEnabled = !!gentracePlugin;
+
+  const canRun = (remoteDebugger.started && !remoteDebugger.reconnecting) || selectedExecutor === 'browser';
 
   return (
     <div css={styles}>
-      {(isActuallyRemoteDebugging || remoteDebugger.reconnecting) && (
+      {(isActuallyRemoteDebugging || (!remoteDebugger.isInternalExecutor && remoteDebugger.reconnecting)) && (
         <div
           className={clsx('remote-debugger-button active', {
             reconnecting: remoteDebugger.reconnecting,
@@ -197,8 +200,8 @@ export const ActionBar: FC<ActionBarProps> = ({
           Run Test <ChevronRightIcon />
         </button>
       </div> */}
-     
-      {isGentracePluginEnabled && <GentraceInteractors /> }
+
+      {isGentracePluginEnabled && <GentraceInteractors />}
 
       {lastRecording && (
         <div className={clsx('save-recording-button')}>
@@ -206,21 +209,23 @@ export const ActionBar: FC<ActionBarProps> = ({
         </div>
       )}
       <div className={clsx('run-button', { running: graphRunning, recording: !!loadedRecording })}>
-        <button onClick={graphRunning ? onAbortGraph : onRunGraph}>
-          {graphRunning ? (
-            <>
-              Abort <MultiplyIcon />
-            </>
-          ) : loadedRecording ? (
-            <>
-              Play Recording <ChevronRightIcon />
-            </>
-          ) : (
-            <>
-              Run <ChevronRightIcon />
-            </>
-          )}
-        </button>
+        {canRun && (
+          <button onClick={graphRunning ? onAbortGraph : onRunGraph}>
+            {graphRunning ? (
+              <>
+                Abort <MultiplyIcon />
+              </>
+            ) : loadedRecording ? (
+              <>
+                Play Recording <ChevronRightIcon />
+              </>
+            ) : (
+              <>
+                Run <ChevronRightIcon />
+              </>
+            )}
+          </button>
+        )}
       </div>
       <Popup
         isOpen={menuIsOpen}
