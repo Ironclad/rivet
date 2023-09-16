@@ -12,8 +12,10 @@ export function getInputOrData<Data extends object, T extends DataType = 'string
     const key = `use${capitalized}Input` as keyof Data & string;
     useInputToggleDataKey = key;
   }
-  const value = data[useInputToggleDataKey]
-    ? coerceTypeOptional(inputs[inputAndDataKey as PortId], type ?? 'string') ?? data[inputAndDataKey]
-    : data[inputAndDataKey];
+  const value =
+    data[useInputToggleDataKey] && inputs[inputAndDataKey as PortId] != null
+      ? coerceTypeOptional(inputs[inputAndDataKey as PortId], type ?? 'string') ?? data[inputAndDataKey]
+      : data[inputAndDataKey];
+  console.dir({ data, inputs, value, inputAndDataKey });
   return value as GetDataValue<T>['value'];
 }

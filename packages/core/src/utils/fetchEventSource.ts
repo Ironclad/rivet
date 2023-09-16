@@ -82,9 +82,6 @@ export default async function fetchEventSource(
     accept: 'text/event-stream',
   };
 
-  console.dir({ headers });
-  console.dir({ init });
-
   const response = await fetch(url, {
     ...init,
     headers,
