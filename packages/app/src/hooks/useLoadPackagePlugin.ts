@@ -5,6 +5,7 @@ import { ResponseType, fetch, getClient } from '@tauri-apps/api/http';
 import { RivetPlugin } from '@ironclad/rivet-core';
 import { invoke } from '@tauri-apps/api/tauri';
 import * as Rivet from '@ironclad/rivet-core';
+import semverGt from 'semver/functions/gt';
 
 export function useLoadPackagePlugin() {
   return async (spec: PackagePluginLoadSpec): Promise<RivetPlugin> => {
@@ -41,7 +42,8 @@ export function useLoadPackagePlugin() {
 
           const latestVersion = npmPackageData.data.version;
 
-          if (version !== latestVersion) {
+          if (semverGt(latestVersion, version)) {
+            console.log(`Plugin update available: ${spec.package}@${spec.tag} -> ${latestVersion}`);
             needsReinstall = true;
           }
         }

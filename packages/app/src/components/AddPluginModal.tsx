@@ -1,5 +1,5 @@
 import { HelperMessage } from '@atlaskit/form';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import TextField from '@atlaskit/textfield';
 import Modal, { ModalTransition, ModalTitle, ModalHeader, ModalFooter, ModalBody } from '@atlaskit/modal-dialog';
 import Button from '@atlaskit/button';
@@ -13,6 +13,9 @@ import * as Rivet from '@ironclad/rivet-core';
 import { useOpenUrl } from '../hooks/useOpenUrl';
 import { PluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
 import { css } from '@emotion/react';
+import { appLocalDataDir, join } from '@tauri-apps/api/path';
+import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-line.svg';
+import { copyToClipboard } from '../utils/copyToClipboard';
 
 const addPluginBody = css`
   display: flex;
@@ -58,6 +61,25 @@ const addPluginBody = css`
       display: flex;
       align-items: center;
       justify-content: flex-end;
+    }
+
+    .helperMessage > div > span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      code {
+        line-height: 11px;
+        font-size: 11px;
+      }
+
+      .copy-plugin-dir-button {
+        cursor: pointer;
+
+        &:hover {
+          color: white;
+        }
+      }
     }
   }
 `;
@@ -149,6 +171,24 @@ export const AddPluginModal: FC<{
 
   const goToDocs = useOpenUrl('https://rivet.ironcladapp.com/docs/'); // TODO
 
+  const [pluginStoreDirectory, setPluginStoreDirectory] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const appDataDir = await appLocalDataDir();
+        setPluginStoreDirectory(await join(appDataDir, 'plugins'));
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+  }, []);
+
+  const copyPluginStoreDirectory = async () => {
+    copyToClipboard(pluginStoreDirectory);
+    toast.success('Copied plugin store directory to clipboard');
+  };
+
   return (
     <ModalTransition>
       {isOpen && (
@@ -199,6 +239,12 @@ export const AddPluginModal: FC<{
                         placeholder="Tag (latest)"
                         onChange={(e) => setPluginTag((e.target as HTMLInputElement).value)}
                       />
+                    </div>
+                    <div className="helperMessage">
+                      <HelperMessage>
+                        Plugins are stored in: <code>{pluginStoreDirectory}</code>{' '}
+                        <CopyIcon className="copy-plugin-dir-button" onClick={copyPluginStoreDirectory} />
+                      </HelperMessage>
                     </div>
                     <div className="buttons">
                       <Button
