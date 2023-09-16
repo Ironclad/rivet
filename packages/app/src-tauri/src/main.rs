@@ -88,10 +88,9 @@ fn create_menu() -> Menu {
         Menu::new()
             .add_item(CustomMenuItem::new("Learn More", "Learn More"))
             .add_native_item(MenuItem::Separator)
-            .add_item(CustomMenuItem::new(
-                "toggle_devtools",
-                "Toggle Developer Tools",
-            )),
+            .add_item(
+                CustomMenuItem::new("toggle_devtools", "Toggle Developer Tools").accelerator("F12"),
+            ),
     );
 
     Menu::new()
