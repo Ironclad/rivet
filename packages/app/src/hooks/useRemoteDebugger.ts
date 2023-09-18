@@ -27,7 +27,6 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
       url = `ws://localhost:21888`;
     }
     const socket = new WebSocket(url);
-
     onConnectLatest.current?.();
 
     setRemoteDebuggerState((prevState) => ({
