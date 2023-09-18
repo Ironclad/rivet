@@ -1,12 +1,12 @@
-import { AppendToDatasetNode } from '@ironclad/rivet-core';
+import { LoadDatasetNode } from '@ironclad/rivet-core';
 import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 import { FC } from 'react';
 import { useDatasets } from '../../hooks/useDatasets';
 import { useRecoilValue } from 'recoil';
 import { projectState } from '../../state/savedGraphs';
 
-export const AppendToDatasetNodeBody: FC<{
-  node: AppendToDatasetNode;
+export const LoadDatasetNodeBody: FC<{
+  node: LoadDatasetNode;
 }> = ({ node }) => {
   const project = useRecoilValue(projectState);
   const { datasets } = useDatasets(project.metadata.id);
@@ -22,6 +22,6 @@ export const AppendToDatasetNodeBody: FC<{
   );
 };
 
-export const appendToDatasetNodeDescriptor: NodeComponentDescriptor<'appendToDataset'> = {
-  Body: AppendToDatasetNodeBody,
+export const loadDatasetNodeDescriptor: NodeComponentDescriptor<'loadDataset'> = {
+  Body: LoadDatasetNodeBody,
 };

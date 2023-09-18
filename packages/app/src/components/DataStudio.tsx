@@ -443,7 +443,6 @@ const DatasetTable: FC<{
   datasetData: DatasetRow[];
   onDataChanged: (data: DatasetRow[]) => void;
 }> = ({ datasetData, onDataChanged }) => {
-  console.dir({ datasetData });
   return (
     <div className="dataset-table-container">
       <table className="dataset-table">
@@ -483,12 +482,10 @@ const DatasetTable: FC<{
         <button
           onClick={() => {
             const newData = [...datasetData];
-            console.dir({ newData: [...newData] });
             newData.push({
               id: newId(),
               data: Array(datasetData[0]?.data.length ?? 1).fill(''),
             });
-            console.dir({ newData });
             onDataChanged(newData);
           }}
         >

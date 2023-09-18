@@ -15,6 +15,7 @@ import { audioNodeDescriptor } from '../components/nodes/AudioNode';
 import { appendToDatasetNodeDescriptor } from '../components/nodes/AppendToDatasetNode';
 import { useRecoilValue } from 'recoil';
 import { pluginRefreshCounterState } from '../state/plugins';
+import { loadDatasetNodeDescriptor } from '../components/nodes/LoadDatasetNode';
 
 export type UnknownNodeComponentDescriptor = {
   Body?: FC<{ node: ChartNode }>;
@@ -53,6 +54,7 @@ const overriddenDescriptors: Partial<NodeComponentDescriptors> = {
   image: imageNodeDescriptor,
   audio: audioNodeDescriptor,
   appendToDataset: appendToDatasetNodeDescriptor,
+  loadDataset: loadDatasetNodeDescriptor,
 };
 
 export function useNodeTypes(): NodeComponentDescriptors {

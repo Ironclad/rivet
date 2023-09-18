@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid/non-secure';
 import {
   ChartNode,
   DatasetId,
@@ -24,7 +23,7 @@ type CreateDatasetNodeData = {};
 export class CreateDatasetNodeImpl extends NodeImpl<CreateDatasetNode> {
   static create(): CreateDatasetNode {
     return {
-      id: nanoid() as NodeId,
+      id: newId<NodeId>(),
       type: 'createDataset',
       title: 'Create Dataset',
       visualData: { x: 0, y: 0, width: 250 },

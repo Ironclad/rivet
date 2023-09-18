@@ -170,6 +170,15 @@ export * from './nodes/AppendToDatasetNode.js';
 import { createDatasetNode } from './nodes/CreateDatasetNode.js';
 export * from './nodes/CreateDatasetNode.js';
 
+import { loadDatasetNode } from './nodes/LoadDatasetNode.js';
+export * from './nodes/LoadDatasetNode.js';
+
+import { getAllDatasetsNode } from './nodes/GetAllDatasetsNode.js';
+export * from './nodes/GetAllDatasetsNode.js';
+
+import { splitNode } from './nodes/SplitNode.js';
+export * from './nodes/SplitNode.js';
+
 export const registerBuiltInNodes = (registry: NodeRegistration) => {
   return registry
     .register(toYamlNode)
@@ -227,7 +236,10 @@ export const registerBuiltInNodes = (registry: NodeRegistration) => {
     .register(httpCallNode)
     .register(delayNode)
     .register(appendToDatasetNode)
-    .register(createDatasetNode);
+    .register(createDatasetNode)
+    .register(loadDatasetNode)
+    .register(getAllDatasetsNode)
+    .register(splitNode);
 };
 
 let globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());

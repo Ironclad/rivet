@@ -145,7 +145,6 @@ export async function runTrivet(opts: TrivetOpts): Promise<TrivetResults> {
             'cost',
           );
 
-          console.dir({ validationOutputs });
           const validationResults = Object.entries(validationOutputs).map(([outputId, result]) => {
             const node = validationOutputNodesById[outputId];
             if (node === undefined) {

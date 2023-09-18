@@ -11,8 +11,10 @@ import {
   Outputs,
   arrayizeDataValue,
   coerceType,
+  coerceTypeOptional,
   expectType,
   getInputOrData,
+  newId,
   unwrapDataValue,
 } from '../../index.js';
 import { InternalProcessContext } from '../ProcessContext.js';
@@ -47,6 +49,12 @@ export class AppendToDatasetNodeImpl extends NodeImpl<AppendToDatasetNode> {
       title: 'Data',
     });
 
+    inputDefinitions.push({
+      id: 'id' as PortId,
+      dataType: 'string',
+      title: 'ID',
+    });
+
     if (this.data.useDatasetIdInput) {
       inputDefinitions.push({
         id: 'datasetId' as PortId,
@@ -64,6 +72,11 @@ export class AppendToDatasetNodeImpl extends NodeImpl<AppendToDatasetNode> {
         id: 'dataset' as PortId,
         title: 'Dataset',
         dataType: 'object', // technically string[][]...
+      },
+      {
+        id: 'id_out' as PortId,
+        title: 'ID',
+        dataType: 'string',
       },
     ];
   }
@@ -99,6 +112,8 @@ export class AppendToDatasetNodeImpl extends NodeImpl<AppendToDatasetNode> {
 
     const datasetId = getInputOrData(this.data, inputs, 'datasetId', 'string') as DatasetId;
 
+    const dataId = coerceTypeOptional(inputs['id' as PortId], 'string') || newId<DatasetId>();
+
     const dataInput = inputs['data' as PortId];
 
     if (!dataInput) {
@@ -113,7 +128,7 @@ export class AppendToDatasetNodeImpl extends NodeImpl<AppendToDatasetNode> {
     const newData = [...dataset.rows];
 
     newData.push({
-      id: nanoid(),
+      id: dataId,
       data: stringData,
     });
 
@@ -126,6 +141,10 @@ export class AppendToDatasetNodeImpl extends NodeImpl<AppendToDatasetNode> {
       ['dataset' as PortId]: {
         type: 'object',
         value: newData as any,
+      },
+      ['id_out' as PortId]: {
+        type: 'string',
+        value: datasetId,
       },
     };
   }
