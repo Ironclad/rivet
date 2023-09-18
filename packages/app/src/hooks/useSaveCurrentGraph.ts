@@ -1,5 +1,5 @@
 import { produce } from 'immer';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { GraphId } from '@ironclad/rivet-core';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { graphState } from '../state/graph.js';

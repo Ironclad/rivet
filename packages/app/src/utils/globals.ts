@@ -2,8 +2,10 @@ import { BrowserIOProvider } from '../io/BrowserIOProvider.js';
 import { IOProvider } from '../io/IOProvider.js';
 import { LegacyBrowserIOProvider } from '../io/LegacyBrowserIOProvider.js';
 import { TauriIOProvider } from '../io/TauriIOProvider.js';
+import { BrowserDatasetProvider } from '../io/BrowserDatasetProvider';
 
 let ioProvider: IOProvider;
+const datasetProvider = new BrowserDatasetProvider();
 
 if (TauriIOProvider.isSupported()) {
   ioProvider = new TauriIOProvider();
@@ -13,4 +15,4 @@ if (TauriIOProvider.isSupported()) {
   ioProvider = new LegacyBrowserIOProvider();
 }
 
-export { ioProvider };
+export { ioProvider, datasetProvider };

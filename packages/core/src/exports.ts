@@ -33,6 +33,7 @@ export * from './model/NodeBodySpec.js';
 export * from './utils/inputs.js';
 export * from './utils/newId.js';
 export * from './utils/misc.js';
+export * from './integrations/DatasetProvider.js';
 
 import * as openai from './utils/openai.js';
 export { openai };

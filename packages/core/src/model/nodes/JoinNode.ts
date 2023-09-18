@@ -1,7 +1,7 @@
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { isArrayDataValue } from '../DataValue.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { coerceType, coerceTypeOptional, inferType } from '../../utils/coerceType.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { dedent } from 'ts-dedent';

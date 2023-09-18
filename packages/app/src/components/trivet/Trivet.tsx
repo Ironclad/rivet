@@ -5,7 +5,7 @@ import { css } from '@emotion/react';
 import Button from '@atlaskit/button';
 import { TestSuiteList } from './TestSuiteList';
 import { TestSuiteRenderer } from './TestSuite';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { TryRunTests } from './api';
 import { overlayOpenState } from '../../state/ui';
 import { NoTestSuitesSplash } from './NoTestSuitesSplash';

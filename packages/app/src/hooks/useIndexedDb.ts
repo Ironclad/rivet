@@ -26,6 +26,12 @@ function useIndexedDb<T = unknown>(options: { dbName: string; storeName: string;
         resolve();
       };
     });
+
+    return () => {
+      db.current?.close();
+      db.current = undefined;
+      dbLoadedPromise.current = undefined;
+    };
   }, [dbName, storeName, version]);
 
   const put = async (key: IDBValidKey, value: T) => {

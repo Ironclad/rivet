@@ -4032,6 +4032,8 @@ __metadata:
     chalk: "npm:^5.3.0"
     clsx: "npm:^1.2.1"
     core-js: "npm:^3.32.0"
+    csv-parse: "npm:^5.5.0"
+    csv-stringify: "npm:^6.4.2"
     emittery: "npm:^1.0.1"
     enquirer: "npm:^2.4.1"
     esbuild: "npm:^0.18.17"
@@ -8148,6 +8150,20 @@ __metadata:
   version: 3.1.1
   resolution: "csstype@npm:3.1.1"
   checksum: 39c4533f337cad38b9574a24b4b94bb203f091882295b6b4fb27e9e2b17148b188847f5fb728796af60bd0b80c502d510f89fe7ada3b661eaa6bca758c902036
+  languageName: node
+  linkType: hard
+
+"csv-parse@npm:^5.5.0":
+  version: 5.5.0
+  resolution: "csv-parse@npm:5.5.0"
+  checksum: 7d5d64c0f94b94e82fbc695beee9ec0d28038c24faeabed9ca9a215c66f4e7fb8f075999bf20d5a8501aa7f4264bcbb5f1d8cad52676d40dbaab850265ca9d3a
+  languageName: node
+  linkType: hard
+
+"csv-stringify@npm:^6.4.2":
+  version: 6.4.2
+  resolution: "csv-stringify@npm:6.4.2"
+  checksum: cd730cd0f8108a41a20b79b69c45a9c4643da00e2ed279bb5407f8bbc6463ba6996a43d5fb2b8b78990980811617b61cbba10aee8c9d2cda4029d12d9bee4224
   languageName: node
   linkType: hard
 

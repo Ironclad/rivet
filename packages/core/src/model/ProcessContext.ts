@@ -9,11 +9,13 @@ import {
   GraphId,
   GraphProcessor,
   ScalarOrArrayDataValue,
+  DatasetProvider,
 } from '../index.js';
 
 export type ProcessContext = {
   settings: Settings;
-  nativeApi: NativeApi;
+  nativeApi?: NativeApi;
+  datasetProvider?: DatasetProvider;
 };
 
 export type ProcessId = Opaque<string, 'ProcessId'>;

@@ -7,6 +7,8 @@ import {
   DataRef,
   DataType,
   DataTypeSelectorEditorDefinition,
+  DatasetMetadata,
+  DatasetSelectorEditorDefinition,
   DropdownEditorDefinition,
   EditorDefinition,
   FileBrowserEditorDefinition,
@@ -37,14 +39,15 @@ import clsx from 'clsx';
 import { projectDataState, projectState } from '../state/savedGraphs.js';
 import { useRecoilValue } from 'recoil';
 import { orderBy } from 'lodash-es';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { LazyCodeEditor, LazyTripleBarColorPicker } from './LazyComponents';
-import { ioProvider } from '../utils/globals';
+import { datasetProvider, ioProvider } from '../utils/globals';
 import Button from '@atlaskit/button';
 import { values } from '../../../core/src/utils/typeSafety';
 import { NodeChanged } from './NodeEditor';
 import prettyBytes from 'pretty-bytes';
 import { toast } from 'react-toastify';
+import { useDatasets } from '../hooks/useDatasets';
 
 export const defaultEditorContainerStyles = css`
   display: flex;
@@ -187,6 +190,7 @@ const DefaultNodeEditorField: FC<
     .with({ type: 'number' }, (editor) => <DefaultNumberEditor {...sharedProps} editor={editor} />)
     .with({ type: 'code' }, (editor) => <DefaultCodeEditor {...sharedProps} editor={editor} />)
     .with({ type: 'graphSelector' }, (editor) => <DefaultGraphSelectorEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'datasetSelector' }, (editor) => <DefaultDatasetSelectorEditor {...sharedProps} editor={editor} />)
     .with({ type: 'color' }, (editor) => <DefaultColorEditor {...sharedProps} editor={editor} />)
     .with({ type: 'fileBrowser' }, (editor) => <DefaultFileBrowserEditor {...sharedProps} editor={editor} />)
     .with({ type: 'imageBrowser' }, (editor) => <DefaultImageBrowserEditor {...sharedProps} editor={editor} />)
@@ -446,6 +450,66 @@ export const GraphSelector: FC<{
         <Select
           {...fieldProps}
           options={graphOptions}
+          value={selectedOption}
+          onChange={(selected) => onChange?.(selected!.value)}
+        />
+      )}
+    </Field>
+  );
+};
+
+export const DefaultDatasetSelectorEditor: FC<
+  SharedProps & {
+    editor: DatasetSelectorEditorDefinition<ChartNode>;
+  }
+> = ({ node, isReadonly, onChange, editor }) => {
+  const data = node.data as Record<string, unknown>;
+
+  return (
+    <DatasetSelector
+      value={data[editor.dataKey] as string | undefined}
+      isReadonly={isReadonly}
+      onChange={(selected) =>
+        onChange({
+          ...node,
+          data: {
+            ...data,
+            [editor.dataKey]: selected,
+          },
+        })
+      }
+      label={editor.label}
+      name={editor.dataKey}
+    />
+  );
+};
+
+export const DatasetSelector: FC<{
+  value: string | undefined;
+  name: string;
+  label: string;
+  isReadonly: boolean;
+  onChange?: (selected: string) => void;
+}> = ({ value, isReadonly, onChange, label, name }) => {
+  const project = useRecoilValue(projectState);
+  const { datasets } = useDatasets(project.metadata.id);
+
+  const datasetOptions = orderBy(
+    datasets?.map((dataset) => ({
+      label: dataset.name,
+      value: dataset.id,
+    })) ?? [],
+    'label',
+  );
+
+  const selectedOption = datasetOptions.find((option) => option.value === value);
+
+  return (
+    <Field name={name} label={label} isDisabled={isReadonly}>
+      {({ fieldProps }) => (
+        <Select
+          {...fieldProps}
+          options={datasetOptions}
           value={selectedOption}
           onChange={(selected) => onChange?.(selected!.value)}
         />

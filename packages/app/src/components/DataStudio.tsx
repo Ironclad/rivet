@@ -5,15 +5,20 @@ import { css } from '@emotion/react';
 import { projectState } from '../state/savedGraphs';
 import { ErrorBoundary } from 'react-error-boundary';
 import useIndexedDb from '../hooks/useIndexedDb';
-import { Dataset, DatasetData, DatasetId, DatasetMetadata, selectedDatasetState } from '../state/dataStudio';
+import { selectedDatasetState } from '../state/dataStudio';
 import { toast } from 'react-toastify';
-import { getError, newId } from '@ironclad/rivet-core';
+import { Dataset, DatasetId, DatasetMetadata, DatasetRow, getError, newId } from '@ironclad/rivet-core';
 import Button from '@atlaskit/button';
 import TextField from '@atlaskit/textfield';
 import clsx from 'clsx';
 import Portal from '@atlaskit/portal';
 import { DropdownItem } from '@atlaskit/dropdown-menu';
 import { useContextMenu } from '../hooks/useContextMenu';
+import { stringify as stringifyCsv } from 'csv-stringify/browser/esm/sync';
+import { parse as parseCsv } from 'csv-parse/browser/esm/sync';
+import { ioProvider } from '../utils/globals';
+import { useDataset } from '../hooks/useDataset';
+import { useDatasets } from '../hooks/useDatasets';
 
 export const DataStudioRenderer: FC = () => {
   const [openOverlay, setOpenOverlay] = useRecoilState(overlayOpenState);
@@ -68,66 +73,49 @@ const styles = css`
 export const DataStudio: FC<{
   onClose: () => void;
 }> = ({ onClose }) => {
-  const datasetsStore = useIndexedDb<DatasetMetadata>({ dbName: 'datasets', storeName: 'datasets' });
-
-  const [datasets, setDatasets] = useState<DatasetMetadata[]>([]);
+  const project = useRecoilValue(projectState);
+  const { datasets, ...datasetsMethods } = useDatasets(project.metadata.id);
 
   const [selectedDataset, setSelectedDataset] = useRecoilState(selectedDatasetState);
   const [renamingDataset, setRenamingDataset] = useState<DatasetId>();
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const allDatasets = await datasetsStore.getAll();
-        setDatasets(allDatasets);
-      } catch (err) {
-        toast.error(`Failed to load datasets: ${getError(err).message}`);
-      }
-    })();
-  }, []);
-
   const newDataset = async () => {
     const metadata: DatasetMetadata = {
       id: newId<DatasetId>(),
+      projectId: project.metadata.id,
       name: 'New Dataset',
       description: '',
     };
 
-    setDatasets([...datasets, metadata]);
-
     try {
-      await datasetsStore.put(metadata.id, metadata);
+      await datasetsMethods.putDataset(metadata);
+      setRenamingDataset(metadata.id);
     } catch (err) {
       toast.error(`Failed to create dataset: ${getError(err).message}`);
     }
-
-    setRenamingDataset(metadata.id);
   };
 
   const updateDataset = async (dataset: DatasetMetadata) => {
-    setDatasets(datasets.map((d) => (d.id === dataset.id ? dataset : d)));
-
     try {
-      await datasetsStore.put(dataset.id, dataset);
+      await datasetsMethods.putDataset(dataset);
     } catch (err) {
       toast.error(`Failed to update dataset: ${getError(err).message}`);
     }
   };
 
-  const selectedDatasetMeta = datasets.find((d) => d.id === selectedDataset);
+  const selectedDatasetMeta = datasets?.find((d) => d.id === selectedDataset);
 
-  const { contextMenuRef, showContextMenu, contextMenuData, handleContextMenu } = useContextMenu();
+  const { contextMenuRef, showContextMenu, contextMenuData, handleContextMenu, setShowContextMenu } = useContextMenu();
 
   const selectedDatasetForContextMenu =
     contextMenuData.data?.type === 'dataset'
-      ? datasets.find((set) => set.id === contextMenuData.data!.element.dataset.datasetid)
+      ? datasets?.find((set) => set.id === contextMenuData.data!.element.dataset.datasetid)
       : undefined;
 
   const deleteDataset = async (dataset: DatasetMetadata) => {
-    setDatasets(datasets.filter((d) => d.id !== dataset.id));
-
+    setShowContextMenu(false);
     try {
-      await datasetsStore.delete(dataset.id);
+      await datasetsMethods.deleteDataset(dataset.id);
     } catch (err) {
       toast.error(`Failed to delete dataset: ${getError(err).message}`);
     }
@@ -138,7 +126,6 @@ export const DataStudio: FC<{
       <div className="content">
         <div
           className="left-sidebar"
-          ref={contextMenuRef}
           onContextMenu={(e) => {
             handleContextMenu(e);
             e.preventDefault();
@@ -151,7 +138,7 @@ export const DataStudio: FC<{
             </Button>
           </header>
           <div className="datasets-list">
-            {datasets.map((dataset) => (
+            {(datasets ?? []).map((dataset) => (
               <DatasetListItem
                 key={dataset.id}
                 dataset={dataset}
@@ -169,8 +156,9 @@ export const DataStudio: FC<{
           <Portal>
             {showContextMenu && contextMenuData.data?.type === 'dataset' && (
               <div
-                className="graph-item-context-menu"
+                className="context-menu"
                 css={contextMenuStyles}
+                ref={contextMenuRef}
                 style={{
                   zIndex: 500,
                   left: contextMenuData.x,
@@ -269,6 +257,15 @@ const datasetDisplayStyles = css`
 
   header {
     margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
   }
 
   .dataset-table-container {
@@ -344,99 +341,44 @@ const datasetDisplayStyles = css`
 const DatasetDisplay: FC<{
   dataset: DatasetMetadata;
 }> = ({ dataset }) => {
-  const datasetDatabase = useIndexedDb<DatasetData>({ dbName: `dataset-data-${dataset.id}`, storeName: 'data' });
+  const project = useRecoilValue(projectState);
 
-  const [datasetData, setDatasetData] = useState<Dataset | undefined>();
+  const { dataset: datasetData, ...datasetMethods } = useDataset(dataset.id);
 
   const { contextMenuData, contextMenuRef, handleContextMenu, showContextMenu } = useContextMenu();
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await datasetDatabase.getAll();
-        setDatasetData({
-          id: dataset.id,
-          data,
-        });
-      } catch (err) {
-        toast.error(`Failed to load dataset: ${getError(err).message}`);
-      }
-    })();
-  }, []);
-
-  const updateDatasetData = async (dataset: Dataset) => {
-    setDatasetData(dataset);
-
-    try {
-      for (const row of dataset.data) {
-        await datasetDatabase.put(row.id, row);
-      }
-    } catch (err) {
-      toast.error(`Failed to update dataset: ${getError(err).message}`);
-    }
+  const updateDatasetData = async (data: DatasetRow[]) => {
+    await datasetMethods.putDatasetData(data);
   };
 
   const selectedCellRow = contextMenuData.data?.type === 'cell' ? contextMenuData.data.element.dataset.row : undefined;
   const selectedCellColumn =
     contextMenuData.data?.type === 'cell' ? contextMenuData.data.element.dataset.column : undefined;
 
-  const deleteRow = (row: number) => {
-    const newData = [...datasetData!.data];
-    newData.splice(row, 1);
-    updateDatasetData({
-      ...datasetData!,
-      data: newData,
-    });
+  const exportDataset = async () => {
+    const csvContent = stringifyCsv(datasetData!.rows.map((row) => row.data));
+
+    try {
+      await ioProvider.saveString(csvContent, `${dataset.name}.csv`);
+    } catch (err) {
+      toast.error(`Failed to export dataset: ${getError(err).message}`);
+    }
   };
 
-  const deleteColumn = (column: number) => {
-    const newData = [...datasetData!.data];
-    newData.forEach((row) => row.data.splice(column, 1));
-    updateDatasetData({
-      ...datasetData!,
-      data: newData,
-    });
-  };
+  const importDataset = async () => {
+    await ioProvider.readFileAsString(async (csvContent) => {
+      try {
+        const csvData = parseCsv(csvContent) as string[][];
 
-  const insertRowAbove = (row: number) => {
-    const newData = [...datasetData!.data];
-    newData.splice(row, 0, {
-      id: newId(),
-      data: Array(datasetData!.data[0]?.data.length ?? 1).fill(''),
-    });
-    updateDatasetData({
-      ...datasetData!,
-      data: newData,
-    });
-  };
+        const data: DatasetRow[] = csvData.map((row) => ({
+          id: newId(),
+          data: row,
+        }));
 
-  const insertRowBelow = (row: number) => {
-    const newData = [...datasetData!.data];
-    newData.splice(row + 1, 0, {
-      id: newId(),
-      data: Array(datasetData!.data[0]?.data.length ?? 1).fill(''),
-    });
-    updateDatasetData({
-      ...datasetData!,
-      data: newData,
-    });
-  };
-
-  const insertColumnLeft = (column: number) => {
-    const newData = [...datasetData!.data];
-    newData.forEach((row) => row.data.splice(column, 0, ''));
-    updateDatasetData({
-      ...datasetData!,
-      data: newData,
-    });
-  };
-
-  const insertColumnRight = (column: number) => {
-    const newData = [...datasetData!.data];
-    newData.forEach((row) => row.data.splice(column + 1, 0, ''));
-    updateDatasetData({
-      ...datasetData!,
-      data: newData,
+        datasetMethods.putDatasetData(data);
+      } catch (err) {
+        toast.error(`Failed to import dataset: ${getError(err).message}`);
+      }
     });
   };
 
@@ -451,12 +393,20 @@ const DatasetDisplay: FC<{
     >
       <header>
         <h1>{dataset.name}</h1>
+        <div className="buttons">
+          <Button appearance="primary" onClick={exportDataset}>
+            Export Dataset
+          </Button>
+          <Button appearance="default" onClick={importDataset}>
+            Import (Replace) Data
+          </Button>
+        </div>
       </header>
-      {datasetData && <DatasetTable dataset={datasetData} setDatasetData={updateDatasetData} />}
+      {datasetData && <DatasetTable datasetData={datasetData.rows} onDataChanged={updateDatasetData} />}
       <Portal>
         {showContextMenu && contextMenuData.data?.type === 'cell' && (
           <div
-            className="graph-item-context-menu"
+            className="context-menu"
             css={contextMenuStyles}
             style={{
               zIndex: 500,
@@ -464,16 +414,24 @@ const DatasetDisplay: FC<{
               top: contextMenuData.y,
             }}
           >
-            <DropdownItem onClick={() => insertRowAbove(parseInt(selectedCellRow!, 10))}>Insert Row Above</DropdownItem>
-            <DropdownItem onClick={() => insertRowBelow(parseInt(selectedCellRow!, 10))}>Insert Row Below</DropdownItem>
-            <DropdownItem onClick={() => insertColumnLeft(parseInt(selectedCellColumn!, 10))}>
+            <DropdownItem onClick={() => datasetMethods.insertRowAbove(parseInt(selectedCellRow!, 10))}>
+              Insert Row Above
+            </DropdownItem>
+            <DropdownItem onClick={() => datasetMethods.insertRowBelow(parseInt(selectedCellRow!, 10))}>
+              Insert Row Below
+            </DropdownItem>
+            <DropdownItem onClick={() => datasetMethods.insertColumnLeft(parseInt(selectedCellColumn!, 10))}>
               Insert Column Left
             </DropdownItem>
-            <DropdownItem onClick={() => insertColumnRight(parseInt(selectedCellColumn!, 10))}>
+            <DropdownItem onClick={() => datasetMethods.insertColumnRight(parseInt(selectedCellColumn!, 10))}>
               Insert Column Right
             </DropdownItem>
-            <DropdownItem onClick={() => deleteRow(parseInt(selectedCellRow!, 10))}>Delete Row</DropdownItem>
-            <DropdownItem onClick={() => deleteColumn(parseInt(selectedCellColumn!, 10))}>Delete Column</DropdownItem>
+            <DropdownItem onClick={() => datasetMethods.deleteRow(parseInt(selectedCellRow!, 10))}>
+              Delete Row
+            </DropdownItem>
+            <DropdownItem onClick={() => datasetMethods.deleteColumn(parseInt(selectedCellColumn!, 10))}>
+              Delete Column
+            </DropdownItem>
           </div>
         )}
       </Portal>
@@ -482,16 +440,15 @@ const DatasetDisplay: FC<{
 };
 
 const DatasetTable: FC<{
-  dataset: Dataset;
-  setDatasetData: (dataset: Dataset) => void;
-}> = ({ dataset, setDatasetData }) => {
-  const { data } = dataset;
-
+  datasetData: DatasetRow[];
+  onDataChanged: (data: DatasetRow[]) => void;
+}> = ({ datasetData, onDataChanged }) => {
+  console.dir({ datasetData });
   return (
     <div className="dataset-table-container">
       <table className="dataset-table">
         <tbody>
-          {data.map((row, i) => (
+          {datasetData.map((row, i) => (
             <tr key={i}>
               {row.data.map((cell, j) => (
                 <td key={`${i}-${j}`}>
@@ -500,12 +457,9 @@ const DatasetTable: FC<{
                     row={i}
                     column={j}
                     onChange={(value) => {
-                      const newData = [...data];
+                      const newData = [...datasetData];
                       newData[i]!.data[j] = value;
-                      setDatasetData({
-                        ...dataset,
-                        data: newData,
-                      });
+                      onDataChanged(newData);
                     }}
                   />
                 </td>
@@ -517,12 +471,9 @@ const DatasetTable: FC<{
       <div className="add-column-area">
         <button
           onClick={() => {
-            const newData = [...data];
+            const newData = [...datasetData];
             newData.forEach((row) => row.data.push(''));
-            setDatasetData({
-              ...dataset,
-              data: newData,
-            });
+            onDataChanged(newData);
           }}
         >
           Add New Column
@@ -531,15 +482,14 @@ const DatasetTable: FC<{
       <div className="add-row-area">
         <button
           onClick={() => {
-            const newData = [...data];
+            const newData = [...datasetData];
+            console.dir({ newData: [...newData] });
             newData.push({
               id: newId(),
-              data: Array(data[0]?.data.length ?? 1).fill(''),
+              data: Array(datasetData[0]?.data.length ?? 1).fill(''),
             });
-            setDatasetData({
-              ...dataset,
-              data: newData,
-            });
+            console.dir({ newData });
+            onDataChanged(newData);
           }}
         >
           Add New Row

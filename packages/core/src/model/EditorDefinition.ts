@@ -1,4 +1,4 @@
-import { ChartNode, DataRef, DataType } from '../index.js';
+import { ChartNode, DataRef, DataType, DatasetId } from '../index.js';
 
 type ExcludeNeverValues<T> = Pick<
   T,
@@ -32,6 +32,14 @@ export type DataTypeSelectorEditorDefinition<T extends ChartNode> = {
   label: string;
 
   dataKey: DataOfType<T, DataType>;
+  useInputToggleDataKey?: DataOfType<T, boolean>;
+};
+
+export type DatasetSelectorEditorDefinition<T extends ChartNode> = {
+  type: 'datasetSelector';
+  label: string;
+
+  dataKey: DataOfType<T, DatasetId>;
   useInputToggleDataKey?: DataOfType<T, boolean>;
 };
 
@@ -136,4 +144,5 @@ export type EditorDefinition<T extends ChartNode> =
   | ColorEditorDefinition<T>
   | GraphSelectorEditorDefinition<T>
   | FileBrowserEditorDefinition<T>
-  | ImageBrowserEditorDefinition<T>;
+  | ImageBrowserEditorDefinition<T>
+  | DatasetSelectorEditorDefinition<T>;

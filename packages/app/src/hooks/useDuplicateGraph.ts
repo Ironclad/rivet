@@ -1,5 +1,5 @@
 import { GraphId, NodeGraph, NodeId } from '@ironclad/rivet-core';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { useLoadGraph } from './useLoadGraph.js';
 import { useStableCallback } from './useStableCallback.js';
 import { useSetRecoilState } from 'recoil';

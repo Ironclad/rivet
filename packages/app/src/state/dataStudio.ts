@@ -1,29 +1,7 @@
+import { Dataset, DatasetId, DatasetMetadata } from '@ironclad/rivet-core';
 import { atom } from 'recoil';
-import { recoilPersist } from 'recoil-persist';
-import { Opaque } from 'type-fest';
 
-export type DatasetId = Opaque<string, 'DatasetId'>;
-
-const { persistAtom } = recoilPersist({ key: 'dataStudio' });
-
-export type DatasetMetadata = {
-  id: DatasetId;
-  name: string;
-  description: string;
-};
-
-export type Dataset = {
-  id: DatasetId;
-  data: DatasetData[];
-};
-
-export type DatasetData = {
-  id: string;
-
-  data: string[];
-};
-
-export const datasetsState = atom<Dataset[]>({
+export const datasetsState = atom<DatasetMetadata[]>({
   key: 'datasets',
   default: [],
 });

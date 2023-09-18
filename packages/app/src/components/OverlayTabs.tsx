@@ -30,7 +30,7 @@ const styles = css`
   .menu-item {
     position: relative;
     background-color: transparent;
-    color: var(--grey-lightest);
+    color: var(--grey-light);
     border: none;
     transition: height 0.2s ease-out;
 

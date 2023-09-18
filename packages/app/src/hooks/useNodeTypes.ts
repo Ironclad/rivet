@@ -12,6 +12,7 @@ import { ObjectNodeDescriptor } from '../components/nodes/ObjectNode.js';
 import { commentNodeDescriptor } from '../components/nodes/CommentNode';
 import { imageNodeDescriptor } from '../components/nodes/ImageNode';
 import { audioNodeDescriptor } from '../components/nodes/AudioNode';
+import { appendToDatasetNodeDescriptor } from '../components/nodes/AppendToDatasetNode';
 import { useRecoilValue } from 'recoil';
 import { pluginRefreshCounterState } from '../state/plugins';
 
@@ -51,6 +52,7 @@ const overriddenDescriptors: Partial<NodeComponentDescriptors> = {
   comment: commentNodeDescriptor,
   image: imageNodeDescriptor,
   audio: audioNodeDescriptor,
+  appendToDataset: appendToDatasetNodeDescriptor,
 };
 
 export function useNodeTypes(): NodeComponentDescriptors {
