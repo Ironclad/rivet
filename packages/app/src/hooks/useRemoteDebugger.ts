@@ -72,8 +72,6 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
 
     socket.onmessage = (event) => {
       const { message, data } = JSON.parse(event.data);
-      
-      console.log('message', message, 'data', data);
 
       if (message === 'graph-upload-allowed') {
         console.log('Graph uploading is allowed.');
