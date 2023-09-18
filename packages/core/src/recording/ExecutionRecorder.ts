@@ -143,8 +143,6 @@ export class ExecutionRecorder {
       const listener = (event: MessageEvent) => {
         const { message, data } = JSON.parse(event.data);
 
-        console.log('recording event', message, data);
-
         if (this.#options.includePartialOutputs === false && message === 'partialOutput') {
           return;
         }
