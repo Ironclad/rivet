@@ -27,6 +27,7 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
       url = `ws://localhost:21888`;
     }
     const socket = new WebSocket(url);
+
     onConnectLatest.current?.();
 
     setRemoteDebuggerState((prevState) => ({
@@ -71,6 +72,8 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
 
     socket.onmessage = (event) => {
       const { message, data } = JSON.parse(event.data);
+      
+      console.log('message', message, 'data', data);
 
       if (message === 'graph-upload-allowed') {
         console.log('Graph uploading is allowed.');

@@ -1,17 +1,19 @@
 import Popup from '@atlaskit/popup';
 import { css } from '@emotion/react';
-import { globalRivetNodeRegistry } from '@ironclad/rivet-core';
+import { ExecutionRecorder, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { useToggle } from 'ahooks';
 import clsx from 'clsx';
 import { ReactComponent as EditPen } from 'majesticons/line/edit-pen-2-line.svg';
 import { ReactComponent as TestTube } from 'majesticons/line/test-tube-filled-line.svg';
 import { toast } from 'react-toastify';
 import { useRecoilValue } from 'recoil';
-import { runGentraceTests } from '../../../../core/src/plugins/gentrace/plugin';
+import { runGentraceTests, runRemoteGentraceTests } from '../../../../core/src/plugins/gentrace/plugin';
 import { ReactComponent as GentraceImage } from '../../assets/vendor_logos/gentrace.svg';
+import { useRemoteDebugger } from '../../hooks/useRemoteDebugger';
+import { useRemoteExecutor } from '../../hooks/useRemoteExecutor';
 import { TauriNativeApi } from '../../model/native/TauriNativeApi';
 import { graphState } from '../../state/graph';
-import { projectState } from '../../state/savedGraphs.js';
+import { projectDataState, projectState } from '../../state/savedGraphs.js';
 import { settingsState } from '../../state/settings';
 import { fillMissingSettingsFromEnvironmentVariables } from '../../utils/tauri';
 import GentracePipelinePicker, { GentracePipeline } from './GentracePipelinePicker';
@@ -20,6 +22,11 @@ export const GentraceInteractors = () => {
   const project = useRecoilValue(projectState);
   const graph = useRecoilValue(graphState);
   const savedSettings = useRecoilValue(settingsState);
+  const projectData = useRecoilValue(projectDataState);
+  
+  const remoteDebugger = useRemoteDebugger();
+
+  const remoteExecutor = useRemoteExecutor();
   
   const gentracePipelineSettings = graph?.metadata?.attachedData?.gentracePipeline as GentracePipeline | undefined;
   const currentGentracePipelineSlug = gentracePipelineSettings?.slug;
@@ -45,8 +52,45 @@ export const GentraceInteractors = () => {
     let testResultId: string | null = null;
     
     try {
-      const testResponse = await runGentraceTests(currentGentracePipelineSlug, settings, project, graph, new TauriNativeApi());
-      testResultId = testResponse.resultId;
+      if (remoteExecutor.active && remoteDebugger.remoteDebuggerState.socket) {
+        const testResponse = await runRemoteGentraceTests(
+          currentGentracePipelineSlug, 
+          settings, 
+          project, 
+          graph, 
+          async (inputs) => {
+            if (remoteDebugger.remoteDebuggerState.remoteUploadAllowed) {
+              remoteDebugger.send('set-dynamic-data', {
+                project: {
+                  ...project,
+                  graphs: {
+                    ...project.graphs,
+                    [graph.metadata!.id!]: graph,
+                  },
+                },
+                settings: await fillMissingSettingsFromEnvironmentVariables(
+                  savedSettings,
+                  globalRivetNodeRegistry.getPlugins(),
+                ),
+              });
+            }
+            
+            const recorder = new ExecutionRecorder();
+            
+            const recorderPromise = recorder.recordSocket(remoteDebugger.remoteDebuggerState.socket!);
+
+            remoteDebugger.send('run', { graphId: graph.metadata!.id!, inputs });
+            
+            await recorderPromise;
+            
+            return recorder.getRecording();
+          }
+        );
+        testResultId = testResponse.resultId;
+      } else {
+        const testResponse = await runGentraceTests(currentGentracePipelineSlug, settings, project, graph, new TauriNativeApi());
+        testResultId = testResponse.resultId;
+      }
     } catch (e: any) {
       const serverResult = e?.response?.data?.message ?? e?.message;
       toast.error((

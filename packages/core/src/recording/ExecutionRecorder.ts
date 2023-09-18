@@ -136,6 +136,40 @@ export class ExecutionRecorder {
   off: Emittery<ExecutionRecorderEvents>['off'] = undefined!;
   once: Emittery<ExecutionRecorderEvents>['once'] = undefined!;
 
+  recordSocket(channel: WebSocket) {
+    return new Promise<void>((resolve, reject) => {
+      this.recordingId = nanoid() as RecordingId;
+
+      const listener = (event: MessageEvent) => {
+        const { message, data } = JSON.parse(event.data);
+
+        console.log('recording event', message, data);
+
+        if (this.#options.includePartialOutputs === false && message === 'partialOutput') {
+          return;
+        }
+
+        if (this.#options.includeTrace === false && message === 'trace') {
+          return;
+        }
+
+        this.#events.push(toRecordedEvent(message, data) as RecordedEvents);
+
+        if (message === 'done' || message === 'abort' || message === 'error') {
+          this.#emitter.emit('finish', {
+            recording: this.getRecording(),
+          });
+
+          channel.removeEventListener('message', listener);
+
+          resolve();
+        }
+      };
+
+      channel.addEventListener('message', listener);
+    });
+  }
+
   record(processor: GraphProcessor) {
     this.recordingId = nanoid() as RecordingId;
     processor.onAny((event, data) => {
