@@ -29,13 +29,15 @@ type SerializedProject = {
   plugins?: PluginLoadSpec[];
 };
 
-type SerializedGraph = {
-  metadata: {
-    id: GraphId;
-    name: string;
-    description: string;
-  };
+type SerializedGraphMetadata = {
+  id: GraphId;
+  name: string;
+  description: string;
+  attachedData?: AttachedData;
+};
 
+type SerializedGraph = {
+  metadata: SerializedGraphMetadata;
   nodes: Record<SerializedGraphNodeKey, SerializedNode>;
 };
 
@@ -145,12 +147,18 @@ function fromSerializedProject(serializedProject: SerializedProject): [Project, 
 }
 
 function toSerializedGraph(graph: NodeGraph): SerializedGraph {
+  const graphMetadata: SerializedGraphMetadata = {
+    id: graph.metadata!.id!,
+    name: graph.metadata!.name!,
+    description: graph.metadata!.description!,
+  };
+
+  if (graph.metadata!.attachedData) {
+    graphMetadata.attachedData = graph.metadata!.attachedData;
+  }
+
   return {
-    metadata: {
-      id: graph.metadata!.id!,
-      name: graph.metadata!.name!,
-      description: graph.metadata!.description!,
-    },
+    metadata: graphMetadata,
     nodes: graph.nodes.reduce(
       (acc, node) => ({
         ...acc,
