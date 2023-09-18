@@ -102,7 +102,7 @@ export const runRemoteGentraceTests = async (
   settings: Settings,
   project: Omit<Project, 'data'>,
   graph: NodeGraph,
-  outputAndStepRetriever: (testCase: Record<string, any>) => Promise<Recording>,
+  runAndRecord: (testCase: Record<string, any>) => Promise<Recording>,
 ) => {
   const gentraceApiKey = settings.pluginSettings?.gentrace?.gentraceApiKey as string | undefined;
 
@@ -127,7 +127,7 @@ export const runRemoteGentraceTests = async (
 
     const rivetFormattedInputs = mapValues(testCase.inputs, inferType);
 
-    const fullRecording = await outputAndStepRetriever(rivetFormattedInputs);
+    const fullRecording = await runAndRecord(rivetFormattedInputs);
     const stepRuns = convertRecordingToStepRuns(fullRecording, project, graphId);
 
     stepRuns.forEach((stepRun) => {
