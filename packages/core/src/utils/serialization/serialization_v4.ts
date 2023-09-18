@@ -194,12 +194,18 @@ function fromSerializedGraph(serializedGraph: SerializedGraph): NodeGraph {
     allConnections.push(...connections);
   }
 
+  const metadata: SerializedGraphMetadata = {
+    id: serializedGraph.metadata.id,
+    name: serializedGraph.metadata.name,
+    description: serializedGraph.metadata.description,
+  };
+
+  if (serializedGraph.metadata.attachedData) {
+    metadata.attachedData = serializedGraph.metadata.attachedData;
+  }
+
   return {
-    metadata: {
-      id: serializedGraph.metadata.id,
-      name: serializedGraph.metadata.name,
-      description: serializedGraph.metadata.description,
-    },
+    metadata,
     nodes: allNodes,
     connections: allConnections,
   };
