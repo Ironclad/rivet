@@ -1,25 +1,5 @@
 import { Opaque } from 'type-fest';
-import { ProjectId } from '../index.js';
-
-export type DatasetId = Opaque<string, 'DatasetId'>;
-
-export type DatasetMetadata = {
-  id: DatasetId;
-  projectId: ProjectId;
-  name: string;
-  description: string;
-};
-
-export type Dataset = {
-  id: DatasetId;
-  rows: DatasetRow[];
-};
-
-export type DatasetRow = {
-  id: string;
-
-  data: string[];
-};
+import { Dataset, DatasetId, DatasetMetadata, DatasetRow, ProjectId } from '../index.js';
 
 export interface DatasetProvider {
   getDatasetMetadata(id: DatasetId): Promise<DatasetMetadata[]>;
@@ -35,4 +15,7 @@ export interface DatasetProvider {
   clearDatasetData(id: DatasetId): Promise<void>;
 
   deleteDataset(id: DatasetId): Promise<void>;
+
+  /** Gets the K nearest neighbor rows to the given vector. */
+  knnDatasetRows(datasetId: DatasetId, k: number, vector: number[]): Promise<(DatasetRow & { distance?: number })[]>;
 }

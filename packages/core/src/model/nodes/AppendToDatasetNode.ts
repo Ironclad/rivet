@@ -55,6 +55,12 @@ export class AppendToDatasetNodeImpl extends NodeImpl<AppendToDatasetNode> {
       title: 'ID',
     });
 
+    inputDefinitions.push({
+      id: 'embedding' as PortId,
+      dataType: 'vector',
+      title: 'Embedding',
+    });
+
     if (this.data.useDatasetIdInput) {
       inputDefinitions.push({
         id: 'datasetId' as PortId,
@@ -111,8 +117,8 @@ export class AppendToDatasetNodeImpl extends NodeImpl<AppendToDatasetNode> {
     }
 
     const datasetId = getInputOrData(this.data, inputs, 'datasetId', 'string') as DatasetId;
-
     const dataId = coerceTypeOptional(inputs['id' as PortId], 'string') || newId<DatasetId>();
+    const embedding = coerceTypeOptional(inputs['embedding' as PortId], 'vector');
 
     const dataInput = inputs['data' as PortId];
 
@@ -130,6 +136,7 @@ export class AppendToDatasetNodeImpl extends NodeImpl<AppendToDatasetNode> {
     newData.push({
       id: dataId,
       data: stringData,
+      embedding,
     });
 
     await datasetProvider.putDatasetData(datasetId, {

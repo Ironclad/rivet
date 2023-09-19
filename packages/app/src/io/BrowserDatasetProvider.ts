@@ -137,4 +137,27 @@ export class BrowserDatasetProvider implements DatasetProvider {
       dataRequest.onerror = reject;
     });
   }
+
+  async knnDatasetRows(
+    datasetId: DatasetId,
+    k: number,
+    vector: number[],
+  ): Promise<(DatasetRow & { distance?: number })[]> {
+    const allRows = await this.getDatasetData(datasetId);
+
+    const sorted = allRows.rows
+      .filter((row) => row.embedding != null)
+      .map((row) => ({
+        row,
+        similarity: dotProductSimilarity(vector, row.embedding!),
+      }))
+      .sort((a, b) => b.similarity - a.similarity);
+
+    return sorted.slice(0, k).map((r) => ({ ...r.row, distance: r.similarity }));
+  }
 }
+
+/** OpenAI embeddings are already normalized, so this is equivalent to cosine similarity */
+const dotProductSimilarity = (a: number[], b: number[]): number => {
+  return a.reduce((acc, val, i) => acc + val * b[i]!, 0);
+};

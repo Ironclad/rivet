@@ -19,6 +19,7 @@ import { parse as parseCsv } from 'csv-parse/browser/esm/sync';
 import { ioProvider } from '../utils/globals';
 import { useDataset } from '../hooks/useDataset';
 import { useDatasets } from '../hooks/useDatasets';
+import { LazyCodeEditor } from './LazyComponents';
 
 export const DataStudioRenderer: FC = () => {
   const [openOverlay, setOpenOverlay] = useRecoilState(overlayOpenState);
@@ -326,13 +327,21 @@ const datasetDisplayStyles = css`
 
       .cell {
         height: 48px;
+
+        &.editor {
+          .editor-container {
+            min-height: 200px;
+            min-width: 100px;
+          }
+        }
       }
 
       .value {
         padding: 4px 8px;
         height: 100%;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
+        overflow: hidden;
       }
     }
   }
@@ -503,19 +512,21 @@ const DatasetEditableCell: FC<{
   onChange: (value: string) => void;
 }> = ({ value, row, column, onChange }) => {
   const [editing, setEditing] = useState(false);
+  const [editingText, setEditingText] = useState(value);
 
   return (
-    <div className="cell" data-row={row} data-column={column} data-contextmenutype="cell">
+    <div className="cell editor" data-row={row} data-column={column} data-contextmenutype="cell">
       {editing ? (
-        <TextField
+        <LazyCodeEditor
           autoFocus
-          defaultValue={value}
-          onBlur={(e) => {
-            onChange((e.target as HTMLInputElement).value);
+          text={value}
+          onChange={(e) => setEditingText(e)}
+          onBlur={() => {
+            onChange(editingText);
             setEditing(false);
           }}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
+            if (e.keyCode === 3 && (e.metaKey || e.ctrlKey)) {
               onChange((e.target as HTMLInputElement).value);
               setEditing(false);
             }
