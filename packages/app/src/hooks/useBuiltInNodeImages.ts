@@ -108,5 +108,11 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     audio: '',
     image: '',
     httpCall: '',
+    appendToDataset: '',
+    createDataset: '',
+    datasetNearestNeighbors: '',
+    getAllDatasets: '',
+    loadDataset: '',
+    split: '',
   };
 };

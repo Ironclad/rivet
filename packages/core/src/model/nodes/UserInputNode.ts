@@ -1,6 +1,6 @@
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { DataValue, ArrayDataValue, StringDataValue } from '../DataValue.js';
 import { zip } from 'lodash-es';
 import { Outputs, Inputs, expectType, EditorDefinition, NodeBodySpec, coerceType } from '../../index.js';

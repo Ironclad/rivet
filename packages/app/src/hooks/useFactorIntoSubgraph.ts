@@ -16,7 +16,7 @@ import {
 } from '@ironclad/rivet-core';
 import { projectState } from '../state/savedGraphs.js';
 import { isNotNull } from '../utils/genericUtilFunctions.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { useLoadGraph } from './useLoadGraph.js';
 
 export function useFactorIntoSubgraph() {

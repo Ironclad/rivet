@@ -164,6 +164,24 @@ export * from './nodes/HttpCallNode.js';
 import { delayNode } from './nodes/DelayNode.js';
 export * from './nodes/DelayNode.js';
 
+import { appendToDatasetNode } from './nodes/AppendToDatasetNode.js';
+export * from './nodes/AppendToDatasetNode.js';
+
+import { createDatasetNode } from './nodes/CreateDatasetNode.js';
+export * from './nodes/CreateDatasetNode.js';
+
+import { loadDatasetNode } from './nodes/LoadDatasetNode.js';
+export * from './nodes/LoadDatasetNode.js';
+
+import { getAllDatasetsNode } from './nodes/GetAllDatasetsNode.js';
+export * from './nodes/GetAllDatasetsNode.js';
+
+import { splitNode } from './nodes/SplitNode.js';
+export * from './nodes/SplitNode.js';
+
+import { datasetNearestNeighborsNode } from './nodes/DatasetNearestNeigborsNode.js';
+export * from './nodes/DatasetNearestNeigborsNode.js';
+
 export const registerBuiltInNodes = (registry: NodeRegistration) => {
   return registry
     .register(toYamlNode)
@@ -219,7 +237,13 @@ export const registerBuiltInNodes = (registry: NodeRegistration) => {
     .register(imageNode)
     .register(audioNode)
     .register(httpCallNode)
-    .register(delayNode);
+    .register(delayNode)
+    .register(appendToDatasetNode)
+    .register(createDatasetNode)
+    .register(loadDatasetNode)
+    .register(getAllDatasetsNode)
+    .register(splitNode)
+    .register(datasetNearestNeighborsNode);
 };
 
 let globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());

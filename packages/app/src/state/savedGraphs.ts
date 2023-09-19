@@ -1,5 +1,5 @@
 import { DefaultValue, atom, selector } from 'recoil';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { produce } from 'immer';
 import { DataId, GraphId, NodeGraph, Project, ProjectId } from '@ironclad/rivet-core';
 import { blankProject } from '../hooks/useNewProject.js';

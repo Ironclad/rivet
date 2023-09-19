@@ -39,7 +39,7 @@ import { Field } from '@atlaskit/form';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import Select from '@atlaskit/select';
 import Toggle from '@atlaskit/toggle';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { TauriNativeApi } from '../model/native/TauriNativeApi.js';
 import { settingsState } from '../state/settings.js';
 import { GraphSelector } from './DefaultNodeEditor.js';
@@ -50,6 +50,8 @@ import { useStableCallback } from '../hooks/useStableCallback.js';
 import { toast } from 'react-toastify';
 import { produce } from 'immer';
 import { overlayOpenState } from '../state/ui';
+import { BrowserDatasetProvider } from '../io/BrowserDatasetProvider';
+import { datasetProvider } from '../utils/globals';
 
 const styles = css`
   position: fixed;
@@ -986,6 +988,7 @@ async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
         createSubProcessor: undefined!,
         settings,
         nativeApi: new TauriNativeApi(),
+        datasetProvider,
         processId: nanoid() as ProcessId,
         executionCache: new Map(),
         externalFunctions: {},
@@ -1043,6 +1046,7 @@ function useRunTestGroup() {
     const outputs = await processor.processGraph(
       {
         nativeApi: new TauriNativeApi(),
+        datasetProvider,
         settings,
       },
       {

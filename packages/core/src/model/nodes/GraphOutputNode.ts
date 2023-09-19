@@ -1,5 +1,5 @@
 import { ChartNode, NodeId, NodeOutputDefinition, PortId, NodeInputDefinition } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { DataType, DataValue } from '../DataValue.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
@@ -100,8 +100,9 @@ export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
         value: undefined,
       };
     } else if (
-      context.graphOutputs[this.data.id] == null ||
-      context.graphOutputs[this.data.id]?.type === 'control-flow-excluded'
+      (context.graphOutputs[this.data.id] == null ||
+        context.graphOutputs[this.data.id]?.type === 'control-flow-excluded') &&
+      inputs['value' as PortId]
     ) {
       context.graphOutputs[this.data.id] = value;
     }
