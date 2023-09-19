@@ -5,9 +5,10 @@ import {
   NodeRegistration,
   plugins as rivetPlugins,
   registerBuiltInNodes,
+  NodeDatasetProvider,
 } from '@ironclad/rivet-node';
 import * as Rivet from '@ironclad/rivet-core';
-import { RivetPluginInitializer } from '@ironclad/rivet-core';
+import { InMemoryDatasetProvider, RivetPluginInitializer } from '@ironclad/rivet-core';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { P, match } from 'ts-pattern';
@@ -106,12 +107,16 @@ const rivetDebugger = startDebuggerServer({
     }
 
     try {
+      console.dir({ currentDebuggerState });
+
+      const datasetProvider = new InMemoryDatasetProvider(currentDebuggerState.datsets ?? []);
       const processor = createProcessor(project, {
         graph: graphId,
         inputs,
         ...currentDebuggerState.settings!,
         remoteDebugger: rivetDebugger,
         registry,
+        datasetProvider,
         onTrace: (trace) => {
           console.log(trace);
         },

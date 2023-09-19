@@ -51,6 +51,7 @@ import { toast } from 'react-toastify';
 import { produce } from 'immer';
 import { overlayOpenState } from '../state/ui';
 import { BrowserDatasetProvider } from '../io/BrowserDatasetProvider';
+import { datasetProvider } from '../utils/globals';
 
 const styles = css`
   position: fixed;
@@ -987,7 +988,7 @@ async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
         createSubProcessor: undefined!,
         settings,
         nativeApi: new TauriNativeApi(),
-        datasetProvider: new BrowserDatasetProvider(),
+        datasetProvider,
         processId: nanoid() as ProcessId,
         executionCache: new Map(),
         externalFunctions: {},
@@ -1045,7 +1046,7 @@ function useRunTestGroup() {
     const outputs = await processor.processGraph(
       {
         nativeApi: new TauriNativeApi(),
-        datasetProvider: new BrowserDatasetProvider(),
+        datasetProvider,
         settings,
       },
       {

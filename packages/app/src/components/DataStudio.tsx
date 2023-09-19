@@ -1,13 +1,12 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { overlayOpenState } from '../state/ui';
 import { css } from '@emotion/react';
 import { projectState } from '../state/savedGraphs';
 import { ErrorBoundary } from 'react-error-boundary';
-import useIndexedDb from '../hooks/useIndexedDb';
 import { selectedDatasetState } from '../state/dataStudio';
 import { toast } from 'react-toastify';
-import { Dataset, DatasetId, DatasetMetadata, DatasetRow, getError, newId } from '@ironclad/rivet-core';
+import { DatasetId, DatasetMetadata, DatasetRow, getError, newId } from '@ironclad/rivet-core';
 import Button from '@atlaskit/button';
 import TextField from '@atlaskit/textfield';
 import clsx from 'clsx';
@@ -27,7 +26,7 @@ export const DataStudioRenderer: FC = () => {
   if (openOverlay !== 'dataStudio') return null;
 
   return (
-    <ErrorBoundary fallback={null}>
+    <ErrorBoundary fallbackRender={() => 'Failed to render Data Studio'}>
       <DataStudio onClose={() => setOpenOverlay(undefined)} />
     </ErrorBoundary>
   );

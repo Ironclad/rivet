@@ -52,7 +52,7 @@ export class BrowserDatasetProvider implements DatasetProvider {
       };
       cursorRequest.onsuccess = () => {
         const cursor = cursorRequest.result;
-        if (cursor) {
+        if (cursor?.value) {
           const dataset = cursor.value as DatasetMetadata;
           if (dataset.projectId === projectId) {
             metadata.push(dataset);
@@ -127,6 +127,14 @@ export class BrowserDatasetProvider implements DatasetProvider {
 
     if (matchingDataset) {
       matchingDataset.meta = metadata;
+    } else {
+      this.#currentProjectDatasets.push({
+        meta: metadata,
+        data: {
+          id: metadata.id,
+          rows: [],
+        },
+      });
     }
 
     // Sync the database

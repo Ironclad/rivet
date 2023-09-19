@@ -4,6 +4,7 @@ import {
   ProcessEvents,
   StringArrayDataValue,
   globalRivetNodeRegistry,
+  serializeDatasets,
 } from '@ironclad/rivet-core';
 import { useCurrentExecution } from './useCurrentExecution';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -21,6 +22,7 @@ import { userInputModalQuestionsState, userInputModalSubmitState } from '../stat
 import { pluginsState } from '../state/plugins';
 import { entries } from '../../../core/src/utils/typeSafety';
 import { selectedExecutorState } from '../state/execution';
+import { datasetProvider } from '../utils/globals';
 
 // TODO: This allows us to retrieve the GraphOutputs from the remote debugger.
 // If the remote debugger events had a unique ID for each run, this would feel a lot less hacky.
@@ -146,6 +148,7 @@ export function useRemoteExecutor() {
             savedSettings,
             globalRivetNodeRegistry.getPlugins(),
           ),
+          datasets: serializeDatasets(await datasetProvider.exportDatasetsForProject(project.metadata.id)),
         });
 
         for (const [id, dataValue] of entries(projectData)) {
@@ -208,6 +211,7 @@ export function useRemoteExecutor() {
                   savedSettings,
                   globalRivetNodeRegistry.getPlugins(),
                 ),
+                datasets: await datasetProvider.exportDatasetsForProject(project.metadata.id),
               });
             }
 

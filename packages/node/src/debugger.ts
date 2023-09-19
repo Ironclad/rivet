@@ -9,6 +9,8 @@ import {
   NodeId,
   StringArrayDataValue,
   DataId,
+  deserializeDatasets,
+  CombinedDataset,
 } from '@ironclad/rivet-core';
 import { match } from 'ts-pattern';
 import Emittery from 'emittery';
@@ -32,6 +34,7 @@ export interface DebuggerEvents {
 export const currentDebuggerState = {
   uploadedProject: undefined as Project | undefined,
   settings: undefined as Settings | undefined,
+  datsets: [] as CombinedDataset[] | undefined,
 };
 
 export type DynamicGraphRunOptions = {
@@ -90,9 +93,14 @@ export function startDebuggerServer(
           })
           .with({ type: 'set-dynamic-data' }, async () => {
             if (options.allowGraphUpload) {
-              const { project, settings } = message.data as { project: Project; settings: Settings };
+              const { project, settings, datasets } = message.data as {
+                project: Project;
+                settings: Settings;
+                datasets: string;
+              };
               currentDebuggerState.uploadedProject = project;
               currentDebuggerState.settings = settings;
+              currentDebuggerState.datsets = deserializeDatasets(datasets);
             }
           })
           .otherwise(async () => {
