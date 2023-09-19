@@ -1,12 +1,11 @@
 import { useSetRecoilState } from 'recoil';
 import { loadedProjectState, projectDataState, projectState } from '../state/savedGraphs.js';
-import { emptyNodeGraph } from '@ironclad/rivet-core';
+import { emptyNodeGraph, getError } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph.js';
 import { ioProvider } from '../utils/globals.js';
 import { trivetState } from '../state/trivet.js';
-import { useStaticDataDatabase } from './useStaticDataDatabase';
-import { entries } from '../../../core/src/utils/typeSafety';
 import { useSetStaticData } from './useSetStaticData';
+import { toast } from 'react-toastify';
 
 export function useLoadProject() {
   const setProject = useSetRecoilState(projectState);
@@ -15,30 +14,34 @@ export function useLoadProject() {
   const setTrivetState = useSetRecoilState(trivetState);
   const setStaticData = useSetStaticData();
 
-  return () => {
-    ioProvider.loadProjectData(({ project, testData, path }) => {
-      const { data, ...projectData } = project;
+  return async () => {
+    try {
+      await ioProvider.loadProjectData(({ project, testData, path }) => {
+        const { data, ...projectData } = project;
 
-      setProject(projectData);
+        setProject(projectData);
 
-      if (data) {
-        setStaticData(data);
-      }
+        if (data) {
+          setStaticData(data);
+        }
 
-      setGraphData(emptyNodeGraph());
+        setGraphData(emptyNodeGraph());
 
-      setLoadedProjectState({
-        path,
-        loaded: true,
+        setLoadedProjectState({
+          path,
+          loaded: true,
+        });
+
+        setTrivetState({
+          testSuites: testData.testSuites,
+          selectedTestSuiteId: undefined,
+          editingTestCaseId: undefined,
+          recentTestResults: undefined,
+          runningTests: false,
+        });
       });
-
-      setTrivetState({
-        testSuites: testData.testSuites,
-        selectedTestSuiteId: undefined,
-        editingTestCaseId: undefined,
-        recentTestResults: undefined,
-        runningTests: false,
-      });
-    });
+    } catch (err) {
+      toast.error(`Failed to load project: ${getError(err).message}`);
+    }
   };
 }

@@ -1,6 +1,18 @@
-import { DatasetRow, DatasetId, DatasetMetadata, DatasetProvider, ProjectId, Dataset } from '@ironclad/rivet-core';
+import {
+  DatasetRow,
+  DatasetId,
+  DatasetMetadata,
+  DatasetProvider,
+  ProjectId,
+  Dataset,
+  CombinedDataset,
+} from '@ironclad/rivet-core';
+import { cloneDeep } from 'lodash-es';
 
 export class BrowserDatasetProvider implements DatasetProvider {
+  currentProjectId: ProjectId | undefined;
+  #currentProjectDatasets: CombinedDataset[] = [];
+
   async getDatasetDatabase(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
       const openRequest = window.indexedDB.open('datasets', 2);
@@ -26,116 +38,144 @@ export class BrowserDatasetProvider implements DatasetProvider {
     });
   }
 
-  async getDatasetMetadata(id: DatasetId): Promise<DatasetMetadata[]> {
-    const metadataStore = await this.getDatasetDatabase();
+  async loadDatasets(projectId: ProjectId): Promise<void> {
+    const db = await this.getDatasetDatabase();
 
-    const transaction = metadataStore.transaction('datasets', 'readonly');
-    const store = transaction.objectStore('datasets');
-    const request = store.get(id);
-    return new Promise<DatasetMetadata[]>((resolve, reject) => {
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = reject;
+    const store = db.transaction('datasets', 'readonly').objectStore('datasets');
+
+    const metadata: DatasetMetadata[] = [];
+
+    await new Promise<void>((resolve, reject) => {
+      const cursorRequest = store.openCursor();
+      cursorRequest.onerror = () => {
+        reject(cursorRequest.error);
+      };
+      cursorRequest.onsuccess = () => {
+        const cursor = cursorRequest.result;
+        if (cursor) {
+          const dataset = cursor.value as DatasetMetadata;
+          if (dataset.projectId === projectId) {
+            metadata.push(dataset);
+          }
+          cursor.continue();
+        } else {
+          resolve();
+        }
+      };
     });
+
+    const dataStore = db.transaction('data', 'readonly').objectStore('data');
+
+    const data = await Promise.all(
+      metadata.map(async (meta) => {
+        const dataset = await toPromise<Dataset | undefined>(dataStore.get(meta.id));
+        return dataset;
+      }),
+    );
+
+    this.currentProjectId = projectId;
+    this.#currentProjectDatasets = metadata.map(
+      (meta, i): CombinedDataset => ({
+        meta,
+        data: data[i] ?? {
+          id: meta.id,
+          rows: [],
+        },
+      }),
+    );
+  }
+
+  async getDatasetMetadata(id: DatasetId): Promise<DatasetMetadata | undefined> {
+    return this.#currentProjectDatasets.find((d) => d.meta.id === id)?.meta;
   }
 
   async getDatasetsForProject(projectId: ProjectId): Promise<DatasetMetadata[]> {
-    const metadataStore = await this.getDatasetDatabase();
+    if (this.currentProjectId !== projectId) {
+      throw new Error('Project not loaded. Call loadDatasets first.');
+    }
 
-    const transaction = metadataStore.transaction('datasets', 'readonly');
-    const store = transaction.objectStore('datasets');
-    const request = store.getAll();
-    return new Promise<DatasetMetadata[]>((resolve, reject) => {
-      request.onsuccess = () => {
-        const datasets = request.result as DatasetMetadata[];
-
-        return resolve(datasets.filter((d) => d.projectId === projectId));
-      };
-      request.onerror = reject;
-    });
+    return this.#currentProjectDatasets.map((d) => d.meta);
   }
 
   async getDatasetData(id: DatasetId): Promise<Dataset> {
-    const dataStore = await this.getDatasetDatabase();
-
-    const transaction = dataStore.transaction('data', 'readonly');
-    const store = transaction.objectStore('data');
-    const request = store.get(id);
-    return new Promise((resolve, reject) => {
-      request.onsuccess = () => {
-        const dataset = request.result as Dataset | null;
-        return resolve(
-          dataset ?? {
-            id,
-            rows: [],
-          },
-        );
-      };
-      request.onerror = reject;
-    });
+    return (
+      this.#currentProjectDatasets.find((d) => d.meta.id === id)?.data ?? {
+        id,
+        rows: [],
+      }
+    );
   }
 
   async putDatasetData(id: DatasetId, data: Dataset): Promise<void> {
+    const dataset = this.#currentProjectDatasets.find((d) => d.meta.id === id);
+    if (!dataset) {
+      throw new Error(`Dataset ${id} not found`);
+    }
+
+    dataset.data = data;
+
+    // Sync the database
     const dataStore = await this.getDatasetDatabase();
 
     const transaction = dataStore.transaction('data', 'readwrite');
     const store = transaction.objectStore('data');
-    const request = store.delete(id);
-    await new Promise<void>((resolve, reject) => {
-      request.onsuccess = () => resolve();
-      request.onerror = reject;
-    });
-
-    const putRequest = store.put(data, id);
-    return new Promise<void>((resolve, reject) => {
-      putRequest.onsuccess = () => resolve();
-      putRequest.onerror = reject;
-    });
+    await toPromise(store.put(data, id));
   }
 
   async putDatasetMetadata(metadata: DatasetMetadata): Promise<void> {
+    const matchingDataset = this.#currentProjectDatasets.find((d) => d.meta.id === metadata.id);
+
+    if (matchingDataset) {
+      matchingDataset.meta = metadata;
+    }
+
+    // Sync the database
     const metadataStore = await this.getDatasetDatabase();
 
     const transaction = metadataStore.transaction('datasets', 'readwrite');
     const store = transaction.objectStore('datasets');
-    const request = store.put(metadata, metadata.id);
-    await new Promise<void>((resolve, reject) => {
-      request.onsuccess = () => resolve();
-      request.onerror = reject;
-    });
+    await toPromise(store.put(metadata, metadata.id));
   }
 
   async clearDatasetData(id: DatasetId): Promise<void> {
+    const dataset = this.#currentProjectDatasets.find((d) => d.meta.id === id);
+    if (!dataset) {
+      return;
+    }
+
+    dataset.data = {
+      id,
+      rows: [],
+    };
+
+    // Sync the database
     const dataStore = await this.getDatasetDatabase();
 
     const transaction = dataStore.transaction('data', 'readwrite');
     const store = transaction.objectStore('data');
-    const request = store.delete(id);
-    return new Promise<void>((resolve, reject) => {
-      request.onsuccess = () => resolve();
-      request.onerror = reject;
-    });
+    await toPromise(store.delete(id));
   }
 
   async deleteDataset(id: DatasetId): Promise<void> {
+    const index = this.#currentProjectDatasets.findIndex((d) => d.meta.id === id);
+    if (index === -1) {
+      return;
+    }
+
+    this.#currentProjectDatasets.splice(index, 1);
+
+    // Sync the database
     const metadataStore = await this.getDatasetDatabase();
 
-    const transaction = metadataStore.transaction('datasets', 'readwrite');
-    const store = transaction.objectStore('datasets');
-    const request = store.delete(id);
-    await new Promise<void>((resolve, reject) => {
-      request.onsuccess = () => resolve();
-      request.onerror = reject;
-    });
+    const metaTxn = metadataStore.transaction('datasets', 'readwrite');
+    const store = metaTxn.objectStore('datasets');
+    await toPromise(store.delete(id));
 
     const dataStore = await this.getDatasetDatabase();
 
-    const dataTransaction = dataStore.transaction('data', 'readwrite');
-    const dataStoreStore = dataTransaction.objectStore('data');
-    const dataRequest = dataStoreStore.delete(id);
-    await new Promise<void>((resolve, reject) => {
-      dataRequest.onsuccess = () => resolve();
-      dataRequest.onerror = reject;
-    });
+    const dataTxn = dataStore.transaction('data', 'readwrite');
+    const dataStoreStore = dataTxn.objectStore('data');
+    await toPromise(dataStoreStore.delete(id));
   }
 
   async knnDatasetRows(
@@ -155,9 +195,40 @@ export class BrowserDatasetProvider implements DatasetProvider {
 
     return sorted.slice(0, k).map((r) => ({ ...r.row, distance: r.similarity }));
   }
+
+  async exportDatasetsForProject(_projectId: ProjectId): Promise<CombinedDataset[]> {
+    return cloneDeep(this.#currentProjectDatasets);
+  }
+
+  async importDatasetsForProject(projectId: ProjectId, datasets: CombinedDataset[]) {
+    this.#currentProjectDatasets = datasets;
+    this.currentProjectId = projectId;
+
+    const db = await this.getDatasetDatabase();
+    const transaction = db.transaction(['datasets', 'data'], 'readwrite');
+
+    const metadataStore = transaction.objectStore('datasets');
+    const dataStore = transaction.objectStore('data');
+
+    await Promise.all(
+      datasets.map(async (dataset) => {
+        await Promise.all([
+          toPromise(metadataStore.put(dataset.meta, dataset.meta.id)),
+          toPromise(dataStore.put(dataset.data, dataset.data.id)),
+        ]);
+      }),
+    );
+  }
 }
 
 /** OpenAI embeddings are already normalized, so this is equivalent to cosine similarity */
 const dotProductSimilarity = (a: number[], b: number[]): number => {
   return a.reduce((acc, val, i) => acc + val * b[i]!, 0);
 };
+
+function toPromise<T = unknown>(request: IDBRequest<T>): Promise<T> {
+  return new Promise((resolve, reject) => {
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}

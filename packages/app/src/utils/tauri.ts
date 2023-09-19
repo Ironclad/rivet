@@ -54,3 +54,7 @@ export async function fillMissingSettingsFromEnvironmentVariables(settings: Part
 
   return fullSettings;
 }
+
+export async function allowDataFileNeighbor(projectFilePath: string): Promise<void> {
+  await invoke('allow_data_file_scope', { projectFilePath });
+}

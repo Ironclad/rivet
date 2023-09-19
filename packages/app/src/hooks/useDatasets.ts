@@ -8,6 +8,15 @@ import { useRecoilState } from 'recoil';
 export function useDatasets(projectId: ProjectId) {
   const [datasets, updateDatasets] = useRecoilState(datasetsState);
 
+  const initDatasets = async () => {
+    try {
+      await datasetProvider.loadDatasets(projectId);
+      await reloadDatasets();
+    } catch (err) {
+      toast.error(getError(err).message);
+    }
+  };
+
   const reloadDatasets = async () => {
     try {
       const datasets = await datasetProvider.getDatasetsForProject(projectId);
@@ -18,7 +27,7 @@ export function useDatasets(projectId: ProjectId) {
   };
 
   useEffect(() => {
-    reloadDatasets();
+    initDatasets();
   }, [projectId]);
 
   const putDataset = async (dataset: DatasetMetadata) => {
