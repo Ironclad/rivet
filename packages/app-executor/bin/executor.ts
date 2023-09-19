@@ -5,16 +5,18 @@ import {
   NodeRegistration,
   plugins as rivetPlugins,
   registerBuiltInNodes,
-  NodeDatasetProvider,
+  DebuggerDatasetProvider,
 } from '@ironclad/rivet-node';
 import * as Rivet from '@ironclad/rivet-core';
-import { InMemoryDatasetProvider, RivetPluginInitializer } from '@ironclad/rivet-core';
+import { RivetPluginInitializer } from '@ironclad/rivet-core';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { P, match } from 'ts-pattern';
 import appdataPath from 'appdata-path';
 import { join } from 'node:path';
 import { access, readFile } from 'node:fs/promises';
+
+const datasetProvider = new DebuggerDatasetProvider();
 
 const { port } = yargs(hideBin(process.argv))
   .option('port', {
@@ -28,6 +30,7 @@ const { port } = yargs(hideBin(process.argv))
 const rivetDebugger = startDebuggerServer({
   port,
   allowGraphUpload: true,
+  datasetProvider,
   dynamicGraphRun: async ({ graphId, inputs }) => {
     console.log(`Running graph ${graphId} with inputs:`, inputs);
 
@@ -107,9 +110,6 @@ const rivetDebugger = startDebuggerServer({
     }
 
     try {
-      console.dir({ currentDebuggerState });
-
-      const datasetProvider = new InMemoryDatasetProvider(currentDebuggerState.datsets ?? []);
       const processor = createProcessor(project, {
         graph: graphId,
         inputs,

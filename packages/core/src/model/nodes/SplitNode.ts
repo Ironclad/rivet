@@ -81,8 +81,9 @@ export class SplitNodeImpl extends NodeImpl<SplitNode> {
   getEditors(): EditorDefinition<SplitNode>[] | Promise<EditorDefinition<SplitNode>[]> {
     return [
       {
-        type: 'string',
+        type: 'code',
         label: 'Delimiter',
+        language: 'plaintext',
         dataKey: 'delimiter',
         useInputToggleDataKey: 'useDelimiterInput',
       },

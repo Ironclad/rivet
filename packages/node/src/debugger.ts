@@ -14,6 +14,7 @@ import {
 } from '@ironclad/rivet-core';
 import { match } from 'ts-pattern';
 import Emittery from 'emittery';
+import { DebuggerDatasetProvider } from './index.js';
 
 export interface RivetDebuggerServer {
   on: Emittery<DebuggerEvents>['on'];
@@ -34,7 +35,6 @@ export interface DebuggerEvents {
 export const currentDebuggerState = {
   uploadedProject: undefined as Project | undefined,
   settings: undefined as Settings | undefined,
-  datsets: [] as CombinedDataset[] | undefined,
 };
 
 export type DynamicGraphRunOptions = {
@@ -50,6 +50,7 @@ export function startDebuggerServer(
   options: {
     getClientsForProcessor?: (processor: GraphProcessor, allClients: WebSocket[]) => WebSocket[];
     getProcessorsForClient?: (client: WebSocket, allProcessors: GraphProcessor[]) => GraphProcessor[];
+    datasetProvider?: DebuggerDatasetProvider;
     server?: WebSocketServer;
     port?: number;
     dynamicGraphRun?: DynamicGraphRun;
@@ -65,6 +66,17 @@ export function startDebuggerServer(
   const attachedProcessors: GraphProcessor[] = [];
 
   server.on('connection', (socket) => {
+    if (options.datasetProvider) {
+      options.datasetProvider.onrequest = (type, data) => {
+        socket.send(
+          JSON.stringify({
+            message: type,
+            data,
+          }),
+        );
+      };
+    }
+
     socket.on('message', async (data) => {
       try {
         const stringData = data.toString();
@@ -100,8 +112,10 @@ export function startDebuggerServer(
               };
               currentDebuggerState.uploadedProject = project;
               currentDebuggerState.settings = settings;
-              currentDebuggerState.datsets = deserializeDatasets(datasets);
             }
+          })
+          .with({ type: 'datasets:response' }, async () => {
+            options.datasetProvider?.handleResponse(message.type, message.data as any);
           })
           .otherwise(async () => {
             const processors = options.getProcessorsForClient?.(socket, attachedProcessors) ?? attachedProcessors;

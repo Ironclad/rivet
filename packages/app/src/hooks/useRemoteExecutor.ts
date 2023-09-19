@@ -148,7 +148,6 @@ export function useRemoteExecutor() {
             savedSettings,
             globalRivetNodeRegistry.getPlugins(),
           ),
-          datasets: serializeDatasets(await datasetProvider.exportDatasetsForProject(project.metadata.id)),
         });
 
         for (const [id, dataValue] of entries(projectData)) {
@@ -211,7 +210,6 @@ export function useRemoteExecutor() {
                   savedSettings,
                   globalRivetNodeRegistry.getPlugins(),
                 ),
-                datasets: await datasetProvider.exportDatasetsForProject(project.metadata.id),
               });
             }
 
