@@ -100,8 +100,9 @@ export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
         value: undefined,
       };
     } else if (
-      context.graphOutputs[this.data.id] == null ||
-      context.graphOutputs[this.data.id]?.type === 'control-flow-excluded'
+      (context.graphOutputs[this.data.id] == null ||
+        context.graphOutputs[this.data.id]?.type === 'control-flow-excluded') &&
+      inputs['value' as PortId]
     ) {
       context.graphOutputs[this.data.id] = value;
     }
