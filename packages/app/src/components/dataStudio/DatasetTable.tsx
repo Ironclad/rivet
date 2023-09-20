@@ -1,17 +1,123 @@
 import { DatasetRow, newId } from '@ironclad/rivet-core';
 import { FC, useState } from 'react';
 import { LazyCodeEditor } from '../LazyComponents';
+import { css } from '@emotion/react';
+
+const styles = css`
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-auto-rows: auto;
+
+  .add-column-area {
+    min-height: 100px;
+    width: 48px;
+
+    button {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+
+      span {
+        transform: rotate(90deg);
+      }
+
+      &:hover {
+        background-color: var(--grey-darkerish);
+      }
+    }
+  }
+
+  .add-row-area {
+    min-height: 48px;
+
+    button {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--grey-darkerish);
+      }
+    }
+  }
+
+  .dataset-table {
+    width: 100%;
+    table-layout: auto;
+
+    tbody {
+      border: none;
+    }
+
+    td {
+      border: 1px solid var(--grey);
+      padding: 0;
+      margin: 0;
+      min-width: 200px;
+      vertical-align: top;
+
+      .cell {
+        height: 48px;
+
+        &.editor {
+          .editor-container {
+            min-height: 200px;
+            min-width: 100px;
+          }
+        }
+      }
+
+      .value {
+        padding: 4px 8px;
+        height: 100%;
+        display: flex;
+        align-items: flex-start;
+        overflow: hidden;
+      }
+    }
+
+    td:first-child {
+      width: 100px;
+      color: var(--foreground-muted);
+      border: 0;
+
+      vertical-align: middle;
+
+      .value {
+        align-items: center;
+      }
+    }
+  }
+`;
 
 export const DatasetTable: FC<{
   datasetData: DatasetRow[];
   onDataChanged: (data: DatasetRow[]) => void;
 }> = ({ datasetData, onDataChanged }) => {
   return (
-    <div className="dataset-table-container">
+    <div css={styles} className="dataset-table-container">
       <table className="dataset-table">
         <tbody>
           {datasetData.map((row, i) => (
             <tr key={i}>
+              <td key={`${i}-id`}>
+                <DatasetEditableCell
+                  value={row.id}
+                  row={i}
+                  column={-1}
+                  onChange={(value) => {
+                    const newData = [...datasetData];
+                    newData[i]!.id = value;
+                    onDataChanged(newData);
+                  }}
+                />
+              </td>
               {row.data.map((cell, j) => (
                 <td key={`${i}-${j}`}>
                   <DatasetEditableCell
