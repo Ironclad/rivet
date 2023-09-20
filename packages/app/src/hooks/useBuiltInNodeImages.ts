@@ -114,5 +114,6 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     getAllDatasets: '',
     loadDataset: '',
     split: '',
+    getDatasetRow: '',
   };
 };

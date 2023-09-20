@@ -25,7 +25,7 @@ type GetDatasetRowNodeData = {
   useDatasetIdInput?: boolean;
 
   rowId: string;
-  useRowIdInput?: string;
+  useRowIdInput?: boolean;
 };
 
 export class GetDatasetRowNodeImpl extends NodeImpl<GetDatasetRowNode> {
