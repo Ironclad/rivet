@@ -1132,8 +1132,19 @@ export class GraphProcessor {
     this.#emitter.emit('nodeStart', { node, inputs: inputValues, processId });
 
     try {
-      const results = await Promise.all(
-        range(0, splittingAmount).map(async (i) => {
+      let results: (
+        | {
+            type: string;
+            output: Outputs;
+          }
+        | {
+            type: string;
+            error: Error;
+          }
+      )[] = [];
+
+      if (node.isSplitSequential) {
+        for (let i = 0; i < splittingAmount; i++) {
           const inputs = fromEntries(
             entries(inputValues).map(([port, value]) => [
               port as PortId,
@@ -1150,12 +1161,37 @@ export class GraphProcessor {
               (node, partialOutputs, index) =>
                 this.#emitter.emit('partialOutput', { node, outputs: partialOutputs, index, processId }),
             );
-            return { type: 'output', output };
+            results.push({ type: 'output', output });
           } catch (error) {
-            return { type: 'error', error: getError(error) };
+            results.push({ type: 'error', error: getError(error) });
           }
-        }),
-      );
+        }
+      } else {
+        results = await Promise.all(
+          range(0, splittingAmount).map(async (i) => {
+            const inputs = fromEntries(
+              entries(inputValues).map(([port, value]) => [
+                port as PortId,
+                isArrayDataValue(value) ? arrayizeDataValue(value)[i] ?? undefined : value,
+              ]),
+            );
+
+            try {
+              const output = await this.#processNodeWithInputData(
+                node,
+                inputs as Inputs,
+                i,
+                processId,
+                (node, partialOutputs, index) =>
+                  this.#emitter.emit('partialOutput', { node, outputs: partialOutputs, index, processId }),
+              );
+              return { type: 'output', output };
+            } catch (error) {
+              return { type: 'error', error: getError(error) };
+            }
+          }),
+        );
+      }
 
       const errors = results.filter((r) => r.type === 'error').map((r) => r.error!);
       if (errors.length === 1) {

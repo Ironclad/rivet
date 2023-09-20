@@ -13,7 +13,7 @@ import Toggle from '@atlaskit/toggle';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { DefaultNodeEditor } from './DefaultNodeEditor.js';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
-import { Field } from '@atlaskit/form';
+import { Field, Label } from '@atlaskit/form';
 import TextField from '@atlaskit/textfield';
 import Select from '@atlaskit/select';
 import Button from '@atlaskit/button';
@@ -415,20 +415,34 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
                         </div>
 
                         {selectedNode.isSplitRun && (
-                          <div className="split-max">
-                            <span>Max:</span>
-                            <TextField
-                              type="number"
-                              placeholder="Max"
-                              value={selectedNode.splitRunMax ?? 10}
-                              onChange={(event) =>
-                                updateNode({
-                                  ...selectedNode,
-                                  splitRunMax: (event.target as HTMLInputElement).valueAsNumber,
-                                })
-                              }
-                            />
-                          </div>
+                          <>
+                            <div className="split-max">
+                              <span>Max:</span>
+                              <TextField
+                                type="number"
+                                placeholder="Max"
+                                value={selectedNode.splitRunMax ?? 10}
+                                onChange={(event) =>
+                                  updateNode({
+                                    ...selectedNode,
+                                    splitRunMax: (event.target as HTMLInputElement).valueAsNumber,
+                                  })
+                                }
+                              />
+                            </div>
+                            <div className="sequential">
+                              <Label htmlFor="">Sequential:</Label>
+                              <Toggle
+                                isChecked={selectedNode.isSplitSequential ?? false}
+                                onChange={(isSequential) =>
+                                  updateNode({
+                                    ...selectedNode,
+                                    isSplitSequential: isSequential.target.checked,
+                                  })
+                                }
+                              />
+                            </div>
+                          </>
                         )}
                       </section>
                     )}
