@@ -155,7 +155,7 @@ const Container = styled.div`
 
   .split-controls {
     display: grid;
-    grid-template-columns: 75px 1fr;
+    grid-template-columns: auto 1fr;
     align-items: center;
     gap: 8px;
 
@@ -221,6 +221,18 @@ const Container = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
+
+    > label {
+      color: var(--foreground);
+      font-size: 12px;
+
+      display: flex;
+      align-items: center;
+      color: rgb(159, 173, 188);
+      font-weight: 600;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Fira Sans', 'Droid Sans',
+        'Helvetica Neue', sans-serif;
+    }
   }
 `;
 
@@ -417,7 +429,20 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
                         {selectedNode.isSplitRun && (
                           <>
                             <div className="split-max">
-                              <span>Max:</span>
+                              <label>
+                                Sequential
+                                <Toggle
+                                  label="asda"
+                                  isChecked={selectedNode.isSplitSequential ?? false}
+                                  onChange={(isSequential) =>
+                                    updateNode({
+                                      ...selectedNode,
+                                      isSplitSequential: isSequential.target.checked,
+                                    })
+                                  }
+                                />
+                              </label>
+                              <label>Max:</label>
                               <TextField
                                 type="number"
                                 placeholder="Max"
@@ -426,18 +451,6 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
                                   updateNode({
                                     ...selectedNode,
                                     splitRunMax: (event.target as HTMLInputElement).valueAsNumber,
-                                  })
-                                }
-                              />
-                            </div>
-                            <div className="sequential">
-                              <Label htmlFor="">Sequential:</Label>
-                              <Toggle
-                                isChecked={selectedNode.isSplitSequential ?? false}
-                                onChange={(isSequential) =>
-                                  updateNode({
-                                    ...selectedNode,
-                                    isSplitSequential: isSequential.target.checked,
                                   })
                                 }
                               />
