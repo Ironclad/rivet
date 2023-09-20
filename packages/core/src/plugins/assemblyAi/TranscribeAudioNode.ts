@@ -20,6 +20,7 @@ import {
   nodeDefinition,
   pluginNodeDefinition,
 } from '../../index.js';
+import { getApiKey } from './lemurHelpers.js';
 
 export type TranscribeAudioNode = ChartNode<'assemblyAiTranscribeAudio', TranscribeAudioNodeData>;
 
@@ -93,11 +94,7 @@ export const TranscribeAudioNodeImpl: PluginNodeImpl<TranscribeAudioNode> = {
     const input = inputs['audio' as PortId] as AudioDataValue | StringDataValue | AnyDataValue;
     if (!input) throw new Error('Audio input is required.');
 
-    const apiKey = context.getPluginConfig('assemblyAiApiKey');
-
-    if (!apiKey) {
-      throw new Error('AssemblyAI API key not set.');
-    }
+    const apiKey = getApiKey(context);
 
     let audioUrl: string;
     if (input.type === 'audio') {

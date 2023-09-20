@@ -10,12 +10,12 @@ function getTranscriptIds(inputs: Inputs): string[] {
   ) {
     return [coerceType(input, 'string')];
   } else if (
-    input.type === 'string[]' ||
+    input.type === 'string[]' || input.type === 'any[]' ||
     (input.type === 'any' && Array.isArray(input.value))
   ) {
     return coerceType(input, 'string[]');
   }
-  throw new Error('Audio input must be a string or string[] of transcript IDs.');
+  throw new Error('Transcript IDs must be a string or string[] of transcript IDs.');
 }
 
 export function getApiKey(context: InternalProcessContext) {
@@ -36,6 +36,13 @@ export function getLemurParams(inputs: Inputs, editorData: LemurNodeData): Lemur
 
   return params;
 }
+
+export const lemurTranscriptIdsInputDefinition = 
+{
+  id: 'transcript_ids' as PortId,
+  dataType: ['string', 'string[]', 'any', 'any[]'],
+  title: 'Transcript IDs',
+} as const;
 
 export const lemurEditorDefinitions = [
   {
