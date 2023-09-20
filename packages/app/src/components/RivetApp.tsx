@@ -18,7 +18,7 @@ import { useRecoilValue } from 'recoil';
 import { themeState } from '../state/settings';
 import clsx from 'clsx';
 import { useLoadStaticData } from '../hooks/useLoadStaticData';
-import { DataStudioRenderer } from './DataStudio';
+import { DataStudioRenderer } from './dataStudio/DataStudio';
 
 const styles = css`
   overflow: hidden;
