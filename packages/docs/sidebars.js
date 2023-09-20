@@ -11,12 +11,6 @@ const sidebars = {
       collapsed: false,
       items: ['getting-started/installation', 'getting-started/setup', 'getting-started/first-ai-agent'],
     },
-    // {
-    //   type: 'category',
-    //   label: 'Concepts',
-    //   collapsible: true,
-    //   items: [],
-    // },
     {
       type: 'category',
       label: 'Working with Rivet',
@@ -32,6 +26,18 @@ const sidebars = {
         'user-guide/subgraphs',
         'user-guide/executors',
         'user-guide/recordings',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Features',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        'user-guide/features/prompt-designer',
+        'user-guide/features/trivet-tests',
+        'user-guide/features/chat-viewer',
+        'user-guide/features/data-studio',
       ],
     },
     {
