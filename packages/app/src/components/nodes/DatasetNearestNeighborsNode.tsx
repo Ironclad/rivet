@@ -18,6 +18,7 @@ export const DatasetNearestNeightborsNode: FC<{
       <div>
         {node.data.useDatasetIdInput ? 'Dataset from input' : dataset ? dataset.name : 'Unknown or no dataset selected'}
       </div>
+      <div>K: {node.data.useKInput ? 'K from input' : node.data.k}</div>
     </div>
   );
 };

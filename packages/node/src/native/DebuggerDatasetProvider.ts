@@ -58,6 +58,10 @@ export class DebuggerDatasetProvider implements DatasetProvider {
     return this.makeRequestAndWaitForResponse(`datasets:put-data`, { id, data });
   }
 
+  putDatasetRow(id: DatasetId, row: DatasetRow): Promise<void> {
+    return this.makeRequestAndWaitForResponse(`datasets:put-row`, { id, row });
+  }
+
   putDatasetMetadata(metadata: DatasetMetadata): Promise<void> {
     return this.makeRequestAndWaitForResponse(`datasets:put-metadata`, { metadata });
   }

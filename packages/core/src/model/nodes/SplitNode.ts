@@ -15,6 +15,7 @@ import {
   Inputs,
   InternalProcessContext,
   Outputs,
+  NodeBodySpec,
 } from '../../index.js';
 
 export type SplitNode = ChartNode<'split', SplitNodeData>;
@@ -88,6 +89,26 @@ export class SplitNodeImpl extends NodeImpl<SplitNode> {
         useInputToggleDataKey: 'useDelimiterInput',
       },
     ];
+  }
+
+  getBody(): string | NodeBodySpec | NodeBodySpec[] | undefined {
+    if (this.data.useDelimiterInput) {
+      return '(Delimiter from input)';
+    }
+
+    if (this.data.delimiter === '\n') {
+      return '(New line)';
+    }
+
+    if (this.data.delimiter === '\t') {
+      return '(Tab)';
+    }
+
+    if (this.data.delimiter === ' ') {
+      return '(Space)';
+    }
+
+    return this.data.delimiter;
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
