@@ -82,8 +82,17 @@ const styles = css`
       }
     }
 
-    td:first-child {
+    td.id-cell {
       width: 100px;
+    }
+
+    td.idx-cell {
+      width: 48px;
+      min-width: 0;
+    }
+
+    td.idx-cell,
+    td.id-cell {
       color: var(--foreground-muted);
       border: 0;
 
@@ -106,7 +115,10 @@ export const DatasetTable: FC<{
         <tbody>
           {datasetData.map((row, i) => (
             <tr key={i}>
-              <td key={`${i}-id`}>
+              <td key={`${i}-idx`} className="idx-cell">
+                {i + 1}
+              </td>
+              <td key={`${i}-id`} className="id-cell">
                 <DatasetEditableCell
                   value={row.id}
                   row={i}
