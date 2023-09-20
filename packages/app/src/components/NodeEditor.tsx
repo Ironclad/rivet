@@ -13,13 +13,13 @@ import Toggle from '@atlaskit/toggle';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { DefaultNodeEditor } from './DefaultNodeEditor.js';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
-import { Field } from '@atlaskit/form';
+import { Field, Label } from '@atlaskit/form';
 import TextField from '@atlaskit/textfield';
 import Select from '@atlaskit/select';
 import Button from '@atlaskit/button';
 import Popup from '@atlaskit/popup';
 import { orderBy } from 'lodash-es';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { ErrorBoundary } from 'react-error-boundary';
 import { projectDataState, projectState } from '../state/savedGraphs';
 import { useSetStaticData } from '../hooks/useSetStaticData';
@@ -155,7 +155,7 @@ const Container = styled.div`
 
   .split-controls {
     display: grid;
-    grid-template-columns: 75px 1fr;
+    grid-template-columns: auto 1fr;
     align-items: center;
     gap: 8px;
 
@@ -221,6 +221,18 @@ const Container = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
+
+    > label {
+      color: var(--foreground);
+      font-size: 12px;
+
+      display: flex;
+      align-items: center;
+      color: rgb(159, 173, 188);
+      font-weight: 600;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Fira Sans', 'Droid Sans',
+        'Helvetica Neue', sans-serif;
+    }
   }
 `;
 
@@ -415,20 +427,35 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
                         </div>
 
                         {selectedNode.isSplitRun && (
-                          <div className="split-max">
-                            <span>Max:</span>
-                            <TextField
-                              type="number"
-                              placeholder="Max"
-                              value={selectedNode.splitRunMax ?? 10}
-                              onChange={(event) =>
-                                updateNode({
-                                  ...selectedNode,
-                                  splitRunMax: (event.target as HTMLInputElement).valueAsNumber,
-                                })
-                              }
-                            />
-                          </div>
+                          <>
+                            <div className="split-max">
+                              <label>
+                                Sequential
+                                <Toggle
+                                  label="asda"
+                                  isChecked={selectedNode.isSplitSequential ?? false}
+                                  onChange={(isSequential) =>
+                                    updateNode({
+                                      ...selectedNode,
+                                      isSplitSequential: isSequential.target.checked,
+                                    })
+                                  }
+                                />
+                              </label>
+                              <label>Max:</label>
+                              <TextField
+                                type="number"
+                                placeholder="Max"
+                                value={selectedNode.splitRunMax ?? 10}
+                                onChange={(event) =>
+                                  updateNode({
+                                    ...selectedNode,
+                                    splitRunMax: (event.target as HTMLInputElement).valueAsNumber,
+                                  })
+                                }
+                              />
+                            </div>
+                          </>
                         )}
                       </section>
                     )}

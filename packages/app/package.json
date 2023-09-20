@@ -76,6 +76,8 @@
     "ahooks": "^3.7.8",
     "clsx": "^1.2.1",
     "core-js": "^3.32.0",
+    "csv-parse": "^5.5.0",
+    "csv-stringify": "^6.4.2",
     "emittery": "^1.0.1",
     "esbuild": "^0.18.17",
     "eslint": "^8.46.0",

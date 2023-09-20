@@ -9,6 +9,9 @@ import {
   PortId,
   ProjectId,
   ChartNodeVariant,
+  DatasetProvider,
+  Dataset,
+  CombinedDataset,
 } from '../../index.js';
 import stableStringify from 'safe-stable-stringify';
 import * as yaml from 'yaml';
@@ -264,4 +267,26 @@ function fromSerializedConnection(connection: SerializedNodeConnection, nodeId: 
     inputId: inputId as PortId,
     inputNodeId: inputNodeId as NodeId,
   };
+}
+
+export function datasetV4Serializer(datasets: CombinedDataset[]): string {
+  const dataContainer = {
+    datasets,
+  };
+
+  const data = JSON.stringify(dataContainer);
+
+  return data;
+}
+
+export function datasetV4Deserializer(serializedDatasets: string): CombinedDataset[] {
+  const stringData = serializedDatasets as string;
+
+  const dataContainer = JSON.parse(stringData) as { datasets: CombinedDataset[] };
+
+  if (!dataContainer.datasets) {
+    throw new Error('Invalid dataset data');
+  }
+
+  return dataContainer.datasets;
 }

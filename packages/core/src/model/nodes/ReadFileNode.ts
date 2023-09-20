@@ -2,7 +2,7 @@ import { ChartNode, NodeId, PortId } from '../NodeBase.js';
 import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
 import { DataValue } from '../DataValue.js';
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { expectType } from '../../index.js';
 import { InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
@@ -70,12 +70,18 @@ export class ReadFileNodeImpl extends NodeImpl<ReadFileNode> {
     inputData: Record<PortId, DataValue>,
     context: InternalProcessContext,
   ): Promise<Record<PortId, DataValue>> {
+    const { nativeApi } = context;
+
+    if (nativeApi == null) {
+      throw new Error('This node requires a native API to run.');
+    }
+
     const path = this.chartNode.data.usePathInput
       ? expectType(inputData['path' as PortId], 'string')
       : this.chartNode.data.path;
 
     try {
-      const content = await context.nativeApi.readTextFile(path, undefined);
+      const content = await nativeApi.readTextFile(path, undefined);
       return {
         ['content' as PortId]: { type: 'string', value: content },
       };

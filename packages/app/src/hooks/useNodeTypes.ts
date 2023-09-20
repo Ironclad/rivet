@@ -12,8 +12,12 @@ import { ObjectNodeDescriptor } from '../components/nodes/ObjectNode.js';
 import { commentNodeDescriptor } from '../components/nodes/CommentNode';
 import { imageNodeDescriptor } from '../components/nodes/ImageNode';
 import { audioNodeDescriptor } from '../components/nodes/AudioNode';
+import { appendToDatasetNodeDescriptor } from '../components/nodes/AppendToDatasetNode';
 import { useRecoilValue } from 'recoil';
 import { pluginRefreshCounterState } from '../state/plugins';
+import { loadDatasetNodeDescriptor } from '../components/nodes/LoadDatasetNode';
+import { datasetNearestNeighborsNodeDescriptor } from '../components/nodes/DatasetNearestNeighborsNode';
+import { getDatasetRowNodeDescriptor } from '../components/nodes/GetDatasetRowNode';
 
 export type UnknownNodeComponentDescriptor = {
   Body?: FC<{ node: ChartNode }>;
@@ -51,6 +55,10 @@ const overriddenDescriptors: Partial<NodeComponentDescriptors> = {
   comment: commentNodeDescriptor,
   image: imageNodeDescriptor,
   audio: audioNodeDescriptor,
+  appendToDataset: appendToDatasetNodeDescriptor,
+  loadDataset: loadDatasetNodeDescriptor,
+  datasetNearestNeighbors: datasetNearestNeighborsNodeDescriptor,
+  getDatasetRow: getDatasetRowNodeDescriptor,
 };
 
 export function useNodeTypes(): NodeComponentDescriptors {

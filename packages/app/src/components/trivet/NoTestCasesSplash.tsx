@@ -64,7 +64,7 @@ export const NoTestCasesSplash: FC<{
       <div className="content">
         <div className="content-markdown" dangerouslySetInnerHTML={contentHtml} />
         <div className="buttons">
-          <Button appearance="primary" onClick={onCreateNewTestCase}>
+          <Button appearance="primary" onClick={() => onCreateNewTestCase?.()}>
             Create Test Case
           </Button>
           <Button appearance="default" onClick={viewDocumentation}>

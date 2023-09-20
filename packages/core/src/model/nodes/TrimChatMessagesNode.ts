@@ -1,7 +1,7 @@
 import { ChartNode, NodeId, PortId, NodeInputDefinition, NodeOutputDefinition } from '../../model/NodeBase.js';
 import { NodeImpl, NodeUIData, nodeDefinition } from '../../model/NodeImpl.js';
 import { SupportedModels, getTokenCountForMessages } from '../../utils/tokenizer.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { EditorDefinition, Inputs, NodeBodySpec, Outputs, expectType } from '../../index.js';
 import { ChatCompletionRequestMessage, openAiModelOptions, openaiModels } from '../../utils/openai.js';
 import { dedent } from 'ts-dedent';

@@ -5,6 +5,7 @@ import {
   NodeRegistration,
   plugins as rivetPlugins,
   registerBuiltInNodes,
+  DebuggerDatasetProvider,
 } from '@ironclad/rivet-node';
 import * as Rivet from '@ironclad/rivet-core';
 import { RivetPluginInitializer } from '@ironclad/rivet-core';
@@ -14,6 +15,8 @@ import { P, match } from 'ts-pattern';
 import appdataPath from 'appdata-path';
 import { join } from 'node:path';
 import { access, readFile } from 'node:fs/promises';
+
+const datasetProvider = new DebuggerDatasetProvider();
 
 const { port } = yargs(hideBin(process.argv))
   .option('port', {
@@ -27,6 +30,7 @@ const { port } = yargs(hideBin(process.argv))
 const rivetDebugger = startDebuggerServer({
   port,
   allowGraphUpload: true,
+  datasetProvider,
   dynamicGraphRun: async ({ graphId, inputs }) => {
     console.log(`Running graph ${graphId} with inputs:`, inputs);
 
@@ -112,6 +116,7 @@ const rivetDebugger = startDebuggerServer({
         ...currentDebuggerState.settings!,
         remoteDebugger: rivetDebugger,
         registry,
+        datasetProvider,
         onTrace: (trace) => {
           console.log(trace);
         },

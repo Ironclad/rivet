@@ -79,6 +79,9 @@ export const GraphBuilder: FC = () => {
     newNode.visualData.x = position.x;
     newNode.visualData.y = position.y;
 
+    // We've added more buttons at the top so just... increase the width of every node a little bit :/
+    newNode.visualData.width = (newNode.visualData.width ?? 200) + 30;
+
     nodesChanged?.([...nodes, newNode]);
     // setSelectedNode(newNode.id);
   });

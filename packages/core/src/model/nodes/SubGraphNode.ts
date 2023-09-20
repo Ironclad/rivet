@@ -2,7 +2,7 @@ import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefin
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { GraphId } from '../NodeGraph.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { Project } from '../Project.js';
 import { GraphInputNode } from './GraphInputNode.js';
 import { GraphOutputNode } from './GraphOutputNode.js';

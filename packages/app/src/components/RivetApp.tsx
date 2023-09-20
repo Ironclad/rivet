@@ -18,6 +18,7 @@ import { useRecoilValue } from 'recoil';
 import { themeState } from '../state/settings';
 import clsx from 'clsx';
 import { useLoadStaticData } from '../hooks/useLoadStaticData';
+import { DataStudioRenderer } from './dataStudio/DataStudio';
 
 const styles = css`
   overflow: hidden;
@@ -54,6 +55,7 @@ export const RivetApp: FC = () => {
       <PromptDesignerRenderer />
       <TrivetRenderer tryRunTests={tryRunTests} />
       <ChatViewerRenderer />
+      <DataStudioRenderer />
       <ToastContainer position="bottom-right" hideProgressBar newestOnTop />
     </div>
   );

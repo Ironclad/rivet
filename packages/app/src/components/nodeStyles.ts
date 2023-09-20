@@ -103,7 +103,7 @@ export const nodeStyles = css`
   .title-controls {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0;
 
     .success,
     .error {

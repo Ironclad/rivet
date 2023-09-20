@@ -1,7 +1,7 @@
 import { ChartNode, NodeId, PortId } from '../NodeBase.js';
 import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { Inputs, Outputs } from '../GraphProcessor.js';
 import { NodeBodySpec, expectType } from '../../index.js';
 import { InternalProcessContext } from '../ProcessContext.js';
@@ -147,6 +147,12 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
   }
 
   async process(inputData: Inputs, context: InternalProcessContext): Promise<Outputs> {
+    const { nativeApi } = context;
+
+    if (nativeApi == null) {
+      throw new Error('This node requires a native API to run.');
+    }
+
     const path = this.chartNode.data.usePathInput
       ? expectType(inputData['path' as PortId], 'string')
       : this.chartNode.data.path;
@@ -181,7 +187,7 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
     }
 
     try {
-      const files = await context.nativeApi.readdir(path, undefined, {
+      const files = await nativeApi.readdir(path, undefined, {
         recursive,
         includeDirectories,
         filterGlobs,

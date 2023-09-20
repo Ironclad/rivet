@@ -49,6 +49,18 @@ import vectorKnnNodeImage from '../assets/node_images/vector_knn_node.png';
 import vectorStoreNodeImage from '../assets/node_images/vector_store_node.png';
 import waitForEventNodeImage from '../assets/node_images/wait_for_event_node.png';
 import delayNodeImage from '../assets/node_images/delay_node.png';
+import commentNodeImage from '../assets/node_images/comment_node.png';
+import objectNodeImage from '../assets/node_images/object_node.png';
+import audioNodeImage from '../assets/node_images/audio_node.png';
+import imageNodeImage from '../assets/node_images/image_node.png';
+import httpCallNodeImage from '../assets/node_images/http_call_node.png';
+import appendToDatasetNodeImage from '../assets/node_images/append_to_dataset_node.png';
+import createDatasetNodeImage from '../assets/node_images/create_dataset_node.png';
+import datasetNearestNeighborsNodeImage from '../assets/node_images/dataset_nearest_neighbors_node.png';
+import getAllDatasetsNodeImage from '../assets/node_images/get_all_datasets_node.png';
+import loadDatasetNodeImage from '../assets/node_images/load_dataset_node.png';
+import splitNodeImage from '../assets/node_images/split_node.png';
+import getDatasetRowNodeImage from '../assets/node_images/get_dataset_row_node.png';
 
 export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
   return {
@@ -101,12 +113,17 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     vectorStore: vectorStoreNodeImage,
     waitForEvent: waitForEventNodeImage,
     delay: delayNodeImage,
-
-    // TODO
-    comment: '',
-    object: '',
-    audio: '',
-    image: '',
-    httpCall: '',
+    comment: commentNodeImage,
+    object: objectNodeImage,
+    audio: audioNodeImage,
+    image: imageNodeImage,
+    httpCall: httpCallNodeImage,
+    appendToDataset: appendToDatasetNodeImage,
+    createDataset: createDatasetNodeImage,
+    datasetNearestNeighbors: datasetNearestNeighborsNodeImage,
+    getAllDatasets: getAllDatasetsNodeImage,
+    loadDataset: loadDatasetNodeImage,
+    split: splitNodeImage,
+    getDatasetRow: getDatasetRowNodeImage,
   };
 };

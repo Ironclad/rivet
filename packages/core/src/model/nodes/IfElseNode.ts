@@ -1,7 +1,7 @@
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { ArrayDataValue, DataValue, ScalarDataValue } from '../DataValue.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { ControlFlowExcludedPort } from '../../utils/symbols.js';
 import { dedent } from 'ts-dedent';
 

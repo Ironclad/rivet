@@ -25,6 +25,7 @@ import {
   NodeTestGroup,
   PortId,
   ProcessId,
+  RivetPlugin,
   Settings,
   arrayizeDataValue,
   coerceType,
@@ -39,7 +40,7 @@ import { Field } from '@atlaskit/form';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import Select from '@atlaskit/select';
 import Toggle from '@atlaskit/toggle';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { TauriNativeApi } from '../model/native/TauriNativeApi.js';
 import { settingsState } from '../state/settings.js';
 import { GraphSelector } from './DefaultNodeEditor.js';
@@ -50,6 +51,10 @@ import { useStableCallback } from '../hooks/useStableCallback.js';
 import { toast } from 'react-toastify';
 import { produce } from 'immer';
 import { overlayOpenState } from '../state/ui';
+import { BrowserDatasetProvider } from '../io/BrowserDatasetProvider';
+import { datasetProvider } from '../utils/globals';
+import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
+import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 
 const styles = css`
   position: fixed;
@@ -452,6 +457,8 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
   const abortController = useRef<AbortController>();
   const [inProgress, setInProgress] = useState(false);
 
+  const plugins = useDependsOnPlugins();
+
   const tryRunSingle = async () => {
     try {
       abortController.current?.abort();
@@ -467,6 +474,7 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
         data: config.data,
         signal: abortController.current.signal,
         settings,
+        plugins,
         onPartialResult: (partialResult) => {
           setResponse({
             response: partialResult,
@@ -505,6 +513,7 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
           data: config.data,
           settings,
           signal: abortController.current.signal,
+          plugins,
         },
         {
           onPartialResults: (partialResult) => {
@@ -943,11 +952,12 @@ type AdHocChatConfig = {
   data: ChatNodeConfigData;
   signal: AbortSignal;
   settings: Settings;
+  plugins: RivetPlugin[];
   onPartialResult?: (response: string) => void;
 };
 
 async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
-  const { data, signal, settings, onPartialResult } = config;
+  const { data, signal, plugins, settings, onPartialResult } = config;
 
   const chatNode = new ChatNodeImpl({
     data: {
@@ -984,8 +994,9 @@ async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
         executor: 'browser',
         contextValues: {},
         createSubProcessor: undefined!,
-        settings,
+        settings: await fillMissingSettingsFromEnvironmentVariables(settings, plugins),
         nativeApi: new TauriNativeApi(),
+        datasetProvider,
         processId: nanoid() as ProcessId,
         executionCache: new Map(),
         externalFunctions: {},
@@ -1043,6 +1054,7 @@ function useRunTestGroup() {
     const outputs = await processor.processGraph(
       {
         nativeApi: new TauriNativeApi(),
+        datasetProvider,
         settings,
       },
       {

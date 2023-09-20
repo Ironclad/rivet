@@ -1,7 +1,7 @@
 import { ChartNode, NodeId, PortId } from '../NodeBase.js';
 import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import {
   DataRef,
   EditorDefinition,

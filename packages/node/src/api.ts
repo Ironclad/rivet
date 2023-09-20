@@ -1,5 +1,6 @@
 import {
   DataValue,
+  DatasetProvider,
   ExternalFunction,
   GraphId,
   GraphProcessor,
@@ -47,6 +48,7 @@ export type RunGraphOptions = {
   context?: Record<string, LooseDataValue>;
   remoteDebugger?: RivetDebuggerServer;
   nativeApi?: NativeApi;
+  datasetProvider?: DatasetProvider;
   externalFunctions?: {
     [key: string]: ExternalFunction;
   };
@@ -193,6 +195,7 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
       const outputs = await processor.processGraph(
         {
           nativeApi: options.nativeApi ?? new NodeNativeApi(),
+          datasetProvider: options.datasetProvider,
           settings: {
             openAiKey: options.openAiKey ?? '',
             openAiOrganization: options.openAiOrganization ?? '',

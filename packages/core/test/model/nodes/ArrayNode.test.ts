@@ -1,7 +1,7 @@
 import { it, describe, mock } from 'node:test';
 import { strict as assert } from 'node:assert';
 import { ArrayNode, ArrayNodeImpl, NodeConnection, NodeId } from '../../../src/index.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 
 const createNode = (data: Partial<ArrayNode['data']>) => {
   return new ArrayNodeImpl({

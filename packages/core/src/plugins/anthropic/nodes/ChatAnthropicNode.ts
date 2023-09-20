@@ -31,7 +31,7 @@ import {
   anthropicModels,
   streamChatCompletions,
 } from '../anthropic.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
 import retry from 'p-retry';
 import { match } from 'ts-pattern';
