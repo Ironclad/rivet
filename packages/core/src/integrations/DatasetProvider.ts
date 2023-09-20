@@ -10,6 +10,8 @@ export interface DatasetProvider {
 
   putDatasetData(id: DatasetId, data: Dataset): Promise<void>;
 
+  putDatasetRow(id: DatasetId, row: DatasetRow): Promise<void>;
+
   putDatasetMetadata(metadata: DatasetMetadata): Promise<void>;
 
   clearDatasetData(id: DatasetId): Promise<void>;
@@ -44,6 +46,22 @@ export class InMemoryDatasetProvider implements DatasetProvider {
       return { id, rows: [] };
     }
     return dataset.data;
+  }
+
+  async putDatasetRow(id: DatasetId, row: DatasetRow): Promise<void> {
+    const dataset = this.#datasets.find((d) => d.meta.id === id);
+    if (!dataset) {
+      throw new Error(`Dataset ${id} not found`);
+    }
+
+    const existingRow = dataset.data.rows.find((r) => r.id === row.id);
+    if (existingRow) {
+      existingRow.data = row.data;
+      existingRow.embedding = row.embedding;
+      return;
+    }
+
+    dataset.data.rows.push(row);
   }
 
   async putDatasetData(id: DatasetId, data: Dataset): Promise<void> {

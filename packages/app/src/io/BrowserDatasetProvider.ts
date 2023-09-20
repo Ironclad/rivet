@@ -122,6 +122,29 @@ export class BrowserDatasetProvider implements DatasetProvider {
     await toPromise(store.put(data, id));
   }
 
+  async putDatasetRow(id: DatasetId, row: DatasetRow): Promise<void> {
+    const dataset = this.#currentProjectDatasets.find((d) => d.meta.id === id);
+    if (!dataset) {
+      throw new Error(`Dataset ${id} not found`);
+    }
+
+    const existingRow = dataset.data.rows.find((r) => r.id === row.id);
+    if (existingRow) {
+      existingRow.data = row.data;
+      existingRow.embedding = row.embedding;
+      return;
+    }
+
+    dataset.data.rows.push(row);
+
+    // Sync the database
+    const dataStore = await this.getDatasetDatabase();
+
+    const transaction = dataStore.transaction('data', 'readwrite');
+    const store = transaction.objectStore('data');
+    await toPromise(store.put(dataset.data, id));
+  }
+
   async putDatasetMetadata(metadata: DatasetMetadata): Promise<void> {
     const matchingDataset = this.#currentProjectDatasets.find((d) => d.meta.id === metadata.id);
 

@@ -177,6 +177,18 @@ async function handleDatasetsMessage(type: string, data: any, socket: WebSocket)
         }),
       );
     })
+    .with('datasets:put-row', async () => {
+      await datasetProvider.putDatasetRow(payload.id, payload.row);
+      socket.send(
+        JSON.stringify({
+          type: 'datasets:response',
+          data: {
+            requestId,
+            payload: undefined,
+          },
+        }),
+      );
+    })
     .with('datasets:put-metadata', async () => {
       await datasetProvider.putDatasetMetadata(payload.metadata);
       socket.send(

@@ -5,6 +5,7 @@ import { nanoid } from 'nanoid/non-secure';
 import {
   DataValue,
   DatasetId,
+  DatasetRow,
   EditorDefinition,
   Inputs,
   NodeBodySpec,
@@ -129,20 +130,13 @@ export class AppendToDatasetNodeImpl extends NodeImpl<AppendToDatasetNode> {
     const data = arrayizeDataValue(unwrapDataValue(dataInput));
     const stringData = data.map((d) => coerceType(d, 'string'));
 
-    const dataset = await datasetProvider.getDatasetData(datasetId);
-
-    const newData = [...dataset.rows];
-
-    newData.push({
+    const newData: DatasetRow = {
       id: dataId,
       data: stringData,
       embedding,
-    });
+    };
 
-    await datasetProvider.putDatasetData(datasetId, {
-      ...dataset,
-      rows: newData,
-    });
+    await datasetProvider.putDatasetRow(datasetId, newData);
 
     return {
       ['dataset' as PortId]: {
