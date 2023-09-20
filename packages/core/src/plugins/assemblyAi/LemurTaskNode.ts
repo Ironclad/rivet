@@ -6,7 +6,6 @@ import {
   Inputs,
   InternalProcessContext,
   NodeId,
-  NodeImpl,
   NodeInputDefinition,
   NodeOutputDefinition,
   NodeUIData,
@@ -14,10 +13,9 @@ import {
   PluginNodeImpl,
   PortId,
   coerceTypeOptional,
-  nodeDefinition,
   pluginNodeDefinition,
 } from '../../index.js';
-import { LemurNodeData, LemurParams, getApiKey, getLemurParams, lemurEditorDefinitions } from './lemurHelpers.js';
+import { LemurNodeData, LemurParams, getApiKey, getLemurParams, lemurEditorDefinitions, lemurTranscriptIdsInputDefinition } from './lemurHelpers.js';
 
 export type LemurTaskNode = ChartNode<'assemblyAiLemurTask', LemurTaskNodeData>;
 
@@ -46,11 +44,7 @@ export const LemurTaskNodeImpl: PluginNodeImpl<LemurTaskNode> = {
 
   getInputDefinitions(): NodeInputDefinition[] {
     return [
-      {
-        id: 'transcript_ids' as PortId,
-        dataType: ['string', 'string[]'],
-        title: 'Transcript IDs',
-      },
+      lemurTranscriptIdsInputDefinition,
       {
         id: 'prompt' as PortId,
         dataType: 'string',

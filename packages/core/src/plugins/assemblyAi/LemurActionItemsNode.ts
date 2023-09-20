@@ -6,17 +6,15 @@ import {
   Inputs,
   InternalProcessContext,
   NodeId,
-  NodeImpl,
   NodeInputDefinition,
   NodeOutputDefinition,
   NodeUIData,
   Outputs,
   PluginNodeImpl,
   PortId,
-  nodeDefinition,
   pluginNodeDefinition,
 } from '../../index.js';
-import { LemurNodeData, LemurParams, getApiKey, getLemurParams, lemurEditorDefinitions } from './lemurHelpers.js';
+import { LemurNodeData, LemurParams, getApiKey, getLemurParams, lemurEditorDefinitions, lemurTranscriptIdsInputDefinition } from './lemurHelpers.js';
 
 export type LemurActionItemsNode = ChartNode<'assemblyAiLemurActionItems', LemurActionItemsNodeData>;
 
@@ -45,11 +43,7 @@ export const LemurActionItemsNodeImpl: PluginNodeImpl<LemurActionItemsNode> = {
 
   getInputDefinitions(): NodeInputDefinition[] {
     return [
-      {
-        id: 'transcript_ids' as PortId,
-        dataType: ['string', 'string[]'],
-        title: 'Transcript IDs',
-      },
+      lemurTranscriptIdsInputDefinition,
       {
         id: 'context' as PortId,
         dataType: 'string',

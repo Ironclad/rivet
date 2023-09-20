@@ -7,7 +7,6 @@ import {
   Inputs,
   InternalProcessContext,
   NodeId,
-  NodeImpl,
   NodeInputDefinition,
   NodeOutputDefinition,
   NodeUIData,
@@ -16,13 +15,19 @@ import {
   StringArrayDataValue,
   StringDataValue,
   coerceType,
-  nodeDefinition,
   ObjectDataValue,
   ArrayDataValue,
   PluginNodeImpl,
   pluginNodeDefinition,
 } from '../../index.js';
-import { LemurNodeData, LemurParams, getApiKey, getLemurParams, lemurEditorDefinitions } from './lemurHelpers.js';
+import { 
+  LemurNodeData, 
+  LemurParams, 
+  getApiKey, 
+  getLemurParams, 
+  lemurEditorDefinitions, 
+  lemurTranscriptIdsInputDefinition
+} from './lemurHelpers.js';
 
 export type LemurQaNode = ChartNode<'assemblyAiLemurQa', LemurQaNodeData>;
 
@@ -53,11 +58,7 @@ export const LemurQaNodeImpl = {
 
   getInputDefinitions(): NodeInputDefinition[] {
     return [
-      {
-        id: 'transcript_ids' as PortId,
-        dataType: ['string', 'string[]'],
-        title: 'Transcript IDs',
-      },
+      lemurTranscriptIdsInputDefinition,
       {
         id: 'questions' as PortId,
         dataType: ['string', 'string[]', 'object', 'object[]', 'any', 'any[]'],
@@ -182,7 +183,7 @@ function getQuestions(inputs: Inputs): Question[] {
       }
     });
   }
-  throw new Error('Audio input must be a string, string[], a question object, or an array of question objects.');
+  throw new Error('Questions must be a string, string[], a question object, or an array of question objects.');
 }
 
 function applyQuestionEditors(data: LemurQaNodeData, question: Question): Question {
