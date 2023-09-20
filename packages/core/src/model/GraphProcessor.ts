@@ -1136,10 +1136,12 @@ export class GraphProcessor {
         | {
             type: string;
             output: Outputs;
+            error?: Error;
           }
         | {
             type: string;
             error: Error;
+            output?: Outputs;
           }
       )[] = [];
 
