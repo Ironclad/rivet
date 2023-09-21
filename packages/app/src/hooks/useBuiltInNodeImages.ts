@@ -61,6 +61,7 @@ import getAllDatasetsNodeImage from '../assets/node_images/get_all_datasets_node
 import loadDatasetNodeImage from '../assets/node_images/load_dataset_node.png';
 import splitNodeImage from '../assets/node_images/split_node.png';
 import getDatasetRowNodeImage from '../assets/node_images/get_dataset_row_node.png';
+import sliceNodeImage from '../assets/node_images/slice_node.png';
 
 export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
   return {
@@ -125,5 +126,6 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     loadDataset: loadDatasetNodeImage,
     split: splitNodeImage,
     getDatasetRow: getDatasetRowNodeImage,
+    slice: sliceNodeImage,
   };
 };
