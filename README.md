@@ -141,6 +141,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/advisely"><img src="https://avatars.githubusercontent.com/u/29242247?v=4?s=100" width="100px;" alt="HumanBot"/><br /><sub><b>HumanBot</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/issues?q=author%3Aadvisely" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/bradstallion"><img src="https://avatars.githubusercontent.com/u/37795833?v=4?s=100" width="100px;" alt="bradstallion"/><br /><sub><b>bradstallion</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/issues?q=author%3Abradstallion" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Wannabeasmartguy"><img src="https://avatars.githubusercontent.com/u/107250451?v=4?s=100" width="100px;" alt="Wannabeasmartguy"/><br /><sub><b>Wannabeasmartguy</b></sub></a><br /><a href="#ideas-Wannabeasmartguy" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
 </table>
