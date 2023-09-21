@@ -151,7 +151,8 @@ fn create_menu() -> Menu {
         .add_submenu(Submenu::new(
             "Run",
             Menu::new()
-                .add_item(CustomMenuItem::new("run", "Run Graph").accelerator("CmdOrCtrl+Enter")),
+                .add_item(CustomMenuItem::new("run", "Run Graph").accelerator("CmdOrCtrl+Enter"))
+                .add_item(CustomMenuItem::new("clear_outputs", "Clear Outputs")),
         ))
         .add_submenu(view_menu)
         .add_submenu(debug_menu)

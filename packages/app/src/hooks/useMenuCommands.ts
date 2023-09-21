@@ -12,6 +12,7 @@ import { WebviewWindow } from '@tauri-apps/api/window';
 import { ioProvider } from '../utils/globals.js';
 import { debuggerPanelOpenState } from '../state/ui';
 import { useToggleRemoteDebugger } from '../components/DebuggerConnectPanel';
+import { lastRunDataByNodeState } from '../state/dataFlow';
 
 type MenuIds =
   | 'settings'
@@ -25,7 +26,8 @@ type MenuIds =
   | 'run'
   | 'load_recording'
   | 'remote_debugger'
-  | 'toggle_devtools';
+  | 'toggle_devtools'
+  | 'clear_outputs';
 
 const handlerState: {
   handler: (e: { payload: MenuIds }) => void;
@@ -62,6 +64,7 @@ export function useMenuCommands(
   const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
   const { loadRecording } = useLoadRecording();
   const toggleRemoteDebugger = useToggleRemoteDebugger();
+  const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
 
   useEffect(() => {
     const handler: (e: { payload: MenuIds }) => void = ({ payload }) => {
@@ -100,6 +103,9 @@ export function useMenuCommands(
           toggleRemoteDebugger();
         })
         .with('toggle_devtools', () => {})
+        .with('clear_outputs', () => {
+          setLastRunData({});
+        })
         .exhaustive();
     };
 
