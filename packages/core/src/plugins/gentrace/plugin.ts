@@ -11,7 +11,9 @@ import {
   RivetPlugin,
   SecretPluginConfigurationSpec,
   Settings,
+  inferType,
 } from '../../index.js';
+import { mapValues } from 'lodash-es';
 
 const apiKeyConfigSpec: SecretPluginConfigurationSpec = {
   type: 'secret',
@@ -55,16 +57,7 @@ export const runGentraceTests = async (
 
     const runner = pipeline.start();
 
-    // Transform inputs
-    const rivetFormattedInputs: Record<string, any> = {};
-
-    Object.entries(testCase.inputs).forEach(([key, value]) => {
-      rivetFormattedInputs[key] = {
-        // Improve to fit Gentrace data types into the format that Rivet expects. Currently too naïve.
-        type: typeof value,
-        value,
-      };
-    });
+    const rivetFormattedInputs = mapValues(testCase.inputs, inferType);
 
     const tempProject = {
       ...project,
@@ -89,6 +82,53 @@ export const runGentraceTests = async (
 
     const fullRecording = recorder.getRecording();
 
+    const stepRuns = convertRecordingToStepRuns(fullRecording, project, graphId);
+
+    stepRuns.forEach((stepRun) => {
+      runner.addStepRunNode(stepRun);
+    });
+
+    if (stepRuns.length === 0) {
+      throw new Error('No Rivet steps found. You need operations which are not Graph Input or Graph Output nodes.');
+    }
+
+    return ['', runner];
+  });
+
+  return response;
+};
+
+export const runRemoteGentraceTests = async (
+  gentracePipelineSlug: string,
+  settings: Settings,
+  project: Omit<Project, 'data'>,
+  graph: NodeGraph,
+  runAndRecord: (testCase: Record<string, any>) => Promise<Recording>,
+) => {
+  const gentraceApiKey = settings.pluginSettings?.gentrace?.gentraceApiKey as string | undefined;
+
+  if (!gentraceApiKey) {
+    throw new Error('Gentrace API key not set.');
+  }
+
+  const graphId = graph.metadata?.id;
+
+  if (!graphId) {
+    throw new Error('Graph ID not set.');
+  }
+
+  initializeGentrace(gentraceApiKey);
+
+  const response = await runTest(gentracePipelineSlug, async (testCase) => {
+    const pipeline = new Pipeline({
+      slug: gentracePipelineSlug,
+    });
+
+    const runner = pipeline.start();
+
+    const rivetFormattedInputs = mapValues(testCase.inputs, inferType);
+
+    const fullRecording = await runAndRecord(rivetFormattedInputs);
     const stepRuns = convertRecordingToStepRuns(fullRecording, project, graphId);
 
     stepRuns.forEach((stepRun) => {

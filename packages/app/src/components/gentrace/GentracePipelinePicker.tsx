@@ -68,7 +68,7 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
 
   const effectiveSelectedPipeline = selectedPipelineOption ?? currentOption ?? pipelineOptions[0] ?? null;
   
-  const onSave = () => {
+  const onAssociate = () => {
     if (!selectedPipelineOption) {
       return;
     }
@@ -79,20 +79,22 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
       return;
     }
 
+    const { cases, ...selectedPipelineNoCases } = selectedPipeline;
+
     setGraph({ 
       ...graph, 
       metadata: { 
         ...graph.metadata, 
         attachedData: { 
           ...(graph.metadata?.attachedData ?? {}), 
-          gentracePipeline: selectedPipeline
+          gentracePipeline: selectedPipelineNoCases
         } 
       } 
     });
     
     setSelectedPipeline(null);
     
-    toast.info(`Saved Gentrace Pipeline: ${selectedPipelineOption.label}`, { autoClose: 4000 });
+    toast.info(`Associated Gentrace pipeline: ${selectedPipelineOption.label}`, { autoClose: 4000 });
   };
 
   return (
@@ -137,8 +139,8 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
           height: 32px;
           border-radius: 5px;
           background: ${selectedPipelineOption ? "var(--success)" : "var(--grey-darker)"};
-        `} disabled={!selectedPipelineOption} onClick={onSave}>
-          Save
+        `} disabled={!selectedPipelineOption} onClick={onAssociate}>
+          Associate
         </button>
       </div>
       
