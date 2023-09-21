@@ -16,15 +16,28 @@ import { DefaultImageBrowserEditor } from './ImageBrowserEditor';
 import { DefaultNumberEditor } from './NumberEditor';
 import { DefaultStringEditor } from './StringEditor';
 import { DefaultToggleEditor } from './ToggleEditor';
+import { EditorGroup } from './EditorGroup';
+import { KeyValuePairEditor } from './KeyValuePairEditor';
+import { StringListEditor } from './StringListEditor';
 
 export const DefaultNodeEditorField: FC<
   SharedEditorProps & {
     editor: EditorDefinition<ChartNode>;
   }
-> = ({ node, onChange, editor, isReadonly, onClose }) => {
+> = ({ node, onChange, editor, isReadonly, isDisabled, onClose }) => {
   const data = node.data as Record<string, unknown>;
 
-  const sharedProps: SharedEditorProps = { node, onChange, isReadonly, onClose };
+  if (editor.hideIf?.(node.data)) {
+    return null;
+  }
+
+  const sharedProps: SharedEditorProps = {
+    node,
+    onChange,
+    isReadonly,
+    onClose,
+    isDisabled,
+  };
 
   const input = match(editor)
     .with({ type: 'string' }, (editor) => <DefaultStringEditor {...sharedProps} editor={editor} />)
@@ -39,27 +52,31 @@ export const DefaultNodeEditorField: FC<
     .with({ type: 'color' }, (editor) => <DefaultColorEditor {...sharedProps} editor={editor} />)
     .with({ type: 'fileBrowser' }, (editor) => <DefaultFileBrowserEditor {...sharedProps} editor={editor} />)
     .with({ type: 'imageBrowser' }, (editor) => <DefaultImageBrowserEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'group' }, (editor) => <EditorGroup {...sharedProps} editor={editor} />)
+    .with({ type: 'keyValuePair' }, (editor) => <KeyValuePairEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'stringList' }, (editor) => <StringListEditor {...sharedProps} editor={editor} />)
     .exhaustive();
 
-  const toggle = editor.useInputToggleDataKey ? (
-    <div className="use-input-toggle">
-      <Toggle
-        isChecked={data[editor.useInputToggleDataKey] as boolean | undefined}
-        isDisabled={isReadonly}
-        onChange={(e) =>
-          onChange({
-            ...node,
-            data: {
-              ...data,
-              [editor.useInputToggleDataKey!]: e.target.checked,
-            },
-          })
-        }
-      />
-    </div>
-  ) : (
-    <div />
-  );
+  const toggle =
+    editor.type !== 'group' && editor.useInputToggleDataKey ? (
+      <div className="use-input-toggle">
+        <Toggle
+          isChecked={data[editor.useInputToggleDataKey] as boolean | undefined}
+          isDisabled={isReadonly || sharedProps.isDisabled}
+          onChange={(e) =>
+            onChange({
+              ...node,
+              data: {
+                ...data,
+                [editor.useInputToggleDataKey!]: e.target.checked,
+              },
+            })
+          }
+        />
+      </div>
+    ) : (
+      <div />
+    );
 
   return (
     <div className={clsx('row', editor.type)}>

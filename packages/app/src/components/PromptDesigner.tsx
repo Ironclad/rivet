@@ -43,7 +43,6 @@ import Toggle from '@atlaskit/toggle';
 import { nanoid } from 'nanoid/non-secure';
 import { TauriNativeApi } from '../model/native/TauriNativeApi.js';
 import { settingsState } from '../state/settings.js';
-import { GraphSelector } from './DefaultNodeEditor.js';
 import TextArea from '@atlaskit/textarea';
 import { projectState } from '../state/savedGraphs.js';
 import { cloneDeep, findIndex, mapValues, range, zip } from 'lodash-es';
@@ -55,6 +54,7 @@ import { BrowserDatasetProvider } from '../io/BrowserDatasetProvider';
 import { datasetProvider } from '../utils/globals';
 import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
+import { GraphSelector } from './editors/GraphSelectorEditor';
 
 const styles = css`
   position: fixed;

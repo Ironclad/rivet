@@ -1,5 +1,5 @@
 import Button from '@atlaskit/button';
-import { Field } from '@atlaskit/form';
+import { Field, HelperMessage } from '@atlaskit/form';
 import { ImageBrowserEditorDefinition, ChartNode, DataId, uint8ArrayToBase64, DataRef } from '@ironclad/rivet-core';
 import { nanoid } from 'nanoid/non-secure';
 import { FC } from 'react';
@@ -7,13 +7,15 @@ import { useRecoilValue } from 'recoil';
 import { projectDataState } from '../../state/savedGraphs';
 import { ioProvider } from '../../utils/globals';
 import { SharedEditorProps } from './SharedEditorProps';
+import { getHelperMessage } from './editorUtils';
 
 export const DefaultImageBrowserEditor: FC<
   SharedEditorProps & {
     editor: ImageBrowserEditorDefinition<ChartNode>;
   }
-> = ({ node, isReadonly, onChange, editor }) => {
+> = ({ node, isReadonly, isDisabled, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
+  const helperMessage = getHelperMessage(editor, node.data);
 
   const dataState = useRecoilValue(projectDataState);
 
@@ -47,7 +49,11 @@ export const DefaultImageBrowserEditor: FC<
     <Field name={editor.dataKey} label={editor.label}>
       {() => (
         <div>
-          <Button onClick={pickFile}>Pick Image</Button>
+          <Button onClick={pickFile} isDisabled={isReadonly || isDisabled}>
+            Pick Image
+          </Button>
+          {helperMessage && <HelperMessage>{helperMessage}</HelperMessage>}
+
           <div className="current">
             <img src={dataUri} alt="" />
           </div>

@@ -22,6 +22,7 @@ import CrossIcon from '@atlaskit/icon/glyph/cross';
 import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
 import { Label } from '@atlaskit/form';
+import { KeyValuePairs } from './editors/KeyValuePairEditor';
 
 interface SettingsModalProps {}
 
@@ -62,7 +63,7 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
   return (
     <ModalTransition>
       {isOpen && (
-        <Modal onClose={closeModal} width="large">
+        <Modal onClose={closeModal} width="xlarge">
           <ModalHeader>
             <ModalTitle>Settings</ModalTitle>
             <Button appearance="link" onClick={() => setIsOpen(false)}>
@@ -190,6 +191,39 @@ const fields = css`
 export const OpenAiSettingsPage: FC = () => {
   const [settings, setSettings] = useRecoilState(settingsState);
 
+  const chatNodeHeadersPairs = entries(settings.chatNodeHeaders ?? {}).map(([key, value]) => ({
+    key,
+    value,
+  }));
+
+  const [headers, setHeaders] = useState<{ key: string; value: string }[]>(chatNodeHeadersPairs);
+
+  const onSetHeaders = (newHeaders: { key: string; value: string }[]) => {
+    setHeaders(newHeaders);
+    setSettings((s) => ({
+      ...s,
+      chatNodeHeaders: Object.fromEntries(newHeaders.map(({ key, value }) => [key, value])),
+    }));
+  };
+
+  const configureAzure = () => {
+    setSettings((s) => ({
+      ...s,
+      openAiEndpoint:
+        'https://{your-resource-name}.openai.azure.com/openai/deployments/{deployment-id}/chat/completions?api-version=2023-05-15',
+      chatNodeHeaders: {
+        'api-key': '',
+      },
+    }));
+
+    setHeaders([
+      {
+        key: 'api-key',
+        value: '',
+      },
+    ]);
+  };
+
   return (
     <div css={fields}>
       <Field name="api-key" label="OpenAI API Key">
@@ -218,6 +252,18 @@ export const OpenAiSettingsPage: FC = () => {
           </>
         )}
       </Field>
+      {!settings.openAiEndpoint && (
+        <div className="configure-azure">
+          <Button appearance="primary" onClick={configureAzure}>
+            Configure For Azure OpenAI
+          </Button>
+          <HelperMessage>
+            You can click this button to set up a configuration for Azure OpenAI. You will have to fill in placeholder
+            fields in the OpenAI Endpoint, and fill in your API key header.
+          </HelperMessage>
+        </div>
+      )}
+
       <Field name="organization" label="OpenAI Endpoint">
         {() => (
           <>
@@ -232,6 +278,20 @@ export const OpenAiSettingsPage: FC = () => {
           </>
         )}
       </Field>
+      <KeyValuePairs
+        label="Chat Node Headers"
+        helperMessage="Headers to send with each request of a Chat node to its endpoint. You can use this for alternative APIs such as Azure OpenAI."
+        name="chatNodeHeaders"
+        keyValuePairs={headers}
+        isValuesSecret
+        onAddPair={() => onSetHeaders([...headers, { key: '', value: '' }])}
+        onDeletePair={(index) => onSetHeaders(headers.filter((_, i) => i !== index))}
+        onPairChange={(index, keyOrValue, value) => {
+          const newHeaders = [...headers];
+          newHeaders[index]![keyOrValue] = value;
+          onSetHeaders(newHeaders);
+        }}
+      />
     </div>
   );
 };

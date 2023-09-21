@@ -1,7 +1,6 @@
 import { FC, useCallback, useMemo } from 'react';
 import { TestCaseTable } from './TestCaseTable';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
-import { GraphSelector } from '../DefaultNodeEditor';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { savedGraphsState } from '../../state/savedGraphs';
 import { keyBy } from 'lodash-es';
@@ -22,6 +21,7 @@ import { ReactComponent as BrowserLineIcon } from 'majesticons/line/browser-line
 import { ReactComponent as AlertCircleIcon } from 'majesticons/line/alert-circle-line.svg';
 import { NoTestCasesSplash } from './NoTestCasesSplash';
 import { useTestSuite } from '../../hooks/useTestSuite';
+import { GraphSelector } from '../editors/GraphSelectorEditor';
 
 const styles = css`
   min-height: 100%;

@@ -93,6 +93,11 @@ export function useDataset(datasetId: DatasetId) {
     await reloadDatasetData();
   };
 
+  const clearData = async () => {
+    await datasetProvider.clearDatasetData(datasetId);
+    await reloadDatasetData();
+  };
+
   return {
     dataset,
     deleteRow,
@@ -102,5 +107,6 @@ export function useDataset(datasetId: DatasetId) {
     insertColumnLeft,
     insertColumnRight,
     putDatasetData,
+    clearData,
   };
 }

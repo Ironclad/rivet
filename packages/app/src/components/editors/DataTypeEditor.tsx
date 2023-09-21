@@ -1,5 +1,5 @@
 import Checkbox from '@atlaskit/checkbox';
-import { Field } from '@atlaskit/form';
+import { Field, HelperMessage } from '@atlaskit/form';
 import Select from '@atlaskit/select';
 import { css } from '@emotion/react';
 import {
@@ -13,6 +13,7 @@ import {
 } from '@ironclad/rivet-core';
 import { FC } from 'react';
 import { SharedEditorProps } from './SharedEditorProps';
+import { getHelperMessage } from './editorUtils';
 
 const validSelectableDataTypes = scalarTypes.filter((type) => type !== 'control-flow-excluded');
 
@@ -20,9 +21,10 @@ export const DefaultDataTypeSelector: FC<
   SharedEditorProps & {
     editor: DataTypeSelectorEditorDefinition<ChartNode>;
   }
-> = ({ node, isReadonly, onChange, editor }) => {
+> = ({ node, isReadonly, isDisabled, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
   const dataType = data[editor.dataKey] as DataType | undefined;
+  const helperMessage = getHelperMessage(editor, node.data);
 
   const scalarType = dataType ? getScalarTypeOf(dataType) : undefined;
   const isArray = dataType ? isArrayDataType(dataType) : undefined;
@@ -36,7 +38,7 @@ export const DefaultDataTypeSelector: FC<
 
   return (
     <div className="data-type-selector">
-      <Field name="data-type" label="Data Type" isDisabled={isReadonly}>
+      <Field name="data-type" label="Data Type" isDisabled={isReadonly || isDisabled}>
         {({ fieldProps }) => (
           <Select
             {...fieldProps}
@@ -71,9 +73,11 @@ export const DefaultDataTypeSelector: FC<
                 },
               })
             }
+            isDisabled={isDisabled}
           />
         )}
       </Field>
+      {helperMessage && <HelperMessage>{helperMessage}</HelperMessage>}
     </div>
   );
 };

@@ -111,6 +111,7 @@ export type ChatCompletionRequestMessage = {
 export type ChatCompletionOptions = {
   endpoint: string;
   auth: { apiKey: string; organization?: string };
+  headers?: Record<string, string>;
   signal?: AbortSignal;
   model: string;
   messages: ChatCompletionRequestMessage[];
@@ -188,6 +189,7 @@ export async function* streamChatCompletions({
   endpoint,
   auth,
   signal,
+  headers,
   ...rest
 }: ChatCompletionOptions): AsyncGenerator<ChatCompletionChunk> {
   const abortSignal = signal ?? new AbortController().signal;
@@ -203,6 +205,7 @@ export async function* streamChatCompletions({
         'Content-Type': 'application/json',
         Authorization: `Bearer ${auth.apiKey}`,
         ...(auth.organization ? { 'OpenAI-Organization': auth.organization } : {}),
+        ...headers,
       },
       body: JSON.stringify({
         ...rest,

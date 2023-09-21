@@ -1,15 +1,17 @@
-import { Field } from '@atlaskit/form';
-import { EditorDefinition, ChartNode } from '@ironclad/rivet-core';
+import { Field, HelperMessage } from '@atlaskit/form';
+import { ChartNode, ColorEditorDefinition } from '@ironclad/rivet-core';
 import { FC, Suspense } from 'react';
 import { LazyTripleBarColorPicker } from '../LazyComponents';
 import { SharedEditorProps } from './SharedEditorProps';
+import { getHelperMessage } from './editorUtils';
 
 export const DefaultColorEditor: FC<
   SharedEditorProps & {
-    editor: EditorDefinition<ChartNode>;
+    editor: ColorEditorDefinition<ChartNode>;
   }
 > = ({ node, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
+  const helperMessage = getHelperMessage(editor, node.data);
 
   const parsed = /rgba\((?<rStr>\d+),(?<gStr>\d+),(?<bStr>\d+),(?<aStr>[\d.]+)\)/.exec(data[editor.dataKey] as string);
 
@@ -26,18 +28,21 @@ export const DefaultColorEditor: FC<
     <Suspense fallback={<div />}>
       <Field name={editor.dataKey} label={editor.label}>
         {() => (
-          <LazyTripleBarColorPicker
-            color={{ r, g, b, a }}
-            onChange={(newColor) => {
-              onChange({
-                ...node,
-                data: {
-                  ...data,
-                  [editor.dataKey]: `rgba(${newColor.rgb.r},${newColor.rgb.g},${newColor.rgb.b},${newColor.rgb.a})`,
-                },
-              });
-            }}
-          />
+          <>
+            <LazyTripleBarColorPicker
+              color={{ r, g, b, a }}
+              onChange={(newColor) => {
+                onChange({
+                  ...node,
+                  data: {
+                    ...data,
+                    [editor.dataKey]: `rgba(${newColor.rgb.r},${newColor.rgb.g},${newColor.rgb.b},${newColor.rgb.a})`,
+                  },
+                });
+              }}
+            />
+            {helperMessage && <HelperMessage>{helperMessage}</HelperMessage>}
+          </>
         )}
       </Field>
     </Suspense>

@@ -1147,6 +1147,10 @@ export class GraphProcessor {
 
       if (node.isSplitSequential) {
         for (let i = 0; i < splittingAmount; i++) {
+          if (this.#aborted) {
+            throw new Error('Processing aborted');
+          }
+
           const inputs = fromEntries(
             entries(inputValues).map(([port, value]) => [
               port as PortId,

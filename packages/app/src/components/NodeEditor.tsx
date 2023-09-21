@@ -11,7 +11,6 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import Toggle from '@atlaskit/toggle';
 import { useStableCallback } from '../hooks/useStableCallback.js';
-import { DefaultNodeEditor } from './DefaultNodeEditor.js';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import { Field, Label } from '@atlaskit/form';
 import TextField from '@atlaskit/textfield';
@@ -23,6 +22,7 @@ import { nanoid } from 'nanoid/non-secure';
 import { ErrorBoundary } from 'react-error-boundary';
 import { projectDataState, projectState } from '../state/savedGraphs';
 import { useSetStaticData } from '../hooks/useSetStaticData';
+import { DefaultNodeEditor } from './editors/DefaultNodeEditor';
 
 export const NodeEditorRenderer: FC = () => {
   const nodesById = useRecoilValue(nodesByIdState);
@@ -135,7 +135,7 @@ const Container = styled.div`
   }
 
   .section-node {
-    flex: 1 1 auto;
+    flex: 1 0 auto;
     min-height: 0;
     display: flex;
     flex-direction: column;
@@ -143,10 +143,14 @@ const Container = styled.div`
   }
 
   .section-node-content {
-    flex: 1 1 auto;
-    min-height: 0;
+    flex: 1 0 auto;
+    min-height: 300px;
     position: relative;
     display: flex;
+  }
+
+  .bottom-spacer {
+    height: 300px;
   }
 
   .unknown-node {
@@ -521,6 +525,7 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
 
                 <div className="section section-node">
                   <div className="section-node-content">{nodeEditor}</div>
+                  <div className="bottom-spacer" />
                 </div>
               </div>
               <div className="section section-footer">

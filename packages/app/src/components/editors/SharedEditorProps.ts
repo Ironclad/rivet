@@ -5,5 +5,6 @@ export type SharedEditorProps = {
   node: ChartNode;
   onChange: NodeChanged;
   isReadonly: boolean;
+  isDisabled: boolean;
   onClose?: () => void;
 };

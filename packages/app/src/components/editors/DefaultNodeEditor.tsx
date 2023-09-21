@@ -1,8 +1,9 @@
 import { FC, useEffect, useState } from 'react';
-import { ChartNode, EditorDefinitionOrGroup, getError, globalRivetNodeRegistry } from '@ironclad/rivet-core';
+import { ChartNode, EditorDefinition, getError, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { toast } from 'react-toastify';
 import { SharedEditorProps } from './SharedEditorProps';
+import { DefaultNodeEditorField } from './DefaultNodeEditorField';
 
 export const defaultEditorContainerStyles = css`
   display: flex;
@@ -21,8 +22,8 @@ export const defaultEditorContainerStyles = css`
   }
 
   .use-input-toggle {
-    align-self: center;
-    margin-top: 32px;
+    align-self: top;
+    margin-top: 36px;
   }
 
   .data-type-selector {
@@ -54,7 +55,7 @@ export const defaultEditorContainerStyles = css`
   }
 
   .row.code {
-    min-height: min-content;
+    min-height: 500px;
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
@@ -78,14 +79,17 @@ export const defaultEditorContainerStyles = css`
       margin: 0;
     }
   }
+
+  .helper-message {
+  }
 `;
 
 export const DefaultNodeEditor: FC<
-  SharedEditorProps & {
+  Omit<SharedEditorProps, 'isDisabled'> & {
     onClose?: () => void;
   }
 > = ({ node, onChange, isReadonly, onClose }) => {
-  const [editors, setEditors] = useState<EditorDefinitionOrGroup<ChartNode>[]>([]);
+  const [editors, setEditors] = useState<EditorDefinition<ChartNode>[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -104,16 +108,20 @@ export const DefaultNodeEditor: FC<
 
   return (
     <div css={defaultEditorContainerStyles}>
-      {editors.map((editor, i) => (
-        <DefaultNodeEditorField
-          key={editor.dataKey}
-          node={node}
-          onChange={onChange}
-          editor={editor}
-          isReadonly={isReadonly}
-          onClose={onClose}
-        />
-      ))}
+      {editors.map((editor, i) => {
+        const isDisabled = editor.disableIf?.(node.data) ?? false;
+        return (
+          <DefaultNodeEditorField
+            key={editor.type === 'group' ? editor.label : editor.dataKey}
+            node={node}
+            onChange={onChange}
+            editor={editor}
+            isReadonly={isReadonly}
+            isDisabled={isDisabled}
+            onClose={onClose}
+          />
+        );
+      })}
     </div>
   );
 };

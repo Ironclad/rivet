@@ -90,6 +90,14 @@ export const DatasetDisplay: FC<{
     });
   };
 
+  const clearDataset = async () => {
+    try {
+      await datasetMethods.clearData();
+    } catch (err) {
+      toast.error(`Failed to clear dataset: ${getError(err).message}`);
+    }
+  };
+
   return (
     <div
       css={datasetDisplayStyles}
@@ -107,6 +115,9 @@ export const DatasetDisplay: FC<{
           </Button>
           <Button appearance="default" onClick={importDataset}>
             Import (Replace) Data
+          </Button>
+          <Button appearance="danger" onClick={clearDataset}>
+            Clear Data
           </Button>
         </div>
       </header>

@@ -4061,6 +4061,7 @@ __metadata:
     prettier: "npm:^2.8.8"
     pretty-bytes: "npm:^6.1.1"
     react: "npm:^18.2.0"
+    react-collapsible: "npm:^2.10.0"
     react-color: "npm:^2.19.3"
     react-dnd: "npm:^16.0.1"
     react-dnd-html5-backend: "npm:^16.0.1"
@@ -14286,6 +14287,16 @@ __metadata:
   peerDependencies:
     react: ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
   checksum: 7598cc1ca8e5e9200c02d4555b3f3fccd15306ed6de6c617c4bdd5135460367c087c4ca7c8de6337921ff5f616c1f9d8b99492ba255f0599cd055b4ee76e4e23
+  languageName: node
+  linkType: hard
+
+"react-collapsible@npm:^2.10.0":
+  version: 2.10.0
+  resolution: "react-collapsible@npm:2.10.0"
+  peerDependencies:
+    react: ~15 || ~16 || ~17 || ~18
+    react-dom: ~15 || ~16 || ~17 || ~18
+  checksum: 018eadcf4b0300becb5c10c656ddc5a60f5ffe74d74ca4a9c0070c56aa065ff11688be5767c6b8304a7adceeb370884bf61b4468475425c8953834f4c5dd4cb4
   languageName: node
   linkType: hard
 

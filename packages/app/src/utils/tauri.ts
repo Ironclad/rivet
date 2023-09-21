@@ -22,6 +22,7 @@ export async function getEnvVar(name: string): Promise<string | undefined> {
 
 export async function fillMissingSettingsFromEnvironmentVariables(settings: Partial<Settings>, plugins: RivetPlugin[]) {
   const fullSettings: Settings = {
+    ...settings,
     openAiKey: (settings.openAiKey || (await getEnvVar('OPENAI_API_KEY'))) ?? '',
     openAiOrganization: (settings.openAiOrganization || (await getEnvVar('OPENAI_ORG_ID'))) ?? '',
     openAiEndpoint: (settings.openAiEndpoint || (await getEnvVar('OPENAI_ENDPOINT'))) ?? '',

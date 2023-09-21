@@ -1,18 +1,20 @@
-import { Label } from '@atlaskit/form';
+import { HelperMessage, Label } from '@atlaskit/form';
 import { CodeEditorDefinition, ChartNode } from '@ironclad/rivet-core';
 import { useLatest, useDebounceFn } from 'ahooks';
 import { FC, useRef, useEffect, Suspense } from 'react';
 import { monaco } from '../../utils/monaco';
 import { LazyCodeEditor } from '../LazyComponents';
 import { SharedEditorProps } from './SharedEditorProps';
+import { getHelperMessage } from './editorUtils';
 
 export const DefaultCodeEditor: FC<
   SharedEditorProps & {
     editor: CodeEditorDefinition<ChartNode>;
   }
-> = ({ node, isReadonly, onChange, editor: editorDef, onClose }) => {
+> = ({ node, isReadonly, isDisabled, onChange, editor: editorDef, onClose }) => {
   const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
 
+  const helperMessage = getHelperMessage(editorDef, node.data);
   const nodeLatest = useLatest(node);
 
   const debouncedOnChange = useDebounceFn<(node: ChartNode) => void>(onChange, { wait: 100 });
@@ -53,6 +55,7 @@ export const DefaultCodeEditor: FC<
     <Suspense fallback={<div />}>
       <div className="editor-wrapper-wrapper">
         <Label htmlFor="">{editorDef.label}</Label>
+        {helperMessage && <HelperMessage>{helperMessage}</HelperMessage>}
         <div className="editor-wrapper">
           <LazyCodeEditor
             editorRef={editorInstance}
@@ -62,7 +65,7 @@ export const DefaultCodeEditor: FC<
             onChange={onEditorChange}
             theme={editorDef.theme}
             language={editorDef.language}
-            isReadonly={isReadonly}
+            isReadonly={isReadonly || isDisabled}
             onKeyDown={handleKeyDown}
           />
         </div>

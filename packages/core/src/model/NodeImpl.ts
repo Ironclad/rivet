@@ -2,7 +2,7 @@ import { Inputs, Outputs } from './GraphProcessor.js';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition } from './NodeBase.js';
 import { Project } from './Project.js';
 import { InternalProcessContext } from './ProcessContext.js';
-import { EditorDefinition } from './EditorDefinition.js';
+import { EditorDefinition, GetEditorsReturnType } from './EditorDefinition.js';
 import { NodeBodySpec } from './NodeBodySpec.js';
 
 export interface PluginNodeImpl<T extends ChartNode> {
@@ -22,7 +22,7 @@ export interface PluginNodeImpl<T extends ChartNode> {
 
   process(data: T['data'], inputData: Inputs, context: InternalProcessContext): Promise<Outputs>;
 
-  getEditors(data: T['data']): EditorDefinition<T>[] | Promise<EditorDefinition<T>[]>;
+  getEditors(data: T['data']): GetEditorsReturnType<T>;
 
   getBody(data: T['data']): string | NodeBodySpec | NodeBodySpec[] | undefined;
 
@@ -72,7 +72,7 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
 
   abstract process(inputData: Inputs, context: InternalProcessContext): Promise<Outputs>;
 
-  getEditors(): EditorDefinition<T>[] | Promise<EditorDefinition<T>[]> {
+  getEditors(): GetEditorsReturnType<T> {
     return [];
   }
 
@@ -109,7 +109,7 @@ export class PluginNodeImplClass<T extends ChartNode, Type extends T['type'] = T
     return this.impl.process(this.data, inputData, context);
   }
 
-  getEditors(): EditorDefinition<T>[] | Promise<EditorDefinition<T>[]> {
+  getEditors(): GetEditorsReturnType<T> {
     return this.impl.getEditors(this.data);
   }
 

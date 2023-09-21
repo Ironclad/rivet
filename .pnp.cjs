@@ -6788,6 +6788,7 @@ const RAW_RUNTIME_STATE =
           ["prettier", "npm:2.8.8"],\
           ["pretty-bytes", "npm:6.1.1"],\
           ["react", "npm:18.2.0"],\
+          ["react-collapsible", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.10.0"],\
           ["react-color", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.19.3"],\
           ["react-dnd", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:16.0.1"],\
           ["react-dnd-html5-backend", "npm:16.0.1"],\
@@ -19896,6 +19897,32 @@ const RAW_RUNTIME_STATE =
         ],\
         "packagePeers": [\
           "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["react-collapsible", [\
+      ["npm:2.10.0", {\
+        "packageLocation": "./.yarn/cache/react-collapsible-npm-2.10.0-ab06e75446-018eadcf4b.zip/node_modules/react-collapsible/",\
+        "packageDependencies": [\
+          ["react-collapsible", "npm:2.10.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.10.0", {\
+        "packageLocation": "./.yarn/__virtual__/react-collapsible-virtual-9a465f4d51/0/cache/react-collapsible-npm-2.10.0-ab06e75446-018eadcf4b.zip/node_modules/react-collapsible/",\
+        "packageDependencies": [\
+          ["react-collapsible", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.10.0"],\
+          ["@types/react", "npm:18.2.17"],\
+          ["@types/react-dom", "npm:18.2.7"],\
+          ["react", "npm:18.2.0"],\
+          ["react-dom", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:18.2.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/react-dom",\
+          "@types/react",\
+          "react-dom",\
           "react"\
         ],\
         "linkType": "HARD"\

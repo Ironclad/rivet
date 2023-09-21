@@ -23,7 +23,7 @@ import { Inputs, Outputs } from '../GraphProcessor.js';
 import { match } from 'ts-pattern';
 import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 import { InternalProcessContext } from '../ProcessContext.js';
-import { EditorDefinition, expectTypeOptional, getError, getInputOrData } from '../../index.js';
+import { EditorDefinition, GetEditorsReturnType, expectTypeOptional, getError, getInputOrData } from '../../index.js';
 import { dedent } from 'ts-dedent';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
@@ -42,6 +42,7 @@ export type ChatNodeConfigData = {
   numberOfChoices?: number;
   endpoint?: string;
   overrideModel?: string;
+  headers?: { key: string; value: string }[];
 };
 
 export type ChatNodeData = ChatNodeConfigData & {
@@ -58,6 +59,7 @@ export type ChatNodeData = ChatNodeConfigData & {
   useUserInput?: boolean;
   useNumberOfChoicesInput?: boolean;
   useEndpointInput?: boolean;
+  useHeadersInput?: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
@@ -218,6 +220,14 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       });
     }
 
+    if (this.data.useHeadersInput) {
+      inputs.push({
+        dataType: 'object',
+        id: 'headers' as PortId,
+        title: 'Headers',
+      });
+    }
+
     inputs.push({
       dataType: ['chat-message', 'chat-message[]'] as const,
       id: 'prompt' as PortId,
@@ -286,105 +296,138 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataKey: 'model',
         useInputToggleDataKey: 'useModelInput',
         options: openAiModelOptions,
+        disableIf: (data) => {
+          return !!data.overrideModel?.trim();
+        },
+        helperMessage: (data) => {
+          if (data.overrideModel?.trim()) {
+            return `Model overridden to: ${data.overrideModel}`;
+          }
+        },
       },
       {
-        type: 'number',
-        label: 'Temperature',
-        dataKey: 'temperature',
-        useInputToggleDataKey: 'useTemperatureInput',
-        min: 0,
-        max: 2,
-        step: 0.1,
+        type: 'group',
+        label: 'Parameters',
+        editors: [
+          {
+            type: 'number',
+            label: 'Temperature',
+            dataKey: 'temperature',
+            useInputToggleDataKey: 'useTemperatureInput',
+            min: 0,
+            max: 2,
+            step: 0.1,
+          },
+          {
+            type: 'number',
+            label: 'Top P',
+            dataKey: 'top_p',
+            useInputToggleDataKey: 'useTopPInput',
+            min: 0,
+            max: 1,
+            step: 0.1,
+          },
+          {
+            type: 'toggle',
+            label: 'Use Top P',
+            dataKey: 'useTopP',
+            useInputToggleDataKey: 'useUseTopPInput',
+          },
+          {
+            type: 'number',
+            label: 'Max Tokens',
+            dataKey: 'maxTokens',
+            useInputToggleDataKey: 'useMaxTokensInput',
+            min: 0,
+            max: Number.MAX_SAFE_INTEGER,
+            step: 1,
+          },
+          {
+            type: 'string',
+            label: 'Stop',
+            dataKey: 'stop',
+            useInputToggleDataKey: 'useStopInput',
+          },
+          {
+            type: 'number',
+            label: 'Presence Penalty',
+            dataKey: 'presencePenalty',
+            useInputToggleDataKey: 'usePresencePenaltyInput',
+            min: 0,
+            max: 2,
+            step: 0.1,
+          },
+          {
+            type: 'number',
+            label: 'Frequency Penalty',
+            dataKey: 'frequencyPenalty',
+            useInputToggleDataKey: 'useFrequencyPenaltyInput',
+            min: 0,
+            max: 2,
+            step: 0.1,
+          },
+        ],
       },
       {
-        type: 'number',
-        label: 'Top P',
-        dataKey: 'top_p',
-        useInputToggleDataKey: 'useTopPInput',
-        min: 0,
-        max: 1,
-        step: 0.1,
+        type: 'group',
+        label: 'GPT Functions',
+        editors: [
+          {
+            type: 'string',
+            label: 'User',
+            dataKey: 'user',
+            useInputToggleDataKey: 'useUserInput',
+          },
+          {
+            type: 'toggle',
+            label: 'Enable Function Use',
+            dataKey: 'enableFunctionUse',
+          },
+        ],
       },
       {
-        type: 'toggle',
-        label: 'Use Top P',
-        dataKey: 'useTopP',
-        useInputToggleDataKey: 'useUseTopPInput',
-      },
-      {
-        type: 'number',
-        label: 'Max Tokens',
-        dataKey: 'maxTokens',
-        useInputToggleDataKey: 'useMaxTokensInput',
-        min: 0,
-        max: Number.MAX_SAFE_INTEGER,
-        step: 1,
-      },
-      {
-        type: 'string',
-        label: 'Stop',
-        dataKey: 'stop',
-        useInputToggleDataKey: 'useStopInput',
-      },
-      {
-        type: 'number',
-        label: 'Presence Penalty',
-        dataKey: 'presencePenalty',
-        useInputToggleDataKey: 'usePresencePenaltyInput',
-        min: 0,
-        max: 2,
-        step: 0.1,
-      },
-      {
-        type: 'number',
-        label: 'Frequency Penalty',
-        dataKey: 'frequencyPenalty',
-        useInputToggleDataKey: 'useFrequencyPenaltyInput',
-        min: 0,
-        max: 2,
-        step: 0.1,
-      },
-      {
-        type: 'string',
-        label: 'User',
-        dataKey: 'user',
-        useInputToggleDataKey: 'useUserInput',
-      },
-      {
-        type: 'number',
-        label: 'Number of Choices',
-        dataKey: 'numberOfChoices',
-        useInputToggleDataKey: 'useNumberOfChoicesInput',
-        min: 1,
-        max: 10,
-        step: 1,
-        defaultValue: 1,
-      },
-      {
-        type: 'toggle',
-        label: 'Enable Function Use',
-        dataKey: 'enableFunctionUse',
-      },
-      {
-        type: 'string',
-        label: 'Endpoint',
-        dataKey: 'endpoint',
-        useInputToggleDataKey: 'useEndpointInput',
-      },
-      {
-        type: 'string',
-        label: 'Custom Model',
-        dataKey: 'overrideModel',
-      },
-      {
-        type: 'toggle',
-        label: 'Cache (same inputs, same outputs)',
-        dataKey: 'cache',
-      },
-      {
-        type: 'toggle',
-        label: 'Use for subgraph partial output',
-        dataKey: 'useAsGraphPartialOutput',
+        type: 'group',
+        label: 'Advanced',
+        editors: [
+          {
+            type: 'number',
+            label: 'Number of Choices',
+            dataKey: 'numberOfChoices',
+            useInputToggleDataKey: 'useNumberOfChoicesInput',
+            min: 1,
+            max: 10,
+            step: 1,
+            defaultValue: 1,
+          },
+          {
+            type: 'string',
+            label: 'Endpoint',
+            dataKey: 'endpoint',
+            useInputToggleDataKey: 'useEndpointInput',
+          },
+          {
+            type: 'string',
+            label: 'Custom Model',
+            dataKey: 'overrideModel',
+          },
+          {
+            type: 'keyValuePair',
+            label: 'Headers',
+            dataKey: 'headers',
+            useInputToggleDataKey: 'useHeadersInput',
+            keyPlaceholder: 'Header',
+          },
+          {
+            type: 'toggle',
+            label: 'Cache (same inputs, same outputs)',
+            dataKey: 'cache',
+          },
+          {
+            type: 'toggle',
+            label: 'Use for subgraph partial output',
+            dataKey: 'useAsGraphPartialOutput',
+          },
+        ],
       },
     ];
   }
@@ -411,6 +454,20 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     const numberOfChoices = getInputOrData(this.data, inputs, 'numberOfChoices', 'number');
     const endpoint = getInputOrData(this.data, inputs, 'endpoint');
     const overrideModel = getInputOrData(this.data, inputs, 'overrideModel');
+
+    const headersFromData = (this.data.headers ?? []).reduce((acc, header) => {
+      acc[header.key] = header.value;
+      return acc;
+    }, {} as Record<string, string>);
+    const additionalHeaders = this.data.useHeadersInput
+      ? (coerceTypeOptional(inputs['headers' as PortId], 'object') as Record<string, string> | undefined) ??
+        headersFromData
+      : headersFromData;
+
+    const allAdditionalHeaders = {
+      ...context.settings.chatNodeHeaders,
+      ...additionalHeaders,
+    };
 
     // If using a model input, that's priority, otherwise override > main
     const finalModel = this.data.useModelInput && inputs['model' as PortId] != null ? model : overrideModel || model;
@@ -484,6 +541,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               apiKey: context.settings.openAiKey ?? '',
               organization: context.settings.openAiOrganization,
             },
+            headers: allAdditionalHeaders,
             signal: context.signal,
             ...options,
           });

@@ -1,24 +1,26 @@
 import { GraphSelectorEditorDefinition, ChartNode, GraphId } from '@ironclad/rivet-core';
 import { FC } from 'react';
 import { SharedEditorProps } from './SharedEditorProps';
-import { Field } from '@atlaskit/form';
+import { Field, HelperMessage } from '@atlaskit/form';
 import Select from '@atlaskit/select';
 import { orderBy, values } from 'lodash-es';
 import { nanoid } from 'nanoid/non-secure';
 import { useRecoilValue } from 'recoil';
 import { projectState } from '../../state/savedGraphs';
+import { getHelperMessage } from './editorUtils';
 
 export const DefaultGraphSelectorEditor: FC<
   SharedEditorProps & {
     editor: GraphSelectorEditorDefinition<ChartNode>;
   }
-> = ({ node, isReadonly, onChange, editor }) => {
+> = ({ node, isReadonly, isDisabled, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
+  const helperMessage = getHelperMessage(editor, node.data);
 
   return (
     <GraphSelector
       value={data[editor.dataKey] as string | undefined}
-      isReadonly={isReadonly}
+      isReadonly={isReadonly || isDisabled}
       onChange={(selected) =>
         onChange({
           ...node,
@@ -30,6 +32,7 @@ export const DefaultGraphSelectorEditor: FC<
       }
       label={editor.label}
       name={editor.dataKey}
+      helperMessage={helperMessage}
     />
   );
 };
@@ -40,7 +43,8 @@ export const GraphSelector: FC<{
   label: string;
   isReadonly: boolean;
   onChange?: (selected: string) => void;
-}> = ({ value, isReadonly, onChange, label, name }) => {
+  helperMessage?: string;
+}> = ({ value, isReadonly, onChange, label, name, helperMessage }) => {
   const project = useRecoilValue(projectState);
 
   const graphOptions = orderBy(
@@ -56,12 +60,15 @@ export const GraphSelector: FC<{
   return (
     <Field name={name} label={label} isDisabled={isReadonly}>
       {({ fieldProps }) => (
-        <Select
-          {...fieldProps}
-          options={graphOptions}
-          value={selectedOption}
-          onChange={(selected) => onChange?.(selected!.value)}
-        />
+        <>
+          <Select
+            {...fieldProps}
+            options={graphOptions}
+            value={selectedOption}
+            onChange={(selected) => onChange?.(selected!.value)}
+          />
+          {helperMessage && <HelperMessage>{helperMessage}</HelperMessage>}
+        </>
       )}
     </Field>
   );

@@ -10,6 +10,11 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
+
+  --label-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Fira Sans', 'Droid Sans',
+    'Helvetica Neue', sans-serif;
+  --label-color: rgb(159, 173, 188);
+  --label-font-weight: 600;
 }
 
 * {
