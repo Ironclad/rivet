@@ -1,3 +1,4 @@
+export * from './utils/newId.js';
 export * from './model/GraphProcessor.js';
 export * from './model/DataValue.js';
 export * from './model/GraphProcessor.js';
@@ -31,7 +32,6 @@ export type * from './model/Settings.js';
 export * from './model/EditorDefinition.js';
 export * from './model/NodeBodySpec.js';
 export * from './utils/inputs.js';
-export * from './utils/newId.js';
 export * from './utils/misc.js';
 export * from './integrations/DatasetProvider.js';
 export * from './model/Dataset.js';
