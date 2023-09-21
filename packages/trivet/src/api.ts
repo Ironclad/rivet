@@ -57,6 +57,7 @@ export function createTestGraphRunner(opts: { openAiKey: string; executor?: 'nod
           pluginEnv: {},
           pluginSettings: {},
           recordingPlaybackLatency: 1000,
+          chatNodeHeaders: {},
         } satisfies Required<Settings>,
       },
       inputs,

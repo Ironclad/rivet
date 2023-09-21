@@ -15,9 +15,4 @@ export interface Settings<PluginSettings = Record<string, Record<string, unknown
   openAiEndpoint?: string;
 
   chatNodeHeaders?: Record<string, string>;
-
-  // anthropicApiKey?: string;
-  // assemblyAiApiKey?: string;
-
-  //
 }

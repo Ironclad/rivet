@@ -203,6 +203,7 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
             pluginEnv: options.pluginEnv ?? {},
             pluginSettings: options.pluginSettings ?? {},
             recordingPlaybackLatency: 1000,
+            chatNodeHeaders: options.chatNodeHeaders ?? {},
           } satisfies Required<Settings>,
         },
         resolvedInputs,
