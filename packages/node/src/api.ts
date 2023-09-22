@@ -6,6 +6,7 @@ import {
   GraphProcessor,
   NativeApi,
   NodeRegistration,
+  ProcessContext,
   ProcessEvents,
   Project,
   Settings,
@@ -57,6 +58,7 @@ export type RunGraphOptions = {
   };
   abortSignal?: AbortSignal;
   registry?: NodeRegistration;
+  getChatNodeEndpoint?: ProcessContext['getChatNodeEndpoint'];
 } & {
   [P in keyof ProcessEvents as `on${PascalCase<P>}`]?: (params: ProcessEvents[P]) => void;
 } & Settings;
@@ -205,6 +207,7 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
             recordingPlaybackLatency: 1000,
             chatNodeHeaders: options.chatNodeHeaders ?? {},
           } satisfies Required<Settings>,
+          getChatNodeEndpoint: options.getChatNodeEndpoint,
         },
         resolvedInputs,
         resolvedContextValues,

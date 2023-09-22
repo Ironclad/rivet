@@ -464,11 +464,6 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         headersFromData
       : headersFromData;
 
-    const allAdditionalHeaders = {
-      ...context.settings.chatNodeHeaders,
-      ...additionalHeaders,
-    };
-
     // If using a model input, that's priority, otherwise override > main
     const finalModel = this.data.useModelInput && inputs['model' as PortId] != null ? model : overrideModel || model;
 
@@ -509,6 +504,21 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
     const isMultiResponse = this.data.useNumberOfChoicesInput || (this.data.numberOfChoices ?? 1) > 1;
 
+    // Resolve to final endpoint if configured in ProcessContext
+    const configuredEndpoint = endpoint || context.settings.openAiEndpoint || DEFAULT_CHAT_ENDPOINT;
+    const resolvedEndpointAndHeaders = context.getChatNodeEndpoint
+      ? await context.getChatNodeEndpoint(configuredEndpoint, finalModel)
+      : {
+          endpoint: configuredEndpoint,
+          headers: {},
+        };
+
+    const allAdditionalHeaders = {
+      ...context.settings.chatNodeHeaders,
+      ...additionalHeaders,
+      ...resolvedEndpointAndHeaders.headers,
+    };
+
     try {
       return await retry(
         async () => {
@@ -523,7 +533,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             presence_penalty: presencePenalty,
             stop: stop || undefined,
             functions: functions?.length === 0 ? undefined : functions,
-            endpoint: endpoint || context.settings.openAiEndpoint || DEFAULT_CHAT_ENDPOINT,
+            endpoint: resolvedEndpointAndHeaders.endpoint,
           };
           const cacheKey = JSON.stringify(options);
 
@@ -664,6 +674,15 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           randomize: true,
           signal: context.signal,
           onFailedAttempt(err) {
+            if (err.toString().includes('fetch failed') && err.cause) {
+              const cause =
+                getError(err.cause) instanceof AggregateError
+                  ? (err.cause as AggregateError).errors[0]
+                  : getError(err.cause);
+
+              err = cause;
+            }
+
             context.trace(`ChatNode failed, retrying: ${err.toString()}`);
 
             if (context.signal.aborted) {
@@ -673,6 +692,10 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             const { retriesLeft } = err;
 
             if (!(err instanceof OpenAIError)) {
+              if ('code' in err) {
+                throw err;
+              }
+
               return; // Just retry?
             }
 

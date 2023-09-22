@@ -16,6 +16,20 @@ export type ProcessContext = {
   settings: Settings;
   nativeApi?: NativeApi;
   datasetProvider?: DatasetProvider;
+
+  /**
+   * If implemented, chat nodes will first call this to resolve their configured endpoint to a final endpoint.
+   * You can use this for adding auth headers, or to load balance between multiple endpoints.
+   */
+  getChatNodeEndpoint?: (
+    configuredEndpoint: string,
+    configuredModel: string,
+  ) => ChatNodeEndpointInfo | Promise<ChatNodeEndpointInfo>;
+};
+
+export type ChatNodeEndpointInfo = {
+  endpoint: string;
+  headers: Record<string, string>;
 };
 
 export type ProcessId = Opaque<string, 'ProcessId'>;
