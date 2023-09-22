@@ -174,5 +174,3 @@ export type EditorDefinition<T extends ChartNode> =
   | KeyValuePairEditorDefinition<T>
   | EditorDefinitionGroup<T>
   | StringListEditorDefinition<T>;
-
-export type GetEditorsReturnType<T extends ChartNode> = EditorDefinition<T>[] | Promise<EditorDefinition<T>[]>;

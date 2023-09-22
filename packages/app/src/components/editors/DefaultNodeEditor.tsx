@@ -4,6 +4,9 @@ import { css } from '@emotion/react';
 import { toast } from 'react-toastify';
 import { SharedEditorProps } from './SharedEditorProps';
 import { DefaultNodeEditorField } from './DefaultNodeEditorField';
+import { RivetUIContext } from '../../../../core/src/model/RivetUIContext';
+import { datasetProvider } from '../../utils/globals';
+import { useGetRivetUIContext } from '../../hooks/useGetRivetUIContext';
 
 export const defaultEditorContainerStyles = css`
   display: flex;
@@ -91,13 +94,15 @@ export const DefaultNodeEditor: FC<
 > = ({ node, onChange, isReadonly, onClose }) => {
   const [editors, setEditors] = useState<EditorDefinition<ChartNode>[]>([]);
 
+  const getUIContext = useGetRivetUIContext();
+
   useEffect(() => {
     (async () => {
       try {
         const dynamicImpl = globalRivetNodeRegistry.createDynamicImpl(node);
 
         // eslint-disable-next-line @typescript-eslint/await-thenable -- Is is thenable you dummy
-        const loadedEditors = await dynamicImpl.getEditors();
+        const loadedEditors = await dynamicImpl.getEditors(await getUIContext({ node }));
 
         setEditors(loadedEditors);
       } catch (err) {

@@ -23,7 +23,7 @@ import { Inputs, Outputs } from '../GraphProcessor.js';
 import { match } from 'ts-pattern';
 import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 import { InternalProcessContext } from '../ProcessContext.js';
-import { EditorDefinition, GetEditorsReturnType, expectTypeOptional, getError, getInputOrData } from '../../index.js';
+import { EditorDefinition, getError, getInputOrData } from '../../index.js';
 import { dedent } from 'ts-dedent';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;

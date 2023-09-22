@@ -4083,6 +4083,7 @@ __metadata:
     tsx: "npm:^3.12.7"
     type-fest: "npm:^4.0.0"
     typescript: "npm:^5.1.6"
+    use-async-effect: "npm:^2.2.7"
     vite: "npm:^4.4.7"
     vite-plugin-monaco-editor: "npm:^1.1.0"
     vite-plugin-svgr: "npm:^3.2.0"
@@ -16811,6 +16812,15 @@ __metadata:
   dependencies:
     prepend-http: "npm:^2.0.0"
   checksum: f5e84305a7ed1e087bc1c0d263fe05ab432619b4f3ce957a78dcd2b2d989e28b1a3169a7cf8ce9e780e4c45d613f029d38dcf68d7b39b77dbdff197dceb3ac53
+  languageName: node
+  linkType: hard
+
+"use-async-effect@npm:^2.2.7":
+  version: 2.2.7
+  resolution: "use-async-effect@npm:2.2.7"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 8ed139706809cb3d3aed2f788285d0da98ecb057db1c400b6ba09c441386f118fd478912c942f9b59537eb0fb86fa76f5f01d9315fdd1499baac024730e43a52
   languageName: node
   linkType: hard
 

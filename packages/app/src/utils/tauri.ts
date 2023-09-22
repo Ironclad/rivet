@@ -12,9 +12,17 @@ export function isInTauri(): boolean {
   }
 }
 
+const cachedEnvVars: Record<string, string> = {};
+
 export async function getEnvVar(name: string): Promise<string | undefined> {
+  if (cachedEnvVars[name]) {
+    return cachedEnvVars[name];
+  }
+
   if (isInTauri()) {
-    return await invoke('get_environment_variable', { name });
+    const value = (await invoke('get_environment_variable', { name })) as string;
+    cachedEnvVars[name] = value;
+    return value;
   } else {
     return process.env[name];
   }

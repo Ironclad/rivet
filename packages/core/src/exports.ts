@@ -35,6 +35,7 @@ export * from './utils/inputs.js';
 export * from './utils/misc.js';
 export * from './integrations/DatasetProvider.js';
 export * from './model/Dataset.js';
+export * from './utils/getPluginConfig.js';
 
 import * as openai from './utils/openai.js';
 export { openai };

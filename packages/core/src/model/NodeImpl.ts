@@ -2,8 +2,9 @@ import { Inputs, Outputs } from './GraphProcessor.js';
 import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition } from './NodeBase.js';
 import { Project } from './Project.js';
 import { InternalProcessContext } from './ProcessContext.js';
-import { EditorDefinition, GetEditorsReturnType } from './EditorDefinition.js';
+import { EditorDefinition } from './EditorDefinition.js';
 import { NodeBodySpec } from './NodeBodySpec.js';
+import { RivetUIContext } from './RivetUIContext.js';
 
 export interface PluginNodeImpl<T extends ChartNode> {
   getInputDefinitions(
@@ -22,13 +23,13 @@ export interface PluginNodeImpl<T extends ChartNode> {
 
   process(data: T['data'], inputData: Inputs, context: InternalProcessContext): Promise<Outputs>;
 
-  getEditors(data: T['data']): GetEditorsReturnType<T>;
+  getEditors(data: T['data'], context: RivetUIContext): EditorDefinition<T>[] | Promise<EditorDefinition<T>[]>;
 
-  getBody(data: T['data']): string | NodeBodySpec | NodeBodySpec[] | undefined;
+  getBody(data: T['data'], context: RivetUIContext): NodeBody | Promise<NodeBody>;
 
   create(): T;
 
-  getUIData(): NodeUIData;
+  getUIData(context: RivetUIContext): NodeUIData | Promise<NodeUIData>;
 }
 
 export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['type']> {
@@ -72,14 +73,16 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
 
   abstract process(inputData: Inputs, context: InternalProcessContext): Promise<Outputs>;
 
-  getEditors(): GetEditorsReturnType<T> {
+  getEditors(_context: RivetUIContext): EditorDefinition<T>[] | Promise<EditorDefinition<T>[]> {
     return [];
   }
 
-  getBody(): string | NodeBodySpec | NodeBodySpec[] | undefined {
+  getBody(_context: RivetUIContext): NodeBody | Promise<NodeBody> {
     return undefined;
   }
 }
+
+export type NodeBody = string | NodeBodySpec | NodeBodySpec[] | undefined;
 
 export class PluginNodeImplClass<T extends ChartNode, Type extends T['type'] = T['type']> extends NodeImpl<T, Type> {
   readonly impl: PluginNodeImpl<T>;
@@ -109,12 +112,12 @@ export class PluginNodeImplClass<T extends ChartNode, Type extends T['type'] = T
     return this.impl.process(this.data, inputData, context);
   }
 
-  getEditors(): GetEditorsReturnType<T> {
-    return this.impl.getEditors(this.data);
+  getEditors(context: RivetUIContext): EditorDefinition<T>[] | Promise<EditorDefinition<T>[]> {
+    return this.impl.getEditors(this.data, context);
   }
 
-  getBody(): string | NodeBodySpec | NodeBodySpec[] | undefined {
-    return this.impl.getBody(this.data);
+  getBody(context: RivetUIContext): NodeBody | Promise<NodeBody> {
+    return this.impl.getBody(this.data, context);
   }
 }
 
@@ -131,7 +134,7 @@ export type NodeImplConstructor<T extends ChartNode> = {
 
   create(pluginImpl?: PluginNodeImpl<T>): T;
 
-  getUIData(pluginImpl?: PluginNodeImpl<T>): NodeUIData;
+  getUIData(context: RivetUIContext): NodeUIData | Promise<NodeUIData>;
 };
 
 export type NodeDefinition<T extends ChartNode> = {

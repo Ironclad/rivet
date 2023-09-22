@@ -6810,6 +6810,7 @@ const RAW_RUNTIME_STATE =
           ["tsx", "npm:3.12.7"],\
           ["type-fest", "npm:4.0.0"],\
           ["typescript", "patch:typescript@npm%3A5.1.6#optional!builtin<compat/typescript>::version=5.1.6&hash=5da071"],\
+          ["use-async-effect", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.2.7"],\
           ["vite", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.4.7"],\
           ["vite-plugin-monaco-editor", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:1.1.0"],\
           ["vite-plugin-svgr", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:3.2.0"],\
@@ -23223,6 +23224,28 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["url-parse-lax", "npm:3.0.0"],\
           ["prepend-http", "npm:2.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["use-async-effect", [\
+      ["npm:2.2.7", {\
+        "packageLocation": "./.yarn/cache/use-async-effect-npm-2.2.7-67b614b316-8ed1397068.zip/node_modules/use-async-effect/",\
+        "packageDependencies": [\
+          ["use-async-effect", "npm:2.2.7"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.2.7", {\
+        "packageLocation": "./.yarn/__virtual__/use-async-effect-virtual-117c4eb7fb/0/cache/use-async-effect-npm-2.2.7-67b614b316-8ed1397068.zip/node_modules/use-async-effect/",\
+        "packageDependencies": [\
+          ["use-async-effect", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.2.7"],\
+          ["@types/react", "npm:18.2.17"],\
+          ["react", "npm:18.2.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
         ],\
         "linkType": "HARD"\
       }]\

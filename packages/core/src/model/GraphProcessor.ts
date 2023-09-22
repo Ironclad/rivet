@@ -30,6 +30,7 @@ import { coerceTypeOptional } from '../utils/coerceType.js';
 import { BuiltInNodeType, BuiltInNodes, globalRivetNodeRegistry } from './Nodes.js';
 import { NodeRegistration } from './NodeRegistration.js';
 import { StringPluginConfigurationSpec } from './RivetPlugin.js';
+import { getPluginConfig } from '../utils/getPluginConfig.js';
 
 // CJS compatibility, gets default.default for whatever reason
 let PQueue = PQueueImport;
@@ -1409,36 +1410,7 @@ export class GraphProcessor {
       abortGraph: (error) => {
         this.abort(error === undefined, error);
       },
-      getPluginConfig: (name) => {
-        if (!plugin) {
-          return undefined;
-        }
-
-        const configSpec = plugin?.configSpec?.[name];
-
-        if (!configSpec) {
-          return undefined;
-        }
-
-        const pluginSettings = this.#context.settings.pluginSettings?.[plugin.id];
-        if (pluginSettings) {
-          const value = pluginSettings[name];
-          if (!value || typeof value !== 'string') {
-            return undefined;
-          }
-
-          return value;
-        }
-
-        const envFallback = (configSpec as StringPluginConfigurationSpec).pullEnvironmentVariable;
-        const envFallbackName = envFallback === true ? name : envFallback;
-
-        if (envFallbackName && this.#context.settings.pluginEnv?.[envFallbackName]) {
-          return this.#context.settings.pluginEnv[envFallbackName];
-        }
-
-        return undefined;
-      },
+      getPluginConfig: (name) => getPluginConfig(plugin, this.#context.settings, name),
     };
 
     await this.#waitUntilUnpaused();

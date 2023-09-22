@@ -1,8 +1,12 @@
-import { NodeUIData, globalRivetNodeRegistry } from '@ironclad/rivet-core';
+import { NodeUIData, getError, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { ContextMenuItem } from './useContextMenuConfiguration';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useBuiltInNodeImages } from './useBuiltInNodeImages';
 import { useDependsOnPlugins } from './useDependsOnPlugins';
+import { useGetRivetUIContext } from './useGetRivetUIContext';
+import useAsyncEffect from 'use-async-effect';
+import { toast } from 'react-toastify';
+import { isNotNull } from '../utils/genericUtilFunctions';
 
 export const addContextMenuGroups = [
   {
@@ -56,51 +60,68 @@ export const addContextMenuGroups = [
 export function useContextMenuAddNodeConfiguration() {
   const constructors = globalRivetNodeRegistry.getNodeConstructors();
   const builtInImages = useBuiltInNodeImages();
+  const getUIContext = useGetRivetUIContext();
 
-  const uiData = constructors.map((constructor) => {
-    const { type } = constructor.create();
+  const [uiData, setUiData] = useState<readonly { type: string; uiData: NodeUIData }[]>([]);
 
-    const uiData = constructor.getUIData
-      ? constructor.getUIData()
-      : ({
-        group: 'Custom',
-        contextMenuTitle: type,
-        infoBoxTitle: type,
-        infoBoxBody: '',
-      } satisfies NodeUIData);
+  useAsyncEffect(async () => {
+    const context = await getUIContext({});
 
-    return { type, uiData };
+    const uiData = (
+      await Promise.all(
+        constructors.map(async (constructor) => {
+          try {
+            const { type } = constructor.create();
+
+            const uiData = constructor.getUIData // eslint-disable-next-line @typescript-eslint/await-thenable -- it is thenable you dummy
+              ? await constructor.getUIData(context)
+              : ({
+                  group: 'Custom',
+                  contextMenuTitle: type,
+                  infoBoxTitle: type,
+                  infoBoxBody: '',
+                } satisfies NodeUIData);
+
+            return { type, uiData };
+          } catch (err) {
+            toast.error(`Error getting UI data for node type ${constructor.name}: ${getError(err).message}`);
+            return undefined;
+          }
+        }),
+      )
+    ).filter(isNotNull);
+
+    setUiData(uiData);
   });
 
   const plugins = useDependsOnPlugins();
   const groupsWithItems = useMemo(() => {
-    const groups = ([
-      ...addContextMenuGroups,
-      ...plugins.flatMap(plugin => plugin.contextMenuGroups ?? [])
-    ]).map((group) => {
-      const items = uiData
-        .filter((item) =>
-          Array.isArray(item.uiData.group)
-            ? item.uiData.group.includes(group.label)
-            : item.uiData.group === group.label,
-        )
-        .map((item): ContextMenuItem => {
-          const { type } = item;
+    const groups = [...addContextMenuGroups, ...plugins.flatMap((plugin) => plugin.contextMenuGroups ?? [])].map(
+      (group) => {
+        const items = uiData
+          .filter((item) =>
+            Array.isArray(item.uiData.group)
+              ? item.uiData.group.includes(group.label)
+              : item.uiData.group === group.label,
+          )
+          .map((item): ContextMenuItem => {
+            const { type } = item;
 
-          return {
-            id: `add-node:${type}`,
-            label: item.uiData.contextMenuTitle ?? type,
-            data: type,
-            infoBox: {
-              title: item.uiData.infoBoxTitle ?? type,
-              description: item.uiData.infoBoxBody ?? '',
-              image: builtInImages[type as keyof typeof builtInImages] ?? undefined,
-            },
-          };
-        });
+            return {
+              id: `add-node:${type}`,
+              label: item.uiData.contextMenuTitle ?? type,
+              data: type,
+              infoBox: {
+                title: item.uiData.infoBoxTitle ?? type,
+                description: item.uiData.infoBoxBody ?? '',
+                image: builtInImages[type as keyof typeof builtInImages] ?? undefined,
+              },
+            };
+          });
 
-      return { ...group, items };
-    });
+        return { ...group, items };
+      },
+    );
 
     return groups.filter((group) => group.items.length > 0);
   }, [builtInImages, uiData]);

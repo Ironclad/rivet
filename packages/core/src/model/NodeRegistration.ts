@@ -9,6 +9,7 @@ import {
 } from '../index.js';
 import { keys, mapValues, values } from '../utils/typeSafety.js';
 import { RivetPlugin } from './RivetPlugin.js';
+import { RivetUIContext } from './RivetUIContext.js';
 
 export class NodeRegistration<NodeTypes extends string = never, Nodes extends ChartNode = never> {
   NodesType: Nodes = undefined!;
@@ -75,8 +76,8 @@ export class NodeRegistration<NodeTypes extends string = never, Nodes extends Ch
         return definition.impl.create();
       }
 
-      static getUIData() {
-        return definition.impl.getUIData();
+      static getUIData(context: RivetUIContext) {
+        return definition.impl.getUIData(context);
       }
     };
 
