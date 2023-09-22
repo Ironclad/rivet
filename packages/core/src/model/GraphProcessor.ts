@@ -40,7 +40,7 @@ if (typeof PQueue !== 'function') {
 
 export type ProcessEvents = {
   /** Called when processing has started. */
-  start: { project: Project; inputs: GraphInputs; contextValues: Record<string, DataValue> };
+  start: { project: Project; startGraph: NodeGraph; inputs: GraphInputs; contextValues: Record<string, DataValue> };
 
   /** Called when a graph or subgraph has started. */
   graphStart: { graph: NodeGraph; inputs: GraphInputs };
@@ -473,6 +473,7 @@ export class GraphProcessor {
               project: this.#project,
               contextValues: data.contextValues,
               inputs: data.inputs,
+              startGraph: getGraph(data.startGraph),
             });
             this.#contextValues = data.contextValues;
             this.#graphInputs = data.inputs;
@@ -646,6 +647,7 @@ export class GraphProcessor {
           contextValues: this.#contextValues,
           inputs: this.#graphInputs,
           project: this.#project,
+          startGraph: this.#graph,
         });
       }
 
@@ -1168,6 +1170,10 @@ export class GraphProcessor {
               (node, partialOutputs, index) =>
                 this.#emitter.emit('partialOutput', { node, outputs: partialOutputs, index, processId }),
             );
+
+            if (output['cost' as PortId]?.type === 'number') {
+              this.#totalCost += coerceTypeOptional(output['cost' as PortId], 'number') ?? 0;
+            }
             results.push({ type: 'output', output });
           } catch (error) {
             results.push({ type: 'error', error: getError(error) });
@@ -1192,6 +1198,10 @@ export class GraphProcessor {
                 (node, partialOutputs, index) =>
                   this.#emitter.emit('partialOutput', { node, outputs: partialOutputs, index, processId }),
               );
+
+              if (output['cost' as PortId]?.type === 'number') {
+                this.#totalCost += coerceTypeOptional(output['cost' as PortId], 'number') ?? 0;
+              }
               return { type: 'output', output };
             } catch (error) {
               return { type: 'error', error: getError(error) };

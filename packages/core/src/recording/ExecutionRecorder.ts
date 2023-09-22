@@ -81,10 +81,11 @@ const toRecordedEventMap: {
   globalSet: ({ id, processId, value }) => ({ id, processId, value }),
   pause: () => void 0,
   resume: () => void 0,
-  start: ({ contextValues, inputs, project }) => ({
+  start: ({ contextValues, inputs, project, startGraph }) => ({
     contextValues,
     inputs,
     projectId: project.metadata!.id!,
+    startGraph: startGraph.metadata!.id!,
   }),
   trace: (message) => message,
 };

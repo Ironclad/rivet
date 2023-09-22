@@ -19,6 +19,7 @@ import { themeState } from '../state/settings';
 import clsx from 'clsx';
 import { useLoadStaticData } from '../hooks/useLoadStaticData';
 import { DataStudioRenderer } from './dataStudio/DataStudio';
+import { StatusBar } from './StatusBar';
 
 const styles = css`
   overflow: hidden;
@@ -48,6 +49,7 @@ export const RivetApp: FC = () => {
         onPauseGraph={tryPauseGraph}
         onResumeGraph={tryResumeGraph}
       />
+      <StatusBar />
       <DebuggerPanelRenderer />
       <LeftSidebar />
       <GraphBuilder />

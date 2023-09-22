@@ -16,7 +16,6 @@ export class DebuggerDatasetProvider implements DatasetProvider {
   onrequest: ((type: string, data: any) => void) | undefined;
 
   handleResponse(type: string, data: any) {
-    console.dir({ type, data, listeners: this.listeners });
     const { requestId, payload } = data;
 
     if (type === 'datasets:response') {

@@ -35,6 +35,11 @@ export const runningGraphsState = atom<GraphId[]>({
   default: [],
 });
 
+export const rootGraphState = atom<GraphId | undefined>({
+  key: 'rootGraph',
+  default: undefined,
+});
+
 export const lastRunData = selectorFamily<ProcessDataForNode[] | undefined, NodeId>({
   key: 'lastRunData',
   get:

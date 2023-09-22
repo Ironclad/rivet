@@ -70,7 +70,7 @@ export function useRemoteExecutor() {
         currentExecution.onUserInput(data as ProcessEvents['userInput']);
         break;
       case 'start':
-        currentExecution.onStart();
+        currentExecution.onStart(data as ProcessEvents['start']);
         break;
       case 'done':
         const doneData = data as ProcessEvents['done'];

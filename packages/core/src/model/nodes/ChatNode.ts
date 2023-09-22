@@ -643,6 +643,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             getCostForTokens(responseTokenCount, 'completion', model as keyof typeof openaiModels);
 
           output['cost' as PortId] = { type: 'number', value: cost };
+          output['__hidden_token_count' as PortId] = { type: 'number', value: requestTokenCount + responseTokenCount };
 
           const duration = endTime - startTime;
 

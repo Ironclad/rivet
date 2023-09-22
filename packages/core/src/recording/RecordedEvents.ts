@@ -18,7 +18,7 @@ export type RecordingId = Opaque<string, 'RecordingId'>;
 export type RecordedEventsMap = OverrideProperties<
   ProcessEvents,
   {
-    start: { projectId: ProjectId; inputs: GraphInputs; contextValues: Record<string, DataValue> };
+    start: { projectId: ProjectId; inputs: GraphInputs; contextValues: Record<string, DataValue>; startGraph: GraphId };
 
     /** Called when a graph or subgraph has started. */
     graphStart: { graphId: GraphId; inputs: GraphInputs };
