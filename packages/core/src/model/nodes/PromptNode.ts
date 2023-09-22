@@ -1,7 +1,15 @@
 import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid/non-secure';
 import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { EditorDefinition, Inputs, NodeBodySpec, Outputs, coerceType } from '../../index.js';
+import {
+  ChatMessage,
+  EditorDefinition,
+  Inputs,
+  NodeBodySpec,
+  Outputs,
+  coerceType,
+  getTokenCountForMessages,
+} from '../../index.js';
 import { mapValues } from 'lodash-es';
 import { dedent } from 'ts-dedent';
 
@@ -16,6 +24,7 @@ export type PromptNodeData = {
   name?: string;
   useNameInput?: boolean;
   enableFunctionCall?: boolean;
+  computeTokenCount?: boolean;
 };
 
 export class PromptNodeImpl extends NodeImpl<PromptNode> {
@@ -86,13 +95,23 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
   }
 
   getOutputDefinitions(): NodeOutputDefinition[] {
-    return [
+    const outputs: NodeOutputDefinition[] = [
       {
         id: 'output' as PortId,
         title: 'Output',
         dataType: 'chat-message',
       },
     ];
+
+    if (this.chartNode.data.computeTokenCount) {
+      outputs.push({
+        id: 'tokenCount' as PortId,
+        title: 'Token Count',
+        dataType: 'number',
+      });
+    }
+
+    return outputs;
   }
 
   getEditors(): EditorDefinition<PromptNode>[] {
@@ -119,6 +138,11 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
         type: 'toggle',
         label: 'Enable Function Call',
         dataKey: 'enableFunctionCall',
+      },
+      {
+        type: 'toggle',
+        label: 'Compute Token Count',
+        dataKey: 'computeTokenCount',
       },
       {
         type: 'code',
@@ -174,19 +198,39 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
 
     const outputValue = this.interpolate(this.chartNode.data.promptText, inputMap);
 
-    return {
+    const message: ChatMessage = {
+      type: this.chartNode.data.type,
+      message: outputValue,
+      name: this.data.name,
+      function_call: this.data.enableFunctionCall ? coerceType(inputs['function-call' as PortId], 'object') : undefined,
+    };
+
+    const outputs: Outputs = {
       ['output' as PortId]: {
         type: 'chat-message',
-        value: {
-          type: this.chartNode.data.type,
-          message: outputValue,
-          name: this.data.name,
-          function_call: this.data.enableFunctionCall
-            ? coerceType(inputs['function-call' as PortId], 'object')
-            : undefined,
-        },
+        value: message,
       },
     };
+
+    if (this.chartNode.data.computeTokenCount) {
+      const tokenCount = getTokenCountForMessages(
+        [
+          {
+            name: message.name,
+            content: message.message,
+            function_call: message.function_call,
+            role: message.type,
+          },
+        ],
+        'gpt-4',
+      );
+      outputs['tokenCount' as PortId] = {
+        type: 'number',
+        value: tokenCount,
+      };
+    }
+
+    return outputs;
   }
 }
 
