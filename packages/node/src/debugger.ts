@@ -210,8 +210,8 @@ export function startDebuggerServer(
       processor.on('nodeExcluded', (data) => {
         this.broadcast(processor, 'nodeExcluded', data);
       });
-      processor.on('start', () => {
-        this.broadcast(processor, 'start', null);
+      processor.on('start', (data) => {
+        this.broadcast(processor, 'start', data);
       });
       processor.on('done', (data) => {
         this.broadcast(processor, 'done', data);
