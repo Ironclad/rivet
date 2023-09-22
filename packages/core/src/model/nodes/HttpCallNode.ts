@@ -103,7 +103,7 @@ export class HttpCallNodeImpl extends NodeImpl<HttpCallNode> {
       },
       {
         dataType: 'object',
-        id: 'headers' as PortId,
+        id: 'res_headers' as PortId,
         title: 'Headers',
       },
     ];
@@ -223,7 +223,7 @@ export class HttpCallNodeImpl extends NodeImpl<HttpCallNode> {
         type: 'number',
         value: response.status,
       },
-      ['headers' as PortId]: {
+      ['res_headers' as PortId]: {
         type: 'object',
         value: Object.fromEntries(response.headers.entries()),
       },
