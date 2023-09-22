@@ -4,8 +4,8 @@ import { useTotalRunCost } from '../hooks/useTotalRunCost';
 
 const styles = css`
   position: fixed;
-  bottom: 0;
-  right: 0;
+  bottom: 8px;
+  right: 8px;
   height: 32px;
   width: auto;
   background: var(--grey-darker);
@@ -16,9 +16,10 @@ const styles = css`
   justify-content: flex-end;
   padding: 0 8px;
   z-index: 50;
-  box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   gap: 16px;
   font-size: 0.8rem;
+  border-radius: 5px;
 `;
 
 export const StatusBar: FC<{}> = () => {
