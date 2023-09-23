@@ -1,4 +1,4 @@
-export * from './utils/newId.js';
+export * from './utils/index.js';
 export * from './model/GraphProcessor.js';
 export * from './model/DataValue.js';
 export * from './model/NodeBase.js';

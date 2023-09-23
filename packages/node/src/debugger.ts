@@ -1,20 +1,18 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import {
-  GraphId,
-  GraphProcessor,
-  Project,
+  type GraphId,
+  type GraphProcessor,
+  type Project,
   getError,
-  Settings,
-  GraphInputs,
-  NodeId,
-  StringArrayDataValue,
-  DataId,
-  deserializeDatasets,
-  CombinedDataset,
+  type Settings,
+  type GraphInputs,
+  type NodeId,
+  type StringArrayDataValue,
+  type DataId,
 } from '@ironclad/rivet-core';
 import { match } from 'ts-pattern';
 import Emittery from 'emittery';
-import { DebuggerDatasetProvider } from './index.js';
+import { type DebuggerDatasetProvider } from './index.js';
 
 export interface RivetDebuggerServer {
   on: Emittery<DebuggerEvents>['on'];

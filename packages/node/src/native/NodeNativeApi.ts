@@ -1,9 +1,8 @@
 import { opendir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { lstatSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { BaseDir, NativeApi, ReadDirOptions } from '@ironclad/rivet-core';
+import { type BaseDir, type NativeApi, type ReadDirOptions } from '@ironclad/rivet-core';
 import { minimatch } from 'minimatch';
-import { exec } from 'child_process';
 
 async function* walk(dir: string): AsyncGenerator<string> {
   for await (const d of await opendir(dir)) {

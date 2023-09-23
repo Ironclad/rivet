@@ -1,12 +1,11 @@
-import WebSocket, { WebSocketServer } from 'ws';
 import {
-  CombinedDataset,
-  Dataset,
-  DatasetId,
-  DatasetMetadata,
-  DatasetProvider,
-  DatasetRow,
-  ProjectId,
+  type CombinedDataset,
+  type Dataset,
+  type DatasetId,
+  type DatasetMetadata,
+  type DatasetProvider,
+  type DatasetRow,
+  type ProjectId,
   newId,
 } from '@ironclad/rivet-core';
 

@@ -1,26 +1,26 @@
 import {
-  DataValue,
-  DatasetProvider,
-  ExternalFunction,
-  GraphId,
+  type DataValue,
+  type DatasetProvider,
+  type ExternalFunction,
+  type GraphId,
   GraphProcessor,
-  NativeApi,
-  NodeRegistration,
-  ProcessContext,
-  ProcessEvents,
-  Project,
-  Settings,
-  StringPluginConfigurationSpec,
+  type NativeApi,
+  type NodeRegistration,
+  type ProcessContext,
+  type ProcessEvents,
+  type Project,
+  type Settings,
+  type StringPluginConfigurationSpec,
   deserializeProject,
   globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
 
 import { readFile } from 'node:fs/promises';
-import { RivetDebuggerServer } from './debugger.js';
-import { PascalCase } from 'type-fest';
+import { type RivetDebuggerServer } from './debugger.js';
+import { type PascalCase } from 'type-fest';
 import { NodeNativeApi } from './native/NodeNativeApi.js';
 import { mapValues } from 'lodash-es';
-import { AttachedData } from '../../core/src/utils/serialization/serializationUtils.js';
+import { type AttachedData } from '../../core/src/utils/serialization/serializationUtils.js';
 
 export async function loadProjectFromFile(path: string): Promise<Project> {
   const content = await readFile(path, { encoding: 'utf8' });
