@@ -1,4 +1,4 @@
-import { type Opaque } from 'type-fest';
+import type { Opaque } from 'type-fest';
 import { type GraphId, type NodeGraph } from './NodeGraph.js';
 import { type PluginLoadSpec } from './PluginLoadSpec.js';
 

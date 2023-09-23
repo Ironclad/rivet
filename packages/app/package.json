@@ -79,7 +79,7 @@
     "csv-parse": "^5.5.0",
     "csv-stringify": "^6.4.2",
     "emittery": "^1.0.1",
-    "esbuild": "^0.18.17",
+    "esbuild": "^0.19.3",
     "eslint": "^8.46.0",
     "eslint-config-react-app": "^7.0.1",
     "fuse.js": "^6.6.2",

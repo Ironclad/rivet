@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid/non-secure';
 import { type ChartNode, type NodeConnection } from './NodeBase.js';
-import { type Opaque } from 'type-fest';
+import type { Opaque } from 'type-fest';
 import { type AttachedData } from '../utils/serialization/serializationUtils.js';
 
 export type GraphId = Opaque<string, 'GraphId'>;

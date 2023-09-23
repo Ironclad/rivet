@@ -8,8 +8,9 @@
     "declarationDir": "dist/types",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "verbatimModuleSyntax": false,
-    "noEmit": true
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "importsNotUsedAsValues": "remove"
   },
   "include": ["src", "bin", "scripts"],
   "ts-node": {

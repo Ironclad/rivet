@@ -1,4 +1,4 @@
-import { type Opaque, type OverrideProperties } from 'type-fest';
+import type { Opaque, OverrideProperties } from 'type-fest';
 import {
   type ProcessEvents,
   type ProjectId,

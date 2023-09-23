@@ -1,4 +1,4 @@
-import { type Opaque } from 'type-fest';
+import type { Opaque } from 'type-fest';
 import {
   type Settings,
   type NativeApi,
