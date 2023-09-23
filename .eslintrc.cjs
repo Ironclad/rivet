@@ -106,7 +106,6 @@ module.exports = {
     '@typescript-eslint/no-dynamic-delete': 'off',
     '@typescript-eslint/no-invalid-void-type': 'off',
     '@typescript-eslint/no-throw-literal': 'off',
-    '@typescript-eslint/restrict-plus-operands': 'off',
     '@typescript-eslint/no-non-null-asserted-optional-chain': 'off',
     '@typescript-eslint/triple-slash-reference': 'off',
   },

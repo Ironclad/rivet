@@ -4,12 +4,14 @@
     "module": "ESNext",
     "moduleResolution": "NodeNext",
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": ".",
     "declarationDir": "dist/types",
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": false,
+    "noEmit": true
   },
-  "include": ["src"],
+  "include": ["src", "bin", "scripts"],
   "ts-node": {
     "swc": true,
     "compilerOptions": {

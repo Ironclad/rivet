@@ -8,11 +8,11 @@ import {
   DebuggerDatasetProvider,
 } from '@ironclad/rivet-node';
 import * as Rivet from '@ironclad/rivet-core';
-import { RivetPluginInitializer } from '@ironclad/rivet-core';
+import { type RivetPluginInitializer } from '@ironclad/rivet-core';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { P, match } from 'ts-pattern';
-import appdataPath from 'appdata-path';
+import { getAppDataPath } from 'appdata-path';
 import { join } from 'node:path';
 import { access, readFile } from 'node:fs/promises';
 
@@ -70,7 +70,7 @@ const rivetDebugger = startDebuggerServer({
             registry.registerPlugin(initializedPlugin);
           })
           .with({ type: 'package' }, async (spec) => {
-            const localDataDir = appdataPath('com.ironcladapp.rivet');
+            const localDataDir = getAppDataPath('com.ironcladapp.rivet');
             const pluginDir = join(localDataDir, `plugins/${spec.package}-${spec.tag}/package`);
 
             const packageJsonPath = join(pluginDir, 'package.json');
