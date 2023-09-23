@@ -4,6 +4,7 @@ export * from './model/DataValue.js';
 export * from './model/NodeBase.js';
 export * from './model/NodeGraph.js';
 export * from './model/NodeImpl.js';
+export * from './model/NodeDefinition.js';
 export * from './model/Nodes.js';
 export * from './model/Project.js';
 export * from './native/BaseDir.js';
