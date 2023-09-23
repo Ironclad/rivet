@@ -13,6 +13,7 @@ import {
   type StringPluginConfigurationSpec,
   deserializeProject,
   globalRivetNodeRegistry,
+  type AttachedData,
 } from '@ironclad/rivet-core';
 
 import { readFile } from 'node:fs/promises';
@@ -20,7 +21,6 @@ import { type RivetDebuggerServer } from './debugger.js';
 import type { PascalCase } from 'type-fest';
 import { NodeNativeApi } from './native/NodeNativeApi.js';
 import { mapValues } from 'lodash-es';
-import { type AttachedData } from '../../core/src/utils/serialization/serializationUtils.js';
 
 export async function loadProjectFromFile(path: string): Promise<Project> {
   const content = await readFile(path, { encoding: 'utf8' });
