@@ -1,10 +1,12 @@
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import type { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid/non-secure';
-import { DataValue, ArrayDataValue, StringDataValue } from '../DataValue.js';
+import type { ArrayDataValue, StringDataValue } from '../DataValue.js';
 import { zip } from 'lodash-es';
-import { Outputs, Inputs, expectType, EditorDefinition, NodeBodySpec, coerceType } from '../../index.js';
+import { type Outputs, type Inputs, type EditorDefinition, type NodeBodySpec } from '../../index.js';
 import { dedent } from 'ts-dedent';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { coerceType } from '../../utils/coerceType.js';
 
 export type UserInputNode = ChartNode<'userInput', UserInputNodeData>;
 

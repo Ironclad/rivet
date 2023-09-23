@@ -1,4 +1,4 @@
-import { RivetPlugin, Settings, StringPluginConfigurationSpec } from '../index.js';
+import type { RivetPlugin, Settings, StringPluginConfigurationSpec } from '../index.js';
 
 export function getPluginConfig(plugin: RivetPlugin | undefined, settings: Settings, name: string) {
   if (!plugin) {

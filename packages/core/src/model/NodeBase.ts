@@ -1,6 +1,6 @@
-import { Opaque } from 'type-fest';
-import { DataType } from './DataValue.js';
-import { BooleanNodeImpl, GraphId } from '../index.js';
+import type { Opaque } from 'type-fest';
+import type { DataType } from './DataValue.js';
+import type { GraphId } from '../index.js';
 
 /** Unique in a NodeGraph. */
 export type NodeId = Opaque<string, 'NodeId'>;

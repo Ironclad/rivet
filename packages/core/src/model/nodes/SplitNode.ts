@@ -1,22 +1,19 @@
-import {
+import type {
   ChartNode,
   NodeId,
-  NodeImpl,
   NodeInputDefinition,
   NodeOutputDefinition,
   NodeUIData,
-  dedent,
-  nodeDefinition,
-  newId,
   EditorDefinition,
   PortId,
-  getInputOrData,
-  coerceType,
   Inputs,
   InternalProcessContext,
   Outputs,
   NodeBodySpec,
 } from '../../index.js';
+import { NodeImpl } from '../NodeImpl.js';
+import { coerceType, dedent, getInputOrData, newId } from '../../utils/index.js';
+import { nodeDefinition } from '../NodeDefinition.js';
 
 export type SplitNode = ChartNode<'split', SplitNodeData>;
 

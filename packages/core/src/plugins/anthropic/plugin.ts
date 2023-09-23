@@ -1,4 +1,4 @@
-import { RivetPlugin } from '@ironclad/rivet-core';
+import { type RivetPlugin } from '../../index.js';
 import { chatAnthropicNode } from './nodes/ChatAnthropicNode.js';
 
 export const anthropicPlugin: RivetPlugin = {

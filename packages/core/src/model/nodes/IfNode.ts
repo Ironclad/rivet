@@ -1,8 +1,15 @@
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { ControlFlowExcludedDataValue, ScalarDataValue, ArrayDataValue } from '../DataValue.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
+import { type ControlFlowExcludedDataValue, type ScalarDataValue, type ArrayDataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid/non-secure';
-import { Inputs, Outputs } from '../GraphProcessor.js';
+import type { Inputs, Outputs } from '../GraphProcessor.js';
 import { dedent } from 'ts-dedent';
 
 export type IfNode = ChartNode<'if', IfNodeData>;

@@ -1,4 +1,4 @@
-import { BaseDir } from './BaseDir.js';
+import { type BaseDir } from './BaseDir.js';
 
 export type ReadDirOptions = {
   recursive?: boolean;

@@ -1,20 +1,27 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { nanoid } from 'nanoid/non-secure';
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
 import {
-  FunctionDataValues,
-  ScalarDataType,
-  ScalarDataValue,
-  ScalarOrArrayDataType,
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type PortId,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import {
+  type FunctionDataValues,
+  type ScalarDataType,
+  type ScalarDataValue,
+  type ScalarOrArrayDataType,
   isArrayDataType,
   isScalarDataType,
   scalarDefaults,
 } from '../DataValue.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { coerceType } from '../../utils/coerceType.js';
-import { InternalProcessContext } from '../ProcessContext.js';
+import { type InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
-import { EditorDefinition, NodeBodySpec } from '../../index.js';
+import { type EditorDefinition, type NodeBodySpec } from '../../index.js';
 
 export type GetGlobalNode = ChartNode<'getGlobal', GetGlobalNodeData>;
 

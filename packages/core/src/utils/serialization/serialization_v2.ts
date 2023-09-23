@@ -1,4 +1,4 @@
-import { Project, NodeGraph } from '../../index.js';
+import type { Project, NodeGraph } from '../../index.js';
 import { doubleCheckProject } from './serializationUtils.js';
 // @ts-ignore
 import * as yaml from 'yaml';

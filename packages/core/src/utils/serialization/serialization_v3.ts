@@ -1,5 +1,5 @@
 import { mapValues } from 'lodash-es';
-import {
+import type {
   NodeGraph,
   Project,
   GraphId,

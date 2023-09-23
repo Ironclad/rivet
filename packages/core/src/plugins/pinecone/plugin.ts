@@ -1,5 +1,6 @@
-import { registerIntegration, RivetPlugin } from '../../index.js';
+import { type RivetPlugin } from '../../index.js';
 import { PineconeVectorDatabase } from './PineconeVectorDatabase.js';
+import { registerIntegration } from '../../integrations/integrations.js';
 
 export const pineconePlugin: RivetPlugin = {
   id: 'pinecone',

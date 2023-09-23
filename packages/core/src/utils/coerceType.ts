@@ -1,10 +1,9 @@
 import { match } from 'ts-pattern';
 import {
-  ArrayDataValues,
-  ChatMessage,
-  DataType,
-  DataValue,
-  GetDataValue,
+  type ChatMessage,
+  type DataType,
+  type DataValue,
+  type GetDataValue,
   getScalarTypeOf,
   isArrayDataType,
   isArrayDataValue,

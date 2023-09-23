@@ -1,6 +1,5 @@
-import { Project } from '../../index.js';
-// @ts-ignore
-import * as yaml from 'yaml';
+import type { Project } from '../../index.js';
+import type * as yaml from 'yaml';
 
 /** Additional data that has been attached to a project/graph, for use by plugins, etc. */
 export type AttachedData = Record<string, unknown>;

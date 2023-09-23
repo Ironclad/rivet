@@ -3,7 +3,9 @@ module.exports = {
     browser: true,
     es2021: true,
   },
+  root: true,
   extends: 'standard-with-typescript',
+  plugins: ['import', '@typescript-eslint'],
   overrides: [
     {
       env: {
@@ -18,16 +20,39 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
+    project: ['./packages/*/tsconfig.json'],
+  },
+  settings: {
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
+    },
+    'import/resolver': {
+      typescript: {
+        alwaysTryTypes: true,
+        project: 'packages/*/tsconfig.json',
+      },
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
+    },
   },
   rules: {
     semi: ['error', 'always'],
     eqeqeq: ['error', 'smart'],
     'generator-star-spacing': 'off', // prettier handles it
+    '@typescript-eslint/consistent-type-imports': [
+      'error',
+      {
+        prefer: 'type-imports',
+        fixStyle: 'inline-type-imports',
+      },
+    ],
     'no-async-promise-executor': 'error',
     'no-void': 'off',
     'prefer-const': 'error',
     'eol-last': 'off',
     'import/no-duplicates': 'off',
+    'import/no-cycle': 'error',
     'no-extra-boolean-cast': 'off',
     'no-prototype-builtins': 'off',
     'no-undef-init': 'off',
@@ -49,7 +74,6 @@ module.exports = {
     '@typescript-eslint/space-before-function-paren': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/comma-dangle': 'off',
-    '@typescript-eslint/consistent-type-imports': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/member-delimiter-style': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',

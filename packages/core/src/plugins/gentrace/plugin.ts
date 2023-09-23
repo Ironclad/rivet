@@ -1,19 +1,19 @@
 import { Pipeline, StepRun, init, runTest, getPipelines } from '@gentrace/core';
 
 import {
-  ExecutionRecorder,
-  GraphId,
-  GraphProcessor,
-  NativeApi,
-  NodeGraph,
-  Project,
-  Recording,
-  RivetPlugin,
-  SecretPluginConfigurationSpec,
-  Settings,
-  inferType,
+  type GraphId,
+  type NativeApi,
+  type NodeGraph,
+  type Project,
+  type Recording,
+  type RivetPlugin,
+  type SecretPluginConfigurationSpec,
+  type Settings,
 } from '../../index.js';
 import { mapValues } from 'lodash-es';
+import { ExecutionRecorder } from '../../recording/ExecutionRecorder.js';
+import { inferType } from '../../utils/coerceType.js';
+import { GraphProcessor } from '../../model/GraphProcessor.js';
 
 const apiKeyConfigSpec: SecretPluginConfigurationSpec = {
   type: 'secret',

@@ -1,4 +1,4 @@
-import { RivetPlugin } from '../../index.js';
+import { type RivetPlugin } from '../../index.js';
 import { chatHuggingFaceNode } from './nodes/ChatHuggingFace.js';
 import { textToImageHuggingFaceNode } from './nodes/TextToImageHuggingFace.js';
 

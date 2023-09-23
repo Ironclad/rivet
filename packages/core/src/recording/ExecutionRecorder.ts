@@ -1,12 +1,12 @@
 import { nanoid } from 'nanoid/non-secure';
 import {
-  GraphProcessor,
-  ProcessEvents,
-  RecordedEvent,
-  RecordedEvents,
-  Recording,
-  RecordingId,
-  SerializedRecording,
+  type GraphProcessor,
+  type ProcessEvents,
+  type RecordedEvent,
+  type RecordedEvents,
+  type Recording,
+  type RecordingId,
+  type SerializedRecording,
 } from '../index.js';
 import Emittery from 'emittery';
 

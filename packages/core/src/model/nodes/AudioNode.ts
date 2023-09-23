@@ -1,16 +1,16 @@
-import { ChartNode, NodeId, PortId } from '../NodeBase.js';
-import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { type ChartNode, type NodeId, type PortId } from '../NodeBase.js';
+import { type NodeInputDefinition, type NodeOutputDefinition } from '../NodeBase.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nanoid } from 'nanoid/non-secure';
 import {
-  DataRef,
-  EditorDefinition,
-  Inputs,
-  InternalProcessContext,
-  Outputs,
-  base64ToUint8Array,
-  expectType,
+  type DataRef,
+  type EditorDefinition,
+  type Inputs,
+  type InternalProcessContext,
+  type Outputs,
 } from '../../index.js';
+import { base64ToUint8Array, expectType } from '../../utils/index.js';
+import { nodeDefinition } from '../NodeDefinition.js';
 
 export type AudioNode = ChartNode<'audio', AudioNodeData>;
 

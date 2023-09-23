@@ -1,16 +1,27 @@
-import { AnyDataValue, ArrayDataValue, Inputs, InternalProcessContext, PortId, StringArrayDataValue, StringDataValue, coerceType, coerceTypeOptional } from "../../index.js";
+import {
+  type AnyDataValue,
+  type ArrayDataValue,
+  type Inputs,
+  type InternalProcessContext,
+  type PortId,
+  type StringArrayDataValue,
+  type StringDataValue,
+} from '../../index.js';
+import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 
 function getTranscriptIds(inputs: Inputs): string[] {
-  const input = inputs['transcript_ids' as PortId] as StringDataValue | StringArrayDataValue | AnyDataValue | ArrayDataValue<AnyDataValue>;
+  const input = inputs['transcript_ids' as PortId] as
+    | StringDataValue
+    | StringArrayDataValue
+    | AnyDataValue
+    | ArrayDataValue<AnyDataValue>;
   if (!input) throw new Error('Transcript IDs are required.');
 
-  if (
-    input.type === 'string' ||
-    (input.type === 'any' && typeof input.value === 'string')
-  ) {
+  if (input.type === 'string' || (input.type === 'any' && typeof input.value === 'string')) {
     return [coerceType(input, 'string')];
   } else if (
-    input.type === 'string[]' || input.type === 'any[]' ||
+    input.type === 'string[]' ||
+    input.type === 'any[]' ||
     (input.type === 'any' && Array.isArray(input.value))
   ) {
     return coerceType(input, 'string[]');
@@ -37,8 +48,7 @@ export function getLemurParams(inputs: Inputs, editorData: LemurNodeData): Lemur
   return params;
 }
 
-export const lemurTranscriptIdsInputDefinition = 
-{
+export const lemurTranscriptIdsInputDefinition = {
   id: 'transcript_ids' as PortId,
   dataType: ['string', 'string[]', 'any', 'any[]'],
   title: 'Transcript IDs',
@@ -58,12 +68,12 @@ export const lemurEditorDefinitions = [
         value: 'basic',
         label: 'Basic',
       },
-    ]
+    ],
   },
   {
     type: 'number',
     label: 'Maximum Output Size',
-    dataKey: 'max_output_size'
+    dataKey: 'max_output_size',
   },
 ] as const;
 
@@ -74,10 +84,10 @@ export type LemurParams = {
   context?: string;
   final_model?: FinalModel;
   max_output_size?: number;
-}
+};
 
 export type LemurNodeData = {
   context?: string;
   final_model?: FinalModel;
   max_output_size?: number;
-}
+};

@@ -1,5 +1,5 @@
 import { exhaustiveTuple } from '../utils/genericUtilFunctions.js';
-import { DataId } from './Project.js';
+import type { DataId } from './Project.js';
 
 export type DataValueDef<Type extends string, RuntimeType> = {
   type: Type;

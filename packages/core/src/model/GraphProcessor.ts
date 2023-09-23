@@ -1,36 +1,44 @@
 import { max, range, sum, uniqBy } from 'lodash-es';
 import { ControlFlowExcluded, ControlFlowExcludedPort } from '../utils/symbols.js';
 import {
-  DataValue,
-  ArrayDataValue,
-  AnyDataValue,
-  StringArrayDataValue,
-  ControlFlowExcludedDataValue,
+  type DataValue,
+  type ArrayDataValue,
+  type AnyDataValue,
+  type StringArrayDataValue,
+  type ControlFlowExcludedDataValue,
   isArrayDataValue,
   arrayizeDataValue,
-  ScalarOrArrayDataValue,
+  type ScalarOrArrayDataValue,
   getScalarTypeOf,
 } from './DataValue.js';
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from './NodeBase.js';
-import { GraphId, NodeGraph } from './NodeGraph.js';
-import { NodeImpl } from './NodeImpl.js';
-import { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode.js';
+import type {
+  ChartNode,
+  NodeConnection,
+  NodeId,
+  NodeInputDefinition,
+  NodeOutputDefinition,
+  PortId,
+} from './NodeBase.js';
+import type { GraphId, NodeGraph } from './NodeGraph.js';
+import type { NodeImpl } from './NodeImpl.js';
+import type { UserInputNode, UserInputNodeImpl } from './nodes/UserInputNode.js';
 import PQueueImport from 'p-queue';
 import { getError } from '../utils/errors.js';
 import Emittery from 'emittery';
 import { entries, fromEntries, values } from '../utils/typeSafety.js';
 import { isNotNull } from '../utils/genericUtilFunctions.js';
-import { Project } from './Project.js';
+import type { Project } from './Project.js';
 import { nanoid } from 'nanoid/non-secure';
-import { InternalProcessContext, ProcessContext, ProcessId } from './ProcessContext.js';
-import { ExecutionRecorder } from '../recording/ExecutionRecorder.js';
+import type { InternalProcessContext, ProcessContext, ProcessId } from './ProcessContext.js';
+import type { ExecutionRecorder } from '../recording/ExecutionRecorder.js';
 import { P, match } from 'ts-pattern';
-import { Opaque } from 'type-fest';
+import type { Opaque } from 'type-fest';
 import { coerceTypeOptional } from '../utils/coerceType.js';
-import { BuiltInNodeType, BuiltInNodes, globalRivetNodeRegistry } from './Nodes.js';
-import { NodeRegistration } from './NodeRegistration.js';
-import { StringPluginConfigurationSpec } from './RivetPlugin.js';
-import { getPluginConfig } from '../utils/getPluginConfig.js';
+import { globalRivetNodeRegistry } from './Nodes.js';
+import type { BuiltInNodeType, BuiltInNodes } from './Nodes.js';
+import type { NodeRegistration } from './NodeRegistration.js';
+import type { StringPluginConfigurationSpec } from './RivetPlugin.js';
+import { getPluginConfig } from '../utils/index.js';
 
 // CJS compatibility, gets default.default for whatever reason
 let PQueue = PQueueImport;

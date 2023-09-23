@@ -1,4 +1,4 @@
-import { RivetPlugin } from '../../index.js';
+import { type RivetPlugin } from '../../index.js';
 import { lemurQaNode } from './LemurQaNode.js';
 import { transcribeAudioNode } from './TranscribeAudioNode.js';
 import { lemurSummaryNode } from './LemurSummaryNode.js';

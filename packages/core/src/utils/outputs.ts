@@ -1,5 +1,6 @@
-import { Outputs, expectType } from '../index.js';
-import { ArrayDataValue, StringDataValue } from '../model/DataValue.js';
+import type { Outputs } from '../index.js';
+import type { ArrayDataValue, StringDataValue } from '../model/DataValue.js';
+import { expectType } from './expectType.js';
 import { WarningsPort } from './symbols.js';
 
 export function addWarning(outputs: Outputs, warning: string): void {

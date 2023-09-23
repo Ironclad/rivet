@@ -1,6 +1,6 @@
-import { ChartNode } from './NodeBase.js';
+import type { ChartNode } from './NodeBase.js';
 import { NodeRegistration } from './NodeRegistration.js';
-import { NodeImpl } from './NodeImpl.js';
+import type { NodeImpl } from './NodeImpl.js';
 
 import { userInputNode } from './nodes/UserInputNode.js';
 export * from './nodes/UserInputNode.js';

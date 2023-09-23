@@ -1,5 +1,5 @@
 import { mapValues } from 'lodash-es';
-import {
+import type {
   NodeGraph,
   Project,
   GraphId,
@@ -9,15 +9,13 @@ import {
   PortId,
   ProjectId,
   ChartNodeVariant,
-  DatasetProvider,
-  Dataset,
-  CombinedDataset,
 } from '../../index.js';
 import stableStringify from 'safe-stable-stringify';
 import * as yaml from 'yaml';
-import { AttachedData, doubleCheckProject } from './serializationUtils.js';
+import { type AttachedData, doubleCheckProject } from './serializationUtils.js';
 import { entries } from '../typeSafety.js';
-import { PluginLoadSpec } from '../../model/PluginLoadSpec.js';
+import type { PluginLoadSpec } from '../../model/PluginLoadSpec.js';
+import type { CombinedDataset } from './serialization.js';
 
 type SerializedProject = {
   metadata: {

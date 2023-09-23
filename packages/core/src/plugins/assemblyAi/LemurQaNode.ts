@@ -1,33 +1,33 @@
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
 import {
-  AnyDataValue,
-  ChartNode,
-  EditorDefinition,
-  Inputs,
-  InternalProcessContext,
-  NodeId,
-  NodeInputDefinition,
-  NodeOutputDefinition,
-  NodeUIData,
-  Outputs,
-  PortId,
-  StringArrayDataValue,
-  StringDataValue,
-  coerceType,
-  ObjectDataValue,
-  ArrayDataValue,
-  PluginNodeImpl,
-  pluginNodeDefinition,
+  type AnyDataValue,
+  type ChartNode,
+  type EditorDefinition,
+  type Inputs,
+  type InternalProcessContext,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type NodeUIData,
+  type Outputs,
+  type PortId,
+  type StringArrayDataValue,
+  type StringDataValue,
+  type ObjectDataValue,
+  type ArrayDataValue,
+  type PluginNodeImpl,
 } from '../../index.js';
-import { 
-  LemurNodeData, 
-  LemurParams, 
-  getApiKey, 
-  getLemurParams, 
-  lemurEditorDefinitions, 
-  lemurTranscriptIdsInputDefinition
+import {
+  type LemurNodeData,
+  type LemurParams,
+  getApiKey,
+  getLemurParams,
+  lemurEditorDefinitions,
+  lemurTranscriptIdsInputDefinition,
 } from './lemurHelpers.js';
+import { coerceType } from '../../utils/coerceType.js';
+import { pluginNodeDefinition } from '../../model/NodeDefinition.js';
 
 export type LemurQaNode = ChartNode<'assemblyAiLemurQa', LemurQaNodeData>;
 

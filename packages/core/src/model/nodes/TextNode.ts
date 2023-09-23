@@ -1,10 +1,17 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type PortId,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
 import { nanoid } from 'nanoid/non-secure';
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { DataValue } from '../DataValue.js';
-import { match } from 'ts-pattern';
-import { EditorDefinition, NodeBodySpec, coerceTypeOptional } from '../../index.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { type DataValue } from '../DataValue.js';
+import { type EditorDefinition, type NodeBodySpec } from '../../index.js';
 import { dedent } from 'ts-dedent';
+import { coerceTypeOptional } from '../../utils/coerceType.js';
 
 export type TextNode = ChartNode<'text', TextNodeData>;
 

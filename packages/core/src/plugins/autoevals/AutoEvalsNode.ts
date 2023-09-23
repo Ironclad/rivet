@@ -10,9 +10,9 @@ import {
   Summary,
   Translation,
   Sql,
-  templates,
+  type templates,
 } from 'autoevals';
-import {
+import type {
   ChartNode,
   EditorDefinition,
   Inputs,
@@ -25,11 +25,10 @@ import {
   Outputs,
   PluginNodeImpl,
   PortId,
-  coerceType,
-  nodeDefinition,
-  pluginNodeDefinition,
 } from '../../index.js';
 import { match } from 'ts-pattern';
+import { coerceType } from '../../utils/coerceType.js';
+import { pluginNodeDefinition } from '../../model/NodeDefinition.js';
 
 export type AutoEvalsNode = ChartNode<'autoevals', AutoEvalsNodeData>;
 

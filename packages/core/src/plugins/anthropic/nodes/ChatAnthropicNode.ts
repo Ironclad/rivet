@@ -1,11 +1,10 @@
-import {
+import type {
   ChartNode,
   ChatMessage,
   EditorDefinition,
   Inputs,
   InternalProcessContext,
   NodeId,
-  NodeImpl,
   NodeInputDefinition,
   NodeOutputDefinition,
   NodeUIData,
@@ -13,20 +12,10 @@ import {
   PluginNodeImpl,
   PortId,
   ScalarDataValue,
-  addWarning,
-  coerceType,
-  coerceTypeOptional,
-  expectTypeOptional,
-  getError,
-  getScalarTypeOf,
-  getTokenCountForString,
-  isArrayDataValue,
-  nodeDefinition,
-  pluginNodeDefinition,
-} from '@ironclad/rivet-core';
+} from '../../../index.js';
 import {
-  AnthropicModels,
-  ChatCompletionOptions,
+  type AnthropicModels,
+  type ChatCompletionOptions,
   anthropicModelOptions,
   anthropicModels,
   streamChatCompletions,
@@ -35,6 +24,13 @@ import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
 import retry from 'p-retry';
 import { match } from 'ts-pattern';
+import { coerceType, coerceTypeOptional } from '../../../utils/coerceType.js';
+import { expectTypeOptional } from '../../../utils/expectType.js';
+import { getTokenCountForString } from '../../../utils/tokenizer.js';
+import { addWarning } from '../../../utils/outputs.js';
+import { getError } from '../../../utils/errors.js';
+import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
+import { getScalarTypeOf, isArrayDataValue } from '../../../model/DataValue.js';
 
 export type ChatAnthropicNode = ChartNode<'chatAnthropic', ChatAnthropicNodeData>;
 

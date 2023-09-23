@@ -1,4 +1,5 @@
-import { DataType, GetDataValue, Inputs, PortId, coerceTypeOptional } from '../index.js';
+import type { DataType, GetDataValue, Inputs, PortId } from '../index.js';
+import { coerceTypeOptional } from './coerceType.js';
 
 export function getInputOrData<Data extends object, T extends DataType = 'string'>(
   data: Data,

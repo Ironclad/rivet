@@ -1,15 +1,22 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { AnyDataValue, ArrayDataValue } from '../DataValue.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type PortId,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { type AnyDataValue, type ArrayDataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid/non-secure';
-import { Inputs, Outputs } from '../GraphProcessor.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { coerceType } from '../../utils/coerceType.js';
 import { getError } from '../../utils/errors.js';
-import { InternalProcessContext } from '../ProcessContext.js';
+import { type InternalProcessContext } from '../ProcessContext.js';
 import { omit } from 'lodash-es';
 import { dedent } from 'ts-dedent';
-import { EditorDefinition } from '../EditorDefinition.js';
-import { NodeBodySpec } from '../NodeBodySpec.js';
+import { type EditorDefinition } from '../EditorDefinition.js';
+import { type NodeBodySpec } from '../NodeBodySpec.js';
 
 export type ExternalCallNode = ChartNode<'externalCall', ExternalCallNodeData>;
 

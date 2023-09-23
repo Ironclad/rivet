@@ -1,5 +1,5 @@
-import { Opaque } from 'type-fest';
-import { ProjectId } from '../index.js';
+import type { Opaque } from 'type-fest';
+import type { ProjectId } from '../index.js';
 
 export type DatasetId = Opaque<string, 'DatasetId'>;
 

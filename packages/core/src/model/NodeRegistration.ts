@@ -1,15 +1,9 @@
-import {
-  ChartNode,
-  NodeImplConstructor,
-  NodeDefinition,
-  NodeImpl,
-  PluginNodeImpl,
-  PluginNodeDefinition,
-  PluginNodeImplClass,
-} from '../index.js';
-import { keys, mapValues, values } from '../utils/typeSafety.js';
-import { RivetPlugin } from './RivetPlugin.js';
-import { RivetUIContext } from './RivetUIContext.js';
+import { type ChartNode, type NodeImplConstructor, type NodeImpl, type PluginNodeImpl } from '../index.js';
+import { mapValues, values } from '../utils/typeSafety.js';
+import type { NodeDefinition, PluginNodeDefinition } from './NodeDefinition.js';
+import { type RivetPlugin } from './RivetPlugin.js';
+import { type RivetUIContext } from './RivetUIContext.js';
+import { PluginNodeImplClass } from './NodeImpl.js';
 
 export class NodeRegistration<NodeTypes extends string = never, Nodes extends ChartNode = never> {
   NodesType: Nodes = undefined!;

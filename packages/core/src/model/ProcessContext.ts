@@ -1,15 +1,15 @@
-import { Opaque } from 'type-fest';
+import { type Opaque } from 'type-fest';
 import {
-  Settings,
-  NativeApi,
-  Project,
-  DataValue,
-  ExternalFunction,
-  Outputs,
-  GraphId,
-  GraphProcessor,
-  ScalarOrArrayDataValue,
-  DatasetProvider,
+  type Settings,
+  type NativeApi,
+  type Project,
+  type DataValue,
+  type ExternalFunction,
+  type Outputs,
+  type GraphId,
+  type GraphProcessor,
+  type ScalarOrArrayDataValue,
+  type DatasetProvider,
 } from '../index.js';
 
 export type ProcessContext = {

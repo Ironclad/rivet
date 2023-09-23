@@ -1,10 +1,18 @@
-import { ChartNode, NodeId, PortId, NodeInputDefinition, NodeOutputDefinition } from '../../model/NodeBase.js';
-import { NodeImpl, NodeUIData, nodeDefinition } from '../../model/NodeImpl.js';
-import { SupportedModels, getTokenCountForMessages } from '../../utils/tokenizer.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type PortId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+} from '../../model/NodeBase.js';
+import { NodeImpl, type NodeUIData } from '../../model/NodeImpl.js';
+import { type SupportedModels, getTokenCountForMessages } from '../../utils/tokenizer.js';
 import { nanoid } from 'nanoid/non-secure';
-import { EditorDefinition, Inputs, NodeBodySpec, Outputs, expectType } from '../../index.js';
-import { ChatCompletionRequestMessage, openAiModelOptions, openaiModels } from '../../utils/openai.js';
+import { type EditorDefinition, type Inputs, type NodeBodySpec, type Outputs } from '../../index.js';
+import { type ChatCompletionRequestMessage, openAiModelOptions, openaiModels } from '../../utils/openai.js';
 import { dedent } from 'ts-dedent';
+import { expectType } from '../../utils/expectType.js';
+import { nodeDefinition } from '../NodeDefinition.js';
 
 export type TrimChatMessagesNodeData = {
   maxTokenCount: number;

@@ -1,9 +1,10 @@
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
+import { type ChartNode, type NodeId, type NodeInputDefinition, type NodeOutputDefinition } from '../NodeBase.js';
 import { nanoid } from 'nanoid/non-secure';
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { DataValue } from '../DataValue.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { type DataValue } from '../DataValue.js';
 import { dedent } from 'ts-dedent';
-import { EditorDefinition } from '../EditorDefinition.js';
+import { type EditorDefinition } from '../EditorDefinition.js';
+import { nodeDefinition } from '../NodeDefinition.js';
 
 export type CommentNode = ChartNode<'comment', CommentNodeData>;
 

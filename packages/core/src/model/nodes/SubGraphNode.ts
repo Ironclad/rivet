@@ -1,15 +1,24 @@
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
-import { GraphId } from '../NodeGraph.js';
+import {
+  type ChartNode,
+  type NodeConnection,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { type GraphId } from '../NodeGraph.js';
 import { nanoid } from 'nanoid/non-secure';
-import { Project } from '../Project.js';
-import { GraphInputNode } from './GraphInputNode.js';
-import { GraphOutputNode } from './GraphOutputNode.js';
-import { ControlFlowExcludedDataValue, DataValue } from '../DataValue.js';
-import { InternalProcessContext } from '../ProcessContext.js';
-import { EditorDefinition, getError } from '../../index.js';
+import { type Project } from '../Project.js';
+import { type GraphInputNode } from './GraphInputNode.js';
+import { type GraphOutputNode } from './GraphOutputNode.js';
+import { type DataValue } from '../DataValue.js';
+import { type InternalProcessContext } from '../ProcessContext.js';
+import { type EditorDefinition } from '../../index.js';
 import { dedent } from 'ts-dedent';
+import { getError } from '../../utils/errors.js';
 
 export type SubGraphNode = ChartNode & {
   type: 'subGraph';

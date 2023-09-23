@@ -1,13 +1,13 @@
 import {
-  ArrayDataValue,
-  DataValue,
-  ScalarDataValue,
-  Settings,
-  VectorDataValue,
-  VectorDatabase,
-  coerceType,
-} from '@ironclad/rivet-core';
+  type ArrayDataValue,
+  type DataValue,
+  type ScalarDataValue,
+  type Settings,
+  type VectorDataValue,
+  type VectorDatabase,
+} from '../../index.js';
 import * as CryptoJS from 'crypto-js';
+import { coerceType } from '../../utils/coerceType.js';
 
 export class PineconeVectorDatabase implements VectorDatabase {
   #apiKey;

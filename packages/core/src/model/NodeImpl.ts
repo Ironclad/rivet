@@ -1,10 +1,10 @@
-import { Inputs, Outputs } from './GraphProcessor.js';
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition } from './NodeBase.js';
-import { Project } from './Project.js';
-import { InternalProcessContext } from './ProcessContext.js';
-import { EditorDefinition } from './EditorDefinition.js';
-import { NodeBodySpec } from './NodeBodySpec.js';
-import { RivetUIContext } from './RivetUIContext.js';
+import type { Inputs, Outputs } from './GraphProcessor.js';
+import type { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition } from './NodeBase.js';
+import type { Project } from './Project.js';
+import type { InternalProcessContext } from './ProcessContext.js';
+import type { EditorDefinition } from './EditorDefinition.js';
+import type { NodeBodySpec } from './NodeBodySpec.js';
+import type { RivetUIContext } from './RivetUIContext.js';
 
 export interface PluginNodeImpl<T extends ChartNode> {
   getInputDefinitions(
@@ -136,35 +136,3 @@ export type NodeImplConstructor<T extends ChartNode> = {
 
   getUIData(context: RivetUIContext): NodeUIData | Promise<NodeUIData>;
 };
-
-export type NodeDefinition<T extends ChartNode> = {
-  impl: NodeImplConstructor<T>;
-  displayName: string;
-};
-
-export type PluginNodeDefinition<T extends ChartNode> = {
-  impl: PluginNodeImpl<T>;
-  displayName: string;
-};
-
-export type UnknownNodeDefinition = NodeDefinition<ChartNode>;
-
-export function nodeDefinition<T extends ChartNode>(
-  impl: NodeImplConstructor<T>,
-  displayName: string,
-): NodeDefinition<T> {
-  return {
-    impl,
-    displayName,
-  };
-}
-
-export function pluginNodeDefinition<T extends ChartNode>(
-  impl: PluginNodeImpl<T>,
-  displayName: string,
-): PluginNodeDefinition<T> {
-  return {
-    impl,
-    displayName,
-  };
-}

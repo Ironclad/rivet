@@ -1,6 +1,6 @@
-import { Opaque } from 'type-fest';
-import { GraphId, NodeGraph } from './NodeGraph.js';
-import { PluginLoadSpec } from './PluginLoadSpec.js';
+import { type Opaque } from 'type-fest';
+import { type GraphId, type NodeGraph } from './NodeGraph.js';
+import { type PluginLoadSpec } from './PluginLoadSpec.js';
 
 export type ProjectId = Opaque<string, 'ProjectId'>;
 

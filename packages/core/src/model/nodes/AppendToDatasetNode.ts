@@ -1,25 +1,16 @@
-import { ChartNode, NodeId, PortId } from '../NodeBase.js';
-import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import type { ChartNode, NodeId, PortId } from '../NodeBase.js';
+import type { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nanoid } from 'nanoid/non-secure';
-import {
-  DataValue,
-  DatasetId,
-  DatasetRow,
-  EditorDefinition,
-  Inputs,
-  NodeBodySpec,
-  Outputs,
-  arrayizeDataValue,
-  coerceType,
-  coerceTypeOptional,
-  expectType,
-  getInputOrData,
-  newId,
-  unwrapDataValue,
-} from '../../index.js';
-import { InternalProcessContext } from '../ProcessContext.js';
+
+import type { InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { getInputOrData, coerceTypeOptional, newId, coerceType } from '../../utils/index.js';
+import { arrayizeDataValue, unwrapDataValue } from '../DataValue.js';
+import type { DatasetId, DatasetRow } from '../Dataset.js';
+import type { EditorDefinition } from '../EditorDefinition.js';
+import type { Inputs, Outputs } from '../GraphProcessor.js';
 
 export type AppendToDatasetNode = ChartNode<'appendToDataset', AppendToDatasetNodeData>;
 

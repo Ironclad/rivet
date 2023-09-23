@@ -1,9 +1,9 @@
 // @ts-ignore
 import * as yaml from 'yaml';
 import { graphV3Deserializer, projectV3Deserializer } from './serialization_v3.js';
-import { Project, NodeGraph, ProjectId, DatasetProvider, Dataset, DatasetMetadata } from '../../index.js';
+import type { Project, NodeGraph, ProjectId, DatasetProvider, Dataset, DatasetMetadata } from '../../index.js';
 import { getError } from '../errors.js';
-import { AttachedData, yamlProblem } from './serializationUtils.js';
+import { type AttachedData, yamlProblem } from './serializationUtils.js';
 import {
   datasetV4Deserializer,
   datasetV4Serializer,

@@ -1,11 +1,13 @@
-import { ChartNode, NodeId, PortId } from '../NodeBase.js';
-import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { type ChartNode, type NodeId, type PortId } from '../NodeBase.js';
+import { type NodeInputDefinition, type NodeOutputDefinition } from '../NodeBase.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
 import { nanoid } from 'nanoid/non-secure';
-import { Inputs, Outputs } from '../GraphProcessor.js';
-import { NodeBodySpec, expectType } from '../../index.js';
-import { InternalProcessContext } from '../ProcessContext.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { type NodeBodySpec } from '../../index.js';
+import { type InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
+import { expectType } from '../../utils/expectType.js';
 
 export type ReadDirectoryNode = ChartNode<'readDirectory', ReadDirectoryNodeData>;
 

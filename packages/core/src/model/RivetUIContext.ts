@@ -1,4 +1,4 @@
-import { ChartNode, DatasetProvider, NodeGraph, Project, Settings } from '../index.js';
+import { type ChartNode, type DatasetProvider, type NodeGraph, type Project, type Settings } from '../index.js';
 
 /** Context accessible to UI functions such as getEditors() and getBody(). */
 export type RivetUIContext = {

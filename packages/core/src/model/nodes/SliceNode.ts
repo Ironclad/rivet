@@ -1,11 +1,19 @@
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
 import { nanoid } from 'nanoid/non-secure';
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { entries } from '../../utils/typeSafety.js';
 import { dedent } from 'ts-dedent';
-import { EditorDefinition } from '../EditorDefinition.js';
-import { NodeBodySpec, coerceType } from '../../index.js';
+import { type EditorDefinition } from '../EditorDefinition.js';
+import { type NodeBodySpec } from '../../index.js';
+import { coerceType } from '../../utils/coerceType.js';
 
 export type SliceNode = ChartNode<'slice', SliceNodeData>;
 

@@ -1,9 +1,17 @@
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { DataValue, unwrapDataValue } from '../DataValue.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import {
+  type ChartNode,
+  type NodeConnection,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
+import { type DataValue, unwrapDataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid/non-secure';
-import { Inputs, Outputs } from '../GraphProcessor.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { dedent } from 'ts-dedent';
+import { nodeDefinition } from '../NodeDefinition.js';
 
 export type CoalesceNode = ChartNode<'coalesce', CoalesceNodeData>;
 

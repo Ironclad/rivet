@@ -1,6 +1,6 @@
-import { TiktokenModel } from '@dqbd/tiktoken';
+import type { TiktokenModel } from '@dqbd/tiktoken';
 import fetchEventSource from './fetchEventSource.js';
-import { SupportedModels } from './tokenizer.js';
+import type { SupportedModels } from './tokenizer.js';
 
 // https://github.com/openai/openai-node/issues/18#issuecomment-1518715285
 

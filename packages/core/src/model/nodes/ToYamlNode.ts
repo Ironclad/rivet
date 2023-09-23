@@ -1,11 +1,18 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type PortId,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
 import { nanoid } from 'nanoid/non-secure';
-import { NodeDefinition, NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 // @ts-ignore
 import yaml from 'yaml';
-import { Inputs, Outputs } from '../GraphProcessor.js';
-import { coerceType } from '../../index.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { coerceType } from '../../utils/index.js';
 import { dedent } from 'ts-dedent';
+import { nodeDefinition } from '../NodeDefinition.js';
 
 export type ToYamlNode = ChartNode<'toYaml', ToYamlNodeData>;
 

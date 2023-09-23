@@ -1,25 +1,21 @@
 import { nanoid } from 'nanoid/non-secure';
 import {
-  ChartNode,
-  EditorDefinition,
-  Inputs,
-  InternalProcessContext,
-  NodeBodySpec,
-  NodeId,
-  NodeImpl,
-  NodeInputDefinition,
-  NodeOutputDefinition,
-  NodeUIData,
-  Outputs,
-  PluginNodeImpl,
-  PortId,
-  coerceType,
-  getInputOrData,
-  nodeDefinition,
-  pluginNodeDefinition,
+  type ChartNode,
+  type EditorDefinition,
+  type NodeBodySpec,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type NodeUIData,
+  type Outputs,
+  type PluginNodeImpl,
+  type PortId,
 } from '../../../index.js';
 import { HfInference, HfInferenceEndpoint } from '@huggingface/inference';
 import { dedent } from 'ts-dedent';
+import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
+import { getInputOrData } from '../../../utils/inputs.js';
+import { coerceType } from '../../../utils/coerceType.js';
 
 export type TextToImageHuggingFaceNode = ChartNode<'textToImageHuggingFace', TextToImageHuggingFaceNodeData>;
 

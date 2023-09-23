@@ -1,11 +1,19 @@
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
+import {
+  type ChartNode,
+  type NodeConnection,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
 import { nanoid } from 'nanoid/non-secure';
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { ChatMessage, arrayizeDataValue, unwrapDataValue } from '../DataValue.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { type ChatMessage, arrayizeDataValue, unwrapDataValue } from '../DataValue.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { coerceType } from '../../utils/coerceType.js';
 import { orderBy } from 'lodash-es';
-import { coerceType } from '../../index.js';
 import { dedent } from 'ts-dedent';
+import { nodeDefinition } from '../NodeDefinition.js';
 
 export type AssemblePromptNode = ChartNode<'assemblePrompt', AssemblePromptNodeData>;
 

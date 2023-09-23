@@ -1,5 +1,6 @@
-import { CombinedDataset, Dataset, DatasetId, DatasetMetadata, DatasetRow, ProjectId } from '../index.js';
+import { type Dataset, type DatasetId, type DatasetMetadata, type DatasetRow, type ProjectId } from '../index.js';
 import { cloneDeep } from 'lodash-es';
+import type { CombinedDataset } from '../utils/index.js';
 
 export interface DatasetProvider {
   getDatasetMetadata(id: DatasetId): Promise<DatasetMetadata | undefined>;

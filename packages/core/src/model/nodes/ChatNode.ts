@@ -1,7 +1,13 @@
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
 import { nanoid } from 'nanoid/non-secure';
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { ChatMessage, ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { type ChatMessage, type ScalarDataValue, getScalarTypeOf, isArrayDataValue } from '../DataValue.js';
 import {
   getCostForPrompt,
   getCostForTokens,
@@ -10,8 +16,8 @@ import {
 } from '../../utils/tokenizer.js';
 import { addWarning } from '../../utils/outputs.js';
 import {
-  ChatCompletionOptions,
-  ChatCompletionRequestMessage,
+  type ChatCompletionOptions,
+  type ChatCompletionRequestMessage,
   DEFAULT_CHAT_ENDPOINT,
   OpenAIError,
   openAiModelOptions,
@@ -19,12 +25,15 @@ import {
   streamChatCompletions,
 } from '../../utils/openai.js';
 import retry from 'p-retry';
-import { Inputs, Outputs } from '../GraphProcessor.js';
+import type { Inputs, Outputs } from '../GraphProcessor.js';
 import { match } from 'ts-pattern';
 import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
-import { InternalProcessContext } from '../ProcessContext.js';
-import { EditorDefinition, getError, getInputOrData } from '../../index.js';
+import { type InternalProcessContext } from '../ProcessContext.js';
+import { type EditorDefinition } from '../../index.js';
 import { dedent } from 'ts-dedent';
+import { getInputOrData } from '../../utils/inputs.js';
+import { getError } from '../../utils/errors.js';
+import { nodeDefinition } from '../NodeDefinition.js';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 

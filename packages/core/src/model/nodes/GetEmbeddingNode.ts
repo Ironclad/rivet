@@ -1,11 +1,19 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type PortId,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
 import { nanoid } from 'nanoid/non-secure';
-import { Inputs, Outputs } from '../GraphProcessor.js';
-import { InternalProcessContext } from '../ProcessContext.js';
-import * as openai from 'openai';
-import { EditorDefinition, coerceType, getIntegration } from '../../index.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { type InternalProcessContext } from '../ProcessContext.js';
+import { type EditorDefinition } from '../../index.js';
 import { dedent } from 'ts-dedent';
+import { coerceType } from '../../utils/coerceType.js';
+import { getIntegration } from '../../integrations/integrations.js';
 
 export type GetEmbeddingNode = ChartNode<'getEmbedding', GetEmbeddingNodeData>;
 

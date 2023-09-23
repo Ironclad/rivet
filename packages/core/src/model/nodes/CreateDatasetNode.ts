@@ -1,20 +1,18 @@
-import {
+import type {
   ChartNode,
   DatasetId,
   Inputs,
   InternalProcessContext,
   NodeId,
-  NodeImpl,
   NodeInputDefinition,
   NodeOutputDefinition,
   NodeUIData,
   Outputs,
   PortId,
-  coerceTypeOptional,
-  dedent,
-  nodeDefinition,
-  newId,
 } from '../../index.js';
+import { NodeImpl } from '../NodeImpl.js';
+import { coerceTypeOptional, dedent, newId } from '../../utils/index.js';
+import { nodeDefinition } from '../NodeDefinition.js';
 
 export type CreateDatasetNode = ChartNode<'createDataset', CreateDatasetNodeData>;
 

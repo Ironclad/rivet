@@ -1,26 +1,24 @@
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
 import {
-  AnyDataValue,
-  AudioDataValue,
-  ChartNode,
-  EditorDefinition,
-  Inputs,
-  InternalProcessContext,
-  NodeId,
-  NodeImpl,
-  NodeInputDefinition,
-  NodeOutputDefinition,
-  NodeUIData,
-  Outputs,
-  PluginNodeImpl,
-  PortId,
-  StringDataValue,
-  coerceType,
-  nodeDefinition,
-  pluginNodeDefinition,
+  type AnyDataValue,
+  type AudioDataValue,
+  type ChartNode,
+  type EditorDefinition,
+  type Inputs,
+  type InternalProcessContext,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type NodeUIData,
+  type Outputs,
+  type PluginNodeImpl,
+  type PortId,
+  type StringDataValue,
 } from '../../index.js';
 import { getApiKey } from './lemurHelpers.js';
+import { pluginNodeDefinition } from '../../model/NodeDefinition.js';
+import { coerceType } from '../../utils/coerceType.js';
 
 export type TranscribeAudioNode = ChartNode<'assemblyAiTranscribeAudio', TranscribeAudioNodeData>;
 

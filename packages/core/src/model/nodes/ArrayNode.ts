@@ -1,11 +1,19 @@
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
+import {
+  type ChartNode,
+  type NodeConnection,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
 import { nanoid } from 'nanoid/non-secure';
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { entries } from '../../utils/typeSafety.js';
 import { flattenDeep } from 'lodash-es';
 import { dedent } from 'ts-dedent';
-import { EditorDefinition } from '../EditorDefinition.js';
+import { type EditorDefinition } from '../EditorDefinition.js';
+import { nodeDefinition } from '../NodeDefinition.js';
 
 export type ArrayNode = ChartNode<'array', ArrayNodeData>;
 

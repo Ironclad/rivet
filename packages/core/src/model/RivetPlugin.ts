@@ -1,5 +1,5 @@
-import { ChartNode } from './NodeBase.js';
-import { PluginNodeDefinition } from './NodeImpl.js';
+import { type ChartNode } from './NodeBase.js';
+import type { PluginNodeDefinition } from './NodeDefinition.js';
 
 export type RivetPlugin = {
   /** The unique identifier of the plugin. Should be unique across all plugins. */

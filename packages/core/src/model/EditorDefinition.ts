@@ -1,4 +1,4 @@
-import { ChartNode, DataRef, DataType, DatasetId } from '../index.js';
+import { type ChartNode, type DataRef, type DataType, type DatasetId } from '../index.js';
 
 type ExcludeNeverValues<T> = Pick<
   T,

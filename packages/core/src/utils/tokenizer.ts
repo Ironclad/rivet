@@ -1,5 +1,5 @@
-import { encoding_for_model, TiktokenModel } from '@dqbd/tiktoken';
-import { ChatCompletionRequestMessage, openaiModels } from './openai.js';
+import { encoding_for_model, type TiktokenModel } from '@dqbd/tiktoken';
+import { type ChatCompletionRequestMessage, openaiModels } from './openai.js';
 
 export const supportedModels = [...Object.keys(openaiModels)] as (keyof typeof openaiModels)[];
 export type SupportedModels = keyof typeof openaiModels;

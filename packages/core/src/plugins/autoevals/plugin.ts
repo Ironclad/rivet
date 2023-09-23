@@ -1,4 +1,4 @@
-import { RivetPlugin } from '../../index.js';
+import type { RivetPlugin } from '../../index.js';
 import { autoEvalsNode } from './AutoEvalsNode.js';
 
 export const autoevalsPlugin: RivetPlugin = {

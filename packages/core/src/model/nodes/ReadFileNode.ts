@@ -1,10 +1,11 @@
-import { ChartNode, NodeId, PortId } from '../NodeBase.js';
-import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
-import { DataValue } from '../DataValue.js';
-import { NodeImpl, NodeUIData, nodeDefinition } from '../NodeImpl.js';
+import { type ChartNode, type NodeId, type PortId } from '../NodeBase.js';
+import { type NodeInputDefinition, type NodeOutputDefinition } from '../NodeBase.js';
+import { type DataValue } from '../DataValue.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
 import { nanoid } from 'nanoid/non-secure';
-import { expectType } from '../../index.js';
-import { InternalProcessContext } from '../ProcessContext.js';
+import { expectType } from '../../utils/index.js';
+import { type InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
 
 export type ReadFileNode = ChartNode<'readFile', ReadFileNodeData>;
