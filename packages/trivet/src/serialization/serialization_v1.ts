@@ -1,5 +1,5 @@
 import * as yaml from 'yaml';
-import { TrivetData, TrivetTestCase, TrivetTestSuite } from '../index.js';
+import { type TrivetData, type TrivetTestCase, type TrivetTestSuite } from '../index.js';
 
 export interface SerializedTrivetTestSuite {
   id: string;

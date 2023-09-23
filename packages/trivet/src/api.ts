@@ -1,15 +1,15 @@
 import {
-  DataValue,
-  NativeApi,
-  BaseDir,
-  ReadDirOptions,
+  type DataValue,
+  type NativeApi,
+  type BaseDir,
+  type ReadDirOptions,
   GraphProcessor,
-  Settings,
-  GraphOutputNode,
+  type Settings,
+  type GraphOutputNode,
   inferType,
 } from '@ironclad/rivet-core';
 import { cloneDeep, keyBy, mapValues, omit } from 'lodash-es';
-import { TrivetGraphRunner, TrivetOpts, TrivetResults, TrivetTestCaseResult } from './trivetTypes.js';
+import { type TrivetGraphRunner, type TrivetOpts, type TrivetResults, type TrivetTestCaseResult } from './trivetTypes.js';
 
 const TRUTHY_STRINGS = new Set(['true', 'TRUE']);
 

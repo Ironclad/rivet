@@ -1,5 +1,5 @@
 import { keyBy } from 'lodash-es';
-import { GraphInputNode, NodeGraph } from '@ironclad/rivet-core';
+import { type GraphInputNode, type NodeGraph } from '@ironclad/rivet-core';
 
 export function validateValidationGraphFormat(validationGraph: NodeGraph): { valid: boolean; errorMessages: string[] } {
   const inputNodes = validationGraph.nodes.filter((n): n is GraphInputNode => n.type === 'graphInput');
