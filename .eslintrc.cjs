@@ -51,7 +51,7 @@ module.exports = {
     'no-void': 'off',
     'prefer-const': 'error',
     'eol-last': 'off',
-    'import/no-duplicates': 'off',
+    'import/no-duplicates': 'error',
     'import/no-cycle': 'error',
     'no-extra-boolean-cast': 'off',
     'no-prototype-builtins': 'off',

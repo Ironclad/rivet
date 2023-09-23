@@ -1,5 +1,10 @@
-import { type ChartNode, type NodeId, type PortId } from '../NodeBase.js';
-import { type NodeInputDefinition, type NodeOutputDefinition } from '../NodeBase.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type PortId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
 import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nanoid } from 'nanoid/non-secure';
 import {
