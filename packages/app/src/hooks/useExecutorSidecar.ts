@@ -1,4 +1,4 @@
-import { Child, Command } from '@tauri-apps/api/shell';
+import { type Child, Command } from '@tauri-apps/api/shell';
 import { useEffect } from 'react';
 
 let sidecarProcess: Child | null = null;

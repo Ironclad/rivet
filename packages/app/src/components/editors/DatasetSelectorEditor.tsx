@@ -1,12 +1,12 @@
 import { Field, HelperMessage } from '@atlaskit/form';
 import Select from '@atlaskit/select';
-import { DatasetSelectorEditorDefinition, ChartNode } from '@ironclad/rivet-core';
+import { type DatasetSelectorEditorDefinition, type ChartNode } from '@ironclad/rivet-core';
 import { orderBy } from 'lodash-es';
-import { FC } from 'react';
+import { type FC } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useDatasets } from '../../hooks/useDatasets';
 import { projectState } from '../../state/savedGraphs';
-import { SharedEditorProps } from './SharedEditorProps';
+import { type SharedEditorProps } from './SharedEditorProps';
 import { getHelperMessage } from './editorUtils';
 
 export const DefaultDatasetSelectorEditor: FC<

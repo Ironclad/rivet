@@ -1,7 +1,7 @@
-import { FC } from 'react';
+import { type FC } from 'react';
 import { css } from '@emotion/react';
-import { Outputs, PortId, expectType } from '@ironclad/rivet-core';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
+import { type Outputs, type PortId, expectType } from '@ironclad/rivet-core';
+import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 
 const questionsAndAnswersStyles = css`
   display: flex;

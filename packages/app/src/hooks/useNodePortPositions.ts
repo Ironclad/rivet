@@ -1,6 +1,6 @@
-import { PortId, NodeId } from '@ironclad/rivet-core';
+import { type PortId, type NodeId } from '@ironclad/rivet-core';
 import { useState, useLayoutEffect, useRef } from 'react';
-import { PortPositions } from '../components/NodeCanvas';
+import { type PortPositions } from '../components/NodeCanvas';
 import { useRecoilValue } from 'recoil';
 import { nodesByIdState } from '../state/graph';
 

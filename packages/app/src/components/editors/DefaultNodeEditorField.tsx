@@ -1,9 +1,9 @@
 import Toggle from '@atlaskit/toggle';
-import { EditorDefinition, ChartNode } from '@ironclad/rivet-core';
+import { type EditorDefinition, type ChartNode } from '@ironclad/rivet-core';
 import clsx from 'clsx';
-import { FC } from 'react';
+import { type FC } from 'react';
 import { match } from 'ts-pattern';
-import { SharedEditorProps } from './SharedEditorProps';
+import { type SharedEditorProps } from './SharedEditorProps';
 import { DefaultAnyDataEditor } from './AnyEditor';
 import { DefaultCodeEditor } from './CodeEditor';
 import { DefaultColorEditor } from './ColorEditor';
@@ -16,6 +16,7 @@ import { DefaultImageBrowserEditor } from './ImageBrowserEditor';
 import { DefaultNumberEditor } from './NumberEditor';
 import { DefaultStringEditor } from './StringEditor';
 import { DefaultToggleEditor } from './ToggleEditor';
+// eslint-disable-next-line import/no-cycle
 import { EditorGroup } from './EditorGroup';
 import { KeyValuePairEditor } from './KeyValuePairEditor';
 import { StringListEditor } from './StringListEditor';

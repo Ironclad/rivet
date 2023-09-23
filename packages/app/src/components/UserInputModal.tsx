@@ -1,6 +1,6 @@
-import { FC, Suspense, useEffect, useRef, useState } from 'react';
+import { type FC, Suspense, useEffect, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { ArrayDataValue, StringDataValue } from '@ironclad/rivet-core';
+import { type ArrayDataValue, type StringDataValue } from '@ironclad/rivet-core';
 import { lastAnswersState } from '../state/userInput.js';
 import Modal, { ModalBody, ModalFooter, ModalHeader, ModalTitle, ModalTransition } from '@atlaskit/modal-dialog';
 import Button from '@atlaskit/button';

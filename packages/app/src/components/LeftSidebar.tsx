@@ -1,12 +1,12 @@
 import { css } from '@emotion/react';
-import { FC, useEffect } from 'react';
+import { type FC, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { graphState } from '../state/graph.js';
 import { loadedProjectState, projectState, savedGraphsState } from '../state/savedGraphs.js';
 import { ReactComponent as ExpandLeftIcon } from 'majesticons/line/menu-expand-left-line.svg';
 import { ReactComponent as ExpandRightIcon } from 'majesticons/line/menu-expand-right-line.svg';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
-import { NodeGraph } from '@ironclad/rivet-core';
+import { type NodeGraph } from '@ironclad/rivet-core';
 import { sidebarOpenState } from '../state/graphBuilder.js';
 import { appWindow } from '@tauri-apps/api/window';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';

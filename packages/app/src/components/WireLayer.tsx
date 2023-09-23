@@ -1,5 +1,5 @@
-import { FC, useCallback, useEffect, useLayoutEffect, useState } from 'react';
-import { NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
+import { type FC, useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import { type NodeConnection, type NodeId, type PortId } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { ConditionallyRenderWire, PartialWire } from './Wire.js';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
@@ -8,7 +8,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { draggingWireClosestPortState } from '../state/graphBuilder.js';
 import { orderBy } from 'lodash-es';
 import { nodesByIdState } from '../state/graph';
-import { PortPositions } from './NodeCanvas';
+import { type PortPositions } from './NodeCanvas';
 
 const wiresStyles = css`
   width: 100%;

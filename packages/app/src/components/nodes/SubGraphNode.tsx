@@ -1,8 +1,8 @@
-import { FC } from 'react';
+import { type FC } from 'react';
 import { useRecoilValue } from 'recoil';
 import { projectState } from '../../state/savedGraphs.js';
-import { Outputs, PortId, SubGraphNode, coerceTypeOptional } from '@ironclad/rivet-core';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
+import { type Outputs, type PortId, type SubGraphNode, coerceTypeOptional } from '@ironclad/rivet-core';
+import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 import { RenderDataOutputs } from '../RenderDataValue.js';
 import { omit } from 'lodash-es';
 

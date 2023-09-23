@@ -1,7 +1,7 @@
 import Portal from '@atlaskit/portal';
 import Select from '@atlaskit/select';
 import { css } from '@emotion/react';
-import { FC, useRef } from 'react';
+import { type FC, useRef } from 'react';
 import { useSetRecoilState, useRecoilState } from 'recoil';
 import { useLoadRecording } from '../hooks/useLoadRecording';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';

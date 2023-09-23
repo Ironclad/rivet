@@ -4,15 +4,15 @@ import Select from '@atlaskit/select';
 import { css } from '@emotion/react';
 import {
   scalarTypes,
-  DataTypeSelectorEditorDefinition,
-  ChartNode,
-  DataType,
+  type DataTypeSelectorEditorDefinition,
+  type ChartNode,
+  type DataType,
   getScalarTypeOf,
   isArrayDataType,
   dataTypeDisplayNames,
 } from '@ironclad/rivet-core';
-import { FC } from 'react';
-import { SharedEditorProps } from './SharedEditorProps';
+import { type FC } from 'react';
+import { type SharedEditorProps } from './SharedEditorProps';
 import { getHelperMessage } from './editorUtils';
 
 const validSelectableDataTypes = scalarTypes.filter((type) => type !== 'control-flow-excluded');

@@ -1,9 +1,8 @@
 import { Field, HelperMessage } from '@atlaskit/form';
 import TextField from '@atlaskit/textfield';
-import { ChartNode, NumberEditorDefinition } from '@ironclad/rivet-core';
-import { FC } from 'react';
-import { NodeChanged } from '../NodeEditor';
-import { SharedEditorProps } from './SharedEditorProps';
+import { type ChartNode, type NumberEditorDefinition } from '@ironclad/rivet-core';
+import { type FC } from 'react';
+import { type SharedEditorProps } from './SharedEditorProps';
 import { getHelperMessage } from './editorUtils';
 
 export const DefaultNumberEditor: FC<

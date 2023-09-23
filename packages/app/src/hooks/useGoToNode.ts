@@ -1,4 +1,4 @@
-import { NodeId } from '@ironclad/rivet-core';
+import { type NodeId } from '@ironclad/rivet-core';
 import { useStableCallback } from './useStableCallback';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useLoadGraph } from './useLoadGraph';

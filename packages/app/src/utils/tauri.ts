@@ -1,4 +1,4 @@
-import { RivetPlugin, Settings, StringPluginConfigurationSpec } from '@ironclad/rivet-core';
+import { type RivetPlugin, type Settings, type StringPluginConfigurationSpec } from '@ironclad/rivet-core';
 import { window } from '@tauri-apps/api';
 import { invoke } from '@tauri-apps/api/tauri';
 import { entries, values } from '../../../core/src/utils/typeSafety';

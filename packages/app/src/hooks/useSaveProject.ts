@@ -2,7 +2,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { loadedProjectState, projectState } from '../state/savedGraphs.js';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph.js';
 import { produce } from 'immer';
-import { toast, Id as ToastId } from 'react-toastify';
+import { toast, type Id as ToastId } from 'react-toastify';
 import { ioProvider } from '../utils/globals.js';
 import { trivetState } from '../state/trivet.js';
 

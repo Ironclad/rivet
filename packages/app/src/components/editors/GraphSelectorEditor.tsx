@@ -1,6 +1,6 @@
-import { GraphSelectorEditorDefinition, ChartNode, GraphId } from '@ironclad/rivet-core';
-import { FC } from 'react';
-import { SharedEditorProps } from './SharedEditorProps';
+import { type GraphSelectorEditorDefinition, type ChartNode, type GraphId } from '@ironclad/rivet-core';
+import { type FC } from 'react';
+import { type SharedEditorProps } from './SharedEditorProps';
 import { Field, HelperMessage } from '@atlaskit/form';
 import Select from '@atlaskit/select';
 import { orderBy, values } from 'lodash-es';

@@ -1,8 +1,8 @@
 import { Field, HelperMessage } from '@atlaskit/form';
-import { ChartNode, ColorEditorDefinition } from '@ironclad/rivet-core';
-import { FC, Suspense } from 'react';
+import { type ChartNode, type ColorEditorDefinition } from '@ironclad/rivet-core';
+import { type FC, Suspense } from 'react';
 import { LazyTripleBarColorPicker } from '../LazyComponents';
-import { SharedEditorProps } from './SharedEditorProps';
+import { type SharedEditorProps } from './SharedEditorProps';
 import { getHelperMessage } from './editorUtils';
 
 export const DefaultColorEditor: FC<

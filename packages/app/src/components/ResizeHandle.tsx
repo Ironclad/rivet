@@ -1,5 +1,5 @@
 import { useLatest } from 'ahooks';
-import { MouseEvent, FC, useRef } from 'react';
+import { type MouseEvent, type FC, useRef } from 'react';
 
 interface ResizeHandleProps {
   onResizeStart?: (event: MouseEvent) => void;

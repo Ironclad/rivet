@@ -1,13 +1,13 @@
 import Button from '@atlaskit/button';
 import { Field, HelperMessage } from '@atlaskit/form';
-import { FileBrowserEditorDefinition, ChartNode, DataId, uint8ArrayToBase64, DataRef } from '@ironclad/rivet-core';
+import { type FileBrowserEditorDefinition, type ChartNode, type DataId, uint8ArrayToBase64, type DataRef } from '@ironclad/rivet-core';
 import { nanoid } from 'nanoid/non-secure';
 import prettyBytes from 'pretty-bytes';
-import { FC } from 'react';
+import { type FC } from 'react';
 import { useRecoilValue } from 'recoil';
 import { projectDataState } from '../../state/savedGraphs';
 import { ioProvider } from '../../utils/globals';
-import { SharedEditorProps } from './SharedEditorProps';
+import { type SharedEditorProps } from './SharedEditorProps';
 import { getHelperMessage } from './editorUtils';
 
 export const DefaultFileBrowserEditor: FC<

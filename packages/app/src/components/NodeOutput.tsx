@@ -1,10 +1,10 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { NodeRunData, ProcessDataForNode, lastRunData, selectedProcessPage } from '../state/dataFlow.js';
-import { FC, ReactNode, memo, useMemo, useState } from 'react';
+import { type NodeRunData, type ProcessDataForNode, lastRunData, selectedProcessPage } from '../state/dataFlow.js';
+import { type FC, type ReactNode, memo, useMemo, useState } from 'react';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { copyToClipboard } from '../utils/copyToClipboard.js';
-import { ChartNode, PortId, ProcessId, getWarnings } from '@ironclad/rivet-core';
+import { type ChartNode, type PortId, type ProcessId, getWarnings } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-line.svg';
 import { ReactComponent as ExpandIcon } from 'majesticons/line/maximize-line.svg';

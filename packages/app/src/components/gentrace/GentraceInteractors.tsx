@@ -16,7 +16,7 @@ import { graphState } from '../../state/graph';
 import { projectDataState, projectState } from '../../state/savedGraphs.js';
 import { settingsState } from '../../state/settings';
 import { fillMissingSettingsFromEnvironmentVariables } from '../../utils/tauri';
-import GentracePipelinePicker, { GentracePipeline } from './GentracePipelinePicker';
+import GentracePipelinePicker, { type GentracePipeline } from './GentracePipelinePicker';
 
 export const GentraceInteractors = () => {
   const project = useRecoilValue(projectState);

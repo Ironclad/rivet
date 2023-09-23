@@ -1,8 +1,8 @@
-import { FC } from 'react';
+import { type FC } from 'react';
 import { css } from '@emotion/react';
 import { RenderDataValue } from '../RenderDataValue.js';
-import { ChatNode, Outputs, PortId, coerceTypeOptional, inferType, isArrayDataValue } from '@ironclad/rivet-core';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
+import { type ChatNode, type Outputs, type PortId, coerceTypeOptional, inferType, isArrayDataValue } from '@ironclad/rivet-core';
+import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 import styled from '@emotion/styled';
 import clsx from 'clsx';
 import { useMarkdown } from '../../hooks/useMarkdown.js';

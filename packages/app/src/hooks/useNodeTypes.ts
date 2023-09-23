@@ -1,6 +1,6 @@
-import { NodeOfType, BuiltInNodeType, Outputs, globalRivetNodeRegistry } from '@ironclad/rivet-core';
-import { FC, useMemo } from 'react';
-import { ChartNode } from '@ironclad/rivet-core';
+import { type NodeOfType, type BuiltInNodeType, type Outputs, globalRivetNodeRegistry } from '@ironclad/rivet-core';
+import { type FC, useMemo } from 'react';
+import { type ChartNode } from '@ironclad/rivet-core';
 import { chatNodeDescriptor } from '../components/nodes/ChatNode.js';
 import { loopControllerNodeDescriptor } from '../components/nodes/LoopControllerNode.js';
 import { matchNodeDescriptor } from '../components/nodes/MatchNode.js';

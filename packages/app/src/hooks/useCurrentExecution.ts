@@ -1,18 +1,18 @@
 import {
-  DataValue,
-  Inputs,
-  NodeId,
-  Outputs,
-  PortId,
-  ProcessEvents,
-  ProcessId,
+  type DataValue,
+  type Inputs,
+  type NodeId,
+  type Outputs,
+  type PortId,
+  type ProcessEvents,
+  type ProcessId,
   coerceTypeOptional,
 } from '@ironclad/rivet-core';
 import { produce } from 'immer';
 import { cloneDeep } from 'lodash-es';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  NodeRunData,
+  type NodeRunData,
   graphPausedState,
   graphRunningState,
   lastRunDataByNodeState,
@@ -20,7 +20,7 @@ import {
   runningGraphsState,
   selectedProcessPageNodesState,
 } from '../state/dataFlow';
-import { ProcessQuestions, userInputModalQuestionsState } from '../state/userInput';
+import { type ProcessQuestions, userInputModalQuestionsState } from '../state/userInput';
 import { lastRecordingState } from '../state/execution';
 import { trivetTestsRunningState } from '../state/trivet';
 import { useLatest } from 'ahooks';

@@ -1,13 +1,13 @@
-import { FC, Suspense, memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { type FC, Suspense, memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import {
-  ChartNode,
-  ColorizedNodeBodySpec,
-  MarkdownNodeBodySpec,
-  NodeBodySpec,
-  PlainNodeBodySpec,
+  type ChartNode,
+  type ColorizedNodeBodySpec,
+  type MarkdownNodeBodySpec,
+  type NodeBodySpec,
+  type PlainNodeBodySpec,
   globalRivetNodeRegistry,
-  NodeBody as RenderedNodeBody,
+  type NodeBody as RenderedNodeBody,
   getError,
 } from '@ironclad/rivet-core';
 import { useMarkdown } from '../hooks/useMarkdown';

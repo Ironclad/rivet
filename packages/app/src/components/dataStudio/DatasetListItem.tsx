@@ -1,8 +1,8 @@
 import TextField from '@atlaskit/textfield';
 import { css } from '@emotion/react';
-import { DatasetMetadata } from '@ironclad/rivet-core';
+import { type DatasetMetadata } from '@ironclad/rivet-core';
 import clsx from 'clsx';
-import { FC } from 'react';
+import { type FC } from 'react';
 
 const datasetStyles = css`
   display: flex;

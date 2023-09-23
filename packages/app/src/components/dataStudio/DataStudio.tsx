@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { type FC } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { css } from '@emotion/react';
 import { ErrorBoundary } from 'react-error-boundary';

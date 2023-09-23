@@ -1,7 +1,7 @@
 import { useSetRecoilState } from 'recoil';
 import { useStaticDataDatabase } from './useStaticDataDatabase';
 import { projectDataState } from '../state/savedGraphs';
-import { DataId } from '@ironclad/rivet-core';
+import { type DataId } from '@ironclad/rivet-core';
 import { entries } from '../../../core/src/utils/typeSafety';
 
 export function useSetStaticData() {

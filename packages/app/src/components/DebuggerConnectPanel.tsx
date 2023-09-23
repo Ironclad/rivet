@@ -1,7 +1,7 @@
 import Button from '@atlaskit/button';
 import TextField from '@atlaskit/textfield';
 import { css } from '@emotion/react';
-import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
+import { type ChangeEvent, type FC, useEffect, useRef, useState } from 'react';
 import { Field } from '@atlaskit/form';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
 import { useRecoilState, useSetRecoilState } from 'recoil';

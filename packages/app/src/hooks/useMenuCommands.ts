@@ -8,7 +8,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { settingsModalOpenState } from '../components/SettingsModal.js';
 import { graphState } from '../state/graph.js';
 import { useLoadRecording } from './useLoadRecording.js';
-import { WebviewWindow } from '@tauri-apps/api/window';
+import { type WebviewWindow } from '@tauri-apps/api/window';
 import { ioProvider } from '../utils/globals.js';
 import { debuggerPanelOpenState } from '../state/ui';
 import { useToggleRemoteDebugger } from '../components/DebuggerConnectPanel';

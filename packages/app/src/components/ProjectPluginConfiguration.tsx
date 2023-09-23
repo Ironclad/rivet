@@ -1,6 +1,6 @@
 import { Label } from '@atlaskit/form';
 import { produce } from 'immer';
-import { FC } from 'react';
+import { type FC } from 'react';
 import { useRecoilState } from 'recoil';
 import { projectPluginsState } from '../state/savedGraphs';
 import { ReactComponent as PlusIcon } from 'majesticons/line/plus-line.svg';
@@ -9,7 +9,7 @@ import { ReactComponent as DeleteBinIcon } from 'majesticons/line/delete-bin-lin
 import { ReactComponent as LightningIcon } from 'majesticons/line/lightning-bolt-line.svg';
 import { ReactComponent as InfoIcon } from 'majesticons/line/info-circle-line.svg';
 import { useToggle } from 'ahooks';
-import { PluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
+import { type PluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
 import { css } from '@emotion/react';
 import Popup from '@atlaskit/popup';
 import { MenuGroup, ButtonItem } from '@atlaskit/menu';

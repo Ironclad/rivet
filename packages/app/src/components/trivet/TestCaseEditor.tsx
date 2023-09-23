@@ -1,4 +1,4 @@
-import { FC, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { type FC, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { trivetState } from '../../state/trivet';
 import { useRecoilState } from 'recoil';
 import Button from '@atlaskit/button';

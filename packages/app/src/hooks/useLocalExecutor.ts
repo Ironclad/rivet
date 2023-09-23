@@ -1,11 +1,11 @@
 import {
   GraphProcessor,
-  NodeId,
-  StringArrayDataValue,
-  DataValue,
+  type NodeId,
+  type StringArrayDataValue,
+  type DataValue,
   coerceTypeOptional,
   ExecutionRecorder,
-  GraphOutputs,
+  type GraphOutputs,
   globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
 import { produce } from 'immer';

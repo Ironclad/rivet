@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { FC, useState } from 'react';
+import { type FC, useState } from 'react';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import clsx from 'clsx';

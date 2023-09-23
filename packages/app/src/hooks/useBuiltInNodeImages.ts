@@ -1,4 +1,4 @@
-import { BuiltInNodeType } from '@ironclad/rivet-core';
+import { type BuiltInNodeType } from '@ironclad/rivet-core';
 
 import textNodeImage from '../assets/node_images/text_node.png';
 import chatNodeImage from '../assets/node_images/chat_node.png';

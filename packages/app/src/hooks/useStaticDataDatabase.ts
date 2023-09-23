@@ -1,4 +1,4 @@
-import { DataId } from '@ironclad/rivet-core';
+import { type DataId } from '@ironclad/rivet-core';
 import { useEffect, useRef, useState } from 'react';
 
 export function useStaticDataDatabase() {

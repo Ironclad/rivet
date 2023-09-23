@@ -1,5 +1,5 @@
-import { NodeGraph, Project, ExecutionRecorder } from '@ironclad/rivet-core';
-import { TrivetData } from '@ironclad/trivet';
+import { type NodeGraph, type Project, type ExecutionRecorder } from '@ironclad/rivet-core';
+import { type TrivetData } from '@ironclad/trivet';
 
 export interface IOProvider {
   saveGraphData(graphData: NodeGraph): Promise<void>;

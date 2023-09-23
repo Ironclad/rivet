@@ -1,7 +1,8 @@
-import { ChartNode, EditorDefinitionGroup } from '@ironclad/rivet-core';
-import { FC } from 'react';
-import { SharedEditorProps } from './SharedEditorProps';
+import { type ChartNode, type EditorDefinitionGroup } from '@ironclad/rivet-core';
+import { type FC } from 'react';
+import { type SharedEditorProps } from './SharedEditorProps';
 import { css } from '@emotion/react';
+// eslint-disable-next-line import/no-cycle
 import { DefaultNodeEditorField } from './DefaultNodeEditorField';
 import Collapsible from 'react-collapsible';
 import { ReactComponent as ChevronDownIcon } from 'majesticons/line/chevron-down-line.svg';

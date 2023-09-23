@@ -1,10 +1,10 @@
-import { FC, memo } from 'react';
-import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
+import { type FC, memo } from 'react';
+import { type ChartNode, type NodeConnection, type NodeId, type PortId } from '@ironclad/rivet-core';
 import { useRecoilValue } from 'recoil';
 import clsx from 'clsx';
 import { ErrorBoundary } from 'react-error-boundary';
 import { nodeByIdState } from '../state/graph';
-import { PortPositions } from './NodeCanvas';
+import { type PortPositions } from './NodeCanvas';
 
 type WireProps = {
   connection: NodeConnection;

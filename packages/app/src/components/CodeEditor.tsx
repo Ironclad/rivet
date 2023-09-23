@@ -1,5 +1,5 @@
 import { useLatest } from 'ahooks';
-import { FC, MutableRefObject, useEffect, useRef } from 'react';
+import { type FC, type MutableRefObject, useEffect, useRef } from 'react';
 import { monaco } from '../utils/monaco.js';
 import { useRecoilValue } from 'recoil';
 import { themeState } from '../state/settings';

@@ -1,6 +1,6 @@
-import { AppendToDatasetNode } from '@ironclad/rivet-core';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
-import { FC } from 'react';
+import { type AppendToDatasetNode } from '@ironclad/rivet-core';
+import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { type FC } from 'react';
 import { useDatasets } from '../../hooks/useDatasets';
 import { useRecoilValue } from 'recoil';
 import { projectState } from '../../state/savedGraphs';

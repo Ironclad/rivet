@@ -1,12 +1,12 @@
 import Modal, { ModalTransition, ModalBody, ModalHeader, ModalFooter, ModalTitle } from '@atlaskit/modal-dialog';
-import { FC, useState } from 'react';
+import { type FC, useState } from 'react';
 import Select from '@atlaskit/select';
 import TextField from '@atlaskit/textfield';
 import { LazyCodeEditor } from './LazyComponents';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { lastRunData, lastRunDataByNodeState } from '../state/dataFlow';
 import { graphState } from '../state/graph';
-import { BuiltInNodeType, BuiltInNodes, GraphInputNode, PortId } from '@ironclad/rivet-core';
+import { BuiltInNodeType, type BuiltInNodes, type GraphInputNode, type PortId } from '@ironclad/rivet-core';
 import { max, maxBy, range } from 'lodash-es';
 import { Field, Label } from '@atlaskit/form';
 import { css } from '@emotion/react';

@@ -1,10 +1,10 @@
-import { ComponentType, useMemo } from 'react';
+import { type ComponentType, useMemo } from 'react';
 import { useContextMenuAddNodeConfiguration } from './useContextMenuAddNodeConfiguration.js';
 import { ReactComponent as DeleteIcon } from 'majesticons/line/delete-bin-line.svg';
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
 import { ReactComponent as DuplicateIcon } from 'majesticons/line/image-multiple-line.svg';
 import { ReactComponent as PlayIcon } from 'majesticons/line/play-circle-line.svg';
-import { NodeId } from '@ironclad/rivet-core';
+import { type NodeId } from '@ironclad/rivet-core';
 import { useRecoilValue } from 'recoil';
 import { selectedNodesState } from '../state/graphBuilder.js';
 import { useContextMenuCommands } from './useContextMenuCommands.js';

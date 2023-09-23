@@ -1,8 +1,8 @@
 import clsx from 'clsx';
-import { CSSProperties, FC, HTMLAttributes, MouseEvent, forwardRef, memo, useEffect, useState } from 'react';
+import { type CSSProperties, type FC, type HTMLAttributes, type MouseEvent, forwardRef, memo, useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { match } from 'ts-pattern';
-import { ChartNode, CommentNode, NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
+import { type ChartNode, type CommentNode, type NodeConnection, type NodeId, type PortId } from '@ironclad/rivet-core';
 import { lastRunData, selectedProcessPage } from '../state/dataFlow.js';
 import { NodeBody } from './NodeBody.js';
 import { NodeOutput } from './NodeOutput.js';

@@ -1,21 +1,21 @@
-import { FC, useCallback, useMemo } from 'react';
+import { type FC, useCallback, useMemo } from 'react';
 import { TestCaseTable } from './TestCaseTable';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { savedGraphsState } from '../../state/savedGraphs';
 import { keyBy } from 'lodash-es';
-import { NodeGraph } from '@ironclad/rivet-core';
+import { type NodeGraph } from '@ironclad/rivet-core';
 import { TestCaseEditor } from './TestCaseEditor';
 import { css } from '@emotion/react';
 import {
-  TrivetTestCase,
-  TrivetTestSuite,
+  type TrivetTestCase,
+  type TrivetTestSuite,
   validateTestCaseFormat,
   validateValidationGraphFormat,
 } from '@ironclad/trivet';
 import { trivetState } from '../../state/trivet';
 import Button from '@atlaskit/button';
-import { TryRunTests } from './api';
+import { type TryRunTests } from './api';
 import { useOpenUrl } from '../../hooks/useOpenUrl';
 import { ReactComponent as BrowserLineIcon } from 'majesticons/line/browser-line.svg';
 import { ReactComponent as AlertCircleIcon } from 'majesticons/line/alert-circle-line.svg';

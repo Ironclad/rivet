@@ -1,7 +1,7 @@
 import Portal from '@atlaskit/portal';
 import Select from '@atlaskit/select';
 import { css } from '@emotion/react';
-import { FC, useEffect, useRef, useState } from 'react';
+import { type FC, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { getGentracePipelines } from '../../../../core/src/plugins/gentrace/plugin';

@@ -1,8 +1,8 @@
 import Button from '@atlaskit/button';
 import { DropdownItem } from '@atlaskit/dropdown-menu';
 import Portal from '@atlaskit/portal';
-import { DatasetId, DatasetMetadata, newId, getError } from '@ironclad/rivet-core';
-import { FC, useState } from 'react';
+import { type DatasetId, type DatasetMetadata, newId, getError } from '@ironclad/rivet-core';
+import { type FC, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useContextMenu } from '../../hooks/useContextMenu';

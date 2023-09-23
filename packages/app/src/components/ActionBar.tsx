@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import clsx from 'clsx';
-import { FC, useEffect, useRef, useState } from 'react';
+import { type FC, useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useLoadRecording } from '../hooks/useLoadRecording';
 import { useSaveRecording } from '../hooks/useSaveRecording';

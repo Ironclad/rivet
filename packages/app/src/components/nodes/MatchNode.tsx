@@ -1,7 +1,7 @@
-import { FC } from 'react';
-import { ChartNode, MatchNode, NumberEditorDefinition } from '@ironclad/rivet-core';
+import { type FC } from 'react';
+import { type ChartNode, type MatchNode, type NumberEditorDefinition } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
+import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 import TextField from '@atlaskit/textfield';
 import { Label } from '@atlaskit/form';
 import { DefaultNumberEditor } from '../editors/NumberEditor';

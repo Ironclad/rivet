@@ -1,5 +1,5 @@
-import { NodeId, PortId } from '@ironclad/rivet-core';
-import { FC, useRef, MouseEvent, memo } from 'react';
+import { type NodeId, type PortId } from '@ironclad/rivet-core';
+import { type FC, useRef, type MouseEvent, memo } from 'react';
 import clsx from 'clsx';
 
 export const Port: FC<{

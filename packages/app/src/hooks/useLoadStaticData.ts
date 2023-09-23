@@ -3,7 +3,7 @@ import { loadedProjectState, projectDataState } from '../state/savedGraphs';
 import { useEffect } from 'react';
 import { useLoadProject } from './useLoadProject';
 import { useStaticDataDatabase } from './useStaticDataDatabase';
-import { DataId } from '@ironclad/rivet-core';
+import { type DataId } from '@ironclad/rivet-core';
 
 export function useLoadStaticData() {
   const [data, setData] = useRecoilState(projectDataState);

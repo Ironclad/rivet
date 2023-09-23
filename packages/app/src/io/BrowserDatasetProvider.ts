@@ -1,11 +1,11 @@
 import {
-  DatasetRow,
-  DatasetId,
-  DatasetMetadata,
-  DatasetProvider,
-  ProjectId,
-  Dataset,
-  CombinedDataset,
+  type DatasetRow,
+  type DatasetId,
+  type DatasetMetadata,
+  type DatasetProvider,
+  type ProjectId,
+  type Dataset,
+  type CombinedDataset,
 } from '@ironclad/rivet-core';
 import { cloneDeep } from 'lodash-es';
 

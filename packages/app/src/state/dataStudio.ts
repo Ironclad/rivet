@@ -1,4 +1,4 @@
-import { Dataset, DatasetId, DatasetMetadata } from '@ironclad/rivet-core';
+import { Dataset, type DatasetId, type DatasetMetadata } from '@ironclad/rivet-core';
 import { atom } from 'recoil';
 
 export const datasetsState = atom<DatasetMetadata[]>({

@@ -1,8 +1,8 @@
-import { ChartNode, getPluginConfig, globalRivetNodeRegistry } from '@ironclad/rivet-core';
+import { type ChartNode, getPluginConfig, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { datasetProvider } from '../utils/globals';
 import { useRecoilValue } from 'recoil';
 import { selectedExecutorState } from '../state/execution';
-import { RivetUIContext } from '../../../core/src/model/RivetUIContext';
+import { type RivetUIContext } from '../../../core/src/model/RivetUIContext';
 import { settingsState } from '../state/settings';
 import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
 import { useDependsOnPlugins } from './useDependsOnPlugins';

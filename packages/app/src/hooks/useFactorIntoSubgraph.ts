@@ -4,13 +4,13 @@ import { selectedNodesState } from '../state/graphBuilder.js';
 import { connectionsState, nodesByIdState } from '../state/graph.js';
 import { max, min, uniqBy } from 'lodash-es';
 import {
-  ChartNode,
+  type ChartNode,
   GraphInputNodeImpl,
   GraphOutputNodeImpl,
-  NodeConnection,
-  NodeId,
-  PortId,
-  ScalarOrArrayDataType,
+  type NodeConnection,
+  type NodeId,
+  type PortId,
+  type ScalarOrArrayDataType,
   emptyNodeGraph,
   globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';

@@ -1,10 +1,10 @@
 import { HelperMessage, Label } from '@atlaskit/form';
-import { CodeEditorDefinition, ChartNode } from '@ironclad/rivet-core';
+import { type CodeEditorDefinition, type ChartNode } from '@ironclad/rivet-core';
 import { useLatest, useDebounceFn } from 'ahooks';
-import { FC, useRef, useEffect, Suspense } from 'react';
-import { monaco } from '../../utils/monaco';
+import { type FC, useRef, useEffect, Suspense } from 'react';
+import { type monaco } from '../../utils/monaco';
 import { LazyCodeEditor } from '../LazyComponents';
-import { SharedEditorProps } from './SharedEditorProps';
+import { type SharedEditorProps } from './SharedEditorProps';
 import { getHelperMessage } from './editorUtils';
 
 export const DefaultCodeEditor: FC<

@@ -1,9 +1,9 @@
-import { FC } from 'react';
+import { type FC } from 'react';
 import Toggle from '@atlaskit/toggle';
 import { css } from '@emotion/react';
 import Button from '@atlaskit/button';
-import { ChartNode, ReadFileNode } from '@ironclad/rivet-core';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
+import { type ChartNode, type ReadFileNode } from '@ironclad/rivet-core';
+import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 import { ioProvider } from '../../utils/globals.js';
 
 type ReadFileNodeBodyProps = {

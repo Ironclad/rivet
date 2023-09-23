@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { type FC, useState } from 'react';
 import { atom, useRecoilState } from 'recoil';
 import {
   defaultExecutorState,
@@ -16,7 +16,7 @@ import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { entries } from '../../../core/src/utils/typeSafety';
 import { match } from 'ts-pattern';
 import Select from '@atlaskit/select';
-import { SecretPluginConfigurationSpec, StringPluginConfigurationSpec } from '../../../core/src/index.js';
+import { type SecretPluginConfigurationSpec, type StringPluginConfigurationSpec } from '../../../core/src/index.js';
 import { SideNavigation, NavigationHeader, ButtonItem, Header, NavigationContent } from '@atlaskit/side-navigation';
 import CrossIcon from '@atlaskit/icon/glyph/cross';
 import { css } from '@emotion/react';

@@ -1,5 +1,5 @@
 import { atom } from 'recoil';
-import { ChatMessage, ChatNodeConfigData, NodeId, ProcessId } from '@ironclad/rivet-core';
+import { type ChatMessage, type ChatNodeConfigData, type NodeId, type ProcessId } from '@ironclad/rivet-core';
 
 export type PromptDesignerMessagesState = {
   messages: ChatMessage[];

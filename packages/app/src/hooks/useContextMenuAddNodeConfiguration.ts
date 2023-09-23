@@ -1,5 +1,5 @@
-import { NodeUIData, getError, globalRivetNodeRegistry } from '@ironclad/rivet-core';
-import { ContextMenuItem } from './useContextMenuConfiguration';
+import { type NodeUIData, getError, globalRivetNodeRegistry } from '@ironclad/rivet-core';
+import { type ContextMenuItem } from './useContextMenuConfiguration';
 import { useMemo, useState } from 'react';
 import { useBuiltInNodeImages } from './useBuiltInNodeImages';
 import { useDependsOnPlugins } from './useDependsOnPlugins';

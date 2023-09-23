@@ -1,6 +1,6 @@
-import { FC, useLayoutEffect, useRef } from 'react';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
-import { AudioNode } from '@ironclad/rivet-core';
+import { type FC, useLayoutEffect, useRef } from 'react';
+import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { type AudioNode } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { useRecoilValue } from 'recoil';
 import { projectDataState } from '../../state/savedGraphs';

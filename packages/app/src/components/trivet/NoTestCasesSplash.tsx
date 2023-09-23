@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { FC } from 'react';
+import { type FC } from 'react';
 import { useMarkdown } from '../../hooks/useMarkdown';
 import Button from '@atlaskit/button';
 import { useOpenUrl } from '../../hooks/useOpenUrl';

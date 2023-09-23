@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
+import { type NodeConnection, type NodeId, type PortId } from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { connectionsState, ioDefinitionsState, nodesByIdState } from '../state/graph.js';
 import { draggingWireClosestPortState, draggingWireState } from '../state/graphBuilder.js';

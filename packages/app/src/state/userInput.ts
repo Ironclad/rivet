@@ -1,5 +1,5 @@
 import { atom } from 'recoil';
-import { ArrayDataValue, NodeId, ProcessId, StringDataValue } from '@ironclad/rivet-core';
+import { type ArrayDataValue, type NodeId, type ProcessId, type StringDataValue } from '@ironclad/rivet-core';
 import { recoilPersist } from 'recoil-persist';
 
 const { persistAtom } = recoilPersist({ key: 'userInput' });

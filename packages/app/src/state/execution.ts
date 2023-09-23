@@ -1,5 +1,5 @@
 import { atom } from 'recoil';
-import { ExecutionRecorder } from '@ironclad/rivet-core';
+import { type ExecutionRecorder } from '@ironclad/rivet-core';
 import { recoilPersist } from 'recoil-persist';
 import { defaultExecutorState } from './settings';
 

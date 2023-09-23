@@ -1,5 +1,5 @@
-import { DatasetRow, newId } from '@ironclad/rivet-core';
-import { FC, useState } from 'react';
+import { type DatasetRow, newId } from '@ironclad/rivet-core';
+import { type FC, useState } from 'react';
 import { LazyCodeEditor } from '../LazyComponents';
 import { css } from '@emotion/react';
 

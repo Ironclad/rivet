@@ -1,5 +1,5 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { NodeGraph, emptyNodeGraph } from '@ironclad/rivet-core';
+import { type NodeGraph, emptyNodeGraph } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph.js';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph.js';
 import {

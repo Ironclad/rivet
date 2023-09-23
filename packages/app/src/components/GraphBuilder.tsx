@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState, MouseEvent } from 'react';
+import { type FC, useEffect, useMemo, useState, type MouseEvent } from 'react';
 import { NodeCanvas } from './NodeCanvas.js';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { connectionsState, graphState, nodesByIdState } from '../state/graph.js';
@@ -9,15 +9,15 @@ import styled from '@emotion/styled';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import {
-  ArrayDataValue,
-  BuiltInNodes,
-  ChartNode,
-  GraphId,
-  NodeId,
-  StringDataValue,
+  type ArrayDataValue,
+  type BuiltInNodes,
+  type ChartNode,
+  type GraphId,
+  type NodeId,
+  type StringDataValue,
   globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
-import { ProcessQuestions, userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput.js';
+import { type ProcessQuestions, userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput.js';
 import { UserInputModal } from './UserInputModal.js';
 import Button from '@atlaskit/button';
 import { isNotNull } from '../utils/genericUtilFunctions.js';
@@ -26,7 +26,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { loadedRecordingState } from '../state/execution.js';
 import { useLoadGraph } from '../hooks/useLoadGraph.js';
 import { projectState } from '../state/savedGraphs.js';
-import { ContextMenuContext } from './ContextMenu.js';
+import { type ContextMenuContext } from './ContextMenu.js';
 import { useGraphHistoryNavigation } from '../hooks/useGraphHistoryNavigation';
 import { useProjectPlugins } from '../hooks/useProjectPlugins';
 import { entries } from '../../../core/src/utils/typeSafety';

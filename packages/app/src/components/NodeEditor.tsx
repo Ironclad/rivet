@@ -1,10 +1,10 @@
-import { FC, useMemo, useState, MouseEvent } from 'react';
+import { type FC, useMemo, useState, type MouseEvent } from 'react';
 import { editingNodeState } from '../state/graphBuilder.js';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { connectionsForSingleNodeState, connectionsState, nodesByIdState, nodesState } from '../state/graph.js';
 import styled from '@emotion/styled';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
-import { ChartNode, NodeTestGroup, GraphId, globalRivetNodeRegistry, DataId } from '@ironclad/rivet-core';
+import { type ChartNode, type NodeTestGroup, type GraphId, globalRivetNodeRegistry, type DataId } from '@ironclad/rivet-core';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import { produce } from 'immer';
 import { useHotkeys } from 'react-hotkeys-hook';

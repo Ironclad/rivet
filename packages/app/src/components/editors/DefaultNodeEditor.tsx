@@ -1,8 +1,8 @@
-import { FC, useEffect, useState } from 'react';
-import { ChartNode, EditorDefinition, getError, globalRivetNodeRegistry } from '@ironclad/rivet-core';
+import { type FC, useEffect, useState } from 'react';
+import { type ChartNode, type EditorDefinition, getError, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { toast } from 'react-toastify';
-import { SharedEditorProps } from './SharedEditorProps';
+import { type SharedEditorProps } from './SharedEditorProps';
 import { DefaultNodeEditorField } from './DefaultNodeEditorField';
 import { RivetUIContext } from '../../../../core/src/model/RivetUIContext';
 import { datasetProvider } from '../../utils/globals';

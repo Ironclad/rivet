@@ -1,9 +1,9 @@
-import { FC } from 'react';
+import { type FC } from 'react';
 import {
-  DataValue,
-  Outputs,
-  ScalarDataType,
-  ScalarDataValue,
+  type DataValue,
+  type Outputs,
+  type ScalarDataType,
+  type ScalarDataValue,
   arrayizeDataValue,
   getScalarTypeOf,
   inferType,

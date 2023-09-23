@@ -1,7 +1,7 @@
-import { FC } from 'react';
-import { Outputs, PortId } from '@ironclad/rivet-core';
+import { type FC } from 'react';
+import { type Outputs, type PortId } from '@ironclad/rivet-core';
 import { RenderDataValue } from '../RenderDataValue.js';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
+import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 
 export const LoopControllerNodeOutput: FC<{ outputs: Outputs; renderMarkdown?: boolean }> = ({ outputs }) => {
   const outputKeys = Object.keys(outputs).filter((key) => key.startsWith('output'));

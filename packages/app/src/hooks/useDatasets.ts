@@ -1,4 +1,4 @@
-import { DatasetId, DatasetMetadata, ProjectId, getError } from '@ironclad/rivet-core';
+import { type DatasetId, type DatasetMetadata, type ProjectId, getError } from '@ironclad/rivet-core';
 import { useEffect, useState } from 'react';
 import { datasetProvider } from '../utils/globals';
 import { toast } from 'react-toastify';

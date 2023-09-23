@@ -1,4 +1,4 @@
-import { FC, useLayoutEffect, useRef } from 'react';
+import { type FC, useLayoutEffect, useRef } from 'react';
 import { monaco } from '../utils/monaco';
 import { useRecoilValue } from 'recoil';
 import { themeState } from '../state/settings';

@@ -1,21 +1,21 @@
-import { FC, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { type FC, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { orderBy } from 'lodash-es';
 import { overlayOpenState } from '../state/ui';
 import { css } from '@emotion/react';
 import clsx from 'clsx';
 import {
-  BuiltInNodes,
-  ChartNode,
-  DataValue,
-  NodeId,
-  PortId,
-  ProcessId,
-  ScalarOrArrayDataValue,
+  type BuiltInNodes,
+  type ChartNode,
+  type DataValue,
+  type NodeId,
+  type PortId,
+  type ProcessId,
+  type ScalarOrArrayDataValue,
   arrayizeDataValue,
   coerceTypeOptional,
 } from '@ironclad/rivet-core';
-import { NodeRunData, lastRunDataByNodeState } from '../state/dataFlow';
+import { type NodeRunData, lastRunDataByNodeState } from '../state/dataFlow';
 import { projectState } from '../state/savedGraphs';
 import { ErrorBoundary } from 'react-error-boundary';
 import TextField from '@atlaskit/textfield';

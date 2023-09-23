@@ -1,8 +1,8 @@
 import {
-  GraphOutputs,
-  NodeId,
-  ProcessEvents,
-  StringArrayDataValue,
+  type GraphOutputs,
+  type NodeId,
+  type ProcessEvents,
+  type StringArrayDataValue,
   globalRivetNodeRegistry,
   serializeDatasets,
 } from '@ironclad/rivet-core';

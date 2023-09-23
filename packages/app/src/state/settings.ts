@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 import { persistAtom } from './persist.js';
-import { Settings } from '@ironclad/rivet-core';
+import { type Settings } from '@ironclad/rivet-core';
 import { isInTauri } from '../utils/tauri';
 
 export const settingsState = atom<Settings>({

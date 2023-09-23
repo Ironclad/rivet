@@ -1,14 +1,14 @@
 import {
-  NodeGraph,
-  Project,
+  type NodeGraph,
+  type Project,
   ExecutionRecorder,
   deserializeGraph,
   deserializeProject,
   serializeGraph,
   serializeProject,
 } from '@ironclad/rivet-core';
-import { IOProvider } from './IOProvider.js';
-import { SerializedTrivetData, TrivetData, deserializeTrivetData, serializeTrivetData } from '@ironclad/trivet';
+import { type IOProvider } from './IOProvider.js';
+import { type SerializedTrivetData, type TrivetData, deserializeTrivetData, serializeTrivetData } from '@ironclad/trivet';
 
 export class BrowserIOProvider implements IOProvider {
   static isSupported(): boolean {

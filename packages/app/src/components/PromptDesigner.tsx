@@ -1,9 +1,9 @@
 import Button from '@atlaskit/button';
 import { css } from '@emotion/react';
-import { ChangeEvent, FC, useEffect, useState, useRef, useLayoutEffect } from 'react';
+import { type ChangeEvent, type FC, useEffect, useState, useRef, useLayoutEffect } from 'react';
 import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import {
-  PromptDesignerTestGroupResults,
+  type PromptDesignerTestGroupResults,
   promptDesignerAttachedChatNodeState,
   promptDesignerConfigurationState,
   promptDesignerMessagesState,
@@ -14,19 +14,19 @@ import {
 import { nodesByIdState, nodesState } from '../state/graph.js';
 import { lastRunDataByNodeState } from '../state/dataFlow.js';
 import {
-  ChatMessage,
-  ChatNode,
-  ChatNodeConfigData,
+  type ChatMessage,
+  type ChatNode,
+  type ChatNodeConfigData,
   ChatNodeImpl,
-  GraphId,
+  type GraphId,
   GraphProcessor,
-  InternalProcessContext,
-  NodeId,
-  NodeTestGroup,
-  PortId,
-  ProcessId,
-  RivetPlugin,
-  Settings,
+  type InternalProcessContext,
+  type NodeId,
+  type NodeTestGroup,
+  type PortId,
+  type ProcessId,
+  type RivetPlugin,
+  type Settings,
   arrayizeDataValue,
   coerceType,
   coerceTypeOptional,

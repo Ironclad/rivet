@@ -1,10 +1,10 @@
-import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
-import { FC, MouseEvent } from 'react';
+import { type ChartNode, type NodeConnection, type NodeId, type PortId } from '@ironclad/rivet-core';
+import { type FC, type MouseEvent } from 'react';
 import { useNodeIO } from '../hooks/useGetNodeIO.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { Port } from './Port.js';
 import { ErrorBoundary } from 'react-error-boundary';
-import { WireDef } from './WireLayer';
+import { type WireDef } from './WireLayer';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 
 export type NodePortsProps = {

@@ -1,8 +1,8 @@
-import { PackagePluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
+import { type PackagePluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
 import { appLocalDataDir, join } from '@tauri-apps/api/path';
 import { readDir, exists, readTextFile, writeBinaryFile, createDir, removeDir } from '@tauri-apps/api/fs';
 import { ResponseType, fetch, getClient } from '@tauri-apps/api/http';
-import { RivetPlugin } from '@ironclad/rivet-core';
+import { type RivetPlugin } from '@ironclad/rivet-core';
 import { invoke } from '@tauri-apps/api/tauri';
 import * as Rivet from '@ironclad/rivet-core';
 import semverGt from 'semver/functions/gt';

@@ -1,5 +1,5 @@
 import { atom } from 'recoil';
-import { PluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
+import { type PluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
 
 export type PluginState = {
   id: string;

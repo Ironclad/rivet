@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { datasetProvider } from '../utils/globals';
 import { toast } from 'react-toastify';
-import { DatasetRow, DatasetId, getError, newId, Dataset } from '@ironclad/rivet-core';
+import { type DatasetRow, type DatasetId, getError, newId, type Dataset } from '@ironclad/rivet-core';
 
 export function useDataset(datasetId: DatasetId) {
   const [dataset, updateDataset] = useState<Dataset | null>(null);

@@ -1,11 +1,11 @@
 import { css } from '@emotion/react';
-import { FC, MouseEvent } from 'react';
+import { type FC, type MouseEvent } from 'react';
 import clsx from 'clsx';
 import { useContextMenu } from '../../hooks/useContextMenu';
 import { useStableCallback } from '../../hooks/useStableCallback';
 import Portal from '@atlaskit/portal';
 import { DropdownItem } from '@atlaskit/dropdown-menu';
-import { TrivetTestSuite } from '@ironclad/trivet';
+import { type TrivetTestSuite } from '@ironclad/trivet';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import { LoadingSpinner } from '../LoadingSpinner';
 

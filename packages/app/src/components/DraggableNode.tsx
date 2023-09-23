@@ -1,6 +1,6 @@
 import { useDraggable } from '@dnd-kit/core';
-import { ChartNode, NodeConnection, NodeId, PortId } from '@ironclad/rivet-core';
-import { MouseEvent, FC } from 'react';
+import { type ChartNode, type NodeConnection, type NodeId, type PortId } from '@ironclad/rivet-core';
+import { type MouseEvent, type FC } from 'react';
 import { VisualNode } from './VisualNode.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { ErrorBoundary } from 'react-error-boundary';

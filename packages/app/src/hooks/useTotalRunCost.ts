@@ -1,4 +1,4 @@
-import { NodeId, ChartNode, BuiltInNodeType, PortId } from '@ironclad/rivet-core';
+import { type NodeId, type ChartNode, type BuiltInNodeType, type PortId } from '@ironclad/rivet-core';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { lastRunDataByNodeState } from '../state/dataFlow';

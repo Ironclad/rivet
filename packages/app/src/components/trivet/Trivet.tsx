@@ -1,12 +1,12 @@
 import { useRecoilState } from 'recoil';
 import { trivetState } from '../../state/trivet';
-import { FC, useCallback, useMemo } from 'react';
+import { type FC, useCallback, useMemo } from 'react';
 import { css } from '@emotion/react';
 import Button from '@atlaskit/button';
 import { TestSuiteList } from './TestSuiteList';
 import { TestSuiteRenderer } from './TestSuite';
 import { nanoid } from 'nanoid/non-secure';
-import { TryRunTests } from './api';
+import { type TryRunTests } from './api';
 import { overlayOpenState } from '../../state/ui';
 import { NoTestSuitesSplash } from './NoTestSuitesSplash';
 
