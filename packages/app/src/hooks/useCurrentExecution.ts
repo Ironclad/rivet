@@ -137,8 +137,6 @@ export function useCurrentExecution() {
     setGraphRunning(true);
     setRootGraph(startGraph.metadata!.id);
 
-    console.log(startGraph);
-
     // Don't clear the last run data if we're running trivet tests, so you can see both the
     // test graph and the validation graph in the results.
     if (!trivetRunningLatest.current) {
