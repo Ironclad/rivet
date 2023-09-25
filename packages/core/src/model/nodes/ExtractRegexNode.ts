@@ -20,6 +20,7 @@ export type ExtractRegexNodeData = {
   regex: string;
   useRegexInput: boolean;
   errorOnFailed: boolean;
+  multilineMode?: boolean;
 };
 
 export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
@@ -114,6 +115,11 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
         dataKey: 'errorOnFailed',
       },
       {
+        type: 'toggle',
+        label: 'Multiline mode',
+        dataKey: 'multilineMode',
+      },
+      {
         type: 'code',
         label: 'Regex',
         dataKey: 'regex',
@@ -144,7 +150,7 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
     const inputString = expectType(inputs['input' as PortId], 'string');
     const regex = expectTypeOptional(inputs['regex' as PortId], 'string') ?? this.chartNode.data.regex;
 
-    const regExp = new RegExp(regex, 'g');
+    const regExp = new RegExp(regex, this.data.multilineMode ? 'gm' : 'g');
 
     let matches = [];
     let match;
