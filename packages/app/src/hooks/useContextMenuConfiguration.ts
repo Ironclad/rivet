@@ -8,6 +8,10 @@ import { type NodeId } from '@ironclad/rivet-core';
 import { useRecoilValue } from 'recoil';
 import { selectedNodesState } from '../state/graphBuilder.js';
 import { useContextMenuCommands } from './useContextMenuCommands.js';
+import { ReactComponent as CopyIcon } from '../assets/icons/copy-icon.svg';
+import { ReactComponent as PasteIcon } from '../assets/icons/paste-icon.svg';
+import { ReactComponent as PlusIcon } from 'majesticons/line/plus-line.svg';
+import { clipboardState } from '../state/clipboard';
 
 export type ContextMenuConfig = {
   contexts: ContextMenuContextConfig;
@@ -46,6 +50,7 @@ export function useContextMenuConfiguration() {
   const addMenuConfig = useContextMenuAddNodeConfiguration();
   const commands = useContextMenuCommands();
   const selectedNodeIds = useRecoilValue(selectedNodesState);
+  const clipboard = useRecoilValue(clipboardState);
 
   const config = useMemo(
     () =>
@@ -58,6 +63,11 @@ export function useContextMenuConfiguration() {
               nodeId: NodeId;
             }>(),
             items: [
+              {
+                id: 'node-copy',
+                label: 'Copy',
+                icon: CopyIcon,
+              },
               {
                 id: 'node-go-to-subgraph',
                 label: 'Go To Subgraph',
@@ -102,6 +112,13 @@ export function useContextMenuConfiguration() {
                 id: 'add',
                 label: 'Add',
                 items: addMenuConfig,
+                icon: PlusIcon,
+              },
+              {
+                id: 'paste',
+                label: 'Paste',
+                icon: PasteIcon,
+                conditional: () => clipboard !== undefined,
               },
             ],
           },
