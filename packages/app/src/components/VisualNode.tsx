@@ -288,7 +288,6 @@ const NormalVisualNodeContent: FC<{
     onNodeSizeChanged,
     handleAttributes,
   }) => {
-    const isComment = node.type === 'comment';
     const lastRun = useRecoilValue(lastRunData(node.id));
     const processPage = useRecoilValue(selectedProcessPage(node.id));
     useDependsOnPlugins();
@@ -378,7 +377,6 @@ const NormalVisualNodeContent: FC<{
 
     const isKnownNodeType = useIsKnownNodeType(node.type);
 
-    const { canvasPosition } = useCanvasPositioning();
     const draggingWire = useRecoilValue(draggingWireState);
     const closestPortToDraggingWire = useRecoilValue(draggingWireClosestPortState);
 
