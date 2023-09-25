@@ -173,7 +173,10 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
       }
     }
 
-    const inputCount = Object.keys(inputs).filter((key) => key.startsWith('input') && !key.endsWith('Default')).length;
+    let inputCount = 0;
+    while (inputs[`input${inputCount + 1}` as PortId] || inputs[`input${inputCount + 1}Default` as PortId]) {
+      inputCount++;
+    }
 
     if (continueValue) {
       output['break' as PortId] = { type: 'control-flow-excluded', value: 'loop-not-broken' };
