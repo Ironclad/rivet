@@ -9,7 +9,7 @@ export const DefaultNumberEditor: FC<
   SharedEditorProps & {
     editor: NumberEditorDefinition<ChartNode>;
   }
-> = ({ node, isReadonly, isDisabled, onChange, editor }) => {
+> = ({ node, isReadonly, isDisabled, onChange, editor, onClose }) => {
   const data = node.data as Record<string, unknown>;
   const helperMessage = getHelperMessage(editor, node.data);
   return (
@@ -41,6 +41,11 @@ export const DefaultNumberEditor: FC<
                     [editor.dataKey]: (e.target as HTMLInputElement).valueAsNumber,
                   },
                 });
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                onClose?.();
               }
             }}
           />

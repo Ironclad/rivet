@@ -9,7 +9,7 @@ export const DefaultStringEditor: FC<
   SharedEditorProps & {
     editor: StringEditorDefinition<ChartNode>;
   }
-> = ({ node, isReadonly, isDisabled, onChange, editor }) => {
+> = ({ node, isReadonly, isDisabled, onChange, editor, onClose }) => {
   const data = node.data as Record<string, unknown>;
   const helperMessage = getHelperMessage(editor, node.data);
   return (
@@ -29,6 +29,11 @@ export const DefaultStringEditor: FC<
                 },
               })
             }
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                onClose?.();
+              }
+            }}
           />
           {helperMessage && <HelperMessage>{helperMessage}</HelperMessage>}
         </>
