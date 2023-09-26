@@ -1,7 +1,15 @@
-import { DefaultValue, atom, selector } from 'recoil';
+import { DefaultValue, atom, selector, selectorFamily } from 'recoil';
 import { nanoid } from 'nanoid/non-secure';
 import { produce } from 'immer';
-import { type DataId, type GraphId, type NodeGraph, type Project, type ProjectId } from '@ironclad/rivet-core';
+import {
+  type NodeId,
+  type DataId,
+  type GraphId,
+  type NodeGraph,
+  type Project,
+  type ProjectId,
+  type ChartNode,
+} from '@ironclad/rivet-core';
 import { blankProject } from '../utils/blankProject.js';
 import { recoilPersist } from 'recoil-persist';
 import { entries, values } from '../../../core/src/utils/typeSafety';
