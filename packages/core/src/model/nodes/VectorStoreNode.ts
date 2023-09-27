@@ -119,8 +119,8 @@ export class VectorStoreNodeImpl extends NodeImpl<VectorStoreNode> {
 
   getBody(): string | undefined {
     return dedent`
-      ${this.data.useIntegrationInput ? '(Integration using input)' : this.data.integration}
-      ${this.data.useCollectionIdInput ? '(using input)' : this.data.collectionId}
+      Integration: ${this.data.useIntegrationInput ? '(using input)' : this.data.integration}
+      Collection Id: ${this.data.useCollectionIdInput ? '(using input)' : this.data.collectionId}
     `;
   }
 

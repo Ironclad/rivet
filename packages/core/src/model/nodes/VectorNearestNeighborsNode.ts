@@ -80,15 +80,6 @@ export class VectorNearestNeighborsNodeImpl extends NodeImpl<VectorNearestNeighb
       });
     }
 
-    if (this.data.useCollectionIdInput) {
-      inputDefinitions.push({
-        id: 'collectionId' as PortId,
-        title: 'Collection ID',
-        dataType: 'string',
-        required: true,
-      });
-    }
-
     return inputDefinitions;
   }
 
@@ -137,9 +128,9 @@ export class VectorNearestNeighborsNodeImpl extends NodeImpl<VectorNearestNeighb
 
   getBody(): string | undefined {
     return dedent`
-      ${this.data.useIntegrationInput ? '(Integration using input)' : this.data.integration}
-      k: ${this.data.useKInput ? '(using input)' : this.data.k}
-      ${this.data.useCollectionIdInput ? '(using input)' : this.data.collectionId}
+      Integration: ${this.data.useIntegrationInput ? '(using input)' : this.data.integration}
+      K: ${this.data.useKInput ? '(using input)' : this.data.k}
+      Collection Id: ${this.data.useCollectionIdInput ? '(using input)' : this.data.collectionId}
     `;
   }
 

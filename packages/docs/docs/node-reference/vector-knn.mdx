@@ -3,3 +3,59 @@ title: 'Vector Nearest Neighbors'
 ---
 
 # Vector Nearest Neighbors Node
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Overview
+
+The Vector KNN Node takes a vector embedding and searches for K similar vectors.
+
+![Chat Node Screenshot](./assets/vector-knn-node.png)
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+## Inputs
+
+| Title  | Data Type   | Description                                                 | Required |                                                                                                                                                                |
+| ------ | ----------- | ----------------------------------------------------------- | -------- |
+| Vector | vector      | The vector you would like to search for nearest neighbors.  | True     |
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title    | Data Type | Description                   |
+| -------- | --------- | ----------------------------- |
+| Results  | any[]     | Array of nearest K neighbors. |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting         | Description                            | 
+| --------------- | -------------------------------------- | 
+| Integration     | Which integrated store to use.         |
+| K               | Number of nearest neighbors to return. |
+| Collection Id   | Which collection to store the vector.  |
+
+
+</TabItem>
+
+</Tabs>
+
+## See Also
+
+- [Pinecone](../user-guide/plugins/built-in/pinecone.md)
