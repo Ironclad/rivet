@@ -1,10 +1,19 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { DataValue } from '../DataValue.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type PortId,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { type DataValue } from '../DataValue.js';
 import { JSONPath } from 'jsonpath-plus';
 import { expectType } from '../../utils/expectType.js';
-import { coerceTypeOptional } from '../../index.js';
+import { type EditorDefinition, type NodeBodySpec } from '../../index.js';
+import { dedent } from 'ts-dedent';
+import { coerceTypeOptional } from '../../utils/coerceType.js';
 
 export type ExtractObjectPathNode = ChartNode<'extractObjectPath', ExtractObjectPathNodeData>;
 
@@ -84,6 +93,17 @@ export class ExtractObjectPathNodeImpl extends NodeImpl<ExtractObjectPathNode> {
 
   getBody(): string | NodeBodySpec | undefined {
     return this.data.usePathInput ? '(Using Input)' : this.data.path;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Extracts the value at the specified path from the input value. The path uses JSONPath notation to navigate through the value.
+      `,
+      infoBoxTitle: 'Extract Object Path Node',
+      contextMenuTitle: 'Extract Object Path',
+      group: ['Objects'],
+    };
   }
 
   async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {

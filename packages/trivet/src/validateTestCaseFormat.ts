@@ -1,10 +1,13 @@
-import { GraphInputNode, GraphOutputNode, NodeGraph } from '@ironclad/rivet-core';
-import { TrivetTestCase } from './trivetTypes.js';
+import { type GraphInputNode, type GraphOutputNode, type NodeGraph } from '@ironclad/rivet-core';
+import { type TrivetTestCase } from './trivetTypes.js';
 
-export function validateTestCaseFormat(testGraph: NodeGraph, testCase: TrivetTestCase): {
-  valid: boolean,
-  missingInputIds: string[],
-  missingOutputIds: string[],
+export function validateTestCaseFormat(
+  testGraph: NodeGraph,
+  testCase: TrivetTestCase,
+): {
+  valid: boolean;
+  missingInputIds: string[];
+  missingOutputIds: string[];
 } {
   const inputNodes = testGraph.nodes.filter((n): n is GraphInputNode => n.type === 'graphInput');
   const outputNodes = testGraph.nodes.filter((n): n is GraphOutputNode => n.type === 'graphOutput');
@@ -21,5 +24,5 @@ export function validateTestCaseFormat(testGraph: NodeGraph, testCase: TrivetTes
     valid: missingInputIds.length === 0 && missingOutputIds.length === 0,
     missingInputIds,
     missingOutputIds,
-  }
+  };
 }

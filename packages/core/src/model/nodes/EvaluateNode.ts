@@ -1,9 +1,18 @@
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
-import { coerceType, coerceTypeOptional } from '../../index.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { type EditorDefinition } from '../../index.js';
 import { match } from 'ts-pattern';
+import { dedent } from 'ts-dedent';
+import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 
 export type EvaluateNode = ChartNode<'evaluate', EvaluateNodeData>;
 
@@ -111,6 +120,19 @@ export class EvaluateNodeImpl extends NodeImpl<EvaluateNode> {
     }
 
     return this.data.useOperationInput ? 'A (Operation) B' : `A ${this.data.operation} B`;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Evaluates the configured mathematical operation on the input values and outputs the result.
+
+        For more complex operations, you should use the \`Code\` node.
+      `,
+      infoBoxTitle: 'Evaluate Node',
+      contextMenuTitle: 'Evaluate',
+      group: ['Logic'],
+    };
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

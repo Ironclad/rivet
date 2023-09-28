@@ -1,9 +1,9 @@
-import { FC } from 'react';
+import { type FC } from 'react';
 import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
 import Button from '@atlaskit/button';
-import { ChartNode, Outputs, PortId, ReadDirectoryNode, expectType } from '@ironclad/rivet-core';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
+import { type ChartNode, type Outputs, type PortId, type ReadDirectoryNode, expectType } from '@ironclad/rivet-core';
+import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 import { ioProvider } from '../../utils/globals.js';
 
 export const ReadDirectoryNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {

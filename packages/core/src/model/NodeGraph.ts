@@ -1,6 +1,7 @@
-import { nanoid } from 'nanoid';
-import { ChartNode, NodeConnection } from './NodeBase.js';
-import { Opaque } from 'type-fest';
+import { nanoid } from 'nanoid/non-secure';
+import { type ChartNode, type NodeConnection } from './NodeBase.js';
+import type { Opaque } from 'type-fest';
+import { type AttachedData } from '../utils/serialization/serializationUtils.js';
 
 export type GraphId = Opaque<string, 'GraphId'>;
 
@@ -9,6 +10,8 @@ export interface NodeGraph {
     id?: GraphId;
     name?: string;
     description?: string;
+
+    attachedData?: AttachedData;
   };
 
   nodes: ChartNode[];

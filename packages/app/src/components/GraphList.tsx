@@ -1,6 +1,6 @@
-import { DndContext, DragEndEvent, DragOverEvent, useDraggable, useDroppable } from '@dnd-kit/core';
+import { DndContext, type DragEndEvent, type DragOverEvent, type DragStartEvent, useDraggable, useDroppable } from '@dnd-kit/core';
 import { css } from '@emotion/react';
-import { CSSProperties, FC, useState, useMemo, FocusEvent, MouseEvent, KeyboardEvent, useEffect } from 'react';
+import { type CSSProperties, type FC, useState, useMemo, type FocusEvent, type MouseEvent, type KeyboardEvent, useEffect, memo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { graphState } from '../state/graph.js';
 import { savedGraphsState } from '../state/savedGraphs.js';
@@ -8,14 +8,14 @@ import { orderBy, range } from 'lodash-es';
 import { DropdownItem } from '@atlaskit/dropdown-menu';
 import { useDeleteGraph } from '../hooks/useDeleteGraph.js';
 import { useLoadGraph } from '../hooks/useLoadGraph.js';
-import { GraphId, emptyNodeGraph } from '@ironclad/rivet-core';
+import { type GraphId, emptyNodeGraph } from '@ironclad/rivet-core';
 import clsx from 'clsx';
 import { LoadingSpinner } from './LoadingSpinner.js';
 import { runningGraphsState } from '../state/dataFlow.js';
 import { useDuplicateGraph } from '../hooks/useDuplicateGraph.js';
 import { useContextMenu } from '../hooks/useContextMenu.js';
 import Portal from '@atlaskit/portal';
-import { NodeGraph } from '@ironclad/rivet-core';
+import { type NodeGraph } from '@ironclad/rivet-core';
 import { ReactComponent as ArrowRightIcon } from 'majesticons/line/arrow-right-line.svg';
 import { ReactComponent as ArrowDownIcon } from 'majesticons/line/arrow-down-line.svg';
 import { ReactComponent as MenuLineIcon } from 'majesticons/line/menu-line.svg';
@@ -80,7 +80,7 @@ const styles = css`
 
   .selected {
     background-color: var(--primary);
-    color: var(--grey-dark);
+    color: var(--foreground-on-primary);
 
     &:hover {
       background-color: var(--primary-dark);
@@ -88,7 +88,7 @@ const styles = css`
   }
 
   .selected .spinner svg {
-    color: var(--grey-dark);
+    color: var(--foreground-on-primary);
   }
 
   .dragger {
@@ -119,6 +119,11 @@ const contextMenuStyles = css`
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
   background: var(--grey-dark);
   min-width: max-content;
+
+  > button span {
+    // This fixes a bug in Ubuntu where the text is missing
+    overflow-x: visible !important;
+  }
 `;
 
 interface NodeGraphFolder {
@@ -243,7 +248,10 @@ export const GraphList: FC = () => {
   const [savedGraphs, setSavedGraphs] = useRecoilState(savedGraphsState);
 
   // Track the graph that is being renamed, so that we can update the name when the user is done.
-  const [renamingItemFullPath, setRenamingItemFullPath] = useState<string>();
+  const [renamingItemFullPath, setRenamingItemFullPath] = useState<string | undefined>();
+
+  const [draggingItemFullPath, setDraggingItemFullPath] = useState<string | undefined>();
+  const draggingItemFolder = draggingItemFullPath?.split('/').slice(0, -1).join('/');
 
   // Track folders on deletion or creation, so that empty folders aren't automatically deleted.
   const [folderNames, setFolderNames] = useState<string[]>([]);
@@ -284,34 +292,34 @@ export const GraphList: FC = () => {
       graph.metadata!.name = i === 1 ? `Untitled Graph` : `Untitled Graph ${i}`;
     }
     loadGraph(graph);
-    setSavedGraphs([...savedGraphs, graph]);
+    setSavedGraphs((savedGraphs) => [...savedGraphs, graph]);
     startRename(graph.metadata!.name!);
   });
 
-  function handleNewFolder(parentPath?: string) {
+  const handleNewFolder = useStableCallback((parentPath?: string) => {
     const newFolderPath = parentPath ? `${parentPath}/New Folder` : 'New Folder';
     setFolderNames((prev) => [...prev, newFolderPath]);
     startRename(newFolderPath);
-  }
+  });
 
-  function handleDelete(graph: NodeGraph) {
+  const handleDelete = useStableCallback((graph: NodeGraph) => {
     setFolderNames(getFolderNames(folderedGraphs));
     deleteGraph(graph);
-  }
+  });
 
-  function handleDeleteFolder(folderName: string) {
+  const handleDeleteFolder = useStableCallback((folderName: string) => {
     const graphsToDelete = savedGraphs.filter(
       (graph) => graph.metadata?.name && isInFolder(folderName, graph.metadata?.name),
     );
     graphsToDelete.forEach((graph) => deleteGraph(graph));
     setFolderNames((prev) => prev.filter((name) => folderName !== name && !isInFolder(folderName, name)));
-  }
+  });
 
-  function startRename(folderItemName: string) {
+  const startRename = useStableCallback((folderItemName: string) => {
     setRenamingItemFullPath(folderItemName);
-  }
+  });
 
-  function renameFolderItem(fullPath: string, newFullPath: string, itemId?: string) {
+  const renameFolderItem = useStableCallback((fullPath: string, newFullPath: string, itemId?: string) => {
     if (fullPath === newFullPath || !newFullPath || /\/$/.test(newFullPath)) {
       setRenamingItemFullPath(undefined);
       return;
@@ -354,9 +362,14 @@ export const GraphList: FC = () => {
       ),
     );
     setRenamingItemFullPath(undefined);
+  });
+
+  function handleDragStart(drag: DragStartEvent) {
+    const activeFullPath = drag.active?.id as string;
+    setDraggingItemFullPath(activeFullPath);
   }
 
-  function handleDragEnd(dragResult: DragEndEvent) {
+  const handleDragEnd = useStableCallback((dragResult: DragEndEvent) => {
     setDragOverFolderName(undefined);
     const activeFullPath = dragResult.active?.id as string;
     const overFullPath = dragResult.over?.id as string;
@@ -373,7 +386,7 @@ export const GraphList: FC = () => {
         renameFolderItem(activeFullPath, newItemFullPath);
       }
     }
-  }
+  });
 
   const [dragOverFolderName, setDragOverFolderName] = useState<string | undefined>();
 
@@ -402,8 +415,8 @@ export const GraphList: FC = () => {
 
   return (
     <div css={styles} ref={contextMenuRef} onContextMenu={handleSidebarContextMenu}>
-      <div className={clsx('graph-list', { 'dragging-over': dragOverFolderName === '' })}>
-        <DndContext onDragEnd={handleDragEnd} onDragOver={handleDragOver}>
+      <div className={clsx('graph-list', { 'dragging-over': dragOverFolderName === '' && draggingItemFolder !== '' })}>
+        <DndContext onDragEnd={handleDragEnd} onDragOver={handleDragOver} onDragStart={handleDragStart}>
           {folderedGraphs.map((item) => (
             <FolderItem
               key={item.type === 'graph' ? item.graph.metadata?.id : item.fullPath}
@@ -411,10 +424,11 @@ export const GraphList: FC = () => {
               runningGraphs={runningGraphs}
               renamingItemFullPath={renamingItemFullPath}
               graph={graph}
-              loadGraph={loadGraph}
-              renameFolderItem={renameFolderItem}
               dragOverFolderName={dragOverFolderName}
+              draggingItemFolder={draggingItemFolder}
               depth={0}
+              onGraphSelected={loadGraph}
+              onRenameItem={renameFolderItem}
             />
           ))}
           <GraphListSpacer />
@@ -484,108 +498,125 @@ export const FolderItem: FC<{
   runningGraphs: GraphId[];
   renamingItemFullPath: string | undefined;
   graph: NodeGraph;
-  loadGraph: (savedGraph: NodeGraph) => void;
-  renameFolderItem: (fullPath: string, newFullPath: string) => void;
   depth: number;
   dragOverFolderName: string | undefined;
-}> = ({ item, runningGraphs, renamingItemFullPath, graph, loadGraph, renameFolderItem, depth, dragOverFolderName }) => {
-  const [isExpanded, setExpanded] = useState(true);
-  const savedGraph = item.type === 'graph' ? item.graph : undefined;
-  const graphIsRunning = savedGraph && runningGraphs.includes(savedGraph.metadata?.id ?? ('' as GraphId));
-  const fullPath = item.type === 'folder' ? item.fullPath : item.graph.metadata?.name ?? 'Untitled Graph';
-  const isRenaming = renamingItemFullPath === fullPath;
-  const isSelected = graph.metadata?.id === savedGraph?.metadata?.id;
-  const isDraggingOver = item.type === 'folder' && dragOverFolderName === fullPath;
+  draggingItemFolder: string | undefined;
+  onGraphSelected?: (savedGraph: NodeGraph) => void;
+  onRenameItem: (fullPath: string, newFullPath: string) => void;
+}> = memo(
+  ({
+    item,
+    runningGraphs,
+    renamingItemFullPath,
+    graph,
+    draggingItemFolder,
+    onGraphSelected,
+    onRenameItem,
+    depth,
+    dragOverFolderName,
+  }) => {
+    const [isExpanded, setExpanded] = useState(true);
+    const savedGraph = item.type === 'graph' ? item.graph : undefined;
+    const graphIsRunning = savedGraph && runningGraphs.includes(savedGraph.metadata?.id ?? ('' as GraphId));
+    const fullPath = item.type === 'folder' ? item.fullPath : item.graph.metadata?.name ?? 'Untitled Graph';
+    const isRenaming = renamingItemFullPath === fullPath;
+    const isSelected = graph.metadata?.id === savedGraph?.metadata?.id;
+    const isDraggingOver =
+      item.type === 'folder' && dragOverFolderName === fullPath && draggingItemFolder !== dragOverFolderName;
 
-  const handleRenameSaved = useStableCallback((newName: string) => {
-    renameFolderItem(fullPath, fullPath.replace(/[^/]+$/, newName));
-  });
+    const handleRenameSaved = useStableCallback((newName: string) => {
+      onRenameItem(fullPath, fullPath.replace(/[^/]+$/, newName));
+    });
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef: setDraggableNodeRef,
-    transform,
-    isDragging,
-  } = useDraggable({ id: fullPath });
-  const style: CSSProperties = transform ? { transform: `translate3d(0, ${transform.y}px, 0)`, zIndex: 100 } : {};
-  const { setNodeRef: setDroppableNodeRef } = useDroppable({ id: item.type === 'folder' ? fullPath + '/' : fullPath });
+    const {
+      attributes,
+      listeners,
+      setNodeRef: setDraggableNodeRef,
+      transform,
+      isDragging,
+    } = useDraggable({ id: fullPath });
+    const style: CSSProperties = transform ? { transform: `translate3d(0, ${transform.y}px, 0)`, zIndex: 100 } : {};
+    const { setNodeRef: setDroppableNodeRef } = useDroppable({
+      id: item.type === 'folder' ? fullPath + '/' : fullPath,
+    });
 
-  const virtualDepth = useMemo(
-    () =>
-      isDragging && item.type === 'folder' && item.fullPath !== dragOverFolderName
-        ? dragOverFolderName?.split('/').length ?? 0
-        : depth,
-    [isDragging, dragOverFolderName, depth, item],
-  );
+    const virtualDepth = useMemo(
+      () =>
+        isDragging && item.type === 'folder' && item.fullPath !== dragOverFolderName
+          ? dragOverFolderName?.split('/').length ?? 0
+          : depth,
+      [isDragging, dragOverFolderName, depth, item],
+    );
 
-  return (
-    <div ref={setDroppableNodeRef}>
-      <div
-        className={clsx('folder-item', { 'dragging-over': isDraggingOver, dragging: isDragging })}
-        ref={setDraggableNodeRef}
-        style={style}
-      >
+    return (
+      <div ref={setDroppableNodeRef}>
         <div
-          className={clsx('graph-item', { selected: isSelected })}
-          data-contextmenutype={item.type === 'folder' ? 'graph-folder' : 'graph-item'}
-          data-graphid={savedGraph?.metadata?.id}
-          data-folderpath={item.type === 'folder' ? item.fullPath : item.graph.metadata?.name}
-          title={fullPath}
+          className={clsx('folder-item', { 'dragging-over': isDraggingOver, dragging: isDragging })}
+          ref={setDraggableNodeRef}
+          style={style}
         >
-          {range(virtualDepth + 1).map((idx) => {
-            const isSpinner = idx === 0 && graphIsRunning;
-            const isExpander = idx === virtualDepth && item.type === 'folder' && !isSpinner;
-            return (
-              <div className="depthSpacer" key={idx}>
-                {isSpinner && (
-                  <div className="spinner">
-                    <LoadingSpinner />
-                  </div>
-                )}
-                {isExpander && (
-                  <div className="expander" onClick={() => setExpanded(!isExpanded)}>
-                    {isExpanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
-                  </div>
-                )}
-              </div>
-            );
-          })}
           <div
-            className="graph-item-select"
-            onClick={() => (item.type === 'graph' ? loadGraph(item.graph) : setExpanded(!isExpanded))}
+            className={clsx('graph-item', { selected: isSelected })}
+            data-contextmenutype={item.type === 'folder' ? 'graph-folder' : 'graph-item'}
+            data-graphid={savedGraph?.metadata?.id}
+            data-folderpath={item.type === 'folder' ? item.fullPath : item.graph.metadata?.name}
+            title={fullPath}
           >
-            {isRenaming ? (
-              <FolderItemRename value={fullPath.replace(/.*\//, '')} onSaved={handleRenameSaved} />
-            ) : (
-              <span>{item.name}</span>
-            )}
+            {range(virtualDepth + 1).map((idx) => {
+              const isSpinner = idx === 0 && graphIsRunning;
+              const isExpander = idx === virtualDepth && item.type === 'folder' && !isSpinner;
+              return (
+                <div className="depthSpacer" key={idx}>
+                  {isSpinner && (
+                    <div className="spinner">
+                      <LoadingSpinner />
+                    </div>
+                  )}
+                  {isExpander && (
+                    <div className="expander" onClick={() => setExpanded(!isExpanded)}>
+                      {isExpanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            <div
+              className="graph-item-select"
+              onClick={() => (item.type === 'graph' ? onGraphSelected?.(item.graph) : setExpanded(!isExpanded))}
+            >
+              {isRenaming ? (
+                <FolderItemRename value={fullPath.replace(/.*\//, '')} onSaved={handleRenameSaved} />
+              ) : (
+                <span>{item.name}</span>
+              )}
+            </div>
+            <div className="dragger" {...listeners} {...attributes}>
+              <MenuLineIcon />
+            </div>
           </div>
-          <div className="dragger" {...listeners} {...attributes}>
-            <MenuLineIcon />
-          </div>
+          {item.type === 'folder' && (
+            <div className={clsx('folder-children', { expanded: isExpanded })}>
+              {item.children.map((child) => (
+                <FolderItem
+                  key={child.type === 'graph' ? child.graph.metadata?.id : child.fullPath}
+                  item={child}
+                  runningGraphs={runningGraphs}
+                  renamingItemFullPath={renamingItemFullPath}
+                  graph={graph}
+                  onGraphSelected={onGraphSelected}
+                  onRenameItem={onRenameItem}
+                  dragOverFolderName={dragOverFolderName}
+                  depth={virtualDepth + 1}
+                  draggingItemFolder={draggingItemFolder}
+                />
+              ))}
+            </div>
+          )}
         </div>
-        {item.type === 'folder' && (
-          <div className={clsx('folder-children', { expanded: isExpanded })}>
-            {item.children.map((child) => (
-              <FolderItem
-                key={child.type === 'graph' ? child.graph.metadata?.id : child.fullPath}
-                item={child}
-                runningGraphs={runningGraphs}
-                renamingItemFullPath={renamingItemFullPath}
-                graph={graph}
-                loadGraph={loadGraph}
-                renameFolderItem={renameFolderItem}
-                dragOverFolderName={dragOverFolderName}
-                depth={virtualDepth + 1}
-              />
-            ))}
-          </div>
-        )}
       </div>
-    </div>
-  );
-};
+    );
+  },
+);
 
 const FolderItemRename: FC<{
   value: string;

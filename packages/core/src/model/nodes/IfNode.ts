@@ -1,8 +1,16 @@
-import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { ControlFlowExcludedDataValue, ScalarDataValue, ArrayDataValue } from '../DataValue.js';
-import { nanoid } from 'nanoid';
-import { Inputs, Outputs } from '../GraphProcessor.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
+import { type ControlFlowExcludedDataValue, type ScalarDataValue, type ArrayDataValue } from '../DataValue.js';
+import { nanoid } from 'nanoid/non-secure';
+import type { Inputs, Outputs } from '../GraphProcessor.js';
+import { dedent } from 'ts-dedent';
 
 export type IfNode = ChartNode<'if', IfNodeData>;
 
@@ -42,49 +50,71 @@ export class IfNodeImpl extends NodeImpl<IfNode> {
     return [
       {
         id: 'output' as PortId,
-        title: 'Output',
+        title: 'True',
+        dataType: 'string',
+      },
+      {
+        id: 'falseOutput' as PortId,
+        title: 'False',
         dataType: 'string',
       },
     ];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Takes in a condition and a value. If the condition is truthy, the value is passed through the True port, and the False port is not ran.
+        If the condition is falsy, the value is passed through the False port, and the True port is not ran.
+      `,
+      infoBoxTitle: 'If Node',
+      contextMenuTitle: 'If',
+      group: ['Logic'],
+    };
   }
 
   async process(inputData: Inputs): Promise<Outputs> {
     const ifValue = inputData['if' as PortId];
     const value = inputData['value' as PortId] ?? { type: 'any', value: undefined };
 
-    const excluded = {
+    const isFalse = {
       output: {
         type: 'control-flow-excluded',
         value: undefined,
       } as ControlFlowExcludedDataValue,
+      falseOutput: value,
     };
 
     if (!ifValue) {
-      return excluded;
+      return isFalse;
     }
 
     if (ifValue.type === 'control-flow-excluded') {
-      return excluded;
+      return isFalse;
     }
 
     if (ifValue.type === 'string' && !ifValue.value) {
-      return excluded;
+      return isFalse;
     }
 
     if (ifValue.type === 'boolean' && !ifValue.value) {
-      return excluded;
+      return isFalse;
     }
 
     if (ifValue.type.endsWith('[]')) {
       const value = ifValue as ArrayDataValue<ScalarDataValue>;
 
       if (!value.value || value.value.length === 0) {
-        return excluded;
+        return isFalse;
       }
     }
 
     return {
       ['output' as PortId]: value,
+      ['falseOutput' as PortId]: {
+        type: 'control-flow-excluded',
+        value: undefined,
+      } as ControlFlowExcludedDataValue,
     };
   }
 }

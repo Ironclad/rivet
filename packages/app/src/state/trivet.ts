@@ -1,5 +1,5 @@
-import { TrivetResults, TrivetTestSuite } from '@ironclad/trivet';
-import { atom } from 'recoil';
+import { type TrivetResults, type TrivetTestSuite } from '@ironclad/trivet';
+import { atom, selector } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 
 const { persistAtom } = recoilPersist({ key: 'trivet' });
@@ -19,4 +19,9 @@ export const trivetState = atom<TrivetState>({
     runningTests: false,
   },
   effects_UNSTABLE: [persistAtom],
+});
+
+export const trivetTestsRunningState = selector({
+  key: 'trivetTestsRunningState',
+  get: ({ get }) => get(trivetState).runningTests,
 });

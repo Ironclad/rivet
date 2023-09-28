@@ -1,4 +1,5 @@
 import { exhaustiveTuple } from '../utils/genericUtilFunctions.js';
+import type { DataId } from './Project.js';
 
 export type DataValueDef<Type extends string, RuntimeType> = {
   type: Type;
@@ -12,6 +13,7 @@ export type BoolDataValue = DataValueDef<'boolean', boolean>;
 export type ChatMessage = {
   type: 'system' | 'user' | 'assistant' | 'function';
   message: string;
+  name: string | undefined;
   function_call: object | undefined;
 };
 
@@ -23,6 +25,12 @@ export type DateTimeDataValue = DataValueDef<'datetime', string>;
 export type AnyDataValue = DataValueDef<'any', unknown>;
 export type ObjectDataValue = DataValueDef<'object', Record<string, unknown>>;
 export type VectorDataValue = DataValueDef<'vector', number[]>;
+export type BinaryDataValue = DataValueDef<'binary', Uint8Array>;
+export type ImageDataValue = DataValueDef<
+  'image',
+  { mediaType: 'image/jpeg' | 'image/png' | 'image/gif'; data: Uint8Array }
+>;
+export type AudioDataValue = DataValueDef<'audio', { data: Uint8Array }>;
 
 /** GPT function definition */
 export type GptFunction = {
@@ -48,7 +56,10 @@ export type ScalarDataValue =
   | AnyDataValue
   | ObjectDataValue
   | GptFunctionDataValue
-  | VectorDataValue;
+  | VectorDataValue
+  | ImageDataValue
+  | BinaryDataValue
+  | AudioDataValue;
 
 export type ScalarType = ScalarDataValue['type'];
 
@@ -77,6 +88,11 @@ export type FunctionDataType = FunctionDataValues['type'];
 export type ScalarOrArrayDataType = ScalarOrArrayDataValue['type'];
 
 export type GetDataValue<Type extends DataType> = Extract<DataValue, { type: Type }>;
+
+/** A reference to large data stored outside the graphs themselves. */
+export type DataRef = {
+  refId: DataId;
+};
 
 export const dataTypes = exhaustiveTuple<DataType>()(
   'any',
@@ -127,6 +143,18 @@ export const dataTypes = exhaustiveTuple<DataType>()(
   'vector[]',
   'fn<vector>',
   'fn<vector[]>',
+  'image',
+  'image[]',
+  'fn<image>',
+  'fn<image[]>',
+  'binary',
+  'binary[]',
+  'fn<binary>',
+  'fn<binary[]>',
+  'audio',
+  'audio[]',
+  'fn<audio>',
+  'fn<audio[]>',
 );
 
 export const scalarTypes = exhaustiveTuple<ScalarType>()(
@@ -142,6 +170,9 @@ export const scalarTypes = exhaustiveTuple<ScalarType>()(
   'object',
   'gpt-function',
   'vector',
+  'image',
+  'binary',
+  'audio',
 );
 
 export const dataTypeDisplayNames: Record<DataType, string> = {
@@ -193,6 +224,18 @@ export const dataTypeDisplayNames: Record<DataType, string> = {
   'vector[]': 'Vector Array',
   'fn<vector>': 'Function<Vector>',
   'fn<vector[]>': 'Function<Vector Array>',
+  image: 'Image',
+  'image[]': 'Image Array',
+  'fn<image>': 'Function<Image>',
+  'fn<image[]>': 'Function<Image Array>',
+  binary: 'Binary',
+  'binary[]': 'Binary Array',
+  'fn<binary>': 'Function<Binary>',
+  'fn<binary[]>': 'Function<Binary Array>',
+  audio: 'Audio',
+  'audio[]': 'Audio Array',
+  'fn<audio>': 'Function<Audio>',
+  'fn<audio[]>': 'Function<Audio Array>',
 };
 
 export function isScalarDataValue(value: DataValue | undefined): value is ScalarDataValue {
@@ -297,6 +340,7 @@ export const scalarDefaults: { [P in ScalarDataType]: Extract<ScalarDataValue, {
     type: 'user',
     message: '',
     function_call: undefined,
+    name: undefined,
   },
   'control-flow-excluded': undefined,
   date: new Date().toISOString(),
@@ -310,6 +354,12 @@ export const scalarDefaults: { [P in ScalarDataType]: Extract<ScalarDataValue, {
     namespace: undefined,
   },
   vector: [],
+  image: {
+    mediaType: 'image/jpeg',
+    data: new Uint8Array(),
+  },
+  binary: new Uint8Array(),
+  audio: { data: new Uint8Array() },
 };
 
 export function getDefaultValue<T extends DataType>(type: T): (DataValue & { type: T })['value'] {

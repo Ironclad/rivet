@@ -1,13 +1,13 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { FC, forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import { type FC, forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { useFloating, useMergeRefs, autoUpdate, shift, flip } from '@floating-ui/react';
 import {
-  ContextMenuConfiguration,
+  type ContextMenuConfiguration,
   useContextMenuConfiguration,
-  ContextMenuItem as ContextMenuConfigItem,
+  type ContextMenuItem as ContextMenuConfigItem,
 } from '../hooks/useContextMenuConfiguration';
 import { useFuseSearch } from '../hooks/useFuseSearch.js';
 import { uniqBy } from 'lodash-es';
@@ -98,6 +98,10 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
 
     // Flatten the items into a single array
     const searchItems = useMemo(() => {
+      if (disabled) {
+        return [];
+      }
+
       const flattenItems = (
         items: readonly ContextMenuConfigItem[],
         path: string[] = [],
@@ -115,7 +119,7 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
       };
 
       return flattenItems(items);
-    }, [items, commands]);
+    }, [items, commands, disabled]);
 
     const searchRef = useRef<HTMLInputElement>(null);
 
@@ -289,8 +293,8 @@ export const ContextMenuItemDiv = styled.div<{ hasSubmenu?: boolean }>`
 
   &:hover,
   &.active {
-    background-color: #4444446e;
-    color: var(--primary);
+    background-color: var(--tertiary-light);
+    color: var(--primary-text);
   }
 
   ${(props) =>

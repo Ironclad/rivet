@@ -1,8 +1,17 @@
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
-import { coerceTypeOptional } from '../../index.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { type EditorDefinition } from '../../index.js';
+import { dedent } from 'ts-dedent';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { coerceTypeOptional } from '../../utils/coerceType.js';
 
 export type BooleanNode = ChartNode<'boolean', BooleanNodeData>;
 
@@ -60,6 +69,17 @@ export class BooleanNodeImpl extends NodeImpl<BooleanNode> {
     return this.data.useValueInput ? `(Input to bool)` : (this.data.value ?? false).toString();
   }
 
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Outputs a boolean constant, or converts an input value into a boolean.
+      `,
+      infoBoxTitle: 'Bool Node',
+      contextMenuTitle: 'Bool',
+      group: ['Data'],
+    };
+  }
+
   async process(inputs: Inputs): Promise<Outputs> {
     const value = this.data.useValueInput
       ? coerceTypeOptional(inputs['input' as PortId], 'boolean') ?? this.data.value ?? false
@@ -68,7 +88,7 @@ export class BooleanNodeImpl extends NodeImpl<BooleanNode> {
     return {
       ['value' as PortId]: {
         type: 'boolean',
-        value: value,
+        value,
       },
     };
   }

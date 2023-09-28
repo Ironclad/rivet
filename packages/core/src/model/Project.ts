@@ -1,7 +1,10 @@
-import { Opaque } from 'type-fest';
-import { GraphId, NodeGraph } from './NodeGraph.js';
+import type { Opaque } from 'type-fest';
+import { type GraphId, type NodeGraph } from './NodeGraph.js';
+import { type PluginLoadSpec } from './PluginLoadSpec.js';
 
 export type ProjectId = Opaque<string, 'ProjectId'>;
+
+export type DataId = Opaque<string, 'DataId'>;
 
 export type Project = {
   metadata: {
@@ -10,5 +13,9 @@ export type Project = {
     description: string;
   };
 
+  plugins?: PluginLoadSpec[];
+
   graphs: Record<GraphId, NodeGraph>;
+
+  data?: Record<DataId, string>;
 };

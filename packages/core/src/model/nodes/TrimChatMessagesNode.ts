@@ -1,10 +1,18 @@
-import { ChartNode, NodeId, PortId, NodeInputDefinition, NodeOutputDefinition } from '../../model/NodeBase.js';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../../model/NodeImpl.js';
-import { SupportedModels, getTokenCountForMessages } from '../../utils/tokenizer.js';
-import { nanoid } from 'nanoid';
-import { Inputs, Outputs, expectType } from '../../index.js';
-import { ChatCompletionRequestMessage, openAiModelOptions, openaiModels } from '../../utils/openai.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type PortId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+} from '../../model/NodeBase.js';
+import { NodeImpl, type NodeUIData } from '../../model/NodeImpl.js';
+import { type SupportedModels, getTokenCountForMessages } from '../../utils/tokenizer.js';
+import { nanoid } from 'nanoid/non-secure';
+import { type EditorDefinition, type Inputs, type NodeBodySpec, type Outputs } from '../../index.js';
+import { type ChatCompletionRequestMessage, openAiModelOptions, openaiModels } from '../../utils/openai.js';
 import { dedent } from 'ts-dedent';
+import { expectType } from '../../utils/expectType.js';
+import { nodeDefinition } from '../NodeDefinition.js';
 
 export type TrimChatMessagesNodeData = {
   maxTokenCount: number;
@@ -83,6 +91,19 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
     `;
   }
 
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Takes an array of chat messages, and slices messages from the beginning or the end of the list until the total length of the messages is under the configured token length.
+
+        Useful for setting up infinite message chains that stay under the LLM context limit.
+      `,
+      infoBoxTitle: 'Trim Chat Messages Node',
+      contextMenuTitle: 'Trim Chat Messages',
+      group: ['AI'],
+    };
+  }
+
   async process(inputs: Inputs): Promise<Outputs> {
     const input = expectType(inputs['input' as PortId], 'chat-message[]');
     const maxTokenCount = this.chartNode.data.maxTokenCount;
@@ -91,11 +112,16 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
     const model = 'gpt-3.5-turbo' as SupportedModels; // You can change this to a configurable model if needed
     const tiktokenModel = openaiModels[model].tiktokenModel;
 
-    let trimmedMessages = [...input];
+    const trimmedMessages = [...input];
 
     let tokenCount = getTokenCountForMessages(
       trimmedMessages.map(
-        (message): ChatCompletionRequestMessage => ({ content: message.message, role: message.type }),
+        (message): ChatCompletionRequestMessage => ({
+          content: message.message,
+          role: message.type,
+          name: message.name,
+          function_call: message.function_call,
+        }),
       ),
       tiktokenModel,
     );
@@ -112,6 +138,7 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
             content: message.message,
             role: message.type,
             function_call: message.function_call,
+            name: message.name,
           }),
         ),
         tiktokenModel,

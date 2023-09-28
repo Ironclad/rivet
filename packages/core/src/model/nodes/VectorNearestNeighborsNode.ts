@@ -1,10 +1,19 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { nanoid } from 'nanoid';
-import { Inputs, Outputs } from '../GraphProcessor.js';
-import { InternalProcessContext } from '../ProcessContext.js';
-import { DataValue, VectorDataValue, coerceTypeOptional, getIntegration } from '../../index.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type PortId,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { nanoid } from 'nanoid/non-secure';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { type InternalProcessContext } from '../ProcessContext.js';
+import { type DataValue, type EditorDefinition, type VectorDataValue } from '../../index.js';
 import { dedent } from 'ts-dedent';
+import { coerceTypeOptional } from '../../utils/coerceType.js';
+import { getIntegration } from '../../integrations/integrations.js';
 
 export type VectorNearestNeighborsNode = ChartNode<'vectorNearestNeighbors', VectorNearestNeighborsNodeData>;
 
@@ -71,15 +80,6 @@ export class VectorNearestNeighborsNodeImpl extends NodeImpl<VectorNearestNeighb
       });
     }
 
-    if (this.data.useCollectionIdInput) {
-      inputDefinitions.push({
-        id: 'collectionId' as PortId,
-        title: 'Collection ID',
-        dataType: 'string',
-        required: true,
-      });
-    }
-
     return inputDefinitions;
   }
 
@@ -128,10 +128,21 @@ export class VectorNearestNeighborsNodeImpl extends NodeImpl<VectorNearestNeighb
 
   getBody(): string | undefined {
     return dedent`
-      ${this.data.useIntegrationInput ? '(Integration using input)' : this.data.integration}
-      k: ${this.data.useKInput ? '(using input)' : this.data.k}
-      ${this.data.useCollectionIdInput ? '(using input)' : this.data.collectionId}
+      Integration: ${this.data.useIntegrationInput ? '(using input)' : this.data.integration}
+      K: ${this.data.useKInput ? '(using input)' : this.data.k}
+      Collection Id: ${this.data.useCollectionIdInput ? '(using input)' : this.data.collectionId}
     `;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Performs a k-nearest neighbors search on the vectors stored in the configured vector DB integration. Takes in a vector and returns the k closest vectors and their corresponding data.
+      `,
+      infoBoxTitle: 'Vector KNN Node',
+      contextMenuTitle: 'Vector KNN',
+      group: ['Input/Output'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

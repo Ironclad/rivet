@@ -1,0 +1,62 @@
+---
+title: 'Vector Store'
+---
+
+# Vector Store Node
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Overview
+
+The Vector Store Node takes a vector embedding and stores it in a vector store. The vector store can then be used to perform similarity searches.
+
+![Chat Node Screenshot](./assets/vector-store-node.png)
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+## Inputs
+
+| Title  | Data Type   | Description                                       | Required |                                                                                                                                                                |
+| ------ | ----------- | ------------------------------------------------  | -------- |
+| Vector | vector      | The vector you would like to store.               | True     |
+| Data   | any         | Metadata you would like to store with the vector. | True     |
+| Id     | string      | The vectors unique id.                            | True     |
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title    | Data Type | Description                                       |
+| -------- | --------- | ------------------------------------------------- |
+| Complete | boolean   | Returns True if the store completes successfully. |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting         | Description                          | 
+| --------------- | ------------------------------------ | 
+| Integration     | Which integrated store to use.       |
+| Collection Id   | Which collection to store the vector.|
+
+
+</TabItem>
+
+</Tabs>
+
+## See Also
+
+- [Pinecone](../user-guide/plugins/built-in/pinecone.md)

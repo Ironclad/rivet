@@ -1,11 +1,20 @@
-import { ChartNode, NodeId, NodeOutputDefinition, PortId, NodeInputDefinition } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { DataType, DataValue } from '../DataValue.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
-import { InternalProcessContext } from '../ProcessContext.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeOutputDefinition,
+  type PortId,
+  type NodeInputDefinition,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { type DataType } from '../DataValue.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { type InternalProcessContext } from '../ProcessContext.js';
 import { ControlFlowExcludedPort } from '../../utils/symbols.js';
 import { dedent } from 'ts-dedent';
+import { type EditorDefinition } from '../EditorDefinition.js';
+import { type NodeBodySpec } from '../NodeBodySpec.js';
 
 export type GraphOutputNode = ChartNode<'graphOutput', GraphOutputNodeData>;
 
@@ -15,7 +24,7 @@ export type GraphOutputNodeData = {
 };
 
 export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
-  static create(id: string = 'output', dataType: DataType = 'string'): GraphOutputNode {
+  static create(): GraphOutputNode {
     const chartNode: GraphOutputNode = {
       type: 'graphOutput',
       title: 'Graph Output',
@@ -26,8 +35,8 @@ export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
         width: 300,
       },
       data: {
-        id,
-        dataType,
+        id: 'output',
+        dataType: 'string',
       },
     };
 
@@ -76,6 +85,17 @@ export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
     `;
   }
 
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Each instance of this node represents an individual output of the graph. The value passed into this node becomes part of the overall output of the graph.
+      `,
+      infoBoxTitle: 'Graph Output Node',
+      contextMenuTitle: 'Graph Output',
+      group: ['Input/Output'],
+    };
+  }
+
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const value = inputs['value' as PortId] ?? { type: 'any', value: undefined };
 
@@ -87,8 +107,9 @@ export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
         value: undefined,
       };
     } else if (
-      context.graphOutputs[this.data.id] == null ||
-      context.graphOutputs[this.data.id]?.type === 'control-flow-excluded'
+      (context.graphOutputs[this.data.id] == null ||
+        context.graphOutputs[this.data.id]?.type === 'control-flow-excluded') &&
+      inputs['value' as PortId]
     ) {
       context.graphOutputs[this.data.id] = value;
     }

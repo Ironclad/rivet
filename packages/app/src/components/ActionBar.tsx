@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import clsx from 'clsx';
-import { FC, useRef, useState } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { type FC, useEffect, useRef, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { useLoadRecording } from '../hooks/useLoadRecording';
 import { useSaveRecording } from '../hooks/useSaveRecording';
 import { graphRunningState, graphPausedState } from '../state/dataFlow';
@@ -12,13 +12,14 @@ import { ReactComponent as PauseIcon } from 'majesticons/line/pause-circle-line.
 import { ReactComponent as PlayIcon } from 'majesticons/line/play-circle-line.svg';
 import { ReactComponent as MoreMenuVerticalIcon } from 'majesticons/line/more-menu-vertical-line.svg';
 import Popup from '@atlaskit/popup';
-import { settingsModalOpenState } from './SettingsModal';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
-import { isInTauri } from '../utils/tauri';
-import Select from '@atlaskit/select';
-import Portal from '@atlaskit/portal';
 import { debuggerPanelOpenState } from '../state/ui';
 import { ActionBarMoreMenu } from './ActionBarMoreMenu';
+import { useCurrentExecution } from '../hooks/useCurrentExecution';
+import { CopyAsTestCaseModal } from './CopyAsTestCaseModal';
+import { useToggle } from 'ahooks';
+import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
+import { GentraceInteractors } from './gentrace/GentraceInteractors';
 
 const styles = css`
   position: fixed;
@@ -39,6 +40,7 @@ const styles = css`
   .unload-recording-button button,
   .run-test-button button,
   .save-recording-button button,
+  .run-gentrace-button button,
   .more-menu,
   .remote-debugger-button button {
     border: none;
@@ -54,13 +56,14 @@ const styles = css`
 
   .run-button button {
     background-color: var(--success);
-    color: #ffffff;
+    color: var(--grey-lightest);
 
     &:hover {
       background-color: var(--success-dark);
     }
   }
 
+  .run-gentrace-button button,
   .pause-button button,
   .save-recording-button button {
     background-color: rgba(255, 255, 255, 0.1);
@@ -90,7 +93,7 @@ const styles = css`
 
   .run-test-button button {
     background-color: var(--grey-darkish);
-    color: #ffffff;
+    color: var(--grey-lightest);
 
     &:hover {
       background-color: var(--grey);
@@ -144,14 +147,23 @@ export const ActionBar: FC<ActionBarProps> = ({
 
   const loadedRecording = useRecoilValue(loadedRecordingState);
   const { unloadRecording } = useLoadRecording();
-  const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const [menuIsOpen, toggleMenuIsOpen] = useToggle();
+  const selectedExecutor = useRecoilValue(selectedExecutorState);
 
   const { remoteDebuggerState: remoteDebugger, disconnect } = useRemoteDebugger();
   const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
+  const [copyAsTestCaseModalOpen, toggleCopyAsTestCaseModalOpen] = useToggle();
+
+  const plugins = useDependsOnPlugins();
+
+  const gentracePlugin = plugins.find((plugin) => plugin.id === 'gentrace');
+  const isGentracePluginEnabled = !!gentracePlugin;
+
+  const canRun = (remoteDebugger.started && !remoteDebugger.reconnecting) || selectedExecutor === 'browser';
 
   return (
     <div css={styles}>
-      {(isActuallyRemoteDebugging || remoteDebugger.reconnecting) && (
+      {(isActuallyRemoteDebugging || (!remoteDebugger.isInternalExecutor && remoteDebugger.reconnecting)) && (
         <div
           className={clsx('remote-debugger-button active', {
             reconnecting: remoteDebugger.reconnecting,
@@ -183,44 +195,64 @@ export const ActionBar: FC<ActionBarProps> = ({
           </button>
         </div>
       )}
-      <div className={clsx('run-test-button', { running: graphRunning })}>
+      {/* <div className={clsx('run-test-button', { running: graphRunning })}>
         <button onClick={graphRunning ? onAbortGraph : onRunTests}>
           Run Test <ChevronRightIcon />
         </button>
-      </div>
+      </div> */}
+
+      {isGentracePluginEnabled && <GentraceInteractors />}
+
       {lastRecording && (
         <div className={clsx('save-recording-button')}>
           <button onClick={saveRecording}>Save Recording</button>
         </div>
       )}
       <div className={clsx('run-button', { running: graphRunning, recording: !!loadedRecording })}>
-        <button onClick={graphRunning ? onAbortGraph : onRunGraph}>
-          {graphRunning ? (
-            <>
-              Abort <MultiplyIcon />
-            </>
-          ) : loadedRecording ? (
-            <>
-              Play Recording <ChevronRightIcon />
-            </>
-          ) : (
-            <>
-              Run <ChevronRightIcon />
-            </>
-          )}
-        </button>
+        {canRun && (
+          <button onClick={graphRunning ? onAbortGraph : onRunGraph}>
+            {graphRunning ? (
+              <>
+                Abort <MultiplyIcon />
+              </>
+            ) : loadedRecording ? (
+              <>
+                Play Recording <ChevronRightIcon />
+              </>
+            ) : (
+              <>
+                Run <ChevronRightIcon />
+              </>
+            )}
+          </button>
+        )}
       </div>
       <Popup
         isOpen={menuIsOpen}
-        onClose={() => setMenuIsOpen(false)}
-        content={() => <ActionBarMoreMenu onClose={() => setMenuIsOpen(false)} />}
+        onClose={toggleMenuIsOpen.setLeft}
+        content={() => (
+          <ActionBarMoreMenu
+            onClose={toggleMenuIsOpen.setLeft}
+            onCopyAsTestCase={toggleCopyAsTestCaseModalOpen.setRight}
+          />
+        )}
         placement="bottom-end"
         trigger={(triggerProps) => (
-          <button className="more-menu" {...triggerProps} onClick={() => setMenuIsOpen(!menuIsOpen)}>
+          <button
+            className="more-menu"
+            {...triggerProps}
+            onMouseDown={(e) => {
+              if (e.button === 0) {
+                toggleMenuIsOpen.toggle();
+                e.preventDefault();
+              }
+            }}
+          >
             <MoreMenuVerticalIcon />
           </button>
         )}
       />
+      <CopyAsTestCaseModal open={copyAsTestCaseModalOpen} onClose={toggleCopyAsTestCaseModalOpen.setLeft} />
     </div>
   );
 };

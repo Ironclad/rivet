@@ -1,9 +1,17 @@
-import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { DataValue, unwrapDataValue } from '../DataValue.js';
-import { nanoid } from 'nanoid';
-import { coerceType } from '../../utils/coerceType.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import {
+  type ChartNode,
+  type NodeConnection,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
+import { type DataValue, unwrapDataValue } from '../DataValue.js';
+import { nanoid } from 'nanoid/non-secure';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { dedent } from 'ts-dedent';
+import { nodeDefinition } from '../NodeDefinition.js';
 
 export type CoalesceNode = ChartNode<'coalesce', CoalesceNodeData>;
 
@@ -54,6 +62,17 @@ export class CoalesceNodeImpl extends NodeImpl<CoalesceNode> {
         title: 'Output',
       },
     ];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Takes in any number of inputs and outputs the first value that exists. Useful for consolidating branches after a Match node. This node can also "consume" the "Not Ran" value.
+      `,
+      infoBoxTitle: 'Coalesce Node',
+      contextMenuTitle: 'Coalesce',
+      group: ['Logic'],
+    };
   }
 
   #getInputPortCount(connections: NodeConnection[]): number {

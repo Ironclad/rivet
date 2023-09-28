@@ -1,16 +1,20 @@
+import { getError } from './errors.js';
+
 // https://github.com/openai/openai-node/issues/18#issuecomment-1518715285
 export class EventSourceResponse extends Response {
   name: string;
+  timeout?: number;
   readonly streams: {
     eventStream: ReadableStream<string>;
     textStream: ReadableStream<string>;
   } | null;
 
-  constructor(body: ReadableStream<Uint8Array> | null, init?: ResponseInit) {
+  constructor(body: ReadableStream<Uint8Array> | null, init?: ResponseInit, timeout?: number) {
     if (body == null) {
       super(null, init);
       this.name = 'EventSourceResponse';
       this.streams = null;
+      this.timeout = timeout;
       return;
     }
 
@@ -21,6 +25,7 @@ export class EventSourceResponse extends Response {
     super(bodyForString, init);
     this.name = 'EventSourceResponse';
     this.streams = streams;
+    this.timeout = timeout;
   }
 
   async *events(): AsyncGenerator<string> {
@@ -31,22 +36,29 @@ export class EventSourceResponse extends Response {
 
     try {
       while (true) {
-        const { done, value } = await this.raceWithTimeout(reader.read());
+        const { done, value } = await this.raceWithTimeout(reader.read(), this.timeout);
         if (done) {
           break;
         }
         yield value;
       }
     } finally {
-      reader.releaseLock();
+      try {
+        reader.releaseLock();
+      } catch (err) {
+        console.error(`Failed to release read lock on event source: ${getError(err).toString()}`);
+      }
     }
   }
 
-  private async raceWithTimeout<T>(promise: Promise<T>, timeout = 5000): Promise<T> {
+  private async raceWithTimeout<T>(promise: Promise<T>, timeout?: number): Promise<T> {
+    const raceTimeout = timeout ?? 5000;
+
+    // eslint-disable-next-line no-async-promise-executor -- Error handled correctly
     return new Promise(async (resolve, reject) => {
       const timer = setTimeout(() => {
         reject(new Error('Timeout: API response took too long.'));
-      }, timeout);
+      }, raceTimeout);
 
       try {
         const result = await promise;
@@ -60,7 +72,11 @@ export class EventSourceResponse extends Response {
   }
 }
 
-export default async function fetchEventSource(url: string, init?: RequestInit): Promise<EventSourceResponse> {
+export default async function fetchEventSource(
+  url: string,
+  init?: RequestInit,
+  timeout?: number,
+): Promise<EventSourceResponse> {
   const headers = {
     ...init?.headers,
     accept: 'text/event-stream',
@@ -71,7 +87,7 @@ export default async function fetchEventSource(url: string, init?: RequestInit):
     headers,
   });
 
-  return new EventSourceResponse(response.body, response);
+  return new EventSourceResponse(response.body, response, timeout);
 }
 
 const lineSplitter = new (class implements Transformer<string, string> {

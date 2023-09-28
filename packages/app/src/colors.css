@@ -2,9 +2,13 @@
   /* Greyscale colors */
   --grey-darkest: #1e1e1e;
   --grey-darker: #282c34;
+  --grey-darkerish: #2b2b2b;
   --grey-dark: #2e2e2e;
   --grey-dark-seethrough: #2e2e2eb8;
+  --grey-dark-seethrougher: rgba(46, 46, 46, 0.35);
+  --grey-dark-bluish-seethrough: rgba(40, 44, 52, 0.8);
   --grey-darkish: #3d3d3d;
+  --grey-darkish-seethrough: rgba(61, 61, 61, 0.5);
   --grey: #5a5a5a;
   --grey-lightish: #6e6e6e;
   --grey-light: #bbb;
@@ -13,11 +17,7 @@
   --foreground: #f0f0f0;
   --foreground-bright: #fff;
   --foreground-muted: #8d8d8d;
-
-  /* Primary colors */
-  --primary: #ff9900;
-  --primary-dark: #cc6600;
-  --primary-light: #ffb545;
+  --foreground-on-primary: #1e1e1e;
 
   /* Tertiary colors */
   --tertiary: #444;
@@ -46,10 +46,100 @@
   /* Shadows */
   --shadow: rgba(0, 0, 0, 0.2);
   --shadow-dark: rgba(0, 0, 0, 0.4);
-  --shadow-primary: rgba(255, 153, 0, 0.3);
 
   /* Gradient */
   --grey-subtle-accent: rgba(255, 255, 255, 0.02);
+}
 
-  --shadow-orange: rgba(255, 140, 0, 0.8);
+.app.theme-default,
+.app.theme-molten {
+  /* Primary colors */
+  --primary: #ff9900;
+  --primary-text: #ff9900;
+  --primary-dark: #cc6600;
+  --primary-light: #ffb545;
+  --primary-5percent: rgba(255, 153, 0, 0.05);
+
+  --shadow-primary: rgba(255, 153, 0, 0.3);
+  --shadow-primary-bright: rgba(255, 140, 0, 0.8);
+}
+
+.app.theme-grapefruit {
+  /* Primary colors */
+  --primary: #ff8862;
+  --primary-text: #ff8862;
+  --primary-dark: #cc6a4c;
+  --primary-light: #ffa382;
+  --primary-5percent: rgba(255, 136, 98, 0.05);
+
+  /* Tertiary colors */
+  --tertiary: #444;
+  --tertiary-light: #4444446e;
+
+  /* Accent colors */
+  --accent: #ff704d;
+  --accent-dark: #b24c33;
+  --accent-light: #ff9980;
+
+  /* Success colors */
+  --success: #4caf50;
+  --success-dark: #388e3c;
+  --success-light: #81c784;
+
+  /* Error colors */
+  --error: #f44336;
+  --error-dark: #d32f2f;
+  --error-light: #e57373;
+
+  /* Warning colors */
+  --warning: #ff9800;
+  --warning-dark: #f57c00;
+  --warning-light: #ffb74d;
+
+  /* Shadows */
+  --shadow-primary: rgba(255, 136, 98, 0.5); /* darker shadow */
+  --shadow-primary-bright: rgba(255, 136, 98, 0.8); /* lighter shadow */
+
+  /* Gradient */
+  --grey-subtle-accent: rgba(255, 136, 98, 0.02);
+}
+
+.app.theme-taffy {
+  /* Primary colors */
+  --primary: #a55fff;
+  --primary-text: #d6c2ff;
+  --primary-dark: #7a44cc;
+  --primary-light: #b78aff;
+  --primary-5percent: rgba(165, 95, 255, 0.05);
+
+  /* Tertiary colors */
+  --tertiary: #444;
+  --tertiary-light: #4444446e;
+
+  /* Accent colors */
+  --accent: #c774ff;
+  --accent-dark: #9a58cc;
+  --accent-light: #d4a1ff;
+
+  /* Success colors */
+  --success: #30c9c3;
+  --success-dark: #238f8d;
+  --success-light: #62d8d6;
+
+  /* Error colors */
+  --error: #f44336;
+  --error-dark: #d32f2f;
+  --error-light: #e57373;
+
+  /* Warning colors */
+  --warning: #ff9800;
+  --warning-dark: #f57c00;
+  --warning-light: #ffb74d;
+
+  /* Shadows */
+  --shadow-primary: rgba(165, 95, 255, 0.5); /* darker shadow */
+  --shadow-primary-bright: rgba(165, 95, 255, 0.8); /* lighter shadow */
+
+  /* Gradient */
+  --grey-subtle-accent: rgba(165, 95, 255, 0.02);
 }

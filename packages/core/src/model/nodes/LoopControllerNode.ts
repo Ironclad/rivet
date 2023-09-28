@@ -1,9 +1,19 @@
-import { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
+import {
+  type ChartNode,
+  type NodeConnection,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { coerceType } from '../../utils/coerceType.js';
-import { InternalProcessContext } from '../ProcessContext.js';
+import { type InternalProcessContext } from '../ProcessContext.js';
+import { dedent } from 'ts-dedent';
+import { type EditorDefinition } from '../../index.js';
 
 export type LoopControllerNode = ChartNode<'loopController', LoopControllerNodeData>;
 
@@ -115,6 +125,19 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
     ];
   }
 
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Defines the entry point for a loop. Values from inside the loop should be passed back through the "Input" ports, and their corresponding "Default" values can be specified on the input ports as well.
+
+        If the "continue" input is falsey, then the "break" output will run.
+      `,
+      infoBoxTitle: 'Loop Controller Node',
+      contextMenuTitle: 'Loop Controller',
+      group: ['Logic'],
+    };
+  }
+
   #getInputPortCount(connections: NodeConnection[]): number {
     const inputNodeId = this.chartNode.id;
     const messageConnections = connections.filter(
@@ -142,7 +165,7 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
     if (inputs['continue' as PortId] === undefined) {
       continueValue = true;
     } else {
-      let continueDataValue = inputs['continue' as PortId]!;
+      const continueDataValue = inputs['continue' as PortId]!;
       if (continueDataValue.type === 'control-flow-excluded') {
         continueValue = false;
       } else {
@@ -150,12 +173,15 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
       }
     }
 
-    const inputCount = Object.keys(inputs).filter((key) => key.startsWith('input') && !key.endsWith('Default')).length;
+    let inputCount = 0;
+    while (inputs[`input${inputCount + 1}` as PortId] || inputs[`input${inputCount + 1}Default` as PortId]) {
+      inputCount++;
+    }
 
     if (continueValue) {
       output['break' as PortId] = { type: 'control-flow-excluded', value: 'loop-not-broken' };
     } else {
-      let inputValues: unknown[] = [];
+      const inputValues: unknown[] = [];
       for (let i = 1; i <= inputCount; i++) {
         inputValues.push(inputs[`input${i}` as PortId]?.value);
       }

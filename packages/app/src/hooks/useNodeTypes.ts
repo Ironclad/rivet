@@ -1,6 +1,6 @@
-import { NodeOfType, NodeType, Outputs, getNodeTypes } from '@ironclad/rivet-core';
-import { FC } from 'react';
-import { ChartNode } from '@ironclad/rivet-core';
+import { type NodeOfType, type BuiltInNodeType, type Outputs, globalRivetNodeRegistry } from '@ironclad/rivet-core';
+import { type FC, useMemo } from 'react';
+import { type ChartNode } from '@ironclad/rivet-core';
 import { chatNodeDescriptor } from '../components/nodes/ChatNode.js';
 import { loopControllerNodeDescriptor } from '../components/nodes/LoopControllerNode.js';
 import { matchNodeDescriptor } from '../components/nodes/MatchNode.js';
@@ -10,6 +10,14 @@ import { subgraphNodeDescriptor } from '../components/nodes/SubGraphNode.js';
 import { userInputNodeDescriptor } from '../components/nodes/UserInputNode.js';
 import { ObjectNodeDescriptor } from '../components/nodes/ObjectNode.js';
 import { commentNodeDescriptor } from '../components/nodes/CommentNode';
+import { imageNodeDescriptor } from '../components/nodes/ImageNode';
+import { audioNodeDescriptor } from '../components/nodes/AudioNode';
+import { appendToDatasetNodeDescriptor } from '../components/nodes/AppendToDatasetNode';
+import { useRecoilValue } from 'recoil';
+import { pluginRefreshCounterState } from '../state/plugins';
+import { loadDatasetNodeDescriptor } from '../components/nodes/LoadDatasetNode';
+import { datasetNearestNeighborsNodeDescriptor } from '../components/nodes/DatasetNearestNeighborsNode';
+import { getDatasetRowNodeDescriptor } from '../components/nodes/GetDatasetRowNode';
 
 export type UnknownNodeComponentDescriptor = {
   Body?: FC<{ node: ChartNode }>;
@@ -17,20 +25,22 @@ export type UnknownNodeComponentDescriptor = {
   Editor?: FC<{ node: ChartNode; onChange?: (node: ChartNode) => void }>;
   FullscreenOutput?: FC<{ node: ChartNode }>;
   OutputSimple?: FC<{ outputs: Outputs }>;
-  FullscreenOutputSimple?: FC<{ outputs: Outputs }>;
+  FullscreenOutputSimple?: FC<{ outputs: Outputs; renderMarkdown: boolean }>;
+  defaultRenderMarkdown?: boolean;
 };
 
-export type NodeComponentDescriptor<T extends NodeType> = {
+export type NodeComponentDescriptor<T extends BuiltInNodeType> = {
   Body?: FC<{ node: NodeOfType<T> }>;
   Output?: FC<{ node: NodeOfType<T> }>;
   Editor?: FC<{ node: NodeOfType<T>; onChange?: (node: NodeOfType<T>) => void }>;
   FullscreenOutput?: FC<{ node: NodeOfType<T> }>;
   OutputSimple?: FC<{ outputs: Outputs }>;
-  FullscreenOutputSimple?: FC<{ outputs: Outputs }>;
+  FullscreenOutputSimple?: FC<{ outputs: Outputs; renderMarkdown: boolean }>;
+  defaultRenderMarkdown?: boolean;
 };
 
 export type NodeComponentDescriptors = {
-  [P in NodeType]: NodeComponentDescriptor<P>;
+  [P in BuiltInNodeType]: NodeComponentDescriptor<P>;
 };
 
 const overriddenDescriptors: Partial<NodeComponentDescriptors> = {
@@ -43,21 +53,31 @@ const overriddenDescriptors: Partial<NodeComponentDescriptors> = {
   userInput: userInputNodeDescriptor,
   object: ObjectNodeDescriptor,
   comment: commentNodeDescriptor,
+  image: imageNodeDescriptor,
+  audio: audioNodeDescriptor,
+  appendToDataset: appendToDatasetNodeDescriptor,
+  loadDataset: loadDatasetNodeDescriptor,
+  datasetNearestNeighbors: datasetNearestNeighborsNodeDescriptor,
+  getDatasetRow: getDatasetRowNodeDescriptor,
 };
 
 export function useNodeTypes(): NodeComponentDescriptors {
-  const allNodeTypes = getNodeTypes();
+  const counter = useRecoilValue(pluginRefreshCounterState);
 
-  return Object.fromEntries(
-    allNodeTypes.map((nodeType) => {
-      const descriptor = overriddenDescriptors[nodeType] ?? {};
-      return [nodeType, descriptor];
-    }),
-  ) as NodeComponentDescriptors;
+  return useMemo(() => {
+    const allNodeTypes = globalRivetNodeRegistry.getNodeTypes();
+
+    return Object.fromEntries(
+      allNodeTypes.map((nodeType) => {
+        const descriptor = overriddenDescriptors[nodeType] ?? {};
+        return [nodeType, descriptor];
+      }),
+    ) as NodeComponentDescriptors;
+  }, [counter]);
 }
 
 export function useUnknownNodeComponentDescriptorFor(node: ChartNode) {
   const descriptors = useNodeTypes();
 
-  return (descriptors[node.type as NodeType] ?? {}) as UnknownNodeComponentDescriptor;
+  return (descriptors[node.type as BuiltInNodeType] ?? {}) as UnknownNodeComponentDescriptor;
 }

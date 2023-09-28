@@ -1,5 +1,5 @@
 import { mapValues } from 'lodash-es';
-import {
+import type {
   NodeGraph,
   Project,
   GraphId,
@@ -11,10 +11,11 @@ import {
   ChartNodeVariant,
 } from '../../index.js';
 import stableStringify from 'safe-stable-stringify';
-// @ts-ignore
 import * as yaml from 'yaml';
-import { AttachedData, doubleCheckProject } from './serializationUtils.js';
+import { type AttachedData, doubleCheckProject } from './serializationUtils.js';
 import { entries } from '../typeSafety.js';
+import type { PluginLoadSpec } from '../../model/PluginLoadSpec.js';
+import type { CombinedDataset } from './serialization.js';
 
 type SerializedProject = {
   metadata: {
@@ -26,15 +27,18 @@ type SerializedProject = {
   graphs: Record<GraphId, SerializedGraph>;
 
   attachedData?: AttachedData;
+  plugins?: PluginLoadSpec[];
+};
+
+type SerializedGraphMetadata = {
+  id: GraphId;
+  name: string;
+  description: string;
+  attachedData?: AttachedData;
 };
 
 type SerializedGraph = {
-  metadata: {
-    id: GraphId;
-    name: string;
-    description: string;
-  };
-
+  metadata: SerializedGraphMetadata;
   nodes: Record<SerializedGraphNodeKey, SerializedNode>;
 };
 
@@ -128,6 +132,7 @@ function toSerializedProject(project: Project, attachedData?: AttachedData): Ser
     metadata: project.metadata,
     graphs: mapValues(project.graphs, (graph) => toSerializedGraph(graph)),
     attachedData,
+    plugins: project.plugins ?? [],
   };
 }
 
@@ -136,18 +141,25 @@ function fromSerializedProject(serializedProject: SerializedProject): [Project, 
     {
       metadata: serializedProject.metadata,
       graphs: mapValues(serializedProject.graphs, (graph) => fromSerializedGraph(graph)) as Record<GraphId, NodeGraph>,
+      plugins: serializedProject.plugins ?? [],
     },
     serializedProject.attachedData ?? {},
   ];
 }
 
 function toSerializedGraph(graph: NodeGraph): SerializedGraph {
+  const graphMetadata: SerializedGraphMetadata = {
+    id: graph.metadata!.id!,
+    name: graph.metadata!.name!,
+    description: graph.metadata!.description!,
+  };
+
+  if (graph.metadata!.attachedData) {
+    graphMetadata.attachedData = graph.metadata!.attachedData;
+  }
+
   return {
-    metadata: {
-      id: graph.metadata!.id!,
-      name: graph.metadata!.name!,
-      description: graph.metadata!.description!,
-    },
+    metadata: graphMetadata,
     nodes: graph.nodes.reduce(
       (acc, node) => ({
         ...acc,
@@ -183,12 +195,18 @@ function fromSerializedGraph(serializedGraph: SerializedGraph): NodeGraph {
     allConnections.push(...connections);
   }
 
+  const metadata: SerializedGraphMetadata = {
+    id: serializedGraph.metadata.id,
+    name: serializedGraph.metadata.name,
+    description: serializedGraph.metadata.description,
+  };
+
+  if (serializedGraph.metadata.attachedData) {
+    metadata.attachedData = serializedGraph.metadata.attachedData;
+  }
+
   return {
-    metadata: {
-      id: serializedGraph.metadata.id,
-      name: serializedGraph.metadata.name,
-      description: serializedGraph.metadata.description,
-    },
+    metadata,
     nodes: allNodes,
     connections: allConnections,
   };
@@ -261,4 +279,26 @@ function fromSerializedConnection(connection: SerializedNodeConnection, nodeId: 
     inputId: inputId as PortId,
     inputNodeId: inputNodeId as NodeId,
   };
+}
+
+export function datasetV4Serializer(datasets: CombinedDataset[]): string {
+  const dataContainer = {
+    datasets,
+  };
+
+  const data = JSON.stringify(dataContainer);
+
+  return data;
+}
+
+export function datasetV4Deserializer(serializedDatasets: string): CombinedDataset[] {
+  const stringData = serializedDatasets as string;
+
+  const dataContainer = JSON.parse(stringData) as { datasets: CombinedDataset[] };
+
+  if (!dataContainer.datasets) {
+    throw new Error('Invalid dataset data');
+  }
+
+  return dataContainer.datasets;
 }

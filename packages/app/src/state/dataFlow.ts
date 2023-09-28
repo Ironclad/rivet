@@ -1,5 +1,5 @@
 import { atom, selectorFamily } from 'recoil';
-import { GraphId, Inputs, NodeId, Outputs, ProcessId } from '@ironclad/rivet-core';
+import { type GraphId, type Inputs, type NodeId, type Outputs, type ProcessId } from '@ironclad/rivet-core';
 
 export type ProcessDataForNode = {
   processId: ProcessId;
@@ -14,7 +14,7 @@ export type NodeRunData = {
   startedAt?: number;
   finishedAt?: number;
 
-  status?: { type: 'ok' } | { type: 'error'; error: string } | { type: 'running' };
+  status?: { type: 'ok' } | { type: 'error'; error: string } | { type: 'running' } | { type: 'interrupted' };
 
   inputData?: Inputs;
 
@@ -33,6 +33,11 @@ export const lastRunDataByNodeState = atom<RunDataByNodeId>({
 export const runningGraphsState = atom<GraphId[]>({
   key: 'runningGraphs',
   default: [],
+});
+
+export const rootGraphState = atom<GraphId | undefined>({
+  key: 'rootGraph',
+  default: undefined,
 });
 
 export const lastRunData = selectorFamily<ProcessDataForNode[] | undefined, NodeId>({

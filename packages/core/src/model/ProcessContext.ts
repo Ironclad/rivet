@@ -1,24 +1,43 @@
-import { Opaque } from 'type-fest';
+import type { Opaque } from 'type-fest';
 import {
-  Settings,
-  NativeApi,
-  Project,
-  DataValue,
-  ExternalFunction,
-  Outputs,
-  GraphId,
-  GraphProcessor,
-  ScalarOrArrayDataValue,
+  type Settings,
+  type NativeApi,
+  type Project,
+  type DataValue,
+  type ExternalFunction,
+  type Outputs,
+  type GraphId,
+  type GraphProcessor,
+  type ScalarOrArrayDataValue,
+  type DatasetProvider,
 } from '../index.js';
 
 export type ProcessContext = {
   settings: Settings;
-  nativeApi: NativeApi;
+  nativeApi?: NativeApi;
+  datasetProvider?: DatasetProvider;
+
+  /**
+   * If implemented, chat nodes will first call this to resolve their configured endpoint to a final endpoint.
+   * You can use this for adding auth headers, or to load balance between multiple endpoints.
+   */
+  getChatNodeEndpoint?: (
+    configuredEndpoint: string,
+    configuredModel: string,
+  ) => ChatNodeEndpointInfo | Promise<ChatNodeEndpointInfo>;
+};
+
+export type ChatNodeEndpointInfo = {
+  endpoint: string;
+  headers: Record<string, string>;
 };
 
 export type ProcessId = Opaque<string, 'ProcessId'>;
 
 export type InternalProcessContext = ProcessContext & {
+  /** The executor that is running the current processor. */
+  executor: 'nodejs' | 'browser';
+
   /** The project being executed. */
   project: Project;
 
@@ -67,4 +86,7 @@ export type InternalProcessContext = ProcessContext & {
 
   /** Aborts the current graph, if there is an error, the graph is error aborted, and if undefined, then it is simply early-exited. */
   abortGraph: (error?: Error | string) => void;
+
+  /** Gets a string plugin config value from the settings, falling back to a specified environment variable if set. */
+  getPluginConfig(name: string): string | undefined;
 };

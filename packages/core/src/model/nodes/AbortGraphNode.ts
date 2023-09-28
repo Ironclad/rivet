@@ -1,10 +1,12 @@
-import { ChartNode, NodeId, NodeOutputDefinition, PortId, NodeInputDefinition } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
-import { InternalProcessContext } from '../ProcessContext.js';
-import { coerceTypeOptional } from '../../index.js';
+import type { ChartNode, NodeId, NodeOutputDefinition, PortId, NodeInputDefinition } from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import type { Inputs, Outputs } from '../GraphProcessor.js';
+import type { InternalProcessContext } from '../ProcessContext.js';
+import type { EditorDefinition } from '../../index.js';
 import { dedent } from 'ts-dedent';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { coerceTypeOptional } from '../../utils/coerceType.js';
 
 export type AbortGraphNode = ChartNode<'abortGraph', AbortGraphNodeData>;
 
@@ -89,6 +91,19 @@ export class AbortGraphNodeImpl extends NodeImpl<AbortGraphNode> {
           : 'Error Abort'
       }
     `;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Aborts the execution of the entire graph immediately.
+
+        Can either "successfully" abort the graph (early-exit), or "error" abort the graph.
+      `,
+      infoBoxTitle: 'Abort Graph Node',
+      contextMenuTitle: 'Abort Graph',
+      group: ['Logic'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

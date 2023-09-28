@@ -1,9 +1,9 @@
-import { FC } from 'react';
+import { type FC } from 'react';
 import Toggle from '@atlaskit/toggle';
 import { css } from '@emotion/react';
 import Button from '@atlaskit/button';
-import { ChartNode, ReadFileNode } from '@ironclad/rivet-core';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
+import { type ChartNode, type ReadFileNode } from '@ironclad/rivet-core';
+import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 import { ioProvider } from '../../utils/globals.js';
 
 type ReadFileNodeBodyProps = {
@@ -14,7 +14,7 @@ const currentPathCss = css`
   white-space: pre-wrap;
   word-wrap: break-word;
   font-family: 'Roboto mono', monospace;
-  color: var(--primary);
+  color: var(--primary-text);
 `;
 
 export const ReadFileNodeBody: FC<ReadFileNodeBodyProps> = ({ node }) => {
@@ -82,7 +82,7 @@ const container = css`
 
 export const ReadFileNodeEditor: FC<ReadFileNodeEditorProps> = ({ node, onChange }) => {
   const handleBrowseClick = async () => {
-    const path = await ioProvider.openFile();
+    const path = await ioProvider.openFilePath();
     if (path) {
       onChange?.({
         ...node,

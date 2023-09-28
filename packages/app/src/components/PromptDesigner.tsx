@@ -1,9 +1,9 @@
 import Button from '@atlaskit/button';
 import { css } from '@emotion/react';
-import { ChangeEvent, FC, useEffect, useState, useRef, useLayoutEffect } from 'react';
+import { type ChangeEvent, type FC, useEffect, useState, useRef, useLayoutEffect } from 'react';
 import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import {
-  PromptDesignerTestGroupResults,
+  type PromptDesignerTestGroupResults,
   promptDesignerAttachedChatNodeState,
   promptDesignerConfigurationState,
   promptDesignerMessagesState,
@@ -14,18 +14,19 @@ import {
 import { nodesByIdState, nodesState } from '../state/graph.js';
 import { lastRunDataByNodeState } from '../state/dataFlow.js';
 import {
-  ChatMessage,
-  ChatNode,
-  ChatNodeConfigData,
+  type ChatMessage,
+  type ChatNode,
+  type ChatNodeConfigData,
   ChatNodeImpl,
-  GraphId,
+  type GraphId,
   GraphProcessor,
-  InternalProcessContext,
-  NodeId,
-  NodeTestGroup,
-  PortId,
-  ProcessId,
-  Settings,
+  type InternalProcessContext,
+  type NodeId,
+  type NodeTestGroup,
+  type PortId,
+  type ProcessId,
+  type RivetPlugin,
+  type Settings,
   arrayizeDataValue,
   coerceType,
   coerceTypeOptional,
@@ -39,10 +40,9 @@ import { Field } from '@atlaskit/form';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import Select from '@atlaskit/select';
 import Toggle from '@atlaskit/toggle';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import { TauriNativeApi } from '../model/native/TauriNativeApi.js';
 import { settingsState } from '../state/settings.js';
-import { GraphSelector } from './DefaultNodeEditor.js';
 import TextArea from '@atlaskit/textarea';
 import { projectState } from '../state/savedGraphs.js';
 import { cloneDeep, findIndex, mapValues, range, zip } from 'lodash-es';
@@ -50,6 +50,11 @@ import { useStableCallback } from '../hooks/useStableCallback.js';
 import { toast } from 'react-toastify';
 import { produce } from 'immer';
 import { overlayOpenState } from '../state/ui';
+import { BrowserDatasetProvider } from '../io/BrowserDatasetProvider';
+import { datasetProvider } from '../utils/globals';
+import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
+import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
+import { GraphSelector } from './editors/GraphSelectorEditor';
 
 const styles = css`
   position: fixed;
@@ -160,7 +165,7 @@ const styles = css`
     outline: none;
     padding: 10px;
     &:focus {
-      border: solid 1px #fff;
+      border: solid 1px var(--grey-lightest);
     }
 
     &:hover {
@@ -394,7 +399,7 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
   const addMessage = useStableCallback((index: number) => {
     setMessages((s) =>
       produce(s, (draft) => {
-        draft.messages.splice(index + 1, 0, { type: 'user', message: '', function_call: undefined });
+        draft.messages.splice(index + 1, 0, { type: 'user', message: '', function_call: undefined, name: undefined });
       }),
     );
   });
@@ -452,6 +457,8 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
   const abortController = useRef<AbortController>();
   const [inProgress, setInProgress] = useState(false);
 
+  const plugins = useDependsOnPlugins();
+
   const tryRunSingle = async () => {
     try {
       abortController.current?.abort();
@@ -467,6 +474,7 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
         data: config.data,
         signal: abortController.current.signal,
         settings,
+        plugins,
         onPartialResult: (partialResult) => {
           setResponse({
             response: partialResult,
@@ -505,6 +513,7 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
           data: config.data,
           settings,
           signal: abortController.current.signal,
+          plugins,
         },
         {
           onPartialResults: (partialResult) => {
@@ -943,11 +952,12 @@ type AdHocChatConfig = {
   data: ChatNodeConfigData;
   signal: AbortSignal;
   settings: Settings;
+  plugins: RivetPlugin[];
   onPartialResult?: (response: string) => void;
 };
 
 async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
-  const { data, signal, settings, onPartialResult } = config;
+  const { data, signal, plugins, settings, onPartialResult } = config;
 
   const chatNode = new ChatNodeImpl({
     data: {
@@ -981,10 +991,12 @@ async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
         },
       },
       {
+        executor: 'browser',
         contextValues: {},
         createSubProcessor: undefined!,
-        settings,
+        settings: await fillMissingSettingsFromEnvironmentVariables(settings, plugins),
         nativeApi: new TauriNativeApi(),
+        datasetProvider,
         processId: nanoid() as ProcessId,
         executionCache: new Map(),
         externalFunctions: {},
@@ -1005,6 +1017,7 @@ async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
           }
         },
         abortGraph: undefined!,
+        getPluginConfig: undefined!,
       } as InternalProcessContext,
     );
 
@@ -1028,6 +1041,7 @@ function useRunTestGroup() {
     const response = await runAdHocChat(messages, config);
 
     const processor = new GraphProcessor(project, testGroup.evaluatorGraphId);
+    processor.executor = 'browser';
 
     processor.on('trace', (value) => console.log(value));
 
@@ -1040,6 +1054,7 @@ function useRunTestGroup() {
     const outputs = await processor.processGraph(
       {
         nativeApi: new TauriNativeApi(),
+        datasetProvider,
         settings,
       },
       {

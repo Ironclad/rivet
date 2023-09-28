@@ -1,10 +1,6 @@
-import { NodeId, PortId } from '@ironclad/rivet-core';
-import { FC, useRef, useLayoutEffect, MouseEvent } from 'react';
-import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
-import { nodePortCache, nodePortPositionCache } from './VisualNode.js';
+import { type NodeId, type PortId } from '@ironclad/rivet-core';
+import { type FC, useRef, type MouseEvent, memo } from 'react';
 import clsx from 'clsx';
-import { useRecoilValue } from 'recoil';
-import { draggingWireClosestPortState, draggingWireState } from '../state/graphBuilder.js';
 
 export const Port: FC<{
   input?: boolean;
@@ -12,41 +8,19 @@ export const Port: FC<{
   nodeId: NodeId;
   id: PortId;
   connected?: boolean;
+  canDragTo: boolean;
+  closest: boolean;
   onMouseDown?: (event: MouseEvent<HTMLDivElement>, port: PortId, isInput: boolean) => void;
   onMouseUp?: (event: MouseEvent<HTMLDivElement>, port: PortId) => void;
-}> = ({ input = false, title, nodeId, id, connected, onMouseDown, onMouseUp }) => {
-  const { clientToCanvasPosition } = useCanvasPositioning();
+}> = memo(({ input = false, title, nodeId, id, connected, canDragTo, closest, onMouseDown, onMouseUp }) => {
   const ref = useRef<HTMLDivElement>(null);
-
-  const draggingWire = useRecoilValue(draggingWireState);
-  const closestPortToDraggingWire = useRecoilValue(draggingWireClosestPortState);
-
-  useLayoutEffect(() => {
-    if (!ref.current) {
-      return;
-    }
-
-    nodePortCache[nodeId] ??= {};
-    nodePortCache[nodeId]![id] = ref.current;
-
-    const rect = ref.current.getBoundingClientRect();
-    const canvasPosition = clientToCanvasPosition(rect.x + rect.width / 2, rect.y + rect.height / 2);
-
-    nodePortPositionCache[nodeId] ??= {};
-    nodePortPositionCache[nodeId]![id] = {
-      x: canvasPosition.x,
-      y: canvasPosition.y,
-    };
-  });
-
-  const canDragTo = draggingWire ? draggingWire.startPortIsInput !== input : false;
 
   return (
     <div
       key={id}
       className={clsx('port', {
         connected,
-        closest: closestPortToDraggingWire?.nodeId === nodeId && closestPortToDraggingWire.portId === id,
+        closest,
       })}
     >
       <div
@@ -64,4 +38,4 @@ export const Port: FC<{
       <div className="port-label">{title}</div>
     </div>
   );
-};
+});

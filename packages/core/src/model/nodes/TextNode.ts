@@ -1,9 +1,17 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { DataValue } from '../DataValue.js';
-import { match } from 'ts-pattern';
-import { coerceTypeOptional } from '../../index.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type PortId,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { type DataValue } from '../DataValue.js';
+import { type EditorDefinition, type NodeBodySpec } from '../../index.js';
+import { dedent } from 'ts-dedent';
+import { coerceTypeOptional } from '../../utils/coerceType.js';
 
 export type TextNode = ChartNode<'text', TextNodeData>;
 
@@ -12,7 +20,7 @@ export type TextNodeData = {
 };
 
 export class TextNodeImpl extends NodeImpl<TextNode> {
-  static create(text: string = '{{input}}'): TextNode {
+  static create(): TextNode {
     const chartNode: TextNode = {
       type: 'text',
       title: 'Text',
@@ -23,7 +31,7 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
         width: 300,
       },
       data: {
-        text,
+        text: '{{input}}',
       },
     };
 
@@ -102,6 +110,19 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
         type: 'string',
         value: outputValue,
       },
+    };
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Outputs a string of text. It can also interpolate values using <span style="color: var(--primary)">{{tags}}</span>.
+
+        The inputs are dynamic based on the interpolation tags.
+      `,
+      contextMenuTitle: 'Text',
+      infoBoxTitle: 'Text Node',
+      group: ['Common', 'Text'],
     };
   }
 }

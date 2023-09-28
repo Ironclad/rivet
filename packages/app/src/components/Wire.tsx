@@ -1,25 +1,17 @@
-import { FC, memo, useMemo } from 'react';
-import {
-  ChartNode,
-  NodeConnection,
-  NodeId,
-  NodeInputDefinition,
-  NodeOutputDefinition,
-  PortId,
-} from '@ironclad/rivet-core';
+import { type FC, memo } from 'react';
+import { type ChartNode, type NodeConnection, type NodeId, type PortId } from '@ironclad/rivet-core';
 import { useRecoilValue } from 'recoil';
-import { nodesByIdState } from '../state/graph.js';
-import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
-import { useGetNodeIO } from '../hooks/useGetNodeIO.js';
 import clsx from 'clsx';
-import { nodePortPositionCache } from './VisualNode.js';
-import { lineCrossesViewport } from '../utils/lineClipping.js';
 import { ErrorBoundary } from 'react-error-boundary';
+import { nodeByIdState } from '../state/graph';
+import { type PortPositions } from './NodeCanvas';
 
 type WireProps = {
-  connection: NodeConnection | PartialConnection;
+  connection: NodeConnection;
   selected: boolean;
   highlighted: boolean;
+  nodesById: Record<NodeId, ChartNode>;
+  portPositions: PortPositions;
 };
 
 export type PartialConnection = {
@@ -29,88 +21,51 @@ export type PartialConnection = {
   toY: number;
 };
 
-export function useWireStartEnd(connection: NodeConnection | PartialConnection) {
-  const nodesById = useRecoilValue(nodesByIdState);
-  const getIO = useGetNodeIO();
+export const ConditionallyRenderWire: FC<WireProps> = ({
+  connection,
+  selected,
+  highlighted,
+  nodesById,
+  portPositions,
+}) => {
+  const inputNode = nodesById[connection.inputNodeId]!;
+  const outputNode = nodesById[connection.outputNodeId]!;
 
-  let possibleNodes = 'toX' in connection ? [connection.nodeId] : [connection.inputNodeId, connection.outputNodeId];
-
-  const possibleNodeCachedValues = possibleNodes
-    .flatMap((nodeId) => {
-      const ports = 'toX' in connection ? [connection.portId] : [connection.inputId, connection.outputId];
-      return ports.map((portId) => [nodeId, portId] as const);
-    })
-    .filter(([nodeId, portId]) => nodeId && portId)
-    .map(
-      ([nodeId, portId]) =>
-        [nodePortPositionCache[nodeId]?.[portId]?.x, nodePortPositionCache[nodeId]?.[portId]?.y] as const,
-    )
-    .filter(([x, y]) => x && y)
-    .map(([x, y]) => `${x},${y}`)
-    .join('\n');
-
-  return useMemo(() => {
-    let start: { x: number; y: number };
-    let end: { x: number; y: number };
-
-    if ('toX' in connection) {
-      const node = nodesById[connection.nodeId];
-
-      let port = null;
-      if (node) {
-        const { inputDefinitions, outputDefinitions } = getIO(node);
-        port =
-          outputDefinitions.find((port) => port.id === connection.portId) ??
-          inputDefinitions.find((port) => port.id === connection.portId);
-      }
-
-      if (!port) {
-        return null;
-      }
-
-      start = getNodePortPosition(nodesById[connection.nodeId]!, connection.portId, getIO);
-      end = { x: connection.toX, y: connection.toY };
-    } else {
-      const outputNode = nodesById[connection.outputNodeId];
-
-      const outputPort = outputNode
-        ? getIO(outputNode).outputDefinitions.find((port) => port.id === connection.outputId)
-        : null;
-      const inputNode = nodesById[connection.inputNodeId];
-      const inputPort = inputNode
-        ? getIO(inputNode).inputDefinitions.find((port) => port.id === connection.inputId)
-        : null;
-
-      if (!outputPort || !inputPort) {
-        return null;
-      }
-
-      start = getNodePortPosition(nodesById[connection.outputNodeId]!, connection.outputId, getIO);
-      end = getNodePortPosition(nodesById[connection.inputNodeId]!, connection.inputId, getIO);
-    }
-
-    return { start, end };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodesById, connection, getIO, possibleNodeCachedValues]);
-}
-
-export const ConditionallyRenderWire: FC<WireProps> = ({ connection, selected, highlighted }) => {
-  const startEnd = useWireStartEnd(connection);
-  const { canvasToClientPosition } = useCanvasPositioning();
-
-  if (!startEnd) {
+  if (!inputNode || !outputNode) {
     return null;
   }
 
-  const { start, end } = startEnd;
+  const start = getNodePortPosition(outputNode, connection.outputId, portPositions);
+  const end = getNodePortPosition(inputNode, connection.inputId, portPositions);
 
-  if (!lineCrossesViewport(canvasToClientPosition(start.x, start.y), canvasToClientPosition(end.x, end.y))) {
-    return null;
-  }
+  // Optimization might not be needed
+  // if (!lineCrossesViewport(canvasToClientPosition(start.x, start.y), canvasToClientPosition(end.x, end.y))) {
+  //   return null;
+  // }
 
   return (
     <ErrorBoundary fallback={<></>}>
       <Wire sx={start.x} sy={start.y} ex={end.x} ey={end.y} selected={selected} highlighted={highlighted} />;
+    </ErrorBoundary>
+  );
+};
+
+export const PartialWire: FC<{ connection: PartialConnection; portPositions: PortPositions }> = ({
+  connection,
+  portPositions,
+}) => {
+  const node = useRecoilValue(nodeByIdState(connection.nodeId));
+
+  if (!node) {
+    return null;
+  }
+
+  const start = getNodePortPosition(node, connection.portId, portPositions);
+  const end = { x: connection.toX, y: connection.toY };
+
+  return (
+    <ErrorBoundary fallback={<></>}>
+      <Wire sx={start.x} sy={start.y} ex={end.x} ey={end.y} selected={false} highlighted={false} />;
     </ErrorBoundary>
   );
 };
@@ -147,28 +102,20 @@ export const Wire: FC<{
 export function getNodePortPosition(
   node: ChartNode,
   portId: PortId,
-  getIO: (node: ChartNode) => { inputDefinitions: NodeInputDefinition[]; outputDefinitions: NodeOutputDefinition[] },
+  portPositions: PortPositions,
 ): { x: number; y: number } {
-  if (!(node && portId)) {
+  if (!node) {
     return { x: 0, y: 0 };
   }
 
-  let isInput = true;
-  const io = getIO(node);
-  const foundInput = io.inputDefinitions.find((input) => input.id === portId);
-  let foundPort: NodeInputDefinition | NodeOutputDefinition | undefined = foundInput;
-  if (!foundPort) {
-    isInput = false;
-    foundPort = io.outputDefinitions.find((output) => output.id === portId);
-  }
-
-  if (foundPort) {
-    const portPosition = nodePortPositionCache[node.id]?.[foundPort.id];
+  if (portId) {
+    const key = `${node.id}-${portId}`;
+    const portPosition = portPositions[key];
     if (portPosition) {
       return { x: portPosition.x, y: portPosition.y };
     } else {
       return {
-        x: isInput ? node.visualData.x : node.visualData.x + (node.visualData.width ?? 300),
+        x: node.visualData.x + 100,
         y: node.visualData.y + 100,
       };
     }

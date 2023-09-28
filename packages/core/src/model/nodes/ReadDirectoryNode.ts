@@ -1,11 +1,18 @@
-import { ChartNode, NodeId, PortId } from '../NodeBase.js';
-import { NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
-import { NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { nanoid } from 'nanoid';
-import { Inputs, Outputs } from '../GraphProcessor.js';
-import { expectType } from '../../index.js';
-import { InternalProcessContext } from '../ProcessContext.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type PortId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { nanoid } from 'nanoid/non-secure';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { type NodeBodySpec } from '../../index.js';
+import { type InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
+import { expectType } from '../../utils/expectType.js';
 
 export type ReadDirectoryNode = ChartNode<'readDirectory', ReadDirectoryNodeData>;
 
@@ -135,7 +142,24 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
     `;
   }
 
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Reads the contents of the specified directory and outputs an array of filenames.
+      `,
+      infoBoxTitle: 'Read Directory Node',
+      contextMenuTitle: 'Read Directory',
+      group: ['Input/Output'],
+    };
+  }
+
   async process(inputData: Inputs, context: InternalProcessContext): Promise<Outputs> {
+    const { nativeApi } = context;
+
+    if (nativeApi == null) {
+      throw new Error('This node requires a native API to run.');
+    }
+
     const path = this.chartNode.data.usePathInput
       ? expectType(inputData['path' as PortId], 'string')
       : this.chartNode.data.path;
@@ -170,7 +194,7 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
     }
 
     try {
-      const files = await context.nativeApi.readdir(path, undefined, {
+      const files = await nativeApi.readdir(path, undefined, {
         recursive,
         includeDirectories,
         filterGlobs,

@@ -1,8 +1,17 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
-import { coerceType } from '../../index.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type PortId,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { type EditorDefinition } from '../../index.js';
+import { dedent } from 'ts-dedent';
+import { coerceType } from '../../utils/coerceType.js';
 
 export type ToJsonNode = ChartNode<'toJson', ToJsonNodeData>;
 
@@ -62,6 +71,17 @@ export class ToJsonNodeImpl extends NodeImpl<ToJsonNode> {
 
   getBody(): string | undefined {
     return this.data.indented ? 'Indented' : 'Not indented';
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Turns the input value into its JSON equivalent (stringifies the value).
+      `,
+      infoBoxTitle: 'To JSON Node',
+      contextMenuTitle: 'To JSON',
+      group: ['Text'],
+    };
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

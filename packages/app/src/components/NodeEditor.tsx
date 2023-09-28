@@ -1,16 +1,16 @@
-import { FC, useEffect, useMemo, useState, MouseEvent } from 'react';
+import { type FC, useMemo, useState, type MouseEvent } from 'react';
 import { editingNodeState } from '../state/graphBuilder.js';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { nodesByIdState, nodesState } from '../state/graph.js';
+import { connectionsForSingleNodeState, connectionsState, nodesByIdState, nodesState } from '../state/graph.js';
 import styled from '@emotion/styled';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
-import { NodeType, getNodeDisplayName, ChartNode, NodeTestGroup, GraphId } from '@ironclad/rivet-core';
+import { type ChartNode, type NodeTestGroup, type GraphId, globalRivetNodeRegistry, type DataId } from '@ironclad/rivet-core';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import { produce } from 'immer';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import Toggle from '@atlaskit/toggle';
 import { useStableCallback } from '../hooks/useStableCallback.js';
-import { DefaultNodeEditor, GraphSelector } from './DefaultNodeEditor.js';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import { Field, Label } from '@atlaskit/form';
 import TextField from '@atlaskit/textfield';
@@ -18,7 +18,11 @@ import Select from '@atlaskit/select';
 import Button from '@atlaskit/button';
 import Popup from '@atlaskit/popup';
 import { orderBy } from 'lodash-es';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
+import { ErrorBoundary } from 'react-error-boundary';
+import { projectDataState, projectState } from '../state/savedGraphs';
+import { useSetStaticData } from '../hooks/useSetStaticData';
+import { DefaultNodeEditor } from './editors/DefaultNodeEditor';
 
 export const NodeEditorRenderer: FC = () => {
   const nodesById = useRecoilValue(nodesByIdState);
@@ -34,7 +38,11 @@ export const NodeEditorRenderer: FC = () => {
     return null;
   }
 
-  return <NodeEditor selectedNode={selectedNode} onDeselect={deselect} />;
+  return (
+    <ErrorBoundary fallback={null}>
+      <NodeEditor selectedNode={selectedNode} onDeselect={deselect} />
+    </ErrorBoundary>
+  );
 };
 
 const Container = styled.div`
@@ -51,7 +59,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     color: var(--foreground);
-    background-color: rgba(40, 44, 52, 0.8);
+    background-color: var(--grey-dark-bluish-seethrough);
     backdrop-filter: blur(2px);
     font-family: 'Roboto Mono', monospace;
     width: 100%;
@@ -86,7 +94,7 @@ const Container = styled.div`
     top: 20px;
     background-color: var(--primary);
     border: none;
-    color: var(--grey-dark);
+    color: var(--foreground-on-primary);
     cursor: pointer;
     font-size: 20px;
     padding: 5px 10px;
@@ -127,7 +135,7 @@ const Container = styled.div`
   }
 
   .section-node {
-    flex: 1 1 auto;
+    flex: 1 0 auto;
     min-height: 0;
     display: flex;
     flex-direction: column;
@@ -135,19 +143,23 @@ const Container = styled.div`
   }
 
   .section-node-content {
-    flex: 1 1 auto;
-    min-height: 0;
+    flex: 1 0 auto;
+    min-height: 300px;
     position: relative;
     display: flex;
   }
 
+  .bottom-spacer {
+    height: 300px;
+  }
+
   .unknown-node {
-    color: var(--primary);
+    color: var(--primary-text);
   }
 
   .split-controls {
     display: grid;
-    grid-template-columns: 75px 1fr;
+    grid-template-columns: auto 1fr;
     align-items: center;
     gap: 8px;
 
@@ -213,23 +225,66 @@ const Container = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
+
+    > label {
+      color: var(--foreground);
+      font-size: 12px;
+
+      display: flex;
+      align-items: center;
+      color: rgb(159, 173, 188);
+      font-weight: 600;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Fira Sans', 'Droid Sans',
+        'Helvetica Neue', sans-serif;
+    }
   }
 `;
 
 type NodeEditorProps = { selectedNode: ChartNode; onDeselect: () => void };
+
+export type NodeChanged = (changed: ChartNode, newData?: Record<DataId, string>) => void;
 
 export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) => {
   const setNodes = useSetRecoilState(nodesState);
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
   const [addVariantPopupOpen, setAddVariantPopupOpen] = useState(false);
 
-  const updateNode = useStableCallback((node: ChartNode) => {
+  const nodesById = useRecoilValue(nodesByIdState);
+  const project = useRecoilValue(projectState);
+  const connectionsForNode = useRecoilValue(connectionsForSingleNodeState(selectedNode.id));
+  const setConnections = useSetRecoilState(connectionsState);
+  const setStaticData = useSetStaticData();
+
+  const updateNode = useStableCallback((node: ChartNode, newData?: Record<DataId, string>) => {
+    // Update the node
     setNodes((nodes) =>
       produce(nodes, (draft) => {
         const index = draft.findIndex((n) => n.id === node.id);
         draft[index] = node;
       }),
     );
+
+    if (newData) {
+      setStaticData(newData);
+    }
+
+    // Check for any invalid connections
+    const instance = globalRivetNodeRegistry.createDynamicImpl(node);
+
+    const inputDefs = instance.getInputDefinitions(connectionsForNode ?? [], nodesById, project);
+    const outputDefs = instance.getOutputDefinitions(connectionsForNode ?? [], nodesById, project);
+
+    const invalidConnections = connectionsForNode?.filter((connection) => {
+      if (connection.inputNodeId === node.id) {
+        return !inputDefs.find((def) => def.id === connection.inputId);
+      } else {
+        return !outputDefs.find((def) => def.id === connection.outputId);
+      }
+    });
+
+    if (invalidConnections?.length) {
+      setConnections((conns) => conns.filter((c) => !invalidConnections.includes(c)));
+    }
   });
 
   const isVariant = selectedVariant !== undefined;
@@ -244,22 +299,15 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
   const nodeEditor = Editor ? (
     <Editor node={nodeForEditor} onChange={isVariant ? () => {} : updateNode} />
   ) : (
-    <DefaultNodeEditor node={nodeForEditor} isReadonly={isVariant} onChange={isVariant ? () => {} : updateNode} />
+    <DefaultNodeEditor
+      node={nodeForEditor}
+      isReadonly={isVariant}
+      onChange={isVariant ? () => {} : updateNode}
+      onClose={onDeselect}
+    />
   );
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onDeselect?.();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [onDeselect]);
+  useHotkeys('esc', onDeselect, [onDeselect]);
 
   const nodeDescriptionChanged = useStableCallback((description: string) => {
     updateNode({ ...selectedNode, description });
@@ -343,8 +391,7 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
       <div className="tabs">
         <Tabs id="node-editor-tabs">
           <TabList>
-            <Tab>{getNodeDisplayName(selectedNode.type as NodeType)} Node</Tab>
-            <Tab>Test Cases</Tab>
+            <Tab>{globalRivetNodeRegistry.getDynamicDisplayName(selectedNode.type)} Node</Tab>
           </TabList>
           <TabPanel>
             <div className="panel-container">
@@ -384,20 +431,35 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
                         </div>
 
                         {selectedNode.isSplitRun && (
-                          <div className="split-max">
-                            <span>Max:</span>
-                            <TextField
-                              type="number"
-                              placeholder="Max"
-                              value={selectedNode.splitRunMax ?? 10}
-                              onChange={(event) =>
-                                updateNode({
-                                  ...selectedNode,
-                                  splitRunMax: (event.target as HTMLInputElement).valueAsNumber,
-                                })
-                              }
-                            />
-                          </div>
+                          <>
+                            <div className="split-max">
+                              <label>
+                                Sequential
+                                <Toggle
+                                  label="asda"
+                                  isChecked={selectedNode.isSplitSequential ?? false}
+                                  onChange={(isSequential) =>
+                                    updateNode({
+                                      ...selectedNode,
+                                      isSplitSequential: isSequential.target.checked,
+                                    })
+                                  }
+                                />
+                              </label>
+                              <label>Max:</label>
+                              <TextField
+                                type="number"
+                                placeholder="Max"
+                                value={selectedNode.splitRunMax ?? 10}
+                                onChange={(event) =>
+                                  updateNode({
+                                    ...selectedNode,
+                                    splitRunMax: (event.target as HTMLInputElement).valueAsNumber,
+                                  })
+                                }
+                              />
+                            </div>
+                          </>
                         )}
                       </section>
                     )}
@@ -463,33 +525,13 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
 
                 <div className="section section-node">
                   <div className="section-node-content">{nodeEditor}</div>
+                  <div className="bottom-spacer" />
                 </div>
               </div>
               <div className="section section-footer">
                 <span className="node-id" onClick={selectText}>
                   {selectedNode.id}
                 </span>
-              </div>
-            </div>
-          </TabPanel>
-          <TabPanel>
-            <div className="panel">
-              <Label htmlFor="">Tests</Label>
-              <Button appearance="link" onClick={handleAddTestGroup}>
-                Add Test Group
-              </Button>
-              <div className="test-groups">
-                {(selectedNode.tests ?? []).map((test, index) => (
-                  <div className="test-group" key={index}>
-                    <GraphSelector
-                      label="Evaluator Graph"
-                      value={test.evaluatorGraphId}
-                      onChange={(selected) => updateTestGroupGraph(test, selected as GraphId)}
-                      isReadonly={false}
-                      name={`evaluator-graph-${index}`}
-                    />
-                  </div>
-                ))}
               </div>
             </div>
           </TabPanel>

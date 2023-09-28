@@ -1,7 +1,7 @@
 import {
-  DataType,
-  DataValue,
-  GetDataValue,
+  type DataType,
+  type DataValue,
+  type GetDataValue,
   getScalarTypeOf,
   isArrayDataType,
   isFunctionDataType,

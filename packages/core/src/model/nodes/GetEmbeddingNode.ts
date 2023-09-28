@@ -1,10 +1,19 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { nanoid } from 'nanoid';
-import { Inputs, Outputs } from '../GraphProcessor.js';
-import { InternalProcessContext } from '../ProcessContext.js';
-import * as openai from 'openai';
-import { coerceType, getIntegration } from '../../index.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type PortId,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { nanoid } from 'nanoid/non-secure';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { type InternalProcessContext } from '../ProcessContext.js';
+import { type EditorDefinition } from '../../index.js';
+import { dedent } from 'ts-dedent';
+import { coerceType } from '../../utils/coerceType.js';
+import { getIntegration } from '../../integrations/integrations.js';
 
 export type GetEmbeddingNode = ChartNode<'getEmbedding', GetEmbeddingNodeData>;
 
@@ -75,6 +84,19 @@ export class GetEmbeddingNodeImpl extends NodeImpl<GetEmbeddingNode> {
 
   getBody(): string | undefined {
     return `Using ${this.data.useIntegrationInput ? '(input)' : this.data.integration}`;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Gets a OpenAI vector embedding for the input text provided.
+
+        Can be used with the Vector Store and Vector KNN nodes.
+      `,
+      infoBoxTitle: 'Get Embedding Node',
+      contextMenuTitle: 'Get Embedding',
+      group: ['AI'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

@@ -1,6 +1,6 @@
-import { FC } from 'react';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
-import { CommentNode } from '@ironclad/rivet-core';
+import { type FC } from 'react';
+import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { type CommentNode } from '@ironclad/rivet-core';
 import { useMarkdown } from '../../hooks/useMarkdown';
 import { css } from '@emotion/react';
 
@@ -35,6 +35,10 @@ const styles = css`
 
   h6 {
     font-size: 12px;
+  }
+
+  p {
+    max-width: 600px;
   }
 `;
 

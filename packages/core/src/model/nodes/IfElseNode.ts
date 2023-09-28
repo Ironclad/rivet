@@ -1,8 +1,16 @@
-import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { ArrayDataValue, DataValue, ScalarDataValue } from '../DataValue.js';
-import { nanoid } from 'nanoid';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
+import { type ArrayDataValue, type DataValue, type ScalarDataValue } from '../DataValue.js';
+import { nanoid } from 'nanoid/non-secure';
 import { ControlFlowExcludedPort } from '../../utils/symbols.js';
+import { dedent } from 'ts-dedent';
 
 export type IfElseNode = ChartNode<'ifElse', IfElseNodeData>;
 
@@ -51,6 +59,19 @@ export class IfElseNodeImpl extends NodeImpl<IfElseNode> {
         dataType: 'any',
       },
     ];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Takes in three inputs: a condition, a true value, and a false value. If the condition is truthy, the true value is passed through the output port. If the condition is not truthy, the false value is passed through the output port.
+
+        This node can "consume" a \`Not Ran\` to continue a graph from that point.
+      `,
+      infoBoxTitle: 'If/Else Node',
+      contextMenuTitle: 'If/Else',
+      group: ['Logic'],
+    };
   }
 
   async process(inputData: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {

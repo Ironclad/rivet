@@ -1,9 +1,17 @@
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { shuffle } from 'lodash-es';
-import { DataValue, isArrayDataValue } from '../DataValue.js';
+import { type DataValue, isArrayDataValue } from '../DataValue.js';
+import { dedent } from 'ts-dedent';
 
 export type ShuffleNode = ChartNode<'shuffle'>;
 
@@ -42,6 +50,17 @@ export class ShuffleNodeImpl extends NodeImpl<ShuffleNode> {
         title: 'Shuffled',
       },
     ];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Shuffles the input array. Outputs the shuffled array.
+      `,
+      infoBoxTitle: 'Shuffle Node',
+      contextMenuTitle: 'Shuffle',
+      group: ['Lists'],
+    };
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

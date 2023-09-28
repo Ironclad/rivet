@@ -1,8 +1,17 @@
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
-import { coerceTypeOptional } from '../../index.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { type EditorDefinition } from '../../index.js';
+import { dedent } from 'ts-dedent';
+import { coerceTypeOptional } from '../../utils/coerceType.js';
 
 export type NumberNode = ChartNode<'number', NumberNodeData>;
 
@@ -22,7 +31,7 @@ export class NumberNodeImpl extends NodeImpl<NumberNode> {
       visualData: {
         x: 0,
         y: 0,
-        width: 150,
+        width: 200,
       },
       data: {
         value: 0,
@@ -68,6 +77,19 @@ export class NumberNodeImpl extends NodeImpl<NumberNode> {
     return this.data.useValueInput ? `(Input to number)` : (this.data.value ?? 0).toLocaleString();
   }
 
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Outputs a number constant, or converts an input value into a number.
+
+        Can be configured to round the number to a certain number of decimal places.
+      `,
+      infoBoxTitle: 'Number Node',
+      contextMenuTitle: 'Number',
+      group: ['Numbers'],
+    };
+  }
+
   async process(inputs: Inputs): Promise<Outputs> {
     let value = this.data.useValueInput
       ? coerceTypeOptional(inputs['input' as PortId], 'number') ?? this.data.value ?? 0
@@ -82,7 +104,7 @@ export class NumberNodeImpl extends NodeImpl<NumberNode> {
     return {
       ['value' as PortId]: {
         type: 'number',
-        value: value,
+        value,
       },
     };
   }

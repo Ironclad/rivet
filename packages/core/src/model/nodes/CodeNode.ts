@@ -1,7 +1,17 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { DataValue } from '../DataValue.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type PortId,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { type DataValue } from '../DataValue.js';
+import { dedent } from 'ts-dedent';
+import { type EditorDefinition } from '../EditorDefinition.js';
+import { type NodeBodySpec } from '../NodeBodySpec.js';
+import { nodeDefinition } from '../NodeDefinition.js';
 
 export type CodeNode = ChartNode<'code', CodeNodeData>;
 
@@ -12,15 +22,7 @@ export type CodeNodeData = {
 };
 
 export class CodeNodeImpl extends NodeImpl<CodeNode> {
-  static create(
-    code: string = `// This is a code node, you can write and JS in here and it will be executed.
-// Inputs are accessible via an object \`inputs\` and data is typed (i.e. inputs.foo.type, inputs.foo.value)
-// Return an object with named outputs that match the output names specified in the node's config.
-// Output values must by typed as well (e.g. { bar: { type: 'string', value: 'bar' } }
-return { output: inputs.input };`,
-    inputNames: string = 'input',
-    outputNames: string = 'output',
-  ): CodeNode {
+  static create(): CodeNode {
     const chartNode: CodeNode = {
       type: 'code',
       title: 'Code',
@@ -30,9 +32,13 @@ return { output: inputs.input };`,
         y: 0,
       },
       data: {
-        code,
-        inputNames,
-        outputNames,
+        code: dedent`// This is a code node, you can write and JS in here and it will be executed.
+        // Inputs are accessible via an object \`inputs\` and data is typed (i.e. inputs.foo.type, inputs.foo.value)
+        // Return an object with named outputs that match the output names specified in the node's config.
+        // Output values must by typed as well (e.g. { bar: { type: 'string', value: 'bar' } }
+        return { output: inputs.input };`,
+        inputNames: 'input',
+        outputNames: 'output',
       },
     };
 
@@ -86,6 +92,17 @@ return { output: inputs.input };`,
       language: 'javascript',
       fontSize: 12,
       fontFamily: 'monospace',
+    };
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Executes a piece of JavaScript code. Documentation for the inputs and outputs is available in the default code.
+      `,
+      infoBoxTitle: 'Code Node',
+      contextMenuTitle: 'Code',
+      group: ['Advanced'],
     };
   }
 

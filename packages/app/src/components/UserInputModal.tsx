@@ -1,15 +1,14 @@
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { type FC, Suspense, useEffect, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { ArrayDataValue, StringDataValue } from '@ironclad/rivet-core';
+import { type ArrayDataValue, type StringDataValue } from '@ironclad/rivet-core';
 import { lastAnswersState } from '../state/userInput.js';
 import Modal, { ModalBody, ModalFooter, ModalHeader, ModalTitle, ModalTransition } from '@atlaskit/modal-dialog';
 import Button from '@atlaskit/button';
 import { Field } from '@atlaskit/form';
 import { css } from '@emotion/react';
-import { marked } from 'marked';
-import { CodeEditor } from './CodeEditor.js';
-import { monaco } from '../utils/monaco.js';
+import type { monaco } from '../utils/monaco.js';
 import { useMarkdown } from '../hooks/useMarkdown.js';
+import { LazyCodeEditor } from './LazyComponents';
 
 const styles = css`
   .question {
@@ -104,7 +103,8 @@ const UserInputModalQuestion: FC<{
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>();
 
   const handleTextAreaKeyDown = (e: monaco.IKeyboardEvent) => {
-    if (e.keyCode === monaco.KeyCode.Enter && (e.metaKey || e.ctrlKey)) {
+    const enter: monaco.KeyCode = 3;
+    if (e.keyCode === enter && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       onSubmit?.();
     }
@@ -118,14 +118,16 @@ const UserInputModalQuestion: FC<{
         <div>
           <div className="question" dangerouslySetInnerHTML={questionHtml} />
           <div className="editor">
-            <CodeEditor
-              key={question}
-              text={answer ?? ''}
-              onChange={(e) => onChange?.(index, e)}
-              autoFocus
-              onKeyDown={handleTextAreaKeyDown}
-              editorRef={editorRef}
-            />
+            <Suspense fallback={<div />}>
+              <LazyCodeEditor
+                key={question}
+                text={answer ?? ''}
+                onChange={(e) => onChange?.(index, e)}
+                autoFocus
+                onKeyDown={handleTextAreaKeyDown}
+                editorRef={editorRef}
+              />
+            </Suspense>
           </div>
         </div>
       )}

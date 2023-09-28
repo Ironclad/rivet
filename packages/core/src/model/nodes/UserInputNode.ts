@@ -1,9 +1,12 @@
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { DataValue, ArrayDataValue, StringDataValue } from '../DataValue.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import type { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import type { ArrayDataValue, StringDataValue } from '../DataValue.js';
 import { zip } from 'lodash-es';
-import { Outputs, Inputs, expectType } from '../../index.js';
+import { type Outputs, type Inputs, type EditorDefinition, type NodeBodySpec } from '../../index.js';
+import { dedent } from 'ts-dedent';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { coerceType } from '../../utils/coerceType.js';
 
 export type UserInputNode = ChartNode<'userInput', UserInputNodeData>;
 
@@ -13,7 +16,7 @@ export type UserInputNodeData = {
 };
 
 export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
-  static create(prompt = 'This is an example question?'): UserInputNode {
+  static create(): UserInputNode {
     const chartNode: UserInputNode = {
       type: 'userInput',
       title: 'User Input',
@@ -24,7 +27,7 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
         width: 250,
       },
       data: {
-        prompt,
+        prompt: 'This is an example question?',
         useInput: false,
       },
     };
@@ -76,6 +79,17 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
     return this.data.useInput ? '(Using input)' : this.data.prompt;
   }
 
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Prompts the user for input during the execution of the graph. The user's response becomes the output of this node.
+      `,
+      infoBoxTitle: 'User Input Node',
+      contextMenuTitle: 'User Input',
+      group: ['Input/Output'],
+    };
+  }
+
   async process(): Promise<Outputs> {
     return {
       ['output' as PortId]: undefined!,
@@ -85,7 +99,7 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
 
   getOutputValuesFromUserInput(questions: Inputs, answers: ArrayDataValue<StringDataValue>): Outputs {
     const questionsList = this.data.useInput
-      ? expectType(questions['questions' as PortId], 'string[]')
+      ? coerceType(questions['questions' as PortId], 'string[]')
       : [this.data.prompt];
 
     return {

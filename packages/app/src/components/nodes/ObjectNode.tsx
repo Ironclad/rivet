@@ -1,8 +1,8 @@
-import { FC, useLayoutEffect, useMemo, useRef } from 'react';
-import { monaco } from '../../utils/monaco';
+import { type FC, useMemo } from 'react';
 import styled from '@emotion/styled';
-import { ObjectNode } from '@ironclad/rivet-core';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { type ObjectNode } from '@ironclad/rivet-core';
+import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes';
+import { LazyColorizedPreformattedText } from '../LazyComponents';
 
 export type ObjectNodeBodyProps = {
   node: ObjectNode;
@@ -19,21 +19,14 @@ const Body = styled.div`
 `;
 
 export const ObjectNodeBody: FC<ObjectNodeBodyProps> = ({ node }) => {
-  const bodyRef = useRef<HTMLPreElement>(null);
-
-  const truncated = useMemo(() => node.data.jsonTemplate.split('\n').slice(0, 15).join('\n').trim(), [node.data.jsonTemplate]);
-
-  useLayoutEffect(() => {
-    monaco.editor.colorizeElement(bodyRef.current!, {
-      theme: 'prompt-interpolation',
-    });
-  }, [truncated]);
+  const truncated = useMemo(
+    () => node.data.jsonTemplate.split('\n').slice(0, 15).join('\n').trim(),
+    [node.data.jsonTemplate],
+  );
 
   return (
     <Body>
-      <pre ref={bodyRef} data-lang="json">
-        {truncated}
-      </pre>
+      <LazyColorizedPreformattedText text={truncated} language="json" />
     </Body>
   );
 };

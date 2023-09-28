@@ -1,20 +1,27 @@
-import { FC, memo, useLayoutEffect, useMemo, useRef } from 'react';
+import { type FC, Suspense, memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import {
-  ChartNode,
-  ColorizedNodeBodySpec,
-  MarkdownNodeBodySpec,
-  NodeBodySpec,
-  PlainNodeBodySpec,
-  createUnknownNodeInstance,
+  type ChartNode,
+  type ColorizedNodeBodySpec,
+  type MarkdownNodeBodySpec,
+  type NodeBodySpec,
+  type PlainNodeBodySpec,
+  globalRivetNodeRegistry,
+  type NodeBody as RenderedNodeBody,
+  getError,
 } from '@ironclad/rivet-core';
 import { useMarkdown } from '../hooks/useMarkdown';
 import { match } from 'ts-pattern';
-import { monaco } from '../utils/monaco';
 import styled from '@emotion/styled';
+import { LazyColorizedPreformattedText } from './LazyComponents';
+import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
+import { useGetRivetUIContext } from '../hooks/useGetRivetUIContext';
+import { useAsyncEffect } from 'use-async-effect';
+import { toast } from 'react-toastify';
 
 export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
   const { Body } = useUnknownNodeComponentDescriptorFor(node);
+  useDependsOnPlugins();
 
   const body = Body ? <Body node={node} /> : <UnknownNodeBody node={node} />;
 
@@ -31,9 +38,23 @@ const UnknownNodeBodyWrapper = styled.div<{
 `;
 
 const UnknownNodeBody: FC<{ node: ChartNode }> = ({ node }) => {
-  const body = useMemo(() => createUnknownNodeInstance(node).getBody(), [node]);
+  const getUIContext = useGetRivetUIContext();
 
-  let bodySpec: NodeBodySpec | NodeBodySpec[] | undefined =
+  const [body, setBody] = useState<RenderedNodeBody | undefined>();
+
+  useAsyncEffect(async () => {
+    try {
+      const impl = globalRivetNodeRegistry.createDynamicImpl(node);
+      // eslint-disable-next-line @typescript-eslint/await-thenable -- it is thenable you dummy
+      const renderedBody = await impl.getBody(await getUIContext({ node }));
+
+      setBody(renderedBody);
+    } catch (err) {
+      toast.error(`Failed to load body for node ${node.id}: ${getError(err).message}`);
+    }
+  }, [node]);
+
+  const bodySpec: NodeBodySpec | NodeBodySpec[] | undefined =
     typeof body === 'string' ? { type: 'plain', text: body } : body;
   let allSpecs = bodySpec ? (Array.isArray(bodySpec) ? bodySpec : [bodySpec]) : [];
 
@@ -75,18 +96,10 @@ export const MarkdownNodeBody: FC<MarkdownNodeBodySpec> = memo(({ text }) => {
   return <div className="pre-wrap" dangerouslySetInnerHTML={markdownBody} />;
 });
 
-export const ColorizedNodeBody: FC<ColorizedNodeBodySpec> = memo(({ text, theme, language }) => {
-  const bodyRef = useRef<HTMLPreElement>(null);
-
-  useLayoutEffect(() => {
-    monaco.editor.colorizeElement(bodyRef.current!, {
-      theme: theme ?? 'vs-dark',
-    });
-  }, [text, theme]);
-
+export const ColorizedNodeBody: FC<ColorizedNodeBodySpec> = memo(({ text, language, theme }) => {
   return (
-    <pre ref={bodyRef} data-lang={language}>
-      {text}
-    </pre>
+    <Suspense fallback={<div />}>
+      <LazyColorizedPreformattedText text={text} language={language} theme={theme} />
+    </Suspense>
   );
 });

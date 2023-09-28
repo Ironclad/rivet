@@ -1,0 +1,174 @@
+.header {
+  background-color: var(--black-0);
+  color: var(--white-0);
+  margin: 0;
+  padding: 20px 32px;
+}
+
+.header.menuOpen {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+.nav {
+  align-items: center;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.logo {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  z-index: 3;
+}
+
+.logoText {
+  text-decoration: none;
+  color: var(--white-0);
+  display: none;
+  font-size: 40px;
+  line-height: 1;
+}
+
+.hamburger {
+  background-color: var(--white-0);
+  background-clip: padding-box;
+  border: 19px solid transparent;
+  border-left: none;
+  border-right: none;
+  cursor: pointer;
+  height: 40px;
+  transition: background-color 0.2s;
+  width: 40px;
+  position: relative;
+  z-index: 3;
+}
+
+.hamburger::before,
+.hamburger::after {
+  background-color: var(--white-0);
+  content: '';
+  display: block;
+  height: 100%;
+  transform: translate(0, -10px);
+  position: absolute;
+  width: 100%;
+  transition: transform 0.2s;
+}
+
+.hamburger::after {
+  transform: translate(0, 10px);
+}
+
+.hamburger.menuOpen {
+  background-color: transparent;
+}
+
+.hamburger.menuOpen:before {
+  transform: translate(0, 0) rotate(45deg);
+}
+
+.hamburger.menuOpen:after {
+  transform: translate(0, 0) rotate(-45deg);
+}
+
+.navList {
+  background-color: var(--black-0);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 100%;
+  opacity: 0;
+  transition: left 0.2s, opacity 0.2s;
+}
+
+.navList > li {
+  display: flex;
+  align-items: center;
+}
+
+.navList.menuOpen {
+  left: 0;
+  opacity: 1;
+}
+
+.navLink {
+  color: var(--white-0);
+  font-size: 24px;
+  transition: color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.navLink.navLink:hover {
+  color: var(--white-2);
+}
+
+.navLink.primary {
+  color: var(--orange-0);
+}
+
+.navLink.primary:hover {
+  color: var(--orange-1);
+}
+
+.navLink svg {
+  height: 24px;
+  width: 24px;
+}
+
+@media screen and (min-width: 768px) {
+  .header.menuOpen {
+    position: static;
+    z-index: unset;
+  }
+
+  .logoText {
+    display: block;
+  }
+
+  .hamburger,
+  .menuText {
+    display: none;
+  }
+
+  .navList {
+    background-color: transparent;
+    flex-direction: row;
+    position: static;
+    height: unset;
+    width: unset;
+    top: 0;
+    left: 100%;
+    opacity: 1;
+    transition: left 0.2s, opacity 0.2s;
+  }
+
+  .navLink {
+    font-size: 20px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .header {
+    padding: 40px 60px;
+  }
+
+  .navLink.navLink {
+    font-size: 24px;
+  }
+}

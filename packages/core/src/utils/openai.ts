@@ -1,6 +1,6 @@
-import { TiktokenModel } from '@dqbd/tiktoken';
+import type { TiktokenModel } from '@dqbd/tiktoken';
 import fetchEventSource from './fetchEventSource.js';
-import { SupportedModels } from './tokenizer.js';
+import type { SupportedModels } from './tokenizer.js';
 
 // https://github.com/openai/openai-node/issues/18#issuecomment-1518715285
 
@@ -102,14 +102,18 @@ export type ChatCompletionRequestMessage = {
   /** The content of the message. */
   content: string;
 
-  function_call?: object;
+  name: string | undefined;
+
+  function_call: object | undefined;
 };
 
 // https://platform.openai.com/docs/api-reference/chat/create
 export type ChatCompletionOptions = {
+  endpoint: string;
   auth: { apiKey: string; organization?: string };
+  headers?: Record<string, string>;
   signal?: AbortSignal;
-  model: SupportedModels;
+  model: string;
   messages: ChatCompletionRequestMessage[];
   temperature?: number;
   top_p?: number;
@@ -152,13 +156,23 @@ export type ChatCompletionChunk = {
   choices?: ChatCompletionChunkChoice[];
 };
 
+export type GptFunctionCall = {
+  name: string;
+  arguments: string;
+};
+
+export type GptFunctionCallDelta = {
+  name?: string;
+  arguments?: string;
+};
+
 export type ChatCompletionChunkChoice = {
   index: number;
   message_index: number;
   delta: {
     role?: 'assistant';
     content?: string;
-    function_call?: object;
+    function_call?: GptFunctionCallDelta;
   };
   finish_reason: null | 'stop' | 'length' | 'insufficient_tokens' | 'function_call';
 };
@@ -169,32 +183,45 @@ export type ChatCompletionFunction = {
   parameters: object;
 };
 
+export const DEFAULT_CHAT_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
+
 export async function* streamChatCompletions({
+  endpoint,
   auth,
   signal,
+  headers,
   ...rest
 }: ChatCompletionOptions): AsyncGenerator<ChatCompletionChunk> {
-  const defaultSignal = new AbortController().signal;
-  const response = await fetchEventSource('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${auth.apiKey}`,
-      ...(auth.organization ? { 'OpenAI-Organization': auth.organization } : {}),
+  const abortSignal = signal ?? new AbortController().signal;
+
+  // Turn off timeout because local models can be slow, TODO configurable timeout
+  const timeout = endpoint === DEFAULT_CHAT_ENDPOINT ? 5000 : 10000000;
+
+  const response = await fetchEventSource(
+    endpoint,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${auth.apiKey}`,
+        ...(auth.organization ? { 'OpenAI-Organization': auth.organization } : {}),
+        ...headers,
+      },
+      body: JSON.stringify({
+        ...rest,
+        stream: true,
+      }),
+      signal: abortSignal,
     },
-    body: JSON.stringify({
-      ...rest,
-      stream: true,
-    }),
-    signal: signal ?? defaultSignal,
-  });
+    timeout,
+  );
 
   let hadChunks = false;
 
   for await (const chunk of response.events()) {
     hadChunks = true;
 
-    if (chunk === '[DONE]') {
+    if (chunk === '[DONE]' || abortSignal?.aborted) {
       return;
     }
     let data: ChatCompletionChunk;

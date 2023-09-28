@@ -2,17 +2,17 @@ import { DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
 import { DraggableNode } from './DraggableNode.js';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles.js';
-import { FC, useMemo, useRef, useState } from 'react';
-import { ContextMenu, ContextMenuContext } from './ContextMenu.js';
+import { type FC, useMemo, useRef, useState } from 'react';
+import { ContextMenu, type ContextMenuContext } from './ContextMenu.js';
 import { CSSTransition } from 'react-transition-group';
 import { WireLayer } from './WireLayer.js';
 import { useContextMenu } from '../hooks/useContextMenu.js';
 import { useDraggingNode } from '../hooks/useDraggingNode.js';
 import { useDraggingWire } from '../hooks/useDraggingWire.js';
-import { ChartNode, CommentNode, GraphId, NodeConnection, NodeId, NodeType } from '@ironclad/rivet-core';
+import { type ChartNode, type CommentNode, type NodeConnection, type NodeId } from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  CanvasPosition,
+  type CanvasPosition,
   canvasPositionState,
   editingNodeState,
   lastCanvasPositionByGraphState,
@@ -26,8 +26,10 @@ import { useThrottleFn } from 'ahooks';
 import { produce } from 'immer';
 import { graphMetadataState } from '../state/graph.js';
 import { useViewportBounds } from '../hooks/useViewportBounds.js';
-import { nanoid } from 'nanoid';
 import { useGlobalHotkey } from '../hooks/useGlobalHotkey.js';
+import { useWireDragScrolling } from '../hooks/useWireDragScrolling';
+import { useMergeRefs } from '@floating-ui/react';
+import { useNodePortPositions } from '../hooks/useNodePortPositions';
 
 const styles = css`
   width: 100vw;
@@ -109,7 +111,7 @@ const styles = css`
   .selection-box {
     position: absolute;
     border: 2px dashed var(--primary);
-    background-color: rgba(255, 153, 0, 0.05); /* --primary color with 20% opacity */
+    background-color: var(--primary-5percent);
     z-index: 2000;
   }
 
@@ -131,6 +133,8 @@ export interface NodeCanvasProps {
     meta: { x: number; y: number },
   ) => void;
 }
+
+export type PortPositions = Record<string, { x: number; y: number }>;
 
 export const NodeCanvas: FC<NodeCanvasProps> = ({
   nodes,
@@ -165,6 +169,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   const { draggingNodes, onNodeStartDrag, onNodeDragged } = useDraggingNode(onNodesChanged);
   const { draggingWire, onWireStartDrag, onWireEndDrag } = useDraggingWire(onConnectionsChanged);
+  useWireDragScrolling();
 
   const {
     contextMenuRef,
@@ -175,7 +180,10 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     setContextMenuData,
   } = useContextMenu();
 
+  const { nodePortPositions, canvasRef } = useNodePortPositions();
+
   const { setNodeRef } = useDroppable({ id: 'NodeCanvas' });
+  const setCanvasRef = useMergeRefs([setNodeRef, canvasRef]);
 
   const nodesWithConnections = useMemo(() => {
     return nodes.map((node) => {
@@ -198,7 +206,6 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   );
 
   const canvasMouseDown = useStableCallback((e: React.MouseEvent) => {
-    console.dir({ e });
     if (e.button !== 0) {
       return;
     }
@@ -439,7 +446,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   const hydratedContextMenuData = useMemo((): ContextMenuContext | null => {
     if (contextMenuData.data?.type.startsWith('node-')) {
-      const nodeType = contextMenuData.data.type.replace('node-', '') as NodeType;
+      const nodeType = contextMenuData.data.type.replace('node-', '');
       const nodeId = contextMenuData.data.element.dataset.nodeid as NodeId;
       return {
         type: 'node',
@@ -463,7 +470,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   return (
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
       <div
-        ref={setNodeRef}
+        ref={setCanvasRef}
         className="node-canvas"
         css={styles}
         onContextMenu={handleCanvasContextMenu}
@@ -504,6 +511,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
                   node={node}
                   connections={nodeConnections}
                   isSelected={highlightedNodes.includes(node.id)}
+                  canvasZoom={canvasPosition.zoom}
                   onWireStartDrag={onWireStartDrag}
                   onWireEndDrag={onWireEndDrag}
                   onNodeSelected={nodeSelected}
@@ -572,7 +580,12 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           />
         )}
 
-        <WireLayer connections={connections} draggingWire={draggingWire} highlightedNodes={highlightedNodes} />
+        <WireLayer
+          connections={connections}
+          draggingWire={draggingWire}
+          highlightedNodes={highlightedNodes}
+          portPositions={nodePortPositions}
+        />
       </div>
     </DndContext>
   );

@@ -1,6 +1,6 @@
-import { Opaque } from 'type-fest';
-import { DataType } from './DataValue.js';
-import { GraphId } from '../index.js';
+import type { Opaque } from 'type-fest';
+import type { DataType } from './DataValue.js';
+import type { GraphId } from '../index.js';
 
 /** Unique in a NodeGraph. */
 export type NodeId = Opaque<string, 'NodeId'>;
@@ -23,6 +23,9 @@ export interface NodeBase {
   description?: string;
 
   isSplitRun?: boolean;
+
+  /** When splitting, should the executions be ran sequentially instead of in parallel? */
+  isSplitSequential?: boolean;
 
   splitRunMax?: number;
 

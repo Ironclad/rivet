@@ -1,21 +1,26 @@
 import {
-  DataValue,
-  ExternalFunction,
-  GraphId,
+  type DataValue,
+  type DatasetProvider,
+  type ExternalFunction,
+  type GraphId,
   GraphProcessor,
-  NativeApi,
-  ProcessEvents,
-  Project,
-  Settings,
+  type NativeApi,
+  type NodeRegistration,
+  type ProcessContext,
+  type ProcessEvents,
+  type Project,
+  type Settings,
+  type StringPluginConfigurationSpec,
   deserializeProject,
+  globalRivetNodeRegistry,
+  type AttachedData,
 } from '@ironclad/rivet-core';
 
 import { readFile } from 'node:fs/promises';
-import { RivetDebuggerServer } from './debugger.js';
-import { PascalCase } from 'type-fest';
+import { type RivetDebuggerServer } from './debugger.js';
+import type { PascalCase } from 'type-fest';
 import { NodeNativeApi } from './native/NodeNativeApi.js';
 import { mapValues } from 'lodash-es';
-import { AttachedData } from '../../core/src/utils/serialization/serializationUtils.js';
 
 export async function loadProjectFromFile(path: string): Promise<Project> {
   const content = await readFile(path, { encoding: 'utf8' });
@@ -44,6 +49,7 @@ export type RunGraphOptions = {
   context?: Record<string, LooseDataValue>;
   remoteDebugger?: RivetDebuggerServer;
   nativeApi?: NativeApi;
+  datasetProvider?: DatasetProvider;
   externalFunctions?: {
     [key: string]: ExternalFunction;
   };
@@ -51,6 +57,8 @@ export type RunGraphOptions = {
     [key: string]: (data: DataValue | undefined) => void;
   };
   abortSignal?: AbortSignal;
+  registry?: NodeRegistration;
+  getChatNodeEndpoint?: ProcessContext['getChatNodeEndpoint'];
 } & {
   [P in keyof ProcessEvents as `on${PascalCase<P>}`]?: (params: ProcessEvents[P]) => void;
 } & Settings;
@@ -61,7 +69,7 @@ export async function runGraphInFile(path: string, options: RunGraphOptions): Pr
 }
 
 export function createProcessor(project: Project, options: RunGraphOptions) {
-  const { graph, inputs = {}, context = {} } = options;
+  const { graph, inputs = {}, context = {}, registry } = options;
 
   const graphId =
     graph in project.graphs
@@ -72,7 +80,8 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
     throw new Error('Graph not found');
   }
 
-  const processor = new GraphProcessor(project, graphId as GraphId);
+  const processor = new GraphProcessor(project, graphId as GraphId, options.registry);
+  processor.executor = 'nodejs';
 
   if (options.remoteDebugger) {
     options.remoteDebugger.attach(processor);
@@ -174,6 +183,12 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
     return value;
   });
 
+  let pluginEnv = options.pluginEnv;
+  if (!pluginEnv) {
+    // If unset, use process.env
+    pluginEnv = getPluginEnvFromProcessEnv(registry);
+  }
+
   return {
     processor,
     inputs: resolvedInputs,
@@ -182,12 +197,17 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
       const outputs = await processor.processGraph(
         {
           nativeApi: options.nativeApi ?? new NodeNativeApi(),
+          datasetProvider: options.datasetProvider,
           settings: {
-            openAiKey: options.openAiKey,
+            openAiKey: options.openAiKey ?? '',
             openAiOrganization: options.openAiOrganization ?? '',
-            pineconeApiKey: options.pineconeApiKey ?? '',
-            anthropicApiKey: options.anthropicApiKey ?? '',
+            openAiEndpoint: options.openAiEndpoint ?? '',
+            pluginEnv: options.pluginEnv ?? {},
+            pluginSettings: options.pluginSettings ?? {},
+            recordingPlaybackLatency: 1000,
+            chatNodeHeaders: options.chatNodeHeaders ?? {},
           } satisfies Required<Settings>,
+          getChatNodeEndpoint: options.getChatNodeEndpoint,
         },
         resolvedInputs,
         resolvedContextValues,
@@ -201,4 +221,28 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
 export async function runGraph(project: Project, options: RunGraphOptions): Promise<Record<string, DataValue>> {
   const processorInfo = createProcessor(project, options);
   return processorInfo.run();
+}
+
+function getPluginEnvFromProcessEnv(registry?: NodeRegistration) {
+  const pluginEnv: Record<string, string> = {};
+  for (const plugin of (registry ?? globalRivetNodeRegistry).getPlugins() ?? []) {
+    const configs = Object.entries(plugin.configSpec ?? {}).filter(([, c]) => c.type === 'string') as [
+      string,
+      StringPluginConfigurationSpec,
+    ][];
+    for (const [configName, config] of configs) {
+      if (config.pullEnvironmentVariable) {
+        const envVarName =
+          typeof config.pullEnvironmentVariable === 'string'
+            ? config.pullEnvironmentVariable
+            : config.pullEnvironmentVariable === true
+            ? configName
+            : undefined;
+        if (envVarName) {
+          pluginEnv[envVarName] = process.env[envVarName] ?? '';
+        }
+      }
+    }
+  }
+  return pluginEnv;
 }

@@ -1,10 +1,19 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { DataType, DataValue } from '../DataValue.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
-import { InternalProcessContext } from '../ProcessContext.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type PortId,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { type DataType, type DataValue } from '../DataValue.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { type InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
+import { type EditorDefinition } from '../EditorDefinition.js';
+import { type NodeBodySpec } from '../NodeBodySpec.js';
+import { nodeDefinition } from '../NodeDefinition.js';
 
 export type ContextNode = ChartNode<'context', ContextNodeData>;
 
@@ -16,7 +25,7 @@ export type ContextNodeData = {
 };
 
 export class ContextNodeImpl extends NodeImpl<ContextNode> {
-  static create(id: string = 'input', dataType: DataType = 'string'): ContextNode {
+  static create(): ContextNode {
     const chartNode: ContextNode = {
       type: 'context',
       title: 'Context',
@@ -27,8 +36,8 @@ export class ContextNodeImpl extends NodeImpl<ContextNode> {
         width: 300,
       },
       data: {
-        id,
-        dataType,
+        id: 'input',
+        dataType: 'string',
         defaultValue: undefined,
         useDefaultValueInput: false,
       },
@@ -79,6 +88,17 @@ export class ContextNodeImpl extends NodeImpl<ContextNode> {
       ${this.data.id}
       Type: ${this.data.dataType}
     `;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Retrieves a value from the graph's context using a configured id. The context serves as a "global graph input", allowing the same values to be accessible from any graph or subgraph.
+      `,
+      infoBoxTitle: 'Context Node',
+      contextMenuTitle: 'Context',
+      group: ['Advanced'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

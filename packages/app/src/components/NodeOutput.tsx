@@ -1,34 +1,34 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { NodeRunData, ProcessDataForNode, lastRunData, selectedProcessPage } from '../state/dataFlow.js';
-import { FC, ReactNode, memo, useMemo, useState } from 'react';
+import { type NodeRunData, type ProcessDataForNode, lastRunData, selectedProcessPage } from '../state/dataFlow.js';
+import { type FC, type ReactNode, memo, useMemo, useState } from 'react';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { copyToClipboard } from '../utils/copyToClipboard.js';
-import { ChartNode, PortId, ProcessId, getWarnings } from '@ironclad/rivet-core';
+import { type ChartNode, type PortId, type ProcessId, getWarnings } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-line.svg';
 import { ReactComponent as ExpandIcon } from 'majesticons/line/maximize-line.svg';
 import { ReactComponent as FlaskIcon } from 'majesticons/line/flask-line.svg';
 import { FullScreenModal } from './FullScreenModal.js';
 import { RenderDataOutputs } from './RenderDataValue.js';
-import { entries } from '../utils/typeSafety.js';
 import { orderBy } from 'lodash-es';
 import { promptDesignerAttachedChatNodeState, promptDesignerState } from '../state/promptDesigner.js';
 import { overlayOpenState } from '../state/ui';
+import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
+import { entries } from '../../../core/src/utils/typeSafety';
+import { useToggle } from 'ahooks';
+import Toggle from '@atlaskit/toggle';
 
 export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleScroll = useStableCallback((e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    e.stopPropagation();
-  });
+  useDependsOnPlugins();
 
   return (
     <div className="node-output-outer">
       <FullScreenModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <NodeFullscreenOutput node={node} />
       </FullScreenModal>
-      <div onScroll={handleScroll}>
+      <div onWheel={(e) => e.stopPropagation()}>
         <NodeOutputBase node={node} onOpenFullscreenModal={() => setIsModalOpen(true)} />
       </div>
     </div>
@@ -41,6 +41,10 @@ const fullscreenOutputCss = css`
   .fullscreen-header {
     position: sticky;
     top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .picker {
@@ -92,11 +96,15 @@ const fullscreenOutputCss = css`
 `;
 
 const fullscreenOutputButtonsCss = css`
-  position: absolute;
-  top: 0;
-  right: 4px;
   display: inline-flex;
   gap: 8px;
+
+  border: 1px solid var(--grey);
+  background: var(--grey-darker);
+  border-radius: 4px;
+  box-shadow: 4px 4px 8px var(--shadow-dark);
+  margin-bottom: 8px;
+  padding: 8px 12px;
 
   .copy-button,
   .prompt-designer-button {
@@ -113,13 +121,39 @@ const fullscreenOutputButtonsCss = css`
   .prompt-designer-button:hover {
     opacity: 1;
   }
+
+  .copy-json-button {
+    opacity: 0.2;
+    cursor: pointer;
+    user-select: none;
+    text-transform: uppercase;
+    font-size: 10px;
+    transition: opacity 0.2s;
+    z-index: 1;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .markdown-toggle {
+    display: flex;
+    align-items: center;
+    user-select: none;
+  }
 `;
 
 const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
   const output = useRecoilValue(lastRunData(node.id));
-  let [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
+  const [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
 
-  const { FullscreenOutput, Output, OutputSimple, FullscreenOutputSimple } = useUnknownNodeComponentDescriptorFor(node);
+  const { FullscreenOutput, Output, OutputSimple, FullscreenOutputSimple, defaultRenderMarkdown } =
+    useUnknownNodeComponentDescriptorFor(node);
+
+  const [renderMarkdown, toggleRenderMarkdown] = useToggle(defaultRenderMarkdown ?? false);
 
   const setOverlayOpen = useSetRecoilState(overlayOpenState);
   const setPromptDesignerAttachedNode = useSetRecoilState(promptDesignerAttachedChatNodeState);
@@ -163,6 +197,13 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
     } else {
       copyToClipboard(JSON.stringify(outputValue, null, 2));
     }
+  });
+
+  const handleCopyToClipboardJson = useStableCallback(() => {
+    if (!data) {
+      return;
+    }
+    copyToClipboard(JSON.stringify(data.outputData, null, 2));
   });
 
   const prevPage = useStableCallback(() => {
@@ -213,29 +254,29 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
       <div className="split-output">
         {outputs.map(({ key, value }) =>
           FullscreenOutputSimple ? (
-            <FullscreenOutputSimple key={`outputs-${key}`} outputs={value} />
+            <FullscreenOutputSimple key={`outputs-${key}`} outputs={value} renderMarkdown={renderMarkdown} />
           ) : OutputSimple ? (
             <OutputSimple key={`outputs-${key}`} outputs={value} />
           ) : (
-            <RenderDataOutputs key={`outputs-${key}`} outputs={value} />
+            <RenderDataOutputs key={`outputs-${key}`} outputs={value} renderMarkdown={renderMarkdown} />
           ),
         )}
       </div>
     );
   } else {
     body = FullscreenOutputSimple ? (
-      <FullscreenOutputSimple outputs={data.outputData!} />
+      <FullscreenOutputSimple outputs={data.outputData!} renderMarkdown={renderMarkdown} />
     ) : OutputSimple ? (
       <OutputSimple outputs={data.outputData!} />
     ) : (
-      <RenderDataOutputs outputs={data.outputData!} />
+      <RenderDataOutputs outputs={data.outputData!} renderMarkdown={renderMarkdown} />
     );
   }
 
   return (
     <div css={fullscreenOutputCss}>
       <header className="fullscreen-header">
-        {output.length > 1 && (
+        {output.length > 1 ? (
           <div className="picker">
             <button className="picker-left" onClick={prevPage}>
               {'<'}
@@ -245,10 +286,18 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
               {'>'}
             </button>
           </div>
+        ) : (
+          <div />
         )}
         <div css={fullscreenOutputButtonsCss}>
-          <div className="copy-button" onClick={handleCopyToClipboard}>
+          <label className="markdown-toggle">
+            <Toggle isChecked={renderMarkdown} onChange={toggleRenderMarkdown.toggle} /> Render Markdown
+          </label>
+          <div className="copy-button" onClick={handleCopyToClipboard} title="Copy Value">
             <CopyIcon />
+          </div>
+          <div className="copy-json-button" onClick={handleCopyToClipboardJson} title="Copy as JSON">
+            JSON
           </div>
           {node.type === 'chat' && (
             <div className="prompt-designer-button" onClick={handleOpenPromptDesigner}>
@@ -408,7 +457,7 @@ const NodeOutputMultiProcess: FC<{
   data: ProcessDataForNode[];
   onOpenFullscreenModal?: () => void;
 }> = ({ node, data, onOpenFullscreenModal }) => {
-  let [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
+  const [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
 
   const prevPage = useStableCallback(() => {
     setSelectedPage((page) => {

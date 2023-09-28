@@ -1,10 +1,12 @@
 // @ts-ignore
 import * as yaml from 'yaml';
 import { graphV3Deserializer, projectV3Deserializer } from './serialization_v3.js';
-import { Project, NodeGraph } from '../../index.js';
+import type { Project, NodeGraph, ProjectId, DatasetProvider, Dataset, DatasetMetadata } from '../../index.js';
 import { getError } from '../errors.js';
-import { AttachedData, yamlProblem } from './serializationUtils.js';
+import { type AttachedData, yamlProblem } from './serializationUtils.js';
 import {
+  datasetV4Deserializer,
+  datasetV4Serializer,
   graphV4Deserializer,
   graphV4Serializer,
   projectV4Deserializer,
@@ -78,4 +80,17 @@ export function deserializeGraph(serializedGraph: unknown): NodeGraph {
       }
     }
   }
+}
+
+export type CombinedDataset = {
+  meta: DatasetMetadata;
+  data: Dataset;
+};
+
+export function serializeDatasets(datasets: CombinedDataset[]): string {
+  return datasetV4Serializer(datasets);
+}
+
+export function deserializeDatasets(serializedDatasets: string): CombinedDataset[] {
+  return datasetV4Deserializer(serializedDatasets);
 }

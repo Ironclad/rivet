@@ -1,5 +1,5 @@
-import { NodeGraph, Project, ExecutionRecorder } from '@ironclad/rivet-core';
-import { TrivetData } from '@ironclad/trivet';
+import { type NodeGraph, type Project, type ExecutionRecorder } from '@ironclad/rivet-core';
+import { type TrivetData } from '@ironclad/trivet';
 
 export interface IOProvider {
   saveGraphData(graphData: NodeGraph): Promise<void>;
@@ -16,7 +16,15 @@ export interface IOProvider {
 
   openDirectory(): Promise<string | string[] | null>;
 
-  openFile(): Promise<string>;
+  openFilePath(): Promise<string>;
 
   saveString(content: string, defaultFileName: string): Promise<void>;
+
+  readFileAsString(callback: (data: string) => void): Promise<void>;
+
+  readFileAsBinary(callback: (data: Uint8Array) => void): Promise<void>;
+
+  readPathAsString(path: string): Promise<string>;
+
+  readPathAsBinary(path: string): Promise<Uint8Array>;
 }

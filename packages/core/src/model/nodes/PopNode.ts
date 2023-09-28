@@ -1,9 +1,23 @@
-import { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { dedent } from 'ts-dedent';
+import type { EditorDefinition } from '../EditorDefinition.js';
+import type { RivetUIContext } from '../RivetUIContext.js';
 
-export type PopNode = ChartNode<'pop', {}>;
+export type PopNode = ChartNode<'pop', PopNodeData>;
+
+export type PopNodeData = {
+  fromFront?: boolean;
+};
 
 export class PopNodeImpl extends NodeImpl<PopNode> {
   static create(): PopNode {
@@ -47,6 +61,29 @@ export class PopNodeImpl extends NodeImpl<PopNode> {
     ];
   }
 
+  getEditors(_context: RivetUIContext): EditorDefinition<PopNode>[] | Promise<EditorDefinition<PopNode>[]> {
+    return [
+      {
+        label: 'Pop from front',
+        type: 'toggle',
+        dataKey: 'fromFront',
+      },
+    ];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Pops the last value off the input array and outputs the new array and the popped value.
+
+        Can also be used to just extract the last value from an array.
+      `,
+      infoBoxTitle: 'Pop Node',
+      contextMenuTitle: 'Pop',
+      group: ['Lists'],
+    };
+  }
+
   async process(inputs: Inputs): Promise<Outputs> {
     const inputArray = inputs['array' as PortId]?.value;
 
@@ -54,8 +91,8 @@ export class PopNodeImpl extends NodeImpl<PopNode> {
       throw new Error('Input array is empty or not an array');
     }
 
-    const lastItem = inputArray[inputArray.length - 1];
-    const rest = inputArray.slice(0, inputArray.length - 1);
+    const lastItem = this.data.fromFront ? inputArray[0] : inputArray[inputArray.length - 1];
+    const rest = this.data.fromFront ? inputArray.slice(1) : inputArray.slice(0, inputArray.length - 1);
 
     return {
       ['lastItem' as PortId]: {

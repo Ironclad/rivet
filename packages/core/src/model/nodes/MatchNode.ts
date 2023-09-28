@@ -1,9 +1,17 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { DataValue } from '../DataValue.js';
-import { expectType } from '../../utils/expectType.js';
-import { coerceType } from '../../index.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type PortId,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { type DataValue } from '../DataValue.js';
+import { type Inputs, type Outputs } from '../../index.js';
+import { dedent } from 'ts-dedent';
+import { coerceType } from '../../utils/coerceType.js';
 
 export type MatchNode = ChartNode<'match', MatchNodeData>;
 
@@ -13,7 +21,7 @@ export type MatchNodeData = {
 };
 
 export class MatchNodeImpl extends NodeImpl<MatchNode> {
-  static create(caseCount: number = 2, cases: string[] = ['YES', 'NO']): MatchNode {
+  static create(): MatchNode {
     const chartNode: MatchNode = {
       type: 'match',
       title: 'Match',
@@ -24,8 +32,8 @@ export class MatchNodeImpl extends NodeImpl<MatchNode> {
         width: 250,
       },
       data: {
-        caseCount,
-        cases,
+        caseCount: 2,
+        cases: ['YES', 'NO'],
       },
     };
 
@@ -36,9 +44,14 @@ export class MatchNodeImpl extends NodeImpl<MatchNode> {
     const inputs: NodeInputDefinition[] = [
       {
         id: 'input' as PortId,
-        title: 'Input',
+        title: 'Test',
         dataType: 'string',
         required: true,
+      },
+      {
+        id: 'value' as PortId,
+        title: 'Value',
+        dataType: 'any',
       },
     ];
 
@@ -65,11 +78,27 @@ export class MatchNodeImpl extends NodeImpl<MatchNode> {
     return outputs;
   }
 
-  async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
-    const inputString = coerceType(inputs.input, 'string');
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Any number of regular expressions can be configured, each corresponding to an output of the node. The output port of the first matching regex will be ran, and all other output ports will not be ran.
+      `,
+      infoBoxTitle: 'Match Node',
+      contextMenuTitle: 'Match',
+      group: ['Logic'],
+    };
+  }
+
+  async process(inputs: Inputs): Promise<Outputs> {
+    const inputString = coerceType(inputs['input' as PortId], 'string');
+    const value = inputs['value' as PortId];
+
+    const outputType = value === undefined ? 'string' : value.type;
+    const outputValue = value === undefined ? inputString : value.value;
+
     const cases = this.chartNode.data.cases;
     let matched = false;
-    const output: Record<string, DataValue> = {};
+    const output: Outputs = {};
 
     for (let i = 0; i < cases.length; i++) {
       const regExp = new RegExp(cases[i]!);
@@ -77,12 +106,12 @@ export class MatchNodeImpl extends NodeImpl<MatchNode> {
 
       if (match) {
         matched = true;
-        output[`case${i + 1}`] = {
-          type: 'string',
-          value: inputString,
-        };
+        output[`case${i + 1}` as PortId] = {
+          type: outputType,
+          value: outputValue,
+        } as DataValue;
       } else {
-        output[`case${i + 1}`] = {
+        output[`case${i + 1}` as PortId] = {
           type: 'control-flow-excluded',
           value: undefined,
         };
@@ -90,12 +119,12 @@ export class MatchNodeImpl extends NodeImpl<MatchNode> {
     }
 
     if (!matched) {
-      output.unmatched = {
-        type: 'string',
-        value: inputString,
-      };
+      output['unmatched' as PortId] = {
+        type: outputType,
+        value: outputValue,
+      } as DataValue;
     } else {
-      output.unmatched = {
+      output['unmatched' as PortId] = {
         type: 'control-flow-excluded',
         value: undefined,
       };

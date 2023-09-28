@@ -15,11 +15,16 @@ monaco.languages.setMonarchTokensProvider('prompt-interpolation', {
 
 monaco.languages.setMonarchTokensProvider('prompt-interpolation-markdown', promptInterpolationMarkdownLanguage);
 
-monaco.editor.defineTheme('prompt-interpolation', {
-  base: 'vs-dark',
-  inherit: true,
-  rules: [{ token: 'prompt-replacement', foreground: 'ff9900' }],
-  colors: {
-    'editor.background': '#282c34',
-  },
-});
+const definePITheme = (name: string, colors: { primary: string }) =>
+  monaco.editor.defineTheme(`prompt-interpolation-${name}`, {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [{ token: 'prompt-replacement', foreground: colors.primary }],
+    colors: {
+      'editor.background': '#282c34',
+    },
+  });
+
+definePITheme('molten', { primary: 'ff9900' });
+definePITheme('grapefruit', { primary: 'ff8862' });
+definePITheme('taffy', { primary: 'd6c2ff' });

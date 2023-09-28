@@ -1,16 +1,16 @@
-import { Opaque, OverrideProperties } from 'type-fest';
+import type { Opaque, OverrideProperties } from 'type-fest';
 import {
-  ProcessEvents,
-  ProjectId,
-  GraphInputs,
-  DataValue,
-  GraphId,
-  GraphOutputs,
-  NodeId,
-  Inputs,
-  ProcessId,
-  Outputs,
-  StringArrayDataValue,
+  type ProcessEvents,
+  type ProjectId,
+  type GraphInputs,
+  type DataValue,
+  type GraphId,
+  type GraphOutputs,
+  type NodeId,
+  type Inputs,
+  type ProcessId,
+  type Outputs,
+  type StringArrayDataValue,
 } from '../index.js';
 
 export type RecordingId = Opaque<string, 'RecordingId'>;
@@ -18,7 +18,7 @@ export type RecordingId = Opaque<string, 'RecordingId'>;
 export type RecordedEventsMap = OverrideProperties<
   ProcessEvents,
   {
-    start: { projectId: ProjectId; inputs: GraphInputs; contextValues: Record<string, DataValue> };
+    start: { projectId: ProjectId; inputs: GraphInputs; contextValues: Record<string, DataValue>; startGraph: GraphId };
 
     /** Called when a graph or subgraph has started. */
     graphStart: { graphId: GraphId; inputs: GraphInputs };

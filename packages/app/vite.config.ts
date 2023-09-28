@@ -20,6 +20,9 @@ export default defineConfig({
       '@ironclad/trivet': resolve('../trivet/src/index.ts'),
     },
   },
+  build: {
+    chunkSizeWarningLimit: 10000,
+  },
   plugins: [
     react(),
     viteTsconfigPaths(),
@@ -28,7 +31,8 @@ export default defineConfig({
         icon: true,
       },
     }),
-    monacoEditorPlugin({}),
+    // Bad ESM
+    (monacoEditorPlugin as any).default({}),
     wasm(),
     topLevelAwait(),
   ],

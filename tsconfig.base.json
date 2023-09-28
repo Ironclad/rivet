@@ -12,7 +12,9 @@
     "isolatedModules": true,
     "noUncheckedIndexedAccess": true,
     "composite": true,
-    "declaration": true
+    "declaration": true,
+    "verbatimModuleSyntax": true,
+    "emitDecoratorMetadata": false
   },
   "ts-node": {
     "swc": true,

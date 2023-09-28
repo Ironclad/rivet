@@ -11,12 +11,6 @@ const sidebars = {
       collapsed: false,
       items: ['getting-started/installation', 'getting-started/setup', 'getting-started/first-ai-agent'],
     },
-    // {
-    //   type: 'category',
-    //   label: 'Concepts',
-    //   collapsible: true,
-    //   items: [],
-    // },
     {
       type: 'category',
       label: 'Working with Rivet',
@@ -31,6 +25,41 @@ const sidebars = {
         'user-guide/splitting',
         'user-guide/subgraphs',
         'user-guide/executors',
+        'user-guide/recordings',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Features',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        'user-guide/features/prompt-designer',
+        'user-guide/features/trivet-tests',
+        'user-guide/features/chat-viewer',
+        'user-guide/features/data-studio',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Plugins',
+      collapsible: true,
+      collapsed: false,
+      items: ['user-guide/plugins', 'user-guide/plugins/creating-plugins'],
+    },
+    {
+      type: 'category',
+      label: 'Built-In Plugins',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        'user-guide/plugins/built-in/all',
+        'user-guide/plugins/built-in/anthropic',
+        'user-guide/plugins/built-in/assemblyai',
+        'user-guide/plugins/built-in/autoevals',
+        'user-guide/plugins/built-in/gentrace',
+        'user-guide/plugins/built-in/huggingface',
+        'user-guide/plugins/built-in/pinecone'
       ],
     },
     {
@@ -45,7 +74,13 @@ const sidebars = {
       label: 'Testing',
       collapsible: true,
       collapsed: false,
-      items: ['user-guide/node-testing', 'user-guide/graph-testing'],
+      items: [
+        'trivet',
+        'user-guide/trivet-getting-started',
+        'user-guide/trivet-validation-graphs',
+        'user-guide/trivet-tutorial',
+        'user-guide/trivet-library',
+      ],
     },
     {
       type: 'category',
@@ -209,6 +244,7 @@ const sidebars = {
         'node-reference/context',
         'node-reference/get-global',
         'node-reference/set-global',
+        'node-reference/race-inputs',
       ],
     },
   ],

@@ -8,8 +8,11 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { settingsModalOpenState } from '../components/SettingsModal.js';
 import { graphState } from '../state/graph.js';
 import { useLoadRecording } from './useLoadRecording.js';
-import { WebviewWindow } from '@tauri-apps/api/window';
+import { type WebviewWindow } from '@tauri-apps/api/window';
 import { ioProvider } from '../utils/globals.js';
+import { debuggerPanelOpenState } from '../state/ui';
+import { useToggleRemoteDebugger } from '../components/DebuggerConnectPanel';
+import { lastRunDataByNodeState } from '../state/dataFlow';
 
 type MenuIds =
   | 'settings'
@@ -21,7 +24,10 @@ type MenuIds =
   | 'export_graph'
   | 'import_graph'
   | 'run'
-  | 'load_recording';
+  | 'load_recording'
+  | 'remote_debugger'
+  | 'toggle_devtools'
+  | 'clear_outputs';
 
 const handlerState: {
   handler: (e: { payload: MenuIds }) => void;
@@ -57,6 +63,8 @@ export function useMenuCommands(
   const loadProject = useLoadProject();
   const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
   const { loadRecording } = useLoadRecording();
+  const toggleRemoteDebugger = useToggleRemoteDebugger();
+  const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
 
   useEffect(() => {
     const handler: (e: { payload: MenuIds }) => void = ({ payload }) => {
@@ -90,6 +98,13 @@ export function useMenuCommands(
         })
         .with('load_recording', () => {
           loadRecording();
+        })
+        .with('remote_debugger', () => {
+          toggleRemoteDebugger();
+        })
+        .with('toggle_devtools', () => {})
+        .with('clear_outputs', () => {
+          setLastRunData({});
         })
         .exhaustive();
     };

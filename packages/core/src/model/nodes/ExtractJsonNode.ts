@@ -1,8 +1,16 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { DataValue } from '../DataValue.js';
-import { expectType } from '../../index.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type PortId,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { type DataValue } from '../DataValue.js';
+import { expectType } from '../../utils/index.js';
+import { dedent } from 'ts-dedent';
 
 export type ExtractJsonNode = ChartNode<'extractJson', ExtractJsonNodeData>;
 
@@ -49,6 +57,19 @@ export class ExtractJsonNodeImpl extends NodeImpl<ExtractJsonNode> {
         dataType: 'string',
       },
     ];
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Finds and parses the first JSON object in the input text.
+
+        Outputs the parsed object.
+      `,
+      infoBoxTitle: 'Extract JSON Node',
+      contextMenuTitle: 'Extract JSON',
+      group: ['Objects'],
+    };
   }
 
   async process(inputs: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {

@@ -1,43 +1,30 @@
-import { FC, useEffect, useMemo, useState, MouseEvent } from 'react';
+import { type FC, useEffect, useMemo, useState, type MouseEvent } from 'react';
 import { NodeCanvas } from './NodeCanvas.js';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { connectionsState, graphState, nodesByIdState } from '../state/graph.js';
-import { nodesState } from '../state/graph.js';
-import { editingNodeState, graphNavigationStackState, selectedNodesState } from '../state/graphBuilder.js';
+import { connectionsState, nodesByIdState, nodesState } from '../state/graph.js';
+import { editingNodeState, selectedNodesState } from '../state/graphBuilder.js';
 import { NodeEditorRenderer } from './NodeEditor.js';
 import styled from '@emotion/styled';
-import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
-import {
-  ArrayDataValue,
-  ChartNode,
-  GraphId,
-  NodeId,
-  NodeType,
-  Nodes,
-  StringDataValue,
-  nodeFactory,
-} from '@ironclad/rivet-core';
-import { ProcessQuestions, userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput.js';
-import { entries } from '../utils/typeSafety.js';
+import { type ArrayDataValue, type ChartNode, type StringDataValue } from '@ironclad/rivet-core';
+import { type ProcessQuestions, userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput.js';
 import { UserInputModal } from './UserInputModal.js';
 import Button from '@atlaskit/button';
 import { isNotNull } from '../utils/genericUtilFunctions.js';
-import { useFactorIntoSubgraph } from '../hooks/useFactorIntoSubgraph.js';
 import { ErrorBoundary } from 'react-error-boundary';
 import { loadedRecordingState } from '../state/execution.js';
-import { useLoadGraph } from '../hooks/useLoadGraph.js';
-import { projectState } from '../state/savedGraphs.js';
-import { ContextMenuContext } from './ContextMenu.js';
 import { useGraphHistoryNavigation } from '../hooks/useGraphHistoryNavigation';
+import { useProjectPlugins } from '../hooks/useProjectPlugins';
+import { entries } from '../../../core/src/utils/typeSafety';
+import { useGraphBuilderContextMenuHandler } from '../hooks/useGraphBuilderContextMenuHandler';
 
 const Container = styled.div`
   position: relative;
 
   .user-input-modal-open {
     position: absolute;
-    top: 48px;
-    right: 0;
+    top: 62px;
+    right: 16px;
     z-index: 100;
   }
 
@@ -57,126 +44,18 @@ export const GraphBuilder: FC = () => {
   const [nodes, setNodes] = useRecoilState(nodesState);
   const [connections, setConnections] = useRecoilState(connectionsState);
   const [selectedNodeIds, setSelectedNodeIds] = useRecoilState(selectedNodesState);
-  const { clientToCanvasPosition } = useCanvasPositioning();
   const setEditingNodeId = useSetRecoilState(editingNodeState);
   const loadedRecording = useRecoilValue(loadedRecordingState);
-  const loadGraph = useLoadGraph();
-  const project = useRecoilValue(projectState);
-  const [graphNavigationStack, setGraphNavigationStack] = useRecoilState(graphNavigationStackState);
+
   const historyNav = useGraphHistoryNavigation();
+  useProjectPlugins();
 
   const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {
     setNodes?.(newNodes);
   });
 
-  const addNode = useStableCallback((nodeType: NodeType, position: { x: number; y: number }) => {
-    const newNode = nodeFactory(nodeType);
-
-    newNode.visualData.x = position.x;
-    newNode.visualData.y = position.y;
-
-    nodesChanged?.([...nodes, newNode]);
-    // setSelectedNode(newNode.id);
-  });
-
-  const removeNode = useStableCallback((nodeId: NodeId) => {
-    const nodeIndex = nodes.findIndex((n) => n.id === nodeId);
-    if (nodeIndex >= 0) {
-      const newNodes = [...nodes];
-      newNodes.splice(nodeIndex, 1);
-      nodesChanged?.(newNodes);
-    }
-
-    // Remove all connections associated with the node
-    const newConnections = connections.filter((c) => c.inputNodeId !== nodeId && c.outputNodeId !== nodeId);
-    setConnections?.(newConnections);
-  });
-
-  const factorIntoSubgraph = useFactorIntoSubgraph();
   const nodesById = useRecoilValue(nodesByIdState);
-
-  const contextMenuItemSelected = useStableCallback(
-    (menuItemId: string, data: unknown, context: ContextMenuContext, meta: { x: number; y: number }) => {
-      if (menuItemId.startsWith('add-node:')) {
-        const nodeType = data as NodeType;
-        addNode(nodeType, clientToCanvasPosition(meta.x, meta.y));
-        return;
-      }
-
-      if (menuItemId === 'node-delete') {
-        const { nodeId } = context.data as { nodeId: NodeId };
-        removeNode(nodeId);
-        return;
-      }
-
-      if (menuItemId === 'node-edit') {
-        const { nodeId } = context.data as { nodeId: NodeId };
-        setEditingNodeId(nodeId);
-        return;
-      }
-
-      if (menuItemId === 'node-duplicate') {
-        const { nodeId } = context.data as { nodeId: NodeId };
-        const node = nodesById[nodeId] as Nodes;
-
-        if (!node) {
-          return;
-        }
-
-        const newNode = nodeFactory(node.type);
-        newNode.data = { ...(node.data as object) };
-        newNode.visualData = {
-          ...node.visualData,
-          x: node.visualData.x,
-          y: node.visualData.y + 200,
-        };
-        newNode.title = node.title;
-        newNode.description = node.description;
-        newNode.isSplitRun = node.isSplitRun;
-        newNode.splitRunMax = node.splitRunMax;
-        nodesChanged?.([...nodes, newNode]);
-
-        // Copy the connections to the input ports
-        const oldNodeConnections = connections.filter((c) => c.inputNodeId === nodeId);
-        const newNodeConnections = oldNodeConnections.map((c) => ({
-          ...c,
-          inputNodeId: newNode.id,
-        }));
-        setConnections([...connections, ...newNodeConnections]);
-      }
-
-      if (menuItemId === 'nodes-factor-into-subgraph') {
-        factorIntoSubgraph();
-      }
-
-      if (menuItemId === 'node-go-to-subgraph') {
-        const { nodeId } = context.data as { nodeId: NodeId };
-        const node = nodesById[nodeId] as Nodes;
-
-        if (node?.type !== 'subGraph') {
-          return;
-        }
-
-        const { graphId } = node.data;
-
-        const graph = project.graphs[graphId];
-
-        if (!graph) {
-          return;
-        }
-
-        loadGraph(graph);
-      }
-
-      if (menuItemId.startsWith('go-to-graph:')) {
-        const graphId = data as GraphId;
-        const graph = project.graphs[graphId];
-        if (graph) {
-          loadGraph(graph);
-        }
-      }
-    },
-  );
+  const contextMenuHandler = useGraphBuilderContextMenuHandler();
 
   const nodeSelected = useStableCallback((node: ChartNode, multi: boolean) => {
     if (!multi) {
@@ -246,7 +125,7 @@ export const GraphBuilder: FC = () => {
           onNodeSelected={nodeSelected}
           selectedNodes={selectedNodes}
           onNodeStartEditing={nodeStartEditing}
-          onContextMenuItemSelected={contextMenuItemSelected}
+          onContextMenuItemSelected={contextMenuHandler}
         />
         {loadedRecording && <div className="recording-border" />}
         <NodeEditorRenderer />

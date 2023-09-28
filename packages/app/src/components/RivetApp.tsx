@@ -1,6 +1,6 @@
 import { GraphBuilder } from './GraphBuilder.js';
 import { OverlayTabs } from './OverlayTabs.js';
-import { FC } from 'react';
+import { type FC, useEffect } from 'react';
 import { css } from '@emotion/react';
 import { SettingsModal } from './SettingsModal.js';
 import { setGlobalTheme } from '@atlaskit/tokens';
@@ -14,6 +14,12 @@ import { TrivetRenderer } from './trivet/Trivet.js';
 import { ActionBar } from './ActionBar';
 import { DebuggerPanelRenderer } from './DebuggerConnectPanel';
 import { ChatViewerRenderer } from './ChatViewer';
+import { useRecoilValue } from 'recoil';
+import { themeState } from '../state/settings';
+import clsx from 'clsx';
+import { useLoadStaticData } from '../hooks/useLoadStaticData';
+import { DataStudioRenderer } from './dataStudio/DataStudio';
+import { StatusBar } from './StatusBar';
 
 const styles = css`
   overflow: hidden;
@@ -25,13 +31,16 @@ setGlobalTheme({
 
 export const RivetApp: FC = () => {
   const { tryRunGraph, tryRunTests, tryAbortGraph, tryPauseGraph, tryResumeGraph } = useGraphExecutor();
+  const theme = useRecoilValue(themeState);
+
+  useLoadStaticData();
 
   useMenuCommands({
     onRunGraph: tryRunGraph,
   });
 
   return (
-    <div className="app" css={styles}>
+    <div className={clsx('app', theme ? `theme-${theme}` : 'theme-default')} css={styles}>
       <OverlayTabs />
       <ActionBar
         onRunGraph={tryRunGraph}
@@ -40,6 +49,7 @@ export const RivetApp: FC = () => {
         onPauseGraph={tryPauseGraph}
         onResumeGraph={tryResumeGraph}
       />
+      <StatusBar />
       <DebuggerPanelRenderer />
       <LeftSidebar />
       <GraphBuilder />
@@ -47,6 +57,7 @@ export const RivetApp: FC = () => {
       <PromptDesignerRenderer />
       <TrivetRenderer tryRunTests={tryRunTests} />
       <ChatViewerRenderer />
+      <DataStudioRenderer />
       <ToastContainer position="bottom-right" hideProgressBar newestOnTop />
     </div>
   );

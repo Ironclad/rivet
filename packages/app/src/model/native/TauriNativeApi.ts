@@ -1,5 +1,5 @@
-import { readDir, BaseDirectory, readTextFile, readBinaryFile, writeFile, FileEntry } from '@tauri-apps/api/fs';
-import { BaseDir, NativeApi, ReadDirOptions } from '@ironclad/rivet-core';
+import { readDir, BaseDirectory, readTextFile, readBinaryFile, writeFile, type FileEntry } from '@tauri-apps/api/fs';
+import { type BaseDir, type NativeApi, type ReadDirOptions } from '@ironclad/rivet-core';
 
 import { minimatch } from 'minimatch';
 
@@ -82,5 +82,9 @@ export class TauriNativeApi implements NativeApi {
   async writeTextFile(path: string, data: string, baseDir?: BaseDir): Promise<void> {
     const baseDirectory = baseDirToBaseDirectory(baseDir);
     await writeFile(path, data, { dir: baseDirectory });
+  }
+
+  async exec(command: string, args: string[], options?: { cwd?: string | undefined } | undefined): Promise<void> {
+    throw new Error('Method not implemented.');
   }
 }

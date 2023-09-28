@@ -1,6 +1,6 @@
 import { useLayoutEffect, useMemo, useState } from 'react';
 import { useCanvasPositioning } from './useCanvasPositioning.js';
-import { CanvasPosition } from '../state/graphBuilder.js';
+import { type CanvasPosition } from '../state/graphBuilder.js';
 
 interface ViewportBounds {
   left: number;
@@ -12,7 +12,7 @@ interface ViewportBounds {
 export function useViewportBounds(): ViewportBounds {
   const { clientToCanvasPosition } = useCanvasPositioning();
 
-  let [{ innerWidth, innerHeight }, setWindowSize] = useState({
+  const [{ innerWidth, innerHeight }, setWindowSize] = useState({
     innerWidth: window.innerWidth,
     innerHeight: window.innerHeight,
   });

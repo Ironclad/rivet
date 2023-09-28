@@ -1,18 +1,27 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { nanoid } from 'nanoid';
-import { EditorDefinition, NodeBodySpec, NodeImpl, nodeDefinition } from '../NodeImpl.js';
 import {
-  DataType,
-  ScalarDataValue,
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type PortId,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import {
+  type DataType,
+  type ScalarDataValue,
   isArrayDataType,
   isScalarDataType,
   scalarDefaults,
   unwrapDataValue,
 } from '../DataValue.js';
-import { Inputs, Outputs } from '../GraphProcessor.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { coerceType } from '../../utils/coerceType.js';
-import { InternalProcessContext } from '../ProcessContext.js';
+import { type InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
+import { type EditorDefinition } from '../EditorDefinition.js';
+import { type NodeBodySpec } from '../NodeBodySpec.js';
 
 export type SetGlobalNode = ChartNode<'setGlobal', SetGlobalNodeData>;
 
@@ -100,6 +109,17 @@ export class SetGlobalNodeImpl extends NodeImpl<SetGlobalNode> {
       ${this.data.id}
       Type: ${this.data.dataType}
     `;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Sets a global value that is shared across all graphs and subgraphs. The id of the global value and the value itself are configured in this node.
+      `,
+      infoBoxTitle: 'Set Global Node',
+      contextMenuTitle: 'Set Global',
+      group: ['Advanced'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

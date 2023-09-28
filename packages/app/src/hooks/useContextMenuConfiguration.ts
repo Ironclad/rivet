@@ -1,12 +1,17 @@
-import { ComponentType, useMemo } from 'react';
+import { type ComponentType, useMemo } from 'react';
 import { useContextMenuAddNodeConfiguration } from './useContextMenuAddNodeConfiguration.js';
 import { ReactComponent as DeleteIcon } from 'majesticons/line/delete-bin-line.svg';
 import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
 import { ReactComponent as DuplicateIcon } from 'majesticons/line/image-multiple-line.svg';
-import { NodeId, NodeType } from '@ironclad/rivet-core';
+import { ReactComponent as PlayIcon } from 'majesticons/line/play-circle-line.svg';
+import { type NodeId } from '@ironclad/rivet-core';
 import { useRecoilValue } from 'recoil';
 import { selectedNodesState } from '../state/graphBuilder.js';
 import { useContextMenuCommands } from './useContextMenuCommands.js';
+import { ReactComponent as CopyIcon } from '../assets/icons/copy-icon.svg';
+import { ReactComponent as PasteIcon } from '../assets/icons/paste-icon.svg';
+import { ReactComponent as PlusIcon } from 'majesticons/line/plus-line.svg';
+import { clipboardState } from '../state/clipboard';
 
 export type ContextMenuConfig = {
   contexts: ContextMenuContextConfig;
@@ -45,6 +50,7 @@ export function useContextMenuConfiguration() {
   const addMenuConfig = useContextMenuAddNodeConfiguration();
   const commands = useContextMenuCommands();
   const selectedNodeIds = useRecoilValue(selectedNodesState);
+  const clipboard = useRecoilValue(clipboardState);
 
   const config = useMemo(
     () =>
@@ -53,16 +59,21 @@ export function useContextMenuConfiguration() {
         contexts: {
           node: {
             contextType: type<{
-              nodeType: NodeType;
+              nodeType: string;
               nodeId: NodeId;
             }>(),
             items: [
+              {
+                id: 'node-copy',
+                label: 'Copy',
+                icon: CopyIcon,
+              },
               {
                 id: 'node-go-to-subgraph',
                 label: 'Go To Subgraph',
                 icon: SettingsCogIcon,
                 conditional: (context) => {
-                  const { nodeType } = context as { nodeType: NodeType };
+                  const { nodeType } = context as { nodeType: string };
                   return nodeType === 'subGraph';
                 },
               },
@@ -83,6 +94,11 @@ export function useContextMenuConfiguration() {
                 conditional: () => selectedNodeIds.length > 0,
               },
               {
+                id: 'node-run-to-here',
+                label: 'Run to Here',
+                icon: PlayIcon,
+              },
+              {
                 id: 'node-delete',
                 label: 'Delete',
                 icon: DeleteIcon,
@@ -96,6 +112,13 @@ export function useContextMenuConfiguration() {
                 id: 'add',
                 label: 'Add',
                 items: addMenuConfig,
+                icon: PlusIcon,
+              },
+              {
+                id: 'paste',
+                label: 'Paste',
+                icon: PasteIcon,
+                conditional: () => clipboard !== undefined,
               },
             ],
           },

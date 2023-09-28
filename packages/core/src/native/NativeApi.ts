@@ -1,4 +1,4 @@
-import { BaseDir } from './BaseDir.js';
+import { type BaseDir } from './BaseDir.js';
 
 export type ReadDirOptions = {
   recursive?: boolean;
@@ -16,4 +16,6 @@ export interface NativeApi {
   readBinaryFile(path: string, baseDir?: BaseDir): Promise<Blob>;
 
   writeTextFile(path: string, data: string, baseDir?: BaseDir): Promise<void>;
+
+  exec(command: string, args: string[], options?: { cwd?: string }): Promise<void>;
 }

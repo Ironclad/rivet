@@ -1,10 +1,19 @@
-import { ChartNode, NodeId, NodeInputDefinition, PortId, NodeOutputDefinition } from '../NodeBase.js';
-import { EditorDefinition, NodeImpl, nodeDefinition } from '../NodeImpl.js';
-import { nanoid } from 'nanoid';
-import { Inputs, Outputs } from '../GraphProcessor.js';
-import { InternalProcessContext } from '../ProcessContext.js';
-import { VectorDataValue, coerceTypeOptional, getIntegration } from '../../index.js';
+import {
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type PortId,
+  type NodeOutputDefinition,
+} from '../NodeBase.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { nanoid } from 'nanoid/non-secure';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+import { type InternalProcessContext } from '../ProcessContext.js';
+import { type EditorDefinition, type VectorDataValue } from '../../index.js';
 import { dedent } from 'ts-dedent';
+import { coerceTypeOptional } from '../../utils/coerceType.js';
+import { getIntegration } from '../../integrations/integrations.js';
 
 export type VectorStoreNode = ChartNode<'vectorStore', VectorStoreNodeData>;
 
@@ -110,9 +119,20 @@ export class VectorStoreNodeImpl extends NodeImpl<VectorStoreNode> {
 
   getBody(): string | undefined {
     return dedent`
-      ${this.data.useIntegrationInput ? '(Integration using input)' : this.data.integration}
-      ${this.data.useCollectionIdInput ? '(using input)' : this.data.collectionId}
+      Integration: ${this.data.useIntegrationInput ? '(using input)' : this.data.integration}
+      Collection Id: ${this.data.useCollectionIdInput ? '(using input)' : this.data.collectionId}
     `;
+  }
+
+  static getUIData(): NodeUIData {
+    return {
+      infoBoxBody: dedent`
+        Takes in a vector, as well as data to store with the vector. This data is stored in the configured vector DB integration for later retrieval.
+      `,
+      infoBoxTitle: 'Vector Store Node',
+      contextMenuTitle: 'Vector Store',
+      group: ['Input/Output'],
+    };
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {

@@ -2,7 +2,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { loadedProjectState, projectState } from '../state/savedGraphs.js';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph.js';
 import { produce } from 'immer';
-import { toast } from 'react-toastify';
+import { toast, type Id as ToastId } from 'react-toastify';
 import { ioProvider } from '../utils/globals.js';
 import { trivetState } from '../state/trivet.js';
 
@@ -23,7 +23,19 @@ export function useSaveProject() {
       draft.graphs[savedGraph.metadata!.id!] = savedGraph;
     });
 
+    // Large datasets can save slowly because of indexeddb, so show a "saving..." toast if it's a slow save
+    let saving: ToastId | undefined;
+    const savingTimeout = setTimeout(() => {
+      saving = toast.info('Saving project');
+    }, 500);
+
     await ioProvider.saveProjectDataNoPrompt(newProject, { testSuites }, loadedProject.path);
+
+    if (saving != null) {
+      toast.dismiss(saving);
+    }
+    clearTimeout(savingTimeout);
+
     toast.success('Project saved');
     setLoadedProject({
       loaded: true,
@@ -38,7 +50,18 @@ export function useSaveProject() {
       draft.graphs[savedGraph.metadata!.id!] = savedGraph;
     });
 
+    // Large datasets can save slowly because of indexeddb, so show a "saving..." toast if it's a slow save
+    let saving: ToastId | undefined;
+    const savingTimeout = setTimeout(() => {
+      saving = toast.info('Saving project');
+    }, 500);
+
     const filePath = await ioProvider.saveProjectData(newProject, { testSuites });
+
+    if (saving != null) {
+      toast.dismiss(saving);
+    }
+    clearTimeout(savingTimeout);
 
     if (filePath) {
       toast.success('Project saved');

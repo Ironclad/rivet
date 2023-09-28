@@ -1,16 +1,17 @@
 import { css } from '@emotion/react';
-import { FC, useEffect } from 'react';
+import { type FC, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { graphState } from '../state/graph.js';
 import { loadedProjectState, projectState, savedGraphsState } from '../state/savedGraphs.js';
 import { ReactComponent as ExpandLeftIcon } from 'majesticons/line/menu-expand-left-line.svg';
 import { ReactComponent as ExpandRightIcon } from 'majesticons/line/menu-expand-right-line.svg';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
-import { NodeGraph } from '@ironclad/rivet-core';
+import { type NodeGraph } from '@ironclad/rivet-core';
 import { sidebarOpenState } from '../state/graphBuilder.js';
 import { appWindow } from '@tauri-apps/api/window';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import { GraphList } from './GraphList.js';
+import { ProjectPluginsConfiguration } from './ProjectPluginConfiguration';
 
 const styles = css`
   position: fixed;
@@ -18,12 +19,12 @@ const styles = css`
   left: 0;
   bottom: 0;
   width: 250px; // Adjust the width of the sidebar as needed
-  background-color: rgba(46, 46, 46, 0.35);
+  background-color: var(--grey-dark-seethrougher);
   backdrop-filter: blur(2px);
   padding: 0;
   z-index: 50;
   border-right: 1px solid var(--grey);
-  height: calc(100vh - 32px);
+  height: 100vh;
 
   .panel {
     display: flex;
@@ -43,10 +44,11 @@ const styles = css`
 
   .toggle-tab {
     position: absolute;
-    top: 10px;
+    top: 0;
     right: -32px;
     background-color: var(--grey-dark);
     border: 1px solid var(--grey);
+    border-top: 0;
     border-left: 0;
     border-radius: 0 8px 8px 0;
     width: 32px;
@@ -163,6 +165,8 @@ export const LeftSidebar: FC = () => {
                   }
                   readViewFitContainerWidth
                 />
+
+                <ProjectPluginsConfiguration />
               </div>
             </div>
           </TabPanel>

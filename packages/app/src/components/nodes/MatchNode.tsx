@@ -1,10 +1,11 @@
-import { FC } from 'react';
-import { ChartNode, MatchNode, NumberEditorDefinition } from '@ironclad/rivet-core';
+import { type FC } from 'react';
+import { type ChartNode, type MatchNode, type NumberEditorDefinition } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
-import { NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
-import { DefaultNumberEditor, defaultEditorContainerStyles } from '../DefaultNodeEditor.js';
+import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 import TextField from '@atlaskit/textfield';
 import { Label } from '@atlaskit/form';
+import { DefaultNumberEditor } from '../editors/NumberEditor';
+import { defaultEditorContainerStyles } from '../editors/DefaultNodeEditor';
 
 export type MatchNodeEditorProps = {
   node: MatchNode;
@@ -25,6 +26,8 @@ export const MatchNodeEditor: FC<MatchNodeEditorProps> = ({ node, onChange }) =>
       <div className="row">
         <DefaultNumberEditor
           node={node}
+          isDisabled={false}
+          isReadonly={false}
           onChange={(changed) => {
             const newCount = (changed as MatchNode).data.caseCount;
             const newCases = matchNode.data.cases.slice(0, newCount);

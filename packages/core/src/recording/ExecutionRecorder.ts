@@ -1,12 +1,12 @@
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid/non-secure';
 import {
-  GraphProcessor,
-  ProcessEvents,
-  RecordedEvent,
-  RecordedEvents,
-  Recording,
-  RecordingId,
-  SerializedRecording,
+  type GraphProcessor,
+  type ProcessEvents,
+  type RecordedEvent,
+  type RecordedEvents,
+  type Recording,
+  type RecordingId,
+  type SerializedRecording,
 } from '../index.js';
 import Emittery from 'emittery';
 
@@ -81,10 +81,11 @@ const toRecordedEventMap: {
   globalSet: ({ id, processId, value }) => ({ id, processId, value }),
   pause: () => void 0,
   resume: () => void 0,
-  start: ({ contextValues, inputs, project }) => ({
+  start: ({ contextValues, inputs, project, startGraph }) => ({
     contextValues,
     inputs,
     projectId: project.metadata!.id!,
+    startGraph: startGraph.metadata!.id!,
   }),
   trace: (message) => message,
 };
@@ -135,6 +136,38 @@ export class ExecutionRecorder {
   on: Emittery<ExecutionRecorderEvents>['on'] = undefined!;
   off: Emittery<ExecutionRecorderEvents>['off'] = undefined!;
   once: Emittery<ExecutionRecorderEvents>['once'] = undefined!;
+
+  recordSocket(channel: WebSocket) {
+    return new Promise<void>((resolve, reject) => {
+      this.recordingId = nanoid() as RecordingId;
+
+      const listener = (event: MessageEvent) => {
+        const { message, data } = JSON.parse(event.data);
+
+        if (this.#options.includePartialOutputs === false && message === 'partialOutput') {
+          return;
+        }
+
+        if (this.#options.includeTrace === false && message === 'trace') {
+          return;
+        }
+
+        this.#events.push(toRecordedEvent(message, data) as RecordedEvents);
+
+        if (message === 'done' || message === 'abort' || message === 'error') {
+          this.#emitter.emit('finish', {
+            recording: this.getRecording(),
+          });
+
+          channel.removeEventListener('message', listener);
+
+          resolve();
+        }
+      };
+
+      channel.addEventListener('message', listener);
+    });
+  }
 
   record(processor: GraphProcessor) {
     this.recordingId = nanoid() as RecordingId;
