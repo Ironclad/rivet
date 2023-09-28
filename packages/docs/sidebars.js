@@ -58,6 +58,8 @@ const sidebars = {
         'user-guide/plugins/built-in/assemblyai',
         'user-guide/plugins/built-in/autoevals',
         'user-guide/plugins/built-in/gentrace',
+        'user-guide/plugins/built-in/huggingface',
+        'user-guide/plugins/built-in/pinecone'
       ],
     },
     {
