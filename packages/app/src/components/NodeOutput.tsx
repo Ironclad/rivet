@@ -482,11 +482,11 @@ const NodeOutputMultiProcess: FC<{
     <div className="node-output multi">
       <div className="multi-node-output">
         <div className="picker">
-          <button className="picker-left" onClick={prevPage}>
+          <button className="picker-left" onClick={prevPage} onDoubleClick={(e) => e.stopPropagation()}>
             {'<'}
           </button>
           <div className="picker-page">{selectedPage === 'latest' ? data.length : selectedPage + 1}</div>
-          <button className="picker-right" onClick={nextPage}>
+          <button className="picker-right" onClick={nextPage} onDoubleClick={(e) => e.stopPropagation()}>
             {'>'}
           </button>
         </div>
