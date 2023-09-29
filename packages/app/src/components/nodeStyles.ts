@@ -41,7 +41,7 @@ export const nodeStyles = css`
   .node.selected:not(.isComment) {
     border-color: var(--primary);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 0 10px var(--shadow-primary);
-    z-index: 1000 !important;
+    z-index: 10000 !important;
   }
 
   .node-title {
