@@ -26,6 +26,7 @@ import { trivetTestsRunningState } from '../state/trivet';
 import { useLatest } from 'ahooks';
 import { entries, keys } from '../../../core/src/utils/typeSafety';
 import { match } from 'ts-pattern';
+import { previousDataPerNodeToKeepState } from '../state/settings';
 
 function sanitizeDataValueForLength(value: DataValue | undefined) {
   return match(value)
@@ -67,6 +68,7 @@ export function useCurrentExecution() {
   const trivetRunning = useRecoilValue(trivetTestsRunningState);
   const trivetRunningLatest = useLatest(trivetRunning);
   const setRootGraph = useSetRecoilState(rootGraphState);
+  const previousDataPerNodeToKeep = useRecoilValue(previousDataPerNodeToKeepState);
 
   const setDataForNode = (nodeId: NodeId, processId: ProcessId, data: Partial<NodeRunData>) => {
     setLastRunData((prev) =>
@@ -81,6 +83,24 @@ export function useCurrentExecution() {
             ...cloneDeep(data),
           };
         } else {
+          if (previousDataPerNodeToKeep > -1) {
+            const dataNotKept =
+              previousDataPerNodeToKeep === 0 ? draft[nodeId]! : draft[nodeId]!.slice(0, -previousDataPerNodeToKeep);
+
+            // Only keep the latest process data for each node for memory reasons
+            for (const prev of dataNotKept) {
+              if (prev.data.inputData) {
+                prev.data.inputData = {};
+              }
+              if (prev.data.outputData) {
+                prev.data.outputData = {};
+              }
+              if (prev.data.splitOutputData) {
+                prev.data.splitOutputData = {};
+              }
+            }
+          }
+
           draft[nodeId]!.push({
             processId,
             data: cloneDeep(data),

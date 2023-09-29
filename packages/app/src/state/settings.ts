@@ -59,3 +59,9 @@ export const executorOptions = isInTauri()
       { label: 'Node', value: 'nodejs' },
     ] as const)
   : ([{ label: 'Browser', value: 'browser' }] as const);
+
+export const previousDataPerNodeToKeepState = atom<number>({
+  key: 'previousDataPerNodeToKeep',
+  default: -1,
+  effects_UNSTABLE: [persistAtom],
+});

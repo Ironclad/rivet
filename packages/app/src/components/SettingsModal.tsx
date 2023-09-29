@@ -3,6 +3,7 @@ import { atom, useRecoilState } from 'recoil';
 import {
   defaultExecutorState,
   executorOptions,
+  previousDataPerNodeToKeepState,
   recordExecutionsState,
   settingsState,
   themeState,
@@ -11,7 +12,7 @@ import {
 import Modal, { ModalTransition, ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
 import TextField from '@atlaskit/textfield';
 import Button from '@atlaskit/button';
-import { Field, HelperMessage } from '@atlaskit/form';
+import { Field, HelperMessage, Label } from '@atlaskit/form';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { entries } from '../../../core/src/utils/typeSafety';
 import { match } from 'ts-pattern';
@@ -21,7 +22,6 @@ import { SideNavigation, NavigationHeader, ButtonItem, Header, NavigationContent
 import CrossIcon from '@atlaskit/icon/glyph/cross';
 import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
-import { Label } from '@atlaskit/form';
 import { KeyValuePairs } from './editors/KeyValuePairEditor';
 
 interface SettingsModalProps {}
@@ -109,6 +109,7 @@ export const GeneralSettingsPage: FC = () => {
   const [theme, setTheme] = useRecoilState(themeState);
   const [recordExecutions, setRecordExecutions] = useRecoilState(recordExecutionsState);
   const [defaultExecutor, setDefaultExecutor] = useRecoilState(defaultExecutorState);
+  const [previousDataPerNodeToKeep, setPreviousDataPerNodeToKeep] = useRecoilState(previousDataPerNodeToKeepState);
 
   return (
     <div css={fields}>
@@ -174,6 +175,32 @@ export const GeneralSettingsPage: FC = () => {
             <HelperMessage>
               The default executor to use when starting the application. The browser executor is more stable, but the
               node executor is required for some features and plugins.
+            </HelperMessage>
+          </>
+        )}
+      </Field>
+      <Field name="previousDataPerNodeToKeep">
+        {() => (
+          <>
+            <Label htmlFor="previousDataPerNodeToKeep" testId="previousDataPerNodeToKeep">
+              Previous data per node to keep
+            </Label>
+            <div className="toggle-field">
+              <TextField
+                type="number"
+                defaultValue={Number.isNaN(previousDataPerNodeToKeep) ? -1 : previousDataPerNodeToKeep ?? -1}
+                onChange={(e) => {
+                  const value = (e.target as HTMLInputElement).valueAsNumber;
+                  if (Number.isNaN(value) || value == null) {
+                    return;
+                  }
+                  return setPreviousDataPerNodeToKeep(value);
+                }}
+              />
+            </div>
+            <HelperMessage>
+              The number of previous data values to keep per node. Increasing this will increase memory usage, but allow
+              you to go back further in time. -1 to disable and keep all.
             </HelperMessage>
           </>
         )}
