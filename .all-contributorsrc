@@ -257,6 +257,15 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "altaiiiir",
+      "name": "Mohamed Alturfi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/71999644?v=4",
+      "profile": "https://www.linkedin.com/in/moalturfi/",
+      "contributions": [
+        "maintenance"
+      ]
     }
   ],
   "contributorsPerLine": 7,
