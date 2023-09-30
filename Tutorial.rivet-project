@@ -197,7 +197,7 @@ data:
             cache: true
             frequencyPenalty: 0.2
             maxTokens: 1024
-            model: gpt-4
+            model: gpt-3.5-turbo
             presencePenalty: 0
             stop: ""
             temperature: 0
@@ -355,10 +355,10 @@ data:
             maxIterations: 100
           outgoingConnections:
             - break->"Graph Output" BGxIU1lPfHInWebPnkjIp/value
-            - output1->"Assemble Prompt" x4FAAOuoIN1S0Lw7fek5z/message1
             - output1->"Text" aL6MDkuQg6rur5RsEg2Mo/input
             - output2->"Assemble Prompt" THt39JHlYuxYTw9ci2j0y/message1
-          visualData: 717/543/250/38
+            - output2->"Assemble Prompt" x4FAAOuoIN1S0Lw7fek5z/message1
+          visualData: 717/543/250/44
         '[KEgT2C3VQqLFR7ynVkL_c]:prompt "Prompt"':
           data:
             promptText: "{{input}}"
@@ -562,13 +562,14 @@ data:
         '[e8scS4YSujo0I1DOkbCyo]:prompt "Prompt"':
           data:
             promptText: "The user has indicated that they want to generate this contract
-              type: {{type}}. You must now output a template for this contract
-              type. Only reply with a template."
+              type: {{selected type}} based on a selection of the provided list
+              here: {{Contract Types}}. You must now output a template for this
+              contract type. Only reply with a template."
             type: system
             useTypeInput: false
           outgoingConnections:
             - output->"Assemble Prompt" 1T4q6C6b97-XNbAqAqdx4/message3
-          visualData: 2042/926/null/23
+          visualData: 2042/926/null/27
         '[lZDsm-nZ1kdG2934rDFvU]:chat "Chat"':
           data:
             cache: false
@@ -590,6 +591,7 @@ data:
             useTopPInput: false
             useUseTopPInput: false
           outgoingConnections:
+            - response->"Prompt" e8scS4YSujo0I1DOkbCyo/Contract Types
             - response->"Text" 7HKPcVRT3aqPSW5BE0f9c/templates
           visualData: 1439/795/200/7
         '[qwaxSQochbTLU0zKhX9N9]:text "Text"':
@@ -608,7 +610,7 @@ data:
             useInput: true
           outgoingConnections:
             - output->"Assemble Prompt" 1T4q6C6b97-XNbAqAqdx4/message2
-            - output->"Prompt" e8scS4YSujo0I1DOkbCyo/type
+            - output->"Prompt" e8scS4YSujo0I1DOkbCyo/selected type
           visualData: 2131/680/250/16
         '[yLbk-PtbB2DQxsJD42QCx]:prompt "Prompt"':
           data:
@@ -692,6 +694,7 @@ data:
             presencePenalty: 0
             stop: ""
             temperature: 0.5
+            text: ""
             top_p: 1
             useFrequencyPenaltyInput: false
             useMaxTokensInput: false
@@ -742,7 +745,7 @@ data:
 
 
               They dislike {{dislike_food}} and {{dislike_color}}.
-          visualData: 2345/741/300/23
+          visualData: 2345/741/307.0131414233556/23
         '[snX_4a3o4ha0fZUmRzPFC]:extractYaml "Extract YAML"':
           data:
             rootPropertyName: yamlDocument
@@ -1012,7 +1015,7 @@ data:
             cache: false
             frequencyPenalty: 0
             maxTokens: 1024
-            model: gpt-4
+            model: gpt-3.5-turbo
             presencePenalty: 0
             stop: ""
             temperature: 0
@@ -1037,7 +1040,7 @@ data:
             cache: false
             frequencyPenalty: 0
             maxTokens: 10
-            model: gpt-4
+            model: gpt-3.5-turbo
             presencePenalty: 0
             stop: ""
             temperature: 0
@@ -1083,3 +1086,4 @@ data:
     description: Project for the Rivet tutorial
     id: liGprwPyTFI883VYgoMB-
     title: Tutorial
+  plugins: []
