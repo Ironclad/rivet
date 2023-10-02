@@ -461,14 +461,14 @@ const NodeOutputMultiProcess: FC<{
 
   const prevPage = useStableCallback(() => {
     setSelectedPage((page) => {
-      const pageNum = page === 'latest' ? data.length : page;
+      const pageNum = page === 'latest' ? data.length - 1 : page;
       return pageNum > 0 ? pageNum - 1 : pageNum;
     });
   });
 
   const nextPage = useStableCallback(() => {
     setSelectedPage((page) => {
-      const pageNum = page === 'latest' ? data.length : page;
+      const pageNum = page === 'latest' ? data.length - 1 : page;
       return pageNum < data.length - 1 ? pageNum + 1 : pageNum;
     });
   });

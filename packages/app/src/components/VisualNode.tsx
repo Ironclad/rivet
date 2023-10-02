@@ -120,6 +120,8 @@ export const VisualNode = memo(
           ? lastRun?.at(processPage === 'latest' ? lastRun.length - 1 : processPage)?.data
           : undefined;
 
+      const isKnownNodeType = useIsKnownNodeType(node.type);
+
       return (
         <div
           className={clsx('node', {
@@ -139,7 +141,13 @@ export const VisualNode = memo(
           data-contextmenutype={`node-${node.type}`}
           onMouseOver={(event) => onMouseOver?.(event, node.id)}
           onMouseOut={(event) => onMouseOut?.(event, node.id)}
-          onDoubleClick={onStartEditing}
+          onDoubleClick={
+            () => {
+              if (isKnownNodeType) {
+                onStartEditing?.();
+              }
+            }
+          }
         >
           {isZoomedOut ? (
             <ZoomedOutVisualNodeContent
@@ -436,7 +444,12 @@ const NormalVisualNodeContent: FC<{
                 <></>
               )}
             </div>
-            <button className="edit-button" onClick={handleEditClick} onMouseDown={handleEditMouseDown} title="Edit">
+            <button className="edit-button" onClick={(e) => {
+              if (isKnownNodeType) {
+                handleEditClick(e);
+              }
+            } 
+          }onMouseDown={handleEditMouseDown} title="Edit">
               <SettingsCogIcon />
             </button>
           </div>
