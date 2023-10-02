@@ -13,12 +13,7 @@ import { type PluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
 import { css } from '@emotion/react';
 import Popup from '@atlaskit/popup';
 import { MenuGroup, ButtonItem } from '@atlaskit/menu';
-import { AddPluginModal } from './AddPluginModal';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
-import Modal, { ModalTransition, ModalHeader, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
-import { match } from 'ts-pattern';
-import Button from '@atlaskit/button';
-import { type RivetPlugin } from '@ironclad/rivet-core';
 import { PluginInfoModal } from './PluginInfoModal';
 
 const styles = css`
@@ -49,10 +44,6 @@ const styles = css`
       border: 1px solid var(--foreground-bright);
       color: var(--foreground-bright);
     }
-  }
-
-  .add-plugin {
-    border: 1px solid var(--grey);
   }
 
   .plugins-list {
@@ -93,19 +84,6 @@ const styles = css`
 
 export const ProjectPluginsConfiguration: FC = () => {
   const [pluginSpecs, setPluginSpecs] = useRecoilState(projectPluginsState);
-  const [addPluginModalOpen, toggleAddPluginModal] = useToggle();
-
-  const addPlugin = (plugin: PluginLoadSpec) => {
-    setPluginSpecs((specs) =>
-      produce(specs, (draft) => {
-        if (draft.find((s) => s.id === plugin.id)) {
-          return;
-        }
-
-        draft.push(plugin);
-      }),
-    );
-  };
 
   const deletePlugin = (spec: PluginLoadSpec) => {
     setPluginSpecs((specs) => specs.filter((s) => s.id !== spec.id));
@@ -115,22 +93,12 @@ export const ProjectPluginsConfiguration: FC = () => {
     <div css={styles}>
       <div className="label">
         <Label htmlFor="">Plugins</Label>
-        <button className="add-plugin" onClick={toggleAddPluginModal.setRight}>
-          <PlusIcon />
-        </button>
       </div>
       <ul className="plugins-list">
         {pluginSpecs.map((spec, i) => (
           <PluginConfigurationItem spec={spec} key={`spec-${i}`} onDelete={deletePlugin} />
         ))}
       </ul>
-
-      <AddPluginModal
-        isOpen={addPluginModalOpen}
-        onClose={toggleAddPluginModal.setLeft}
-        onAddPlugin={addPlugin}
-        onRemovePlugin={deletePlugin}
-      />
     </div>
   );
 };

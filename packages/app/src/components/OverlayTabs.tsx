@@ -225,6 +225,19 @@ export const OverlayTabs: FC = () => {
           </button>
         </div>
 
+        <div className={clsx('menu-item plugins', { active: openOverlay === 'plugins' })}>
+          <button
+            className="dropdown-item"
+            onMouseDown={(e) => {
+              if (e.button === 0) {
+                setOpenOverlay((s) => (s === 'plugins' ? undefined : 'plugins'));
+              }
+            }}
+          >
+            Plugins
+          </button>
+        </div>
+
         <div className={clsx('menu-item prompt-designer-menu', { active: openOverlay === 'promptDesigner' })}>
           <button
             className="dropdown-item"

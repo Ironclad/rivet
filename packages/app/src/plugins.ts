@@ -1,4 +1,11 @@
 import dedent from 'ts-dedent';
+import AnthropicLogo from './assets/vendor_logos/anthropic-logo.png';
+import AssemblyAiLogo from './assets/vendor_logos/assemblyAI-logo.png';
+import RivetLogo from './assets/vendor_logos/rivet-logo.png';
+import GentraceLogo from './assets/vendor_logos/gentrace.svg';
+import HuggingFaceLogo from './assets/vendor_logos/hf-logo.svg';
+import MongoDBLogo from './assets/vendor_logos/MongoDB_Logomark_ForestGreen.svg';
+import PineconeLogo from './assets/vendor_logos/pinecone-logo.png';
 
 type SharedPluginInfo = {
   id: string;
@@ -11,6 +18,8 @@ type SharedPluginInfo = {
   github?: string;
   documentation?: string;
   website?: string;
+
+  logoImage?: string;
 };
 
 export type PackagePluginInfo = SharedPluginInfo & {
@@ -36,6 +45,8 @@ export const pluginInfos: PluginInfo[] = [
     author: 'Rivet Team',
     package: 'rivet-plugin-example-python-exec',
     tag: 'latest',
+    logoImage: RivetLogo,
+    github: 'https://github.com/abrenneke/rivet-plugin-example-python-exec',
   },
   {
     type: 'built-in',
@@ -46,6 +57,8 @@ export const pluginInfos: PluginInfo[] = [
       Adds a Chat (Anthropic) node.
     `,
     author: 'Rivet Team',
+    logoImage: AnthropicLogo,
+    documentation: 'https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/anthropic',
   },
   {
     type: 'built-in',
@@ -56,16 +69,26 @@ export const pluginInfos: PluginInfo[] = [
       Adds an Autoevals node with many variants of evaluations.
     `,
     author: 'Braintrust',
+    documentation: 'https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/autoevals',
   },
   {
     type: 'built-in',
     id: 'assemblyAi',
     name: 'AssemblyAI',
     description: dedent`
-      Adds a number of nodes for using AssemblyAI's speech-to-text and text-to-speech APIs.
-      Adds ability to use LeMUR to chat with AssemblyAI's LLM models.
+      Use [AssemblyAI](https://www.assemblyai.com/) to build AI applications with voice data.
+
+      - [Transcribe audio files](https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/assemblyai#transcribe-audio-node)
+      - [Summarize audio files using LeMUR](https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/assemblyai#lemur-summary-node)
+      - [Answer questions about audio files using LeMUR Q&A](https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/assemblyai#lemur-qa)
+      - [Extract action items from audio files using LeMUR](https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/assemblyai#lemur-action-items)
+      - [Run custom LLM tasks against audio files using LeMUR](https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/assemblyai#lemur-custom-task)
+
+      Follow this [step-by-step tutorial to see these capabilities in action](https://www.assemblyai.com/blog/podcast-qa-application-rivet/).
     `,
     author: 'AssemblyAI',
+    logoImage: AssemblyAiLogo,
+    documentation: 'https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/assemblyai',
   },
   {
     type: 'built-in',
@@ -76,6 +99,7 @@ export const pluginInfos: PluginInfo[] = [
       Vector Store and Vector KNN nodes.
     `,
     author: 'Rivet Team',
+    logoImage: PineconeLogo,
   },
   {
     type: 'built-in',
@@ -85,6 +109,7 @@ export const pluginInfos: PluginInfo[] = [
       Adds a Chat (Hugging Face) node that allows you to chat with any of Hugging Face's LLM models.
     `,
     author: 'Rivet Team',
+    logoImage: HuggingFaceLogo,
   },
   {
     type: 'built-in',
@@ -92,9 +117,12 @@ export const pluginInfos: PluginInfo[] = [
     name: 'Gentrace',
     description: dedent`
       Gentrace evaluates and observes your generative AI pipelines.
+
       This plugin helps you run Gentrace test cases through your Rivet graph and evaluates their performance on a variety of benchmarks.
     `,
     author: 'Gentrace',
+    logoImage: GentraceLogo,
+    documentation: 'https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/gentrace',
   },
   {
     type: 'package',
@@ -107,6 +135,7 @@ export const pluginInfos: PluginInfo[] = [
     package: 'rivet-plugin-example',
     tag: 'latest',
     github: 'https://github.com/abrenneke/rivet-plugin-example',
+    logoImage: RivetLogo,
   },
   {
     type: 'package',
@@ -131,5 +160,6 @@ export const pluginInfos: PluginInfo[] = [
     author: 'Andrew Rothwell',
     package: 'rivet-plugin-mongodb',
     tag: 'latest',
+    logoImage: MongoDBLogo,
   },
 ];

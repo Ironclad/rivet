@@ -1,7 +1,6 @@
 import { HelperMessage, Field } from '@atlaskit/form';
 import { type FC, useState, useRef, useLayoutEffect } from 'react';
 import TextField from '@atlaskit/textfield';
-import Modal, { ModalTransition, ModalTitle, ModalHeader, ModalFooter, ModalBody } from '@atlaskit/modal-dialog';
 import Button from '@atlaskit/button';
 import { useToggle } from 'ahooks';
 import { toast } from 'react-toastify';
@@ -13,11 +12,51 @@ import { appLocalDataDir, join } from '@tauri-apps/api/path';
 import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-line.svg';
 import { copyToClipboard } from '../utils/copyToClipboard';
 import { useLoadPackagePlugin } from '../hooks/useLoadPackagePlugin';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { pluginsState } from '../state/plugins';
 import useAsyncEffect from 'use-async-effect';
 import { type BuiltInPluginInfo, type PackagePluginInfo, pluginInfos, type PluginInfo } from '../plugins.js';
 import { useFuseSearch } from '../hooks/useFuseSearch';
+import { overlayOpenState } from '../state/ui';
+import { ErrorBoundary } from 'react-error-boundary';
+import Modal, { ModalTransition, ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
+import clsx from 'clsx';
+import { useMarkdown } from '../hooks/useMarkdown';
+import { ReactComponent as GithubMark } from '../assets/vendor_logos/github-mark-white.svg';
+
+const styles = css`
+  position: fixed;
+  left: 250px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--grey-darker);
+  padding: 64px 32px 0 32px;
+
+  display: flex;
+  flex-direction: column;
+
+  > header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--grey);
+  }
+
+  > main {
+    flex: 1 1 auto;
+    overflow: auto;
+    min-height: 0;
+  }
+
+  > footer {
+    border-top: 1px solid var(--grey);
+    display: flex;
+    align-items: center;
+    padding: 16px 0;
+  }
+`;
 
 const addPluginBody = css`
   display: flex;
@@ -101,32 +140,82 @@ const addPluginBody = css`
 
     .plugin {
       display: grid;
-      grid-template-columns: 1fr auto;
-      column-gap: 8px;
+      grid-template-columns: 64px 200px 1fr auto;
+      grid-template-rows: auto auto;
+      row-gap: 8px;
+      column-gap: 32px;
       padding: 24px 16px;
       align-items: center;
       border-bottom: 1px solid var(--grey);
     }
 
-    .plugin-info {
-      display: grid;
-      grid-template-columns: 200px 1fr;
-      column-gap: 32px;
-      align-items: center;
+    .plugin-icon {
+      width: 64px;
+      height: 64px;
+      grid-column: 1;
+      grid-row: 1 / -1;
+
+      &.missing {
+        border: 1px solid var(--grey);
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
     }
 
     .plugin-name {
       font-weight: 600;
     }
+
+    .plugin-actions {
+      display: flex;
+      align-items: center;
+      align-self: end;
+      grid-column: -1;
+    }
+
+    .plugin-name-author {
+      grid-column: 2;
+    }
+
+    .plugin-links {
+      grid-column: 2;
+
+      a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    .plugin-description {
+      grid-column: 3;
+      grid-row: 1 / -1;
+    }
   }
 `;
 
-export const AddPluginModal: FC<{
-  isOpen: boolean;
-  onClose: () => void;
-  onAddPlugin: (plugin: PluginLoadSpec) => void;
-  onRemovePlugin: (plugin: PluginLoadSpec) => void;
-}> = ({ isOpen, onClose, onAddPlugin, onRemovePlugin }) => {
+export const PluginsOverlayRenderer: FC = () => {
+  const [openOverlay] = useRecoilState(overlayOpenState);
+
+  if (openOverlay !== 'plugins') return null;
+
+  return (
+    <ErrorBoundary fallbackRender={() => 'Failed to render Plugins overlay'}>
+      <PluginsOverlay />
+    </ErrorBoundary>
+  );
+};
+
+export const PluginsOverlay: FC = () => {
   const { loadPackagePlugin, packageInstallLog, setPackageInstallLog } = useLoadPackagePlugin({
     onLog: (msg) => console.log(msg),
   });
@@ -141,11 +230,11 @@ export const AddPluginModal: FC<{
   const [addNPMPluginModalOpen, toggleAddNPMPluginModal] = useToggle();
 
   const addBuiltInPlugin = (info: BuiltInPluginInfo) => {
-    onAddPlugin({
-      id: info.id,
-      type: 'built-in',
-      name: info.name,
-    });
+    // onAddPlugin({
+    //   id: info.id,
+    //   type: 'built-in',
+    //   name: info.name,
+    // });
   };
 
   const addPackagePlugin = async (info: PackagePluginInfo) => {
@@ -163,7 +252,7 @@ export const AddPluginModal: FC<{
       await loadPackagePlugin(spec);
       togglePluginLogModal.setLeft();
       toggleAddNPMPluginModal.setLeft();
-      onAddPlugin(spec);
+      // onAddPlugin(spec);
     } catch (err) {
       setPackageInstallLog((log) => `${log}\nError installing plugin: ${getError(err).message}`);
     }
@@ -180,7 +269,7 @@ export const AddPluginModal: FC<{
   const removePlugin = (info: PluginInfo) => {
     const matchingPlugin = plugins.find((p) => p.spec.id === info.id);
     if (matchingPlugin) {
-      onRemovePlugin(matchingPlugin.spec);
+      // onRemovePlugin(matchingPlugin.spec);
     }
   };
 
@@ -214,86 +303,115 @@ export const AddPluginModal: FC<{
   ]);
 
   return (
-    <ModalTransition>
-      {isOpen && (
-        <Modal width="x-large" onClose={onClose} height="100%">
-          <ModalHeader>
-            <ModalTitle>Add Plugin</ModalTitle>
-            <div className="plugin-search">
-              <TextField
-                placeholder="Search..."
-                value={searchText}
-                onChange={(e) => setSearchText((e.target as HTMLInputElement).value)}
-              />
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            <div css={addPluginBody}>
-              <div className="plugin-list">
-                <div className="plugins">
-                  {searchedPlugins.map(({ item: pluginInfo }) => (
-                    <div className="plugin" key={pluginInfo.id}>
-                      <div className="plugin-info">
-                        <div className="plugin-name-author">
-                          <div className="plugin-name">{pluginInfo.name}</div>
-                          <div className="plugin-author">By: {pluginInfo.author}</div>
-                        </div>
-                        <div className="plugin-description">{pluginInfo.description}</div>
-                      </div>
-                      <div className="plugin-actions">
-                        {isPluginInstalledInProject(pluginInfo) ? (
-                          <span className="installed">Installed</span>
-                        ) : (
-                          <Button appearance="primary" onClick={() => addPlugin(pluginInfo)}>
-                            Add
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                  {!searchText && (
-                    <div className="plugin custom-plugin" key="custom-plugin">
-                      <div className="plugin-info">
-                        <div className="plugin-name">NPM Plugin</div>
-                        <div className="plugin-description">Add a plugin from NPM manually</div>
-                      </div>
-                      <div className="plugin-actions">
-                        <Button appearance="default" onClick={toggleAddNPMPluginModal.setRight}>
-                          Add
-                        </Button>
-                      </div>
-                    </div>
-                  )}
+    <div css={styles}>
+      <header>
+        <h1>Plugin</h1>
+        <div className="plugin-search">
+          <TextField
+            placeholder="Search..."
+            value={searchText}
+            onChange={(e) => setSearchText((e.target as HTMLInputElement).value)}
+          />
+        </div>
+      </header>
+      <main>
+        <div css={addPluginBody}>
+          <div className="plugin-list">
+            <div className="plugins">
+              {searchedPlugins.map(({ item: pluginInfo }) => (
+                <PluginListItem
+                  key={pluginInfo.id}
+                  plugin={pluginInfo}
+                  isInstalled={isPluginInstalledInProject(pluginInfo)}
+                  onAddPlugin={addPlugin}
+                  onRemovePlugin={removePlugin}
+                />
+              ))}
+              {!searchText && (
+                <div className="plugin custom-plugin" key="custom-plugin">
+                  <div className="plugin-icon" />
+                  <div className="plugin-name-author">
+                    <div className="plugin-name">NPM Plugin</div>
+                  </div>
+                  <div className="plugin-description">Add a plugin from NPM manually</div>
+                  <div className="plugin-actions">
+                    <Button appearance="default" onClick={toggleAddNPMPluginModal.setRight}>
+                      Add
+                    </Button>
+                  </div>
                 </div>
-              </div>
-
-              <AddNPMPluginModal
-                isOpen={addNPMPluginModalOpen}
-                onClose={toggleAddNPMPluginModal.setLeft}
-                onAddPlugin={addPackagePlugin}
-              />
-
-              <PluginLogModal
-                isOpen={pluginLogModalOpen}
-                log={packageInstallLog}
-                onClose={togglePluginLogModal.setLeft}
-              />
+              )}
             </div>
-          </ModalBody>
-          <ModalFooter>
-            <div className="helperMessage">
-              <HelperMessage>
-                Plugins are stored in: <code>{pluginStoreDirectory}</code>{' '}
-                <CopyIcon className="copy-plugin-dir-button" onClick={copyPluginStoreDirectory} />
-              </HelperMessage>
-            </div>
-            <Button appearance="subtle" onClick={onClose}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </Modal>
+          </div>
+
+          <AddNPMPluginModal
+            isOpen={addNPMPluginModalOpen}
+            onClose={toggleAddNPMPluginModal.setLeft}
+            onAddPlugin={addPackagePlugin}
+          />
+
+          <PluginLogModal isOpen={pluginLogModalOpen} log={packageInstallLog} onClose={togglePluginLogModal.setLeft} />
+        </div>
+      </main>
+      <footer>
+        <div className="helperMessage">
+          <HelperMessage>
+            Plugins are stored in: <code>{pluginStoreDirectory}</code>{' '}
+            <CopyIcon className="copy-plugin-dir-button" onClick={copyPluginStoreDirectory} />
+          </HelperMessage>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+const PluginListItem: FC<{
+  plugin: PluginInfo;
+  isInstalled: boolean;
+  onAddPlugin: (plugin: PluginInfo) => void;
+  onRemovePlugin: (plugin: PluginInfo) => void;
+}> = ({ plugin, isInstalled, onAddPlugin }) => {
+  const markdownDescription = useMarkdown(plugin.description);
+
+  return (
+    <div className="plugin" key={plugin.id}>
+      <div className={clsx('plugin-icon', { missing: !plugin.logoImage })}>
+        {plugin.logoImage && <img src={plugin.logoImage} alt={plugin.name} />}
+      </div>
+      <div className="plugin-name-author">
+        <div className="plugin-name">{plugin.name}</div>
+        <div className="plugin-author">By: {plugin.author}</div>
+      </div>
+      <div className="plugin-description" dangerouslySetInnerHTML={markdownDescription}></div>
+      {(plugin.github || plugin.website || plugin.documentation) && (
+        <div className="plugin-links">
+          {plugin.github && (
+            <a className="plugin-github" href={plugin.github} target="_blank" rel="noreferrer">
+              <GithubMark viewBox="0 0 100 100" /> GitHub
+            </a>
+          )}
+          {plugin.website && (
+            <a className="plugin-website" href={plugin.website} target="_blank" rel="noreferrer">
+              Website
+            </a>
+          )}
+          {plugin.documentation && (
+            <a className="plugin-docs" href={plugin.documentation} target="_blank" rel="noreferrer">
+              Docs
+            </a>
+          )}
+        </div>
       )}
-    </ModalTransition>
+      <div className="plugin-actions">
+        {isInstalled ? (
+          <span className="installed">Installed</span>
+        ) : (
+          <Button appearance="primary" onClick={() => onAddPlugin(plugin)}>
+            Add
+          </Button>
+        )}
+      </div>
+    </div>
   );
 };
 

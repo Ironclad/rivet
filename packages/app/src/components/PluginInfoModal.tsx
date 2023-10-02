@@ -2,9 +2,12 @@ import Button from '@atlaskit/button';
 import Modal, { ModalTransition, ModalHeader, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
 import { css } from '@emotion/react';
 import { type RivetPlugin } from '@ironclad/rivet-core';
-import { type FC } from 'react';
+import { useState, type FC } from 'react';
 import { match } from 'ts-pattern';
 import { type PluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
+import { appLocalDataDir, join } from '@tauri-apps/api/path';
+import useAsyncEffect from 'use-async-effect';
+import { CopyToClipboardButton } from './CopyToClipboardButton';
 
 const pluginInfoModalBody = css`
   dl {
@@ -37,10 +40,25 @@ type PluginInfoModalProps = {
 };
 
 export const PluginInfoModal: FC<PluginInfoModalProps> = ({ isOpen, onClose, pluginName, spec, loadedPlugin }) => {
+  const [installDir, setInstallDir] = useState('');
+
+  useAsyncEffect(async () => {
+    if (spec.type !== 'package') {
+      return;
+    }
+
+    const localDataDir = await appLocalDataDir();
+
+    const pluginDir = await join(localDataDir, `plugins/${spec.package}-${spec.tag}`);
+    const pluginFilesPath = await join(pluginDir, 'package');
+
+    setInstallDir(pluginFilesPath);
+  }, []);
+
   return (
     <ModalTransition>
       {isOpen && (
-        <Modal onClose={onClose}>
+        <Modal onClose={onClose} width="large">
           <ModalHeader>
             <h3>{pluginName}</h3>
           </ModalHeader>
@@ -79,6 +97,11 @@ export const PluginInfoModal: FC<PluginInfoModalProps> = ({ isOpen, onClose, plu
                     <dd>{spec.tag}</dd>
                     <dt>Name</dt>
                     <dd>{loadedPlugin?.name ?? 'Unknown'}</dd>
+                    <dt>Install Directory</dt>
+                    <dd>
+                      <code>{installDir}</code>
+                      <CopyToClipboardButton text={installDir} />
+                    </dd>
                   </dl>
                 ))
                 .exhaustive()}

@@ -20,6 +20,7 @@ import clsx from 'clsx';
 import { useLoadStaticData } from '../hooks/useLoadStaticData';
 import { DataStudioRenderer } from './dataStudio/DataStudio';
 import { StatusBar } from './StatusBar';
+import { PluginsOverlayRenderer } from './PluginsOverlay';
 
 const styles = css`
   overflow: hidden;
@@ -58,6 +59,7 @@ export const RivetApp: FC = () => {
       <TrivetRenderer tryRunTests={tryRunTests} />
       <ChatViewerRenderer />
       <DataStudioRenderer />
+      <PluginsOverlayRenderer />
       <ToastContainer position="bottom-right" hideProgressBar newestOnTop />
     </div>
   );
