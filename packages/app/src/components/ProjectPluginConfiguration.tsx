@@ -18,6 +18,8 @@ import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import Modal, { ModalTransition, ModalHeader, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
 import { match } from 'ts-pattern';
 import Button from '@atlaskit/button';
+import { type RivetPlugin } from '@ironclad/rivet-core';
+import { PluginInfoModal } from './PluginInfoModal';
 
 const styles = css`
   .label {
@@ -94,8 +96,6 @@ export const ProjectPluginsConfiguration: FC = () => {
   const [addPluginModalOpen, toggleAddPluginModal] = useToggle();
 
   const addPlugin = (plugin: PluginLoadSpec) => {
-    toggleAddPluginModal.setLeft();
-
     setPluginSpecs((specs) =>
       produce(specs, (draft) => {
         if (draft.find((s) => s.id === plugin.id)) {
@@ -125,32 +125,15 @@ export const ProjectPluginsConfiguration: FC = () => {
         ))}
       </ul>
 
-      <AddPluginModal isOpen={addPluginModalOpen} onClose={toggleAddPluginModal.setLeft} onAddPlugin={addPlugin} />
+      <AddPluginModal
+        isOpen={addPluginModalOpen}
+        onClose={toggleAddPluginModal.setLeft}
+        onAddPlugin={addPlugin}
+        onRemovePlugin={deletePlugin}
+      />
     </div>
   );
 };
-
-const pluginInfoModalBody = css`
-  dl {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    column-gap: 32px;
-    row-gap: 8px;
-    margin: 0;
-    padding: 0;
-
-    dt {
-      font-weight: bold;
-      margin: 0;
-      padding: 0;
-    }
-
-    dd {
-      margin: 0;
-      padding: 0;
-    }
-  }
-`;
 
 const PluginConfigurationItem: FC<{ spec: PluginLoadSpec; onDelete?: (spec: PluginLoadSpec) => void }> = ({
   spec,
@@ -206,58 +189,13 @@ const PluginConfigurationItem: FC<{ spec: PluginLoadSpec; onDelete?: (spec: Plug
           </button>
         )}
       />
-      <ModalTransition>
-        {infoModalOpen && (
-          <Modal onClose={toggleInfoModal.setLeft}>
-            <ModalHeader>
-              <h3>{pluginName}</h3>
-            </ModalHeader>
-            <ModalBody>
-              <div css={pluginInfoModalBody}>
-                {match(spec)
-                  .with({ type: 'built-in' }, (spec) => (
-                    <dl>
-                      <dt>Type</dt>
-                      <dd>Built-In</dd>
-                      <dt>Plugin</dt>
-                      <dd>{spec.id}</dd>
-                    </dl>
-                  ))
-                  .with({ type: 'uri' }, (spec) => (
-                    <dl>
-                      <dt>Type</dt>
-                      <dd>URI</dd>
-                      <dt>ID</dt>
-                      <dd>{loadedPlugin?.id ?? spec.id}</dd>
-                      <dt>URI</dt>
-                      <dd>{spec.uri}</dd>
-                      <dt>Name</dt>
-                      <dd>{loadedPlugin?.name ?? 'Unknown'}</dd>
-                    </dl>
-                  ))
-                  .with({ type: 'package' }, (spec) => (
-                    <dl>
-                      <dt>Type</dt>
-                      <dd>Package</dd>
-                      <dt>ID</dt>
-                      <dd>{loadedPlugin?.id ?? spec.id}</dd>
-                      <dt>Package</dt>
-                      <dd>{spec.package}</dd>
-                      <dt>Tag</dt>
-                      <dd>{spec.tag}</dd>
-                      <dt>Name</dt>
-                      <dd>{loadedPlugin?.name ?? 'Unknown'}</dd>
-                    </dl>
-                  ))
-                  .exhaustive()}
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              <Button onClick={toggleInfoModal.setLeft}>Close</Button>
-            </ModalFooter>
-          </Modal>
-        )}
-      </ModalTransition>
+      <PluginInfoModal
+        isOpen={infoModalOpen}
+        onClose={toggleInfoModal.setLeft}
+        pluginName={pluginName}
+        spec={spec}
+        loadedPlugin={loadedPlugin}
+      />
     </li>
   );
 };

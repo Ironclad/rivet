@@ -95,6 +95,7 @@
     "p-queue": "^7.3.4",
     "p-retry": "^5.1.2",
     "pkg": "^5.8.1",
+    "pnpm": "^8.8.0",
     "prettier": "^2.8.8",
     "pretty-bytes": "^6.1.1",
     "react": "^18.2.0",
@@ -135,7 +136,7 @@
     "jest-mock": "^28.1.0"
   },
   "volta": {
-    "node": "18.15.0",
+    "node": "20.4.0",
     "yarn": "3.5.0"
   },
   "devDependencies": {

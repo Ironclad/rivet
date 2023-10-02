@@ -7,6 +7,7 @@ import { useGetRivetUIContext } from './useGetRivetUIContext';
 import useAsyncEffect from 'use-async-effect';
 import { toast } from 'react-toastify';
 import { isNotNull } from '../utils/genericUtilFunctions';
+import { uniq, uniqBy } from 'lodash-es';
 
 export const addContextMenuGroups = [
   {
@@ -96,32 +97,35 @@ export function useContextMenuAddNodeConfiguration() {
 
   const plugins = useDependsOnPlugins();
   const groupsWithItems = useMemo(() => {
-    const groups = [...addContextMenuGroups, ...plugins.flatMap((plugin) => plugin.contextMenuGroups ?? [])].map(
-      (group) => {
-        const items = uiData
-          .filter((item) =>
-            Array.isArray(item.uiData.group)
-              ? item.uiData.group.includes(group.label)
-              : item.uiData.group === group.label,
-          )
-          .map((item): ContextMenuItem => {
-            const { type } = item;
-
-            return {
-              id: `add-node:${type}`,
-              label: item.uiData.contextMenuTitle ?? type,
-              data: type,
-              infoBox: {
-                title: item.uiData.infoBoxTitle ?? type,
-                description: item.uiData.infoBoxBody ?? '',
-                image: builtInImages[type as keyof typeof builtInImages] ?? undefined,
-              },
-            };
-          });
-
-        return { ...group, items };
-      },
+    const allGroups = uniqBy(
+      [...addContextMenuGroups, ...plugins.flatMap((plugin) => plugin.contextMenuGroups ?? [])],
+      (g) => g.id,
     );
+
+    const groups = allGroups.map((group) => {
+      const items = uiData
+        .filter((item) =>
+          Array.isArray(item.uiData.group)
+            ? item.uiData.group.includes(group.label)
+            : item.uiData.group === group.label,
+        )
+        .map((item): ContextMenuItem => {
+          const { type } = item;
+
+          return {
+            id: `add-node:${type}`,
+            label: item.uiData.contextMenuTitle ?? type,
+            data: type,
+            infoBox: {
+              title: item.uiData.infoBoxTitle ?? type,
+              description: item.uiData.infoBoxBody ?? '',
+              image: builtInImages[type as keyof typeof builtInImages] ?? undefined,
+            },
+          };
+        });
+
+      return { ...group, items };
+    });
 
     return groups.filter((group) => group.items.length > 0);
   }, [builtInImages, uiData]);

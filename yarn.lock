@@ -4226,6 +4226,7 @@ __metadata:
     p-queue: "npm:^7.3.4"
     p-retry: "npm:^5.1.2"
     pkg: "npm:^5.8.1"
+    pnpm: "npm:^8.8.0"
     prettier: "npm:^2.8.8"
     pretty-bytes: "npm:^6.1.1"
     react: "npm:^18.2.0"
@@ -4375,6 +4376,9 @@ __metadata:
     typescript: "npm:^5.1.6"
     yargs: "npm:^17.7.2"
     zx: "npm:^7.2.3"
+  dependenciesMeta:
+    "@pnpm/exe@8.8.0":
+      unplugged: true
   languageName: unknown
   linkType: soft
 
@@ -13976,6 +13980,18 @@ __metadata:
   bin:
     pkg: lib-es5/bin.js
   checksum: 5ae44c83603d755d5ebf6b7237194aedd42924dfdccfa3ffbae7af2f7529cbb02fb03b4a97c0873cec429ff08d33982f07e8d4da7e273dbd1cf707e9ff255899
+  languageName: node
+  linkType: hard
+
+"pnpm@npm:^8.8.0":
+  version: 8.8.0
+  resolution: "pnpm@npm:8.8.0"
+  dependencies:
+    node-gyp: "npm:latest"
+  bin:
+    pnpm: bin/pnpm.cjs
+    pnpx: bin/pnpx.cjs
+  checksum: 7b9c087565534bc5e63616c4c1f7344adce5b5a3d61aefc7ba348944ebf8af56365a450ec1cdb0ef585e699cfb7b62416eeec3badf9d1546c9bbd1b0a2fed285
   languageName: node
   linkType: hard
 

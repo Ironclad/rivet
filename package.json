@@ -51,5 +51,10 @@
   "dependencies": {
     "@ironclad/rivet-core": "workspace:^",
     "@ironclad/rivet-node": "workspace:^"
+  },
+  "dependenciesMeta": {
+    "@pnpm/exe@8.8.0": {
+      "unplugged": true
+    }
   }
 }

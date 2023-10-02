@@ -1,26 +1,29 @@
-import { HelperMessage } from '@atlaskit/form';
-import { type FC, useEffect, useState } from 'react';
+import { HelperMessage, Field } from '@atlaskit/form';
+import { type FC, useState, useRef, useLayoutEffect } from 'react';
 import TextField from '@atlaskit/textfield';
 import Modal, { ModalTransition, ModalTitle, ModalHeader, ModalFooter, ModalBody } from '@atlaskit/modal-dialog';
 import Button from '@atlaskit/button';
 import { useToggle } from 'ahooks';
-import Select from '@atlaskit/select';
-import { Field } from '@atlaskit/form';
-import { useBuiltInPlugins } from '../hooks/useBuiltInPlugins';
 import { toast } from 'react-toastify';
-import { type RivetPluginInitializer } from '@ironclad/rivet-core';
-import * as Rivet from '@ironclad/rivet-core';
+import { getError } from '@ironclad/rivet-core';
 import { useOpenUrl } from '../hooks/useOpenUrl';
-import { type PluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
+import { type PackagePluginLoadSpec, type PluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
 import { css } from '@emotion/react';
 import { appLocalDataDir, join } from '@tauri-apps/api/path';
 import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-line.svg';
 import { copyToClipboard } from '../utils/copyToClipboard';
+import { useLoadPackagePlugin } from '../hooks/useLoadPackagePlugin';
+import { useRecoilValue } from 'recoil';
+import { pluginsState } from '../state/plugins';
+import useAsyncEffect from 'use-async-effect';
+import { type BuiltInPluginInfo, type PackagePluginInfo, pluginInfos, type PluginInfo } from '../plugins.js';
+import { useFuseSearch } from '../hooks/useFuseSearch';
 
 const addPluginBody = css`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  height: 100%;
 
   .add-remote-plugin {
     display: flex;
@@ -82,109 +85,116 @@ const addPluginBody = css`
       }
     }
   }
+
+  .plugin-list {
+    display: flex;
+    flex-direction: column;
+    background: var(--grey-dark);
+    border: 1px solid var(--grey);
+    flex: 1;
+    position: relative;
+
+    .plugin-search {
+      padding: 16px;
+      border-bottom: 1px solid var(--grey);
+    }
+
+    .plugin {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      column-gap: 8px;
+      padding: 24px 16px;
+      align-items: center;
+      border-bottom: 1px solid var(--grey);
+    }
+
+    .plugin-info {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      column-gap: 32px;
+      align-items: center;
+    }
+
+    .plugin-name {
+      font-weight: 600;
+    }
+  }
 `;
 
 export const AddPluginModal: FC<{
   isOpen: boolean;
   onClose: () => void;
   onAddPlugin: (plugin: PluginLoadSpec) => void;
-}> = ({ isOpen, onClose, onAddPlugin }) => {
-  const [pluginUri, setPluginUri] = useState('');
-  const [selectedBuiltInPlugin, setSelectedBuiltInPlugin] = useState<string | undefined>();
-  const builtInPlugins = useBuiltInPlugins();
-  const [loadingPlugin, toggleLoadingPlugin] = useToggle();
-  const [pluginPackageName, setPluginPackageName] = useState('');
-  const [pluginTag, setPluginTag] = useState('');
+  onRemovePlugin: (plugin: PluginLoadSpec) => void;
+}> = ({ isOpen, onClose, onAddPlugin, onRemovePlugin }) => {
+  const { loadPackagePlugin, packageInstallLog, setPackageInstallLog } = useLoadPackagePlugin({
+    onLog: (msg) => console.log(msg),
+  });
+  const plugins = useRecoilValue(pluginsState);
+  const [searchText, setSearchText] = useState('');
 
-  const addBuiltInPlugin = () => {
-    if (!selectedBuiltInPlugin) {
-      return;
-    }
+  const isPluginInstalledInProject = (plugin: PluginInfo): boolean => {
+    return plugins.some((p) => p.spec.id === plugin.id);
+  };
 
+  const [pluginLogModalOpen, togglePluginLogModal] = useToggle();
+  const [addNPMPluginModalOpen, toggleAddNPMPluginModal] = useToggle();
+
+  const addBuiltInPlugin = (info: BuiltInPluginInfo) => {
     onAddPlugin({
-      id: selectedBuiltInPlugin,
+      id: info.id,
       type: 'built-in',
-      name: selectedBuiltInPlugin,
+      name: info.name,
     });
-
-    setSelectedBuiltInPlugin(undefined);
   };
 
-  const addRemotePlugin = async () => {
-    try {
-      if (pluginUri.trim() === '') {
-        return;
-      }
+  const addPackagePlugin = async (info: PackagePluginInfo) => {
+    togglePluginLogModal.setRight();
 
-      toggleLoadingPlugin.setRight();
-
-      const plugin = await import(pluginUri);
-
-      if (!plugin) {
-        throw new Error(`Failed to load plugin from ${pluginUri}`);
-      }
-
-      if (!plugin.default) {
-        throw new Error(`Plugin at ${pluginUri} does not have a default export`);
-      }
-
-      if (typeof plugin.default !== 'function') {
-        throw new Error(`Plugin at ${pluginUri} does not export a function`);
-      }
-
-      const initializer = plugin.default as RivetPluginInitializer;
-
-      const pluginInstance = initializer(Rivet);
-
-      if (!pluginInstance || !pluginInstance.id) {
-        throw new Error(`Plugin at ${pluginUri} did not return a valid plugin`);
-      }
-
-      onAddPlugin({
-        type: 'uri',
-        id: pluginInstance.id,
-        uri: pluginUri,
-      });
-
-      setPluginUri('');
-    } catch (err) {
-      toast.error(`Failed to load plugin: ${err}`);
-    } finally {
-      toggleLoadingPlugin.setLeft();
-    }
-  };
-
-  const addPackagePlugin = () => {
-    if (!pluginPackageName.trim()) {
-      return;
-    }
-
-    const tag = pluginTag.trim() || 'latest';
-
-    onAddPlugin({
+    const spec: PackagePluginLoadSpec = {
       type: 'package',
-      id: `${pluginPackageName}@${tag}`,
-      package: pluginPackageName,
-      tag,
-    });
+      id: `${info.package}@${info.tag}`,
+      package: info.package,
+      tag: info.tag,
+    };
 
-    setPluginPackageName('');
-    setPluginTag('');
+    try {
+      setPackageInstallLog(`Installing plugin: ${info.name}...\n`);
+      await loadPackagePlugin(spec);
+      togglePluginLogModal.setLeft();
+      toggleAddNPMPluginModal.setLeft();
+      onAddPlugin(spec);
+    } catch (err) {
+      setPackageInstallLog((log) => `${log}\nError installing plugin: ${getError(err).message}`);
+    }
+  };
+
+  const addPlugin = (info: PluginInfo) => {
+    if (info.type === 'built-in') {
+      addBuiltInPlugin(info);
+    } else if (info.type === 'package') {
+      addPackagePlugin(info);
+    }
+  };
+
+  const removePlugin = (info: PluginInfo) => {
+    const matchingPlugin = plugins.find((p) => p.spec.id === info.id);
+    if (matchingPlugin) {
+      onRemovePlugin(matchingPlugin.spec);
+    }
   };
 
   const goToDocs = useOpenUrl('https://rivet.ironcladapp.com/docs/'); // TODO
 
   const [pluginStoreDirectory, setPluginStoreDirectory] = useState('');
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const appDataDir = await appLocalDataDir();
-        setPluginStoreDirectory(await join(appDataDir, 'plugins'));
-      } catch (err) {
-        console.error(err);
-      }
-    })();
+  useAsyncEffect(async () => {
+    try {
+      const appDataDir = await appLocalDataDir();
+      setPluginStoreDirectory(await join(appDataDir, 'plugins'));
+    } catch (err) {
+      console.error(err);
+    }
   }, []);
 
   const copyPluginStoreDirectory = async () => {
@@ -192,97 +202,195 @@ export const AddPluginModal: FC<{
     toast.success('Copied plugin store directory to clipboard');
   };
 
+  const sortedPlugins = pluginInfos.sort((a, b) => a.name.localeCompare(b.name));
+
+  const searchedPlugins = useFuseSearch(sortedPlugins, searchText, [
+    'id',
+    'name',
+    'description',
+    'author',
+    'github',
+    'website',
+  ]);
+
   return (
     <ModalTransition>
       {isOpen && (
         <Modal width="x-large" onClose={onClose} height="100%">
           <ModalHeader>
             <ModalTitle>Add Plugin</ModalTitle>
+            <div className="plugin-search">
+              <TextField
+                placeholder="Search..."
+                value={searchText}
+                onChange={(e) => setSearchText((e.target as HTMLInputElement).value)}
+              />
+            </div>
           </ModalHeader>
           <ModalBody>
             <div css={addPluginBody}>
-              <Field name="plugin" label="Add Remote Plugin">
-                {() => (
-                  <div className="add-remote-plugin">
-                    <TextField
-                      label="Plugin URL"
-                      value={pluginUri}
-                      placeholder="https://example.com/plugin.js"
-                      onChange={(e) => setPluginUri((e.target as HTMLInputElement).value)}
-                    />
-                    <HelperMessage>
-                      Plugins must be hosted on a public URL and must export a function that returns a valid Rivet
-                      plugin. See the <a onClick={goToDocs}>documentation</a> for more information.
-                    </HelperMessage>
-                    <div className="buttons">
-                      <Button
-                        appearance="primary"
-                        onClick={addRemotePlugin}
-                        isDisabled={loadingPlugin || !pluginUri.trim()}
-                      >
-                        {loadingPlugin ? 'Loading...' : 'Add Remote Plugin'}
-                      </Button>
+              <div className="plugin-list">
+                <div className="plugins">
+                  {searchedPlugins.map(({ item: pluginInfo }) => (
+                    <div className="plugin" key={pluginInfo.id}>
+                      <div className="plugin-info">
+                        <div className="plugin-name-author">
+                          <div className="plugin-name">{pluginInfo.name}</div>
+                          <div className="plugin-author">By: {pluginInfo.author}</div>
+                        </div>
+                        <div className="plugin-description">{pluginInfo.description}</div>
+                      </div>
+                      <div className="plugin-actions">
+                        {isPluginInstalledInProject(pluginInfo) ? (
+                          <span className="installed">Installed</span>
+                        ) : (
+                          <Button appearance="primary" onClick={() => addPlugin(pluginInfo)}>
+                            Add
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </Field>
-              <Field name="plugin" label="Add NPM Plugin">
-                {() => (
-                  <div className="add-npm-plugin">
-                    <div className="inputs">
-                      <TextField
-                        label="Package Name"
-                        value={pluginPackageName}
-                        placeholder="Package Name"
-                        onChange={(e) => setPluginPackageName((e.target as HTMLInputElement).value)}
-                      />
-                      <TextField
-                        label="Tag"
-                        value={pluginTag}
-                        placeholder="Tag (latest)"
-                        onChange={(e) => setPluginTag((e.target as HTMLInputElement).value)}
-                      />
+                  ))}
+                  {!searchText && (
+                    <div className="plugin custom-plugin" key="custom-plugin">
+                      <div className="plugin-info">
+                        <div className="plugin-name">NPM Plugin</div>
+                        <div className="plugin-description">Add a plugin from NPM manually</div>
+                      </div>
+                      <div className="plugin-actions">
+                        <Button appearance="default" onClick={toggleAddNPMPluginModal.setRight}>
+                          Add
+                        </Button>
+                      </div>
                     </div>
-                    <div className="helperMessage">
-                      <HelperMessage>
-                        Plugins are stored in: <code>{pluginStoreDirectory}</code>{' '}
-                        <CopyIcon className="copy-plugin-dir-button" onClick={copyPluginStoreDirectory} />
-                      </HelperMessage>
-                    </div>
-                    <div className="buttons">
-                      <Button
-                        appearance="primary"
-                        onClick={addPackagePlugin}
-                        isDisabled={loadingPlugin || !pluginPackageName.trim()}
-                      >
-                        {loadingPlugin ? 'Loading...' : 'Add NPM Plugin'}
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </Field>
-              <Field name="plugin" label="Built-In Plugins">
-                {() => (
-                  <div className="built-in-plugins">
-                    <Select
-                      options={builtInPlugins}
-                      placeholder="Select a plugin"
-                      onChange={(e) => setSelectedBuiltInPlugin(e?.value)}
-                      value={builtInPlugins.find((id) => id.value === selectedBuiltInPlugin)}
-                    />
-                    <div className="buttons">
-                      <Button appearance="primary" onClick={addBuiltInPlugin} isDisabled={!selectedBuiltInPlugin}>
-                        Add Built-In Plugin
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </Field>
+                  )}
+                </div>
+              </div>
+
+              <AddNPMPluginModal
+                isOpen={addNPMPluginModalOpen}
+                onClose={toggleAddNPMPluginModal.setLeft}
+                onAddPlugin={addPackagePlugin}
+              />
+
+              <PluginLogModal
+                isOpen={pluginLogModalOpen}
+                log={packageInstallLog}
+                onClose={togglePluginLogModal.setLeft}
+              />
             </div>
           </ModalBody>
           <ModalFooter>
+            <div className="helperMessage">
+              <HelperMessage>
+                Plugins are stored in: <code>{pluginStoreDirectory}</code>{' '}
+                <CopyIcon className="copy-plugin-dir-button" onClick={copyPluginStoreDirectory} />
+              </HelperMessage>
+            </div>
             <Button appearance="subtle" onClick={onClose}>
               Cancel
+            </Button>
+          </ModalFooter>
+        </Modal>
+      )}
+    </ModalTransition>
+  );
+};
+
+const PluginLogModal: FC<{
+  isOpen: boolean;
+  log: string;
+  onClose: () => void;
+}> = ({ isOpen, log, onClose }) => {
+  const logPreRef = useRef<HTMLPreElement>(null);
+
+  useLayoutEffect(() => {
+    if (logPreRef.current) {
+      logPreRef.current.scrollTop = logPreRef.current.scrollHeight;
+    }
+  }, [log]);
+
+  return (
+    <ModalTransition>
+      {isOpen && (
+        <Modal width="large" onClose={onClose}>
+          <ModalHeader>
+            <ModalTitle>Installing...</ModalTitle>
+          </ModalHeader>
+          <ModalBody>
+            <div className="plugin-log">
+              <pre style={{ whiteSpace: 'pre-wrap' }} ref={logPreRef}>
+                {log}
+              </pre>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={onClose}>Close</Button>
+          </ModalFooter>
+        </Modal>
+      )}
+    </ModalTransition>
+  );
+};
+
+const AddNPMPluginModal: FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  onAddPlugin: (plugin: PackagePluginInfo) => void;
+}> = ({ isOpen, onClose, onAddPlugin }) => {
+  const [pluginName, setPluginName] = useState('');
+  const [pluginVersion, setPluginVersion] = useState('');
+
+  const addPlugin = () => {
+    const version = pluginVersion.trim() || 'latest';
+    onAddPlugin({
+      type: 'package',
+      id: `${pluginName}@${version}`,
+      package: pluginName,
+      tag: version,
+      author: '',
+      name: pluginName,
+      description: '',
+    });
+  };
+
+  return (
+    <ModalTransition>
+      {isOpen && (
+        <Modal width="large" onClose={onClose}>
+          <ModalHeader>
+            <ModalTitle>Add NPM Plugin</ModalTitle>
+          </ModalHeader>
+          <ModalBody>
+            <div className="add-npm-plugin">
+              <div className="inputs">
+                <Field name="packageName" label="Package Name">
+                  {({ fieldProps }) => (
+                    <TextField
+                      {...fieldProps}
+                      placeholder="Package Name"
+                      value={pluginName}
+                      onChange={(e) => setPluginName((e.target as HTMLInputElement).value)}
+                    />
+                  )}
+                </Field>
+                <Field name="packageVersion" label="Version">
+                  {({ fieldProps }) => (
+                    <TextField
+                      {...fieldProps}
+                      placeholder="Latest"
+                      value={pluginVersion}
+                      onChange={(e) => setPluginVersion((e.target as HTMLInputElement).value)}
+                    />
+                  )}
+                </Field>
+              </div>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={onClose}>Cancel</Button>
+            <Button appearance="primary" onClick={addPlugin}>
+              Add
             </Button>
           </ModalFooter>
         </Modal>

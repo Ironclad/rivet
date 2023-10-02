@@ -19,7 +19,8 @@
     "noUncheckedIndexedAccess": true,
     "composite": true
   },
-  "include": ["src"],
+  "include": ["src", "scripts", "sidecars"],
+  "exclude": ["**/dist", "**/node_modules"],
   "ts-node": {
     "swc": true,
     "compilerOptions": {

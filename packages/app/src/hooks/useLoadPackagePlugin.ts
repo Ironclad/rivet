@@ -1,15 +1,31 @@
 import { type PackagePluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
 import { appLocalDataDir, join } from '@tauri-apps/api/path';
-import { readDir, exists, readTextFile, writeBinaryFile, createDir, removeDir } from '@tauri-apps/api/fs';
+import {
+  readDir,
+  exists,
+  readTextFile,
+  writeBinaryFile,
+  createDir,
+  removeDir,
+  writeTextFile,
+} from '@tauri-apps/api/fs';
 import { ResponseType, fetch, getClient } from '@tauri-apps/api/http';
 import { type RivetPlugin } from '@ironclad/rivet-core';
 import { invoke } from '@tauri-apps/api/tauri';
 import * as Rivet from '@ironclad/rivet-core';
 import semverGt from 'semver/functions/gt';
 import { Command } from '@tauri-apps/api/shell';
+import { useState } from 'react';
 
-export function useLoadPackagePlugin() {
-  return async (spec: PackagePluginLoadSpec): Promise<RivetPlugin> => {
+export function useLoadPackagePlugin(options: { onLog?: (message: string) => void } = {}) {
+  const [packageInstallLog, setPackageInstallLog] = useState('');
+
+  const log = (message: string) => {
+    setPackageInstallLog((prev) => `${prev}${message}`);
+    options.onLog?.(message);
+  };
+
+  const loadPackagePlugin = async (spec: PackagePluginLoadSpec): Promise<RivetPlugin> => {
     const localDataDir = await appLocalDataDir();
 
     const pluginDir = await join(localDataDir, `plugins/${spec.package}-${spec.tag}`);
@@ -22,7 +38,7 @@ export function useLoadPackagePlugin() {
         const packageJson = await join(pluginFilesPath, 'package.json');
 
         if (await exists(packageJson)) {
-          console.log(`Checking for plugin updates: ${spec.package}@${spec.tag}`);
+          log(`Checking for plugin updates: ${spec.package}@${spec.tag}\n`);
           const { version } = JSON.parse(await readTextFile(packageJson));
 
           const npmPackageData = await fetch<any>(`https://registry.npmjs.org/${spec.package}/${spec.tag}`, {
@@ -44,13 +60,13 @@ export function useLoadPackagePlugin() {
           const latestVersion = npmPackageData.data.version;
 
           if (semverGt(latestVersion, version)) {
-            console.log(`Plugin update available: ${spec.package}@${spec.tag} -> ${latestVersion}`);
+            log(`Plugin update available: ${spec.package}@${spec.tag} -> ${latestVersion}\n`);
             needsReinstall = true;
           }
 
-          // if (!(await exists(await join(pluginFilesPath, 'node_modules')))) {
-          //   needsReinstall = true;
-          // }
+          if (!(await exists(await join(pluginFilesPath, 'node_modules')))) {
+            needsReinstall = true;
+          }
         }
       } else {
         needsReinstall = true;
@@ -59,20 +75,30 @@ export function useLoadPackagePlugin() {
       needsReinstall = true;
     }
 
+    const completedInstallVersionFile = await join(pluginFilesPath, '.install_complete_version');
+    if (await exists(completedInstallVersionFile)) {
+      const version = await readTextFile(completedInstallVersionFile);
+      if (version !== spec.tag) {
+        needsReinstall = true;
+      }
+    } else {
+      needsReinstall = true;
+    }
+
     if (await exists(await join(pluginFilesPath, '.git'))) {
       needsReinstall = false;
-      console.log(`Plugin is a git repository, skipping reinstall: ${spec.package}@${spec.tag}`);
+      log(`Plugin is a git repository, skipping reinstall: ${spec.package}@${spec.tag}\n`);
     }
 
     if (needsReinstall) {
       if (await exists(pluginDir)) {
-        console.log(`Removing existing plugin: ${spec.package}@${spec.tag}`);
+        log(`Removing existing plugin: ${spec.package}@${spec.tag}\n`);
         await removeDir(pluginDir, {
           recursive: true,
         });
       }
 
-      console.log(`Plugin not found locally or needs reinstall: ${spec.package}@${spec.tag}, downloading from NPM...`);
+      log(`Plugin not found locally or needs reinstall: ${spec.package}@${spec.tag}, downloading from NPM...\n`);
 
       // Download from NPM and install to plugins directory
       const npmPackageData = await fetch<any>(`https://registry.npmjs.org/${spec.package}/${spec.tag}`, {
@@ -93,7 +119,7 @@ export function useLoadPackagePlugin() {
 
       const tarball = npmPackageData.data.dist.tarball;
 
-      console.log(`Downloading plugin tarball from NPM: ${tarball}`);
+      log(`Downloading plugin tarball from NPM: ${tarball}\n`);
 
       const client = await getClient();
       const tarballData = await client.get<unknown>(tarball, {
@@ -103,7 +129,7 @@ export function useLoadPackagePlugin() {
         responseType: ResponseType.Binary,
       });
 
-      console.log(`Downloaded plugin tarball from NPM: ${tarball}`);
+      log(`Downloaded plugin tarball from NPM: ${tarball}\n`);
 
       const tarDestination = await join(pluginDir, 'package.tgz');
       const data = new Uint8Array(tarballData.data as number[]);
@@ -119,17 +145,29 @@ export function useLoadPackagePlugin() {
       });
 
       // TODO not working
-      // console.log('Installing NPM dependencies...');
+      log('Installing NPM dependencies...\n');
 
-      // const command = new Command('npm', ['install', '--omit=dev'], {
-      //   cwd: pluginFilesPath,
-      // });
+      const command = Command.sidecar('../sidecars/pnpm/pnpm', ['install', '--prod'], {
+        cwd: pluginFilesPath,
+      });
 
-      // const result = await command.execute();
+      command.stdout.on('data', (data) => {
+        log(data + '\n');
+      });
 
-      // if (result.code !== 0) {
-      //   throw new Error(`Error installing plugin dependencies: ${spec.package}@${spec.tag}: ${result.stderr}`);
-      // }
+      command.stderr.on('data', (data) => {
+        log(data + '\n');
+      });
+
+      const result = await command.execute();
+
+      if (result.code !== 0) {
+        throw new Error(`Error installing plugin dependencies: ${spec.package}@${spec.tag}: ${result.stderr}`);
+      }
+
+      log('Installed NPM dependencies\n');
+
+      await writeTextFile(completedInstallVersionFile, spec.tag);
     }
 
     const files = await readDir(pluginFilesPath);
@@ -166,5 +204,11 @@ export function useLoadPackagePlugin() {
     } catch (e) {
       throw new Error(`Error loading plugin: ${spec.package}@${spec.tag}: ${Rivet.getError(e).message}`);
     }
+  };
+
+  return {
+    loadPackagePlugin,
+    packageInstallLog,
+    setPackageInstallLog,
   };
 }

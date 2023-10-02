@@ -6971,6 +6971,7 @@ const RAW_RUNTIME_STATE =
           ["p-queue", "npm:7.3.4"],\
           ["p-retry", "npm:5.1.2"],\
           ["pkg", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.8.1"],\
+          ["pnpm", "npm:8.8.0"],\
           ["prettier", "npm:2.8.8"],\
           ["pretty-bytes", "npm:6.1.1"],\
           ["react", "npm:18.2.0"],\
@@ -19459,6 +19460,16 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["pkg-up", "npm:3.1.0"],\
           ["find-up", "npm:3.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["pnpm", [\
+      ["npm:8.8.0", {\
+        "packageLocation": "./.yarn/unplugged/pnpm-npm-8.8.0-9f369df0ec/node_modules/pnpm/",\
+        "packageDependencies": [\
+          ["pnpm", "npm:8.8.0"],\
+          ["node-gyp", "npm:9.3.1"]\
         ],\
         "linkType": "HARD"\
       }]\
