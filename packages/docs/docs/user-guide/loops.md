@@ -36,23 +36,40 @@ On the first iteration, the value of this port will be the value passed into the
 
 ### Example
 
-The following image shows a loop controller with two values flowing through it. The initial values are `A` and `B`:
+**Loop Controller First Iteration**: The following image shows a loop controller with two values flowing through it:
 
-![Loop controller iteration 1](./assets/loop-controller-iteration-1.png)
+!<img width="960" alt="loop_controller_iteration_1_arrows" src="https://github.com/Ironclad/rivet/assets/135409779/13b6d377-324e-4973-b7bc-72fa90631a8b">
 
-The default values of `A` and `B` flow through the loop controller to the first and 2nd outputs on the loop controller. These values flow into two text nodes, one that appends `+ A`, and one that appends `+ B`. These then flow back into the corresponding input ports of the loop controller.
+1. The initial values are `A` and `B`.
+2. The default values of `A` and `B` flow through the loop controller to the first and 2nd outputs on the loop controller.
+3. These values flow into two text nodes, one that appends `+ A`, and one that appends `+ B`.
+4. These then flow back into the corresponding input ports of the loop controller.
 
-On the 2nd iteration, the default values can be ignored, and the flow looks like this:
 
-![Loop controller iteration 2](./assets/loop-controller-iteration-2.png)
+**Loop Controller Subsequent Iterations**: On the 2nd iteration, the default values can be ignored, and the flow looks like this:
 
-The `A + A` and `B + B` values flow to the output ports of the loop controller, and back into the text nodes to append `+ A` and `+ B` again, flowing back into the loop controller again.
+!<img width="946" alt="loop_controller_iteration_2_arrows" src="https://github.com/Ironclad/rivet/assets/135409779/e395b042-d527-40a7-a1a8-c73d9ffeff8b">
+
+
+1. The `A + A` and `B + B` values flow to the output ports of the loop controller.
+2. From the loop controller, the values go back to their respective text nodes to append `+ A` and `+ B` again.
+3. The appended values flow back into the loop controller again.
 
 :::info
 
 This loop will never break. If you were to run this graph, it would error once the loop controller reached its max iteration count.
 
 :::
+
+**Managing Loop Iterations with the "Continue" Input Port**: You can manage loop iterations by adding a Node series that evaluates the loop state, and then provides a "falsey" output once the desired number of iterations have completed.
+
+<img width="1194" alt="loop_controller_continue_until_six" src="https://github.com/Ironclad/rivet/assets/135409779/e66e926a-e570-477b-a2c8-cffecbb0af4f">
+
+In this example, the output from the "B + B" loop is split based on the "+" delimeter, and the result sent to an Array Node, which is used to count the resulting array length. Since we started with an initial value of "B", the Array Length - 1 will correspond to the number of completed loops. Once the array length exceeds the value in the Number Node (here, 6), then the Compare Node will return a falsey value, which stops the loop iterations.
+
+The following image shows the result of running this loop. At the start of the sixth loop cycle, the falsey value input at the Continue Port causes the loop to stop before sending additional values to the "A + A?" and "B + B?" Output Ports. The result of the completed loops is then sent to the Break Output Port.
+
+<img width="752" alt="loop_controller_stopped_at_six" src="https://github.com/Ironclad/rivet/assets/135409779/14dd1750-0d13-45bb-9fcf-93a62cc4b84f">
 
 ## Recipes
 
