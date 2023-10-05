@@ -52,6 +52,28 @@ function sanitizeDataValueForLength(value: DataValue | undefined) {
 
       return value;
     })
+    .with({ type: 'image' }, (value): DataValue => {
+      if (value.value.data instanceof Uint8Array || Array.isArray(value.value.data)) {
+        return value;
+      } else if (Array.isArray(value.value.data)) {
+        return {
+          ...value,
+          value: {
+            ...value.value,
+            data: Uint8Array.from(value.value.data),
+          },
+        };
+      } else {
+        // JSON.stringify converts Uint8Array to an object with numeric keys, so convert it back.
+        return {
+          ...value,
+          value: {
+            ...value.value,
+            data: Uint8Array.from(Object.values(value.value.data)),
+          },
+        };
+      }
+    })
     .otherwise((value): DataValue | undefined => value);
 }
 
