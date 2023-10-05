@@ -184,15 +184,6 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
       ? expectType(inputData['ignores' as PortId], 'string[]')
       : this.chartNode.data.ignores;
 
-    // Can be slow, assume a directory doesn't change during execution
-    // TODO once this is at auto-gpt level changing files, will need to rethink, but good enough
-    // for now
-    const cacheKey = `ReadDirectoryNode-${path}-${recursive}-${includeDirectories}-${filterGlobs.join()}-${relative}-${ignores?.join()}`;
-    const cached = context.executionCache.get(cacheKey);
-    if (cached) {
-      return cached as Outputs;
-    }
-
     try {
       const files = await nativeApi.readdir(path, undefined, {
         recursive,
@@ -206,8 +197,6 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
         ['paths' as PortId]: { type: 'string[]', value: files },
         ['rootPath' as PortId]: { type: 'string', value: path },
       };
-
-      context.executionCache.set(cacheKey, outputs);
 
       return outputs;
     } catch (err) {
