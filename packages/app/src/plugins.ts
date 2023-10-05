@@ -54,6 +54,7 @@ export const pluginInfos: PluginInfo[] = [
     name: 'Anthropic',
     description: dedent`
       Allows you to chat with Anthropic LLM models such as Claude 2 and Claude Instant.
+
       Adds a Chat (Anthropic) node.
     `,
     author: 'Rivet Team',
@@ -66,6 +67,7 @@ export const pluginInfos: PluginInfo[] = [
     name: 'AutoEvals',
     description: dedent`
       Simplified evaluation of LLM responses using the autoevals library.
+
       Adds an Autoevals node with many variants of evaluations.
     `,
     author: 'Braintrust',

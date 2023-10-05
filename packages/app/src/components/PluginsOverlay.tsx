@@ -12,7 +12,7 @@ import { appLocalDataDir, join } from '@tauri-apps/api/path';
 import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-line.svg';
 import { copyToClipboard } from '../utils/copyToClipboard';
 import { useLoadPackagePlugin } from '../hooks/useLoadPackagePlugin';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { pluginsState } from '../state/plugins';
 import useAsyncEffect from 'use-async-effect';
 import { type BuiltInPluginInfo, type PackagePluginInfo, pluginInfos, type PluginInfo } from '../plugins.js';
@@ -23,6 +23,8 @@ import Modal, { ModalTransition, ModalHeader, ModalTitle, ModalBody, ModalFooter
 import clsx from 'clsx';
 import { useMarkdown } from '../hooks/useMarkdown';
 import { ReactComponent as GithubMark } from '../assets/vendor_logos/github-mark-white.svg';
+import { projectPluginsState } from '../state/savedGraphs';
+import { produce } from 'immer';
 
 const styles = css`
   position: fixed;
@@ -141,7 +143,6 @@ const addPluginBody = css`
     .plugin {
       display: grid;
       grid-template-columns: 64px 200px 1fr auto;
-      grid-template-rows: auto auto;
       row-gap: 8px;
       column-gap: 32px;
       padding: 24px 16px;
@@ -228,13 +229,26 @@ export const PluginsOverlay: FC = () => {
 
   const [pluginLogModalOpen, togglePluginLogModal] = useToggle();
   const [addNPMPluginModalOpen, toggleAddNPMPluginModal] = useToggle();
+  const setPluginSpecs = useSetRecoilState(projectPluginsState);
+
+  const addPluginSpec = (spec: PluginLoadSpec) => {
+    setPluginSpecs((specs) =>
+      produce(specs, (draft) => {
+        if (draft.find((s) => s.id === spec.id)) {
+          return;
+        }
+
+        draft.push(spec);
+      }),
+    );
+  };
 
   const addBuiltInPlugin = (info: BuiltInPluginInfo) => {
-    // onAddPlugin({
-    //   id: info.id,
-    //   type: 'built-in',
-    //   name: info.name,
-    // });
+    addPluginSpec({
+      id: info.id,
+      type: 'built-in',
+      name: info.name,
+    });
   };
 
   const addPackagePlugin = async (info: PackagePluginInfo) => {
@@ -252,7 +266,7 @@ export const PluginsOverlay: FC = () => {
       await loadPackagePlugin(spec);
       togglePluginLogModal.setLeft();
       toggleAddNPMPluginModal.setLeft();
-      // onAddPlugin(spec);
+      addPluginSpec(spec);
     } catch (err) {
       setPackageInstallLog((log) => `${log}\nError installing plugin: ${getError(err).message}`);
     }
@@ -263,13 +277,6 @@ export const PluginsOverlay: FC = () => {
       addBuiltInPlugin(info);
     } else if (info.type === 'package') {
       addPackagePlugin(info);
-    }
-  };
-
-  const removePlugin = (info: PluginInfo) => {
-    const matchingPlugin = plugins.find((p) => p.spec.id === info.id);
-    if (matchingPlugin) {
-      // onRemovePlugin(matchingPlugin.spec);
     }
   };
 
@@ -324,7 +331,6 @@ export const PluginsOverlay: FC = () => {
                   plugin={pluginInfo}
                   isInstalled={isPluginInstalledInProject(pluginInfo)}
                   onAddPlugin={addPlugin}
-                  onRemovePlugin={removePlugin}
                 />
               ))}
               {!searchText && (
@@ -369,39 +375,47 @@ const PluginListItem: FC<{
   plugin: PluginInfo;
   isInstalled: boolean;
   onAddPlugin: (plugin: PluginInfo) => void;
-  onRemovePlugin: (plugin: PluginInfo) => void;
 }> = ({ plugin, isInstalled, onAddPlugin }) => {
   const markdownDescription = useMarkdown(plugin.description);
+  const itemRef = useRef<HTMLDivElement>(null);
+
+  // Markdown links open new because tauri
+  useLayoutEffect(() => {
+    itemRef.current?.querySelectorAll('a').forEach((a) => {
+      a.target = '_blank';
+    });
+  }, []);
 
   return (
-    <div className="plugin" key={plugin.id}>
+    <div className="plugin" key={plugin.id} ref={itemRef}>
       <div className={clsx('plugin-icon', { missing: !plugin.logoImage })}>
         {plugin.logoImage && <img src={plugin.logoImage} alt={plugin.name} />}
       </div>
       <div className="plugin-name-author">
         <div className="plugin-name">{plugin.name}</div>
         <div className="plugin-author">By: {plugin.author}</div>
+        {(plugin.github || plugin.website || plugin.documentation) && (
+          <div className="plugin-links">
+            {plugin.github && (
+              <a className="plugin-github" href={plugin.github} target="_blank" rel="noreferrer">
+                <GithubMark viewBox="0 0 100 100" /> GitHub
+              </a>
+            )}
+            {plugin.website && (
+              <a className="plugin-website" href={plugin.website} target="_blank" rel="noreferrer">
+                Website
+              </a>
+            )}
+            {plugin.documentation && (
+              <a className="plugin-docs" href={plugin.documentation} target="_blank" rel="noreferrer">
+                Docs
+              </a>
+            )}
+          </div>
+        )}
       </div>
       <div className="plugin-description" dangerouslySetInnerHTML={markdownDescription}></div>
-      {(plugin.github || plugin.website || plugin.documentation) && (
-        <div className="plugin-links">
-          {plugin.github && (
-            <a className="plugin-github" href={plugin.github} target="_blank" rel="noreferrer">
-              <GithubMark viewBox="0 0 100 100" /> GitHub
-            </a>
-          )}
-          {plugin.website && (
-            <a className="plugin-website" href={plugin.website} target="_blank" rel="noreferrer">
-              Website
-            </a>
-          )}
-          {plugin.documentation && (
-            <a className="plugin-docs" href={plugin.documentation} target="_blank" rel="noreferrer">
-              Docs
-            </a>
-          )}
-        </div>
-      )}
+
       <div className="plugin-actions">
         {isInstalled ? (
           <span className="installed">Installed</span>
