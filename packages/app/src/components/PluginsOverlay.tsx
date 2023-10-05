@@ -12,7 +12,7 @@ import { appLocalDataDir, join } from '@tauri-apps/api/path';
 import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-line.svg';
 import { copyToClipboard } from '../utils/copyToClipboard';
 import { useLoadPackagePlugin } from '../hooks/useLoadPackagePlugin';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { pluginsState } from '../state/plugins';
 import useAsyncEffect from 'use-async-effect';
 import { type BuiltInPluginInfo, type PackagePluginInfo, pluginInfos, type PluginInfo } from '../plugins.js';
@@ -23,6 +23,7 @@ import Modal, { ModalTransition, ModalHeader, ModalTitle, ModalBody, ModalFooter
 import clsx from 'clsx';
 import { useMarkdown } from '../hooks/useMarkdown';
 import { ReactComponent as GithubMark } from '../assets/vendor_logos/github-mark-white.svg';
+import { projectPluginsState } from '../state/savedGraphs';
 
 const styles = css`
   position: fixed;
@@ -219,7 +220,8 @@ export const PluginsOverlay: FC = () => {
   const { loadPackagePlugin, packageInstallLog, setPackageInstallLog } = useLoadPackagePlugin({
     onLog: (msg) => console.log(msg),
   });
-  const plugins = useRecoilValue(pluginsState);
+  const setProjectPlugins = useSetRecoilState(projectPluginsState);
+  const [plugins, setPlugins] = useRecoilState(pluginsState);
   const [searchText, setSearchText] = useState('');
 
   const isPluginInstalledInProject = (plugin: PluginInfo): boolean => {
@@ -229,12 +231,17 @@ export const PluginsOverlay: FC = () => {
   const [pluginLogModalOpen, togglePluginLogModal] = useToggle();
   const [addNPMPluginModalOpen, toggleAddNPMPluginModal] = useToggle();
 
+  const onAddPlugin = (plugin: PluginLoadSpec) => {
+    setPlugins((plugins) => [...plugins, { id: plugin.id, loaded: true, spec: plugin }]);
+    setProjectPlugins((projectPlugins) => [...projectPlugins, plugin]);
+  }
+
   const addBuiltInPlugin = (info: BuiltInPluginInfo) => {
-    // onAddPlugin({
-    //   id: info.id,
-    //   type: 'built-in',
-    //   name: info.name,
-    // });
+    onAddPlugin({
+      id: info.id,
+      type: 'built-in',
+      name: info.name,
+    });
   };
 
   const addPackagePlugin = async (info: PackagePluginInfo) => {
@@ -252,7 +259,7 @@ export const PluginsOverlay: FC = () => {
       await loadPackagePlugin(spec);
       togglePluginLogModal.setLeft();
       toggleAddNPMPluginModal.setLeft();
-      // onAddPlugin(spec);
+      onAddPlugin(spec);
     } catch (err) {
       setPackageInstallLog((log) => `${log}\nError installing plugin: ${getError(err).message}`);
     }
