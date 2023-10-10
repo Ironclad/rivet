@@ -6,18 +6,23 @@ import {
   type NodeOutputDefinition,
 } from '../../model/NodeBase.js';
 import { NodeImpl, type NodeUIData } from '../../model/NodeImpl.js';
-import { type SupportedModels, getTokenCountForMessages } from '../../utils/tokenizer.js';
 import { nanoid } from 'nanoid/non-secure';
-import { type EditorDefinition, type Inputs, type NodeBodySpec, type Outputs } from '../../index.js';
+import {
+  type EditorDefinition,
+  type Inputs,
+  type InternalProcessContext,
+  type NodeBodySpec,
+  type Outputs,
+} from '../../index.js';
 import { type ChatCompletionRequestMessage, openAiModelOptions, openaiModels } from '../../utils/openai.js';
 import { dedent } from 'ts-dedent';
 import { expectType } from '../../utils/expectType.js';
 import { nodeDefinition } from '../NodeDefinition.js';
+import type { TokenizerCallInfo } from '../../integrations/Tokenizer.js';
 
 export type TrimChatMessagesNodeData = {
   maxTokenCount: number;
   removeFromBeginning: boolean;
-  model: SupportedModels;
 };
 
 export type TrimChatMessagesNode = ChartNode<'trimChatMessages', TrimChatMessagesNodeData>;
@@ -36,7 +41,6 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
       data: {
         maxTokenCount: 4096,
         removeFromBeginning: true,
-        model: 'gpt-3.5-turbo',
       },
     };
 
@@ -75,12 +79,6 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
         label: 'Remove From Beginning',
         dataKey: 'removeFromBeginning',
       },
-      {
-        type: 'dropdown',
-        label: 'Model',
-        dataKey: 'model',
-        options: openAiModelOptions,
-      },
     ];
   }
 
@@ -104,27 +102,18 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
     };
   }
 
-  async process(inputs: Inputs): Promise<Outputs> {
+  async process(inputs: Inputs, context: InternalProcessContext<TrimChatMessagesNode>): Promise<Outputs> {
     const input = expectType(inputs['input' as PortId], 'chat-message[]');
     const maxTokenCount = this.chartNode.data.maxTokenCount;
     const removeFromBeginning = this.chartNode.data.removeFromBeginning;
 
-    const model = 'gpt-3.5-turbo' as SupportedModels; // You can change this to a configurable model if needed
-    const tiktokenModel = openaiModels[model].tiktokenModel;
-
     const trimmedMessages = [...input];
 
-    let tokenCount = getTokenCountForMessages(
-      trimmedMessages.map(
-        (message): ChatCompletionRequestMessage => ({
-          content: message.message,
-          role: message.type,
-          name: message.name,
-          function_call: message.function_call,
-        }),
-      ),
-      tiktokenModel,
-    );
+    const tokenizerInfo: TokenizerCallInfo = {
+      node: this.chartNode,
+    };
+
+    let tokenCount = context.tokenizer.getTokenCountForMessages(trimmedMessages, tokenizerInfo);
 
     while (tokenCount > maxTokenCount) {
       if (removeFromBeginning) {
@@ -132,17 +121,7 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
       } else {
         trimmedMessages.pop();
       }
-      tokenCount = getTokenCountForMessages(
-        trimmedMessages.map(
-          (message): ChatCompletionRequestMessage => ({
-            content: message.message,
-            role: message.type,
-            function_call: message.function_call,
-            name: message.name,
-          }),
-        ),
-        tiktokenModel,
-      );
+      tokenCount = context.tokenizer.getTokenCountForMessages(trimmedMessages, tokenizerInfo);
     }
 
     return {

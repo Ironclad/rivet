@@ -34,6 +34,7 @@ import {
   getError,
   isArrayDataValue,
   openai,
+  type ChartNode,
 } from '@ironclad/rivet-core';
 import TextField from '@atlaskit/textfield';
 import { Field } from '@atlaskit/form';
@@ -55,6 +56,7 @@ import { datasetProvider } from '../utils/globals';
 import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { GraphSelector } from './editors/GraphSelectorEditor';
+import { GptTokenizerTokenizer } from '../../../core/src/integrations/GptTokenizerTokenizer';
 
 const styles = css`
   position: fixed;
@@ -992,6 +994,8 @@ async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
       },
       {
         executor: 'browser',
+        node: {} as ChartNode,
+        tokenizer: new GptTokenizerTokenizer(),
         contextValues: {},
         createSubProcessor: undefined!,
         settings: await fillMissingSettingsFromEnvironmentVariables(settings, plugins),

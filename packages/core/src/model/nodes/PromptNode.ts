@@ -8,11 +8,17 @@ import {
 import { nanoid } from 'nanoid/non-secure';
 import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nodeDefinition } from '../NodeDefinition.js';
-import { type ChatMessage, type EditorDefinition, type Inputs, type NodeBodySpec, type Outputs } from '../../index.js';
+import {
+  type ChatMessage,
+  type EditorDefinition,
+  type Inputs,
+  type InternalProcessContext,
+  type NodeBodySpec,
+  type Outputs,
+} from '../../index.js';
 import { mapValues } from 'lodash-es';
 import { dedent } from 'ts-dedent';
 import { coerceType } from '../../utils/coerceType.js';
-import { getTokenCountForMessages } from '../../utils/tokenizer.js';
 
 export type PromptNode = ChartNode<'prompt', PromptNodeData>;
 
@@ -194,7 +200,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
     });
   }
 
-  async process(inputs: Inputs): Promise<Outputs> {
+  async process(inputs: Inputs, context: InternalProcessContext<PromptNode>): Promise<Outputs> {
     const inputMap = mapValues(inputs, (input) => coerceType(input, 'string')) as Record<PortId, string>;
 
     const outputValue = this.interpolate(this.chartNode.data.promptText, inputMap);
@@ -214,17 +220,9 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
     };
 
     if (this.chartNode.data.computeTokenCount) {
-      const tokenCount = getTokenCountForMessages(
-        [
-          {
-            name: message.name,
-            content: message.message,
-            function_call: message.function_call,
-            role: message.type,
-          },
-        ],
-        'gpt-4',
-      );
+      const tokenCount = context.tokenizer.getTokenCountForMessages([message], {
+        node: this.chartNode,
+      });
       outputs['tokenCount' as PortId] = {
         type: 'number',
         value: tokenCount,

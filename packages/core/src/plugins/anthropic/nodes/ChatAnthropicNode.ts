@@ -26,11 +26,11 @@ import retry from 'p-retry';
 import { match } from 'ts-pattern';
 import { coerceType, coerceTypeOptional } from '../../../utils/coerceType.js';
 import { expectTypeOptional } from '../../../utils/expectType.js';
-import { getTokenCountForString } from '../../../utils/tokenizer.js';
 import { addWarning } from '../../../utils/outputs.js';
 import { getError } from '../../../utils/errors.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
 import { getScalarTypeOf, isArrayDataValue } from '../../../model/DataValue.js';
+import type { TokenizerCallInfo } from '../../../integrations/Tokenizer.js';
 
 export type ChatAnthropicNode = ChartNode<'chatAnthropic', ChatAnthropicNodeData>;
 
@@ -305,7 +305,13 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
 
     let { maxTokens } = data;
 
-    const tokenCount = getTokenCountForString(prompt, anthropicModels[model].tiktokenModel);
+    const tokenizerInfo: TokenizerCallInfo = {
+      node: context.node,
+      model,
+      endpoint: undefined,
+    };
+
+    const tokenCount = context.tokenizer.getTokenCountForString(prompt, tokenizerInfo);
 
     if (tokenCount >= anthropicModels[model].maxTokens) {
       throw new Error(
@@ -377,13 +383,9 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
             throw new Error('No response from Anthropic');
           }
 
-          const requestTokenCount = getTokenCountForString(prompt, anthropicModels[model].tiktokenModel);
-          output['requestTokens' as PortId] = { type: 'number', value: requestTokenCount };
+          output['requestTokens' as PortId] = { type: 'number', value: tokenCount };
 
-          const responseTokenCount = getTokenCountForString(
-            responseParts.join(''),
-            anthropicModels[model].tiktokenModel,
-          );
+          const responseTokenCount = context.tokenizer.getTokenCountForString(responseParts.join(''), tokenizerInfo);
           output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
 
           // TODO

@@ -3116,13 +3116,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dqbd/tiktoken@npm:^1.0.7":
-  version: 1.0.7
-  resolution: "@dqbd/tiktoken@npm:1.0.7"
-  checksum: bbe3845aa66983d5bbe0c2100dc836b7410af3593aff0d2c99ff3f9c0fa1e8bb1e95a4c0c4b8545231d131d19cf43daedfadd99e5f77e2fade2643079b9abaed
-  languageName: node
-  linkType: hard
-
 "@emotion/babel-plugin@npm:^11.11.0":
   version: 11.11.0
   resolution: "@emotion/babel-plugin@npm:11.11.0"
@@ -4118,7 +4111,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ironclad/rivet-app-executor@workspace:packages/app-executor"
   dependencies:
-    "@dqbd/tiktoken": "npm:^1.0.7"
     "@ironclad/rivet-core": "workspace:^"
     "@ironclad/rivet-node": "workspace:^"
     "@swc/core": "npm:^1.3.71"
@@ -4169,7 +4161,6 @@ __metadata:
     "@atlaskit/toggle": "npm:^12.6.9"
     "@atlaskit/tokens": "npm:^1.13.1"
     "@dnd-kit/core": "npm:^6.0.8"
-    "@dqbd/tiktoken": "npm:^1.0.7"
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
     "@floating-ui/react": "npm:^0.25.0"
@@ -4258,7 +4249,6 @@ __metadata:
     vite-plugin-monaco-editor: "npm:^1.1.0"
     vite-plugin-svgr: "npm:^3.2.0"
     vite-plugin-top-level-await: "npm:^1.3.1"
-    vite-plugin-wasm: "npm:^3.2.2"
     vite-tsconfig-paths: "npm:^4.2.0"
     ws: "npm:^8.13.0"
     yaml: "npm:^2.3.1"
@@ -4270,7 +4260,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ironclad/rivet-core@workspace:packages/core"
   dependencies:
-    "@dqbd/tiktoken": "npm:^1.0.7"
     "@gentrace/core": "npm:^2.1.15"
     "@huggingface/inference": "npm:^2.6.1"
     "@swc/core": "npm:^1.3.71"
@@ -4292,6 +4281,7 @@ __metadata:
     eslint-plugin-import: "npm:eslint-plugin-i@latest"
     eslint-plugin-n: "npm:^16.0.1"
     eslint-plugin-promise: "npm:^6.1.1"
+    gpt-tokenizer: "npm:^2.1.2"
     jsonpath-plus: "npm:^7.2.0"
     lodash: "npm:^4.17.21"
     lodash-es: "npm:^4.17.21"
@@ -10995,6 +10985,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"gpt-tokenizer@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "gpt-tokenizer@npm:2.1.2"
+  dependencies:
+    rfc4648: "npm:^1.5.2"
+  checksum: fdadca8482deb6659eafaaf6c0d19652f64fcf75ded08a30b93b3a03a4a810f3ee6f5c22ca18b2d49590c03c8dea5c0742168c67d6c804899cf227ae4aaca0be
+  languageName: node
+  linkType: hard
+
 "graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6, graceful-fs@npm:^4.2.9":
   version: 4.2.11
   resolution: "graceful-fs@npm:4.2.11"
@@ -15609,6 +15608,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rfc4648@npm:^1.5.2":
+  version: 1.5.2
+  resolution: "rfc4648@npm:1.5.2"
+  checksum: 96ef88d246ea65f1b268c388801b2c7fc5d7d0d75875e949bfb692476fc4c94b6edf50606b245ddc1a25b2e0ef2c83261b56267e47f29401ba91da24cb9ca1f9
+  languageName: node
+  linkType: hard
+
 "rimraf@npm:^3.0.2":
   version: 3.0.2
   resolution: "rimraf@npm:3.0.2"
@@ -17561,15 +17567,6 @@ __metadata:
   peerDependencies:
     vite: ">=2.8"
   checksum: c94c01769ed492c2ed2f26ca69cfbac075405c8c1b924cd57122eb88e5445feb678707dcf3ac2dcc6b68b4d85d038c9e78d8d6057f802d5fdf8cbeb888f40951
-  languageName: node
-  linkType: hard
-
-"vite-plugin-wasm@npm:^3.2.2":
-  version: 3.2.2
-  resolution: "vite-plugin-wasm@npm:3.2.2"
-  peerDependencies:
-    vite: ^2 || ^3 || ^4
-  checksum: 9d30d73c5ca6958d044a13cc5b8139a0a842501d2dd59fbb7efda388bc45705d94611f1256e192c085f091e0bf9616ff7dbf0f77e350113e3d2d639a12f58d97
   languageName: node
   linkType: hard
 

@@ -30,14 +30,8 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "@dqbd/tiktoken": "^1.0.7",
     "ts-pattern": "^5.0.5",
     "yargs": "^17.7.2"
-  },
-  "pkg": {
-    "assets": [
-      "bin/tiktoken_bg.wasm"
-    ]
   },
   "volta": {
     "node": "20.4.0"

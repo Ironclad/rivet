@@ -2,12 +2,7 @@ import { cp } from 'node:fs/promises';
 import { execaCommand } from 'execa';
 import chalk from 'chalk';
 import * as esbuild from 'esbuild';
-import { copy } from 'esbuild-plugin-copy';
-import { dirname, join, resolve } from 'node:path';
-
-import { createRequire } from 'node:module';
-
-const require = createRequire(import.meta.url);
+import { resolve } from 'node:path';
 
 const resolveRivet: esbuild.Plugin = {
   name: 'resolve-rivet',
@@ -31,17 +26,7 @@ esbuild.build({
   format: 'cjs',
   target: 'node16',
   external: [],
-  plugins: [
-    resolveRivet,
-    copy({
-      assets: [
-        {
-          from: join(dirname(require.resolve('@dqbd/tiktoken')), 'tiktoken_bg.wasm'),
-          to: './tiktoken_bg.wasm',
-        },
-      ],
-    }),
-  ],
+  plugins: [resolveRivet],
 });
 
 console.log(`Compiling to native binary for ${chalk.cyan(process.platform)}...`);

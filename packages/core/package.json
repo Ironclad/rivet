@@ -43,13 +43,13 @@
     "test": "tsx --test test/**/*.ts"
   },
   "dependencies": {
-    "@dqbd/tiktoken": "^1.0.7",
     "@gentrace/core": "^2.1.15",
     "@huggingface/inference": "^2.6.1",
     "autoevals": "^0.0.16",
     "crypto-js": "^4.1.1",
     "emittery": "^1.0.1",
     "emittery-0-13": "npm:emittery@^0.13.1",
+    "gpt-tokenizer": "^2.1.2",
     "jsonpath-plus": "^7.2.0",
     "lodash-es": "^4.17.21",
     "minimatch": "^9.0.3",

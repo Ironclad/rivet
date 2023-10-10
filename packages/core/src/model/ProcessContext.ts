@@ -10,12 +10,19 @@ import {
   type GraphProcessor,
   type ScalarOrArrayDataValue,
   type DatasetProvider,
+  type ChartNode,
 } from '../index.js';
+import type { Tokenizer } from '../integrations/Tokenizer.js';
 
 export type ProcessContext = {
   settings: Settings;
   nativeApi?: NativeApi;
+
+  /** Sets the dataset provider to be used for all dataset node calls. */
   datasetProvider?: DatasetProvider;
+
+  /** Sets the tokenizer that will be used for all nodes. If unset, the default GptTokenizerTokenizer will be used. */
+  tokenizer?: Tokenizer;
 
   /**
    * If implemented, chat nodes will first call this to resolve their configured endpoint to a final endpoint.
@@ -34,7 +41,7 @@ export type ChatNodeEndpointInfo = {
 
 export type ProcessId = Opaque<string, 'ProcessId'>;
 
-export type InternalProcessContext = ProcessContext & {
+export type InternalProcessContext<T extends ChartNode = ChartNode> = ProcessContext & {
   /** The executor that is running the current processor. */
   executor: 'nodejs' | 'browser';
 
@@ -55,6 +62,12 @@ export type InternalProcessContext = ProcessContext & {
 
   /** Outputs from the graph. A GraphOutputNode will set these. */
   graphOutputs: Record<string, DataValue>;
+
+  /** The tokenizer to use to tokenize all strings.s */
+  tokenizer: Tokenizer;
+
+  /** The current node being executed. */
+  node: T;
 
   /** Raises a user event that can be listened for on the GraphProcessor. */
   raiseEvent: (eventName: string, data: DataValue | undefined) => void;

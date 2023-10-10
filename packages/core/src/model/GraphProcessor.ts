@@ -37,8 +37,8 @@ import { coerceTypeOptional } from '../utils/coerceType.js';
 import { globalRivetNodeRegistry } from './Nodes.js';
 import type { BuiltInNodeType, BuiltInNodes } from './Nodes.js';
 import type { NodeRegistration } from './NodeRegistration.js';
-import type { StringPluginConfigurationSpec } from './RivetPlugin.js';
 import { getPluginConfig } from '../utils/index.js';
+import { GptTokenizerTokenizer } from '../integrations/GptTokenizerTokenizer.js';
 
 // CJS compatibility, gets default.default for whatever reason
 let PQueue = PQueueImport;
@@ -1318,6 +1318,8 @@ export class GraphProcessor {
 
     const context: InternalProcessContext = {
       ...this.#context,
+      node,
+      tokenizer: this.#context.tokenizer ?? new GptTokenizerTokenizer(),
       executor: this.executor ?? 'nodejs',
       project: this.#project,
       executionCache: this.#executionCache,
