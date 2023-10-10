@@ -1,4 +1,11 @@
-import { type NodeId, type ChartNode, type BuiltInNodeType, type PortId } from '@ironclad/rivet-core';
+import {
+  type NodeId,
+  type ChartNode,
+  type BuiltInNodeType,
+  type PortId,
+  type GraphId,
+  type NodeGraph,
+} from '@ironclad/rivet-core';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { lastRunDataByNodeState } from '../state/dataFlow';
@@ -16,7 +23,8 @@ export function useTotalRunCost() {
       return {};
     }
 
-    const allNodes = entries(project.graphs).flatMap(([graphId, projectGraph]) => {
+    const combinedGraphs: Record<GraphId, NodeGraph> = { ...project.graphs, [graph.metadata!.id!]: graph };
+    const allNodes = entries(combinedGraphs).flatMap(([graphId, projectGraph]) => {
       if (projectGraph.metadata!.id! === graph.metadata!.id!) {
         return graph.nodes.map((node) => {
           return { graphId, nodeId: node.id, node };
