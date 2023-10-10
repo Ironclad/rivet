@@ -7,7 +7,12 @@ const aliasModule = (moduleFrom: string, moduleTo: string): esbuild.Plugin => ({
       const resolved = await build.resolve(moduleTo, {
         importer: args.importer,
         kind: 'import-statement',
+        resolveDir: args.resolveDir,
       });
+
+      if (resolved.errors.length > 0) {
+        return { errors: resolved.errors };
+      }
 
       return { path: resolved.path, namespace: 'alias-module', external: true };
     });
