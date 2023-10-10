@@ -9,16 +9,15 @@ import {
 } from '@ironclad/rivet-core';
 import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
 import { type ContextMenuContext } from '../components/ContextMenu';
-import { clipboardState } from '../state/clipboard';
-import { editingNodeState, graphNavigationStackState, selectedNodesState } from '../state/graphBuilder';
+import { editingNodeState, selectedNodesState } from '../state/graphBuilder';
 import { projectState } from '../state/savedGraphs';
-import { isNotNull } from '../utils/genericUtilFunctions';
 import { useCanvasPositioning } from './useCanvasPositioning';
 import { useFactorIntoSubgraph } from './useFactorIntoSubgraph';
 import { useGraphExecutor } from './useGraphExecutor';
 import { useLoadGraph } from './useLoadGraph';
 import { usePasteNodes } from './usePasteNodes';
 import { connectionsState, nodesByIdState, nodesState } from '../state/graph';
+import { useCopyNodes } from './useCopyNodes';
 
 export function useGraphBuilderContextMenuHandler() {
   const [nodes, setNodes] = useRecoilState(nodesState);
@@ -26,10 +25,9 @@ export function useGraphBuilderContextMenuHandler() {
   const { clientToCanvasPosition } = useCanvasPositioning();
   const loadGraph = useLoadGraph();
   const project = useRecoilValue(projectState);
-  const [graphNavigationStack, setGraphNavigationStack] = useRecoilState(graphNavigationStackState);
   const { tryRunGraph } = useGraphExecutor();
-  const [clipboard, setClipboard] = useRecoilState(clipboardState);
   const pasteNodes = usePasteNodes();
+  const copyNodes = useCopyNodes();
   const factorIntoSubgraph = useFactorIntoSubgraph();
   const setEditingNodeId = useSetRecoilState(editingNodeState);
   const [selectedNodeIds, setSelectedNodeIds] = useRecoilState(selectedNodesState);
@@ -153,17 +151,7 @@ export function useGraphBuilderContextMenuHandler() {
         })
         .with('node-copy', () => {
           const { nodeId } = context.data as { nodeId: NodeId };
-          const nodeIds = selectedNodeIds.length > 0 ? [...new Set([...selectedNodeIds, nodeId])] : [nodeId];
-
-          const copiedConnections = connections.filter(
-            (c) => nodeIds.includes(c.inputNodeId) && nodeIds.includes(c.outputNodeId),
-          );
-
-          setClipboard({
-            type: 'nodes',
-            nodes: nodeIds.map((id) => nodesById[id]).filter(isNotNull),
-            connections: copiedConnections,
-          });
+          copyNodes(nodeId);
         })
         .otherwise(() => {
           console.log('Unknown menu item selected', menuItemId);

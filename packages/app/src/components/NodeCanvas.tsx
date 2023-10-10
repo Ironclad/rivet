@@ -2,7 +2,7 @@ import { DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
 import { DraggableNode } from './DraggableNode.js';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles.js';
-import { type FC, useMemo, useRef, useState } from 'react';
+import { type FC, useMemo, useRef, useState, useEffect } from 'react';
 import { ContextMenu, type ContextMenuContext } from './ContextMenu.js';
 import { CSSTransition } from 'react-transition-group';
 import { WireLayer } from './WireLayer.js';
@@ -22,7 +22,7 @@ import {
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { VisualNode } from './VisualNode.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
-import { useThrottleFn } from 'ahooks';
+import { useLatest, useThrottleFn } from 'ahooks';
 import { produce } from 'immer';
 import { graphMetadataState } from '../state/graph.js';
 import { useViewportBounds } from '../hooks/useViewportBounds.js';
@@ -30,6 +30,7 @@ import { useGlobalHotkey } from '../hooks/useGlobalHotkey.js';
 import { useWireDragScrolling } from '../hooks/useWireDragScrolling';
 import { useMergeRefs } from '@floating-ui/react';
 import { useNodePortPositions } from '../hooks/useNodePortPositions';
+import { useCopyNodesHotkeys } from '../hooks/useCopyNodesHotkeys';
 
 const styles = css`
   width: 100vw;
@@ -466,6 +467,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   // Idk, before we were able to unmount the context menu, but safari be weird,
   // so we move it off screen instead
   const [contextMenuDisabled, setContextMenuDisabled] = useState(true);
+
+  useCopyNodesHotkeys();
 
   return (
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
