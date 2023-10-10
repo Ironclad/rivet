@@ -190,7 +190,9 @@ export function useLoadPackagePlugin(options: { onLog?: (message: string) => voi
     const b64Contents = btoa(mainContents);
 
     try {
-      const pluginInitializer = (await import(`data:application/javascript;base64,${b64Contents}`)) as {
+      const pluginInitializer = (await import(
+        /* @vite-ignore */ `data:application/javascript;base64,${b64Contents}`
+      )) as {
         default: Rivet.RivetPluginInitializer;
       };
 

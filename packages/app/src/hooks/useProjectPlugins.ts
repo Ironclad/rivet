@@ -35,7 +35,8 @@ export function useProjectPlugins() {
             throw new Error(`Unknown built-in plugin ${name}.`);
           })
           .with({ type: 'uri' }, async (spec) => {
-            const plugin = ((await import(spec.uri)) as { default: Rivet.RivetPluginInitializer }).default;
+            const plugin = ((await import(/* @vite-ignore */ spec.uri)) as { default: Rivet.RivetPluginInitializer })
+              .default;
 
             if (typeof plugin !== 'function') {
               throw new Error(`Plugin ${spec.id} is not a function`);
