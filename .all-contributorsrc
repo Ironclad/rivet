@@ -267,6 +267,15 @@
       "contributions": [
         "maintenance"
       ]
+    },
+    {
+      "login": "kojikeneda",
+      "name": "kojikeneda",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2552616?v=4",
+      "profile": "https://github.com/kojikeneda",
+      "contributions": [
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
