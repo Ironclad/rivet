@@ -145,7 +145,7 @@ export type KeyValuePairEditorDefinition<T extends ChartNode> = SharedEditorDefi
 export type StringListEditorDefinition<T extends ChartNode> = SharedEditorDefinitionProps<T> & {
   type: 'stringList';
 
-  dataKey: DataOfType<T, string[]>;
+  dataKey: DataOfType<T, string[] | string>;
   useInputToggleDataKey?: DataOfType<T, boolean>;
 
   placeholder?: string;

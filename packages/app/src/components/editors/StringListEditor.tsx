@@ -43,23 +43,50 @@ type StringListEditorProps = SharedEditorProps & {
 
 export const StringListEditor: FC<StringListEditorProps> = ({ node, isReadonly, isDisabled, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
-  const stringList = data[editor.dataKey] as string[] | undefined;
+  const stringListValue = data[editor.dataKey] as string[] | string | undefined;
+  const stringList = !stringListValue ? [] : Array.isArray(stringListValue) ? stringListValue : [stringListValue];
+
   const [items, setItems] = useState<string[]>(stringList || []);
 
   const handleAddItem = () => {
-    setItems([...items, '']);
+    const newItems = [...items, ''];
+    setItems(newItems);
+
+    onChange({
+      ...node,
+      data: {
+        ...data,
+        [editor.dataKey]: newItems,
+      },
+    });
   };
 
   const handleDeleteItem = (index: number) => {
     const newItems = [...items];
     newItems.splice(index, 1);
     setItems(newItems);
+
+    onChange({
+      ...node,
+      data: {
+        ...data,
+        [editor.dataKey]: newItems,
+      },
+    });
   };
 
   const handleItemChange = (index: number, value: string) => {
     const newItems = [...items];
     newItems[index] = value;
     setItems(newItems);
+
+    onChange({
+      ...node,
+      data: {
+        ...data,
+        [editor.dataKey]: newItems,
+      },
+    });
   };
 
   return (
