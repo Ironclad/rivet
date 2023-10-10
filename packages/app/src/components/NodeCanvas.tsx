@@ -31,6 +31,7 @@ import { useWireDragScrolling } from '../hooks/useWireDragScrolling';
 import { useMergeRefs } from '@floating-ui/react';
 import { useNodePortPositions } from '../hooks/useNodePortPositions';
 import { useCopyNodesHotkeys } from '../hooks/useCopyNodesHotkeys';
+import { useCanvasHotkeys } from '../hooks/useCanvasHotkeys';
 
 const styles = css`
   width: 100vw;
@@ -469,6 +470,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const [contextMenuDisabled, setContextMenuDisabled] = useState(true);
 
   useCopyNodesHotkeys();
+  useCanvasHotkeys();
 
   return (
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
