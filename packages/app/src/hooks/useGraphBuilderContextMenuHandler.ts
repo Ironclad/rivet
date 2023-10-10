@@ -18,6 +18,7 @@ import { useLoadGraph } from './useLoadGraph';
 import { usePasteNodes } from './usePasteNodes';
 import { connectionsState, nodesByIdState, nodesState } from '../state/graph';
 import { useCopyNodes } from './useCopyNodes';
+import { useDuplicateNode } from './useDuplicateNode';
 
 export function useGraphBuilderContextMenuHandler() {
   const [nodes, setNodes] = useRecoilState(nodesState);
@@ -28,6 +29,7 @@ export function useGraphBuilderContextMenuHandler() {
   const { tryRunGraph } = useGraphExecutor();
   const pasteNodes = usePasteNodes();
   const copyNodes = useCopyNodes();
+  const duplicateNode = useDuplicateNode();
   const factorIntoSubgraph = useFactorIntoSubgraph();
   const setEditingNodeId = useSetRecoilState(editingNodeState);
   const [selectedNodeIds, setSelectedNodeIds] = useRecoilState(selectedNodesState);
@@ -89,32 +91,7 @@ export function useGraphBuilderContextMenuHandler() {
         })
         .with('node-duplicate', () => {
           const { nodeId } = context.data as { nodeId: NodeId };
-          const node = nodesById[nodeId];
-
-          if (!node) {
-            return;
-          }
-
-          const newNode = globalRivetNodeRegistry.createDynamic(node.type);
-          newNode.data = { ...(node.data as object) };
-          newNode.visualData = {
-            ...node.visualData,
-            x: node.visualData.x,
-            y: node.visualData.y + 200,
-          };
-          newNode.title = node.title;
-          newNode.description = node.description;
-          newNode.isSplitRun = node.isSplitRun;
-          newNode.splitRunMax = node.splitRunMax;
-          nodesChanged?.([...nodes, newNode]);
-
-          // Copy the connections to the input ports
-          const oldNodeConnections = connections.filter((c) => c.inputNodeId === nodeId);
-          const newNodeConnections = oldNodeConnections.map((c) => ({
-            ...c,
-            inputNodeId: newNode.id,
-          }));
-          setConnections([...connections, ...newNodeConnections]);
+          duplicateNode(nodeId);
         })
         .with('nodes-factor-into-subgraph', () => {
           factorIntoSubgraph();
