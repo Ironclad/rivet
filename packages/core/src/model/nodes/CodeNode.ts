@@ -17,8 +17,8 @@ export type CodeNode = ChartNode<'code', CodeNodeData>;
 
 export type CodeNodeData = {
   code: string;
-  inputNames: string;
-  outputNames: string;
+  inputNames: string | string[];
+  outputNames: string | string[];
 };
 
 export class CodeNodeImpl extends NodeImpl<CodeNode> {
@@ -32,11 +32,13 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
         y: 0,
       },
       data: {
-        code: dedent`// This is a code node, you can write and JS in here and it will be executed.
-        // Inputs are accessible via an object \`inputs\` and data is typed (i.e. inputs.foo.type, inputs.foo.value)
-        // Return an object with named outputs that match the output names specified in the node's config.
-        // Output values must by typed as well (e.g. { bar: { type: 'string', value: 'bar' } }
-        return { output: inputs.input };`,
+        code: dedent`
+          // This is a code node, you can write and JS in here and it will be executed.
+          // Inputs are accessible via an object \`inputs\` and data is typed (i.e. inputs.foo.type, inputs.foo.value)
+          // Return an object with named outputs that match the output names specified in the node's config.
+          // Output values must by typed as well (e.g. { bar: { type: 'string', value: 'bar' } }
+          return { output: inputs.input };
+        `,
         inputNames: 'input',
         outputNames: 'output',
       },
@@ -46,7 +48,13 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
   }
 
   getInputDefinitions(): NodeInputDefinition[] {
-    return this.chartNode.data.inputNames.split(',').map((inputName) => {
+    const inputNames = this.data.inputNames
+      ? Array.isArray(this.data.inputNames)
+        ? this.data.inputNames
+        : [this.data.inputNames]
+      : [];
+
+    return inputNames.map((inputName) => {
       return {
         type: 'string',
         id: inputName.trim() as PortId,
@@ -58,7 +66,13 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
   }
 
   getOutputDefinitions(): NodeOutputDefinition[] {
-    return this.chartNode.data.outputNames.split(',').map((outputName) => {
+    const outputNames = this.data.outputNames
+      ? Array.isArray(this.data.outputNames)
+        ? this.data.outputNames
+        : [this.data.outputNames]
+      : [];
+
+    return outputNames.map((outputName) => {
       return {
         id: outputName.trim() as PortId,
         title: outputName.trim(),
@@ -74,6 +88,16 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
         label: 'Code',
         dataKey: 'code',
         language: 'javascript',
+      },
+      {
+        type: 'stringList',
+        label: 'Inputs',
+        dataKey: 'inputNames',
+      },
+      {
+        type: 'stringList',
+        label: 'Outputs',
+        dataKey: 'outputNames',
       },
     ];
   }
