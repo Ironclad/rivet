@@ -1,5 +1,124 @@
 ---
-title: 'Context'
+id: context
+title: Context Node
+sidebar_label: Context
 ---
 
-# Context Node
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+![Context Node Screenshot](./assets/context-node.png)
+
+## Overview
+
+The "Context" in Rivet is a set of shared inputs that are accessible in any graph, no matter if they are the entry-point graph, or a subgraph called by another graph. The Context node is used to access these inputs.
+
+The Context Node allows you to access these values in your graph. It is useful for "global values" that every graph can access, without having to pipe the values in as graph inputs. Use the Context Node and `contextValues` to pass in "global context" to your projects, such as the current date.
+
+Context can currently only be set when Rivet is embedded in a host application. It is passed in using the `contextValues` parameter to `runGraphInFile` or `createProcessor`:
+
+```ts
+import * as Rivet from '@ironclad/rivet-node';
+
+const contextValues = {
+  stringContext: 'str',
+  numberContext: 1,
+  booleanContext: true,
+};
+
+const processor = Rivet.createProcessor({
+  ...etc,
+  contextValues,
+});
+```
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+The context node has no inputs besides optional ones from the Editor Settings page.
+
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title        | Data Type              | Description                     | Notes                                                                                                                                                                                                                |
+| ------------ | ---------------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (Context ID) | (Configured in editor) | The value of the context value. | The ID and data type are configured in the Editor Settings page of the Context node. If the context value is not set, then the default value configured in the editor settings, or via the input port, will be used. |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting       | Description                                                                                                                         | Default Value | Use Input Toggle | Input Data Type                                                                                    |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------- | -------------------------------------------------------------------------------------------------- |
+| ID            | The ID of the context that you are pulling in. Must match exactly to the ID passed in to `contextValues` in the parent application. | (required)    | No               | N/A                                                                                                |
+| Data Type     | The data type of the value passed in to `contextValues`. The value will be coerced to this data type if it does not match.          | String        | No               | N/A                                                                                                |
+| Default Value | The default value, if the context value is not set.                                                                                 | (empty)       | Yes              | Same data type as the configured `Data Type` above. Will be coerced into the data type configured. |
+
+</TabItem>
+
+</Tabs>
+
+## Example 1: Access a string context value
+
+In your parent application, pass a string value into `contextValues`:
+
+```ts
+import * as Rivet from '@ironclad/rivet-node';
+
+const contextValues = {
+  stringContext: 'str',
+};
+
+const processor = Rivet.createProcessor({
+  ...etc,
+  contextValues,
+});
+```
+
+In your graph, add a Context node. Set the `ID` to `stringContext`, and the `Data Type` to `String`. Leave the `Default Value` empty.
+
+Run your graph while the [Remote Debugger](../user-guide/remote-debugging.md) is attached. The output of the Context node should be `str`.
+
+## Error Handling
+
+The context node cannot error in normal circumstances. If the context is not set via `contextValues`, then the default value will be used.
+
+## FAQ
+
+**Q: Can I use the Context node to pass in the current date and time?**
+
+A: Yes, you can pass in the current date as a context value:
+
+```ts
+const processor = Rivet.createProcessor({
+  ...etc,
+  contextValues: {
+    currentDate: new Date(),
+  },
+});
+```
+
+Then, in your graph, add a Context node. Set the `ID` to `currentDate`, and the `Data Type` to `Date`. Leave the `Default Value` empty.
+
+**Q: Can I use the Context node to pass in a function?**
+
+A: No, you cannot pass in a function as a context value. You can only pass in [Data Values](../user-guide/data-types.md)
+
+**Q: Can I use the Context node to pass in a custom data type?**
+
+A: No, you cannot pass in a custom data type as a context value. You can only pass in [Data Values](../user-guide/data-types.md)
+
+## See Also

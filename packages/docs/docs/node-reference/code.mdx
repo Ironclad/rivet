@@ -185,6 +185,10 @@ A: No, the `console` variable is not available in a code node.
 
 A: Yes. If you return the special value `{ type: 'control-flow-excluded', value: undefined }` from the Code node, then the nodes after the Code node will be excluded from the graph's execution. This is useful if you want to conditionally execute a portion of the graph.
 
+**Q: Is there any timeout? What if I create an infinite loop?**
+
+A: There is no timeout. If you create an infinite loop, then the graph will hang indefinitely.
+
 ## See Also
 
 - [External Call Node](./external-call.md)
