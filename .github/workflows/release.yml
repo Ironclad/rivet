@@ -36,6 +36,8 @@ jobs:
         run: yarn --immutable
       - name: Build Rivet
         run: yarn build
+        env:
+          NODE_OPTIONS: --max-old-space-size=6000
       - name: Build Tauri App
         uses: tauri-apps/tauri-action@v0
         with:
