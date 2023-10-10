@@ -6980,6 +6980,7 @@ const RAW_RUNTIME_STATE =
           ["recoil-persist", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.1.0"],\
           ["retry", "npm:0.13.1"],\
           ["rollup", "npm:3.27.0"],\
+          ["rollup-plugin-visualizer", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.9.2"],\
           ["safe-stable-stringify", "npm:2.4.3"],\
           ["semver", "npm:7.5.4"],\
           ["ts-dedent", "npm:2.2.0"],\
@@ -22154,6 +22155,32 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["rollup-plugin-visualizer", [\
+      ["npm:5.9.2", {\
+        "packageLocation": "./.yarn/cache/rollup-plugin-visualizer-npm-5.9.2-bac6a0a56c-4aab6a29de.zip/node_modules/rollup-plugin-visualizer/",\
+        "packageDependencies": [\
+          ["rollup-plugin-visualizer", "npm:5.9.2"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.9.2", {\
+        "packageLocation": "./.yarn/__virtual__/rollup-plugin-visualizer-virtual-ceeb49067d/0/cache/rollup-plugin-visualizer-npm-5.9.2-bac6a0a56c-4aab6a29de.zip/node_modules/rollup-plugin-visualizer/",\
+        "packageDependencies": [\
+          ["rollup-plugin-visualizer", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.9.2"],\
+          ["@types/rollup", null],\
+          ["open", "npm:8.4.2"],\
+          ["picomatch", "npm:2.3.1"],\
+          ["rollup", "npm:3.27.0"],\
+          ["source-map", "npm:0.7.4"],\
+          ["yargs", "npm:17.7.2"]\
+        ],\
+        "packagePeers": [\
+          "@types/rollup",\
+          "rollup"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["rtl-detect", [\
       ["npm:1.0.4", {\
         "packageLocation": "./.yarn/cache/rtl-detect-npm-1.0.4-9936ce935c-f4e1be2beb.zip/node_modules/rtl-detect/",\
@@ -22744,6 +22771,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/source-map-npm-0.6.1-1a3621db16-cba9f44c3a.zip/node_modules/source-map/",\
         "packageDependencies": [\
           ["source-map", "npm:0.6.1"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:0.7.4", {\
+        "packageLocation": "./.yarn/cache/source-map-npm-0.7.4-bc8d018ab6-97353dd6ff.zip/node_modules/source-map/",\
+        "packageDependencies": [\
+          ["source-map", "npm:0.7.4"]\
         ],\
         "linkType": "HARD"\
       }]\

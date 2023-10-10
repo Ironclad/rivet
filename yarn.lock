@@ -4236,6 +4236,7 @@ __metadata:
     recoil-persist: "npm:^5.1.0"
     retry: "npm:^0.13.1"
     rollup: "npm:^3.27.0"
+    rollup-plugin-visualizer: "npm:^5.9.2"
     safe-stable-stringify: "npm:^2.4.3"
     semver: "npm:^7.5.4"
     ts-dedent: "npm:^2.2.0"
@@ -15626,6 +15627,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rollup-plugin-visualizer@npm:^5.9.2":
+  version: 5.9.2
+  resolution: "rollup-plugin-visualizer@npm:5.9.2"
+  dependencies:
+    open: "npm:^8.4.0"
+    picomatch: "npm:^2.3.1"
+    source-map: "npm:^0.7.4"
+    yargs: "npm:^17.5.1"
+  peerDependencies:
+    rollup: 2.x || 3.x
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+  bin:
+    rollup-plugin-visualizer: dist/bin/cli.js
+  checksum: 4aab6a29defac30eb97ea849525dcc239dc6ae5da4adbbb549a5eefa96fef353ef9bf97b894c0d2a77c18d94274002df55af2d5ee6ff703ffb6b7b94f9878bb4
+  languageName: node
+  linkType: hard
+
 "rollup@npm:^3.25.2, rollup@npm:^3.27.0":
   version: 3.27.0
   resolution: "rollup@npm:3.27.0"
@@ -16194,6 +16214,13 @@ __metadata:
   version: 0.6.1
   resolution: "source-map@npm:0.6.1"
   checksum: cba9f44c3a4a0485f44a7760ebe427eecdd3b58011ae0459c05506b54f898835b2302073d6afa563a19b60ee9e54c82e33bc4a032e28bebacdfc635f1d0bf7e0
+  languageName: node
+  linkType: hard
+
+"source-map@npm:^0.7.4":
+  version: 0.7.4
+  resolution: "source-map@npm:0.7.4"
+  checksum: 97353dd6ffe747221f810400254a2c0110d745758aa094d3efe697d15c7697bb9bf49fea7028e88e97f973af53ac98cf69522ced606a4b46428fdd3e0d759280
   languageName: node
   linkType: hard
 
@@ -18172,7 +18199,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^17.7.2":
+"yargs@npm:^17.5.1, yargs@npm:^17.7.2":
   version: 17.7.2
   resolution: "yargs@npm:17.7.2"
   dependencies:
