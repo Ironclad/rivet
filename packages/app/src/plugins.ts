@@ -164,4 +164,20 @@ export const pluginInfos: PluginInfo[] = [
     tag: 'latest',
     logoImage: MongoDBLogo,
   },
+  {
+    type: 'package',
+    id: 'rivet-plugin-fs@latest',
+    name: 'FS Plugin',
+    description: dedent`
+      Adds two dangerous nodes that should be used in a sandboxed environment if possible:
+
+      - **Write File**, which writes a string to a file
+      - **Shell Command**, which executes a shell command
+    `,
+    github: 'https://github.com/abrenneke/rivet-plugin-fs',
+    author: 'Rivet Team',
+    package: 'rivet-plugin-fs',
+    tag: 'latest',
+    logoImage: RivetLogo,
+  },
 ];
