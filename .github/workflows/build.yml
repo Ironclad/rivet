@@ -19,5 +19,7 @@ jobs:
         run: yarn --immutable
       - name: Build
         run: yarn build
+        env:
+          NODE_OPTIONS: --max_old_space_size=6000
       - name: Test
         run: yarn test
