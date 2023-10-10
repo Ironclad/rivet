@@ -167,21 +167,21 @@ function codeNode(inputs) {
 
 **Q: Can I use `require` or `import` in the code node?**
 
-A: No. The code node is executed in a sandboxed environment, and does not have access to the `require` or `import` functions. If you need to `require` or `import`, [use an External Call Node](./external-call.md) instead, or [create a Rivet plugin](../user-guide/plugins/creating-plugins.md).
+A: No. The code node is executed in a sandboxed environment, and does not have access to the `require` or `import` functions. If you need to `require` or `import`, [use an External Call Node](./external-call.mdx) instead, or [create a Rivet plugin](../user-guide/plugins/creating-plugins.md).
 
 **Q: Can I use `async`/`await` in the code node?**
 
-A: No. The code node is executed synchronously, and does not support `async`/`await`. As you cannot use external libraries in a Code node, there is no need for `async`/`await` support anyway. Use an [External Call Node](./external-call.md) instead.
+A: No. The code node is executed synchronously, and does not support `async`/`await`. As you cannot use external libraries in a Code node, there is no need for `async`/`await` support anyway. Use an [External Call Node](./external-call.mdx) instead.
 
 **Q: Can I use external libraries in the code node?**
 
-A: No. The code node is executed in a sandboxed environment, and does not have access to external libraries. Use an [External Call Node](./external-call.md) instead.
+A: No. The code node is executed in a sandboxed environment, and does not have access to external libraries. Use an [External Call Node](./external-call.mdx) instead.
 
 **Q: Can I use `console.log` in the code node?**
 
 A: No, the `console` variable is not available in a code node.
 
-**Q: Can the code node function like an [If Node](./if.md)?**
+**Q: Can the code node function like an [If Node](./if.mdx)?**
 
 A: Yes. If you return the special value `{ type: 'control-flow-excluded', value: undefined }` from the Code node, then the nodes after the Code node will be excluded from the graph's execution. This is useful if you want to conditionally execute a portion of the graph.
 
@@ -191,4 +191,4 @@ A: There is no timeout. If you create an infinite loop, then the graph will hang
 
 ## See Also
 
-- [External Call Node](./external-call.md)
+- [External Call Node](./external-call.mdx)
