@@ -144,6 +144,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Wannabeasmartguy"><img src="https://avatars.githubusercontent.com/u/107250451?v=4?s=100" width="100px;" alt="Wannabeasmartguy"/><br /><sub><b>Wannabeasmartguy</b></sub></a><br /><a href="#ideas-Wannabeasmartguy" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mhamadeus"><img src="https://avatars.githubusercontent.com/u/77891233?v=4?s=100" width="100px;" alt="mhamadeus"/><br /><sub><b>mhamadeus</b></sub></a><br /><a href="#ideas-mhamadeus" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/moalturfi/"><img src="https://avatars.githubusercontent.com/u/71999644?v=4?s=100" width="100px;" alt="Mohamed Alturfi"/><br /><sub><b>Mohamed Alturfi</b></sub></a><br /><a href="#maintenance-altaiiiir" title="Maintenance">🚧</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kojikeneda"><img src="https://avatars.githubusercontent.com/u/2552616?v=4?s=100" width="100px;" alt="kojikeneda"/><br /><sub><b>kojikeneda</b></sub></a><br /><a href="#ideas-kojikeneda" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
 </table>
