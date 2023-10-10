@@ -4,6 +4,7 @@ import type {
   EditorDefinition,
   Inputs,
   InternalProcessContext,
+  LLMRequestResponseNodeData,
   NodeId,
   NodeInputDefinition,
   NodeOutputDefinition,
@@ -44,7 +45,7 @@ export type ChatAnthropicNodeConfigData = {
   stop?: string;
 };
 
-export type ChatAnthropicNodeData = ChatAnthropicNodeConfigData & {
+export type ChatAnthropicNodeData = ChatAnthropicNodeConfigData & LLMRequestResponseNodeData & {
   useModelInput: boolean;
   useTemperatureInput: boolean;
   useTopPInput: boolean;
@@ -99,6 +100,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
 
         cache: false,
         useAsGraphPartialOutput: true,
+        isLlmRequestResponse: true,
       },
     };
 

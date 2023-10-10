@@ -14,6 +14,8 @@ import {
   type ScalarOrArrayDataValue,
   arrayizeDataValue,
   coerceTypeOptional,
+  isLlmRequestResponseNodeData,
+  isLlmRequestResponseNode,
 } from '@ironclad/rivet-core';
 import { type NodeRunData, lastRunDataByNodeState } from '../state/dataFlow';
 import { projectState } from '../state/savedGraphs';
@@ -210,7 +212,7 @@ export const ChatViewer: FC<{
 
   const chatNodes = useMemo(() => {
     const allNodes = Object.values(project.graphs).flatMap((g) => g.nodes) as BuiltInNodes[];
-    const nodes = (allNodes as ChartNode[]).filter((node) => node.type === 'chat' || node.type === 'chatAnthropic');
+    const nodes = (allNodes as ChartNode[]).filter((node) => isLlmRequestResponseNode(node));
     if (graphFilter === '') {
       return nodes;
     }
@@ -341,10 +343,10 @@ const ChatBubble: FC<{
     }
   }
 
+  const responseOutput =
+    isLlmRequestResponseNodeData(data) && data.llmResponseOutput ? data.llmResponseOutput : ('response' as PortId);
   const chatOutput =
-    splitIndex === -1
-      ? data.outputData?.['response' as PortId]
-      : data.splitOutputData![splitIndex]!['response' as PortId];
+    splitIndex === -1 ? data.outputData?.[responseOutput] : data.splitOutputData![splitIndex]![responseOutput];
 
   const promptText = coerceTypeOptional(prompt, 'string');
   const responseText = coerceTypeOptional(chatOutput, 'string');

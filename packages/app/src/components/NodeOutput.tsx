@@ -4,7 +4,13 @@ import { type FC, type ReactNode, memo, useMemo, useState } from 'react';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { copyToClipboard } from '../utils/copyToClipboard.js';
-import { type ChartNode, type PortId, type ProcessId, getWarnings } from '@ironclad/rivet-core';
+import {
+  type ChartNode,
+  type PortId,
+  type ProcessId,
+  getWarnings,
+  isLlmRequestResponseNode,
+} from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-line.svg';
 import { ReactComponent as ExpandIcon } from 'majesticons/line/maximize-line.svg';
@@ -299,7 +305,7 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
           <div className="copy-json-button" onClick={handleCopyToClipboardJson} title="Copy as JSON">
             JSON
           </div>
-          {node.type === 'chat' && (
+          {isLlmRequestResponseNode(node) && (
             <div className="prompt-designer-button" onClick={handleOpenPromptDesigner}>
               <FlaskIcon />
             </div>
@@ -423,7 +429,7 @@ const NodeOutputSingleProcess: FC<{
         <div className="copy-button" onClick={handleCopyToClipboard}>
           <CopyIcon />
         </div>
-        {node.type === 'chat' && (
+        {isLlmRequestResponseNode(node) && (
           <div className="prompt-designer-button" onClick={handleOpenPromptDesigner}>
             <FlaskIcon />
           </div>

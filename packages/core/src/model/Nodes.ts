@@ -188,6 +188,8 @@ export * from './nodes/GetDatasetRow.js';
 import { sliceNode } from './nodes/SliceNode.js';
 export * from './nodes/SliceNode.js';
 
+export * from './nodes/NodeExtensions.js';
+
 export const registerBuiltInNodes = (registry: NodeRegistration) => {
   return registry
     .register(toYamlNode)

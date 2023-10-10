@@ -34,6 +34,7 @@ import {
   getError,
   isArrayDataValue,
   openai,
+  isLlmRequestResponseNode,
 } from '@ironclad/rivet-core';
 import TextField from '@atlaskit/textfield';
 import { Field } from '@atlaskit/form';
@@ -1046,8 +1047,9 @@ function useRunTestGroup() {
     processor.on('trace', (value) => console.log(value));
 
     processor.on('nodeFinish', ({ node, outputs }) => {
-      if (node.type === 'chat') {
-        console.log(outputs['response' as PortId]);
+      if (isLlmRequestResponseNode(node)) {
+        const responsePort = node.data.llmResponseOutput || ('response' as PortId);
+        console.log(outputs[responsePort]);
       }
     });
 
