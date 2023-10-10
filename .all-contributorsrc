@@ -201,7 +201,8 @@
       "profile": "https://gentrace.ai",
       "contributions": [
         "code",
-        "doc"
+        "doc",
+        "bug"
       ]
     },
     {
