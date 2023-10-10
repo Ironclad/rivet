@@ -1,16 +1,18 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { clipboardState } from '../state/clipboard';
-import { graphState, nodesState } from '../state/graph';
-import { type NodeId, newId } from '@ironclad/rivet-core';
+import { connectionsState, graphState, nodesState } from '../state/graph';
+import { type NodeId, newId, type NodeConnection } from '@ironclad/rivet-core';
 import { useCanvasPositioning } from './useCanvasPositioning';
 import { produce } from 'immer';
 import { selectedNodesState } from '../state/graphBuilder';
+import { isNotNull } from '../utils/genericUtilFunctions';
 
 export function usePasteNodes() {
   const clipboard = useRecoilValue(clipboardState);
   const { clientToCanvasPosition } = useCanvasPositioning();
   const setNodes = useSetRecoilState(nodesState);
   const setSelectedNodeIds = useSetRecoilState(selectedNodesState);
+  const setConnections = useSetRecoilState(connectionsState);
 
   const pasteNodes = (mousePosition: { x: number; y: number }) => {
     if (clipboard?.type !== 'nodes') {
@@ -36,9 +38,14 @@ export function usePasteNodes() {
       },
     );
 
+    const oldNewNodeIdMap: Record<NodeId, NodeId> = {};
+
     const newNodes = clipboard.nodes.map((node) => {
       return produce(node, (draft) => {
-        draft.id = newId<NodeId>();
+        const newNodeId = newId<NodeId>();
+        oldNewNodeIdMap[node.id] = newNodeId;
+
+        draft.id = newNodeId;
 
         // Move the bounding box of all the copied nodes, align the top-left of it with the mouse position
         draft.visualData.x = canvasPosition.x + (node.visualData.x - boundingBoxOfCopiedNodes.minX);
@@ -48,6 +55,25 @@ export function usePasteNodes() {
 
     setNodes((nodes) => [...nodes, ...newNodes]);
     setSelectedNodeIds(newNodes.map((node) => node.id));
+
+    const newConnections: NodeConnection[] = clipboard.connections
+      .map((connection): NodeConnection | undefined => {
+        const inputNodeId = oldNewNodeIdMap[connection.inputNodeId];
+        const outputNodeId = oldNewNodeIdMap[connection.outputNodeId];
+
+        if (!inputNodeId || !outputNodeId) {
+          return undefined;
+        }
+
+        return {
+          ...connection,
+          inputNodeId,
+          outputNodeId,
+        };
+      })
+      .filter(isNotNull);
+
+    setConnections((connections) => [...connections, ...newConnections]);
   };
 
   return pasteNodes;

@@ -155,9 +155,14 @@ export function useGraphBuilderContextMenuHandler() {
           const { nodeId } = context.data as { nodeId: NodeId };
           const nodeIds = selectedNodeIds.length > 0 ? [...new Set([...selectedNodeIds, nodeId])] : [nodeId];
 
+          const copiedConnections = connections.filter(
+            (c) => nodeIds.includes(c.inputNodeId) && nodeIds.includes(c.outputNodeId),
+          );
+
           setClipboard({
             type: 'nodes',
             nodes: nodeIds.map((id) => nodesById[id]).filter(isNotNull),
+            connections: copiedConnections,
           });
         })
         .otherwise(() => {

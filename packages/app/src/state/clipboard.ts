@@ -1,9 +1,10 @@
-import { type ChartNode } from '@ironclad/rivet-core';
+import { type NodeConnection, type ChartNode } from '@ironclad/rivet-core';
 import { atom } from 'recoil';
 
 export type NodesClipboardItem = {
   type: 'nodes';
   nodes: ChartNode[];
+  connections: NodeConnection[];
 };
 
 export type ClipboardItem = NodesClipboardItem;
