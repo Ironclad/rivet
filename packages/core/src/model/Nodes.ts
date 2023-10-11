@@ -182,8 +182,8 @@ export * from './nodes/SplitNode.js';
 import { datasetNearestNeighborsNode } from './nodes/DatasetNearestNeigborsNode.js';
 export * from './nodes/DatasetNearestNeigborsNode.js';
 
-import { getDatasetRowNode } from './nodes/GetDatasetRow.js';
-export * from './nodes/GetDatasetRow.js';
+import { getDatasetRowNode } from './nodes/GetDatasetRowNode.js';
+export * from './nodes/GetDatasetRowNode.js';
 
 import { sliceNode } from './nodes/SliceNode.js';
 export * from './nodes/SliceNode.js';
