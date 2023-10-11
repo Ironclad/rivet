@@ -199,7 +199,7 @@ const DatasetEditableCell: FC<{
           }}
           onKeyDown={(e) => {
             if (e.keyCode === 3 && (e.metaKey || e.ctrlKey)) {
-              onChange((e.target as HTMLInputElement).value);
+              onChange(editingText);
               setEditing(false);
             }
           }}
