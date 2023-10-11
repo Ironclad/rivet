@@ -28,9 +28,9 @@ export function useProjectPlugins() {
       try {
         const loadedPlugin = await match(spec)
           .with({ type: 'built-in' }, async (spec) => {
-            const { name } = spec;
-            if (name in rivetPlugins) {
-              return rivetPlugins[name as keyof typeof rivetPlugins];
+            const { id } = spec;
+            if (id in rivetPlugins) {
+              return rivetPlugins[id as keyof typeof rivetPlugins];
             }
             throw new Error(`Unknown built-in plugin ${name}.`);
           })

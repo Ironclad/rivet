@@ -48,11 +48,11 @@ const rivetDebugger = startDebuggerServer({
       try {
         await match(spec)
           .with({ type: 'built-in' }, async (spec) => {
-            const { name } = spec;
-            if (name in rivetPlugins) {
-              registry.registerPlugin(rivetPlugins[name as keyof typeof rivetPlugins]);
+            const { id } = spec;
+            if (id in rivetPlugins) {
+              registry.registerPlugin(rivetPlugins[id as keyof typeof rivetPlugins]);
             } else {
-              throw new Error(`Unknown built-in plugin ${name}.`);
+              throw new Error(`Unknown built-in plugin ${id}.`);
             }
           })
           .with({ type: 'uri' }, async (spec) => {
