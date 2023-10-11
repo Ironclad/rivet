@@ -185,7 +185,7 @@ export async function* streamChatCompletions({
   const abortSignal = signal ?? new AbortController().signal;
 
   // Turn off timeout because local models can be slow, TODO configurable timeout
-  const timeout = endpoint === DEFAULT_CHAT_ENDPOINT ? 5000 : 10000000;
+  const timeout = endpoint === DEFAULT_CHAT_ENDPOINT ? 30000 : 10000000;
 
   const response = await fetchEventSource(
     endpoint,

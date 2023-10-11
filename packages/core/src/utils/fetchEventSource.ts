@@ -52,7 +52,7 @@ export class EventSourceResponse extends Response {
   }
 
   private async raceWithTimeout<T>(promise: Promise<T>, timeout?: number): Promise<T> {
-    const raceTimeout = timeout ?? 5000;
+    const raceTimeout = timeout ?? 30000;
 
     // eslint-disable-next-line no-async-promise-executor -- Error handled correctly
     return new Promise(async (resolve, reject) => {
@@ -128,6 +128,8 @@ function createEventStream(body: ReadableStream<Uint8Array> | null) {
         } else if (line.startsWith('event: ')) {
           const event = line.slice(7).trim();
           controller.enqueue(`[${event}]`);
+        } else {
+          console.log('Unknown event source line: ', line);
         }
       },
     }),
