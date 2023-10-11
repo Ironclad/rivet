@@ -223,6 +223,13 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: 'Data',
+      collapsible: true,
+      collapsed: false,
+      items: ['node-reference/audio', 'node-reference/bool', 'node-reference/hash', 'node-reference/image'],
+    },
+    {
+      type: 'category',
       label: 'Logic',
       collapsible: true,
       collapsed: false,
