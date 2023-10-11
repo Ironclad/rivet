@@ -117,7 +117,7 @@ export class GetGlobalNodeImpl extends NodeImpl<GetGlobalNode> {
 
   getBody(): string | NodeBodySpec | undefined {
     return dedent`
-      ${this.data.id}
+      ${this.data.useIdInput ? '(ID from input)' : this.data.id}
       Type: ${this.data.dataType}
       ${this.data.wait ? 'Waits for available data' : ''}
     `;
