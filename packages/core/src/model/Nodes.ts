@@ -188,6 +188,9 @@ export * from './nodes/GetDatasetRowNode.js';
 import { sliceNode } from './nodes/SliceNode.js';
 export * from './nodes/SliceNode.js';
 
+import { extractMarkdownCodeBlocksNode } from './nodes/ExtractMarkdownCodeBlocksNode.js';
+export * from './nodes/ExtractMarkdownCodeBlocksNode.js';
+
 export const registerBuiltInNodes = (registry: NodeRegistration) => {
   return registry
     .register(toYamlNode)
@@ -251,7 +254,8 @@ export const registerBuiltInNodes = (registry: NodeRegistration) => {
     .register(splitNode)
     .register(datasetNearestNeighborsNode)
     .register(getDatasetRowNode)
-    .register(sliceNode);
+    .register(sliceNode)
+    .register(extractMarkdownCodeBlocksNode);
 };
 
 let globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());

@@ -166,6 +166,7 @@ const sidebars = {
       collapsed: false,
       items: [
         'node-reference/chunk',
+        'node-reference/extract-markdown-code-blocks',
         'node-reference/extract-with-regex',
         'node-reference/join',
         'node-reference/prompt',
