@@ -26,6 +26,8 @@ const config = {
 
   trailingSlash: false,
 
+  plugins: [require.resolve('docusaurus-plugin-image-zoom')],
+
   presets: [
     [
       'classic',
