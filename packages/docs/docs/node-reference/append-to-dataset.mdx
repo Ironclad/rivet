@@ -30,12 +30,12 @@ For more information on datasets, see the [Data Studio](../user-guide/features/d
 
 ## Inputs
 
-| Title      | Data Type  | Description                                                                                            | Default Value                                               | Notes                                                                      |
-| ---------- | ---------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- | -------------------------------------------------------------------------- |
-| Data       | `string[]` | The data to be appended to the dataset.                                                                | (required)                                                  | The input will be coerced into a string array if it is not a string array. |
-| ID         | `string`   | The ID for the new row of data. If not provided, a new ID will be generated.                           | (Automatically generated)                                   | The input will be coerced into a string if it is not a string.             |
-| Embedding  | `vector`   | An optional vector that can be associated with the new row of data.                                    | (empty)                                                     | The input will be coerced into a vector if it is not a vector.             |
-| Dataset ID | `string`   | The ID of the dataset to append to. This input is only available if `Use Dataset ID Input` is enabled. | (required if if the input toggle for Dataset ID is enabled) | The input will be coerced into a string if it is not a string.             |
+| Title      | Data Type              | Description                                                                                                            | Default Value                                               | Notes                                                                      |
+| ---------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Data       | `string` or `string[]` | The data to be appended to the dataset. Each entry in the array corresponds to a column in the new row in the dataset. | (required)                                                  | The input will be coerced into a string array if it is not a string array. |
+| ID         | `string`               | The ID for the new row of data. If not provided, a new ID will be generated.                                           | (Automatically generated)                                   | The input will be coerced into a string if it is not a string.             |
+| Embedding  | `vector`               | An optional vector that can be associated with the new row of data.                                                    | (empty)                                                     | The input will be coerced into a vector if it is not a vector.             |
+| Dataset ID | `string`               | The ID of the dataset to append to. This input is only available if `Use Dataset ID Input` is enabled.                 | (required if if the input toggle for Dataset ID is enabled) | The input will be coerced into a string if it is not a string.             |
 
 </TabItem>
 
