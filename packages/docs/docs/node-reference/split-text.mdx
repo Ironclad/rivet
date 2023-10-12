@@ -1,5 +1,59 @@
 ---
-title: 'Split Text'
+id: split-text
+title: Split Text Node
+sidebar_label: Split Text
 ---
 
-# Split Text Node
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+## Overview
+
+The Split Text Node splits a string based on a delimiter. This can be helpful for parsing structured output from an LLM.
+
+![Split Text Node Screenshot](./assets/split-text-node.png)
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+## Inputs
+
+| Title      | Data Type  | Description                                                                                            | Default Value                                               | Notes                                                                      |
+| ---------- | ---------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- | -------------------------------------------------------------------------- |
+| String     | `string`   | The string to split.                                                                | (required)                                                  | The input will be coerced into a string. |
+
+
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title  | Data Type      | Description                 | Notes                                                                                |
+| ------ | -------------- | --------------------------- | ------------------------------------------------------------------------------------ |
+| Split  | `string[]`     | The split string segments            |  |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting                 | Description                                                                                                                         | Default Value | Notes |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------- | ----- |
+| Delimiter               | The delimiter to split on.   | ","    | Can be set dynamically as input   |
+
+</TabItem>
+
+</Tabs>
+
+## See Also

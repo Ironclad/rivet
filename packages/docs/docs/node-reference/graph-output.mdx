@@ -1,5 +1,73 @@
 ---
-title: 'Graph Output'
+id: graph-output
+title: Graph Output Node
+sidebar_label: Graph Output
 ---
 
-# Graph Output Node
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+![Graph Output Node Screenshot](./assets/graph-output-node.png)
+
+## Overview
+
+The Graph Output Node defines an output for a graph. The outputs are returned after processing a graph via the SDK, or defines one of the output ports when the graph is used as a subgraph.
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+## Inputs
+
+| Title         | Data Type | Description                                                                       | Default Value | Notes                                                                                                                                                            |
+| ------------- | --------- | --------------------------------------------------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Output        | Any       | The value for the output.                                                         | (optional)    | The output will be coerced into the data type specified in the Editor Settings. |
+
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title | Data Type | Description                                                                                                                     | Notes                                                                                           |
+| ----- | --------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Output  | Any       | The value of the output. |     |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting                 | Description                                                                                                                         | Default Value | Notes |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------- | ----- |
+| ID                      | The ID of the output. This will be used to identify the output when the graph is called, and defines the name of the output in the UI. | (required)    | N/A   |
+| Data Type               | The data type of the output.                                                                                                        | `string`      | N/A   |
+
+</TabItem>
+
+</Tabs>
+
+## Example 1: Define outputs for a graph
+
+1. Create a new graph and add two Graph Output Nodes to it.
+2. In the Editor Settings, set the first Graph Output Node's ID to `firstOutput` and the Data Type to `string`.
+3. In the Editor Settings, set the second's ID to `secondOutput` and the Data Type to `string`.
+4. Create a new graph, and add a Subgraph Node. Note the `firstOutput` and `secondOutput` nodes.
+
+![Graph Output Node Example 1](./assets/graph-output-node-example-01.png)
+![Graph Output Node Example 1](./assets/graph-output-node-example-01-2.png)
+
+## See Also
+
+- [Graph Input Node](./graph-input.mdx)
+- [Subgraph Node](./subgraph.mdx)
+- [Data Types](../user-guide/data-types.md)
+- [RunGraphOptions](../api-reference/node/RunGraphOptions)

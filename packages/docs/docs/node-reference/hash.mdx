@@ -1,5 +1,58 @@
 ---
-title: 'Hash'
+id: hash
+title: Hash Node
+sidebar_label: Hash
 ---
 
-# Hash Node
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+![Hash Node Screenshot](./assets/hash-node.png)
+
+## Overview
+
+Computes the hash of the input value using the configured hash function. Supports MD5, SHA1, SHA256, and SHA512.
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+## Inputs
+
+| Title         | Data Type | Description                                                                       | Default Value | Notes                                                                                                                                                            |
+| ------------- | --------- | --------------------------------------------------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Input        | Any        | The value to hash.                                                                | (required)    | The input will be coerced to a string value. |
+
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title | Data Type | Description                                                                                                                     | Notes                                                                                           |
+| ----- | --------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Hash  | `string`  | The hash value. |     |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting                 | Description                                                                                                                         | Default Value | Notes |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------- | ----- |
+| Algorithm               | The hash algorithm to use (MD5, SHA1, SHA256, or SHA512).   | SHA-256    | N/A   |
+
+</TabItem>
+
+</Tabs>
+
+## See Also
+- [Get Embedding Node](./get-embedding.mdx)

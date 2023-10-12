@@ -1,5 +1,78 @@
 ---
-title: 'Prompt'
+id: prompt
+title: Prompt Node
+sidebar_label: Prompt
 ---
 
-# Prompt Node
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+## Overview
+
+The Prompt Node represents a single message in a prompt (from the User, Assistant, or other). Prompt Nodes can then be assembled into a message chain using the [Assemble Prompt Node](./assemble-prompt), which can in turn be fed into a [Chat Node](./chat).
+
+In some contexts, [Text Nodes](./text) are interpreted as Prompt Nodes from the User.
+
+![Prompt Node Screenshot](./assets/prompt-node.png)
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+## Inputs
+
+| Inputs are defined based on variables in the Prompt Text (see Editor Settings). |
+| ------ |
+
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title  | Data Type      | Description                 | Notes                                                                                |
+| ------ | -------------- | --------------------------- | ------------------------------------------------------------------------------------ |
+| Output | chat-message   | The chat message            | The output will be a single chat message |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting                 | Description                                                                                                                         | Default Value | Notes |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------- | ----- |
+| Type                    | The chat message type (User, Assistant, System, or Function).   | User    | Can be set dynamically as input   |
+| Name                    | The name of the User or Function. Usually this is safe to ignore. | (optional) | Usually this is safe to ignore. |
+| Enable Function Call    | Enable OpenAI function calling. | Off |     |
+| Compute Token Count     | Adds a Token Count output, that computes the number of tokens the message contains. | Off   | Count is based on the tokenizer for gpt-3.5-turbo and gpt-4. |
+| Prompt Text             | The text of the message.      | (required)  | Text can contain template variables, marked by "{{" and "}}" |
+
+</TabItem>
+
+</Tabs>
+
+### Example: Question Answering Prompts
+
+To create a prompt for answering a question about the text of an article:
+
+1. Add a Prompt Node to your graph.
+2. Make the prompt text something like: "Here is the article text: {{articleText}}. Answer the question: {{question}}." The `articleText` and `question` template variables will create inputs for the prompt node.
+3. Connect the inputs to [Text Nodes](./text) containing the article text and the question.
+4. Connect the output to a [Chat Node](./chat)
+
+![Prompt Node Example 1](./assets/prompt-node-example-01.png)
+
+## See Also
+
+- [Text Node](./text)
+- [Assemble Prompt Node](./assemble-prompt)
+- [Chat Node](./chat)
