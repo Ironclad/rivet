@@ -6,7 +6,7 @@ import {
   type PortId,
 } from '../NodeBase.js';
 import { nanoid } from 'nanoid/non-secure';
-import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { NodeImpl, type NodeBody, type NodeUIData } from '../NodeImpl.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { dedent } from 'ts-dedent';
@@ -82,6 +82,10 @@ export class PopNodeImpl extends NodeImpl<PopNode> {
       contextMenuTitle: 'Pop',
       group: ['Lists'],
     };
+  }
+
+  getBody(_context: RivetUIContext): NodeBody | Promise<NodeBody> {
+    return this.data.fromFront ? 'From front' : 'From back';
   }
 
   async process(inputs: Inputs): Promise<Outputs> {
