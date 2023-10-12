@@ -1,5 +1,60 @@
 ---
-sidebar_label: 'To JSON'
+id: to-json
+title: To JSON Node
+sidebar_label: To JSON
 ---
 
-# To JSON Node
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+## Overview
+
+The To JSON Node converts an object to a JSON string. This can be helpful for parsing structured input into an LLM.
+
+![To JSON Node Screenshot](./assets/to-json-node.png)
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+## Inputs
+
+| Title      | Data Type  | Description                                                                                            | Default Value                                               | Notes                                                                      |
+| ---------- | ---------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Object     | `object`   | The object to convert to JSON.                                                                | (required)                                                  |    |
+
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title  | Data Type      | Description                 | Notes                                                                                |
+| ------ | -------------- | --------------------------- | ------------------------------------------------------------------------------------ |
+| JSON  | `string`     | The JSON representing the input object            |  |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting                 | Description                                                                                                                         | Default Value | Notes |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------- | ----- |
+| Indented                | Whether to indent the JSON, or keep it all on a single line.    | Off    |   |
+
+</TabItem>
+
+</Tabs>
+
+## See Also
+
+- [Extract JSON Node](./extract-json)

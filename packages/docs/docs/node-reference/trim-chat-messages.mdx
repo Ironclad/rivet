@@ -1,5 +1,60 @@
 ---
-title: 'Trim Chat Messages'
+id: trim-chat-messages
+title: Trim Chat Messages Node
+sidebar_label: Trim Chat Messages
 ---
 
-# Trim Chat Messages Node
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+## Overview
+
+The Trim Chat Messages Node removes messages from an array of chat messages, so that the total number of tokens is less than or equal to a maximum number of tokens. This is useful for fitting a set of messages into the context window of an LLM. By default, this will remove messages from the beginning of the array of messages (but it can be configured to trim from the end).
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+## Inputs
+
+| Title      | Data Type  | Description                                                                                            | Default Value                                               | Notes                                                                      |
+| ---------- | ---------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Input     | `chat-message[]`   | The array of messages to trim.                                                                | (required)                                                  |    |
+
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title  | Data Type      | Description                 | Notes                                                                                |
+| ------ | -------------- | --------------------------- | ------------------------------------------------------------------------------------ |
+| Trimmed  | `chat-message[]`     | The trimmed array of messages            |  |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting                 | Description                                                                                                                         | Default Value | Notes |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------- | ----- |
+| Max Token Count                | The maximum number of total tokens for the chat message array.    | 4096    |   |
+| Remove from Beginning          | Whether to remove from the beginning.                             | Yes     | Removing messages from the beginning is the default. Otherwise, messages will be removed from the end. |
+
+</TabItem>
+
+</Tabs>
+
+## See Also
+
+- [Assemble Prompt Node](./assemble-prompt)
+- [Chat Node](./chat)

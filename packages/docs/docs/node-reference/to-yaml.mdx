@@ -1,5 +1,60 @@
 ---
-title: 'To YAML'
+id: to-yaml
+title: To YAML Node
+sidebar_label: To YAML
 ---
 
-# To YAML Node
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Admonition from '@theme/Admonition';
+
+## Overview
+
+The To YAML Node converts an object to a YAML string. This can be helpful for parsing structured input into an LLM.
+
+![To YAML Node Screenshot](./assets/to-yaml-node.png)
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+## Inputs
+
+| Title      | Data Type  | Description                                                                                            | Default Value                                               | Notes                                                                      |
+| ---------- | ---------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Object     | `object`   | The object to convert to YAML.                                                                | (required)                                                  |    |
+
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title  | Data Type      | Description                 | Notes                                                                                |
+| ------ | -------------- | --------------------------- | ------------------------------------------------------------------------------------ |
+| YAML  | `string`     | The YAML representing the input object            |  |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting                 | Description                                                                                                                         | Default Value | Notes |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------- | ----- |
+| None               |    |     |   |
+
+</TabItem>
+
+</Tabs>
+
+## See Also
+
+- [Extract YAML Node](./extract-yaml)

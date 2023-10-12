@@ -158,7 +158,6 @@ const sidebars = {
   ],
   nodeReference: [
     'node-reference',
-    'node-reference/all-nodes',
     {
       type: 'category',
       label: 'Text',
