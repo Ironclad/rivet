@@ -108,6 +108,9 @@ export type ProcessEvents = {
 
   /** Called when a global variable has been set in a graph. */
   globalSet: { id: string; value: ScalarOrArrayDataValue; processId: ProcessId };
+
+  /** Called when an AbortController has been created. Used by node to increase the max event listeners. */
+  newAbortController: AbortController;
 } & {
   /** Listen for any user event. */
   [key: `userEvent:${string}`]: DataValue | undefined;
@@ -588,6 +591,7 @@ export class GraphProcessor {
           .with({ type: P.string.startsWith('userEvent:') }, ({ type, data }) => {
             this.#emitter.emit(type, data);
           })
+          .with({ type: 'newAbortController' }, () => {})
           .with(undefined, () => {})
           .exhaustive();
       }
@@ -1298,6 +1302,12 @@ export class GraphProcessor {
     for (const subprocessor of this.#subprocessors) {
       subprocessor.raiseEvent(event, data);
     }
+  }
+
+  #newAbortController() {
+    const controller = new AbortController();
+    this.#emitter.emit('newAbortController', controller);
+    return controller;
   }
 
   async #processNodeWithInputData(

@@ -88,6 +88,7 @@ const toRecordedEventMap: {
     startGraph: startGraph.metadata!.id!,
   }),
   trace: (message) => message,
+  newAbortController: () => {},
 };
 
 const isPrefix = <const T extends string>(s: string, prefix: T): s is `${T}${string}` => s.startsWith(prefix);

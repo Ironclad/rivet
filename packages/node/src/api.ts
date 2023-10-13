@@ -21,6 +21,7 @@ import { type RivetDebuggerServer } from './debugger.js';
 import type { PascalCase } from 'type-fest';
 import { NodeNativeApi } from './native/NodeNativeApi.js';
 import { mapValues } from 'lodash-es';
+import * as events from 'node:events';
 
 export async function loadProjectFromFile(path: string): Promise<Project> {
   const content = await readFile(path, { encoding: 'utf8' });
@@ -82,6 +83,10 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
 
   const processor = new GraphProcessor(project, graphId as GraphId, options.registry);
   processor.executor = 'nodejs';
+
+  processor.on('newAbortController', (controller) => {
+    events.setMaxListeners(100, controller.signal);
+  });
 
   if (options.remoteDebugger) {
     options.remoteDebugger.attach(processor);
