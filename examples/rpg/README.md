@@ -18,7 +18,7 @@ With it, we demonstrate `Assemble Prompt`, `Loop Controller`, `Subgraph`, `Chat`
    1. Chooses a random setting from an array
    2. Use ChatGPT to generate the initial setting for the adventure
    3. Show the user the initial setting and ask for input
-   4. Combine the intial setting and the user input to create a chat history
+   4. Combine the initial setting and the user input to create a chat history
    5. Output: that history
 3. Main
    1. Use a loop controller, initialized with the `Initialize Chat` output, to repeatedly call the `Loop Iteration` subgraph
