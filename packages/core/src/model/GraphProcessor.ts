@@ -622,7 +622,7 @@ export class GraphProcessor {
     this.#globals ??= new Map();
     this.#ignoreNodes = new Set();
 
-    this.#abortController = new AbortController();
+    this.#abortController = this.#newAbortController();
     this.#abortController.signal.addEventListener('abort', () => {
       this.#aborted = true;
     });
@@ -1318,7 +1318,7 @@ export class GraphProcessor {
     partialOutput?: (node: ChartNode, partialOutputs: Outputs, index: number) => void,
   ) {
     const instance = this.#nodeInstances[node.id]!;
-    const nodeAbortController = new AbortController();
+    const nodeAbortController = this.#newAbortController();
     this.#nodeAbortControllers.set(`${node.id}-${processId}`, nodeAbortController);
     this.#abortController.signal.addEventListener('abort', () => {
       nodeAbortController.abort();
