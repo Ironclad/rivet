@@ -1,5 +1,104 @@
 ---
-title: 'User Input'
+id: user-input
+title: User Input Node
+sidebar_label: User Input
 ---
 
-# User Input Node
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+![User Input Node Screenshot](./assets/user-input-node.png)
+
+## Overview
+
+The User Input Node is designed to prompt the user for input during the execution of the graph. The user's response becomes the output of this node. This node is particularly useful in interactive scenarios where user input is required to proceed with the graph execution.
+
+The User Input Node can either use a static prompt defined in the node settings or dynamic prompts provided via the node's input.
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+## Inputs
+
+| Title      | Data Type | Description                                                                 | Default Value | Notes                                                                                       |
+| ---------- | --------- | --------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------- |
+| Questions  | `string[]`| An array of questions to prompt the user.                                   | N/A           | This input is only available when the "Use Input" toggle is enabled in the node settings.   |
+
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title               | Data Type | Description                                                                 | Notes                                                                                       |
+| ------------------- | --------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Answers Only        | `string[]`| An array containing the user's answers to the prompted questions.           |                                                                                             |
+| Q & A               | `string[]`| An array containing the questions and answers formatted as "Question\nAnswer". |                                                                                             |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting   | Description                                                                 | Default Value | Use Input Toggle | Input Data Type |
+| --------- | --------------------------------------------------------------------------- | ------------- | ---------------- | --------------- |
+| Prompt    | The question to prompt the user.                                            | (required)    | Yes              | `string`        |
+
+</TabItem>
+
+</Tabs>
+
+## Example 1: Using a static prompt
+
+1. Create a User Input Node.
+2. In the node settings, set the "Prompt" to "What is your name?".
+3. Run the graph. The graph execution will pause and prompt you for input.
+4. Enter your name and press "Submit". The graph execution will resume and the output of the User Input Node will be the name you entered.
+
+![User Input Node Example 1](./assets/user-input-node-example-01.png)
+
+## Example 2: Using dynamic prompts
+
+1. Create a User Input Node.
+2. In the node settings, enable the "Use Input" toggle.
+3. Create an [Array Node](./array.mdx) and connect 2 [Text Nodes](./text.mdx) to it.
+4. Add the text "What is your name?" to the first Text Node and "What is your favorite color?" to the second Text Node.
+5. Connect the Array Node to the "Questions" input of the User Input Node.
+6. Run the graph. The graph execution will pause and prompt you for input.
+6. Enter your answers and press "Submit". The graph execution will resume and the output of the User Input Node will be an array containing your answers.
+
+![User Input Node Example 2](./assets/user-input-node-example-02.png)
+
+## Error Handling
+
+The User Input Node does not have any error handling behavior. If the node is executed, it will always pause the graph execution and prompt the user for input.
+
+## FAQ
+
+**Q: Can I use the User Input Node to prompt the user for multiple inputs at once?**
+
+A: Yes, you can do this by connecting an Array Node to the "Questions" input of the User Input Node. Each item in the array will be a separate question that the user is prompted for.
+
+**Q: What happens if the user does not provide any input?**
+
+A: If the user does not provide any input and presses "Submit", the output of the User Input Node will be an empty string.
+
+**Q: Can I use the User Input Node to prompt the user for a password or other sensitive information?**
+
+A: No, the User Input Node does not currently support masking the user's input. All input provided by the user will be visible in the graph execution log.
+
+## See Also
+
+- [Array Node](./array.mdx)
+- [Text Node](./text.mdx)
+- [Split Node](./split-text.mdx)
+- [Join Node](./join.mdx)

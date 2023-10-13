@@ -1,13 +1,160 @@
 ---
-title: 'Text'
+id: text
+title: Text Node
+sidebar_label: Text
 ---
 
-# Text Node
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-Text nodes are string constants used to pass data to other nodes.
 
-## Config Data
-- text - The text to pass to other nodes.
+## Overview
 
-## Ports
-- output - Outputs the text to other nodes.
+The Text Node is used to output a string of text. It can also interpolate values using `{{tags}}` within the text. The inputs are dynamically generated based on the interpolation tags used in the text.
+
+This node is particularly useful for creating dynamic text based on the inputs to the node. The Text Node supports markdown, so you can use it to create richly formatted text.
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+## Inputs
+
+| Title      | Data Type | Description                                                                 | Default Value | Notes                                                                                     |
+| ---------- | --------- | --------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------- |
+| (dynamic)  | `string`  | The inputs are dynamically generated based on the interpolation tags used.  | N/A           | The input names are derived from the interpolation tags used in the text. For example, if the text contains `{{name}}`, then there will be an input named `name`. |
+
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title  | Data Type | Description                         | Notes |
+| ------ | --------- | ----------------------------------- | ----- |
+| Output | `string`  | The output text after interpolation |       |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting | Description                                                                                                           | Default Value | Use Input Toggle | Input Data Type |
+| ------- | --------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------- | --------------- |
+| Text    | The text to output. You can use interpolation tags in the format `{{tag}}` to insert the values of the inputs. | `{{input}}`   | No               | `string`        |
+
+</TabItem>
+
+</Tabs>
+
+## Example 1: Simple Text Output
+
+1. Create a Text Node.
+2. Set the `Text` to `Hello, world!`.
+3. Run the graph. The output of the Text Node will be `Hello, world!`.
+
+## Example 2: Interpolation
+
+1. Create a Text Node.
+2. Set the `Text` to `Hello, {{name}}!`.
+3. Create a [Text Node](./text.mdx) and set the text to `John Doe`. Connect it to the `name` input of the Text Node.
+4. Run the graph. The output of the Text Node will be `Hello, John Doe!`.
+
+## Example 3: Using Markdown
+
+1. Create a Text Node.
+2. Set the `Text` to `# Hello, {{name}}!`.
+3. Create a [Text Node](./text.mdx) and set the text to `John Doe`. Connect it to the `name` input of the Text Node.
+4. Run the graph. The output of the Text Node will be `# Hello, John Doe!`.
+
+## Error Handling
+
+The Text Node does not have any notable error handling behavior. If an input is missing or null, the corresponding interpolation tag will be replaced with an empty string.
+
+## FAQ
+
+**Q: Can I use markdown in the Text Node?**
+
+A: Yes, the Text Node supports markdown. You can use markdown syntax in the text to create richly formatted text.
+
+**Q: Can I use the Text Node to create a template?**
+
+A: Yes, you can use the Text Node to create a template by using interpolation tags. You can then connect other nodes to the inputs of the Text Node to fill in the values of the tags.
+
+**Q: Can I use the Text Node to concatenate strings?**
+
+A: Yes, you can use the Text Node to concatenate strings by using interpolation tags. For example, you can set the text to `{{string1}}{{string2}}` to concatenate the values of `string1` and `string2`.
+
+## See Also
+
+- [Code Node](./code.mdx)
+- [Number Node](./number.mdx)
+- [Boolean Node](./boolean.mdx)
+- [Object Node](./object.mdx)
+- [Array Node](./array.mdx)
+- [Date Node](./date.mdx)
+- [Extract Object Path Node](./extract-object-path.mdx)
+- [Extract with Regex Node](./extract-with-regex.mdx)
+- [Extract JSON Node](./extract-json.mdx)
+- [Extract YAML Node](./extract-yaml.mdx)
+- [To JSON Node](./to-json.mdx)
+- [To YAML Node](./to-yaml.mdx)
+- [HTTP Call Node](./http-call.mdx)
+- [External Call Node](./external-call.mdx)
+- [Raise Event Node](./raise-event.mdx)
+- [Context Node](./context.mdx)
+- [Match Node](./match.mdx)
+- [If Node](./if.mdx)
+- [If/Else Node](./if-else.mdx)
+- [Coalesce Node](./coalesce.mdx)
+- [Split Node](./split.mdx)
+- [Loop Controller Node](./loop-controller.mdx)
+- [Chat Node](./chat.mdx)
+- [Prompt Node](./prompt.mdx)
+- [Assemble Prompt Node](./assemble-prompt.mdx)
+- [Trim Chat Messages Node](./trim-chat-messages.mdx)
+- [Extract Chat Message Node](./extract-chat-message.mdx)
+- [Extract Chat Messages Node](./extract-chat-messages.mdx)
+- [Set Chat Message Node](./set-chat-message.mdx)
+- [Set Chat Messages Node](./set-chat-messages.mdx)
+- [Add Chat Message Node](./add-chat-message.mdx)
+- [Add Chat Messages Node](./add-chat-messages.mdx)
+- [Remove Chat Message Node](./remove-chat-message.mdx)
+- [Remove Chat Messages Node](./remove-chat-messages.mdx)
+- [Sort Chat Messages Node](./sort-chat-messages.mdx)
+- [Filter Chat Messages Node](./filter-chat-messages.mdx)
+- [Find Chat Message Node](./find-chat-message.mdx)
+- [Find Chat Messages Node](./find-chat-messages.mdx)
+- [Map Chat Messages Node](./map-chat-messages.mdx)
+- [Reduce Chat Messages Node](./reduce-chat-messages.mdx)
+- [Every Chat Message Node](./every-chat-message.mdx)
+- [Some Chat Message Node](./some-chat-message.mdx)
+- [Includes Chat Message Node](./includes-chat-message.mdx)
+- [IndexOf Chat Message Node](./indexof-chat-message.mdx)
+- [LastIndexOf Chat Message Node](./lastindexof-chat-message.mdx)
+- [FindIndex Chat Message Node](./findindex-chat-message.mdx)
+- [FindLastIndex Chat Message Node](./findlastindex-chat-message.mdx)
+- [Reverse Chat Messages Node](./reverse-chat-messages.mdx)
+- [Slice Chat Messages Node](./slice-chat-messages.mdx)
+- [Splice Chat Messages Node](./splice-chat-messages.mdx)
+- [Join Chat Messages Node](./join-chat-messages.mdx)
+- [Fill Chat Messages Node](./fill-chat-messages.mdx)
+- [CopyWithin Chat Messages Node](./copywithin-chat-messages.mdx)
+- [Concat Chat Messages Node](./concat-chat-messages.mdx)
+- [Flat Chat Messages Node](./flat-chat-messages.mdx)
+- [FlatMap Chat Messages Node](./flatmap-chat-messages.mdx)
+- [ForEach Chat Message Node](./foreach-chat-message.mdx)
+- [Chat Message Node](./chat-message.mdx)
+- [Chat Messages Node](./chat-messages.mdx)
+- [Data Types](../user-guide/data-types.md)
+- [Control Flow](../user-guide/control-flow.md)
+- [Markdown](../user-guide/markdown.md)
+- [Interpolation](../user-guide/interpolation.md)
