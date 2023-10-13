@@ -7,11 +7,11 @@ sidebar_label: To YAML
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+![To YAML Node Screenshot](./assets/to-yaml-node.png)
+
 ## Overview
 
 The To YAML Node is used to convert an object into a YAML string. This can be useful when you need to output your data in a YAML format.
-
-
 
 <Tabs
   defaultValue="inputs"
@@ -58,8 +58,8 @@ This node does not have any configurable editor settings.
 
    ```json
    {
-     "name": "John Doe",
-     "age": 30
+     "name": "Claude Shannon",
+     "occupation": "Computer scientist"
    }
    ```
 
@@ -67,11 +67,11 @@ This node does not have any configurable editor settings.
 3. Run the graph. The To YAML Node should output the following YAML string:
 
    ```yaml
-   name: John Doe
-   age: 30
+name: Claude Shannon
+occupation: Computer scientist
    ```
 
-
+   ![To YAML Node Example 1](./assets/to-yaml-node-example-01.png)
 
 ## Error Handling
 

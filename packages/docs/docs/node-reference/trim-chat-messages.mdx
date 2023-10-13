@@ -7,6 +7,8 @@ sidebar_label: Trim Chat Messages
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+![Trim Chat Messages Node Screenshot](./assets/trim-chat-messages-node.png)
+
 ## Overview
 
 The Trim Chat Messages Node is used to manage the length of chat message chains in terms of tokens. It takes an array of chat messages and trims messages from either the beginning or the end of the list until the total length of the messages is under the configured token length. This is particularly useful for setting up infinite message chains that stay under the language model's context limit.
@@ -60,6 +62,8 @@ The Trim Chat Messages Node is used to manage the length of chat message chains 
 1. Create an [Array Node](./array.mdx) and set the value to an array of chat messages that exceeds a certain token count.
 2. Create a Trim Chat Messages Node and connect the Array Node to its `Input` port. Set the `Max Token Count` to a value lower than the total token count of the chat messages.
 3. Run the graph. The `Trimmed` output of the Trim Chat Messages Node should contain an array of chat messages with a total token count that does not exceed the configured `Max Token Count`.
+
+   ![Trim Chat Messages Node Example 1](./assets/trim-chat-node-example-01.png)
 
 ## Error Handling
 
