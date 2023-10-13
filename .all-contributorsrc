@@ -276,6 +276,15 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "Sandesh-Pyakurel",
+      "name": "Sandesh  Pyakurel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/82999440?v=4",
+      "profile": "https://github.com/Sandesh-Pyakurel",
+      "contributions": [
+        "maintenance"
+      ]
     }
   ],
   "contributorsPerLine": 7,
