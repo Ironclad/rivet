@@ -8,18 +8,16 @@ import {
 import { NodeImpl, type NodeUIData } from '../../model/NodeImpl.js';
 import { nanoid } from 'nanoid/non-secure';
 import {
-  coerceType,
   type EditorDefinition,
   type Inputs,
   type InternalProcessContext,
   type NodeBodySpec,
   type Outputs,
 } from '../../index.js';
-import { type ChatCompletionRequestMessage, openAiModelOptions, openaiModels } from '../../utils/openai.js';
 import { dedent } from 'ts-dedent';
-import { expectType } from '../../utils/expectType.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import type { TokenizerCallInfo } from '../../integrations/Tokenizer.js';
+import { coerceType } from '../../utils/coerceType.js';
 
 export type TrimChatMessagesNodeData = {
   maxTokenCount: number;
