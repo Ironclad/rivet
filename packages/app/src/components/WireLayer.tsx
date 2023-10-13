@@ -9,6 +9,7 @@ import { draggingWireClosestPortState } from '../state/graphBuilder.js';
 import { orderBy } from 'lodash-es';
 import { nodesByIdState } from '../state/graph';
 import { type PortPositions } from './NodeCanvas';
+import { lastRunDataByNodeState } from '../state/dataFlow';
 
 const wiresStyles = css`
   width: 100%;
@@ -103,6 +104,8 @@ export const WireLayer: FC<WireLayerProps> = ({ connections, draggingWire, highl
 
   const nodesById = useRecoilValue(nodesByIdState);
 
+  const lastRun = useRecoilValue(lastRunDataByNodeState);
+
   return (
     <svg css={wiresStyles}>
       <g transform={`scale(${canvasPosition.zoom}) translate(${canvasPosition.x}, ${canvasPosition.y})`}>
@@ -136,7 +139,9 @@ export const WireLayer: FC<WireLayerProps> = ({ connections, draggingWire, highl
         )}
         {connections.map((connection) => {
           const highlighted =
-            highlightedNodes?.includes(connection.inputNodeId) || highlightedNodes?.includes(connection.outputNodeId);
+            highlightedNodes?.includes(connection.inputNodeId) ||
+            highlightedNodes?.includes(connection.outputNodeId) ||
+            lastRun[connection.inputNodeId]?.some((run) => run.data.status?.type === 'running');
           return (
             <ErrorBoundary fallback={<></>} key={`wire-${connection.inputId}-${connection.inputNodeId}`}>
               <ConditionallyRenderWire
