@@ -3,6 +3,7 @@ import type { Tokenizer, TokenizerCallInfo } from './Tokenizer.js';
 import { encode, encodeChat } from 'gpt-tokenizer';
 import Emittery from 'emittery';
 import { getError } from '../utils/errors.js';
+import { sum } from 'lodash';
 
 export class GptTokenizerTokenizer implements Tokenizer {
   emitter = new Emittery<{
@@ -19,13 +20,16 @@ export class GptTokenizerTokenizer implements Tokenizer {
 
   getTokenCountForMessages(messages: ChatMessage[], _info: TokenizerCallInfo): number {
     try {
-      return encodeChat(
+      const encodedChat = encodeChat(
         messages.map((message) => ({
           role: message.type as 'system' | 'user' | 'assistant', // Doesn't support 'function' yet
           content: message.message,
           name: message.name,
         })),
-      ).length;
+        (_info.model as any) ?? 'gpt-3.5-turbo',
+      );
+
+      return encodedChat.length;
     } catch (err) {
       this.emitter.emit('error', getError(err));
       return 0;

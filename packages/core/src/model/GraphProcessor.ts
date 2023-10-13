@@ -654,6 +654,12 @@ export class GraphProcessor {
       this.#graphInputs = inputs;
       this.#contextValues ??= contextValues;
 
+      if (this.#context.tokenizer) {
+        this.#context.tokenizer.on('error', (error) => {
+          this.#emitter.emit('error', { error });
+        });
+      }
+
       if (!this.#isSubProcessor) {
         this.#emitter.emit('start', {
           contextValues: this.#contextValues,
@@ -1326,10 +1332,16 @@ export class GraphProcessor {
 
     const plugin = this.#registry.getPluginFor(node.type);
 
+    let tokenizer = this.#context.tokenizer;
+    if (!tokenizer) {
+      tokenizer = new GptTokenizerTokenizer();
+      tokenizer.on('error', (e) => this.#emitter.emit('error', { error: e }));
+    }
+
     const context: InternalProcessContext = {
       ...this.#context,
       node,
-      tokenizer: this.#context.tokenizer ?? new GptTokenizerTokenizer(),
+      tokenizer,
       executor: this.executor ?? 'nodejs',
       project: this.#project,
       executionCache: this.#executionCache,
