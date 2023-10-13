@@ -108,6 +108,9 @@ export type ProcessEvents = {
 
   /** Called when a global variable has been set in a graph. */
   globalSet: { id: string; value: ScalarOrArrayDataValue; processId: ProcessId };
+
+  /** Called when an AbortController has been created. Used by node to increase the max event listeners. */
+  newAbortController: AbortController;
 } & {
   /** Listen for any user event. */
   [key: `userEvent:${string}`]: DataValue | undefined;
@@ -588,6 +591,7 @@ export class GraphProcessor {
           .with({ type: P.string.startsWith('userEvent:') }, ({ type, data }) => {
             this.#emitter.emit(type, data);
           })
+          .with({ type: 'newAbortController' }, () => {})
           .with(undefined, () => {})
           .exhaustive();
       }
@@ -618,7 +622,7 @@ export class GraphProcessor {
     this.#globals ??= new Map();
     this.#ignoreNodes = new Set();
 
-    this.#abortController = new AbortController();
+    this.#abortController = this.#newAbortController();
     this.#abortController.signal.addEventListener('abort', () => {
       this.#aborted = true;
     });
@@ -649,6 +653,12 @@ export class GraphProcessor {
       this.#context = context;
       this.#graphInputs = inputs;
       this.#contextValues ??= contextValues;
+
+      if (this.#context.tokenizer) {
+        this.#context.tokenizer.on('error', (error) => {
+          this.#emitter.emit('error', { error });
+        });
+      }
 
       if (!this.#isSubProcessor) {
         this.#emitter.emit('start', {
@@ -1300,6 +1310,12 @@ export class GraphProcessor {
     }
   }
 
+  #newAbortController() {
+    const controller = new AbortController();
+    this.#emitter.emit('newAbortController', controller);
+    return controller;
+  }
+
   async #processNodeWithInputData(
     node: ChartNode,
     inputValues: Inputs,
@@ -1308,7 +1324,7 @@ export class GraphProcessor {
     partialOutput?: (node: ChartNode, partialOutputs: Outputs, index: number) => void,
   ) {
     const instance = this.#nodeInstances[node.id]!;
-    const nodeAbortController = new AbortController();
+    const nodeAbortController = this.#newAbortController();
     this.#nodeAbortControllers.set(`${node.id}-${processId}`, nodeAbortController);
     this.#abortController.signal.addEventListener('abort', () => {
       nodeAbortController.abort();
@@ -1316,10 +1332,16 @@ export class GraphProcessor {
 
     const plugin = this.#registry.getPluginFor(node.type);
 
+    let tokenizer = this.#context.tokenizer;
+    if (!tokenizer) {
+      tokenizer = new GptTokenizerTokenizer();
+      tokenizer.on('error', (e) => this.#emitter.emit('error', { error: e }));
+    }
+
     const context: InternalProcessContext = {
       ...this.#context,
       node,
-      tokenizer: this.#context.tokenizer ?? new GptTokenizerTokenizer(),
+      tokenizer,
       executor: this.executor ?? 'nodejs',
       project: this.#project,
       executionCache: this.#executionCache,

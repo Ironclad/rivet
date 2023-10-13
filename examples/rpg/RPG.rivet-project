@@ -303,7 +303,7 @@ data:
             - output->"Assemble Prompt" OE9oEA2HAeyCJzKnMAlAB/message3
           visualData: 1797.7136653014277/68.06726944245918/250/323
   metadata:
-    description: An example project to demostrate a basic chat loop, utilizing
+    description: An example project to demonstrate a basic chat loop, utilizing
       system prompts to implement a text-based RPG.
     id: mdaNOH2qO9sNDSGXgCrzi
     title: RPG

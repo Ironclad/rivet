@@ -225,6 +225,18 @@ async function handleDatasetsMessage(type: string, data: any, socket: WebSocket)
         }),
       );
     })
+    .with('datasets:knn', async () => {
+      const nearest = await datasetProvider.knnDatasetRows(payload.datasetId, payload.k, payload.vector);
+      socket.send(
+        JSON.stringify({
+          type: 'datasets:response',
+          data: {
+            requestId,
+            payload: nearest,
+          },
+        }),
+      );
+    })
     .otherwise(() => {
       console.error(`Unknown datasets message type: ${type}`);
     });

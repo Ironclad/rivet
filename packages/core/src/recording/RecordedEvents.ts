@@ -60,6 +60,8 @@ export type RecordedEventsMap = OverrideProperties<
 
     /** Called when the root graph has errored. The root graph will also throw. */
     error: { error: string };
+
+    newAbortController: undefined;
   }
 >;
 

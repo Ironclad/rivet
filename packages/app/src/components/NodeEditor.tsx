@@ -4,7 +4,13 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { connectionsForSingleNodeState, connectionsState, nodesByIdState, nodesState } from '../state/graph.js';
 import styled from '@emotion/styled';
 import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
-import { type ChartNode, type NodeTestGroup, type GraphId, globalRivetNodeRegistry, type DataId } from '@ironclad/rivet-core';
+import {
+  type ChartNode,
+  type NodeTestGroup,
+  type GraphId,
+  globalRivetNodeRegistry,
+  type DataId,
+} from '@ironclad/rivet-core';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import { produce } from 'immer';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -386,6 +392,8 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
     selection!.addRange(range);
   };
 
+  const showGlobalControls = selectedNode.type !== 'comment';
+
   return (
     <Container>
       <div className="tabs">
@@ -399,129 +407,131 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
                 <button className="close-button" onClick={onDeselect}>
                   <MultiplyIcon />
                 </button>
-                <div className="section section-global-controls">
-                  <InlineEditableTextfield
-                    key={`node-title-${selectedNode.id}`}
-                    label="Node Title"
-                    placeholder="Enter a name for the node..."
-                    defaultValue={selectedNode.title}
-                    onConfirm={nodeTitleChanged}
-                    readViewFitContainerWidth
-                  />
-                  <InlineEditableTextfield
-                    key={`node-description-${selectedNode.id}`}
-                    label="Node Description"
-                    defaultValue={selectedNode.description ?? ''}
-                    onConfirm={nodeDescriptionChanged}
-                    placeholder="Optional description..."
-                    readViewFitContainerWidth
-                  ></InlineEditableTextfield>
+                {showGlobalControls && (
+                  <div className="section section-global-controls">
+                    <InlineEditableTextfield
+                      key={`node-title-${selectedNode.id}`}
+                      label="Node Title"
+                      placeholder="Enter a name for the node..."
+                      defaultValue={selectedNode.title}
+                      onConfirm={nodeTitleChanged}
+                      readViewFitContainerWidth
+                    />
+                    <InlineEditableTextfield
+                      key={`node-description-${selectedNode.id}`}
+                      label="Node Description"
+                      defaultValue={selectedNode.description ?? ''}
+                      onConfirm={nodeDescriptionChanged}
+                      placeholder="Optional description..."
+                      readViewFitContainerWidth
+                    ></InlineEditableTextfield>
 
-                  <Field name="isSplitRun" label="Split">
-                    {({ fieldProps }) => (
-                      <section className="split-controls">
-                        <div className="split-controls-toggle">
-                          <Toggle
-                            {...fieldProps}
-                            isChecked={selectedNode.isSplitRun}
-                            onChange={(isSplitRun) =>
-                              updateNode({ ...selectedNode, isSplitRun: isSplitRun.target.checked })
-                            }
-                          />
-                        </div>
+                    <Field name="isSplitRun" label="Split">
+                      {({ fieldProps }) => (
+                        <section className="split-controls">
+                          <div className="split-controls-toggle">
+                            <Toggle
+                              {...fieldProps}
+                              isChecked={selectedNode.isSplitRun}
+                              onChange={(isSplitRun) =>
+                                updateNode({ ...selectedNode, isSplitRun: isSplitRun.target.checked })
+                              }
+                            />
+                          </div>
 
-                        {selectedNode.isSplitRun && (
-                          <>
-                            <div className="split-max">
-                              <label>
-                                Sequential
-                                <Toggle
-                                  label="asda"
-                                  isChecked={selectedNode.isSplitSequential ?? false}
-                                  onChange={(isSequential) =>
+                          {selectedNode.isSplitRun && (
+                            <>
+                              <div className="split-max">
+                                <label>
+                                  Sequential
+                                  <Toggle
+                                    label="asda"
+                                    isChecked={selectedNode.isSplitSequential ?? false}
+                                    onChange={(isSequential) =>
+                                      updateNode({
+                                        ...selectedNode,
+                                        isSplitSequential: isSequential.target.checked,
+                                      })
+                                    }
+                                  />
+                                </label>
+                                <label>Max:</label>
+                                <TextField
+                                  type="number"
+                                  placeholder="Max"
+                                  value={selectedNode.splitRunMax ?? 10}
+                                  onChange={(event) =>
                                     updateNode({
                                       ...selectedNode,
-                                      isSplitSequential: isSequential.target.checked,
+                                      splitRunMax: (event.target as HTMLInputElement).valueAsNumber,
                                     })
                                   }
                                 />
-                              </label>
-                              <label>Max:</label>
-                              <TextField
-                                type="number"
-                                placeholder="Max"
-                                value={selectedNode.splitRunMax ?? 10}
-                                onChange={(event) =>
-                                  updateNode({
-                                    ...selectedNode,
-                                    splitRunMax: (event.target as HTMLInputElement).valueAsNumber,
-                                  })
-                                }
-                              />
-                            </div>
-                          </>
-                        )}
-                      </section>
-                    )}
-                  </Field>
-                  <Field name="variants" label="Variant">
-                    {({ fieldProps }) => (
-                      <section className="variants">
-                        {variantOptions.length > 1 && (
-                          <Select
-                            className="variant-select"
-                            {...fieldProps}
-                            options={variantOptions}
-                            value={selectedVariantOption}
-                            onChange={(val) => setSelectedVariant(val!.value === '' ? undefined : val!.value)}
-                          />
-                        )}
-
-                        {isVariant ? (
-                          <div className="variant-buttons">
-                            <Button appearance="primary" onClick={handleApplyVariant}>
-                              Apply
-                            </Button>
-                            <Button appearance="danger" onClick={handleDeleteVariant}>
-                              Delete Variant
-                            </Button>
-                          </div>
-                        ) : (
-                          <Popup
-                            isOpen={addVariantPopupOpen}
-                            trigger={(triggerProps) => (
-                              <Button
-                                {...triggerProps}
-                                appearance="subtle-link"
-                                onClick={() => setAddVariantPopupOpen(!addVariantPopupOpen)}
-                              >
-                                Save As Variant
-                              </Button>
-                            )}
-                            content={() => (
-                              <div>
-                                <Field name="variantName" label="Variant Name">
-                                  {({ fieldProps }) => (
-                                    <TextField
-                                      {...fieldProps}
-                                      placeholder="Enter a name for the variant..."
-                                      onKeyDown={(event) => {
-                                        if (event.key === 'Enter') {
-                                          handleSaveAsVariant((event.target as HTMLInputElement).value);
-                                          setAddVariantPopupOpen(false);
-                                        }
-                                      }}
-                                    />
-                                  )}
-                                </Field>
                               </div>
-                            )}
-                          />
-                        )}
-                      </section>
-                    )}
-                  </Field>
-                </div>
+                            </>
+                          )}
+                        </section>
+                      )}
+                    </Field>
+                    <Field name="variants" label="Variant">
+                      {({ fieldProps }) => (
+                        <section className="variants">
+                          {variantOptions.length > 1 && (
+                            <Select
+                              className="variant-select"
+                              {...fieldProps}
+                              options={variantOptions}
+                              value={selectedVariantOption}
+                              onChange={(val) => setSelectedVariant(val!.value === '' ? undefined : val!.value)}
+                            />
+                          )}
+
+                          {isVariant ? (
+                            <div className="variant-buttons">
+                              <Button appearance="primary" onClick={handleApplyVariant}>
+                                Apply
+                              </Button>
+                              <Button appearance="danger" onClick={handleDeleteVariant}>
+                                Delete Variant
+                              </Button>
+                            </div>
+                          ) : (
+                            <Popup
+                              isOpen={addVariantPopupOpen}
+                              trigger={(triggerProps) => (
+                                <Button
+                                  {...triggerProps}
+                                  appearance="subtle-link"
+                                  onClick={() => setAddVariantPopupOpen(!addVariantPopupOpen)}
+                                >
+                                  Save As Variant
+                                </Button>
+                              )}
+                              content={() => (
+                                <div>
+                                  <Field name="variantName" label="Variant Name">
+                                    {({ fieldProps }) => (
+                                      <TextField
+                                        {...fieldProps}
+                                        placeholder="Enter a name for the variant..."
+                                        onKeyDown={(event) => {
+                                          if (event.key === 'Enter') {
+                                            handleSaveAsVariant((event.target as HTMLInputElement).value);
+                                            setAddVariantPopupOpen(false);
+                                          }
+                                        }}
+                                      />
+                                    )}
+                                  </Field>
+                                </div>
+                              )}
+                            />
+                          )}
+                        </section>
+                      )}
+                    </Field>
+                  </div>
+                )}
 
                 <div className="section section-node">
                   <div className="section-node-content">{nodeEditor}</div>
