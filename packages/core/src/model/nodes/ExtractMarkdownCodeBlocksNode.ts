@@ -10,6 +10,7 @@ import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import { expectType } from '../../utils/expectType.js';
 import type { Inputs, Outputs } from '../GraphProcessor.js';
+import { dedent } from 'ts-dedent';
 
 export type ExtractMarkdownCodeBlocksNode = ChartNode<'extractMarkdownCodeBlocks', {}>;
 
@@ -63,7 +64,7 @@ export class ExtractMarkdownCodeBlocksNodeImpl extends NodeImpl<ExtractMarkdownC
 
   static getUIData(): NodeUIData {
     return {
-      infoBoxBody: `
+      infoBoxBody: dedent`
         Extracts the code blocks in the input Markdown text.
 
         Outputs the first matched block, all matched blocks, and the languages specified for the blocks.
