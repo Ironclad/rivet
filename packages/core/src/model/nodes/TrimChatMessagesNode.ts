@@ -8,6 +8,7 @@ import {
 import { NodeImpl, type NodeUIData } from '../../model/NodeImpl.js';
 import { nanoid } from 'nanoid/non-secure';
 import {
+  coerceType,
   type EditorDefinition,
   type Inputs,
   type InternalProcessContext,
@@ -103,7 +104,7 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
   }
 
   async process(inputs: Inputs, context: InternalProcessContext<TrimChatMessagesNode>): Promise<Outputs> {
-    const input = expectType(inputs['input' as PortId], 'chat-message[]');
+    const input = coerceType(inputs['input' as PortId], 'chat-message[]');
     const maxTokenCount = this.chartNode.data.maxTokenCount;
     const removeFromBeginning = this.chartNode.data.removeFromBeginning;
 
