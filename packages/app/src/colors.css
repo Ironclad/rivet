@@ -49,6 +49,33 @@
 
   /* Gradient */
   --grey-subtle-accent: rgba(255, 255, 255, 0.02);
+
+  --node-color-1: #ff9900;
+  --node-color-1-foreground: #1e1e1e;
+
+  --node-color-2: #a55fff;
+  --node-color-2-foreground: #fff;
+
+  --node-color-3: #30c9c3;
+  --node-color-3-foreground: #1e1e1e;
+
+  --node-color-4: #00b74c;
+  --node-color-4-foreground: #1e1e1e;
+
+  --node-color-5: #e74c3c;
+  --node-color-5-foreground: #1e1e1e;
+
+  --node-color-6: #f1c40f;
+  --node-color-6-foreground: #1e1e1e;
+
+  --node-color-7: #ff704d;
+  --node-color-7-foreground: #1e1e1e;
+
+  --node-color-8: #222222;
+  --node-color-8-foreground: #fff;
+
+  --node-color-9: #444444;
+  --node-color-9-foreground: #fff;
 }
 
 .app.theme-default,

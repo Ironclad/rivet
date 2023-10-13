@@ -221,7 +221,7 @@ function toSerializedNode(node: ChartNode, allNodes: ChartNode[], allConnections
     description: node.description?.trim() ? node.description : undefined,
     visualData: `${node.visualData.x}/${node.visualData.y}/${node.visualData.width ?? 'null'}/${
       node.visualData.zIndex ?? 'null'
-    }`,
+    }/${node.visualData.color?.border ?? ''}/${node.visualData.color?.bg ?? ''}`,
     isSplitRun: node.isSplitRun ? true : undefined,
     splitRunMax: node.isSplitRun ? node.splitRunMax : undefined,
     data: Object.keys(node.data ?? {}).length > 0 ? node.data : undefined,
@@ -236,12 +236,14 @@ function fromSerializedNode(
 ): [ChartNode, NodeConnection[]] {
   const [nodeId, type, title] = deserializeGraphNodeKey(serializedNodeInfo);
 
-  const [x, y, width, zIndex] = serializedNode.visualData.split('/');
+  const [x, y, width, zIndex, borderColor, bgColor] = serializedNode.visualData.split('/');
 
   const connections =
     serializedNode.outgoingConnections?.map((serializedConnection) =>
       fromSerializedConnection(serializedConnection, nodeId),
     ) ?? [];
+
+  const color = borderColor || bgColor ? { border: borderColor!, bg: bgColor! } : undefined;
 
   return [
     {
@@ -256,6 +258,7 @@ function fromSerializedNode(
         y: parseFloat(y!),
         width: width === 'null' ? undefined : parseFloat(width!),
         zIndex: zIndex === 'null' ? undefined : parseFloat(zIndex!),
+        color,
       },
       data: serializedNode.data ?? {},
       variants: serializedNode.variants ?? [],

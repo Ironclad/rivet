@@ -29,6 +29,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { projectDataState, projectState } from '../state/savedGraphs';
 import { useSetStaticData } from '../hooks/useSetStaticData';
 import { DefaultNodeEditor } from './editors/DefaultNodeEditor';
+import { NodeColorPicker } from './NodeColorPicker';
 
 export const NodeEditorRenderer: FC = () => {
   const nodesById = useRecoilValue(nodesByIdState);
@@ -215,7 +216,7 @@ const Container = styled.div`
 
   .section-global-controls {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: auto 1fr 1fr;
     row-gap: 8px;
     column-gap: 16px;
     margin-bottom: 16px;
@@ -243,6 +244,10 @@ const Container = styled.div`
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Fira Sans', 'Droid Sans',
         'Helvetica Neue', sans-serif;
     }
+  }
+
+  .node-color-picker {
+    padding-top: 8px;
   }
 `;
 
@@ -321,6 +326,10 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
 
   const nodeTitleChanged = useStableCallback((title: string) => {
     updateNode({ ...selectedNode, title });
+  });
+
+  const nodeColorChanged = useStableCallback((color: string | undefined) => {
+    updateNode({ ...selectedNode, visualData: { ...selectedNode.visualData, color } });
   });
 
   const variantOptions = useMemo(() => {
@@ -409,6 +418,9 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
                 </button>
                 {showGlobalControls && (
                   <div className="section section-global-controls">
+                    <div className="node-color-picker">
+                      <NodeColorPicker currentColor={selectedNode.visualData.color} onChange={nodeColorChanged} />
+                    </div>
                     <InlineEditableTextfield
                       key={`node-title-${selectedNode.id}`}
                       label="Node Title"
@@ -425,7 +437,7 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
                       placeholder="Optional description..."
                       readViewFitContainerWidth
                     ></InlineEditableTextfield>
-
+                    <div />
                     <Field name="isSplitRun" label="Split">
                       {({ fieldProps }) => (
                         <section className="split-controls">

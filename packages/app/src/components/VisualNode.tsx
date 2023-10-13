@@ -8,6 +8,7 @@ import {
   memo,
   useEffect,
   useState,
+  useMemo,
 } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { match } from 'ts-pattern';
@@ -97,13 +98,38 @@ export const VisualNode = memo(
         canvasPosition: { zoom },
       } = useCanvasPositioning();
 
-      const style: CSSProperties = {
-        opacity: isDragging ? '0' : '',
-        transform: `translate(${node.visualData.x + xDelta}px, ${node.visualData.y + yDelta}px) scale(${scale ?? 1})`,
-        zIndex: isComment ? -10000 : node.visualData.zIndex ?? 0,
-        width: node.visualData.width,
-        height: isComment ? (node as CommentNode).data.height : undefined,
-      };
+      const style = useMemo(() => {
+        const bgColor = node.visualData.color?.bg ?? 'var(--grey-darkish)';
+        const borderColor = node.visualData.color?.border ?? 'rgba(0, 0, 0, 0.2)';
+
+        let fgColor = 'var(--foreground-bright)';
+        if (bgColor) {
+          const match = bgColor.match(/node-color-(\d+)/);
+          if (match?.[1]) {
+            fgColor = `var(--node-color-${match[1]}-foreground)`;
+          }
+        }
+
+        const style: CSSProperties = {
+          opacity: isDragging ? '0' : '',
+          transform: `translate(${node.visualData.x + xDelta}px, ${node.visualData.y + yDelta}px) scale(${scale ?? 1})`,
+          zIndex: isComment ? -10000 : node.visualData.zIndex ?? 0,
+          width: node.visualData.width,
+          height: isComment ? (node as CommentNode).data.height : undefined,
+          '--node-bg': bgColor,
+          '--node-border': borderColor,
+          '--node-bg-foreground': fgColor,
+        } as CSSProperties;
+
+        return style;
+      }, [
+        node.visualData.color?.bg,
+        node.visualData.color?.border,
+        node.visualData.x,
+        node.visualData.y,
+        xDelta,
+        yDelta,
+      ]);
 
       const nodeRef = (refValue: HTMLDivElement | null) => {
         if (typeof ref === 'function') {
@@ -141,13 +167,11 @@ export const VisualNode = memo(
           data-contextmenutype={`node-${node.type}`}
           onMouseOver={(event) => onMouseOver?.(event, node.id)}
           onMouseOut={(event) => onMouseOut?.(event, node.id)}
-          onDoubleClick={
-            () => {
-              if (isKnownNodeType) {
-                onStartEditing?.();
-              }
+          onDoubleClick={() => {
+            if (isKnownNodeType) {
+              onStartEditing?.();
             }
-          }
+          }}
         >
           {isZoomedOut ? (
             <ZoomedOutVisualNodeContent
@@ -444,12 +468,16 @@ const NormalVisualNodeContent: FC<{
                 <></>
               )}
             </div>
-            <button className="edit-button" onClick={(e) => {
-              if (isKnownNodeType) {
-                handleEditClick(e);
-              }
-            } 
-          }onMouseDown={handleEditMouseDown} title="Edit">
+            <button
+              className="edit-button"
+              onClick={(e) => {
+                if (isKnownNodeType) {
+                  handleEditClick(e);
+                }
+              }}
+              onMouseDown={handleEditMouseDown}
+              title="Edit"
+            >
               <SettingsCogIcon />
             </button>
           </div>

@@ -39,6 +39,12 @@ export interface NodeBase {
 
     width?: number;
 
+    /** The accent color of the node in the UI. */
+    color?: {
+      border: string;
+      bg: string;
+    };
+
     /** The z-index, the last grabbed node is on top of all others. */
     zIndex?: number;
   };

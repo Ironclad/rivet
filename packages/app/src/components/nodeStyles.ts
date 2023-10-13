@@ -4,7 +4,7 @@ export const nodeStyles = css`
   .node {
     background-color: var(--grey-dark-seethrough);
     border-radius: 8px;
-    border: 2px solid var(--grey);
+    border: 2px solid var(--node-border);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
@@ -45,11 +45,11 @@ export const nodeStyles = css`
   }
 
   .node-title {
-    background-color: var(--grey-darkish);
-    color: var(--foreground-bright);
+    background-color: var(--node-bg);
+    color: var(--node-bg-foreground);
     padding: 12px;
     margin: -12px -12px 8px -12px;
-    border-radius: 8px 8px 0 0;
+    border-radius: 6px 6px 0 0;
     letter-spacing: 1px;
     display: flex;
     justify-content: space-between;
@@ -125,7 +125,7 @@ export const nodeStyles = css`
     button {
       background-color: transparent;
       border: none;
-      color: var(--grey-lighter);
+      color: var(--node-bg-foreground);
       cursor: pointer;
       font-size: 18px;
       margin-left: 8px;
