@@ -12,7 +12,7 @@ When a node is split:
 - The input types for the input ports of the node can be arrays of the same type of data that would normally be accepted by the node
 - The output types for the output ports of the node will be arrays of data of the same type that would normally be output by the node
 - Each execution of the node will be given a single value from the array of data, and executed normally. The output of each execution will be collected into an array, and the array will be output from the node.
-- If the input value is not an array, then every execution of the node will be given the same value.
+- If the input value is not an array, then it will be treated as an array of N copies of the value, where N is the length of the array given to another input port. For example, if one port is given a string `"value"`, and another port is given an array of 3 numbers, then the node will be executed 3 times, and each execution will be given the string `"value"`.
 - If multiple values are arrays, then the values will be zipped together for each execution. For example, if one port is given a (string, string), and another port a (number, number), then each execution will be given a (string, number) as its inputs.
 
 ## Use Cases
