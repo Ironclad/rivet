@@ -100,7 +100,7 @@ export const VisualNode = memo(
 
       const style = useMemo(() => {
         const bgColor = node.visualData.color?.bg ?? 'var(--grey-darkish)';
-        const borderColor = node.visualData.color?.border ?? 'rgba(0, 0, 0, 0.2)';
+        const borderColor = node.visualData.color?.border ?? 'var(--grey-darkish)';
 
         let fgColor = 'var(--foreground-bright)';
         if (bgColor) {
