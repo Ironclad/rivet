@@ -328,7 +328,7 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
     updateNode({ ...selectedNode, title });
   });
 
-  const nodeColorChanged = useStableCallback((color: string | undefined) => {
+  const nodeColorChanged = useStableCallback((color: { bg: string; border: string } | undefined) => {
     updateNode({ ...selectedNode, visualData: { ...selectedNode.visualData, color } });
   });
 
