@@ -1,5 +1,7 @@
 ---
-title: 'Vector Nearest Neighbors'
+id: vector-knn
+title: Vector K-Nearest Neighbors Node
+sidebar_label: Vector KNN
 ---
 
 # Vector Nearest Neighbors Node
@@ -12,6 +14,12 @@ import TabItem from '@theme/TabItem';
 The Vector KNN Node takes a vector embedding and searches for K similar vectors.
 
 ![Chat Node Screenshot](./assets/vector-knn-node.png)
+
+## Overview
+
+The Vector K-Nearest Neighbors (KNN) Node is used to perform a k-nearest neighbors search on vectors stored in a configured vector database integration. It takes in a vector and returns the k closest vectors and their corresponding data.
+
+This node is useful when working with vector databases such as Pinecone, where you might want to find the vectors in the database that are most similar to a given input vector.
 
 <Tabs
   defaultValue="inputs"
@@ -26,18 +34,22 @@ The Vector KNN Node takes a vector embedding and searches for K similar vectors.
 
 ## Inputs
 
-| Title  | Data Type   | Description                                                 | Required |                                                                                                                                                                |
-| ------ | ----------- | ----------------------------------------------------------- | -------- |
-| Vector | vector      | The vector you would like to search for nearest neighbors.  | True     |
+| Title         | Data Type | Description                                                                                           | Default Value | Notes                                                                                                                            |
+| ------------- | --------- | ----------------------------------------------------------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Vector        | `vector`  | The vector to find the nearest neighbors for.                                                         | (required)    | The input will be coerced into a vector if it is not a vector.                                                                   |
+| Integration   | `string`  | The name of the vector database integration to use.                                                   | (optional)    | Only required if `Use Integration Input` is enabled in the editor settings.                                                      |
+| K             | `number`  | The number of nearest neighbors to find.                                                              | (optional)    | Only required if `Use K Input` is enabled in the editor settings.                                                                |
+| Collection ID | `string`  | The ID of the collection in the vector database to search for the nearest neighbors.                  | (optional)    | Only required if `Use Collection ID Input` is enabled in the editor settings.                                                     |
+
 </TabItem>
 
 <TabItem value="outputs">
 
 ## Outputs
 
-| Title    | Data Type | Description                   |
-| -------- | --------- | ----------------------------- |
-| Results  | any[]     | Array of nearest K neighbors. |
+| Title   | Data Type | Description                                                                                   | Notes                                                                                      |
+| ------- | --------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Results | `any[]`   | The k nearest neighbors to the input vector, along with their corresponding data.             | If the value is not found, this port is not ran.                                          |
 
 </TabItem>
 
@@ -45,16 +57,38 @@ The Vector KNN Node takes a vector embedding and searches for K similar vectors.
 
 ## Editor Settings
 
-| Setting         | Description                            | 
-| --------------- | -------------------------------------- | 
-| Integration     | Which integrated store to use.         |
-| K               | Number of nearest neighbors to return. |
-| Collection Id   | Which collection to store the vector.  |
-
+| Setting               | Description                                                                                                                                        | Default Value | Use Input Toggle | Input Data Type |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------- | --------------- |
+| Integration           | The name of the vector database integration to use.                                                                                                | (empty)       | Yes              | `string`        |
+| K                     | The number of nearest neighbors to find.                                                                                                           | 10            | Yes              | `number`        |
+| Collection ID         | The ID of the collection in the vector database to search for the nearest neighbors.                                                               | (empty)       | Yes              | `string`        |
 
 </TabItem>
 
 </Tabs>
+
+## Example 1: Find the nearest neighbors of a vector in a Pinecone database
+
+1. Create a [Text Node](./text.mdx) with the text you want to search for nearest neighbors of. 
+2. Connect the Text Node to a [Get Embedding Node](./get-embedding) to convert the text into a vector.
+3. Create a Vector KNN Node and connect the Vector Node to its `Vector` input. Set the `Integration` to `pinecone`, the `K` to `10`, and the `Collection ID` to the ID of your Pinecone collection.
+4. Run the graph. The Vector KNN Node should output the 10 nearest neighbors to the input vector in the Pinecone collection.
+
+![Vector KNN Node Example 1](./assets/vector-knn-node-example-01.png)
+
+## Error Handling
+
+The Vector KNN Node will throw an error if the input vector is not a vector, or if the specified vector database integration is not found. If the specified collection ID is not found in the vector database, the node will return an empty array.
+
+## FAQ
+
+**Q: Can I use the Vector KNN Node with other vector database integrations?**
+
+A: Yes, you can use the Vector KNN Node with any vector database integration supported by Rivet, such as Pinecone. You just need to specify the name of the integration in the `Integration` setting of the node.
+
+**Q: Can I find the nearest neighbors of multiple vectors at once?**
+
+A: No, the Vector KNN Node can only find the nearest neighbors of a single vector at a time. If you want to find the nearest neighbors of multiple vectors, you would need to use multiple Vector KNN Nodes, one for each vector.
 
 ## See Also
 

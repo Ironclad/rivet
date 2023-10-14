@@ -208,7 +208,7 @@ const sidebars = {
       label: 'Numbers',
       collapsible: true,
       collapsed: false,
-      items: ['node-reference/number', 'node-reference/rng'],
+      items: ['node-reference/number', 'node-reference/RNG'],
     },
     {
       type: 'category',
