@@ -129,6 +129,11 @@ export const VisualNode = memo(
         node.visualData.y,
         xDelta,
         yDelta,
+        node.visualData.width,
+        isDragging,
+        scale,
+        node.visualData.zIndex,
+        isComment,
       ]);
 
       const nodeRef = (refValue: HTMLDivElement | null) => {
