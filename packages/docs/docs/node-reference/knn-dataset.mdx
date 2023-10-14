@@ -65,7 +65,7 @@ For more information on datasets, see the [Data Studio](../user-guide/features/d
 
 1. First, in the [Data Studio](../user-guide/features/data-studio.md), create a new dataset with the name `Employees`.
 2. In a new graph, add an [Append to Dataset Node](./append-to-dataset.mdx) and set the Dataset ID to `Employees`.
-3. Add a [Text Node](../text.mdx) and set the value to `John Doe`. We will be getting an embedding for this text node.
+3. Add a [Text Node](./text.mdx) and set the value to `John Doe`. We will be getting an embedding for this text node.
 4. Add a [Get Embedding Node](./get-embedding.mdx) and connect the Text Node to it. Connect the `Embedding` output of the Get Embedding Node to the `Embedding` input of the Append to Dataset Node.
 5. Connect the Text Node to the `Data` input of the Append to Dataset Node.
 6. Run the graph. This will append "John Doe" and its embedding to the `Employees` dataset.
@@ -74,7 +74,7 @@ For more information on datasets, see the [Data Studio](../user-guide/features/d
 ![KNN Dataset Node Example 1](./assets/knn-dataset-node-example-01.png)
 
 1. Next, create a new graph with a KNN Dataset Node and set the Dataset ID to `Employees` and K to 1.
-2. Add a [Text Node](../text.mdx) and set the value to `Jane`. We will be finding the nearest neighbor to this text node.
+2. Add a [Text Node](./text.mdx) and set the value to `Jane`. We will be finding the nearest neighbor to this text node.
 3. Add a [Get Embedding Node](./get-embedding.mdx) and connect the Text Node to it. Connect the `Embedding` output of the Get Embedding Node to the `Embedding` input of the KNN Dataset Node.
 4. Run the graph. This will find the nearest neighbor to "Jane" in the `Employees` dataset, which is "Jane Doe".
 

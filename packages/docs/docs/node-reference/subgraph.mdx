@@ -30,9 +30,9 @@ The Subgraph Node also has an optional error output. If enabled, any errors that
 
 ## Inputs
 
-| Title          | Data Type | Description                                                                                           | Default Value | Notes                                                                                                                          |
-| -------------- | --------- | ----------------------------------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| (custom names) | Any       | The input values passed into the subgraph. Dynamic based on the inputs configured in the subgraph.   | N/A           | Always accepts any data type.                                                                                                  |
+| Title          | Data Type | Description                                                                                        | Default Value | Notes                         |
+| -------------- | --------- | -------------------------------------------------------------------------------------------------- | ------------- | ----------------------------- |
+| (custom names) | Any       | The input values passed into the subgraph. Dynamic based on the inputs configured in the subgraph. | N/A           | Always accepts any data type. |
 
 </TabItem>
 
@@ -40,10 +40,10 @@ The Subgraph Node also has an optional error output. If enabled, any errors that
 
 ## Outputs
 
-| Title          | Data Type | Description                                                                                           | Notes                                                                                                                          |
-| -------------- | --------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| (custom names) | Any       | The output values from the execution of the subgraph. Dynamic based on the outputs configured in the subgraph. | Always accepts any data type.                                                                                                  |
-| Error          | `string`  | If the subgraph errors, will be populated with the error message.                                     | Only enabled if `Use Error Output` is turned on. If `Use Error Output` is turned off, the node will error instead.             |
+| Title          | Data Type | Description                                                                                                    | Notes                                                                                                              |
+| -------------- | --------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| (custom names) | Any       | The output values from the execution of the subgraph. Dynamic based on the outputs configured in the subgraph. | Always accepts any data type.                                                                                      |
+| Error          | `string`  | If the subgraph errors, will be populated with the error message.                                              | Only enabled if `Use Error Output` is turned on. If `Use Error Output` is turned off, the node will error instead. |
 
 </TabItem>
 
@@ -51,10 +51,10 @@ The Subgraph Node also has an optional error output. If enabled, any errors that
 
 ## Editor Settings
 
-| Setting          | Description                                                                                                                                                                                                | Default Value                  | Use Input Toggle | Input Data Type |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ | ---------------- | --------------- |
-| Graph            | The graph to execute when this node is ran. Must be a graph in the same project.                                                                                                                           | (required)                     | No               | N/A             |
-| Use Error Output | If enabled, then the Subgraph node will not fail, but instead any error will appear in the `Error` output port of the node. If disabled, the entire Subgraph node will error if the call errors. | False                           | No               | N/A             |
+| Setting          | Description                                                                                                                                                                                      | Default Value | Use Input Toggle | Input Data Type |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- | ---------------- | --------------- |
+| Graph            | The graph to execute when this node is ran. Must be a graph in the same project.                                                                                                                 | (required)    | No               | N/A             |
+| Use Error Output | If enabled, then the Subgraph node will not fail, but instead any error will appear in the `Error` output port of the node. If disabled, the entire Subgraph node will error if the call errors. | False         | No               | N/A             |
 
 </TabItem>
 
@@ -68,8 +68,7 @@ Hi, From Subgraph`.
 3. In your main graph, add a Subgraph Node. In the editor settings, set the `Graph` to the graph you created in step 1.
 4. Connect a [Text Node](./text.mdx) to the input of the Subgraph Node.
 5. Set the Text of the Text Node to `Hello Subgraph!`.
-5. Run the graph. Note that the text is passed through the subgraph and back to the main graph with the text from the subgraph appended to it.
-
+6. Run the graph. Note that the text is passed through the subgraph and back to the main graph with the text from the subgraph appended to it.
 
 ![Subgraph Node Example 1a](./assets/subgraph-node-example-01a.png)
 ![Subgraph Node Example 1b](./assets/subgraph-node-example-01b.png)
@@ -79,9 +78,9 @@ Hi, From Subgraph`.
 1. Using the same graphs from Example 1, in the subgraph add a vector store node.
 2. Connect all the outputs from the text node to the vector store node.
 3. This will cause the Vector Store Node to Error
-3. In your main graph, add a Subgraph Node. In the editor settings enable `Use Error Output`.
-4. Connect [Text Nodes](./text.mdx) to both outputs of the Subgraph Node.
-5. Run the graph. Note that the error is output on the `Error` port of the Subgraph Node, and the `Output` port is not ran.
+4. In your main graph, add a Subgraph Node. In the editor settings enable `Use Error Output`.
+5. Connect [Text Nodes](./text.mdx) to both outputs of the Subgraph Node.
+6. Run the graph. Note that the error is output on the `Error` port of the Subgraph Node, and the `Output` port is not ran.
 
 ![Subgraph Node Example 2a](./assets/subgraph-node-example-02a.png)
 ![Subgraph Node Example 2b](./assets/subgraph-node-example-02b.png)
@@ -110,5 +109,4 @@ A: Yes, you can use an [If Node](./if.mdx) to conditionally execute a Subgraph N
 - [Graph Output Node](./graph-output.mdx)
 - [If Node](./if.mdx)
 - [Loop Controller Node](./loop-controller.mdx)
-- [Print Node](./print.mdx)
 - [Text Node](./text.mdx)
