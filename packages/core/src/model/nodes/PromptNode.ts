@@ -19,6 +19,7 @@ import {
 import { mapValues } from 'lodash-es';
 import { dedent } from 'ts-dedent';
 import { coerceType } from '../../utils/coerceType.js';
+import { getInputOrData } from '../../utils/index.js';
 
 export type PromptNode = ChartNode<'prompt', PromptNodeData>;
 
@@ -205,10 +206,18 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
 
     const outputValue = this.interpolate(this.chartNode.data.promptText, inputMap);
 
+    const type = getInputOrData(this.data, inputs, 'type', 'string');
+
+    if (['assistant', 'system', 'user', 'function'].includes(type) === false) {
+      throw new Error(`Invalid type: ${type}`);
+    }
+
+    const name = getInputOrData(this.data, inputs, 'name', 'string');
+
     const message: ChatMessage = {
-      type: this.chartNode.data.type,
+      type: type as 'assistant' | 'system' | 'user' | 'function',
       message: outputValue,
-      name: this.data.name,
+      name,
       function_call: this.data.enableFunctionCall ? coerceType(inputs['function-call' as PortId], 'object') : undefined,
     };
 

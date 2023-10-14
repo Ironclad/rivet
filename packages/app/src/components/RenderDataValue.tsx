@@ -40,7 +40,10 @@ const scalarRenderers: {
     return (
       <div>
         <div>
-          <em>{value.value.type}:</em>
+          <em>
+            {value.value.type}
+            {value.value.name ? ` (${value.value.name})` : ''}:
+          </em>
         </div>
         {renderMarkdown ? (
           <div dangerouslySetInnerHTML={markdownRendered} />
