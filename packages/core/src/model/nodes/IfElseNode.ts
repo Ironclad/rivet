@@ -79,6 +79,8 @@ export class IfElseNodeImpl extends NodeImpl<IfElseNode> {
     const trueValue = inputData['true' as PortId] ?? { type: 'any', value: undefined };
     const falseValue = inputData['false' as PortId] ?? { type: 'any', value: undefined };
 
+    console.dir({ ifValue });
+
     if (!(trueValue || falseValue)) {
       return {
         ['output' as PortId]: {

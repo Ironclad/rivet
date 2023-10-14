@@ -131,7 +131,7 @@ export class EvaluateNodeImpl extends NodeImpl<EvaluateNode> {
       `,
       infoBoxTitle: 'Evaluate Node',
       contextMenuTitle: 'Evaluate',
-      group: ['Logic'],
+      group: ['Numbers'],
     };
   }
 
