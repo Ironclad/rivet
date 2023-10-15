@@ -14,6 +14,7 @@ import { coerceType, coerceTypeOptional, inferType } from '../../utils/coerceTyp
 import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { dedent } from 'ts-dedent';
 import { type EditorDefinition } from '../EditorDefinition.js';
+import { handleEscapeCharacters } from '../../index.js';
 
 export type JoinNode = ChartNode<'join', JoinNodeData>;
 
@@ -139,6 +140,8 @@ export class JoinNodeImpl extends NodeImpl<JoinNode> {
       ? coerceTypeOptional(inputs['joinString' as PortId], 'string') ?? this.data.joinString
       : this.data.joinString;
 
+    const normalizedJoinString = handleEscapeCharacters(joinString);
+
     const inputKeys = Object.keys(inputs).filter((key) => key.startsWith('input'));
 
     const inputValueStrings: string[] = [];
@@ -154,7 +157,7 @@ export class JoinNodeImpl extends NodeImpl<JoinNode> {
       }
     }
 
-    const outputValue = inputValueStrings.join(joinString);
+    const outputValue = inputValueStrings.join(normalizedJoinString);
 
     return {
       ['output' as PortId]: {

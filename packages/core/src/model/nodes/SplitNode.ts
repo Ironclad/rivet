@@ -12,7 +12,7 @@ import type {
   NodeBodySpec,
 } from '../../index.js';
 import { NodeImpl } from '../NodeImpl.js';
-import { coerceType, dedent, getInputOrData, newId } from '../../utils/index.js';
+import { coerceType, dedent, getInputOrData, handleEscapeCharacters, newId } from '../../utils/index.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 
 export type SplitNode = ChartNode<'split', SplitNodeData>;
@@ -31,6 +31,7 @@ export class SplitNodeImpl extends NodeImpl<SplitNode> {
       visualData: { x: 0, y: 0, width: 250 },
       data: {
         delimiter: ',',
+        regex: false,
       },
     };
   }
@@ -93,26 +94,34 @@ export class SplitNodeImpl extends NodeImpl<SplitNode> {
       return '(Delimiter from input)';
     }
 
-    if (this.data.delimiter === '\n') {
+    const normalized = handleEscapeCharacters(this.data.delimiter);
+
+    if (normalized === '\n') {
       return '(New line)';
     }
 
-    if (this.data.delimiter === '\t') {
+    if (normalized === '\r\n') {
+      return '(New line (windows))';
+    }
+
+    if (normalized === '\t') {
       return '(Tab)';
     }
 
-    if (this.data.delimiter === ' ') {
+    if (normalized === ' ') {
       return '(Space)';
     }
 
-    return this.data.delimiter;
+    return normalized;
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const delimiter = getInputOrData(this.data, inputs, 'delimiter');
+    const normalizedDelimiter = handleEscapeCharacters(delimiter);
+
     const stringToSplit = coerceType(inputs['string' as PortId], 'string');
 
-    const splitString = stringToSplit.split(delimiter);
+    const splitString = stringToSplit.split(normalizedDelimiter);
 
     return {
       ['splitString' as PortId]: {
