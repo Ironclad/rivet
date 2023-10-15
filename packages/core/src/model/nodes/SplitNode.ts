@@ -20,6 +20,7 @@ export type SplitNode = ChartNode<'split', SplitNodeData>;
 type SplitNodeData = {
   delimiter: string;
   useDelimiterInput?: boolean;
+  regex?: boolean;
 };
 
 export class SplitNodeImpl extends NodeImpl<SplitNode> {
@@ -80,6 +81,11 @@ export class SplitNodeImpl extends NodeImpl<SplitNode> {
   getEditors(): EditorDefinition<SplitNode>[] | Promise<EditorDefinition<SplitNode>[]> {
     return [
       {
+        type: 'toggle',
+        label: 'Regex',
+        dataKey: 'regex',
+      },
+      {
         type: 'code',
         label: 'Delimiter',
         language: 'plaintext',
@@ -117,7 +123,8 @@ export class SplitNodeImpl extends NodeImpl<SplitNode> {
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const delimiter = getInputOrData(this.data, inputs, 'delimiter');
-    const normalizedDelimiter = handleEscapeCharacters(delimiter);
+
+    const normalizedDelimiter = this.data.regex ? new RegExp(delimiter) : handleEscapeCharacters(delimiter);
 
     const stringToSplit = coerceType(inputs['string' as PortId], 'string');
 
