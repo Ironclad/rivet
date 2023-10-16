@@ -34,7 +34,7 @@ export const DefaultDataTypeSelector: FC<
     value: type,
   }));
 
-  const selectedOption = dataTypeOptions.find((option) => option.value === dataType);
+  const selectedOption = dataTypeOptions.find((option) => option.value === scalarType);
 
   return (
     <div className="data-type-selector">
@@ -60,6 +60,7 @@ export const DefaultDataTypeSelector: FC<
         {({ fieldProps }) => (
           <Checkbox
             {...fieldProps}
+            isChecked={isArray}
             label="Array"
             css={css`
               margin-top: 16px;
