@@ -123,7 +123,9 @@ export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
       };
     }
 
-    return inputs;
+    return {
+      ['valueOutput' as PortId]: context.graphOutputs[this.data.id],
+    };
   }
 }
 
