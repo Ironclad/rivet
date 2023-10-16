@@ -1,3 +1,4 @@
+import { useFloating, autoUpdate, shift } from '@floating-ui/react';
 import { useRef, useState, useCallback, useEffect } from 'react';
 
 export type ContextMenuData = {
@@ -23,6 +24,16 @@ export const useContextMenu = () => {
     },
     [],
   );
+
+  const { refs, floatingStyles, update } = useFloating({
+    placement: 'bottom-start',
+    whileElementsMounted: autoUpdate,
+    middleware: [shift({ crossAxis: true })],
+  });
+
+  useEffect(() => {
+    update();
+  }, [update, contextMenuData.x, contextMenuData.y]);
 
   useEffect(() => {
     const handleWindowClick = (event: MouseEvent) => {
@@ -54,6 +65,9 @@ export const useContextMenu = () => {
     handleContextMenu,
     setContextMenuData,
     setShowContextMenu,
+    refs,
+    floatingStyles,
+    update,
   };
 };
 

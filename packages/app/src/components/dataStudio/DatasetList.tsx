@@ -11,6 +11,7 @@ import { selectedDatasetState } from '../../state/dataStudio';
 import { projectState } from '../../state/savedGraphs';
 import { DatasetListItem } from './DatasetListItem';
 import { css } from '@emotion/react';
+import { autoUpdate, shift, useFloating } from '@floating-ui/react';
 
 const contextMenuStyles = css`
   position: absolute;
@@ -27,7 +28,15 @@ const contextMenuStyles = css`
 
 export const DatasetList: FC<{}> = () => {
   const [selectedDataset, setSelectedDataset] = useRecoilState(selectedDatasetState);
-  const { contextMenuRef, showContextMenu, contextMenuData, handleContextMenu, setShowContextMenu } = useContextMenu();
+  const {
+    refs,
+    floatingStyles,
+    contextMenuRef,
+    showContextMenu,
+    contextMenuData,
+    handleContextMenu,
+    setShowContextMenu,
+  } = useContextMenu();
   const [renamingDataset, setRenamingDataset] = useState<DatasetId>();
 
   const project = useRecoilValue(projectState);
@@ -104,17 +113,18 @@ export const DatasetList: FC<{}> = () => {
       <Portal>
         {showContextMenu && contextMenuData.data?.type === 'dataset' && (
           <div
-            className="context-menu"
-            css={contextMenuStyles}
-            ref={contextMenuRef}
+            ref={refs.setReference}
             style={{
+              position: 'absolute',
               zIndex: 500,
               left: contextMenuData.x,
               top: contextMenuData.y,
             }}
           >
-            <DropdownItem onClick={() => setRenamingDataset(selectedDatasetForContextMenu?.id)}>Rename</DropdownItem>
-            <DropdownItem onClick={() => deleteDataset(selectedDatasetForContextMenu!)}>Delete</DropdownItem>
+            <div ref={refs.setFloating} style={floatingStyles} css={contextMenuStyles}>
+              <DropdownItem onClick={() => setRenamingDataset(selectedDatasetForContextMenu?.id)}>Rename</DropdownItem>
+              <DropdownItem onClick={() => deleteDataset(selectedDatasetForContextMenu!)}>Delete</DropdownItem>
+            </div>
           </div>
         )}
       </Portal>
