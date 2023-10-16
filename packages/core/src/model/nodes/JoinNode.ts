@@ -14,7 +14,7 @@ import { coerceType, coerceTypeOptional, inferType } from '../../utils/coerceTyp
 import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { dedent } from 'ts-dedent';
 import { type EditorDefinition } from '../EditorDefinition.js';
-import { handleEscapeCharacters } from '../../index.js';
+import { handleEscapeCharacters } from '../../utils/index.js';
 
 export type JoinNode = ChartNode<'join', JoinNodeData>;
 
