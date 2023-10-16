@@ -51,7 +51,7 @@ export class PopNodeImpl extends NodeImpl<PopNode> {
       {
         dataType: 'any',
         id: 'lastItem' as PortId,
-        title: 'Last',
+        title: this.data.fromFront ? 'First' : 'Last',
       },
       {
         dataType: 'any',
