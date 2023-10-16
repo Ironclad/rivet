@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { type CanvasPosition, canvasPositionState } from '../state/graphBuilder';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { type CanvasPosition, canvasPositionState, searchingGraphState } from '../state/graphBuilder';
 import { useLatest } from 'ahooks';
 import { useViewportBounds } from './useViewportBounds';
 import { useCanvasPositioning } from './useCanvasPositioning';
@@ -9,6 +9,7 @@ export function useCanvasHotkeys() {
   const [canvasPosition, setCanvasPosition] = useRecoilState(canvasPositionState);
   const viewportBounds = useViewportBounds();
   const { canvasToClientPosition } = useCanvasPositioning();
+  const setSearching = useSetRecoilState(searchingGraphState);
 
   const latestHandler = useLatest((e: KeyboardEvent) => {
     // If we're in an input, don't do anything
@@ -72,6 +73,13 @@ export function useCanvasHotkeys() {
         zoom: canvasPosition.zoom,
       };
       setCanvasPosition(position);
+    }
+
+    if (e.key === 'f' && (e.metaKey || e.ctrlKey) && !e.shiftKey) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      setSearching({ searching: true, query: '' });
     }
   });
 

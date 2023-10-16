@@ -18,6 +18,7 @@ import {
   lastCanvasPositionByGraphState,
   lastMousePositionState,
   selectedNodesState,
+  searchMatchingNodeIdsState,
 } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { VisualNode } from './VisualNode.js';
@@ -32,6 +33,7 @@ import { useMergeRefs } from '@floating-ui/react';
 import { useNodePortPositions } from '../hooks/useNodePortPositions';
 import { useCopyNodesHotkeys } from '../hooks/useCopyNodesHotkeys';
 import { useCanvasHotkeys } from '../hooks/useCanvasHotkeys';
+import { useSearchGraph } from '../hooks/useSearchGraph';
 
 const styles = css`
   width: 100vw;
@@ -471,6 +473,9 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   useCopyNodesHotkeys();
   useCanvasHotkeys();
+  useSearchGraph();
+
+  const searchMatchingNodes = useRecoilValue(searchMatchingNodeIdsState);
 
   return (
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
@@ -515,7 +520,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
                   key={node.id}
                   node={node}
                   connections={nodeConnections}
-                  isSelected={highlightedNodes.includes(node.id)}
+                  isSelected={highlightedNodes.includes(node.id) || searchMatchingNodes.includes(node.id)}
                   canvasZoom={canvasPosition.zoom}
                   onWireStartDrag={onWireStartDrag}
                   onWireEndDrag={onWireEndDrag}

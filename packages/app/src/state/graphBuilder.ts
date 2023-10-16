@@ -1,5 +1,12 @@
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
-import { type ChartNode, type GraphId, type NodeId, NodeImpl, NodeInputDefinition, type PortId } from '@ironclad/rivet-core';
+import {
+  type ChartNode,
+  type GraphId,
+  type NodeId,
+  NodeImpl,
+  NodeInputDefinition,
+  type PortId,
+} from '@ironclad/rivet-core';
 import { recoilPersist } from 'recoil-persist';
 import { type WireDef } from '../components/WireLayer.js';
 import { mapValues } from 'lodash-es';
@@ -83,4 +90,17 @@ export const isPinnedState = selectorFamily<boolean, NodeId>({
     (nodeId) =>
     ({ get }) =>
       get(pinnedNodesState).includes(nodeId),
+});
+
+export const searchingGraphState = atom({
+  key: 'searchingGraph',
+  default: {
+    searching: false,
+    query: '',
+  },
+});
+
+export const searchMatchingNodeIdsState = atom<NodeId[]>({
+  key: 'searchMatchingNodeIds',
+  default: [],
 });
