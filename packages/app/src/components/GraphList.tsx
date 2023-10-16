@@ -46,7 +46,13 @@ const styles = css`
   flex-direction: column;
   flex-shrink: 1;
   min-height: 100%;
-  margin-top: 8px;
+
+  .graph-list-container {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 1;
+    min-height: 0;
+  }
 
   .graph-list {
     overflow-y: auto;
@@ -131,7 +137,6 @@ const styles = css`
   }
 
   .search {
-    margin-top: -8px;
     position: relative;
 
     input {
@@ -506,7 +511,7 @@ export const GraphList: FC = () => {
           </button>
         )}
       </div>
-      <div ref={contextMenuRef} onContextMenu={handleSidebarContextMenu}>
+      <div className="graph-list-container" ref={contextMenuRef} onContextMenu={handleSidebarContextMenu}>
         <div
           className={clsx('graph-list', { 'dragging-over': dragOverFolderName === '' && draggingItemFolder !== '' })}
         >
