@@ -17,6 +17,7 @@ import { useGraphHistoryNavigation } from '../hooks/useGraphHistoryNavigation';
 import { useProjectPlugins } from '../hooks/useProjectPlugins';
 import { entries } from '../../../core/src/utils/typeSafety';
 import { useGraphBuilderContextMenuHandler } from '../hooks/useGraphBuilderContextMenuHandler';
+import { NavigationBar } from './NavigationBar';
 
 const Container = styled.div`
   position: relative;
@@ -134,6 +135,7 @@ export const GraphBuilder: FC = () => {
             User Input Needed
           </Button>
         )}
+        <NavigationBar />
         <UserInputModal
           open={isUserInputModalOpen}
           questions={lastQuestions}

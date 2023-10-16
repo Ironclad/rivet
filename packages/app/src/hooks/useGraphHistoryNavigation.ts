@@ -9,6 +9,10 @@ export const useGraphHistoryNavigation = () => {
   const loadGraph = useLoadGraph();
   const project = useRecoilValue(projectState);
 
+  const hasForward =
+    graphNavigationStack.index != null && graphNavigationStack.index < graphNavigationStack.stack.length - 1;
+  const hasBackward = (graphNavigationStack.index ?? -1) > 0;
+
   const navigateBack = useCallback(() => {
     if ((graphNavigationStack.index ?? -1) > 0) {
       const prevGraphId = graphNavigationStack.stack[graphNavigationStack.index! - 1]!;
@@ -41,5 +45,5 @@ export const useGraphHistoryNavigation = () => {
     }
   }, [graphNavigationStack, loadGraph, project, setGraphNavigationStack]);
 
-  return { navigateBack, navigateForward };
+  return { navigateBack, navigateForward, hasForward, hasBackward };
 };
