@@ -1,5 +1,4 @@
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useViewportBounds } from './useViewportBounds';
 import { nodesState } from '../state/graph';
 import { useEffect, useMemo } from 'react';
 import { entries } from '../../../core/src/utils/typeSafety';
@@ -7,12 +6,16 @@ import { searchMatchingNodeIdsState, searchingGraphState } from '../state/graphB
 import { useFuseSearch } from './useFuseSearch';
 import { globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { useFocusOnNodes } from './useFocusOnNodes';
+import { useNodeTypes } from './useNodeTypes';
+import { useDependsOnPlugins } from './useDependsOnPlugins';
 
 export function useSearchGraph() {
   const graphNodes = useRecoilValue(nodesState);
   const setSearchMatchingNodes = useSetRecoilState(searchMatchingNodeIdsState);
 
+  useDependsOnPlugins();
   const focusOnNodes = useFocusOnNodes();
+  const nodeTypes = useNodeTypes();
 
   const searchableNodes = useMemo(() => {
     return graphNodes.map((node) => {
@@ -20,12 +23,14 @@ export function useSearchGraph() {
         return `${value}`;
       });
 
+      const isKnownNodeType = node.type in nodeTypes;
+
       const searchableNode = {
         title: node.title,
         description: node.description,
         id: node.id,
         joinedData: joinedData.join(' '),
-        nodeType: globalRivetNodeRegistry.getDisplayName(node.type as any),
+        nodeType: isKnownNodeType ? globalRivetNodeRegistry.getDisplayName(node.type as any) : '',
       };
 
       return searchableNode;
@@ -34,10 +39,15 @@ export function useSearchGraph() {
 
   const searchState = useRecoilValue(searchingGraphState);
 
-  const searchedNodes = useFuseSearch(searchableNodes, searchState.query, ['title', 'description', 'joinedData'], {
-    enabled: searchState.searching,
-    noInputEmptyList: true,
-  });
+  const searchedNodes = useFuseSearch(
+    searchableNodes,
+    searchState.query,
+    ['title', 'description', 'joinedData', 'nodeType'],
+    {
+      enabled: searchState.searching,
+      noInputEmptyList: true,
+    },
+  );
 
   useEffect(() => {
     setSearchMatchingNodes(searchedNodes.map((n) => n.item.id));
