@@ -3,7 +3,6 @@ import type { Tokenizer, TokenizerCallInfo } from './Tokenizer.js';
 import { encode, encodeChat } from 'gpt-tokenizer';
 import Emittery from 'emittery';
 import { getError } from '../utils/errors.js';
-import { sum } from 'lodash';
 
 export class GptTokenizerTokenizer implements Tokenizer {
   emitter = new Emittery<{
