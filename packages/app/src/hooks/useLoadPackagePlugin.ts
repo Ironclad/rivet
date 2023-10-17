@@ -147,7 +147,7 @@ export function useLoadPackagePlugin(options: { onLog?: (message: string) => voi
       // TODO not working
       log('Installing NPM dependencies...\n');
 
-      const command = Command.sidecar('../sidecars/pnpm/pnpm', ['install', '--prod'], {
+      const command = Command.sidecar('../sidecars/pnpm/pnpm', ['install', '--prod', '--ignore-scripts'], {
         cwd: pluginFilesPath,
       });
 
