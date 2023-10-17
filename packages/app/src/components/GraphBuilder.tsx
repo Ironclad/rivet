@@ -18,6 +18,8 @@ import { useProjectPlugins } from '../hooks/useProjectPlugins';
 import { entries } from '../../../core/src/utils/typeSafety';
 import { useGraphBuilderContextMenuHandler } from '../hooks/useGraphBuilderContextMenuHandler';
 import { NavigationBar } from './NavigationBar';
+import { projectState } from '../state/savedGraphs';
+import { useDatasets } from '../hooks/useDatasets';
 
 const Container = styled.div`
   position: relative;
@@ -47,6 +49,9 @@ export const GraphBuilder: FC = () => {
   const [selectedNodeIds, setSelectedNodeIds] = useRecoilState(selectedNodesState);
   const setEditingNodeId = useSetRecoilState(editingNodeState);
   const loadedRecording = useRecoilValue(loadedRecordingState);
+  const project = useRecoilValue(projectState);
+
+  useDatasets(project.metadata.id);
 
   const historyNav = useGraphHistoryNavigation();
   useProjectPlugins();
