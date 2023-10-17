@@ -10,7 +10,7 @@ export type AnthropicModel = {
 };
 
 export const anthropicModels = {
-  'claude-instant': {
+  'claude-instant-1': {
     maxTokens: 100000,
     cost: {
       prompt: 0.00163,
