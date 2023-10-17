@@ -26,7 +26,7 @@ export class GptTokenizerTokenizer implements Tokenizer {
           content: message.message,
           name: message.name,
         })),
-        (_info.model as any) ?? 'gpt-3.5-turbo',
+        'gpt-3.5-turbo',
       );
 
       return encodedChat.length;
