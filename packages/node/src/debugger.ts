@@ -53,9 +53,10 @@ export function startDebuggerServer(
     port?: number;
     dynamicGraphRun?: DynamicGraphRun;
     allowGraphUpload?: boolean;
+    throttlePartialOutputs?: number;
   } = {},
 ): RivetDebuggerServer {
-  const { port = 21888 } = options;
+  const { port = 21888, throttlePartialOutputs = 100 } = options;
 
   const server = options.server ?? new WebSocketServer({ port });
 
@@ -179,6 +180,7 @@ export function startDebuggerServer(
         return;
       }
 
+      const lastPartialOutputsTimePerNode: Record<NodeId, number> = {};
       attachedProcessors.push(processor);
 
       processor.on('nodeStart', (data) => {
@@ -215,7 +217,14 @@ export function startDebuggerServer(
         this.broadcast(processor, 'done', data);
       });
       processor.on('partialOutput', (data) => {
-        this.broadcast(processor, 'partialOutput', data);
+        // Throttle the partial outputs because they can get ridiculous on the serdes side
+        if (
+          lastPartialOutputsTimePerNode[data.node.id] == null ||
+          (lastPartialOutputsTimePerNode[data.node.id] ?? 0) + throttlePartialOutputs < Date.now()
+        ) {
+          this.broadcast(processor, 'partialOutput', data);
+          lastPartialOutputsTimePerNode[data.node.id] = Date.now();
+        }
       });
       processor.on('abort', () => {
         this.broadcast(processor, 'abort', null);
