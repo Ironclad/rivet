@@ -28,7 +28,8 @@ export function useNodePortPositions() {
     for (const elem of normalPortElements) {
       const portId = elem.dataset.portid! as PortId;
       const nodeId = elem.dataset.nodeid! as NodeId;
-      const key = `${nodeId}-${portId}`;
+      const portType = elem.dataset.porttype! as 'input' | 'output';
+      const key = `${nodeId}-${portType}-${portId}`;
 
       if (seen.has(key)) {
         return;
@@ -72,7 +73,8 @@ export function useNodePortPositions() {
 
       const portId = elem.dataset.portid! as PortId;
       const nodeId = elem.dataset.nodeid! as NodeId;
-      const key = `${nodeId}-${portId}`;
+      const portType = elem.dataset.porttype! as 'input' | 'output';
+      const key = `${nodeId}-${portType}-${portId}`;
 
       if (seen.has(key)) {
         return;

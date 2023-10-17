@@ -35,8 +35,8 @@ export const ConditionallyRenderWire: FC<WireProps> = ({
     return null;
   }
 
-  const start = getNodePortPosition(outputNode, connection.outputId, portPositions);
-  const end = getNodePortPosition(inputNode, connection.inputId, portPositions);
+  const start = getNodePortPosition(outputNode, connection.outputId, false, portPositions);
+  const end = getNodePortPosition(inputNode, connection.inputId, true, portPositions);
 
   // Optimization might not be needed
   // if (!lineCrossesViewport(canvasToClientPosition(start.x, start.y), canvasToClientPosition(end.x, end.y))) {
@@ -60,7 +60,7 @@ export const PartialWire: FC<{ connection: PartialConnection; portPositions: Por
     return null;
   }
 
-  const start = getNodePortPosition(node, connection.portId, portPositions);
+  const start = getNodePortPosition(node, connection.portId, false, portPositions);
   const end = { x: connection.toX, y: connection.toY };
 
   return (
@@ -102,6 +102,7 @@ export const Wire: FC<{
 export function getNodePortPosition(
   node: ChartNode,
   portId: PortId,
+  portIsInput: boolean,
   portPositions: PortPositions,
 ): { x: number; y: number } {
   if (!node) {
@@ -109,7 +110,7 @@ export function getNodePortPosition(
   }
 
   if (portId) {
-    const key = `${node.id}-${portId}`;
+    const key = `${node.id}-${portIsInput ? 'input' : 'output'}-${portId}`;
     const portPosition = portPositions[key];
     if (portPosition) {
       return { x: portPosition.x, y: portPosition.y };

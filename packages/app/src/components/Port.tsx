@@ -31,6 +31,7 @@ export const Port: FC<{
         }}
         onMouseUp={(e) => onMouseUp?.(e, id)}
         data-portid={id}
+        data-porttype={input ? 'input' : 'output'}
         data-nodeid={nodeId}
       >
         {canDragTo && <div className={clsx('port-hover-area')} />}
