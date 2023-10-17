@@ -21,6 +21,10 @@ import { useLoadStaticData } from '../hooks/useLoadStaticData';
 import { DataStudioRenderer } from './dataStudio/DataStudio';
 import { StatusBar } from './StatusBar';
 import { PluginsOverlayRenderer } from './PluginsOverlay';
+import { useCheckForUpdate } from '../hooks/useCheckForUpdate';
+import useAsyncEffect from 'use-async-effect';
+import { UpdateModalRenderer } from './UpdateModal';
+import { useMonitorUpdateStatus } from '../hooks/useMonitorUpdateStatus';
 
 const styles = css`
   overflow: hidden;
@@ -39,6 +43,14 @@ export const RivetApp: FC = () => {
   useMenuCommands({
     onRunGraph: tryRunGraph,
   });
+
+  const checkForUpdate = useCheckForUpdate();
+
+  useAsyncEffect(async () => {
+    await checkForUpdate();
+  }, []);
+
+  useMonitorUpdateStatus();
 
   return (
     <div className={clsx('app', theme ? `theme-${theme}` : 'theme-default')} css={styles}>
@@ -60,6 +72,7 @@ export const RivetApp: FC = () => {
       <ChatViewerRenderer />
       <DataStudioRenderer />
       <PluginsOverlayRenderer />
+      <UpdateModalRenderer />
       <ToastContainer position="bottom-right" hideProgressBar newestOnTop />
     </div>
   );

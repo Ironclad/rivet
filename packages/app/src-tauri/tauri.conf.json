@@ -22,6 +22,9 @@
       "dialog": {
         "all": true
       },
+      "process": {
+        "relaunch": true
+      },
       "shell": {
         "sidecar": true,
         "open": true,
@@ -89,7 +92,7 @@
     "updater": {
       "active": true,
       "endpoints": ["https://github.com/Ironclad/rivet/releases/latest/download/latest.json"],
-      "dialog": true,
+      "dialog": false,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDQwRTgxNDEzODJDREJDNzkKUldSNXZNMkNFeFRvUU5VK0NXdEIwNlc3NTREUWpNSmpaeGFwWjFwc21ZT0U5cFlzcy81QndDOXYK"
     },
     "windows": [

@@ -65,3 +65,19 @@ export const previousDataPerNodeToKeepState = atom<number>({
   default: -1,
   effects_UNSTABLE: [persistAtom],
 });
+
+export const skippedMaxVersion = atom<string | undefined>({
+  key: 'skippedMaxVersion',
+  default: undefined,
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const updateModalOpenState = atom<boolean>({
+  key: 'updateModalOpen',
+  default: false,
+});
+
+export const updateStatusState = atom<string | undefined>({
+  key: 'updateStatus',
+  default: undefined,
+});
