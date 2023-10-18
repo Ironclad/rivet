@@ -144,28 +144,38 @@ export function useLoadPackagePlugin(options: { onLog?: (message: string) => voi
         path: tarDestination,
       });
 
-      // TODO not working
-      log('Installing NPM dependencies...\n');
+      const packageJsonPath = await join(pluginFilesPath, 'package.json');
 
-      const command = Command.sidecar('../sidecars/pnpm/pnpm', ['install', '--prod', '--ignore-scripts'], {
-        cwd: pluginFilesPath,
-      });
+      if (await exists(packageJsonPath)) {
+        const packageJsonContents = JSON.parse(await readTextFile(packageJsonPath));
 
-      command.stdout.on('data', (data) => {
-        log(data + '\n');
-      });
+        const installDisabled = packageJsonContents?.rivet?.skipInstall;
+        if (!installDisabled) {
+          log('Installing NPM dependencies...\n');
 
-      command.stderr.on('data', (data) => {
-        log(data + '\n');
-      });
+          const command = Command.sidecar('../sidecars/pnpm/pnpm', ['install', '--prod', '--ignore-scripts'], {
+            cwd: pluginFilesPath,
+          });
 
-      const result = await command.execute();
+          command.stdout.on('data', (data) => {
+            log(data + '\n');
+          });
 
-      if (result.code !== 0) {
-        throw new Error(`Error installing plugin dependencies: ${spec.package}@${spec.tag}: ${result.stderr}`);
+          command.stderr.on('data', (data) => {
+            log(data + '\n');
+          });
+
+          const result = await command.execute();
+
+          if (result.code !== 0) {
+            throw new Error(`Error installing plugin dependencies: ${spec.package}@${spec.tag}: ${result.stderr}`);
+          }
+
+          log('Installed NPM dependencies\n');
+        } else {
+          log('Skipping NPM dependencies install\n');
+        }
       }
-
-      log('Installed NPM dependencies\n');
 
       await writeTextFile(completedInstallVersionFile, spec.tag);
     }
