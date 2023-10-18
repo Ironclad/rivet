@@ -1,11 +1,12 @@
 import { type FC, useState } from 'react';
-import { atom, useRecoilState } from 'recoil';
+import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import {
   defaultExecutorState,
   executorOptions,
   previousDataPerNodeToKeepState,
   recordExecutionsState,
   settingsState,
+  skippedMaxVersionState,
   themeState,
   themes,
 } from '../state/settings.js';
@@ -23,6 +24,7 @@ import CrossIcon from '@atlaskit/icon/glyph/cross';
 import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
 import { KeyValuePairs } from './editors/KeyValuePairEditor';
+import { useCheckForUpdate } from '../hooks/useCheckForUpdate';
 
 interface SettingsModalProps {}
 
@@ -45,7 +47,7 @@ const modalBody = css`
   }
 `;
 
-type Pages = 'general' | 'openai' | 'plugins';
+type Pages = 'general' | 'openai' | 'plugins' | 'updates';
 
 const buttonsContainer = css`
   > button span {
@@ -63,7 +65,7 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
   return (
     <ModalTransition>
       {isOpen && (
-        <Modal onClose={closeModal} width="xlarge">
+        <Modal onClose={closeModal} width="80%">
           <ModalHeader>
             <ModalTitle>Settings</ModalTitle>
             <Button appearance="link" onClick={() => setIsOpen(false)}>
@@ -85,6 +87,9 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
                       <ButtonItem isSelected={page === 'plugins'} onClick={() => setPage('plugins')}>
                         Plugins
                       </ButtonItem>
+                      <ButtonItem isSelected={page === 'updates'} onClick={() => setPage('updates')}>
+                        Updates
+                      </ButtonItem>
                     </div>
                   </NavigationContent>
                 </SideNavigation>
@@ -94,6 +99,7 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
                   .with('general', () => <GeneralSettingsPage />)
                   .with('openai', () => <OpenAiSettingsPage />)
                   .with('plugins', () => <PluginsSettingsPage />)
+                  .with('updates', () => <UpdatesSettingsPage />)
                   .exhaustive()}
               </main>
             </div>
@@ -380,6 +386,57 @@ export const PluginsSettingsPage: FC = () => {
           </section>
         );
       })}
+    </div>
+  );
+};
+
+export const UpdatesSettingsPage: FC = () => {
+  const checkForUpdates = useCheckForUpdate({ notifyNoUpdates: true, force: true });
+
+  const skippedMaxVersion = useRecoilValue(skippedMaxVersionState);
+
+  return (
+    <div css={fields}>
+      <Field name="check-for-updates">
+        {() => (
+          <>
+            <Label htmlFor="check-for-updates" testId="check-for-updates">
+              Check for updates on startup
+            </Label>
+            <div className="toggle-field">
+              <Toggle
+                id="check-for-updates"
+                isChecked={true}
+                onChange={(e) => {
+                  // TODO
+                }}
+              />
+            </div>
+            <HelperMessage>Automatically check for updates on startup</HelperMessage>
+          </>
+        )}
+      </Field>
+      <Field name="check-for-updates-now">
+        {() => (
+          <>
+            <Button appearance="primary" onClick={() => checkForUpdates()}>
+              Check for updates now
+            </Button>
+          </>
+        )}
+      </Field>
+      {skippedMaxVersion && (
+        <Field name="skipped-update-version">
+          {() => (
+            <>
+              <Label htmlFor="skipped-update-version" testId="skipped-update-version">
+                Skipped update version
+              </Label>
+              <div>You have skipped version {skippedMaxVersion}. You may update by clicking the button above.</div>
+            </>
+          )}
+        </Field>
+      )}
     </div>
   );
 };

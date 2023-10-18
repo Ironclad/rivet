@@ -2,7 +2,7 @@ import { useState, type FC, useEffect } from 'react';
 
 import Modal, { ModalTransition, ModalBody, ModalFooter, ModalHeader, ModalTitle } from '@atlaskit/modal-dialog';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { updateModalOpenState, updateStatusState } from '../state/settings';
+import { skippedMaxVersionState, updateModalOpenState, updateStatusState } from '../state/settings';
 import Button from '@atlaskit/button';
 import useAsyncEffect from 'use-async-effect';
 import { checkUpdate, installUpdate, onUpdaterEvent } from '@tauri-apps/api/updater';
@@ -26,6 +26,7 @@ export const UpdateModal: FC = () => {
   const setModalOpen = useSetRecoilState(updateModalOpenState);
   const [isUpdating, setIsUpdating] = useState(false);
   const [updateStatus, setUpdateStatus] = useRecoilState(updateStatusState);
+  const setSkippedMaxVersion = useSetRecoilState(skippedMaxVersionState);
 
   const [currentVersion, setCurrentVersion] = useState('');
   const [latestVersion, setLatestVersion] = useState('');
@@ -64,7 +65,10 @@ export const UpdateModal: FC = () => {
     }
   }, [updateStatus]);
 
-  const skipUpdate = () => {};
+  const skipUpdate = () => {
+    setSkippedMaxVersion(latestVersion);
+    handleModalClose();
+  };
 
   const canRender = currentVersion && latestVersion && updateBody;
 

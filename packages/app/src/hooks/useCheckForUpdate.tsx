@@ -4,8 +4,10 @@ import useAsyncEffect from 'use-async-effect';
 import { toast } from 'react-toastify';
 import { css } from '@emotion/react';
 import { isInTauri } from '../utils/tauri';
-import { useSetRecoilState } from 'recoil';
-import { updateModalOpenState } from '../state/settings';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { checkForUpdatesState, skippedMaxVersionState, updateModalOpenState } from '../state/settings';
+import { gt, lt, lte } from 'semver';
+import { getVersion } from '@tauri-apps/api/app';
 
 const toastStyle = css`
   display: flex;
@@ -38,13 +40,32 @@ const toastStyle = css`
   }
 `;
 
-export function useCheckForUpdate() {
+export function useCheckForUpdate({
+  notifyNoUpdates = false,
+  force = false,
+}: { notifyNoUpdates?: boolean; force?: boolean } = {}) {
   const setUpdateModalOpen = useSetRecoilState(updateModalOpenState);
+  const checkForUpdates = useRecoilValue(checkForUpdatesState);
+  const [skippedMaxVersion, setSkippedMaxVersion] = useRecoilState(skippedMaxVersionState);
 
   return async () => {
+    if (!checkForUpdates) {
+      return;
+    }
+
     const { shouldUpdate, manifest } = await checkUpdate();
 
-    if (shouldUpdate) {
+    if (!manifest) {
+      return;
+    }
+
+    const shouldSkip = skippedMaxVersion == null ? false : lte(manifest.version, skippedMaxVersion);
+
+    if (force) {
+      setSkippedMaxVersion(undefined);
+    }
+
+    if (shouldUpdate && (force || !shouldSkip)) {
       toast.success(
         ({ closeToast }) => (
           <div css={toastStyle}>
@@ -53,7 +74,7 @@ export function useCheckForUpdate() {
               <button className="primary" onClick={() => setUpdateModalOpen(true)}>
                 Install
               </button>
-              <button onClick={() => installUpdate()}>Skip</button>
+              <button onClick={() => setSkippedMaxVersion(manifest?.version)}>Skip</button>
               <button onClick={() => closeToast?.()}>Not Now</button>
             </div>
           </div>
@@ -63,6 +84,8 @@ export function useCheckForUpdate() {
           closeButton: false,
         },
       );
+    } else if (notifyNoUpdates) {
+      toast.info('Rivet is up to date!');
     }
   };
 }

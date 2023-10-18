@@ -66,7 +66,13 @@ export const previousDataPerNodeToKeepState = atom<number>({
   effects_UNSTABLE: [persistAtom],
 });
 
-export const skippedMaxVersion = atom<string | undefined>({
+export const checkForUpdatesState = atom<boolean>({
+  key: 'checkForUpdates',
+  default: true,
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const skippedMaxVersionState = atom<string | undefined>({
   key: 'skippedMaxVersion',
   default: undefined,
   effects_UNSTABLE: [persistAtom],
