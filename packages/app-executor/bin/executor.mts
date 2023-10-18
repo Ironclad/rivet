@@ -94,13 +94,15 @@ const rivetDebugger = startDebuggerServer({
             try {
               await access(packageJsonPath);
             } catch (err) {
-              throw new Error(`Plugin ${spec.id} is not installed.`);
+              throw new Error(`Plugin ${spec.id} is not installed, could not access ${packageJsonPath}}`);
             }
 
             const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf-8'));
 
             if (packageJson.name !== spec.package) {
-              throw new Error(`Plugin ${spec.id} is not installed.`);
+              throw new Error(
+                `Plugin ${spec.id} is not installed, found ${packageJson.name} instead of ${spec.package}`,
+              );
             }
 
             const plugin = ((await import(join(pluginDir, packageJson.main))) as { default: RivetPluginInitializer })
