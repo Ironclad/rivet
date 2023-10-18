@@ -12,11 +12,27 @@ import { type RivetPluginInitializer } from '@ironclad/rivet-core';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { P, match } from 'ts-pattern';
-import { getAppDataPath } from 'appdata-path';
 import { join } from 'node:path';
 import { access, readFile } from 'node:fs/promises';
+import { platform, homedir } from 'node:os';
 
 const datasetProvider = new DebuggerDatasetProvider();
+
+// Roughly https://github.com/demurgos/appdata-path/blob/master/lib/index.js but appdata local and .local/share, try to match `dirs` from rust
+function getAppDataLocalPath() {
+  const identifier = 'com.ironcladapp.rivet';
+  return match(platform())
+    .with('win32', () => join(homedir(), 'AppData', 'Local', identifier))
+    .with('darwin', () => join(homedir(), 'Library', 'Application Support', identifier))
+    .with('linux', () => join(homedir(), '.local', 'share', identifier))
+    .otherwise(() => {
+      if (platform().startsWith('win')) {
+        return join(homedir(), 'AppData', 'Local', identifier);
+      } else {
+        return join(homedir(), '.local', 'share', identifier);
+      }
+    });
+}
 
 const { port } = yargs(hideBin(process.argv))
   .option('port', {
@@ -70,7 +86,7 @@ const rivetDebugger = startDebuggerServer({
             registry.registerPlugin(initializedPlugin);
           })
           .with({ type: 'package' }, async (spec) => {
-            const localDataDir = getAppDataPath('com.ironcladapp.rivet');
+            const localDataDir = getAppDataLocalPath();
             const pluginDir = join(localDataDir, `plugins/${spec.package}-${spec.tag}/package`);
 
             const packageJsonPath = join(pluginDir, 'package.json');
