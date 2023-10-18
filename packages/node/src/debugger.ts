@@ -54,11 +54,12 @@ export function startDebuggerServer(
     dynamicGraphRun?: DynamicGraphRun;
     allowGraphUpload?: boolean;
     throttlePartialOutputs?: number;
+    host?: string;
   } = {},
 ): RivetDebuggerServer {
-  const { port = 21888, throttlePartialOutputs = 100 } = options;
+  const { port = 21888, throttlePartialOutputs = 100, host = 'localhost' } = options;
 
-  const server = options.server ?? new WebSocketServer({ port });
+  const server = options.server ?? new WebSocketServer({ port, host });
 
   const emitter = new Emittery<DebuggerEvents>();
 
