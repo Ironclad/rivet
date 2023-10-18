@@ -105,8 +105,9 @@ const rivetDebugger = startDebuggerServer({
               );
             }
 
-            const plugin = ((await import(join(pluginDir, packageJson.main))) as { default: RivetPluginInitializer })
-              .default;
+            const mainPath = join(pluginDir, packageJson.main);
+
+            const plugin = ((await import(`file://${mainPath}`)) as { default: RivetPluginInitializer }).default;
 
             if (typeof plugin !== 'function') {
               throw new Error(`Plugin ${spec.id} is not a function`);
