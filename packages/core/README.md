@@ -147,6 +147,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/kojikeneda"><img src="https://avatars.githubusercontent.com/u/2552616?v=4?s=100" width="100px;" alt="kojikeneda"/><br /><sub><b>kojikeneda</b></sub></a><br /><a href="#ideas-kojikeneda" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Sandesh-Pyakurel"><img src="https://avatars.githubusercontent.com/u/82999440?v=4?s=100" width="100px;" alt="Sandesh  Pyakurel"/><br /><sub><b>Sandesh  Pyakurel</b></sub></a><br /><a href="#maintenance-Sandesh-Pyakurel" title="Maintenance">🚧</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.linkedin.com/in/jasonlgill"><img src="https://avatars.githubusercontent.com/u/241711?v=4?s=100" width="100px;" alt="Jason Gill"/><br /><sub><b>Jason Gill</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/issues?q=author%3Ajasongill" title="Bug reports">🐛</a></td>
+    </tr>
   </tbody>
 </table>
 
