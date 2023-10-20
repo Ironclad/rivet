@@ -121,8 +121,8 @@ export type ProcessEvents = {
   [key: `globalSet:${string}`]: ScalarOrArrayDataValue | undefined;
 };
 
-export type ProcessEventTuple = {
-  [key in keyof ProcessEvents]: [key, ProcessEvents[key]];
+export type ProcessEvent = {
+  [P in keyof ProcessEvents]: { type: P } & ProcessEvents[P];
 }[keyof ProcessEvents];
 
 export type GraphOutputs = Record<string, DataValue>;
@@ -447,9 +447,9 @@ export class GraphProcessor {
     await this.#emitter.once('resume');
   }
 
-  async *events(): AsyncGenerator<ProcessEventTuple> {
+  async *events(): AsyncGenerator<ProcessEvent> {
     for await (const [event, data] of this.#emitter.anyEvent()) {
-      yield [event, data as any];
+      yield { type: event, ...(data as any) };
 
       if (event === 'finish') {
         break;
