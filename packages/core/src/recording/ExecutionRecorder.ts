@@ -89,6 +89,7 @@ const toRecordedEventMap: {
   }),
   trace: (message) => message,
   newAbortController: () => {},
+  finish: () => void 0,
 };
 
 const isPrefix = <const T extends string>(s: string, prefix: T): s is `${T}${string}` => s.startsWith(prefix);

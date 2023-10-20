@@ -97,6 +97,9 @@ export type ProcessEvents = {
   /** Called when processing has been aborted. */
   abort: { successful: boolean; error?: string | Error };
 
+  /** Called when processing has finished either successfully or unsuccessfully. */
+  finish: void;
+
   /** Called for trace level logs. */
   trace: string;
 
@@ -117,6 +120,10 @@ export type ProcessEvents = {
 } & {
   [key: `globalSet:${string}`]: ScalarOrArrayDataValue | undefined;
 };
+
+export type ProcessEventTuple = {
+  [key in keyof ProcessEvents]: [key, ProcessEvents[key]];
+}[keyof ProcessEvents];
 
 export type GraphOutputs = Record<string, DataValue>;
 export type GraphInputs = Record<string, DataValue>;
@@ -440,6 +447,16 @@ export class GraphProcessor {
     await this.#emitter.once('resume');
   }
 
+  async *events(): AsyncGenerator<ProcessEventTuple> {
+    for await (const [event, data] of this.#emitter.anyEvent()) {
+      yield [event, data as any];
+
+      if (event === 'finish') {
+        break;
+      }
+    }
+  }
+
   async replayRecording(recorder: ExecutionRecorder): Promise<GraphOutputs> {
     const { events } = recorder;
 
@@ -592,6 +609,9 @@ export class GraphProcessor {
             this.#emitter.emit(type, data);
           })
           .with({ type: 'newAbortController' }, () => {})
+          .with({ type: 'finish' }, () => {
+            this.#emitter.emit('finish', undefined);
+          })
           .with(undefined, () => {})
           .exhaustive();
       }
@@ -735,11 +755,16 @@ export class GraphProcessor {
 
       if (!this.#isSubProcessor) {
         this.#emitter.emit('done', { results: outputValues });
+        this.#emitter.emit('finish', undefined);
       }
 
       return outputValues;
     } finally {
       this.#running = false;
+
+      if (!this.#isSubProcessor) {
+        this.#emitter.emit('finish', undefined);
+      }
     }
   }
 
