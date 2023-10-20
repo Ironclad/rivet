@@ -67,28 +67,27 @@ export async function* getProcessorEvents(
   spec: RivetEventStreamFilterSpec,
 ): AsyncGenerator<RivetEventStreamEventInfo, void> {
   const previousIndexes = new Map<NodeId, number>();
+
   for await (const event of processor.events()) {
     if (event.type === 'partialOutput') {
       if (
         spec.partialOutputs === true ||
-        !spec.partialOutputs?.includes(event.node.id) ||
-        !spec.partialOutputs?.includes(event.node.title)
+        spec.partialOutputs?.includes(event.node.id) ||
+        spec.partialOutputs?.includes(event.node.title)
       ) {
-        return;
+        const currentOutput = coerceType(event.outputs['response' as PortId], 'string');
+
+        const delta = currentOutput.slice(previousIndexes.get(event.node.id) ?? 0);
+
+        yield {
+          type: 'partialOutput',
+          nodeId: event.node.id,
+          nodeTitle: event.node.title,
+          delta,
+        };
+
+        previousIndexes.set(event.node.id, currentOutput.length);
       }
-
-      const currentOutput = coerceType(event.outputs['response' as PortId], 'string');
-
-      const delta = currentOutput.slice(previousIndexes.get(event.node.id) ?? 0);
-
-      yield {
-        type: 'partialOutput',
-        nodeId: event.node.id,
-        nodeTitle: event.node.title,
-        delta,
-      };
-
-      previousIndexes.set(event.node.id, currentOutput.length);
     } else if (event.type === 'done') {
       if (spec.done) {
         yield {
@@ -140,7 +139,7 @@ export async function* getProcessorEvents(
  * Includes configuration for what events to send to the client, for example you can stream the partial output deltas
  * for specific nodes, and/or the graph output when done.
  */
-export function getProcessorEventStream(
+export function getProcessorSSEStream(
   processor: GraphProcessor,
 
   /** The spec for what you're streaming to the client */
@@ -163,6 +162,32 @@ export function getProcessorEventStream(
         for await (const event of getProcessorEvents(processor, spec)) {
           sendEvent(controller, event.type, event);
         }
+        controller.close();
+      } catch (err) {
+        controller.error(err);
+      }
+    },
+  });
+}
+
+export function getSingleNodeStream(processor: GraphProcessor, nodeIdOrTitle: string) {
+  return new ReadableStream<string>({
+    async start(controller) {
+      try {
+        for await (const event of getProcessorEvents(processor, {
+          partialOutputs: [nodeIdOrTitle],
+          nodeFinish: [nodeIdOrTitle],
+        })) {
+          if (event.type === 'partialOutput' && (event.nodeId === nodeIdOrTitle || event.nodeTitle === nodeIdOrTitle)) {
+            controller.enqueue(`data: ${JSON.stringify(event.delta)}\n\n`);
+          } else if (
+            event.type === 'nodeFinish' &&
+            (event.nodeId === nodeIdOrTitle || event.nodeTitle === nodeIdOrTitle)
+          ) {
+            controller.close();
+          }
+        }
+
         controller.close();
       } catch (err) {
         controller.error(err);

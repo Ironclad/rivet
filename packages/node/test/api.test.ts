@@ -57,7 +57,7 @@ describe('api', () => {
     processor.run();
 
     const reader = processor
-      .getEventStream({
+      .getSSEStream({
         nodeFinish: true,
       })
       .getReader();
