@@ -3,7 +3,7 @@ import { editingNodeState } from '../state/graphBuilder.js';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { connectionsForSingleNodeState, connectionsState, nodesByIdState, nodesState } from '../state/graph.js';
 import styled from '@emotion/styled';
-import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
+import MultiplyIcon from 'majesticons/line/multiply-line.svg?react';
 import {
   type ChartNode,
   type NodeTestGroup,

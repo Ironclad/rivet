@@ -5,9 +5,9 @@ import TextField from '@atlaskit/textfield';
 import Button from '@atlaskit/button';
 import { Field, HelperMessage } from '@atlaskit/form';
 import { css } from '@emotion/react';
-import { ReactComponent as CrossIcon } from 'majesticons/line/multiply-line.svg';
-import { ReactComponent as EyeIcon } from 'majesticons/line/eye-line.svg';
-import { ReactComponent as EyeOffIcon } from 'majesticons/line/eye-off-line.svg';
+import CrossIcon from 'majesticons/line/multiply-line.svg?react';
+import EyeIcon from 'majesticons/line/eye-line.svg?react';
+import EyeOffIcon from 'majesticons/line/eye-off-line.svg?react';
 import { getHelperMessage } from './editorUtils';
 
 type KVPair = {

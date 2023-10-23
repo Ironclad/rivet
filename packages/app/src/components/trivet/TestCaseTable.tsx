@@ -9,8 +9,8 @@ import { useContextMenu } from '../../hooks/useContextMenu';
 import { useStableCallback } from '../../hooks/useStableCallback';
 import Portal from '@atlaskit/portal';
 import { DropdownItem } from '@atlaskit/dropdown-menu';
-import { ReactComponent as MultiplyIcon } from 'majesticons/line/multiply-line.svg';
-import { ReactComponent as PlayIcon } from 'majesticons/line/play-circle-line.svg';
+import MultiplyIcon from 'majesticons/line/multiply-line.svg?react';
+import PlayIcon from 'majesticons/line/play-circle-line.svg?react';
 import Popup from '@atlaskit/popup';
 import TextField from '@atlaskit/textfield';
 

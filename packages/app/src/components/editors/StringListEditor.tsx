@@ -5,7 +5,7 @@ import TextField from '@atlaskit/textfield';
 import Button from '@atlaskit/button';
 import { Field } from '@atlaskit/form';
 import { css } from '@emotion/react';
-import { ReactComponent as CrossIcon } from 'majesticons/line/multiply-line.svg';
+import CrossIcon from 'majesticons/line/multiply-line.svg?react';
 
 const styles = css`
   .string-list {

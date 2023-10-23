@@ -1,9 +1,9 @@
 import { css } from '@emotion/react';
 import { type FC } from 'react';
 import { useGraphHistoryNavigation } from '../hooks/useGraphHistoryNavigation';
-import { ReactComponent as LeftIcon } from 'majesticons/line/chevron-left-line.svg';
-import { ReactComponent as RightIcon } from 'majesticons/line/chevron-right-line.svg';
-import { ReactComponent as CrossIcon } from 'majesticons/line/multiply-line.svg';
+import LeftIcon from 'majesticons/line/chevron-left-line.svg?react';
+import RightIcon from 'majesticons/line/chevron-right-line.svg?react';
+import CrossIcon from 'majesticons/line/multiply-line.svg?react';
 import { useRecoilState } from 'recoil';
 import { searchingGraphState } from '../state/graphBuilder';
 

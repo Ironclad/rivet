@@ -1,3 +1,4 @@
+/// <reference types="vite-plugin-svgr/client" />
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import './colors.css';

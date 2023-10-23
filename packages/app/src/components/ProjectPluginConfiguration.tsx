@@ -1,13 +1,11 @@
 import { Label } from '@atlaskit/form';
-import { produce } from 'immer';
 import { type FC } from 'react';
 import { useRecoilState } from 'recoil';
 import { projectPluginsState } from '../state/savedGraphs';
-import { ReactComponent as PlusIcon } from 'majesticons/line/plus-line.svg';
-import { ReactComponent as MoreMenuVerticalIcon } from 'majesticons/line/more-menu-vertical-line.svg';
-import { ReactComponent as DeleteBinIcon } from 'majesticons/line/delete-bin-line.svg';
-import { ReactComponent as LightningIcon } from 'majesticons/line/lightning-bolt-line.svg';
-import { ReactComponent as InfoIcon } from 'majesticons/line/info-circle-line.svg';
+import MoreMenuVerticalIcon from 'majesticons/line/more-menu-vertical-line.svg?react';
+import DeleteBinIcon from 'majesticons/line/delete-bin-line.svg?react';
+import LightningIcon from 'majesticons/line/lightning-bolt-line.svg?react';
+import InfoIcon from 'majesticons/line/info-circle-line.svg?react';
 import { useToggle } from 'ahooks';
 import { type PluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
 import { css } from '@emotion/react';

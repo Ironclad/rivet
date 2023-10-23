@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { ReactComponent as PinwheelIcon } from 'majesticons/line/pinwheel-line.svg';
+import PinwheelIcon from 'majesticons/line/pinwheel-line.svg?react';
 import { type FC } from 'react';
 
 const spinnerCss = css`

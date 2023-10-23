@@ -5,8 +5,8 @@ import { css } from '@emotion/react';
 // eslint-disable-next-line import/no-cycle
 import { DefaultNodeEditorField } from './DefaultNodeEditorField';
 import Collapsible from 'react-collapsible';
-import { ReactComponent as ChevronDownIcon } from 'majesticons/line/chevron-down-line.svg';
-import { ReactComponent as ChevronUpIcon } from 'majesticons/line/chevron-up-line.svg';
+import ChevronDownIcon from 'majesticons/line/chevron-down-line.svg?react';
+import ChevronUpIcon from 'majesticons/line/chevron-up-line.svg?react';
 import { getHelperMessage } from './editorUtils';
 import { HelperMessage } from '@atlaskit/form';
 
