@@ -28,7 +28,7 @@ export class GetEmbeddingNodeImpl extends NodeImpl<GetEmbeddingNode> {
       id: nanoid() as NodeId,
       type: 'getEmbedding',
       title: 'Get Embedding',
-      visualData: { x: 0, y: 0, width: 200 },
+      visualData: { x: 0, y: 0, width: 250 },
       data: {
         integration: 'openai',
         useIntegrationInput: false,
