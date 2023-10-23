@@ -1,29 +1,27 @@
 import { type Settings } from '../../index.js';
 import { type EmbeddingGenerator } from '../EmbeddingGenerator.js';
-import * as openai from 'openai';
+import { OpenAI } from 'openai';
 
 export class OpenAIEmbeddingGenerator implements EmbeddingGenerator {
-  #settings;
+  readonly #settings;
 
   constructor(settings: Settings) {
     this.#settings = settings;
   }
 
   async generateEmbedding(text: string): Promise<number[]> {
-    const config = new openai.Configuration({
+    const api = new OpenAI({
       apiKey: this.#settings.openAiKey,
       organization: this.#settings.openAiOrganization,
     });
 
-    const api = new openai.OpenAIApi(config);
-
-    const response = await api.createEmbedding({
+    const response = await api.embeddings.create({
       input: text,
       model: 'text-embedding-ada-002',
     });
 
-    const { embedding } = response.data.data[0]!;
+    const embeddings = response.data;
 
-    return embedding;
+    return embeddings[0]!.embedding;
   }
 }
