@@ -1,5 +1,6 @@
 import type { DataType, GetDataValue, Inputs, PortId } from '../index.js';
 import { coerceTypeOptional } from './coerceType.js';
+import { entries } from './typeSafety.js';
 
 export function getInputOrData<Data extends object, T extends DataType = 'string'>(
   data: Data,
@@ -18,4 +19,8 @@ export function getInputOrData<Data extends object, T extends DataType = 'string
       ? coerceTypeOptional(inputs[inputAndDataKey as PortId], type ?? 'string') ?? data[inputAndDataKey]
       : data[inputAndDataKey];
   return value as GetDataValue<T>['value'];
+}
+
+export function cleanHeaders(headers: Record<string, string>): Record<string, string> {
+  return Object.fromEntries(entries(headers).filter(([key]) => key.trim()));
 }
