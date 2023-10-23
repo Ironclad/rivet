@@ -135,7 +135,7 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
     const codeFunction = new Function('inputs', this.chartNode.data.code);
     const outputs = codeFunction(inputs);
 
-    if (outputs == null || typeof outputs !== 'object') {
+    if (outputs == null || typeof outputs !== 'object' || ('then' in outputs && typeof outputs.then === 'function')) {
       throw new Error('Code node must return an object with output values.');
     }
 
