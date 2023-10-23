@@ -16,13 +16,13 @@ const resolveRivet: esbuild.Plugin = {
   },
 };
 
-console.log(`Bundling to ${chalk.cyan('bin/executor-bundle.js')}...`);
+console.log(`Bundling to ${chalk.cyan('bin/executor-bundle.cjs')}...`);
 
 esbuild.build({
   entryPoints: ['bin/executor.mts'],
   bundle: true,
   platform: 'node',
-  outfile: './bin/executor-bundle.js',
+  outfile: './bin/executor-bundle.cjs',
   format: 'cjs',
   target: 'node16',
   external: [],

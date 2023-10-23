@@ -43,7 +43,8 @@
   },
   "resolutions": {
     "jest-mock": "^28.1.0",
-    "@types/react": "18.2.31"
+    "@types/react": "18.2.31",
+    "esbuild": "0.19.5"
   },
   "volta": {
     "node": "20.4.0",

@@ -26,6 +26,7 @@ dist
 *.tsbuildinfo
 
 packages/app-executor/bin/executor-bundle.js
+packages/app-executor/bin/executor-bundle.cjs
 
 .yarn/*
 !.yarn/cache

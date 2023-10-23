@@ -3,10 +3,11 @@
   "license": "MIT",
   "repository": "https://github.com/ironclad/rivet",
   "version": "1.0.1",
-  "bin": "./bin/executor-bundle.js",
+  "bin": "./bin/executor-bundle.cjs",
+  "type": "module",
   "scripts": {
     "build": "tsx scripts/build-executor.mts",
-    "start": "yarn build && node --experimental-network-imports bin/executor-bundle.js",
+    "start": "yarn build && node --experimental-network-imports bin/executor-bundle.cjs",
     "lint": "eslint ./bin/executor.ts"
   },
   "devDependencies": {
@@ -17,7 +18,7 @@
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "appdata-path": "^1.0.0",
     "chalk": "^5.3.0",
-    "esbuild": "^0.19.5",
+    "esbuild": "0.19.3",
     "esbuild-plugin-copy": "^2.1.1",
     "eslint-config-standard-with-typescript": "^39.1.1",
     "eslint-plugin-import": "npm:eslint-plugin-i@latest",
