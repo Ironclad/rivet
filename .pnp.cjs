@@ -6887,6 +6887,7 @@ const RAW_RUNTIME_STATE =
           ["pnpm", "npm:8.9.2"],\
           ["prettier", "npm:3.0.3"],\
           ["pretty-bytes", "npm:6.1.1"],\
+          ["pretty-ms", "npm:8.0.0"],\
           ["react", "npm:18.2.0"],\
           ["react-collapsible", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.10.0"],\
           ["react-color", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.19.3"],\
@@ -20025,6 +20026,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["parse-ms", [\
+      ["npm:3.0.0", {\
+        "packageLocation": "./.yarn/cache/parse-ms-npm-3.0.0-3acf02c3f3-fc602bba09.zip/node_modules/parse-ms/",\
+        "packageDependencies": [\
+          ["parse-ms", "npm:3.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["parse-numeric-range", [\
       ["npm:1.3.0", {\
         "packageLocation": "./.yarn/cache/parse-numeric-range-npm-1.3.0-71baf377a4-289ca126d5.zip/node_modules/parse-numeric-range/",\
@@ -21281,6 +21291,16 @@ const RAW_RUNTIME_STATE =
           ["pretty-error", "npm:4.0.0"],\
           ["lodash", "npm:4.17.21"],\
           ["renderkid", "npm:3.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["pretty-ms", [\
+      ["npm:8.0.0", {\
+        "packageLocation": "./.yarn/cache/pretty-ms-npm-8.0.0-7a40e0b54a-07c78d9522.zip/node_modules/pretty-ms/",\
+        "packageDependencies": [\
+          ["pretty-ms", "npm:8.0.0"],\
+          ["parse-ms", "npm:3.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\

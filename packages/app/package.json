@@ -97,6 +97,7 @@
     "pnpm": "^8.9.2",
     "prettier": "^3.0.3",
     "pretty-bytes": "^6.1.1",
+    "pretty-ms": "^8.0.0",
     "react": "^18.2.0",
     "react-collapsible": "^2.10.0",
     "react-color": "^2.19.3",
