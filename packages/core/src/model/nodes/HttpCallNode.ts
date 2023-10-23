@@ -9,8 +9,9 @@ import { nanoid } from 'nanoid/non-secure';
 import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import { type Inputs, type Outputs } from '../GraphProcessor.js';
-import { getError, type EditorDefinition, type InternalProcessContext } from '../../index.js';
+import { type EditorDefinition, type InternalProcessContext } from '../../index.js';
 import { coerceType, dedent, getInputOrData } from '../../utils/index.js';
+import { getError } from '../../utils/errors.js';
 
 export type HttpCallNode = ChartNode<'httpCall', HttpCallNodeData>;
 
