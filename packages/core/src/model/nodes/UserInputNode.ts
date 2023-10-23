@@ -13,6 +13,8 @@ export type UserInputNode = ChartNode<'userInput', UserInputNodeData>;
 export type UserInputNodeData = {
   prompt: string;
   useInput: boolean;
+
+  renderingFormat?: 'preformatted' | 'markdown';
 };
 
 export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
@@ -71,6 +73,22 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
         dataKey: 'prompt',
         useInputToggleDataKey: 'useInput',
         language: 'plain-text',
+      },
+      {
+        type: 'group',
+        label: 'Rendering',
+        editors: [
+          {
+            type: 'dropdown',
+            dataKey: 'renderingFormat',
+            label: 'Format',
+            options: [
+              { label: 'Preformatted', value: 'preformatted' },
+              { label: 'Markdown', value: 'markdown' },
+            ],
+            defaultValue: 'markdown',
+          },
+        ],
       },
     ];
   }

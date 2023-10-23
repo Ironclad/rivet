@@ -112,7 +112,7 @@ export const GraphBuilder: FC = () => {
     }
   });
 
-  const [, questions] = firstNodeQuestions ? firstNodeQuestions : [undefined, [] as ProcessQuestions[]];
+  const [questionsNodeId, questions] = firstNodeQuestions ? firstNodeQuestions : [undefined, [] as ProcessQuestions[]];
   const lastQuestions = questions.at(-1)?.questions ?? [];
 
   const selectedNodes = useMemo(
@@ -144,6 +144,7 @@ export const GraphBuilder: FC = () => {
         <UserInputModal
           open={isUserInputModalOpen}
           questions={lastQuestions}
+          questionsNodeId={questionsNodeId}
           onSubmit={handleSubmitUserInputModal}
           onClose={handleCloseUserInputModal}
         />
