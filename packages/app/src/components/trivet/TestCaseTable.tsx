@@ -15,6 +15,11 @@ import Popup from '@atlaskit/popup';
 import TextField from '@atlaskit/textfield';
 
 const containerStyles = css`
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 auto;
+  min-height: 0;
+
   h3 {
     margin-top: 32px;
     margin-bottom: 0;
@@ -28,6 +33,10 @@ const styles = css`
   grid-template-columns: 8px auto 36px 1fr 1fr;
   padding-top: 10px;
 
+  min-height: 0;
+  flex: 0 1 auto;
+  overflow: auto;
+
   .cell {
     padding: 8px;
     overflow: hidden;
@@ -37,6 +46,7 @@ const styles = css`
     display: flex;
     align-items: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    min-height: 32px;
   }
 
   .test-case-row {

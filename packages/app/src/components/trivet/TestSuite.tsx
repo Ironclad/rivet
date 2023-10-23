@@ -27,10 +27,24 @@ const styles = css`
   min-height: 100%;
   position: relative;
   display: flex;
+  overflow: hidden;
+  height: 100%;
 
   .test-suite-area {
-    padding: 48px 20px 20px 20px;
+    padding: 48px 20px 40px 20px;
+    min-height: 0;
     flex: 1 1 auto;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  .test-suite-area-main {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1 1 auto;
+    min-height: 0;
   }
 
   header {
@@ -261,7 +275,7 @@ export const TestSuite: FC<{ testSuite: TrivetTestSuite; tryRunTests: TryRunTest
             </div>
           </div>
         </header>
-        <div>
+        <div className="test-suite-area-main">
           {validationGraphValidationResults != null && !validationGraphValidationResults.valid && (
             <div className="validation-results">
               <AlertCircleIcon /> Validation graph requires a specific format. Please fix the following errors:
