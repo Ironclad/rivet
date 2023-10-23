@@ -170,22 +170,22 @@ type AttachedNodeData = {
 
 export class GraphProcessor {
   // Per-instance state
-  #graph: NodeGraph;
-  #project: Project;
-  #nodesById: Record<NodeId, ChartNode>;
-  #nodeInstances: Record<NodeId, NodeImpl<ChartNode>>;
-  #connections: Record<NodeId, NodeConnection[]>;
-  #definitions: Record<NodeId, { inputs: NodeInputDefinition[]; outputs: NodeOutputDefinition[] }>;
-  #emitter: Emittery<ProcessEvents> = new Emittery();
+  readonly #graph: NodeGraph;
+  readonly #project: Project;
+  readonly #nodesById: Record<NodeId, ChartNode>;
+  readonly #nodeInstances: Record<NodeId, NodeImpl<ChartNode>>;
+  readonly #connections: Record<NodeId, NodeConnection[]>;
+  readonly #definitions: Record<NodeId, { inputs: NodeInputDefinition[]; outputs: NodeOutputDefinition[] }>;
+  readonly #emitter: Emittery<ProcessEvents> = new Emittery();
   #running = false;
   #isSubProcessor = false;
-  #scc: ChartNode[][];
-  #nodesNotInCycle: ChartNode[];
+  readonly #scc: ChartNode[][];
+  readonly #nodesNotInCycle: ChartNode[];
   #externalFunctions: Record<string, ExternalFunction> = {};
   slowMode = false;
   #isPaused = false;
   #parent: GraphProcessor | undefined;
-  #registry: NodeRegistration;
+  readonly #registry: NodeRegistration;
   id = nanoid();
 
   executor?: 'nodejs' | 'browser';
@@ -369,7 +369,7 @@ export class GraphProcessor {
   onAny = undefined! as Emittery<ProcessEvents>['onAny'];
   offAny = undefined! as Emittery<ProcessEvents>['offAny'];
 
-  #onUserEventHandlers: Map<(event: DataValue | undefined) => void, Function> = new Map();
+  readonly #onUserEventHandlers: Map<(event: DataValue | undefined) => void, Function> = new Map();
 
   onUserEvent(onEvent: string, listener: (event: DataValue | undefined) => void): void {
     const handler = (event: string, value: unknown) => {
