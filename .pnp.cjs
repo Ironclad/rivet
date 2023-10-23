@@ -1518,7 +1518,7 @@ const RAW_RUNTIME_STATE =
           ["@atlaskit/ds-lib", "virtual:d4b2e85144327fffab969fba84e58124b30b0034e793be0b9d0a77144493541b6059b5467b63c703967cf3e2052265dd7c6d487dfbce3accec8199f6489a4147#npm:2.2.0"],\
           ["@atlaskit/platform-feature-flags", "npm:0.2.4"],\
           ["@babel/runtime", "npm:7.22.5"],\
-          ["@babel/traverse", "npm:7.22.8"],\
+          ["@babel/traverse", "npm:7.23.2"],\
           ["@babel/types", "npm:7.22.5"],\
           ["@types/react", "npm:18.2.31"],\
           ["bind-event-listener", "npm:2.1.1"],\
@@ -1537,7 +1537,7 @@ const RAW_RUNTIME_STATE =
           ["@atlaskit/ds-lib", "virtual:d4b2e85144327fffab969fba84e58124b30b0034e793be0b9d0a77144493541b6059b5467b63c703967cf3e2052265dd7c6d487dfbce3accec8199f6489a4147#npm:2.2.0"],\
           ["@atlaskit/platform-feature-flags", "npm:0.2.4"],\
           ["@babel/runtime", "npm:7.22.5"],\
-          ["@babel/traverse", "npm:7.22.8"],\
+          ["@babel/traverse", "npm:7.23.2"],\
           ["@babel/types", "npm:7.22.5"],\
           ["@types/react", "npm:18.2.31"],\
           ["bind-event-listener", "npm:2.1.1"],\
@@ -1635,7 +1635,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/helpers", "npm:7.22.6"],\
           ["@babel/parser", "npm:7.22.7"],\
           ["@babel/template", "npm:7.22.5"],\
-          ["@babel/traverse", "npm:7.22.8"],\
+          ["@babel/traverse", "npm:7.23.2"],\
           ["@babel/types", "npm:7.22.5"],\
           ["convert-source-map", "npm:1.9.0"],\
           ["debug", "virtual:ac3d8e680759ce54399273724d44e041d6c9b73454d191d411a8c44bb27e22f02aaf6ed9d3ad0ac1c298eac4833cff369c9c7b84c573016112c4f84be2cd8543#npm:4.3.4"],\
@@ -1660,7 +1660,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/helpers", "npm:7.22.6"],\
           ["@babel/parser", "npm:7.22.7"],\
           ["@babel/template", "npm:7.22.5"],\
-          ["@babel/traverse", "npm:7.22.8"],\
+          ["@babel/traverse", "npm:7.23.2"],\
           ["@babel/types", "npm:7.22.5"],\
           ["convert-source-map", "npm:1.9.0"],\
           ["debug", "virtual:ac3d8e680759ce54399273724d44e041d6c9b73454d191d411a8c44bb27e22f02aaf6ed9d3ad0ac1c298eac4833cff369c9c7b84c573016112c4f84be2cd8543#npm:4.3.4"],\
@@ -2104,7 +2104,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/helper-member-expression-to-functions", "npm:7.22.5"],\
           ["@babel/helper-optimise-call-expression", "npm:7.22.5"],\
           ["@babel/template", "npm:7.22.5"],\
-          ["@babel/traverse", "npm:7.22.8"],\
+          ["@babel/traverse", "npm:7.23.2"],\
           ["@babel/types", "npm:7.22.5"]\
         ],\
         "linkType": "HARD"\
@@ -2188,7 +2188,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/helper-wrap-function", "npm:7.22.5"],\
           ["@babel/helper-function-name", "npm:7.22.5"],\
           ["@babel/template", "npm:7.22.5"],\
-          ["@babel/traverse", "npm:7.22.8"],\
+          ["@babel/traverse", "npm:7.23.2"],\
           ["@babel/types", "npm:7.22.5"]\
         ],\
         "linkType": "HARD"\
@@ -2200,7 +2200,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@babel/helpers", "npm:7.22.6"],\
           ["@babel/template", "npm:7.22.5"],\
-          ["@babel/traverse", "npm:7.22.8"],\
+          ["@babel/traverse", "npm:7.23.2"],\
           ["@babel/types", "npm:7.22.5"]\
         ],\
         "linkType": "HARD"\
@@ -4748,23 +4748,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@babel/traverse", [\
-      ["npm:7.22.8", {\
-        "packageLocation": "./.yarn/cache/@babel-traverse-npm-7.22.8-98fbaaf7d8-a2c2157c85.zip/node_modules/@babel/traverse/",\
-        "packageDependencies": [\
-          ["@babel/traverse", "npm:7.22.8"],\
-          ["@babel/code-frame", "npm:7.22.5"],\
-          ["@babel/generator", "npm:7.22.9"],\
-          ["@babel/helper-environment-visitor", "npm:7.22.5"],\
-          ["@babel/helper-function-name", "npm:7.22.5"],\
-          ["@babel/helper-hoist-variables", "npm:7.22.5"],\
-          ["@babel/helper-split-export-declaration", "npm:7.22.6"],\
-          ["@babel/parser", "npm:7.22.7"],\
-          ["@babel/types", "npm:7.22.5"],\
-          ["debug", "virtual:ac3d8e680759ce54399273724d44e041d6c9b73454d191d411a8c44bb27e22f02aaf6ed9d3ad0ac1c298eac4833cff369c9c7b84c573016112c4f84be2cd8543#npm:4.3.4"],\
-          ["globals", "npm:11.12.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:7.23.2", {\
         "packageLocation": "./.yarn/cache/@babel-traverse-npm-7.23.2-4758feee42-e4fcb8f839.zip/node_modules/@babel/traverse/",\
         "packageDependencies": [\
@@ -4990,7 +4973,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/preset-typescript", "virtual:a9a19b630a588155c92f4ae8a8db8144917ee83e3cd36bb76901eb84a4f5c22dc9e3132b483ed08b52ebbd0b97f69550387746aa970daf04db052b2bb054ab12#npm:7.22.5"],\
           ["@babel/runtime", "npm:7.22.5"],\
           ["@babel/runtime-corejs3", "npm:7.22.5"],\
-          ["@babel/traverse", "npm:7.22.8"],\
+          ["@babel/traverse", "npm:7.23.2"],\
           ["@docusaurus/cssnano-preset", "npm:2.4.3"],\
           ["@docusaurus/logger", "npm:2.4.3"],\
           ["@docusaurus/mdx-loader", "virtual:58680e8d566c6aebd5db03d7546bc63d5bf703b93ff709dde3ca9f86d23431f983c51bd17426b6d5a1edfc8b19aee7a7cf1f861f2df39223dda3fa60638945e8#npm:2.4.3"],\
@@ -5081,7 +5064,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/preset-typescript", "virtual:a9a19b630a588155c92f4ae8a8db8144917ee83e3cd36bb76901eb84a4f5c22dc9e3132b483ed08b52ebbd0b97f69550387746aa970daf04db052b2bb054ab12#npm:7.22.5"],\
           ["@babel/runtime", "npm:7.22.5"],\
           ["@babel/runtime-corejs3", "npm:7.22.5"],\
-          ["@babel/traverse", "npm:7.22.8"],\
+          ["@babel/traverse", "npm:7.23.2"],\
           ["@docusaurus/cssnano-preset", "npm:2.4.3"],\
           ["@docusaurus/logger", "npm:2.4.3"],\
           ["@docusaurus/mdx-loader", "virtual:bed6fc142c9998fd7509f50df78d5e62d76128675eb2cb137e57a9fda0b81f50b1b3ca6caf1d6adcd58b6e25955a49103025302d3947c215a595811479948ef5#npm:2.4.3"],\
@@ -5197,7 +5180,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@docusaurus/mdx-loader", "virtual:58680e8d566c6aebd5db03d7546bc63d5bf703b93ff709dde3ca9f86d23431f983c51bd17426b6d5a1edfc8b19aee7a7cf1f861f2df39223dda3fa60638945e8#npm:2.4.3"],\
           ["@babel/parser", "npm:7.22.7"],\
-          ["@babel/traverse", "npm:7.22.8"],\
+          ["@babel/traverse", "npm:7.23.2"],\
           ["@docusaurus/logger", "npm:2.4.3"],\
           ["@docusaurus/utils", "virtual:706f143487a78b8684246f275ed29f3133385011efe15f7e5b0935539ed7e237f13f299e33b733e5b45f7630cd4116f4dce8bfea7ea24e9bd56dd7ea4b54682a#npm:2.4.3"],\
           ["@mdx-js/mdx", "npm:1.6.22"],\
@@ -5231,7 +5214,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@docusaurus/mdx-loader", "virtual:bed6fc142c9998fd7509f50df78d5e62d76128675eb2cb137e57a9fda0b81f50b1b3ca6caf1d6adcd58b6e25955a49103025302d3947c215a595811479948ef5#npm:2.4.3"],\
           ["@babel/parser", "npm:7.22.7"],\
-          ["@babel/traverse", "npm:7.22.8"],\
+          ["@babel/traverse", "npm:7.23.2"],\
           ["@docusaurus/logger", "npm:2.4.3"],\
           ["@docusaurus/utils", "virtual:706f143487a78b8684246f275ed29f3133385011efe15f7e5b0935539ed7e237f13f299e33b733e5b45f7630cd4116f4dce8bfea7ea24e9bd56dd7ea4b54682a#npm:2.4.3"],\
           ["@mdx-js/mdx", "npm:1.6.22"],\
