@@ -9,7 +9,7 @@ import { nanoid } from 'nanoid/non-secure';
 import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import { type Inputs, type Outputs } from '../GraphProcessor.js';
-import { type EditorDefinition, type InternalProcessContext } from '../../index.js';
+import { getError, type EditorDefinition, type InternalProcessContext } from '../../index.js';
 import { coerceType, dedent, getInputOrData } from '../../utils/index.js';
 
 export type HttpCallNode = ChartNode<'httpCall', HttpCallNodeData>;
@@ -217,46 +217,59 @@ export class HttpCallNodeImpl extends NodeImpl<HttpCallNode> {
       body = this.data.body || undefined;
     }
 
-    const response = await fetch(url, {
-      method,
-      headers,
-      body,
-      signal: context.signal,
-      mode: 'cors',
-    });
+    try {
+      const response = await fetch(url, {
+        method,
+        headers,
+        body,
+        signal: context.signal,
+        mode: 'cors',
+      });
 
-    const output: Outputs = {
-      ['statusCode' as PortId]: {
-        type: 'number',
-        value: response.status,
-      },
-      ['res_headers' as PortId]: {
-        type: 'object',
-        value: Object.fromEntries(response.headers.entries()),
-      },
-    };
-
-    const responseBody = await response.text();
-
-    output['res_body' as PortId] = {
-      type: 'string',
-      value: responseBody,
-    };
-
-    if (response.headers.get('content-type')?.includes('application/json')) {
-      const jsonData = JSON.parse(responseBody);
-      output['json' as PortId] = {
-        type: 'object',
-        value: jsonData,
+      const output: Outputs = {
+        ['statusCode' as PortId]: {
+          type: 'number',
+          value: response.status,
+        },
+        ['res_headers' as PortId]: {
+          type: 'object',
+          value: Object.fromEntries(response.headers.entries()),
+        },
       };
-    } else {
-      output['json' as PortId] = {
-        type: 'control-flow-excluded',
-        value: undefined,
+
+      const responseBody = await response.text();
+
+      output['res_body' as PortId] = {
+        type: 'string',
+        value: responseBody,
       };
+
+      if (response.headers.get('content-type')?.includes('application/json')) {
+        const jsonData = JSON.parse(responseBody);
+        output['json' as PortId] = {
+          type: 'object',
+          value: jsonData,
+        };
+      } else {
+        output['json' as PortId] = {
+          type: 'control-flow-excluded',
+          value: undefined,
+        };
+      }
+
+      return output;
+    } catch (err) {
+      const { message } = getError(err);
+      if (message.includes('Load failed') || message.includes('Failed to fetch')) {
+        if (context.executor === 'browser') {
+          throw new Error(
+            'Failed to make HTTP call. You may be running into CORS problems. Try using the Node executor in the top-right menu.',
+          );
+        }
+      }
+
+      throw err;
     }
-
-    return output;
   }
 }
 
