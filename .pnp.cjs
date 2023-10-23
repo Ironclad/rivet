@@ -5747,7 +5747,7 @@ const RAW_RUNTIME_STATE =
           ["@docusaurus/utils", "virtual:98506254c557f052dc653ac12352b5dbc491513883f522589c22c278228f909f4a93800512624a41ab73456b434ca4e10b2fcb53e27ab1d61f4c5587ef0bfd4f#npm:2.4.3"],\
           ["@docusaurus/utils-common", "virtual:98506254c557f052dc653ac12352b5dbc491513883f522589c22c278228f909f4a93800512624a41ab73456b434ca4e10b2fcb53e27ab1d61f4c5587ef0bfd4f#npm:2.4.3"],\
           ["@docusaurus/utils-validation", "npm:2.4.3"],\
-          ["@mdx-js/react", "virtual:547b93882b88753db9797c48ef44fcafbfa794b7e29d63c0c06a3386ce08dada8c36534050cd7b6784fe0a070458710a221d44364f68850f4f9f59865ef5d851#npm:1.6.22"],\
+          ["@mdx-js/react", "virtual:de4bf54a777135b8d60a2c1bc2cf7d39bd0fa16a9131c1af77548d129c9a717e7f375cc137473742e792217a8989b7749d6c0934ca8eca0d7787e968286b7135#npm:1.6.22"],\
           ["@types/react", null],\
           ["@types/react-dom", null],\
           ["clsx", "npm:1.2.1"],\
@@ -7233,35 +7233,15 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["npm:2.3.0", {\
-        "packageLocation": "./.yarn/cache/@mdx-js-react-npm-2.3.0-d5582a450b-bce1cb1dde.zip/node_modules/@mdx-js/react/",\
+      ["virtual:de4bf54a777135b8d60a2c1bc2cf7d39bd0fa16a9131c1af77548d129c9a717e7f375cc137473742e792217a8989b7749d6c0934ca8eca0d7787e968286b7135#npm:1.6.22", {\
+        "packageLocation": "./.yarn/__virtual__/@mdx-js-react-virtual-d5f47fa3a3/0/cache/@mdx-js-react-npm-1.6.22-57e4c05c2b-b4fc3b78ca.zip/node_modules/@mdx-js/react/",\
         "packageDependencies": [\
-          ["@mdx-js/react", "npm:2.3.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:547b93882b88753db9797c48ef44fcafbfa794b7e29d63c0c06a3386ce08dada8c36534050cd7b6784fe0a070458710a221d44364f68850f4f9f59865ef5d851#npm:1.6.22", {\
-        "packageLocation": "./.yarn/__virtual__/@mdx-js-react-virtual-9a5aa0d21d/0/cache/@mdx-js-react-npm-1.6.22-57e4c05c2b-b4fc3b78ca.zip/node_modules/@mdx-js/react/",\
-        "packageDependencies": [\
-          ["@mdx-js/react", "virtual:547b93882b88753db9797c48ef44fcafbfa794b7e29d63c0c06a3386ce08dada8c36534050cd7b6784fe0a070458710a221d44364f68850f4f9f59865ef5d851#npm:1.6.22"],\
+          ["@mdx-js/react", "virtual:de4bf54a777135b8d60a2c1bc2cf7d39bd0fa16a9131c1af77548d129c9a717e7f375cc137473742e792217a8989b7749d6c0934ca8eca0d7787e968286b7135#npm:1.6.22"],\
           ["@types/react", null],\
           ["react", "npm:18.2.0"]\
         ],\
         "packagePeers": [\
           "@types/react",\
-          "react"\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["virtual:de4bf54a777135b8d60a2c1bc2cf7d39bd0fa16a9131c1af77548d129c9a717e7f375cc137473742e792217a8989b7749d6c0934ca8eca0d7787e968286b7135#npm:2.3.0", {\
-        "packageLocation": "./.yarn/__virtual__/@mdx-js-react-virtual-2a88733b94/0/cache/@mdx-js-react-npm-2.3.0-d5582a450b-bce1cb1dde.zip/node_modules/@mdx-js/react/",\
-        "packageDependencies": [\
-          ["@mdx-js/react", "virtual:de4bf54a777135b8d60a2c1bc2cf7d39bd0fa16a9131c1af77548d129c9a717e7f375cc137473742e792217a8989b7749d6c0934ca8eca0d7787e968286b7135#npm:2.3.0"],\
-          ["@types/mdx", "npm:2.0.9"],\
-          ["@types/react", "npm:18.2.31"],\
-          ["react", "npm:18.2.0"]\
-        ],\
-        "packagePeers": [\
           "react"\
         ],\
         "linkType": "HARD"\
@@ -9186,15 +9166,6 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/mdast", "npm:3.0.11"],\
           ["@types/unist", "npm:2.0.6"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@types/mdx", [\
-      ["npm:2.0.9", {\
-        "packageLocation": "./.yarn/cache/@types-mdx-npm-2.0.9-cfb7c4dde5-1c49619434.zip/node_modules/@types/mdx/",\
-        "packageDependencies": [\
-          ["@types/mdx", "npm:2.0.9"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -13605,7 +13576,7 @@ const RAW_RUNTIME_STATE =
           ["@docusaurus/preset-classic", "virtual:de4bf54a777135b8d60a2c1bc2cf7d39bd0fa16a9131c1af77548d129c9a717e7f375cc137473742e792217a8989b7749d6c0934ca8eca0d7787e968286b7135#npm:2.4.3"],\
           ["@docusaurus/theme-classic", "virtual:de4bf54a777135b8d60a2c1bc2cf7d39bd0fa16a9131c1af77548d129c9a717e7f375cc137473742e792217a8989b7749d6c0934ca8eca0d7787e968286b7135#npm:2.4.3"],\
           ["@docusaurus/types", "virtual:de4bf54a777135b8d60a2c1bc2cf7d39bd0fa16a9131c1af77548d129c9a717e7f375cc137473742e792217a8989b7749d6c0934ca8eca0d7787e968286b7135#npm:2.4.3"],\
-          ["@mdx-js/react", "virtual:de4bf54a777135b8d60a2c1bc2cf7d39bd0fa16a9131c1af77548d129c9a717e7f375cc137473742e792217a8989b7749d6c0934ca8eca0d7787e968286b7135#npm:2.3.0"],\
+          ["@mdx-js/react", "virtual:de4bf54a777135b8d60a2c1bc2cf7d39bd0fa16a9131c1af77548d129c9a717e7f375cc137473742e792217a8989b7749d6c0934ca8eca0d7787e968286b7135#npm:1.6.22"],\
           ["@tsconfig/docusaurus", "npm:2.0.2"],\
           ["clsx", "npm:2.0.0"],\
           ["docusaurus-plugin-image-zoom", "virtual:de4bf54a777135b8d60a2c1bc2cf7d39bd0fa16a9131c1af77548d129c9a717e7f375cc137473742e792217a8989b7749d6c0934ca8eca0d7787e968286b7135#npm:1.0.1"],\

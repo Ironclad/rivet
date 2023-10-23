@@ -4387,18 +4387,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mdx-js/react@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "@mdx-js/react@npm:2.3.0"
-  dependencies:
-    "@types/mdx": "npm:^2.0.0"
-    "@types/react": "npm:>=16"
-  peerDependencies:
-    react: ">=16"
-  checksum: bce1cb1dde0a9a2b786cd9167b9e2bc0e3be52c195a4a79aaf1677470566d1fd2979d01baca2380c76aa4a1a27cd89f051484e595fdc4144a428d6af39bb667a
-  languageName: node
-  linkType: hard
-
 "@mdx-js/util@npm:1.6.22":
   version: 1.6.22
   resolution: "@mdx-js/util@npm:1.6.22"
@@ -5893,13 +5881,6 @@ __metadata:
   dependencies:
     "@types/unist": "npm:*"
   checksum: b48aed305f26a75189bd4dcaf9ce70d225ea6fb7ca721f968a3425ac1e7ad8771a1cf9bee7d4473c60e7e9ef36e8252d648b540b4a582c517799d091749e5661
-  languageName: node
-  linkType: hard
-
-"@types/mdx@npm:^2.0.0":
-  version: 2.0.9
-  resolution: "@types/mdx@npm:2.0.9"
-  checksum: 1c49619434dfd6da2ca33f2093c9bf9e7135410983903ea19a7c41c3c60884cea2773b9ab280291e95c54e4e2c493504a475127cfa0003e41c4064b47f2869b0
   languageName: node
   linkType: hard
 
@@ -9246,7 +9227,7 @@ __metadata:
     "@docusaurus/preset-classic": "npm:2.4.3"
     "@docusaurus/theme-classic": "npm:^2.4.3"
     "@docusaurus/types": "npm:^2.4.3"
-    "@mdx-js/react": "npm:^2.3.0"
+    "@mdx-js/react": "npm:^1.6.22"
     "@tsconfig/docusaurus": "npm:^2.0.2"
     clsx: "npm:^2.0.0"
     docusaurus-plugin-image-zoom: "npm:^1.0.1"
