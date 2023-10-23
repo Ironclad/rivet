@@ -12,9 +12,9 @@
   "devDependencies": {
     "@ironclad/rivet-core": "workspace:^",
     "@ironclad/rivet-node": "workspace:^",
-    "@swc/core": "^1.3.71",
-    "@types/yargs": "^17.0.24",
-    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@swc/core": "^1.3.94",
+    "@types/yargs": "^17.0.29",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
     "appdata-path": "^1.0.0",
     "chalk": "^5.3.0",
     "esbuild": "^0.19.5",
