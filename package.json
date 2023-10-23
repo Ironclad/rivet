@@ -42,7 +42,8 @@
     "zx": "^7.2.3"
   },
   "resolutions": {
-    "jest-mock": "^28.1.0"
+    "jest-mock": "^28.1.0",
+    "@types/react": "18.2.31"
   },
   "volta": {
     "node": "20.4.0",
