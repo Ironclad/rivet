@@ -6,6 +6,7 @@ import { Port } from './Port.js';
 import { ErrorBoundary } from 'react-error-boundary';
 import { type WireDef } from './WireLayer';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
+import { LoopControllerNodePorts } from './LoopControllerNodePorts';
 
 export type NodePortsProps = {
   node: ChartNode;
@@ -25,7 +26,7 @@ export type NodePortsProps = {
 export const NodePortsRenderer: FC<NodePortsProps> = ({ ...props }) => {
   return (
     <ErrorBoundary fallback={<div />}>
-      <NodePorts {...props} />
+      {props.node.type === 'loopController' ? <LoopControllerNodePorts {...props} /> : <NodePorts {...props} />}
     </ErrorBoundary>
   );
 };

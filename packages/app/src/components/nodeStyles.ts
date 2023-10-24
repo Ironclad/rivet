@@ -177,6 +177,30 @@ export const nodeStyles = css`
     margin: 0 -12px 0 -12px;
   }
 
+  .node-ports-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .node-ports-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    > header {
+      background: var(--node-bg);
+      color: var(--node-bg-foreground);
+      align-self: flex-start;
+      padding: 4px 8px;
+      margin-left: -12px;
+      font-size: 12px;
+      font-family: var(--font-family-monospace);
+      border-radius: 0 4px 4px 0;
+      user-select: none;
+    }
+  }
+
   .input-ports,
   .output-ports {
     display: flex;

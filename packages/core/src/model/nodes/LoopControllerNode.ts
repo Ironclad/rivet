@@ -74,7 +74,7 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
         (connection) => connection.inputId === inputDefault.id && connection.inputNodeId === this.id,
       );
       if (inputDefaultConnection && nodes[inputDefaultConnection.outputNodeId]) {
-        inputDefault.title = nodes[inputDefaultConnection.outputNodeId]!.title;
+        inputDefault.title = `${nodes[inputDefaultConnection.outputNodeId]!.title} (Default)`;
       }
 
       inputs.push(input);
