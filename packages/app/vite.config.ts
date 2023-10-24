@@ -7,6 +7,7 @@ import topLevelAwait from 'vite-plugin-top-level-await';
 import { resolve } from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { splitVendorChunkPlugin } from 'vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -46,5 +47,8 @@ export default defineConfig({
     (monacoEditorPlugin as any).default({}),
     topLevelAwait(),
     splitVendorChunkPlugin(),
+    nodePolyfills({
+      include: ['fs', 'stream', '_stream_writable', 'buffer', 'events']
+    }),
   ],
 });

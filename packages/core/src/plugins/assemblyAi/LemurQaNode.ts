@@ -20,7 +20,6 @@ import {
 } from '../../index.js';
 import {
   type LemurNodeData,
-  type LemurParams,
   getApiKey,
   getLemurParams,
   lemurEditorDefinitions,
@@ -28,6 +27,7 @@ import {
 } from './lemurHelpers.js';
 import { coerceType } from '../../utils/coerceType.js';
 import { pluginNodeDefinition } from '../../model/NodeDefinition.js';
+import { AssemblyAI, type LemurQuestion, type LemurQuestionAnswerParameters } from 'assemblyai';
 
 export type LemurQaNode = ChartNode<'assemblyAiLemurQa', LemurQaNodeData>;
 
@@ -123,17 +123,16 @@ export const LemurQaNodeImpl = {
 
   async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const apiKey = getApiKey(context);
+    const client = new AssemblyAI({ apiKey });
 
     const questions = getQuestions(inputs).map((question) => applyQuestionEditors(data, question));
 
-    const params: LemurParams & {
-      questions: Question[];
-    } = {
+    const params: LemurQuestionAnswerParameters = {
       questions,
       ...getLemurParams(inputs, data),
     };
 
-    const { response } = await runLemurQa(apiKey, params);
+    const { response } = await client.lemur.questionAnswer(params);
     return {
       ['response' as PortId]: {
         type: 'object[]',
@@ -143,7 +142,7 @@ export const LemurQaNodeImpl = {
   },
 } satisfies PluginNodeImpl<LemurQaNode>;
 
-function getQuestions(inputs: Inputs): Question[] {
+function getQuestions(inputs: Inputs): LemurQuestion[] {
   const input = inputs['questions' as PortId] as
     | StringDataValue
     | StringArrayDataValue
@@ -163,9 +162,9 @@ function getQuestions(inputs: Inputs): Question[] {
   } else if (input.type === 'string[]') {
     return coerceType(input, 'string[]').map((question) => ({ question }));
   } else if (input.type === 'object') {
-    return [coerceType(input, 'object')] as Question[];
+    return [coerceType(input, 'object')] as LemurQuestion[];
   } else if (input.type === 'object[]') {
-    return coerceType(input, 'object[]') as unknown as Question[];
+    return coerceType(input, 'object[]') as unknown as LemurQuestion[];
   } else if (input.type === 'any' && typeof input.value === 'string') {
     return [
       {
@@ -173,11 +172,11 @@ function getQuestions(inputs: Inputs): Question[] {
       },
     ];
   } else if ((input.type === 'any' && Array.isArray(input.value)) || input.type === 'any[]') {
-    return (input.value as any[]).map<Question>((question: any) => {
+    return (input.value as any[]).map<LemurQuestion>((question: any) => {
       if (typeof question === 'string') {
         return { question };
       } else if (typeof question === 'object') {
-        return question as Question;
+        return question as LemurQuestion;
       } else {
         throw new Error('Question must be a string or object.');
       }
@@ -186,7 +185,7 @@ function getQuestions(inputs: Inputs): Question[] {
   throw new Error('Questions must be a string, string[], a question object, or an array of question objects.');
 }
 
-function applyQuestionEditors(data: LemurQaNodeData, question: Question): Question {
+function applyQuestionEditors(data: LemurQaNodeData, question: LemurQuestion): LemurQuestion {
   if (!('answer_format' in question) && data.questions_answer_format) {
     question.answer_format = data.questions_answer_format;
   }
@@ -199,33 +198,5 @@ function applyQuestionEditors(data: LemurQaNodeData, question: Question): Questi
 
   return question;
 }
-
-async function runLemurQa(apiToken: string, params: object) {
-  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/question-answer', {
-    method: 'POST',
-    body: JSON.stringify(params),
-    headers: {
-      authorization: apiToken,
-    },
-  });
-  const body = await response.json();
-  if (response.status !== 200) {
-    if ('error' in body) throw new Error(body.error);
-    throw new Error(`LeMUR QA failed with status ${response.status}`);
-  }
-
-  return body as { response: QuestionAnswer[] };
-}
-
-type Question = {
-  question: string;
-  context?: string;
-  answer_format?: string;
-  answer_options?: string[];
-};
-type QuestionAnswer = {
-  question: string;
-  answer: string;
-};
 
 export const lemurQaNode = pluginNodeDefinition(LemurQaNodeImpl, 'LeMUR Q&A');

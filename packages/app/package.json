@@ -155,6 +155,7 @@
     "execa": "^8.0.1",
     "rollup-plugin-visualizer": "^5.9.2",
     "semver": "^7.5.4",
-    "tsx": "^3.12.7"
+    "tsx": "^3.12.7",
+    "vite-plugin-node-polyfills": "^0.15.0"
   }
 }
