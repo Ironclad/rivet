@@ -149,6 +149,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://www.linkedin.com/in/jasonlgill"><img src="https://avatars.githubusercontent.com/u/241711?v=4?s=100" width="100px;" alt="Jason Gill"/><br /><sub><b>Jason Gill</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/issues?q=author%3Ajasongill" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://andriydruk.com"><img src="https://avatars.githubusercontent.com/u/1927559?v=4?s=100" width="100px;" alt="Andriy Druk"/><br /><sub><b>Andriy Druk</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/issues?q=author%3Aandriydruk" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
