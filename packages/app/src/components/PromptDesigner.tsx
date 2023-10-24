@@ -1022,6 +1022,7 @@ async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
         },
         abortGraph: undefined!,
         getPluginConfig: undefined!,
+        attachedData: {},
       } as InternalProcessContext,
     );
 
