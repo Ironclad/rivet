@@ -139,9 +139,9 @@ export type ExternalFunction = (
   ...args: unknown[]
 ) => Promise<DataValue & { cost?: number }>;
 
-type RaceId = Opaque<string, 'RaceId'>;
+export type RaceId = Opaque<string, 'RaceId'>;
 
-type LoopInfo = AttachedNodeDataItem & {
+export type LoopInfo = AttachedNodeDataItem & {
   /** ID of the controller of the loop */
   loopControllerId: NodeId;
 
@@ -151,11 +151,11 @@ type LoopInfo = AttachedNodeDataItem & {
   iterationCount: number;
 };
 
-type AttachedNodeDataItem = {
+export type AttachedNodeDataItem = {
   propagate: boolean | ((parent: ChartNode, connections: NodeConnection[]) => boolean);
 };
 
-type AttachedNodeData = {
+export type AttachedNodeData = {
   loopInfo?: LoopInfo;
   races?: {
     propagate: boolean;
@@ -1083,7 +1083,6 @@ export class GraphProcessor {
 
   async #processNode(node: ChartNode) {
     const processId = nanoid() as ProcessId;
-    const builtInNode = node as BuiltInNodes;
 
     if (this.#abortController.signal.aborted) {
       this.#nodeErrored(node, new Error('Processing aborted'), processId);
@@ -1372,6 +1371,7 @@ export class GraphProcessor {
       executionCache: this.#executionCache,
       graphInputs: this.#graphInputs,
       graphOutputs: this.#graphOutputs,
+      attachedData: this.#getAttachedDataTo(node),
       waitEvent: async (event) => {
         return new Promise((resolve, reject) => {
           this.#emitter.once(`userEvent:${event}`).then(resolve).catch(reject);

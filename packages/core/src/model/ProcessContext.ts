@@ -11,6 +11,7 @@ import {
   type ScalarOrArrayDataValue,
   type DatasetProvider,
   type ChartNode,
+  type AttachedNodeData,
 } from '../index.js';
 import type { Tokenizer } from '../integrations/Tokenizer.js';
 
@@ -68,6 +69,9 @@ export type InternalProcessContext<T extends ChartNode = ChartNode> = ProcessCon
 
   /** The current node being executed. */
   node: T;
+
+  /** For internal and advanced cases, gets the arbitrary data attached to the node during graph execution. */
+  attachedData: AttachedNodeData;
 
   /** Raises a user event that can be listened for on the GraphProcessor. */
   raiseEvent: (eventName: string, data: DataValue | undefined) => void;

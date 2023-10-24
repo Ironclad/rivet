@@ -95,6 +95,12 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
       title: 'Break',
     });
 
+    outputs.push({
+      dataType: 'number',
+      id: 'iteration' as PortId,
+      title: 'Iteration',
+    });
+
     for (let i = 1; i <= messageCount; i++) {
       const output: NodeOutputDefinition = {
         dataType: 'any',
@@ -157,6 +163,10 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const output: Outputs = {};
+
+    const iterationCount = context.attachedData.loopInfo?.iterationCount ?? 0;
+
+    output['iteration' as PortId] = { type: 'number', value: iterationCount + 1 };
 
     // If the continue port is not connected (so undefined), or if it's undefined before it's
     // inside the loop itself (connection has not ran yet), then we should continue by default.

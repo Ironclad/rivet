@@ -56,8 +56,6 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
 
   const inputCount = inputDefinitions.filter((input) => /input(\d+)$/.test(input.id)).length;
 
-  console.dir({ inputCount });
-
   for (let i = 0; i < inputCount; i++) {
     const input = inputDefinitions.find((input) => input.id === `input${i + 1}`);
     const inputDefault = inputDefinitions.find((input) => input.id === `input${i + 1}Default`);
@@ -77,8 +75,6 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
   const otherOutputPorts = outputDefinitions.filter((output) =>
     groupedInputsAndOutputs.every((group) => group.outputDefinition !== output),
   );
-
-  console.dir({ otherInputPorts, otherOutputPorts });
 
   return (
     <div className="node-ports-groups">
