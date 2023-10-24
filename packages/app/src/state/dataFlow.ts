@@ -54,6 +54,11 @@ export const graphRunningState = atom<boolean>({
   default: false,
 });
 
+export const graphStartTimeState = atom<number | undefined>({
+  key: 'graphStartTime',
+  default: undefined,
+});
+
 export const graphPausedState = atom<boolean>({
   key: 'graphPaused',
   default: false,

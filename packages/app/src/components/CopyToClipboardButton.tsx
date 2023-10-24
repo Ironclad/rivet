@@ -1,5 +1,5 @@
 import { type FC } from 'react';
-import { ReactComponent as CopyIcon } from '../assets/icons/copy-icon.svg';
+import CopyIcon from '../assets/icons/copy-icon.svg?react';
 import { css } from '@emotion/react';
 import { copyToClipboard } from '../utils/copyToClipboard';
 import { toast } from 'react-toastify';

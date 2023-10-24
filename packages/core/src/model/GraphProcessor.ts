@@ -97,6 +97,9 @@ export type ProcessEvents = {
   /** Called when processing has been aborted. */
   abort: { successful: boolean; error?: string | Error };
 
+  /** Called when processing has finished either successfully or unsuccessfully. */
+  finish: void;
+
   /** Called for trace level logs. */
   trace: string;
 
@@ -117,6 +120,10 @@ export type ProcessEvents = {
 } & {
   [key: `globalSet:${string}`]: ScalarOrArrayDataValue | undefined;
 };
+
+export type ProcessEvent = {
+  [P in keyof ProcessEvents]: { type: P } & ProcessEvents[P];
+}[keyof ProcessEvents];
 
 export type GraphOutputs = Record<string, DataValue>;
 export type GraphInputs = Record<string, DataValue>;
@@ -163,22 +170,22 @@ type AttachedNodeData = {
 
 export class GraphProcessor {
   // Per-instance state
-  #graph: NodeGraph;
-  #project: Project;
-  #nodesById: Record<NodeId, ChartNode>;
-  #nodeInstances: Record<NodeId, NodeImpl<ChartNode>>;
-  #connections: Record<NodeId, NodeConnection[]>;
-  #definitions: Record<NodeId, { inputs: NodeInputDefinition[]; outputs: NodeOutputDefinition[] }>;
-  #emitter: Emittery<ProcessEvents> = new Emittery();
+  readonly #graph: NodeGraph;
+  readonly #project: Project;
+  readonly #nodesById: Record<NodeId, ChartNode>;
+  readonly #nodeInstances: Record<NodeId, NodeImpl<ChartNode>>;
+  readonly #connections: Record<NodeId, NodeConnection[]>;
+  readonly #definitions: Record<NodeId, { inputs: NodeInputDefinition[]; outputs: NodeOutputDefinition[] }>;
+  readonly #emitter: Emittery<ProcessEvents> = new Emittery();
   #running = false;
   #isSubProcessor = false;
-  #scc: ChartNode[][];
-  #nodesNotInCycle: ChartNode[];
+  readonly #scc: ChartNode[][];
+  readonly #nodesNotInCycle: ChartNode[];
   #externalFunctions: Record<string, ExternalFunction> = {};
   slowMode = false;
   #isPaused = false;
   #parent: GraphProcessor | undefined;
-  #registry: NodeRegistration;
+  readonly #registry: NodeRegistration;
   id = nanoid();
 
   executor?: 'nodejs' | 'browser';
@@ -362,7 +369,7 @@ export class GraphProcessor {
   onAny = undefined! as Emittery<ProcessEvents>['onAny'];
   offAny = undefined! as Emittery<ProcessEvents>['offAny'];
 
-  #onUserEventHandlers: Map<(event: DataValue | undefined) => void, Function> = new Map();
+  readonly #onUserEventHandlers: Map<(event: DataValue | undefined) => void, Function> = new Map();
 
   onUserEvent(onEvent: string, listener: (event: DataValue | undefined) => void): void {
     const handler = (event: string, value: unknown) => {
@@ -438,6 +445,16 @@ export class GraphProcessor {
     }
 
     await this.#emitter.once('resume');
+  }
+
+  async *events(): AsyncGenerator<ProcessEvent> {
+    for await (const [event, data] of this.#emitter.anyEvent()) {
+      yield { type: event, ...(data as any) };
+
+      if (event === 'finish') {
+        break;
+      }
+    }
   }
 
   async replayRecording(recorder: ExecutionRecorder): Promise<GraphOutputs> {
@@ -592,6 +609,9 @@ export class GraphProcessor {
             this.#emitter.emit(type, data);
           })
           .with({ type: 'newAbortController' }, () => {})
+          .with({ type: 'finish' }, () => {
+            this.#emitter.emit('finish', undefined);
+          })
           .with(undefined, () => {})
           .exhaustive();
       }
@@ -735,11 +755,16 @@ export class GraphProcessor {
 
       if (!this.#isSubProcessor) {
         this.#emitter.emit('done', { results: outputValues });
+        this.#emitter.emit('finish', undefined);
       }
 
       return outputValues;
     } finally {
       this.#running = false;
+
+      if (!this.#isSubProcessor) {
+        this.#emitter.emit('finish', undefined);
+      }
     }
   }
 

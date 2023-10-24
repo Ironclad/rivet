@@ -1,9 +1,9 @@
-import { URL as URL$1, fileURLToPath, pathToFileURL } from 'url';
 import fs from 'fs';
+import { URL as URL$1, fileURLToPath, pathToFileURL } from 'url';
 import path from 'path';
-import moduleExports, { Module } from 'module';
 import { createHash } from 'crypto';
 import { EOL } from 'os';
+import moduleExports, { isBuiltin } from 'module';
 import assert from 'assert';
 
 const SAFE_TIME = 456789e3;
@@ -16,14 +16,16 @@ const PortablePath = {
 const npath = Object.create(path);
 const ppath = Object.create(path.posix);
 npath.cwd = () => process.cwd();
-ppath.cwd = () => toPortablePath(process.cwd());
-ppath.resolve = (...segments) => {
-  if (segments.length > 0 && ppath.isAbsolute(segments[0])) {
-    return path.posix.resolve(...segments);
-  } else {
-    return path.posix.resolve(ppath.cwd(), ...segments);
-  }
-};
+ppath.cwd = process.platform === `win32` ? () => toPortablePath(process.cwd()) : process.cwd;
+if (process.platform === `win32`) {
+  ppath.resolve = (...segments) => {
+    if (segments.length > 0 && ppath.isAbsolute(segments[0])) {
+      return path.posix.resolve(...segments);
+    } else {
+      return path.posix.resolve(ppath.cwd(), ...segments);
+    }
+  };
+}
 const contains = function(pathUtils, from, to) {
   from = pathUtils.normalize(from);
   to = pathUtils.normalize(to);
@@ -37,17 +39,13 @@ const contains = function(pathUtils, from, to) {
     return null;
   }
 };
-npath.fromPortablePath = fromPortablePath;
-npath.toPortablePath = toPortablePath;
 npath.contains = (from, to) => contains(npath, from, to);
 ppath.contains = (from, to) => contains(ppath, from, to);
 const WINDOWS_PATH_REGEXP = /^([a-zA-Z]:.*)$/;
 const UNC_WINDOWS_PATH_REGEXP = /^\/\/(\.\/)?(.*)$/;
 const PORTABLE_PATH_REGEXP = /^\/([a-zA-Z]:.*)$/;
 const UNC_PORTABLE_PATH_REGEXP = /^\/unc\/(\.dot\/)?(.*)$/;
-function fromPortablePath(p) {
-  if (process.platform !== `win32`)
-    return p;
+function fromPortablePathWin32(p) {
   let portablePathMatch, uncPortablePathMatch;
   if (portablePathMatch = p.match(PORTABLE_PATH_REGEXP))
     p = portablePathMatch[1];
@@ -57,9 +55,7 @@ function fromPortablePath(p) {
     return p;
   return p.replace(/\//g, `\\`);
 }
-function toPortablePath(p) {
-  if (process.platform !== `win32`)
-    return p;
+function toPortablePathWin32(p) {
   p = p.replace(/\\/g, `/`);
   let windowsPathMatch, uncWindowsPathMatch;
   if (windowsPathMatch = p.match(WINDOWS_PATH_REGEXP))
@@ -68,6 +64,10 @@ function toPortablePath(p) {
     p = `/unc/${uncWindowsPathMatch[1] ? `.dot/` : ``}${uncWindowsPathMatch[2]}`;
   return p;
 }
+const toPortablePath = process.platform === `win32` ? toPortablePathWin32 : (p) => p;
+const fromPortablePath = process.platform === `win32` ? fromPortablePathWin32 : (p) => p;
+npath.fromPortablePath = fromPortablePath;
+npath.toPortablePath = toPortablePath;
 function convertPath(targetPathUtils, sourcePath) {
   return targetPathUtils === npath ? fromPortablePath(sourcePath) : toPortablePath(sourcePath);
 }
@@ -89,7 +89,6 @@ async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
   }));
 }
 async function copyImpl(prelayout, postlayout, destinationFs, destination, sourceFs, source, opts) {
-  var _a, _b, _c;
   const destinationStat = opts.didParentExist ? await maybeLStat(destinationFs, destination) : null;
   const sourceStat = await sourceFs.lstatPromise(source);
   const { atime, mtime } = opts.stableTime ? { atime: defaultTime, mtime: defaultTime } : sourceStat;
@@ -115,8 +114,8 @@ async function copyImpl(prelayout, postlayout, destinationFs, destination, sourc
         throw new Error(`Unsupported file type (${sourceStat.mode})`);
       }
   }
-  if (((_a = opts.linkStrategy) == null ? void 0 : _a.type) !== `HardlinkFromIndex` || !sourceStat.isFile()) {
-    if (updated || ((_b = destinationStat == null ? void 0 : destinationStat.mtime) == null ? void 0 : _b.getTime()) !== mtime.getTime() || ((_c = destinationStat == null ? void 0 : destinationStat.atime) == null ? void 0 : _c.getTime()) !== atime.getTime()) {
+  if (opts.linkStrategy?.type !== `HardlinkFromIndex` || !sourceStat.isFile()) {
+    if (updated || destinationStat?.mtime?.getTime() !== mtime.getTime() || destinationStat?.atime?.getTime() !== atime.getTime()) {
       postlayout.push(() => destinationFs.lutimesPromise(destination, atime, mtime));
       updated = true;
     }
@@ -186,7 +185,7 @@ async function copyFileViaIndex(prelayout, postlayout, destinationFs, destinatio
   let indexStat = await maybeLStat(destinationFs, indexPath);
   if (destinationStat) {
     const isDestinationHardlinkedFromIndex = indexStat && destinationStat.dev === indexStat.dev && destinationStat.ino === indexStat.ino;
-    const isIndexModified = (indexStat == null ? void 0 : indexStat.mtimeMs) !== defaultTimeMs;
+    const isIndexModified = indexStat?.mtimeMs !== defaultTimeMs;
     if (isDestinationHardlinkedFromIndex) {
       if (isIndexModified && linkStrategy.autoRepair) {
         atomicBehavior = 0 /* Lock */;
@@ -256,8 +255,7 @@ async function copyFileDirect(prelayout, postlayout, destinationFs, destination,
   return true;
 }
 async function copyFile(prelayout, postlayout, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
-  var _a;
-  if (((_a = opts.linkStrategy) == null ? void 0 : _a.type) === `HardlinkFromIndex`) {
+  if (opts.linkStrategy?.type === `HardlinkFromIndex`) {
     return copyFileViaIndex(prelayout, postlayout, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts, opts.linkStrategy);
   } else {
     return copyFileDirect(prelayout, postlayout, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
@@ -387,7 +385,7 @@ class FakeFS {
             throw error;
           }
         }
-        createdDirectory ?? (createdDirectory = subPath);
+        createdDirectory ??= subPath;
         if (chmod != null)
           await this.chmodPromise(subPath, chmod);
         if (utimes != null) {
@@ -418,7 +416,7 @@ class FakeFS {
             throw error;
           }
         }
-        createdDirectory ?? (createdDirectory = subPath);
+        createdDirectory ??= subPath;
         if (chmod != null)
           this.chmodSync(subPath, chmod);
         if (utimes != null) {
@@ -613,12 +611,14 @@ class FakeFS {
       throw error;
     }
   }
-  async writeJsonPromise(p, data) {
-    return await this.writeFilePromise(p, `${JSON.stringify(data, null, 2)}
+  async writeJsonPromise(p, data, { compact = false } = {}) {
+    const space = compact ? 0 : 2;
+    return await this.writeFilePromise(p, `${JSON.stringify(data, null, space)}
 `);
   }
-  writeJsonSync(p, data) {
-    return this.writeFileSync(p, `${JSON.stringify(data, null, 2)}
+  writeJsonSync(p, data, { compact = false } = {}) {
+    const space = compact ? 0 : 2;
+    return this.writeFileSync(p, `${JSON.stringify(data, null, space)}
 `);
   }
   async preserveTimePromise(p, cb) {
@@ -852,7 +852,7 @@ class ProxiedFS extends FakeFS {
   readFileSync(p, encoding) {
     return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
   }
-  async readdirPromise(p, opts) {
+  readdirPromise(p, opts) {
     return this.baseFs.readdirPromise(this.mapToBase(p), opts);
   }
   readdirSync(p, opts) {
@@ -932,12 +932,24 @@ class NodeFS extends BasePortableFakeFS {
         this.realFs.opendir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
       }
     }).then((dir) => {
-      return Object.defineProperty(dir, `path`, { value: p, configurable: true, writable: true });
+      const dirWithFixedPath = dir;
+      Object.defineProperty(dirWithFixedPath, `path`, {
+        value: p,
+        configurable: true,
+        writable: true
+      });
+      return dirWithFixedPath;
     });
   }
   opendirSync(p, opts) {
     const dir = typeof opts !== `undefined` ? this.realFs.opendirSync(npath.fromPortablePath(p), opts) : this.realFs.opendirSync(npath.fromPortablePath(p));
-    return Object.defineProperty(dir, `path`, { value: p, configurable: true, writable: true });
+    const dirWithFixedPath = dir;
+    Object.defineProperty(dirWithFixedPath, `path`, {
+      value: p,
+      configurable: true,
+      writable: true
+    });
+    return dirWithFixedPath;
   }
   async readPromise(fd, buffer, offset = 0, length = 0, position = -1) {
     return await new Promise((resolve, reject) => {
@@ -1215,16 +1227,16 @@ class NodeFS extends BasePortableFakeFS {
   }
   async readdirPromise(p, opts) {
     return await new Promise((resolve, reject) => {
-      if (opts == null ? void 0 : opts.withFileTypes) {
-        this.realFs.readdir(npath.fromPortablePath(p), { withFileTypes: true }, this.makeCallback(resolve, reject));
+      if (opts) {
+        this.realFs.readdir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
       } else {
         this.realFs.readdir(npath.fromPortablePath(p), this.makeCallback((value) => resolve(value), reject));
       }
     });
   }
   readdirSync(p, opts) {
-    if (opts == null ? void 0 : opts.withFileTypes) {
-      return this.realFs.readdirSync(npath.fromPortablePath(p), { withFileTypes: true });
+    if (opts) {
+      return this.realFs.readdirSync(npath.fromPortablePath(p), opts);
     } else {
       return this.realFs.readdirSync(npath.fromPortablePath(p));
     }
@@ -1359,14 +1371,9 @@ class VirtualFS extends ProxiedFS {
 }
 
 const [major, minor] = process.versions.node.split(`.`).map((value) => parseInt(value, 10));
-const HAS_CONSOLIDATED_HOOKS = major > 16 || major === 16 && minor >= 12;
-const HAS_UNFLAGGED_JSON_MODULES = major > 17 || major === 17 && minor >= 5 || major === 16 && minor >= 15;
-const HAS_JSON_IMPORT_ASSERTION_REQUIREMENT = major > 17 || major === 17 && minor >= 1 || major === 16 && minor > 14;
 const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || major === 19 && minor >= 2 || major === 18 && minor >= 13;
 const HAS_LAZY_LOADED_TRANSLATORS = major > 19 || major === 19 && minor >= 3;
 
-const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
-const isBuiltinModule = (request) => request.startsWith(`node:`) || builtinModules.has(request);
 function readPackageScope(checkPath) {
   const rootSeparatorIndex = checkPath.indexOf(npath.sep);
   let separatorIndex;
@@ -1427,11 +1434,7 @@ function getFileFormat(filepath) {
       );
     }
     case `.json`: {
-      if (HAS_UNFLAGGED_JSON_MODULES)
-        return `json`;
-      throw new Error(
-        `Unknown file extension ".json" for ${filepath}`
-      );
+      return `json`;
     }
     case `.js`: {
       const pkg = readPackageScope(filepath);
@@ -1452,38 +1455,15 @@ function getFileFormat(filepath) {
   }
 }
 
-async function getFormat$1(resolved, context, defaultGetFormat) {
-  const url = tryParseURL(resolved);
-  if ((url == null ? void 0 : url.protocol) !== `file:`)
-    return defaultGetFormat(resolved, context, defaultGetFormat);
-  const format = getFileFormat(fileURLToPath(url));
-  if (format) {
-    return {
-      format
-    };
-  }
-  return defaultGetFormat(resolved, context, defaultGetFormat);
-}
-
-async function getSource$1(urlString, context, defaultGetSource) {
-  const url = tryParseURL(urlString);
-  if ((url == null ? void 0 : url.protocol) !== `file:`)
-    return defaultGetSource(urlString, context, defaultGetSource);
-  return {
-    source: await fs.promises.readFile(fileURLToPath(url), `utf8`)
-  };
-}
-
 async function load$1(urlString, context, nextLoad) {
-  var _a;
   const url = tryParseURL(urlString);
-  if ((url == null ? void 0 : url.protocol) !== `file:`)
+  if (url?.protocol !== `file:`)
     return nextLoad(urlString, context, nextLoad);
   const filePath = fileURLToPath(url);
   const format = getFileFormat(filePath);
   if (!format)
     return nextLoad(urlString, context, nextLoad);
-  if (HAS_JSON_IMPORT_ASSERTION_REQUIREMENT && format === `json` && ((_a = context.importAssertions) == null ? void 0 : _a.type) !== `json`) {
+  if (format === `json` && context.importAssertions?.type !== `json`) {
     const err = new TypeError(`[ERR_IMPORT_ASSERTION_TYPE_MISSING]: Module "${urlString}" needs an import assertion of type "json"`);
     err.code = `ERR_IMPORT_ASSERTION_TYPE_MISSING`;
     throw err;
@@ -1500,7 +1480,7 @@ async function load$1(urlString, context, nextLoad) {
   }
   return {
     format,
-    source: await fs.promises.readFile(filePath, `utf8`),
+    source: format === `commonjs` ? void 0 : await fs.promises.readFile(filePath, `utf8`),
     shortCircuit: true
   };
 }
@@ -1980,9 +1960,8 @@ async function resolvePrivateRequest(specifier, issuer, context, nextResolve) {
   }
 }
 async function resolve$1(originalSpecifier, context, nextResolve) {
-  var _a;
   const { findPnpApi } = moduleExports;
-  if (!findPnpApi || isBuiltinModule(originalSpecifier))
+  if (!findPnpApi || isBuiltin(originalSpecifier))
     return nextResolve(originalSpecifier, context, nextResolve);
   let specifier = originalSpecifier;
   const url = tryParseURL(specifier, isRelativeRegexp.test(specifier) ? context.parentURL : void 0);
@@ -1992,7 +1971,7 @@ async function resolve$1(originalSpecifier, context, nextResolve) {
     specifier = fileURLToPath(url);
   }
   const { parentURL, conditions = [] } = context;
-  const issuer = parentURL && ((_a = tryParseURL(parentURL)) == null ? void 0 : _a.protocol) === `file:` ? fileURLToPath(parentURL) : process.cwd();
+  const issuer = parentURL && tryParseURL(parentURL)?.protocol === `file:` ? fileURLToPath(parentURL) : process.cwd();
   const pnpapi = findPnpApi(issuer) ?? (url ? findPnpApi(specifier) : null);
   if (!pnpapi)
     return nextResolve(originalSpecifier, context, nextResolve);
@@ -2069,8 +2048,6 @@ if (!HAS_LAZY_LOADED_TRANSLATORS) {
 }
 
 const resolve = resolve$1;
-const getFormat = HAS_CONSOLIDATED_HOOKS ? void 0 : getFormat$1;
-const getSource = HAS_CONSOLIDATED_HOOKS ? void 0 : getSource$1;
-const load = HAS_CONSOLIDATED_HOOKS ? load$1 : void 0;
+const load = load$1;
 
-export { getFormat, getSource, load, resolve };
+export { load, resolve };

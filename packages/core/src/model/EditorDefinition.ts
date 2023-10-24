@@ -64,6 +64,7 @@ export type DropdownEditorDefinition<T extends ChartNode> = SharedEditorDefiniti
     value: string;
     label: string;
   }[];
+  defaultValue?: string;
 
   useInputToggleDataKey?: DataOfType<T, boolean>;
 };

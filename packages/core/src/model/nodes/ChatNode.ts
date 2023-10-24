@@ -25,7 +25,7 @@ import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 import { type InternalProcessContext } from '../ProcessContext.js';
 import { type EditorDefinition } from '../../index.js';
 import { dedent } from 'ts-dedent';
-import { getInputOrData } from '../../utils/inputs.js';
+import { getInputOrData, cleanHeaders } from '../../utils/inputs.js';
 import { getError } from '../../utils/errors.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import type { TokenizerCallInfo } from '../../integrations/Tokenizer.js';
@@ -499,11 +499,11 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           headers: {},
         };
 
-    const allAdditionalHeaders = {
+    const allAdditionalHeaders = cleanHeaders({
       ...context.settings.chatNodeHeaders,
       ...additionalHeaders,
       ...resolvedEndpointAndHeaders.headers,
-    };
+    });
 
     const tokenizerInfo: TokenizerCallInfo = {
       node: this.chartNode,

@@ -9,7 +9,8 @@ import { useOpenUrl } from '../hooks/useOpenUrl';
 import { type PackagePluginLoadSpec, type PluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
 import { css } from '@emotion/react';
 import { appLocalDataDir, join } from '@tauri-apps/api/path';
-import { ReactComponent as CopyIcon } from 'majesticons/line/clipboard-line.svg';
+import CopyIcon from 'majesticons/line/clipboard-line.svg?react';
+import GithubMark from '../assets/vendor_logos/github-mark-white.svg?react';
 import { copyToClipboard } from '../utils/copyToClipboard';
 import { useLoadPackagePlugin } from '../hooks/useLoadPackagePlugin';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -22,7 +23,6 @@ import { ErrorBoundary } from 'react-error-boundary';
 import Modal, { ModalTransition, ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
 import clsx from 'clsx';
 import { useMarkdown } from '../hooks/useMarkdown';
-import { ReactComponent as GithubMark } from '../assets/vendor_logos/github-mark-white.svg';
 import { projectPluginsState } from '../state/savedGraphs';
 import { produce } from 'immer';
 

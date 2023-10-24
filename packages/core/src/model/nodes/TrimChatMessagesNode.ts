@@ -18,10 +18,14 @@ import { dedent } from 'ts-dedent';
 import { nodeDefinition } from '../NodeDefinition.js';
 import type { TokenizerCallInfo } from '../../integrations/Tokenizer.js';
 import { coerceType } from '../../utils/coerceType.js';
+import { getInputOrData } from '../../utils/index.js';
 
 export type TrimChatMessagesNodeData = {
   maxTokenCount: number;
+  useMaxTokenCountInput?: boolean;
+
   removeFromBeginning: boolean;
+  useRemoveFromBeginningInput?: boolean;
 };
 
 export type TrimChatMessagesNode = ChartNode<'trimChatMessages', TrimChatMessagesNodeData>;
@@ -47,13 +51,31 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
   }
 
   getInputDefinitions(): NodeInputDefinition[] {
-    return [
+    const inputs: NodeInputDefinition[] = [
       {
         id: 'input' as PortId,
         title: 'Input',
         dataType: 'chat-message[]',
       },
     ];
+
+    if (this.data.useMaxTokenCountInput) {
+      inputs.push({
+        id: 'maxTokenCount' as PortId,
+        title: 'Max Token Count',
+        dataType: 'number',
+      });
+    }
+
+    if (this.data.useRemoveFromBeginningInput) {
+      inputs.push({
+        id: 'removeFromBeginning' as PortId,
+        title: 'Remove From Beginning',
+        dataType: 'boolean',
+      });
+    }
+
+    return inputs;
   }
 
   getOutputDefinitions(): NodeOutputDefinition[] {
@@ -72,19 +94,23 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
         type: 'number',
         label: 'Max Token Count',
         dataKey: 'maxTokenCount',
+        useInputToggleDataKey: 'useMaxTokenCountInput',
       },
       {
         type: 'toggle',
         label: 'Remove From Beginning',
         dataKey: 'removeFromBeginning',
+        useInputToggleDataKey: 'useRemoveFromBeginningInput',
       },
     ];
   }
 
   getBody(): string | NodeBodySpec | undefined {
     return dedent`
-      Max Token Count: ${this.data.maxTokenCount}
-      Remove From Beginning: ${this.data.removeFromBeginning ? 'Yes' : 'No'}
+      Max Token Count: ${this.data.useMaxTokenCountInput ? '(From Input)' : this.data.maxTokenCount}
+      Remove From Beginning: ${
+        this.data.useRemoveFromBeginningInput ? '(From Input)' : this.data.removeFromBeginning ? 'Yes' : 'No'
+      }
     `;
   }
 
@@ -103,8 +129,9 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
 
   async process(inputs: Inputs, context: InternalProcessContext<TrimChatMessagesNode>): Promise<Outputs> {
     const input = coerceType(inputs['input' as PortId], 'chat-message[]');
-    const maxTokenCount = this.chartNode.data.maxTokenCount;
-    const removeFromBeginning = this.chartNode.data.removeFromBeginning;
+
+    const maxTokenCount = getInputOrData(this.data, inputs, 'maxTokenCount', 'number');
+    const removeFromBeginning = getInputOrData(this.data, inputs, 'removeFromBeginning', 'boolean');
 
     const trimmedMessages = [...input];
 

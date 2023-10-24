@@ -1,24 +1,38 @@
 # Plugins
 
-Plugins allow authors to extend the functionality of Rivet, such as adding new nodes that
-you can use in your graphs.
+Plugins allow authors to extend the functionality of Rivet, such as adding new nodes that you can use in your graphs.
 
 ## Enabling Plugins
 
-To enable a built-in plugin, go to the **Project** tab on the left panel. You will see a **Plugins** section there. Click
-the **+** button to add a plugin to the project.
+Plugins are configured per-project, and the plugins enabled for a project will be remembered when opening a project.
 
-![Add Plugin](./assets/add-plugin.png)
+To enable a plugin, go to the **Plugins** tab at the top of the screen. You will see all plugins that are available to install on the plugins screen.
 
-The modal the pops up will allow you to either enable one of the built-in plugins, or enter a URL to
-load a remote plugin.
+![Plugins](./assets/plugins.png)
 
-![Add Plugin Modal](./assets/add-plugin-modal.png)
+Click the Add buttton next to any plugin to install it to your current project.
 
-## Built-in Plugins
+## Removing Plugins
 
-A project can enable any number of the built-in plugins in Rivet. See the [Built-In Plugins List](/docs/user-guide/plugins/built-in/all) page for a list of all the built-in plugins and their documentation.
+To remove a plugin, navigate to the **Project** tab in the left sidebar, and find your plugin in the plugins list. Click the `...` menu next to the plugin and select **Remove**.
 
-## Remote Plugins
+![Remove Plugin](./assets/remove-plugin.png)
 
-Documentation to be written.
+## Installing Custom Plugins
+
+If the plugin you want to install is not part of the plugins shown in Rivet, you can install any Rivet plugin using the `NPM Plugin` option at the bottom of the plugins list.
+
+The plugin you are installing must be published on NPM. Click the Add button, and in the modal, enter the name of the plugin (and optionally the version) you want to install.
+
+![Add NPM Plugin](./assets/add-npm-plugin.png)
+
+## Installing Plugins from Source
+
+You can install plugins from their source code by following the steps here:
+
+1. In a terminal, navigate to plugin install directory for your operating system. The plugin install directory is shown below the plugins list in Rivet, with a copy button.
+2. Make a directory for the plugin. It must be named `<package-name>-latest`, where `<package-name>` is the name of the plugin package.
+3. Inside the directory you have created, run `git clone <git-url> package` to clone the plugin source code into the `package` directory.
+4. In Rivet, choose Add NPM Plugin at the bottom of the plugins list. Enter `<package-name>` for the package name. It must match exactly to the package name you used above, and the `name` field of the package.json must also match this name.
+5. If the plugin does not commit its bundled files, you may need to run `yarn` and `yarn build` inside the `package` directory to build the plugin. Ideally plugins will commit their bundled files so that you do not need to build them yourself.
+6. Click Add to install the plugin. It will now be available in your project.

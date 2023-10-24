@@ -5,7 +5,7 @@ module.exports = {
     {
       files: ['*.ts', '*.tsx'],
       parserOptions: {
-        project: true,
+        project: './packages/core/tsconfig.eslint.json',
         ecmaVersion: 'latest',
         sourceType: 'module',
       },

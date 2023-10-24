@@ -294,6 +294,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "andriydruk",
+      "name": "Andriy Druk",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1927559?v=4",
+      "profile": "https://andriydruk.com",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,

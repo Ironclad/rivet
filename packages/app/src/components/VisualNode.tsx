@@ -16,11 +16,11 @@ import { type ChartNode, type CommentNode, type NodeConnection, type NodeId, typ
 import { lastRunData, selectedProcessPage } from '../state/dataFlow.js';
 import { NodeBody } from './NodeBody.js';
 import { NodeOutput } from './NodeOutput.js';
-import { ReactComponent as SettingsCogIcon } from 'majesticons/line/settings-cog-line.svg';
-import { ReactComponent as SendIcon } from 'majesticons/solid/send.svg';
-import { ReactComponent as GitForkLine } from 'majesticons/line/git-fork-line.svg';
-import { ReactComponent as PinIcon } from 'majesticons/line/pin-line.svg';
-import { ReactComponent as PinSolidIcon } from 'majesticons/solid/pin.svg';
+import SettingsCogIcon from 'majesticons/line/settings-cog-line.svg?react';
+import SendIcon from 'majesticons/solid/send.svg?react';
+import GitForkLine from 'majesticons/line/git-fork-line.svg?react';
+import PinIcon from 'majesticons/line/pin-line.svg?react';
+import PinSolidIcon from 'majesticons/solid/pin.svg?react';
 import { ResizeHandle } from './ResizeHandle.js';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';

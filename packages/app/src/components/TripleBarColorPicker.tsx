@@ -15,7 +15,7 @@ export const TripleBarColorPicker = CustomPicker((props) => {
           position: relative;
         `}
       >
-        <Saturation {...props} />
+        <Saturation {...(props as any)} />
       </div>
       <div
         css={css`
@@ -23,7 +23,7 @@ export const TripleBarColorPicker = CustomPicker((props) => {
           position: relative;
         `}
       >
-        <Hue {...props} />
+        <Hue {...(props as any)} />
       </div>
       <div
         css={css`
@@ -31,7 +31,7 @@ export const TripleBarColorPicker = CustomPicker((props) => {
           position: relative;
         `}
       >
-        <Alpha {...props} />
+        <Alpha {...(props as any)} />
       </div>
     </div>
   );

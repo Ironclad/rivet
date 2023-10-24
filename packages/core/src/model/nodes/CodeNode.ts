@@ -122,7 +122,7 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
   static getUIData(): NodeUIData {
     return {
       infoBoxBody: dedent`
-        Executes a piece of JavaScript code. Documentation for the inputs and outputs is available in the default code.
+        Executes a piece of JavaScript code. See the Rivet Documentation for more information on how to write code for the Code Node.
       `,
       infoBoxTitle: 'Code Node',
       contextMenuTitle: 'Code',
@@ -134,6 +134,11 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
     // eslint-disable-next-line no-new-func
     const codeFunction = new Function('inputs', this.chartNode.data.code);
     const outputs = codeFunction(inputs);
+
+    if (outputs == null || typeof outputs !== 'object' || ('then' in outputs && typeof outputs.then === 'function')) {
+      throw new Error('Code node must return an object with output values.');
+    }
+
     return outputs;
   }
 }

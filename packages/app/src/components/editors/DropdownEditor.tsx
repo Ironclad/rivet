@@ -1,9 +1,10 @@
 import { Field, HelperMessage } from '@atlaskit/form';
 import Select from '@atlaskit/select';
 import { type DropdownEditorDefinition, type ChartNode } from '@ironclad/rivet-core';
-import { type FC } from 'react';
+import { useRef, type FC } from 'react';
 import { type SharedEditorProps } from './SharedEditorProps';
 import { getHelperMessage } from './editorUtils';
+import Portal from '@atlaskit/portal';
 
 export const DefaultDropdownEditor: FC<
   SharedEditorProps & {
@@ -12,6 +13,13 @@ export const DefaultDropdownEditor: FC<
 > = ({ node, isReadonly, isDisabled, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
   const helperMessage = getHelperMessage(editor, node.data);
+  const menuPortalTarget = useRef<HTMLDivElement>(null);
+
+  const selectedValue =
+    data[editor.dataKey] == null
+      ? editor.options.find((option) => option.value === editor.defaultValue)
+      : editor.options.find((option) => option.value === data[editor.dataKey]);
+
   return (
     <Field name={editor.dataKey} label={editor.label} isDisabled={isReadonly || isDisabled}>
       {({ fieldProps }) => (
@@ -19,7 +27,8 @@ export const DefaultDropdownEditor: FC<
           <Select
             {...fieldProps}
             options={editor.options}
-            value={editor.options.find((option) => option.value === data[editor.dataKey])}
+            value={selectedValue}
+            menuPortalTarget={menuPortalTarget.current}
             onChange={(selected) =>
               onChange({
                 ...node,
@@ -30,6 +39,9 @@ export const DefaultDropdownEditor: FC<
               })
             }
           />
+          <Portal>
+            <div ref={menuPortalTarget} />
+          </Portal>
           {helperMessage && <HelperMessage>{helperMessage}</HelperMessage>}
         </>
       )}

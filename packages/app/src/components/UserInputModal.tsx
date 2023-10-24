@@ -1,6 +1,6 @@
-import { type FC, Suspense, useEffect, useRef, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { type ArrayDataValue, type StringDataValue } from '@ironclad/rivet-core';
+import { type FC, Suspense, useEffect, useRef, useState, useMemo } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { type UserInputNode, type ArrayDataValue, type StringDataValue, type NodeId } from '@ironclad/rivet-core';
 import { lastAnswersState } from '../state/userInput.js';
 import Modal, { ModalBody, ModalFooter, ModalHeader, ModalTitle, ModalTransition } from '@atlaskit/modal-dialog';
 import Button from '@atlaskit/button';
@@ -9,6 +9,10 @@ import { css } from '@emotion/react';
 import type { monaco } from '../utils/monaco.js';
 import { useMarkdown } from '../hooks/useMarkdown.js';
 import { LazyCodeEditor } from './LazyComponents';
+import { projectState } from '../state/savedGraphs';
+import { values } from '../../../core/src/utils/typeSafety';
+import { toast } from 'react-toastify';
+import { nodesState } from '../state/graph';
 
 const styles = css`
   .question {
@@ -34,13 +38,34 @@ const styles = css`
 type UserInputModalProps = {
   open: boolean;
   questions: string[];
+  questionsNodeId: NodeId | undefined;
   onSubmit: (answers: ArrayDataValue<StringDataValue>) => void;
   onClose?: () => void;
 };
 
-export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, onSubmit, onClose }) => {
+export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, questionsNodeId, onSubmit, onClose }) => {
   const [answers, setAnswers] = useState<string[]>([]);
   const [lastAnswers, setLastAnswers] = useRecoilState(lastAnswersState);
+
+  const project = useRecoilValue(projectState);
+  const currentGraphNodes = useRecoilValue(nodesState);
+
+  const questionsNode = useMemo(() => {
+    if (!questionsNodeId) {
+      return undefined;
+    }
+
+    const nodes = values(project.graphs).flatMap((graph) => graph.nodes);
+
+    const node =
+      currentGraphNodes.find((n) => n.id === questionsNodeId) ?? nodes.find((node) => node.id === questionsNodeId);
+
+    if (!node) {
+      console.warn(`Could not find node with ID ${questionsNodeId} for user input modal`);
+    }
+
+    return node as UserInputNode | undefined;
+  }, [project, questionsNodeId, currentGraphNodes]);
 
   useEffect(() => {
     setAnswers(questions.map((question) => lastAnswers[question] ?? ''));
@@ -77,6 +102,7 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, onSub
                   index={index}
                   key={`question-${index}`}
                   question={question}
+                  node={questionsNode}
                   answer={answers?.[index]}
                   onChange={handleChange}
                   onSubmit={handleSubmit}
@@ -97,9 +123,10 @@ const UserInputModalQuestion: FC<{
   index: number;
   question: string;
   answer: string | undefined;
+  node: UserInputNode | undefined;
   onChange?: (index: number, newText: string) => void;
   onSubmit?: () => void;
-}> = ({ question, answer, index, onChange, onSubmit }) => {
+}> = ({ question, answer, index, node, onChange, onSubmit }) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>();
 
   const handleTextAreaKeyDown = (e: monaco.IKeyboardEvent) => {
@@ -110,13 +137,19 @@ const UserInputModalQuestion: FC<{
     }
   };
 
-  const questionHtml = useMarkdown(question);
+  const renderingFormat = node?.data.renderingFormat ?? 'markdown';
+
+  const questionHtml = useMarkdown(question, renderingFormat === 'markdown');
 
   return (
     <Field name={`question-${index}`} label={`Question ${index + 1}`}>
       {() => (
         <div>
-          <div className="question" dangerouslySetInnerHTML={questionHtml} />
+          {renderingFormat === 'markdown' ? (
+            <div className="question" dangerouslySetInnerHTML={questionHtml} />
+          ) : (
+            <pre className="question">{question}</pre>
+          )}
           <div className="editor">
             <Suspense fallback={<div />}>
               <LazyCodeEditor

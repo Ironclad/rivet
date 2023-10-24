@@ -3,12 +3,12 @@ import { css } from '@emotion/react';
 import { ExecutionRecorder, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { useToggle } from 'ahooks';
 import clsx from 'clsx';
-import { ReactComponent as EditPen } from 'majesticons/line/edit-pen-2-line.svg';
-import { ReactComponent as TestTube } from 'majesticons/line/test-tube-filled-line.svg';
+import EditPen from 'majesticons/line/edit-pen-2-line.svg?react';
+import TestTube from 'majesticons/line/test-tube-filled-line.svg?react';
+import GentraceImage from '../../assets/vendor_logos/gentrace.svg?react';
 import { toast } from 'react-toastify';
 import { useRecoilValue } from 'recoil';
 import { runGentraceTests, runRemoteGentraceTests } from '../../../../core/src/plugins/gentrace/plugin';
-import { ReactComponent as GentraceImage } from '../../assets/vendor_logos/gentrace.svg';
 import { useRemoteDebugger } from '../../hooks/useRemoteDebugger';
 import { useRemoteExecutor } from '../../hooks/useRemoteExecutor';
 import { TauriNativeApi } from '../../model/native/TauriNativeApi';
@@ -23,26 +23,26 @@ export const GentraceInteractors = () => {
   const graph = useRecoilValue(graphState);
   const savedSettings = useRecoilValue(settingsState);
   const projectData = useRecoilValue(projectDataState);
-  
+
   const remoteDebugger = useRemoteDebugger();
 
   const remoteExecutor = useRemoteExecutor();
-  
+
   const gentracePipelineSettings = graph?.metadata?.attachedData?.gentracePipeline as GentracePipeline | undefined;
   const currentGentracePipelineSlug = gentracePipelineSettings?.slug;
 
   const [gentracePipelineSelectorOpen, toggleGentracePipelineSelectorOpen] = useToggle(false);
-  
+
   const onRun = async () => {
     const settings = await fillMissingSettingsFromEnvironmentVariables(
       savedSettings,
-      globalRivetNodeRegistry.getPlugins()
-    ); 
-    
+      globalRivetNodeRegistry.getPlugins(),
+    );
+
     if (!graph.metadata?.id) {
-      return; 
+      return;
     }
-    
+
     if (!currentGentracePipelineSlug) {
       toast.warn('No Gentrace pipeline added.');
       return;
@@ -50,14 +50,14 @@ export const GentraceInteractors = () => {
 
     toast.info(`Running Gentrace pipeline ${currentGentracePipelineSlug} tests ...`);
     let testResultId: string | null = null;
-    
+
     try {
       if (remoteExecutor.active && remoteDebugger.remoteDebuggerState.socket) {
         const testResponse = await runRemoteGentraceTests(
-          currentGentracePipelineSlug, 
-          settings, 
-          project, 
-          graph, 
+          currentGentracePipelineSlug,
+          settings,
+          project,
+          graph,
           async (inputs) => {
             if (remoteDebugger.remoteDebuggerState.remoteUploadAllowed) {
               remoteDebugger.send('set-dynamic-data', {
@@ -74,65 +74,78 @@ export const GentraceInteractors = () => {
                 ),
               });
             }
-            
+
             const recorder = new ExecutionRecorder();
-            
+
             const recorderPromise = recorder.recordSocket(remoteDebugger.remoteDebuggerState.socket!);
 
             remoteDebugger.send('run', { graphId: graph.metadata!.id!, inputs });
-            
+
             await recorderPromise;
-            
+
             return recorder.getRecording();
-          }
+          },
         );
         testResultId = testResponse.resultId;
       } else {
-        const testResponse = await runGentraceTests(currentGentracePipelineSlug, settings, project, graph, new TauriNativeApi());
+        const testResponse = await runGentraceTests(
+          currentGentracePipelineSlug,
+          settings,
+          project,
+          graph,
+          new TauriNativeApi(),
+        );
         testResultId = testResponse.resultId;
       }
     } catch (e: any) {
       const serverResult = e?.response?.data?.message ?? e?.message;
-      toast.error((
+      toast.error(
         <div>
-          <div css={css`
-            margin-bottom: 10px; 
-          `}>
-            Error running Gentrace pipeline {currentGentracePipelineSlug} tests: 
+          <div
+            css={css`
+              margin-bottom: 10px;
+            `}
+          >
+            Error running Gentrace pipeline {currentGentracePipelineSlug} tests:
           </div>
-          
+
           <div>
-            <code css={css`
-              font-size: 12px;
-            `}>
+            <code
+              css={css`
+                font-size: 12px;
+              `}
+            >
               {serverResult}
             </code>
           </div>
-        </div>
-      ), {
-        autoClose: false,
-        closeOnClick: false,
-        draggable: false
-      });
+        </div>,
+        {
+          autoClose: false,
+          closeOnClick: false,
+          draggable: false,
+        },
+      );
       return;
     }
-    
+
     const url = `http://gentrace.ai/pipeline/${gentracePipelineSettings.id}/results/${testResultId}?size=compact`;
 
-    toast.info((
+    toast.info(
       <div>
+        <div>Gentrace pipeline {currentGentracePipelineSlug} tests finished.</div>
         <div>
-          Gentrace pipeline {currentGentracePipelineSlug} tests finished.
+          View results here{' '}
+          <a href={url} target="_blank" rel="noreferrer">
+            {url}
+          </a>
         </div>
-        <div>
-          View results here <a href={url} target="_blank" rel="noreferrer">{url}</a>
-        </div>
-      </div>
-    ), {
-      autoClose: false,
-      closeOnClick: false,
-      draggable: false
-    });
+      </div>,
+      {
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+      },
+    );
   };
 
   return (
@@ -140,9 +153,7 @@ export const GentraceInteractors = () => {
       <Popup
         isOpen={gentracePipelineSelectorOpen}
         onClose={toggleGentracePipelineSelectorOpen.setLeft}
-        content={() => (
-          <GentracePipelinePicker onClose={toggleGentracePipelineSelectorOpen.setLeft} />
-        )}
+        content={() => <GentracePipelinePicker onClose={toggleGentracePipelineSelectorOpen.setLeft} />}
         placement="bottom-end"
         trigger={(triggerProps) => (
           <div className={clsx('run-gentrace-button')}>
@@ -164,7 +175,7 @@ export const GentraceInteractors = () => {
               <div>
                 <GentraceImage height="17px" width="17px" />
               </div>
-              {currentGentracePipelineSlug ? "Change" : "Add"} Gentrace Pipeline
+              {currentGentracePipelineSlug ? 'Change' : 'Add'} Gentrace Pipeline
               <EditPen />
             </button>
           </div>
@@ -172,7 +183,7 @@ export const GentraceInteractors = () => {
       />
 
       <div className={clsx('run-gentrace-button')}>
-        <button onClick={onRun} css={`` }>
+        <button onClick={onRun} css={``}>
           <div>
             <GentraceImage height="17px" width="17px" />
           </div>

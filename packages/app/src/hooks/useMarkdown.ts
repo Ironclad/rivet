@@ -7,7 +7,7 @@ export function useMarkdown(text: string | undefined, enabled: boolean = true) {
       return { __html: '' };
     }
 
-    const converted = marked(text ?? '', { mangle: false, headerIds: false });
+    const converted = marked(text ?? '');
 
     return { __html: converted };
   }, [text, enabled]);

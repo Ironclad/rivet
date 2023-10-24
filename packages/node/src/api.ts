@@ -22,6 +22,12 @@ import type { PascalCase } from 'type-fest';
 import { NodeNativeApi } from './native/NodeNativeApi.js';
 import { mapValues } from 'lodash-es';
 import * as events from 'node:events';
+import {
+  getProcessorSSEStream,
+  getProcessorEvents,
+  type RivetEventStreamFilterSpec,
+  getSingleNodeStream,
+} from './streaming.js';
 
 export async function loadProjectFromFile(path: string): Promise<Project> {
   const content = await readFile(path, { encoding: 'utf8' });
@@ -198,6 +204,9 @@ export function createProcessor(project: Project, options: RunGraphOptions) {
     processor,
     inputs: resolvedInputs,
     contextValues: resolvedContextValues,
+    getEvents: (spec: RivetEventStreamFilterSpec) => getProcessorEvents(processor, spec),
+    getSSEStream: (spec: RivetEventStreamFilterSpec) => getProcessorSSEStream(processor, spec),
+    streamNode: (nodeIdOrTitle: string) => getSingleNodeStream(processor, nodeIdOrTitle),
     async run() {
       const outputs = await processor.processGraph(
         {

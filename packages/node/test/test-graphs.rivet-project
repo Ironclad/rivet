@@ -1,0 +1,35 @@
+version: 4
+data:
+  attachedData:
+    trivet:
+      testSuites: []
+      version: 1
+  graphs:
+    kqaNrBo0WpJ1EOc2hj0zK:
+      metadata:
+        description: ""
+        id: kqaNrBo0WpJ1EOc2hj0zK
+        name: Passthrough
+      nodes:
+        '[Dp5_0MQuZk7_UTdBQGX-P]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1185/525/330/10//
+        '[hHAeA3eIMmdfGFOYeool0]:passthrough "Passthrough"':
+          outgoingConnections:
+            - output1->"Graph Output" Dp5_0MQuZk7_UTdBQGX-P/value
+          visualData: 928/554/205/9//
+        '[pbV0xrVlBYe1I3Mew3CIT]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: input
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Passthrough" hHAeA3eIMmdfGFOYeool0/input1
+          visualData: 549/516/330/11//
+  metadata:
+    description: ""
+    id: ytCHmBvDFSkCnQ9L7DJLB
+    title: Untitled Project
+  plugins: []

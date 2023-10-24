@@ -19,6 +19,7 @@ import {
   rootGraphState,
   runningGraphsState,
   selectedProcessPageNodesState,
+  graphStartTimeState,
 } from '../state/dataFlow';
 import { type ProcessQuestions, userInputModalQuestionsState } from '../state/userInput';
 import { lastRecordingState } from '../state/execution';
@@ -91,6 +92,7 @@ export function useCurrentExecution() {
   const trivetRunningLatest = useLatest(trivetRunning);
   const setRootGraph = useSetRecoilState(rootGraphState);
   const previousDataPerNodeToKeep = useRecoilValue(previousDataPerNodeToKeepState);
+  const setGraphStartTime = useSetRecoilState(graphStartTimeState);
 
   const setDataForNode = (nodeId: NodeId, processId: ProcessId, data: Partial<NodeRunData>) => {
     setLastRunData((prev) =>
@@ -178,6 +180,7 @@ export function useCurrentExecution() {
     setUserInputQuestions({});
     setGraphRunning(true);
     setRootGraph(startGraph.metadata!.id);
+    setGraphStartTime(Date.now());
 
     // Don't clear the last run data if we're running trivet tests, so you can see both the
     // test graph and the validation graph in the results.

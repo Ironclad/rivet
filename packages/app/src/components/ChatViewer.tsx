@@ -20,8 +20,8 @@ import { projectState } from '../state/savedGraphs';
 import { ErrorBoundary } from 'react-error-boundary';
 import TextField from '@atlaskit/textfield';
 import { useGoToNode } from '../hooks/useGoToNode';
-import { ReactComponent as MaximizeIcon } from 'majesticons/line/maximize-line.svg';
-import { ReactComponent as MinimizeIcon } from 'majesticons/line/minimize-line.svg';
+import MaximizeIcon from 'majesticons/line/maximize-line.svg?react';
+import MinimizeIcon from 'majesticons/line/minimize-line.svg?react';
 import { useToggle } from 'ahooks';
 import { FixedSizeList } from 'react-window';
 
