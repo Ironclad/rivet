@@ -86,6 +86,11 @@ export class GetGlobalNodeImpl extends NodeImpl<GetGlobalNode> {
         title: 'Value',
         dataType: onDemand ? (`fn<${dataType}>` as const) : dataType,
       },
+      {
+        id: 'variable_id_out' as PortId,
+        title: 'Variable ID',
+        dataType: 'string',
+      },
     ];
   }
 
@@ -176,6 +181,7 @@ export class GetGlobalNodeImpl extends NodeImpl<GetGlobalNode> {
 
     return {
       ['value' as PortId]: value,
+      ['variable_id_out' as PortId]: { type: 'string', value: id },
     };
   }
 }

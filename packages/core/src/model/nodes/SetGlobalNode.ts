@@ -84,6 +84,11 @@ export class SetGlobalNodeImpl extends NodeImpl<SetGlobalNode> {
         title: 'Previous Value',
         dataType: this.data.dataType,
       },
+      {
+        id: 'variable_id_out' as PortId,
+        title: 'Variable ID',
+        dataType: 'string',
+      },
     ];
   }
 
@@ -148,6 +153,7 @@ export class SetGlobalNodeImpl extends NodeImpl<SetGlobalNode> {
     return {
       ['saved-value' as PortId]: value,
       ['previous-value' as PortId]: previousValue,
+      ['variable_id_out' as PortId]: { type: 'string', value: id },
     };
   }
 }
