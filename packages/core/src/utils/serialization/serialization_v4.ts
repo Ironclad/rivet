@@ -46,7 +46,7 @@ type SerializedNode = {
   description?: string;
   isSplitRun?: boolean;
   splitRunMax?: number;
-
+  isSplitSequential?: boolean;
   visualData: SerializedVisualData;
   outgoingConnections: SerializedNodeConnection[] | undefined;
   data?: unknown;
@@ -224,6 +224,7 @@ function toSerializedNode(node: ChartNode, allNodes: ChartNode[], allConnections
     }/${node.visualData.color?.border ?? ''}/${node.visualData.color?.bg ?? ''}`,
     isSplitRun: node.isSplitRun ? true : undefined,
     splitRunMax: node.isSplitRun ? node.splitRunMax : undefined,
+
     data: Object.keys(node.data ?? {}).length > 0 ? node.data : undefined,
     outgoingConnections: outgoingConnections.length > 0 ? outgoingConnections : undefined,
     variants: (node.variants?.length ?? 0) > 0 ? node.variants : undefined,
@@ -253,6 +254,7 @@ function fromSerializedNode(
       description: serializedNode.description,
       isSplitRun: serializedNode.isSplitRun ?? false,
       splitRunMax: serializedNode.splitRunMax ?? 10,
+      isSplitSequential: serializedNode.isSplitSequential ?? false,
       visualData: {
         x: parseFloat(x!),
         y: parseFloat(y!),
