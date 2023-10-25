@@ -52,7 +52,14 @@ export const openaiModels = {
     },
     displayName: 'GPT-3.5 Turbo',
   },
-
+  'gpt-3.5-turbo-16k': {
+    maxTokens: 16384,
+    cost: {
+      prompt: 0.003,
+      completion: 0.004,
+    },
+    displayName: 'GPT-3.5 16k',
+  },
   'gpt-3.5-turbo-0613': {
     maxTokens: 16384,
     cost: {
@@ -61,7 +68,6 @@ export const openaiModels = {
     },
     displayName: 'GPT-3.5 (v0613)',
   },
-
   'gpt-3.5-turbo-16k-0613': {
     maxTokens: 16384,
     cost: {
@@ -69,6 +75,30 @@ export const openaiModels = {
       completion: 0.004,
     },
     displayName: 'GPT-3.5 16k (v0613)',
+  },
+  'gpt-3.5-turbo-0301': {
+    maxTokens: 16384,
+    cost: {
+      prompt: 0.002,
+      completion: 0.002,
+    },
+    displayName: 'GPT-3.5 (v0301)',
+  },
+  'gpt-4-0314': {
+    maxTokens: 8192,
+    cost: {
+      prompt: 0.03,
+      completion: 0.06,
+    },
+    displayName: 'GPT-4 (v0314)',
+  },
+  'gpt-4-32k-0314': {
+    maxTokens: 32768,
+    cost: {
+      prompt: 0.06,
+      completion: 0.12,
+    },
+    displayName: 'GPT-4 32k (v0314)',
   },
 } satisfies Record<string, OpenAIModel>;
 
