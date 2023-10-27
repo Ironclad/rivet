@@ -26,6 +26,8 @@ export * from './model/EditorDefinition.js';
 export * from './model/NodeBodySpec.js';
 export * from './integrations/DatasetProvider.js';
 export * from './model/Dataset.js';
+export * from './api/streaming.js';
+export * from './api/createProcessor.js';
 
 import * as openai from './utils/openai.js';
 export { openai };

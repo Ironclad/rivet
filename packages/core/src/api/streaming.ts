@@ -4,9 +4,9 @@ import {
   type Outputs,
   type GraphOutputs,
   type GraphProcessor,
-  coerceType,
   type PortId,
-} from '@ironclad/rivet-core';
+} from '../index.js';
+import { coerceType } from '../utils/coerceType.js';
 
 export type RivetEventStreamFilterSpec = {
   /** Stream partial output deltas for the specified node IDs or node titles. */
