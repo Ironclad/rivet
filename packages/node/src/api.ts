@@ -8,10 +8,10 @@ import {
   coreCreateProcessor,
   loadProjectFromString,
   loadProjectAndAttachedDataFromString,
+  type RunGraphOptions,
 } from '@ironclad/rivet-core';
 
 import { readFile } from 'node:fs/promises';
-import type { RunGraphOptions } from '../dist/types/api.js';
 import { type RivetDebuggerServer, type Settings } from './index.js';
 import { NodeNativeApi } from './native/NodeNativeApi.js';
 import * as events from 'node:events';
@@ -65,9 +65,9 @@ export function createProcessor(
           nativeApi: options.nativeApi ?? new NodeNativeApi(),
           datasetProvider: options.datasetProvider,
           settings: {
-            openAiKey: options.openAiKey ?? '',
-            openAiOrganization: options.openAiOrganization ?? '',
-            openAiEndpoint: options.openAiEndpoint ?? '',
+            openAiKey: options.openAiKey ?? process.env.OPENAI_API_KEY ?? '',
+            openAiOrganization: options.openAiOrganization ?? process.env.OPENAI_ORG_ID ?? '',
+            openAiEndpoint: options.openAiEndpoint ?? process.env.OPENAI_ENDPOINT ?? '',
             pluginEnv: pluginEnv ?? {},
             pluginSettings: options.pluginSettings ?? {},
             recordingPlaybackLatency: 1000,
