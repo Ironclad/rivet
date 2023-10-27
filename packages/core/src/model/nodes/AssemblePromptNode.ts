@@ -14,10 +14,15 @@ import { coerceType } from '../../utils/coerceType.js';
 import { orderBy } from 'lodash-es';
 import { dedent } from 'ts-dedent';
 import { nodeDefinition } from '../NodeDefinition.js';
+import type { EditorDefinition } from '../EditorDefinition.js';
+import type { RivetUIContext } from '../RivetUIContext.js';
+import type { InternalProcessContext } from '../ProcessContext.js';
 
 export type AssemblePromptNode = ChartNode<'assemblePrompt', AssemblePromptNodeData>;
 
-export type AssemblePromptNodeData = {};
+export type AssemblePromptNodeData = {
+  computeTokenCount?: boolean;
+};
 
 export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
   static create(): AssemblePromptNode {
@@ -52,13 +57,23 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
   }
 
   getOutputDefinitions(): NodeOutputDefinition[] {
-    return [
+    const outputs: NodeOutputDefinition[] = [
       {
         dataType: 'chat-message[]',
         id: 'prompt' as PortId,
         title: 'Prompt',
       },
     ];
+
+    if (this.data.computeTokenCount) {
+      outputs.push({
+        dataType: 'number',
+        id: 'tokenCount' as PortId,
+        title: 'Token Count',
+      });
+    }
+
+    return outputs;
   }
 
   #getMessagePortCount(connections: NodeConnection[]): number {
@@ -93,7 +108,17 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
     };
   }
 
-  async process(inputs: Inputs): Promise<Outputs> {
+  getEditors(_context: RivetUIContext): EditorDefinition<AssemblePromptNode>[] {
+    return [
+      {
+        type: 'toggle',
+        label: 'Compute Token Count',
+        dataKey: 'computeTokenCount',
+      },
+    ];
+  }
+
+  async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const output: Outputs = {};
 
     const outMessages: ChatMessage[] = [];
@@ -127,6 +152,16 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
       type: 'chat-message[]',
       value: outMessages,
     };
+
+    if (this.data.computeTokenCount) {
+      const tokenCount = context.tokenizer.getTokenCountForMessages(outMessages, {
+        node: this.chartNode,
+      });
+      output['tokenCount' as PortId] = {
+        type: 'number',
+        value: tokenCount,
+      };
+    }
 
     return output;
   }
