@@ -8,7 +8,12 @@ import {
   serializeProject,
 } from '@ironclad/rivet-core';
 import { type IOProvider } from './IOProvider.js';
-import { type SerializedTrivetData, type TrivetData, deserializeTrivetData, serializeTrivetData } from '@ironclad/trivet';
+import {
+  type SerializedTrivetData,
+  type TrivetData,
+  deserializeTrivetData,
+  serializeTrivetData,
+} from '@ironclad/trivet';
 
 export class BrowserIOProvider implements IOProvider {
   static isSupported(): boolean {
@@ -55,6 +60,10 @@ export class BrowserIOProvider implements IOProvider {
       : { testSuites: [] };
 
     callback({ project, testData, path: fileHandle.name });
+  }
+
+  async loadProjectDataNoPrompt(path: string): Promise<{ project: Project; testData: TrivetData }> {
+    throw new Error('Function not supported in the browser');
   }
 
   async loadRecordingData(callback: (data: { recorder: ExecutionRecorder; path: string }) => void): Promise<void> {

@@ -75,6 +75,10 @@ export class LegacyBrowserIOProvider implements IOProvider {
     input.click();
   }
 
+  async loadProjectDataNoPrompt(path: string): Promise<{ project: Project; testData: TrivetData }> {
+    throw new Error('Function not supported in the browser');
+  }
+
   async loadRecordingData(callback: (data: { recorder: ExecutionRecorder; path: string }) => void): Promise<void> {
     const input = document.createElement('input');
     input.type = 'file';

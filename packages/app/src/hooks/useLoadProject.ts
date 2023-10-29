@@ -52,6 +52,14 @@ export function useLoadProject() {
           recentTestResults: undefined,
           runningTests: false,
         });
+      } else {
+        setTrivetState({
+          testSuites: [],
+          selectedTestSuiteId: undefined,
+          editingTestCaseId: undefined,
+          recentTestResults: undefined,
+          runningTests: false,
+        });
       }
     } catch (err) {
       toast.error(`Failed to load project: ${getError(err).message}`);
