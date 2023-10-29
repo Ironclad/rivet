@@ -21,7 +21,7 @@ import { GentraceInteractors } from './gentrace/GentraceInteractors';
 
 const styles = css`
   position: fixed;
-  top: 20px;
+  top: calc(20px + var(--project-selector-height));
   right: 20px;
   background: var(--grey-darker);
   border-radius: 4px;

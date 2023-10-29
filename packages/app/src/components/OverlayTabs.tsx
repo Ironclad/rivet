@@ -16,7 +16,7 @@ const styles = css`
   align-items: flex-start;
   z-index: 100;
   position: absolute;
-  top: 0;
+  top: var(--project-selector-height);
   left: 300px;
   height: 40px;
 

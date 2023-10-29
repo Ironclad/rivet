@@ -3,7 +3,7 @@ import { useSaveProject } from './useSaveProject.js';
 import { window } from '@tauri-apps/api';
 import { match } from 'ts-pattern';
 import { useNewProject } from './useNewProject.js';
-import { useLoadProject } from './useLoadProject.js';
+import { useLoadProjectWithFileBrowser } from './useLoadProjectWithFileBrowser.js';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { settingsModalOpenState } from '../components/SettingsModal.js';
 import { graphState } from '../state/graph.js';
@@ -60,7 +60,7 @@ export function useMenuCommands(
   const [graphData, setGraphData] = useRecoilState(graphState);
   const { saveProject, saveProjectAs } = useSaveProject();
   const newProject = useNewProject();
-  const loadProject = useLoadProject();
+  const loadProject = useLoadProjectWithFileBrowser();
   const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
   const { loadRecording } = useLoadRecording();
   const toggleRemoteDebugger = useToggleRemoteDebugger();

@@ -20,6 +20,7 @@ import { useGraphBuilderContextMenuHandler } from '../hooks/useGraphBuilderConte
 import { NavigationBar } from './NavigationBar';
 import { projectState } from '../state/savedGraphs';
 import { useDatasets } from '../hooks/useDatasets';
+import { overlayOpenState } from '../state/ui';
 
 const Container = styled.div`
   position: relative;
@@ -120,6 +121,8 @@ export const GraphBuilder: FC = () => {
     [selectedNodeIds, nodesById],
   );
 
+  const overlay = useRecoilValue(overlayOpenState);
+
   return (
     <Container onMouseDown={containerMouseDown}>
       <ErrorBoundary fallback={<div>Failed to render GraphBuilder</div>}>
@@ -140,7 +143,7 @@ export const GraphBuilder: FC = () => {
             User Input Needed
           </Button>
         )}
-        <NavigationBar />
+        {overlay === undefined && <NavigationBar />}
         <UserInputModal
           open={isUserInputModalOpen}
           questions={lastQuestions}

@@ -1,0 +1,95 @@
+version: 4
+data:
+  attachedData:
+    trivet:
+      testSuites: []
+      version: 1
+  graphs:
+    GXpzVjboP1ZUrOIze3ruE:
+      metadata:
+        description: ""
+        id: GXpzVjboP1ZUrOIze3ruE
+        name: Passthrough Context
+      nodes:
+        '[afZg6h1jk_1ogyVo3-kKw]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 928.1484716157206/519.8646288209608/330/2//
+        '[jpVwcLOBSv-pjZlTiEZ1d]:context "Context"':
+          data:
+            dataType: string
+            id: input
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Graph Output" afZg6h1jk_1ogyVo3-kKw/value
+          visualData: 498.36611302861/514.655377789643/330/3//
+    GXtTE0VHoknHZhmQTvVc1:
+      metadata:
+        description: ""
+        id: GXtTE0VHoknHZhmQTvVc1
+        name: Passthrough
+      nodes:
+        '[jF0266rZlkDCQx0hOF_ua]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 928.1484716157206/519.8646288209608/330/2//
+        '[qPu5QhOJzFQ_jBFKXqqYE]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: input
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Graph Output" jF0266rZlkDCQx0hOF_ua/value
+          visualData: 472.6026200873362/522.6593886462882/330/null//
+    e-En3m8cuQfywKGSjcmvy:
+      metadata:
+        description: ""
+        id: e-En3m8cuQfywKGSjcmvy
+        name: Simple Chat
+      nodes:
+        '[_JdV0AMMBJdGtDqoVbCSr]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1444.4009464559645/540.0170597904262/330/2//
+        '[tzjWEDrR5S0ZNKqXPKeMj]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: input
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Chat" vzC9lcEyXZ2Q1-cCaG0v4/prompt
+          visualData: 742/554/330/null//
+        '[vzC9lcEyXZ2Q1-cCaG0v4]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Graph Output" _JdV0AMMBJdGtDqoVbCSr/value
+          visualData: 1161.2433795254476/499.8004778205847/230/1//
+  metadata:
+    description: ""
+    id: w1AwkridWC7fohDRlVfOS
+    title: Untitled Project
+  plugins: []

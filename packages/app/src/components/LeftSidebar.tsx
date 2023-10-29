@@ -15,7 +15,7 @@ import { ProjectPluginsConfiguration } from './ProjectPluginConfiguration';
 
 const styles = css`
   position: fixed;
-  top: 0;
+  top: var(--project-selector-height);
   left: 0;
   bottom: 0;
   width: 250px; // Adjust the width of the sidebar as needed

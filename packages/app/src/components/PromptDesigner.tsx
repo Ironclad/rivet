@@ -60,7 +60,7 @@ import { GptTokenizerTokenizer } from '../../../core/src/integrations/GptTokeniz
 
 const styles = css`
   position: fixed;
-  top: 0;
+  top: var(--project-selector-height);
   left: 0;
   right: 0;
   bottom: 0;

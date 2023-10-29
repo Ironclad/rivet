@@ -29,7 +29,7 @@ import { produce } from 'immer';
 const styles = css`
   position: fixed;
   left: 250px;
-  top: 0;
+  top: var(--project-selector-height);
   right: 0;
   bottom: 0;
   background: var(--grey-darker);

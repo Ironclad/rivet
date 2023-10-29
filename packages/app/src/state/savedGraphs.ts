@@ -131,3 +131,53 @@ export const projectPluginsState = selector({
     });
   },
 });
+
+export type OpenedProjectInfo = {
+  project: Project;
+  fsPath: string;
+  openedGraph?: GraphId;
+};
+
+export type OpenedProjectsInfo = {
+  openedProjects: Record<ProjectId, OpenedProjectInfo>;
+  openedProjectsSortedIds: ProjectId[];
+};
+
+export const projectsState = atom<OpenedProjectsInfo>({
+  key: 'projectsState',
+  default: {
+    openedProjects: {},
+    openedProjectsSortedIds: [],
+  },
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const openedProjectsState = selector({
+  key: 'openedProjectsState',
+  get: ({ get }) => {
+    return get(projectsState).openedProjects;
+  },
+  set: ({ set }, newValue) => {
+    set(projectsState, (oldValue) => {
+      return {
+        ...oldValue,
+        openedProjects: newValue instanceof DefaultValue ? {} : newValue,
+      };
+    });
+  },
+});
+
+export const openedProjectsSortedIdsState = selector({
+  key: 'openedProjectsSortedIdsState',
+  get: ({ get }) => {
+    return get(projectsState).openedProjectsSortedIds;
+  },
+  set: ({ set }, newValue) => {
+    set(projectsState, (oldValue) => {
+      return {
+        ...oldValue,
+        openedProjectsSortedIds: newValue instanceof DefaultValue ? [] : newValue,
+      };
+    });
+  },
+});

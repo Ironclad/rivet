@@ -1,7 +1,6 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { loadedProjectState, projectDataState } from '../state/savedGraphs';
 import { useEffect } from 'react';
-import { useLoadProject } from './useLoadProject';
 import { useStaticDataDatabase } from './useStaticDataDatabase';
 import { type DataId } from '@ironclad/rivet-core';
 

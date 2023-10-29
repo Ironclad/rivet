@@ -12,6 +12,8 @@ export interface IOProvider {
 
   loadProjectData(callback: (data: { project: Project; testData: TrivetData; path: string }) => void): Promise<void>;
 
+  loadProjectDataNoPrompt(path: string): Promise<{ project: Project; testData: TrivetData }>;
+
   loadRecordingData(callback: (data: { recorder: ExecutionRecorder; path: string }) => void): Promise<void>;
 
   openDirectory(): Promise<string | string[] | null>;

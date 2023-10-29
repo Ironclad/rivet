@@ -25,6 +25,7 @@ import { useCheckForUpdate } from '../hooks/useCheckForUpdate';
 import useAsyncEffect from 'use-async-effect';
 import { UpdateModalRenderer } from './UpdateModal';
 import { useMonitorUpdateStatus } from '../hooks/useMonitorUpdateStatus';
+import { ProjectSelector } from './ProjectSelector';
 
 const styles = css`
   overflow: hidden;
@@ -54,6 +55,7 @@ export const RivetApp: FC = () => {
 
   return (
     <div className={clsx('app', theme ? `theme-${theme}` : 'theme-default')} css={styles}>
+      <ProjectSelector />
       <OverlayTabs />
       <ActionBar
         onRunGraph={tryRunGraph}

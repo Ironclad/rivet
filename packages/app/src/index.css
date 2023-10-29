@@ -20,6 +20,10 @@ body {
   --label-font-weight: 600;
 }
 
+:root {
+  --project-selector-height: 38px;
+}
+
 * {
   box-sizing: border-box;
 }

@@ -1,5 +1,5 @@
 import { useSetRecoilState } from 'recoil';
-import { type OpenedProjectInfo, loadedProjectState, projectState } from '../state/savedGraphs.js';
+import { loadedProjectState, projectState } from '../state/savedGraphs.js';
 import { emptyNodeGraph, getError } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph.js';
 import { ioProvider } from '../utils/globals.js';
@@ -8,7 +8,7 @@ import { useSetStaticData } from './useSetStaticData';
 import { toast } from 'react-toastify';
 import { graphNavigationStackState } from '../state/graphBuilder';
 
-export function useLoadProject() {
+export function useLoadProjectWithFileBrowser() {
   const setProject = useSetRecoilState(projectState);
   const setLoadedProjectState = useSetRecoilState(loadedProjectState);
   const setGraphData = useSetRecoilState(graphState);
@@ -16,34 +16,24 @@ export function useLoadProject() {
   const setStaticData = useSetStaticData();
   const setNavigationStack = useSetRecoilState(graphNavigationStackState);
 
-  return async (projectInfo: OpenedProjectInfo) => {
+  return async () => {
     try {
-      setProject(projectInfo.project);
+      await ioProvider.loadProjectData(({ project, testData, path }) => {
+        const { data, ...projectData } = project;
 
-      setNavigationStack({ stack: [], index: undefined });
+        setProject(projectData);
+        setNavigationStack({ stack: [], index: undefined });
 
-      if (projectInfo.openedGraph) {
-        const graphData = projectInfo.project.graphs[projectInfo.openedGraph];
-        if (graphData) {
-          setGraphData(graphData);
-        } else {
-          setGraphData(emptyNodeGraph());
+        if (data) {
+          setStaticData(data);
         }
-      } else {
+
         setGraphData(emptyNodeGraph());
-      }
 
-      if (projectInfo.project.data) {
-        setStaticData(projectInfo.project.data);
-      }
-
-      setLoadedProjectState({
-        path: projectInfo.fsPath,
-        loaded: true,
-      });
-
-      if (projectInfo.fsPath) {
-        const { testData } = await ioProvider.loadProjectDataNoPrompt(projectInfo.fsPath);
+        setLoadedProjectState({
+          path,
+          loaded: true,
+        });
 
         setTrivetState({
           testSuites: testData.testSuites,
@@ -52,7 +42,7 @@ export function useLoadProject() {
           recentTestResults: undefined,
           runningTests: false,
         });
-      }
+      });
     } catch (err) {
       toast.error(`Failed to load project: ${getError(err).message}`);
     }

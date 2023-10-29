@@ -125,17 +125,22 @@ export class TauriIOProvider implements IOProvider {
     })) as string | undefined;
 
     if (path) {
-      const data = await readTextFile(path);
-      const [projectData, attachedData] = deserializeProject(data);
-
-      const trivetData = attachedData.trivet
-        ? deserializeTrivetData(attachedData.trivet as SerializedTrivetData)
-        : { testSuites: [] };
-
-      await loadDatasetsFile(path, projectData);
-
-      callback({ project: projectData, testData: trivetData, path });
+      const projectData = await this.loadProjectDataNoPrompt(path);
+      callback({ ...projectData, path });
     }
+  }
+
+  async loadProjectDataNoPrompt(path: string): Promise<{ project: Project; testData: TrivetData }> {
+    const data = await readTextFile(path);
+    const [projectData, attachedData] = deserializeProject(data);
+
+    const trivetData = attachedData.trivet
+      ? deserializeTrivetData(attachedData.trivet as SerializedTrivetData)
+      : { testSuites: [] };
+
+    await loadDatasetsFile(path, projectData);
+
+    return { project: projectData, testData: trivetData };
   }
 
   async loadRecordingData(callback: (data: { recorder: ExecutionRecorder; path: string }) => void) {

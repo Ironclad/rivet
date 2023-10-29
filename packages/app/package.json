@@ -53,6 +53,7 @@
     "@atlaskit/toggle": "^12.6.11",
     "@atlaskit/tokens": "^1.28.0",
     "@dnd-kit/core": "^6.0.8",
+    "@dnd-kit/sortable": "^7.0.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@floating-ui/react": "^0.26.1",

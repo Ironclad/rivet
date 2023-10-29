@@ -2851,7 +2851,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dnd-kit/utilities@npm:^3.2.1":
+"@dnd-kit/sortable@npm:^7.0.2":
+  version: 7.0.2
+  resolution: "@dnd-kit/sortable@npm:7.0.2"
+  dependencies:
+    "@dnd-kit/utilities": "npm:^3.2.0"
+    tslib: "npm:^2.0.0"
+  peerDependencies:
+    "@dnd-kit/core": ^6.0.7
+    react: ">=16.8.0"
+  checksum: e22e0f0146e371bff86fd88fdeeee980c58a9a6aca78c8ada2553d8cc1f45b8056a4fc1c1f06fce294b93e5a868659474085da21f2e4282e731fdb142e7ba0ff
+  languageName: node
+  linkType: hard
+
+"@dnd-kit/utilities@npm:^3.2.0, @dnd-kit/utilities@npm:^3.2.1":
   version: 3.2.1
   resolution: "@dnd-kit/utilities@npm:3.2.1"
   dependencies:
@@ -4013,6 +4026,7 @@ __metadata:
     "@atlaskit/toggle": "npm:^12.6.11"
     "@atlaskit/tokens": "npm:^1.28.0"
     "@dnd-kit/core": "npm:^6.0.8"
+    "@dnd-kit/sortable": "npm:^7.0.2"
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
     "@floating-ui/react": "npm:^0.26.1"
@@ -4107,6 +4121,25 @@ __metadata:
     ws: "npm:^8.14.2"
     yaml: "npm:^2.3.3"
     yargs: "npm:^17.7.2"
+  languageName: unknown
+  linkType: soft
+
+"@ironclad/rivet-cli@workspace:packages/cli":
+  version: 0.0.0-use.local
+  resolution: "@ironclad/rivet-cli@workspace:packages/cli"
+  dependencies:
+    "@ironclad/rivet-node": "workspace:^"
+    "@types/yargs": "npm:^17.0.29"
+    eslint: "npm:^8.52.0"
+    eslint-config-standard-with-typescript: "npm:^39.1.1"
+    eslint-plugin-import: "npm:^2.29.0"
+    eslint-plugin-n: "npm:^16.2.0"
+    eslint-plugin-promise: "npm:^6.1.1"
+    tsx: "npm:^3.14.0"
+    typescript: "npm:^5.2.2"
+    yargs: "npm:^17.7.2"
+  bin:
+    rivet: bin/cli.js
   languageName: unknown
   linkType: soft
 

@@ -9,7 +9,7 @@ import { searchingGraphState } from '../state/graphBuilder';
 
 const styles = css`
   position: fixed;
-  top: 50px;
+  top: calc(50px + var(--project-selector-height));
   left: 275px;
   background: transparent;
   z-index: 50;
