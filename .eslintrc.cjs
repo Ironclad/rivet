@@ -11,7 +11,7 @@ module.exports = {
       env: {
         node: true,
       },
-      files: ['.eslintrc.{js,cjs}'],
+      files: ['.eslintrc.{js,cjs,mjs}'],
       parserOptions: {
         sourceType: 'script',
       },
@@ -24,7 +24,7 @@ module.exports = {
   },
   settings: {
     'import/parsers': {
-      '@typescript-eslint/parser': ['.ts', '.tsx'],
+      '@typescript-eslint/parser': ['.ts', '.tsx', '.mts', '.cts'],
     },
     'import/resolver': {
       typescript: {
@@ -32,7 +32,7 @@ module.exports = {
         project: 'packages/*/tsconfig.json',
       },
       node: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.mts', '.cts'],
       },
     },
   },

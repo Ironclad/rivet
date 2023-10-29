@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsx scripts/build-executor.mts",
     "start": "yarn build && node --experimental-network-imports bin/executor-bundle.cjs",
-    "lint": "eslint ./bin/executor.ts"
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx,.mts bin"
   },
   "devDependencies": {
     "@ironclad/rivet-core": "workspace:^",

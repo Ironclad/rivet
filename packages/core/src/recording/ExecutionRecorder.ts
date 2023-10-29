@@ -126,8 +126,8 @@ export type ExecutionRecorderOptions = {
 export class ExecutionRecorder {
   #events: RecordedEvents[] = [];
   recordingId: RecordingId | undefined;
-  #emitter: Emittery<ExecutionRecorderEvents>;
-  #options: ExecutionRecorderOptions;
+  readonly #emitter: Emittery<ExecutionRecorderEvents>;
+  readonly #options: ExecutionRecorderOptions;
 
   constructor(options: ExecutionRecorderOptions = {}) {
     this.#options = options;

@@ -18,12 +18,10 @@ export class NodeRegistration<NodeTypes extends string = never, Nodes extends Ch
     };
   };
 
-  #dynamicRegistered = [] as string[];
-  #plugins = [] as RivetPlugin[];
-  #pluginImpls = [] as PluginNodeImpl<ChartNode>[];
+  readonly #plugins = [] as RivetPlugin[];
 
   #implsMap = {} as Record<string, { impl: NodeImplConstructor<ChartNode>; pluginImpl?: PluginNodeImpl<ChartNode> }>;
-  #nodeTypes = [] as NodeTypes[];
+  readonly #nodeTypes = [] as NodeTypes[];
 
   register<T extends ChartNode>(
     definition: NodeDefinition<T>,

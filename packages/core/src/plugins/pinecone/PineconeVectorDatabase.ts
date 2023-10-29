@@ -10,7 +10,7 @@ import * as CryptoJS from 'crypto-js';
 import { coerceType } from '../../utils/coerceType.js';
 
 export class PineconeVectorDatabase implements VectorDatabase {
-  #apiKey;
+  readonly #apiKey;
 
   constructor(settings: Settings) {
     this.#apiKey = settings.pluginSettings?.pinecone?.pineconeApiKey as string | undefined;

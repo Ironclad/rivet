@@ -26,7 +26,7 @@ export interface DatasetProvider {
 }
 
 export class InMemoryDatasetProvider implements DatasetProvider {
-  #datasets;
+  readonly #datasets;
 
   constructor(datasets: CombinedDataset[]) {
     this.#datasets = datasets;

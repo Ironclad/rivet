@@ -3,7 +3,7 @@ module.exports = {
   root: true,
   overrides: [
     {
-      files: ['*.ts', '*.tsx'],
+      files: ['*.ts', '*.tsx', '*.mts'],
       parserOptions: {
         project: true,
         ecmaVersion: 'latest',
