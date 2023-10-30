@@ -243,9 +243,13 @@ export class GraphProcessor {
     return this.#running;
   }
 
-  constructor(project: Project, graphId: GraphId, registry?: NodeRegistration) {
+  constructor(project: Project, graphId?: GraphId, registry?: NodeRegistration) {
     this.#project = project;
-    const graph = project.graphs[graphId];
+    const graph = graphId
+      ? project.graphs[graphId]
+      : project.metadata.mainGraphId
+      ? project.graphs[project.metadata.mainGraphId]
+      : undefined;
 
     if (!graph) {
       throw new Error(`Graph ${graphId} not found in project`);

@@ -171,6 +171,16 @@ const portInfoBoxStyles = css`
       min-width: 200px;
     }
 
+    dt.id-title {
+      grid-column: 1 / span 2;
+
+      .id {
+        font-family: var(--font-family-monospace);
+        font-weight: 400;
+        font-size: 12px;
+      }
+    }
+
     dd.description {
       grid-column: 1 / span 2;
     }
@@ -702,10 +712,15 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           <Portal>
             <div css={portInfoBoxStyles} ref={refs.setFloating} style={floatingStyles}>
               <dl>
-                <dt>Port</dt>
-                <dd>{hoveringPort.definition.title}</dd>
-                <dt>ID</dt>
-                <dd>{hoveringPort.definition.id}</dd>
+                <dt className="id-title">
+                  {hoveringPort.definition.title === hoveringPort.definition.id ? (
+                    hoveringPort.definition.title
+                  ) : (
+                    <span>
+                      {hoveringPort.definition.title} <span className="id">({hoveringPort.definition.id})</span>
+                    </span>
+                  )}
+                </dt>
                 <dt>Data Type</dt>
                 <dd>
                   {Array.isArray(hoveringPort.definition.dataType)

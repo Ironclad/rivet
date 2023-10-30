@@ -15,6 +15,8 @@ import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { PluginInfoModal } from './PluginInfoModal';
 
 const styles = css`
+  margin-top: 16px;
+
   .label {
     display: flex;
     align-items: center;

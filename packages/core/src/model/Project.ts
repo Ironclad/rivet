@@ -11,6 +11,7 @@ export type Project = {
     id: ProjectId;
     title: string;
     description: string;
+    mainGraphId?: GraphId;
   };
 
   plugins?: PluginLoadSpec[];

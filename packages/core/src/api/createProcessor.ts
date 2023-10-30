@@ -22,7 +22,7 @@ import { DEFAULT_CHAT_NODE_TIMEOUT } from '../utils/defaults.js';
 export type LooseDataValue = DataValue | string | number | boolean;
 
 export type RunGraphOptions = {
-  graph: string;
+  graph?: string;
   inputs?: Record<string, LooseDataValue>;
   context?: Record<string, LooseDataValue>;
   nativeApi?: NativeApi;
@@ -43,13 +43,14 @@ export type RunGraphOptions = {
 export function coreCreateProcessor(project: Project, options: RunGraphOptions) {
   const { graph, inputs = {}, context = {} } = options;
 
-  const graphId =
-    graph in project.graphs
+  const graphId = graph
+    ? graph in project.graphs
       ? graph
-      : Object.values(project.graphs).find((g) => g.metadata?.name === graph)?.metadata?.id;
+      : Object.values(project.graphs).find((g) => g.metadata?.name === graph)?.metadata?.id
+    : project.metadata.mainGraphId;
 
   if (!graphId) {
-    throw new Error('Graph not found');
+    throw new Error(`Graph not found, and no main graph specified.`);
   }
 
   const processor = new GraphProcessor(project, graphId as GraphId, options.registry);

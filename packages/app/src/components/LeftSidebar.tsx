@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { type FC, useEffect } from 'react';
+import { type FC, useEffect, useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { graphState } from '../state/graph.js';
 import { loadedProjectState, projectState, savedGraphsState } from '../state/savedGraphs.js';
@@ -12,6 +12,8 @@ import { appWindow } from '@tauri-apps/api/window';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import { GraphList } from './GraphList.js';
 import { ProjectPluginsConfiguration } from './ProjectPluginConfiguration';
+import { Field } from '@atlaskit/form';
+import Select from '@atlaskit/select';
 
 const styles = css`
   position: fixed;
@@ -85,6 +87,13 @@ export const LeftSidebar: FC<{
     setGraph(graph);
     setSavedGraphs(savedGraphs.map((g) => (g.metadata!.id === graph.metadata!.id ? graph : g)));
   }
+
+  const graphOptions = useMemo(
+    () => savedGraphs.map((g) => ({ label: g.metadata!.name, value: g.metadata!.id })),
+    [savedGraphs],
+  );
+
+  const selectedMainGraph = graphOptions.find((g) => g.value === project.metadata.mainGraphId);
 
   useEffect(() => {
     (async () => {
@@ -167,6 +176,21 @@ export const LeftSidebar: FC<{
                   }
                   readViewFitContainerWidth
                 />
+
+                <Field name="mainGraph" label="Main Graph">
+                  {() => (
+                    <Select
+                      options={graphOptions}
+                      value={selectedMainGraph}
+                      onChange={(newValue) => {
+                        setProject({
+                          ...project,
+                          metadata: { ...project.metadata, mainGraphId: newValue?.value ?? undefined },
+                        });
+                      }}
+                    />
+                  )}
+                </Field>
 
                 <ProjectPluginsConfiguration />
               </div>
