@@ -1,4 +1,11 @@
-import { type ChartNode, type NodeConnection, type NodeId, type PortId } from '@ironclad/rivet-core';
+import {
+  type NodeInputDefinition,
+  type ChartNode,
+  type NodeConnection,
+  type NodeId,
+  type PortId,
+  type NodeOutputDefinition,
+} from '@ironclad/rivet-core';
 import { type FC, type MouseEvent } from 'react';
 import { useNodeIO } from '../hooks/useGetNodeIO.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
@@ -21,8 +28,20 @@ export type NodePortsProps = {
     isInput: boolean,
   ) => void;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
-  onPortMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
-  onPortMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
+  onPortMouseOver?: (
+    event: MouseEvent<HTMLElement>,
+    nodeId: NodeId,
+    isInput: boolean,
+    portId: PortId,
+    definition: NodeInputDefinition | NodeOutputDefinition,
+  ) => void;
+  onPortMouseOut?: (
+    event: MouseEvent<HTMLElement>,
+    nodeId: NodeId,
+    isInput: boolean,
+    portId: PortId,
+    definition: NodeInputDefinition | NodeOutputDefinition,
+  ) => void;
 };
 
 export const NodePortsRenderer: FC<NodePortsProps> = ({ ...props }) => {
@@ -74,6 +93,7 @@ export const NodePorts: FC<NodePortsProps> = ({
               nodeId={node.id}
               canDragTo={draggingWire ? !draggingWire.startPortIsInput : false}
               closest={closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === input.id}
+              definition={input}
               onMouseDown={handlePortMouseDown}
               onMouseUp={handlePortMouseUp}
               onMouseOver={onPortMouseOver}
@@ -96,6 +116,7 @@ export const NodePorts: FC<NodePortsProps> = ({
               nodeId={node.id}
               canDragTo={draggingWire ? draggingWire.startPortIsInput : false}
               closest={closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === output.id}
+              definition={output}
               onMouseDown={handlePortMouseDown}
               onMouseUp={handlePortMouseUp}
               onMouseOver={onPortMouseOver}

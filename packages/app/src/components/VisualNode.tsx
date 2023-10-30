@@ -12,7 +12,15 @@ import {
 } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { match } from 'ts-pattern';
-import { type ChartNode, type CommentNode, type NodeConnection, type NodeId, type PortId } from '@ironclad/rivet-core';
+import {
+  type NodeInputDefinition,
+  type ChartNode,
+  type CommentNode,
+  type NodeConnection,
+  type NodeId,
+  type PortId,
+  type NodeOutputDefinition,
+} from '@ironclad/rivet-core';
 import { lastRunData, selectedProcessPage } from '../state/dataFlow.js';
 import { NodeBody } from './NodeBody.js';
 import { NodeOutput } from './NodeOutput.js';
@@ -58,8 +66,20 @@ export type VisualNodeProps = {
   onNodeSizeChanged?: (newWidth: number, newHeight: number) => void;
   onMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId) => void;
   onMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId) => void;
-  onPortMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
-  onPortMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
+  onPortMouseOver?: (
+    event: MouseEvent<HTMLElement>,
+    nodeId: NodeId,
+    isInput: boolean,
+    portId: PortId,
+    definition: NodeInputDefinition | NodeOutputDefinition,
+  ) => void;
+  onPortMouseOut?: (
+    event: MouseEvent<HTMLElement>,
+    nodeId: NodeId,
+    isInput: boolean,
+    portId: PortId,
+    definition: NodeInputDefinition | NodeOutputDefinition,
+  ) => void;
 
   nodeAttributes?: HTMLAttributes<HTMLDivElement>;
   handleAttributes?: HTMLAttributes<HTMLDivElement>;
@@ -220,8 +240,20 @@ const ZoomedOutVisualNodeContent: FC<{
   onStartEditing?: () => void;
   onWireStartDrag?: (event: MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => void;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
-  onPortMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
-  onPortMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
+  onPortMouseOver?: (
+    event: MouseEvent<HTMLElement>,
+    nodeId: NodeId,
+    isInput: boolean,
+    portId: PortId,
+    definition: NodeInputDefinition | NodeOutputDefinition,
+  ) => void;
+  onPortMouseOut?: (
+    event: MouseEvent<HTMLElement>,
+    nodeId: NodeId,
+    isInput: boolean,
+    portId: PortId,
+    definition: NodeInputDefinition | NodeOutputDefinition,
+  ) => void;
 }> = memo(
   ({
     node,
@@ -336,8 +368,20 @@ const NormalVisualNodeContent: FC<{
   onSelectNode?: (multi: boolean) => void;
   onStartEditing?: () => void;
   onNodeSizeChanged?: (newWidth: number, newHeight: number) => void;
-  onPortMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
-  onPortMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
+  onPortMouseOver?: (
+    event: MouseEvent<HTMLElement>,
+    nodeId: NodeId,
+    isInput: boolean,
+    portId: PortId,
+    definition: NodeInputDefinition | NodeOutputDefinition,
+  ) => void;
+  onPortMouseOut?: (
+    event: MouseEvent<HTMLElement>,
+    nodeId: NodeId,
+    isInput: boolean,
+    portId: PortId,
+    definition: NodeInputDefinition | NodeOutputDefinition,
+  ) => void;
 }> = memo(
   ({
     node,

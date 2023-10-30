@@ -2,14 +2,22 @@ import { DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
 import { DraggableNode } from './DraggableNode.js';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles.js';
-import { type FC, useMemo, useRef, useState, useEffect } from 'react';
+import { type FC, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { ContextMenu, type ContextMenuContext } from './ContextMenu.js';
 import { CSSTransition } from 'react-transition-group';
 import { WireLayer } from './WireLayer.js';
 import { useContextMenu } from '../hooks/useContextMenu.js';
 import { useDraggingNode } from '../hooks/useDraggingNode.js';
 import { useDraggingWire } from '../hooks/useDraggingWire.js';
-import { type PortId, type ChartNode, type CommentNode, type NodeConnection, type NodeId } from '@ironclad/rivet-core';
+import {
+  type PortId,
+  type ChartNode,
+  type CommentNode,
+  type NodeConnection,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+} from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   type CanvasPosition,
@@ -23,17 +31,18 @@ import {
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { VisualNode } from './VisualNode.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
-import { useLatest, useThrottleFn } from 'ahooks';
+import { useThrottleFn } from 'ahooks';
 import { produce } from 'immer';
 import { graphMetadataState } from '../state/graph.js';
 import { useViewportBounds } from '../hooks/useViewportBounds.js';
 import { useGlobalHotkey } from '../hooks/useGlobalHotkey.js';
 import { useWireDragScrolling } from '../hooks/useWireDragScrolling';
-import { useMergeRefs } from '@floating-ui/react';
+import { autoUpdate, offset, shift, useFloating, useMergeRefs } from '@floating-ui/react';
 import { useNodePortPositions } from '../hooks/useNodePortPositions';
 import { useCopyNodesHotkeys } from '../hooks/useCopyNodesHotkeys';
 import { useCanvasHotkeys } from '../hooks/useCanvasHotkeys';
 import { useSearchGraph } from '../hooks/useSearchGraph';
+import Portal from '@atlaskit/portal';
 
 const styles = css`
   width: 100vw;
@@ -122,6 +131,45 @@ const styles = css`
   ${nodeStyles}
 `;
 
+const portInfoBoxStyles = css`
+  position: absolute;
+
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: var(--grey-darker);
+  color: var(--foreground);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--grey);
+  z-index: 1000;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  dl {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+
+    dt {
+      font-weight: bold;
+      min-width: 100px;
+      margin: 0;
+      padding: 0;
+    }
+
+    dd {
+      margin: 0;
+      padding: 0;
+      min-width: 100px;
+    }
+  }
+`;
+
 export interface NodeCanvasProps {
   nodes: ChartNode[];
   connections: NodeConnection[];
@@ -158,6 +206,12 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, canvasStartX: 0, canvasStartY: 0 });
   const { clientToCanvasPosition } = useCanvasPositioning();
   const setLastMousePosition = useSetRecoilState(lastMousePositionState);
+
+  const { refs, floatingStyles, update } = useFloating({
+    placement: 'bottom-end',
+    whileElementsMounted: autoUpdate,
+    middleware: [offset(5), shift({ crossAxis: true })],
+  });
 
   const lastMouseInfoRef = useRef<{ x: number; y: number; target: EventTarget | undefined }>({
     x: -3000,
@@ -403,20 +457,39 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         nodeId: NodeId;
         isInput: boolean;
         portId: PortId;
+        definition: NodeInputDefinition | NodeOutputDefinition;
       }
     | undefined
   >();
+  const hoveringPortTimeout = useRef<number | undefined>();
+  const [hoveringShowPortInfo, setHoveringPortShowInfo] = useState(false);
 
-  const onNodeMouseOver = useStableCallback((_e: any, nodeId: NodeId) => {
+  const onNodeMouseOver = useStableCallback((_e: MouseEvent<HTMLElement>, nodeId: NodeId) => {
     setHoveringNode(nodeId);
   });
 
-  const onPortMouseOver = useStableCallback((_e: any, nodeId: NodeId, isInput: boolean, portId: PortId) => {
-    setHoveringPort({ nodeId, isInput, portId });
-  });
+  const onPortMouseOver = useStableCallback(
+    (
+      e: MouseEvent<HTMLElement>,
+      nodeId: NodeId,
+      isInput: boolean,
+      portId: PortId,
+      definition: NodeInputDefinition | NodeOutputDefinition,
+    ) => {
+      setHoveringPort({ nodeId, isInput, portId, definition });
+      refs.setReference((e.target as HTMLElement).closest('.port'));
+      hoveringPortTimeout.current = window.setTimeout(() => {
+        setHoveringPortShowInfo(true);
+      }, 700);
+    },
+  );
 
-  const onPortMouseOut = useStableCallback((_e: any, nodeId: NodeId, isInput: boolean, portId: PortId) => {
+  const onPortMouseOut = useStableCallback(() => {
     setHoveringPort(undefined);
+    setHoveringPortShowInfo(false);
+    if (hoveringPortTimeout.current) {
+      window.clearTimeout(hoveringPortTimeout.current);
+    }
   });
 
   const onNodeMouseOut = useStableCallback(() => {
@@ -615,6 +688,30 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           highlightedPort={hoveringPort}
           portPositions={nodePortPositions}
         />
+        {hoveringPort && hoveringShowPortInfo && (
+          <Portal>
+            <div css={portInfoBoxStyles} ref={refs.setFloating} style={floatingStyles}>
+              <dl>
+                <dt>Port</dt>
+                <dd>{hoveringPort.definition.title}</dd>
+                <dt>ID</dt>
+                <dd>{hoveringPort.definition.id}</dd>
+                <dt>Data Type</dt>
+                <dd>
+                  {Array.isArray(hoveringPort.definition.dataType)
+                    ? hoveringPort.definition.dataType.join(' or ')
+                    : hoveringPort.definition.dataType}
+                </dd>
+                {(hoveringPort.definition as NodeInputDefinition).required && (
+                  <>
+                    <dt>Required</dt>
+                    <dd>Yes</dd>
+                  </>
+                )}
+              </dl>
+            </div>
+          </Portal>
+        )}
       </div>
     </DndContext>
   );

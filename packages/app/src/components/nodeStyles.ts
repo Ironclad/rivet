@@ -241,7 +241,8 @@ export const nodeStyles = css`
   }
 
   .node.selected .port-label,
-  .node.overlayNode .port-label {
+  .node.overlayNode .port-label,
+  .port-label:hover {
     opacity: 1;
   }
 

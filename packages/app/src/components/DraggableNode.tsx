@@ -1,5 +1,12 @@
 import { useDraggable } from '@dnd-kit/core';
-import { type ChartNode, type NodeConnection, type NodeId, type PortId } from '@ironclad/rivet-core';
+import {
+  type NodeInputDefinition,
+  type ChartNode,
+  type NodeConnection,
+  type NodeId,
+  type PortId,
+  type NodeOutputDefinition,
+} from '@ironclad/rivet-core';
 import { type MouseEvent, type FC } from 'react';
 import { VisualNode } from './VisualNode.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
@@ -22,8 +29,20 @@ interface DraggableNodeProps {
   onNodeSizeChanged?: (node: ChartNode, newWidth: number, newHeight: number) => void;
   onMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId) => void;
   onMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId) => void;
-  onPortMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
-  onPortMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
+  onPortMouseOver?: (
+    event: MouseEvent<HTMLElement>,
+    nodeId: NodeId,
+    isInput: boolean,
+    portId: PortId,
+    definition: NodeInputDefinition | NodeOutputDefinition,
+  ) => void;
+  onPortMouseOut?: (
+    event: MouseEvent<HTMLElement>,
+    nodeId: NodeId,
+    isInput: boolean,
+    portId: PortId,
+    definition: NodeInputDefinition | NodeOutputDefinition,
+  ) => void;
 }
 
 export const DraggableNode: FC<DraggableNodeProps> = ({

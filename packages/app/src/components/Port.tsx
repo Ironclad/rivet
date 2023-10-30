@@ -1,6 +1,7 @@
-import { type NodeId, type PortId } from '@ironclad/rivet-core';
+import { type NodeInputDefinition, type NodeId, type PortId, type NodeOutputDefinition } from '@ironclad/rivet-core';
 import { type FC, useRef, type MouseEvent, memo } from 'react';
 import clsx from 'clsx';
+import { useStableCallback } from '../hooks/useStableCallback';
 
 export const Port: FC<{
   input?: boolean;
@@ -10,10 +11,23 @@ export const Port: FC<{
   connected?: boolean;
   canDragTo: boolean;
   closest: boolean;
+  definition: NodeInputDefinition | NodeOutputDefinition;
   onMouseDown?: (event: MouseEvent<HTMLDivElement>, port: PortId, isInput: boolean) => void;
   onMouseUp?: (event: MouseEvent<HTMLDivElement>, port: PortId) => void;
-  onMouseOver?: (event: MouseEvent<HTMLDivElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
-  onMouseOut?: (event: MouseEvent<HTMLDivElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
+  onMouseOver?: (
+    event: MouseEvent<HTMLDivElement>,
+    nodeId: NodeId,
+    isInput: boolean,
+    portId: PortId,
+    definition: NodeInputDefinition | NodeOutputDefinition,
+  ) => void;
+  onMouseOut?: (
+    event: MouseEvent<HTMLDivElement>,
+    nodeId: NodeId,
+    isInput: boolean,
+    portId: PortId,
+    definition: NodeInputDefinition | NodeOutputDefinition,
+  ) => void;
 }> = memo(
   ({
     input = false,
@@ -23,12 +37,21 @@ export const Port: FC<{
     connected,
     canDragTo,
     closest,
+    definition,
     onMouseDown,
     onMouseUp,
     onMouseOver,
     onMouseOut,
   }) => {
     const ref = useRef<HTMLDivElement>(null);
+
+    const handleMouseOver = useStableCallback((event: MouseEvent<HTMLDivElement>) => {
+      onMouseOver?.(event, nodeId, input, id, definition);
+    });
+
+    const handleMouseOut = useStableCallback((event: MouseEvent<HTMLDivElement>) => {
+      onMouseOut?.(event, nodeId, input, id, definition);
+    });
 
     return (
       <div
@@ -45,19 +68,15 @@ export const Port: FC<{
             return onMouseDown?.(e, id, input);
           }}
           onMouseUp={(e) => onMouseUp?.(e, id)}
-          onMouseOver={(e) => onMouseOver?.(e, nodeId, input, id)}
-          onMouseOut={(e) => onMouseOut?.(e, nodeId, input, id)}
+          onMouseOver={handleMouseOver}
+          onMouseOut={handleMouseOut}
           data-portid={id}
           data-porttype={input ? 'input' : 'output'}
           data-nodeid={nodeId}
         >
           {canDragTo && <div className={clsx('port-hover-area')} />}
         </div>
-        <div
-          className="port-label"
-          onMouseOver={(e) => onMouseOver?.(e, nodeId, input, id)}
-          onMouseOut={(e) => onMouseOut?.(e, nodeId, input, id)}
-        >
+        <div className="port-label" onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
           {title}
         </div>
       </div>
