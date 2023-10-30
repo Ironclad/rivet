@@ -1,7 +1,9 @@
 import { type DatasetRow, newId } from '@ironclad/rivet-core';
-import { type FC, useState } from 'react';
+import { type FC, useState, useEffect } from 'react';
 import { LazyCodeEditor } from '../LazyComponents';
 import { css } from '@emotion/react';
+import ImageInPictureIcon from 'majesticons/line/image-in-picture-line.svg?react';
+import { type DatasetRowWithDistance } from './DatasetDisplay';
 
 const styles = css`
   display: grid;
@@ -83,7 +85,9 @@ const styles = css`
     }
 
     td.id-cell {
-      width: 100px;
+      width: 50px;
+      min-width: 0;
+      overflow: hidden;
     }
 
     td.idx-cell {
@@ -91,8 +95,34 @@ const styles = css`
       min-width: 0;
     }
 
+    td.embedding-cell {
+      width: 32px;
+      min-width: 0;
+      display: flex;
+      height: 48px;
+
+      span {
+        display: inline-flex;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+      }
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    td.distance-cell {
+      width: 32px;
+      min-width: 0;
+    }
+
     td.idx-cell,
-    td.id-cell {
+    td.id-cell,
+    td.embedding-cell,
+    td.distance-cell {
       color: var(--foreground-muted);
       border: 0;
 
@@ -106,9 +136,39 @@ const styles = css`
 `;
 
 export const DatasetTable: FC<{
-  datasetData: DatasetRow[];
+  datasetData: DatasetRowWithDistance[];
+  isFiltered?: boolean;
   onDataChanged: (data: DatasetRow[]) => void;
-}> = ({ datasetData, onDataChanged }) => {
+}> = ({ datasetData, isFiltered, onDataChanged }) => {
+  const getColorForDistance = (distance: number) => {
+    const points = [
+      [0, [255, 0, 0]],
+      [0.5, [255, 0, 0]],
+      [0.75, [255, 255, 0]],
+      [1, [0, 255, 0]],
+    ] as const;
+
+    distance = Math.min(Math.max(distance, 0), 1);
+
+    // Find the two points between which the input lies
+    let i = 0;
+    while (i < points.length) {
+      if (distance < points[i]![0]!) {
+        i--;
+        break;
+      }
+      i++;
+    }
+
+    // Linearly interpolate the colors
+    const [t1, color1] = points[i]!;
+    const [t2, color2] = points[i + 1]!;
+    const ratio = (distance - t1) / (t2 - t1);
+    const [r, g, b] = color1.map((c1, i) => c1 + ratio * (color2[i]! - c1)) as [number, number, number];
+
+    return `rgb(${r},${g},${b})`;
+  };
+
   return (
     <div css={styles} className="dataset-table-container">
       <table className="dataset-table">
@@ -118,6 +178,22 @@ export const DatasetTable: FC<{
               <td key={`${i}-idx`} className="idx-cell">
                 {i + 1}
               </td>
+              <td key={`${i}-embedding`} className="embedding-cell">
+                {datasetData[i]!.embedding ? (
+                  <span title="Has Embedding">
+                    <ImageInPictureIcon />
+                  </span>
+                ) : null}
+              </td>
+              {row.distance != null && (
+                <td
+                  key={`${i}-distance`}
+                  className="distance-cell"
+                  style={{ color: getColorForDistance(row.distance) }}
+                >
+                  {row.distance.toFixed(2)}
+                </td>
+              )}
               <td key={`${i}-id`} className="id-cell">
                 <DatasetEditableCell
                   value={row.id}
@@ -130,6 +206,7 @@ export const DatasetTable: FC<{
                   }}
                 />
               </td>
+
               {row.data.map((cell, j) => (
                 <td key={`${i}-${j}`}>
                   <DatasetEditableCell
@@ -148,31 +225,35 @@ export const DatasetTable: FC<{
           ))}
         </tbody>
       </table>
-      <div className="add-column-area">
-        <button
-          onClick={() => {
-            const newData = [...datasetData];
-            newData.forEach((row) => row.data.push(''));
-            onDataChanged(newData);
-          }}
-        >
-          Add New Column
-        </button>
-      </div>
-      <div className="add-row-area">
-        <button
-          onClick={() => {
-            const newData = [...datasetData];
-            newData.push({
-              id: newId(),
-              data: Array(datasetData[0]?.data.length ?? 1).fill(''),
-            });
-            onDataChanged(newData);
-          }}
-        >
-          Add New Row
-        </button>
-      </div>
+      {!isFiltered && (
+        <div className="add-column-area">
+          <button
+            onClick={() => {
+              const newData = [...datasetData];
+              newData.forEach((row) => row.data.push(''));
+              onDataChanged(newData);
+            }}
+          >
+            Add New Column
+          </button>
+        </div>
+      )}
+      {!isFiltered && (
+        <div className="add-row-area">
+          <button
+            onClick={() => {
+              const newData = [...datasetData];
+              newData.push({
+                id: newId(),
+                data: Array(datasetData[0]?.data.length ?? 1).fill(''),
+              });
+              onDataChanged(newData);
+            }}
+          >
+            Add New Row
+          </button>
+        </div>
+      )}
     </div>
   );
 };

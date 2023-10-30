@@ -2,24 +2,31 @@ import Button from '@atlaskit/button';
 import { DropdownItem } from '@atlaskit/dropdown-menu';
 import Portal from '@atlaskit/portal';
 import { css } from '@emotion/react';
-import { type DatasetMetadata, type DatasetRow, getError, newId } from '@ironclad/rivet-core';
-import { type FC } from 'react';
+import { type DatasetMetadata, type DatasetRow, getError, newId, getIntegration } from '@ironclad/rivet-core';
+import { useState, type FC, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useRecoilValue } from 'recoil';
 import { useContextMenu } from '../../hooks/useContextMenu';
 import { useDataset } from '../../hooks/useDataset';
 import { projectState } from '../../state/savedGraphs';
-import { ioProvider } from '../../utils/globals';
+import { datasetProvider, ioProvider } from '../../utils/globals';
 import { stringify as stringifyCsv } from 'csv-stringify/browser/esm/sync';
 import { parse as parseCsv } from 'csv-parse/browser/esm/sync';
 import { DatasetTable } from './DatasetTable';
+import Select from '@atlaskit/select';
+import TextField from '@atlaskit/textfield';
+import { useDebounce } from 'ahooks';
+import useAsyncEffect from 'use-async-effect';
+import { useGetAdHocInternalProcessContext } from '../../hooks/useGetAdHocInternalProcessContext';
 
 const datasetDisplayStyles = css`
   padding: 16px;
+  display: grid;
+  grid-template-rows: auto 1fr;
   height: 100%;
-  overflow: auto;
 
   header {
+    padding-top: 40px;
     margin-bottom: 16px;
     display: flex;
     align-items: center;
@@ -30,6 +37,23 @@ const datasetDisplayStyles = css`
       align-items: center;
       gap: 8px;
     }
+
+    .searchKnn {
+      display: flex;
+      align-items: center;
+      gap: 0;
+
+      .searchInput {
+      }
+
+      .embeddingProvider {
+        min-width: 100px;
+      }
+    }
+  }
+
+  .table-viewer {
+    overflow: auto;
   }
 `;
 
@@ -45,6 +69,12 @@ const contextMenuStyles = css`
     overflow-x: visible !important;
   }
 `;
+
+const embeddingProviders = [{ value: 'openai', label: 'OpenAI' }] as const;
+
+export type DatasetRowWithDistance = DatasetRow & {
+  distance?: number;
+};
 
 export const DatasetDisplay: FC<{
   dataset: DatasetMetadata;
@@ -98,6 +128,37 @@ export const DatasetDisplay: FC<{
     }
   };
 
+  const [knnEmbeddingProvider, setKnnEmbeddingProvider] =
+    useState<(typeof embeddingProviders)[number]['value']>('openai');
+
+  const [knnSearch, setKnnSearch] = useState('');
+
+  const debouncedKnnSearch = useDebounce(knnSearch, { wait: 500 });
+  const getAdHocInternalProcessContext = useGetAdHocInternalProcessContext();
+
+  const [filteredRows, setFilteredRows] = useState<DatasetRowWithDistance[] | undefined>(undefined);
+
+  useAsyncEffect(async () => {
+    if (debouncedKnnSearch.trim().length === 0) {
+      return;
+    }
+
+    try {
+      const provider = getIntegration(
+        'embeddingGenerator',
+        knnEmbeddingProvider,
+        await getAdHocInternalProcessContext(),
+      );
+      const embedding = await provider.generateEmbedding(debouncedKnnSearch);
+      const knn = await datasetProvider.knnDatasetRows(dataset.id, 1000, embedding);
+
+      setFilteredRows(knn);
+    } catch (err) {
+      toast.error(`Failed to generate embedding: ${getError(err).message}`);
+      setFilteredRows(undefined);
+    }
+  }, [debouncedKnnSearch, knnEmbeddingProvider, dataset.id]);
+
   return (
     <div
       css={datasetDisplayStyles}
@@ -110,6 +171,22 @@ export const DatasetDisplay: FC<{
       <header>
         <h1>{dataset.name}</h1>
         <div className="buttons">
+          <div className="searchKnn">
+            <TextField
+              className="searchInput"
+              type="text"
+              placeholder="Search KNN"
+              value={knnSearch}
+              onChange={(e) => setKnnSearch((e.target as HTMLInputElement).value)}
+            />
+
+            <Select
+              className="embeddingProvider"
+              options={embeddingProviders}
+              value={embeddingProviders.find((p) => p.value === knnEmbeddingProvider)}
+              placeholder="Embedding Provider"
+            />
+          </div>
           <Button appearance="primary" onClick={exportDataset}>
             Export Dataset
           </Button>
@@ -121,7 +198,11 @@ export const DatasetDisplay: FC<{
           </Button>
         </div>
       </header>
-      {datasetData && <DatasetTable datasetData={datasetData.rows} onDataChanged={updateDatasetData} />}
+      <div className="table-viewer">
+        {datasetData && (
+          <DatasetTable datasetData={filteredRows ?? datasetData.rows} onDataChanged={updateDatasetData} />
+        )}
+      </div>
       <Portal>
         {showContextMenu && contextMenuData.data?.type === 'cell' && (
           <div

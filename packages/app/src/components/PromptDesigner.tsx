@@ -57,6 +57,7 @@ import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { GraphSelector } from './editors/GraphSelectorEditor';
 import { GptTokenizerTokenizer } from '../../../core/src/integrations/GptTokenizerTokenizer';
+import { useGetAdHocInternalProcessContext } from '../hooks/useGetAdHocInternalProcessContext';
 
 const styles = css`
   position: fixed;
@@ -454,12 +455,10 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
 
   const resultsForAttachedNode = testGroupResultsByNodeId[attachedNodeId?.nodeId ?? ''];
 
-  const settings = useRecoilValue(settingsState);
-
   const abortController = useRef<AbortController>();
   const [inProgress, setInProgress] = useState(false);
 
-  const plugins = useDependsOnPlugins();
+  const getAdHocInternalProcessContext = useGetAdHocInternalProcessContext();
 
   const tryRunSingle = async () => {
     try {
@@ -472,17 +471,16 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
         setTestGroupResultsByNodeId((s) => ({ ...s, [attachedNodeId.nodeId]: [] }));
       }
 
-      const response = await runAdHocChat(messages, {
-        data: config.data,
-        signal: abortController.current.signal,
-        settings,
-        plugins,
-        onPartialResult: (partialResult) => {
-          setResponse({
-            response: partialResult,
-          });
-        },
-      });
+      const response = await runAdHocChat(
+        messages,
+        config.data,
+        await getAdHocInternalProcessContext({
+          onPartialResult: (partialResult) => {
+            setResponse({ response: partialResult });
+          },
+          signal: abortController.current.signal,
+        }),
+      );
 
       setResponse({
         response,
@@ -512,19 +510,14 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
         messages,
         promptDesigner.samples,
         {
-          data: config.data,
-          settings,
-          signal: abortController.current.signal,
-          plugins,
-        },
-        {
-          onPartialResults: (partialResult) => {
+          onPartialResults: (partialResults) => {
             setTestGroupResultsByNodeId((s) => ({
               ...s,
-              [attachedNodeId.nodeId]: partialResult,
+              [attachedNodeId.nodeId]: partialResults,
             }));
           },
         },
+        config.data,
       );
     } catch (err) {
       console.error(getError(err));
@@ -950,17 +943,7 @@ export const PromptDesignerTestGroupResult: FC<{
   );
 };
 
-type AdHocChatConfig = {
-  data: ChatNodeConfigData;
-  signal: AbortSignal;
-  settings: Settings;
-  plugins: RivetPlugin[];
-  onPartialResult?: (response: string) => void;
-};
-
-async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
-  const { data, signal, plugins, settings, onPartialResult } = config;
-
+async function runAdHocChat(messages: ChatMessage[], data: ChatNodeConfigData, context: InternalProcessContext) {
   const chatNode = new ChatNodeImpl({
     data: {
       ...data,
@@ -992,38 +975,7 @@ async function runAdHocChat(messages: ChatMessage[], config: AdHocChatConfig) {
           value: messages,
         },
       },
-      {
-        executor: 'browser',
-        node: {} as ChartNode,
-        tokenizer: new GptTokenizerTokenizer(),
-        contextValues: {},
-        createSubProcessor: undefined!,
-        settings: await fillMissingSettingsFromEnvironmentVariables(settings, plugins),
-        nativeApi: new TauriNativeApi(),
-        datasetProvider,
-        processId: nanoid() as ProcessId,
-        executionCache: new Map(),
-        externalFunctions: {},
-        getGlobal: undefined!,
-        graphInputs: {},
-        graphOutputs: {},
-        project: undefined!,
-        raiseEvent: undefined!,
-        setGlobal: undefined!,
-        signal,
-        trace: (value) => console.log(value),
-        waitEvent: undefined!,
-        waitForGlobal: undefined!,
-        onPartialOutputs: (outputs) => {
-          const responsePartial = coerceTypeOptional(outputs['response' as PortId], 'string');
-          if (responsePartial) {
-            onPartialResult?.(responsePartial);
-          }
-        },
-        abortGraph: undefined!,
-        getPluginConfig: undefined!,
-        attachedData: {},
-      } as InternalProcessContext,
+      context,
     );
 
     const response = coerceTypeOptional(result['response' as PortId], 'string');
@@ -1041,9 +993,10 @@ function useRunTestGroup() {
   return async (
     testGroup: NodeTestGroup,
     messages: ChatMessage[],
-    config: AdHocChatConfig,
+    data: ChatNodeConfigData,
+    context: InternalProcessContext,
   ): Promise<PromptDesignerTestGroupResults> => {
-    const response = await runAdHocChat(messages, config);
+    const response = await runAdHocChat(messages, data, context);
 
     const processor = new GraphProcessor(project, testGroup.evaluatorGraphId);
     processor.executor = 'browser';
@@ -1106,15 +1059,16 @@ function useRunTestGroup() {
 
 function useRunTestGroupSampleCount() {
   const runTestGroup = useRunTestGroup();
+  const getAdHocInternalProcessContext = useGetAdHocInternalProcessContext();
 
   return async (
     testGroup: NodeTestGroup,
     messages: ChatMessage[],
     sampleCount: number,
-    config: AdHocChatConfig,
     options: {
       onPartialResults?: (data: PromptDesignerTestGroupResults[]) => void;
     } = {},
+    data: ChatNodeConfigData,
   ): Promise<PromptDesignerTestGroupResults[]> => {
     const { onPartialResults } = options;
 
@@ -1130,13 +1084,17 @@ function useRunTestGroupSampleCount() {
           results: [],
         };
 
-        const caseResults = await runTestGroup(testGroup, messages, {
-          ...config,
-          onPartialResult: (response) => {
-            results[sampleIndex]!.response = response;
-            onPartialResults?.(cloneDeep(results));
-          },
-        });
+        const caseResults = await runTestGroup(
+          testGroup,
+          messages,
+          data,
+          await getAdHocInternalProcessContext({
+            onPartialResult: (response) => {
+              results[sampleIndex]!.response = response;
+              onPartialResults?.(cloneDeep(results));
+            },
+          }),
+        );
 
         results[sampleIndex]!.results = caseResults.results;
 

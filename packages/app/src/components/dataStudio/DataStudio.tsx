@@ -55,7 +55,7 @@ const styles = css`
   }
 
   .dataset-display-area {
-    padding-top: 40px;
+    overflow: hidden;
   }
 `;
 
