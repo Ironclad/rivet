@@ -95,6 +95,7 @@ export class GraphInputNodeImpl extends NodeImpl<GraphInputNode> {
     return dedent`
       ${this.data.id}
       Type: ${this.data.dataType}
+      ${this.data.defaultValue == null ? '' : `Default: ${this.data.defaultValue}`}
     `;
   }
 
