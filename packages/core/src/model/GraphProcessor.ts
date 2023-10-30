@@ -1029,17 +1029,6 @@ export class GraphProcessor {
       };
 
       attachedData.loopInfo = childLoopInfo; // Not 100% sure if this is right - sets the childLoopInfo on the loop controller itself, probably fine?
-
-      if (childLoopInfo.iterationCount > (builtInNode.data.maxIterations ?? 100)) {
-        this.#nodeErrored(
-          node,
-          new Error(
-            `Loop controller ${node.title} has exceeded max iterations of ${builtInNode.data.maxIterations ?? 100}`,
-          ),
-          processId,
-        );
-        return;
-      }
     }
 
     for (const { node: outputNode, connections: connectionsToOutputNode } of outputNodes.connectionsToNodes) {

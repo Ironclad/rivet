@@ -19,6 +19,7 @@ export type LoopControllerNode = ChartNode<'loopController', LoopControllerNodeD
 
 export type LoopControllerNodeData = {
   maxIterations?: number;
+  atMaxIterationsAction?: 'break' | 'error';
 };
 
 export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
@@ -128,6 +129,23 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
         label: 'Max Iterations',
         dataKey: 'maxIterations',
       },
+      {
+        type: 'dropdown',
+        options: [
+          {
+            label: 'Break',
+            value: 'break',
+          },
+          {
+            label: 'Error',
+            value: 'error',
+          },
+        ],
+        label: 'At Max Iterations',
+        dataKey: 'atMaxIterationsAction',
+        defaultValue: 'error',
+        helperMessage: 'What should happen when the max iterations is reached?',
+      },
     ];
   }
 
@@ -168,6 +186,10 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
 
     output['iteration' as PortId] = { type: 'number', value: iterationCount + 1 };
 
+    if (iterationCount >= (this.data.maxIterations ?? 100) && this.data.atMaxIterationsAction !== 'break') {
+      throw new Error(`Loop controller exceeded max iterations of ${this.data.maxIterations ?? 100}`);
+    }
+
     // If the continue port is not connected (so undefined), or if it's undefined before it's
     // inside the loop itself (connection has not ran yet), then we should continue by default.
     let continueValue = false;
@@ -181,6 +203,10 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
       } else {
         continueValue = coerceType(continueDataValue, 'boolean');
       }
+    }
+
+    if (iterationCount >= (this.data.maxIterations ?? 100) && this.data.atMaxIterationsAction === 'break') {
+      continueValue = false;
     }
 
     let inputCount = 0;
