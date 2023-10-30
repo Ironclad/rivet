@@ -66,7 +66,7 @@ export const RivetApp: FC = () => {
       />
       <StatusBar />
       <DebuggerPanelRenderer />
-      <LeftSidebar />
+      <LeftSidebar onRunGraph={(graphId) => tryRunGraph({ graphId })} />
       <GraphBuilder />
       <SettingsModal />
       <PromptDesignerRenderer />

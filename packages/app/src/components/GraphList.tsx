@@ -40,6 +40,7 @@ import { toast } from 'react-toastify';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import TextField from '@atlaskit/textfield';
 import { useFuseSearch } from '../hooks/useFuseSearch';
+import { useGraphExecutor } from '../hooks/useGraphExecutor';
 
 const styles = css`
   display: flex;
@@ -311,7 +312,7 @@ function getFolderNames(folderedGraphs: NodeGraphFolderItem[]): string[] {
   return folderNames;
 }
 
-export const GraphList: FC = () => {
+export const GraphList: FC<{ onRunGraph?: (graphId: string) => void }> = ({ onRunGraph }) => {
   const [graph, setGraph] = useRecoilState(graphState);
   const [savedGraphs, setSavedGraphs] = useRecoilState(savedGraphsState);
   const [searchText, setSearchText] = useState('');
@@ -390,6 +391,13 @@ export const GraphList: FC = () => {
     );
     graphsToDelete.forEach((graph) => deleteGraph(graph));
     setFolderNames((prev) => prev.filter((name) => folderName !== name && !isInFolder(folderName, name)));
+  });
+
+  const runGraph = useStableCallback((folderName: string) => {
+    const graph = savedGraphs.find((graph) => graph.metadata?.name === folderName);
+    if (graph) {
+      onRunGraph?.(graph.metadata!.id!);
+    }
   });
 
   const startRename = useStableCallback((folderItemName: string) => {
@@ -545,6 +553,7 @@ export const GraphList: FC = () => {
                   top: contextMenuData.y,
                 }}
               >
+                <DropdownItem onClick={() => runGraph(selectedFolderNameForContextMenu!)}>Run</DropdownItem>
                 <DropdownItem onClick={() => startRename(selectedFolderNameForContextMenu!)}>Rename Graph</DropdownItem>
                 <DropdownItem onClick={() => duplicateGraph(selectedGraphForContextMenu!)}>Duplicate</DropdownItem>
                 <DropdownItem onClick={() => handleDelete(selectedGraphForContextMenu!)}>Delete</DropdownItem>

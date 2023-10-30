@@ -6,7 +6,7 @@ import { loadedProjectState, projectState, savedGraphsState } from '../state/sav
 import ExpandLeftIcon from 'majesticons/line/menu-expand-left-line.svg?react';
 import ExpandRightIcon from 'majesticons/line/menu-expand-right-line.svg?react';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
-import { type NodeGraph } from '@ironclad/rivet-core';
+import { type GraphId, type NodeGraph } from '@ironclad/rivet-core';
 import { sidebarOpenState } from '../state/graphBuilder.js';
 import { appWindow } from '@tauri-apps/api/window';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
@@ -71,7 +71,9 @@ const styles = css`
   }
 `;
 
-export const LeftSidebar: FC = () => {
+export const LeftSidebar: FC<{
+  onRunGraph?: (graphId: GraphId) => void;
+}> = ({ onRunGraph }) => {
   const [graph, setGraph] = useRecoilState(graphState);
   const [project, setProject] = useRecoilState(projectState);
   const [savedGraphs, setSavedGraphs] = useRecoilState(savedGraphsState);
@@ -112,7 +114,7 @@ export const LeftSidebar: FC = () => {
           </TabList>
           <TabPanel>
             <div className="panel" data-contextmenutype="graph-list">
-              <GraphList />
+              <GraphList onRunGraph={onRunGraph} />
             </div>
           </TabPanel>
           <TabPanel>

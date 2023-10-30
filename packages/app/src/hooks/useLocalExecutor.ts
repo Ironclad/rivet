@@ -7,6 +7,7 @@ import {
   ExecutionRecorder,
   type GraphOutputs,
   globalRivetNodeRegistry,
+  type GraphId,
 } from '@ironclad/rivet-core';
 import { produce } from 'immer';
 import { useRef } from 'react';
@@ -85,11 +86,14 @@ export function useLocalExecutor() {
   const tryRunGraph = useStableCallback(
     async (
       options: {
+        graphId?: GraphId;
         to?: NodeId[];
       } = {},
     ) => {
       try {
         saveGraph();
+
+        const graphToRun = options.graphId ?? graph.metadata!.id!;
 
         if (currentProcessor.current?.isRunning) {
           return;
@@ -97,6 +101,7 @@ export function useLocalExecutor() {
 
         const tempProject = {
           ...project,
+          // Include the just-saved version of the currently selected graph, because saveGraph won't update the `project` until next render
           graphs: {
             ...project.graphs,
             [graph.metadata!.id!]: graph,
@@ -105,7 +110,7 @@ export function useLocalExecutor() {
         };
 
         const recorder = new ExecutionRecorder();
-        const processor = new GraphProcessor(tempProject, graph.metadata!.id!);
+        const processor = new GraphProcessor(tempProject, graphToRun);
         processor.executor = 'browser';
         processor.recordingPlaybackChatLatency = savedSettings.recordingPlaybackLatency ?? 1000;
 

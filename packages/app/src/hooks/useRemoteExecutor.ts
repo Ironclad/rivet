@@ -5,6 +5,7 @@ import {
   type StringArrayDataValue,
   globalRivetNodeRegistry,
   serializeDatasets,
+  type GraphId,
 } from '@ironclad/rivet-core';
 import { useCurrentExecution } from './useCurrentExecution';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -113,7 +114,7 @@ export function useRemoteExecutor() {
     }
   });
 
-  const tryRunGraph = async (options: { to?: NodeId[] } = {}) => {
+  const tryRunGraph = async (options: { to?: NodeId[]; graphId?: GraphId } = {}) => {
     if (
       !remoteDebugger.remoteDebuggerState.started ||
       remoteDebugger.remoteDebuggerState.socket?.readyState !== WebSocket.OPEN
@@ -133,6 +134,8 @@ export function useRemoteExecutor() {
         );
       },
     });
+
+    const graphToRun = options.graphId ?? graph.metadata!.id!;
 
     try {
       if (remoteDebugger.remoteDebuggerState.remoteUploadAllowed) {
@@ -155,7 +158,7 @@ export function useRemoteExecutor() {
         }
       }
 
-      remoteDebugger.send('run', { graphId: graph.metadata!.id!, runToNodeIds: options.to });
+      remoteDebugger.send('run', { graphId: graphToRun, runToNodeIds: options.to });
     } catch (e) {
       console.error(e);
     }
