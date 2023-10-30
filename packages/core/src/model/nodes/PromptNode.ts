@@ -9,6 +9,7 @@ import { nanoid } from 'nanoid/non-secure';
 import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import {
+  coerceTypeOptional,
   type ChatMessage,
   type EditorDefinition,
   type Inputs,
@@ -214,9 +215,14 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
 
     const name = getInputOrData(this.data, inputs, 'name', 'string');
 
-    const functionCall = this.data.enableFunctionCall
-      ? coerceType(inputs['function-call' as PortId], 'object')
+    let functionCall = this.data.enableFunctionCall
+      ? coerceTypeOptional(inputs['function-call' as PortId], 'object')
       : undefined;
+
+    // If no name is specified, ignore the function call
+    if (!functionCall?.name || !functionCall?.arguments) {
+      functionCall = undefined;
+    }
 
     // GPT is weird - the arguments should be a stringified JSON object https://platform.openai.com/docs/api-reference/chat/create
     if (functionCall?.arguments && typeof functionCall.arguments !== 'string') {
@@ -227,7 +233,14 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
       type: type as 'assistant' | 'system' | 'user' | 'function',
       message: outputValue,
       name,
-      function_call: functionCall,
+
+      // Standardize to only have name and arguments (discard other props)
+      function_call: functionCall
+        ? {
+            name: functionCall.name,
+            arguments: functionCall.arguments,
+          }
+        : undefined,
     };
 
     const outputs: Outputs = {
