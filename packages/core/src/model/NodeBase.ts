@@ -104,6 +104,9 @@ export type NodeInputDefinition = {
 
   /** The default value of the input, if it is not connected to an output. */
   defaultValue?: unknown;
+
+  /** User-facing description of the port. */
+  description?: string;
 };
 
 /** Represents an output definition of a node. */
@@ -122,6 +125,9 @@ export type NodeOutputDefinition = {
 
   /** The default value of the output. Some outputs just have a fixed value. */
   defaultValue?: unknown;
+
+  /** User-facing description of the port. */
+  description?: string;
 };
 
 /** Represents a connection between two nodes. */

@@ -135,7 +135,7 @@ const styles = css`
 const portInfoBoxStyles = css`
   position: absolute;
 
-  padding: 5px 10px;
+  padding: 12px;
   border-radius: 5px;
   background-color: var(--grey-darker);
   color: var(--foreground);
@@ -149,24 +149,29 @@ const portInfoBoxStyles = css`
 
   dl {
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: auto 2fr;
     flex-direction: column;
-    gap: 4px;
     margin: 0;
     padding: 0;
     align-items: center;
+    column-gap: 16px;
+    row-gap: 4px;
 
     dt {
       font-weight: bold;
-      min-width: 100px;
       margin: 0;
+      white-space: nowrap;
       padding: 0;
     }
 
     dd {
       margin: 0;
       padding: 0;
-      min-width: 100px;
+      min-width: 200px;
+    }
+
+    dd.description {
+      grid-column: 1 / span 2;
     }
   }
 `;
@@ -709,6 +714,11 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
                   <>
                     <dt>Required</dt>
                     <dd>Yes</dd>
+                  </>
+                )}
+                {hoveringPort.definition.description && (
+                  <>
+                    <dd className="description">{hoveringPort.definition.description}</dd>
                   </>
                 )}
               </dl>

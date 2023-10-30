@@ -3,9 +3,10 @@ import { type SharedEditorProps } from './SharedEditorProps';
 import { type ChartNode, type StringListEditorDefinition } from '@ironclad/rivet-core';
 import TextField from '@atlaskit/textfield';
 import Button from '@atlaskit/button';
-import { Field } from '@atlaskit/form';
+import { Field, HelperMessage } from '@atlaskit/form';
 import { css } from '@emotion/react';
 import CrossIcon from 'majesticons/line/multiply-line.svg?react';
+import { getHelperMessage } from './editorUtils';
 
 const styles = css`
   .string-list {
@@ -35,6 +36,11 @@ const styles = css`
       justify-content: center;
     }
   }
+
+  .helperMessage {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
 `;
 
 type StringListEditorProps = SharedEditorProps & {
@@ -45,6 +51,7 @@ export const StringListEditor: FC<StringListEditorProps> = ({ node, isReadonly, 
   const data = node.data as Record<string, unknown>;
   const stringListValue = data[editor.dataKey] as string[] | string | undefined;
   const stringList = !stringListValue ? [] : Array.isArray(stringListValue) ? stringListValue : [stringListValue];
+  const helperMessage = getHelperMessage(editor, node.data);
 
   const [items, setItems] = useState<string[]>(stringList || []);
 
@@ -95,6 +102,7 @@ export const StringListEditor: FC<StringListEditorProps> = ({ node, isReadonly, 
       dataKey={editor.dataKey}
       isReadonly={isReadonly}
       isDisabled={isDisabled}
+      helperMessage={helperMessage}
       stringList={items}
       onAddItem={handleAddItem}
       onDeleteItem={handleDeleteItem}
@@ -109,6 +117,7 @@ type StringListProps = {
   isReadonly?: boolean;
   isDisabled?: boolean;
   stringList: string[];
+  helperMessage?: string;
   onAddItem: () => void;
   onDeleteItem: (index: number) => void;
   onItemChange: (index: number, value: string) => void;
@@ -120,6 +129,7 @@ export const StringList: FC<StringListProps> = ({
   isReadonly,
   isDisabled,
   stringList,
+  helperMessage,
   onAddItem,
   onDeleteItem,
   onItemChange,
@@ -129,6 +139,11 @@ export const StringList: FC<StringListProps> = ({
       <Field name={dataKey} label={label} isDisabled={isDisabled}>
         {({ fieldProps }) => (
           <>
+            {helperMessage && (
+              <div className="helperMessage">
+                <HelperMessage>{helperMessage}</HelperMessage>
+              </div>
+            )}
             <div className="string-list">
               {stringList.map((item, index) => (
                 <div key={index} className="string-item">

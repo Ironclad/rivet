@@ -9,7 +9,6 @@ import { nanoid } from 'nanoid/non-secure';
 import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import {
-  coerceTypeOptional,
   type ChatMessage,
   type EditorDefinition,
   type Inputs,
@@ -19,7 +18,7 @@ import {
 } from '../../index.js';
 import { mapValues } from 'lodash-es';
 import { dedent } from 'ts-dedent';
-import { coerceType } from '../../utils/coerceType.js';
+import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 import { getInputOrData } from '../../utils/index.js';
 
 export type PromptNode = ChartNode<'prompt', PromptNodeData>;

@@ -8,7 +8,6 @@ import {
 import { type FC, useMemo } from 'react';
 import { chatNodeDescriptor } from '../components/nodes/ChatNode.js';
 import { loopControllerNodeDescriptor } from '../components/nodes/LoopControllerNode.js';
-import { matchNodeDescriptor } from '../components/nodes/MatchNode.js';
 import { readDirectoryNodeDescriptor } from '../components/nodes/ReadDirectoryNode.js';
 import { readFileNodeDescriptor } from '../components/nodes/ReadFileNode.js';
 import { subgraphNodeDescriptor } from '../components/nodes/SubGraphNode.js';
@@ -51,7 +50,6 @@ export type NodeComponentDescriptors = {
 const overriddenDescriptors: Partial<NodeComponentDescriptors> = {
   chat: chatNodeDescriptor,
   loopController: loopControllerNodeDescriptor,
-  match: matchNodeDescriptor,
   readDirectory: readDirectoryNodeDescriptor,
   readFile: readFileNodeDescriptor,
   subGraph: subgraphNodeDescriptor,
