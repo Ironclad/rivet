@@ -89,7 +89,10 @@ export const LeftSidebar: FC<{
   }
 
   const graphOptions = useMemo(
-    () => savedGraphs.map((g) => ({ label: g.metadata!.name, value: g.metadata!.id })),
+    () => [
+      { label: '(None)', value: undefined },
+      ...savedGraphs.map((g) => ({ label: g.metadata!.name, value: g.metadata!.id })),
+    ],
     [savedGraphs],
   );
 
