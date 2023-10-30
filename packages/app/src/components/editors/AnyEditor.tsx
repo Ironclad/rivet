@@ -9,7 +9,7 @@ export const DefaultAnyDataEditor: FC<
   SharedEditorProps & {
     editor: AnyDataEditorDefinition<ChartNode>;
   }
-> = ({ node, isReadonly, isDisabled, onChange, editor }) => {
+> = ({ node, isReadonly, isDisabled, onChange, editor, onClose }) => {
   const data = node.data as Record<string, unknown>;
 
   const helperMessage = getHelperMessage(editor, node.data);
@@ -33,6 +33,11 @@ export const DefaultAnyDataEditor: FC<
                 },
               })
             }
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                onClose?.();
+              }
+            }}
           />
           {helperMessage && <HelperMessage>{helperMessage}</HelperMessage>}
         </>
