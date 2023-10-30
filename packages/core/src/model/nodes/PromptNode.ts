@@ -20,6 +20,7 @@ import { mapValues } from 'lodash-es';
 import { dedent } from 'ts-dedent';
 import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 import { getInputOrData } from '../../utils/index.js';
+import { interpolate } from '../../utils/interpolation.js';
 
 export type PromptNode = ChartNode<'prompt', PromptNodeData>;
 
@@ -194,17 +195,10 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
     };
   }
 
-  interpolate(baseString: string, values: Record<string, string>): string {
-    return baseString.replace(/\{\{([^}]+)\}\}/g, (_m, p1) => {
-      const value = values[p1];
-      return value !== undefined ? value : '';
-    });
-  }
-
   async process(inputs: Inputs, context: InternalProcessContext<PromptNode>): Promise<Outputs> {
     const inputMap = mapValues(inputs, (input) => coerceType(input, 'string')) as Record<PortId, string>;
 
-    const outputValue = this.interpolate(this.chartNode.data.promptText, inputMap);
+    const outputValue = interpolate(this.chartNode.data.promptText, inputMap);
 
     const type = getInputOrData(this.data, inputs, 'type', 'string');
 
