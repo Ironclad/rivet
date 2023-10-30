@@ -11,7 +11,9 @@ import TabItem from '@theme/TabItem';
 
 ## Overview
 
-The Match Node is used to match a string input against a series of regular expressions. Each regular expression corresponds to an output of the node. The output port for each matching regular expression will be executed, and all other output ports will not be executed. If no match is found, the `Unmatched` output port will be executed.
+The Match Node is used to match a string input against a series of regular expressions. Each regular expression corresponds to an output of the node.
+
+The node can be configured to either run the _first_ matching output port, or to run _all_ matching output ports. If no match is found, the `Unmatched` output port will be executed.
 
 This node is useful for routing control flow based on the content of a string. For example, you can use the Match Node to check if a user's message contains certain keywords and route the conversation accordingly.
 
@@ -52,9 +54,10 @@ If the `Value` input is provided, it will be passed through the corresponding ou
 
 ## Editor Settings
 
-The editor contains a "Case Count" number editor. This controls how many cases, and how many outputs, the node will have. The default value is 2, which means the node will have 2 cases and 2 outputs. Each case can be edited in the editor for the match node. The case number is displayed in the editor for each case.
-
-The default two cases are `YES` and `NO`, which will match those texts in the test string.
+| Setting   | Description                                                                                                                                     | Default Value | Use Input Toggle | Input Data Type |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------- | --------------- |
+| Exclusive | If enabled, then the _first_ matched case will be ran, and all other cases will not be ran. If disabled, then _all_ matching cases will be ran. | Off           | No               | N/A             |
+| Cases     | The list of regular expression cases to match against.                                                                                          | `YES`, `NO`   | No               | N/A             |
 
 </TabItem>
 

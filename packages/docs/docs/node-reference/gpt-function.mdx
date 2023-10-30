@@ -19,6 +19,8 @@ If you want to pass multiple functions into a Chat Node, all of the functions sh
 
 A function is defined using JSON Schema, which is a vocabulary that allows you to annotate and validate JSON documents. For more information on JSON Schema, see the [official website](https://json-schema.org/).
 
+You may use interpolation values in the GPT Function schema the same way you can use them in the Text and Prompt nodes. Wrap your interpolation values in double curly braces, e.g. `{{value}}`.
+
 <Tabs
   defaultValue="inputs"
   values={[
@@ -30,7 +32,9 @@ A function is defined using JSON Schema, which is a vocabulary that allows you t
 
 <TabItem value="inputs">
 
-The GPT Function Node does not have any inputs.
+| Title   | Data Type | Description                                                                                                   | Default Value  | Notes |
+| ------- | --------- | ------------------------------------------------------------------------------------------------------------- | -------------- | ----- |
+| Input N | `string`  | Variable number of inputs for interpolated values such as {{value}} inside the schema definition of the node. | (empty string) |       |
 
 </TabItem>
 
@@ -50,9 +54,9 @@ The GPT Function Node does not have any inputs.
 
 | Setting     | Description                                                                                                         | Default Value | Use Input Toggle | Input Data Type |
 | ----------- | ------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------- | --------------- |
-| Name        | The name of the function. This is the name that GPT will use to call the function in its responses.                 | `newFunction` | No               | `string`        |
-| Description | A description of the function. This is used for documentation purposes and does not affect the function's behavior. | (empty)       | No               | `string`        |
-| Schema      | The JSON Schema that defines the function's parameters.                                                             | (empty)       | No               | `string`        |
+| Name        | The name of the function. This is the name that GPT will use to call the function in its responses.                 | `newFunction` | Yes              | `string`        |
+| Description | A description of the function. This is used for documentation purposes and does not affect the function's behavior. | (empty)       | Yes              | `string`        |
+| Schema      | The JSON Schema that defines the function's parameters.                                                             | (empty)       | Yes              | `object`        |
 
 </TabItem>
 
