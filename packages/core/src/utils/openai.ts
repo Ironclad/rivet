@@ -101,6 +101,14 @@ export const openaiModels = {
     },
     displayName: 'GPT-4 32k (v0314)',
   },
+  'local-model': {
+    maxTokens: Number.MAX_SAFE_INTEGER,
+    cost: {
+      prompt: 0,
+      completion: 0,
+    },
+    displayName: 'Local Model',
+  },
 } satisfies Record<string, OpenAIModel>;
 
 export const openAiModelOptions = Object.entries(openaiModels).map(([id, { displayName }]) => ({

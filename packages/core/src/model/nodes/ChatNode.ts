@@ -46,6 +46,7 @@ export type ChatNodeConfigData = {
   numberOfChoices?: number;
   endpoint?: string;
   overrideModel?: string;
+  overrideMaxTokens?: number;
   headers?: { key: string; value: string }[];
 };
 
@@ -415,6 +416,12 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             dataKey: 'overrideModel',
           },
           {
+            type: 'number',
+            label: 'Custom Max Tokens',
+            dataKey: 'overrideMaxTokens',
+            allowEmpty: true,
+          },
+          {
             type: 'keyValuePair',
             label: 'Headers',
             dataKey: 'headers',
@@ -486,7 +493,20 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
     let { maxTokens } = this.data;
 
-    const openaiModel = openaiModels[model as keyof typeof openaiModels];
+    const openaiModel = {
+      ...(openaiModels[model as keyof typeof openaiModels] ?? {
+        maxTokens: this.data.overrideMaxTokens ?? 8192,
+        cost: {
+          completion: 0,
+          prompt: 0,
+        },
+        displayName: 'Custom Model',
+      }),
+    };
+
+    if (this.data.overrideMaxTokens) {
+      openaiModel.maxTokens = this.data.overrideMaxTokens;
+    }
 
     const isMultiResponse = this.data.useNumberOfChoicesInput || (this.data.numberOfChoices ?? 1) > 1;
 
@@ -512,6 +532,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     };
     const tokenCount = context.tokenizer.getTokenCountForMessages(messages, tokenizerInfo);
 
+    console.dir({ tokenCount, openaiModel });
     if (tokenCount >= openaiModel.maxTokens) {
       throw new Error(
         `The model ${model} can only handle ${openaiModel.maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`,
@@ -744,9 +765,6 @@ export const chatNode = nodeDefinition(ChatNodeImpl, 'Chat');
 
 export function getChatNodeMessages(inputs: Inputs) {
   const prompt = inputs['prompt' as PortId];
-  if (!prompt) {
-    throw new Error('Prompt is required');
-  }
 
   let messages: ChatMessage[] = match(prompt)
     .with({ type: 'chat-message' }, (p) => [p.value])
@@ -758,6 +776,10 @@ export function getChatNodeMessages(inputs: Inputs) {
       p.value.map((v) => ({ type: 'user', message: v, function_call: undefined, name: undefined })),
     )
     .otherwise((p): ChatMessage[] => {
+      if (!p) {
+        return [];
+      }
+
       if (isArrayDataValue(p)) {
         const stringValues = (p.value as readonly unknown[]).map((v) =>
           coerceType(
