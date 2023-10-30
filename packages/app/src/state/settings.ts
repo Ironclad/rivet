@@ -2,6 +2,7 @@ import { atom } from 'recoil';
 import { persistAtom } from './persist.js';
 import { type Settings } from '@ironclad/rivet-core';
 import { isInTauri } from '../utils/tauri';
+import { DEFAULT_CHAT_NODE_TIMEOUT } from '../../../core/src/utils/defaults';
 
 export const settingsState = atom<Settings>({
   key: 'settings',
@@ -11,6 +12,7 @@ export const settingsState = atom<Settings>({
     openAiKey: '',
     openAiOrganization: '',
     openAiEndpoint: '',
+    chatNodeTimeout: DEFAULT_CHAT_NODE_TIMEOUT,
 
     pluginEnv: {},
     pluginSettings: {},

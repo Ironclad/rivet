@@ -1,4 +1,5 @@
 import { getError } from './errors.js';
+import { DEFAULT_CHAT_NODE_TIMEOUT } from './defaults.js';
 
 // https://github.com/openai/openai-node/issues/18#issuecomment-1518715285
 export class EventSourceResponse extends Response {
@@ -52,7 +53,7 @@ export class EventSourceResponse extends Response {
   }
 
   private async raceWithTimeout<T>(promise: Promise<T>, timeout?: number): Promise<T> {
-    const raceTimeout = timeout ?? 30000;
+    const raceTimeout = timeout ?? DEFAULT_CHAT_NODE_TIMEOUT;
 
     // eslint-disable-next-line no-async-promise-executor -- Error handled correctly
     return new Promise(async (resolve, reject) => {

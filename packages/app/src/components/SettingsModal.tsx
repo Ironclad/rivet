@@ -17,7 +17,7 @@ import Button from '@atlaskit/button';
 import { Field, HelperMessage, Label } from '@atlaskit/form';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { entries } from '../../../core/src/utils/typeSafety';
-import { match } from 'ts-pattern';
+import { P, match } from 'ts-pattern';
 import Select from '@atlaskit/select';
 import { type SecretPluginConfigurationSpec, type StringPluginConfigurationSpec } from '../../../core/src/index.js';
 import { SideNavigation, NavigationHeader, ButtonItem, Header, NavigationContent } from '@atlaskit/side-navigation';
@@ -27,6 +27,7 @@ import Toggle from '@atlaskit/toggle';
 import { KeyValuePairs } from './editors/KeyValuePairEditor';
 import { useCheckForUpdate } from '../hooks/useCheckForUpdate';
 import Range from '@atlaskit/range';
+import { DEFAULT_CHAT_NODE_TIMEOUT } from '../../../core/src/utils/defaults';
 
 interface SettingsModalProps {}
 
@@ -248,6 +249,12 @@ const fields = css`
   display: flex;
   flex-direction: column;
   gap: 20px;
+
+  .auto-configurations {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
 `;
 
 export const OpenAiSettingsPage: FC = () => {
@@ -286,6 +293,13 @@ export const OpenAiSettingsPage: FC = () => {
     ]);
   };
 
+  const configureLmStudio = () => {
+    setSettings((s) => ({
+      ...s,
+      openAiEndpoint: 'http://localhost:1234/chat/completions',
+    }));
+  };
+
   return (
     <div css={fields}>
       <Field name="api-key" label="OpenAI API Key">
@@ -314,18 +328,55 @@ export const OpenAiSettingsPage: FC = () => {
           </>
         )}
       </Field>
+      <Field name="timeout" label="OpenAI Timeout (ms)">
+        {() => (
+          <>
+            <TextField
+              type="number"
+              value={settings.chatNodeTimeout ?? DEFAULT_CHAT_NODE_TIMEOUT}
+              onChange={(e) => {
+                if ((e.target as HTMLInputElement).valueAsNumber > 0) {
+                  setSettings((s) => ({
+                    ...s,
+                    chatNodeTimeout: (e.target as HTMLInputElement).valueAsNumber,
+                  }));
+                }
+              }}
+            />
+            <HelperMessage>
+              The timeout for the initial response for a Chat node. If you are using local models, you may need to
+              increase this. Chat nodes are automatically retried if they time out. If you notice a chat node hanging
+              for a long time, you may want to increase this.
+            </HelperMessage>
+          </>
+        )}
+      </Field>
       {!settings.openAiEndpoint && (
-        <div className="configure-azure">
-          <Button appearance="primary" onClick={configureAzure}>
-            Configure For Azure OpenAI
-          </Button>
-          <HelperMessage>
-            You can click this button to set up a configuration for Azure OpenAI. You will have to fill in placeholder
-            fields in the OpenAI Endpoint, and fill in your API key header.
-          </HelperMessage>
-        </div>
+        <Field name="autoConfiguration" label="Auto Configuration">
+          {() => (
+            <div className="auto-configurations">
+              <div className="configure-azure">
+                <Button appearance="primary" onClick={configureAzure}>
+                  Configure For Azure OpenAI
+                </Button>
+                <HelperMessage>
+                  You can click this button to set up a configuration for Azure OpenAI. You will have to fill in
+                  placeholder fields in the OpenAI Endpoint, and fill in your API key header.
+                </HelperMessage>
+              </div>
+              <div className="configure-lmstudio">
+                <Button appearance="primary" onClick={configureLmStudio}>
+                  Configure For LM Studio
+                </Button>
+                <HelperMessage>
+                  You can click this button to set up a configuration for LM Studio. You will also need to either use
+                  the Node executor, or enable CORS in your LM Studio settings.
+                </HelperMessage>
+              </div>
+            </div>
+          )}
+        </Field>
       )}
-
       <Field name="organization" label="OpenAI Endpoint">
         {() => (
           <>

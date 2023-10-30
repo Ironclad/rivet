@@ -15,6 +15,7 @@ import { readFile } from 'node:fs/promises';
 import { type RivetDebuggerServer, type Settings } from './index.js';
 import { NodeNativeApi } from './native/NodeNativeApi.js';
 import * as events from 'node:events';
+import { DEFAULT_CHAT_NODE_TIMEOUT } from '../../core/src/utils/defaults.js';
 
 export async function loadProjectFromFile(path: string): Promise<Project> {
   const content = await readFile(path, { encoding: 'utf8' });
@@ -72,6 +73,7 @@ export function createProcessor(
             pluginSettings: options.pluginSettings ?? {},
             recordingPlaybackLatency: 1000,
             chatNodeHeaders: options.chatNodeHeaders ?? {},
+            chatNodeTimeout: options.chatNodeTimeout ?? DEFAULT_CHAT_NODE_TIMEOUT,
           } satisfies Required<Settings>,
           getChatNodeEndpoint: options.getChatNodeEndpoint,
         },

@@ -14,5 +14,8 @@ export interface Settings<PluginSettings = Record<string, Record<string, unknown
   openAiOrganization?: string;
   openAiEndpoint?: string;
 
+  /** Timeout in milliseconds before retrying a chat node call. */
+  chatNodeTimeout?: number;
+
   chatNodeHeaders?: Record<string, string>;
 }

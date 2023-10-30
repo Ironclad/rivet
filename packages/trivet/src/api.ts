@@ -9,7 +9,13 @@ import {
   inferType,
 } from '@ironclad/rivet-core';
 import { cloneDeep, keyBy, mapValues, omit } from 'lodash-es';
-import { type TrivetGraphRunner, type TrivetOpts, type TrivetResults, type TrivetTestCaseResult } from './trivetTypes.js';
+import {
+  type TrivetGraphRunner,
+  type TrivetOpts,
+  type TrivetResults,
+  type TrivetTestCaseResult,
+} from './trivetTypes.js';
+import { DEFAULT_CHAT_NODE_TIMEOUT } from '../../core/src/utils/defaults.js';
 
 const TRUTHY_STRINGS = new Set(['true', 'TRUE']);
 
@@ -58,6 +64,7 @@ export function createTestGraphRunner(opts: { openAiKey: string; executor?: 'nod
           pluginSettings: {},
           recordingPlaybackLatency: 1000,
           chatNodeHeaders: {},
+          chatNodeTimeout: DEFAULT_CHAT_NODE_TIMEOUT,
         } satisfies Required<Settings>,
       },
       inputs,

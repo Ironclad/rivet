@@ -12,7 +12,6 @@ import { addWarning } from '../../utils/outputs.js';
 import {
   type ChatCompletionOptions,
   type ChatCompletionRequestMessage,
-  DEFAULT_CHAT_ENDPOINT,
   OpenAIError,
   openAiModelOptions,
   openaiModels,
@@ -29,6 +28,7 @@ import { getInputOrData, cleanHeaders } from '../../utils/inputs.js';
 import { getError } from '../../utils/errors.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import type { TokenizerCallInfo } from '../../integrations/Tokenizer.js';
+import { DEFAULT_CHAT_ENDPOINT } from '../../utils/defaults.js';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 
@@ -562,6 +562,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             },
             headers: allAdditionalHeaders,
             signal: context.signal,
+            timeout: context.settings.chatNodeTimeout,
             ...options,
           });
 

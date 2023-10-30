@@ -17,6 +17,7 @@ import { mapValues } from '../utils/typeSafety.js';
 import { getProcessorEvents, getProcessorSSEStream, getSingleNodeStream } from './streaming.js';
 import { GraphProcessor } from '../model/GraphProcessor.js';
 import { deserializeProject } from '../utils/serialization/serialization.js';
+import { DEFAULT_CHAT_NODE_TIMEOUT } from '../utils/defaults.js';
 
 export type LooseDataValue = DataValue | string | number | boolean;
 
@@ -169,6 +170,7 @@ export function coreCreateProcessor(project: Project, options: RunGraphOptions) 
             pluginSettings: options.pluginSettings ?? {},
             recordingPlaybackLatency: 1000,
             chatNodeHeaders: options.chatNodeHeaders ?? {},
+            chatNodeTimeout: options.chatNodeTimeout ?? DEFAULT_CHAT_NODE_TIMEOUT,
           } satisfies Required<Settings>,
           getChatNodeEndpoint: options.getChatNodeEndpoint,
         },

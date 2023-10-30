@@ -1,3 +1,4 @@
+import { DEFAULT_CHAT_NODE_TIMEOUT } from './defaults.js';
 import fetchEventSource from './fetchEventSource.js';
 
 // https://github.com/openai/openai-node/issues/18#issuecomment-1518715285
@@ -133,6 +134,10 @@ export type ChatCompletionOptions = {
   auth: { apiKey: string; organization?: string };
   headers?: Record<string, string>;
   signal?: AbortSignal;
+
+  /** The timeout in milliseconds before an initial response, before retrying. */
+  timeout?: number;
+
   model: string;
   messages: ChatCompletionRequestMessage[];
   temperature?: number;
@@ -203,19 +208,15 @@ export type ChatCompletionFunction = {
   parameters: object;
 };
 
-export const DEFAULT_CHAT_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
-
 export async function* streamChatCompletions({
   endpoint,
   auth,
   signal,
   headers,
+  timeout,
   ...rest
 }: ChatCompletionOptions): AsyncGenerator<ChatCompletionChunk> {
   const abortSignal = signal ?? new AbortController().signal;
-
-  // Turn off timeout because local models can be slow, TODO configurable timeout
-  const timeout = endpoint === DEFAULT_CHAT_ENDPOINT ? 30000 : 10000000;
 
   const response = await fetchEventSource(
     endpoint,
@@ -233,7 +234,7 @@ export async function* streamChatCompletions({
       }),
       signal: abortSignal,
     },
-    timeout,
+    timeout ?? DEFAULT_CHAT_NODE_TIMEOUT,
   );
 
   let hadChunks = false;
