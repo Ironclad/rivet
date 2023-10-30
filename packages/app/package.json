@@ -44,6 +44,7 @@
     "@atlaskit/modal-dialog": "^12.8.3",
     "@atlaskit/popup": "^1.11.2",
     "@atlaskit/portal": "^4.3.6",
+    "@atlaskit/range": "^7.1.7",
     "@atlaskit/select": "^16.7.3",
     "@atlaskit/side-navigation": "^3.0.0",
     "@atlaskit/tabs": "^13.4.9",

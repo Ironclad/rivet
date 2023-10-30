@@ -9,6 +9,7 @@ import {
   skippedMaxVersionState,
   themeState,
   themes,
+  zoomSensitivityState,
 } from '../state/settings.js';
 import Modal, { ModalTransition, ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
 import TextField from '@atlaskit/textfield';
@@ -25,6 +26,7 @@ import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
 import { KeyValuePairs } from './editors/KeyValuePairEditor';
 import { useCheckForUpdate } from '../hooks/useCheckForUpdate';
+import Range from '@atlaskit/range';
 
 interface SettingsModalProps {}
 
@@ -116,6 +118,7 @@ export const GeneralSettingsPage: FC = () => {
   const [recordExecutions, setRecordExecutions] = useRecoilState(recordExecutionsState);
   const [defaultExecutor, setDefaultExecutor] = useRecoilState(defaultExecutorState);
   const [previousDataPerNodeToKeep, setPreviousDataPerNodeToKeep] = useRecoilState(previousDataPerNodeToKeepState);
+  const [zoomSensitivity, setZoomSensitivity] = useRecoilState(zoomSensitivityState);
 
   return (
     <div css={fields}>
@@ -207,6 +210,32 @@ export const GeneralSettingsPage: FC = () => {
             <HelperMessage>
               The number of previous data values to keep per node. Increasing this will increase memory usage, but allow
               you to go back further in time. -1 to disable and keep all.
+            </HelperMessage>
+          </>
+        )}
+      </Field>
+      <Field name="zoomSensitivity">
+        {() => (
+          <>
+            <Label htmlFor="zoomSensitivity" testId="zoomSensitivity">
+              Zoom sensitivity
+            </Label>
+            <div className="toggle-field">
+              <Range
+                min={0.01}
+                max={2}
+                step={0.01}
+                value={zoomSensitivity}
+                onChange={(value) => {
+                  if (Number.isNaN(value) || value == null) {
+                    return;
+                  }
+                  setZoomSensitivity(value);
+                }}
+              />
+            </div>
+            <HelperMessage>
+              The sensitivity of the zoom when using the mouse wheel. Lower values will zoom slower.
             </HelperMessage>
           </>
         )}

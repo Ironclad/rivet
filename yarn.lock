@@ -666,6 +666,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@atlaskit/range@npm:^7.1.7":
+  version: 7.1.7
+  resolution: "@atlaskit/range@npm:7.1.7"
+  dependencies:
+    "@atlaskit/ds-lib": "npm:^2.2.0"
+    "@atlaskit/theme": "npm:^12.5.0"
+    "@atlaskit/tokens": "npm:^1.14.0"
+    "@babel/runtime": "npm:^7.0.0"
+    "@emotion/react": "npm:^11.7.1"
+  peerDependencies:
+    react: ^16.8.0
+  checksum: 8a8c20c77e1b28996164c8fce448f9df87fe5db75a64ad7c128441f18fe8ead713e0d24ee05b32bc93d3dca0ebee2e716d2f0d5c4dd885a785c753f7876c1ab4
+  languageName: node
+  linkType: hard
+
 "@atlaskit/select@npm:^16.7.3":
   version: 16.7.3
   resolution: "@atlaskit/select@npm:16.7.3"
@@ -4017,6 +4032,7 @@ __metadata:
     "@atlaskit/modal-dialog": "npm:^12.8.3"
     "@atlaskit/popup": "npm:^1.11.2"
     "@atlaskit/portal": "npm:^4.3.6"
+    "@atlaskit/range": "npm:^7.1.7"
     "@atlaskit/select": "npm:^16.7.3"
     "@atlaskit/side-navigation": "npm:^3.0.0"
     "@atlaskit/tabs": "npm:^13.4.9"

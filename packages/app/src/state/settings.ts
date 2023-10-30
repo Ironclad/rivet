@@ -87,3 +87,9 @@ export const updateStatusState = atom<string | undefined>({
   key: 'updateStatus',
   default: undefined,
 });
+
+export const zoomSensitivityState = atom<number>({
+  key: 'zoomSensitivity',
+  default: 0.25,
+  effects_UNSTABLE: [persistAtom],
+});

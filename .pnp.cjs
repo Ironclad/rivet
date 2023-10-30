@@ -1206,6 +1206,33 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@atlaskit/range", [\
+      ["npm:7.1.7", {\
+        "packageLocation": "./.yarn/cache/@atlaskit-range-npm-7.1.7-77467f7244-8a8c20c77e.zip/node_modules/@atlaskit/range/",\
+        "packageDependencies": [\
+          ["@atlaskit/range", "npm:7.1.7"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:7.1.7", {\
+        "packageLocation": "./.yarn/__virtual__/@atlaskit-range-virtual-f945bec183/0/cache/@atlaskit-range-npm-7.1.7-77467f7244-8a8c20c77e.zip/node_modules/@atlaskit/range/",\
+        "packageDependencies": [\
+          ["@atlaskit/range", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:7.1.7"],\
+          ["@atlaskit/ds-lib", "virtual:d4b2e85144327fffab969fba84e58124b30b0034e793be0b9d0a77144493541b6059b5467b63c703967cf3e2052265dd7c6d487dfbce3accec8199f6489a4147#npm:2.2.0"],\
+          ["@atlaskit/theme", "virtual:7af515959f3d80af109cbfbf20fcbe37b63e407f5b6acd34720ea6b97b208d570b2d522b703e160adea455751c5944d27e119f5b9e55319a365b511f7efe073c#npm:12.6.0"],\
+          ["@atlaskit/tokens", "virtual:d4b2e85144327fffab969fba84e58124b30b0034e793be0b9d0a77144493541b6059b5467b63c703967cf3e2052265dd7c6d487dfbce3accec8199f6489a4147#npm:1.20.0"],\
+          ["@babel/runtime", "npm:7.22.5"],\
+          ["@emotion/react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:11.11.1"],\
+          ["@types/react", "npm:18.2.31"],\
+          ["react", "npm:18.2.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@atlaskit/select", [\
       ["npm:16.7.3", {\
         "packageLocation": "./.yarn/cache/@atlaskit-select-npm-16.7.3-9002dac0c8-2065577e18.zip/node_modules/@atlaskit/select/",\
@@ -6852,6 +6879,7 @@ const RAW_RUNTIME_STATE =
           ["@atlaskit/modal-dialog", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:12.8.3"],\
           ["@atlaskit/popup", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:1.11.2"],\
           ["@atlaskit/portal", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.3.6"],\
+          ["@atlaskit/range", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:7.1.7"],\
           ["@atlaskit/select", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:16.7.3"],\
           ["@atlaskit/side-navigation", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:3.0.0"],\
           ["@atlaskit/tabs", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:13.4.9"],\

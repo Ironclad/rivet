@@ -43,6 +43,7 @@ import { useCopyNodesHotkeys } from '../hooks/useCopyNodesHotkeys';
 import { useCanvasHotkeys } from '../hooks/useCanvasHotkeys';
 import { useSearchGraph } from '../hooks/useSearchGraph';
 import Portal from '@atlaskit/portal';
+import { zoomSensitivityState } from '../state/settings';
 
 const styles = css`
   width: 100vw;
@@ -373,6 +374,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     return false;
   };
 
+  const zoomSensitivity = useRecoilValue(zoomSensitivityState);
+
   // I think safari deals with wheel events differently, so we need to throttle the zooming
   // because otherwise it lags like CRAZY
   const zoomDebounced = useThrottleFn(
@@ -381,7 +384,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         return;
       }
 
-      const zoomSpeed = 0.025;
+      const zoomSpeed = zoomSensitivity / 10; // 0.25 -> 0.025;
 
       const zoomFactor = wheelDelta < 0 ? 1 + zoomSpeed : 1 - zoomSpeed;
       const newZoom = canvasPosition.zoom * zoomFactor;
