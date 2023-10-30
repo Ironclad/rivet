@@ -53,7 +53,13 @@ export const Port: FC<{
         >
           {canDragTo && <div className={clsx('port-hover-area')} />}
         </div>
-        <div className="port-label">{title}</div>
+        <div
+          className="port-label"
+          onMouseOver={(e) => onMouseOver?.(e, nodeId, input, id)}
+          onMouseOut={(e) => onMouseOut?.(e, nodeId, input, id)}
+        >
+          {title}
+        </div>
       </div>
     );
   },

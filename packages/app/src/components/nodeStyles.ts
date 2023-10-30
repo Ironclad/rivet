@@ -233,7 +233,7 @@ export const nodeStyles = css`
     white-space: nowrap;
     user-select: none;
     opacity: 0.5;
-    transition: opacity 0.2s ease-out;
+    cursor: default;
   }
 
   .node.zoomedOut .port-label {
