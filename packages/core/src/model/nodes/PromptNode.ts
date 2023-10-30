@@ -214,11 +214,20 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
 
     const name = getInputOrData(this.data, inputs, 'name', 'string');
 
+    const functionCall = this.data.enableFunctionCall
+      ? coerceType(inputs['function-call' as PortId], 'object')
+      : undefined;
+
+    // GPT is weird - the arguments should be a stringified JSON object https://platform.openai.com/docs/api-reference/chat/create
+    if (functionCall?.arguments && typeof functionCall.arguments !== 'string') {
+      functionCall.arguments = JSON.stringify(functionCall.arguments);
+    }
+
     const message: ChatMessage = {
       type: type as 'assistant' | 'system' | 'user' | 'function',
       message: outputValue,
       name,
-      function_call: this.data.enableFunctionCall ? coerceType(inputs['function-call' as PortId], 'object') : undefined,
+      function_call: functionCall,
     };
 
     const outputs: Outputs = {

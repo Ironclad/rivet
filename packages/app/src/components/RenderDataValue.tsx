@@ -50,6 +50,14 @@ const scalarRenderers: {
         ) : (
           <pre className="pre-wrap">{value.value.message}</pre>
         )}
+        {value.value.function_call && (
+          <div className="function-call">
+            <h4>Function Call:</h4>
+            <div className="pre-wrap">
+              <RenderDataValue value={inferType(value.value.function_call)} />
+            </div>
+          </div>
+        )}
       </div>
     );
   },

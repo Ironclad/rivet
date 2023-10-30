@@ -550,4 +550,15 @@ export const nodeStyles = css`
     transform: translate(-50%, -50%);
     /* background-color: rgba(1, 1, 1, 0.5); */
   }
+
+  .node-output .function-call {
+    h4 {
+      margin-top: 0;
+      margin-bottom: 0;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: normal;
+      color: var(--primary-text);
+    }
+  }
 `;
