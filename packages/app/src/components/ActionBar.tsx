@@ -18,6 +18,9 @@ import { CopyAsTestCaseModal } from './CopyAsTestCaseModal';
 import { useToggle } from 'ahooks';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { GentraceInteractors } from './gentrace/GentraceInteractors';
+import { projectMetadataState } from '../state/savedGraphs';
+import { graphMetadataState } from '../state/graph';
+import { type GraphId } from '@ironclad/rivet-core';
 
 const styles = css`
   position: fixed;
@@ -123,7 +126,7 @@ const styles = css`
 `;
 
 export type ActionBarProps = {
-  onRunGraph?: () => void;
+  onRunGraph?: (options: { graphId?: GraphId }) => void;
   onRunTests?: () => void;
   onAbortGraph?: () => void;
   onPauseGraph?: () => void;
@@ -137,6 +140,8 @@ export const ActionBar: FC<ActionBarProps> = ({
   onPauseGraph,
   onResumeGraph,
 }) => {
+  const graphMetadata = useRecoilValue(graphMetadataState);
+  const projectMetadata = useRecoilValue(projectMetadataState);
   const lastRecording = useRecoilValue(lastRecordingState);
   const saveRecording = useSaveRecording();
 
@@ -158,6 +163,8 @@ export const ActionBar: FC<ActionBarProps> = ({
   const isGentracePluginEnabled = !!gentracePlugin;
 
   const canRun = (remoteDebugger.started && !remoteDebugger.reconnecting) || selectedExecutor === 'browser';
+  const hasMainGraph = projectMetadata.mainGraphId != null;
+  const isMainGraph = hasMainGraph && graphMetadata?.id === projectMetadata.mainGraphId;
 
   return (
     <div css={styles}>
@@ -208,7 +215,7 @@ export const ActionBar: FC<ActionBarProps> = ({
       )}
       <div className={clsx('run-button', { running: graphRunning, recording: !!loadedRecording })}>
         {canRun && (
-          <button onClick={graphRunning ? onAbortGraph : onRunGraph}>
+          <button onClick={() => (graphRunning ? onAbortGraph?.() : onRunGraph?.({ graphId: graphMetadata?.id }))}>
             {graphRunning ? (
               <>
                 Abort <MultiplyIcon />
@@ -219,12 +226,31 @@ export const ActionBar: FC<ActionBarProps> = ({
               </>
             ) : (
               <>
-                Run <ChevronRightIcon />
+                {hasMainGraph && !isMainGraph ? `Run ${graphMetadata?.name}` : 'Run'} <ChevronRightIcon />
               </>
             )}
           </button>
         )}
       </div>
+      {hasMainGraph && !isMainGraph && !graphRunning && (
+        <div className={clsx('run-button', { running: graphRunning })}>
+          {canRun && (
+            <button
+              onClick={() => (graphRunning ? onAbortGraph?.() : onRunGraph?.({ graphId: projectMetadata.mainGraphId }))}
+            >
+              {graphRunning ? (
+                <>
+                  Abort <MultiplyIcon />
+                </>
+              ) : (
+                <>
+                  Run Main <ChevronRightIcon />
+                </>
+              )}
+            </button>
+          )}
+        </div>
+      )}
       <Popup
         isOpen={menuIsOpen}
         onClose={toggleMenuIsOpen.setLeft}
