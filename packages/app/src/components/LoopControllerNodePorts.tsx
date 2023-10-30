@@ -4,6 +4,7 @@ import {
   type NodeConnection,
   type NodeId,
   type PortId,
+  type NodeOutputDefinition,
 } from '@ironclad/rivet-core';
 import { type FC, type MouseEvent } from 'react';
 import { useNodeIO } from '../hooks/useGetNodeIO.js';
@@ -25,6 +26,20 @@ export type NodePortsProps = {
     isInput: boolean,
   ) => void;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
+  onPortMouseOver?: (
+    event: MouseEvent<HTMLElement>,
+    nodeId: NodeId,
+    isInput: boolean,
+    portId: PortId,
+    definition: NodeInputDefinition | NodeOutputDefinition,
+  ) => void;
+  onPortMouseOut?: (
+    event: MouseEvent<HTMLElement>,
+    nodeId: NodeId,
+    isInput: boolean,
+    portId: PortId,
+    definition: NodeInputDefinition | NodeOutputDefinition,
+  ) => void;
 };
 
 export const LoopControllerNodePorts: FC<NodePortsProps> = ({
@@ -34,6 +49,8 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
   closestPortToDraggingWire,
   onWireStartDrag,
   onWireEndDrag,
+  onPortMouseOver,
+  onPortMouseOut,
 }) => {
   const { inputDefinitions, outputDefinitions } = useNodeIO(node.id)!;
 
@@ -98,8 +115,11 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
                   closest={
                     closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === input.id
                   }
+                  definition={input}
                   onMouseDown={handlePortMouseDown}
                   onMouseUp={handlePortMouseUp}
+                  onMouseOver={onPortMouseOver}
+                  onMouseOut={onPortMouseOut}
                 />
               );
             })}
@@ -120,8 +140,11 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
                   closest={
                     closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === output.id
                   }
+                  definition={output}
                   onMouseDown={handlePortMouseDown}
                   onMouseUp={handlePortMouseUp}
+                  onMouseOver={onPortMouseOver}
+                  onMouseOut={onPortMouseOut}
                 />
               );
             })}
@@ -150,8 +173,11 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
                     closest={
                       closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === input.id
                     }
+                    definition={input}
                     onMouseDown={handlePortMouseDown}
                     onMouseUp={handlePortMouseUp}
+                    onMouseOver={onPortMouseOver}
+                    onMouseOut={onPortMouseOut}
                   />
                 );
               })}
@@ -176,8 +202,11 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
                     closest={
                       closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === output.id
                     }
+                    definition={output}
                     onMouseDown={handlePortMouseDown}
                     onMouseUp={handlePortMouseUp}
+                    onMouseOver={onPortMouseOver}
+                    onMouseOut={onPortMouseOut}
                   />
                 );
               })}
