@@ -44,6 +44,7 @@ import { useCanvasHotkeys } from '../hooks/useCanvasHotkeys';
 import { useSearchGraph } from '../hooks/useSearchGraph';
 import Portal from '@atlaskit/portal';
 import { zoomSensitivityState } from '../state/settings';
+import { MouseIcon } from './MouseIcon';
 
 const styles = css`
   width: 100vw;
@@ -591,6 +592,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           backgroundSize: `${20 * canvasPosition.zoom}px ${20 * canvasPosition.zoom}px`,
         }}
       >
+        <MouseIcon />
         <DebugOverlay enabled={false} />
         <div
           className="canvas-contents"

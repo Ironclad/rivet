@@ -312,7 +312,7 @@ function getFolderNames(folderedGraphs: NodeGraphFolderItem[]): string[] {
   return folderNames;
 }
 
-export const GraphList: FC<{ onRunGraph?: (graphId: string) => void }> = ({ onRunGraph }) => {
+export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onRunGraph }) => {
   const [graph, setGraph] = useRecoilState(graphState);
   const [savedGraphs, setSavedGraphs] = useRecoilState(savedGraphsState);
   const [searchText, setSearchText] = useState('');
