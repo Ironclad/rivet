@@ -37,7 +37,7 @@ export const nodeStyles = css`
     box-shadow: 10px 10px 16px rgba(0, 0, 0, 0.4), 0 0 10px var(--shadow-primary);
   }
 
-  .node:hover:not(.isComment),
+  .node.selected:not(.isComment),
   .node.selected:not(.isComment) {
     border-color: var(--primary);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 0 10px var(--shadow-primary);
@@ -240,7 +240,7 @@ export const nodeStyles = css`
     display: none;
   }
 
-  .node:hover .port-label,
+  .node.selected .port-label,
   .node.overlayNode .port-label {
     opacity: 1;
   }

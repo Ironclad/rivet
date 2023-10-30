@@ -45,9 +45,20 @@ type WireLayerProps = {
   draggingWire?: WireDef;
   highlightedNodes?: NodeId[];
   portPositions: PortPositions;
+  highlightedPort?: {
+    nodeId: NodeId;
+    isInput: boolean;
+    portId: PortId;
+  };
 };
 
-export const WireLayer: FC<WireLayerProps> = ({ connections, draggingWire, highlightedNodes, portPositions }) => {
+export const WireLayer: FC<WireLayerProps> = ({
+  connections,
+  draggingWire,
+  highlightedNodes,
+  portPositions,
+  highlightedPort,
+}) => {
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const setClosestPort = useSetRecoilState(draggingWireClosestPortState);
 
@@ -138,10 +149,19 @@ export const WireLayer: FC<WireLayerProps> = ({ connections, draggingWire, highl
           </ErrorBoundary>
         )}
         {connections.map((connection) => {
-          const highlighted =
-            highlightedNodes?.includes(connection.inputNodeId) ||
-            highlightedNodes?.includes(connection.outputNodeId) ||
-            lastRun[connection.inputNodeId]?.some((run) => run.data.status?.type === 'running');
+          const isHighlightedNode =
+            highlightedNodes?.includes(connection.inputNodeId) || highlightedNodes?.includes(connection.outputNodeId);
+
+          const isCurrentlyRunning = lastRun[connection.inputNodeId]?.some(
+            (run) => run.data.status?.type === 'running',
+          );
+
+          const isHighlightedPort =
+            highlightedPort &&
+            (highlightedPort.isInput ? connection.inputId : connection.outputId) === highlightedPort.portId &&
+            (highlightedPort.isInput ? connection.inputNodeId : connection.outputNodeId) === highlightedPort.nodeId;
+
+          const highlighted = isHighlightedNode || isCurrentlyRunning || isHighlightedPort;
           return (
             <ErrorBoundary fallback={<></>} key={`wire-${connection.inputId}-${connection.inputNodeId}`}>
               <ConditionallyRenderWire

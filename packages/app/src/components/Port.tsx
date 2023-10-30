@@ -12,31 +12,49 @@ export const Port: FC<{
   closest: boolean;
   onMouseDown?: (event: MouseEvent<HTMLDivElement>, port: PortId, isInput: boolean) => void;
   onMouseUp?: (event: MouseEvent<HTMLDivElement>, port: PortId) => void;
-}> = memo(({ input = false, title, nodeId, id, connected, canDragTo, closest, onMouseDown, onMouseUp }) => {
-  const ref = useRef<HTMLDivElement>(null);
+  onMouseOver?: (event: MouseEvent<HTMLDivElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
+  onMouseOut?: (event: MouseEvent<HTMLDivElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
+}> = memo(
+  ({
+    input = false,
+    title,
+    nodeId,
+    id,
+    connected,
+    canDragTo,
+    closest,
+    onMouseDown,
+    onMouseUp,
+    onMouseOver,
+    onMouseOut,
+  }) => {
+    const ref = useRef<HTMLDivElement>(null);
 
-  return (
-    <div
-      key={id}
-      className={clsx('port', {
-        connected,
-        closest,
-      })}
-    >
+    return (
       <div
-        ref={ref}
-        className={clsx('port-circle', { 'input-port': input, 'output-port': !input })}
-        onMouseDown={(e) => {
-          return onMouseDown?.(e, id, input);
-        }}
-        onMouseUp={(e) => onMouseUp?.(e, id)}
-        data-portid={id}
-        data-porttype={input ? 'input' : 'output'}
-        data-nodeid={nodeId}
+        key={id}
+        className={clsx('port', {
+          connected,
+          closest,
+        })}
       >
-        {canDragTo && <div className={clsx('port-hover-area')} />}
+        <div
+          ref={ref}
+          className={clsx('port-circle', { 'input-port': input, 'output-port': !input })}
+          onMouseDown={(e) => {
+            return onMouseDown?.(e, id, input);
+          }}
+          onMouseUp={(e) => onMouseUp?.(e, id)}
+          onMouseOver={(e) => onMouseOver?.(e, nodeId, input, id)}
+          onMouseOut={(e) => onMouseOut?.(e, nodeId, input, id)}
+          data-portid={id}
+          data-porttype={input ? 'input' : 'output'}
+          data-nodeid={nodeId}
+        >
+          {canDragTo && <div className={clsx('port-hover-area')} />}
+        </div>
+        <div className="port-label">{title}</div>
       </div>
-      <div className="port-label">{title}</div>
-    </div>
-  );
-});
+    );
+  },
+);

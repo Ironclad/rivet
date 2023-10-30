@@ -9,7 +9,7 @@ import { WireLayer } from './WireLayer.js';
 import { useContextMenu } from '../hooks/useContextMenu.js';
 import { useDraggingNode } from '../hooks/useDraggingNode.js';
 import { useDraggingWire } from '../hooks/useDraggingWire.js';
-import { type ChartNode, type CommentNode, type NodeConnection, type NodeId } from '@ironclad/rivet-core';
+import { type PortId, type ChartNode, type CommentNode, type NodeConnection, type NodeId } from '@ironclad/rivet-core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   type CanvasPosition,
@@ -398,9 +398,25 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   });
 
   const [hoveringNode, setHoveringNode] = useState<NodeId | undefined>();
+  const [hoveringPort, setHoveringPort] = useState<
+    | {
+        nodeId: NodeId;
+        isInput: boolean;
+        portId: PortId;
+      }
+    | undefined
+  >();
 
   const onNodeMouseOver = useStableCallback((_e: any, nodeId: NodeId) => {
     setHoveringNode(nodeId);
+  });
+
+  const onPortMouseOver = useStableCallback((_e: any, nodeId: NodeId, isInput: boolean, portId: PortId) => {
+    setHoveringPort({ nodeId, isInput, portId });
+  });
+
+  const onPortMouseOut = useStableCallback((_e: any, nodeId: NodeId, isInput: boolean, portId: PortId) => {
+    setHoveringPort(undefined);
   });
 
   const onNodeMouseOut = useStableCallback(() => {
@@ -414,11 +430,11 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
       hNodes.add(editingNodeId);
     }
 
-    if (hoveringNode) {
+    if (hoveringNode && !hoveringPort) {
       hNodes.add(hoveringNode);
     }
     return [...hNodes];
-  }, [selectedNodeIds, hoveringNode, editingNodeId]);
+  }, [selectedNodeIds, hoveringNode, hoveringPort, editingNodeId]);
 
   const nodeSelected = useStableCallback((node: ChartNode, multi: boolean) => {
     onNodeSelected?.(node, multi);
@@ -529,6 +545,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
                   onNodeSizeChanged={onNodeSizeChanged}
                   onMouseOver={onNodeMouseOver}
                   onMouseOut={onNodeMouseOut}
+                  onPortMouseOver={onPortMouseOver}
+                  onPortMouseOut={onPortMouseOut}
                 />
               );
             })}
@@ -594,6 +612,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           connections={connections}
           draggingWire={draggingWire}
           highlightedNodes={highlightedNodes}
+          highlightedPort={hoveringPort}
           portPositions={nodePortPositions}
         />
       </div>

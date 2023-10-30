@@ -21,6 +21,8 @@ export type NodePortsProps = {
     isInput: boolean,
   ) => void;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
+  onPortMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
+  onPortMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
 };
 
 export const NodePortsRenderer: FC<NodePortsProps> = ({ ...props }) => {
@@ -38,6 +40,8 @@ export const NodePorts: FC<NodePortsProps> = ({
   closestPortToDraggingWire,
   onWireStartDrag,
   onWireEndDrag,
+  onPortMouseOver,
+  onPortMouseOut,
 }) => {
   const { inputDefinitions, outputDefinitions } = useNodeIO(node.id)!;
 
@@ -72,6 +76,8 @@ export const NodePorts: FC<NodePortsProps> = ({
               closest={closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === input.id}
               onMouseDown={handlePortMouseDown}
               onMouseUp={handlePortMouseUp}
+              onMouseOver={onPortMouseOver}
+              onMouseOut={onPortMouseOut}
             />
           );
         })}
@@ -92,6 +98,8 @@ export const NodePorts: FC<NodePortsProps> = ({
               closest={closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === output.id}
               onMouseDown={handlePortMouseDown}
               onMouseUp={handlePortMouseUp}
+              onMouseOver={onPortMouseOver}
+              onMouseOut={onPortMouseOut}
             />
           );
         })}

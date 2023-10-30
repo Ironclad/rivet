@@ -22,6 +22,8 @@ interface DraggableNodeProps {
   onNodeSizeChanged?: (node: ChartNode, newWidth: number, newHeight: number) => void;
   onMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId) => void;
   onMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId) => void;
+  onPortMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
+  onPortMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
 }
 
 export const DraggableNode: FC<DraggableNodeProps> = ({
@@ -36,6 +38,8 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
   onNodeSizeChanged,
   onMouseOver,
   onMouseOut,
+  onPortMouseOver,
+  onPortMouseOut,
 }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: node.id });
 
@@ -62,6 +66,8 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
         onNodeSizeChanged={(width, height) => onNodeSizeChanged?.(node, width, height)}
         onMouseOver={onMouseOver}
         onMouseOut={onMouseOut}
+        onPortMouseOver={onPortMouseOver}
+        onPortMouseOut={onPortMouseOut}
       />
     </ErrorBoundary>
   );

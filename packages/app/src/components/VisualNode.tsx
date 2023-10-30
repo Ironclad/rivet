@@ -58,6 +58,8 @@ export type VisualNodeProps = {
   onNodeSizeChanged?: (newWidth: number, newHeight: number) => void;
   onMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId) => void;
   onMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId) => void;
+  onPortMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
+  onPortMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
 
   nodeAttributes?: HTMLAttributes<HTMLDivElement>;
   handleAttributes?: HTMLAttributes<HTMLDivElement>;
@@ -84,6 +86,8 @@ export const VisualNode = memo(
         onNodeSizeChanged,
         onMouseOver,
         onMouseOut,
+        onPortMouseOver,
+        onPortMouseOut,
       },
       ref,
     ) => {
@@ -185,6 +189,8 @@ export const VisualNode = memo(
               handleAttributes={handleAttributes}
               onSelectNode={onSelectNode}
               onStartEditing={onStartEditing}
+              onPortMouseOver={onPortMouseOver}
+              onPortMouseOut={onPortMouseOut}
             />
           ) : (
             <NormalVisualNodeContent
@@ -196,6 +202,8 @@ export const VisualNode = memo(
               onStartEditing={onStartEditing}
               onNodeSizeChanged={onNodeSizeChanged}
               handleAttributes={handleAttributes}
+              onPortMouseOver={onPortMouseOver}
+              onPortMouseOut={onPortMouseOut}
             />
           )}
         </div>
@@ -212,8 +220,20 @@ const ZoomedOutVisualNodeContent: FC<{
   onStartEditing?: () => void;
   onWireStartDrag?: (event: MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => void;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
+  onPortMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
+  onPortMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
 }> = memo(
-  ({ node, connections = [], handleAttributes, onSelectNode, onStartEditing, onWireStartDrag, onWireEndDrag }) => {
+  ({
+    node,
+    connections = [],
+    handleAttributes,
+    onSelectNode,
+    onStartEditing,
+    onWireStartDrag,
+    onWireEndDrag,
+    onPortMouseOver,
+    onPortMouseOut,
+  }) => {
     const lastRun = useRecoilValue(lastRunData(node.id));
     const processPage = useRecoilValue(selectedProcessPage(node.id));
     useDependsOnPlugins();
@@ -293,6 +313,8 @@ const ZoomedOutVisualNodeContent: FC<{
             onWireEndDrag={onWireEndDrag}
             draggingWire={draggingWire}
             closestPortToDraggingWire={closestPortToDraggingWire}
+            onPortMouseOver={onPortMouseOver}
+            onPortMouseOut={onPortMouseOut}
           />
         )}
       </>
@@ -314,6 +336,8 @@ const NormalVisualNodeContent: FC<{
   onSelectNode?: (multi: boolean) => void;
   onStartEditing?: () => void;
   onNodeSizeChanged?: (newWidth: number, newHeight: number) => void;
+  onPortMouseOver?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
+  onPortMouseOut?: (event: MouseEvent<HTMLElement>, nodeId: NodeId, isInput: boolean, portId: PortId) => void;
 }> = memo(
   ({
     node,
@@ -324,6 +348,8 @@ const NormalVisualNodeContent: FC<{
     onStartEditing,
     onNodeSizeChanged,
     handleAttributes,
+    onPortMouseOver,
+    onPortMouseOut,
   }) => {
     const lastRun = useRecoilValue(lastRunData(node.id));
     const processPage = useRecoilValue(selectedProcessPage(node.id));
@@ -503,6 +529,8 @@ const NormalVisualNodeContent: FC<{
             onWireEndDrag={onWireEndDrag}
             draggingWire={draggingWire}
             closestPortToDraggingWire={closestPortToDraggingWire}
+            onPortMouseOver={onPortMouseOver}
+            onPortMouseOut={onPortMouseOut}
           />
         )}
 

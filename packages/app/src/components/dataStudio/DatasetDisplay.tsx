@@ -79,8 +79,6 @@ export type DatasetRowWithDistance = DatasetRow & {
 export const DatasetDisplay: FC<{
   dataset: DatasetMetadata;
 }> = ({ dataset }) => {
-  const project = useRecoilValue(projectState);
-
   const { dataset: datasetData, ...datasetMethods } = useDataset(dataset.id);
 
   const { contextMenuData, contextMenuRef, handleContextMenu, showContextMenu } = useContextMenu();
