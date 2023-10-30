@@ -113,7 +113,7 @@ export const TranscribeAudioNodeImpl: PluginNodeImpl<TranscribeAudioNode> = {
     return {
       ['text' as PortId]: {
         type: 'string',
-        value: transcript.text,
+        value: transcript.text as string,
       },
       ['id' as PortId]: {
         type: 'string',

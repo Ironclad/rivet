@@ -96,7 +96,7 @@ export const LemurTaskNodeImpl: PluginNodeImpl<LemurTaskNode> = {
 
   async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const apiKey = getApiKey(context);
-    const client = new AssemblyAI(apiKey);
+    const client = new AssemblyAI({ apiKey });
     const params: LemurTaskParameters = {
       prompt: coerceTypeOptional(inputs['prompt' as PortId], 'string') || data.prompt || '',
       ...getLemurParams(inputs, data),
