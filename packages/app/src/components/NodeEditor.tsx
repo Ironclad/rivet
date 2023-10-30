@@ -54,7 +54,7 @@ export const NodeEditorRenderer: FC = () => {
 
 const Container = styled.div`
   position: absolute;
-  top: 32px;
+  top: calc(32px + var(--project-selector-height));
   // tabpanel the parent has a padding of 8px on the left and right, so just move it over a bit...
   right: -8px;
   bottom: 0;
