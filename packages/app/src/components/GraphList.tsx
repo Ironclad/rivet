@@ -50,13 +50,14 @@ const styles = css`
   .graph-list-container {
     display: flex;
     flex-direction: column;
-    flex-shrink: 1;
+    flex: 1 1 auto;
     min-height: 0;
   }
 
   .graph-list {
     overflow-y: auto;
     overflow-x: hidden;
+    flex: 1 1 auto;
   }
 
   .graph-list,
@@ -126,6 +127,7 @@ const styles = css`
 
   .graph-list-spacer {
     min-height: 100px;
+    flex-grow: 1;
   }
 
   .dragging-over {
