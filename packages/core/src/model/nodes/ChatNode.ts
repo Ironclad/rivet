@@ -258,12 +258,14 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataType: 'string[]',
         id: 'response' as PortId,
         title: 'Responses',
+        description: 'All responses from the model.',
       });
     } else {
       outputs.push({
         dataType: 'string',
         id: 'response' as PortId,
         title: 'Response',
+        description: 'The textual response from the model.',
       });
     }
 
@@ -272,8 +274,32 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataType: 'object',
         id: 'function-call' as PortId,
         title: 'Function Call',
+        description: 'The function call that was made, if any.',
       });
     }
+
+    outputs.push({
+      dataType: 'chat-message[]',
+      id: 'in-messages' as PortId,
+      title: 'Messages Sent',
+      description: 'All messages sent to the model.',
+    });
+
+    if (!(this.data.useNumberOfChoicesInput || (this.data.numberOfChoices ?? 1) > 1)) {
+      outputs.push({
+        dataType: 'chat-message[]',
+        id: 'all-messages' as PortId,
+        title: 'All Messages',
+        description: 'All messages, with the response appended.',
+      });
+    }
+
+    outputs.push({
+      dataType: 'number',
+      id: 'responseTokens' as PortId,
+      title: 'Response Tokens',
+      description: 'The number of tokens in the response from the LLM. For a multi-response, this is the sum.',
+    });
 
     return outputs;
   }
@@ -281,7 +307,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
   static getUIData(): NodeUIData {
     return {
       infoBoxBody: dedent`
-        Makes a call to an LLM chat model. Currently only supports GPT. The settings contains many options for tweaking the model's behavior.
+        Makes a call to an LLM chat model. Supports GPT and any OpenAI-compatible API. The settings contains many options for tweaking the model's behavior.
 
         The \`System Prompt\` input specifies a system prompt as the first message to the model. This is useful for providing context to the model.
 
@@ -482,6 +508,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
     const { messages } = getChatNodeMessages(inputs);
 
+    output['in-messages' as PortId] = { type: 'chat-message[]', value: messages };
+
     const completionMessages = messages.map(
       (message): ChatCompletionRequestMessage => ({
         content: message.message,
@@ -532,7 +560,6 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     };
     const tokenCount = context.tokenizer.getTokenCountForMessages(messages, tokenizerInfo);
 
-    console.dir({ tokenCount, openaiModel });
     if (tokenCount >= openaiModel.maxTokens) {
       throw new Error(
         `The model ${model} can only handle ${openaiModel.maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`,
@@ -662,6 +689,22 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             }
 
             context.onPartialOutputs?.(output);
+          }
+
+          if (!isMultiResponse) {
+            output['all-messages' as PortId] = {
+              type: 'chat-message[]',
+              value: [
+                ...messages,
+                {
+                  type: 'assistant',
+                  message: responseChoicesParts[0]?.join('') ?? '',
+                  function_call: functionCalls[0]?.lastParsedArguments as object | undefined,
+                  name: undefined,
+                },
+              ],
+            };
+            console.dir({ output });
           }
 
           const endTime = Date.now();
