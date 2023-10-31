@@ -36,6 +36,7 @@ export const styles = css`
   .projects-container {
     display: flex;
     flex: 1;
+    width: 100%;
   }
 
   .projects {
@@ -45,6 +46,7 @@ export const styles = css`
     gap: 1px;
     background-color: black;
     padding-right: 1px;
+    width: 100%;
   }
 
   > .actions {
@@ -79,6 +81,8 @@ export const styles = css`
 
   .draggableProject {
     display: flex;
+    min-width: 50px;
+    flex-shrink: 1;
   }
 
   .project {
@@ -95,16 +99,28 @@ export const styles = css`
     margin-bottom: -1px;
     background: var(--grey-darkerish);
     border-bottom: 1px solid var(--grey);
+    flex-shrink: 1;
+    min-width: 50px;
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
 
     .project-name {
       display: flex;
       align-items: center;
       align-self: stretch;
+      overflow: hidden;
       gap: 8px;
+      min-width: 50px;
+      flex-shrink: 1;
+      white-space: nowrap;
+      text-overflow: ellipsis;
 
-      svg {
-        width: 12px;
-        height: 12px;
+      > span {
+        min-width: 50px;
+        flex-shrink: 1;
       }
     }
 
@@ -304,9 +320,9 @@ export const ProjectTab: FC<{
       className={clsx('project', { active: currentProject.metadata.id === projectId, unsaved })}
       onMouseDown={handleMouseDown}
     >
+      <BlankFileIcon />
       <div className="project-name" {...dragListeners}>
-        <BlankFileIcon />
-        {projectDisplayName}
+        <span>{projectDisplayName}</span>
       </div>
       <div className="actions">
         <button className="close-project" onClick={onCloseProject}>
