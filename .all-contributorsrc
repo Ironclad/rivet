@@ -303,6 +303,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "bardia-pourvakil",
+      "name": "bardia-pourvakil",
+      "avatar_url": "https://avatars.githubusercontent.com/u/132475166?v=4",
+      "profile": "https://github.com/bardia-pourvakil",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
