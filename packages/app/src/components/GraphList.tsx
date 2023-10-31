@@ -41,6 +41,7 @@ import { useStableCallback } from '../hooks/useStableCallback.js';
 import TextField from '@atlaskit/textfield';
 import { useFuseSearch } from '../hooks/useFuseSearch';
 import { useGraphExecutor } from '../hooks/useGraphExecutor';
+import { useImportGraph } from '../hooks/useImportGraph';
 
 const styles = css`
   display: flex;
@@ -342,6 +343,7 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
   const loadGraph = useLoadGraph();
 
   const duplicateGraph = useDuplicateGraph();
+  const importGraph = useImportGraph();
 
   const handleNew = useStableCallback((folderPath?: string) => {
     const graph = emptyNodeGraph();
@@ -596,6 +598,7 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
             >
               <DropdownItem onClick={() => handleNew()}>New Graph</DropdownItem>
               <DropdownItem onClick={() => handleNewFolder()}>New Folder</DropdownItem>
+              <DropdownItem onClick={() => importGraph()}>Import Graph...</DropdownItem>
             </div>
           )}
         </Portal>

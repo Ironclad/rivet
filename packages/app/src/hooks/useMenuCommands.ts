@@ -13,6 +13,7 @@ import { ioProvider } from '../utils/globals.js';
 import { debuggerPanelOpenState } from '../state/ui';
 import { useToggleRemoteDebugger } from '../components/DebuggerConnectPanel';
 import { lastRunDataByNodeState } from '../state/dataFlow';
+import { useImportGraph } from './useImportGraph';
 
 type MenuIds =
   | 'settings'
@@ -65,6 +66,7 @@ export function useMenuCommands(
   const { loadRecording } = useLoadRecording();
   const toggleRemoteDebugger = useToggleRemoteDebugger();
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
+  const importGraph = useImportGraph();
 
   useEffect(() => {
     const handler: (e: { payload: MenuIds }) => void = ({ payload }) => {
@@ -91,7 +93,7 @@ export function useMenuCommands(
           ioProvider.saveGraphData(graphData);
         })
         .with('import_graph', () => {
-          ioProvider.loadGraphData((data) => setGraphData(data));
+          importGraph();
         })
         .with('run', () => {
           options.onRunGraph?.();
