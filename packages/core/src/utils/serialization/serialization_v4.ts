@@ -51,6 +51,7 @@ type SerializedNode = {
   outgoingConnections: SerializedNodeConnection[] | undefined;
   data?: unknown;
   variants?: ChartNodeVariant<unknown>[];
+  disabled?: boolean;
 };
 
 /** x/y/width/zIndex */
@@ -228,6 +229,7 @@ function toSerializedNode(node: ChartNode, allNodes: ChartNode[], allConnections
     data: Object.keys(node.data ?? {}).length > 0 ? node.data : undefined,
     outgoingConnections: outgoingConnections.length > 0 ? outgoingConnections : undefined,
     variants: (node.variants?.length ?? 0) > 0 ? node.variants : undefined,
+    disabled: node.disabled ? true : undefined,
   };
 }
 
@@ -264,6 +266,7 @@ function fromSerializedNode(
       },
       data: serializedNode.data ?? {},
       variants: serializedNode.variants ?? [],
+      disabled: serializedNode.disabled,
     },
     connections,
   ];
