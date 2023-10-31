@@ -1,4 +1,10 @@
-import { type NodeInputDefinition, type NodeId, type PortId, type NodeOutputDefinition } from '@ironclad/rivet-core';
+import {
+  type NodeInputDefinition,
+  type NodeId,
+  type PortId,
+  type NodeOutputDefinition,
+  type DataType,
+} from '@ironclad/rivet-core';
 import { type FC, useRef, type MouseEvent, memo } from 'react';
 import clsx from 'clsx';
 import { useStableCallback } from '../hooks/useStableCallback';
@@ -12,6 +18,7 @@ export const Port: FC<{
   canDragTo: boolean;
   closest: boolean;
   definition: NodeInputDefinition | NodeOutputDefinition;
+  draggingDataType?: DataType;
   onMouseDown?: (event: MouseEvent<HTMLDivElement>, port: PortId, isInput: boolean) => void;
   onMouseUp?: (event: MouseEvent<HTMLDivElement>, port: PortId) => void;
   onMouseOver?: (
@@ -38,6 +45,7 @@ export const Port: FC<{
     canDragTo,
     closest,
     definition,
+    draggingDataType,
     onMouseDown,
     onMouseUp,
     onMouseOver,
@@ -46,10 +54,16 @@ export const Port: FC<{
     const ref = useRef<HTMLDivElement>(null);
 
     const handleMouseOver = useStableCallback((event: MouseEvent<HTMLDivElement>) => {
+      if ((event.target as HTMLElement).closest('.port-hover-area')) {
+        return;
+      }
       onMouseOver?.(event, nodeId, input, id, definition);
     });
 
     const handleMouseOut = useStableCallback((event: MouseEvent<HTMLDivElement>) => {
+      if ((event.target as HTMLElement).closest('.port-hover-area')) {
+        return;
+      }
       onMouseOut?.(event, nodeId, input, id, definition);
     });
 

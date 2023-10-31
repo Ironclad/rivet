@@ -7,7 +7,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { draggingWireClosestPortState } from '../state/graphBuilder.js';
 import { orderBy } from 'lodash-es';
-import { nodesByIdState } from '../state/graph';
+import { ioDefinitionsForNodeState, ioDefinitionsState, nodesByIdState } from '../state/graph';
 import { type PortPositions } from './NodeCanvas';
 import { lastRunDataByNodeState } from '../state/dataFlow';
 
@@ -61,6 +61,7 @@ export const WireLayer: FC<WireLayerProps> = ({
 }) => {
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const setClosestPort = useSetRecoilState(draggingWireClosestPortState);
+  const ioByNode = useRecoilValue(ioDefinitionsState);
 
   const handleMouseMove = useCallback(
     (event: MouseEvent) => {
@@ -89,7 +90,10 @@ export const WireLayer: FC<WireLayerProps> = ({
           const nodeId = closestHoverElem!.parentElement!.dataset.nodeid as NodeId | undefined;
 
           if (portId && nodeId) {
-            setClosestPort({ nodeId, portId });
+            const io = ioByNode[nodeId!];
+            const definition = io!.inputDefinitions.find((def) => def.id === portId)!;
+
+            setClosestPort({ nodeId, portId, element: closestHoverElem.parentElement!, definition });
           } else {
             setClosestPort(undefined);
           }

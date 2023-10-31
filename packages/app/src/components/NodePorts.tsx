@@ -5,6 +5,7 @@ import {
   type NodeId,
   type PortId,
   type NodeOutputDefinition,
+  type DataType,
 } from '@ironclad/rivet-core';
 import { type FC, type MouseEvent } from 'react';
 import { useNodeIO } from '../hooks/useGetNodeIO.js';
@@ -20,6 +21,7 @@ export type NodePortsProps = {
   connections: NodeConnection[];
   zoomedOut?: boolean;
   draggingWire: WireDef | undefined;
+  draggingDataType?: DataType;
   closestPortToDraggingWire: { nodeId: NodeId; portId: PortId } | undefined;
   onWireStartDrag?: (
     event: MouseEvent<HTMLElement>,
@@ -56,6 +58,7 @@ export const NodePorts: FC<NodePortsProps> = ({
   node,
   connections,
   draggingWire,
+  draggingDataType,
   closestPortToDraggingWire,
   onWireStartDrag,
   onWireEndDrag,
@@ -94,6 +97,7 @@ export const NodePorts: FC<NodePortsProps> = ({
               canDragTo={draggingWire ? !draggingWire.startPortIsInput : false}
               closest={closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === input.id}
               definition={input}
+              draggingDataType={draggingDataType}
               onMouseDown={handlePortMouseDown}
               onMouseUp={handlePortMouseUp}
               onMouseOver={onPortMouseOver}
@@ -117,6 +121,7 @@ export const NodePorts: FC<NodePortsProps> = ({
               canDragTo={draggingWire ? draggingWire.startPortIsInput : false}
               closest={closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === output.id}
               definition={output}
+              draggingDataType={draggingDataType}
               onMouseDown={handlePortMouseDown}
               onMouseUp={handlePortMouseUp}
               onMouseOver={onPortMouseOver}

@@ -4,7 +4,7 @@ import {
   type GraphId,
   type NodeId,
   NodeImpl,
-  NodeInputDefinition,
+  type NodeInputDefinition,
   type PortId,
 } from '@ironclad/rivet-core';
 import { recoilPersist } from 'recoil-persist';
@@ -63,7 +63,9 @@ export const isDraggingWireState = selector<boolean>({
   },
 });
 
-export const draggingWireClosestPortState = atom<{ nodeId: NodeId; portId: PortId } | undefined>({
+export const draggingWireClosestPortState = atom<
+  { nodeId: NodeId; portId: PortId; element: HTMLElement; definition: NodeInputDefinition } | undefined
+>({
   key: 'draggingWireClosestPort',
   default: undefined,
 });

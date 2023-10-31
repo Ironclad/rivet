@@ -2,7 +2,7 @@ import { DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
 import { DraggableNode } from './DraggableNode.js';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles.js';
-import { type FC, useMemo, useRef, useState, type MouseEvent } from 'react';
+import { type FC, useMemo, useRef, useState, type MouseEvent, useEffect } from 'react';
 import { ContextMenu, type ContextMenuContext } from './ContextMenu.js';
 import { CSSTransition } from 'react-transition-group';
 import { WireLayer } from './WireLayer.js';
@@ -27,6 +27,7 @@ import {
   lastMousePositionState,
   selectedNodesState,
   searchMatchingNodeIdsState,
+  draggingWireClosestPortState,
 } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { VisualNode } from './VisualNode.js';
@@ -482,6 +483,30 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   >();
   const hoveringPortTimeout = useRef<number | undefined>();
   const [hoveringShowPortInfo, setHoveringPortShowInfo] = useState(false);
+
+  const closestPort = useRecoilValue(draggingWireClosestPortState);
+
+  useEffect(() => {
+    if (closestPort) {
+      setHoveringPort({
+        portId: closestPort.portId,
+        nodeId: closestPort.nodeId,
+        isInput: true,
+        definition: closestPort.definition,
+      });
+      refs.setReference(closestPort.element);
+
+      hoveringPortTimeout.current = window.setTimeout(() => {
+        setHoveringPortShowInfo(true);
+      }, 400);
+    } else {
+      setHoveringPort(undefined);
+      setHoveringPortShowInfo(false);
+      if (hoveringPortTimeout.current) {
+        window.clearTimeout(hoveringPortTimeout.current);
+      }
+    }
+  }, [closestPort?.portId, closestPort?.nodeId, closestPort?.definition]);
 
   const onNodeMouseOver = useStableCallback((_e: MouseEvent<HTMLElement>, nodeId: NodeId) => {
     setHoveringNode(nodeId);
