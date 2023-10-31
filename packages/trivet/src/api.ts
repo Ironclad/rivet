@@ -7,6 +7,7 @@ import {
   type Settings,
   type GraphOutputNode,
   inferType,
+  DEFAULT_CHAT_NODE_TIMEOUT,
 } from '@ironclad/rivet-core';
 import { cloneDeep, keyBy, mapValues, omit } from 'lodash-es';
 import {
@@ -15,7 +16,6 @@ import {
   type TrivetResults,
   type TrivetTestCaseResult,
 } from './trivetTypes.js';
-import { DEFAULT_CHAT_NODE_TIMEOUT } from '../../core/src/utils/defaults.js';
 
 const TRUTHY_STRINGS = new Set(['true', 'TRUE']);
 

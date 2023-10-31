@@ -9,13 +9,13 @@ import {
   loadProjectFromString,
   loadProjectAndAttachedDataFromString,
   type RunGraphOptions,
+  DEFAULT_CHAT_NODE_TIMEOUT,
 } from '@ironclad/rivet-core';
 
 import { readFile } from 'node:fs/promises';
 import { type RivetDebuggerServer, type Settings } from './index.js';
 import { NodeNativeApi } from './native/NodeNativeApi.js';
 import * as events from 'node:events';
-import { DEFAULT_CHAT_NODE_TIMEOUT } from '../../core/src/utils/defaults.js';
 
 export async function loadProjectFromFile(path: string): Promise<Project> {
   const content = await readFile(path, { encoding: 'utf8' });
