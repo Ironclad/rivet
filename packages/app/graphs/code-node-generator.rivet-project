@@ -413,6 +413,9 @@ data:
 
 
               If the specification is invalid for any reason, such as impossible requirements, or things that are not possible for a code node, do not include a code block, and tell me what is wrong with the specification.
+
+
+              To save space and time, only reply with the code inside a code block, please.
           outgoingConnections:
             - output->"Assemble Prompt" 9p_ku4OqApb_u5QXegpdA/message2
           visualData: -1159.414078546703/820.6518251580231/330/44//
