@@ -17,6 +17,7 @@ import { type SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { SortableContext, horizontalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
 import { useLoadProjectWithFileBrowser } from '../hooks/useLoadProjectWithFileBrowser';
 import { graphNavigationStackState } from '../state/graphBuilder';
+import { newProjectModalOpenState } from '../state/ui';
 
 export const styles = css`
   position: absolute;
@@ -199,7 +200,7 @@ export const ProjectSelector: FC = () => {
   }, [openedProjectsSortedIds, openedProjects]);
 
   const loadProject = useLoadProject();
-  const newProject = useNewProject();
+  const setNewProjectModalOpen = useSetRecoilState(newProjectModalOpenState);
   const loadProjectWithFileBrowser = useLoadProjectWithFileBrowser();
 
   useSyncCurrentStateIntoOpenedProjects();
@@ -236,7 +237,7 @@ export const ProjectSelector: FC = () => {
     if (closestProject) {
       loadProject(closestProject.project);
     } else {
-      newProject();
+      setNewProjectModalOpen(true);
     }
   };
 
@@ -268,7 +269,7 @@ export const ProjectSelector: FC = () => {
         </div>
       </div>
       <div className="actions">
-        <button className="new-project" onClick={newProject} title="New Project">
+        <button className="new-project" onClick={() => setNewProjectModalOpen(true)} title="New Project">
           <FileIcon />
         </button>
         <button className="open-project" onClick={loadProjectWithFileBrowser} title="Open Project">
