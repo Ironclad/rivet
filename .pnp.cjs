@@ -7057,7 +7057,7 @@ const RAW_RUNTIME_STATE =
           ["@typescript-eslint/parser", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:6.9.0"],\
           ["assemblyai", "npm:3.0.1"],\
           ["autoevals", "npm:0.0.26"],\
-          ["crypto-js", "npm:4.1.1"],\
+          ["crypto-js", "npm:4.2.0"],\
           ["emittery", "npm:1.0.1"],\
           ["emittery-0-13", [\
             "emittery",\
@@ -12916,10 +12916,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["crypto-js", [\
-      ["npm:4.1.1", {\
-        "packageLocation": "./.yarn/cache/crypto-js-npm-4.1.1-38a3b8c19d-99d0033554.zip/node_modules/crypto-js/",\
+      ["npm:4.2.0", {\
+        "packageLocation": "./.yarn/cache/crypto-js-npm-4.2.0-d6f7744e63-c7bcc56a6e.zip/node_modules/crypto-js/",\
         "packageDependencies": [\
-          ["crypto-js", "npm:4.1.1"]\
+          ["crypto-js", "npm:4.2.0"]\
         ],\
         "linkType": "HARD"\
       }]\

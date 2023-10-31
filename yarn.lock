@@ -4176,7 +4176,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^6.9.0"
     assemblyai: "npm:^3.0.1"
     autoevals: "npm:^0.0.26"
-    crypto-js: "npm:^4.1.1"
+    crypto-js: "npm:^4.2.0"
     emittery: "npm:^1.0.1"
     emittery-0-13: "npm:emittery@^0.13.1"
     esbuild: "npm:^0.19.5"
@@ -8722,10 +8722,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"crypto-js@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "crypto-js@npm:4.1.1"
-  checksum: 99d0033554477a8372d1e508bdbdc334e9bdf9cf6ce3d85d5b5cde2617ed0ebadde0bdd259cdf1182954754fb18fe8d760291d7b70f51bfbe237c06e809d21db
+"crypto-js@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "crypto-js@npm:4.2.0"
+  checksum: c7bcc56a6e01c3c397e95aa4a74e4241321f04677f9a618a8f48a63b5781617248afb9adb0629824792e7ec20ca0d4241a49b6b2938ae6f973ec4efc5c53c924
   languageName: node
   linkType: hard
 
