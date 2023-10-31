@@ -188,6 +188,7 @@ export const VisualNode = memo(
             zoomedOut: isZoomedOut,
             isComment,
             isPinned,
+            disabled: node.disabled,
           })}
           ref={nodeRef}
           style={style}

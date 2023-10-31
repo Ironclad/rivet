@@ -56,6 +56,9 @@ export interface NodeBase {
   variants?: ChartNodeVariant<unknown>[];
 
   tests?: NodeTestGroup[];
+
+  /** If true, the node is disabled and effectively "not ran" */
+  disabled?: boolean;
 }
 
 /** Base type for a typed node. */

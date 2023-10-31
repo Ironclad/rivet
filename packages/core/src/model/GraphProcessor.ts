@@ -1490,6 +1490,16 @@ export class GraphProcessor {
     processId: ProcessId,
     typeOfExclusion: ControlFlowExcludedDataValue['value'] = undefined,
   ) {
+    if (node.disabled) {
+      this.#emitter.emit('trace', `Excluding node ${node.title} because it's disabled`);
+
+      this.#emitter.emit('nodeExcluded', { node, processId });
+      this.#visitedNodes.add(node.id);
+      this.#nodeResults.set(node.id, {
+        [ControlFlowExcluded as unknown as PortId]: { type: 'control-flow-excluded', value: undefined },
+      });
+    }
+
     const inputsWithValues = entries(inputValues);
     const controlFlowExcludedValues = inputsWithValues.filter(
       ([, value]) =>

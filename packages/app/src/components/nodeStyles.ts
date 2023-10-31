@@ -561,4 +561,12 @@ export const nodeStyles = css`
       color: var(--primary-text);
     }
   }
+
+  .node.disabled {
+    opacity: 0.5;
+
+    .node-title {
+      text-decoration: line-through;
+    }
+  }
 `;

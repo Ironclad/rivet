@@ -247,7 +247,11 @@ const Container = styled.div`
   }
 
   .node-color-picker {
-    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    padding-top: 4px;
   }
 `;
 
@@ -330,6 +334,10 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
 
   const nodeColorChanged = useStableCallback((color: { bg: string; border: string } | undefined) => {
     updateNode({ ...selectedNode, visualData: { ...selectedNode.visualData, color } });
+  });
+
+  const nodeDisabledChanged = useStableCallback((disabled: boolean) => {
+    updateNode({ ...selectedNode, disabled });
   });
 
   const variantOptions = useMemo(() => {
@@ -419,6 +427,10 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
                 {showGlobalControls && (
                   <div className="section section-global-controls">
                     <div className="node-color-picker">
+                      <Toggle
+                        isChecked={!selectedNode.disabled}
+                        onChange={(e) => nodeDisabledChanged(!e.target.checked)}
+                      />
                       <NodeColorPicker currentColor={selectedNode.visualData.color} onChange={nodeColorChanged} />
                     </div>
                     <InlineEditableTextfield

@@ -12,6 +12,7 @@
   --grey: #5a5a5a;
   --grey-lightish: #6e6e6e;
   --grey-light: #bbb;
+  --grey-light-seethrough: rgba(187, 187, 187, 0.5);
   --grey-lighter: #ddd;
   --grey-lightest: #fff;
   --foreground: #f0f0f0;
