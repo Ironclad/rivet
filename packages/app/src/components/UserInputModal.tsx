@@ -104,6 +104,7 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, quest
                   question={question}
                   node={questionsNode}
                   answer={answers?.[index]}
+                  multipleQuestions={questions.length > 1}
                   onChange={handleChange}
                   onSubmit={handleSubmit}
                 />
@@ -124,9 +125,10 @@ const UserInputModalQuestion: FC<{
   question: string;
   answer: string | undefined;
   node: UserInputNode | undefined;
+  multipleQuestions: boolean;
   onChange?: (index: number, newText: string) => void;
   onSubmit?: () => void;
-}> = ({ question, answer, index, node, onChange, onSubmit }) => {
+}> = ({ question, answer, index, node, multipleQuestions, onChange, onSubmit }) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>();
 
   const handleTextAreaKeyDown = (e: monaco.IKeyboardEvent) => {
@@ -142,7 +144,7 @@ const UserInputModalQuestion: FC<{
   const questionHtml = useMarkdown(question, renderingFormat === 'markdown');
 
   return (
-    <Field name={`question-${index}`} label={`Question ${index + 1}`}>
+    <Field name={`question-${index}`} label={multipleQuestions ? `Question ${index + 1}` : undefined}>
       {() => (
         <div>
           {renderingFormat === 'markdown' ? (
