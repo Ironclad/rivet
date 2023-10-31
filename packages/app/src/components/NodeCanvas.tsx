@@ -46,6 +46,7 @@ import { useSearchGraph } from '../hooks/useSearchGraph';
 import Portal from '@atlaskit/portal';
 import { zoomSensitivityState } from '../state/settings';
 import { MouseIcon } from './MouseIcon';
+import { PortInfo } from './PortInfo';
 
 const styles = css`
   width: 100vw;
@@ -134,60 +135,6 @@ const styles = css`
   ${nodeStyles}
 `;
 
-const portInfoBoxStyles = css`
-  position: absolute;
-
-  padding: 12px;
-  border-radius: 5px;
-  background-color: var(--grey-darker);
-  color: var(--foreground);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--grey);
-  z-index: 1000;
-  font-size: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-
-  dl {
-    display: grid;
-    grid-template-columns: auto 2fr;
-    flex-direction: column;
-    margin: 0;
-    padding: 0;
-    align-items: center;
-    column-gap: 16px;
-    row-gap: 4px;
-
-    dt {
-      font-weight: bold;
-      margin: 0;
-      white-space: nowrap;
-      padding: 0;
-    }
-
-    dd {
-      margin: 0;
-      padding: 0;
-      min-width: 200px;
-    }
-
-    dt.id-title {
-      grid-column: 1 / span 2;
-
-      .id {
-        font-family: var(--font-family-monospace);
-        font-weight: 400;
-        font-size: 12px;
-      }
-    }
-
-    dd.description {
-      grid-column: 1 / span 2;
-    }
-  }
-`;
-
 export interface NodeCanvasProps {
   nodes: ChartNode[];
   connections: NodeConnection[];
@@ -225,7 +172,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const { clientToCanvasPosition } = useCanvasPositioning();
   const setLastMousePosition = useSetRecoilState(lastMousePositionState);
 
-  const { refs, floatingStyles, update } = useFloating({
+  const { refs, floatingStyles } = useFloating({
     placement: 'bottom-end',
     whileElementsMounted: autoUpdate,
     middleware: [offset(5), shift({ crossAxis: true })],
@@ -734,38 +681,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           portPositions={nodePortPositions}
         />
         {hoveringPort && hoveringShowPortInfo && (
-          <Portal>
-            <div css={portInfoBoxStyles} ref={refs.setFloating} style={floatingStyles}>
-              <dl>
-                <dt className="id-title">
-                  {hoveringPort.definition.title === hoveringPort.definition.id ? (
-                    hoveringPort.definition.title
-                  ) : (
-                    <span>
-                      {hoveringPort.definition.title} <span className="id">({hoveringPort.definition.id})</span>
-                    </span>
-                  )}
-                </dt>
-                <dt>Data Type</dt>
-                <dd>
-                  {Array.isArray(hoveringPort.definition.dataType)
-                    ? hoveringPort.definition.dataType.join(' or ')
-                    : hoveringPort.definition.dataType}
-                </dd>
-                {(hoveringPort.definition as NodeInputDefinition).required && (
-                  <>
-                    <dt>Required</dt>
-                    <dd>Yes</dd>
-                  </>
-                )}
-                {hoveringPort.definition.description && (
-                  <>
-                    <dd className="description">{hoveringPort.definition.description}</dd>
-                  </>
-                )}
-              </dl>
-            </div>
-          </Portal>
+          <PortInfo floatingStyles={floatingStyles} ref={refs.setFloating} port={hoveringPort} />
         )}
       </div>
     </DndContext>
