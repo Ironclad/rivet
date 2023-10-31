@@ -38,18 +38,23 @@ export class AppendToDatasetNodeImpl extends NodeImpl<AppendToDatasetNode> {
       id: 'data' as PortId,
       dataType: 'string[]',
       title: 'Data',
+      description:
+        'The data to append to the dataset. May be a string or array of strings. If an array, each element will be a column in the dataset.',
     });
 
     inputDefinitions.push({
       id: 'id' as PortId,
       dataType: 'string',
       title: 'ID',
+      description:
+        'The ID of the row to append. If not provided, a random ID will be generated. If an existing ID is provided, the row will be overwritten.',
     });
 
     inputDefinitions.push({
       id: 'embedding' as PortId,
       dataType: 'vector',
       title: 'Embedding',
+      description: 'The vector embedding to store with the row.',
     });
 
     if (this.data.useDatasetIdInput) {
@@ -57,6 +62,7 @@ export class AppendToDatasetNodeImpl extends NodeImpl<AppendToDatasetNode> {
         id: 'datasetId' as PortId,
         title: 'Dataset ID',
         dataType: 'string',
+        description: 'The ID of the dataset to append to.',
       });
     }
 

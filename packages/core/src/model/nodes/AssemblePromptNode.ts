@@ -50,6 +50,7 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
         dataType: ['chat-message', 'chat-message[]'] as const,
         id: `message${i}` as PortId,
         title: `Message ${i}`,
+        description: 'A message, or messages, to include in the full prompt.',
       });
     }
 
@@ -62,6 +63,7 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
         dataType: 'chat-message[]',
         id: 'prompt' as PortId,
         title: 'Prompt',
+        description: 'The assembled prompt, a list of chat messages.',
       },
     ];
 
@@ -70,6 +72,7 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
         dataType: 'number',
         id: 'tokenCount' as PortId,
         title: 'Token Count',
+        description: 'The number of tokens in the full output prompt.',
       });
     }
 

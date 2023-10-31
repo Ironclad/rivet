@@ -51,6 +51,8 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
         dataType: 'any',
         id: `input${i}` as PortId,
         title: `Input ${i}`,
+        description:
+          'An input to create the array from. If an array, will be flattened if the "Flatten" option is enabled.',
       });
     }
 
@@ -63,16 +65,20 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
         dataType: 'any[]',
         id: 'output' as PortId,
         title: 'Output',
+        description: 'The array created from the inputs.',
       },
       {
         dataType: 'number[]',
         id: 'indices' as PortId,
         title: 'Indices',
+        description:
+          'The indices of the array. I.e. [0, 1, 2, 3, etc]. Useful for zipping with the output array to get the indexes.',
       },
       {
         dataType: 'number',
         id: 'length' as PortId,
         title: 'Length',
+        description: 'The length of the output array.',
       },
     ];
   }

@@ -45,6 +45,7 @@ export class AbortGraphNodeImpl extends NodeImpl<AbortGraphNode> {
         id: 'data' as PortId,
         title: 'Data or Error',
         dataType: 'any',
+        description: 'The message to abort the graph with.',
       },
     ];
 
@@ -53,6 +54,7 @@ export class AbortGraphNodeImpl extends NodeImpl<AbortGraphNode> {
         id: 'successfully' as PortId,
         title: 'Successfully',
         dataType: 'boolean',
+        description: 'Whether to successfully abort the graph (early-exit), or error abort the graph.',
       });
     }
 
