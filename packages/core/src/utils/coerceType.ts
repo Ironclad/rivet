@@ -283,3 +283,43 @@ function coerceToObject(value: DataValue | undefined): object | undefined {
 
   return value.value; // Whatever, consider anything an object
 }
+
+export function canBeCoercedAny(from: DataType | Readonly<DataType[]>, to: DataType | Readonly<DataType[]>) {
+  for (const fromType of Array.isArray(from) ? from : [from]) {
+    for (const toType of Array.isArray(to) ? to : [to]) {
+      if (canBeCoerced(fromType, toType)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+// TODO hard to keep in sync with coerceType
+export function canBeCoerced(from: DataType, to: DataType) {
+  if (to === 'any' || from === 'any') {
+    return true;
+  }
+
+  if (isArrayDataType(to) && isArrayDataType(from)) {
+    return canBeCoerced(getScalarTypeOf(from), getScalarTypeOf(to));
+  }
+
+  if (isArrayDataType(to) && !isArrayDataType(from)) {
+    return canBeCoerced(from, getScalarTypeOf(to));
+  }
+
+  if (isArrayDataType(from) && !isArrayDataType(to)) {
+    return to === 'string' || to === 'object';
+  }
+
+  if (to === 'gpt-function') {
+    return from === 'object';
+  }
+
+  if (to === 'audio' || to === 'binary' || to === 'image') {
+    return false;
+  }
+
+  return true;
+}

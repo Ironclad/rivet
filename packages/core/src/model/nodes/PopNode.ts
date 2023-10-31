@@ -42,6 +42,7 @@ export class PopNodeImpl extends NodeImpl<PopNode> {
         dataType: 'any[]',
         id: 'array' as PortId,
         title: 'Array',
+        coerced: false,
       },
     ];
   }

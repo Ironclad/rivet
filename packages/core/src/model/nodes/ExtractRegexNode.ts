@@ -51,6 +51,7 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
         title: 'Input',
         dataType: 'string',
         required: true,
+        coerced: false,
       },
     ];
 
@@ -60,6 +61,7 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
         title: 'Regex',
         dataType: 'string',
         required: false,
+        coerced: false,
       });
     }
 

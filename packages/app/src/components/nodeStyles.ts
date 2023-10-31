@@ -298,6 +298,18 @@ export const nodeStyles = css`
     border: 2px solid var(--primary-dark);
   }
 
+  .port.compatible .port-circle {
+    border: 2px solid var(--success);
+  }
+
+  .port.coerced .port-circle {
+    border: 2px solid var(--warning);
+  }
+
+  .port.incompatible .port-circle {
+    border: 2px solid var(--error);
+  }
+
   .port.connected .port-label {
     color: var(--primary-text);
   }

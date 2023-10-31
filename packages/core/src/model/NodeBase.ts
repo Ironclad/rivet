@@ -110,6 +110,9 @@ export type NodeInputDefinition = {
 
   /** User-facing description of the port. */
   description?: string;
+
+  /** Will the input value attempt to be coerced into the desired type? */
+  coerced?: boolean;
 };
 
 /** Represents an output definition of a node. */

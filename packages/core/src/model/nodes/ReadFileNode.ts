@@ -45,6 +45,7 @@ export class ReadFileNodeImpl extends NodeImpl<ReadFileNode> {
         id: 'path' as PortId,
         title: 'Path',
         dataType: 'string',
+        coerced: false,
       });
     }
 

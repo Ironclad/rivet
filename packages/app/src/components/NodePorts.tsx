@@ -12,16 +12,15 @@ import { useNodeIO } from '../hooks/useGetNodeIO.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { Port } from './Port.js';
 import { ErrorBoundary } from 'react-error-boundary';
-import { type WireDef } from './WireLayer';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { LoopControllerNodePorts } from './LoopControllerNodePorts';
+import { type DraggingWireDef } from '../state/graphBuilder';
 
 export type NodePortsProps = {
   node: ChartNode;
   connections: NodeConnection[];
   zoomedOut?: boolean;
-  draggingWire: WireDef | undefined;
-  draggingDataType?: DataType;
+  draggingWire: DraggingWireDef | undefined;
   closestPortToDraggingWire: { nodeId: NodeId; portId: PortId } | undefined;
   onWireStartDrag?: (
     event: MouseEvent<HTMLElement>,
@@ -58,7 +57,6 @@ export const NodePorts: FC<NodePortsProps> = ({
   node,
   connections,
   draggingWire,
-  draggingDataType,
   closestPortToDraggingWire,
   onWireStartDrag,
   onWireEndDrag,
@@ -97,7 +95,7 @@ export const NodePorts: FC<NodePortsProps> = ({
               canDragTo={draggingWire ? !draggingWire.startPortIsInput : false}
               closest={closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === input.id}
               definition={input}
-              draggingDataType={draggingDataType}
+              draggingDataType={draggingWire?.dataType}
               onMouseDown={handlePortMouseDown}
               onMouseUp={handlePortMouseUp}
               onMouseOver={onPortMouseOver}
@@ -121,7 +119,7 @@ export const NodePorts: FC<NodePortsProps> = ({
               canDragTo={draggingWire ? draggingWire.startPortIsInput : false}
               closest={closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === output.id}
               definition={output}
-              draggingDataType={draggingDataType}
+              draggingDataType={draggingWire?.dataType}
               onMouseDown={handlePortMouseDown}
               onMouseUp={handlePortMouseUp}
               onMouseOver={onPortMouseOver}

@@ -69,6 +69,7 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
         title: 'Path',
         dataType: 'string',
         required: true,
+        coerced: false,
       });
     }
 
@@ -78,6 +79,7 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
         title: 'Recursive',
         dataType: 'boolean',
         required: true,
+        coerced: false,
       });
     }
 
@@ -87,6 +89,7 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
         title: 'Include Directories',
         dataType: 'boolean',
         required: true,
+        coerced: false,
       });
     }
 
@@ -96,6 +99,7 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
         title: 'Filter Globs',
         dataType: 'string[]',
         required: true,
+        coerced: false,
       });
     }
 
@@ -105,6 +109,7 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
         title: 'Relative',
         dataType: 'boolean',
         required: true,
+        coerced: false,
       });
     }
 

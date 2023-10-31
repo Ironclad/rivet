@@ -45,6 +45,7 @@ export class AudioNodeImpl extends NodeImpl<AudioNode> {
         id: 'data' as PortId,
         title: 'Data',
         dataType: 'string',
+        coerced: false,
       });
     }
 

@@ -58,6 +58,7 @@ export class ExtractObjectPathNodeImpl extends NodeImpl<ExtractObjectPathNode> {
         title: 'Path',
         dataType: 'string',
         required: true,
+        coerced: false,
       });
     }
 

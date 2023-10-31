@@ -54,6 +54,7 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
         title: 'Input',
         dataType: 'string',
         required: true,
+        coerced: false,
       },
     ];
 

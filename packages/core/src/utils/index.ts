@@ -10,3 +10,4 @@ export * from './getPluginConfig.js';
 export * from './newId.js';
 export * from './serialization/serializationUtils.js';
 export * from './handleEscapeCharacters.js';
+export * from './compatibility.js';

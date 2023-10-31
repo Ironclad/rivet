@@ -40,6 +40,7 @@ export class ExtractJsonNodeImpl extends NodeImpl<ExtractJsonNode> {
         title: 'Input',
         dataType: 'string',
         required: true,
+        coerced: false,
       },
     ];
   }

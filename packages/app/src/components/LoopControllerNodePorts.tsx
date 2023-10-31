@@ -10,14 +10,14 @@ import { type FC, type MouseEvent } from 'react';
 import { useNodeIO } from '../hooks/useGetNodeIO.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { Port } from './Port.js';
-import { type WireDef } from './WireLayer';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
+import { type DraggingWireDef } from '../state/graphBuilder';
 
 export type NodePortsProps = {
   node: ChartNode;
   connections: NodeConnection[];
   zoomedOut?: boolean;
-  draggingWire: WireDef | undefined;
+  draggingWire: DraggingWireDef | undefined;
   closestPortToDraggingWire: { nodeId: NodeId; portId: PortId } | undefined;
   onWireStartDrag?: (
     event: MouseEvent<HTMLElement>,
@@ -115,6 +115,7 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
                   closest={
                     closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === input.id
                   }
+                  draggingDataType={draggingWire?.dataType}
                   definition={input}
                   onMouseDown={handlePortMouseDown}
                   onMouseUp={handlePortMouseUp}
@@ -141,6 +142,7 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
                     closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === output.id
                   }
                   definition={output}
+                  draggingDataType={draggingWire?.dataType}
                   onMouseDown={handlePortMouseDown}
                   onMouseUp={handlePortMouseUp}
                   onMouseOver={onPortMouseOver}
@@ -174,6 +176,7 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
                       closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === input.id
                     }
                     definition={input}
+                    draggingDataType={draggingWire?.dataType}
                     onMouseDown={handlePortMouseDown}
                     onMouseUp={handlePortMouseUp}
                     onMouseOver={onPortMouseOver}
@@ -203,6 +206,7 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
                       closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === output.id
                     }
                     definition={output}
+                    draggingDataType={draggingWire?.dataType}
                     onMouseDown={handlePortMouseDown}
                     onMouseUp={handlePortMouseUp}
                     onMouseOver={onPortMouseOver}

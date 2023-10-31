@@ -6,6 +6,7 @@ import {
   NodeImpl,
   type NodeInputDefinition,
   type PortId,
+  type DataType,
 } from '@ironclad/rivet-core';
 import { recoilPersist } from 'recoil-persist';
 import { type WireDef } from '../components/WireLayer.js';
@@ -51,7 +52,9 @@ export const sidebarOpenState = atom<boolean>({
   default: true,
 });
 
-export const draggingWireState = atom<WireDef | undefined>({
+export type DraggingWireDef = WireDef & { readonly dataType: DataType | Readonly<DataType[]> };
+
+export const draggingWireState = atom<DraggingWireDef | undefined>({
   key: 'draggingWire',
   default: undefined,
 });

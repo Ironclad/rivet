@@ -50,6 +50,7 @@ export class ImageNodeImpl extends NodeImpl<ImageNode> {
         id: 'data' as PortId,
         title: 'Data',
         dataType: 'string',
+        coerced: false,
       });
     }
 

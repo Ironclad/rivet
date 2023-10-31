@@ -4,8 +4,10 @@ import {
   type PortId,
   type NodeOutputDefinition,
   type DataType,
+  isDataTypeAccepted,
+  canBeCoercedAny,
 } from '@ironclad/rivet-core';
-import { type FC, useRef, type MouseEvent, memo } from 'react';
+import { type FC, useRef, type MouseEvent, memo, useMemo } from 'react';
 import clsx from 'clsx';
 import { useStableCallback } from '../hooks/useStableCallback';
 
@@ -18,7 +20,7 @@ export const Port: FC<{
   canDragTo: boolean;
   closest: boolean;
   definition: NodeInputDefinition | NodeOutputDefinition;
-  draggingDataType?: DataType;
+  draggingDataType?: DataType | Readonly<DataType[]>;
   onMouseDown?: (event: MouseEvent<HTMLDivElement>, port: PortId, isInput: boolean) => void;
   onMouseUp?: (event: MouseEvent<HTMLDivElement>, port: PortId) => void;
   onMouseOver?: (
@@ -67,13 +69,34 @@ export const Port: FC<{
       onMouseOut?.(event, nodeId, input, id, definition);
     });
 
+    const accepted = useMemo(() => {
+      if (!draggingDataType || !input) {
+        return '';
+      }
+
+      if (isDataTypeAccepted(draggingDataType, definition.dataType)) {
+        return 'compatible';
+      }
+
+      // We almost always coerce so default it to true for now...
+      if ((definition as NodeInputDefinition).coerced ?? true) {
+        return canBeCoercedAny(draggingDataType, definition.dataType) ? 'coerced' : 'incompatible';
+      }
+
+      return 'incompatible';
+    }, [draggingDataType, definition.dataType, (definition as NodeInputDefinition).coerced, input]);
+
     return (
       <div
         key={id}
-        className={clsx('port', {
-          connected,
-          closest,
-        })}
+        className={clsx(
+          'port',
+          {
+            connected,
+            closest,
+          },
+          accepted,
+        )}
       >
         <div
           ref={ref}

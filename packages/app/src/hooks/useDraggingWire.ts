@@ -42,17 +42,23 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
           newConnections.splice(existingConnectionIndex, 1);
           onConnectionsChanged(newConnections);
 
-          setDraggingWire({
-            startNodeId: connections[existingConnectionIndex]!.outputNodeId,
-            startPortId: connections[existingConnectionIndex]!.outputId,
+          const { outputId, outputNodeId } = connections[existingConnectionIndex]!;
 
+          const def = ioByNode[outputNodeId]!.outputDefinitions.find((o) => o.id === outputId)!;
+
+          setDraggingWire({
+            startNodeId: outputNodeId,
+            startPortId: outputId,
             startPortIsInput: false,
+            dataType: def.dataType,
           });
           return;
         }
         return;
       }
-      setDraggingWire({ startNodeId, startPortId, startPortIsInput: isInput });
+
+      const def = ioByNode[startNodeId]!.outputDefinitions.find((o) => o.id === startPortId)!;
+      setDraggingWire({ startNodeId, startPortId, startPortIsInput: isInput, dataType: def.dataType });
     },
     [connections, onConnectionsChanged, setDraggingWire],
   );

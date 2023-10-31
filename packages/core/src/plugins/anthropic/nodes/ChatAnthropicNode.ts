@@ -288,8 +288,6 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
         : undefined
       : data.stop;
 
-    const functions = expectTypeOptional(inputs['functions' as PortId], 'gpt-function[]');
-
     const { messages } = getChatAnthropicNodeMessages(inputs);
 
     let prompt = messages.reduce((acc, message) => {
