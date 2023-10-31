@@ -704,7 +704,6 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                 },
               ],
             };
-            console.dir({ output });
           }
 
           const endTime = Date.now();

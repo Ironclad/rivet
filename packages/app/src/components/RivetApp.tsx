@@ -75,7 +75,15 @@ export const RivetApp: FC = () => {
       <DataStudioRenderer />
       <PluginsOverlayRenderer />
       <UpdateModalRenderer />
-      <ToastContainer position="bottom-right" hideProgressBar newestOnTop />
+      <ToastContainer enableMultiContainer position="bottom-right" hideProgressBar newestOnTop />
+      <ToastContainer
+        enableMultiContainer
+        containerId="wide"
+        style={{ width: 600 }}
+        position="bottom-right"
+        hideProgressBar
+        newestOnTop
+      />
     </div>
   );
 };

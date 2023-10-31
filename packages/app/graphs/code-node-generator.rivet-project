@@ -1,0 +1,482 @@
+version: 4
+data:
+  attachedData:
+    trivet:
+      testSuites: []
+      version: 1
+  graphs:
+    fd-5pfqrBw3YAPli0X_yi:
+      metadata:
+        description: Generates the configuration and code for a Code Node based on a
+          user's request.
+        id: fd-5pfqrBw3YAPli0X_yi
+        name: Code Node Generator
+      nodes:
+        '[-P4jrioMlRwwAvby_BgqI]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            defaultValue: Sum two inputs
+            id: prompt
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Text" fIZiW_3xLyXZ3t1oXaTJY/spec
+          visualData: -1552.419236105042/873.516337043934/287.64850782584654/51//
+        '[319YuflbBPMYioT5fIS3g]:text "Text"':
+          data:
+            text: >-
+              Rivet is a visual programming IDE where you connect together Nodes
+              in order to make programs that interact with large language models
+              (LLMs).
+
+
+              The Code Node is a special node that can execute arbitrary JavaScript. 
+
+
+              You are a Code Node script writer. The user will give you what they want from the code node, and you output both the code an an explanation of how to use it.
+
+
+              ## Code Node Specification
+
+
+              The Code Node has an editor. This editor has 3 parts:
+
+
+              1. The code block. This is where the body of the code goes, explained later.
+
+              2. The inputs configuration. This is a list of strings the user can modify. The user can add and remove strings, and each string corresponds to one of the input ports on the code node. An input port is where you can connect wires from other nodes, and the data goes into the code node. Each of the configured strings is available at `inputs.x`, where x is the name of the string.
+
+              3. The outputs configuration. This is a list of strings the user can modify. The user can add and remove strings, and each string corresponds to one of the output ports on the code node. An output port is the data that the code node returns, and can be connected to subsequent nodes in the graph.
+
+
+
+              ### Code Node Code
+
+
+              The code you write in the code node runs in the body of a function. This function has roughly this definition:
+
+
+              ```js
+
+              function codeNode(inputs) {
+                  // Your code is pasted in here
+              }
+
+              ```
+
+
+              You do not write the `function codeNode` part, just the body, when writing the code node's code.
+
+
+              The code node must return an object. The object must have a property for each of the outputs configured above. 
+
+
+              All values of the code node have the following format:
+
+
+              ```ts
+
+              {
+                  type: string;
+                  value: unknown;
+              }
+
+              ```
+
+
+              For example, you have by default, `inputs.input.type` and `inputs.input.value`.
+
+
+              ## Data Types
+
+
+              All data types are:
+
+
+              - "any" (value is anything)
+
+              - "boolean" (value is a boolean)
+
+              - "string" (value is a number)
+
+              - "number" (value is a number)
+
+              - "date" (value is a ISO formatted string)
+
+              - "time" (value is a ISO formatted string)
+
+              - "datetime" (value is an ISO formatted string)
+
+              - "chat-message" (value is an object with `{ type: 'assistant' | 'user' | 'system'; message: string }`)
+
+              - "control-flow-executed" (value is undefined) - This causes nodes connected to this port to not be ran
+
+              - "object" (value is an object or array, similar to any)
+
+              - "vector" (value is an array of numbers)
+
+              - "image" (value is a UInt8Array)
+
+              - "binary" (value is a UIntU8Array)
+
+              - "audio" (value is a UInt8Array)
+
+
+              All data types may have `[]` appended to them to make them an array of that value. For example, `type: 'string[]'` is an array of strings. `type: 'boolean[]'` is an array of booleans.
+
+
+              ## Defaults
+
+
+              By default, the Code Node has:
+
+
+              - One input named `input`, accessible via `inputs.input`
+
+              - One output named `output`, so you must `return { output: { type: 'etc', value: 'etc' } }`
+
+
+              ## Examples
+
+
+              1. Split a string by new lines
+
+
+              ```js
+
+              const splitted = inputs.input.value.split('\n');
+
+              return {
+                  output: {
+                      type: 'string[]'
+                      value: splitted
+                  }
+              };
+
+              ```
+
+
+              2. Add two numbers together
+
+
+              First, configure the Code Node to have two inputs, `a` and `b`, and an output named `sum`
+
+
+              ```js
+
+              const sum = inputs.a.value + inputs.b.value;
+
+              return {
+                  sum: {
+                      type: 'number',
+                      value: sum
+                  }
+              }
+
+              ```
+
+
+              3. Filter an array of numbers to be numbers greater than `num`
+
+
+              Configure the Code Node with:
+
+
+              - An input named `array`
+
+              - An input named `num`
+
+              - An output named `filtered`
+
+              - An output named `length`
+
+
+              ```js
+
+              const filtered = inputs.array.value.filter(val => val > inputs.num.value);
+
+              return {
+                  filtered: {
+                      type: 'number[]',
+                      value: filtered
+                  },
+                  length: {
+                      type: 'number',
+                      value: filtered.length
+                  }
+              }
+
+              ```
+
+
+              ## Restrictions
+
+
+              You must take into account that the code node has the following restrictions:
+
+
+              - The code node is not ran using node.js. You cannot use `require`.
+
+              - The code node cannot `import` any packages. It is ran in a sandboxed `new Function(...)` sandbox. The variables accessible in this sandboxed environment are `console` and `inputs`
+
+              - The code node cannot use `async` nor `await`. The code node cannot use Promises.
+
+              - The code node must return an object. The properties of the object must correspond with configured input and output values.
+
+
+              Other than those things explicitly mentioned above, all JavaScript is valid inside a code node!
+
+
+              You must keep these restrictions in mind when generating code for the Code Node. You cannot generate code that violates these restrictions. You can only generate valid Code Node code.
+
+
+              The following nodes may work if the user is requesting restricted functions:
+
+
+              * The `rivet-plugin-example-python-exec` plugin to run python code
+
+              * The `Read File`, `Read Directory` Nodes built-in to Rivet
+
+              * The `Write File` and `Shell Command` nodes in the FS plugin
+
+              * The HTTP Call node can make HTTP requests
+
+              * Writing a custom Rivet plugin to accomplish what you are wanting
+
+              * Using the External Call node to write the code in a parent application that Rivet can call into
+
+
+              ## Your Role
+
+
+              The user will give you what they want the code node to do. You will then explain how they should configure the code node, and what the code of the node should be.
+          outgoingConnections:
+            - output->"Chat" CjLJbPjhdruU-zmPW6Jhm/systemPrompt
+            - output->"Chat" EzziKQsubxlludQlCSmS5/systemPrompt
+            - output->"Chat" fmAm9-8tUxSxBq8W6oHmo/systemPrompt
+          visualData: -726.7897865366365/329.1772579707348/330/33//
+        '[5oPR0odAnmYwwA4Zs_Mvb]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 915.0097396180166
+            text: "### 2nd query to make sure the code is correct"
+          visualData: 23.178858803127127/408.94922493616093/1533.2626014642121/81//
+        '[9GsfADpgO48OoS-fdwjdA]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Chat" CjLJbPjhdruU-zmPW6Jhm/prompt
+          visualData: 2357.279661622449/812.5298061807753/280/71//
+        '[9p_ku4OqApb_u5QXegpdA]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Chat" EzziKQsubxlludQlCSmS5/prompt
+            - prompt->"If" GfukJD1rWUaD_KOq-DE0A/value
+          visualData: -717.0170939371682/713.5432398109425/280/32//
+        '[CjLJbPjhdruU-zmPW6Jhm]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            presencePenalty: 0
+            stop: ""
+            temperature: 0
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: true
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Coalesce" f7Q_XCvM9ug7p7cB-6YBh/input1
+          visualData: 3028.8834235770914/632.0288899270461/230/null//
+        '[EzziKQsubxlludQlCSmS5]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-4
+            presencePenalty: 0
+            stop: ""
+            temperature: 0
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: true
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - all-messages->"Assemble Prompt" LYpyRywQiXi08XUJRl0yn/message1
+            - response->"Coalesce" f7Q_XCvM9ug7p7cB-6YBh/input2
+            - response->"Extract Markdown Code Blocks"
+              sxDLlmtDGO0riiWWEEi6X/input
+            - response->"Prompt" sNGzZfMWBnJ2zRrtaPU66/input
+          visualData: -290.8634551725346/579.3170909210522/230/37//
+        '[G9KtaAPXalxXbUbZiDbl0]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: response
+          visualData: 3754.3429826245606/413.1414311116011/330/76//
+        '[GfukJD1rWUaD_KOq-DE0A]:if "If"':
+          outgoingConnections:
+            - output->"Assemble Prompt" 9GsfADpgO48OoS-fdwjdA/message1
+          visualData: 2083.6440079048366/832.2631465931032/155/70//
+        '[HwcR4nwypZ_WUjrYkcNz2]:text "Text"':
+          data:
+            text: I will tell you that this is impossible with a Code Node. Please explain
+              to me why this cannot be achieved with the Code Node, and provide
+              me with some alternatives instead.
+          outgoingConnections:
+            - output->"Assemble Prompt" 9GsfADpgO48OoS-fdwjdA/message2
+          visualData: 1898.1506080289546/1208.5121704548212/330/72//
+        '[J4bFCY4R2l5RHElPJ-w-n]:match "Match"':
+          data:
+            cases:
+              - LOOKS OK
+          outgoingConnections:
+            - case1->"Graph Output" _BTgGCvkQ24wzeWR2K7xw/value
+            - unmatched->"If" GfukJD1rWUaD_KOq-DE0A/if
+          visualData: 1620.5074334190645/946.7672995061329/280/64//
+        '[LYpyRywQiXi08XUJRl0yn]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Chat" fmAm9-8tUxSxBq8W6oHmo/prompt
+          visualData: 850.0992506853411/1004.51270259952/280/64//
+        '[RYDwAKZ3ZmY5efXzi3dke]:if "If"':
+          outgoingConnections:
+            - output->"Assemble Prompt" LYpyRywQiXi08XUJRl0yn/message2
+          visualData: 625.6368655248732/851.2728451259366/155/67//
+        '[Z_qSy2xnId1UfROpdFiOy]:text "Text"':
+          data:
+            text: >-
+              Thank you. Just to double check, you didn't violate any of the
+              code node restrictions, did you? Be permissive, I'm just making
+              sure you're not using `require`, `import`, `async`, or `await`.
+
+
+              Reply LOOKS OK or RESTRICTED. You can only reply with LOOKS OK or RESTRICTED and you may include a reason.
+          outgoingConnections:
+            - output->"Assemble Prompt" LYpyRywQiXi08XUJRl0yn/message3
+          visualData: 374.05178128132206/1045.3570121045987/330/64//
+        '[_BTgGCvkQ24wzeWR2K7xw]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: code
+          visualData: 2752.808251129153/947.1230142723288/330/69//
+        '[aM02bd3jmDg5cZQtxpFfp]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 976.9015417959613
+            text: "### Initial question to generate the code"
+          visualData: -1637.2291911884442/228.4700890675118/1607.5652234243616/79//
+        '[eMWn7HRkScN6rAMo7NDsq]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: Hello, what would you like the Code Node to do?
+            type: assistant
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" 9p_ku4OqApb_u5QXegpdA/message1
+          visualData: -1108.4581203475575/638.8682964068248/280/27//
+        '[f7Q_XCvM9ug7p7cB-6YBh]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" G9KtaAPXalxXbUbZiDbl0/value
+          visualData: 3457.492181353439/431.0952176456849/180/75//
+        '[fIZiW_3xLyXZ3t1oXaTJY]:text "Text"':
+          data:
+            text: >-
+              I would like the code node to follow the following specification:
+
+
+              """
+
+              {{spec}}
+
+              """
+
+
+              Please reply with a markdown block that I can paste into the Code Node.
+
+
+              If the specification is invalid for any reason, such as impossible requirements, or things that are not possible for a code node, do not include a code block, and tell me what is wrong with the specification.
+          outgoingConnections:
+            - output->"Assemble Prompt" 9p_ku4OqApb_u5QXegpdA/message2
+          visualData: -1159.414078546703/820.6518251580231/330/44//
+        '[fmAm9-8tUxSxBq8W6oHmo]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 8
+            model: gpt-3.5-turbo
+            numberOfChoices: 1
+            presencePenalty: 0
+            stop: ""
+            temperature: 0
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Match" J4bFCY4R2l5RHElPJ-w-n/input
+          visualData: 1227.5570074908946/921.4156591236706/230/64//
+        '[girfWNhmDz24NtWgpIXQU]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            defaultValue: gpt-3.5-turbo
+            id: model
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Chat" CjLJbPjhdruU-zmPW6Jhm/model
+            - data->"Chat" EzziKQsubxlludQlCSmS5/model
+          visualData: -1135.2269437747914/447.68092596305564/294.1641220064855/45//
+        '[ooYA3jXKgPtNL6pYgLLt3]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 976.1863868724195
+            text: "### If incorrect, explain why it's impossible with the code node"
+          visualData: 1579.1467316866808/452.2108448546919/1758.5591606172588/83//
+        '[sNGzZfMWBnJ2zRrtaPU66]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: "{{input}}"
+            type: assistant
+            useTypeInput: false
+          outgoingConnections:
+            - output->"If" RYDwAKZ3ZmY5efXzi3dke/value
+          visualData: 92.32216945628014/885.2124216965464/280/84//
+        '[sxDLlmtDGO0riiWWEEi6X]:extractMarkdownCodeBlocks "Extract Markdown Code Blocks"':
+          outgoingConnections:
+            - firstBlock->"If" RYDwAKZ3ZmY5efXzi3dke/if
+            - firstBlock->"Match" J4bFCY4R2l5RHElPJ-w-n/value
+          visualData: 93.22129334676526/626.8160707712718/280/66//
+  metadata:
+    description: ""
+    id: 4tDjaNgAP-udJg2Uoz6JI
+    mainGraphId: fd-5pfqrBw3YAPli0X_yi
+    title: Code Node Generator
+  plugins: []

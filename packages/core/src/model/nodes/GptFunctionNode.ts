@@ -174,7 +174,6 @@ export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
 
       const interpolated = interpolate(this.data.schema, inputMap);
 
-      console.dir({ inputMap, interpolated, inputs });
       schema = JSON.parse(interpolated);
     }
 

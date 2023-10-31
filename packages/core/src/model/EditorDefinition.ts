@@ -158,6 +158,14 @@ export type EditorDefinitionGroup<T extends ChartNode> = SharedEditorDefinitionP
   editors: EditorDefinition<T>[];
 };
 
+export type CustomEditorDefinition<T extends ChartNode> = SharedEditorDefinitionProps<T> & {
+  type: 'custom';
+  customEditorId: string;
+  dataKey?: DataOfType<T, any>;
+  useInputToggleDataKey?: DataOfType<T, boolean>;
+  data?: any;
+};
+
 export type EditorDefinition<T extends ChartNode> =
   | StringEditorDefinition<T>
   | ToggleEditorDefinition<T>
@@ -174,4 +182,5 @@ export type EditorDefinition<T extends ChartNode> =
   | DatasetSelectorEditorDefinition<T>
   | KeyValuePairEditorDefinition<T>
   | EditorDefinitionGroup<T>
-  | StringListEditorDefinition<T>;
+  | StringListEditorDefinition<T>
+  | CustomEditorDefinition<T>;

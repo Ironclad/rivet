@@ -6,7 +6,7 @@ import {
   openedProjectsState,
   projectState,
 } from '../state/savedGraphs';
-import { graphMetadataState } from '../state/graph';
+import { graphState } from '../state/graph';
 
 export function useSyncCurrentStateIntoOpenedProjects() {
   const [openedProjects, setOpenedProjects] = useRecoilState(openedProjectsState);
@@ -14,7 +14,7 @@ export function useSyncCurrentStateIntoOpenedProjects() {
 
   const currentProject = useRecoilValue(projectState);
   const loadedProject = useRecoilValue(loadedProjectState);
-  const currentGraph = useRecoilValue(graphMetadataState);
+  const currentGraph = useRecoilValue(graphState);
 
   // Make sure current opened project is in opened projects
   useEffect(() => {
@@ -56,15 +56,24 @@ export function useSyncCurrentStateIntoOpenedProjects() {
 
   // Sync current graph into opened projects
   useEffect(() => {
-    if (currentGraph?.id != null && currentProject.graphs[currentGraph.id]) {
+    if (currentGraph.metadata?.id != null && currentProject.graphs[currentGraph.metadata.id]) {
       setOpenedProjects((openedProjects) => ({
         ...openedProjects,
         [currentProject.metadata.id]: {
           ...openedProjects[currentProject.metadata.id],
-          openedGraph: currentGraph!.id!,
+          project: {
+            ...currentProject,
+            graphs: {
+              // Sync current graph into opened projects as well, so that when you make changes, nav away, nav back, your changes are still there
+              ...currentProject.graphs,
+              [currentGraph.metadata!.id!]: currentGraph,
+            },
+          },
+          openedGraph: currentGraph.metadata!.id!,
         },
       }));
     }
+    // Changes a lot, hopefully okay
   }, [currentGraph]);
 
   // Make sure opened projects sorted ids are in sync with opened projects

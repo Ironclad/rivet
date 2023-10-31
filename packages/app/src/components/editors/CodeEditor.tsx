@@ -34,14 +34,17 @@ export const DefaultCodeEditor: FC<
       const currentValue = (nodeLatest.current?.data as Record<string, unknown> | undefined)?.[editorDef.dataKey] as
         | string
         | undefined;
-      editorInstance.current.setValue(currentValue ?? '');
+
+      if (editorInstance.current.getValue() !== currentValue) {
+        editorInstance.current.setValue(currentValue ?? '');
+      }
 
       editorInstance.current.updateOptions({
         readOnly: isReadonly,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [node.id, isReadonly]);
+  }, [node.id, isReadonly, (node.data as Record<string, unknown>)[editorDef.dataKey]]);
 
   const handleKeyDown = (e: monaco.IKeyboardEvent) => {
     if (e.keyCode === 9 /* Escape */) {

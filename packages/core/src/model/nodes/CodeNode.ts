@@ -84,6 +84,11 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
   getEditors(): EditorDefinition<CodeNode>[] {
     return [
       {
+        type: 'custom',
+        customEditorId: 'CodeNodeAIAssist',
+        label: 'AI Assist',
+      },
+      {
         type: 'code',
         label: 'Code',
         dataKey: 'code',

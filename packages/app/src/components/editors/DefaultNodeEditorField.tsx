@@ -20,6 +20,7 @@ import { DefaultToggleEditor } from './ToggleEditor';
 import { EditorGroup } from './EditorGroup';
 import { KeyValuePairEditor } from './KeyValuePairEditor';
 import { StringListEditor } from './StringListEditor';
+import { CustomEditor } from './CustomEditor';
 
 export const DefaultNodeEditorField: FC<
   SharedEditorProps & {
@@ -56,6 +57,7 @@ export const DefaultNodeEditorField: FC<
     .with({ type: 'group' }, (editor) => <EditorGroup {...sharedProps} editor={editor} />)
     .with({ type: 'keyValuePair' }, (editor) => <KeyValuePairEditor {...sharedProps} editor={editor} />)
     .with({ type: 'stringList' }, (editor) => <StringListEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'custom' }, (editor) => <CustomEditor {...sharedProps} editor={editor} />)
     .exhaustive();
 
   const toggle =
