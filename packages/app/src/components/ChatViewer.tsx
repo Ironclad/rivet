@@ -15,7 +15,7 @@ import {
   arrayizeDataValue,
   coerceTypeOptional,
 } from '@ironclad/rivet-core';
-import { type NodeRunData, lastRunDataByNodeState } from '../state/dataFlow';
+import { type NodeRunData, lastRunDataByNodeState, graphRunningState } from '../state/dataFlow';
 import { projectState } from '../state/savedGraphs';
 import { ErrorBoundary } from 'react-error-boundary';
 import TextField from '@atlaskit/textfield';
@@ -24,6 +24,7 @@ import MaximizeIcon from 'majesticons/line/maximize-line.svg?react';
 import MinimizeIcon from 'majesticons/line/minimize-line.svg?react';
 import { useToggle } from 'ahooks';
 import { FixedSizeList } from 'react-window';
+import { useCurrentExecution } from '../hooks/useCurrentExecution';
 
 export const ChatViewerRenderer: FC = () => {
   const [openOverlay, setOpenOverlay] = useRecoilState(overlayOpenState);
@@ -197,6 +198,7 @@ export const ChatViewer: FC<{
   const allLastRunData = useRecoilValue(lastRunDataByNodeState);
   const [graphFilter, setGraphFilter] = useState('');
   const goToNode = useGoToNode();
+  const graphRunning = useRecoilValue(graphRunningState);
 
   const nodesToGraphNameMap = useMemo(() => {
     const map: Record<NodeId, string> = {};
@@ -287,23 +289,26 @@ export const ChatViewer: FC<{
         />
       </div>
       <div className="chats">
-        <section className="in-progress-chats">
-          {runningProcesses.map(({ node, process, index }) => {
-            const graphName = nodesToGraphNameMap[node.id]!;
-            return (
-              <ChatBubble
-                nodeId={node.id}
-                nodeTitle={node.title}
-                processId={process.processId}
-                data={process.data}
-                key={`${node.id}-${process.processId}-${index}`}
-                graphName={graphName}
-                onGoToNode={doGoToNode}
-                splitIndex={index}
-              />
-            );
-          })}
-        </section>
+        {graphRunning && (
+          <section className="in-progress-chats">
+            {runningProcesses.map(({ node, process, index }) => {
+              const graphName = nodesToGraphNameMap[node.id]!;
+              return (
+                <ChatBubble
+                  nodeId={node.id}
+                  nodeTitle={node.title}
+                  processId={process.processId}
+                  data={process.data}
+                  key={`${node.id}-${process.processId}-${index}`}
+                  graphName={graphName}
+                  onGoToNode={doGoToNode}
+                  splitIndex={index}
+                />
+              );
+            })}
+          </section>
+        )}
+
         <section className="completed-chats">
           <FixedSizeList height={window.innerHeight} width="100%" itemCount={completedProcesses.length} itemSize={150}>
             {CompletedRow}
