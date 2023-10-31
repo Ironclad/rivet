@@ -1,5 +1,5 @@
 import { type DatasetRow, newId } from '@ironclad/rivet-core';
-import { type FC, useState, useEffect } from 'react';
+import { type FC, useState, useEffect, Suspense } from 'react';
 import { LazyCodeEditor } from '../LazyComponents';
 import { css } from '@emotion/react';
 import ImageInPictureIcon from 'majesticons/line/image-in-picture-line.svg?react';
@@ -270,21 +270,23 @@ const DatasetEditableCell: FC<{
   return (
     <div className="cell editor" data-row={row} data-column={column} data-contextmenutype="cell">
       {editing ? (
-        <LazyCodeEditor
-          autoFocus
-          text={value}
-          onChange={(e) => setEditingText(e)}
-          onBlur={() => {
-            onChange(editingText);
-            setEditing(false);
-          }}
-          onKeyDown={(e) => {
-            if (e.keyCode === 3 && (e.metaKey || e.ctrlKey)) {
+        <Suspense fallback={<div />}>
+          <LazyCodeEditor
+            autoFocus
+            text={value}
+            onChange={(e) => setEditingText(e)}
+            onBlur={() => {
               onChange(editingText);
               setEditing(false);
-            }
-          }}
-        />
+            }}
+            onKeyDown={(e) => {
+              if (e.keyCode === 3 && (e.metaKey || e.ctrlKey)) {
+                onChange(editingText);
+                setEditing(false);
+              }
+            }}
+          />
+        </Suspense>
       ) : (
         <div className="value" onDoubleClick={() => setEditing(true)}>
           {value}

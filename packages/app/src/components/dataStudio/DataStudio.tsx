@@ -15,7 +15,7 @@ export const DataStudioRenderer: FC = () => {
   if (openOverlay !== 'dataStudio') return null;
 
   return (
-    <ErrorBoundary fallbackRender={() => 'Failed to render Data Studio'}>
+    <ErrorBoundary onError={(err) => console.error(err)} fallbackRender={() => 'Failed to render Data Studio'}>
       <DataStudio onClose={() => setOpenOverlay(undefined)} />
     </ErrorBoundary>
   );
