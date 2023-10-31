@@ -132,10 +132,9 @@ export class BrowserDatasetProvider implements DatasetProvider {
     if (existingRow) {
       existingRow.data = row.data;
       existingRow.embedding = row.embedding;
-      return;
+    } else {
+      dataset.data.rows.push(row);
     }
-
-    dataset.data.rows.push(row);
 
     // Sync the database
     const dataStore = await this.getDatasetDatabase();
