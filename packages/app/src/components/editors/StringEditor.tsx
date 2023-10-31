@@ -20,6 +20,7 @@ export const DefaultStringEditor: FC<
             {...fieldProps}
             value={data[editor.dataKey] as string | undefined}
             isReadOnly={isReadonly}
+            autoFocus={editor.autoFocus}
             onChange={(e) =>
               onChange({
                 ...node,

@@ -70,6 +70,7 @@ export const DefaultCodeEditor: FC<
             language={editorDef.language}
             isReadonly={isReadonly || isDisabled}
             onKeyDown={handleKeyDown}
+            autoFocus={editorDef.autoFocus}
           />
         </div>
       </div>

@@ -22,6 +22,7 @@ export const DefaultNumberEditor: FC<
             min={editor.min}
             max={editor.max}
             step={editor.step}
+            autoFocus={editor.autoFocus}
             {...fieldProps}
             defaultValue={(data[editor.dataKey] ?? editor.defaultValue) as number | undefined}
             onChange={(e) => {

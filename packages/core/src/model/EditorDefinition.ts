@@ -16,6 +16,8 @@ export type SharedEditorDefinitionProps<T extends ChartNode> = {
 
   helperMessage?: string | ((data: T['data']) => string | undefined);
 
+  autoFocus?: boolean;
+
   hideIf?: (data: T['data']) => boolean;
 
   disableIf?: (data: T['data']) => boolean;

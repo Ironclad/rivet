@@ -24,6 +24,7 @@ export const DefaultAnyDataEditor: FC<
             isDisabled={isDisabled}
             value={data[editor.dataKey] as string | undefined}
             isReadOnly={isReadonly}
+            autoFocus={editor.autoFocus}
             onChange={(e) =>
               onChange({
                 ...node,

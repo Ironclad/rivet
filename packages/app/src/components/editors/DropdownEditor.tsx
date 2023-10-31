@@ -29,6 +29,7 @@ export const DefaultDropdownEditor: FC<
             options={editor.options}
             value={selectedValue}
             menuPortalTarget={menuPortalTarget.current}
+            autoFocus={editor.autoFocus}
             onChange={(selected) =>
               onChange({
                 ...node,

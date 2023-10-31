@@ -7,6 +7,7 @@ import { DefaultNodeEditorField } from './DefaultNodeEditorField';
 import { RivetUIContext } from '../../../../core/src/model/RivetUIContext';
 import { datasetProvider } from '../../utils/globals';
 import { useGetRivetUIContext } from '../../hooks/useGetRivetUIContext';
+import { produce } from 'immer';
 
 export const defaultEditorContainerStyles = css`
   display: flex;
@@ -102,7 +103,24 @@ export const DefaultNodeEditor: FC<
         const dynamicImpl = globalRivetNodeRegistry.createDynamicImpl(node);
 
         // eslint-disable-next-line @typescript-eslint/await-thenable -- Is is thenable you dummy
-        const loadedEditors = await dynamicImpl.getEditors(await getUIContext({ node }));
+        let loadedEditors = await dynamicImpl.getEditors(await getUIContext({ node }));
+
+        loadedEditors = produce(loadedEditors, (draft) => {
+          const autoFocused = draft.find((e) => e.autoFocus);
+          if (!autoFocused) {
+            const firstStringOrCodeEditor = draft.find(
+              (e) =>
+                e.type === 'string' ||
+                e.type === 'code' ||
+                e.type === 'number' ||
+                e.type === 'dropdown' ||
+                e.type === 'anyData',
+            );
+            if (firstStringOrCodeEditor) {
+              firstStringOrCodeEditor.autoFocus = true;
+            }
+          }
+        });
 
         setEditors(loadedEditors);
       } catch (err) {
