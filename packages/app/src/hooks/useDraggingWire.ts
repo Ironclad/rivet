@@ -60,7 +60,7 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
       const def = ioByNode[startNodeId]!.outputDefinitions.find((o) => o.id === startPortId)!;
       setDraggingWire({ startNodeId, startPortId, startPortIsInput: isInput, dataType: def.dataType });
     },
-    [connections, onConnectionsChanged, setDraggingWire],
+    [connections, ioByNode, onConnectionsChanged, setDraggingWire],
   );
 
   const onWireEndDrag = useCallback(
