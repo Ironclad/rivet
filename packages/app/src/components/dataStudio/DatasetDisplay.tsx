@@ -161,6 +161,12 @@ export const DatasetDisplay: FC<{
     await datasetMethods.putDatasetData(data);
   };
 
+  // Clear search when switching datasets
+  useEffect(() => {
+    setKnnSearch('');
+    setFilteredRows(undefined);
+  }, [dataset.id]);
+
   return (
     <div
       css={datasetDisplayStyles}
