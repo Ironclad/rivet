@@ -21,6 +21,15 @@ data:
           outgoingConnections:
             - data->"Text" fIZiW_3xLyXZ3t1oXaTJY/spec
           visualData: -1552.419236105042/873.516337043934/287.64850782584654/51//
+        '[0P6jhkLtbx7WtpQ4yfNDX]:graphOutput "Graph Output"':
+          data:
+            dataType: object
+            id: configuration
+          visualData: 3394.0514149023847/-170.51503973137648/330/104//
+        '[1mEM9EWEILNeNqexuK0Bp]:if "If"':
+          outgoingConnections:
+            - output->"Assemble Prompt" puu83XM1fKYrGzNF4j1U-/message2
+          visualData: 2090.7014733701326/112.03155291957617/155/96//
         '[319YuflbBPMYioT5fIS3g]:text "Text"':
           data:
             text: >-
@@ -321,6 +330,7 @@ data:
             useUserInput: false
           outgoingConnections:
             - all-messages->"Assemble Prompt" LYpyRywQiXi08XUJRl0yn/message1
+            - all-messages->"Assemble Prompt" puu83XM1fKYrGzNF4j1U-/message1
             - response->"Coalesce" f7Q_XCvM9ug7p7cB-6YBh/input2
             - response->"Extract Markdown Code Blocks"
               sxDLlmtDGO0riiWWEEi6X/input
@@ -334,7 +344,7 @@ data:
         '[GfukJD1rWUaD_KOq-DE0A]:if "If"':
           outgoingConnections:
             - output->"Assemble Prompt" 9GsfADpgO48OoS-fdwjdA/message1
-          visualData: 2083.6440079048366/832.2631465931032/155/70//
+          visualData: 2028.871102637096/1002.8416229983525/155/97//
         '[HwcR4nwypZ_WUjrYkcNz2]:text "Text"':
           data:
             text: I will tell you that this is impossible with a Code Node. Please explain
@@ -349,8 +359,25 @@ data:
               - LOOKS OK
           outgoingConnections:
             - case1->"Graph Output" _BTgGCvkQ24wzeWR2K7xw/value
+            - case1->"If" 1mEM9EWEILNeNqexuK0Bp/if
             - unmatched->"If" GfukJD1rWUaD_KOq-DE0A/if
           visualData: 1620.5074334190645/946.7672995061329/280/64//
+        '[Jjm9r6KVbOyNosl2SaLU1]:text "Text"':
+          data:
+            text: |-
+              What inputs and outputs should I configure for this code?
+
+              Reply with a JSON object like this:
+
+              ```json
+              {
+                "inputs": ["these", "are", "the", "inputs"],
+                "outputs": ["these", "are", "the", "outputs"]
+              }
+              ```
+          outgoingConnections:
+            - output->"If" 1mEM9EWEILNeNqexuK0Bp/value
+          visualData: 1647.3827227737963/13.5088698504415/330/108//
         '[LYpyRywQiXi08XUJRl0yn]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Chat" fmAm9-8tUxSxBq8W6oHmo/prompt
@@ -359,6 +386,17 @@ data:
           outgoingConnections:
             - output->"Assemble Prompt" LYpyRywQiXi08XUJRl0yn/message2
           visualData: 625.6368655248732/851.2728451259366/155/67//
+        '[TpMSdJZ0PrSBT12aZZkUY]:extractJson "Extract JSON"':
+          outgoingConnections:
+            - output->"Graph Output" 0P6jhkLtbx7WtpQ4yfNDX/value
+          visualData: 3039.1025964821933/-138.70977271554102/280/102//
+        '[Ulj7drB7JEyBv2jNn44jz]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 970.4770224613585
+            text: "### If correct, get the inputs and outputs configuration"
+          visualData: 1553.1294086690673/-577.7260293972732/2238.1028168320545/106//
         '[Z_qSy2xnId1UfROpdFiOy]:text "Text"':
           data:
             text: >-
@@ -375,7 +413,7 @@ data:
           data:
             dataType: string
             id: code
-          visualData: 2752.808251129153/947.1230142723288/330/69//
+          visualData: 2433.1385816752395/163.6463229309498/330/107//
         '[aM02bd3jmDg5cZQtxpFfp]:comment "Comment"':
           data:
             backgroundColor: rgba(0,0,0,0.05)
@@ -456,6 +494,32 @@ data:
             - data->"Chat" CjLJbPjhdruU-zmPW6Jhm/model
             - data->"Chat" EzziKQsubxlludQlCSmS5/model
           visualData: -1135.2269437747914/447.68092596305564/294.1641220064855/45//
+        '[iV_N5g9y64eD9t9_oRU2S]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Extract JSON" TpMSdJZ0PrSBT12aZZkUY/input
+          visualData: 2703.048336692004/-194.010038589744/230/100//
         '[ooYA3jXKgPtNL6pYgLLt3]:comment "Comment"':
           data:
             backgroundColor: rgba(0,0,0,0.05)
@@ -463,6 +527,10 @@ data:
             height: 976.1863868724195
             text: "### If incorrect, explain why it's impossible with the code node"
           visualData: 1579.1467316866808/452.2108448546919/1758.5591606172588/83//
+        '[puu83XM1fKYrGzNF4j1U-]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Chat" iV_N5g9y64eD9t9_oRU2S/prompt
+          visualData: 2319.182735344136/-111.75488860290679/280/94//
         '[sNGzZfMWBnJ2zRrtaPU66]:prompt "Prompt"':
           data:
             enableFunctionCall: false

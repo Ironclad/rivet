@@ -1,4 +1,4 @@
-import { useState, type FC } from 'react';
+import { useState, type FC, useEffect } from 'react';
 import { type SharedEditorProps } from './SharedEditorProps';
 import { type ChartNode, type StringListEditorDefinition } from '@ironclad/rivet-core';
 import TextField from '@atlaskit/textfield';
@@ -95,6 +95,10 @@ export const StringListEditor: FC<StringListEditorProps> = ({ node, isReadonly, 
       },
     });
   };
+
+  useEffect(() => {
+    setItems(stringList);
+  }, [stringList]);
 
   return (
     <StringList

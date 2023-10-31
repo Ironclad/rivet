@@ -9,6 +9,7 @@ import {
   type CodeNodeData,
   coerceType,
   coerceTypeOptional,
+  expectTypeOptional,
 } from '@ironclad/rivet-core';
 import { Field } from '@atlaskit/form';
 import TextField from '@atlaskit/textfield';
@@ -62,6 +63,10 @@ export const CodeNodeAIAssistEditor: FC<
 
       const outputs = await processor.run();
       const code = coerceTypeOptional(outputs.code, 'string');
+      const configuration = coerceTypeOptional(outputs.configuration, 'object') as {
+        inputs: string[];
+        outputs: string[];
+      };
 
       if (code) {
         onChange({
@@ -69,6 +74,8 @@ export const CodeNodeAIAssistEditor: FC<
           data: {
             ...data,
             code,
+            inputNames: configuration.inputs,
+            outputNames: configuration.outputs,
           } satisfies CodeNodeData,
         });
       } else {
