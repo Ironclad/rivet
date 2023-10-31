@@ -1,5 +1,5 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { loadedProjectState, projectState } from '../state/savedGraphs.js';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { loadedProjectState, openedProjectsState, projectState } from '../state/savedGraphs.js';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph.js';
 import { produce } from 'immer';
 import { toast, type Id as ToastId } from 'react-toastify';
@@ -11,6 +11,7 @@ export function useSaveProject() {
   const project = useRecoilValue(projectState);
   const [loadedProject, setLoadedProject] = useRecoilState(loadedProjectState);
   const { testSuites } = useRecoilValue(trivetState);
+  const setOpenedProjects = useSetRecoilState(openedProjectsState);
 
   async function saveProject() {
     if (!loadedProject.loaded || !loadedProject.path) {
@@ -69,6 +70,13 @@ export function useSaveProject() {
         loaded: true,
         path: filePath,
       });
+      setOpenedProjects((projects) => ({
+        ...projects,
+        [project.metadata.id]: {
+          project,
+          fsPath: filePath,
+        },
+      }));
     }
   }
 
