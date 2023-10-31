@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import { useEffect, type FC, useState } from 'react';
 import { lastMousePositionState } from '../state/graphBuilder';
 import { useRecoilValue } from 'recoil';
+import { useInterval } from 'ahooks';
 
 const styles = css`
   position: fixed;
@@ -31,7 +32,7 @@ export const MouseIcon: FC = () => {
       }
     };
     const releaseHandler = (e: KeyboardEvent) => {
-      if (e.key === 'Shift') {
+      if (!e.shiftKey || e.key === 'Shift') {
         setShiftPressed(false);
       }
     };
