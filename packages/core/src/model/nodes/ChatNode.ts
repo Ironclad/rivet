@@ -699,7 +699,12 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                 {
                   type: 'assistant',
                   message: responseChoicesParts[0]?.join('') ?? '',
-                  function_call: functionCalls[0]?.lastParsedArguments as object | undefined,
+                  function_call: functionCalls[0]
+                    ? {
+                        name: functionCalls[0].name,
+                        arguments: functionCalls[0].arguments, // Needs the stringified one here in chat list
+                      }
+                    : undefined,
                   name: undefined,
                 },
               ],
