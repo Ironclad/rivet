@@ -5,10 +5,8 @@ import { css } from '@emotion/react';
 import { type DatasetMetadata, type DatasetRow, getError, newId, getIntegration } from '@ironclad/rivet-core';
 import { useState, type FC, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useRecoilValue } from 'recoil';
 import { useContextMenu } from '../../hooks/useContextMenu';
 import { useDataset } from '../../hooks/useDataset';
-import { projectState } from '../../state/savedGraphs';
 import { datasetProvider, ioProvider } from '../../utils/globals';
 import { stringify as stringifyCsv } from 'csv-stringify/browser/esm/sync';
 import { parse as parseCsv } from 'csv-parse/browser/esm/sync';
@@ -83,10 +81,6 @@ export const DatasetDisplay: FC<{
 
   const { contextMenuData, contextMenuRef, handleContextMenu, showContextMenu } = useContextMenu();
 
-  const updateDatasetData = async (data: DatasetRow[]) => {
-    await datasetMethods.putDatasetData(data);
-  };
-
   const selectedCellRow = contextMenuData.data?.type === 'cell' ? contextMenuData.data.element.dataset.row : undefined;
   const selectedCellColumn =
     contextMenuData.data?.type === 'cell' ? contextMenuData.data.element.dataset.column : undefined;
@@ -138,6 +132,7 @@ export const DatasetDisplay: FC<{
 
   useAsyncEffect(async () => {
     if (debouncedKnnSearch.trim().length === 0) {
+      setFilteredRows(undefined);
       return;
     }
 
@@ -156,6 +151,15 @@ export const DatasetDisplay: FC<{
       setFilteredRows(undefined);
     }
   }, [debouncedKnnSearch, knnEmbeddingProvider, dataset.id]);
+
+  const updateDatasetData = async (data: DatasetRow[]) => {
+    // Safeguard because filtering gets nearest 1000, but if dataset is bigger than that, the putDatasetData will lose rows
+    if (filteredRows && filteredRows.length < datasetData!.rows.length) {
+      throw new Error('Too many rows to update while filtering, sorry!');
+    }
+
+    await datasetMethods.putDatasetData(data);
+  };
 
   return (
     <div
