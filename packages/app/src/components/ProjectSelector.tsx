@@ -44,7 +44,6 @@ export const styles = css`
     align-items: stretch;
     height: 100%;
     gap: 1px;
-    background-color: black;
     padding-right: 1px;
     width: 100%;
   }
@@ -101,6 +100,7 @@ export const styles = css`
     border-bottom: 1px solid var(--grey);
     flex-shrink: 1;
     min-width: 50px;
+    position: relative;
 
     svg {
       width: 12px;
@@ -172,6 +172,16 @@ export const styles = css`
         background-color: var(--grey);
       }
     }
+  }
+
+  .project::after {
+    content: '';
+    display: block;
+    position: absolute;
+    right: -1px;
+    width: 1px;
+    background-color: var(--grey-darkest);
+    height: 100%;
   }
 `;
 
