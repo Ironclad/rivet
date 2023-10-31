@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
+import { AssemblyAI, type LemurSummaryParameters } from 'assemblyai';
 import {
   type ChartNode,
   type EditorDefinition,
@@ -15,7 +16,6 @@ import {
 } from '../../index.js';
 import {
   type LemurNodeData,
-  type LemurParams,
   getApiKey,
   getLemurParams,
   lemurEditorDefinitions,
@@ -95,15 +95,14 @@ export const LemurSummaryNodeImpl: PluginNodeImpl<LemurSummaryNode> = {
 
   async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const apiKey = getApiKey(context);
-    const params: LemurParams & {
-      answer_format?: string;
-    } = getLemurParams(inputs, data);
+    const client = new AssemblyAI({ apiKey });
+    const params: LemurSummaryParameters = getLemurParams(inputs, data);
 
     if (data.answer_format) {
       params.answer_format = data.answer_format;
     }
 
-    const { response } = await runLemurSummary(apiKey, params);
+    const { response } = await client.lemur.summary(params);
 
     return {
       ['response' as PortId]: {
@@ -113,22 +112,5 @@ export const LemurSummaryNodeImpl: PluginNodeImpl<LemurSummaryNode> = {
     };
   },
 };
-
-async function runLemurSummary(apiToken: string, params: object) {
-  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/summary', {
-    method: 'POST',
-    body: JSON.stringify(params),
-    headers: {
-      authorization: apiToken,
-    },
-  });
-  const body = await response.json();
-  if (response.status !== 200) {
-    if ('error' in body) throw new Error(body.error);
-    throw new Error(`LeMUR Summary failed with status ${response.status}`);
-  }
-
-  return body as { response: string };
-}
 
 export const lemurSummaryNode = pluginNodeDefinition(LemurSummaryNodeImpl, 'LeMUR Summary');

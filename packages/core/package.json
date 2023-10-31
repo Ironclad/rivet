@@ -45,6 +45,7 @@
   "dependencies": {
     "@gentrace/core": "^2.2.5",
     "@huggingface/inference": "^2.6.4",
+    "assemblyai": "^3.0.1",
     "autoevals": "^0.0.26",
     "crypto-js": "^4.1.1",
     "emittery": "^1.0.1",

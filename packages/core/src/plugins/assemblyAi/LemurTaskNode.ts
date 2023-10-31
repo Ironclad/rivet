@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
+import { AssemblyAI, type LemurTaskParameters } from 'assemblyai';
 import {
   type ChartNode,
   type EditorDefinition,
@@ -15,7 +16,6 @@ import {
 } from '../../index.js';
 import {
   type LemurNodeData,
-  type LemurParams,
   getApiKey,
   getLemurParams,
   lemurEditorDefinitions,
@@ -96,15 +96,14 @@ export const LemurTaskNodeImpl: PluginNodeImpl<LemurTaskNode> = {
 
   async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const apiKey = getApiKey(context);
-    const params: Omit<LemurParams, 'context'> & {
-      prompt: string;
-    } = {
+    const client = new AssemblyAI({ apiKey });
+    const params: LemurTaskParameters = {
       prompt: coerceTypeOptional(inputs['prompt' as PortId], 'string') || data.prompt || '',
       ...getLemurParams(inputs, data),
     };
     if (!params.prompt) throw new Error('Prompt must be provided.');
 
-    const { response } = await runLemurTask(apiKey, params);
+    const { response } = await client.lemur.task(params);
 
     return {
       ['response' as PortId]: {
@@ -114,22 +113,5 @@ export const LemurTaskNodeImpl: PluginNodeImpl<LemurTaskNode> = {
     };
   },
 };
-
-async function runLemurTask(apiToken: string, params: object) {
-  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/task', {
-    method: 'POST',
-    body: JSON.stringify(params),
-    headers: {
-      authorization: apiToken,
-    },
-  });
-  const body = await response.json();
-  if (response.status !== 200) {
-    if ('error' in body) throw new Error(body.error);
-    throw new Error(`LeMUR Task failed with status ${response.status}`);
-  }
-
-  return body as { response: string };
-}
 
 export const lemurTaskNode = pluginNodeDefinition(LemurTaskNodeImpl, 'LeMUR Task');

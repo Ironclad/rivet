@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
+import { AssemblyAI, type LemurActionItemsParameters } from 'assemblyai';
 import {
   type ChartNode,
   type EditorDefinition,
@@ -16,7 +17,6 @@ import {
 import { pluginNodeDefinition } from '../../model/NodeDefinition.js';
 import {
   type LemurNodeData,
-  type LemurParams,
   getApiKey,
   getLemurParams,
   lemurEditorDefinitions,
@@ -25,9 +25,7 @@ import {
 
 export type LemurActionItemsNode = ChartNode<'assemblyAiLemurActionItems', LemurActionItemsNodeData>;
 
-export type LemurActionItemsNodeData = LemurNodeData & {
-  answer_format?: string;
-};
+export type LemurActionItemsNodeData = LemurNodeData;
 
 export const LemurActionItemsNodeImpl: PluginNodeImpl<LemurActionItemsNode> = {
   create(): LemurActionItemsNode {
@@ -95,15 +93,11 @@ export const LemurActionItemsNodeImpl: PluginNodeImpl<LemurActionItemsNode> = {
 
   async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const apiKey = getApiKey(context);
-    const params: LemurParams & {
-      answer_format?: string;
-    } = getLemurParams(inputs, data);
+    const client = new AssemblyAI({ apiKey });
 
-    if (data.answer_format) {
-      params.answer_format = data.answer_format;
-    }
+    const params: LemurActionItemsParameters = getLemurParams(inputs, data);
 
-    const { response } = await runLemurActionItems(apiKey, params);
+    const { response } = await client.lemur.actionItems(params);
 
     return {
       ['response' as PortId]: {
@@ -113,22 +107,5 @@ export const LemurActionItemsNodeImpl: PluginNodeImpl<LemurActionItemsNode> = {
     };
   },
 };
-
-async function runLemurActionItems(apiToken: string, params: object) {
-  const response = await fetch('https://api.assemblyai.com/lemur/v3/generate/action-items', {
-    method: 'POST',
-    body: JSON.stringify(params),
-    headers: {
-      authorization: apiToken,
-    },
-  });
-  const body = await response.json();
-  if (response.status !== 200) {
-    if ('error' in body) throw new Error(body.error);
-    throw new Error(`LeMUR Action Items failed with status ${response.status}`);
-  }
-
-  return body as { response: string };
-}
 
 export const lemurActionItemsNode = pluginNodeDefinition(LemurActionItemsNodeImpl, 'LeMUR Action Items');
