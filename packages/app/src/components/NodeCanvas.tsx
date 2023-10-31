@@ -28,6 +28,7 @@ import {
   selectedNodesState,
   searchMatchingNodeIdsState,
   draggingWireClosestPortState,
+  hoveringNodeState,
 } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { VisualNode } from './VisualNode.js';
@@ -418,7 +419,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     );
   });
 
-  const [hoveringNode, setHoveringNode] = useState<NodeId | undefined>();
+  const [hoveringNode, setHoveringNode] = useRecoilState(hoveringNodeState);
   const [hoveringPort, setHoveringPort] = useState<
     | {
         nodeId: NodeId;

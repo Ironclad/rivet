@@ -1,6 +1,12 @@
 import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { type CanvasPosition, canvasPositionState, searchingGraphState } from '../state/graphBuilder';
+import {
+  type CanvasPosition,
+  canvasPositionState,
+  searchingGraphState,
+  editingNodeState,
+  hoveringNodeState,
+} from '../state/graphBuilder';
 import { useLatest } from 'ahooks';
 import { useViewportBounds } from './useViewportBounds';
 import { useCanvasPositioning } from './useCanvasPositioning';
@@ -10,6 +16,8 @@ export function useCanvasHotkeys() {
   const viewportBounds = useViewportBounds();
   const { canvasToClientPosition } = useCanvasPositioning();
   const setSearching = useSetRecoilState(searchingGraphState);
+  const setEditingNode = useSetRecoilState(editingNodeState);
+  const hoveringNode = useRecoilValue(hoveringNodeState);
 
   const latestHandler = useLatest((e: KeyboardEvent) => {
     // If we're in an input, don't do anything
@@ -80,6 +88,16 @@ export function useCanvasHotkeys() {
       e.stopPropagation();
 
       setSearching({ searching: true, query: '' });
+    }
+
+    if (e.key === 'e' && !e.metaKey && !e.ctrlKey && !e.shiftKey) {
+      if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName!)) {
+        return;
+      }
+
+      if (hoveringNode) {
+        setEditingNode(hoveringNode);
+      }
     }
   });
 

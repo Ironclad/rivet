@@ -109,3 +109,8 @@ export const searchMatchingNodeIdsState = atom<NodeId[]>({
   key: 'searchMatchingNodeIds',
   default: [],
 });
+
+export const hoveringNodeState = atom<NodeId | undefined>({
+  key: 'hoveringNode',
+  default: undefined,
+});
