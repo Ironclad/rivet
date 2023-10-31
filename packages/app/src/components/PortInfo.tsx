@@ -1,13 +1,16 @@
 import Portal from '@atlaskit/portal';
 import { css } from '@emotion/react';
 import {
-  getScalarTypeOf,
+  canBeCoercedAny,
+  isDataTypeAccepted,
   type NodeId,
   type NodeInputDefinition,
   type NodeOutputDefinition,
   type PortId,
 } from '@ironclad/rivet-core';
 import { type CSSProperties, forwardRef } from 'react';
+import { useRecoilValue } from 'recoil';
+import { draggingWireState } from '../state/graphBuilder';
 
 const style = css`
   position: absolute;
@@ -61,6 +64,24 @@ const style = css`
       grid-column: 1 / span 2;
     }
   }
+
+  .will-be-coerced {
+    color: var(--warning);
+
+    code {
+      font-family: var(--font-family-monospace);
+      font-size: 12px;
+    }
+  }
+
+  .incompatible {
+    color: var(--error);
+
+    code {
+      font-family: var(--font-family-monospace);
+      font-size: 12px;
+    }
+  }
 `;
 
 export const PortInfo = forwardRef<
@@ -78,11 +99,27 @@ export const PortInfo = forwardRef<
   const { definition } = port;
   const { dataType, title, description, id } = definition;
 
-  let dataTypeDisplay: string = Array.isArray(dataType) ? dataType.join(' or ') : (dataType as string);
+  const draggingWire = useRecoilValue(draggingWireState);
 
+  const dataTypeDisplay: string = Array.isArray(dataType) ? dataType.join(' or ') : (dataType as string);
+  let dataTypeDisplayWithCoerced = dataTypeDisplay;
+
+  let canCoerce = false;
   if (port.isInput && ((definition as NodeInputDefinition).coerced ?? true)) {
-    dataTypeDisplay += ' (coerced)';
+    canCoerce = true;
+    dataTypeDisplayWithCoerced += ' (coerced)';
   }
+
+  const willCoerce =
+    canCoerce &&
+    draggingWire &&
+    canBeCoercedAny(draggingWire.dataType, definition.dataType) &&
+    !isDataTypeAccepted(draggingWire.dataType, definition.dataType);
+
+  const incompatible =
+    draggingWire &&
+    !isDataTypeAccepted(draggingWire.dataType, definition.dataType) &&
+    (!canCoerce || !canBeCoercedAny(draggingWire.dataType, definition.dataType));
 
   return (
     <Portal>
@@ -98,7 +135,7 @@ export const PortInfo = forwardRef<
             )}
           </dt>
           <dt>Data Type</dt>
-          <dd>{dataTypeDisplay}</dd>
+          <dd>{dataTypeDisplayWithCoerced}</dd>
 
           {(definition as NodeInputDefinition).required && (
             <>
@@ -113,6 +150,18 @@ export const PortInfo = forwardRef<
             </>
           )}
         </dl>
+        {willCoerce && (
+          <div className="will-be-coerced">
+            Your data of type <code>{draggingWire.dataType}</code> will be coerced to <code>{dataTypeDisplay}</code> if
+            you connect it here.
+          </div>
+        )}
+        {incompatible && (
+          <div className="incompatible">
+            Your data of type <code>{draggingWire.dataType}</code> is incompatible with <code>{dataTypeDisplay}</code>.
+            You may still connect it, but your graph may error.
+          </div>
+        )}
       </div>
     </Portal>
   );

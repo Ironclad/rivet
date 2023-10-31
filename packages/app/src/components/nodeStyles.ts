@@ -298,7 +298,7 @@ export const nodeStyles = css`
     border: 2px solid var(--primary-dark);
   }
 
-  .port.compatible .port-circle {
+  .port.compatible:not(.connected) .port-circle {
     border: 2px solid var(--success);
   }
 
