@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useSaveProject } from './useSaveProject.js';
 import { window } from '@tauri-apps/api';
 import { match } from 'ts-pattern';
-import { useNewProject } from './useNewProject.js';
 import { useLoadProjectWithFileBrowser } from './useLoadProjectWithFileBrowser.js';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { settingsModalOpenState } from '../components/SettingsModal.js';
@@ -10,7 +9,7 @@ import { graphState } from '../state/graph.js';
 import { useLoadRecording } from './useLoadRecording.js';
 import { type WebviewWindow } from '@tauri-apps/api/window';
 import { ioProvider } from '../utils/globals.js';
-import { debuggerPanelOpenState } from '../state/ui';
+import { newProjectModalOpenState } from '../state/ui';
 import { useToggleRemoteDebugger } from '../components/DebuggerConnectPanel';
 import { lastRunDataByNodeState } from '../state/dataFlow';
 import { useImportGraph } from './useImportGraph';
@@ -60,7 +59,7 @@ export function useMenuCommands(
 ) {
   const [graphData, setGraphData] = useRecoilState(graphState);
   const { saveProject, saveProjectAs } = useSaveProject();
-  const newProject = useNewProject();
+  const setNewProjectModalOpen = useSetRecoilState(newProjectModalOpenState);
   const loadProject = useLoadProjectWithFileBrowser();
   const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
   const { loadRecording } = useLoadRecording();
@@ -78,7 +77,7 @@ export function useMenuCommands(
           mainWindow.close();
         })
         .with('new_project', () => {
-          newProject();
+          setNewProjectModalOpen(true);
         })
         .with('open_project', () => {
           loadProject();
@@ -117,15 +116,5 @@ export function useMenuCommands(
     return () => {
       handlerState.handler = prevHandler;
     };
-  }, [
-    saveProject,
-    saveProjectAs,
-    newProject,
-    loadProject,
-    setSettingsOpen,
-    graphData,
-    setGraphData,
-    options,
-    loadRecording,
-  ]);
+  }, [saveProject, saveProjectAs, loadProject, setSettingsOpen, graphData, setGraphData, options, loadRecording]);
 }

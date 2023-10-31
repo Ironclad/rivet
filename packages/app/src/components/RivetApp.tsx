@@ -26,6 +26,7 @@ import useAsyncEffect from 'use-async-effect';
 import { UpdateModalRenderer } from './UpdateModal';
 import { useMonitorUpdateStatus } from '../hooks/useMonitorUpdateStatus';
 import { ProjectSelector } from './ProjectSelector';
+import { NewProjectModalRenderer } from './NewProjectModal';
 
 const styles = css`
   overflow: hidden;
@@ -75,6 +76,7 @@ export const RivetApp: FC = () => {
       <DataStudioRenderer />
       <PluginsOverlayRenderer />
       <UpdateModalRenderer />
+      <NewProjectModalRenderer />
       <ToastContainer enableMultiContainer position="bottom-right" hideProgressBar newestOnTop />
       <ToastContainer
         enableMultiContainer

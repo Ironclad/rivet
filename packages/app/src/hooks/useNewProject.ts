@@ -11,8 +11,17 @@ export function useNewProject() {
   const setGraphData = useSetRecoilState(graphState);
   const setTrivetData = useSetRecoilState(trivetState);
 
-  return () => {
+  return ({
+    title,
+    description,
+  }: {
+    title?: string;
+    description?: string;
+  } = {}) => {
     const { data: _data, ...project } = blankProject();
+
+    project.metadata.title = title || project.metadata.title;
+    project.metadata.description = description || project.metadata.description;
 
     setProject(project);
     setLoadedProject({ loaded: false, path: '' });

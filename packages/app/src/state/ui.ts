@@ -11,3 +11,8 @@ export const overlayOpenState = atom<OverlayKey | undefined>({
   key: 'overlayOpenState',
   default: undefined,
 });
+
+export const newProjectModalOpenState = atom({
+  key: 'newProjectModalOpenState',
+  default: false,
+});
