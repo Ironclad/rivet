@@ -89,6 +89,14 @@ export const NewProjectModal: FC = () => {
                   ⭐ Community Templates
                 </ButtonItem>
               </Section>
+              <Section title="Examples">
+                <ButtonItem
+                  isSelected={selectedTemplate === 'community_examples'}
+                  onClick={() => setSelectedTemplate('community_examples')}
+                >
+                  ⭐ Community Examples
+                </ButtonItem>
+              </Section>
             </SideNavigation>
           </nav>
           <main>
@@ -96,6 +104,7 @@ export const NewProjectModal: FC = () => {
               .with('blank_project', () => <BlankProjectTemplate onCreated={onProjectCreated} />)
               .with('tutorial', () => <FromTutorialTemplate onCreated={onProjectCreated} />)
               .with('community_templates', () => <div>Coming soon!</div>)
+              .with('community_examples', () => <div>Coming soon!</div>)
               .otherwise((template) => (
                 <div>Unknown template: {template}</div>
               ))}
