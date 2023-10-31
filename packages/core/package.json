@@ -47,7 +47,7 @@
     "@huggingface/inference": "^2.6.4",
     "assemblyai": "^3.0.1",
     "autoevals": "^0.0.26",
-    "crypto-js": "^4.1.1",
+    "crypto-js": "^4.2.0",
     "emittery": "^1.0.1",
     "emittery-0-13": "npm:emittery@^0.13.1",
     "gpt-tokenizer": "^2.1.2",
