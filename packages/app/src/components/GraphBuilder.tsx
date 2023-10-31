@@ -27,7 +27,7 @@ const Container = styled.div`
 
   .user-input-modal-open {
     position: absolute;
-    top: 62px;
+    top: calc(62px + var(--project-selector-height));
     right: 16px;
     z-index: 100;
   }
