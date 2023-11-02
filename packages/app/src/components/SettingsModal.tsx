@@ -28,6 +28,8 @@ import { KeyValuePairs } from './editors/KeyValuePairEditor';
 import { useCheckForUpdate } from '../hooks/useCheckForUpdate';
 import Range from '@atlaskit/range';
 import { DEFAULT_CHAT_NODE_TIMEOUT } from '../../../core/src/utils/defaults';
+import useAsyncEffect from 'use-async-effect';
+import { getVersion } from '@tauri-apps/api/app';
 
 interface SettingsModalProps {}
 
@@ -472,11 +474,19 @@ export const PluginsSettingsPage: FC = () => {
 
 export const UpdatesSettingsPage: FC = () => {
   const checkForUpdates = useCheckForUpdate({ notifyNoUpdates: true, force: true });
+  const [currentVersion, setCurrentVersion] = useState('');
+
+  useAsyncEffect(async () => {
+    setCurrentVersion(await getVersion());
+  }, []);
 
   const skippedMaxVersion = useRecoilValue(skippedMaxVersionState);
 
   return (
     <div css={fields}>
+      <p>
+        You are currently on <strong>Rivet {currentVersion}</strong>
+      </p>
       <Field name="check-for-updates">
         {() => (
           <>

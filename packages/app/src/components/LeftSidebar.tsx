@@ -14,6 +14,7 @@ import { GraphList } from './GraphList.js';
 import { ProjectPluginsConfiguration } from './ProjectPluginConfiguration';
 import { Field } from '@atlaskit/form';
 import Select from '@atlaskit/select';
+import { getVersion } from '@tauri-apps/api/app';
 
 const styles = css`
   position: fixed;
@@ -101,7 +102,8 @@ export const LeftSidebar: FC<{
   useEffect(() => {
     (async () => {
       try {
-        await appWindow.setTitle(`Rivet - ${project.metadata.title} (${loadedProject.path})`);
+        const currentVersion = await getVersion();
+        await appWindow.setTitle(`Rivet ${currentVersion} - ${project.metadata.title} (${loadedProject.path})`);
       } catch (err) {
         console.warn(`Failed to set window title, likely not running in Tauri: ${err}`);
       }
