@@ -485,7 +485,7 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
     }
   }
 
-  const { contextMenuRef, showContextMenu, contextMenuData, handleContextMenu, floatingStyles, refs } =
+  const { setShowContextMenu, showContextMenu, contextMenuData, handleContextMenu, floatingStyles, refs } =
     useContextMenu();
   const handleSidebarContextMenu = useStableCallback((e: MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -562,12 +562,38 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
                   style={floatingStyles}
                   ref={refs.setFloating}
                 >
-                  <DropdownItem onClick={() => runGraph(selectedFolderNameForContextMenu!)}>Run</DropdownItem>
-                  <DropdownItem onClick={() => startRename(selectedFolderNameForContextMenu!)}>
+                  <DropdownItem
+                    onClick={() => {
+                      runGraph(selectedFolderNameForContextMenu!);
+                      setShowContextMenu(false);
+                    }}
+                  >
+                    Run
+                  </DropdownItem>
+                  <DropdownItem
+                    onClick={() => {
+                      startRename(selectedFolderNameForContextMenu!);
+                      setShowContextMenu(false);
+                    }}
+                  >
                     Rename Graph
                   </DropdownItem>
-                  <DropdownItem onClick={() => duplicateGraph(selectedGraphForContextMenu!)}>Duplicate</DropdownItem>
-                  <DropdownItem onClick={() => handleDelete(selectedGraphForContextMenu!)}>Delete</DropdownItem>
+                  <DropdownItem
+                    onClick={() => {
+                      duplicateGraph(selectedGraphForContextMenu!);
+                      setShowContextMenu(false);
+                    }}
+                  >
+                    Duplicate
+                  </DropdownItem>
+                  <DropdownItem
+                    onClick={() => {
+                      handleDelete(selectedGraphForContextMenu!);
+                      setShowContextMenu(false);
+                    }}
+                  >
+                    Delete
+                  </DropdownItem>
                 </div>
               </div>
             )}
@@ -588,14 +614,36 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
                   style={floatingStyles}
                   ref={refs.setFloating}
                 >
-                  <DropdownItem onClick={() => startRename(selectedFolderNameForContextMenu!)}>
+                  <DropdownItem
+                    onClick={() => {
+                      startRename(selectedFolderNameForContextMenu!);
+                      setShowContextMenu(false);
+                    }}
+                  >
                     Rename Folder
                   </DropdownItem>
-                  <DropdownItem onClick={() => handleNew(selectedFolderNameForContextMenu!)}>New Graph</DropdownItem>
-                  <DropdownItem onClick={() => handleNewFolder(selectedFolderNameForContextMenu!)}>
+                  <DropdownItem
+                    onClick={() => {
+                      handleNew(selectedFolderNameForContextMenu!);
+                      setShowContextMenu(false);
+                    }}
+                  >
+                    New Graph
+                  </DropdownItem>
+                  <DropdownItem
+                    onClick={() => {
+                      handleNewFolder(selectedFolderNameForContextMenu!);
+                      setShowContextMenu(false);
+                    }}
+                  >
                     New Folder
                   </DropdownItem>
-                  <DropdownItem onClick={() => handleDeleteFolder(selectedFolderNameForContextMenu!)}>
+                  <DropdownItem
+                    onClick={() => {
+                      handleDeleteFolder(selectedFolderNameForContextMenu!);
+                      setShowContextMenu(false);
+                    }}
+                  >
                     Delete
                   </DropdownItem>
                 </div>
@@ -621,9 +669,30 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
                 style={floatingStyles}
                 ref={refs.setFloating}
               >
-                <DropdownItem onClick={() => handleNew()}>New Graph</DropdownItem>
-                <DropdownItem onClick={() => handleNewFolder()}>New Folder</DropdownItem>
-                <DropdownItem onClick={() => importGraph()}>Import Graph...</DropdownItem>
+                <DropdownItem
+                  onClick={() => {
+                    handleNew();
+                    setShowContextMenu(false);
+                  }}
+                >
+                  New Graph
+                </DropdownItem>
+                <DropdownItem
+                  onClick={() => {
+                    handleNewFolder();
+                    setShowContextMenu(false);
+                  }}
+                >
+                  New Folder
+                </DropdownItem>
+                <DropdownItem
+                  onClick={() => {
+                    importGraph();
+                    setShowContextMenu(false);
+                  }}
+                >
+                  Import Graph...
+                </DropdownItem>
               </div>
             </div>
           )}
