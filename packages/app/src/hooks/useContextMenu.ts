@@ -1,4 +1,4 @@
-import { useFloating, autoUpdate, shift } from '@floating-ui/react';
+import { useFloating, autoUpdate, shift, useMergeRefs } from '@floating-ui/react';
 import { useRef, useState, useCallback, useEffect } from 'react';
 
 export type ContextMenuData = {
@@ -57,6 +57,8 @@ export const useContextMenu = () => {
       window.removeEventListener('keydown', handleEscapePress);
     };
   }, [contextMenuRef]);
+
+  refs.setReference = useMergeRefs([refs.setReference, contextMenuRef]) as any;
 
   return {
     contextMenuRef,

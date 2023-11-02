@@ -184,7 +184,6 @@ const styles = css`
 `;
 
 const contextMenuStyles = css`
-  position: absolute;
   border: 1px solid var(--grey);
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
   background: var(--grey-dark);
@@ -486,7 +485,8 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
     }
   }
 
-  const { contextMenuRef, showContextMenu, contextMenuData, handleContextMenu } = useContextMenu();
+  const { contextMenuRef, showContextMenu, contextMenuData, handleContextMenu, floatingStyles, refs } =
+    useContextMenu();
   const handleSidebarContextMenu = useStableCallback((e: MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     handleContextMenu(e);
@@ -523,7 +523,7 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
           </button>
         )}
       </div>
-      <div className="graph-list-container" ref={contextMenuRef} onContextMenu={handleSidebarContextMenu}>
+      <div className="graph-list-container" onContextMenu={handleSidebarContextMenu}>
         <div
           className={clsx('graph-list', { 'dragging-over': dragOverFolderName === '' && draggingItemFolder !== '' })}
         >
@@ -547,40 +547,58 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
           <Portal>
             {showContextMenu && contextMenuData.data?.type === 'graph-item' && (
               <div
-                className="graph-item-context-menu"
-                css={contextMenuStyles}
+                className="graph-item-context-menu-pos"
+                ref={refs.setReference}
                 style={{
                   zIndex: 500,
+                  position: 'absolute',
                   left: contextMenuData.x,
                   top: contextMenuData.y,
                 }}
               >
-                <DropdownItem onClick={() => runGraph(selectedFolderNameForContextMenu!)}>Run</DropdownItem>
-                <DropdownItem onClick={() => startRename(selectedFolderNameForContextMenu!)}>Rename Graph</DropdownItem>
-                <DropdownItem onClick={() => duplicateGraph(selectedGraphForContextMenu!)}>Duplicate</DropdownItem>
-                <DropdownItem onClick={() => handleDelete(selectedGraphForContextMenu!)}>Delete</DropdownItem>
+                <div
+                  className="graph-item-context-menu"
+                  css={contextMenuStyles}
+                  style={floatingStyles}
+                  ref={refs.setFloating}
+                >
+                  <DropdownItem onClick={() => runGraph(selectedFolderNameForContextMenu!)}>Run</DropdownItem>
+                  <DropdownItem onClick={() => startRename(selectedFolderNameForContextMenu!)}>
+                    Rename Graph
+                  </DropdownItem>
+                  <DropdownItem onClick={() => duplicateGraph(selectedGraphForContextMenu!)}>Duplicate</DropdownItem>
+                  <DropdownItem onClick={() => handleDelete(selectedGraphForContextMenu!)}>Delete</DropdownItem>
+                </div>
               </div>
             )}
             {showContextMenu && contextMenuData.data?.type === 'graph-folder' && (
               <div
-                className="graph-item-context-menu"
-                css={contextMenuStyles}
+                className="graph-item-context-menu-pos"
+                ref={refs.setReference}
                 style={{
                   zIndex: 500,
+                  position: 'absolute',
                   left: contextMenuData.x,
                   top: contextMenuData.y,
                 }}
               >
-                <DropdownItem onClick={() => startRename(selectedFolderNameForContextMenu!)}>
-                  Rename Folder
-                </DropdownItem>
-                <DropdownItem onClick={() => handleNew(selectedFolderNameForContextMenu!)}>New Graph</DropdownItem>
-                <DropdownItem onClick={() => handleNewFolder(selectedFolderNameForContextMenu!)}>
-                  New Folder
-                </DropdownItem>
-                <DropdownItem onClick={() => handleDeleteFolder(selectedFolderNameForContextMenu!)}>
-                  Delete
-                </DropdownItem>
+                <div
+                  className="graph-item-context-menu"
+                  css={contextMenuStyles}
+                  style={floatingStyles}
+                  ref={refs.setFloating}
+                >
+                  <DropdownItem onClick={() => startRename(selectedFolderNameForContextMenu!)}>
+                    Rename Folder
+                  </DropdownItem>
+                  <DropdownItem onClick={() => handleNew(selectedFolderNameForContextMenu!)}>New Graph</DropdownItem>
+                  <DropdownItem onClick={() => handleNewFolder(selectedFolderNameForContextMenu!)}>
+                    New Folder
+                  </DropdownItem>
+                  <DropdownItem onClick={() => handleDeleteFolder(selectedFolderNameForContextMenu!)}>
+                    Delete
+                  </DropdownItem>
+                </div>
               </div>
             )}
           </Portal>
@@ -588,17 +606,25 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
         <Portal>
           {showContextMenu && contextMenuData.data?.type === 'graph-list' && (
             <div
-              className="graph-list-context-menu"
-              css={contextMenuStyles}
+              className="graph-list-context-menu-pos"
+              ref={refs.setReference}
               style={{
+                position: 'absolute',
                 zIndex: 500,
                 left: contextMenuData.x,
                 top: contextMenuData.y,
               }}
             >
-              <DropdownItem onClick={() => handleNew()}>New Graph</DropdownItem>
-              <DropdownItem onClick={() => handleNewFolder()}>New Folder</DropdownItem>
-              <DropdownItem onClick={() => importGraph()}>Import Graph...</DropdownItem>
+              <div
+                className="graph-list-context-menu"
+                css={contextMenuStyles}
+                style={floatingStyles}
+                ref={refs.setFloating}
+              >
+                <DropdownItem onClick={() => handleNew()}>New Graph</DropdownItem>
+                <DropdownItem onClick={() => handleNewFolder()}>New Folder</DropdownItem>
+                <DropdownItem onClick={() => importGraph()}>Import Graph...</DropdownItem>
+              </div>
             </div>
           )}
         </Portal>
