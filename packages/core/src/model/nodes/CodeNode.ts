@@ -144,6 +144,15 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
       throw new Error('Code node must return an object with output values.');
     }
 
+    const missingOutputs = this.getOutputDefinitions().filter((output) => !(output.id in outputs));
+    if (missingOutputs.length > 0) {
+      throw new Error(
+        `Code node must return an object with output values for all outputs. To not run an output, return { "type": "control-flow-excluded", "value": undefiend }. To return undefined, return { "type": "any", "value": undefined }. Missing: ${missingOutputs
+          .map((output) => output.id)
+          .join(', ')}`,
+      );
+    }
+
     return outputs;
   }
 }
