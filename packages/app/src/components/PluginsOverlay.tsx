@@ -34,6 +34,7 @@ const styles = css`
   bottom: 0;
   background: var(--grey-darker);
   padding: 64px 32px 0 32px;
+  z-index: 150;
 
   display: flex;
   flex-direction: column;

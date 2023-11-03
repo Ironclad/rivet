@@ -28,7 +28,7 @@ const styles = css`
   right: 0;
   bottom: 0;
   background-color: var(--grey-darker);
-  z-index: 60;
+  z-index: 150;
   overflow: auto;
 
   .content {

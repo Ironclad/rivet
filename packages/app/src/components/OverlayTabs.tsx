@@ -14,7 +14,7 @@ const styles = css`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  z-index: 100;
+  z-index: 200;
   position: absolute;
   top: var(--project-selector-height);
   left: 300px;

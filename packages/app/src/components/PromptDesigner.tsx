@@ -67,7 +67,7 @@ const styles = css`
   bottom: 0;
   background-color: var(--grey-darker);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  z-index: 60;
+  z-index: 150;
 
   .close-prompt-designer {
     position: absolute;
