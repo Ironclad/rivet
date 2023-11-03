@@ -37,7 +37,12 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
           // Inputs are accessible via an object \`inputs\` and data is typed (i.e. inputs.foo.type, inputs.foo.value)
           // Return an object with named outputs that match the output names specified in the node's config.
           // Output values must by typed as well (e.g. { bar: { type: 'string', value: 'bar' } }
-          return { output: inputs.input };
+          return {
+            output: {
+              type: inputs.input.type;
+              value: inputs.input.value;
+            }
+          };
         `,
         inputNames: 'input',
         outputNames: 'output',
