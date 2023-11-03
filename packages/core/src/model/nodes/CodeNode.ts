@@ -38,14 +38,14 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
           // Return an object with named outputs that match the output names specified in the node's config.
           // Output values must by typed as well (e.g. { bar: { type: 'string', value: 'bar' } }
           return {
-            output: {
-              type: inputs.input.type;
-              value: inputs.input.value;
+            output1: {
+              type: inputs.input1.type;
+              value: inputs.input1.value;
             }
           };
         `,
-        inputNames: 'input',
-        outputNames: 'output',
+        inputNames: 'input1',
+        outputNames: 'output1',
       },
     };
 
