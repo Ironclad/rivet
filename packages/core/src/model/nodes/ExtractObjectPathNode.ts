@@ -119,7 +119,9 @@ export class ExtractObjectPathNodeImpl extends NodeImpl<ExtractObjectPathNode> {
 
     let matches: unknown[];
     try {
-      matches = JSONPath({ json: inputObject ?? null, path: inputPath.trim() });
+      // Wrap doesn't seem to wrap when the input is undefined or null...
+      const match = JSONPath<unknown>({ json: inputObject ?? null, path: inputPath.trim(), wrap: true });
+      matches = match == null ? [] : (match as unknown[]);
     } catch (err) {
       matches = [];
     }
