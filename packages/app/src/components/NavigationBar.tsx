@@ -6,6 +6,7 @@ import RightIcon from 'majesticons/line/chevron-right-line.svg?react';
 import CrossIcon from 'majesticons/line/multiply-line.svg?react';
 import { useRecoilState } from 'recoil';
 import { searchingGraphState } from '../state/graphBuilder';
+import { Tooltip } from './Tooltip';
 
 const styles = css`
   position: fixed;
@@ -94,17 +95,21 @@ export const NavigationBar: FC = () => {
   return (
     <div css={styles}>
       {navigationStack.hasBackward ? (
-        <button onClick={navigationStack.navigateBack}>
-          <LeftIcon />
-        </button>
+        <Tooltip content="Go to previous graph" placement="bottom">
+          <button onClick={navigationStack.navigateBack}>
+            <LeftIcon />
+          </button>
+        </Tooltip>
       ) : (
         <div className="button-placeholder" />
       )}
 
       {navigationStack.hasForward ? (
-        <button onClick={navigationStack.navigateForward}>
-          <RightIcon />
-        </button>
+        <Tooltip content="Go to next graph" placement="bottom">
+          <button onClick={navigationStack.navigateForward}>
+            <RightIcon />
+          </button>
+        </Tooltip>
       ) : (
         <div className="button-placeholder" />
       )}
