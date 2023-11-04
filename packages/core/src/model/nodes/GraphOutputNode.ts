@@ -11,7 +11,6 @@ import { nodeDefinition } from '../NodeDefinition.js';
 import { type DataType } from '../DataValue.js';
 import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { type InternalProcessContext } from '../ProcessContext.js';
-import { ControlFlowExcludedPort } from '../../utils/symbols.js';
 import { dedent } from 'ts-dedent';
 import { type EditorDefinition } from '../EditorDefinition.js';
 import { type NodeBodySpec } from '../NodeBodySpec.js';
@@ -99,7 +98,7 @@ export class GraphOutputNodeImpl extends NodeImpl<GraphOutputNode> {
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const value = inputs['value' as PortId] ?? { type: 'any', value: undefined };
 
-    const isExcluded = value.type === 'control-flow-excluded' || inputs[ControlFlowExcludedPort] != null;
+    const isExcluded = value.type === 'control-flow-excluded';
 
     if (isExcluded && context.graphOutputs[this.data.id] == null) {
       context.graphOutputs[this.data.id] = {

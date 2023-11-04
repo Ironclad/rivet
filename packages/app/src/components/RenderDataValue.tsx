@@ -156,6 +156,10 @@ export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number;
     renderMarkdown?: boolean;
   }>;
 
+  if (!Renderer) {
+    return <div>ERROR: UNKNOWN TYPE: {JSON.stringify(value)}</div>;
+  }
+
   return <Renderer value={value} depth={(depth ?? 0) + 1} renderMarkdown={renderMarkdown} />;
 };
 

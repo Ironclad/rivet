@@ -9,7 +9,6 @@ import {
 } from '../NodeBase.js';
 import { type ArrayDataValue, type DataValue, type ScalarDataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid/non-secure';
-import { ControlFlowExcludedPort } from '../../utils/symbols.js';
 import { dedent } from 'ts-dedent';
 
 export type IfElseNode = ChartNode<'ifElse', IfElseNodeData>;
@@ -89,12 +88,6 @@ export class IfElseNodeImpl extends NodeImpl<IfElseNode> {
     }
 
     if (ifValue?.type === 'control-flow-excluded') {
-      return {
-        ['output' as PortId]: falseValue,
-      };
-    }
-
-    if (inputData[ControlFlowExcludedPort]) {
       return {
         ['output' as PortId]: falseValue,
       };

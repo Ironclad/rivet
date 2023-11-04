@@ -1,5 +1,4 @@
 import { max, range, sum, uniqBy } from 'lodash-es';
-import { ControlFlowExcluded, ControlFlowExcludedPort } from '../utils/symbols.js';
 import {
   type DataValue,
   type ArrayDataValue,
@@ -1495,9 +1494,13 @@ export class GraphProcessor {
 
       this.#emitter.emit('nodeExcluded', { node, processId });
       this.#visitedNodes.add(node.id);
-      this.#nodeResults.set(node.id, {
-        [ControlFlowExcluded as unknown as PortId]: { type: 'control-flow-excluded', value: undefined },
-      });
+
+      const outputs: Outputs = {};
+      for (const output of this.#definitions[node.id]!.outputs) {
+        outputs[output.id] = { type: 'control-flow-excluded', value: undefined };
+      }
+      this.#nodeResults.set(node.id, outputs);
+      return;
     }
 
     const inputsWithValues = entries(inputValues);
@@ -1514,22 +1517,6 @@ export class GraphProcessor {
       .map((conn) => this.#nodesById[conn.outputNodeId])
       .filter(isNotNull) as ChartNode[];
 
-    const outputsNodesWithExcludedValue =
-      outputNodes.length > 0
-        ? outputNodes.filter((outputNode) => {
-            const outputValues = this.#nodeResults.get(outputNode.id) ?? {};
-            const outputControlFlowExcluded = outputValues[ControlFlowExcluded as unknown as PortId];
-            if (
-              outputControlFlowExcluded &&
-              (!typeOfExclusion || outputControlFlowExcluded.value === typeOfExclusion)
-            ) {
-              return true;
-            }
-            return false;
-          })
-        : [];
-    const anyOutputIsExcludedValue = outputsNodesWithExcludedValue.length > 0;
-
     const isWaitingForLoop = controlFlowExcludedValues.some((value) => value?.[1]?.value === 'loop-not-broken');
 
     const nodesAllowedToConsumeExcludedValue: BuiltInNodeType[] = [
@@ -1543,7 +1530,7 @@ export class GraphProcessor {
     const allowedToConsumedExcludedValue =
       nodesAllowedToConsumeExcludedValue.includes(node.type as BuiltInNodeType) && !isWaitingForLoop;
 
-    if ((inputIsExcludedValue || anyOutputIsExcludedValue) && !allowedToConsumedExcludedValue) {
+    if (inputIsExcludedValue && !allowedToConsumedExcludedValue) {
       if (!isWaitingForLoop) {
         if (inputIsExcludedValue) {
           this.#emitter.emit(
@@ -1552,20 +1539,14 @@ export class GraphProcessor {
           );
         }
 
-        if (anyOutputIsExcludedValue) {
-          this.#emitter.emit(
-            'trace',
-            `Excluding node ${node.title} because of control flow. Output is excluded: ${outputsNodesWithExcludedValue
-              .map((n) => n.title)
-              .join(', ')}`,
-          );
-        }
-
         this.#emitter.emit('nodeExcluded', { node, processId });
         this.#visitedNodes.add(node.id);
-        this.#nodeResults.set(node.id, {
-          [ControlFlowExcluded as unknown as PortId]: { type: 'control-flow-excluded', value: undefined },
-        });
+
+        const outputs: Outputs = {};
+        for (const output of this.#definitions[node.id]!.outputs) {
+          outputs[output.id] = { type: 'control-flow-excluded', value: undefined };
+        }
+        this.#nodeResults.set(node.id, outputs);
       }
 
       return true;
@@ -1587,13 +1568,6 @@ export class GraphProcessor {
         const outputResult = outputNodeOutputs?.[connection.outputId];
 
         values[input.id] = outputResult;
-
-        if (outputNodeOutputs?.[ControlFlowExcludedPort]) {
-          values[ControlFlowExcludedPort] = {
-            type: 'control-flow-excluded',
-            value: undefined,
-          };
-        }
       }
       return values;
     }, {} as Record<string, any>);
