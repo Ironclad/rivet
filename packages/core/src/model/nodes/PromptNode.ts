@@ -230,8 +230,8 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
       // Standardize to only have name and arguments (discard other props)
       function_call: functionCall
         ? {
-            name: functionCall.name,
-            arguments: functionCall.arguments,
+            name: functionCall.name as string,
+            arguments: functionCall.arguments as string,
           }
         : undefined,
     };

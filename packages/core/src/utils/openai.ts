@@ -133,7 +133,12 @@ export type ChatCompletionRequestMessage = {
 
   name: string | undefined;
 
-  function_call: object | undefined;
+  function_call:
+    | {
+        name: string;
+        arguments: string;
+      }
+    | undefined;
 };
 
 // https://platform.openai.com/docs/api-reference/chat/create

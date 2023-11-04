@@ -156,6 +156,17 @@ function coerceToString(value: DataValue | undefined): string | undefined {
 }
 
 function coerceToChatMessage(value: DataValue | undefined): ChatMessage | undefined {
+  const chatMessage = coerceToChatMessageRaw(value);
+
+  // Double check that arguments is a string, stringify if needed
+  if (chatMessage?.function_call?.arguments && typeof chatMessage.function_call.arguments !== 'string') {
+    chatMessage.function_call.arguments = JSON.stringify(chatMessage.function_call.arguments);
+  }
+
+  return chatMessage;
+}
+
+function coerceToChatMessageRaw(value: DataValue | undefined): ChatMessage | undefined {
   if (!value || value.value == null) {
     return undefined;
   }

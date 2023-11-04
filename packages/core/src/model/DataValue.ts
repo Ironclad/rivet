@@ -14,7 +14,12 @@ export type ChatMessage = {
   type: 'system' | 'user' | 'assistant' | 'function';
   message: string;
   name: string | undefined;
-  function_call: object | undefined;
+  function_call:
+    | {
+        name: string;
+        arguments: string; // JSON string
+      }
+    | undefined;
 };
 
 export type ChatMessageDataValue = DataValueDef<'chat-message', ChatMessage>;
