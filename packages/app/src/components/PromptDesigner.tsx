@@ -24,9 +24,6 @@ import {
   type NodeId,
   type NodeTestGroup,
   type PortId,
-  type ProcessId,
-  type RivetPlugin,
-  type Settings,
   arrayizeDataValue,
   coerceType,
   coerceTypeOptional,
@@ -34,7 +31,6 @@ import {
   getError,
   isArrayDataValue,
   openai,
-  type ChartNode,
 } from '@ironclad/rivet-core';
 import TextField from '@atlaskit/textfield';
 import { Field } from '@atlaskit/form';
@@ -51,12 +47,8 @@ import { useStableCallback } from '../hooks/useStableCallback.js';
 import { toast } from 'react-toastify';
 import { produce } from 'immer';
 import { overlayOpenState } from '../state/ui';
-import { BrowserDatasetProvider } from '../io/BrowserDatasetProvider';
 import { datasetProvider } from '../utils/globals';
-import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
-import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { GraphSelector } from './editors/GraphSelectorEditor';
-import { GptTokenizerTokenizer } from '../../../core/src/integrations/GptTokenizerTokenizer';
 import { useGetAdHocInternalProcessContext } from '../hooks/useGetAdHocInternalProcessContext';
 
 const styles = css`
