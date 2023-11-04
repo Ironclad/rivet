@@ -25,7 +25,6 @@ import { lastRecordingState, loadedRecordingState } from '../state/execution';
 import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
 import { trivetState } from '../state/trivet';
 import { runTrivet } from '@ironclad/trivet';
-import { BrowserDatasetProvider } from '../io/BrowserDatasetProvider';
 import { datasetProvider } from '../utils/globals';
 import { entries } from '../../../core/src/utils/typeSafety';
 
@@ -76,6 +75,7 @@ export function useLocalExecutor() {
     processor.on('pause', currentExecution.onPause);
     processor.on('resume', currentExecution.onResume);
     processor.on('error', currentExecution.onError);
+    processor.on('nodeExcluded', currentExecution.onNodeExcluded);
 
     processor.onUserEvent('toast', (data: DataValue | undefined) => {
       const stringData = coerceTypeOptional(data, 'string');

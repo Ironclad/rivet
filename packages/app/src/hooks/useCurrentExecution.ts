@@ -170,6 +170,17 @@ export function useCurrentExecution() {
     setSelectedNodePageLatest(node.id);
   };
 
+  function onNodeExcluded({ node, processId, inputs, outputs, reason }: ProcessEvents['nodeExcluded']) {
+    setDataForNode(node.id, processId, {
+      inputData: inputs,
+      outputData: outputs,
+      status: { type: 'notRan', reason },
+      startedAt: Date.now(),
+      finishedAt: Date.now(),
+    });
+    setSelectedNodePageLatest(node.id);
+  }
+
   const onNodeError = ({ node, error, processId }: ProcessEvents['nodeError']) => {
     setDataForNode(node.id, processId, {
       status: { type: 'error', error: typeof error === 'string' ? error : error.toString() },
@@ -356,6 +367,7 @@ export function useCurrentExecution() {
     onNodeStart,
     onNodeFinish,
     onNodeError,
+    onNodeExcluded,
     onStart,
     onStop,
     onUserInput,

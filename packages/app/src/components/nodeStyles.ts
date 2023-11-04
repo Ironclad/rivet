@@ -106,7 +106,9 @@ export const nodeStyles = css`
     gap: 0;
 
     .success,
-    .error {
+    .error,
+    .interrupted,
+    .not-ran {
       width: 24px;
       height: 24px;
       display: flex;
@@ -397,6 +399,12 @@ export const nodeStyles = css`
     border-top-color: var(--error-light);
   }
 
+  .node.not-ran .node-output:not(.multi) .node-output-inner,
+  .node.not-ran .multi-node-output {
+    border-top-style: dashed;
+    border-top-color: var(--grey-lightish);
+  }
+
   .node:hover .node-output-inner {
     max-height: 500px;
     overflow: auto;
@@ -435,6 +443,10 @@ export const nodeStyles = css`
 
   .node.error .node-output:before {
     border-top-color: var(--error-light);
+  }
+
+  .node.not-ran .node-output:before {
+    border-top-color: var(--grey-lightish);
   }
 
   .node-output.errored:before {

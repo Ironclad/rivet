@@ -113,6 +113,9 @@ export function useRemoteExecutor() {
         graphExecutionPromise?.reject?.(errorData.error);
         currentExecution.onError(data as ProcessEvents['error']);
         break;
+      case 'nodeExcluded':
+        currentExecution.onNodeExcluded(data as ProcessEvents['nodeExcluded']);
+        break;
     }
   });
 

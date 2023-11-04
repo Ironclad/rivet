@@ -8,9 +8,10 @@ import {
   type NodeOutputDefinition,
   type PortId,
 } from '@ironclad/rivet-core';
-import { type CSSProperties, forwardRef } from 'react';
+import { type CSSProperties, forwardRef, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { draggingWireState } from '../state/graphBuilder';
+import { lastRunData, selectedProcessPage } from '../state/dataFlow';
 
 const style = css`
   position: absolute;
@@ -82,6 +83,13 @@ const style = css`
       font-size: 12px;
     }
   }
+
+  .not-ran {
+    border-top: 1px dashed var(--warning);
+    padding-top: 4px;
+    margin-top: 4px;
+    color: var(--warning);
+  }
 `;
 
 export const PortInfo = forwardRef<
@@ -98,6 +106,27 @@ export const PortInfo = forwardRef<
 >(({ port, floatingStyles }, ref) => {
   const { definition } = port;
   const { dataType, title, description, id } = definition;
+
+  const lastRun = useRecoilValue(lastRunData(port.nodeId));
+  const selectedPage = useRecoilValue(selectedProcessPage(port.nodeId));
+
+  const didNotRun = useMemo(() => {
+    if (!lastRun || selectedPage == null) {
+      return false;
+    }
+
+    const execution = selectedPage === 'latest' ? lastRun[lastRun.length - 1] : lastRun[selectedPage];
+    if (!execution?.data) {
+      return false;
+    }
+
+    const data = port.isInput ? execution.data.inputData : execution.data.outputData;
+    if (!data) {
+      return false;
+    }
+
+    return data[port.portId]?.type === 'control-flow-excluded';
+  }, [lastRun, selectedPage]);
 
   const draggingWire = useRecoilValue(draggingWireState);
 
@@ -161,6 +190,12 @@ export const PortInfo = forwardRef<
             Your data of type <code>{draggingWire.dataType}</code> is incompatible with <code>{dataTypeDisplay}</code>.
             You may still connect it, but your graph may error.
           </div>
+        )}
+        {didNotRun && port.isInput && (
+          <div className="not-ran">The input to this port was not run in the last execution.</div>
+        )}
+        {didNotRun && !port.isInput && (
+          <div className="not-ran">Nodes connected to this port were not run in the last execution.</div>
         )}
       </div>
     </Portal>

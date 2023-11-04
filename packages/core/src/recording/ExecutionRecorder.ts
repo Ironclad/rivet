@@ -54,9 +54,12 @@ const toRecordedEventMap: {
     error: typeof error === 'string' ? error : error?.stack,
     graphId: graph.metadata!.id!,
   }),
-  nodeExcluded: ({ node, processId }) => ({
+  nodeExcluded: ({ node, processId, inputs, outputs, reason }) => ({
     nodeId: node.id,
     processId,
+    inputs,
+    outputs,
+    reason,
   }),
   userInput: ({ node, inputs, callback, processId }) => ({
     nodeId: node.id,

@@ -185,6 +185,7 @@ export const VisualNode = memo(
             success: selectedProcessRun?.status?.type === 'ok',
             error: selectedProcessRun?.status?.type === 'error',
             running: selectedProcessRun?.status?.type === 'running',
+            'not-ran': selectedProcessRun?.status?.type === 'notRan',
             zoomedOut: isZoomedOut,
             isComment,
             isPinned,
@@ -323,6 +324,11 @@ const ZoomedOutVisualNodeContent: FC<{
                   ))
                   .with({ type: 'interrupted' }, () => (
                     <div className="interrupted">
+                      <SendIcon />
+                    </div>
+                  ))
+                  .with({ type: 'notRan' }, () => (
+                    <div className="not-ran">
                       <SendIcon />
                     </div>
                   ))
@@ -536,6 +542,11 @@ const NormalVisualNodeContent: FC<{
                   ))
                   .with({ type: 'interrupted' }, () => (
                     <div className="interrupted">
+                      <SendIcon />
+                    </div>
+                  ))
+                  .with({ type: 'notRan' }, () => (
+                    <div className="not-ran">
                       <SendIcon />
                     </div>
                   ))

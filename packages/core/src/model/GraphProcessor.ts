@@ -71,7 +71,7 @@ export type ProcessEvents = {
   nodeError: { node: ChartNode; error: Error | string; processId: ProcessId };
 
   /** Called when a node has been excluded from processing. */
-  nodeExcluded: { node: ChartNode; processId: ProcessId };
+  nodeExcluded: { node: ChartNode; processId: ProcessId; inputs: Inputs; outputs: Outputs; reason: string };
 
   /** Called when a user input node requires user input. Call the callback when finished, or call userInput() on the GraphProcessor with the results. */
   userInput: {
@@ -591,6 +591,9 @@ export class GraphProcessor {
             this.#emitter.emit('nodeExcluded', {
               node: getNode(data.nodeId),
               processId: data.processId,
+              inputs: data.inputs,
+              outputs: data.outputs,
+              reason: data.reason,
             });
 
             this.#visitedNodes.add(data.nodeId);
@@ -1492,7 +1495,6 @@ export class GraphProcessor {
     if (node.disabled) {
       this.#emitter.emit('trace', `Excluding node ${node.title} because it's disabled`);
 
-      this.#emitter.emit('nodeExcluded', { node, processId });
       this.#visitedNodes.add(node.id);
 
       const outputs: Outputs = {};
@@ -1500,6 +1502,9 @@ export class GraphProcessor {
         outputs[output.id] = { type: 'control-flow-excluded', value: undefined };
       }
       this.#nodeResults.set(node.id, outputs);
+
+      this.#emitter.emit('nodeExcluded', { node, processId, inputs: inputValues, outputs, reason: 'disabled' });
+
       return;
     }
 
@@ -1534,7 +1539,6 @@ export class GraphProcessor {
           );
         }
 
-        this.#emitter.emit('nodeExcluded', { node, processId });
         this.#visitedNodes.add(node.id);
 
         const outputs: Outputs = {};
@@ -1542,6 +1546,14 @@ export class GraphProcessor {
           outputs[output.id] = { type: 'control-flow-excluded', value: undefined };
         }
         this.#nodeResults.set(node.id, outputs);
+
+        this.#emitter.emit('nodeExcluded', {
+          node,
+          processId,
+          inputs: inputValues,
+          outputs,
+          reason: 'input is excluded value',
+        });
       }
 
       return true;

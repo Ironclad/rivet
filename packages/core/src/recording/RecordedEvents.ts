@@ -42,7 +42,7 @@ export type RecordedEventsMap = OverrideProperties<
     nodeError: { nodeId: NodeId; error: string; processId: ProcessId };
 
     /** Called when a node has been excluded from processing. */
-    nodeExcluded: { nodeId: NodeId; processId: ProcessId };
+    nodeExcluded: { nodeId: NodeId; processId: ProcessId; inputs: Inputs; outputs: Outputs; reason: string };
 
     /** Called when a user input node requires user input. Call the callback when finished, or call userInput() on the GraphProcessor with the results. */
     userInput: {
