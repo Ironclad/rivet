@@ -7,9 +7,10 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { draggingWireClosestPortState } from '../state/graphBuilder.js';
 import { orderBy } from 'lodash-es';
-import { ioDefinitionsForNodeState, ioDefinitionsState, nodesByIdState } from '../state/graph';
+import { ioDefinitionsState, nodesByIdState } from '../state/graph';
 import { type PortPositions } from './NodeCanvas';
-import { lastRunDataByNodeState } from '../state/dataFlow';
+import { lastRunDataByNodeState, selectedProcessPageNodesState } from '../state/dataFlow';
+import select from '@atlaskit/select/dist/types/entry-points/select';
 
 const wiresStyles = css`
   width: 100%;
@@ -22,8 +23,9 @@ const wiresStyles = css`
     stroke: gray;
   }
 
-  .selected {
-    stroke: blue;
+  .wire.isNotRan {
+    stroke: var(--grey-lightish);
+    stroke-dasharray: 5;
   }
 
   .wire.highlighted {
@@ -62,6 +64,10 @@ export const WireLayer: FC<WireLayerProps> = ({
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const setClosestPort = useSetRecoilState(draggingWireClosestPortState);
   const ioByNode = useRecoilValue(ioDefinitionsState);
+
+  // Is this too inefficient?
+  const lastRunDataByNode = useRecoilValue(lastRunDataByNodeState);
+  const selectedProcessPageNodes = useRecoilValue(selectedProcessPageNodesState);
 
   const handleMouseMove = useCallback(
     (event: MouseEvent) => {
@@ -138,6 +144,7 @@ export const WireLayer: FC<WireLayerProps> = ({
                 highlighted={!!(draggingWire.endNodeId && draggingWire.endPortId)}
                 nodesById={nodesById}
                 portPositions={portPositions}
+                isNotRan={false}
               />
             ) : (
               <PartialWire
@@ -165,6 +172,21 @@ export const WireLayer: FC<WireLayerProps> = ({
             (highlightedPort.isInput ? connection.inputId : connection.outputId) === highlightedPort.portId &&
             (highlightedPort.isInput ? connection.inputNodeId : connection.outputNodeId) === highlightedPort.nodeId;
 
+          // Too heavyweight for here?
+          const outputNodeSelectedProcessPage = selectedProcessPageNodes[connection.outputNodeId];
+          const lastRunData = lastRunDataByNode[connection.outputNodeId];
+          let isNotRan = false;
+          if (lastRunData && outputNodeSelectedProcessPage != null) {
+            const selectedExecution =
+              outputNodeSelectedProcessPage === 'latest'
+                ? lastRunData[lastRunData.length - 1]
+                : lastRunData[outputNodeSelectedProcessPage];
+            if (selectedExecution?.data.outputData) {
+              const outputValue = selectedExecution.data.outputData[connection.outputId];
+              isNotRan = outputValue?.type === 'control-flow-excluded';
+            }
+          }
+
           const highlighted = isHighlightedNode || isCurrentlyRunning || isHighlightedPort;
           return (
             <ErrorBoundary fallback={<></>} key={`wire-${connection.inputId}-${connection.inputNodeId}`}>
@@ -174,6 +196,7 @@ export const WireLayer: FC<WireLayerProps> = ({
                 highlighted={!!highlighted}
                 nodesById={nodesById}
                 portPositions={portPositions}
+                isNotRan={isNotRan}
               />
             </ErrorBoundary>
           );

@@ -10,6 +10,7 @@ type WireProps = {
   connection: NodeConnection;
   selected: boolean;
   highlighted: boolean;
+  isNotRan: boolean;
   nodesById: Record<NodeId, ChartNode>;
   portPositions: PortPositions;
 };
@@ -25,6 +26,7 @@ export const ConditionallyRenderWire: FC<WireProps> = ({
   connection,
   selected,
   highlighted,
+  isNotRan,
   nodesById,
   portPositions,
 }) => {
@@ -45,7 +47,16 @@ export const ConditionallyRenderWire: FC<WireProps> = ({
 
   return (
     <ErrorBoundary fallback={<></>}>
-      <Wire sx={start.x} sy={start.y} ex={end.x} ey={end.y} selected={selected} highlighted={highlighted} />;
+      <Wire
+        sx={start.x}
+        sy={start.y}
+        ex={end.x}
+        ey={end.y}
+        selected={selected}
+        highlighted={highlighted}
+        isNotRan={isNotRan}
+      />
+      ;
     </ErrorBoundary>
   );
 };
@@ -65,7 +76,7 @@ export const PartialWire: FC<{ connection: PartialConnection; portPositions: Por
 
   return (
     <ErrorBoundary fallback={<></>}>
-      <Wire sx={start.x} sy={start.y} ex={end.x} ey={end.y} selected={false} highlighted={false} />;
+      <Wire sx={start.x} sy={start.y} ex={end.x} ey={end.y} selected={false} highlighted={false} isNotRan={false} />;
     </ErrorBoundary>
   );
 };
@@ -77,7 +88,8 @@ export const Wire: FC<{
   ey: number;
   selected: boolean;
   highlighted: boolean;
-}> = memo(({ sx, sy, ex, ey, selected, highlighted }) => {
+  isNotRan: boolean;
+}> = memo(({ sx, sy, ex, ey, selected, highlighted, isNotRan }) => {
   const deltaX = Math.abs(ex - sx);
   const handleDistance = sx <= ex ? deltaX * 0.5 : Math.abs(ey - sy) * 0.6;
 
@@ -96,7 +108,7 @@ export const Wire: FC<{
       : `M${sx},${sy} C${curveX1},${curveY1} ${curveX1},${middleY} ${sx},${middleY} ` +
         `L${ex},${middleY} C${curveX2},${middleY} ${curveX2},${curveY2} ${ex},${ey}`;
 
-  return <path className={clsx('wire', { selected, highlighted, backwards: isBackwards })} d={wirePath} />;
+  return <path className={clsx('wire', { selected, highlighted, backwards: isBackwards, isNotRan })} d={wirePath} />;
 });
 
 export function getNodePortPosition(

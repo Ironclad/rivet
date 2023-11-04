@@ -1,7 +1,7 @@
 import { getVersion } from '@tauri-apps/api/app';
 import { appWindow } from '@tauri-apps/api/window';
 import { useEffect } from 'react';
-import { useRecoilValue, useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { projectState, loadedProjectState } from '../state/savedGraphs';
 
 export function useWindowTitle() {
