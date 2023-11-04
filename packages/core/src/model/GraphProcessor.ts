@@ -1512,11 +1512,6 @@ export class GraphProcessor {
     );
     const inputIsExcludedValue = inputsWithValues.length > 0 && controlFlowExcludedValues.length > 0;
 
-    const inputConnections = this.#connections[node.id]?.filter((conn) => conn.inputNodeId === node.id) ?? [];
-    const outputNodes = inputConnections
-      .map((conn) => this.#nodesById[conn.outputNodeId])
-      .filter(isNotNull) as ChartNode[];
-
     const isWaitingForLoop = controlFlowExcludedValues.some((value) => value?.[1]?.value === 'loop-not-broken');
 
     const nodesAllowedToConsumeExcludedValue: BuiltInNodeType[] = [
