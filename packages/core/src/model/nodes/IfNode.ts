@@ -7,14 +7,22 @@ import {
   type NodeOutputDefinition,
   type PortId,
 } from '../NodeBase.js';
-import { type ControlFlowExcludedDataValue, type ScalarDataValue, type ArrayDataValue } from '../DataValue.js';
+import {
+  type ControlFlowExcludedDataValue,
+  type ScalarDataValue,
+  type ArrayDataValue,
+  type DataValue,
+} from '../DataValue.js';
 import { nanoid } from 'nanoid/non-secure';
 import type { Inputs, Outputs } from '../GraphProcessor.js';
 import { dedent } from 'ts-dedent';
+import type { EditorDefinition } from '../EditorDefinition.js';
 
 export type IfNode = ChartNode<'if', IfNodeData>;
 
-export type IfNodeData = {};
+export type IfNodeData = {
+  unconnectedControlFlowExcluded?: boolean;
+};
 
 export class IfNodeImpl extends NodeImpl<IfNode> {
   static create = (): IfNode => {
@@ -22,7 +30,10 @@ export class IfNodeImpl extends NodeImpl<IfNode> {
       type: 'if',
       title: 'If',
       id: nanoid() as NodeId,
-      data: {},
+      data: {
+        // Legacy behavior is false
+        unconnectedControlFlowExcluded: true,
+      },
       visualData: {
         x: 0,
         y: 0,
@@ -36,12 +47,15 @@ export class IfNodeImpl extends NodeImpl<IfNode> {
       {
         id: 'if' as PortId,
         title: 'If',
-        dataType: 'string',
+        dataType: 'any',
+        description:
+          'If this is truthy, the value will be passed through the True port. Otherwise, it will be passed through the False port. An unconnected port is considered false.',
       },
       {
         id: 'value' as PortId,
         title: 'Value',
-        dataType: 'string',
+        dataType: 'any',
+        description: 'The value to pass through the True or False port. If unconnected, it will be undefined.',
       },
     ];
   }
@@ -51,12 +65,14 @@ export class IfNodeImpl extends NodeImpl<IfNode> {
       {
         id: 'output' as PortId,
         title: 'True',
-        dataType: 'string',
+        dataType: 'any',
+        description: 'The `value` passed through if the condition is truthy.',
       },
       {
         id: 'falseOutput' as PortId,
         title: 'False',
-        dataType: 'string',
+        dataType: 'any',
+        description: 'The `value` passed through if the condition is falsy.',
       },
     ];
   }
@@ -73,9 +89,23 @@ export class IfNodeImpl extends NodeImpl<IfNode> {
     };
   }
 
+  getEditors(): EditorDefinition<IfNode>[] {
+    return [
+      {
+        type: 'toggle',
+        label: "Don't run unconnected value",
+        dataKey: 'unconnectedControlFlowExcluded',
+      },
+    ];
+  }
+
   async process(inputData: Inputs): Promise<Outputs> {
+    const unconnectedValue: DataValue = this.data.unconnectedControlFlowExcluded
+      ? { type: 'control-flow-excluded', value: undefined }
+      : { type: 'any', value: undefined };
+
     const ifValue = inputData['if' as PortId];
-    const value = inputData['value' as PortId] ?? { type: 'any', value: undefined };
+    const value = inputData['value' as PortId] ?? unconnectedValue;
 
     const isFalse = {
       output: {

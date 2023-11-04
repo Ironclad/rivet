@@ -10,10 +10,14 @@ import {
 import { type ArrayDataValue, type DataValue, type ScalarDataValue } from '../DataValue.js';
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
+import type { EditorDefinition } from '../EditorDefinition.js';
 
 export type IfElseNode = ChartNode<'ifElse', IfElseNodeData>;
 
-export type IfElseNodeData = {};
+export type IfElseNodeData = {
+  /** If true, unconnected input ports are control-flow-excluded. */
+  unconnectedControlFlowExcluded?: boolean;
+};
 
 export class IfElseNodeImpl extends NodeImpl<IfElseNode> {
   static create = (): IfElseNode => {
@@ -21,7 +25,10 @@ export class IfElseNodeImpl extends NodeImpl<IfElseNode> {
       type: 'ifElse',
       title: 'If/Else',
       id: nanoid() as NodeId,
-      data: {},
+      data: {
+        // Legacy behavior is false
+        unconnectedControlFlowExcluded: true,
+      },
       visualData: {
         x: 0,
         y: 0,
@@ -36,16 +43,20 @@ export class IfElseNodeImpl extends NodeImpl<IfElseNode> {
         id: 'if' as PortId,
         title: 'If',
         dataType: 'any',
+        description:
+          'If this is truthy, the `true` value will be passed through the output port. Otherwise, the `false` value will be passed through the output port. An unconnected port is considered false. A `Not Ran` value is considered false.',
       },
       {
         id: 'true' as PortId,
         title: 'True',
         dataType: 'any',
+        description: 'The value to pass through the output port if the condition is truthy. ',
       },
       {
         id: 'false' as PortId,
         title: 'False',
         dataType: 'any',
+        description: 'The value to pass through the output port if the condition is not truthy.',
       },
     ];
   }
@@ -56,6 +67,7 @@ export class IfElseNodeImpl extends NodeImpl<IfElseNode> {
         id: 'output' as PortId,
         title: 'Output',
         dataType: 'any',
+        description: 'The `true` or `false` value, depending on the `if` condition.',
       },
     ];
   }
@@ -73,10 +85,27 @@ export class IfElseNodeImpl extends NodeImpl<IfElseNode> {
     };
   }
 
+  getEditors(): EditorDefinition<IfElseNode>[] {
+    return [
+      {
+        type: 'toggle',
+        label: "Don't run unconnected ports",
+        dataKey: 'unconnectedControlFlowExcluded',
+      },
+    ];
+  }
+
   async process(inputData: Record<PortId, DataValue>): Promise<Record<PortId, DataValue>> {
+    const unconnectedValue: DataValue = this.data.unconnectedControlFlowExcluded
+      ? { type: 'control-flow-excluded', value: undefined }
+      : {
+          type: 'any',
+          value: undefined,
+        };
+
     const ifValue = inputData['if' as PortId];
-    const trueValue = inputData['true' as PortId] ?? { type: 'any', value: undefined };
-    const falseValue = inputData['false' as PortId] ?? { type: 'any', value: undefined };
+    const trueValue = inputData['true' as PortId] ?? unconnectedValue;
+    const falseValue = inputData['false' as PortId] ?? unconnectedValue;
 
     if (!(trueValue || falseValue)) {
       return {
