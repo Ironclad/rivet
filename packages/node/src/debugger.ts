@@ -9,6 +9,7 @@ import {
   type NodeId,
   type StringArrayDataValue,
   type DataId,
+  type DataValue,
 } from '@ironclad/rivet-core';
 import { match } from 'ts-pattern';
 import Emittery from 'emittery';
@@ -40,6 +41,7 @@ export type DynamicGraphRunOptions = {
   graphId: GraphId;
   inputs?: GraphInputs;
   runToNodeIds?: NodeId[];
+  contextValues: Record<string, DataValue>;
 };
 
 export type DynamicGraphRun = (data: DynamicGraphRunOptions) => Promise<void>;
@@ -95,13 +97,14 @@ export function startDebuggerServer(
 
         await match(message)
           .with({ type: 'run' }, async () => {
-            const { graphId, inputs, runToNodeIds } = message.data as {
+            const { graphId, inputs, runToNodeIds, contextValues } = message.data as {
               graphId: GraphId;
               inputs: GraphInputs;
               runToNodeIds?: NodeId[];
+              contextValues: Record<string, DataValue>;
             };
 
-            await options.dynamicGraphRun?.({ client: socket, graphId, inputs, runToNodeIds });
+            await options.dynamicGraphRun?.({ client: socket, graphId, inputs, runToNodeIds, contextValues });
           })
           .with({ type: 'set-dynamic-data' }, async () => {
             if (options.allowGraphUpload) {

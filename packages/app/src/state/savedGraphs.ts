@@ -1,4 +1,4 @@
-import { DefaultValue, atom, selector, selectorFamily } from 'recoil';
+import { DefaultValue, atom, atomFamily, selector, selectorFamily } from 'recoil';
 import { nanoid } from 'nanoid/non-secure';
 import { produce } from 'immer';
 import {
@@ -9,6 +9,7 @@ import {
   type Project,
   type ProjectId,
   type ChartNode,
+  type DataValue,
 } from '@ironclad/rivet-core';
 import { blankProject } from '../utils/blankProject.js';
 import { recoilPersist } from 'recoil-persist';
@@ -180,4 +181,19 @@ export const openedProjectsSortedIdsState = selector({
       };
     });
   },
+});
+
+/** Project context values stored in the IDE and not in the project file. Available in Context nodes. */
+export type ProjectContext = Record<
+  string,
+  {
+    value: DataValue;
+    secret: boolean;
+  }
+>;
+
+export const projectContextState = atomFamily<ProjectContext, ProjectId>({
+  key: 'projectContext',
+  default: {},
+  effects_UNSTABLE: [persistAtom],
 });

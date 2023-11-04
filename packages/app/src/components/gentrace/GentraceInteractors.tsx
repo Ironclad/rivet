@@ -1,6 +1,6 @@
 import Popup from '@atlaskit/popup';
 import { css } from '@emotion/react';
-import { ExecutionRecorder, globalRivetNodeRegistry } from '@ironclad/rivet-core';
+import { type DataValue, ExecutionRecorder, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { useToggle } from 'ahooks';
 import clsx from 'clsx';
 import EditPen from 'majesticons/line/edit-pen-2-line.svg?react';
@@ -13,16 +13,18 @@ import { useRemoteDebugger } from '../../hooks/useRemoteDebugger';
 import { useRemoteExecutor } from '../../hooks/useRemoteExecutor';
 import { TauriNativeApi } from '../../model/native/TauriNativeApi';
 import { graphState } from '../../state/graph';
-import { projectDataState, projectState } from '../../state/savedGraphs.js';
+import { projectContextState, projectDataState, projectState } from '../../state/savedGraphs.js';
 import { settingsState } from '../../state/settings';
 import { fillMissingSettingsFromEnvironmentVariables } from '../../utils/tauri';
 import GentracePipelinePicker, { type GentracePipeline } from './GentracePipelinePicker';
+import { entries } from '../../../../core/src/utils/typeSafety';
 
 export const GentraceInteractors = () => {
   const project = useRecoilValue(projectState);
   const graph = useRecoilValue(graphState);
   const savedSettings = useRecoilValue(settingsState);
   const projectData = useRecoilValue(projectDataState);
+  const projectContext = useRecoilValue(projectContextState(project.metadata.id));
 
   const remoteDebugger = useRemoteDebugger();
 
@@ -79,7 +81,15 @@ export const GentraceInteractors = () => {
 
             const recorderPromise = recorder.recordSocket(remoteDebugger.remoteDebuggerState.socket!);
 
-            remoteDebugger.send('run', { graphId: graph.metadata!.id!, inputs });
+            const contextValues = entries(projectContext).reduce(
+              (acc, [key, value]) => ({
+                ...acc,
+                [key]: value.value,
+              }),
+              {} as Record<string, DataValue>,
+            );
+
+            remoteDebugger.send('run', { graphId: graph.metadata!.id!, inputs, contextValues });
 
             await recorderPromise;
 

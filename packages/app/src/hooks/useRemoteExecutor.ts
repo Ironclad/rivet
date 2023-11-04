@@ -6,6 +6,7 @@ import {
   globalRivetNodeRegistry,
   serializeDatasets,
   type GraphId,
+  type DataValue,
 } from '@ironclad/rivet-core';
 import { useCurrentExecution } from './useCurrentExecution';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -13,7 +14,7 @@ import { graphState } from '../state/graph';
 import { settingsState } from '../state/settings';
 import { setCurrentDebuggerMessageHandler, useRemoteDebugger } from './useRemoteDebugger';
 import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
-import { projectDataState, projectState } from '../state/savedGraphs';
+import { projectContextState, projectDataState, projectState } from '../state/savedGraphs';
 import { useStableCallback } from './useStableCallback';
 import { toast } from 'react-toastify';
 import { trivetState } from '../state/trivet';
@@ -44,6 +45,7 @@ export function useRemoteExecutor() {
   const setUserInputModalSubmit = useSetRecoilState(userInputModalSubmitState);
   const setUserInputQuestions = useSetRecoilState(userInputModalQuestionsState);
   const selectedExecutor = useRecoilValue(selectedExecutorState);
+  const projectContext = useRecoilValue(projectContextState(project.metadata.id));
 
   const remoteDebugger = useRemoteDebugger({
     onDisconnect: () => {
@@ -158,7 +160,15 @@ export function useRemoteExecutor() {
         }
       }
 
-      remoteDebugger.send('run', { graphId: graphToRun, runToNodeIds: options.to });
+      const contextValues = entries(projectContext).reduce(
+        (acc, [id, value]) => ({
+          ...acc,
+          [id]: value.value,
+        }),
+        {} as Record<string, DataValue>,
+      );
+
+      remoteDebugger.send('run', { graphId: graphToRun, runToNodeIds: options.to, contextValues });
     } catch (e) {
       console.error(e);
     }
@@ -230,7 +240,15 @@ export function useRemoteExecutor() {
               };
             }
 
-            remoteDebugger.send('run', { graphId, inputs });
+            const contextValues = entries(projectContext).reduce(
+              (acc, [id, value]) => ({
+                ...acc,
+                [id]: value.value,
+              }),
+              {} as Record<string, DataValue>,
+            );
+
+            remoteDebugger.send('run', { graphId, inputs, contextValues });
 
             const results = await graphExecutionPromise.promise!;
             return results;

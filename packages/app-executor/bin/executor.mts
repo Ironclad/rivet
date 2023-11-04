@@ -11,7 +11,7 @@ import * as Rivet from '@ironclad/rivet-core';
 import { type RivetPluginInitializer } from '@ironclad/rivet-core';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { P, match } from 'ts-pattern';
+import { match } from 'ts-pattern';
 import { join } from 'node:path';
 import { access, readFile } from 'node:fs/promises';
 import { platform, homedir } from 'node:os';
@@ -47,7 +47,7 @@ const rivetDebugger = startDebuggerServer({
   port,
   allowGraphUpload: true,
   datasetProvider,
-  dynamicGraphRun: async ({ graphId, inputs, runToNodeIds }) => {
+  dynamicGraphRun: async ({ graphId, inputs, runToNodeIds, contextValues }) => {
     console.log(`Running graph ${graphId} with inputs:`, inputs);
 
     const project = currentDebuggerState.uploadedProject;
@@ -139,6 +139,7 @@ const rivetDebugger = startDebuggerServer({
         onTrace: (trace) => {
           console.log(trace);
         },
+        context: contextValues,
       });
 
       if (runToNodeIds) {

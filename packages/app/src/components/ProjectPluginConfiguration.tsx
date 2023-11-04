@@ -95,9 +95,13 @@ export const ProjectPluginsConfiguration: FC = () => {
         <Label htmlFor="">Plugins</Label>
       </div>
       <ul className="plugins-list">
-        {pluginSpecs.map((spec, i) => (
-          <PluginConfigurationItem spec={spec} key={`spec-${i}`} onDelete={deletePlugin} />
-        ))}
+        {pluginSpecs.length > 0 ? (
+          pluginSpecs.map((spec, i) => (
+            <PluginConfigurationItem spec={spec} key={`spec-${i}`} onDelete={deletePlugin} />
+          ))
+        ) : (
+          <li>None</li>
+        )}
       </ul>
     </div>
   );

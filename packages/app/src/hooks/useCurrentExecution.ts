@@ -32,6 +32,10 @@ import { previousDataPerNodeToKeepState } from '../state/settings';
 function sanitizeDataValueForLength(value: DataValue | undefined) {
   return match(value)
     .with({ type: 'string' }, (value): DataValue => {
+      if (value.value == null) {
+        return value;
+      }
+
       if (value.value.length > 300_000) {
         return { type: 'string', value: `String (length ${value.value.length.toLocaleString()}` };
       }

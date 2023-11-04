@@ -18,7 +18,7 @@ import { useSaveCurrentGraph } from './useSaveCurrentGraph';
 import { useCurrentExecution } from './useCurrentExecution';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
-import { projectDataState, projectState } from '../state/savedGraphs';
+import { projectContextState, projectDataState, projectState } from '../state/savedGraphs';
 import { recordExecutionsState, settingsState } from '../state/settings';
 import { graphState } from '../state/graph';
 import { lastRecordingState, loadedRecordingState } from '../state/execution';
@@ -27,6 +27,7 @@ import { trivetState } from '../state/trivet';
 import { runTrivet } from '@ironclad/trivet';
 import { BrowserDatasetProvider } from '../io/BrowserDatasetProvider';
 import { datasetProvider } from '../utils/globals';
+import { entries } from '../../../core/src/utils/typeSafety';
 
 export function useLocalExecutor() {
   const project = useRecoilValue(projectState);
@@ -42,6 +43,7 @@ export function useLocalExecutor() {
   const [{ testSuites }, setTrivetState] = useRecoilState(trivetState);
   const recordExecutions = useRecoilValue(recordExecutionsState);
   const projectData = useRecoilValue(projectDataState);
+  const projectContext = useRecoilValue(projectContextState(project.metadata.id));
 
   function attachGraphEvents(processor: GraphProcessor) {
     processor.on('nodeStart', currentExecution.onNodeStart);
@@ -129,14 +131,26 @@ export function useLocalExecutor() {
         if (loadedRecording) {
           results = await processor.replayRecording(loadedRecording.recorder);
         } else {
-          results = await processor.processGraph({
-            settings: await fillMissingSettingsFromEnvironmentVariables(
-              savedSettings,
-              globalRivetNodeRegistry.getPlugins(),
-            ),
-            nativeApi: new TauriNativeApi(),
-            datasetProvider,
-          });
+          const contextValues = entries(projectContext).reduce(
+            (acc, [key, value]) => ({
+              ...acc,
+              [key]: value.value,
+            }),
+            {} as Record<string, DataValue>,
+          );
+
+          results = await processor.processGraph(
+            {
+              settings: await fillMissingSettingsFromEnvironmentVariables(
+                savedSettings,
+                globalRivetNodeRegistry.getPlugins(),
+              ),
+              nativeApi: new TauriNativeApi(),
+              datasetProvider,
+            },
+            {},
+            contextValues,
+          );
         }
 
         if (recordExecutions) {
