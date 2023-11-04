@@ -238,6 +238,19 @@ export const OverlayTabs: FC = () => {
           </button>
         </div>
 
+        <div className={clsx('menu-item community', { active: openOverlay === 'community' })}>
+          <button
+            className="dropdown-item"
+            onMouseDown={(e) => {
+              if (e.button === 0) {
+                setOpenOverlay((s) => (s === 'community' ? undefined : 'community'));
+              }
+            }}
+          >
+            Community
+          </button>
+        </div>
+
         <div className={clsx('menu-item prompt-designer-menu', { active: openOverlay === 'promptDesigner' })}>
           <button
             className="dropdown-item"

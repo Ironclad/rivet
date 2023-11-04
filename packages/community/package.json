@@ -1,0 +1,40 @@
+{
+  "name": "@ironclad/rivet-community",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@auth/core": "^0.18.0",
+    "@ironclad/rivet-core": "workspace:^",
+    "@recoiljs/refine": "^0.1.1",
+    "@vercel/blob": "^0.14.1",
+    "@vercel/kv": "^0.2.4",
+    "immer": "^10.0.3",
+    "lodash-es": "^4.17.21",
+    "nanoid": "^5.0.2",
+    "next": "14.0.1",
+    "next-auth": "^5.0.0-beta.3",
+    "next-connect": "1.0.0-next.4",
+    "octokit": "^3.1.1",
+    "passport-local": "^1.0.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "semver": "^7.5.4"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.10",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/semver": "^7.5.4",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.1",
+    "type-fest": "^4.6.0",
+    "typescript": "^5"
+  }
+}
