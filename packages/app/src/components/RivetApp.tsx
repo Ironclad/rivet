@@ -27,6 +27,7 @@ import { UpdateModalRenderer } from './UpdateModal';
 import { useMonitorUpdateStatus } from '../hooks/useMonitorUpdateStatus';
 import { ProjectSelector } from './ProjectSelector';
 import { NewProjectModalRenderer } from './NewProjectModal';
+import { useWindowTitle } from '../hooks/useWindowTitle';
 
 const styles = css`
   overflow: hidden;
@@ -53,6 +54,7 @@ export const RivetApp: FC = () => {
   }, []);
 
   useMonitorUpdateStatus();
+  useWindowTitle();
 
   return (
     <div className={clsx('app', theme ? `theme-${theme}` : 'theme-default')} css={styles}>

@@ -77,19 +77,6 @@ export const LeftSidebar: FC<{
   const project = useRecoilValue(projectState);
   const [sidebarOpen, setSidebarOpen] = useRecoilState(sidebarOpenState);
 
-  const loadedProject = useRecoilValue(loadedProjectState);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const currentVersion = await getVersion();
-        await appWindow.setTitle(`Rivet ${currentVersion} - ${project.metadata.title} (${loadedProject.path})`);
-      } catch (err) {
-        console.warn(`Failed to set window title, likely not running in Tauri: ${err}`);
-      }
-    })();
-  }, [loadedProject, project.metadata.title]);
-
   return (
     <div
       css={styles}
