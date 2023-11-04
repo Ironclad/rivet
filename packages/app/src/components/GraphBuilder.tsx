@@ -21,6 +21,7 @@ import { NavigationBar } from './NavigationBar';
 import { projectState } from '../state/savedGraphs';
 import { useDatasets } from '../hooks/useDatasets';
 import { overlayOpenState } from '../state/ui';
+import { GraphExecutionSelectorBar } from './GraphExecutionSelectorBar';
 
 const Container = styled.div`
   position: relative;
@@ -144,6 +145,7 @@ export const GraphBuilder: FC = () => {
           </Button>
         )}
         {overlay === undefined && <NavigationBar />}
+        <GraphExecutionSelectorBar />
         <UserInputModal
           open={isUserInputModalOpen}
           questions={lastQuestions}
