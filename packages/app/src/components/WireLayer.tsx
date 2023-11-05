@@ -9,7 +9,7 @@ import { draggingWireClosestPortState } from '../state/graphBuilder.js';
 import { orderBy } from 'lodash-es';
 import { ioDefinitionsState, nodesByIdState } from '../state/graph';
 import { type PortPositions } from './NodeCanvas';
-import { lastRunDataByNodeState, selectedProcessPageNodesState } from '../state/dataFlow';
+import { type RunDataByNodeId, lastRunDataByNodeState, selectedProcessPageNodesState } from '../state/dataFlow';
 import select from '@atlaskit/select/dist/types/entry-points/select';
 
 const wiresStyles = css`
@@ -125,8 +125,6 @@ export const WireLayer: FC<WireLayerProps> = ({
 
   const nodesById = useRecoilValue(nodesByIdState);
 
-  const lastRun = useRecoilValue(lastRunDataByNodeState);
-
   return (
     <svg css={wiresStyles}>
       <g transform={`scale(${canvasPosition.zoom}) translate(${canvasPosition.x}, ${canvasPosition.y})`}>
@@ -163,7 +161,7 @@ export const WireLayer: FC<WireLayerProps> = ({
           const isHighlightedNode =
             highlightedNodes?.includes(connection.inputNodeId) || highlightedNodes?.includes(connection.outputNodeId);
 
-          const isCurrentlyRunning = lastRun[connection.inputNodeId]?.some(
+          const isCurrentlyRunning = lastRunDataByNode[connection.inputNodeId]?.some(
             (run) => run.data.status?.type === 'running',
           );
 
@@ -172,20 +170,7 @@ export const WireLayer: FC<WireLayerProps> = ({
             (highlightedPort.isInput ? connection.inputId : connection.outputId) === highlightedPort.portId &&
             (highlightedPort.isInput ? connection.inputNodeId : connection.outputNodeId) === highlightedPort.nodeId;
 
-          // Too heavyweight for here?
-          const outputNodeSelectedProcessPage = selectedProcessPageNodes[connection.outputNodeId];
-          const lastRunData = lastRunDataByNode[connection.outputNodeId];
-          let isNotRan = false;
-          if (lastRunData && outputNodeSelectedProcessPage != null) {
-            const selectedExecution =
-              outputNodeSelectedProcessPage === 'latest'
-                ? lastRunData[lastRunData.length - 1]
-                : lastRunData[outputNodeSelectedProcessPage];
-            if (selectedExecution?.data.outputData) {
-              const outputValue = selectedExecution.data.outputData[connection.outputId];
-              isNotRan = outputValue?.type === 'control-flow-excluded';
-            }
-          }
+          const isNotRan = getIsNotRan(connection, selectedProcessPageNodes, lastRunDataByNode);
 
           const highlighted = isHighlightedNode || isCurrentlyRunning || isHighlightedPort;
           return (
@@ -205,3 +190,41 @@ export const WireLayer: FC<WireLayerProps> = ({
     </svg>
   );
 };
+
+// Not sure if too much computation to run on render... it's all indexed lookups, but there are a lot
+function getIsNotRan(
+  connection: NodeConnection,
+  selectedProcessPageNodes: Record<NodeId, number | 'latest'>,
+  lastRunDataByNode: RunDataByNodeId,
+) {
+  // Too heavyweight for here?
+  const inputNodeSelectedProcessPage = selectedProcessPageNodes[connection.inputNodeId];
+  const outputNodeSelectedProcessPage = selectedProcessPageNodes[connection.outputNodeId];
+  const inputNodeLastRunData = lastRunDataByNode[connection.inputNodeId];
+  const outputNodeLastRunData = lastRunDataByNode[connection.outputNodeId];
+  let isNotRan = false;
+  if (
+    inputNodeLastRunData &&
+    outputNodeLastRunData &&
+    inputNodeSelectedProcessPage != null &&
+    outputNodeSelectedProcessPage != null &&
+    inputNodeSelectedProcessPage === outputNodeSelectedProcessPage // Needs same process selected for this to mean anything
+  ) {
+    const inputNodeSelectedExecution =
+      inputNodeSelectedProcessPage === 'latest'
+        ? inputNodeLastRunData[inputNodeLastRunData.length - 1]
+        : inputNodeLastRunData[inputNodeSelectedProcessPage];
+    const outputNodeSelectedExecution =
+      outputNodeSelectedProcessPage === 'latest'
+        ? outputNodeLastRunData[outputNodeLastRunData.length - 1]
+        : outputNodeLastRunData[outputNodeSelectedProcessPage];
+
+    if (inputNodeSelectedExecution?.data.inputData && outputNodeSelectedExecution?.data.outputData) {
+      const inputValue = inputNodeSelectedExecution.data.inputData[connection.inputId];
+      const outputValue = outputNodeSelectedExecution.data.outputData[connection.outputId];
+      isNotRan = outputValue?.type === 'control-flow-excluded' && inputValue?.type === 'control-flow-excluded';
+    }
+  }
+
+  return isNotRan;
+}
