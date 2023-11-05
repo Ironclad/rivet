@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import { useMemo, type FC } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { lastRunDataByNodeState, selectedProcessPageNodesState } from '../state/dataFlow';
-import { graphState, nodesState } from '../state/graph';
+import { nodesState } from '../state/graph';
 import LeftIcon from 'majesticons/line/chevron-left-line.svg?react';
 import RightIcon from 'majesticons/line/chevron-right-line.svg?react';
 import { produce } from 'immer';

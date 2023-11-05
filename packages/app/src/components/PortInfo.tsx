@@ -12,6 +12,8 @@ import { type CSSProperties, forwardRef, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { draggingWireState } from '../state/graphBuilder';
 import { lastRunData, selectedProcessPage } from '../state/dataFlow';
+import clsx from 'clsx';
+import { RenderDataValue } from './RenderDataValue';
 
 const style = css`
   position: absolute;
@@ -110,23 +112,25 @@ export const PortInfo = forwardRef<
   const lastRun = useRecoilValue(lastRunData(port.nodeId));
   const selectedPage = useRecoilValue(selectedProcessPage(port.nodeId));
 
-  const didNotRun = useMemo(() => {
+  const portData = useMemo(() => {
     if (!lastRun || selectedPage == null) {
-      return false;
+      return undefined;
     }
 
     const execution = selectedPage === 'latest' ? lastRun[lastRun.length - 1] : lastRun[selectedPage];
     if (!execution?.data) {
-      return false;
+      return undefined;
     }
 
     const data = port.isInput ? execution.data.inputData : execution.data.outputData;
     if (!data) {
-      return false;
+      return undefined;
     }
 
-    return data[port.portId]?.type === 'control-flow-excluded';
+    return data;
   }, [lastRun, selectedPage]);
+
+  const didNotRun = portData?.[port.portId]?.type === 'control-flow-excluded';
 
   const draggingWire = useRecoilValue(draggingWireState);
 
@@ -150,9 +154,11 @@ export const PortInfo = forwardRef<
     !isDataTypeAccepted(draggingWire.dataType, definition.dataType) &&
     (!canCoerce || !canBeCoercedAny(draggingWire.dataType, definition.dataType));
 
+  const displayExecutionNum = portData ? (selectedPage === 'latest' ? lastRun!.length : selectedPage + 1) : undefined;
+
   return (
     <Portal>
-      <div css={style} ref={ref} style={floatingStyles}>
+      <div css={style} ref={ref} style={floatingStyles} className={clsx({ 'has-data': !!portData })}>
         <dl>
           <dt className="id-title">
             {title === id ? (
@@ -196,6 +202,14 @@ export const PortInfo = forwardRef<
         )}
         {didNotRun && !port.isInput && (
           <div className="not-ran">Nodes connected to this port were not run in the last execution.</div>
+        )}
+        {portData && (
+          <>
+            <h6>Execution {displayExecutionNum}</h6>
+            <div className="last-value">
+              <RenderDataValue value={portData[port.portId]} />
+            </div>
+          </>
         )}
       </div>
     </Portal>
