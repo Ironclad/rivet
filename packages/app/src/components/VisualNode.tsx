@@ -34,8 +34,7 @@ import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { LoadingSpinner } from './LoadingSpinner.js';
 import { ErrorBoundary } from 'react-error-boundary';
-import { NodePorts, NodePortsRenderer } from './NodePorts.js';
-import { useNodeTypes } from '../hooks/useNodeTypes';
+import { NodePortsRenderer } from './NodePorts.js';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { useIsKnownNodeType } from '../hooks/useIsKnownNodeType';
 import {
@@ -479,7 +478,9 @@ const NormalVisualNodeContent: FC<{
     const [shiftHeld, setShiftHeld] = useState(false);
 
     const watchShift = useStableCallback((event: MouseEvent) => {
-      setShiftHeld(event.shiftKey);
+      if (event.shiftKey !== shiftHeld) {
+        setShiftHeld(event.shiftKey);
+      }
     });
 
     const handleAttributesMaybe = shiftHeld ? {} : handleAttributes;

@@ -44,7 +44,6 @@ import { useNodePortPositions } from '../hooks/useNodePortPositions';
 import { useCopyNodesHotkeys } from '../hooks/useCopyNodesHotkeys';
 import { useCanvasHotkeys } from '../hooks/useCanvasHotkeys';
 import { useSearchGraph } from '../hooks/useSearchGraph';
-import Portal from '@atlaskit/portal';
 import { zoomSensitivityState } from '../state/settings';
 import { MouseIcon } from './MouseIcon';
 import { PortInfo } from './PortInfo';
@@ -552,7 +551,6 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   // so we move it off screen instead
   const [contextMenuDisabled, setContextMenuDisabled] = useState(true);
 
-  useCopyNodesHotkeys();
   useCanvasHotkeys();
   useSearchGraph();
 
@@ -576,6 +574,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         }}
       >
         <MouseIcon />
+        <CopyNodesHotkeys />
         <DebugOverlay enabled={false} />
         <div
           className="canvas-contents"
@@ -714,4 +713,11 @@ const DebugOverlay: FC<{ enabled: boolean }> = ({ enabled }) => {
       </div>
     </div>
   );
+};
+
+// Optimization so that NodeCanvas doesn't rerender on mouse move
+export const CopyNodesHotkeys: FC = () => {
+  useCopyNodesHotkeys();
+
+  return null;
 };

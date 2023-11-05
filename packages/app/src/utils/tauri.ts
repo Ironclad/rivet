@@ -1,7 +1,7 @@
 import { type RivetPlugin, type Settings, type StringPluginConfigurationSpec } from '@ironclad/rivet-core';
 import { window } from '@tauri-apps/api';
 import { invoke } from '@tauri-apps/api/tauri';
-import { entries, values } from '../../../core/src/utils/typeSafety';
+import { entries } from '../../../core/src/utils/typeSafety';
 
 export function isInTauri(): boolean {
   try {
@@ -24,7 +24,11 @@ export async function getEnvVar(name: string): Promise<string | undefined> {
     cachedEnvVars[name] = value;
     return value;
   } else {
-    return process.env[name];
+    if (typeof process !== 'undefined') {
+      return process.env[name];
+    }
+
+    return undefined;
   }
 }
 

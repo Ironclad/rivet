@@ -4,13 +4,14 @@ import { css } from '@emotion/react';
 import { ConditionallyRenderWire, PartialWire } from './Wire.js';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { draggingWireClosestPortState } from '../state/graphBuilder.js';
 import { orderBy } from 'lodash-es';
 import { ioDefinitionsState, nodesByIdState } from '../state/graph';
 import { type PortPositions } from './NodeCanvas';
 import { type RunDataByNodeId, lastRunDataByNodeState, selectedProcessPageNodesState } from '../state/dataFlow';
 import select from '@atlaskit/select/dist/types/entry-points/select';
+import { useStableCallback } from '../hooks/useStableCallback';
 
 const wiresStyles = css`
   width: 100%;
@@ -62,15 +63,24 @@ export const WireLayer: FC<WireLayerProps> = ({
   highlightedPort,
 }) => {
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const setClosestPort = useSetRecoilState(draggingWireClosestPortState);
+  const [closestPort, setClosestPort] = useRecoilState(draggingWireClosestPortState);
   const ioByNode = useRecoilValue(ioDefinitionsState);
 
   // Is this too inefficient?
   const lastRunDataByNode = useRecoilValue(lastRunDataByNodeState);
   const selectedProcessPageNodes = useRecoilValue(selectedProcessPageNodesState);
 
+  const handleMouseDown = useStableCallback((event: MouseEvent) => {
+    const { clientX, clientY } = event;
+    setMousePosition({ x: clientX, y: clientY });
+  });
+
   const handleMouseMove = useCallback(
     (event: MouseEvent) => {
+      if (!draggingWire) {
+        return;
+      }
+
       const { clientX, clientY } = event;
       setMousePosition({ x: clientX, y: clientY });
 
@@ -104,7 +114,7 @@ export const WireLayer: FC<WireLayerProps> = ({
             setClosestPort(undefined);
           }
         }
-      } else {
+      } else if (closestPort !== undefined) {
         setClosestPort(undefined);
       }
     },
@@ -112,11 +122,13 @@ export const WireLayer: FC<WireLayerProps> = ({
   );
 
   useEffect(() => {
+    window.addEventListener('mousedown', handleMouseDown, { capture: true });
     window.addEventListener('mousemove', handleMouseMove);
     return () => {
+      window.removeEventListener('mousedown', handleMouseDown, { capture: true });
       window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [handleMouseMove]);
+  }, [handleMouseMove, handleMouseDown]);
 
   useLayoutEffect(() => {}, [draggingWire, mousePosition.x, mousePosition.y, setClosestPort]);
 
