@@ -27,11 +27,12 @@ const styles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 32px;
+    height: 30px;
     min-width: 32px;
     color: var(--grey-light);
-    font-size: 14px;
+    font-size: 12px;
     pointer-events: none;
+    line-height: 32px;
   }
 
   button {
@@ -41,8 +42,8 @@ const styles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     padding: 0;
     cursor: pointer;
     transition: color 0.2s ease-out, background 0.2s ease-out;
@@ -137,16 +138,16 @@ export const GraphExecutionSelectorBar: FC = () => {
     setAllSelectedExecution(graphSelectedExecution + 1);
   };
 
-  if (maxExecutionNum <= 1) {
-    return null;
-  }
-
   const selectedExecutionText =
     graphSelectedExecution === 'latest'
       ? maxExecutionNum
       : graphSelectedExecution === 'mixed'
       ? '(Mixed)'
       : graphSelectedExecution + 1;
+
+  if (maxExecutionNum <= 1) {
+    return null;
+  }
 
   return (
     <div css={styles}>
@@ -161,7 +162,6 @@ export const GraphExecutionSelectorBar: FC = () => {
       >
         <div className="current">{selectedExecutionText}</div>
       </Tooltip>
-
       <Tooltip content="Next execution (all nodes)" placement="bottom">
         <button className="next" onClick={onNext}>
           <RightIcon />

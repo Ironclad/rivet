@@ -12,12 +12,14 @@ export type TooltipProps = {
   placement?: Placement;
   delay?: number;
   width?: number;
+  wrap?: boolean;
 };
 
 const TRANSITION_TIME = 150;
 
 const style = css`
   position: absolute;
+  z-index: 1000;
 
   .box {
     background: var(--grey-light);
@@ -74,6 +76,7 @@ export const Tooltip: FC<TooltipProps> = ({
   placement = 'top',
   delay = 500,
   width,
+  wrap = false,
 }) => {
   const { refs, floatingStyles, update } = useFloating({
     placement,
@@ -120,7 +123,15 @@ export const Tooltip: FC<TooltipProps> = ({
         onExiting={() => update()}
         onExited={() => update()}
       >
-        <div css={style} ref={combinedFloatingRefs} style={{ ...floatingStyles, width: width ?? 150 }}>
+        <div
+          css={style}
+          ref={combinedFloatingRefs}
+          style={{
+            ...floatingStyles,
+            whiteSpace: wrap ? 'normal' : 'nowrap',
+            width,
+          }}
+        >
           <div className="box">{content}</div>
         </div>
       </CSSTransition>
