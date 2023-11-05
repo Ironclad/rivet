@@ -15,7 +15,7 @@ export function useNodePortPositions() {
   const nodesById = useRecoilValue(nodesByIdState);
   const canvasRef = useRef<HTMLDivElement>(null);
 
-  useLayoutEffect(() => {
+  const recalculate = () => {
     // Lot of duplication but meh
     const normalPortElements = canvasRef.current?.querySelectorAll(
       '.node:not(.overlayNode) .port-circle',
@@ -121,7 +121,11 @@ export function useNodePortPositions() {
     if (changed) {
       setNodePortPositions(newPositions);
     }
+  };
+
+  useLayoutEffect(() => {
+    recalculate();
   });
 
-  return { nodePortPositions, canvasRef };
+  return { nodePortPositions, canvasRef, recalculate };
 }

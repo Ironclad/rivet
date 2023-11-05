@@ -171,6 +171,32 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
       throw new Error('SubGraphNode requires a project to be set in the context.');
     }
 
+    const graph = project.graphs[this.data.graphId];
+    if (!graph) {
+      throw new Error(`SubGraphNode requires a graph with id ${this.data.graphId} to be present in the project.`);
+    }
+
+    const inputNodes = graph.nodes.filter((node) => node.type === 'graphInput') as GraphInputNode[];
+    const inputIds = [...new Set(inputNodes.map((node) => node.data.id))].sort();
+
+    const inputData = inputIds.reduce((obj, id): Inputs => {
+      if (inputs[id as PortId] != null) {
+        return {
+          ...obj,
+          [id]: inputs[id as PortId],
+        };
+      }
+
+      if (this.data.inputData?.[id] != null) {
+        return {
+          ...obj,
+          [id]: this.data.inputData[id],
+        };
+      }
+
+      return obj;
+    }, {} as Inputs);
+
     const subGraphProcessor = context.createSubProcessor(this.data.graphId, { signal: context.signal });
 
     try {
@@ -178,7 +204,7 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
 
       const outputs = await subGraphProcessor.processGraph(
         context,
-        inputs as Record<string, DataValue>,
+        inputData as Record<string, DataValue>,
         context.contextValues,
       );
 

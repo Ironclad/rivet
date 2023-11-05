@@ -21,6 +21,7 @@ import { EditorGroup } from './EditorGroup';
 import { KeyValuePairEditor } from './KeyValuePairEditor';
 import { StringListEditor } from './StringListEditor';
 import { CustomEditor } from './CustomEditor';
+import { DefaultDynamicEditor } from './DynamicEditor';
 
 export const DefaultNodeEditorField: FC<
   SharedEditorProps & {
@@ -58,6 +59,7 @@ export const DefaultNodeEditorField: FC<
     .with({ type: 'keyValuePair' }, (editor) => <KeyValuePairEditor {...sharedProps} editor={editor} />)
     .with({ type: 'stringList' }, (editor) => <StringListEditor {...sharedProps} editor={editor} />)
     .with({ type: 'custom' }, (editor) => <CustomEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'dynamic' }, (editor) => <DefaultDynamicEditor {...sharedProps} editor={editor} />)
     .exhaustive();
 
   const toggle =

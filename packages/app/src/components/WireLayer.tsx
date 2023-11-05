@@ -46,6 +46,7 @@ export type WireDef = {
 type WireLayerProps = {
   connections: NodeConnection[];
   draggingWire?: WireDef;
+  draggingNode: boolean;
   highlightedNodes?: NodeId[];
   portPositions: PortPositions;
   highlightedPort?: {
@@ -58,6 +59,7 @@ type WireLayerProps = {
 export const WireLayer: FC<WireLayerProps> = ({
   connections,
   draggingWire,
+  draggingNode,
   highlightedNodes,
   portPositions,
   highlightedPort,
@@ -77,7 +79,7 @@ export const WireLayer: FC<WireLayerProps> = ({
 
   const handleMouseMove = useCallback(
     (event: MouseEvent) => {
-      if (!draggingWire) {
+      if (!draggingWire && !draggingNode) {
         return;
       }
 
@@ -118,7 +120,7 @@ export const WireLayer: FC<WireLayerProps> = ({
         setClosestPort(undefined);
       }
     },
-    [draggingWire, setClosestPort],
+    [draggingWire, setClosestPort, draggingNode, ioByNode],
   );
 
   useEffect(() => {

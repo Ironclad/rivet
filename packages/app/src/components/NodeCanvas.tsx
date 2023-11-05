@@ -203,7 +203,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     setContextMenuData,
   } = useContextMenu();
 
-  const { nodePortPositions, canvasRef } = useNodePortPositions();
+  const { nodePortPositions, canvasRef, recalculate } = useNodePortPositions();
 
   const { setNodeRef } = useDroppable({ id: 'NodeCanvas' });
   const setCanvasRef = useMergeRefs([setNodeRef, canvasRef]);
@@ -251,6 +251,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     (e: React.MouseEvent) => {
       setLastMousePosition({ x: e.clientX, y: e.clientY });
       lastMouseInfoRef.current = { x: e.clientX, y: e.clientY, target: e.target };
+
+      recalculate();
 
       if (selectionBox) {
         const newBox = {
@@ -679,6 +681,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           highlightedNodes={highlightedNodes}
           highlightedPort={hoveringPort}
           portPositions={nodePortPositions}
+          draggingNode={draggingNodes.length > 0}
         />
         {hoveringPort && hoveringShowPortInfo && (
           <PortInfo floatingStyles={floatingStyles} ref={refs.setFloating} port={hoveringPort} />
