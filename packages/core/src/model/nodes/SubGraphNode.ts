@@ -19,6 +19,8 @@ import { type InternalProcessContext } from '../ProcessContext.js';
 import { type EditorDefinition } from '../../index.js';
 import { dedent } from 'ts-dedent';
 import { getError } from '../../utils/errors.js';
+import { match } from 'ts-pattern';
+import type { RivetUIContext } from '../RivetUIContext.js';
 
 export type SubGraphNode = ChartNode & {
   type: 'subGraph';
@@ -26,6 +28,9 @@ export type SubGraphNode = ChartNode & {
     graphId: GraphId;
     useErrorOutput?: boolean;
     useAsGraphPartialOutput?: boolean;
+
+    /** Data for each of the inputs of the subgraph */
+    inputData?: Record<string, DataValue>;
   };
 };
 
@@ -112,8 +117,8 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
     return outputs;
   }
 
-  getEditors(): EditorDefinition<SubGraphNode>[] {
-    return [
+  getEditors(context: RivetUIContext): EditorDefinition<SubGraphNode>[] {
+    const definitions: EditorDefinition<SubGraphNode>[] = [
       {
         type: 'graphSelector',
         label: 'Graph',
@@ -125,6 +130,27 @@ export class SubGraphNodeImpl extends NodeImpl<SubGraphNode> {
         dataKey: 'useErrorOutput',
       },
     ];
+
+    if (this.data.graphId) {
+      const graph = context.project.graphs[this.data.graphId];
+      if (graph) {
+        const inputNodes = graph.nodes.filter((node) => node.type === 'graphInput') as GraphInputNode[];
+        const inputIds = [...new Set(inputNodes.map((node) => node.data.id))].sort();
+
+        for (const inputId of inputIds) {
+          const inputNode = inputNodes.find((node) => node.data.id === inputId)!;
+          definitions.push({
+            type: 'dynamic',
+            dataKey: 'inputData',
+            dynamicDataKey: inputNode.data.id,
+            dataType: inputNode.data.dataType,
+            label: inputNode.data.id,
+          });
+        }
+      }
+    }
+
+    return definitions;
   }
 
   static getUIData(): NodeUIData {

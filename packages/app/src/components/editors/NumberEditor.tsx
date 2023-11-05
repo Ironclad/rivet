@@ -13,35 +13,82 @@ export const DefaultNumberEditor: FC<
   const data = node.data as Record<string, unknown>;
   const helperMessage = getHelperMessage(editor, node.data);
   return (
-    <Field name={editor.dataKey} label={editor.label} isDisabled={isDisabled}>
+    <NumberEditor
+      value={data[editor.dataKey] as number | undefined}
+      isReadonly={isReadonly}
+      isDisabled={isDisabled}
+      autoFocus={editor.autoFocus}
+      onChange={(newValue) => {
+        onChange({
+          ...node,
+          data: {
+            ...data,
+            [editor.dataKey]: newValue,
+          },
+        });
+      }}
+      label={editor.label}
+      name={editor.dataKey}
+      helperMessage={helperMessage}
+      onClose={onClose}
+      min={editor.min}
+      max={editor.max}
+      step={editor.step}
+      allowEmpty={editor.allowEmpty}
+      defaultValue={editor.defaultValue}
+    />
+  );
+};
+
+export const NumberEditor: FC<{
+  value: number | undefined;
+  onChange: (value: number | undefined) => void;
+  isDisabled: boolean;
+  isReadonly: boolean;
+  autoFocus?: boolean;
+  label: string;
+  name?: string;
+  helperMessage?: string;
+  onClose?: () => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  allowEmpty?: boolean;
+  defaultValue?: number;
+}> = ({
+  value,
+  onChange,
+  isReadonly,
+  isDisabled,
+  label,
+  name,
+  autoFocus,
+  helperMessage,
+  onClose,
+  min,
+  max,
+  step,
+  allowEmpty,
+  defaultValue,
+}) => {
+  return (
+    <Field name={name ?? label} label={label} isDisabled={isDisabled}>
       {({ fieldProps }) => (
         <>
           <TextField
-            isReadOnly={isReadonly}
-            type="number"
-            min={editor.min}
-            max={editor.max}
-            step={editor.step}
-            autoFocus={editor.autoFocus}
             {...fieldProps}
-            defaultValue={(data[editor.dataKey] ?? editor.defaultValue) as number | undefined}
+            type="number"
+            min={min}
+            max={max}
+            step={step}
+            defaultValue={value ?? defaultValue}
+            isReadOnly={isReadonly}
+            autoFocus={autoFocus}
             onChange={(e) => {
-              if (editor.allowEmpty && (e.target as HTMLInputElement).value === '') {
-                onChange({
-                  ...node,
-                  data: {
-                    ...data,
-                    [editor.dataKey]: undefined,
-                  },
-                });
+              if (allowEmpty && (e.target as HTMLInputElement).value === '') {
+                onChange(undefined);
               } else {
-                onChange({
-                  ...node,
-                  data: {
-                    ...data,
-                    [editor.dataKey]: (e.target as HTMLInputElement).valueAsNumber,
-                  },
-                });
+                onChange((e.target as HTMLInputElement).valueAsNumber);
               }
             }}
             onKeyDown={(e) => {

@@ -13,32 +13,73 @@ export const DefaultDropdownEditor: FC<
 > = ({ node, isReadonly, isDisabled, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
   const helperMessage = getHelperMessage(editor, node.data);
+
+  return (
+    <DropdownEditor
+      value={data[editor.dataKey] as string | undefined}
+      isReadonly={isReadonly}
+      isDisabled={isDisabled}
+      onChange={(newValue) => {
+        onChange({
+          ...node,
+          data: {
+            ...data,
+            [editor.dataKey]: newValue,
+          },
+        });
+      }}
+      label={editor.label}
+      name={editor.dataKey}
+      helperMessage={helperMessage}
+      options={editor.options}
+      defaultValue={editor.defaultValue}
+    />
+  );
+};
+
+export const DropdownEditor: FC<{
+  value: string | undefined;
+  onChange: (value: string | undefined) => void;
+  isDisabled: boolean;
+  isReadonly: boolean;
+  autoFocus?: boolean;
+  label: string;
+  name?: string;
+  helperMessage?: string;
+  onClose?: () => void;
+  options: { label: string; value: string }[];
+  defaultValue?: string;
+}> = ({
+  value,
+  onChange,
+  isReadonly,
+  isDisabled,
+  autoFocus,
+  label,
+  name,
+  helperMessage,
+  onClose,
+  options,
+  defaultValue,
+}) => {
   const menuPortalTarget = useRef<HTMLDivElement>(null);
 
   const selectedValue =
-    data[editor.dataKey] == null
-      ? editor.options.find((option) => option.value === editor.defaultValue)
-      : editor.options.find((option) => option.value === data[editor.dataKey]);
+    value == null
+      ? options.find((option) => option.value === defaultValue)
+      : options.find((option) => option.value === value);
 
   return (
-    <Field name={editor.dataKey} label={editor.label} isDisabled={isReadonly || isDisabled}>
+    <Field name={name ?? label} label={label} isDisabled={isReadonly || isDisabled}>
       {({ fieldProps }) => (
         <>
           <Select
             {...fieldProps}
-            options={editor.options}
+            options={options}
             value={selectedValue}
             menuPortalTarget={menuPortalTarget.current}
-            autoFocus={editor.autoFocus}
-            onChange={(selected) =>
-              onChange({
-                ...node,
-                data: {
-                  ...data,
-                  [editor.dataKey]: selected!.value,
-                },
-              })
-            }
+            autoFocus={autoFocus}
+            onChange={(selected) => onChange(selected!.value)}
           />
           <Portal>
             <div ref={menuPortalTarget} />

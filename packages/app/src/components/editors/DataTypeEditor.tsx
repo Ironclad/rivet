@@ -26,8 +26,34 @@ export const DefaultDataTypeSelector: FC<
   const dataType = data[editor.dataKey] as DataType | undefined;
   const helperMessage = getHelperMessage(editor, node.data);
 
-  const scalarType = dataType ? getScalarTypeOf(dataType) : undefined;
-  const isArray = dataType ? isArrayDataType(dataType) : undefined;
+  return (
+    <DataTypeSelector
+      value={dataType}
+      onChange={(newValue) => {
+        onChange({
+          ...node,
+          data: {
+            ...data,
+            [editor.dataKey]: newValue,
+          },
+        });
+      }}
+      isReadonly={isReadonly}
+      isDisabled={isDisabled}
+      helperMessage={helperMessage}
+    />
+  );
+};
+
+export const DataTypeSelector: FC<{
+  value: DataType | undefined;
+  onChange: (value: DataType | undefined) => void;
+  isDisabled: boolean;
+  isReadonly: boolean;
+  helperMessage?: string;
+}> = ({ value, onChange, isReadonly, isDisabled, helperMessage }) => {
+  const scalarType = value ? getScalarTypeOf(value) : undefined;
+  const isArray = value ? isArrayDataType(value) : undefined;
 
   const dataTypeOptions = validSelectableDataTypes.map((type) => ({
     label: dataTypeDisplayNames[type],
@@ -45,13 +71,7 @@ export const DefaultDataTypeSelector: FC<
             options={dataTypeOptions}
             value={selectedOption}
             onChange={(selected) =>
-              onChange?.({
-                ...node,
-                data: {
-                  ...data,
-                  [editor.dataKey]: isArray ? (`${selected!.value}[]` as DataType) : selected!.value,
-                },
-              })
+              onChange?.(selected ? (isArray ? (`${selected.value}[]` as DataType) : selected.value) : undefined)
             }
           />
         )}
@@ -65,15 +85,7 @@ export const DefaultDataTypeSelector: FC<
             css={css`
               margin-top: 16px;
             `}
-            onChange={(e) =>
-              onChange?.({
-                ...node,
-                data: {
-                  ...data,
-                  [editor.dataKey]: e.target.checked ? (`${scalarType}[]` as DataType) : scalarType,
-                },
-              })
-            }
+            onChange={(e) => onChange?.(e.target.checked ? (`${scalarType}[]` as DataType) : scalarType)}
             isDisabled={isDisabled}
           />
         )}

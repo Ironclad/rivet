@@ -1,4 +1,4 @@
-import { type ChartNode, type DataRef, type DataType, type DatasetId } from '../index.js';
+import { type ChartNode, type DataRef, type DataType, type DataValue, type DatasetId } from '../index.js';
 
 type ExcludeNeverValues<T> = Pick<
   T,
@@ -168,6 +168,15 @@ export type CustomEditorDefinition<T extends ChartNode> = SharedEditorDefinition
   data?: any;
 };
 
+export type DynamicEditorDefinition<T extends ChartNode> = SharedEditorDefinitionProps<T> & {
+  type: 'dynamic';
+
+  dataKey: DataOfType<T, Record<string, DataValue>>;
+  dynamicDataKey: string;
+  useInputToggleDataKey?: DataOfType<T, boolean>;
+  dataType: DataType;
+};
+
 export type EditorDefinition<T extends ChartNode> =
   | StringEditorDefinition<T>
   | ToggleEditorDefinition<T>
@@ -185,4 +194,5 @@ export type EditorDefinition<T extends ChartNode> =
   | KeyValuePairEditorDefinition<T>
   | EditorDefinitionGroup<T>
   | StringListEditorDefinition<T>
-  | CustomEditorDefinition<T>;
+  | CustomEditorDefinition<T>
+  | DynamicEditorDefinition<T>;
