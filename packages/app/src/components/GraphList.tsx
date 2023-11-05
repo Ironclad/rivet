@@ -18,9 +18,9 @@ import {
   useEffect,
   memo,
 } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { graphState } from '../state/graph.js';
-import { savedGraphsState } from '../state/savedGraphs.js';
+import { projectMetadataState, savedGraphsState } from '../state/savedGraphs.js';
 import { orderBy, range } from 'lodash-es';
 import { DropdownItem } from '@atlaskit/dropdown-menu';
 import { useDeleteGraph } from '../hooks/useDeleteGraph.js';
@@ -42,6 +42,7 @@ import TextField from '@atlaskit/textfield';
 import { useFuseSearch } from '../hooks/useFuseSearch';
 import { useGraphExecutor } from '../hooks/useGraphExecutor';
 import { useImportGraph } from '../hooks/useImportGraph';
+import { expandedFoldersState } from '../state/ui';
 
 const styles = css`
   display: flex;
@@ -313,6 +314,7 @@ function getFolderNames(folderedGraphs: NodeGraphFolderItem[]): string[] {
 }
 
 export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onRunGraph }) => {
+  const projectMetadata = useRecoilValue(projectMetadataState);
   const [graph, setGraph] = useRecoilState(graphState);
   const [savedGraphs, setSavedGraphs] = useRecoilState(savedGraphsState);
   const [searchText, setSearchText] = useState('');
@@ -375,10 +377,16 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
     startRename(graph.metadata!.name!);
   });
 
+  const setExpandedFolders = useSetRecoilState(expandedFoldersState);
+
   const handleNewFolder = useStableCallback((parentPath?: string) => {
     const newFolderPath = parentPath ? `${parentPath}/New Folder` : 'New Folder';
     setFolderNames((prev) => [...prev, newFolderPath]);
     startRename(newFolderPath);
+    setExpandedFolders((prev) => ({
+      ...prev,
+      [`${projectMetadata.id}/${newFolderPath}`]: true,
+    }));
   });
 
   const handleDelete = useStableCallback((graph: NodeGraph) => {
@@ -448,6 +456,10 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
       ),
     );
     setRenamingItemFullPath(undefined);
+    setExpandedFolders((prev) => ({
+      ...prev,
+      [`${projectMetadata.id}/${newFullPath}`]: prev[`${projectMetadata.id}/${fullPath}`] ?? false,
+    }));
   });
 
   function handleDragStart(drag: DragStartEvent) {
@@ -730,10 +742,14 @@ export const FolderItem: FC<{
     depth,
     dragOverFolderName,
   }) => {
-    const [isExpanded, setExpanded] = useState(true);
+    const projectMetadata = useRecoilValue(projectMetadataState);
+    const [expandedFolders, setExpandedFolders] = useRecoilState(expandedFoldersState);
+
     const savedGraph = item.type === 'graph' ? item.graph : undefined;
     const graphIsRunning = savedGraph && runningGraphs.includes(savedGraph.metadata?.id ?? ('' as GraphId));
     const fullPath = item.type === 'folder' ? item.fullPath : item.graph.metadata?.name ?? 'Untitled Graph';
+    const isExpanded = expandedFolders[`${projectMetadata.id}/${fullPath}`] ?? true; // Default open
+
     const isRenaming = renamingItemFullPath === fullPath;
     const isSelected = graph.metadata?.id === savedGraph?.metadata?.id;
     const isDraggingOver =
@@ -762,6 +778,13 @@ export const FolderItem: FC<{
           : depth,
       [isDragging, dragOverFolderName, depth, item],
     );
+
+    const setExpanded = useStableCallback((expanded: boolean) => {
+      setExpandedFolders((prev) => ({
+        ...prev,
+        [`${projectMetadata.id}/${fullPath}`]: expanded,
+      }));
+    });
 
     return (
       <div ref={setDroppableNodeRef}>

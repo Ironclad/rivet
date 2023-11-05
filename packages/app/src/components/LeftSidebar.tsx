@@ -1,15 +1,13 @@
 import { css } from '@emotion/react';
-import { type FC, useEffect } from 'react';
+import { type FC } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { loadedProjectState, projectState } from '../state/savedGraphs.js';
+import { projectState } from '../state/savedGraphs.js';
 import ExpandLeftIcon from 'majesticons/line/menu-expand-left-line.svg?react';
 import ExpandRightIcon from 'majesticons/line/menu-expand-right-line.svg?react';
 import { type GraphId } from '@ironclad/rivet-core';
 import { sidebarOpenState } from '../state/graphBuilder.js';
-import { appWindow } from '@tauri-apps/api/window';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
 import { GraphList } from './GraphList.js';
-import { getVersion } from '@tauri-apps/api/app';
 import { ProjectInfoSidebarTab } from './ProjectInfoSidebarTab';
 import { GraphInfoSidebarTab } from './GraphInfoSidebarTab';
 

@@ -1,4 +1,9 @@
 import { atom } from 'recoil';
+import { recoilPersist } from 'recoil-persist';
+
+const { persistAtom } = recoilPersist({
+  key: 'ui',
+});
 
 export const debuggerPanelOpenState = atom({
   key: 'debuggerPanelOpenState',
@@ -15,4 +20,10 @@ export const overlayOpenState = atom<OverlayKey | undefined>({
 export const newProjectModalOpenState = atom({
   key: 'newProjectModalOpenState',
   default: false,
+});
+
+export const expandedFoldersState = atom<Record<string, boolean>>({
+  key: 'expandedFoldersState',
+  default: {},
+  effects_UNSTABLE: [persistAtom],
 });
