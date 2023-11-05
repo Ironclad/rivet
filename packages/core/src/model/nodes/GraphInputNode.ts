@@ -22,6 +22,7 @@ export type GraphInputNodeData = {
   dataType: DataType;
   defaultValue?: unknown;
   useDefaultValueInput?: boolean;
+  editor?: string;
 };
 
 export class GraphInputNodeImpl extends NodeImpl<GraphInputNode> {
@@ -87,6 +88,24 @@ export class GraphInputNodeImpl extends NodeImpl<GraphInputNode> {
         label: 'Default Value',
         dataKey: 'defaultValue',
         useInputToggleDataKey: 'useDefaultValueInput',
+      },
+      {
+        type: 'dropdown',
+        label: 'Editor',
+        dataKey: 'editor',
+        defaultValue: 'auto',
+        options: [
+          { label: 'None', value: '' },
+          { label: 'Auto', value: 'auto' },
+          { label: 'String', value: 'string' },
+          { label: 'Number', value: 'number' },
+          { label: 'Code', value: 'code' },
+          { label: 'Data Type', value: 'dataTypeSelector' },
+          { label: 'String List', value: 'stringList' },
+          { label: 'Key Value Pairs', value: 'keyValuePair' },
+          { label: 'Toggle', value: 'toggle' },
+        ] satisfies { label: string; value: EditorDefinition<any>['type'] | '' | 'auto' }[],
+        helperMessage: 'The editor to use when editing this value in the UI. Make sure this matches the data type.',
       },
     ];
   }

@@ -12,8 +12,6 @@ export const DefaultCodeEditor: FC<
     editor: CodeEditorDefinition<ChartNode>;
   }
 > = ({ node, isReadonly, isDisabled, onChange, editor: editorDef, onClose }) => {
-  const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
-
   const helperMessage = getHelperMessage(editorDef, node.data);
   const nodeLatest = useLatest(node);
 
@@ -29,11 +27,43 @@ export const DefaultCodeEditor: FC<
     });
   };
 
+  return (
+    <CodeEditor
+      value={(node.data as Record<string, unknown> | undefined)?.[editorDef.dataKey] as string | undefined}
+      onChange={onEditorChange}
+      isReadonly={isReadonly}
+      isDisabled={isDisabled}
+      autoFocus={editorDef.autoFocus}
+      label={editorDef.label}
+      name={editorDef.dataKey}
+      helperMessage={helperMessage}
+      onClose={onClose}
+      language={editorDef.language}
+      theme={editorDef.theme}
+    />
+  );
+};
+
+export const CodeEditor: FC<{
+  value: string | undefined;
+  onChange: (value: string) => void;
+  isDisabled: boolean;
+  isReadonly: boolean;
+  autoFocus?: boolean;
+  label: string;
+  name?: string;
+  helperMessage?: string;
+  onClose?: () => void;
+  theme?: string;
+  language?: string;
+}> = ({ value, onChange, isReadonly, isDisabled, autoFocus, label, name, helperMessage, onClose, theme, language }) => {
+  const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
+
+  const onChangeLatest = useLatest(onChange);
+
   useEffect(() => {
     if (editorInstance.current) {
-      const currentValue = (nodeLatest.current?.data as Record<string, unknown> | undefined)?.[editorDef.dataKey] as
-        | string
-        | undefined;
+      const currentValue = value;
 
       if (editorInstance.current.getValue() !== currentValue) {
         editorInstance.current.setValue(currentValue ?? '');
@@ -44,7 +74,7 @@ export const DefaultCodeEditor: FC<
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [node.id, isReadonly, (node.data as Record<string, unknown>)[editorDef.dataKey]]);
+  }, [value, isReadonly]);
 
   const handleKeyDown = (e: monaco.IKeyboardEvent) => {
     if (e.keyCode === 9 /* Escape */) {
@@ -57,20 +87,20 @@ export const DefaultCodeEditor: FC<
   return (
     <Suspense fallback={<div />}>
       <div className="editor-wrapper-wrapper">
-        <Label htmlFor="">{editorDef.label}</Label>
+        <Label htmlFor="">{label}</Label>
         {helperMessage && <HelperMessage>{helperMessage}</HelperMessage>}
         <div className="editor-wrapper">
           <LazyCodeEditor
             editorRef={editorInstance}
-            text={
-              ((nodeLatest.current?.data as Record<string, unknown>)[editorDef.dataKey] as string | undefined) ?? ''
-            }
-            onChange={onEditorChange}
-            theme={editorDef.theme}
-            language={editorDef.language}
+            text={value ?? ''}
+            onChange={(newValue) => {
+              onChangeLatest.current?.(newValue);
+            }}
+            theme={theme}
+            language={language}
             isReadonly={isReadonly || isDisabled}
             onKeyDown={handleKeyDown}
-            autoFocus={editorDef.autoFocus}
+            autoFocus={autoFocus}
           />
         </div>
       </div>

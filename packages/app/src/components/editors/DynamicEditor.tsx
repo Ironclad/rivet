@@ -11,6 +11,7 @@ import { StringEditor } from './StringEditor';
 import { type SharedEditorProps } from './SharedEditorProps';
 import { ToggleEditor } from './ToggleEditor';
 import { getHelperMessage } from './editorUtils';
+import { NumberEditor } from './NumberEditor';
 
 export const DefaultDynamicEditor: FC<
   SharedEditorProps & {
@@ -65,6 +66,31 @@ export const DefaultDynamicEditor: FC<
                 ...dynamicData,
                 [editor.dynamicDataKey]: {
                   type: 'boolean',
+                  value: newValue,
+                },
+              },
+            },
+          });
+        }}
+        label={editor.label}
+        name={editor.dynamicDataKey}
+        isDisabled={isDisabled}
+        helperMessage={helperMessage}
+      />
+    ))
+    .with('number', () => (
+      <NumberEditor
+        value={(dynamicDataValue as number | undefined) ?? 0}
+        isReadonly={isReadonly}
+        onChange={(newValue) => {
+          onChange({
+            ...node,
+            data: {
+              ...data,
+              [editor.dataKey]: {
+                ...dynamicData,
+                [editor.dynamicDataKey]: {
+                  type: 'number',
                   value: newValue,
                 },
               },
