@@ -168,6 +168,8 @@ export type CustomEditorDefinition<T extends ChartNode> = SharedEditorDefinition
   data?: any;
 };
 
+export type DynamicEditorEditor = EditorDefinition<any>['type'] | 'none' | 'auto';
+
 export type DynamicEditorDefinition<T extends ChartNode> = SharedEditorDefinitionProps<T> & {
   type: 'dynamic';
 
@@ -175,6 +177,7 @@ export type DynamicEditorDefinition<T extends ChartNode> = SharedEditorDefinitio
   dynamicDataKey: string;
   useInputToggleDataKey?: DataOfType<T, boolean>;
   dataType: DataType;
+  editor: DynamicEditorEditor;
 };
 
 export type EditorDefinition<T extends ChartNode> =

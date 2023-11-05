@@ -11,7 +11,7 @@ import { nodeDefinition } from '../NodeDefinition.js';
 import { type DataType, type DataValue, getDefaultValue, isArrayDataType } from '../DataValue.js';
 import { type Inputs } from '../GraphProcessor.js';
 import { type InternalProcessContext } from '../ProcessContext.js';
-import { type EditorDefinition, type NodeBodySpec } from '../../index.js';
+import { type DynamicEditorEditor, type EditorDefinition, type NodeBodySpec } from '../../index.js';
 import { dedent } from 'ts-dedent';
 import { coerceTypeOptional, inferType } from '../../utils/coerceType.js';
 
@@ -22,7 +22,7 @@ export type GraphInputNodeData = {
   dataType: DataType;
   defaultValue?: unknown;
   useDefaultValueInput?: boolean;
-  editor?: string;
+  editor?: DynamicEditorEditor;
 };
 
 export class GraphInputNodeImpl extends NodeImpl<GraphInputNode> {
@@ -95,7 +95,7 @@ export class GraphInputNodeImpl extends NodeImpl<GraphInputNode> {
         dataKey: 'editor',
         defaultValue: 'auto',
         options: [
-          { label: 'None', value: '' },
+          { label: 'None', value: 'none' },
           { label: 'Auto', value: 'auto' },
           { label: 'String', value: 'string' },
           { label: 'Number', value: 'number' },
@@ -104,7 +104,7 @@ export class GraphInputNodeImpl extends NodeImpl<GraphInputNode> {
           { label: 'String List', value: 'stringList' },
           { label: 'Key Value Pairs', value: 'keyValuePair' },
           { label: 'Toggle', value: 'toggle' },
-        ] satisfies { label: string; value: EditorDefinition<any>['type'] | '' | 'auto' }[],
+        ] satisfies { label: string; value: DynamicEditorEditor }[],
         helperMessage: 'The editor to use when editing this value in the UI. Make sure this matches the data type.',
       },
     ];

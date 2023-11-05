@@ -4,6 +4,7 @@ import {
   type StringDataValue,
   type BoolDataValue,
   type DynamicEditorDefinition,
+  type DynamicEditorEditor,
 } from '@ironclad/rivet-core';
 import { type FC } from 'react';
 import { match } from 'ts-pattern';
@@ -12,6 +13,7 @@ import { type SharedEditorProps } from './SharedEditorProps';
 import { ToggleEditor } from './ToggleEditor';
 import { getHelperMessage } from './editorUtils';
 import { NumberEditor } from './NumberEditor';
+import { CodeEditor } from './CodeEditor';
 
 export const DefaultDynamicEditor: FC<
   SharedEditorProps & {
@@ -23,9 +25,23 @@ export const DefaultDynamicEditor: FC<
   const dynamicData = data[editor.dataKey] as Record<string, DataValue> | undefined;
   const dynamicDataValue = dynamicData?.[editor.dynamicDataKey] as DataValue | undefined;
 
+  let editorMode = editor.editor;
+
+  if (editorMode === 'auto') {
+    editorMode = match(dataType)
+      .with('string', (): DynamicEditorEditor => 'string')
+      .with('boolean', (): DynamicEditorEditor => 'toggle')
+      .with('number', (): DynamicEditorEditor => 'number')
+      .otherwise(() => 'none');
+  }
+
+  if (editorMode === 'none') {
+    return null;
+  }
+
   const helperMessage = getHelperMessage(editor, node.data);
 
-  return match(dataType)
+  return match(editorMode)
     .with('string', () => (
       <StringEditor
         value={(dynamicDataValue as StringDataValue | undefined)?.value ?? ''}
@@ -53,7 +69,7 @@ export const DefaultDynamicEditor: FC<
         helperMessage={helperMessage}
       />
     ))
-    .with('boolean', () => (
+    .with('toggle', () => (
       <ToggleEditor
         value={(dynamicDataValue as BoolDataValue | undefined)?.value ?? false}
         isReadonly={isReadonly}
@@ -101,6 +117,34 @@ export const DefaultDynamicEditor: FC<
         name={editor.dynamicDataKey}
         isDisabled={isDisabled}
         helperMessage={helperMessage}
+      />
+    ))
+    .with('code', () => (
+      <CodeEditor
+        value={(dynamicDataValue as StringDataValue | undefined)?.value ?? ''}
+        onChange={(newValue) => {
+          onChange({
+            ...node,
+            data: {
+              ...data,
+              [editor.dataKey]: {
+                ...dynamicData,
+                [editor.dynamicDataKey]: {
+                  type: 'string',
+                  value: newValue,
+                },
+              },
+            },
+          });
+        }}
+        isReadonly={isReadonly}
+        isDisabled={isDisabled}
+        autoFocus={editor.autoFocus}
+        label={editor.label}
+        name={editor.dynamicDataKey}
+        helperMessage={helperMessage}
+        onClose={onClose}
+        language="plaintext"
       />
     ))
     .otherwise(() => null);
