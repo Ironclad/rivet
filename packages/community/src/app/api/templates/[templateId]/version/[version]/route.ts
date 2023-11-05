@@ -9,21 +9,14 @@ import {
 import { getPublicAccessControlHeaders, getRestrictedAccessControlHeaders } from '@/app/api/cors';
 import { auth } from '@/lib/auth';
 import { array, object, string } from '@recoiljs/refine';
-import {
-  BuiltInNodes,
-  GraphInputNode,
-  NodeGraph,
-  Project,
-  deserializeGraph,
-  deserializeProject,
-} from '@ironclad/rivet-core';
+import { BuiltInNodes, GraphInputNode, Project, deserializeProject } from '@ironclad/rivet-core';
 
 export { OPTIONS } from '@/app/api/cors';
 
-export async function GET(_request: Request, { params }: { params: { graphId: string; version: string } }) {
-  const { graphId, version } = params;
+export async function GET(_request: Request, { params }: { params: { templateId: string; version: string } }) {
+  const { templateId, version } = params;
 
-  const graph = await getTemplate(graphId as RivetTemplateId);
+  const graph = await getTemplate(templateId as RivetTemplateId);
 
   if (!graph) {
     return Response.json({ error: 'Graph not found' }, { status: 404 });
@@ -59,24 +52,24 @@ const putVersionBodyChecker = object({
   serializedProject: string(),
 });
 
-export async function PUT(request: Request, { params }: { params: { graphId: string; version: string } }) {
+export async function PUT(request: Request, { params }: { params: { templateId: string; version: string } }) {
   const session = await auth();
   if (!session) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { graphId, version } = params;
+  const { templateId, version } = params;
 
-  const graph = await getTemplate(graphId as RivetTemplateId);
-  if (!graph) {
-    return Response.json({ error: 'Graph not found' }, { status: 404 });
+  const template = await getTemplate(templateId as RivetTemplateId);
+  if (!template) {
+    return Response.json({ error: 'Template not found' }, { status: 404 });
   }
 
-  if (graph.author !== session.user.id) {
+  if (template.author !== session.user.id) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const previousVersion = graph.versions[graph.versions.length - 1];
+  const previousVersion = template.versions[template.versions.length - 1];
 
   const body = await request.json();
 
@@ -89,7 +82,7 @@ export async function PUT(request: Request, { params }: { params: { graphId: str
   try {
     [project] = deserializeProject(bodyResult.value.serializedProject);
   } catch (err) {
-    return Response.json({ error: 'Invalid graph' }, { status: 400 });
+    return Response.json({ error: 'Invalid project' }, { status: 400 });
   }
 
   const encodedGraph = new TextEncoder().encode(bodyResult.value.serializedProject);
@@ -133,7 +126,7 @@ export async function PUT(request: Request, { params }: { params: { graphId: str
     screenshotUrls: previousVersion?.screenshotUrls ?? [],
     canBeNode: false, // TODO support templates
   };
-  await putTemplateVersion(graphId as RivetTemplateId, newVersion);
+  await putTemplateVersion(templateId as RivetTemplateId, newVersion);
 
   return Response.json(newVersion, {
     headers: {
@@ -142,15 +135,15 @@ export async function PUT(request: Request, { params }: { params: { graphId: str
   });
 }
 
-export async function DELETE(request: Request, { params }: { params: { graphId: string; version: string } }) {
+export async function DELETE(request: Request, { params }: { params: { templateId: string; version: string } }) {
   const session = await auth();
   if (!session) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { graphId, version } = params;
+  const { templateId, version } = params;
 
-  const graph = await getTemplate(graphId as RivetTemplateId);
+  const graph = await getTemplate(templateId as RivetTemplateId);
   if (!graph) {
     return Response.json({ error: 'Graph not found' }, { status: 404 });
   }
@@ -165,7 +158,7 @@ export async function DELETE(request: Request, { params }: { params: { graphId: 
     return Response.json({ error: 'Version not found' }, { status: 404 });
   }
 
-  await deleteTemplateVersion(graphId as RivetTemplateId, version);
+  await deleteTemplateVersion(templateId as RivetTemplateId, version);
 
   return Response.json(graph, {
     headers: {

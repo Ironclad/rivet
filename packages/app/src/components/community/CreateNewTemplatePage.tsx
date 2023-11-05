@@ -1,16 +1,7 @@
 import { css } from '@emotion/react';
-import { useState, type FC, useMemo, Suspense } from 'react';
+import { type FC } from 'react';
 import Button from '@atlaskit/button';
 import CrossIcon from 'majesticons/line/multiply-line.svg?react';
-import { useRecoilValue } from 'recoil';
-import { projectState } from '../../state/savedGraphs';
-import { Field } from '@atlaskit/form';
-import TextField from '@atlaskit/textfield';
-import { LazyCodeEditor } from '../LazyComponents';
-import Toggle from '@atlaskit/toggle';
-import clsx from 'clsx';
-import { type GraphId } from '@ironclad/rivet-core';
-import { orderBy } from 'lodash-es';
 import { CreateTemplateForm } from './CreateTemplateForm';
 import { useUploadNewTemplate } from '../../hooks/useUploadNewTemplate';
 
@@ -65,7 +56,7 @@ export const CreateNewTemplatePage: FC<{
         </div>
       </header>
       <div className="form">
-        <CreateTemplateForm onCreate={(info) => uploadNewTemplate.mutate(info)} />
+        <CreateTemplateForm working={uploadNewTemplate.isPending} onCreate={(info) => uploadNewTemplate.mutate(info)} />
       </div>
     </div>
   );

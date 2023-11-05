@@ -61,8 +61,9 @@ export const styles = css`
 `;
 
 export const MyTemplatesList: FC<{
+  onEditTemplate?: (template: any) => void;
   onCreateNew?: () => void;
-}> = ({ onCreateNew }) => {
+}> = ({ onEditTemplate, onCreateNew }) => {
   const { data } = useQuery({
     queryKey: ['my-templates'],
     queryFn: () => fetchCommunity('/templates/mine', array(templateResponseChecker)),
@@ -97,7 +98,7 @@ export const MyTemplatesList: FC<{
                 )}
               </div>
               <div className="actions">
-                <Button appearance="primary" onClick={() => {}}>
+                <Button appearance="primary" onClick={() => onEditTemplate?.(template)}>
                   Edit
                 </Button>
               </div>

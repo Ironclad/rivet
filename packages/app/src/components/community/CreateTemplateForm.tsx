@@ -68,13 +68,14 @@ const styles = css`
 `;
 
 export const CreateTemplateForm: FC<{
+  working?: boolean;
   onCreate?: (templateInfo: {
     templateName: string;
     version: string;
     graphsToInclude: GraphId[];
     description: string;
   }) => void;
-}> = ({ onCreate }) => {
+}> = ({ working, onCreate }) => {
   const project = useRecoilValue(projectState);
 
   const [templateName, setTemplateName] = useState<string>(project.metadata.title);
@@ -123,6 +124,7 @@ export const CreateTemplateForm: FC<{
             placeholder="Enter template name"
             value={templateName}
             onChange={(e) => setTemplateName(e.currentTarget.value)}
+            isDisabled={working}
           />
         )}
       </Field>
@@ -133,6 +135,7 @@ export const CreateTemplateForm: FC<{
             placeholder="Enter initial version"
             value={version}
             onChange={(e) => setVersion(e.currentTarget.value)}
+            isDisabled={working}
           />
         )}
       </Field>
@@ -143,10 +146,11 @@ export const CreateTemplateForm: FC<{
               <Button
                 appearance="link"
                 onClick={() => setGraphsToInclude(Object.values(project.graphs).map((g) => g.metadata!.id!))}
+                isDisabled={working}
               >
                 Select all
               </Button>
-              <Button appearance="link" onClick={() => setGraphsToInclude([])}>
+              <Button appearance="link" onClick={() => setGraphsToInclude([])} isDisabled={working}>
                 Select none
               </Button>
             </div>
@@ -154,13 +158,18 @@ export const CreateTemplateForm: FC<{
               {sortedGraphs.map((g) => (
                 <div
                   className={clsx('graph', { active: graphsToInclude.includes(g.metadata!.id!) })}
-                  onClick={(e) => toggleGraph(g.metadata!.id!)}
+                  onClick={() => {
+                    if (working) {
+                      return;
+                    }
+                    toggleGraph(g.metadata!.id!);
+                  }}
                 >
                   <div className="info">
                     <span className="name">{g.metadata!.name!}</span>
                   </div>
                   <div className="selected">
-                    <Toggle isChecked={graphsToInclude.includes(g.metadata!.id!)} />
+                    <Toggle isChecked={graphsToInclude.includes(g.metadata!.id!)} isDisabled={working} />
                   </div>
                 </div>
               ))}
@@ -174,14 +183,19 @@ export const CreateTemplateForm: FC<{
             <HelperMessage>Markdown is supported</HelperMessage>
             <div className="description-editor">
               <Suspense fallback={<div>Loading...</div>}>
-                <LazyCodeEditor language="markdown" text={description} onChange={(v) => setDescription(v)} />
+                <LazyCodeEditor
+                  language="markdown"
+                  text={description}
+                  onChange={(v) => setDescription(v)}
+                  isReadonly={working}
+                />
               </Suspense>
             </div>
           </>
         )}
       </Field>
       <div className="actions">
-        <Button appearance="primary" type="submit" isDisabled={!isValid}>
+        <Button appearance="primary" type="submit" isDisabled={!isValid || working}>
           Create Template
         </Button>
       </div>
