@@ -10,7 +10,7 @@ export const debuggerPanelOpenState = atom({
   default: false,
 });
 
-export type OverlayKey = 'promptDesigner' | 'trivet' | 'chatViewer' | 'dataStudio' | 'plugins';
+export type OverlayKey = 'promptDesigner' | 'trivet' | 'chatViewer' | 'dataStudio' | 'plugins' | 'community';
 
 export const overlayOpenState = atom<OverlayKey | undefined>({
   key: 'overlayOpenState',
