@@ -9,6 +9,7 @@ import { isInTauri } from '../utils/tauri.js';
 import { LoadingSpinner } from './LoadingSpinner.js';
 import { overlayOpenState } from '../state/ui';
 import { sidebarOpenState } from '../state/graphBuilder';
+import { useFeatureFlag } from '../hooks/useFeatureFlag';
 
 const styles = css`
   display: flex;
@@ -186,6 +187,8 @@ export const OverlayTabs: FC = () => {
     runMenuCommandImpl(command);
   };
 
+  const communityEnabled = useFeatureFlag('community');
+
   return (
     <div css={styles} className={clsx({ 'sidebar-open': sidebarOpen })}>
       <div className="left-menu">
@@ -238,18 +241,20 @@ export const OverlayTabs: FC = () => {
           </button>
         </div>
 
-        <div className={clsx('menu-item community', { active: openOverlay === 'community' })}>
-          <button
-            className="dropdown-item"
-            onMouseDown={(e) => {
-              if (e.button === 0) {
-                setOpenOverlay((s) => (s === 'community' ? undefined : 'community'));
-              }
-            }}
-          >
-            Community
-          </button>
-        </div>
+        {communityEnabled && (
+          <div className={clsx('menu-item community', { active: openOverlay === 'community' })}>
+            <button
+              className="dropdown-item"
+              onMouseDown={(e) => {
+                if (e.button === 0) {
+                  setOpenOverlay((s) => (s === 'community' ? undefined : 'community'));
+                }
+              }}
+            >
+              Community
+            </button>
+          </div>
+        )}
 
         <div className={clsx('menu-item prompt-designer-menu', { active: openOverlay === 'promptDesigner' })}>
           <button
