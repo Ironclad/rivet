@@ -10,6 +10,9 @@ import { projectState } from '../../state/savedGraphs';
 import { LazyCodeEditor } from '../LazyComponents';
 import { css } from '@emotion/react';
 import Button from '@atlaskit/button';
+import { type TemplateResponse } from '../../utils/communityApi';
+import { inc } from 'semver';
+import { isNotNull } from '../../utils/genericUtilFunctions';
 
 const styles = css`
   .graphs-to-include {
@@ -68,22 +71,40 @@ const styles = css`
 `;
 
 export const CreateTemplateForm: FC<{
+  existingTemplate?: TemplateResponse;
   working?: boolean;
   onCreate?: (templateInfo: {
     templateName: string;
     version: string;
     graphsToInclude: GraphId[];
     description: string;
+    versionDescription: string;
   }) => void;
-}> = ({ working, onCreate }) => {
+}> = ({ existingTemplate, working, onCreate }) => {
   const project = useRecoilValue(projectState);
 
-  const [templateName, setTemplateName] = useState<string>(project.metadata.title);
-  const [version, setVersion] = useState<string>('0.1.0');
-  const [graphsToInclude, setGraphsToInclude] = useState<GraphId[]>(
-    Object.values(project.graphs).map((g) => g.metadata!.id!),
+  const [templateName, setTemplateName] = useState<string>(existingTemplate?.name ?? project.metadata.title);
+
+  const latestVersion = existingTemplate?.versions[existingTemplate.versions.length - 1];
+
+  const nextVersion = inc(latestVersion?.version ?? '0.0.0', 'minor') ?? '0.1.0';
+  const [version, setVersion] = useState<string>(nextVersion);
+
+  const allLocalGraphs = Object.values(project.graphs);
+
+  const initialGraphsToInclude = existingTemplate
+    ? latestVersion?.graphNames
+        .map((g) => allLocalGraphs.find((lg) => lg.metadata!.name === g))
+        .filter(isNotNull)
+        .map((g) => g.metadata!.id!) ?? allLocalGraphs.map((g) => g.metadata!.id!)
+    : allLocalGraphs.map((g) => g.metadata!.id!);
+
+  const [graphsToInclude, setGraphsToInclude] = useState<GraphId[]>(initialGraphsToInclude);
+  const [description, setDescription] = useState<string>(
+    latestVersion?.descriptionMarkdown ?? project.metadata.description,
   );
-  const [description, setDescription] = useState<string>(project.metadata.description);
+
+  const [versionDescription, setVersionDescription] = useState<string>('');
 
   const toggleGraph = (graphId: GraphId) => {
     setGraphsToInclude((prev) => {
@@ -111,6 +132,7 @@ export const CreateTemplateForm: FC<{
         version,
         graphsToInclude,
         description,
+        versionDescription,
       });
     }
   };
@@ -124,11 +146,11 @@ export const CreateTemplateForm: FC<{
             placeholder="Enter template name"
             value={templateName}
             onChange={(e) => setTemplateName(e.currentTarget.value)}
-            isDisabled={working}
+            isDisabled={working || existingTemplate != null}
           />
         )}
       </Field>
-      <Field name="version" label="Initial Version">
+      <Field name="version" label={existingTemplate ? 'New Version' : 'Initial Version'}>
         {() => (
           <TextField
             name="version"
@@ -177,6 +199,23 @@ export const CreateTemplateForm: FC<{
           </>
         )}
       </Field>
+      <Field name="versionDescription" label="Version Description">
+        {() => (
+          <>
+            <HelperMessage>Markdown is supported</HelperMessage>
+            <div className="description-editor" style={{ height: 125 }}>
+              <Suspense fallback={<div>Loading...</div>}>
+                <LazyCodeEditor
+                  language="markdown"
+                  text={versionDescription}
+                  onChange={(v) => setVersionDescription(v)}
+                  isReadonly={working}
+                />
+              </Suspense>
+            </div>
+          </>
+        )}
+      </Field>
       <Field name="description" label="Description">
         {() => (
           <>
@@ -196,7 +235,7 @@ export const CreateTemplateForm: FC<{
       </Field>
       <div className="actions">
         <Button appearance="primary" type="submit" isDisabled={!isValid || working}>
-          Create Template
+          {existingTemplate ? 'Publish Version' : 'Create Template'}
         </Button>
       </div>
     </form>

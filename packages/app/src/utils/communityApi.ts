@@ -63,3 +63,7 @@ export const templateResponseChecker = object({
 });
 
 export type TemplateResponse = CheckerReturnType<typeof templateResponseChecker>;
+
+export const unpublishTemplateResponseChecker = object({
+  success: bool(),
+});

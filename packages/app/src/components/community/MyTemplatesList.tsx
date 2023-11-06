@@ -4,7 +4,7 @@ import Button from '@atlaskit/button';
 import { fetchCommunity, useCommunityApi } from '../../hooks/useCommunityApi';
 import { useQuery } from '@tanstack/react-query';
 import { array } from '@recoiljs/refine';
-import { templateResponseChecker } from '../../utils/communityApi';
+import { type TemplateResponse, templateResponseChecker } from '../../utils/communityApi';
 
 export const styles = css`
   display: flex;
@@ -58,17 +58,29 @@ export const styles = css`
       }
     }
   }
+
+  .stats {
+    margin-top: 4px;
+  }
+
+  .pill {
+    padding: 4px 8px;
+    background: var(--grey-light);
+    color: var(--grey-darker);
+    border-radius: 8px;
+  }
+
+  .pill.warning {
+    background: var(--warning);
+    color: var(--grey-darker);
+  }
 `;
 
 export const MyTemplatesList: FC<{
+  templates: readonly TemplateResponse[];
   onEditTemplate?: (template: any) => void;
   onCreateNew?: () => void;
-}> = ({ onEditTemplate, onCreateNew }) => {
-  const { data } = useQuery({
-    queryKey: ['my-templates'],
-    queryFn: () => fetchCommunity('/templates/mine', array(templateResponseChecker)),
-  });
-
+}> = ({ templates, onEditTemplate, onCreateNew }) => {
   return (
     <div css={styles}>
       <header>
@@ -80,8 +92,9 @@ export const MyTemplatesList: FC<{
         </div>
       </header>
       <div className="templates">
-        {data?.map((template) => {
+        {templates.map((template) => {
           const latestVersion = template.versions.at(-1);
+          const lastUpdated = latestVersion ? new Date(latestVersion.createdAt).toLocaleDateString() : 'N/A';
 
           return (
             <div className="template" key={template.id}>
@@ -89,12 +102,13 @@ export const MyTemplatesList: FC<{
                 <h3>{template.name}</h3>
                 {latestVersion ? (
                   <div className="stats">
-                    <span>Latest Version: {latestVersion.version}</span>
-                    <span>Created: {new Date(latestVersion.createdAt).toLocaleDateString()}</span>
-                    <span>Stars: {template.stars}</span>
+                    <span className="pill">⭐ Stars: {template.stars}</span>
+                    <span className="pill">{latestVersion.version}</span>
+                    <span className="pill">Created: {new Date(latestVersion.createdAt).toLocaleDateString()}</span>
+                    <span className="pill">Last Updated: {lastUpdated}</span>
                   </div>
                 ) : (
-                  <span>No versions</span>
+                  <span className="pill warning">No versions</span>
                 )}
               </div>
               <div className="actions">
