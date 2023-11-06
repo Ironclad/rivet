@@ -56,8 +56,8 @@ export const openaiModels = {
   'gpt-3.5-turbo-16k': {
     maxTokens: 16384,
     cost: {
-      prompt: 0.003,
-      completion: 0.004,
+      prompt: 0.001,
+      completion: 0.002,
     },
     displayName: 'GPT-3.5 16k',
   },
@@ -72,8 +72,8 @@ export const openaiModels = {
   'gpt-3.5-turbo-16k-0613': {
     maxTokens: 16384,
     cost: {
-      prompt: 0.003,
-      completion: 0.004,
+      prompt: 0.001,
+      completion: 0.002,
     },
     displayName: 'GPT-3.5 16k (v0613)',
   },
@@ -100,6 +100,14 @@ export const openaiModels = {
       completion: 0.12,
     },
     displayName: 'GPT-4 32k (v0314)',
+  },
+  'gpt-4-1106-preview': {
+    maxTokens: 128000,
+    cost: {
+      prompt: 0.01,
+      completion: 0.03,
+    },
+    displayName: 'GPT-4 Turbo 128K',
   },
   'local-model': {
     maxTokens: Number.MAX_SAFE_INTEGER,
