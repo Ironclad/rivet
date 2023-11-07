@@ -1505,7 +1505,7 @@ export class GraphProcessor {
 
       this.#emitter.emit('nodeExcluded', { node, processId, inputs: inputValues, outputs, reason: 'disabled' });
 
-      return;
+      return true;
     }
 
     const inputsWithValues = entries(inputValues);
