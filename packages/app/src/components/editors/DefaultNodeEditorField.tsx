@@ -10,7 +10,7 @@ import { DefaultColorEditor } from './ColorEditor';
 import { DefaultDataTypeSelector } from './DataTypeEditor';
 import { DefaultDatasetSelectorEditor } from './DatasetSelectorEditor';
 import { DefaultDropdownEditor } from './DropdownEditor';
-import { DefaultFileBrowserEditor } from './FileBrowserEditor';
+import { DefaultFileBrowserEditor, DefaultFilePathBrowserEditor } from './FileBrowserEditor';
 import { DefaultGraphSelectorEditor } from './GraphSelectorEditor';
 import { DefaultImageBrowserEditor } from './ImageBrowserEditor';
 import { DefaultNumberEditor } from './NumberEditor';
@@ -60,6 +60,7 @@ export const DefaultNodeEditorField: FC<
     .with({ type: 'stringList' }, (editor) => <StringListEditor {...sharedProps} editor={editor} />)
     .with({ type: 'custom' }, (editor) => <CustomEditor {...sharedProps} editor={editor} />)
     .with({ type: 'dynamic' }, (editor) => <DefaultDynamicEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'filePathBrowser' }, (editor) => <DefaultFilePathBrowserEditor {...sharedProps} editor={editor} />)
     .exhaustive();
 
   const toggle =

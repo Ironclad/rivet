@@ -40,6 +40,7 @@ export function coerceTypeOptional<T extends DataType>(
     .with('chat-message', () => coerceToChatMessage(value))
     .with('number', () => coerceToNumber(value))
     .with('object', () => coerceToObject(value))
+    .with('binary', () => coerceToBinary(value))
     .otherwise(() => {
       if (!value) {
         return value;
@@ -293,6 +294,38 @@ function coerceToObject(value: DataValue | undefined): object | undefined {
   }
 
   return value.value; // Whatever, consider anything an object
+}
+
+function coerceToBinary(value: DataValue | undefined): Uint8Array | undefined {
+  if (!value || value.value == null) {
+    return undefined;
+  }
+
+  if (value.type === 'binary') {
+    return value.value;
+  }
+
+  if (value.type === 'string') {
+    return new TextEncoder().encode(value.value);
+  }
+
+  if (value.type === 'boolean') {
+    return new TextEncoder().encode(value.value.toString());
+  }
+
+  if (value.type === 'vector' || value.type === 'number[]') {
+    return new Uint8Array(value.value);
+  }
+
+  if (value.type === 'number') {
+    return new Uint8Array([value.value]);
+  }
+
+  if (value.type === 'audio' || value.type === 'image') {
+    return value.value.data;
+  }
+
+  return new TextEncoder().encode(JSON.stringify(value.value));
 }
 
 export function canBeCoercedAny(from: DataType | Readonly<DataType[]>, to: DataType | Readonly<DataType[]>) {

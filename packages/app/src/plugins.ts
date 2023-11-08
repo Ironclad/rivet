@@ -180,4 +180,13 @@ export const pluginInfos: PluginInfo[] = [
     tag: 'latest',
     logoImage: RivetLogo,
   },
+  {
+    type: 'built-in',
+    id: 'openai',
+    name: 'OpenAI',
+    description: dedent`
+      Adds full OpenAI support, such as fine-tuning, assistants, and more.
+    `,
+    author: 'Rivet Team',
+  },
 ];

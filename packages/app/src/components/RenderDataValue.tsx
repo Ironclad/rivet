@@ -13,6 +13,7 @@ import {
 import { css } from '@emotion/react';
 import { keys } from '../../../core/src/utils/typeSafety';
 import { useMarkdown } from '../hooks/useMarkdown';
+import ColorizedPreformattedText from './ColorizedPreformattedText';
 
 const multiOutput = css`
   display: flex;
@@ -72,7 +73,11 @@ const scalarRenderers: {
     }
     return <RenderDataValue value={inferred} depth={(depth ?? 0) + 1} renderMarkdown={renderMarkdown} />;
   },
-  object: ({ value }) => <>{JSON.stringify(value.value)}</>,
+  object: ({ value }) => (
+    <div className="rendered-object-type">
+      <ColorizedPreformattedText text={JSON.stringify(value.value, null, 2)} language="json" />
+    </div>
+  ),
   'gpt-function': ({ value }) => (
     <>
       GPT Function: <em>{value.value.name}</em>
@@ -175,11 +180,11 @@ export const RenderDataOutputs: FC<{ outputs: Outputs; renderMarkdown?: boolean 
   }
 
   return (
-    <div>
+    <div className="rendered-data-outputs">
       {outputPorts.map((portId) => (
-        <div key={portId}>
+        <div className="port-value" key={portId}>
           <div>
-            <em>{portId}:</em>
+            <em className="port-id-label">{portId}</em>
           </div>
           <RenderDataValue value={outputs![portId]!} renderMarkdown={renderMarkdown} />
         </div>

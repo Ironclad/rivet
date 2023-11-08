@@ -19,7 +19,7 @@ export const DefaultGraphSelectorEditor: FC<
 
   return (
     <GraphSelector
-      value={data[editor.dataKey] as string | undefined}
+      value={data[editor.dataKey] as GraphId | undefined}
       isReadonly={isReadonly || isDisabled}
       onChange={(selected) =>
         onChange({
@@ -38,13 +38,30 @@ export const DefaultGraphSelectorEditor: FC<
 };
 
 export const GraphSelector: FC<{
-  value: string | undefined;
+  value: GraphId | undefined;
   name: string;
   label: string;
   isReadonly: boolean;
-  onChange?: (selected: string) => void;
+  onChange?: (selected: GraphId) => void;
   helperMessage?: string;
 }> = ({ value, isReadonly, onChange, label, name, helperMessage }) => {
+  return (
+    <Field name={name} label={label} isDisabled={isReadonly}>
+      {({ fieldProps }) => (
+        <>
+          <GraphSelectorSelect {...fieldProps} value={value} isReadonly={isReadonly} onChange={onChange} />
+          {helperMessage && <HelperMessage>{helperMessage}</HelperMessage>}
+        </>
+      )}
+    </Field>
+  );
+};
+
+export const GraphSelectorSelect: FC<{
+  value: GraphId | undefined;
+  isReadonly?: boolean;
+  onChange?: (selected: GraphId) => void;
+}> = ({ value, isReadonly, onChange }) => {
   const project = useRecoilValue(projectState);
 
   const graphOptions = orderBy(
@@ -58,18 +75,12 @@ export const GraphSelector: FC<{
   const selectedOption = graphOptions.find((option) => option.value === value);
 
   return (
-    <Field name={name} label={label} isDisabled={isReadonly}>
-      {({ fieldProps }) => (
-        <>
-          <Select
-            {...fieldProps}
-            options={graphOptions}
-            value={selectedOption}
-            onChange={(selected) => onChange?.(selected!.value)}
-          />
-          {helperMessage && <HelperMessage>{helperMessage}</HelperMessage>}
-        </>
-      )}
-    </Field>
+    <Select
+      isDisabled={isReadonly}
+      options={graphOptions}
+      value={selectedOption}
+      onChange={(selected) => onChange?.(selected!.value)}
+      placeholder="Select Graph..."
+    />
   );
 };

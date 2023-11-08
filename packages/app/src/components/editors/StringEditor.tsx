@@ -29,6 +29,8 @@ export const DefaultStringEditor: FC<
       }}
       label={editor.label}
       name={editor.dataKey}
+      placeholder={editor.placeholder}
+      maxLength={editor.maxLength}
       helperMessage={helperMessage}
       onClose={onClose}
     />
@@ -44,8 +46,22 @@ export const StringEditor: FC<{
   label: string;
   name?: string;
   helperMessage?: string;
+  placeholder?: string;
+  maxLength?: number;
   onClose?: () => void;
-}> = ({ value, onChange, isReadonly, isDisabled, label, name, autoFocus, helperMessage, onClose }) => {
+}> = ({
+  value,
+  onChange,
+  isReadonly,
+  isDisabled,
+  label,
+  name,
+  autoFocus,
+  helperMessage,
+  placeholder,
+  maxLength,
+  onClose,
+}) => {
   return (
     <Field name={name ?? label} label={label} isDisabled={isDisabled}>
       {({ fieldProps }) => (
@@ -55,6 +71,8 @@ export const StringEditor: FC<{
             value={value}
             isReadOnly={isReadonly}
             autoFocus={autoFocus}
+            placeholder={placeholder}
+            maxLength={maxLength}
             onChange={(e) => onChange((e.target as HTMLInputElement).value)}
             onKeyDown={(e) => {
               if (e.key === 'Escape') {

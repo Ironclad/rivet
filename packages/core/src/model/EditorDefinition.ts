@@ -28,6 +28,8 @@ export type StringEditorDefinition<T extends ChartNode> = SharedEditorDefinition
 
   dataKey: DataOfType<T, string>;
   useInputToggleDataKey?: DataOfType<T, boolean>;
+  placeholder?: string;
+  maxLength?: number;
 };
 
 export type ToggleEditorDefinition<T extends ChartNode> = SharedEditorDefinitionProps<T> & {
@@ -116,6 +118,15 @@ export type ColorEditorDefinition<T extends ChartNode> = SharedEditorDefinitionP
   useInputToggleDataKey?: DataOfType<T, boolean>;
 };
 
+export type FilePathBrowserEditorDefinition<T extends ChartNode> = SharedEditorDefinitionProps<T> & {
+  type: 'filePathBrowser';
+
+  dataKey: DataOfType<T, string>;
+  useInputToggleDataKey?: DataOfType<T, boolean>;
+
+  accept?: string;
+};
+
 export type FileBrowserEditorDefinition<T extends ChartNode> = SharedEditorDefinitionProps<T> & {
   type: 'fileBrowser';
 
@@ -198,4 +209,5 @@ export type EditorDefinition<T extends ChartNode> =
   | EditorDefinitionGroup<T>
   | StringListEditorDefinition<T>
   | CustomEditorDefinition<T>
-  | DynamicEditorDefinition<T>;
+  | DynamicEditorDefinition<T>
+  | FilePathBrowserEditorDefinition<T>;

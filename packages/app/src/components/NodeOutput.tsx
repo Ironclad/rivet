@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { type NodeRunData, type ProcessDataForNode, lastRunData, selectedProcessPage } from '../state/dataFlow.js';
-import { type FC, type ReactNode, memo, useMemo, useState } from 'react';
+import { type FC, type ReactNode, memo, useMemo, useState, type MouseEvent } from 'react';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { copyToClipboard } from '../utils/copyToClipboard.js';
@@ -12,23 +12,35 @@ import FlaskIcon from 'majesticons/line/flask-line.svg?react';
 import { FullScreenModal } from './FullScreenModal.js';
 import { RenderDataOutputs } from './RenderDataValue.js';
 import { orderBy } from 'lodash-es';
-import { promptDesignerAttachedChatNodeState, promptDesignerState } from '../state/promptDesigner.js';
+import { promptDesignerAttachedChatNodeState } from '../state/promptDesigner.js';
 import { overlayOpenState } from '../state/ui';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { entries } from '../../../core/src/utils/typeSafety';
 import { useToggle } from 'ahooks';
 import Toggle from '@atlaskit/toggle';
+import { pinnedNodesState } from '../state/graphBuilder';
 
 export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   useDependsOnPlugins();
+
+  const isPinned = useRecoilValue(pinnedNodesState).includes(node.id);
+
+  const handleWheel = useStableCallback((e: MouseEvent<HTMLDivElement>) => {
+    if (isPinned) {
+      return; // Scroll is allowed because there's no scroll bar when pinned
+    }
+
+    // Prevent zooming the graph when scrolling the output
+    e.stopPropagation();
+  });
 
   return (
     <div className="node-output-outer">
       <FullScreenModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <NodeFullscreenOutput node={node} />
       </FullScreenModal>
-      <div onWheel={(e) => e.stopPropagation()}>
+      <div onWheel={handleWheel}>
         <NodeOutputBase node={node} onOpenFullscreenModal={() => setIsModalOpen(true)} />
       </div>
     </div>

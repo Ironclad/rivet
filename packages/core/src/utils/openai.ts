@@ -282,3 +282,550 @@ export async function* streamChatCompletions({
     throw new OpenAIError(response.status, responseJson);
   }
 }
+
+export type OpenAIAssistant = {
+  /** The identifier, which can be referenced in API endpoints. */
+  id: string;
+
+  /** The object type, which is always assistant. */
+  object: 'assistant';
+
+  /** The Unix timestamp (in seconds) for when the assistant was created. */
+  created_at: number;
+
+  /** The name of the assistant. The maximum length is 256 characters. */
+  name: string | null;
+
+  /** The description of the assistant. The maximum length is 512 characters. */
+  description: string | null;
+
+  /** ID of the model to use. You can use the List models API to see all of your available models, or see our Model overview for descriptions of them. */
+  model: string;
+
+  /** The system instructions that the assistant uses. The maximum length is 32768 characters. */
+  instructions: string | null;
+
+  /** A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types code_interpreter, retrieval, or function. */
+  tools: OpenAIAssistantTool[];
+
+  /** A list of file IDs attached to this assistant. There can be a maximum of 20 files attached to the assistant. Files are ordered by their creation date in ascending order. */
+  file_ids: string[];
+
+  /** Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long. */
+  metadata: Record<string, string>;
+};
+
+export type OpenAIAssistantCodeInterpreterTool = {
+  /** The type of tool being defined: code_interpreter */
+  type: 'code_interpreter';
+};
+
+export type OpenAIAssistantRetrievalTool = {
+  /** The type of tool being defined: retrieval */
+  type: 'retrieval';
+};
+
+export type OpenAIAssistantFunctionTool = {
+  /** The type of tool being defined: function */
+  type: 'function';
+
+  /** The function definition. */
+  function: ChatCompletionFunction;
+};
+
+export type OpenAIAssistantTool =
+  | OpenAIAssistantCodeInterpreterTool
+  | OpenAIAssistantRetrievalTool
+  | OpenAIAssistantFunctionTool;
+
+/**
+ * POST https://api.openai.com/v1/assistants
+ * Create an assistant with a model and instructions.
+ */
+export type CreateAssistantBody = {
+  /** ID of the model to use. You can use the List models API to see all of your available models, or see our Model overview for descriptions of them. */
+  model?: string;
+
+  /** The name of the assistant. The maximum length is 256 characters. */
+  name?: string | null;
+
+  /** The description of the assistant. The maximum length is 512 characters. */
+  description?: string | null;
+
+  /** The system instructions that the assistant uses. The maximum length is 32768 characters. */
+  instructions?: string | null;
+
+  /** A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types code_interpreter, retrieval, or function. */
+  tools?: OpenAIAssistantTool[];
+
+  /** A list of file IDs attached to this assistant. There can be a maximum of 20 files attached to the assistant. Files are ordered by their creation date in ascending order. */
+  file_ids?: string[];
+
+  /** Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long. */
+  metadata?: Record<string, string>;
+};
+
+export type CreateAssistantResponse = OpenAIAssistant;
+
+export type OpenAIPaginationQuery = {
+  /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20. */
+  limit?: string;
+
+  /** Sort order by the created_at timestamp of the objects. asc for ascending order and desc for descending order. */
+  order?: string;
+
+  /** A cursor for use in pagination. after is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list. */
+  after?: string;
+
+  /** A cursor for use in pagination. before is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list. */
+  before?: string;
+};
+
+export type OpenAIAssistantFile = {
+  /** The identifier, which can be referenced in API endpoints. */
+  id: string;
+
+  /** The object type, which is always assistant.file. */
+  object: 'assistant.file';
+
+  /** The Unix timestamp (in seconds) for when the assistant file was created. */
+  created_at: number;
+
+  /** The assistant ID that the file is attached to. */
+  assistant_id: string;
+};
+
+export type CreateAssistantFileBody = {
+  file_id: string;
+};
+
+export type OpenAIFile = {
+  /** The file identifier, which can be referenced in the API endpoints. */
+  id: string;
+
+  /** The size of the file, in bytes. */
+  bytes: number;
+
+  /** The Unix timestamp (in seconds) for when the file was created. */
+  created_at: number;
+
+  /** The name of the file. */
+  filename: string;
+
+  /** The object type, which is always file. */
+  object: 'file';
+
+  /** The intended purpose of the file. Supported values are fine-tune, fine-tune-results, assistants, and assistants_output. */
+  purpose: OpenAIFilePurpose;
+};
+
+export type OpenAIFilePurpose = 'fine-tune' | 'fine-tune-results' | 'assistants' | 'assistants_output';
+
+export const openAIFilePurposeOptions = [
+  { value: 'fine-tune', label: 'Fine-tuning' },
+  { value: 'fine-tune-results', label: 'Fine-tuning Results' },
+  { value: 'assistants', label: 'Assistants' },
+  { value: 'assistants_output', label: 'Assistants Output' },
+];
+
+export type OpenAIThread = {
+  /** The identifier, which can be referenced in API endpoints. */
+  id: string;
+
+  /** The object type, which is always thread. */
+  object: 'thread';
+
+  /** The Unix timestamp (in seconds) for when the thread was created. */
+  created_at: number;
+
+  /** Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long. */
+  metadata: Record<string, string>;
+};
+
+export type OpenAIThreadMessage = {
+  /** The identifier, which can be referenced in API endpoints. */
+  id: string;
+
+  /** The object type, which is always thread.message. */
+  object: 'thread.message';
+
+  /** The Unix timestamp (in seconds) for when the message was created. */
+  created_at: number;
+
+  /** The thread ID that this message belongs to. */
+  thread_id: string;
+
+  /** The entity that produced the message. One of user or assistant. */
+  role: 'user' | 'assistant';
+
+  /** The content of the message in array of text and/or images. */
+  content: OpenAIThreadMessageContent[];
+};
+
+export type OpenAIThreadMessageContent = OpenAIThreadMessageImageFileContent | OpenAIThreadMessageTextContent;
+
+/** References an image File in the content of a message. */
+export type OpenAIThreadMessageImageFileContent = {
+  /** Always image_file. */
+  type: 'image_file';
+  image_file: {
+    /** The File ID of the image in the message content. */
+    file_id: string;
+  };
+};
+
+/** The text content that is part of a message. */
+export type OpenAIThreadMessageTextContent = {
+  /** Always text. */
+  type: 'text';
+  text: {
+    /** The data that makes up the text. */
+    value: string;
+    annotations: OpenAIThreadMessageContentAnnotation[];
+  };
+};
+
+export type OpenAIThreadMessageContentAnnotation =
+  | OpenAIThreadMessageTextContentFileCitationAnnotation
+  | OpenAIThreadMessageTextContentFilePathAnnotation;
+
+/** A citation within the message that points to a specific quote from a specific File associated with the assistant or the message. Generated when the assistant uses the "retrieval" tool to search files. */
+export type OpenAIThreadMessageTextContentFileCitationAnnotation = {
+  /** Always file_citation. */
+  type: 'file_citation';
+
+  /** The text in the message content that needs to be replaced. */
+  text: string;
+
+  file_citation: {
+    /** The ID of the specific File the citation is from. */
+    file_id: string;
+
+    /** The specific quote in the file. */
+    quote: string;
+  };
+
+  start_index: number;
+  end_index: number;
+};
+
+/** A URL for the file that's generated when the assistant used the code_interpreter tool to generate a file. */
+export type OpenAIThreadMessageTextContentFilePathAnnotation = {
+  /** Always file_path. */
+  type: 'file_path';
+
+  /** The text in the message content that needs to be replaced. */
+  text: string;
+
+  file_path: {
+    /** The ID of the file that was generated. */
+    file_id: string;
+  };
+
+  start_index: number;
+  end_index: number;
+};
+
+export type CreateMessageBody = {
+  /** The role of the entity that is creating the message. Currently only user is supported. */
+  role: 'user';
+
+  /** The content of the message. */
+  content: string;
+
+  /** A list of File IDs that the message should use. There can be a maximum of 10 files attached to a message. Useful for tools like retrieval and code_interpreter that can access and use files. */
+  file_ids?: string[];
+
+  /** Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long. */
+  metadata?: Record<string, string>;
+};
+
+export type CreateThreadBody = {
+  /** A list of messages to start the thread with. */
+  messages: CreateMessageBody[];
+
+  /** Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long. */
+  metadata: Record<string, string>;
+};
+
+export type OpenAIRun = {
+  /** The identifier, which can be referenced in API endpoints. */
+  id: string;
+
+  /** The object type, which is always assistant.run. */
+  object: 'assistant.run';
+
+  /** The Unix timestamp (in seconds) for when the run was created. */
+  created_at: number;
+
+  /** The ID of the thread that was executed on as a part of this run. */
+  thread_id: string;
+
+  /** The ID of the assistant used for execution of this run. */
+  assistant_id: string;
+
+  /** The status of the run, which can be either queued, in_progress, requires_action, cancelling, cancelled, failed, completed, or expired. */
+  status:
+    | 'queued'
+    | 'in_progress'
+    | 'requires_action'
+    | 'cancelling'
+    | 'cancelled'
+    | 'failed'
+    | 'completed'
+    | 'expired';
+
+  /** Details on the action required to continue the run. Will be null if no action is required. */
+  required_action: OpenAIRunRequiredAction | null;
+
+  /** The last error associated with this run. Will be null if there are no errors. */
+  last_error: {
+    /** One of server_error or rate_limit_exceeded. */
+    code: string;
+
+    /** A human-readable description of the error. */
+    message: string;
+  } | null;
+
+  /** The Unix timestamp (in seconds) for when the run will expire. */
+  expires_at: number;
+
+  /** The Unix timestamp (in seconds) for when the run was started. */
+  started_at: number;
+
+  /** The Unix timestamp (in seconds) for when the run was cancelled. */
+  cancelled_at: number;
+
+  /** The Unix timestamp (in seconds) for when the run failed. */
+  failed_at: number;
+
+  /** The Unix timestamp (in seconds) for when the run was completed. */
+  completed_at: number;
+
+  /** The model that the assistant used for this run. */
+  model: string;
+
+  /** The instructions that the assistant used for this run. */
+  instructions: string;
+
+  /** The list of tools that the assistant used for this run. */
+  tools: OpenAIAssistantTool[];
+
+  /** The list of File IDs the assistant used for this run. */
+  file_ids: string[];
+
+  /** Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long. */
+  metadata: Record<string, string>;
+};
+
+export type OpenAIRunRequiredAction = OpenAIRunRequiredActionSubmitToolOutputs;
+
+export type OpenAIRunRequiredActionSubmitToolOutputs = {
+  /** For now, this is always submit_tool_outputs. */
+  type: 'submit_tool_outputs';
+
+  /** Details on the tool outputs needed for this run to continue. */
+  submit_tool_outputs: {
+    /** A list of the relevant tool calls. */
+    tool_calls: OpenAIRunFunctionToolCall[];
+  };
+};
+
+export type OpenAIRunToolCall =
+  | OpenAIRunFunctionToolCall
+  | OpenAIRunRetrievalToolCall
+  | OpenAIRunCodeInterpreterToolCall;
+
+export type OpenAIRunFunctionToolCall = {
+  /** The ID of the tool call. This ID must be referenced when you submit the tool outputs in using the Submit tool outputs to run endpoint. */
+  id: string;
+
+  /** The type of tool call the output is required for. For now, this is always function. */
+  type: 'function';
+
+  /** The function definition. */
+  function: OpenAIRunFunctionToolCallFunction;
+};
+
+export type OpenAIRunFunctionToolCallFunction = {
+  /** The name of the function. */
+  name: string;
+
+  /** The arguments that the model expects you to pass to the function. */
+  arguments: string;
+
+  /** The output of the function. This will be null if the outputs have not been submitted yet. Ignore when submitting tool calls.  */
+  output?: string | null;
+};
+
+export type OpenAIRunRetrievalToolCall = {
+  /** The ID of the tool call object. */
+  id: string;
+
+  /** The type of tool call. This is always going to be retrieval for this type of tool call. */
+  type: 'retrieval';
+
+  /** For now, this is always going to be an empty object. */
+  retrieval: {};
+};
+
+/** Details of the Code Interpreter tool call the run step was involved in. */
+export type OpenAIRunCodeInterpreterToolCall = {
+  /** The ID of the tool call. */
+  id: string;
+
+  /** The type of tool call. This is always going to be code_interpreter for this type of tool call. */
+  type: 'code_interpreter';
+
+  /** The Code Interpreter tool call definition. */
+  code_interpreter: {
+    /**I The input to the Code Interpreter tool call. */
+    input: string;
+
+    /** The outputs from the Code Interpreter tool call. Code Interpreter can output one or more items, including text (logs) or images (image). Each of these are represented by a different object type. */
+    outputs: OpenAIRunCodeInterpreterToolCallOutput[];
+  };
+};
+
+export type OpenAIRunCodeInterpreterToolCallOutput =
+  | OpenAIRunCodeInterpreterToolCallLogOutput
+  | OpenAIRunCodeInterpreterToolCallImageOutput;
+
+/** Text output from the Code Interpreter tool call as part of a run step. */
+export type OpenAIRunCodeInterpreterToolCallLogOutput = {
+  /** Always logs. */
+  type: 'logs';
+
+  /** The text output from the Code Interpreter tool call. */
+  logs: string;
+};
+
+/** Code interpreter image output */
+export type OpenAIRunCodeInterpreterToolCallImageOutput = {
+  /** Always image. */
+  type: 'image';
+  image: {
+    /** The file ID of the image. */
+    file_id: string;
+  };
+};
+
+export type ListThreadMessagesQuery = {
+  /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20. */
+  limit?: number;
+
+  /** Sort order by the created_at timestamp of the objects. asc for ascending order and desc for descending order. */
+  order?: string;
+
+  /** A cursor for use in pagination. after is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list. */
+  after?: string;
+
+  /** A cursor for use in pagination. before is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list. */
+  before?: string;
+};
+
+export type CreateRunBody = {
+  assistant_id: string;
+  model?: string;
+  instructions?: string;
+  tools?: OpenAIAssistantTool[];
+  metadata?: Record<string, string>;
+};
+
+export type SubmitToolOutputsBody = {
+  tool_outputs: SubmitToolOutputsBodyToolOutput[];
+};
+
+export type SubmitToolOutputsBodyToolOutput = {
+  // Dunno why these are optional
+
+  /** The ID of the tool call in the required_action object within the run object the output is being submitted for. */
+  tool_call_id?: string;
+
+  /** The output of the tool call to be submitted to continue the run. */
+  output?: string;
+};
+
+/** Represents a step in execution of a run. */
+export type OpenAIRunStep = {
+  /** The identifier of the run step, which can be referenced in API endpoints. */
+  id: string;
+
+  /** The object type, which is always `assistant.run.step``. */
+  object: 'thread.run.step';
+
+  /** The Unix timestamp (in seconds) for when the run step was created. */
+  created_at: number;
+
+  /** The ID of the assistant associated with the run step. */
+  assistant_id: string;
+
+  /** The ID of the thread that was run. */
+  thread_id: string;
+
+  /** The ID of the run that this run step is a part of. */
+  run_id: string;
+
+  /** The type of run step, which can be either message_creation or tool_calls. */
+  type: 'message_creation' | 'tool_calls';
+
+  /** The status of the run, which can be either in_progress, cancelled, failed, completed, or expired. */
+  status: 'in_progress' | 'cancelled' | 'failed' | 'completed' | 'expired';
+
+  /** The details of the run step. */
+  step_details: OpenAIRunStepDetails;
+
+  /** The last error associated with this run step. Will be null if there are no errors. */
+  last_error: OpenAIErrorInfo | null;
+
+  /** The Unix timestamp (in seconds) for when the run step expired. A step is considered expired if the parent run is expired. */
+  expired_at: number | null;
+
+  /** The Unix timestamp (in seconds) for when the run step was cancelled. */
+  cancelled_at: number | null;
+
+  /** The Unix timestamp (in seconds) for when the run step failed. */
+  failed_at: number | null;
+
+  /** The Unix timestamp (in seconds) for when the run step completed. */
+  completed_at: number | null;
+
+  /** Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maxium of 512 characters long. */
+  metadata: Record<string, string>;
+};
+
+export type OpenAIRunStepDetails = OpenAIMessageCreationRunStepDetails | OpenAIToolCallRunStepDetails;
+
+/** Details of the message creation by the run step. */
+export type OpenAIMessageCreationRunStepDetails = {
+  /** Always `message_creation``. */
+  type: 'message_creation';
+
+  message_creation: {
+    /** The ID of the message that was created by this run step. */
+    message_id: string;
+  };
+};
+
+export type OpenAIErrorInfo = {
+  /** One of server_error or rate_limit_exceeded. */
+  code: 'server_error' | 'rate_limit_exceeded';
+
+  /** A human-readable description of the error. */
+  message: string;
+};
+
+export type OpenAIToolCallRunStepDetails = {
+  type: 'tool_calls';
+
+  /** An array of tool calls the run step was involved in. These can be associated with one of three types of tools: code_interpreter, retrieval, or function. */
+  tool_calls: OpenAIRunToolCall[];
+};
+
+export type OpenAIListResponse<T> = {
+  object: 'list';
+  data: T[];
+  first_id: string;
+  last_id: string;
+  has_more: boolean;
+};

@@ -1,6 +1,6 @@
 import { useState, type FC, useEffect } from 'react';
-import { type SharedEditorProps } from './SharedEditorProps';
-import { type ChartNode, type KeyValuePairEditorDefinition } from '@ironclad/rivet-core';
+import { type SharedEditorProps } from '../SharedEditorProps';
+import { type CustomEditorDefinition, type ChartNode, type GraphId } from '@ironclad/rivet-core';
 import TextField from '@atlaskit/textfield';
 import Button from '@atlaskit/button';
 import { Field, HelperMessage } from '@atlaskit/form';
@@ -8,28 +8,31 @@ import { css } from '@emotion/react';
 import CrossIcon from 'majesticons/line/multiply-line.svg?react';
 import EyeIcon from 'majesticons/line/eye-line.svg?react';
 import EyeOffIcon from 'majesticons/line/eye-off-line.svg?react';
-import { getHelperMessage } from './editorUtils';
+import { getHelperMessage } from '../editorUtils';
+import { GraphSelectorSelect } from '../GraphSelectorEditor';
+import { produce } from 'immer';
 
-type KVPair = {
+type ToolCallHandlerPair = {
   key: string;
-  value: string;
+  value: GraphId;
 };
 
 const styles = css`
-  .key-value-pairs-container {
+  .tool-call-handlers-container {
     display: flex;
     flex-direction: column;
     gap: 8px;
   }
 
-  .key-value-pairs {
+  .tool-call-handlers-pairs {
     display: flex;
     flex-direction: column;
     gap: 8px;
   }
 
-  .key-value-pair {
-    display: flex;
+  .tool-call-handlers-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
     align-items: center;
     gap: 8px;
   }
@@ -57,18 +60,24 @@ const styles = css`
   }
 `;
 
-type KeyValuePairEditorProps = SharedEditorProps & {
-  editor: KeyValuePairEditorDefinition<ChartNode>;
+type ToolCallHandlersEditorProps = SharedEditorProps & {
+  editor: CustomEditorDefinition<ChartNode>;
 };
 
-export const KeyValuePairEditor: FC<KeyValuePairEditorProps> = ({ node, isReadonly, isDisabled, onChange, editor }) => {
+export const ToolCallHandlersEditor: FC<ToolCallHandlersEditorProps> = ({
+  node,
+  isReadonly,
+  isDisabled,
+  onChange,
+  editor,
+}) => {
   const data = node.data as Record<string, unknown>;
   const helperMessage = getHelperMessage(editor, node.data);
-  const keyValuePairs = data[editor.dataKey] as KVPair[] | undefined;
-  const [pairs, setPairs] = useState<KVPair[]>(keyValuePairs || []);
+  const keyValuePairs = data[editor.dataKey!] as ToolCallHandlerPair[] | undefined;
+  const [pairs, setPairs] = useState<ToolCallHandlerPair[]>(keyValuePairs || []);
 
   const handleAddPair = () => {
-    setPairs([...pairs, { key: '', value: '' }]);
+    setPairs([...pairs, { key: '', value: '' as GraphId }]);
   };
 
   const handleDeletePair = (index: number) => {
@@ -77,9 +86,17 @@ export const KeyValuePairEditor: FC<KeyValuePairEditorProps> = ({ node, isReadon
     setPairs(newPairs);
   };
 
-  const handlePairChange = (index: number, keyOrValue: 'key' | 'value', value: string) => {
-    const newPairs = [...pairs];
-    newPairs[index]![keyOrValue] = value;
+  const handlePairChange = (
+    value: { index: number; keyOrValue: 'key'; value: string } | { index: number; keyOrValue: 'value'; value: GraphId },
+  ) => {
+    const newPairs = produce(pairs, (draft) => {
+      if (value.keyOrValue === 'key') {
+        draft[value.index]!.key = value.value;
+      } else {
+        draft[value.index]!.value = value.value;
+      }
+    });
+
     setPairs(newPairs);
   };
 
@@ -88,41 +105,42 @@ export const KeyValuePairEditor: FC<KeyValuePairEditorProps> = ({ node, isReadon
       ...node,
       data: {
         ...data,
-        [editor.dataKey]: pairs,
+        [editor.dataKey!]: pairs,
       },
     });
   }, [pairs]);
 
   return (
-    <KeyValuePairs
+    <ToolCallHandlers
       label={editor.label}
-      name={editor.dataKey}
+      name={editor.dataKey!}
       isReadonly={isReadonly}
       isDisabled={isDisabled}
       keyValuePairs={pairs}
       onAddPair={handleAddPair}
       onDeletePair={handleDeletePair}
       onPairChange={handlePairChange}
-      isValuesSecret={editor.valuesSecret ?? false}
       helperMessage={helperMessage}
     />
   );
 };
 
-type KeyValuePairsProps = {
+type ToolCallHandlersProps = {
   label: string;
   name: string;
   isReadonly?: boolean;
   isDisabled?: boolean;
-  keyValuePairs: KVPair[];
+  keyValuePairs: ToolCallHandlerPair[];
   helperMessage?: string;
   isValuesSecret?: boolean;
   onAddPair: () => void;
   onDeletePair: (index: number) => void;
-  onPairChange: (index: number, keyOrValue: 'key' | 'value', value: string) => void;
+  onPairChange: (
+    value: { index: number; keyOrValue: 'key'; value: string } | { index: number; keyOrValue: 'value'; value: GraphId },
+  ) => void;
 };
 
-export const KeyValuePairs: FC<KeyValuePairsProps> = ({
+export const ToolCallHandlers: FC<ToolCallHandlersProps> = ({
   label,
   name,
   isReadonly,
@@ -140,29 +158,26 @@ export const KeyValuePairs: FC<KeyValuePairsProps> = ({
     <div css={styles}>
       <Field name={name} label={label} isDisabled={isDisabled}>
         {({ fieldProps }) => (
-          <div className="key-value-pairs-container">
+          <div className="tool-call-handlers-container">
             {helperMessage && <HelperMessage>{helperMessage}</HelperMessage>}
-            <div className="key-value-pairs">
+            <div className="tool-call-handlers-pairs">
               {keyValuePairs.map((pair, index) => (
-                <div key={index} className="key-value-pair">
+                <div key={index} className="tool-call-handlers-pair">
                   <TextField
                     {...fieldProps}
                     value={pair.key}
-                    onChange={(e) => onPairChange(index, 'key', (e.target as HTMLInputElement).value)}
+                    onChange={(e) =>
+                      onPairChange({ index, keyOrValue: 'key', value: (e.target as HTMLInputElement).value })
+                    }
                     isDisabled={isDisabled}
                     isReadOnly={isReadonly}
-                    placeholder="Key"
+                    placeholder="Tool ID"
                     style={{ marginRight: '8px' }}
                   />
-                  <TextField
-                    {...fieldProps}
-                    type={isValuesSecret ? (showingValues ? 'text' : 'password') : 'text'}
+                  <GraphSelectorSelect
                     value={pair.value}
-                    onChange={(e) => onPairChange(index, 'value', (e.target as HTMLInputElement).value)}
-                    isDisabled={isDisabled}
-                    isReadOnly={isReadonly}
-                    placeholder="Value"
-                    style={{ marginRight: '8px' }}
+                    isReadonly={isReadonly}
+                    onChange={(v) => onPairChange({ index, keyOrValue: 'value', value: v })}
                   />
                   <Button
                     className="delete-pair"
@@ -183,7 +198,7 @@ export const KeyValuePairs: FC<KeyValuePairsProps> = ({
                 onClick={onAddPair}
                 isDisabled={isDisabled || isReadonly}
               >
-                Add
+                Add Handler
               </Button>
               {isValuesSecret && (
                 <Button

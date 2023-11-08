@@ -4,7 +4,7 @@ import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { savedGraphsState } from '../../state/savedGraphs';
 import { keyBy } from 'lodash-es';
-import { type NodeGraph } from '@ironclad/rivet-core';
+import { type GraphId, type NodeGraph } from '@ironclad/rivet-core';
 import { TestCaseEditor } from './TestCaseEditor';
 import { css } from '@emotion/react';
 import {
@@ -259,14 +259,14 @@ export const TestSuite: FC<{ testSuite: TrivetTestSuite; tryRunTests: TryRunTest
 
             <div className="graph-selectors">
               <GraphSelector
-                value={testSuite.testGraph}
+                value={testSuite.testGraph as GraphId}
                 name="Test Graph"
                 label="Test Graph"
                 onChange={(graphId) => updateTestSuite({ ...testSuite, testGraph: graphId })}
                 isReadonly={false}
               />
               <GraphSelector
-                value={testSuite.validationGraph}
+                value={testSuite.validationGraph as GraphId}
                 name="Validation Graph"
                 label="Validation Graph"
                 onChange={(graphId) => updateTestSuite({ ...testSuite, validationGraph: graphId })}

@@ -29,6 +29,7 @@ import {
   searchMatchingNodeIdsState,
   draggingWireClosestPortState,
   hoveringNodeState,
+  pinnedNodesState,
 } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { VisualNode } from './VisualNode.js';
@@ -558,6 +559,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   const searchMatchingNodes = useRecoilValue(searchMatchingNodeIdsState);
 
+  const pinnedNodes = useRecoilValue(pinnedNodesState);
+
   return (
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
       <div
@@ -586,11 +589,14 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         >
           <div className="nodes">
             {nodesWithConnections.map(({ node, nodeConnections }) => {
+              const isPinned = pinnedNodes.includes(node.id);
+
               if (
-                node.visualData.x < viewportBounds.left - (node.visualData.width ?? 300) ||
-                node.visualData.x > viewportBounds.right + (node.visualData.width ?? 300) ||
-                node.visualData.y < viewportBounds.top - 500 ||
-                node.visualData.y > viewportBounds.bottom + 500
+                (node.visualData.x < viewportBounds.left - (node.visualData.width ?? 300) ||
+                  node.visualData.x > viewportBounds.right + (node.visualData.width ?? 300) ||
+                  node.visualData.y < viewportBounds.top - 500 ||
+                  node.visualData.y > viewportBounds.bottom + 500) &&
+                !isPinned
               ) {
                 return null;
               }

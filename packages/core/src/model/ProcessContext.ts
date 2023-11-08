@@ -88,7 +88,7 @@ export type InternalProcessContext<T extends ChartNode = ChartNode> = ProcessCon
   onPartialOutputs?: (outputs: Outputs) => void;
 
   /** Creates a subprocessor, for executing subgraphs. */
-  createSubProcessor: (subGraphId: GraphId, options?: { signal?: AbortSignal }) => GraphProcessor;
+  createSubProcessor: (subGraphId: GraphId | undefined, options?: { signal?: AbortSignal }) => GraphProcessor;
 
   /** Like context, but variables that are set during the run of the graph and can be read during the graph. Shared among all graphs and subgraphs. */
   getGlobal: (id: string) => ScalarOrArrayDataValue | undefined;
