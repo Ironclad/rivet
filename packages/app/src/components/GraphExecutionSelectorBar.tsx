@@ -140,10 +140,10 @@ export const GraphExecutionSelectorBar: FC = () => {
 
   const selectedExecutionText =
     graphSelectedExecution === 'latest'
-      ? maxExecutionNum
+      ? `${maxExecutionNum} / ${maxExecutionNum}`
       : graphSelectedExecution === 'mixed'
       ? '(Mixed)'
-      : graphSelectedExecution + 1;
+      : `${graphSelectedExecution + 1} / ${maxExecutionNum}`;
 
   if (maxExecutionNum <= 1) {
     return null;
