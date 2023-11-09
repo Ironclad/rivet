@@ -111,6 +111,8 @@ export const Wire: FC<{
   return <path className={clsx('wire', { selected, highlighted, backwards: isBackwards, isNotRan })} d={wirePath} />;
 });
 
+Wire.displayName = 'Wire';
+
 export function getNodePortPosition(
   node: ChartNode,
   portId: PortId,

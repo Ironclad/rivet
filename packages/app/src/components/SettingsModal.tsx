@@ -430,10 +430,10 @@ export const PluginsSettingsPage: FC = () => {
         const configOptions = entries(plugin.configSpec ?? {});
 
         return (
-          <section>
+          <section key={plugin.id}>
             <Header>{plugin.name ?? plugin.id}</Header>
             {configOptions.map(([key, config]) => (
-              <Field name={`plugin-${plugin.id}-${key}`} label={`${config.label} (${plugin.id})`}>
+              <Field key={key} name={`plugin-${plugin.id}-${key}`} label={`${config.label} (${plugin.id})`}>
                 {() =>
                   match(config)
                     .with(

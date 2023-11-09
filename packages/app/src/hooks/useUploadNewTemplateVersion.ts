@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 import { projectState } from '../state/savedGraphs';
 import { type GraphId, serializeProject } from '@ironclad/rivet-core';
 import { type UseMutationResult, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useCommunityApi } from './useCommunityApi';
+import { getCommunityApi } from './getCommunityApi';
 import { type PutTemplateVersionBody } from '../utils/communityApi';
 import { useDependsOnPlugins } from './useDependsOnPlugins';
 import { toast } from 'react-toastify';
@@ -29,7 +29,7 @@ export function useUploadNewTemplateVersion({
     mutationFn: async (params: UseUploadNewTemplateVersionParams) => {
       const serializedProject = serializeProject(project);
 
-      const putTemplateVersionUrl = useCommunityApi('/templates/:templateId/version/:version');
+      const putTemplateVersionUrl = getCommunityApi('/templates/:templateId/version/:version');
 
       const versionResponse = await fetch(
         putTemplateVersionUrl.replace(':templateId', templateId).replace(':version', params.version),

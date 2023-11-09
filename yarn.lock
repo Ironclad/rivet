@@ -3518,6 +3518,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@emotion/eslint-plugin@npm:^11.11.0":
+  version: 11.11.0
+  resolution: "@emotion/eslint-plugin@npm:11.11.0"
+  peerDependencies:
+    eslint: 6 || 7 || 8
+  checksum: 16ebc9d882ac89b9901e24c67507e16ec1fd12de3ed57f12541d32a2060b21162a414cb8cc65bf3a4ee2e96d8684322bb8a95b411d7c9cc36695cd99855dc836
+  languageName: node
+  linkType: hard
+
 "@emotion/hash@npm:^0.9.1":
   version: 0.9.1
   resolution: "@emotion/hash@npm:0.9.1"
@@ -4097,6 +4106,7 @@ __metadata:
     "@atlaskit/tokens": "npm:^1.28.0"
     "@dnd-kit/core": "npm:^6.0.8"
     "@dnd-kit/sortable": "npm:^7.0.2"
+    "@emotion/eslint-plugin": "npm:^11.11.0"
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
     "@floating-ui/react": "npm:^0.26.1"
@@ -4140,6 +4150,7 @@ __metadata:
     eslint-plugin-import: "npm:^2.29.0"
     eslint-plugin-n: "npm:^16.2.0"
     eslint-plugin-promise: "npm:^6.1.1"
+    eslint-plugin-react: "npm:^7.33.2"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     execa: "npm:^8.0.1"
     fuse.js: "npm:^6.6.2"

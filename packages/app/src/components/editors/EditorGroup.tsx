@@ -110,8 +110,8 @@ export const EditorGroup: FC<
         easing="ease-out"
       >
         <div className="editor-group">
-          {editors.map((editor) => {
-            return <DefaultNodeEditorField {...sharedProps} editor={editor} />;
+          {editors.map((editor, i) => {
+            return <DefaultNodeEditorField key={i} {...sharedProps} editor={editor} />;
           })}
         </div>
       </Collapsible>

@@ -21,6 +21,7 @@ const multiOutput = css`
   gap: 8px;
 `;
 
+/* eslint-disable react-hooks/rules-of-hooks -- These are components (ish) */
 const scalarRenderers: {
   [P in ScalarDataType]: FC<{
     value: Extract<ScalarDataValue, { type: P }>;
@@ -122,6 +123,7 @@ const scalarRenderers: {
     );
   },
 };
+/* eslint-enable react-hooks/rules-of-hooks -- These are components (ish) */
 
 export const RenderDataValue: FC<{
   value: DataValue | undefined;

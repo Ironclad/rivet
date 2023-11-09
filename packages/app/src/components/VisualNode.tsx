@@ -360,6 +360,8 @@ const ZoomedOutVisualNodeContent: FC<{
   },
 );
 
+ZoomedOutVisualNodeContent.displayName = 'ZoomedOutVisualNodeContent';
+
 const NormalVisualNodeContent: FC<{
   node: ChartNode;
   connections?: NodeConnection[];
@@ -601,3 +603,5 @@ const NormalVisualNodeContent: FC<{
     );
   },
 );
+
+NormalVisualNodeContent.displayName = 'NormalVisualNodeContent';

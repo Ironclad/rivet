@@ -214,6 +214,8 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
   },
 );
 
+ContextMenu.displayName = 'ContextMenu';
+
 export const submenuStyles = css`
   position: absolute;
   top: 0;

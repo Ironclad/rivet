@@ -47,6 +47,8 @@ export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   );
 });
 
+NodeOutput.displayName = 'NodeOutput';
+
 const fullscreenOutputCss = css`
   position: relative;
 

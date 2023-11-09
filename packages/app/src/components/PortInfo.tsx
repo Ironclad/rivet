@@ -215,3 +215,5 @@ export const PortInfo = forwardRef<
     </Portal>
   );
 });
+
+PortInfo.displayName = 'PortInfo';

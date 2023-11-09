@@ -155,7 +155,7 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
       </div>
 
       {groupedInputsAndOutputs.map((group, i) => (
-        <div className="node-ports-group">
+        <div key={i} className="node-ports-group">
           <header>Data {i + 1}</header>
           <div className="node-ports">
             <div className="input-ports">

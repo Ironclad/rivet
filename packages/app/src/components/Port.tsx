@@ -120,3 +120,5 @@ export const Port: FC<{
     );
   },
 );
+
+Port.displayName = 'Port';
