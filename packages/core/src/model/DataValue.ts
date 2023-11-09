@@ -16,6 +16,7 @@ export type ChatMessage = {
   name: string | undefined;
   function_call:
     | {
+        id?: string;
         name: string;
         arguments: string; // JSON string
       }
