@@ -22,18 +22,25 @@ const multiOutput = css`
 `;
 
 const scalarRenderers: {
-  [P in ScalarDataType]: FC<{ value: Extract<ScalarDataValue, { type: P }>; depth?: number; renderMarkdown?: boolean }>;
+  [P in ScalarDataType]: FC<{
+    value: Extract<ScalarDataValue, { type: P }>;
+    depth?: number;
+    renderMarkdown?: boolean;
+    truncateLength?: number;
+  }>;
 } = {
   boolean: ({ value }) => <>{value.value ? 'true' : 'false'}</>,
   number: ({ value }) => <>{value.value}</>,
-  string: ({ value, renderMarkdown }) => {
-    const markdownRendered = useMarkdown(value.value, renderMarkdown);
+  string: ({ value, renderMarkdown, truncateLength }) => {
+    const truncated = truncateLength ? value.value.slice(0, truncateLength) + '...' : value.value;
+
+    const markdownRendered = useMarkdown(truncated, renderMarkdown);
 
     if (renderMarkdown) {
       return <div dangerouslySetInnerHTML={markdownRendered} />;
     }
 
-    return <pre className="pre-wrap">{value.value}</pre>;
+    return <pre className="pre-wrap">{truncated}</pre>;
   },
   'chat-message': ({ value, renderMarkdown }) => {
     const markdownRendered = useMarkdown(value.value.message, renderMarkdown);
@@ -116,11 +123,12 @@ const scalarRenderers: {
   },
 };
 
-export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number; renderMarkdown?: boolean }> = ({
-  value,
-  depth,
-  renderMarkdown,
-}) => {
+export const RenderDataValue: FC<{
+  value: DataValue | undefined;
+  depth?: number;
+  renderMarkdown?: boolean;
+  truncateLength?: number;
+}> = ({ value, depth, renderMarkdown, truncateLength }) => {
   if ((depth ?? 0) > 100) {
     return <>ERROR: FAILED TO RENDER {JSON.stringify(value)}</>;
   }
@@ -139,7 +147,13 @@ export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number;
       <div css={multiOutput}>
         {items.map((v, i) => (
           <div key={i}>
-            <RenderDataValue key={i} value={v} depth={(depth ?? 0) + 1} renderMarkdown={renderMarkdown} />
+            <RenderDataValue
+              key={i}
+              value={v}
+              depth={(depth ?? 0) + 1}
+              renderMarkdown={renderMarkdown}
+              truncateLength={truncateLength}
+            />
           </div>
         ))}
       </div>
@@ -159,13 +173,16 @@ export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number;
     value: ScalarDataValue;
     depth?: number;
     renderMarkdown?: boolean;
+    truncateLength?: number;
   }>;
 
   if (!Renderer) {
     return <div>ERROR: UNKNOWN TYPE: {JSON.stringify(value)}</div>;
   }
 
-  return <Renderer value={value} depth={(depth ?? 0) + 1} renderMarkdown={renderMarkdown} />;
+  return (
+    <Renderer value={value} depth={(depth ?? 0) + 1} renderMarkdown={renderMarkdown} truncateLength={truncateLength} />
+  );
 };
 
 export const RenderDataOutputs: FC<{ outputs: Outputs; renderMarkdown?: boolean }> = ({ outputs, renderMarkdown }) => {
