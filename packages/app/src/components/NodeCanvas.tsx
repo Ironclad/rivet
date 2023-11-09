@@ -204,7 +204,11 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     setContextMenuData,
   } = useContextMenu();
 
-  const { nodePortPositions, canvasRef, recalculate } = useNodePortPositions();
+  const { nodePortPositions, canvasRef, recalculate: recalculatePortPositions } = useNodePortPositions();
+
+  useEffect(() => {
+    recalculatePortPositions();
+  }, [recalculatePortPositions, selectedGraphMetadata?.id]);
 
   const { setNodeRef } = useDroppable({ id: 'NodeCanvas' });
   const setCanvasRef = useMergeRefs([setNodeRef, canvasRef]);
@@ -253,7 +257,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
       setLastMousePosition({ x: e.clientX, y: e.clientY });
       lastMouseInfoRef.current = { x: e.clientX, y: e.clientY, target: e.target };
 
-      recalculate();
+      recalculatePortPositions();
 
       if (selectionBox) {
         const newBox = {

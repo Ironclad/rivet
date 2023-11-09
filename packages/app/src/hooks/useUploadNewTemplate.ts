@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 import { projectState } from '../state/savedGraphs';
 import { type GraphId, serializeProject } from '@ironclad/rivet-core';
 import { type UseMutationResult, useMutation } from '@tanstack/react-query';
-import { getCommunityApi } from './getCommunityApi';
+import { getCommunityApi } from '../utils/getCommunityApi';
 import { templateResponseChecker, type PostTemplateBody, type PutTemplateVersionBody } from '../utils/communityApi';
 import { useDependsOnPlugins } from './useDependsOnPlugins';
 import { toast } from 'react-toastify';
