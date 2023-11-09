@@ -66,6 +66,11 @@ export function useNodeTypes(): NodeComponentDescriptors {
   const counter = useRecoilValue(pluginRefreshCounterState);
 
   return useMemo(() => {
+    if (Number.isNaN(counter)) {
+      // just for rules-of-hooks
+      throw new Error();
+    }
+
     const allNodeTypes = globalRivetNodeRegistry.getNodeTypes();
 
     return Object.fromEntries(

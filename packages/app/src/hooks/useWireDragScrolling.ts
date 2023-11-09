@@ -31,7 +31,7 @@ export function useWireDragScrolling() {
       window.removeEventListener('mousedown', onMouseDown);
       window.removeEventListener('mousemove', onMouseMove);
     };
-  }, []);
+  }, [draggingWireLatest]);
   const latestCanvasPosition = useLatest(canvasPosition);
 
   // If the mouse is within 10% of the edge of the viewport, then we'll start moving it
@@ -95,5 +95,8 @@ export function useWireDragScrolling() {
     isMouseNearBottomEdge,
     isMouseNearRightEdge,
     isMouseNearTopEdge,
+    nearLatest,
+    setCanvasPosition,
+    latestCanvasPosition,
   ]);
 }

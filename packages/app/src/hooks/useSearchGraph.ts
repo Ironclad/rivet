@@ -35,7 +35,7 @@ export function useSearchGraph() {
 
       return searchableNode;
     });
-  }, [graphNodes]);
+  }, [graphNodes, nodeTypes]);
 
   const searchState = useRecoilValue(searchingGraphState);
 
@@ -55,5 +55,6 @@ export function useSearchGraph() {
     if (searchedNodes.length > 0) {
       focusOnNodes(searchedNodes.map((n) => n.item.id));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- bleh
   }, [searchState.query, searchState.searching]);
 }

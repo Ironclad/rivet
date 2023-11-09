@@ -16,7 +16,7 @@ export const ColorizedPreformattedText: FC<{ text: string; language: string; the
     monaco.editor.colorizeElement(bodyRef.current!, {
       theme: actualTheme ?? 'vs-dark',
     });
-  }, [text, theme]);
+  }, [text, actualTheme]);
 
   return (
     <pre ref={bodyRef} data-lang={language}>

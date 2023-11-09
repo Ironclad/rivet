@@ -41,6 +41,7 @@ export function useSyncCurrentStateIntoOpenedProjects() {
     if (currentProject && openedProjectsSortedIds.includes(currentProject.metadata.id) === false) {
       setOpenedProjectsSortedIds((ids) => [...ids, currentProject.metadata.id]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
   }, [currentProject, loadedProject, setOpenedProjects]);
 
   // Sync current project into opened projects
@@ -52,6 +53,7 @@ export function useSyncCurrentStateIntoOpenedProjects() {
         project: currentProject,
       },
     }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
   }, [currentProject]);
 
   // Sync current graph into opened projects
@@ -74,6 +76,7 @@ export function useSyncCurrentStateIntoOpenedProjects() {
       }));
     }
     // Changes a lot, hopefully okay
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
   }, [currentGraph]);
 
   // Make sure opened projects sorted ids are in sync with opened projects
@@ -81,5 +84,6 @@ export function useSyncCurrentStateIntoOpenedProjects() {
     if (openedProjectsSortedIds.some((id) => openedProjects[id] == null)) {
       setOpenedProjectsSortedIds((ids) => ids.filter((id) => openedProjects[id] != null));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
   }, [openedProjects, openedProjectsSortedIds]);
 }

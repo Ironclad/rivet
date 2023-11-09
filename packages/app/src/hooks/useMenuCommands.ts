@@ -116,5 +116,18 @@ export function useMenuCommands(
     return () => {
       handlerState.handler = prevHandler;
     };
-  }, [saveProject, saveProjectAs, loadProject, setSettingsOpen, graphData, setGraphData, options, loadRecording]);
+  }, [
+    saveProject,
+    saveProjectAs,
+    loadProject,
+    setSettingsOpen,
+    graphData,
+    setGraphData,
+    options,
+    loadRecording,
+    importGraph,
+    toggleRemoteDebugger,
+    setLastRunData,
+    setNewProjectModalOpen,
+  ]);
 }

@@ -1,4 +1,4 @@
-import { useState, type FC, useEffect } from 'react';
+import { useState, type FC, useEffect, useMemo } from 'react';
 import { type SharedEditorProps } from './SharedEditorProps';
 import { type ChartNode, type StringListEditorDefinition } from '@ironclad/rivet-core';
 import TextField from '@atlaskit/textfield';
@@ -50,7 +50,12 @@ type StringListEditorProps = SharedEditorProps & {
 export const StringListEditor: FC<StringListEditorProps> = ({ node, isReadonly, isDisabled, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
   const stringListValue = data[editor.dataKey] as string[] | string | undefined;
-  const stringList = !stringListValue ? [] : Array.isArray(stringListValue) ? stringListValue : [stringListValue];
+
+  const stringList = useMemo(
+    () => (!stringListValue ? [] : Array.isArray(stringListValue) ? stringListValue : [stringListValue]),
+    [stringListValue],
+  );
+
   const helperMessage = getHelperMessage(editor, node.data);
 
   const [items, setItems] = useState<string[]>(stringList || []);

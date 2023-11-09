@@ -129,7 +129,16 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
       setDraggingWire(undefined);
       setClosestPortToDraggingWire(undefined);
     },
-    [draggingWire, connections, nodesById, onConnectionsChanged, ioByNode, setDraggingWire],
+    [
+      draggingWire,
+      connections,
+      nodesById,
+      onConnectionsChanged,
+      ioByNode,
+      setDraggingWire,
+      closestPortToDraggingWire,
+      setClosestPortToDraggingWire,
+    ],
   );
 
   useEffect(() => {
@@ -146,7 +155,7 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
     return () => {
       window.removeEventListener('mouseup', handleWindowClick);
     };
-  }, [draggingWire, setDraggingWire]);
+  }, [draggingWire, setDraggingWire, latestClosestPort]);
 
   return {
     draggingWire,

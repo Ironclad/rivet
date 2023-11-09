@@ -2,22 +2,23 @@ import { useEffect, useState } from 'react';
 import { datasetProvider } from '../utils/globals';
 import { toast } from 'react-toastify';
 import { type DatasetRow, type DatasetId, getError, newId, type Dataset } from '@ironclad/rivet-core';
+import { useStableCallback } from './useStableCallback';
 
 export function useDataset(datasetId: DatasetId) {
   const [dataset, updateDataset] = useState<Dataset | null>(null);
 
-  const reloadDatasetData = async () => {
+  const reloadDatasetData = useStableCallback(async () => {
     try {
       const result = await datasetProvider.getDatasetData(datasetId);
       updateDataset(result);
     } catch (err) {
       toast.error(getError(err).message);
     }
-  };
+  });
 
   useEffect(() => {
     reloadDatasetData();
-  }, [datasetId]);
+  }, [datasetId, reloadDatasetData]);
 
   const deleteRow = async (row: number) => {
     const newData = [...dataset!.rows];

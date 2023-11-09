@@ -57,6 +57,6 @@ export function useGetAdHocInternalProcessContext() {
         attachedData: {},
       };
     },
-    [],
+    [plugins, settings],
   );
 }

@@ -436,15 +436,17 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   const closestPort = useRecoilValue(draggingWireClosestPortState);
 
+  const { setReference } = refs;
+
   useEffect(() => {
-    if (closestPort) {
+    if (closestPort?.portId) {
       setHoveringPort({
         portId: closestPort.portId,
         nodeId: closestPort.nodeId,
         isInput: true,
         definition: closestPort.definition,
       });
-      refs.setReference(closestPort.element);
+      setReference(closestPort.element);
 
       hoveringPortTimeout.current = window.setTimeout(() => {
         setHoveringPortShowInfo(true);
@@ -456,7 +458,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         window.clearTimeout(hoveringPortTimeout.current);
       }
     }
-  }, [closestPort?.portId, closestPort?.nodeId, closestPort?.definition]);
+  }, [closestPort?.portId, closestPort?.nodeId, closestPort?.definition, closestPort?.element, setReference]);
 
   const onNodeMouseOver = useStableCallback((_e: MouseEvent<HTMLElement>, nodeId: NodeId) => {
     setHoveringNode(nodeId);

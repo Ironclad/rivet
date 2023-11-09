@@ -108,6 +108,7 @@ export const ToolCallHandlersEditor: FC<ToolCallHandlersEditorProps> = ({
         [editor.dataKey!]: pairs,
       },
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- would cause cycle
   }, [pairs]);
 
   return (

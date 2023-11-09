@@ -93,7 +93,7 @@ export const GraphExecutionSelectorBar: FC = () => {
     }
 
     return selected === undefined ? 'latest' : selected;
-  }, [selectedExecutionByNode, lastRunDataByNode]);
+  }, [selectedExecutionByNode, nodeIds]);
 
   const setAllSelectedExecution = (page: number | 'latest') => {
     setSelectedExecutionByNode((prev) =>

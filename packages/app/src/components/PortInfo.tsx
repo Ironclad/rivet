@@ -128,7 +128,7 @@ export const PortInfo = forwardRef<
     }
 
     return data;
-  }, [lastRun, selectedPage]);
+  }, [lastRun, selectedPage, port.isInput]);
 
   const didNotRun = portData?.[port.portId]?.type === 'control-flow-excluded';
 

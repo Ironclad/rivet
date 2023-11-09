@@ -91,6 +91,7 @@ export const KeyValuePairEditor: FC<KeyValuePairEditorProps> = ({ node, isReadon
         [editor.dataKey]: pairs,
       },
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- would cause cycle
   }, [pairs]);
 
   return (

@@ -120,7 +120,7 @@ export const WireLayer: FC<WireLayerProps> = ({
         setClosestPort(undefined);
       }
     },
-    [draggingWire, setClosestPort, draggingNode, ioByNode],
+    [draggingWire, setClosestPort, draggingNode, ioByNode, closestPort],
   );
 
   useEffect(() => {

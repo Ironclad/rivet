@@ -56,5 +56,5 @@ export function useCopyNodesHotkeys() {
     return () => {
       window.removeEventListener('keydown', listener);
     };
-  }, []);
+  }, [latestListener]);
 }

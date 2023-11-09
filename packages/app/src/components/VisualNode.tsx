@@ -121,6 +121,7 @@ export const VisualNode = memo(
         canvasPosition: { zoom },
       } = useCanvasPositioning();
 
+      const asCommentNode = node as CommentNode;
       const style = useMemo(() => {
         const bgColor = node.visualData.color?.bg ?? 'var(--grey-darkish)';
         const borderColor = node.visualData.color?.border ?? 'var(--grey-darkish)';
@@ -138,7 +139,7 @@ export const VisualNode = memo(
           transform: `translate(${node.visualData.x + xDelta}px, ${node.visualData.y + yDelta}px) scale(${scale ?? 1})`,
           zIndex: isComment ? -10000 : node.visualData.zIndex ?? 0,
           width: node.visualData.width,
-          height: isComment ? (node as CommentNode).data.height : undefined,
+          height: isComment ? asCommentNode.data.height : undefined,
           '--node-bg': bgColor,
           '--node-border': borderColor,
           '--node-bg-foreground': fgColor,
@@ -157,6 +158,7 @@ export const VisualNode = memo(
         scale,
         node.visualData.zIndex,
         isComment,
+        asCommentNode.data.height,
       ]);
 
       const nodeRef = (refValue: HTMLDivElement | null) => {

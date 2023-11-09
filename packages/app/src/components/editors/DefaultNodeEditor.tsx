@@ -4,8 +4,6 @@ import { css } from '@emotion/react';
 import { toast } from 'react-toastify';
 import { type SharedEditorProps } from './SharedEditorProps';
 import { DefaultNodeEditorField } from './DefaultNodeEditorField';
-import { RivetUIContext } from '../../../../core/src/model/RivetUIContext';
-import { datasetProvider } from '../../utils/globals';
 import { useGetRivetUIContext } from '../../hooks/useGetRivetUIContext';
 import { produce } from 'immer';
 
@@ -127,7 +125,7 @@ export const DefaultNodeEditor: FC<
         toast.error(`Failed to load editors for node ${node.id}: ${getError(err).message}`);
       }
     })();
-  }, [node]);
+  }, [node, getUIContext]);
 
   return (
     <div css={defaultEditorContainerStyles}>

@@ -111,5 +111,5 @@ export function useCanvasHotkeys() {
     return () => {
       window.removeEventListener('keydown', listener);
     };
-  }, []);
+  }, [latestHandler]);
 }
