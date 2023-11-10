@@ -79,7 +79,7 @@ export class AssembleMessageNodeImpl extends NodeImpl<AssembleMessageNode> {
 
     for (let i = 1; i <= messageCount; i++) {
       inputs.push({
-        dataType: ['string', 'image', 'string[]', 'image[]'] as const,
+        dataType: ['string', 'image', 'string[]', 'image[]', 'object', 'object[]'] as const,
         id: `part${i}` as PortId,
         title: `Part ${i}`,
         description: 'A part of the message to assemble.',
@@ -198,6 +198,18 @@ export class AssembleMessageNodeImpl extends NodeImpl<AssembleMessageNode> {
             data: message.value.data,
             mediaType: message.value.mediaType,
           });
+        } else if (message.type === 'object') {
+          if (
+            message.value &&
+            'type' in message.value &&
+            message.value.type === 'url_reference' &&
+            typeof message.value.url === 'string'
+          ) {
+            outMessage.message.push({
+              type: 'url',
+              url: message.value.url,
+            });
+          }
         } else {
           const coerced = coerceTypeOptional(message, 'string');
 
