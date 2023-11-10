@@ -136,7 +136,17 @@ function coerceToString(value: DataValue | undefined): string | undefined {
   }
 
   if (value.type === 'chat-message') {
-    return value.value.message;
+    const messageParts = Array.isArray(value.value.message) ? value.value.message : [value.value.message];
+    const singleString = messageParts
+      .map((part) => {
+        if (typeof part === 'string') {
+          return part;
+        }
+
+        return part.type === 'url' ? `(Image: ${part.url})` : '(Image)';
+      })
+      .join('\n\n');
+    return singleString;
   }
 
   if (value.value === undefined) {
@@ -232,7 +242,15 @@ function coerceToBoolean(value: DataValue | undefined) {
   }
 
   if (value.type === 'chat-message') {
-    return value.value.message.length > 0;
+    const hasValue =
+      (Array.isArray(value.value.message) && value.value.message.length > 0) ||
+      (typeof value.value.message === 'string' && value.value.message.length > 0) ||
+      (typeof value.value.message === 'object' &&
+        'type' in value.value.message &&
+        value.value.message.type === 'url' &&
+        value.value.message.url.length > 0);
+
+    return hasValue;
   }
 
   return !!value.value;
@@ -272,7 +290,19 @@ function coerceToNumber(value: DataValue | undefined): number | undefined {
   }
 
   if (value.type === 'chat-message') {
-    return parseFloat(value.value.message);
+    if (typeof value.value.message === 'string') {
+      return parseFloat(value.value.message);
+    }
+
+    if (
+      Array.isArray(value.value.message) &&
+      value.value.message.length === 1 &&
+      typeof value.value.message[0] === 'string'
+    ) {
+      return parseFloat(value.value.message[0]);
+    }
+
+    return undefined;
   }
 
   if (value.type === 'any') {

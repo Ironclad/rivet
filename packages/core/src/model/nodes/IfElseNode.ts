@@ -11,6 +11,7 @@ import { type ArrayDataValue, type DataValue, type ScalarDataValue } from '../Da
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
 import type { EditorDefinition } from '../EditorDefinition.js';
+import { coerceType } from '../../utils/coerceType.js';
 
 export type IfElseNode = ChartNode<'ifElse', IfElseNodeData>;
 
@@ -141,8 +142,10 @@ export class IfElseNodeImpl extends NodeImpl<IfElseNode> {
     }
 
     if (ifValue?.type === 'chat-message') {
+      const asString = coerceType(ifValue, 'string');
+
       return {
-        ['output' as PortId]: ifValue.value.message.length > 0 ? trueValue : falseValue,
+        ['output' as PortId]: asString ? trueValue : falseValue,
       };
     }
 

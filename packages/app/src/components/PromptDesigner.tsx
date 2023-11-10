@@ -789,6 +789,8 @@ const PromptDesignerMessage: FC<{
     }
   }, [message?.message]);
 
+  const stringMessage = coerceType({ type: 'chat-message', value: message }, 'string');
+
   return (
     <div className="message">
       <div className="message-author-type">
@@ -800,7 +802,7 @@ const PromptDesignerMessage: FC<{
         <textarea
           autoFocus
           className="message-editor"
-          value={message?.message ?? ''}
+          value={stringMessage}
           onClick={(e) => e.stopPropagation()}
           onChange={onTextChange}
           ref={textareaRef}

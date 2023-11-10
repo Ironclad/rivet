@@ -9,6 +9,7 @@ import {
   inferType,
   isArrayDataValue,
   isFunctionDataValue,
+  coerceTypeOptional,
 } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { keys } from '../../../core/src/utils/typeSafety';
@@ -44,7 +45,9 @@ const scalarRenderers: {
     return <pre className="pre-wrap">{truncated}</pre>;
   },
   'chat-message': ({ value, renderMarkdown }) => {
-    const markdownRendered = useMarkdown(value.value.message, renderMarkdown);
+    const singleString = coerceTypeOptional(value, 'string') ?? '';
+
+    const markdownRendered = useMarkdown(singleString, renderMarkdown);
 
     return (
       <div>
@@ -57,7 +60,7 @@ const scalarRenderers: {
         {renderMarkdown ? (
           <div dangerouslySetInnerHTML={markdownRendered} />
         ) : (
-          <pre className="pre-wrap">{value.value.message}</pre>
+          <pre className="pre-wrap">{singleString}</pre>
         )}
         {value.value.function_call && (
           <div className="function-call">

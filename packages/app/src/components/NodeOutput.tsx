@@ -207,7 +207,12 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
     if (outputValue.type === 'string') {
       copyToClipboard(outputValue.value);
     } else if (outputValue.type === 'chat-message') {
-      copyToClipboard(outputValue.value.message);
+      if (Array.isArray(outputValue.value)) {
+        const singleString = outputValue.value.map((v) => (typeof v === 'string' ? v : '(Image)')).join('\n\n');
+        copyToClipboard(singleString);
+      } else {
+        copyToClipboard(typeof outputValue.value.message === 'string' ? outputValue.value.message : '(Image)');
+      }
     } else {
       copyToClipboard(JSON.stringify(outputValue, null, 2));
     }
@@ -384,7 +389,12 @@ const NodeOutputSingleProcess: FC<{
       if (outputValue.type === 'string') {
         copyToClipboard(outputValue.value);
       } else if (outputValue.type === 'chat-message') {
-        copyToClipboard(outputValue.value.message);
+        if (Array.isArray(outputValue.value)) {
+          const singleString = outputValue.value.map((v) => (typeof v === 'string' ? v : '(Image)')).join('\n\n');
+          copyToClipboard(singleString);
+        } else {
+          copyToClipboard(typeof outputValue.value.message === 'string' ? outputValue.value.message : '(Image)');
+        }
       } else {
         copyToClipboard(JSON.stringify(outputValue, null, 2));
       }

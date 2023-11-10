@@ -154,7 +154,28 @@ export type ChatCompletionRequestSystemMessage = {
 
 export type ChatCompletionRequestUserMessage = {
   role: 'user';
-  content: string | string[];
+  content: string | ChatCompletionRequestUserMessageContent[];
+};
+
+export type ChatCompletionRequestUserMessageContent =
+  | ChatCompletionRequestUserMessageTextContent
+  | ChatCompletionRequestUserMessageImageContent;
+
+export type ChatCompletionRequestUserMessageTextContent = {
+  type: 'text';
+  text: string;
+};
+
+export type ChatCompletionRequestUserMessageImageContent = {
+  type: 'image_url';
+  image_url: {
+    url: string;
+    /**
+     * low will disable the “high res” model. The model will receive a low-res 512 x 512 version of the image, and represent the image with a budget of 65 tokens. This allows the API to return faster responses and consume fewer input tokens for use cases that do not require high detail.
+     * high will enable “high res” mode, which first allows the model to see the low res image and then creates detailed crops of input images as 512px squares based on the input image size. Each of the detailed crops uses twice the token budget (65 tokens) for a total of 129 tokens.
+     */
+    detail?: 'low' | 'high';
+  };
 };
 
 export type ChatCompletionRequestAssistantMessage = {

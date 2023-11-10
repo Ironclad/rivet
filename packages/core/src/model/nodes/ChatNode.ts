@@ -17,19 +17,21 @@ import {
   openaiModels,
   streamChatCompletions,
   type ChatCompletionTool,
+  type ChatCompletionRequestUserMessageContent,
 } from '../../utils/openai.js';
 import retry from 'p-retry';
 import type { Inputs, Outputs } from '../GraphProcessor.js';
 import { match } from 'ts-pattern';
 import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 import { type InternalProcessContext } from '../ProcessContext.js';
-import { type EditorDefinition } from '../../index.js';
+import { uint8ArrayToBase64, type EditorDefinition } from '../../index.js';
 import { dedent } from 'ts-dedent';
 import { getInputOrData, cleanHeaders } from '../../utils/inputs.js';
 import { getError } from '../../utils/errors.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import type { TokenizerCallInfo } from '../../integrations/Tokenizer.js';
 import { DEFAULT_CHAT_ENDPOINT } from '../../utils/defaults.js';
+import { chatMessageToOpenAIChatCompletionMessage } from '../../utils/chatMessageToOpenAIChatCompletionMessage.js';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 
@@ -637,7 +639,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     const endpoint = getInputOrData(this.data, inputs, 'endpoint');
     const overrideModel = getInputOrData(this.data, inputs, 'overrideModel');
     const seed = getInputOrData(this.data, inputs, 'seed', 'number');
-    const responseFormat = getInputOrData(this.data, inputs, 'responseFormat') as 'text' | 'json';
+    const responseFormat = getInputOrData(this.data, inputs, 'responseFormat') as 'text' | 'json' | '';
     const toolChoiceMode = getInputOrData(this.data, inputs, 'toolChoice', 'string') as 'none' | 'auto' | 'function';
 
     const toolChoice: ChatCompletionOptions['tool_choice'] = !toolChoiceMode
@@ -651,14 +653,15 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         }
       : toolChoiceMode;
 
-    const openaiResponseFormat =
-      responseFormat === 'json'
-        ? ({
-            type: 'json_object',
-          } as const)
-        : ({
-            type: 'text',
-          } as const);
+    const openaiResponseFormat = !responseFormat?.trim()
+      ? undefined
+      : responseFormat === 'json'
+      ? ({
+          type: 'json_object',
+        } as const)
+      : ({
+          type: 'text',
+        } as const);
 
     const headersFromData = (this.data.headers ?? []).reduce((acc, header) => {
       acc[header.key] = header.value;
@@ -685,36 +688,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
     output['in-messages' as PortId] = { type: 'chat-message[]', value: messages };
 
-    const completionMessages = messages.map(
-      (message): ChatCompletionRequestMessage =>
-        match(message)
-          .with({ type: 'system' }, (m): ChatCompletionRequestMessage => ({ role: m.type, content: m.message }))
-          .with({ type: 'user' }, (m): ChatCompletionRequestMessage => ({ role: m.type, content: m.message }))
-          .with(
-            { type: 'assistant' },
-            (m): ChatCompletionRequestMessage => ({
-              role: m.type,
-              content: m.message,
-              tool_calls: m.function_call
-                ? [
-                    {
-                      id: m.function_call.id ?? 'unknown_function_call', // idk??
-                      type: 'function',
-                      function: m.function_call,
-                    },
-                  ]
-                : undefined,
-            }),
-          )
-          .with(
-            { type: 'function' },
-            (m): ChatCompletionRequestMessage => ({
-              role: 'tool',
-              content: m.message,
-              tool_call_id: m.function_call?.id ?? 'unknown_function_call',
-            }),
-          )
-          .exhaustive(),
+    const completionMessages = await Promise.all(
+      messages.map((message) => chatMessageToOpenAIChatCompletionMessage(message)),
     );
 
     let { maxTokens } = this.data;
@@ -756,7 +731,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       model: finalModel,
       endpoint: resolvedEndpointAndHeaders.endpoint,
     };
-    const tokenCount = context.tokenizer.getTokenCountForMessages(messages, tokenizerInfo);
+    const tokenCount = await context.tokenizer.getTokenCountForMessages(messages, tokenizerInfo);
 
     if (tokenCount >= openaiModel.maxTokens) {
       throw new Error(

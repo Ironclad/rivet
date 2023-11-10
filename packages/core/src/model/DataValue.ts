@@ -12,7 +12,7 @@ export type BoolDataValue = DataValueDef<'boolean', boolean>;
 
 export type ChatMessage = {
   type: 'system' | 'user' | 'assistant' | 'function';
-  message: string;
+  message: ChatMessageMessagePart | ChatMessageMessagePart[];
   name: string | undefined;
   function_call:
     | {
@@ -23,6 +23,13 @@ export type ChatMessage = {
     | undefined;
 };
 
+export type ChatMessageMessagePart =
+  | string
+  | { type: 'image'; mediaType: SupportedMediaTypes; data: Uint8Array }
+  | { type: 'url'; url: string };
+
+export type SupportedMediaTypes = 'image/jpeg' | 'image/png' | 'image/gif';
+
 export type ChatMessageDataValue = DataValueDef<'chat-message', ChatMessage>;
 
 export type DateDataValue = DataValueDef<'date', string>;
@@ -32,10 +39,7 @@ export type AnyDataValue = DataValueDef<'any', unknown>;
 export type ObjectDataValue = DataValueDef<'object', Record<string, unknown>>;
 export type VectorDataValue = DataValueDef<'vector', number[]>;
 export type BinaryDataValue = DataValueDef<'binary', Uint8Array>;
-export type ImageDataValue = DataValueDef<
-  'image',
-  { mediaType: 'image/jpeg' | 'image/png' | 'image/gif'; data: Uint8Array }
->;
+export type ImageDataValue = DataValueDef<'image', { mediaType: SupportedMediaTypes; data: Uint8Array }>;
 export type AudioDataValue = DataValueDef<'audio', { data: Uint8Array }>;
 
 /** GPT function definition */
