@@ -856,6 +856,8 @@ export const FolderItem: FC<{
   },
 );
 
+FolderItem.displayName = 'FolderItem';
+
 const FolderItemRename: FC<{
   value: string;
   onSaved?: (newName: string) => void;

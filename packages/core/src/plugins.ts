@@ -4,6 +4,7 @@ import assemblyAiPlugin from './plugins/assemblyAi/index.js';
 import { huggingFacePlugin } from './plugins/huggingface/plugin.js';
 import pineconePlugin from './plugins/pinecone/index.js';
 import gentracePlugin from './plugins/gentrace/index.js';
+import { openAIPlugin } from './plugins/openai/plugin.js';
 
 export { anthropicPlugin, autoevalsPlugin, assemblyAiPlugin, pineconePlugin, huggingFacePlugin, gentracePlugin };
 
@@ -14,4 +15,5 @@ export const plugins = {
   pinecone: pineconePlugin,
   huggingFace: huggingFacePlugin,
   gentrace: gentracePlugin,
+  openai: openAIPlugin,
 };

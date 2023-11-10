@@ -30,5 +30,6 @@ export function useLoadStaticData() {
         ...dataObj,
       }));
     })();
-  }, [data]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- bleh
+  }, [data, setData, setProjectData]);
 }

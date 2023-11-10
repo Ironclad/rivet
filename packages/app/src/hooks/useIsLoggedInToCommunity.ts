@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
 import { isLoggedInToCommunityState } from '../state/community';
-import { useCommunityApi } from './useCommunityApi';
+import { getCommunityApi } from '../utils/getCommunityApi';
 import { useEffect } from 'react';
 
 export function useIsLoggedInToCommunity() {
-  const profileUrl = useCommunityApi('/profile');
+  const profileUrl = getCommunityApi('/profile');
   const [isLoggedInToCommunity, setIsLoggedIntoCommunity] = useRecoilState(isLoggedInToCommunityState);
 
   const { refetch } = useQuery({
@@ -43,7 +43,7 @@ export function useIsLoggedInToCommunity() {
     if (isLoggedInToCommunity === undefined) {
       refetch();
     }
-  }, [isLoggedInToCommunity]);
+  }, [isLoggedInToCommunity, refetch]);
 
   return isLoggedInToCommunity;
 }

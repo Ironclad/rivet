@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 import { projectState } from '../state/savedGraphs';
 import { type GraphId, serializeProject } from '@ironclad/rivet-core';
 import { type UseMutationResult, useMutation } from '@tanstack/react-query';
-import { useCommunityApi } from './useCommunityApi';
+import { getCommunityApi } from '../utils/getCommunityApi';
 import { templateResponseChecker, type PostTemplateBody, type PutTemplateVersionBody } from '../utils/communityApi';
 import { useDependsOnPlugins } from './useDependsOnPlugins';
 import { toast } from 'react-toastify';
@@ -30,8 +30,8 @@ export function useUploadNewTemplate({ onCompleted }: { onCompleted: () => void 
     }) => {
       const serializedProject = serializeProject(project);
 
-      const postTemplateUrl = useCommunityApi('/templates');
-      const putTemplateVersionUrl = useCommunityApi('/templates/:templateId/version/:version');
+      const postTemplateUrl = getCommunityApi('/templates');
+      const putTemplateVersionUrl = getCommunityApi('/templates/:templateId/version/:version');
 
       const postTemplateResponse = await fetch(postTemplateUrl, {
         credentials: 'include',

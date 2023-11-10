@@ -10,6 +10,7 @@ export function useWireDragScrolling() {
   const viewport = useViewportBounds();
   const { clientToCanvasPosition } = useCanvasPositioning();
   const [canvasPosition, setCanvasPosition] = useRecoilState(canvasPositionState);
+  const draggingWireLatest = useLatest(draggingWire);
 
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   useEffect(() => {
@@ -18,7 +19,7 @@ export function useWireDragScrolling() {
     };
 
     const onMouseMove = (e: MouseEvent) => {
-      if (!draggingWire) {
+      if (!draggingWireLatest.current) {
         return;
       }
       setMousePosition({ x: e.clientX, y: e.clientY });
@@ -30,7 +31,7 @@ export function useWireDragScrolling() {
       window.removeEventListener('mousedown', onMouseDown);
       window.removeEventListener('mousemove', onMouseMove);
     };
-  }, []);
+  }, [draggingWireLatest]);
   const latestCanvasPosition = useLatest(canvasPosition);
 
   // If the mouse is within 10% of the edge of the viewport, then we'll start moving it
@@ -94,5 +95,8 @@ export function useWireDragScrolling() {
     isMouseNearBottomEdge,
     isMouseNearRightEdge,
     isMouseNearTopEdge,
+    nearLatest,
+    setCanvasPosition,
+    latestCanvasPosition,
   ]);
 }

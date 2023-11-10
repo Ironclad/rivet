@@ -1,4 +1,4 @@
-import { useState, type FC } from 'react';
+import { useState, type FC, useEffect } from 'react';
 import { type SharedEditorProps } from './SharedEditorProps';
 import { type ChartNode, type KeyValuePairEditorDefinition } from '@ironclad/rivet-core';
 import TextField from '@atlaskit/textfield';
@@ -82,6 +82,17 @@ export const KeyValuePairEditor: FC<KeyValuePairEditorProps> = ({ node, isReadon
     newPairs[index]![keyOrValue] = value;
     setPairs(newPairs);
   };
+
+  useEffect(() => {
+    onChange({
+      ...node,
+      data: {
+        ...data,
+        [editor.dataKey]: pairs,
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- would cause cycle
+  }, [pairs]);
 
   return (
     <KeyValuePairs

@@ -40,6 +40,7 @@ export function coerceTypeOptional<T extends DataType>(
     .with('chat-message', () => coerceToChatMessage(value))
     .with('number', () => coerceToNumber(value))
     .with('object', () => coerceToObject(value))
+    .with('binary', () => coerceToBinary(value))
     .otherwise(() => {
       if (!value) {
         return value;
@@ -135,7 +136,17 @@ function coerceToString(value: DataValue | undefined): string | undefined {
   }
 
   if (value.type === 'chat-message') {
-    return value.value.message;
+    const messageParts = Array.isArray(value.value.message) ? value.value.message : [value.value.message];
+    const singleString = messageParts
+      .map((part) => {
+        if (typeof part === 'string') {
+          return part;
+        }
+
+        return part.type === 'url' ? `(Image: ${part.url})` : '(Image)';
+      })
+      .join('\n\n');
+    return singleString;
   }
 
   if (value.value === undefined) {
@@ -231,7 +242,15 @@ function coerceToBoolean(value: DataValue | undefined) {
   }
 
   if (value.type === 'chat-message') {
-    return value.value.message.length > 0;
+    const hasValue =
+      (Array.isArray(value.value.message) && value.value.message.length > 0) ||
+      (typeof value.value.message === 'string' && value.value.message.length > 0) ||
+      (typeof value.value.message === 'object' &&
+        'type' in value.value.message &&
+        value.value.message.type === 'url' &&
+        value.value.message.url.length > 0);
+
+    return hasValue;
   }
 
   return !!value.value;
@@ -271,7 +290,19 @@ function coerceToNumber(value: DataValue | undefined): number | undefined {
   }
 
   if (value.type === 'chat-message') {
-    return parseFloat(value.value.message);
+    if (typeof value.value.message === 'string') {
+      return parseFloat(value.value.message);
+    }
+
+    if (
+      Array.isArray(value.value.message) &&
+      value.value.message.length === 1 &&
+      typeof value.value.message[0] === 'string'
+    ) {
+      return parseFloat(value.value.message[0]);
+    }
+
+    return undefined;
   }
 
   if (value.type === 'any') {
@@ -293,6 +324,38 @@ function coerceToObject(value: DataValue | undefined): object | undefined {
   }
 
   return value.value; // Whatever, consider anything an object
+}
+
+function coerceToBinary(value: DataValue | undefined): Uint8Array | undefined {
+  if (!value || value.value == null) {
+    return undefined;
+  }
+
+  if (value.type === 'binary') {
+    return value.value;
+  }
+
+  if (value.type === 'string') {
+    return new TextEncoder().encode(value.value);
+  }
+
+  if (value.type === 'boolean') {
+    return new TextEncoder().encode(value.value.toString());
+  }
+
+  if (value.type === 'vector' || value.type === 'number[]') {
+    return new Uint8Array(value.value);
+  }
+
+  if (value.type === 'number') {
+    return new Uint8Array([value.value]);
+  }
+
+  if (value.type === 'audio' || value.type === 'image') {
+    return value.value.data;
+  }
+
+  return new TextEncoder().encode(JSON.stringify(value.value));
 }
 
 export function canBeCoercedAny(from: DataType | Readonly<DataType[]>, to: DataType | Readonly<DataType[]>) {

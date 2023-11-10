@@ -10,7 +10,7 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
   const ioByNode = useRecoilValue(ioDefinitionsState);
   const connections = useRecoilValue(connectionsState);
   const nodesById = useRecoilValue(nodesByIdState);
-  const closestPortToDraggingWire = useRecoilValue(draggingWireClosestPortState);
+  const [closestPortToDraggingWire, setClosestPortToDraggingWire] = useRecoilState(draggingWireClosestPortState);
   const isDragging = !!draggingWire;
 
   const latestClosestPort = useLatest(closestPortToDraggingWire);
@@ -99,6 +99,7 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
 
         if (!inputNode || !outputNode || !input || !output) {
           setDraggingWire(undefined);
+          setClosestPortToDraggingWire(undefined);
           return;
         }
       }
@@ -126,8 +127,18 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
       onConnectionsChanged?.([...newConnections, connection]);
 
       setDraggingWire(undefined);
+      setClosestPortToDraggingWire(undefined);
     },
-    [draggingWire, connections, nodesById, onConnectionsChanged, ioByNode, setDraggingWire],
+    [
+      draggingWire,
+      connections,
+      nodesById,
+      onConnectionsChanged,
+      ioByNode,
+      setDraggingWire,
+      closestPortToDraggingWire,
+      setClosestPortToDraggingWire,
+    ],
   );
 
   useEffect(() => {
@@ -144,7 +155,7 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
     return () => {
       window.removeEventListener('mouseup', handleWindowClick);
     };
-  }, [draggingWire, setDraggingWire]);
+  }, [draggingWire, setDraggingWire, latestClosestPort]);
 
   return {
     draggingWire,

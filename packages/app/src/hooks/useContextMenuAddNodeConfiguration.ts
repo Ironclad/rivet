@@ -7,7 +7,7 @@ import { useGetRivetUIContext } from './useGetRivetUIContext';
 import useAsyncEffect from 'use-async-effect';
 import { toast } from 'react-toastify';
 import { isNotNull } from '../utils/genericUtilFunctions';
-import { orderBy, uniq, uniqBy } from 'lodash-es';
+import { orderBy, uniqBy } from 'lodash-es';
 
 export const addContextMenuGroups = [
   {
@@ -130,7 +130,7 @@ export function useContextMenuAddNodeConfiguration() {
     });
 
     return groups.filter((group) => group.items.length > 0);
-  }, [builtInImages, uiData]);
+  }, [builtInImages, uiData, plugins]);
 
   return groupsWithItems;
 }

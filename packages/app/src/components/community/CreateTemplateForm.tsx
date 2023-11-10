@@ -4,7 +4,7 @@ import Toggle from '@atlaskit/toggle';
 import { type GraphId } from '@ironclad/rivet-core';
 import clsx from 'clsx';
 import { orderBy } from 'lodash-es';
-import React, { Suspense, useMemo, useState, type FC } from 'react';
+import { type FormEvent, Suspense, useMemo, useState, type FC } from 'react';
 import { useRecoilValue } from 'recoil';
 import { projectState } from '../../state/savedGraphs';
 import { LazyCodeEditor } from '../LazyComponents';
@@ -124,7 +124,7 @@ export const CreateTemplateForm: FC<{
     return templateName.length > 0 && version.length > 0 && graphsToInclude.length > 0 && description.length > 0;
   }, [templateName, version, graphsToInclude, description]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isValid) {
       onCreate?.({
@@ -179,6 +179,7 @@ export const CreateTemplateForm: FC<{
             <div className="graphs-to-include">
               {sortedGraphs.map((g) => (
                 <div
+                  key={g.metadata!.id!}
                   className={clsx('graph', { active: graphsToInclude.includes(g.metadata!.id!) })}
                   onClick={() => {
                     if (working) {

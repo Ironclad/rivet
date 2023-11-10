@@ -157,7 +157,7 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
     };
 
     if (this.data.computeTokenCount) {
-      const tokenCount = context.tokenizer.getTokenCountForMessages(outMessages, {
+      const tokenCount = await context.tokenizer.getTokenCountForMessages(outMessages, {
         node: this.chartNode,
       });
       output['tokenCount' as PortId] = {

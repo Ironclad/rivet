@@ -16,19 +16,22 @@ import {
   openAiModelOptions,
   openaiModels,
   streamChatCompletions,
+  type ChatCompletionTool,
+  type ChatCompletionRequestUserMessageContent,
 } from '../../utils/openai.js';
 import retry from 'p-retry';
 import type { Inputs, Outputs } from '../GraphProcessor.js';
 import { match } from 'ts-pattern';
 import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 import { type InternalProcessContext } from '../ProcessContext.js';
-import { type EditorDefinition } from '../../index.js';
+import { uint8ArrayToBase64, type EditorDefinition } from '../../index.js';
 import { dedent } from 'ts-dedent';
 import { getInputOrData, cleanHeaders } from '../../utils/inputs.js';
 import { getError } from '../../utils/errors.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import type { TokenizerCallInfo } from '../../integrations/Tokenizer.js';
 import { DEFAULT_CHAT_ENDPOINT } from '../../utils/defaults.js';
+import { chatMessageToOpenAIChatCompletionMessage } from '../../utils/chatMessageToOpenAIChatCompletionMessage.js';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 
@@ -48,6 +51,10 @@ export type ChatNodeConfigData = {
   overrideModel?: string;
   overrideMaxTokens?: number;
   headers?: { key: string; value: string }[];
+  seed?: number;
+  toolChoice?: 'none' | 'auto' | 'function';
+  toolChoiceFunction?: string;
+  responseFormat?: 'text' | 'json';
 };
 
 export type ChatNodeData = ChatNodeConfigData & {
@@ -65,6 +72,10 @@ export type ChatNodeData = ChatNodeConfigData & {
   useNumberOfChoicesInput?: boolean;
   useEndpointInput?: boolean;
   useHeadersInput?: boolean;
+  useSeedInput?: boolean;
+  useToolChoiceInput?: boolean;
+  useToolChoiceFunctionInput?: boolean;
+  useResponseFormatInput?: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
@@ -133,6 +144,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataType: 'string',
         id: 'endpoint' as PortId,
         title: 'Endpoint',
+        description:
+          'The endpoint to use for the OpenAI API. You can use this to replace with any OpenAI-compatible API. Leave blank for the default: https://api.openai.com/api/v1/chat/completions',
       });
     }
 
@@ -141,6 +154,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       title: 'System Prompt',
       dataType: 'string',
       required: false,
+      description: 'The system prompt to send to the model.',
+      coerced: true,
     });
 
     if (this.data.useModelInput) {
@@ -149,6 +164,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         title: 'Model',
         dataType: 'string',
         required: false,
+        description: 'The model to use for the chat.',
       });
     }
 
@@ -157,6 +173,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataType: 'number',
         id: 'temperature' as PortId,
         title: 'Temperature',
+        description:
+          'What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.',
       });
     }
 
@@ -165,6 +183,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataType: 'number',
         id: 'top_p' as PortId,
         title: 'Top P',
+        description:
+          'An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.',
       });
     }
 
@@ -173,6 +193,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataType: 'boolean',
         id: 'useTopP' as PortId,
         title: 'Use Top P',
+        description: 'Whether to use top p sampling, or temperature sampling.',
       });
     }
 
@@ -181,6 +202,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataType: 'number',
         id: 'maxTokens' as PortId,
         title: 'Max Tokens',
+        description: 'The maximum number of tokens to generate in the chat completion.',
       });
     }
 
@@ -189,15 +211,16 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataType: 'string',
         id: 'stop' as PortId,
         title: 'Stop',
+        description: 'A sequence where the API will stop generating further tokens.',
       });
     }
 
     if (this.data.usePresencePenaltyInput) {
       inputs.push({
         dataType: 'number',
-
         id: 'presencePenalty' as PortId,
         title: 'Presence Penalty',
+        description: `Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.`,
       });
     }
 
@@ -206,6 +229,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataType: 'number',
         id: 'frequencyPenalty' as PortId,
         title: 'Frequency Penalty',
+        description: `Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.`,
       });
     }
 
@@ -214,6 +238,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataType: 'string',
         id: 'user' as PortId,
         title: 'User',
+        description:
+          'A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.',
       });
     }
 
@@ -222,6 +248,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataType: 'number',
         id: 'numberOfChoices' as PortId,
         title: 'Number of Choices',
+        description: 'If greater than 1, the model will return multiple choices and the response will be an array.',
       });
     }
 
@@ -230,6 +257,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataType: 'object',
         id: 'headers' as PortId,
         title: 'Headers',
+        description: 'Additional headers to send to the API.',
       });
     }
 
@@ -237,6 +265,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       dataType: ['chat-message', 'chat-message[]'] as const,
       id: 'prompt' as PortId,
       title: 'Prompt',
+      description: 'The prompt message or messages to send to the model.',
+      coerced: true,
     });
 
     if (this.data.enableFunctionUse) {
@@ -244,6 +274,50 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataType: ['gpt-function', 'gpt-function[]'] as const,
         id: 'functions' as PortId,
         title: 'Functions',
+        description: 'Functions to use in the model.',
+        coerced: false,
+      });
+    }
+
+    if (this.data.useSeedInput) {
+      inputs.push({
+        dataType: 'number',
+        id: 'seed' as PortId,
+        title: 'Seed',
+        coerced: true,
+        description:
+          'If specified, OpenAI will make a best effort to sample deterministically, such that repeated requests with the same `seed` and parameters should return the same result.',
+      });
+    }
+
+    if (this.data.useToolChoiceInput) {
+      inputs.push({
+        dataType: 'string',
+        id: 'toolChoice' as PortId,
+        title: 'Tool Choice',
+        coerced: true,
+        description:
+          'Controls which (if any) function is called by the model. `none` is the default when no functions are present. `auto` is the default if functions are present. `function` forces the model to call a function.',
+      });
+    }
+
+    if (this.data.useToolChoiceInput || this.data.useToolChoiceFunctionInput) {
+      inputs.push({
+        dataType: 'string',
+        id: 'toolChoiceFunction' as PortId,
+        title: 'Tool Choice Function',
+        coerced: true,
+        description: 'The name of the function to force the model to call.',
+      });
+    }
+
+    if (this.data.useResponseFormatInput) {
+      inputs.push({
+        dataType: 'string',
+        id: 'responseFormat' as PortId,
+        title: 'Response Format',
+        coerced: true,
+        description: 'The format to force the model to reply in.',
       });
     }
 
@@ -334,6 +408,9 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           if (data.overrideModel?.trim()) {
             return `Model overridden to: ${data.overrideModel}`;
           }
+          if (data.model === 'local-model') {
+            return 'Local model is an indicator for your own convenience, it does not affect the local LLM used.';
+          }
         },
       },
       {
@@ -348,6 +425,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             min: 0,
             max: 2,
             step: 0.1,
+            helperMessage:
+              'What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.',
           },
           {
             type: 'number',
@@ -357,12 +436,15 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             min: 0,
             max: 1,
             step: 0.1,
+            helperMessage:
+              'An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.',
           },
           {
             type: 'toggle',
             label: 'Use Top P',
             dataKey: 'useTopP',
             useInputToggleDataKey: 'useUseTopPInput',
+            helperMessage: 'Whether to use top p sampling, or temperature sampling.',
           },
           {
             type: 'number',
@@ -372,12 +454,14 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             min: 0,
             max: Number.MAX_SAFE_INTEGER,
             step: 1,
+            helperMessage: 'The maximum number of tokens to generate in the chat completion.',
           },
           {
             type: 'string',
             label: 'Stop',
             dataKey: 'stop',
             useInputToggleDataKey: 'useStopInput',
+            helperMessage: 'A sequence where the API will stop generating further tokens.',
           },
           {
             type: 'number',
@@ -387,6 +471,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             min: 0,
             max: 2,
             step: 0.1,
+            helperMessage: `Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.`,
           },
           {
             type: 'number',
@@ -396,23 +481,65 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             min: 0,
             max: 2,
             step: 0.1,
+            helperMessage: `Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.`,
+          },
+          {
+            type: 'dropdown',
+            label: 'Response Format',
+            dataKey: 'responseFormat',
+            useInputToggleDataKey: 'useResponseFormatInput',
+            options: [
+              { value: '', label: 'Default' },
+              { value: 'text', label: 'Text' },
+              { value: 'json', label: 'JSON Object' },
+            ],
+            defaultValue: '',
+            helperMessage: 'The format to force the model to reply in.',
+          },
+          {
+            type: 'number',
+            label: 'Seed',
+            dataKey: 'seed',
+            useInputToggleDataKey: 'useSeedInput',
+            step: 1,
+            allowEmpty: true,
+            helperMessage:
+              'If specified, OpenAI will make a best effort to sample deterministically, such that repeated requests with the same `seed` and parameters should return the same result.',
           },
         ],
       },
       {
         type: 'group',
-        label: 'GPT Functions',
+        label: 'GPT Tools',
         editors: [
-          {
-            type: 'string',
-            label: 'User',
-            dataKey: 'user',
-            useInputToggleDataKey: 'useUserInput',
-          },
           {
             type: 'toggle',
             label: 'Enable Function Use',
             dataKey: 'enableFunctionUse',
+          },
+          {
+            type: 'dropdown',
+            label: 'Tool Choice',
+            dataKey: 'toolChoice',
+            useInputToggleDataKey: 'useToolChoiceInput',
+            options: [
+              { value: '', label: 'Default' },
+              { value: 'none', label: 'None' },
+              { value: 'auto', label: 'Auto' },
+              { value: 'function', label: 'Function' },
+            ],
+            defaultValue: '',
+            helperMessage:
+              'Controls which (if any) function is called by the model. None is the default when no functions are present. Auto is the default if functions are present.',
+            hideIf: (data) => !data.enableFunctionUse,
+          },
+          {
+            type: 'string',
+            label: 'Tool Choice Function',
+            dataKey: 'toolChoiceFunction',
+            useInputToggleDataKey: 'useToolChoiceFunctionInput',
+            helperMessage: 'The name of the function to force the model to call.',
+            hideIf: (data) => data.toolChoice !== 'function' || !data.enableFunctionUse,
           },
         ],
       },
@@ -420,6 +547,14 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         type: 'group',
         label: 'Advanced',
         editors: [
+          {
+            type: 'string',
+            label: 'User',
+            dataKey: 'user',
+            useInputToggleDataKey: 'useUserInput',
+            helperMessage:
+              'A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.',
+          },
           {
             type: 'number',
             label: 'Number of Choices',
@@ -429,23 +564,30 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             max: 10,
             step: 1,
             defaultValue: 1,
+            helperMessage:
+              'If greater than 1, the model will return multiple choices and the response will be an array.',
           },
           {
             type: 'string',
             label: 'Endpoint',
             dataKey: 'endpoint',
             useInputToggleDataKey: 'useEndpointInput',
+            helperMessage:
+              'The endpoint to use for the OpenAI API. You can use this to replace with any OpenAI-compatible API. Leave blank for the default: https://api.openai.com/api/v1/chat/completions',
           },
           {
             type: 'string',
             label: 'Custom Model',
             dataKey: 'overrideModel',
+            helperMessage: 'Overrides the model selected above with a custom string for the model.',
           },
           {
             type: 'number',
             label: 'Custom Max Tokens',
             dataKey: 'overrideMaxTokens',
             allowEmpty: true,
+            helperMessage:
+              'Overrides the max number of tokens a model can support. Leave blank for preconfigured token limits.',
           },
           {
             type: 'keyValuePair',
@@ -453,16 +595,21 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             dataKey: 'headers',
             useInputToggleDataKey: 'useHeadersInput',
             keyPlaceholder: 'Header',
+            helperMessage: 'Additional headers to send to the API.',
           },
           {
             type: 'toggle',
-            label: 'Cache (same inputs, same outputs)',
+            label: 'Cache In Rivet',
             dataKey: 'cache',
+            helperMessage:
+              'If on, requests with the same parameters and messages will be cached in Rivet, for immediate responses without an API call.',
           },
           {
             type: 'toggle',
             label: 'Use for subgraph partial output',
             dataKey: 'useAsGraphPartialOutput',
+            helperMessage:
+              'If on, streaming responses from this node will be shown in Subgraph nodes that call this graph.',
           },
         ],
       },
@@ -491,6 +638,30 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     const numberOfChoices = getInputOrData(this.data, inputs, 'numberOfChoices', 'number');
     const endpoint = getInputOrData(this.data, inputs, 'endpoint');
     const overrideModel = getInputOrData(this.data, inputs, 'overrideModel');
+    const seed = getInputOrData(this.data, inputs, 'seed', 'number');
+    const responseFormat = getInputOrData(this.data, inputs, 'responseFormat') as 'text' | 'json' | '';
+    const toolChoiceMode = getInputOrData(this.data, inputs, 'toolChoice', 'string') as 'none' | 'auto' | 'function';
+
+    const toolChoice: ChatCompletionOptions['tool_choice'] = !toolChoiceMode
+      ? undefined
+      : toolChoiceMode === 'function'
+      ? {
+          type: 'function',
+          function: {
+            name: getInputOrData(this.data, inputs, 'toolChoiceFunction', 'string'),
+          },
+        }
+      : toolChoiceMode;
+
+    const openaiResponseFormat = !responseFormat?.trim()
+      ? undefined
+      : responseFormat === 'json'
+      ? ({
+          type: 'json_object',
+        } as const)
+      : ({
+          type: 'text',
+        } as const);
 
     const headersFromData = (this.data.headers ?? []).reduce((acc, header) => {
       acc[header.key] = header.value;
@@ -506,17 +677,19 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
     const functions = coerceTypeOptional(inputs['functions' as PortId], 'gpt-function[]');
 
+    const tools = (functions ?? []).map(
+      (fn): ChatCompletionTool => ({
+        function: fn,
+        type: 'function',
+      }),
+    );
+
     const { messages } = getChatNodeMessages(inputs);
 
     output['in-messages' as PortId] = { type: 'chat-message[]', value: messages };
 
-    const completionMessages = messages.map(
-      (message): ChatCompletionRequestMessage => ({
-        content: message.message,
-        role: message.type,
-        name: message.name?.trim() || undefined,
-        function_call: message.function_call,
-      }),
+    const completionMessages = await Promise.all(
+      messages.map((message) => chatMessageToOpenAIChatCompletionMessage(message)),
     );
 
     let { maxTokens } = this.data;
@@ -558,7 +731,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       model: finalModel,
       endpoint: resolvedEndpointAndHeaders.endpoint,
     };
-    const tokenCount = context.tokenizer.getTokenCountForMessages(messages, tokenizerInfo);
+    const tokenCount = await context.tokenizer.getTokenCountForMessages(messages, tokenizerInfo);
 
     if (tokenCount >= openaiModel.maxTokens) {
       throw new Error(
@@ -589,8 +762,11 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             frequency_penalty: frequencyPenalty,
             presence_penalty: presencePenalty,
             stop: stop || undefined,
-            functions: functions?.length === 0 ? undefined : functions,
+            tools: tools.length > 0 ? tools : undefined,
             endpoint: resolvedEndpointAndHeaders.endpoint,
+            seed,
+            response_format: openaiResponseFormat,
+            tool_choice: toolChoice,
           };
           const cacheKey = JSON.stringify(options);
 
@@ -615,11 +791,14 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           });
 
           const responseChoicesParts: string[][] = [];
+
+          // First array is the function calls per choice, inner array is the functions calls inside the choice
           const functionCalls: {
+            type: 'function';
             name: string;
             arguments: string;
             lastParsedArguments?: unknown;
-          }[] = [];
+          }[][] = [];
 
           for await (const chunk of chunks) {
             if (!chunk.choices) {
@@ -633,24 +812,32 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                 responseChoicesParts[index]!.push(delta.content);
               }
 
-              if (delta.function_call) {
-                functionCalls[index] ??= {
-                  name: '',
-                  arguments: '',
-                  lastParsedArguments: undefined,
-                };
+              if (delta.tool_calls) {
+                // Are we sure that tool_calls will always be full and not a bunch of deltas?
+                functionCalls[index] ??= [];
 
-                if (delta.function_call.name) {
-                  functionCalls[index]!.name += delta.function_call.name;
-                }
+                for (const toolCall of delta.tool_calls) {
+                  functionCalls[index]![toolCall.index] ??= {
+                    type: 'function',
+                    arguments: '',
+                    lastParsedArguments: undefined,
+                    name: '',
+                  };
 
-                if (delta.function_call.arguments) {
-                  functionCalls[index]!.arguments += delta.function_call.arguments;
+                  if (toolCall.function.name) {
+                    functionCalls[index]![toolCall.index]!.name = toolCall.function.name;
+                  }
 
-                  try {
-                    functionCalls[index]!.lastParsedArguments = JSON.parse(functionCalls[index]!.arguments);
-                  } catch (error) {
-                    // Ignore
+                  if (toolCall.function.arguments) {
+                    functionCalls[index]![toolCall.index]!.arguments = toolCall.function.arguments;
+
+                    try {
+                      functionCalls[index]![toolCall.index]!.lastParsedArguments = JSON.parse(
+                        toolCall.function.arguments,
+                      );
+                    } catch (error) {
+                      // Ignore
+                    }
                   }
                 }
               }
@@ -672,17 +859,17 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               if (isMultiResponse) {
                 output['function-call' as PortId] = {
                   type: 'object[]',
-                  value: functionCalls.map((functionCall) => ({
-                    name: functionCall.name,
-                    arguments: functionCall.lastParsedArguments,
+                  value: functionCalls.map((functionCalls) => ({
+                    name: functionCalls[0]?.name,
+                    arguments: functionCalls[0]?.lastParsedArguments,
                   })),
                 };
               } else {
                 output['function-call' as PortId] = {
                   type: 'object',
                   value: {
-                    name: functionCalls[0]!.name,
-                    arguments: functionCalls[0]!.lastParsedArguments,
+                    name: functionCalls[0]![0]?.name,
+                    arguments: functionCalls[0]![0]?.lastParsedArguments,
                   } as Record<string, unknown>,
                 };
               }
@@ -701,8 +888,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                   message: responseChoicesParts[0]?.join('') ?? '',
                   function_call: functionCalls[0]
                     ? {
-                        name: functionCalls[0].name,
-                        arguments: functionCalls[0].arguments, // Needs the stringified one here in chat list
+                        name: functionCalls[0][0]!.name,
+                        arguments: functionCalls[0][0]!.arguments, // Needs the stringified one here in chat list
                       }
                     : undefined,
                   name: undefined,

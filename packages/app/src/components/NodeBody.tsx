@@ -28,6 +28,8 @@ export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
   return <div className="node-body">{body}</div>;
 });
 
+NodeBody.displayName = 'NodeBody';
+
 const UnknownNodeBodyWrapper = styled.div<{
   fontSize: number;
   fontFamily: 'monospace' | 'sans-serif';
@@ -90,11 +92,15 @@ export const PlainNodeBody: FC<PlainNodeBodySpec> = memo(({ text }) => {
   return <pre className="pre-wrap">{text}</pre>;
 });
 
+PlainNodeBody.displayName = 'PlainNodeBody';
+
 export const MarkdownNodeBody: FC<MarkdownNodeBodySpec> = memo(({ text }) => {
   const markdownBody = useMarkdown(text);
 
   return <div className="pre-wrap" dangerouslySetInnerHTML={markdownBody} />;
 });
+
+MarkdownNodeBody.displayName = 'MarkdownNodeBody';
 
 export const ColorizedNodeBody: FC<ColorizedNodeBodySpec> = memo(({ text, language, theme }) => {
   return (
@@ -103,3 +109,5 @@ export const ColorizedNodeBody: FC<ColorizedNodeBodySpec> = memo(({ text, langua
     </Suspense>
   );
 });
+
+ColorizedNodeBody.displayName = 'ColorizedNodeBody';

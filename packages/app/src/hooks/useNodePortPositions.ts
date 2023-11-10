@@ -1,5 +1,5 @@
 import { type PortId, type NodeId } from '@ironclad/rivet-core';
-import { useState, useLayoutEffect, useRef } from 'react';
+import { useState, useLayoutEffect, useRef, useCallback } from 'react';
 import { type PortPositions } from '../components/NodeCanvas';
 import { useRecoilValue } from 'recoil';
 import { nodesByIdState } from '../state/graph';
@@ -15,7 +15,7 @@ export function useNodePortPositions() {
   const nodesById = useRecoilValue(nodesByIdState);
   const canvasRef = useRef<HTMLDivElement>(null);
 
-  const recalculate = () => {
+  const recalculate = useCallback(() => {
     // Lot of duplication but meh
     const normalPortElements = canvasRef.current?.querySelectorAll(
       '.node:not(.overlayNode) .port-circle',
@@ -121,7 +121,7 @@ export function useNodePortPositions() {
     if (changed) {
       setNodePortPositions(newPositions);
     }
-  };
+  }, [nodePortPositions, nodesById]);
 
   useLayoutEffect(() => {
     recalculate();

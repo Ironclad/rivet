@@ -145,6 +145,7 @@
     "yarn": "3.5.0"
   },
   "devDependencies": {
+    "@emotion/eslint-plugin": "^11.11.0",
     "@types/filesystem": "^0.0.34",
     "@types/marked": "^6.0.0",
     "@types/react-color": "^3.0.9",
@@ -158,6 +159,7 @@
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-n": "^16.2.0",
     "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "execa": "^8.0.1",
     "rollup-plugin-visualizer": "^5.9.2",

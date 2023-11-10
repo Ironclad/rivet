@@ -4,7 +4,7 @@ import { CreateNewTemplatePage } from './CreateNewTemplatePage';
 import { EditTemplatePage } from './EditTemplatePage';
 import { templateResponseChecker } from '../../utils/communityApi';
 import { useQuery } from '@tanstack/react-query';
-import { fetchCommunity } from '../../hooks/useCommunityApi';
+import { fetchCommunity } from '../../utils/getCommunityApi';
 import { array } from '@recoiljs/refine';
 
 export const MyTemplatesPage: FC = () => {

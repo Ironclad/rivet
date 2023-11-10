@@ -4,18 +4,19 @@ import { datasetProvider } from '../utils/globals';
 import { toast } from 'react-toastify';
 import { datasetsState } from '../state/dataStudio';
 import { useRecoilState } from 'recoil';
+import { useStableCallback } from './useStableCallback';
 
 export function useDatasets(projectId: ProjectId) {
   const [datasets, updateDatasets] = useRecoilState(datasetsState);
 
-  const initDatasets = async () => {
+  const initDatasets = useStableCallback(async () => {
     try {
       await datasetProvider.loadDatasets(projectId);
       await reloadDatasets();
     } catch (err) {
       toast.error(getError(err).message);
     }
-  };
+  });
 
   const reloadDatasets = async () => {
     try {
@@ -28,7 +29,7 @@ export function useDatasets(projectId: ProjectId) {
 
   useEffect(() => {
     initDatasets();
-  }, [projectId]);
+  }, [projectId, initDatasets]);
 
   const putDataset = async (dataset: DatasetMetadata) => {
     await datasetProvider.putDatasetMetadata(dataset);

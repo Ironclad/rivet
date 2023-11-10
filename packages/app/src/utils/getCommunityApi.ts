@@ -1,9 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
 import join from 'url-join';
 import { type CheckerReturnType, type Checker } from '@recoiljs/refine';
 import { toast } from 'react-toastify';
 
-export function useCommunityHost() {
+export function getCommunityHost() {
   if (import.meta.env.MODE === 'production') {
     throw new Error('Not implemented yet');
   } else {
@@ -11,14 +10,14 @@ export function useCommunityHost() {
   }
 }
 
-export function useCommunityApi(path?: string) {
-  const url = useCommunityHost();
+export function getCommunityApi(path?: string) {
+  const url = getCommunityHost();
 
   return join(url, 'api', path || '');
 }
 
-export function useCommunityLoginUrl() {
-  const url = useCommunityHost();
+export function getCommunityLoginUrl() {
+  const url = getCommunityHost();
 
   return join(url, 'auth/signin');
 }
@@ -28,7 +27,7 @@ export async function fetchCommunity<T extends Checker<any>>(
   bodyChecker: T,
   init?: RequestInit,
 ): Promise<CheckerReturnType<T>> {
-  const url = useCommunityApi(path);
+  const url = getCommunityApi(path);
 
   const result = await fetch(url, {
     credentials: 'include',

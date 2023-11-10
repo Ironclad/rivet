@@ -153,7 +153,7 @@ export const TestCaseEditor: FC = () => {
         testCaseResults
           .filter((r) => r.error != null)
           .map((result) => (
-            <div className="testCaseError">
+            <div key={result.id} className="testCaseError">
               <label>Error</label>
               <pre>
                 {result.error.message ?? result.error?.toString()}

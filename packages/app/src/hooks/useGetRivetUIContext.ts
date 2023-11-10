@@ -8,6 +8,7 @@ import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
 import { useDependsOnPlugins } from './useDependsOnPlugins';
 import { projectState } from '../state/savedGraphs';
 import { graphState } from '../state/graph';
+import { useStableCallback } from './useStableCallback';
 
 export function useGetRivetUIContext() {
   const selectedExecutor = useRecoilValue(selectedExecutorState);
@@ -16,7 +17,7 @@ export function useGetRivetUIContext() {
   const project = useRecoilValue(projectState);
   const graph = useRecoilValue(graphState);
 
-  return async ({ node }: { node?: ChartNode }) => {
+  return useStableCallback(async ({ node }: { node?: ChartNode }) => {
     let getPluginConfigFn: RivetUIContext['getPluginConfig'] = () => undefined;
     if (node) {
       const nodePlugin = globalRivetNodeRegistry.getPluginFor(node?.type);
@@ -36,5 +37,5 @@ export function useGetRivetUIContext() {
     };
 
     return context;
-  };
+  });
 }

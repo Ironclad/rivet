@@ -36,7 +36,7 @@ export function useTotalRunCost() {
     });
 
     return Object.fromEntries(allNodes.map((node) => [node.nodeId, node.node])) as Record<NodeId, ChartNode>;
-  }, [project]);
+  }, [project, graph]); // TODO this is a lot of calc on every node change
 
   const totals = useMemo(() => {
     if (!lastRunData) {
@@ -113,7 +113,7 @@ export function useTotalRunCost() {
     }
 
     return { cost: totalCost, tokens: totalTokens };
-  }, [lastRunData]);
+  }, [lastRunData, allNodesById]);
 
   return totals;
 }

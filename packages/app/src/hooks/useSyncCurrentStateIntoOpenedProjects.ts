@@ -41,6 +41,7 @@ export function useSyncCurrentStateIntoOpenedProjects() {
     if (currentProject && openedProjectsSortedIds.includes(currentProject.metadata.id) === false) {
       setOpenedProjectsSortedIds((ids) => [...ids, currentProject.metadata.id]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
   }, [currentProject, loadedProject, setOpenedProjects]);
 
   // Sync current project into opened projects
@@ -52,6 +53,7 @@ export function useSyncCurrentStateIntoOpenedProjects() {
         project: currentProject,
       },
     }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
   }, [currentProject]);
   
   // Track project and graph state, so that when the user switches projects, we can track that state without saving the project.
@@ -94,6 +96,7 @@ export function useSyncCurrentStateIntoOpenedProjects() {
         openedGraph: currentGraph?.metadata?.id,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
   }, [currentProject]);
 
   // Make sure opened projects sorted ids are in sync with opened projects
@@ -101,5 +104,6 @@ export function useSyncCurrentStateIntoOpenedProjects() {
     if (openedProjectsSortedIds.some((id) => openedProjects[id] == null)) {
       setOpenedProjectsSortedIds((ids) => ids.filter((id) => openedProjects[id] != null));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
   }, [openedProjects, openedProjectsSortedIds]);
 }

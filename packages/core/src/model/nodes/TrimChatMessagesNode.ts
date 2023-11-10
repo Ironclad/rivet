@@ -139,7 +139,7 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
       node: this.chartNode,
     };
 
-    let tokenCount = context.tokenizer.getTokenCountForMessages(trimmedMessages, tokenizerInfo);
+    let tokenCount = await context.tokenizer.getTokenCountForMessages(trimmedMessages, tokenizerInfo);
 
     while (tokenCount > maxTokenCount) {
       if (removeFromBeginning) {
@@ -147,7 +147,7 @@ export class TrimChatMessagesNodeImpl extends NodeImpl<TrimChatMessagesNode> {
       } else {
         trimmedMessages.pop();
       }
-      tokenCount = context.tokenizer.getTokenCountForMessages(trimmedMessages, tokenizerInfo);
+      tokenCount = await context.tokenizer.getTokenCountForMessages(trimmedMessages, tokenizerInfo);
     }
 
     return {

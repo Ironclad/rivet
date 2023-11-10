@@ -12,7 +12,7 @@ import TextField from '@atlaskit/textfield';
 import { Field } from '@atlaskit/form';
 import Modal, { ModalTransition, ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchCommunity } from '../../hooks/useCommunityApi';
+import { fetchCommunity } from '../../utils/getCommunityApi';
 import { toast } from 'react-toastify';
 import { getError } from '@ironclad/rivet-core';
 import { CreateTemplateVersionPage } from './CreateTemplateVersionPage';

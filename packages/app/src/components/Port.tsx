@@ -69,6 +69,7 @@ export const Port: FC<{
       onMouseOut?.(event, nodeId, input, id, definition);
     });
 
+    const definitionAsNodeInputDefinition = definition as NodeInputDefinition;
     const accepted = useMemo(() => {
       if (!draggingDataType || !input) {
         return '';
@@ -79,12 +80,12 @@ export const Port: FC<{
       }
 
       // We almost always coerce so default it to true for now...
-      if ((definition as NodeInputDefinition).coerced ?? true) {
+      if (definitionAsNodeInputDefinition.coerced ?? true) {
         return canBeCoercedAny(draggingDataType, definition.dataType) ? 'coerced' : 'incompatible';
       }
 
       return 'incompatible';
-    }, [draggingDataType, definition.dataType, (definition as NodeInputDefinition).coerced, input]);
+    }, [draggingDataType, definition.dataType, definitionAsNodeInputDefinition.coerced, input]);
 
     return (
       <div
@@ -120,3 +121,5 @@ export const Port: FC<{
     );
   },
 );
+
+Port.displayName = 'Port';

@@ -17,6 +17,7 @@ import { nanoid } from 'nanoid/non-secure';
 import type { Inputs, Outputs } from '../GraphProcessor.js';
 import { dedent } from 'ts-dedent';
 import type { EditorDefinition } from '../EditorDefinition.js';
+import { coerceType } from '../../utils/coerceType.js';
 
 export type IfNode = ChartNode<'if', IfNodeData>;
 
@@ -129,6 +130,14 @@ export class IfNodeImpl extends NodeImpl<IfNode> {
 
     if (ifValue.type === 'boolean' && !ifValue.value) {
       return isFalse;
+    }
+
+    if (ifValue.type === 'chat-message') {
+      const asString = coerceType(ifValue, 'string');
+
+      if (!asString) {
+        return isFalse;
+      }
     }
 
     if (ifValue.type.endsWith('[]')) {

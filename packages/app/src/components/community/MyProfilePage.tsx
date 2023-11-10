@@ -4,7 +4,7 @@ import TextField from '@atlaskit/textfield';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { type FC, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { fetchCommunity } from '../../hooks/useCommunityApi';
+import { fetchCommunity } from '../../utils/getCommunityApi';
 import { getProfileResponseChecker, type PutProfileBody } from '../../utils/communityApi';
 import { css } from '@emotion/react';
 

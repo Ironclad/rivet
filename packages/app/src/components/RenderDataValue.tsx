@@ -9,10 +9,12 @@ import {
   inferType,
   isArrayDataValue,
   isFunctionDataValue,
+  coerceTypeOptional,
 } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { keys } from '../../../core/src/utils/typeSafety';
 import { useMarkdown } from '../hooks/useMarkdown';
+import ColorizedPreformattedText from './ColorizedPreformattedText';
 
 const multiOutput = css`
   display: flex;
@@ -20,22 +22,32 @@ const multiOutput = css`
   gap: 8px;
 `;
 
+/* eslint-disable react-hooks/rules-of-hooks -- These are components (ish) */
 const scalarRenderers: {
-  [P in ScalarDataType]: FC<{ value: Extract<ScalarDataValue, { type: P }>; depth?: number; renderMarkdown?: boolean }>;
+  [P in ScalarDataType]: FC<{
+    value: Extract<ScalarDataValue, { type: P }>;
+    depth?: number;
+    renderMarkdown?: boolean;
+    truncateLength?: number;
+  }>;
 } = {
   boolean: ({ value }) => <>{value.value ? 'true' : 'false'}</>,
   number: ({ value }) => <>{value.value}</>,
-  string: ({ value, renderMarkdown }) => {
-    const markdownRendered = useMarkdown(value.value, renderMarkdown);
+  string: ({ value, renderMarkdown, truncateLength }) => {
+    const truncated = truncateLength ? value.value.slice(0, truncateLength) + '...' : value.value;
+
+    const markdownRendered = useMarkdown(truncated, renderMarkdown);
 
     if (renderMarkdown) {
       return <div dangerouslySetInnerHTML={markdownRendered} />;
     }
 
-    return <pre className="pre-wrap">{value.value}</pre>;
+    return <pre className="pre-wrap">{truncated}</pre>;
   },
   'chat-message': ({ value, renderMarkdown }) => {
-    const markdownRendered = useMarkdown(value.value.message, renderMarkdown);
+    const singleString = coerceTypeOptional(value, 'string') ?? '';
+
+    const markdownRendered = useMarkdown(singleString, renderMarkdown);
 
     return (
       <div>
@@ -48,7 +60,7 @@ const scalarRenderers: {
         {renderMarkdown ? (
           <div dangerouslySetInnerHTML={markdownRendered} />
         ) : (
-          <pre className="pre-wrap">{value.value.message}</pre>
+          <pre className="pre-wrap">{singleString}</pre>
         )}
         {value.value.function_call && (
           <div className="function-call">
@@ -72,7 +84,11 @@ const scalarRenderers: {
     }
     return <RenderDataValue value={inferred} depth={(depth ?? 0) + 1} renderMarkdown={renderMarkdown} />;
   },
-  object: ({ value }) => <>{JSON.stringify(value.value)}</>,
+  object: ({ value }) => (
+    <div className="rendered-object-type">
+      <ColorizedPreformattedText text={JSON.stringify(value.value, null, 2)} language="json" />
+    </div>
+  ),
   'gpt-function': ({ value }) => (
     <>
       GPT Function: <em>{value.value.name}</em>
@@ -110,12 +126,14 @@ const scalarRenderers: {
     );
   },
 };
+/* eslint-enable react-hooks/rules-of-hooks -- These are components (ish) */
 
-export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number; renderMarkdown?: boolean }> = ({
-  value,
-  depth,
-  renderMarkdown,
-}) => {
+export const RenderDataValue: FC<{
+  value: DataValue | undefined;
+  depth?: number;
+  renderMarkdown?: boolean;
+  truncateLength?: number;
+}> = ({ value, depth, renderMarkdown, truncateLength }) => {
   if ((depth ?? 0) > 100) {
     return <>ERROR: FAILED TO RENDER {JSON.stringify(value)}</>;
   }
@@ -134,7 +152,13 @@ export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number;
       <div css={multiOutput}>
         {items.map((v, i) => (
           <div key={i}>
-            <RenderDataValue key={i} value={v} depth={(depth ?? 0) + 1} renderMarkdown={renderMarkdown} />
+            <RenderDataValue
+              key={i}
+              value={v}
+              depth={(depth ?? 0) + 1}
+              renderMarkdown={renderMarkdown}
+              truncateLength={truncateLength}
+            />
           </div>
         ))}
       </div>
@@ -154,13 +178,16 @@ export const RenderDataValue: FC<{ value: DataValue | undefined; depth?: number;
     value: ScalarDataValue;
     depth?: number;
     renderMarkdown?: boolean;
+    truncateLength?: number;
   }>;
 
   if (!Renderer) {
     return <div>ERROR: UNKNOWN TYPE: {JSON.stringify(value)}</div>;
   }
 
-  return <Renderer value={value} depth={(depth ?? 0) + 1} renderMarkdown={renderMarkdown} />;
+  return (
+    <Renderer value={value} depth={(depth ?? 0) + 1} renderMarkdown={renderMarkdown} truncateLength={truncateLength} />
+  );
 };
 
 export const RenderDataOutputs: FC<{ outputs: Outputs; renderMarkdown?: boolean }> = ({ outputs, renderMarkdown }) => {
@@ -175,11 +202,11 @@ export const RenderDataOutputs: FC<{ outputs: Outputs; renderMarkdown?: boolean 
   }
 
   return (
-    <div>
+    <div className="rendered-data-outputs">
       {outputPorts.map((portId) => (
-        <div key={portId}>
+        <div className="port-value" key={portId}>
           <div>
-            <em>{portId}:</em>
+            <em className="port-id-label">{portId}</em>
           </div>
           <RenderDataValue value={outputs![portId]!} renderMarkdown={renderMarkdown} />
         </div>

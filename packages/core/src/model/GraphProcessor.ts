@@ -1411,7 +1411,7 @@ export class GraphProcessor {
         await this.getRootProcessor().#emitter.once(`globalSet:${id}`);
         return this.#globals.get(id)!;
       },
-      createSubProcessor: (subGraphId: GraphId, { signal }: { signal?: AbortSignal } = {}) => {
+      createSubProcessor: (subGraphId: GraphId | undefined, { signal }: { signal?: AbortSignal } = {}) => {
         const processor = new GraphProcessor(this.#project, subGraphId, this.#registry);
         processor.executor = this.executor;
         processor.#isSubProcessor = true;
@@ -1505,7 +1505,7 @@ export class GraphProcessor {
 
       this.#emitter.emit('nodeExcluded', { node, processId, inputs: inputValues, outputs, reason: 'disabled' });
 
-      return;
+      return true;
     }
 
     const inputsWithValues = entries(inputValues);

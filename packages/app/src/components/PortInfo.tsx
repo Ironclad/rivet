@@ -128,7 +128,7 @@ export const PortInfo = forwardRef<
     }
 
     return data;
-  }, [lastRun, selectedPage]);
+  }, [lastRun, selectedPage, port.isInput]);
 
   const didNotRun = portData?.[port.portId]?.type === 'control-flow-excluded';
 
@@ -207,7 +207,7 @@ export const PortInfo = forwardRef<
           <>
             <h6>Execution {displayExecutionNum}</h6>
             <div className="last-value">
-              <RenderDataValue value={portData[port.portId]} />
+              <RenderDataValue truncateLength={1500} value={portData[port.portId]} />
             </div>
           </>
         )}
@@ -215,3 +215,5 @@ export const PortInfo = forwardRef<
     </Portal>
   );
 });
+
+PortInfo.displayName = 'PortInfo';

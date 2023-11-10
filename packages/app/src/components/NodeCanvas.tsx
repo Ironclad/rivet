@@ -29,6 +29,7 @@ import {
   searchMatchingNodeIdsState,
   draggingWireClosestPortState,
   hoveringNodeState,
+  pinnedNodesState,
 } from '../state/graphBuilder';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { VisualNode } from './VisualNode.js';
@@ -203,7 +204,11 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     setContextMenuData,
   } = useContextMenu();
 
-  const { nodePortPositions, canvasRef, recalculate } = useNodePortPositions();
+  const { nodePortPositions, canvasRef, recalculate: recalculatePortPositions } = useNodePortPositions();
+
+  useEffect(() => {
+    recalculatePortPositions();
+  }, [recalculatePortPositions, selectedGraphMetadata?.id]);
 
   const { setNodeRef } = useDroppable({ id: 'NodeCanvas' });
   const setCanvasRef = useMergeRefs([setNodeRef, canvasRef]);
@@ -252,7 +257,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
       setLastMousePosition({ x: e.clientX, y: e.clientY });
       lastMouseInfoRef.current = { x: e.clientX, y: e.clientY, target: e.target };
 
-      recalculate();
+      recalculatePortPositions();
 
       if (selectionBox) {
         const newBox = {
@@ -435,15 +440,17 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   const closestPort = useRecoilValue(draggingWireClosestPortState);
 
+  const { setReference } = refs;
+
   useEffect(() => {
-    if (closestPort) {
+    if (closestPort?.portId) {
       setHoveringPort({
         portId: closestPort.portId,
         nodeId: closestPort.nodeId,
         isInput: true,
         definition: closestPort.definition,
       });
-      refs.setReference(closestPort.element);
+      setReference(closestPort.element);
 
       hoveringPortTimeout.current = window.setTimeout(() => {
         setHoveringPortShowInfo(true);
@@ -455,7 +462,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         window.clearTimeout(hoveringPortTimeout.current);
       }
     }
-  }, [closestPort?.portId, closestPort?.nodeId, closestPort?.definition]);
+  }, [closestPort?.portId, closestPort?.nodeId, closestPort?.definition, closestPort?.element, setReference]);
 
   const onNodeMouseOver = useStableCallback((_e: MouseEvent<HTMLElement>, nodeId: NodeId) => {
     setHoveringNode(nodeId);
@@ -558,6 +565,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   const searchMatchingNodes = useRecoilValue(searchMatchingNodeIdsState);
 
+  const pinnedNodes = useRecoilValue(pinnedNodesState);
+
   return (
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
       <div
@@ -586,11 +595,14 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         >
           <div className="nodes">
             {nodesWithConnections.map(({ node, nodeConnections }) => {
+              const isPinned = pinnedNodes.includes(node.id);
+
               if (
-                node.visualData.x < viewportBounds.left - (node.visualData.width ?? 300) ||
-                node.visualData.x > viewportBounds.right + (node.visualData.width ?? 300) ||
-                node.visualData.y < viewportBounds.top - 500 ||
-                node.visualData.y > viewportBounds.bottom + 500
+                (node.visualData.x < viewportBounds.left - (node.visualData.width ?? 300) ||
+                  node.visualData.x > viewportBounds.right + (node.visualData.width ?? 300) ||
+                  node.visualData.y < viewportBounds.top - 500 ||
+                  node.visualData.y > viewportBounds.bottom + 500) &&
+                !isPinned
               ) {
                 return null;
               }

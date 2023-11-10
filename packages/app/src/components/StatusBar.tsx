@@ -47,7 +47,7 @@ export const StatusBar: FC<{}> = () => {
       }
     };
     requestAnimationFrame(fn);
-  }, [graphRunning, graphStartTime]);
+  }, [graphRunning, graphStartTime, latestGraphRunning, latestGraphStartTime]);
 
   return (
     <div css={styles}>
