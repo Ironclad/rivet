@@ -461,12 +461,8 @@ export function getChatAnthropicNodeMessages(inputs: Inputs) {
   const messages: ChatMessage[] = match(prompt)
     .with({ type: 'chat-message' }, (p) => [p.value])
     .with({ type: 'chat-message[]' }, (p) => p.value)
-    .with({ type: 'string' }, (p): ChatMessage[] => [
-      { type: 'user', message: p.value, function_call: undefined, name: undefined },
-    ])
-    .with({ type: 'string[]' }, (p): ChatMessage[] =>
-      p.value.map((v) => ({ type: 'user', message: v, function_call: undefined, name: undefined })),
-    )
+    .with({ type: 'string' }, (p): ChatMessage[] => [{ type: 'user', message: p.value }])
+    .with({ type: 'string[]' }, (p): ChatMessage[] => p.value.map((v) => ({ type: 'user', message: v })))
     .otherwise((p): ChatMessage[] => {
       if (isArrayDataValue(p)) {
         const stringValues = (p.value as readonly unknown[]).map((v) =>
@@ -479,9 +475,7 @@ export function getChatAnthropicNodeMessages(inputs: Inputs) {
           ),
         );
 
-        return stringValues
-          .filter((v) => v != null)
-          .map((v) => ({ type: 'user', message: v, function_call: undefined, name: undefined }));
+        return stringValues.filter((v) => v != null).map((v) => ({ type: 'user', message: v }));
       }
 
       const coercedMessage = coerceType(p, 'chat-message');
@@ -490,9 +484,7 @@ export function getChatAnthropicNodeMessages(inputs: Inputs) {
       }
 
       const coercedString = coerceType(p, 'string');
-      return coercedString != null
-        ? [{ type: 'user', message: coerceType(p, 'string'), function_call: undefined, name: undefined }]
-        : [];
+      return coercedString != null ? [{ type: 'user', message: coerceType(p, 'string') }] : [];
     });
   return { messages };
 }

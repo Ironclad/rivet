@@ -9,6 +9,7 @@ import { nanoid } from 'nanoid/non-secure';
 import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import {
+  type AssistantChatMessage,
   type ChatMessage,
   type EditorDefinition,
   type Inputs,
@@ -21,6 +22,7 @@ import { dedent } from 'ts-dedent';
 import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 import { getInputOrData } from '../../utils/index.js';
 import { interpolate } from '../../utils/interpolation.js';
+import { match } from 'ts-pattern';
 
 export type PromptNode = ChartNode<'prompt', PromptNodeData>;
 
@@ -142,11 +144,15 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
         label: 'Name',
         dataKey: 'name',
         useInputToggleDataKey: 'useNameInput',
+        hideIf: (data) => data.type !== 'function',
+        helperMessage:
+          'For OpenAI, this is the tool call ID. Otherwise, it is the name of the function that is outputting the message.',
       },
       {
         type: 'toggle',
         label: 'Enable Function Call',
         dataKey: 'enableFunctionCall',
+        hideIf: (data) => data.type !== 'assistant',
       },
       {
         type: 'toggle',
@@ -206,35 +212,53 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
       throw new Error(`Invalid type: ${type}`);
     }
 
-    const name = getInputOrData(this.data, inputs, 'name', 'string');
+    const message = match(type)
+      .with(
+        'system',
+        (type): ChatMessage => ({
+          type,
+          message: outputValue,
+        }),
+      )
+      .with(
+        'user',
+        (type): ChatMessage => ({
+          type,
+          message: outputValue,
+        }),
+      )
+      .with('assistant', (type): ChatMessage => {
+        let functionCall = this.data.enableFunctionCall
+          ? coerceTypeOptional(inputs['function-call' as PortId], 'object')
+          : undefined;
 
-    let functionCall = this.data.enableFunctionCall
-      ? coerceTypeOptional(inputs['function-call' as PortId], 'object')
-      : undefined;
+        // If no name is specified, ignore the function call
+        if (!functionCall?.name || !functionCall?.arguments) {
+          functionCall = undefined;
+        }
 
-    // If no name is specified, ignore the function call
-    if (!functionCall?.name || !functionCall?.arguments) {
-      functionCall = undefined;
-    }
+        // GPT is weird - the arguments should be a stringified JSON object https://platform.openai.com/docs/api-reference/chat/create
+        if (functionCall?.arguments && typeof functionCall.arguments !== 'string') {
+          functionCall.arguments = JSON.stringify(functionCall.arguments);
+        }
 
-    // GPT is weird - the arguments should be a stringified JSON object https://platform.openai.com/docs/api-reference/chat/create
-    if (functionCall?.arguments && typeof functionCall.arguments !== 'string') {
-      functionCall.arguments = JSON.stringify(functionCall.arguments);
-    }
-
-    const message: ChatMessage = {
-      type: type as 'assistant' | 'system' | 'user' | 'function',
-      message: outputValue,
-      name,
-
-      // Standardize to only have name and arguments (discard other props)
-      function_call: functionCall
-        ? {
-            name: functionCall.name as string,
-            arguments: functionCall.arguments as string,
-          }
-        : undefined,
-    };
+        return {
+          type,
+          message: outputValue,
+          function_call: functionCall as AssistantChatMessage['function_call'],
+        };
+      })
+      .with(
+        'function',
+        (type): ChatMessage => ({
+          type,
+          message: outputValue,
+          name: getInputOrData(this.data, inputs, 'name', 'string'),
+        }),
+      )
+      .otherwise(() => {
+        throw new Error(`Invalid chat-message type: ${type}`);
+      });
 
     const outputs: Outputs = {
       ['output' as PortId]: {

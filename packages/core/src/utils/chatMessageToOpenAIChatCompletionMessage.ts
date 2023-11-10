@@ -69,7 +69,7 @@ export async function chatMessageToOpenAIChatCompletionMessage(
       (m): ChatCompletionRequestMessage => ({
         role: 'tool',
         content: onlyStringContent(m),
-        tool_call_id: m.function_call?.id ?? 'unknown_function_call',
+        tool_call_id: m.name ?? 'unknown_function_call',
       }),
     )
     .exhaustive();

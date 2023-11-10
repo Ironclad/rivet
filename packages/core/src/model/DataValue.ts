@@ -10,10 +10,19 @@ export type StringDataValue = DataValueDef<'string', string>;
 export type NumberDataValue = DataValueDef<'number', number>;
 export type BoolDataValue = DataValueDef<'boolean', boolean>;
 
-export type ChatMessage = {
-  type: 'system' | 'user' | 'assistant' | 'function';
+export type SystemChatMessage = {
+  type: 'system';
   message: ChatMessageMessagePart | ChatMessageMessagePart[];
-  name: string | undefined;
+};
+
+export type UserChatMessage = {
+  type: 'user';
+  message: ChatMessageMessagePart | ChatMessageMessagePart[];
+};
+
+export type AssistantChatMessage = {
+  type: 'assistant';
+  message: ChatMessageMessagePart | ChatMessageMessagePart[];
   function_call:
     | {
         id?: string;
@@ -22,6 +31,14 @@ export type ChatMessage = {
       }
     | undefined;
 };
+
+export type FunctionResponseChatMessage = {
+  type: 'function';
+  message: ChatMessageMessagePart | ChatMessageMessagePart[];
+  name: string;
+};
+
+export type ChatMessage = SystemChatMessage | UserChatMessage | AssistantChatMessage | FunctionResponseChatMessage;
 
 export type ChatMessageMessagePart =
   | string
@@ -349,8 +366,6 @@ export const scalarDefaults: { [P in ScalarDataType]: Extract<ScalarDataValue, {
   'chat-message': {
     type: 'user',
     message: '',
-    function_call: undefined,
-    name: undefined,
   },
   'control-flow-excluded': undefined,
   date: new Date().toISOString(),

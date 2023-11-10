@@ -15,6 +15,7 @@ import { css } from '@emotion/react';
 import { keys } from '../../../core/src/utils/typeSafety';
 import { useMarkdown } from '../hooks/useMarkdown';
 import ColorizedPreformattedText from './ColorizedPreformattedText';
+import { match } from 'ts-pattern';
 
 const multiOutput = css`
   display: flex;
@@ -49,29 +50,63 @@ const scalarRenderers: {
 
     const markdownRendered = useMarkdown(singleString, renderMarkdown);
 
-    return (
-      <div>
-        <div>
-          <em>
-            {value.value.type}
-            {value.value.name ? ` (${value.value.name})` : ''}:
-          </em>
-        </div>
-        {renderMarkdown ? (
-          <div dangerouslySetInnerHTML={markdownRendered} />
-        ) : (
-          <pre className="pre-wrap">{singleString}</pre>
-        )}
-        {value.value.function_call && (
-          <div className="function-call">
-            <h4>Function Call:</h4>
-            <div className="pre-wrap">
-              <RenderDataValue value={inferType(value.value.function_call)} />
-            </div>
-          </div>
-        )}
-      </div>
+    const message = value.value;
+
+    const messageContent = renderMarkdown ? (
+      <div dangerouslySetInnerHTML={markdownRendered} />
+    ) : (
+      <pre className="pre-wrap">{singleString}</pre>
     );
+
+    return match(message)
+      .with({ type: 'system' }, () => (
+        <div>
+          <div>
+            <em>system</em>
+          </div>
+          {messageContent}
+        </div>
+      ))
+      .with({ type: 'user' }, () => (
+        <div>
+          <div>
+            <em>user</em>
+          </div>
+          {messageContent}
+        </div>
+      ))
+      .with({ type: 'assistant' }, (message) => (
+        <div>
+          <div>
+            <em>assistant</em>
+          </div>
+          {messageContent}
+          {message.function_call && (
+            <div className="function-call">
+              <h4>Function Call:</h4>
+              <div className="pre-wrap">
+                <RenderDataValue value={inferType(message.function_call)} />
+              </div>
+            </div>
+          )}
+        </div>
+      ))
+      .with({ type: 'function' }, (message) => (
+        <div>
+          <div>
+            <em>function output ({message.name})</em>
+          </div>
+          {messageContent}
+        </div>
+      ))
+      .otherwise((message) => (
+        <div>
+          <div>
+            <em>{(message as any).type as string}</em>
+          </div>
+          {messageContent}
+        </div>
+      ));
   },
   date: ({ value }) => <>{value.value}</>,
   time: ({ value }) => <>{value.value}</>,

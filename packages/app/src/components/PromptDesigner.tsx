@@ -394,7 +394,7 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
   const addMessage = useStableCallback((index: number) => {
     setMessages((s) =>
       produce(s, (draft) => {
-        draft.messages.splice(index + 1, 0, { type: 'user', message: '', function_call: undefined, name: undefined });
+        draft.messages.splice(index + 1, 0, { type: 'user', message: '' });
       }),
     );
   });
@@ -767,7 +767,7 @@ const PromptDesignerMessage: FC<{
     onChange({
       ...message,
       type: nextMessageType,
-    });
+    } as ChatMessage);
   });
 
   const onTextChange = useStableCallback((e: ChangeEvent<HTMLTextAreaElement>) => {

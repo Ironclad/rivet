@@ -15,6 +15,7 @@ import { coerceTypeOptional, dedent, getInputOrData } from '../../utils/index.js
 import { nodeDefinition } from '../NodeDefinition.js';
 import type { EditorDefinition } from '../EditorDefinition.js';
 import type { RivetUIContext } from '../RivetUIContext.js';
+import { match } from 'ts-pattern';
 
 export type AssembleMessageNode = ChartNode<'assembleMessage', AssembleMessageNodeData>;
 
@@ -170,12 +171,41 @@ export class AssembleMessageNodeImpl extends NodeImpl<AssembleMessageNode> {
 
     const type = getInputOrData(this.data, inputs, 'type');
 
-    const outMessage: ChatMessage & { message: ChatMessageMessagePart[] } = {
-      type: type as ChatMessage['type'],
-      message: [],
-      function_call: undefined,
-      name: type === 'function' ? getInputOrData(this.data, inputs, 'toolCallId') : undefined,
-    };
+    type MultiMessage = ChatMessage & { message: ChatMessageMessagePart[] };
+    const outMessage: MultiMessage = match(type)
+      .with(
+        'system',
+        (type): MultiMessage => ({
+          type,
+          message: [],
+        }),
+      )
+      .with(
+        'user',
+        (type): MultiMessage => ({
+          type,
+          message: [],
+        }),
+      )
+      .with(
+        'assistant',
+        (type): MultiMessage => ({
+          type,
+          message: [],
+          function_call: undefined, // Not supported yet in Assemble Message node
+        }),
+      )
+      .with(
+        'function',
+        (type): MultiMessage => ({
+          type,
+          message: [],
+          name: getInputOrData(this.data, inputs, 'toolCallId'),
+        }),
+      )
+      .otherwise(() => {
+        throw new Error(`Invalid type: ${type}`);
+      });
 
     const inputParts = orderBy(
       Object.entries(inputs).filter(([key]) => key.startsWith('part')),

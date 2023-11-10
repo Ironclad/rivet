@@ -825,11 +825,11 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                   };
 
                   if (toolCall.function.name) {
-                    functionCalls[index]![toolCall.index]!.name = toolCall.function.name;
+                    functionCalls[index]![toolCall.index]!.name += toolCall.function.name;
                   }
 
                   if (toolCall.function.arguments) {
-                    functionCalls[index]![toolCall.index]!.arguments = toolCall.function.arguments;
+                    functionCalls[index]![toolCall.index]!.arguments += toolCall.function.arguments;
 
                     try {
                       functionCalls[index]![toolCall.index]!.lastParsedArguments = JSON.parse(
@@ -892,7 +892,6 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                         arguments: functionCalls[0][0]!.arguments, // Needs the stringified one here in chat list
                       }
                     : undefined,
-                  name: undefined,
                 },
               ],
             };
@@ -1003,12 +1002,8 @@ export function getChatNodeMessages(inputs: Inputs) {
   let messages: ChatMessage[] = match(prompt)
     .with({ type: 'chat-message' }, (p) => [p.value])
     .with({ type: 'chat-message[]' }, (p) => p.value)
-    .with({ type: 'string' }, (p): ChatMessage[] => [
-      { type: 'user', message: p.value, function_call: undefined, name: undefined },
-    ])
-    .with({ type: 'string[]' }, (p): ChatMessage[] =>
-      p.value.map((v) => ({ type: 'user', message: v, function_call: undefined, name: undefined })),
-    )
+    .with({ type: 'string' }, (p): ChatMessage[] => [{ type: 'user', message: p.value }])
+    .with({ type: 'string[]' }, (p): ChatMessage[] => p.value.map((v) => ({ type: 'user', message: v })))
     .otherwise((p): ChatMessage[] => {
       if (!p) {
         return [];
@@ -1025,9 +1020,7 @@ export function getChatNodeMessages(inputs: Inputs) {
           ),
         );
 
-        return stringValues
-          .filter((v) => v != null)
-          .map((v) => ({ type: 'user', message: v, function_call: undefined, name: undefined }));
+        return stringValues.filter((v) => v != null).map((v) => ({ type: 'user', message: v }));
       }
 
       const coercedMessage = coerceTypeOptional(p, 'chat-message');
@@ -1036,17 +1029,12 @@ export function getChatNodeMessages(inputs: Inputs) {
       }
 
       const coercedString = coerceTypeOptional(p, 'string');
-      return coercedString != null
-        ? [{ type: 'user', message: coerceType(p, 'string'), function_call: undefined, name: undefined }]
-        : [];
+      return coercedString != null ? [{ type: 'user', message: coerceType(p, 'string') }] : [];
     });
 
   const systemPrompt = inputs['systemPrompt' as PortId];
   if (systemPrompt) {
-    messages = [
-      { type: 'system', message: coerceType(systemPrompt, 'string'), function_call: undefined, name: undefined },
-      ...messages,
-    ];
+    messages = [{ type: 'system', message: coerceType(systemPrompt, 'string') }, ...messages];
   }
 
   return { messages, systemPrompt };
