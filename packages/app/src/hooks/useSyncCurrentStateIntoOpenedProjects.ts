@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   loadedProjectState,
@@ -55,29 +55,49 @@ export function useSyncCurrentStateIntoOpenedProjects() {
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
   }, [currentProject]);
-
-  // Sync current graph into opened projects
+  
+  // Track project and graph state, so that when the user switches projects, we can track that state without saving the project.
+  const [prevProjectState, setPrevProjectState] = useState({
+    project: currentProject,
+    openedGraph: currentGraph?.metadata?.id,
+  });
   useEffect(() => {
-    if (currentGraph.metadata?.id != null && currentProject.graphs[currentGraph.metadata.id]) {
+    if (
+      currentGraph.metadata?.id != null && currentProject.graphs[currentGraph.metadata.id] && 
+      prevProjectState.project.metadata.id === currentProject.metadata.id
+    ) {
+      setPrevProjectState({
+        project: {
+          ...currentProject,
+          graphs: {
+            ...currentProject.graphs,
+            [currentGraph.metadata!.id!]: currentGraph,
+          }
+        },
+        openedGraph: currentGraph.metadata!.id!,
+      });
+    }
+  }, [currentGraph, currentProject, prevProjectState]);
+
+  // Sync current graph into opened projects when user switches projects.
+  useEffect(() => {
+    if (prevProjectState.project != null && prevProjectState.project.metadata.id !== currentProject.metadata.id) {
       setOpenedProjects((openedProjects) => ({
         ...openedProjects,
-        [currentProject.metadata.id]: {
-          ...openedProjects[currentProject.metadata.id],
-          project: {
-            ...currentProject,
-            graphs: {
-              // Sync current graph into opened projects as well, so that when you make changes, nav away, nav back, your changes are still there
-              ...currentProject.graphs,
-              [currentGraph.metadata!.id!]: currentGraph,
-            },
-          },
-          openedGraph: currentGraph.metadata!.id!,
+        [prevProjectState.project.metadata.id]: {
+          ...openedProjects[prevProjectState.project.metadata.id],
+          project: prevProjectState.project,
+          openedGraph: prevProjectState.openedGraph,
         },
       }));
+      // Update prevProjectState, so that we track changes to it
+      setPrevProjectState({
+        project: currentProject,
+        openedGraph: currentGraph?.metadata?.id,
+      });
     }
-    // Changes a lot, hopefully okay
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
-  }, [currentGraph]);
+  }, [currentProject]);
 
   // Make sure opened projects sorted ids are in sync with opened projects
   useEffect(() => {
