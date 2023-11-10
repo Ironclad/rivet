@@ -64,6 +64,7 @@ import getDatasetRowNodeImage from '../assets/node_images/get_dataset_row_node.p
 import sliceNodeImage from '../assets/node_images/slice_node.png';
 import extractMarkdownCodeBlocksImage from '../assets/node_images/extract_markdown_code_blocks_node.png';
 import assembleMessageNodeImage from '../assets/node_images/assemble_message_node.png';
+import urlReferenceNodeImage from '../assets/node_images/url_reference_node.png';
 
 export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
   return {
@@ -131,5 +132,6 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     slice: sliceNodeImage,
     extractMarkdownCodeBlocks: extractMarkdownCodeBlocksImage,
     assembleMessage: assembleMessageNodeImage,
+    urlReference: urlReferenceNodeImage,
   };
 };
