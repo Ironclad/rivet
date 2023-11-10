@@ -75,7 +75,7 @@ export function useSyncCurrentStateIntoOpenedProjects() {
         openedGraph: currentGraph.metadata!.id!,
       });
     }
-  }, [currentGraph]);
+  }, [currentGraph, currentProject, prevProjectState]);
 
   // Sync current graph into opened projects when user switches projects.
   useEffect(() => {
