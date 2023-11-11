@@ -272,7 +272,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         dataType: ['gpt-function', 'gpt-function[]'] as const,
         id: 'functions' as PortId,
         title: 'Functions',
-        description: 'Functions to use in the model.',
+        description: 'Functions to use in the model. To connect multiple functions, use an Array node.',
         coerced: false,
       });
     }

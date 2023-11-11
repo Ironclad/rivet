@@ -1,0 +1,94 @@
+---
+id: assemble-message
+title: Assemble Message Node
+sidebar_label: Assemble Message
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+![Assemble Message Node Screenshot](./assets/assemble-message-node.png)
+
+## Overview
+
+The Assemble Message Node is designed to assemble a single chat message from multiple parts. It is similar to a [Prompt Node](./prompt.mdx), but it works with multimodal models, allowing you to include both text and images in the message. This node is particularly useful when working with multimodal LLMs such as GPT-4 Vision that can process both text and images simultaneously.
+
+The Assemble Message Node can be used in conjunction with the [Image Node](./image.mdx) or [URL Reference Node](./url-reference.mdx) to include images in a message.
+
+The Assemble Message Node outputs a chat message in the same format as a [Prompt Node](./prompt.mdx).
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+## Inputs
+
+| Title  | Data Type                             | Description                                                                                                                                                             | Default Value | Notes                                                                                     |
+| ------ | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------- |
+| Part N | `string`/`string[]`/`image`/`image[]` | A part of the message to assemble. Arrays connected to inputs will be flattened, so connecting a single `image[]` connection will put multiple images into the message. | N/A           | Dynamic number of input ports based on how many inputs are already connected to the node. |
+
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title   | Data Type      | Description                                                                                                         | Notes                                                                                                                |
+| ------- | -------------- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Message | `chat-message` | The assembled chat message. The message will be in the same format as a message from a [Prompt Node](./prompt.mdx). | The output will be a chat message containing the assembled data. The type of the message will be the specified type. |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting | Description                                                                                               | Default Value | Use Input Toggle | Input Data Type |
+| ------- | --------------------------------------------------------------------------------------------------------- | ------------- | ---------------- | --------------- |
+| Type    | The type of message to assemble. The value should be either 'system', 'user', 'assistant', or 'function'. | 'user'        | Yes              | `string`        |
+
+</TabItem>
+
+</Tabs>
+
+## Example 1: Assemble a user message with text and an image
+
+1. Create an Assemble Message Node and set the Type to 'user'.
+1. Create a [Text Node](./text.mdx) and set the value to "Here is an image:". Connect the output of the Text Node to the first input of the Assemble Message Node.
+1. Create an [Image Node](./image.mdx) and browse for your image. Connect the output of the Image Node to the second input of the Assemble Message Node.
+1. Run the graph. The `Message` output of the Assemble Message Node should contain a user message with the text "Here is an image of a cat:" and the text `(Image)` indicating that an image is included in the message.
+
+![Assemble Message Node Example 1](./assets/assemble-message-node-example-01.png)
+
+## Error Handling
+
+The Assemble Message Node will error if the `Type` input is enabled and is set to an invalid value.
+
+## FAQ
+
+**Q: Can I include multiple images in a message?**
+
+A: Yes, you can include multiple images in a message by connecting multiple input nodes.
+
+**Q: Can I use the Assemble Message Node with a function tool call?**
+
+A: Yes, you can set the Type to 'function' to assemble a function response tool call message. Note that function tool call messages require a Tool Call ID, which can be provided via the `Tool Call ID` input or setting. The output of the tool call is the assembled message content.
+
+**Q: Can I include a function call with an `assistant`-type message?**
+
+A: At this time, only the [Prompt Node](./prompt.mdx) supports function/tool calls with `assistant`-type messages.
+
+## See Also
+
+- [Prompt Node](./prompt.mdx)
+- [Image Node](./image.mdx)
+- [URL Reference Node](./url-reference.mdx)
+- [Array Node](./array.mdx)
+- [Chat Node](./chat.mdx)

@@ -182,6 +182,7 @@ const sidebars = {
       collapsible: true,
       collapsed: false,
       items: [
+        'node-reference/assemble-message',
         'node-reference/assemble-prompt',
         'node-reference/chat',
         'node-reference/gpt-function',
@@ -216,6 +217,7 @@ const sidebars = {
       collapsible: true,
       collapsed: false,
       items: [
+        'node-reference/destructure',
         'node-reference/extract-json',
         'node-reference/extract-object-path',
         'node-reference/extract-yaml',
@@ -227,7 +229,13 @@ const sidebars = {
       label: 'Data',
       collapsible: true,
       collapsed: false,
-      items: ['node-reference/audio', 'node-reference/bool', 'node-reference/hash', 'node-reference/image'],
+      items: [
+        'node-reference/audio',
+        'node-reference/bool',
+        'node-reference/hash',
+        'node-reference/image',
+        'node-reference/url-reference',
+      ],
     },
     {
       type: 'category',
