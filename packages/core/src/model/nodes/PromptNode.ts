@@ -82,7 +82,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
     if (this.data.useNameInput) {
       inputs.push({
         id: 'name' as PortId,
-        title: 'Name',
+        title: 'Name/ID',
         dataType: 'string',
       });
     }

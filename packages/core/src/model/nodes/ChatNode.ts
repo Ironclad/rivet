@@ -11,20 +11,18 @@ import { type ChatMessage, type ScalarDataValue, getScalarTypeOf, isArrayDataVal
 import { addWarning } from '../../utils/outputs.js';
 import {
   type ChatCompletionOptions,
-  type ChatCompletionRequestMessage,
   OpenAIError,
   openAiModelOptions,
   openaiModels,
   streamChatCompletions,
   type ChatCompletionTool,
-  type ChatCompletionRequestUserMessageContent,
 } from '../../utils/openai.js';
 import retry from 'p-retry';
 import type { Inputs, Outputs } from '../GraphProcessor.js';
 import { match } from 'ts-pattern';
 import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 import { type InternalProcessContext } from '../ProcessContext.js';
-import { uint8ArrayToBase64, type EditorDefinition } from '../../index.js';
+import { type EditorDefinition } from '../../index.js';
 import { dedent } from 'ts-dedent';
 import { getInputOrData, cleanHeaders } from '../../utils/inputs.js';
 import { getError } from '../../utils/errors.js';
@@ -795,6 +793,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           // First array is the function calls per choice, inner array is the functions calls inside the choice
           const functionCalls: {
             type: 'function';
+            id: string;
             name: string;
             arguments: string;
             lastParsedArguments?: unknown;
@@ -822,7 +821,12 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                     arguments: '',
                     lastParsedArguments: undefined,
                     name: '',
+                    id: '',
                   };
+
+                  if (toolCall.id) {
+                    functionCalls[index]![toolCall.index]!.id = toolCall.id;
+                  }
 
                   if (toolCall.function.name) {
                     functionCalls[index]![toolCall.index]!.name += toolCall.function.name;
@@ -862,6 +866,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                   value: functionCalls.map((functionCalls) => ({
                     name: functionCalls[0]?.name,
                     arguments: functionCalls[0]?.lastParsedArguments,
+                    id: functionCalls[0]?.id,
                   })),
                 };
               } else {
@@ -870,6 +875,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                   value: {
                     name: functionCalls[0]![0]?.name,
                     arguments: functionCalls[0]![0]?.lastParsedArguments,
+                    id: functionCalls[0]![0]?.id,
                   } as Record<string, unknown>,
                 };
               }
@@ -890,6 +896,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                     ? {
                         name: functionCalls[0][0]!.name,
                         arguments: functionCalls[0][0]!.arguments, // Needs the stringified one here in chat list
+                        id: functionCalls[0][0]!.id,
                       }
                     : undefined,
                 },

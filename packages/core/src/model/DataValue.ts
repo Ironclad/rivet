@@ -25,7 +25,7 @@ export type AssistantChatMessage = {
   message: ChatMessageMessagePart | ChatMessageMessagePart[];
   function_call:
     | {
-        id?: string;
+        id: string | undefined;
         name: string;
         arguments: string; // JSON string
       }

@@ -47,7 +47,14 @@ type StringListEditorProps = SharedEditorProps & {
   editor: StringListEditorDefinition<ChartNode>;
 };
 
-export const StringListEditor: FC<StringListEditorProps> = ({ node, isReadonly, isDisabled, onChange, editor }) => {
+export const StringListEditor: FC<StringListEditorProps> = ({
+  node,
+  isReadonly,
+  isDisabled,
+  onChange,
+  editor,
+  onClose,
+}) => {
   const data = node.data as Record<string, unknown>;
   const stringListValue = data[editor.dataKey] as string[] | string | undefined;
 
@@ -116,6 +123,7 @@ export const StringListEditor: FC<StringListEditorProps> = ({ node, isReadonly, 
       onAddItem={handleAddItem}
       onDeleteItem={handleDeleteItem}
       onItemChange={handleItemChange}
+      onClose={onClose}
     />
   );
 };
@@ -130,6 +138,7 @@ type StringListProps = {
   onAddItem: () => void;
   onDeleteItem: (index: number) => void;
   onItemChange: (index: number, value: string) => void;
+  onClose?: () => void;
 };
 
 export const StringList: FC<StringListProps> = ({
@@ -142,6 +151,7 @@ export const StringList: FC<StringListProps> = ({
   onAddItem,
   onDeleteItem,
   onItemChange,
+  onClose,
 }) => {
   return (
     <div css={styles}>
@@ -164,6 +174,11 @@ export const StringList: FC<StringListProps> = ({
                     isReadOnly={isReadonly}
                     placeholder="Item"
                     style={{ marginRight: '8px' }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Escape') {
+                        onClose?.();
+                      }
+                    }}
                   />
                   <Button
                     className="delete-item"

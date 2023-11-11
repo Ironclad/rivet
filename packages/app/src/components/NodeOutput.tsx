@@ -19,6 +19,7 @@ import { entries } from '../../../core/src/utils/typeSafety';
 import { useToggle } from 'ahooks';
 import Toggle from '@atlaskit/toggle';
 import { pinnedNodesState } from '../state/graphBuilder';
+import { useNodeIO } from '../hooks/useGetNodeIO';
 
 export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -172,6 +173,8 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
   const setOverlayOpen = useSetRecoilState(overlayOpenState);
   const setPromptDesignerAttachedNode = useSetRecoilState(promptDesignerAttachedChatNodeState);
 
+  const io = useNodeIO(node.id);
+
   const { data, processId } = useMemo(() => {
     if (!output?.length) {
       return { data: undefined, processId: undefined };
@@ -277,7 +280,12 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
           ) : OutputSimple ? (
             <OutputSimple key={`outputs-${key}`} outputs={value} />
           ) : (
-            <RenderDataOutputs key={`outputs-${key}`} outputs={value} renderMarkdown={renderMarkdown} />
+            <RenderDataOutputs
+              key={`outputs-${key}`}
+              definitions={io.outputDefinitions}
+              outputs={value}
+              renderMarkdown={renderMarkdown}
+            />
           ),
         )}
       </div>
@@ -288,7 +296,11 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
     ) : OutputSimple ? (
       <OutputSimple outputs={data.outputData!} />
     ) : (
-      <RenderDataOutputs outputs={data.outputData!} renderMarkdown={renderMarkdown} />
+      <RenderDataOutputs
+        definitions={io.outputDefinitions}
+        outputs={data.outputData!}
+        renderMarkdown={renderMarkdown}
+      />
     );
   }
 
@@ -372,6 +384,7 @@ const NodeOutputSingleProcess: FC<{
 
   const setOverlayOpen = useSetRecoilState(overlayOpenState);
   const setPromptDesignerAttachedNode = useSetRecoilState(promptDesignerAttachedChatNodeState);
+  const io = useNodeIO(node.id);
 
   const handleOpenPromptDesigner = () => {
     setOverlayOpen('promptDesigner');
@@ -428,7 +441,7 @@ const NodeOutputSingleProcess: FC<{
           OutputSimple ? (
             <OutputSimple key={`outputs-${key}`} outputs={value} />
           ) : (
-            <RenderDataOutputs key={`outputs-${key}`} outputs={value} />
+            <RenderDataOutputs definitions={io.outputDefinitions} key={`outputs-${key}`} outputs={value} />
           ),
         )}
       </div>
@@ -437,7 +450,7 @@ const NodeOutputSingleProcess: FC<{
     body = OutputSimple ? (
       <OutputSimple outputs={data.outputData!} />
     ) : (
-      <RenderDataOutputs outputs={data.outputData!} />
+      <RenderDataOutputs definitions={io.outputDefinitions} outputs={data.outputData!} />
     );
   }
 

@@ -77,6 +77,11 @@
 
   --node-color-9: #444444;
   --node-color-9-foreground: #fff;
+
+  --text-color-accent-1: #ff9900;
+  --text-color-accent-2: #d0acff;
+  --text-color-accent-3: #30c9c3;
+  --text-color-accent-4: #00b74c;
 }
 
 .app.theme-default,

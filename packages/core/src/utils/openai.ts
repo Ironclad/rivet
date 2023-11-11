@@ -1,3 +1,4 @@
+import { orderBy } from 'lodash-es';
 import { DEFAULT_CHAT_NODE_TIMEOUT } from './defaults.js';
 import fetchEventSource from './fetchEventSource.js';
 
@@ -127,10 +128,13 @@ export const openaiModels = {
   },
 } satisfies Record<string, OpenAIModel>;
 
-export const openAiModelOptions = Object.entries(openaiModels).map(([id, { displayName }]) => ({
-  value: id,
-  label: displayName,
-}));
+export const openAiModelOptions = orderBy(
+  Object.entries(openaiModels).map(([id, { displayName }]) => ({
+    value: id,
+    label: displayName,
+  })),
+  'label',
+);
 
 export class OpenAIError extends Error {
   constructor(readonly status: number, readonly responseJson: any) {

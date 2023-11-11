@@ -197,6 +197,9 @@ export * from './nodes/AssembleMessageNode.js';
 import { urlReferenceNode } from './nodes/URLReferenceNode.js';
 export * from './nodes/URLReferenceNode.js';
 
+import { destructureNode } from './nodes/DestructureNode.js';
+export * from './nodes/DestructureNode.js';
+
 export const registerBuiltInNodes = (registry: NodeRegistration) => {
   return registry
     .register(toYamlNode)
@@ -263,7 +266,8 @@ export const registerBuiltInNodes = (registry: NodeRegistration) => {
     .register(sliceNode)
     .register(extractMarkdownCodeBlocksNode)
     .register(assembleMessageNode)
-    .register(urlReferenceNode);
+    .register(urlReferenceNode)
+    .register(destructureNode);
 };
 
 let globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());

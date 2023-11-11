@@ -10,17 +10,46 @@ import {
   isArrayDataValue,
   isFunctionDataValue,
   coerceTypeOptional,
+  type NodeOutputDefinition,
 } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { keys } from '../../../core/src/utils/typeSafety';
 import { useMarkdown } from '../hooks/useMarkdown';
 import ColorizedPreformattedText from './ColorizedPreformattedText';
 import { match } from 'ts-pattern';
+import clsx from 'clsx';
+
+const styles = css`
+  .chat-message.user header em {
+    color: var(--text-color-accent-3);
+  }
+
+  .chat-message.assistant header em {
+    color: var(--text-color-accent-2);
+  }
+
+  .chat-message.function header em {
+    color: var(--grey-light);
+  }
+
+  .chat-message.system header em {
+    color: var(--grey-light);
+  }
+`;
 
 const multiOutput = css`
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  &.chat-message-list {
+    gap: 0;
+
+    .multi-output-item {
+      border-bottom: 1px solid var(--grey-lightish);
+      padding: 4px 0 16px;
+    }
+  }
 `;
 
 /* eslint-disable react-hooks/rules-of-hooks -- These are components (ish) */
@@ -60,26 +89,26 @@ const scalarRenderers: {
 
     return match(message)
       .with({ type: 'system' }, () => (
-        <div>
-          <div>
+        <div className="chat-message system">
+          <header>
             <em>system</em>
-          </div>
+          </header>
           {messageContent}
         </div>
       ))
       .with({ type: 'user' }, () => (
-        <div>
-          <div>
+        <div className="chat-message user">
+          <header>
             <em>user</em>
-          </div>
+          </header>
           {messageContent}
         </div>
       ))
       .with({ type: 'assistant' }, (message) => (
-        <div>
-          <div>
+        <div className="chat-message assistant">
+          <header>
             <em>assistant</em>
-          </div>
+          </header>
           {messageContent}
           {message.function_call && (
             <div className="function-call">
@@ -92,18 +121,18 @@ const scalarRenderers: {
         </div>
       ))
       .with({ type: 'function' }, (message) => (
-        <div>
-          <div>
-            <em>function output ({message.name})</em>
-          </div>
+        <div className="chat-message function">
+          <header>
+            <em>function output for: {message.name}</em>
+          </header>
           {messageContent}
         </div>
       ))
       .otherwise((message) => (
-        <div>
-          <div>
+        <div className="chat-message unknown">
+          <header>
             <em>{(message as any).type as string}</em>
-          </div>
+          </header>
           {messageContent}
         </div>
       ));
@@ -184,9 +213,14 @@ export const RenderDataValue: FC<{
   if (isArrayDataValue(value)) {
     const items = arrayizeDataValue(value);
     return (
-      <div css={multiOutput}>
+      <div
+        css={multiOutput}
+        className={clsx({
+          'chat-message-list': value.type === 'chat-message[]',
+        })}
+      >
         {items.map((v, i) => (
-          <div key={i}>
+          <div className="multi-output-item" key={i}>
             <RenderDataValue
               key={i}
               value={v}
@@ -221,11 +255,22 @@ export const RenderDataValue: FC<{
   }
 
   return (
-    <Renderer value={value} depth={(depth ?? 0) + 1} renderMarkdown={renderMarkdown} truncateLength={truncateLength} />
+    <div css={styles}>
+      <Renderer
+        value={value}
+        depth={(depth ?? 0) + 1}
+        renderMarkdown={renderMarkdown}
+        truncateLength={truncateLength}
+      />
+    </div>
   );
 };
 
-export const RenderDataOutputs: FC<{ outputs: Outputs; renderMarkdown?: boolean }> = ({ outputs, renderMarkdown }) => {
+export const RenderDataOutputs: FC<{
+  definitions?: NodeOutputDefinition[];
+  outputs: Outputs;
+  renderMarkdown?: boolean;
+}> = ({ definitions, outputs, renderMarkdown }) => {
   const outputPorts = keys(outputs);
 
   if (outputPorts.length === 1) {
@@ -238,14 +283,19 @@ export const RenderDataOutputs: FC<{ outputs: Outputs; renderMarkdown?: boolean 
 
   return (
     <div className="rendered-data-outputs">
-      {outputPorts.map((portId) => (
-        <div className="port-value" key={portId}>
-          <div>
-            <em className="port-id-label">{portId}</em>
+      {outputPorts.map((portId) => {
+        const def = definitions?.find((d) => d.id === portId);
+        const label = def?.title ?? portId;
+
+        return (
+          <div className="port-value" key={portId}>
+            <div>
+              <em className="port-id-label">{label}</em>
+            </div>
+            <RenderDataValue value={outputs![portId]!} renderMarkdown={renderMarkdown} />
           </div>
-          <RenderDataValue value={outputs![portId]!} renderMarkdown={renderMarkdown} />
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
