@@ -55,7 +55,7 @@ export function useSyncCurrentStateIntoOpenedProjects() {
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
   }, [currentProject]);
-  
+
   // Track project and graph state, so that when the user switches projects, we can track that state without saving the project.
   const [prevProjectState, setPrevProjectState] = useState({
     project: currentProject,
@@ -63,7 +63,8 @@ export function useSyncCurrentStateIntoOpenedProjects() {
   });
   useEffect(() => {
     if (
-      currentGraph.metadata?.id != null && currentProject.graphs[currentGraph.metadata.id] && 
+      currentGraph.metadata?.id != null &&
+      currentProject.graphs[currentGraph.metadata.id] &&
       prevProjectState.project.metadata.id === currentProject.metadata.id
     ) {
       setPrevProjectState({
@@ -72,12 +73,12 @@ export function useSyncCurrentStateIntoOpenedProjects() {
           graphs: {
             ...currentProject.graphs,
             [currentGraph.metadata!.id!]: currentGraph,
-          }
+          },
         },
         openedGraph: currentGraph.metadata!.id!,
       });
     }
-  }, [currentGraph, currentProject, prevProjectState]);
+  }, [currentGraph, currentProject, prevProjectState.project.metadata.id]);
 
   // Sync current graph into opened projects when user switches projects.
   useEffect(() => {
