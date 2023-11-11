@@ -614,6 +614,35 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     ];
   }
 
+  getBody() {
+    return dedent`
+      ${this.data.endpoint ? `${this.data.endpoint}` : ''}
+      ${this.data.useMaxTokensInput ? 'Max Tokens: (Using Input)' : `${this.data.maxTokens} tokens`}
+      Model: ${this.data.useModelInput ? '(Using Input)' : this.data.overrideModel || this.data.model}
+      ${this.data.useTopP ? 'Top P' : 'Temperature'}:
+      ${
+        this.data.useTopP
+          ? this.data.useTopPInput
+            ? '(Using Input)'
+            : this.data.top_p
+          : this.data.useTemperatureInput
+          ? '(Using Input)'
+          : this.data.temperature
+      }
+      ${this.data.useStop ? `Stop: ${this.data.useStopInput ? '(Using Input)' : this.data.stop}` : ''}
+      ${
+        (this.data.frequencyPenalty ?? 0) !== 0
+          ? `Frequency Penalty: ${this.data.useFrequencyPenaltyInput ? '(Using Input)' : this.data.frequencyPenalty}`
+          : ''
+      }
+      ${
+        (this.data.presencePenalty ?? 0) !== 0
+          ? `Presence Penalty: ${this.data.usePresencePenaltyInput ? '(Using Input)' : this.data.presencePenalty}`
+          : ''
+      }
+    `.trim();
+  }
+
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const output: Outputs = {};
 

@@ -1,15 +1,18 @@
 import { type FC } from 'react';
 import { css } from '@emotion/react';
 import { RenderDataValue } from '../RenderDataValue.js';
-import { type ChatNode, type Outputs, type PortId, coerceTypeOptional, inferType, isArrayDataValue } from '@ironclad/rivet-core';
+import {
+  type ChatNode,
+  type Outputs,
+  type PortId,
+  coerceTypeOptional,
+  inferType,
+  isArrayDataValue,
+} from '@ironclad/rivet-core';
 import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 import styled from '@emotion/styled';
 import clsx from 'clsx';
 import { useMarkdown } from '../../hooks/useMarkdown.js';
-
-type ChatNodeBodyProps = {
-  node: ChatNode;
-};
 
 const bodyStyles = css`
   display: flex;
@@ -23,35 +26,6 @@ const bodyStyles = css`
     gap: 8px;
   }
 `;
-
-export const ChatNodeBody: FC<ChatNodeBodyProps> = ({ node }) => {
-  return (
-    <div css={bodyStyles}>
-      {node.data.endpoint && <div>{node.data.endpoint}</div>}
-      <div>{node.data.useMaxTokensInput ? 'Max Tokens: (Using Input)' : node.data.maxTokens} tokens</div>
-      <div>Model: {node.data.useModelInput ? '(Using Input)' : node.data.overrideModel || node.data.model}</div>
-      <div>
-        {node.data.useTopP ? 'Top P' : 'Temperature'}:{' '}
-        {node.data.useTopP
-          ? node.data.useTopPInput
-            ? '(Using Input)'
-            : node.data.top_p
-          : node.data.useTemperatureInput
-          ? '(Using Input)'
-          : node.data.temperature}
-      </div>
-      {node.data.useStop && <div>Stop: {node.data.useStopInput ? '(Using Input)' : node.data.stop}</div>}
-      {(node.data.frequencyPenalty ?? 0) !== 0 && (
-        <div>
-          Frequency Penalty: {node.data.useFrequencyPenaltyInput ? '(Using Input)' : node.data.frequencyPenalty}
-        </div>
-      )}
-      {(node.data.presencePenalty ?? 0) !== 0 && (
-        <div>Presence Penalty: {node.data.usePresencePenaltyInput ? '(Using Input)' : node.data.presencePenalty}</div>
-      )}
-    </div>
-  );
-};
 
 export const ChatNodeOutput: FC<{
   outputs: Outputs;
@@ -69,7 +43,7 @@ export const ChatNodeOutput: FC<{
     const functionCallOutput = outputs['function-call' as PortId];
     const functionCallAll =
       functionCallOutput?.type === 'object[]'
-        ? functionCallOutput.value.map((v) => JSON.stringify(v))
+        ? functionCallOutput.value
         : coerceTypeOptional(functionCallOutput, 'string[]');
 
     return (
@@ -108,7 +82,7 @@ export const ChatNodeOutput: FC<{
     const functionCallOutput = outputs['function-call' as PortId];
     const functionCall =
       functionCallOutput?.type === 'object'
-        ? JSON.stringify(functionCallOutput.value)
+        ? functionCallOutput.value
         : coerceTypeOptional(functionCallOutput, 'string');
 
     return (
@@ -143,6 +117,7 @@ const ChatNodeOutputContainer = styled.div`
     justify-content: space-between;
     align-items: flex-start;
     min-height: 40px;
+    color: var(--grey-lighter);
   }
 
   &.fullscreen .metaInfo {
@@ -157,7 +132,7 @@ const ChatNodeOutputContainer = styled.div`
 
 export const ChatNodeOutputSingle: FC<{
   outputText: string | undefined;
-  functionCall: string | undefined;
+  functionCall: string | object | undefined;
   requestTokens: number | undefined;
   responseTokens: number | undefined;
   cost: number | undefined;
@@ -225,7 +200,6 @@ const ChatNodeFullscreenOutput: FC<{
 };
 
 export const chatNodeDescriptor: NodeComponentDescriptor<'chat'> = {
-  Body: ChatNodeBody,
   OutputSimple: ChatNodeOutput,
   FullscreenOutputSimple: ChatNodeFullscreenOutput,
   defaultRenderMarkdown: true,
