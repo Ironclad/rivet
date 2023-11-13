@@ -11,12 +11,14 @@ import {
   isFunctionDataValue,
   coerceTypeOptional,
   type NodeOutputDefinition,
+  type ChatMessageMessagePart,
+  type DataType,
 } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { keys } from '../../../core/src/utils/typeSafety';
 import { useMarkdown } from '../hooks/useMarkdown';
 import ColorizedPreformattedText from './ColorizedPreformattedText';
-import { match } from 'ts-pattern';
+import { P, match } from 'ts-pattern';
 import clsx from 'clsx';
 
 const styles = css`
@@ -35,6 +37,17 @@ const styles = css`
   .chat-message.system header em {
     color: var(--grey-light);
   }
+
+  .message-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .chat-message-url-image {
+    max-width: 300px;
+    object-fit: contain;
+  }
 `;
 
 const multiOutput = css`
@@ -52,14 +65,16 @@ const multiOutput = css`
   }
 `;
 
+type ScalarRendererProps<T extends DataType = DataType> = {
+  value: Extract<ScalarDataValue, { type: T }>;
+  depth?: number;
+  renderMarkdown?: boolean;
+  truncateLength?: number;
+};
+
 /* eslint-disable react-hooks/rules-of-hooks -- These are components (ish) */
 const scalarRenderers: {
-  [P in ScalarDataType]: FC<{
-    value: Extract<ScalarDataValue, { type: P }>;
-    depth?: number;
-    renderMarkdown?: boolean;
-    truncateLength?: number;
-  }>;
+  [P in ScalarDataType]: FC<ScalarRendererProps<P>>;
 } = {
   boolean: ({ value }) => <>{value.value ? 'true' : 'false'}</>,
   number: ({ value }) => <>{value.value}</>,
@@ -75,16 +90,18 @@ const scalarRenderers: {
     return <pre className="pre-wrap">{truncated}</pre>;
   },
   'chat-message': ({ value, renderMarkdown }) => {
-    const singleString = coerceTypeOptional(value, 'string') ?? '';
-
-    const markdownRendered = useMarkdown(singleString, renderMarkdown);
+    const parts = Array.isArray(value.value.message) ? value.value.message : [value.value.message];
 
     const message = value.value;
 
-    const messageContent = renderMarkdown ? (
-      <div dangerouslySetInnerHTML={markdownRendered} />
-    ) : (
-      <pre className="pre-wrap">{singleString}</pre>
+    const messageContent = (
+      <div className="message-content">
+        {parts.map((part, i) => (
+          <div className="chat-message-message-part" key={i}>
+            <RenderChatMessagePart part={part} renderMarkdown={renderMarkdown} />
+          </div>
+        ))}
+      </div>
     );
 
     return match(message)
@@ -192,6 +209,25 @@ const scalarRenderers: {
 };
 /* eslint-enable react-hooks/rules-of-hooks -- These are components (ish) */
 
+const RenderChatMessagePart: FC<{ part: ChatMessageMessagePart; renderMarkdown?: boolean }> = ({
+  part,
+  renderMarkdown,
+}) => {
+  return match(part)
+    .with(P.string, (part) => {
+      const Renderer = scalarRenderers.string;
+      return <Renderer value={{ type: 'string', value: part }} renderMarkdown={renderMarkdown} />;
+    })
+    .with({ type: 'image' }, (part) => {
+      const Renderer = scalarRenderers.image;
+      return <Renderer value={{ type: 'image', value: part }} renderMarkdown={renderMarkdown} />;
+    })
+    .with({ type: 'url' }, (part) => {
+      return <img className="chat-message-url-image" src={part.url} alt={part.url} />;
+    })
+    .exhaustive();
+};
+
 export const RenderDataValue: FC<{
   value: DataValue | undefined;
   depth?: number;
@@ -243,12 +279,7 @@ export const RenderDataValue: FC<{
     );
   }
 
-  const Renderer = scalarRenderers[value.type as ScalarDataType] as FC<{
-    value: ScalarDataValue;
-    depth?: number;
-    renderMarkdown?: boolean;
-    truncateLength?: number;
-  }>;
+  const Renderer = scalarRenderers[value.type as ScalarDataType] as FC<ScalarRendererProps>;
 
   if (!Renderer) {
     return <div>ERROR: UNKNOWN TYPE: {JSON.stringify(value)}</div>;

@@ -49,7 +49,7 @@ export class ImageNodeImpl extends NodeImpl<ImageNode> {
       inputDefinitions.push({
         id: 'data' as PortId,
         title: 'Data',
-        dataType: 'string',
+        dataType: 'binary',
         coerced: false,
       });
     }
