@@ -14,6 +14,7 @@ import { coerceType } from '../../utils/coerceType.js';
 import { type InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
 import { type EditorDefinition } from '../../index.js';
+import { entries, values } from '../../utils/typeSafety.js';
 
 export type LoopControllerNode = ChartNode<'loopController', LoopControllerNodeData>;
 
@@ -182,6 +183,24 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const output: Outputs = {};
 
+    let inputCount = 0;
+    while (inputs[`input${inputCount + 1}` as PortId] || inputs[`input${inputCount + 1}Default` as PortId]) {
+      inputCount++;
+    }
+
+    const defaultInputs = entries(inputs).filter(([key]) => key.endsWith('Default'));
+
+    // If any of the default inputs are control-flow-excluded, then exclude all outputs.
+    // Technically, it should be "any node outside of the cycle" but this should be good enough?
+    if (defaultInputs.some(([, value]) => value?.type === 'control-flow-excluded')) {
+      for (let i = 0; i <= inputCount; i++) {
+        output[`output${i}` as PortId] = { type: 'control-flow-excluded', value: undefined };
+      }
+      output['break' as PortId] = { type: 'control-flow-excluded', value: undefined };
+
+      return output;
+    }
+
     const iterationCount = context.attachedData.loopInfo?.iterationCount ?? 0;
 
     output['iteration' as PortId] = { type: 'number', value: iterationCount + 1 };
@@ -207,11 +226,6 @@ export class LoopControllerNodeImpl extends NodeImpl<LoopControllerNode> {
 
     if (iterationCount >= (this.data.maxIterations ?? 100) && this.data.atMaxIterationsAction === 'break') {
       continueValue = false;
-    }
-
-    let inputCount = 0;
-    while (inputs[`input${inputCount + 1}` as PortId] || inputs[`input${inputCount + 1}Default` as PortId]) {
-      inputCount++;
     }
 
     if (continueValue) {

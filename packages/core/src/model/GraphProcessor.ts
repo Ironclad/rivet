@@ -964,8 +964,9 @@ export class GraphProcessor {
       const loopControllerResults = this.#nodeResults.get(node.id)!;
 
       // If the loop controller is excluded, we have to "break" it or else it'll loop forever...
+      const breakValue = loopControllerResults['break' as PortId];
       const didBreak =
-        loopControllerResults['break' as PortId]?.type !== 'control-flow-excluded' ??
+        !(breakValue?.type === 'control-flow-excluded' && breakValue?.value === 'loop-not-broken') ??
         this.#excludedDueToControlFlow(node, this.#getInputValuesForNode(node), nanoid() as ProcessId);
 
       if (!didBreak) {
@@ -1496,14 +1497,7 @@ export class GraphProcessor {
       this.#emitter.emit('trace', `Excluding node ${node.title} because it's disabled`);
 
       this.#visitedNodes.add(node.id);
-
-      const outputs: Outputs = {};
-      for (const output of this.#definitions[node.id]!.outputs) {
-        outputs[output.id] = { type: 'control-flow-excluded', value: undefined };
-      }
-      this.#nodeResults.set(node.id, outputs);
-
-      this.#emitter.emit('nodeExcluded', { node, processId, inputs: inputValues, outputs, reason: 'disabled' });
+      this.#markAsExcluded(node, processId, inputValues, 'disabled');
 
       return true;
     }
@@ -1525,6 +1519,7 @@ export class GraphProcessor {
       'coalesce',
       'graphOutput',
       'raceInputs',
+      'loopController',
     ];
 
     const allowedToConsumedExcludedValue =
@@ -1540,26 +1535,35 @@ export class GraphProcessor {
         }
 
         this.#visitedNodes.add(node.id);
-
-        const outputs: Outputs = {};
-        for (const output of this.#definitions[node.id]!.outputs) {
-          outputs[output.id] = { type: 'control-flow-excluded', value: undefined };
-        }
-        this.#nodeResults.set(node.id, outputs);
-
-        this.#emitter.emit('nodeExcluded', {
-          node,
-          processId,
-          inputs: inputValues,
-          outputs,
-          reason: 'input is excluded value',
-        });
+        this.#markAsExcluded(node, processId, inputValues, 'input is excluded value');
       }
 
       return true;
     }
 
     return false;
+  }
+
+  #markAsExcluded(node: ChartNode, processId: ProcessId, inputValues: Inputs, reason: string) {
+    const outputs: Outputs = {};
+    for (const output of this.#definitions[node.id]!.outputs) {
+      outputs[output.id] = { type: 'control-flow-excluded', value: undefined };
+    }
+
+    // Prevent infinite loop, a control-flow-excluded to loop controller shouldn't set the break port, let the loop controller handle it
+    if (node.type === 'loopController') {
+      outputs['break' as PortId] = { type: 'control-flow-excluded', value: 'loop-not-broken' };
+    }
+
+    this.#nodeResults.set(node.id, outputs);
+
+    this.#emitter.emit('nodeExcluded', {
+      node,
+      processId,
+      inputs: inputValues,
+      outputs,
+      reason,
+    });
   }
 
   #getInputValuesForNode(node: ChartNode): Inputs {

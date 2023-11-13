@@ -6,7 +6,7 @@ import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 export const LoopControllerNodeOutput: FC<{ outputs: Outputs; renderMarkdown?: boolean }> = ({ outputs }) => {
   const outputKeys = Object.keys(outputs).filter((key) => key.startsWith('output'));
 
-  const breakLoop = outputs['break' as PortId]!.type !== 'control-flow-excluded';
+  const breakLoop = outputs['break' as PortId] != null && outputs['break' as PortId]!.type !== 'control-flow-excluded';
 
   return (
     <div>
