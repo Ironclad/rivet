@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid/non-secure';
 import type { InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
 import { nodeDefinition } from '../NodeDefinition.js';
-import { getInputOrData, coerceType, newId } from '../../utils/index.js';
+import { getInputOrData, coerceType, newId, inferType } from '../../utils/index.js';
 import { arrayizeDataValue, unwrapDataValue } from '../DataValue.js';
 import type { DatasetId, DatasetRow } from '../Dataset.js';
 import type { EditorDefinition } from '../EditorDefinition.js';
@@ -108,16 +108,25 @@ export class ReplaceDatasetNodeImpl extends NodeImpl<ReplaceDatasetNode> {
       };
     }
 
-    const dataArrays = unwrapDataValue(dataInput).value as string[][];
+    let dataArrays = unwrapDataValue(dataInput).value as unknown[][] | unknown[] | DatasetRow[];
     if (!Array.isArray(dataArrays)) {
-      throw new Error('Data input must be an array of strings');
+      throw new Error('Data input must be either an array of rows, or an array of columns for a single row.');
     }
 
-    const rows = dataArrays.map((row): DatasetRow => {
+    const isDatasetRow = (row: unknown): row is DatasetRow => {
+      return typeof row === 'object' && row != null && 'id' in row && 'data' in row;
+    };
+
+    const firstElem = dataArrays[0];
+    if (!Array.isArray(firstElem) && !isDatasetRow(firstElem)) {
+      dataArrays = [dataArrays as unknown[]];
+    }
+
+    const rows = (dataArrays as unknown[][] | DatasetRow[]).map((row): DatasetRow => {
       if (Array.isArray(row)) {
         return {
           id: newId(),
-          data: row,
+          data: row.map((value) => coerceType(inferType(value), 'string')),
         };
       }
 
