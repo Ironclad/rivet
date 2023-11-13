@@ -73,6 +73,11 @@ const multiOutput = css`
       padding: 4px 0 16px;
     }
   }
+
+  .array-info {
+    color: var(--grey-light);
+    font-size: 0.8em;
+  }
 `;
 
 type ScalarRendererProps<T extends DataType = DataType> = {
@@ -265,6 +270,9 @@ export const RenderDataValue: FC<{
           'chat-message-list': value.type === 'chat-message[]',
         })}
       >
+        <div className="array-info">
+          ({items.length.toLocaleString()} element{items.length === 1 ? '' : 's'})
+        </div>
         {items.map((v, i) => (
           <div className="multi-output-item" key={i}>
             <RenderDataValue
