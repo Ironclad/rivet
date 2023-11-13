@@ -7,13 +7,14 @@ import {
   type PortId,
 } from '../NodeBase.js';
 import { nanoid } from 'nanoid/non-secure';
-import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { NodeImpl, type NodeBody, type NodeUIData } from '../NodeImpl.js';
 import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { entries } from '../../utils/typeSafety.js';
 import { flattenDeep } from 'lodash-es';
 import { dedent } from 'ts-dedent';
 import { type EditorDefinition } from '../EditorDefinition.js';
 import { nodeDefinition } from '../NodeDefinition.js';
+import type { RivetUIContext } from '../RivetUIContext.js';
 
 export type ArrayNode = ChartNode<'array', ArrayNodeData>;
 
@@ -124,6 +125,12 @@ export class ArrayNodeImpl extends NodeImpl<ArrayNode> {
       contextMenuTitle: 'Array',
       group: ['Lists'],
     };
+  }
+
+  getBody(): NodeBody {
+    return dedent`
+      ${this.data.flatten ? (this.data.flattenDeep ? 'Flatten (Deep)' : 'Flatten') : 'No Flatten'}
+    `;
   }
 
   async process(inputs: Inputs): Promise<Outputs> {

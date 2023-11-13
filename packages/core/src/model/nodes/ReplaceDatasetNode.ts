@@ -40,7 +40,7 @@ export class ReplaceDatasetNodeImpl extends NodeImpl<ReplaceDatasetNode> {
       dataType: 'object[]',
       title: 'Data',
       description:
-        'The data to replace in the dataset. May be a string or array of strings. If an array, each element will be a column in the dataset.',
+        'The new data of the dataset. If empty, the dataset will be cleared. May be an array of array of strings, or an array of DatasetRow objects with { id, data } properties. If a string[][], IDs will be generated.',
     });
 
     if (this.data.useDatasetIdInput) {
@@ -61,6 +61,7 @@ export class ReplaceDatasetNodeImpl extends NodeImpl<ReplaceDatasetNode> {
         id: 'dataset' as PortId,
         title: 'Dataset',
         dataType: 'object[]',
+        description: 'The new data of the dataset. An array of DatasetRow objects with { id, data } properties.',
       },
     ];
   }
@@ -68,7 +69,7 @@ export class ReplaceDatasetNodeImpl extends NodeImpl<ReplaceDatasetNode> {
   static getUIData(): NodeUIData {
     return {
       infoBoxBody: dedent`
-        Replaces the data in the specified dataset.
+        Replaces the data in a dataset with the given data. If no data is given, the dataset will be cleared instead.
       `,
       infoBoxTitle: 'Replace Dataset Node',
       contextMenuTitle: 'Replace Dataset',

@@ -271,6 +271,7 @@ const sidebars = {
         'node-reference/load-dataset',
         'node-reference/read-directory',
         'node-reference/read-file',
+        'node-reference/replace-dataset',
         'node-reference/user-input',
         'node-reference/vector-store',
         'node-reference/vector-knn',

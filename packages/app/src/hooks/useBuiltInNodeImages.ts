@@ -66,6 +66,7 @@ import extractMarkdownCodeBlocksImage from '../assets/node_images/extract_markdo
 import assembleMessageNodeImage from '../assets/node_images/assemble_message_node.png';
 import urlReferenceNodeImage from '../assets/node_images/url_reference_node.png';
 import destructureNodeImage from '../assets/node_images/destructure_node.png';
+import replaceDatasetNodeImage from '../assets/node_images/replace_dataset_node.png';
 
 export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
   return {
@@ -135,5 +136,6 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     assembleMessage: assembleMessageNodeImage,
     urlReference: urlReferenceNodeImage,
     destructure: destructureNodeImage,
+    replaceDataset: replaceDatasetNodeImage,
   };
 };
