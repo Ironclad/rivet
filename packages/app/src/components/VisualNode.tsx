@@ -43,6 +43,7 @@ import {
   isPinnedState,
   pinnedNodesState,
 } from '../state/graphBuilder';
+import { Tooltip } from './Tooltip';
 
 export type VisualNodeProps = {
   node: ChartNode;
@@ -539,53 +540,66 @@ const NormalVisualNodeContent: FC<{
           </div>
           <div className="title-controls">
             <button className={clsx('pin-button', { pinned: isPinned })} onClick={togglePinned}>
-              {isPinned ? <PinSolidIcon /> : <PinIcon />}
+              <Tooltip content="Pin node (always show entire output)">
+                {isPinned ? <PinSolidIcon /> : <PinIcon />}
+              </Tooltip>
             </button>
             <div className="last-run-status">
               {selectedProcessRun?.status ? (
                 match(selectedProcessRun.status)
                   .with({ type: 'ok' }, () => (
-                    <div className="success">
-                      <SendIcon />
-                    </div>
+                    <Tooltip content="This node ran successfully">
+                      <div className="success">
+                        <SendIcon />
+                      </div>
+                    </Tooltip>
                   ))
                   .with({ type: 'error' }, () => (
-                    <div className="error">
-                      <SendIcon />
-                    </div>
+                    <Tooltip content="This node errored">
+                      <div className="error">
+                        <SendIcon />
+                      </div>
+                    </Tooltip>
                   ))
                   .with({ type: 'running' }, () => (
-                    <div className="running">
-                      <LoadingSpinner />
-                    </div>
+                    <Tooltip content="This node is currently running">
+                      <div className="running">
+                        <LoadingSpinner />
+                      </div>
+                    </Tooltip>
                   ))
                   .with({ type: 'interrupted' }, () => (
-                    <div className="interrupted">
-                      <SendIcon />
-                    </div>
+                    <Tooltip content="This node was interrupted">
+                      <div className="interrupted">
+                        <SendIcon />
+                      </div>
+                    </Tooltip>
                   ))
                   .with({ type: 'notRan' }, () => (
-                    <div className="not-ran">
-                      <SendIcon />
-                    </div>
+                    <Tooltip content="This node was not ran due to control flow">
+                      <div className="not-ran">
+                        <SendIcon />
+                      </div>
+                    </Tooltip>
                   ))
                   .exhaustive()
               ) : (
                 <></>
               )}
             </div>
-            <button
-              className="edit-button"
-              onClick={(e) => {
-                if (isKnownNodeType) {
-                  handleEditClick(e);
-                }
-              }}
-              onMouseDown={handleEditMouseDown}
-              title="Edit"
-            >
-              <SettingsCogIcon />
-            </button>
+            <Tooltip content="Edit Node">
+              <button
+                className="edit-button"
+                onClick={(e) => {
+                  if (isKnownNodeType) {
+                    handleEditClick(e);
+                  }
+                }}
+                onMouseDown={handleEditMouseDown}
+              >
+                <SettingsCogIcon />
+              </button>
+            </Tooltip>
           </div>
         </div>
         <ErrorBoundary fallback={<div>Error rendering node body</div>}>

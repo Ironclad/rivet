@@ -4,6 +4,8 @@ import { useToggle } from 'ahooks';
 import { useRef, type FC, type ReactNode } from 'react';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { CSSTransition } from 'react-transition-group';
+import Portal from '@atlaskit/portal';
+import clsx from 'clsx';
 
 export type TooltipProps = {
   children: ReactNode;
@@ -13,6 +15,7 @@ export type TooltipProps = {
   delay?: number;
   width?: number;
   wrap?: boolean;
+  className?: string;
 };
 
 const TRANSITION_TIME = 150;
@@ -77,6 +80,7 @@ export const Tooltip: FC<TooltipProps> = ({
   delay = 500,
   width,
   wrap = false,
+  className,
 }) => {
   const { refs, floatingStyles, update } = useFloating({
     placement,
@@ -111,30 +115,37 @@ export const Tooltip: FC<TooltipProps> = ({
   });
 
   return (
-    <Tag ref={refs.setReference} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
+    <Tag
+      ref={refs.setReference}
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}
+      className={clsx('tooltip', className)}
+    >
       {children}
-      <CSSTransition
-        nodeRef={floatingRef}
-        in={show}
-        timeout={TRANSITION_TIME}
-        classNames="tooltip"
-        onEntering={() => update()}
-        onEntered={() => update()}
-        onExiting={() => update()}
-        onExited={() => update()}
-      >
-        <div
-          css={style}
-          ref={combinedFloatingRefs}
-          style={{
-            ...floatingStyles,
-            whiteSpace: wrap ? 'normal' : 'nowrap',
-            width,
-          }}
+      <Portal>
+        <CSSTransition
+          nodeRef={floatingRef}
+          in={show}
+          timeout={TRANSITION_TIME}
+          classNames="tooltip"
+          onEntering={() => update()}
+          onEntered={() => update()}
+          onExiting={() => update()}
+          onExited={() => update()}
         >
-          <div className="box">{content}</div>
-        </div>
-      </CSSTransition>
+          <div
+            css={style}
+            ref={combinedFloatingRefs}
+            style={{
+              ...floatingStyles,
+              whiteSpace: wrap ? 'normal' : 'nowrap',
+              width,
+            }}
+          >
+            <div className="box">{content}</div>
+          </div>
+        </CSSTransition>
+      </Portal>
     </Tag>
   );
 };

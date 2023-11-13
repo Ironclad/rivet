@@ -149,6 +149,11 @@ export const nodeStyles = css`
     color: var(--primary-text);
   }
 
+  .title-controls .tooltip {
+    display: flex;
+    align-items: center;
+  }
+
   .node.isComment .title-controls {
     .success,
     .error {
@@ -463,6 +468,7 @@ export const nodeStyles = css`
     right: 4px;
     display: flex;
     gap: 8px;
+    z-index: 10;
   }
 
   .copy-button,

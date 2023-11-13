@@ -20,6 +20,7 @@ import { useToggle } from 'ahooks';
 import Toggle from '@atlaskit/toggle';
 import { pinnedNodesState } from '../state/graphBuilder';
 import { useNodeIO } from '../hooks/useGetNodeIO';
+import { Tooltip } from './Tooltip';
 
 export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -457,13 +458,18 @@ const NodeOutputSingleProcess: FC<{
   return (
     <div className="node-output-inner">
       <div className="overlay-buttons">
-        <div className="copy-button" onClick={handleCopyToClipboard}>
-          <CopyIcon />
-        </div>
-        {node.type === 'chat' && (
-          <div className="prompt-designer-button" onClick={handleOpenPromptDesigner}>
-            <FlaskIcon />
+        <Tooltip content="Copy node output to clipboard">
+          <div className="copy-button" onClick={handleCopyToClipboard}>
+            <CopyIcon />
           </div>
+        </Tooltip>
+
+        {node.type === 'chat' && (
+          <Tooltip content="Open chat in Prompt Designer">
+            <div className="prompt-designer-button" onClick={handleOpenPromptDesigner}>
+              <FlaskIcon />
+            </div>
+          </Tooltip>
         )}
         <div
           className="expand-button"
