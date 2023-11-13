@@ -62,7 +62,7 @@ const styles = css`
 export const DataStudio: FC<{
   onClose: () => void;
 }> = ({ onClose }) => {
-  const selectedDataset = useRecoilValue(selectedDatasetState);
+  const [selectedDataset, setSelectedDataset] = useRecoilState(selectedDatasetState);
 
   const project = useRecoilValue(projectState);
   const { datasets } = useDatasets(project.metadata.id);
@@ -75,7 +75,7 @@ export const DataStudio: FC<{
         <DatasetList />
 
         <div className="dataset-display-area">
-          {selectedDatasetMeta && <DatasetDisplay dataset={selectedDatasetMeta} />}
+          {selectedDatasetMeta && <DatasetDisplay dataset={selectedDatasetMeta} onChangedId={setSelectedDataset} />}
         </div>
       </div>
     </div>

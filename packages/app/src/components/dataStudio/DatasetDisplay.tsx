@@ -2,7 +2,14 @@ import Button from '@atlaskit/button';
 import { DropdownItem } from '@atlaskit/dropdown-menu';
 import Portal from '@atlaskit/portal';
 import { css } from '@emotion/react';
-import { type DatasetMetadata, type DatasetRow, getError, newId, getIntegration } from '@ironclad/rivet-core';
+import {
+  type DatasetMetadata,
+  type DatasetRow,
+  getError,
+  newId,
+  getIntegration,
+  type DatasetId,
+} from '@ironclad/rivet-core';
 import { useState, type FC, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useContextMenu } from '../../hooks/useContextMenu';
@@ -16,6 +23,10 @@ import TextField from '@atlaskit/textfield';
 import { useDebounce } from 'ahooks';
 import useAsyncEffect from 'use-async-effect';
 import { useGetAdHocInternalProcessContext } from '../../hooks/useGetAdHocInternalProcessContext';
+import { InlineEditableTextfield } from '@atlaskit/inline-edit';
+import { useDatasets } from '../../hooks/useDatasets';
+import { useRecoilValue } from 'recoil';
+import { projectMetadataState } from '../../state/savedGraphs';
 
 const datasetDisplayStyles = css`
   padding: 16px;
@@ -29,6 +40,25 @@ const datasetDisplayStyles = css`
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    h1 {
+      flex: 1;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 20px;
+      margin: 0;
+      margin-right: 32px;
+
+      form {
+        flex: 1;
+        margin: 0;
+      }
+
+      form > div {
+        margin: 0;
+      }
+    }
 
     .buttons {
       display: flex;
@@ -76,8 +106,12 @@ export type DatasetRowWithDistance = DatasetRow & {
 
 export const DatasetDisplay: FC<{
   dataset: DatasetMetadata;
-}> = ({ dataset }) => {
+  onChangedId?: (id: DatasetId) => void;
+}> = ({ dataset, onChangedId }) => {
   const { dataset: datasetData, ...datasetMethods } = useDataset(dataset.id);
+
+  const projectMetadata = useRecoilValue(projectMetadataState);
+  const datasetsMethods = useDatasets(projectMetadata.id);
 
   const { contextMenuData, contextMenuRef, handleContextMenu, showContextMenu } = useContextMenu();
 
@@ -167,6 +201,16 @@ export const DatasetDisplay: FC<{
     setFilteredRows(undefined);
   }, [dataset.id]);
 
+  const renameDataset = async (name: string) => {
+    await datasetsMethods.putDataset({ ...dataset, name });
+  };
+
+  const setDatasetId = async (id: string) => {
+    await datasetsMethods.putDataset({ ...dataset, id: id as DatasetId });
+    await datasetsMethods.deleteDataset(dataset.id);
+    onChangedId?.(id as DatasetId);
+  };
+
   return (
     <div
       css={datasetDisplayStyles}
@@ -177,7 +221,22 @@ export const DatasetDisplay: FC<{
       ref={contextMenuRef}
     >
       <header>
-        <h1>{dataset.name}</h1>
+        <h1>
+          Dataset:
+          <InlineEditableTextfield
+            defaultValue={dataset.name}
+            placeholder="Dataset Name"
+            onConfirm={(newName) => renameDataset(newName)}
+            readViewFitContainerWidth
+          />
+          ID:
+          <InlineEditableTextfield
+            defaultValue={dataset.id}
+            placeholder="Dataset ID"
+            onConfirm={(newId) => setDatasetId(newId)}
+            readViewFitContainerWidth
+          />
+        </h1>
         <div className="buttons">
           <div className="searchKnn">
             <TextField
