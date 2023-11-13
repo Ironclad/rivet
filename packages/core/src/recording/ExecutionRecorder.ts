@@ -130,12 +130,15 @@ export class ExecutionRecorder {
   #events: RecordedEvents[] = [];
   recordingId: RecordingId | undefined;
   readonly #emitter: Emittery<ExecutionRecorderEvents>;
-  readonly #options: ExecutionRecorderOptions;
+
+  readonly #includePartialOutputs: boolean;
+  readonly #includeTrace: boolean;
 
   constructor(options: ExecutionRecorderOptions = {}) {
-    this.#options = options;
     this.#emitter = new Emittery();
     this.#emitter.bindMethods(this as any, ['on', 'off', 'once']);
+    this.#includePartialOutputs = options.includePartialOutputs ?? false;
+    this.#includeTrace = options.includeTrace ?? false;
   }
 
   on: Emittery<ExecutionRecorderEvents>['on'] = undefined!;
@@ -149,11 +152,11 @@ export class ExecutionRecorder {
       const listener = (event: MessageEvent) => {
         const { message, data } = JSON.parse(event.data);
 
-        if (this.#options.includePartialOutputs === false && message === 'partialOutput') {
+        if (this.#includePartialOutputs === false && message === 'partialOutput') {
           return;
         }
 
-        if (this.#options.includeTrace === false && message === 'trace') {
+        if (this.#includeTrace === false && message === 'trace') {
           return;
         }
 
@@ -177,11 +180,11 @@ export class ExecutionRecorder {
   record(processor: GraphProcessor) {
     this.recordingId = nanoid() as RecordingId;
     processor.onAny((event, data) => {
-      if (this.#options.includePartialOutputs === false && event === 'partialOutput') {
+      if (this.#includePartialOutputs === false && event === 'partialOutput') {
         return;
       }
 
-      if (this.#options.includeTrace === false && event === 'trace') {
+      if (this.#includeTrace === false && event === 'trace') {
         return;
       }
 
