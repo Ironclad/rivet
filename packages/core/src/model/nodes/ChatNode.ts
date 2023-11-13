@@ -866,7 +866,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
                     try {
                       functionCalls[index]![toolCall.index]!.lastParsedArguments = JSON.parse(
-                        toolCall.function.arguments,
+                        functionCalls[index]![toolCall.index]!.arguments,
                       );
                     } catch (error) {
                       // Ignore
