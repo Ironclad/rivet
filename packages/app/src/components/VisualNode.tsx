@@ -21,7 +21,7 @@ import {
   type PortId,
   type NodeOutputDefinition,
 } from '@ironclad/rivet-core';
-import { lastRunData, selectedProcessPage } from '../state/dataFlow.js';
+import { type ProcessDataForNode, lastRunData, selectedProcessPage } from '../state/dataFlow.js';
 import { NodeBody } from './NodeBody.js';
 import { NodeOutput } from './NodeOutput.js';
 import SettingsCogIcon from 'majesticons/line/settings-cog-line.svg?react';
@@ -36,8 +36,8 @@ import { LoadingSpinner } from './LoadingSpinner.js';
 import { ErrorBoundary } from 'react-error-boundary';
 import { NodePortsRenderer } from './NodePorts.js';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
-import { useIsKnownNodeType } from '../hooks/useIsKnownNodeType';
 import {
+  type DraggingWireDef,
   draggingWireClosestPortState,
   draggingWireState,
   isPinnedState,
@@ -53,6 +53,12 @@ export type VisualNodeProps = {
   isOverlay?: boolean;
   isSelected?: boolean;
   scale?: number;
+  isKnownNodeType: boolean;
+  isPinned: boolean;
+  lastRun?: ProcessDataForNode[];
+  processPage: number | 'latest';
+  draggingWire?: DraggingWireDef;
+  isZoomedOut: boolean;
   onWireStartDrag?: (
     event: MouseEvent<HTMLElement>,
     startNodeId: NodeId,
@@ -98,6 +104,11 @@ export const VisualNode = memo(
         isOverlay,
         scale,
         isSelected,
+        isKnownNodeType,
+        isPinned,
+        lastRun,
+        processPage,
+        isZoomedOut,
         onWireEndDrag,
         onWireStartDrag,
         onSelectNode,
@@ -110,16 +121,8 @@ export const VisualNode = memo(
       },
       ref,
     ) => {
-      const lastRun = useRecoilValue(lastRunData(node.id));
-      const processPage = useRecoilValue(selectedProcessPage(node.id));
-      const isPinned = useRecoilValue(isPinnedState(node.id));
-
       const isComment = node.type === 'comment';
       useDependsOnPlugins();
-
-      const {
-        canvasPosition: { zoom },
-      } = useCanvasPositioning();
 
       const asCommentNode = node as CommentNode;
       const style = useMemo(() => {
@@ -169,14 +172,12 @@ export const VisualNode = memo(
         }
       };
 
-      const isZoomedOut = !isComment && zoom < 0.4;
+      // const isZoomedOut = !isComment && zoom < 0.4;
 
       const selectedProcessRun =
         lastRun && lastRun.length > 0
           ? lastRun?.at(processPage === 'latest' ? lastRun.length - 1 : processPage)?.data
           : undefined;
-
-      const isKnownNodeType = useIsKnownNodeType(node.type);
 
       return (
         <div
@@ -214,6 +215,9 @@ export const VisualNode = memo(
               onStartEditing={onStartEditing}
               onPortMouseOver={onPortMouseOver}
               onPortMouseOut={onPortMouseOut}
+              isKnownNodeType={isKnownNodeType}
+              lastRun={lastRun}
+              processPage={processPage}
             />
           ) : (
             <NormalVisualNodeContent
@@ -227,6 +231,10 @@ export const VisualNode = memo(
               handleAttributes={handleAttributes}
               onPortMouseOver={onPortMouseOver}
               onPortMouseOut={onPortMouseOut}
+              isKnownNodeType={isKnownNodeType}
+              lastRun={lastRun}
+              processPage={processPage}
+              isPinned={isPinned}
             />
           )}
         </div>
@@ -239,6 +247,9 @@ const ZoomedOutVisualNodeContent: FC<{
   node: ChartNode;
   connections?: NodeConnection[];
   handleAttributes?: HTMLAttributes<HTMLDivElement>;
+  isKnownNodeType: boolean;
+  lastRun?: ProcessDataForNode[];
+  processPage: number | 'latest';
   onSelectNode?: (multi: boolean) => void;
   onStartEditing?: () => void;
   onWireStartDrag?: (event: MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => void;
@@ -262,6 +273,9 @@ const ZoomedOutVisualNodeContent: FC<{
     node,
     connections = [],
     handleAttributes,
+    isKnownNodeType,
+    lastRun,
+    processPage,
     onSelectNode,
     onStartEditing,
     onWireStartDrag,
@@ -269,8 +283,6 @@ const ZoomedOutVisualNodeContent: FC<{
     onPortMouseOver,
     onPortMouseOut,
   }) => {
-    const lastRun = useRecoilValue(lastRunData(node.id));
-    const processPage = useRecoilValue(selectedProcessPage(node.id));
     useDependsOnPlugins();
 
     const handleEditClick = useStableCallback((event: MouseEvent<HTMLButtonElement>) => {
@@ -295,7 +307,6 @@ const ZoomedOutVisualNodeContent: FC<{
 
     const draggingWire = useRecoilValue(draggingWireState);
     const closestPortToDraggingWire = useRecoilValue(draggingWireClosestPortState);
-    const isKnownNodeType = useIsKnownNodeType(node.type);
 
     return (
       <>
@@ -368,6 +379,10 @@ const NormalVisualNodeContent: FC<{
   node: ChartNode;
   connections?: NodeConnection[];
   handleAttributes?: HTMLAttributes<HTMLDivElement>;
+  isKnownNodeType: boolean;
+  lastRun?: ProcessDataForNode[];
+  processPage: number | 'latest';
+  isPinned: boolean;
   onWireStartDrag?: (
     event: MouseEvent<HTMLElement>,
     startNodeId: NodeId,
@@ -396,6 +411,9 @@ const NormalVisualNodeContent: FC<{
   ({
     node,
     connections = [],
+    lastRun,
+    processPage,
+    isPinned,
     onWireStartDrag,
     onWireEndDrag,
     onSelectNode,
@@ -404,9 +422,8 @@ const NormalVisualNodeContent: FC<{
     handleAttributes,
     onPortMouseOver,
     onPortMouseOut,
+    isKnownNodeType,
   }) => {
-    const lastRun = useRecoilValue(lastRunData(node.id));
-    const processPage = useRecoilValue(selectedProcessPage(node.id));
     useDependsOnPlugins();
 
     const [initialHeight, setInitialHeight] = useState<number | undefined>();
@@ -494,12 +511,9 @@ const NormalVisualNodeContent: FC<{
       onSelectNode?.(event.shiftKey);
     });
 
-    const isKnownNodeType = useIsKnownNodeType(node.type);
-
     const draggingWire = useRecoilValue(draggingWireState);
     const closestPortToDraggingWire = useRecoilValue(draggingWireClosestPortState);
 
-    const isPinned = useRecoilValue(isPinnedState(node.id));
     const setPinnedNodes = useSetRecoilState(pinnedNodesState);
 
     const togglePinned = useStableCallback(() => {

@@ -11,11 +11,14 @@ import { type MouseEvent, type FC } from 'react';
 import { VisualNode } from './VisualNode.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { ErrorBoundary } from 'react-error-boundary';
+import { type ProcessDataForNode } from '../state/dataFlow';
+import { type DraggingWireDef } from '../state/graphBuilder';
 
 interface DraggableNodeProps {
   node: ChartNode;
   connections?: NodeConnection[];
   isSelected?: boolean;
+  isKnownNodeType: boolean;
   onWireStartDrag?: (
     event: MouseEvent<HTMLElement>,
     startNodeId: NodeId,
@@ -23,6 +26,11 @@ interface DraggableNodeProps {
     isInput: boolean,
   ) => void;
   canvasZoom: number;
+  lastRun?: ProcessDataForNode[];
+  processPage: number | 'latest';
+  draggingWire?: DraggingWireDef;
+  isZoomedOut: boolean;
+  isPinned: boolean;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
   onNodeSelected?: (node: ChartNode, multi: boolean) => void;
   onNodeStartEditing?: (node: ChartNode) => void;
@@ -50,6 +58,12 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
   connections = [],
   isSelected = false,
   canvasZoom,
+  isKnownNodeType,
+  lastRun,
+  processPage,
+  draggingWire,
+  isZoomedOut,
+  isPinned,
   onWireStartDrag,
   onWireEndDrag,
   onNodeSelected,
@@ -74,6 +88,12 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
         yDelta={transform ? transform.y / canvasZoom : 0}
         nodeAttributes={attributes}
         handleAttributes={listeners}
+        isKnownNodeType={isKnownNodeType}
+        lastRun={lastRun}
+        processPage={processPage}
+        draggingWire={draggingWire}
+        isZoomedOut={isZoomedOut}
+        isPinned={isPinned}
         onWireEndDrag={onWireEndDrag}
         onWireStartDrag={onWireStartDrag}
         onSelectNode={useStableCallback((multi: boolean) => {

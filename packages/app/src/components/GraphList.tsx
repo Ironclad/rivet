@@ -15,7 +15,6 @@ import {
   type FocusEvent,
   type MouseEvent,
   type KeyboardEvent,
-  useEffect,
   memo,
 } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -40,7 +39,6 @@ import { toast } from 'react-toastify';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import TextField from '@atlaskit/textfield';
 import { useFuseSearch } from '../hooks/useFuseSearch';
-import { useGraphExecutor } from '../hooks/useGraphExecutor';
 import { useImportGraph } from '../hooks/useImportGraph';
 import { expandedFoldersState } from '../state/ui';
 
@@ -313,7 +311,7 @@ function getFolderNames(folderedGraphs: NodeGraphFolderItem[]): string[] {
   return folderNames;
 }
 
-export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onRunGraph }) => {
+export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo(({ onRunGraph }) => {
   const projectMetadata = useRecoilValue(projectMetadataState);
   const [graph, setGraph] = useRecoilState(graphState);
   const [savedGraphs, setSavedGraphs] = useRecoilState(savedGraphsState);
@@ -325,7 +323,7 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
     ['metadata.name' as keyof NodeGraph, 'metadata.description' as keyof NodeGraph],
     {},
   );
-  const filteredGraphs = searchedGraphs.map((g) => g.item);
+  const filteredGraphs = useMemo(() => searchedGraphs.map((g) => g.item), [searchedGraphs]);
 
   // Track the graph that is being renamed, so that we can update the name when the user is done.
   const [renamingItemFullPath, setRenamingItemFullPath] = useState<string | undefined>();
@@ -336,7 +334,10 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
   // Track folders on deletion or creation, so that empty folders aren't automatically deleted.
   const [folderNames, setFolderNames] = useState<string[]>([]);
 
-  const folderedGraphs = createFoldersFromGraphs(filteredGraphs, folderNames);
+  const folderedGraphs = useMemo(
+    () => createFoldersFromGraphs(filteredGraphs, folderNames),
+    [filteredGraphs, folderNames],
+  );
 
   const runningGraphs = useRecoilValue(runningGraphsState);
 
@@ -462,10 +463,10 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
     }));
   });
 
-  function handleDragStart(drag: DragStartEvent) {
+  const handleDragStart = useStableCallback((drag: DragStartEvent) => {
     const activeFullPath = drag.active?.id as string;
     setDraggingItemFullPath(activeFullPath);
-  }
+  });
 
   const handleDragEnd = useStableCallback((dragResult: DragEndEvent) => {
     setDragOverFolderName(undefined);
@@ -488,14 +489,14 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
 
   const [dragOverFolderName, setDragOverFolderName] = useState<string | undefined>();
 
-  function handleDragOver(dragOver: DragOverEvent) {
+  const handleDragOver = useStableCallback((dragOver: DragOverEvent) => {
     const overFullPath = dragOver.over?.id as string;
     if (overFullPath == null) {
       setDragOverFolderName(undefined);
     } else {
       setDragOverFolderName(overFullPath.indexOf('/') > 0 ? overFullPath.replace(/\/[^/]*$/, '') : '');
     }
-  }
+  });
 
   const { setShowContextMenu, showContextMenu, contextMenuData, handleContextMenu, floatingStyles, refs } =
     useContextMenu();
@@ -512,12 +513,12 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
     ? contextMenuData.data?.element.dataset.folderpath
     : undefined;
 
-  const handleSearchKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleSearchKeyDown = useStableCallback((e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Escape') {
       setSearchText('');
       (e.target as HTMLElement).blur();
     }
-  };
+  });
 
   return (
     <div css={styles}>
@@ -712,13 +713,17 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = ({ onR
       </div>
     </div>
   );
-};
+});
+
+GraphList.displayName = 'GraphList';
 
 // Allows the bottom of the list to be a drop target
-export const GraphListSpacer: FC = () => {
+export const GraphListSpacer: FC = memo(() => {
   const { setNodeRef: setDroppableNodeRef } = useDroppable({ id: '/' });
   return <div className="graph-list-spacer" ref={setDroppableNodeRef} />;
-};
+});
+
+GraphListSpacer.displayName = 'GraphListSpacer';
 
 export const FolderItem: FC<{
   item: NodeGraphFolderItem;

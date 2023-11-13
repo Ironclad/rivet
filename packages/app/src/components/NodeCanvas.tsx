@@ -48,6 +48,8 @@ import { useSearchGraph } from '../hooks/useSearchGraph';
 import { zoomSensitivityState } from '../state/settings';
 import { MouseIcon } from './MouseIcon';
 import { PortInfo } from './PortInfo';
+import { useNodeTypes } from '../hooks/useNodeTypes';
+import { lastRunDataByNodeState, selectedProcessPageNodesState } from '../state/dataFlow';
 
 const styles = css`
   width: 100vw;
@@ -567,6 +569,12 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   const pinnedNodes = useRecoilValue(pinnedNodesState);
 
+  const nodeTypes = useNodeTypes();
+  const lastRunPerNode = useRecoilValue(lastRunDataByNodeState);
+  const selectedProcessPagePerNode = useRecoilValue(selectedProcessPageNodesState);
+
+  const isZoomedOut = canvasPosition.zoom < 0.4;
+
   return (
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
       <div
@@ -617,6 +625,12 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
                   connections={nodeConnections}
                   isSelected={highlightedNodes.includes(node.id) || searchMatchingNodes.includes(node.id)}
                   canvasZoom={canvasPosition.zoom}
+                  isKnownNodeType={node.type in nodeTypes}
+                  lastRun={lastRunPerNode[node.id]}
+                  isPinned={pinnedNodes.includes(node.id)}
+                  isZoomedOut={isZoomedOut && node.type !== 'comment'}
+                  processPage={selectedProcessPagePerNode[node.id]!}
+                  draggingWire={draggingWire}
                   onWireStartDrag={onWireStartDrag}
                   onWireEndDrag={onWireEndDrag}
                   onNodeSelected={nodeSelected}
@@ -649,7 +663,16 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
             ]}
           >
             {draggingNodes.map((node) => (
-              <VisualNode key={node.id} node={node} connections={draggingNodeConnections} isOverlay />
+              <VisualNode
+                key={node.id}
+                node={node}
+                connections={draggingNodeConnections}
+                isOverlay
+                isKnownNodeType={node.type in nodeTypes}
+                isPinned={pinnedNodes.includes(node.id)}
+                isZoomedOut={isZoomedOut && node.type !== 'comment'}
+                processPage={selectedProcessPagePerNode[node.id]!}
+              />
             ))}
           </DragOverlay>
         </div>
