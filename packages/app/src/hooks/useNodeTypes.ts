@@ -21,6 +21,7 @@ import { pluginRefreshCounterState } from '../state/plugins';
 import { loadDatasetNodeDescriptor } from '../components/nodes/LoadDatasetNode';
 import { datasetNearestNeighborsNodeDescriptor } from '../components/nodes/DatasetNearestNeighborsNode';
 import { getDatasetRowNodeDescriptor } from '../components/nodes/GetDatasetRowNode';
+import { replaceDatasetNodeDescriptor } from '../components/nodes/ReplaceDatasetNode';
 
 export type UnknownNodeComponentDescriptor = {
   Body?: FC<{ node: ChartNode }>;
@@ -60,6 +61,7 @@ const overriddenDescriptors: Partial<NodeComponentDescriptors> = {
   loadDataset: loadDatasetNodeDescriptor,
   datasetNearestNeighbors: datasetNearestNeighborsNodeDescriptor,
   getDatasetRow: getDatasetRowNodeDescriptor,
+  replaceDataset: replaceDatasetNodeDescriptor,
 };
 
 export function useNodeTypes(): NodeComponentDescriptors {
