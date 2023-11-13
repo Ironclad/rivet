@@ -93,6 +93,16 @@ export function inferType(value: unknown): DataValue {
     return { type: 'datetime', value: value.toISOString() };
   }
 
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      return { type: 'any[]', value: [] };
+    }
+
+    const inferredType = inferType(value[0]);
+
+    return { type: inferredType.type + '[]', value } as DataValue;
+  }
+
   if (typeof value === 'object') {
     return { type: 'object', value: value as Record<string, unknown> };
   }
