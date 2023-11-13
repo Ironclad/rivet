@@ -58,6 +58,11 @@ const multiOutput = css`
   .multi-output-item {
     border-bottom: 1px solid var(--grey-lightish);
     padding-bottom: 8px;
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
   }
 
   &.chat-message-list {
