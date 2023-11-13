@@ -713,8 +713,6 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
     const { messages } = getChatNodeMessages(inputs);
 
-    output['in-messages' as PortId] = { type: 'chat-message[]', value: messages };
-
     const completionMessages = await Promise.all(
       messages.map((message) => chatMessageToOpenAIChatCompletionMessage(message)),
     );
@@ -939,6 +937,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             throw new Error('No response from OpenAI');
           }
 
+          output['in-messages' as PortId] = { type: 'chat-message[]', value: messages };
           output['requestTokens' as PortId] = { type: 'number', value: tokenCount * numberOfChoices };
 
           const responseTokenCount = responseChoicesParts
