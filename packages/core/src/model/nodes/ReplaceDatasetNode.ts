@@ -37,7 +37,7 @@ export class ReplaceDatasetNodeImpl extends NodeImpl<ReplaceDatasetNode> {
 
     inputDefinitions.push({
       id: 'data' as PortId,
-      dataType: 'string[]',
+      dataType: 'object[]',
       title: 'Data',
       description:
         'The data to replace in the dataset. May be a string or array of strings. If an array, each element will be a column in the dataset.',

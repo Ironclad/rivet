@@ -61,7 +61,7 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
 
     return inputNames.map((inputName) => {
       return {
-        type: 'string',
+        type: 'any',
         id: inputName.trim() as PortId,
         title: inputName.trim(),
         dataType: 'string',
@@ -81,7 +81,7 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
       return {
         id: outputName.trim() as PortId,
         title: outputName.trim(),
-        dataType: 'string',
+        dataType: 'any',
       };
     });
   }
