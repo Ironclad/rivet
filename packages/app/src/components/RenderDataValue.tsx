@@ -55,6 +55,11 @@ const multiOutput = css`
   flex-direction: column;
   gap: 8px;
 
+  .multi-output-item {
+    border-bottom: 1px solid var(--grey-lightish);
+    padding-bottom: 8px;
+  }
+
   &.chat-message-list {
     gap: 0;
 
