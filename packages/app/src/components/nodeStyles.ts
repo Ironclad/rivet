@@ -104,6 +104,7 @@ export const nodeStyles = css`
     display: flex;
     align-items: center;
     gap: 0;
+    margin-right: -8px;
 
     .success,
     .error,
@@ -130,14 +131,18 @@ export const nodeStyles = css`
       color: var(--node-bg-foreground);
       cursor: pointer;
       font-size: 18px;
-      margin-left: 8px;
       transition: color 0.2s ease-out;
-      margin: -12px;
-      width: 46px;
+      margin: -12px 0;
+      width: 30px;
       height: 46px;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 0;
+
+      svg {
+        width: 18px;
+      }
     }
 
     button:hover {
