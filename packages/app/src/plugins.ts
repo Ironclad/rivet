@@ -6,6 +6,7 @@ import GentraceLogo from './assets/vendor_logos/gentrace.svg';
 import HuggingFaceLogo from './assets/vendor_logos/hf-logo.svg';
 import MongoDBLogo from './assets/vendor_logos/MongoDB_Logomark_ForestGreen.svg';
 import PineconeLogo from './assets/vendor_logos/pinecone-logo.png';
+import OpenAILogo from './assets/vendor_logos/openai-white-logomark.svg';
 
 type SharedPluginInfo = {
   id: string;
@@ -188,5 +189,6 @@ export const pluginInfos: PluginInfo[] = [
       Adds full OpenAI support, such as fine-tuning, assistants, and more.
     `,
     author: 'Rivet Team',
+    logoImage: OpenAILogo,
   },
 ];
