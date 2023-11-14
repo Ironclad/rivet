@@ -18,6 +18,8 @@ import { SortableContext, horizontalListSortingStrategy, useSortable, arrayMove 
 import { useLoadProjectWithFileBrowser } from '../hooks/useLoadProjectWithFileBrowser';
 import { graphNavigationStackState } from '../state/graphBuilder';
 import { newProjectModalOpenState } from '../state/ui';
+import DiscordLogo from '../assets/vendor_logos/discord-mark-white.svg?react';
+import { useOpenUrl } from '../hooks/useOpenUrl';
 
 export const styles = css`
   position: absolute;
@@ -75,6 +77,25 @@ export const styles = css`
       svg {
         width: 16px;
         height: 16px;
+      }
+    }
+
+    .get-help {
+      display: flex;
+      white-space: nowrap;
+      padding: 4px 8px;
+      background: var(--grey-darkish);
+      border-radius: 12px;
+      min-width: 80px;
+      flex-shrink: 0;
+      height: 28px;
+      align-items: center;
+      gap: 6px;
+
+      svg {
+        width: 16px;
+        height: 16px;
+        fill: #5865f2;
       }
     }
   }
@@ -248,6 +269,8 @@ export const ProjectSelector: FC = () => {
     }
   };
 
+  const openDiscord = useOpenUrl('https://discord.gg/qT8B2gv9Mg');
+
   return (
     <div css={styles}>
       <div className="projects-container">
@@ -274,6 +297,9 @@ export const ProjectSelector: FC = () => {
         </button>
         <button className="open-project" onClick={loadProjectWithFileBrowser} title="Open Project">
           <FolderIcon />
+        </button>
+        <button className="get-help" onClick={openDiscord}>
+          <DiscordLogo /> Discord
         </button>
       </div>
     </div>
