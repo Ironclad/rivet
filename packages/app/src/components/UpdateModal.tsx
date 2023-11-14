@@ -1,15 +1,15 @@
-import { useState, type FC, useEffect } from 'react';
+import { useState, type FC } from 'react';
 
 import Modal, { ModalTransition, ModalBody, ModalFooter, ModalHeader, ModalTitle } from '@atlaskit/modal-dialog';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { skippedMaxVersionState, updateModalOpenState, updateStatusState } from '../state/settings';
 import Button from '@atlaskit/button';
 import useAsyncEffect from 'use-async-effect';
-import { checkUpdate, installUpdate, onUpdaterEvent } from '@tauri-apps/api/updater';
+import { checkUpdate, installUpdate } from '@tauri-apps/api/updater';
 import { getVersion } from '@tauri-apps/api/app';
 import { css } from '@emotion/react';
-import { relaunch } from '@tauri-apps/api/process';
 import { useMarkdown } from '../hooks/useMarkdown';
+import { relaunch } from '@tauri-apps/api/process';
 
 const bodyStyle = css`
   pre {
@@ -60,12 +60,6 @@ export const UpdateModal: FC = () => {
     setModalOpen(false);
   };
 
-  useAsyncEffect(async () => {
-    if (updateStatus === 'Installed.') {
-      await relaunch();
-    }
-  }, [updateStatus]);
-
   const skipUpdate = () => {
     setSkippedMaxVersion(latestVersion);
     handleModalClose();
@@ -93,7 +87,13 @@ export const UpdateModal: FC = () => {
         </ModalBody>
         <ModalFooter>
           {isUpdating ? (
-            <div>{updateStatus}</div>
+            updateStatus === 'Installed.' ? (
+              <Button appearance="primary" onClick={relaunch}>
+                Update complete! Click to restart.
+              </Button>
+            ) : (
+              <div>{updateStatus}</div>
+            )
           ) : (
             <>
               <Button appearance="primary" onClick={doUpdate}>

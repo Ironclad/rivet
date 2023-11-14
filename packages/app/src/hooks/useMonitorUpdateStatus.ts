@@ -1,11 +1,9 @@
-import { useEffect } from 'react';
 import { isInTauri } from '../utils/tauri';
 import { onUpdaterEvent } from '@tauri-apps/api/updater';
 import { useSetRecoilState } from 'recoil';
 import { updateStatusState } from '../state/settings';
 import { match } from 'ts-pattern';
 import useAsyncEffect from 'use-async-effect';
-import { relaunch } from '@tauri-apps/api/process';
 
 export function useMonitorUpdateStatus() {
   const setUpdateStatus = useSetRecoilState(updateStatusState);
