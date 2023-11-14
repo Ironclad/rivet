@@ -9,6 +9,7 @@ import { checkUpdate, installUpdate, onUpdaterEvent } from '@tauri-apps/api/upda
 import { getVersion } from '@tauri-apps/api/app';
 import { css } from '@emotion/react';
 import { relaunch } from '@tauri-apps/api/process';
+import { useMarkdown } from '../hooks/useMarkdown';
 
 const bodyStyle = css`
   pre {
@@ -72,9 +73,11 @@ export const UpdateModal: FC = () => {
 
   const canRender = currentVersion && latestVersion && updateBody;
 
+  const markdownBody = useMarkdown(updateBody ?? '', !!canRender);
+
   return (
     canRender && (
-      <Modal onClose={handleModalClose}>
+      <Modal width="large" onClose={handleModalClose}>
         <ModalHeader>
           <ModalTitle>🎉 Update Available</ModalTitle>
         </ModalHeader>
@@ -85,7 +88,7 @@ export const UpdateModal: FC = () => {
               <strong>{currentVersion}</strong>. Would you like to install it now?
             </p>
             <h4>Update Notes:</h4>
-            <pre>{updateBody}</pre>
+            <div dangerouslySetInnerHTML={markdownBody} />
           </div>
         </ModalBody>
         <ModalFooter>
