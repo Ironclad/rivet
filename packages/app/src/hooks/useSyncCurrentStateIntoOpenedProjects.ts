@@ -99,12 +99,4 @@ export function useSyncCurrentStateIntoOpenedProjects() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
   }, [currentProject]);
-
-  // Make sure opened projects sorted ids are in sync with opened projects
-  useEffect(() => {
-    if (openedProjectsSortedIds.some((id) => openedProjects[id] == null)) {
-      setOpenedProjectsSortedIds((ids) => ids.filter((id) => openedProjects[id] != null));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
-  }, [openedProjects, openedProjectsSortedIds]);
 }

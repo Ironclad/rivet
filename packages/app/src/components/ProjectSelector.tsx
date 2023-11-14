@@ -7,7 +7,7 @@ import CloseIcon from 'majesticons/line/multiply-line.svg?react';
 import BlankFileIcon from 'majesticons/line/file-line.svg?react';
 import FileIcon from 'majesticons/line/file-plus-line.svg?react';
 import FolderIcon from 'majesticons/line/folder-line.svg?react';
-import { openedProjectsSortedIdsState, openedProjectsState, projectState } from '../state/savedGraphs';
+import { openedProjectsSortedIdsState, openedProjectsState, projectState, projectsState } from '../state/savedGraphs';
 import clsx from 'clsx';
 import { useLoadProject } from '../hooks/useLoadProject';
 import { useSyncCurrentStateIntoOpenedProjects } from '../hooks/useSyncCurrentStateIntoOpenedProjects';
@@ -20,6 +20,7 @@ import { graphNavigationStackState } from '../state/graphBuilder';
 import { newProjectModalOpenState } from '../state/ui';
 import DiscordLogo from '../assets/vendor_logos/discord-mark-white.svg?react';
 import { useOpenUrl } from '../hooks/useOpenUrl';
+import { keys } from '../../../core/src/utils/typeSafety';
 
 export const styles = css`
   position: absolute;
@@ -40,6 +41,7 @@ export const styles = css`
     display: flex;
     flex: 1;
     width: 100%;
+    overflow: hidden;
   }
 
   .projects {
@@ -208,6 +210,7 @@ export const styles = css`
 `;
 
 export const ProjectSelector: FC = () => {
+  const setProjects = useSetRecoilState(projectsState);
   const [openedProjects, setOpenedProjects] = useRecoilState(openedProjectsState);
   const [openedProjectsSortedIds, setOpenedProjectsSortedIds] = useRecoilState(openedProjectsSortedIdsState);
 
@@ -242,15 +245,18 @@ export const ProjectSelector: FC = () => {
       return;
     }
 
-    setOpenedProjects((openedProjects) =>
-      produce(openedProjects, (draft) => {
-        delete draft[projectId];
-      }),
-    );
+    setProjects((projects) =>
+      produce(projects, (draft) => {
+        delete draft.openedProjects[projectId];
+        draft.openedProjectsSortedIds = draft.openedProjectsSortedIds.filter(
+          (id) => id !== projectId && draft.openedProjects[id] != null,
+        );
 
-    setOpenedProjectsSortedIds((openedProjectsSortedIds) =>
-      produce(openedProjectsSortedIds, (draft) => {
-        draft.splice(indexOfProject, 1);
+        for (const projectId of keys(draft.openedProjects)) {
+          if (draft.openedProjectsSortedIds.includes(projectId) === false) {
+            delete draft.openedProjects[projectId];
+          }
+        }
       }),
     );
 
@@ -352,6 +358,11 @@ export const ProjectTab: FC<{
     }
   };
 
+  const closeProject = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    onCloseProject?.();
+  };
+
   return (
     <div
       className={clsx('project', { active: currentProject.metadata.id === projectId, unsaved })}
@@ -362,7 +373,7 @@ export const ProjectTab: FC<{
         <span>{projectDisplayName}</span>
       </div>
       <div className="actions">
-        <button className="close-project" onClick={onCloseProject}>
+        <button className="close-project" onMouseDown={(e) => e.stopPropagation()} onClick={closeProject}>
           <CloseIcon />
         </button>
       </div>
