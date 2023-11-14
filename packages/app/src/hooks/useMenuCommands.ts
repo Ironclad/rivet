@@ -9,7 +9,7 @@ import { graphState } from '../state/graph.js';
 import { useLoadRecording } from './useLoadRecording.js';
 import { type WebviewWindow } from '@tauri-apps/api/window';
 import { ioProvider } from '../utils/globals.js';
-import { newProjectModalOpenState } from '../state/ui';
+import { helpModalOpenState, newProjectModalOpenState } from '../state/ui';
 import { useToggleRemoteDebugger } from '../components/DebuggerConnectPanel';
 import { lastRunDataByNodeState } from '../state/dataFlow';
 import { useImportGraph } from './useImportGraph';
@@ -27,7 +27,8 @@ type MenuIds =
   | 'load_recording'
   | 'remote_debugger'
   | 'toggle_devtools'
-  | 'clear_outputs';
+  | 'clear_outputs'
+  | 'get_help';
 
 const handlerState: {
   handler: (e: { payload: MenuIds }) => void;
@@ -66,6 +67,7 @@ export function useMenuCommands(
   const toggleRemoteDebugger = useToggleRemoteDebugger();
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
   const importGraph = useImportGraph();
+  const setHelpModalOpen = useSetRecoilState(helpModalOpenState);
 
   useEffect(() => {
     const handler: (e: { payload: MenuIds }) => void = ({ payload }) => {
@@ -106,6 +108,9 @@ export function useMenuCommands(
         .with('toggle_devtools', () => {})
         .with('clear_outputs', () => {
           setLastRunData({});
+        })
+        .with('get_help', () => {
+          setHelpModalOpen(true);
         })
         .exhaustive();
     };

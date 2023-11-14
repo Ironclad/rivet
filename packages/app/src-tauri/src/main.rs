@@ -109,8 +109,7 @@ fn create_menu() -> Menu {
     let help_menu = Submenu::new(
         "Help",
         Menu::new()
-            .add_item(CustomMenuItem::new("Learn More", "Learn More"))
-            .add_native_item(MenuItem::Separator)
+            .add_item(CustomMenuItem::new("get_help", "Get Help"))
             .add_item(
                 CustomMenuItem::new("toggle_devtools", "Toggle Developer Tools").accelerator("F12"),
             ),

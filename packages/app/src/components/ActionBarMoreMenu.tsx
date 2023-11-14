@@ -6,7 +6,7 @@ import { useSetRecoilState, useRecoilState } from 'recoil';
 import { useLoadRecording } from '../hooks/useLoadRecording';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
 import { selectedExecutorState } from '../state/execution';
-import { debuggerPanelOpenState } from '../state/ui';
+import { debuggerPanelOpenState, helpModalOpenState } from '../state/ui';
 import { isInTauri } from '../utils/tauri';
 import { settingsModalOpenState } from './SettingsModal';
 import LinkIcon from 'majesticons/line/link-circle-line.svg?react';
@@ -17,6 +17,7 @@ import CopyIcon from 'majesticons/line/clipboard-plus-line.svg?react';
 import { CopyAsTestCaseModal } from './CopyAsTestCaseModal';
 import { useToggle } from 'ahooks';
 import { executorOptions } from '../state/settings';
+import QuestionIcon from 'majesticons/line/question-circle-line.svg?react';
 
 const moreMenuStyles = css`
   background-color: var(--grey-darkish);
@@ -81,6 +82,7 @@ export const ActionBarMoreMenu: FC<{
   const [selectedExecutor, setSelectedExecutor] = useRecoilState(selectedExecutorState);
   const selectedExecutorOption = executorOptions.find((option) => option.value === selectedExecutor);
   const { loadRecording } = useLoadRecording();
+  const setHelpModalOpen = useSetRecoilState(helpModalOpenState);
 
   const openDebuggerPanel = () => {
     setDebuggerPanelOpen(true);
@@ -94,6 +96,11 @@ export const ActionBarMoreMenu: FC<{
 
   const openSettings = () => {
     setSettingsOpen(true);
+    onClose();
+  };
+
+  const openHelp = () => {
+    setHelpModalOpen(true);
     onClose();
   };
 
@@ -136,6 +143,9 @@ export const ActionBarMoreMenu: FC<{
       </div>
       <div className="menu-item menu-item-button settings" onClick={openSettings}>
         <GearIcon /> Settings
+      </div>
+      <div className="menu-item menu-item-button help" onClick={openHelp}>
+        <QuestionIcon /> Help
       </div>
     </div>
   );

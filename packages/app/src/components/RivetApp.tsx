@@ -29,6 +29,7 @@ import { ProjectSelector } from './ProjectSelector';
 import { NewProjectModalRenderer } from './NewProjectModal';
 import { useWindowTitle } from '../hooks/useWindowTitle';
 import { CommunityOverlayRenderer } from './community/CommunityOverlay';
+import { HelpModal } from './HelpModal';
 
 const styles = css`
   overflow: hidden;
@@ -81,6 +82,7 @@ export const RivetApp: FC = () => {
       <UpdateModalRenderer />
       <NewProjectModalRenderer />
       <CommunityOverlayRenderer />
+      <HelpModal />
       <ToastContainer enableMultiContainer position="bottom-right" hideProgressBar newestOnTop />
       <ToastContainer
         enableMultiContainer
