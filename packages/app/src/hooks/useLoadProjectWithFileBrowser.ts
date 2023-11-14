@@ -1,5 +1,5 @@
-import { useSetRecoilState } from 'recoil';
-import { loadedProjectState, projectState } from '../state/savedGraphs.js';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { loadedProjectState, openedProjectsState, projectState } from '../state/savedGraphs.js';
 import { emptyNodeGraph, getError } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph.js';
 import { ioProvider } from '../utils/globals.js';
@@ -15,11 +15,21 @@ export function useLoadProjectWithFileBrowser() {
   const setTrivetState = useSetRecoilState(trivetState);
   const setStaticData = useSetStaticData();
   const setNavigationStack = useSetRecoilState(graphNavigationStackState);
+  const openedProjects = useRecoilValue(openedProjectsState);
 
   return async () => {
     try {
       await ioProvider.loadProjectData(({ project, testData, path }) => {
         const { data, ...projectData } = project;
+
+        if (
+          Object.values(openedProjects).some((p) => p.fsPath !== path && p.project.metadata.id === project.metadata.id)
+        ) {
+          toast.error(
+            `A project with the ID ${project.metadata.id} is already open. Please close that project first to open this one.`,
+          );
+          return;
+        }
 
         setProject(projectData);
         setNavigationStack({ stack: [], index: undefined });
