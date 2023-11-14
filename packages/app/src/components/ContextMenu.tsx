@@ -187,6 +187,8 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
         <div style={floatingStyles} css={menuStyles} ref={refs.setFloating}>
           <div className="context-menu-search">
             <input
+              autoComplete="off"
+              spellCheck={false}
               ref={searchRef}
               autoFocus
               placeholder="Search..."

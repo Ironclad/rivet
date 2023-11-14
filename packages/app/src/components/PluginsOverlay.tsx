@@ -316,6 +316,8 @@ export const PluginsOverlay: FC = () => {
         <h1>Plugin</h1>
         <div className="plugin-search">
           <TextField
+            autoComplete="off"
+            spellCheck={false}
             placeholder="Search..."
             value={searchText}
             onChange={(e) => setSearchText((e.target as HTMLInputElement).value)}
