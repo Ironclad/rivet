@@ -120,6 +120,8 @@ export const NavigationBar: FC = () => {
             type="text"
             placeholder="Search..."
             autoFocus
+            autoComplete="off"
+            spellCheck={false}
             value={searching.query}
             onChange={(e) => setSearching({ searching: true, query: e.target.value })}
             onKeyDown={(e) => {

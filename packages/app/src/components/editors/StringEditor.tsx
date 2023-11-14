@@ -71,6 +71,8 @@ export const StringEditor: FC<{
             value={value}
             isReadOnly={isReadonly}
             autoFocus={autoFocus}
+            autoComplete="off"
+            spellCheck={false}
             placeholder={placeholder}
             maxLength={maxLength}
             onChange={(e) => onChange((e.target as HTMLInputElement).value)}

@@ -524,6 +524,8 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo((
     <div css={styles}>
       <div className="search">
         <input
+          autoComplete="off"
+          spellCheck={false}
           type="text"
           placeholder="Search..."
           value={searchText}
