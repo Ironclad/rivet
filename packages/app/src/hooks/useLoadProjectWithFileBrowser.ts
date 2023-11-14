@@ -22,11 +22,24 @@ export function useLoadProjectWithFileBrowser() {
       await ioProvider.loadProjectData(({ project, testData, path }) => {
         const { data, ...projectData } = project;
 
+        console.log(path, project.metadata.id);
+
         if (
-          Object.values(openedProjects).some((p) => p.fsPath !== path && p.project.metadata.id === project.metadata.id)
+          Object.values(openedProjects).some((p) => p.fsPath === path)
         ) {
           toast.error(
-            `A project with the ID ${project.metadata.id} is already open. Please close that project first to open this one.`,
+            `That project is already open.`,
+          );
+          return;
+        }
+
+        const alreadyOpenedProject = Object.values(openedProjects).find((p) => p.project.metadata.id === project.metadata.id);
+
+        if (
+          alreadyOpenedProject
+        ) {
+          toast.error(
+            `"${alreadyOpenedProject.project.metadata.title} [${alreadyOpenedProject.fsPath.split('/').pop()}]" shares the same ID (${project.metadata.id}) and is already open. Please close that project first to open this one.`,
           );
           return;
         }
