@@ -7,6 +7,7 @@ import HuggingFaceLogo from './assets/vendor_logos/hf-logo.svg';
 import MongoDBLogo from './assets/vendor_logos/MongoDB_Logomark_ForestGreen.svg';
 import PineconeLogo from './assets/vendor_logos/pinecone-logo.png';
 import OpenAILogo from './assets/vendor_logos/openai-white-logomark.svg';
+import ChromaLogo from './assets/vendor_logos/chroma.svg';
 
 type SharedPluginInfo = {
   id: string;
@@ -190,5 +191,20 @@ export const pluginInfos: PluginInfo[] = [
     `,
     author: 'Rivet Team',
     logoImage: OpenAILogo,
+  },
+  {
+    type: 'package',
+    id: 'rivet-plugin-chromadb@latest',
+    name: 'Chroma',
+    description: dedent`
+      Integrate with [Chroma](https://www.trychroma.com/), the AI-native open-source embedding database.
+
+      Adds nodes to store and query vectors, documents, and metadata in Chroma, and nodes to create/delete and list Chroma collections.
+    `,
+    github: 'https://github.com/abrenneke/rivet-plugin-chromadb',
+    author: 'Rivet Team',
+    package: 'rivet-plugin-chromadb',
+    tag: 'latest',
+    logoImage: ChromaLogo,
   },
 ];
