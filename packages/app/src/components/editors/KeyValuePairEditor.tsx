@@ -9,6 +9,7 @@ import CrossIcon from 'majesticons/line/multiply-line.svg?react';
 import EyeIcon from 'majesticons/line/eye-line.svg?react';
 import EyeOffIcon from 'majesticons/line/eye-off-line.svg?react';
 import { getHelperMessage } from './editorUtils';
+import { produce } from 'immer';
 
 type KVPair = {
   key: string;
@@ -72,15 +73,19 @@ export const KeyValuePairEditor: FC<KeyValuePairEditorProps> = ({ node, isReadon
   };
 
   const handleDeletePair = (index: number) => {
-    const newPairs = [...pairs];
-    newPairs.splice(index, 1);
-    setPairs(newPairs);
+    setPairs((existingPairs) =>
+      produce(existingPairs, (draft) => {
+        draft.splice(index, 1);
+      }),
+    );
   };
 
   const handlePairChange = (index: number, keyOrValue: 'key' | 'value', value: string) => {
-    const newPairs = [...pairs];
-    newPairs[index]![keyOrValue] = value;
-    setPairs(newPairs);
+    setPairs((existingPairs) =>
+      produce(existingPairs, (draft) => {
+        draft[index]![keyOrValue] = value;
+      }),
+    );
   };
 
   useEffect(() => {
