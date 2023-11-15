@@ -1,4 +1,4 @@
-import type { ChartNode, ChatMessage } from '../index.js';
+import type { ChartNode, ChatMessage, GptFunction } from '../index.js';
 
 export type TokenizerCallInfo = {
   node: ChartNode;
@@ -11,5 +11,5 @@ export type Tokenizer = {
 
   getTokenCountForString(input: string, info: TokenizerCallInfo): number;
 
-  getTokenCountForMessages(messages: ChatMessage[], info: TokenizerCallInfo): Promise<number>;
+  getTokenCountForMessages(messages: ChatMessage[], gptFunctions: GptFunction[] | undefined, info: TokenizerCallInfo): Promise<number>;
 };
