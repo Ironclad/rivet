@@ -268,7 +268,7 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
     };
 
     if (this.chartNode.data.computeTokenCount) {
-      const tokenCount = await context.tokenizer.getTokenCountForMessages([message], {
+      const tokenCount = await context.tokenizer.getTokenCountForMessages([message], undefined, {
         node: this.chartNode,
       });
       outputs['tokenCount' as PortId] = {
