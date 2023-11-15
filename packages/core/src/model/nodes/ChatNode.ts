@@ -756,7 +756,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       model: finalModel,
       endpoint: resolvedEndpointAndHeaders.endpoint,
     };
-    const tokenCount = await context.tokenizer.getTokenCountForMessages(messages, tokenizerInfo);
+    const tokenCount = await context.tokenizer.getTokenCountForMessages(messages, functions, tokenizerInfo);
 
     if (tokenCount >= openaiModel.maxTokens) {
       throw new Error(
