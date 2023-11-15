@@ -56,7 +56,7 @@ export class GptTokenizerTokenizer implements Tokenizer {
    * @param functions
    */
   private convertGptFunctionsToPromptString(functions: GptFunction[]): string {
-    const encoded = `
+    return `
 # Tools
 
 ## functions
@@ -73,7 +73,5 @@ ${Object.entries((fn.parameters as any)?.properties ?? {})
 }
 } // namespace functions
 `;
-    console.log(encoded);
-    return encoded;
   }
 }
