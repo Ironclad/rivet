@@ -938,7 +938,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           }
 
           output['in-messages' as PortId] = { type: 'chat-message[]', value: messages };
-          output['requestTokens' as PortId] = { type: 'number', value: tokenCount * numberOfChoices };
+          output['requestTokens' as PortId] = { type: 'number', value: tokenCount * (numberOfChoices ?? 1) };
 
           const responseTokenCount = responseChoicesParts
             .map((choiceParts) => context.tokenizer.getTokenCountForString(choiceParts.join(), tokenizerInfo))
