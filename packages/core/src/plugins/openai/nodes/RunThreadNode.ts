@@ -164,7 +164,7 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
 
     inputs.push({
       id: 'functions' as PortId,
-      dataType: 'object[]',
+      dataType: ['gpt-function[]', 'gpt-function'],
       title: 'Functions',
       coerced: true,
       defaultValue: [],
@@ -562,6 +562,10 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
               type: 'object[]',
               value: messageBody.content,
             },
+            message: {
+              type: 'object',
+              value: messageBody,
+            },
             message_id: {
               type: 'string',
               value: messageBody.id,
@@ -648,7 +652,7 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
               }
 
               if (!handlerSubgraphId) {
-                throw new Error(`No handler found for tool call: ${toolCall.id}`);
+                throw new Error(`No handler found for tool call: ${toolCall.function.name}`);
               }
 
               const subprocessor = context.createSubProcessor(handlerSubgraphId, { signal: context.signal });
