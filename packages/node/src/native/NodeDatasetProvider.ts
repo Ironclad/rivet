@@ -17,6 +17,12 @@ export type NodeDatasetProviderOptions = {
    * Saves will happen after each modification, so this option should only be used for small datasets.
    */
   save?: boolean;
+
+  /**
+   * If true, then the dataset file must exist already, and will error if it does not. If false (default),
+   * then the dataset file will be created if it doesn't exist.
+   */
+  requireFile?: boolean;
 };
 
 export class NodeDatasetProvider extends InMemoryDatasetProvider {
@@ -47,12 +53,18 @@ export class NodeDatasetProvider extends InMemoryDatasetProvider {
         filePath: datasetsFilePath,
       });
     } catch (err) {
+      const { requireFile = false } = options;
+
       // No data file, so just no datasets
       if ((err as any).code === 'ENOENT') {
-        return new NodeDatasetProvider([], {
-          save: options.save,
-          filePath: datasetsFilePath,
-        });
+        if (requireFile) {
+          throw new Error(`No datasets file found at ${datasetsFilePath}`);
+        } else {
+          return new NodeDatasetProvider([], {
+            save: options.save,
+            filePath: datasetsFilePath,
+          });
+        }
       }
 
       throw err;
