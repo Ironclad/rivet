@@ -22,6 +22,7 @@ import { KeyValuePairEditor } from './KeyValuePairEditor';
 import { StringListEditor } from './StringListEditor';
 import { CustomEditor } from './CustomEditor';
 import { DefaultDynamicEditor } from './DynamicEditor';
+import { Tooltip } from '../Tooltip';
 
 export const DefaultNodeEditorField: FC<
   SharedEditorProps & {
@@ -66,19 +67,21 @@ export const DefaultNodeEditorField: FC<
   const toggle =
     editor.type !== 'group' && editor.useInputToggleDataKey ? (
       <div className="use-input-toggle">
-        <Toggle
-          isChecked={data[editor.useInputToggleDataKey] as boolean | undefined}
-          isDisabled={isReadonly || sharedProps.isDisabled}
-          onChange={(e) =>
-            onChange({
-              ...node,
-              data: {
-                ...data,
-                [editor.useInputToggleDataKey!]: e.target.checked,
-              },
-            })
-          }
-        />
+        <Tooltip content={`Use an input port for ${editor.label}`}>
+          <Toggle
+            isChecked={data[editor.useInputToggleDataKey] as boolean | undefined}
+            isDisabled={isReadonly || sharedProps.isDisabled}
+            onChange={(e) =>
+              onChange({
+                ...node,
+                data: {
+                  ...data,
+                  [editor.useInputToggleDataKey!]: e.target.checked,
+                },
+              })
+            }
+          />
+        </Tooltip>
       </div>
     ) : (
       <div />
