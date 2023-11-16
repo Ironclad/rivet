@@ -8,6 +8,10 @@ import {
   type GptFunction,
   type GraphId,
   type GraphInputs,
+  type ScalarDataValue,
+  isArrayDataValue,
+  arrayizeDataValue,
+  unwrapDataValue,
 } from '../../../index.js';
 import {
   openAiModelOptions,
@@ -24,6 +28,7 @@ import { dedent, newId, coerceTypeOptional, getInputOrData } from '../../../util
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
 import { handleOpenAIError } from '../handleOpenaiError.js';
 import { type DataValue } from '../../../model/DataValue.js';
+import { match } from 'ts-pattern';
 
 export type RunThreadNode = ChartNode<'openaiRunThread', RunThreadNodeData>;
 
@@ -407,20 +412,35 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
 
     let response: Response;
 
-    if (data.createThread) {
-      const messages = coerceTypeOptional(inputData['messages' as PortId], 'object[]') ?? [];
+    const coerceToThreadMessage = (value: DataValue | undefined): CreateMessageBody | undefined => {
+      if (!value?.value) {
+        return undefined;
+      }
 
-      const messagesFormatted = messages.map((message): CreateMessageBody => {
-        if (!('role' in message)) {
-          throw new Error('Invalid message format.');
+      if (value.type === 'string' || typeof value.value === 'string') {
+        return { role: 'user', content: value.value as string };
+      }
+
+      if (typeof value.value === 'object') {
+        if (!('role' in value.value)) {
+          throw new Error('Invalid message format - missing role.');
         }
 
-        if (message.role !== 'user') {
+        if (value.value.role !== 'user') {
           throw new Error('Only user messages are supported.');
         }
 
-        return message as CreateMessageBody;
-      });
+        return value.value as CreateMessageBody;
+      }
+
+      return { role: 'user', content: coerceTypeOptional(value, 'string') ?? '' };
+    };
+
+    if (data.createThread) {
+      const messagesInput = inputData['messages' as PortId];
+      const messages = messagesInput
+        ? arrayizeDataValue(unwrapDataValue(messagesInput)).map((message) => coerceToThreadMessage(message))
+        : [];
 
       response = await fetch('https://api.openai.com/v1/threads/runs', {
         method: 'POST',
@@ -433,7 +453,7 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
         body: JSON.stringify({
           ...requestBody,
           thread: {
-            messages: messagesFormatted,
+            messages,
             // Thread metadata?
           },
         }),
