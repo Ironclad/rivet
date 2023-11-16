@@ -49,7 +49,10 @@ export class NodeDatasetProvider extends InMemoryDatasetProvider {
     } catch (err) {
       // No data file, so just no datasets
       if ((err as any).code === 'ENOENT') {
-        return new NodeDatasetProvider([]);
+        return new NodeDatasetProvider([], {
+          save: options.save,
+          filePath: datasetsFilePath,
+        });
       }
 
       throw err;
