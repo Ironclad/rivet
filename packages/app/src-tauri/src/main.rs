@@ -28,6 +28,12 @@ fn main() {
             }
             _ => {}
         })
+        .setup(|app| {
+            if let Some(path) = app.path_resolver().app_local_data_dir() {
+                app.fs_scope().allow_directory(path, true)?;
+            }
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
