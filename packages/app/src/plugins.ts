@@ -8,7 +8,7 @@ import MongoDBLogo from './assets/vendor_logos/MongoDB_Logomark_ForestGreen.svg'
 import PineconeLogo from './assets/vendor_logos/pinecone-logo.png';
 import OpenAILogo from './assets/vendor_logos/openai-white-logomark.svg';
 import ChromaLogo from './assets/vendor_logos/chroma.svg';
-import OllamaLogo from './assets/vendor_logos/ollama.png';
+import OllamaLogo from './assets/vendor_logos/ollama-logo.png';
 
 type SharedPluginInfo = {
   id: string;
