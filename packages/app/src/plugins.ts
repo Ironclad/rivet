@@ -8,6 +8,7 @@ import MongoDBLogo from './assets/vendor_logos/MongoDB_Logomark_ForestGreen.svg'
 import PineconeLogo from './assets/vendor_logos/pinecone-logo.png';
 import OpenAILogo from './assets/vendor_logos/openai-white-logomark.svg';
 import ChromaLogo from './assets/vendor_logos/chroma.svg';
+import OllamaLogo from './assets/vendor_logos/ollama.png';
 
 type SharedPluginInfo = {
   id: string;
@@ -206,5 +207,18 @@ export const pluginInfos: PluginInfo[] = [
     package: 'rivet-plugin-chromadb',
     tag: 'latest',
     logoImage: ChromaLogo,
+  },
+  {
+    type: 'package',
+    id: 'rivet-plugin-ollama@latest',
+    name: 'Ollama',
+    description: dedent`
+      Adds a node that allows you to chat with Ollama's LLM models.
+    `,
+    github: 'https://github.com/abrenneke/rivet-plugin-ollama',
+    author: 'Rivet Team',
+    package: 'rivet-plugin-ollama',
+    tag: 'latest',
+    logoImage: OllamaLogo,
   },
 ];
