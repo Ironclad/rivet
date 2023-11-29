@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
-import { AssemblyAI, type LemurActionItemsParameters } from 'assemblyai';
+import { AssemblyAI, type LemurActionItemsParams } from 'assemblyai';
 import {
   type ChartNode,
   type EditorDefinition,
@@ -95,7 +95,7 @@ export const LemurActionItemsNodeImpl: PluginNodeImpl<LemurActionItemsNode> = {
     const apiKey = getApiKey(context);
     const client = new AssemblyAI({ apiKey });
 
-    const params: LemurActionItemsParameters = getLemurParams(inputs, data);
+    const params: LemurActionItemsParams = getLemurParams(inputs, data);
 
     const { response } = await client.lemur.actionItems(params);
 

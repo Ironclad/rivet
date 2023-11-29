@@ -7193,7 +7193,7 @@ const RAW_RUNTIME_STATE =
           ["@types/yaml", "npm:1.9.7"],\
           ["@typescript-eslint/eslint-plugin", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:6.9.0"],\
           ["@typescript-eslint/parser", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:6.9.0"],\
-          ["assemblyai", "npm:3.0.1"],\
+          ["assemblyai", "file:/Users/niels/DeepLearning/assemblyai/developer_tools/typescript#/Users/niels/DeepLearning/assemblyai/developer_tools/typescript::hash=abfea2&locator=%40ironclad%2Frivet-core%40workspace%3Apackages%2Fcore"],\
           ["autoevals", "npm:0.0.26"],\
           ["crypto-js", "npm:4.2.0"],\
           ["emittery", "npm:1.0.1"],\
@@ -9300,6 +9300,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@swc-types-npm-0.1.5-97cff73f52-5f4de8c60d.zip/node_modules/@swc/types/",\
         "packageDependencies": [\
           ["@swc/types", "npm:0.1.5"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@swimburger/isomorphic-streams", [\
+      ["npm:1.1.1", {\
+        "packageLocation": "./.yarn/cache/@swimburger-isomorphic-streams-npm-1.1.1-cb63fc767b-d7949e4cde.zip/node_modules/@swimburger/isomorphic-streams/",\
+        "packageDependencies": [\
+          ["@swimburger/isomorphic-streams", "npm:1.1.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -12348,11 +12357,13 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["assemblyai", [\
-      ["npm:3.0.1", {\
-        "packageLocation": "./.yarn/cache/assemblyai-npm-3.0.1-41a2932ec5-bfa7c25c89.zip/node_modules/assemblyai/",\
+      ["file:/Users/niels/DeepLearning/assemblyai/developer_tools/typescript#/Users/niels/DeepLearning/assemblyai/developer_tools/typescript::hash=abfea2&locator=%40ironclad%2Frivet-core%40workspace%3Apackages%2Fcore", {\
+        "packageLocation": "./.yarn/cache/assemblyai-file-4e634be738-aaf8bfc15a.zip/node_modules/assemblyai/",\
         "packageDependencies": [\
-          ["assemblyai", "npm:3.0.1"],\
-          ["ws", "virtual:41a2932ec57dd2cd1a341c0608ef13d6640c3fd069a4ff63bcb6df738241512b3dcf072b1883b6b5389ebd428878606e1146ebd4ea8b50438ca40a7d86e23323#npm:8.13.0"]\
+          ["assemblyai", "file:/Users/niels/DeepLearning/assemblyai/developer_tools/typescript#/Users/niels/DeepLearning/assemblyai/developer_tools/typescript::hash=abfea2&locator=%40ironclad%2Frivet-core%40workspace%3Apackages%2Fcore"],\
+          ["@swimburger/isomorphic-streams", "npm:1.1.1"],\
+          ["isomorphic-ws", "virtual:4e634be73890bd8bcd9deb8535bb876a37340cf45c042d8285e040b079b48dfbbab391dcbbc9216d41e62b34f2add3bfc644e9498d5126d128d39f9af517d301#npm:5.0.0"],\
+          ["ws", "virtual:4e634be73890bd8bcd9deb8535bb876a37340cf45c042d8285e040b079b48dfbbab391dcbbc9216d41e62b34f2add3bfc644e9498d5126d128d39f9af517d301#npm:8.13.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -19613,6 +19624,28 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/isobject-npm-3.0.1-8145901fd2-db85c4c970.zip/node_modules/isobject/",\
         "packageDependencies": [\
           ["isobject", "npm:3.0.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["isomorphic-ws", [\
+      ["npm:5.0.0", {\
+        "packageLocation": "./.yarn/cache/isomorphic-ws-npm-5.0.0-9c72251c2d-e20eb2aee0.zip/node_modules/isomorphic-ws/",\
+        "packageDependencies": [\
+          ["isomorphic-ws", "npm:5.0.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:4e634be73890bd8bcd9deb8535bb876a37340cf45c042d8285e040b079b48dfbbab391dcbbc9216d41e62b34f2add3bfc644e9498d5126d128d39f9af517d301#npm:5.0.0", {\
+        "packageLocation": "./.yarn/__virtual__/isomorphic-ws-virtual-27b50fca45/0/cache/isomorphic-ws-npm-5.0.0-9c72251c2d-e20eb2aee0.zip/node_modules/isomorphic-ws/",\
+        "packageDependencies": [\
+          ["isomorphic-ws", "virtual:4e634be73890bd8bcd9deb8535bb876a37340cf45c042d8285e040b079b48dfbbab391dcbbc9216d41e62b34f2add3bfc644e9498d5126d128d39f9af517d301#npm:5.0.0"],\
+          ["@types/ws", null],\
+          ["ws", "virtual:4e634be73890bd8bcd9deb8535bb876a37340cf45c042d8285e040b079b48dfbbab391dcbbc9216d41e62b34f2add3bfc644e9498d5126d128d39f9af517d301#npm:8.13.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/ws",\
+          "ws"\
         ],\
         "linkType": "HARD"\
       }]\
@@ -28260,7 +28293,7 @@ const RAW_RUNTIME_STATE =
           ["webpack", "virtual:f1ed609ca21ae2f2bda9d96bcd93b7be4ca68ee222eb0657a1aabcd7a4b8874d2284ee552d265ab7ceb1b5cde37ad4273d3ac4f6933ff3477d1624cb2f5760b4#npm:5.87.0"],\
           ["webpack-cli", null],\
           ["webpack-dev-middleware", "virtual:3cee627136e3222935f2f0574998a299414f2997be4d2273e90c3717e54c7ad49885ef603e817dc15b21193b05a7719a630fbd40250061090ae31e6a388b57d3#npm:5.3.3"],\
-          ["ws", "virtual:41a2932ec57dd2cd1a341c0608ef13d6640c3fd069a4ff63bcb6df738241512b3dcf072b1883b6b5389ebd428878606e1146ebd4ea8b50438ca40a7d86e23323#npm:8.13.0"]\
+          ["ws", "virtual:4e634be73890bd8bcd9deb8535bb876a37340cf45c042d8285e040b079b48dfbbab391dcbbc9216d41e62b34f2add3bfc644e9498d5126d128d39f9af517d301#npm:8.13.0"]\
         ],\
         "packagePeers": [\
           "@types/webpack-cli",\
@@ -28621,10 +28654,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:41a2932ec57dd2cd1a341c0608ef13d6640c3fd069a4ff63bcb6df738241512b3dcf072b1883b6b5389ebd428878606e1146ebd4ea8b50438ca40a7d86e23323#npm:8.13.0", {\
-        "packageLocation": "./.yarn/__virtual__/ws-virtual-a67b218817/0/cache/ws-npm-8.13.0-26ffa3016a-1769532b6f.zip/node_modules/ws/",\
+      ["virtual:4e634be73890bd8bcd9deb8535bb876a37340cf45c042d8285e040b079b48dfbbab391dcbbc9216d41e62b34f2add3bfc644e9498d5126d128d39f9af517d301#npm:8.13.0", {\
+        "packageLocation": "./.yarn/__virtual__/ws-virtual-9e8449ff8f/0/cache/ws-npm-8.13.0-26ffa3016a-1769532b6f.zip/node_modules/ws/",\
         "packageDependencies": [\
-          ["ws", "virtual:41a2932ec57dd2cd1a341c0608ef13d6640c3fd069a4ff63bcb6df738241512b3dcf072b1883b6b5389ebd428878606e1146ebd4ea8b50438ca40a7d86e23323#npm:8.13.0"],\
+          ["ws", "virtual:4e634be73890bd8bcd9deb8535bb876a37340cf45c042d8285e040b079b48dfbbab391dcbbc9216d41e62b34f2add3bfc644e9498d5126d128d39f9af517d301#npm:8.13.0"],\
           ["@types/bufferutil", null],\
           ["@types/utf-8-validate", null],\
           ["bufferutil", null],\

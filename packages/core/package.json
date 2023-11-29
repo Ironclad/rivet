@@ -45,7 +45,7 @@
   "dependencies": {
     "@gentrace/core": "^2.2.5",
     "@huggingface/inference": "^2.6.4",
-    "assemblyai": "^3.0.1",
+    "assemblyai": "/Users/niels/DeepLearning/assemblyai/developer_tools/typescript",
     "autoevals": "^0.0.26",
     "crypto-js": "^4.2.0",
     "emittery": "^1.0.1",

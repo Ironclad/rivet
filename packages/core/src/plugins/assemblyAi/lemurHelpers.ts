@@ -1,4 +1,4 @@
-import type { LemurBaseParameters } from 'assemblyai';
+import type { LemurBaseParams } from 'assemblyai';
 import {
   type AnyDataValue,
   type ArrayDataValue,
@@ -38,8 +38,8 @@ export function getApiKey(context: InternalProcessContext) {
   return apiKey;
 }
 
-export function getLemurParams(inputs: Inputs, editorData: LemurNodeData): LemurBaseParameters {
-  const params: LemurBaseParameters = {
+export function getLemurParams(inputs: Inputs, editorData: LemurNodeData): LemurBaseParams {
+  const params: LemurBaseParams = {
     transcript_ids: getTranscriptIds(inputs),
     context: coerceTypeOptional(inputs['context' as PortId], 'string') || editorData.context || undefined,
     final_model: editorData.final_model && editorData.final_model !== 'default' ? editorData.final_model : undefined,
