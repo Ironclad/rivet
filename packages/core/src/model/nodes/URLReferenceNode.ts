@@ -8,7 +8,8 @@ import {
 import { nanoid } from 'nanoid/non-secure';
 import { NodeImpl } from '../NodeImpl.js';
 import { type Inputs, type Outputs } from '../GraphProcessor.js';
-import { nodeDefinition, type EditorDefinition, type NodeUIData } from '../../index.js';
+import { type EditorDefinition, type NodeUIData } from '../../index.js';
+import { nodeDefinition } from '../../model/NodeDefinition.js';
 import { getInputOrData } from '../../utils/index.js';
 
 export type UrlReferenceNode = ChartNode<'urlReference', UrlReferenceNodeData>;

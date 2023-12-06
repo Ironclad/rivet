@@ -15,6 +15,6 @@
   "rust-analyzer.cargo.buildScripts.invocationLocation": "root",
   "rust-analyzer.linkedProjects": ["packages/app/src-tauri/Cargo.toml"],
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   }
 }
