@@ -91,7 +91,7 @@ export default async function fetchEventSource(
   return new EventSourceResponse(response.body, response, timeout);
 }
 
-const lineSplitter = new (class implements Transformer<string, string> {
+class LineSplitter implements Transformer<string, string> {
   private buffer = '';
   constructor(readonly separator = /\n+/) {}
 
@@ -111,7 +111,7 @@ const lineSplitter = new (class implements Transformer<string, string> {
       this.buffer = '';
     }
   }
-})();
+}
 
 function createEventStream(body: ReadableStream<Uint8Array> | null) {
   if (body == null) {
@@ -120,7 +120,7 @@ function createEventStream(body: ReadableStream<Uint8Array> | null) {
 
   const textStream = body.pipeThrough(new TextDecoderStream());
 
-  const eventStream = textStream.pipeThrough(new TransformStream(lineSplitter)).pipeThrough(
+  const eventStream = textStream.pipeThrough(new TransformStream(new LineSplitter())).pipeThrough(
     new TransformStream<string, string>({
       transform(line, controller) {
         if (line.startsWith('data: ')) {
