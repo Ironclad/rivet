@@ -321,6 +321,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "vpckso",
+      "name": "Kit",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40294053?v=4",
+      "profile": "https://github.com/vpckso",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
