@@ -4275,7 +4275,7 @@ __metadata:
     "@types/yaml": "npm:^1.9.7"
     "@typescript-eslint/eslint-plugin": "npm:^6.9.0"
     "@typescript-eslint/parser": "npm:^6.9.0"
-    assemblyai: /Users/niels/DeepLearning/assemblyai/developer_tools/typescript
+    assemblyai: "npm:^4.0.0"
     autoevals: "npm:^0.0.26"
     crypto-js: "npm:^4.2.0"
     emittery: "npm:^1.0.1"
@@ -5930,13 +5930,6 @@ __metadata:
   version: 0.1.5
   resolution: "@swc/types@npm:0.1.5"
   checksum: 5f4de8c60d2623bed607c7fa1e0cee4ffc682af28d5ffe88dc9ed9903a1c2088ccc39f684689d6bb314595c9fbb560beaec773d633be515fb856ffc81d738822
-  languageName: node
-  linkType: hard
-
-"@swimburger/isomorphic-streams@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@swimburger/isomorphic-streams@npm:1.1.1"
-  checksum: d7949e4cdef0bb09ecdc5a56177491912d8fb32d098ee1926b894e2a10d51a6516b752d34f262d8cad9330f7446cbd197cbf796f178c9228fdf52000d4bc8a2c
   languageName: node
   linkType: hard
 
@@ -8231,14 +8224,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"assemblyai@file:/Users/niels/DeepLearning/assemblyai/developer_tools/typescript::locator=%40ironclad%2Frivet-core%40workspace%3Apackages%2Fcore":
+"assemblyai@npm:^4.0.0":
   version: 4.0.0
-  resolution: "assemblyai@file:/Users/niels/DeepLearning/assemblyai/developer_tools/typescript#/Users/niels/DeepLearning/assemblyai/developer_tools/typescript::hash=abfea2&locator=%40ironclad%2Frivet-core%40workspace%3Apackages%2Fcore"
+  resolution: "assemblyai@npm:4.0.0"
   dependencies:
-    "@swimburger/isomorphic-streams": "npm:^1.1.1"
-    isomorphic-ws: "npm:^5.0.0"
     ws: "npm:^8.13.0"
-  checksum: aaf8bfc15a5eea80c73624ab152642f22900cf473ed3a99fc8c094e38c250d14a08f40c40d519696c66ee52b18893e18e0d01b1ceaa327aeb5429aa5f9407c46
+  checksum: 9f626451ad06635a4e2a0542d8b408eba1b3bfb40ab1d4cbdc209fa8464a0656920d85d959afe03a003d23e16838ab07a60a3544125d9c920408ebc379e92af3
   languageName: node
   linkType: hard
 
@@ -13694,15 +13685,6 @@ __metadata:
   version: 3.0.1
   resolution: "isobject@npm:3.0.1"
   checksum: db85c4c970ce30693676487cca0e61da2ca34e8d4967c2e1309143ff910c207133a969f9e4ddb2dc6aba670aabce4e0e307146c310350b298e74a31f7d464703
-  languageName: node
-  linkType: hard
-
-"isomorphic-ws@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "isomorphic-ws@npm:5.0.0"
-  peerDependencies:
-    ws: "*"
-  checksum: e20eb2aee09ba96247465fda40c6d22c1153394c0144fa34fe6609f341af4c8c564f60ea3ba762335a7a9c306809349f9b863c8beedf2beea09b299834ad5398
   languageName: node
   linkType: hard
 
