@@ -67,7 +67,7 @@ If you are looking for other language models that do not support the OpenAI API 
 | Enable Function Use             | Allows the use of functions in the prompt. Enables the `Functions` input.                                                                                                                                                                                                                               | false                                                                                                                       | No               | N/A             |
 | Cache                           | Caches the response locally in Rivet. If the chat node gets the exact same prompt again, it will return the cached response instead of making a new request to OpenAI.                                                                                                                                  | false                                                                                                                       | No               | N/A             |
 | Use for subgraph partial output | If enabled, the Chat Node will be used to generate partial output for subgraphs. This is only visual - the chat node's partial output will appear as the subgraph's partial output. Only enable if the chat node will be running exclusively from other chat nodes at the same time, to avoid problems. | true                                                                                                                        | No               | N/A             |
-| Endpoint                        | The endpoint to use for the request. For example, you can set the endpoint to `http://localhost:1238/v1/chat/completions` for LM Studio. You may also set a global Chat Node endpoint int the Rivet Settings page.                                                                                      | (empty string, uses the default endpoint configured in Settings, or OpenAI's chat completions endpoint if that is not set.) | No               | `string`        |
+| Endpoint                        | The endpoint to use for the request. For example, you can set the endpoint to `http://localhost:1234/v1/chat/completions` for LM Studio. You may also set a global Chat Node endpoint int the Rivet Settings page.                                                                                      | (empty string, uses the default endpoint configured in Settings, or OpenAI's chat completions endpoint if that is not set.) | No               | `string`        |
 | Custom Model                    | If you are not using OpenAI's GPT, you can set the `model` parameter here, to a custom string. This parameter overrides the model defined above.                                                                                                                                                        | (None)                                                                                                                      | No               | `string`        |
 | Headers                         | Allows you to set custom headers to send with the request.                                                                                                                                                                                                                                              | (None)                                                                                                                      | Yes              | `object`        |
 
@@ -91,9 +91,10 @@ For all settings, see the [OpenAI API documentation](https://platform.openai.com
 1. Add a Chat node to your graph.
 2. Add a text node and place your message to GPT inside the text node by opening its editor and replacing `{{input}}` with your message.
 3. Connect the output of the text node to the `Prompt` input of the Chat node.
-4. Set the `Endpoint` setting to `http://localhost:1238/v1/chat/completions`.
+4. Set the `Endpoint` setting to `http://localhost:1234/v1/chat/completions`.
 5. Load your desired model into LM Studio.
-6. Run your graph. You will see the output of the Chat node at the bottom of the node.
+6. Enable CORS in LM Studio Server Options.
+7. Run your graph. You will see the output of the Chat node at the bottom of the node.
 
 ## Error Handling
 
