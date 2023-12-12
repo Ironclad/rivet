@@ -330,6 +330,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "codemile",
+      "name": "Nick Foscarini",
+      "avatar_url": "https://avatars.githubusercontent.com/u/50146659?v=4",
+      "profile": "https://reactgular.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
