@@ -4275,7 +4275,7 @@ __metadata:
     "@types/yaml": "npm:^1.9.7"
     "@typescript-eslint/eslint-plugin": "npm:^6.9.0"
     "@typescript-eslint/parser": "npm:^6.9.0"
-    assemblyai: "npm:^3.0.1"
+    assemblyai: "npm:^4.0.0"
     autoevals: "npm:^0.0.26"
     crypto-js: "npm:^4.2.0"
     emittery: "npm:^1.0.1"
@@ -8248,12 +8248,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"assemblyai@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "assemblyai@npm:3.0.1"
+"assemblyai@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "assemblyai@npm:4.0.0"
   dependencies:
     ws: "npm:^8.13.0"
-  checksum: bfa7c25c89f8b6d05e59f9e8aa8f47fdb9f5a33d09e54ecef7f515e698e250fee9b71939be6b325f2aa2bb01855ae91cfd13ea1bbc66af00f9c39c5e353420ab
+  checksum: 9f626451ad06635a4e2a0542d8b408eba1b3bfb40ab1d4cbdc209fa8464a0656920d85d959afe03a003d23e16838ab07a60a3544125d9c920408ebc379e92af3
   languageName: node
   linkType: hard
 

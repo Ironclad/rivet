@@ -89,7 +89,7 @@ export const TranscribeAudioNodeImpl: PluginNodeImpl<TranscribeAudioNode> = {
     };
   },
 
-  async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+  async process(_data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const input = inputs['audio' as PortId] as AudioDataValue | StringDataValue | AnyDataValue;
     if (!input) throw new Error('Audio input is required.');
 
@@ -106,9 +106,7 @@ export const TranscribeAudioNodeImpl: PluginNodeImpl<TranscribeAudioNode> = {
       throw new Error('Audio input must be audio or string containing the audio URL.');
     }
 
-    validateUrl(audioUrl);
-
-    const transcript = await client.transcripts.create({ audio_url: audioUrl });
+    const transcript = await client.transcripts.transcribe({ audio: audioUrl });
 
     return {
       ['text' as PortId]: {
@@ -126,21 +124,5 @@ export const TranscribeAudioNodeImpl: PluginNodeImpl<TranscribeAudioNode> = {
     };
   },
 };
-
-function validateUrl(audioUrl: string) {
-  if (audioUrl === null) throw new Error('Audio URL cannot be null.');
-  if (audioUrl === undefined) throw new Error('Audio URL cannot be undefined.');
-  if (audioUrl === '') throw new Error('Audio URL is cannot be empty.');
-  try {
-    const url = new URL(audioUrl);
-    if (url.protocol === 'http:' || url.protocol === 'https:') {
-      return true;
-    } else {
-      throw new Error('Audio URL must start with http:// or https://');
-    }
-  } catch {
-    throw new Error('Audio URL is invalid.');
-  }
-}
 
 export const transcribeAudioNode = pluginNodeDefinition(TranscribeAudioNodeImpl, 'Transcribe Audio');

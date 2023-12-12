@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
-import { AssemblyAI, type LemurSummaryParameters } from 'assemblyai';
+import { AssemblyAI, type LemurSummaryParams } from 'assemblyai';
 import {
   type ChartNode,
   type EditorDefinition,
@@ -96,7 +96,7 @@ export const LemurSummaryNodeImpl: PluginNodeImpl<LemurSummaryNode> = {
   async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const apiKey = getApiKey(context);
     const client = new AssemblyAI({ apiKey });
-    const params: LemurSummaryParameters = getLemurParams(inputs, data);
+    const params: LemurSummaryParams = getLemurParams(inputs, data);
 
     if (data.answer_format) {
       params.answer_format = data.answer_format;

@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
-import { AssemblyAI, type LemurTaskParameters } from 'assemblyai';
+import { AssemblyAI, type LemurTaskParams } from 'assemblyai';
 import {
   type ChartNode,
   type EditorDefinition,
@@ -97,7 +97,7 @@ export const LemurTaskNodeImpl: PluginNodeImpl<LemurTaskNode> = {
   async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const apiKey = getApiKey(context);
     const client = new AssemblyAI({ apiKey });
-    const params: LemurTaskParameters = {
+    const params: LemurTaskParams = {
       prompt: coerceTypeOptional(inputs['prompt' as PortId], 'string') || data.prompt || '',
       ...getLemurParams(inputs, data),
     };
