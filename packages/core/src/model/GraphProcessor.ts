@@ -1345,10 +1345,9 @@ export class GraphProcessor {
   ) {
     const instance = this.#nodeInstances[node.id]!;
     const nodeAbortController = this.#newAbortController();
+    const abortListener = () => { nodeAbortController.abort(); };
     this.#nodeAbortControllers.set(`${node.id}-${processId}`, nodeAbortController);
-    this.#abortController.signal.addEventListener('abort', () => {
-      nodeAbortController.abort();
-    });
+    this.#abortController.signal.addEventListener('abort', abortListener);
 
     const plugin = this.#registry.getPluginFor(node.type);
 
@@ -1479,6 +1478,7 @@ export class GraphProcessor {
     await this.#waitUntilUnpaused();
     const results = await instance.process(inputValues, context);
     this.#nodeAbortControllers.delete(`${node.id}-${processId}`);
+    this.#abortController.signal.removeEventListener('abort', abortListener);
 
     if (nodeAbortController.signal.aborted) {
       throw new Error('Aborted');
