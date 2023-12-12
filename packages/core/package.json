@@ -35,8 +35,8 @@
   ],
   "scripts": {
     "build": "yarn build:esm && yarn build:cjs",
-    "build:esm": "rm -rf dist/esm dist/types dist/tsconfig.tsbuildinfo && tsc -b --verbose",
-    "build:cjs": "rm -rf dist/cjs && tsx bundle.esbuild.ts",
+    "build:esm": "rimraf dist/esm dist/types dist/tsconfig.tsbuildinfo && tsc -b --verbose",
+    "build:cjs": "rimraf dist/cjs && tsx bundle.esbuild.ts",
     "prepack": "yarn build && cp -r ../../LICENSE ../../README.md .",
     "publish": "yarn npm publish --access public",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx ./src",
@@ -83,6 +83,7 @@
     "eslint-plugin-n": "^16.2.0",
     "eslint-plugin-promise": "^6.1.1",
     "lodash": "^4.17.21",
+    "rimraf": "^5.0.5",
     "ts-node": "^10.9.1",
     "tsx": "^3.14.0",
     "typescript": "^5.2.2"
