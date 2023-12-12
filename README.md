@@ -153,6 +153,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/bardia-pourvakil"><img src="https://avatars.githubusercontent.com/u/132475166?v=4?s=100" width="100px;" alt="bardia-pourvakil"/><br /><sub><b>bardia-pourvakil</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=bardia-pourvakil" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Cinerar"><img src="https://avatars.githubusercontent.com/u/120550?v=4?s=100" width="100px;" alt="Cinerar"/><br /><sub><b>Cinerar</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=Cinerar" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/vpckso"><img src="https://avatars.githubusercontent.com/u/40294053?v=4?s=100" width="100px;" alt="Kit"/><br /><sub><b>Kit</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=vpckso" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://reactgular.com"><img src="https://avatars.githubusercontent.com/u/50146659?v=4?s=100" width="100px;" alt="Nick Foscarini"/><br /><sub><b>Nick Foscarini</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=codemile" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
