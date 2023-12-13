@@ -257,10 +257,6 @@ export const RenderDataValue: FC<{
   }
 
   const keys = Object.keys(value?.value ?? {});
-  if (keys.length === 2 && keys.includes('type') && keys.includes('value')) {
-    return <div>ERROR: INVALID VALUE: {JSON.stringify(value)}</div>;
-  }
-
   if (isArrayDataValue(value)) {
     const items = arrayizeDataValue(value);
     return (
