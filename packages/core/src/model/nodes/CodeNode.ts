@@ -39,8 +39,8 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
           // Output values must by typed as well (e.g. { bar: { type: 'string', value: 'bar' } }
           return {
             output1: {
-              type: inputs.input1.type;
-              value: inputs.input1.value;
+              type: inputs.input1.type,
+              value: inputs.input1.value
             }
           };
         `,
