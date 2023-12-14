@@ -4070,7 +4070,7 @@ __metadata:
     execa: "npm:^8.0.1"
     pkg: "npm:^5.8.1"
     ts-pattern: "npm:^5.0.5"
-    tsx: "npm:^3.14.0"
+    tsx: "npm:^4.6.2"
     type-fest: "npm:^4.5.0"
     typescript: "npm:^5.2.2"
     yargs: "npm:^17.7.2"
@@ -4193,7 +4193,7 @@ __metadata:
     ts-dedent: "npm:^2.2.0"
     ts-node: "npm:^10.9.1"
     ts-pattern: "npm:^5.0.5"
-    tsx: "npm:^3.14.0"
+    tsx: "npm:^4.6.2"
     type-fest: "npm:^4.5.0"
     typescript: "npm:^5.2.2"
     url-join: "npm:^5.0.0"
@@ -4220,7 +4220,7 @@ __metadata:
     eslint-plugin-import: "npm:^2.29.0"
     eslint-plugin-n: "npm:^16.2.0"
     eslint-plugin-promise: "npm:^6.1.1"
-    tsx: "npm:^3.14.0"
+    tsx: "npm:^4.6.2"
     typescript: "npm:^5.2.2"
     yargs: "npm:^17.7.2"
   bin:
@@ -4302,7 +4302,7 @@ __metadata:
     ts-dedent: "npm:^2.2.0"
     ts-node: "npm:^10.9.1"
     ts-pattern: "npm:^5.0.5"
-    tsx: "npm:^3.14.0"
+    tsx: "npm:^4.6.2"
     type-fest: "npm:^4.5.0"
     typescript: "npm:^5.2.2"
     yaml: "npm:^2.3.3"
@@ -4338,7 +4338,7 @@ __metadata:
     rimraf: "npm:^5.0.5"
     ts-node: "npm:^10.9.1"
     ts-pattern: "npm:^5.0.5"
-    tsx: "npm:^3.14.0"
+    tsx: "npm:^4.6.2"
     type-fest: "npm:^4.5.0"
     typescript: "npm:^5.2.2"
     ws: "npm:^8.14.2"
@@ -4369,7 +4369,7 @@ __metadata:
     eslint-plugin-react-hooks: "npm:^4.6.0"
     rollup: "npm:^4.1.4"
     ts-node: "npm:^10.9.1"
-    tsx: "npm:^3.14.0"
+    tsx: "npm:^4.6.2"
     typescript: "npm:^5.2.2"
     yargs: "npm:^17.7.2"
     zx: "npm:^7.2.3"
@@ -4397,7 +4397,7 @@ __metadata:
     lodash-es: "npm:^4.17.21"
     rimraf: "npm:^5.0.5"
     ts-node: "npm:^10.9.1"
-    tsx: "npm:^3.14.0"
+    tsx: "npm:^4.6.2"
     typescript: "npm:^5.2.2"
     yaml: "npm:^2.3.3"
   languageName: unknown
@@ -19638,20 +19638,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:^3.14.0":
-  version: 3.14.0
-  resolution: "tsx@npm:3.14.0"
+"tsx@npm:^4.6.2":
+  version: 4.6.2
+  resolution: "tsx@npm:4.6.2"
   dependencies:
     esbuild: "npm:~0.18.20"
     fsevents: "npm:~2.3.3"
     get-tsconfig: "npm:^4.7.2"
-    source-map-support: "npm:^0.5.21"
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 7147970975344d779f495169c0246dff5110a3e110b0a89e8cec6403fcd6c03ede3abbf4c7ccc03dae7fb17d7f1a4c21992c5c6d7ab2130cb2f7a3ffaeae1ce1
+  checksum: 451b23ed999a3bf3592181f3411d67bfe6d4269f2171ca627c5acbe442fd08d8864585eb67095c0dc8462e35ee8427de37c9bb2b4f6ffc629d5a05f0c66983d4
   languageName: node
   linkType: hard
 
