@@ -15,6 +15,9 @@ import { nodeDefinition } from '../NodeDefinition.js';
 
 export type CodeNode = ChartNode<'code', CodeNodeData>;
 
+const maskInput = (name: string) => name.trim().replace(/[^a-zA-Z0-9_]/g, '_');
+const asValidNames = (names: string[]): string[] => Array(...new Set(names.map(maskInput))).filter(Boolean);
+
 export type CodeNodeData = {
   code: string;
   inputNames: string | string[];
@@ -59,7 +62,7 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
         : [this.data.inputNames]
       : [];
 
-    return inputNames.map((inputName) => {
+    return asValidNames(inputNames).map((inputName) => {
       return {
         type: 'any',
         id: inputName.trim() as PortId,
@@ -77,7 +80,7 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
         : [this.data.outputNames]
       : [];
 
-    return outputNames.map((outputName) => {
+    return asValidNames(outputNames).map((outputName) => {
       return {
         id: outputName.trim() as PortId,
         title: outputName.trim(),
