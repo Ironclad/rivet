@@ -14,7 +14,7 @@ import { useToggleRemoteDebugger } from '../components/DebuggerConnectPanel';
 import { lastRunDataByNodeState } from '../state/dataFlow';
 import { useImportGraph } from './useImportGraph';
 
-type MenuIds =
+export type MenuIds =
   | 'settings'
   | 'quit'
   | 'new_project'

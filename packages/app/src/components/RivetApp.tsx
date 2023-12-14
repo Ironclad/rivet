@@ -1,3 +1,4 @@
+import { useWindowsHotfix } from '../hooks/useWindowsHotfix';
 import { GraphBuilder } from './GraphBuilder.js';
 import { OverlayTabs } from './OverlayTabs.js';
 import { type FC, useEffect } from 'react';
@@ -48,6 +49,8 @@ export const RivetApp: FC = () => {
   useMenuCommands({
     onRunGraph: tryRunGraph,
   });
+
+  useWindowsHotfix();
 
   const checkForUpdate = useCheckForUpdate();
 
