@@ -9,7 +9,7 @@ export type GoogleModel = {
 
 export const googleModels = {
   'gemini-pro': {
-    maxTokens: 32000,
+    maxTokens: 32760,
     cost: {
       prompt: NaN,
       completion: NaN,
@@ -17,7 +17,7 @@ export const googleModels = {
     displayName: 'Gemini Pro',
   },
   'gemini-pro-vision': {
-    maxTokens: 16000,
+    maxTokens: 16384,
     cost: {
       prompt: NaN,
       completion: NaN,
