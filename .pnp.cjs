@@ -89,7 +89,7 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-react-hooks", "virtual:4a4dfdd9a7df5ec5e275841a43fbecdb97f28d7f31447ab74c1dd2a4d56fe264664aa1dc4ad44cc92e46e533864e6b71f8d1474657f30ffd4d572a69c55bcf0b#npm:4.6.0"],\
           ["rollup", "npm:4.1.4"],\
           ["ts-node", "virtual:74fcc7b6256f60a89945acc6b1c62e6158616c0dcf2312663cfe08ceda598b7d943e5de97f39a415e4491198cfa92535d8e40310ec84839b8241ca342059e353#npm:10.9.1"],\
-          ["tsx", "npm:3.14.0"],\
+          ["tsx", "npm:4.6.2"],\
           ["typescript", "patch:typescript@npm%3A5.2.2#optional!builtin<compat/typescript>::version=5.2.2&hash=f3b441"],\
           ["yargs", "npm:17.7.2"],\
           ["zx", "npm:7.2.3"]\
@@ -6952,7 +6952,7 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-react-hooks", "virtual:4a4dfdd9a7df5ec5e275841a43fbecdb97f28d7f31447ab74c1dd2a4d56fe264664aa1dc4ad44cc92e46e533864e6b71f8d1474657f30ffd4d572a69c55bcf0b#npm:4.6.0"],\
           ["rollup", "npm:4.1.4"],\
           ["ts-node", "virtual:74fcc7b6256f60a89945acc6b1c62e6158616c0dcf2312663cfe08ceda598b7d943e5de97f39a415e4491198cfa92535d8e40310ec84839b8241ca342059e353#npm:10.9.1"],\
-          ["tsx", "npm:3.14.0"],\
+          ["tsx", "npm:4.6.2"],\
           ["typescript", "patch:typescript@npm%3A5.2.2#optional!builtin<compat/typescript>::version=5.2.2&hash=f3b441"],\
           ["yargs", "npm:17.7.2"],\
           ["zx", "npm:7.2.3"]\
@@ -7075,7 +7075,7 @@ const RAW_RUNTIME_STATE =
           ["ts-dedent", "npm:2.2.0"],\
           ["ts-node", "virtual:74fcc7b6256f60a89945acc6b1c62e6158616c0dcf2312663cfe08ceda598b7d943e5de97f39a415e4491198cfa92535d8e40310ec84839b8241ca342059e353#npm:10.9.1"],\
           ["ts-pattern", "npm:5.0.5"],\
-          ["tsx", "npm:3.14.0"],\
+          ["tsx", "npm:4.6.2"],\
           ["type-fest", "npm:4.5.0"],\
           ["typescript", "patch:typescript@npm%3A5.2.2#optional!builtin<compat/typescript>::version=5.2.2&hash=f3b441"],\
           ["url-join", "npm:5.0.0"],\
@@ -7116,7 +7116,7 @@ const RAW_RUNTIME_STATE =
           ["execa", "npm:8.0.1"],\
           ["pkg", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.8.1"],\
           ["ts-pattern", "npm:5.0.5"],\
-          ["tsx", "npm:3.14.0"],\
+          ["tsx", "npm:4.6.2"],\
           ["type-fest", "npm:4.5.0"],\
           ["typescript", "patch:typescript@npm%3A5.2.2#optional!builtin<compat/typescript>::version=5.2.2&hash=f3b441"],\
           ["yargs", "npm:17.7.2"]\
@@ -7136,7 +7136,7 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-import", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.29.0"],\
           ["eslint-plugin-n", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:16.2.0"],\
           ["eslint-plugin-promise", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:6.1.1"],\
-          ["tsx", "npm:3.14.0"],\
+          ["tsx", "npm:4.6.2"],\
           ["typescript", "patch:typescript@npm%3A5.2.2#optional!builtin<compat/typescript>::version=5.2.2&hash=f3b441"],\
           ["yargs", "npm:17.7.2"]\
         ],\
@@ -7232,7 +7232,7 @@ const RAW_RUNTIME_STATE =
           ["ts-dedent", "npm:2.2.0"],\
           ["ts-node", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:10.9.1"],\
           ["ts-pattern", "npm:5.0.5"],\
-          ["tsx", "npm:3.14.0"],\
+          ["tsx", "npm:4.6.2"],\
           ["type-fest", "npm:4.5.0"],\
           ["typescript", "patch:typescript@npm%3A5.2.2#optional!builtin<compat/typescript>::version=5.2.2&hash=f3b441"],\
           ["yaml", "npm:2.3.3"]\
@@ -7273,7 +7273,7 @@ const RAW_RUNTIME_STATE =
           ["rimraf", "npm:5.0.5"],\
           ["ts-node", "virtual:74fcc7b6256f60a89945acc6b1c62e6158616c0dcf2312663cfe08ceda598b7d943e5de97f39a415e4491198cfa92535d8e40310ec84839b8241ca342059e353#npm:10.9.1"],\
           ["ts-pattern", "npm:5.0.5"],\
-          ["tsx", "npm:3.14.0"],\
+          ["tsx", "npm:4.6.2"],\
           ["type-fest", "npm:4.5.0"],\
           ["typescript", "patch:typescript@npm%3A5.2.2#optional!builtin<compat/typescript>::version=5.2.2&hash=f3b441"],\
           ["ws", "virtual:74fcc7b6256f60a89945acc6b1c62e6158616c0dcf2312663cfe08ceda598b7d943e5de97f39a415e4491198cfa92535d8e40310ec84839b8241ca342059e353#npm:8.14.2"]\
@@ -7300,7 +7300,7 @@ const RAW_RUNTIME_STATE =
           ["lodash-es", "npm:4.17.21"],\
           ["rimraf", "npm:5.0.5"],\
           ["ts-node", "virtual:763b5751e0360e14ffc929bbc0bd7578f8f57d8885d5b4f58aaa162c104e4df8cde06b85f86472c72428047754184723fb46f2f667ad4920b095b26bc8ed2f66#npm:10.9.1"],\
-          ["tsx", "npm:3.14.0"],\
+          ["tsx", "npm:4.6.2"],\
           ["typescript", "patch:typescript@npm%3A5.2.2#optional!builtin<compat/typescript>::version=5.2.2&hash=f3b441"],\
           ["yaml", "npm:2.3.3"]\
         ],\
@@ -27208,14 +27208,13 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["npm:3.14.0", {\
-        "packageLocation": "./.yarn/cache/tsx-npm-3.14.0-0e7fee0a4e-7147970975.zip/node_modules/tsx/",\
+      ["npm:4.6.2", {\
+        "packageLocation": "./.yarn/cache/tsx-npm-4.6.2-0721a68f14-451b23ed99.zip/node_modules/tsx/",\
         "packageDependencies": [\
-          ["tsx", "npm:3.14.0"],\
+          ["tsx", "npm:4.6.2"],\
           ["esbuild", "npm:0.19.5"],\
           ["fsevents", "patch:fsevents@npm%3A2.3.3#optional!builtin<compat/fsevents>::version=2.3.3&hash=df0bf1"],\
-          ["get-tsconfig", "npm:4.7.2"],\
-          ["source-map-support", "npm:0.5.21"]\
+          ["get-tsconfig", "npm:4.7.2"]\
         ],\
         "linkType": "HARD"\
       }]\
