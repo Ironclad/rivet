@@ -68,3 +68,14 @@ Testing will also run linting at the same time.
 Rivet uses [ESLint](https://eslint.org/) for linting and [Prettier](https://prettier.io/) for formatting. To run linting, run `yarn lint` in the root folder. This will run linting for all packages.
 
 In VS Code, ESLint is configured to run automatically on save. We also recommend enabling the `Format on Save` option in VS Code to automatically format files with Prettier on save.
+
+## Node Executor
+
+Certain nodes need to run in the "Node Executor." This starts a "sidecar" process, which can be difficult to develop with. If you are developing a feature or plugin that requires the Node Executor, consider running the node executor directly:
+
+```
+cd packages/app-executor
+yarn start --port 21889
+```
+
+This will reduce the build time. However, you will still need to restart the sidecar whenever you make a code change.
