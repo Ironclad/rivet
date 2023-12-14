@@ -21,6 +21,7 @@ If you have any bug reports, questions, ideas, or unexpected behavior feel free 
 - [volta](https://volta.sh/) or Node.js >=20
 - [rust](https://rustup.rs/)
 - [yarn](https://yarnpkg.com/getting-started/install)
+- [macOS](https://www.apple.com/ca/macos/sonoma/) (Mac only) macOS 12.3 or higher
 
 ### Building and Running
 
