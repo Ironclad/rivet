@@ -9,6 +9,7 @@ import PineconeLogo from './assets/vendor_logos/pinecone-logo.png';
 import OpenAILogo from './assets/vendor_logos/openai-white-logomark.svg';
 import ChromaLogo from './assets/vendor_logos/chroma.svg';
 import OllamaLogo from './assets/vendor_logos/ollama-logo.png';
+import BraintrustLogo from './assets/vendor_logos/braintrust_data_logo.jpeg';
 
 type SharedPluginInfo = {
   id: string;
@@ -74,6 +75,7 @@ export const pluginInfos: PluginInfo[] = [
       Adds an Autoevals node with many variants of evaluations.
     `,
     author: 'Braintrust',
+    logoImage: BraintrustLogo,
     documentation: 'https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/autoevals',
   },
   {
