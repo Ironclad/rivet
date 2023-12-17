@@ -95,8 +95,6 @@ export async function* streamChatCompletions({
   });
   const response = await generativeModel.generateContentStream({
     contents: prompt,
-    // TODO Figure out how to abort
-    // signal: signal ?? defaultSignal,
   });
 
   let hadChunks = false;
@@ -105,7 +103,7 @@ export async function* streamChatCompletions({
     console.log('streaming google responses')
     hadChunks = true;
 
-    if (chunk.candidates[0]?.content.parts[0]?.text) {
+    if (!signal?.aborted && chunk.candidates[0]?.content.parts[0]?.text) {
       yield {
         completion: chunk.candidates[0]?.content.parts[0]?.text,
         finish_reason: chunk.candidates[0]?.finishReason as any,

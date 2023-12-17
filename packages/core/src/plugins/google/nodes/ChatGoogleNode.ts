@@ -27,7 +27,6 @@ import { dedent } from 'ts-dedent';
 import retry from 'p-retry';
 import { match } from 'ts-pattern';
 import { coerceType, coerceTypeOptional } from '../../../utils/coerceType.js';
-import { expectTypeOptional } from '../../../utils/expectType.js';
 import { addWarning } from '../../../utils/outputs.js';
 import { getError } from '../../../utils/errors.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
@@ -430,8 +429,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
           return output;
         },
         {
-          forever: true,
-          retries: 10000,
+          retries: 10,
           maxRetryTime: 1000 * 60 * 5,
           factor: 2.5,
           minTimeout: 500,
@@ -444,30 +442,6 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
             if (context.signal.aborted) {
               throw new Error('Aborted');
             }
-
-            const { retriesLeft } = err;
-
-            // TODO
-            // if (!(err instanceof OpenAIError)) {
-            //   return; // Just retry?
-            // }
-
-            // if (err.status === 429) {
-            //   if (retriesLeft) {
-            //     context.onPartialOutputs?.({
-            //       ['response' as PortId]: {
-            //         type: 'string',
-            //         value: 'OpenAI API rate limit exceeded, retrying...',
-            //       },
-            //     });
-            //     return;
-            //   }
-            // }
-
-            // // We did something wrong (besides rate limit)
-            // if (err.status >= 400 && err.status < 500) {
-            //   throw new Error(err.message);
-            // }
           },
         },
       );
