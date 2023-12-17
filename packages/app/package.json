@@ -75,7 +75,6 @@
     "@types/ws": "^8.5.8",
     "@types/yargs": "^17.0.29",
     "@vitejs/plugin-react": "^4.1.0",
-    "@zilliz/milvus2-sdk-node": "^2.3.2",
     "ahooks": "^3.7.8",
     "clsx": "^2.0.0",
     "core-js": "^3.33.1",

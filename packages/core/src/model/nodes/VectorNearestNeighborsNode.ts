@@ -103,7 +103,6 @@ export class VectorNearestNeighborsNodeImpl extends NodeImpl<VectorNearestNeighb
         dataKey: 'integration',
         options: [
           { label: 'Pinecone', value: 'pinecone' },
-          { label: 'Milvus', value: 'milvus' },
         ],
         useInputToggleDataKey: 'useIntegrationInput',
       },
