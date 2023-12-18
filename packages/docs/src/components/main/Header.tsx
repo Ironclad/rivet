@@ -8,6 +8,7 @@ import { useDownloadUrl } from '../../hooks/useDownloadUrl';
 
 import GithubLogo from './logos/github-mark-white.svg';
 import DiscordLogo from './logos/discord-mark-white.svg';
+import YouTubeLogo from './logos/youtube-mark-white.svg';
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -36,6 +37,12 @@ export const Header: React.FC = () => {
               <a className={styles.navLink} href="https://github.com/Ironclad/rivet" target="_blank">
                 <GithubLogo viewBox="0 0 100 100" />
                 <span className={styles.menuText}>GitHub</span>
+              </a>
+            </li>
+            <li className={styles.github}>
+              <a className={styles.navLink} href="https://www.youtube.com/@rivet_ts" target="_blank">
+                <YouTubeLogo viewBox="0 -20 240 220" />
+                <span className={styles.menuText}>YouTube</span>
               </a>
             </li>
             <li className={styles.documentation}>
