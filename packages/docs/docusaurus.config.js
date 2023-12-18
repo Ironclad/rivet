@@ -130,7 +130,11 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/ironclad/rivet', // Replace with your project's GitHub URL
+                href: 'https://github.com/ironclad/rivet',
+              },
+              {
+                label: 'YouTube',
+                href: 'https://www.youtube.com/@rivet_ts',
               },
             ],
           },
