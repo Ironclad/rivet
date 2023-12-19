@@ -104,7 +104,6 @@ export class VectorStoreNodeImpl extends NodeImpl<VectorStoreNode> {
         dataKey: 'integration',
         options: [
           { label: 'Pinecone', value: 'pinecone' },
-          { label: 'Milvus', value: 'milvus' },
         ],
         useInputToggleDataKey: 'useIntegrationInput',
       },
