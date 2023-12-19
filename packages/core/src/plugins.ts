@@ -5,8 +5,9 @@ import { huggingFacePlugin } from './plugins/huggingface/plugin.js';
 import pineconePlugin from './plugins/pinecone/index.js';
 import gentracePlugin from './plugins/gentrace/index.js';
 import { openAIPlugin } from './plugins/openai/plugin.js';
+import { googlePlugin } from './plugins/google/plugin.js';
 
-export { anthropicPlugin, autoevalsPlugin, assemblyAiPlugin, pineconePlugin, huggingFacePlugin, gentracePlugin };
+export { anthropicPlugin, autoevalsPlugin, assemblyAiPlugin, pineconePlugin, huggingFacePlugin, gentracePlugin, googlePlugin };
 
 export const plugins = {
   anthropic: anthropicPlugin,
@@ -16,4 +17,5 @@ export const plugins = {
   huggingFace: huggingFacePlugin,
   gentrace: gentracePlugin,
   openai: openAIPlugin,
+  google: googlePlugin
 };

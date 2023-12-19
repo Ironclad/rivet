@@ -163,6 +163,6 @@
     "execa": "^8.0.1",
     "rollup-plugin-visualizer": "^5.9.2",
     "semver": "^7.5.4",
-    "tsx": "^3.14.0"
+    "tsx": "^4.6.2"
   }
 }
