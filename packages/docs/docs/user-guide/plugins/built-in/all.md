@@ -6,6 +6,7 @@ The available built-in plugins are:
 - [AssemblyAI](./assemblyai.md)
 - [Autoevals](./autoevals.md)
 - [Gentrace](./gentrace.md)
+- [Google](./google.md)
 - [HuggingFace](./huggingface.md)
 - [Pinecone](./pinecone.md)
 

@@ -9,6 +9,7 @@ import PineconeLogo from './assets/vendor_logos/pinecone-logo.png';
 import OpenAILogo from './assets/vendor_logos/openai-white-logomark.svg';
 import ChromaLogo from './assets/vendor_logos/chroma.svg';
 import OllamaLogo from './assets/vendor_logos/ollama-logo.png';
+import GoogleLogo from './assets/vendor_logos/google-logo.png';
 
 type SharedPluginInfo = {
   id: string;
@@ -220,5 +221,18 @@ export const pluginInfos: PluginInfo[] = [
     package: 'rivet-plugin-ollama',
     tag: 'latest',
     logoImage: OllamaLogo,
+  },
+  {
+    type: 'built-in',
+    id: 'google',
+    name: 'Google',
+    description: dedent`
+      Allows you to chat with Google LLM models such as Gemini.
+
+      Adds a Chat (Google) node.
+    `,
+    author: 'Rivet Team',
+    logoImage: GoogleLogo,
+    documentation: 'https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/google',
   },
 ];
