@@ -20,7 +20,7 @@
     "next": "14.0.1",
     "next-auth": "^5.0.0-beta.3",
     "next-connect": "1.0.0-next.4",
-    "octokit": "^3.1.1",
+    "octokit": "^3.1.2",
     "passport-local": "^1.0.0",
     "react": "^18",
     "react-dom": "^18",

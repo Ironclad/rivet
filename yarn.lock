@@ -4222,7 +4222,7 @@ __metadata:
     next: "npm:14.0.1"
     next-auth: "npm:^5.0.0-beta.3"
     next-connect: "npm:1.0.0-next.4"
-    octokit: "npm:^3.1.1"
+    octokit: "npm:^3.1.2"
     passport-local: "npm:^1.0.0"
     react: "npm:^18"
     react-dom: "npm:^18"
@@ -4741,9 +4741,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@octokit/app@npm:^14.0.0":
-  version: 14.0.1
-  resolution: "@octokit/app@npm:14.0.1"
+"@octokit/app@npm:^14.0.2":
+  version: 14.0.2
+  resolution: "@octokit/app@npm:14.0.2"
   dependencies:
     "@octokit/auth-app": "npm:^6.0.0"
     "@octokit/auth-unauthenticated": "npm:^5.0.0"
@@ -4751,8 +4751,8 @@ __metadata:
     "@octokit/oauth-app": "npm:^6.0.0"
     "@octokit/plugin-paginate-rest": "npm:^9.0.0"
     "@octokit/types": "npm:^12.0.0"
-    "@octokit/webhooks": "npm:^12.0.1"
-  checksum: 2e3710c46fa3754d0afd7da77c423c5c7138a4e9d294760d74bd7cc5d572aa8375533d80ac5808334c5731abb66bfeed663b581843c4c32b83ea8957cfb38c62
+    "@octokit/webhooks": "npm:^12.0.4"
+  checksum: d5a4b33ad4a3cd8002f18b838a082644e1c81e04ce44a662a1189f50af4fd2f3e69c4fda40a6a1c383eae956e4dda2cccd57c67c817954ff130f3e60eb8a629a
   languageName: node
   linkType: hard
 
@@ -5064,15 +5064,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@octokit/webhooks@npm:^12.0.1":
-  version: 12.0.3
-  resolution: "@octokit/webhooks@npm:12.0.3"
+"@octokit/webhooks@npm:^12.0.4":
+  version: 12.0.10
+  resolution: "@octokit/webhooks@npm:12.0.10"
   dependencies:
     "@octokit/request-error": "npm:^5.0.0"
     "@octokit/webhooks-methods": "npm:^4.0.0"
     "@octokit/webhooks-types": "npm:7.1.0"
     aggregate-error: "npm:^3.1.0"
-  checksum: 58c739ec0ee15a01181b81d7867ae96ebf021e30fa829060cb60d7ffb4cfd0b3b6fd7c1c3eb7ea30a1f81324bdb3eaed887ee65ca805cd5ae6b3c886c20c099c
+  checksum: ab7d216d1a1fae91bc3f75057c093707c1f6dbd5ff2106656154a7f471b1a1b5b78c947474e21362590e5510516f9537c4ab79ad6780cc91bfaaaa685aa366e0
   languageName: node
   linkType: hard
 
@@ -15482,11 +15482,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"octokit@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "octokit@npm:3.1.1"
+"octokit@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "octokit@npm:3.1.2"
   dependencies:
-    "@octokit/app": "npm:^14.0.0"
+    "@octokit/app": "npm:^14.0.2"
     "@octokit/core": "npm:^5.0.0"
     "@octokit/oauth-app": "npm:^6.0.0"
     "@octokit/plugin-paginate-graphql": "npm:^4.0.0"
@@ -15496,7 +15496,7 @@ __metadata:
     "@octokit/plugin-throttling": "npm:^8.0.0"
     "@octokit/request-error": "npm:^5.0.0"
     "@octokit/types": "npm:^12.0.0"
-  checksum: 81607d887ccb83fa3515c7473f79681b980b43dedcc13651f1a3c1b06a21b049f73b688398f236d08c45eb8047256fbd5de2b684b637b74e1ace18e83e7bcab9
+  checksum: e682c6108c60beee2e723053793e3f7cc88f80eebcd53fd5c2a085fc3f0287150ff3b923856ddda4dca8254e309408f8719ce22580b4c7d2ee2ab47c68f5273e
   languageName: node
   linkType: hard
 
