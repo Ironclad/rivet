@@ -9,6 +9,9 @@ import PineconeLogo from './assets/vendor_logos/pinecone-logo.png';
 import OpenAILogo from './assets/vendor_logos/openai-white-logomark.svg';
 import ChromaLogo from './assets/vendor_logos/chroma.svg';
 import OllamaLogo from './assets/vendor_logos/ollama-logo.png';
+import BraintrustLogo from './assets/vendor_logos/braintrust_data_logo.jpeg';
+import PythonLogo from './assets/vendor_logos/Python-logo.svg.png';
+import FolderLogo from './assets/vendor_logos/folder-icon.png';
 import GoogleLogo from './assets/vendor_logos/google-logo.png';
 
 type SharedPluginInfo = {
@@ -49,7 +52,7 @@ export const pluginInfos: PluginInfo[] = [
     author: 'Rivet Team',
     package: 'rivet-plugin-example-python-exec',
     tag: 'latest',
-    logoImage: RivetLogo,
+    logoImage: PythonLogo,
     github: 'https://github.com/abrenneke/rivet-plugin-example-python-exec',
   },
   {
@@ -75,6 +78,7 @@ export const pluginInfos: PluginInfo[] = [
       Adds an Autoevals node with many variants of evaluations.
     `,
     author: 'Braintrust',
+    logoImage: BraintrustLogo,
     documentation: 'https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/autoevals',
   },
   {
@@ -182,7 +186,7 @@ export const pluginInfos: PluginInfo[] = [
     author: 'Rivet Team',
     package: 'rivet-plugin-fs',
     tag: 'latest',
-    logoImage: RivetLogo,
+    logoImage: FolderLogo,
   },
   {
     type: 'built-in',
