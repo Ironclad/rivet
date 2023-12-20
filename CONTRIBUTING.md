@@ -80,3 +80,42 @@ yarn start --port 21889
 ```
 
 This will reduce the build time. However, you will still need to restart the sidecar whenever you make a code change.
+
+## Releasing
+
+First, tag and publish the NPM libraries.
+
+To do this, you need to be a member of the Ironclad NPM organization. Set up `~/.yarnrc`, so that your NPM credentials are properly set up (`npmAuthToken` value needs to be set).
+
+1. Update the version number in package.json for `packages/cli`, `packages/core`, and `packages/node`.
+2. Run `yarn publish`. This may update relevant `README.md` files.
+3. Git add `package.json` changes and `README.md` changes, then `git commit -m "Libs v1.14.0"` the package changes.
+4. `git tag v1.14.0`
+5. `git push --tags`
+6. `git push origin main`
+7. Create a [release in Github](https://github.com/Ironclad/rivet/releases/new), with title "Rivet Libraries v1.14.0" and two H2 sections (New Features and Bug Fixes).
+  * UNCHECK "Set as the latest release"
+  * THEN "Publish Release"
+
+Then, release new version of `app`
+1. Update `tauri.conf.json` version number.
+2. Git add `tauri.conf.json`, then `git commit -m "App v1.7.4"`
+3. `git tag app-v1.7.4`
+4. `git push --tags`
+5. `git push origin main`
+
+This kicks off the CI process, which will create a new release as a draft.
+
+Then, write up the release notes for the application release.
+
+Once the release is ready, it will show up on the [Github releases page](https://github.com/Ironclad/rivet/releases) as a draft.
+1. Update the release notes.
+2. Publish the release.
+  * KEEP "Set as the latest release" CHECKED
+3. Download `latest.json`
+  * Check that all Darwin builds have the same signature.
+4. In `latest.json`, update the notes field. This supports Markdown syntax, and will show up in the Rivet UI when it gets updated.
+5. Upload `latest.json` to the release (after deleting the old `latest.json`).
+6. Set as latest release, and update the release.
+
+Once the release is out and tested, announce the release on Discord and social.
