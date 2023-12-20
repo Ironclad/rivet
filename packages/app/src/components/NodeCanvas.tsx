@@ -1,4 +1,5 @@
 import { DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
+import { useNodeHeightCache } from '../hooks/useNodeBodyHeight';
 import { DraggableNode } from './DraggableNode.js';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles.js';
@@ -196,6 +197,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const { draggingNodes, onNodeStartDrag, onNodeDragged } = useDraggingNode(onNodesChanged);
   const { draggingWire, onWireStartDrag, onWireEndDrag } = useDraggingWire(onConnectionsChanged);
   useWireDragScrolling();
+
+  const cache = useNodeHeightCache();
 
   const {
     contextMenuRef,
@@ -621,6 +624,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
               return (
                 <DraggableNode
                   key={node.id}
+                  cache={cache}
                   node={node}
                   connections={nodeConnections}
                   isSelected={highlightedNodes.includes(node.id) || searchMatchingNodes.includes(node.id)}
@@ -665,6 +669,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
             {draggingNodes.map((node) => (
               <VisualNode
                 key={node.id}
+                cache={cache}
                 node={node}
                 connections={draggingNodeConnections}
                 isOverlay

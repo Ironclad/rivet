@@ -21,6 +21,7 @@ import {
   type PortId,
   type NodeOutputDefinition,
 } from '@ironclad/rivet-core';
+import type { NodeHeightCache } from '../hooks/useNodeBodyHeight';
 import { type ProcessDataForNode, lastRunData, selectedProcessPage } from '../state/dataFlow.js';
 import { NodeBody } from './NodeBody.js';
 import { NodeOutput } from './NodeOutput.js';
@@ -46,6 +47,7 @@ import {
 import { Tooltip } from './Tooltip';
 
 export type VisualNodeProps = {
+  cache: NodeHeightCache;
   node: ChartNode;
   connections?: NodeConnection[];
   xDelta?: number;
@@ -95,6 +97,7 @@ export const VisualNode = memo(
   forwardRef<HTMLDivElement, VisualNodeProps>(
     (
       {
+        cache,
         node,
         connections = [],
         handleAttributes,
@@ -222,6 +225,7 @@ export const VisualNode = memo(
             />
           ) : (
             <NormalVisualNodeContent
+              cache={cache}
               node={node}
               connections={connections}
               onWireStartDrag={onWireStartDrag}
@@ -377,6 +381,7 @@ const ZoomedOutVisualNodeContent: FC<{
 ZoomedOutVisualNodeContent.displayName = 'ZoomedOutVisualNodeContent';
 
 const NormalVisualNodeContent: FC<{
+  cache: NodeHeightCache;
   node: ChartNode;
   connections?: NodeConnection[];
   handleAttributes?: HTMLAttributes<HTMLDivElement>;
@@ -410,6 +415,7 @@ const NormalVisualNodeContent: FC<{
   ) => void;
 }> = memo(
   ({
+    cache,
     node,
     connections = [],
     lastRun,
@@ -604,7 +610,7 @@ const NormalVisualNodeContent: FC<{
         </div>
         <ErrorBoundary fallback={<div>Error rendering node body</div>}>
           {isKnownNodeType ? (
-            <NodeBody node={node} />
+            <NodeBody cache={cache} node={node} />
           ) : (
             <div>Unknown node type {node.type} - are you missing a plugin?</div>
           )}
