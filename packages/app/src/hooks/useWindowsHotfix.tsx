@@ -8,7 +8,7 @@ declare let window: HotfixWindow;
 
 const isWindowsPlatform = typeof navigator !== 'undefined' && navigator.userAgent.includes('Win64');
 
-if(isWindowsPlatform) {
+if (isWindowsPlatform) {
     console.warn('Hotfix applied for Windows platform');
 }
 
