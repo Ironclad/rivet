@@ -69,7 +69,7 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
         return;
       }
 
-      const { nodeId: endNodeId, portId: endPortId } = closestPortToDraggingWire!;
+      const { nodeId: endNodeId, portId: endPortId } = closestPortToDraggingWire ?? {};
 
       if (!endNodeId || !endPortId) {
         return;
