@@ -135,7 +135,7 @@ export const projectPluginsState = selector({
 
 export type OpenedProjectInfo = {
   project: Project;
-  fsPath: string;
+  fsPath?: string | null;
   openedGraph?: GraphId;
 };
 

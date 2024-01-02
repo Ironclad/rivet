@@ -349,7 +349,7 @@ export const ProjectTab: FC<{
   const project = openedProjects[projectId];
 
   const unsaved = !project?.fsPath;
-  const fileName = unsaved ? 'Unsaved' : project.fsPath.split('/').pop();
+  const fileName = unsaved ? 'Unsaved' : project.fsPath!.split('/').pop();
   const projectDisplayName = `${project?.project.metadata.title}${fileName ? ` [${fileName}]` : ''}`;
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
