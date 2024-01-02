@@ -18,7 +18,7 @@ export const trivetState = atom<TrivetState>({
     testSuites: [],
     runningTests: false,
   },
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
 
 export const trivetTestsRunningState = selector({

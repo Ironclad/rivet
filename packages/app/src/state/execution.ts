@@ -34,7 +34,7 @@ export const remoteDebuggerState = atom<RemoteDebuggerState>({
     remoteUploadAllowed: false,
     isInternalExecutor: false,
   },
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
 
 export const loadedRecordingState = atom<{

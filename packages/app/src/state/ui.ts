@@ -25,7 +25,7 @@ export const newProjectModalOpenState = atom({
 export const expandedFoldersState = atom<Record<string, boolean>>({
   key: 'expandedFoldersState',
   default: {},
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
 
 export const helpModalOpenState = atom<boolean>({

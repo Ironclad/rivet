@@ -30,5 +30,5 @@ export const userInputModalSubmitState = atom<{
 export const lastAnswersState = atom<Record<string, string>>({
   key: 'lastAnswers',
   default: {},
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });

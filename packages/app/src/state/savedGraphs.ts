@@ -29,7 +29,7 @@ export const projectState = atom<Omit<Project, 'data'>>({
     graphs: {},
     plugins: [],
   },
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
 
 export const projectDataState = atom<Record<DataId, string> | undefined>({
@@ -82,7 +82,7 @@ export const loadedProjectState = atom<{
     path: '',
     loaded: false,
   },
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
 
 export const savedGraphsState = selector<NodeGraph[]>({
@@ -150,7 +150,7 @@ export const projectsState = atom<OpenedProjectsInfo>({
     openedProjects: {},
     openedProjectsSortedIds: [],
   },
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
 
 export const openedProjectsState = selector({
@@ -195,5 +195,5 @@ export type ProjectContext = Record<
 export const projectContextState = atomFamily<ProjectContext, ProjectId>({
   key: 'projectContext',
   default: {},
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
