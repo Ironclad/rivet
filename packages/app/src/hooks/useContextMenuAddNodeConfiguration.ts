@@ -58,8 +58,9 @@ export const addContextMenuGroups = [
   items?: readonly ContextMenuItem[];
 };
 
+const constructors = globalRivetNodeRegistry.getNodeConstructors();
+
 export function useContextMenuAddNodeConfiguration() {
-  const constructors = globalRivetNodeRegistry.getNodeConstructors();
   const builtInImages = useBuiltInNodeImages();
   const getUIContext = useGetRivetUIContext();
 
@@ -93,7 +94,7 @@ export function useContextMenuAddNodeConfiguration() {
     ).filter(isNotNull);
 
     setUiData(uiData);
-  });
+  }, [getUIContext]);
 
   const plugins = useDependsOnPlugins();
   const groupsWithItems = useMemo(() => {
