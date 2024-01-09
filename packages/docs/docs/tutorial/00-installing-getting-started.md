@@ -12,6 +12,7 @@ This Tutorial will walk you through the basic building blocks of Rivet.
 
 ## Open the Tutorial
 
+- Download the [documentation-tutorial.rivet-project](https://github.com/Ironclad/rivet/blob/main/packages/app/src/assets/tutorials/documentation-tutorial.rivet-project)
 - Open Rivet
 - Click File > Open Project
-- Find the Tutorial.rivet-project file in the root of the Rivet repository and open it
+- Open the documentation-tutorial.rivet-project file you just downloaded
