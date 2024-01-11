@@ -31,7 +31,7 @@ export function useLoadProjectWithFileBrowser() {
           (p) => p.project.metadata.id === project.metadata.id,
         );
 
-        if (alreadyOpenedProject) {
+        if (alreadyOpenedProject && alreadyOpenedProject.fsPath) {
           toast.error(
             `"${alreadyOpenedProject.project.metadata.title} [${alreadyOpenedProject.fsPath
               .split('/')
