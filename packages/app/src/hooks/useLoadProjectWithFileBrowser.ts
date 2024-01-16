@@ -31,11 +31,10 @@ export function useLoadProjectWithFileBrowser() {
           (p) => p.project.metadata.id === project.metadata.id,
         );
 
-        if (alreadyOpenedProject && alreadyOpenedProject.fsPath) {
+        if (alreadyOpenedProject) {
+          const projectPath = alreadyOpenedProject.fsPath?.split('/').pop() ?? '';
           toast.error(
-            `"${alreadyOpenedProject.project.metadata.title} [${alreadyOpenedProject.fsPath
-              .split('/')
-              .pop()}]" shares the same ID (${
+            `"${alreadyOpenedProject.project.metadata.title} [${projectPath}]" shares the same ID (${
               project.metadata.id
             }) and is already open. Please close that project first to open this one.`,
           );
