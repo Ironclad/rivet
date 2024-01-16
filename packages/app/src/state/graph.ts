@@ -20,7 +20,7 @@ const { persistAtom } = recoilPersist({ key: 'graph' });
 export const graphState = atom<NodeGraph>({
   key: 'graphState',
   default: emptyNodeGraph(),
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
 
 export const graphMetadataState = selector({

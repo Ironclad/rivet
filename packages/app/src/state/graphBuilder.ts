@@ -34,7 +34,7 @@ export const canvasPositionState = atom<CanvasPosition>({
 export const lastCanvasPositionByGraphState = atom<Record<GraphId, CanvasPosition | undefined>>({
   key: 'lastCanvasPositionByGraph',
   default: {},
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
 
 export const draggingNodesState = atom<ChartNode[]>({

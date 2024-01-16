@@ -17,7 +17,7 @@ export const settingsState = atom<Settings>({
     pluginEnv: {},
     pluginSettings: {},
   },
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
 
 export const themes = [
@@ -40,19 +40,19 @@ export type Theme = (typeof themes)[number]['value'];
 export const themeState = atom<Theme>({
   key: 'theme',
   default: 'molten',
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
 
 export const recordExecutionsState = atom<boolean>({
   key: 'recordExecutions',
   default: true,
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
 
 export const defaultExecutorState = atom<'browser' | 'nodejs'>({
   key: 'defaultExecutor',
   default: 'browser',
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
 
 export const executorOptions = isInTauri()
@@ -65,19 +65,19 @@ export const executorOptions = isInTauri()
 export const previousDataPerNodeToKeepState = atom<number>({
   key: 'previousDataPerNodeToKeep',
   default: -1,
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
 
 export const checkForUpdatesState = atom<boolean>({
   key: 'checkForUpdates',
   default: true,
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
 
 export const skippedMaxVersionState = atom<string | undefined>({
   key: 'skippedMaxVersion',
   default: undefined,
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
 
 export const updateModalOpenState = atom<boolean>({
@@ -93,5 +93,5 @@ export const updateStatusState = atom<string | undefined>({
 export const zoomSensitivityState = atom<number>({
   key: 'zoomSensitivity',
   default: 0.25,
-  effects_UNSTABLE: [persistAtom],
+  effects: [persistAtom],
 });
