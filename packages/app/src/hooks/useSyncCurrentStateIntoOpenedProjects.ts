@@ -1,13 +1,13 @@
-import { type Project } from '@ironclad/rivet-core';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { graphState } from '../state/graph';
 import {
-  loadedProjectState, type OpenedProjectInfo,
+  loadedProjectState,
+  type OpenedProjectInfo,
   openedProjectsSortedIdsState,
   openedProjectsState,
   projectState,
 } from '../state/savedGraphs';
-import { graphState } from '../state/graph';
 
 export function useSyncCurrentStateIntoOpenedProjects() {
   const [openedProjects, setOpenedProjects] = useRecoilState(openedProjectsState);
