@@ -624,7 +624,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
               return (
                 <DraggableNode
                   key={node.id}
-                  cache={cache}
+                  heightCache={cache}
                   node={node}
                   connections={nodeConnections}
                   isSelected={highlightedNodes.includes(node.id) || searchMatchingNodes.includes(node.id)}
@@ -669,7 +669,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
             {draggingNodes.map((node) => (
               <VisualNode
                 key={node.id}
-                cache={cache}
+                heightCache={cache}
                 node={node}
                 connections={draggingNodeConnections}
                 isOverlay
