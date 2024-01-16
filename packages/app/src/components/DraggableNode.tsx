@@ -8,6 +8,7 @@ import {
   type NodeOutputDefinition,
 } from '@ironclad/rivet-core';
 import { type MouseEvent, type FC } from 'react';
+import type { HeightCache } from '../hooks/useNodeBodyHeight';
 import { VisualNode } from './VisualNode.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -15,6 +16,7 @@ import { type ProcessDataForNode } from '../state/dataFlow';
 import { type DraggingWireDef } from '../state/graphBuilder';
 
 interface DraggableNodeProps {
+  heightCache: HeightCache;
   node: ChartNode;
   connections?: NodeConnection[];
   isSelected?: boolean;
@@ -54,6 +56,7 @@ interface DraggableNodeProps {
 }
 
 export const DraggableNode: FC<DraggableNodeProps> = ({
+  heightCache,
   node,
   connections = [],
   isSelected = false,
@@ -81,6 +84,7 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
       <VisualNode
         ref={setNodeRef}
         isSelected={isSelected}
+        heightCache={heightCache}
         node={node}
         connections={connections}
         isDragging={isDragging}

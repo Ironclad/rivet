@@ -1,4 +1,5 @@
 import { type FC, Suspense, memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { type HeightCache, useNodeBodyHeight } from '../hooks/useNodeBodyHeight';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import {
   type ChartNode,
@@ -19,11 +20,11 @@ import { useGetRivetUIContext } from '../hooks/useGetRivetUIContext';
 import { useAsyncEffect } from 'use-async-effect';
 import { toast } from 'react-toastify';
 
-export const NodeBody: FC<{ node: ChartNode }> = memo(({ node }) => {
+export const NodeBody: FC<{ heightCache: HeightCache, node: ChartNode }> = memo(({ heightCache, node }) => {
   const { Body } = useUnknownNodeComponentDescriptorFor(node);
   useDependsOnPlugins();
 
-  const body = Body ? <Body node={node} /> : <UnknownNodeBody node={node} />;
+  const body = Body ? <Body node={node} /> : <UnknownNodeBody heightCache={heightCache} node={node} />;
 
   return <div className="node-body">{body}</div>;
 });
@@ -39,10 +40,11 @@ const UnknownNodeBodyWrapper = styled.div<{
   font-family: ${(props) => (props.fontFamily === 'monospace' ? "'Roboto Mono', monospace" : "'Roboto', sans-serif")};
 `;
 
-const UnknownNodeBody: FC<{ node: ChartNode }> = ({ node }) => {
+const UnknownNodeBody: FC<{ heightCache: HeightCache, node: ChartNode }> = ({ heightCache, node }) => {
   const getUIContext = useGetRivetUIContext();
 
   const [body, setBody] = useState<RenderedNodeBody | undefined>();
+  const { ref, height } = useNodeBodyHeight(heightCache, node.id, !!body);
 
   useAsyncEffect(async () => {
     try {
@@ -78,7 +80,7 @@ const UnknownNodeBody: FC<{ node: ChartNode }> = ({ node }) => {
   }));
 
   return (
-    <div>
+    <div ref={ref} style={{ height }}>
       {renderedSpecs.map(({ spec, rendered }, i) => (
         <UnknownNodeBodyWrapper key={i} fontFamily={spec.fontFamily ?? 'sans-serif'} fontSize={spec.fontSize ?? 12}>
           {rendered}
