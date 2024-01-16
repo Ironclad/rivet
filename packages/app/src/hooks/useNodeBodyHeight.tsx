@@ -3,6 +3,8 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { nodesState } from '../state/graph';
 
+const GARBAGE_COLLECTION_INTERVAL = 100;
+
 export interface HeightCache {
   get: (nodeId: NodeId) => number | undefined;
 
@@ -18,7 +20,9 @@ export interface HeightCache {
  */
 export const useNodeHeightCache = (): HeightCache => {
   const nodes = useRecoilValue(nodesState);
+
   const ref = useRef<Record<string, number | undefined>>({});
+  const garbageCollectionCount = useRef(0);
 
   const set = useCallback((nodeId: NodeId, height: number | undefined) => {
     ref.current[nodeId] = height;
@@ -32,14 +36,22 @@ export const useNodeHeightCache = (): HeightCache => {
     return nodeId in ref.current;
   }, []);
 
+  /**
+   * This hook removes nodes from the cache that have been deleted. To improve performance, we only clean up
+   * the cache for every X nodes that are deleted (cache is just numbers).
+   */
+  useEffect(() => {
+    if (garbageCollectionCount.current++ % GARBAGE_COLLECTION_INTERVAL !== 0) {
+      ref.current = nodes.reduce((acc, next) => {
+        acc[next.id] = ref.current[next.id];
+        return acc;
+      }, {} as Record<string, number | undefined>);
+    }
+  }, [nodes]);
+
   return useMemo(() => {
-    const pre = ref.current;
-    ref.current = nodes.reduce((acc, next) => {
-      acc[next.id] = pre[next.id];
-      return acc;
-    }, {} as Record<string, number | undefined>);
     return { set, get, has } satisfies HeightCache;
-  }, [nodes, set, get, has]);
+  }, [set, get, has]);
 };
 
 /**
