@@ -20,7 +20,13 @@ const Body = styled.div`
 
 export const ObjectNodeBody: FC<ObjectNodeBodyProps> = ({ node }) => {
   const truncated = useMemo(
-    () => node.data.jsonTemplate.split('\n').slice(0, 15).join('\n').trim(),
+    () =>
+      node.data.jsonTemplate
+        .split('\n')
+        .slice(0, 15)
+        .map((line) => (line.length > 1000 ? line.slice(0, 1000) + '...' : line))
+        .join('\n')
+        .trim(),
     [node.data.jsonTemplate],
   );
 
