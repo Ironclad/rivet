@@ -6,6 +6,7 @@ import { Field } from '@atlaskit/form';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { debuggerPanelOpenState } from '../state/ui';
+import { debuggerDefaultUrlState } from '../state/settings';
 
 export function useToggleRemoteDebugger() {
   const setDebuggerPanelOpen = useSetRecoilState(debuggerPanelOpenState);
@@ -43,10 +44,10 @@ const styles = css`
   flex-direction: column;
   gap: 16px;
   position: fixed;
-  top: 48px;
+  top: calc(48px + var(--project-selector-height));
   left: 256px;
   background: var(--grey-darker);
-  padding: 16px;
+  padding: 4px 16px 16px 16px; // atlaskit padding on top
   box-shadow: 0 8px 16px var(--shadow-dark);
   width: 400px;
   z-index: 50;
@@ -73,9 +74,15 @@ export type DebuggerConnectPanelProps = {
 };
 
 export const DebuggerConnectPanel: FC<DebuggerConnectPanelProps> = ({ onConnect, onCancel }) => {
-  const [connectUrl, setConnectUrl] = useState('ws://localhost:21888');
+  const [defaultConnectUrl, setDefaultConnectUrl] = useRecoilState(debuggerDefaultUrlState);
+  const [connectUrl, setConnectUrl] = useState(defaultConnectUrl);
 
   const textField = useRef<HTMLInputElement>(null);
+
+  function doConnect() {
+    onConnect?.(connectUrl);
+    setDefaultConnectUrl(connectUrl);
+  }
 
   useEffect(() => {
     if (textField.current) {
@@ -97,7 +104,7 @@ export const DebuggerConnectPanel: FC<DebuggerConnectPanelProps> = ({ onConnect,
               onChange={(e: ChangeEvent<HTMLInputElement>) => setConnectUrl(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  onConnect?.(connectUrl);
+                  doConnect();
                 }
               }}
             />
@@ -109,7 +116,7 @@ export const DebuggerConnectPanel: FC<DebuggerConnectPanelProps> = ({ onConnect,
         <Button className="cancel" onClick={() => onCancel?.()}>
           Cancel
         </Button>
-        <Button className="connect" onClick={() => onConnect?.(connectUrl)}>
+        <Button className="connect" onClick={doConnect}>
           Connect
         </Button>
       </div>
