@@ -61,7 +61,7 @@ export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
   getOutputDefinitions(): NodeOutputDefinition[] {
     return [
       {
-        dataType: 'object',
+        dataType: ['object', 'object[]'],
         id: 'output' as PortId,
         title: 'Output',
       },
@@ -125,6 +125,15 @@ export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
       string,
       unknown
     >;
+
+    if (Array.isArray(outputValue)) {
+      return {
+        output: {
+          type: 'object[]',
+          value: outputValue,
+        },
+      };
+    }
 
     return {
       output: {
