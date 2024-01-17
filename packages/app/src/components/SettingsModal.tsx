@@ -298,7 +298,7 @@ export const OpenAiSettingsPage: FC = () => {
   const configureLmStudio = () => {
     setSettings((s) => ({
       ...s,
-      openAiEndpoint: 'http://localhost:1234/chat/completions',
+      openAiEndpoint: 'http://localhost:1234/v1/chat/completions',
     }));
   };
 
