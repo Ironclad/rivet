@@ -95,3 +95,9 @@ export const zoomSensitivityState = atom<number>({
   default: 0.25,
   effects: [persistAtom],
 });
+
+export const debuggerDefaultUrlState = atom({
+  key: 'debuggerDefaultUrl',
+  default: 'ws://localhost:21888',
+  effects: [persistAtom],
+});
