@@ -196,3 +196,12 @@ export const ioDefinitionsForNodeState = selectorFamily<
       return nodeId ? get(ioDefinitionsState)[nodeId]! : { inputDefinitions: [], outputDefinitions: [] };
     },
 });
+
+export const nodeConstructorsState = selector({
+  key: 'nodeConstructorsState',
+  get: ({ get }) => {
+    get(pluginRefreshCounterState);
+
+    return globalRivetNodeRegistry.getNodeConstructors();
+  },
+});

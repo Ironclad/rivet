@@ -8,6 +8,8 @@ import useAsyncEffect from 'use-async-effect';
 import { toast } from 'react-toastify';
 import { isNotNull } from '../utils/genericUtilFunctions';
 import { orderBy, uniqBy } from 'lodash-es';
+import { useRecoilValue } from 'recoil';
+import { nodeConstructorsState } from '../state/graph';
 
 export const addContextMenuGroups = [
   {
@@ -59,7 +61,7 @@ export const addContextMenuGroups = [
 };
 
 export function useContextMenuAddNodeConfiguration() {
-  const constructors = globalRivetNodeRegistry.getNodeConstructors();
+  const constructors = useRecoilValue(nodeConstructorsState);
   const builtInImages = useBuiltInNodeImages();
   const getUIContext = useGetRivetUIContext();
 
@@ -93,7 +95,7 @@ export function useContextMenuAddNodeConfiguration() {
     ).filter(isNotNull);
 
     setUiData(uiData);
-  });
+  }, [constructors, getUIContext]);
 
   const plugins = useDependsOnPlugins();
   const groupsWithItems = useMemo(() => {
