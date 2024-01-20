@@ -168,7 +168,8 @@ function coerceToString(value: DataValue | undefined): string | undefined {
   }
 
   // Don't know, so try to infer it from the type of the value
-  if (value.type === 'any') {
+  // Any and object are basically the same...
+  if (value.type === 'any' || value.type === 'object') {
     const inferred = inferType(value.value);
     return coerceTypeOptional(inferred, 'string');
   }
@@ -317,12 +318,7 @@ function coerceToNumber(value: DataValue | undefined): number | undefined {
     return undefined;
   }
 
-  if (value.type === 'any') {
-    const inferred = inferType(value.value);
-    return coerceTypeOptional(inferred, 'number');
-  }
-
-  if (value.type === 'object') {
+  if (value.type === 'any' || value.type === 'object') {
     const inferred = inferType(value.value);
     return coerceTypeOptional(inferred, 'number');
   }
