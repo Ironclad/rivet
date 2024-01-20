@@ -90,10 +90,10 @@ export class DestructureNodeImpl extends NodeImpl<DestructureNode> {
 
     const output: Record<PortId, DataValue> = {};
 
-    this.chartNode.data.paths.forEach((path, index) => {
+    this.data.paths.forEach((path, index) => {
       let match: unknown;
       try {
-        match = JSONPath<unknown>({ json: inputObject ?? null, path: path.trim(), wrap: true });
+        match = JSONPath<unknown>({ json: inputObject ?? null, path: path.trim(), wrap: false });
       } catch (err) {
         match = undefined;
       }
