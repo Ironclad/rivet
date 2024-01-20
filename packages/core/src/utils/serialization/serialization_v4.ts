@@ -225,7 +225,7 @@ function toSerializedNode(node: ChartNode, allNodes: ChartNode[], allConnections
     }/${node.visualData.color?.border ?? ''}/${node.visualData.color?.bg ?? ''}`,
     isSplitRun: node.isSplitRun ? true : undefined,
     splitRunMax: node.isSplitRun ? node.splitRunMax : undefined,
-
+    isSplitSequential: node.isSplitSequential ? true : undefined,
     data: Object.keys(node.data ?? {}).length > 0 ? node.data : undefined,
     outgoingConnections: outgoingConnections.length > 0 ? outgoingConnections : undefined,
     variants: (node.variants?.length ?? 0) > 0 ? node.variants : undefined,
