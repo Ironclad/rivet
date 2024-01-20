@@ -190,6 +190,12 @@ export class HttpCallNodeImpl extends NodeImpl<HttpCallNode> {
     const method = getInputOrData(this.data, inputs, 'method', 'string');
     const url = getInputOrData(this.data, inputs, 'url', 'string');
 
+    try {
+      new URL(url);
+    } catch (err) {
+      throw new Error(`Invalid URL: ${url}`);
+    }
+
     let headers: Record<string, string> | undefined;
     if (this.data.useHeadersInput) {
       const headersInput = inputs['headers' as PortId];
