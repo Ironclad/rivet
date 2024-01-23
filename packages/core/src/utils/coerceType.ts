@@ -167,6 +167,10 @@ function coerceToString(value: DataValue | undefined): string | undefined {
     return undefined;
   }
 
+  if (typeof value.value === 'object' && !Array.isArray(value.value)) {
+    return JSON.stringify(value.value);
+  }
+
   // Don't know, so try to infer it from the type of the value
   // Any and object are basically the same...
   if (value.type === 'any' || value.type === 'object') {
