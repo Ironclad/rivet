@@ -584,10 +584,14 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
         })
       : Promise.resolve();
 
-    try {
-      let runStatus = body.status;
+    let latestBody = body;
 
-      while (runStatus === 'in_progress' || runStatus === 'queued') {
+    try {
+      while (
+        latestBody.status === 'in_progress' ||
+        latestBody.status === 'queued' ||
+        latestBody.status === 'requires_action'
+      ) {
         const runResponse = await fetch(`https://api.openai.com/v1/threads/${body.thread_id}/runs/${body.id}`, {
           method: 'GET',
           headers: {
@@ -600,12 +604,11 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
 
         await handleOpenAIError(runResponse);
 
-        const runBody = (await runResponse.json()) as OpenAIRun;
-        runStatus = runBody.status;
+        latestBody = (await runResponse.json()) as OpenAIRun;
 
         // Requires action, start calling subgraphs
-        if (runStatus === 'requires_action') {
-          const toolCalls = runBody.required_action!.submit_tool_outputs.tool_calls;
+        if (latestBody.status === 'requires_action') {
+          const toolCalls = latestBody.required_action!.submit_tool_outputs.tool_calls;
 
           /** Run one subgraph per tool call requested */
           const toolCallOutputs = await Promise.all(
@@ -620,11 +623,11 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
               const inputs: Record<string, DataValue> = {
                 run_id: {
                   type: 'string',
-                  value: runBody.id,
+                  value: latestBody.id,
                 },
                 run: {
                   type: 'object',
-                  value: runBody,
+                  value: latestBody,
                 },
                 tool_call_id: {
                   type: 'string',
@@ -697,12 +700,12 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
       }
 
       if (
-        runStatus === 'cancelled' ||
-        runStatus === 'cancelling' ||
-        runStatus === 'expired' ||
-        runStatus === 'failed'
+        latestBody.status === 'cancelled' ||
+        latestBody.status === 'cancelling' ||
+        latestBody.status === 'expired' ||
+        latestBody.status === 'failed'
       ) {
-        throw new Error(`Run failed with status: ${runStatus}`);
+        throw new Error(`Run failed with status: ${latestBody.status}`);
       }
 
       const listStepsQuery = new URLSearchParams({
@@ -758,11 +761,11 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
       return {
         ['runId' as PortId]: {
           type: 'string',
-          value: body.id,
+          value: latestBody.id,
         },
         ['run' as PortId]: {
           type: 'object',
-          value: body,
+          value: latestBody,
         },
         ['steps' as PortId]: {
           type: 'object[]',
