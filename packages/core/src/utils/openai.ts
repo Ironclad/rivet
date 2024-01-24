@@ -70,6 +70,14 @@ export const openaiModels = {
     },
     displayName: 'GPT-3.5 (v0613)',
   },
+  'gpt-3.5-turbo-1106': {
+    maxTokens: 16385,
+    cost: {
+      prompt: 0.001,
+      completion: 0.002,
+    },
+    displayName: 'GPT-3.5 (v1106)',
+  },
   'gpt-3.5-turbo-16k-0613': {
     maxTokens: 16384,
     cost: {
