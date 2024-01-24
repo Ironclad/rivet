@@ -6,7 +6,7 @@ import {
   type PortId,
   type EditorDefinition,
 } from '../../../index.js';
-import { newId, dedent, getInputOrData, coerceType } from '../../../utils/index.js';
+import { newId, dedent, getInputOrData, coerceType, coerceTypeOptional } from '../../../utils/index.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
 import { handleOpenAIError } from '../handleOpenaiError.js';
 import { openAIFilePurposeOptions } from '../../../utils/openai.js';
@@ -56,6 +56,15 @@ export const UploadFileNodeImpl: PluginNodeImpl<UploadFileNode> = {
       required: true,
     });
 
+    inputs.push({
+      id: 'file-name' as PortId,
+      dataType: 'string',
+      title: 'File Name',
+      coerced: true,
+      description: 'An optional file name to use for the uploaded file.',
+      required: false,
+    });
+
     return inputs;
   },
 
@@ -97,6 +106,7 @@ export const UploadFileNodeImpl: PluginNodeImpl<UploadFileNode> = {
   async process(data, inputData, context) {
     const purpose = getInputOrData(data, inputData, 'purpose');
     const fileData = coerceType(inputData['data' as PortId], 'binary');
+    const fileName = coerceTypeOptional(inputData['file-name' as PortId], 'string');
 
     if (!fileData) {
       throw new Error('File data is required.');
@@ -106,9 +116,13 @@ export const UploadFileNodeImpl: PluginNodeImpl<UploadFileNode> = {
       throw new Error('OpenAI key is not set.');
     }
 
+    const file = fileName
+      ? new File([fileData], fileName, { type: 'application/octet-stream' })
+      : new Blob([fileData], { type: 'application/octet-stream' });
+
     const formData = new FormData();
     formData.append('purpose', purpose);
-    formData.append('file', new Blob([fileData], { type: 'application/octet-stream' }));
+    formData.append('file', file);
 
     const response = await fetch('https://api.openai.com/v1/files', {
       method: 'POST',
