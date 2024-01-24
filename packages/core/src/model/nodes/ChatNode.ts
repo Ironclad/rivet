@@ -53,6 +53,7 @@ export type ChatNodeConfigData = {
   toolChoice?: 'none' | 'auto' | 'function';
   toolChoiceFunction?: string;
   responseFormat?: 'text' | 'json';
+  parallelFunctionCalling?: boolean;
 };
 
 export type ChatNodeData = ChatNodeConfigData & {
@@ -128,6 +129,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
         cache: false,
         useAsGraphPartialOutput: true,
+
+        parallelFunctionCalling: true,
       },
     };
 
@@ -342,12 +345,21 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     }
 
     if (this.data.enableFunctionUse) {
-      outputs.push({
-        dataType: 'object',
-        id: 'function-call' as PortId,
-        title: 'Function Call',
-        description: 'The function call that was made, if any.',
-      });
+      if (this.data.parallelFunctionCalling) {
+        outputs.push({
+          dataType: 'object[]',
+          id: 'function-calls' as PortId,
+          title: 'Function Calls',
+          description: 'The function calls that were made, if any.',
+        });
+      } else {
+        outputs.push({
+          dataType: 'object',
+          id: 'function-call' as PortId,
+          title: 'Function Call',
+          description: 'The function call that was made, if any.',
+        });
+      }
     }
 
     outputs.push({
@@ -514,6 +526,12 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             type: 'toggle',
             label: 'Enable Function Use',
             dataKey: 'enableFunctionUse',
+          },
+          {
+            type: 'toggle',
+            label: 'Enable Parallel Function Calling',
+            dataKey: 'parallelFunctionCalling',
+            hideIf: (data) => !data.enableFunctionUse,
           },
           {
             type: 'dropdown',
@@ -897,14 +915,26 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                   })),
                 };
               } else {
-                output['function-call' as PortId] = {
-                  type: 'object',
-                  value: {
-                    name: functionCalls[0]![0]?.name,
-                    arguments: functionCalls[0]![0]?.lastParsedArguments,
-                    id: functionCalls[0]![0]?.id,
-                  } as Record<string, unknown>,
-                };
+                if (this.data.parallelFunctionCalling) {
+                  console.dir({ functionCalls });
+                  output['function-calls' as PortId] = {
+                    type: 'object[]',
+                    value: functionCalls[0]!.map((functionCall) => ({
+                      name: functionCall.name,
+                      arguments: functionCall.lastParsedArguments,
+                      id: functionCall.id,
+                    })),
+                  };
+                } else {
+                  output['function-call' as PortId] = {
+                    type: 'object',
+                    value: {
+                      name: functionCalls[0]![0]?.name,
+                      arguments: functionCalls[0]![0]?.lastParsedArguments,
+                      id: functionCalls[0]![0]?.id,
+                    } as Record<string, unknown>,
+                  };
+                }
               }
             }
 

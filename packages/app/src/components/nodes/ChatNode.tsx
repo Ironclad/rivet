@@ -40,7 +40,7 @@ export const ChatNodeOutput: FC<{
     const costAll = coerceTypeOptional(outputs['cost' as PortId], 'number[]') ?? [];
     const durationAll = coerceTypeOptional(outputs['duration' as PortId], 'number[]') ?? [];
 
-    const functionCallOutput = outputs['function-call' as PortId];
+    const functionCallOutput = outputs['function-call' as PortId] ?? outputs['function-calls' as PortId];
     const functionCallAll =
       functionCallOutput?.type === 'object[]'
         ? functionCallOutput.value
@@ -79,11 +79,7 @@ export const ChatNodeOutput: FC<{
     const cost = coerceTypeOptional(outputs['cost' as PortId], 'number');
     const duration = coerceTypeOptional(outputs['duration' as PortId], 'number');
 
-    const functionCallOutput = outputs['function-call' as PortId];
-    const functionCall =
-      functionCallOutput?.type === 'object'
-        ? functionCallOutput.value
-        : coerceTypeOptional(functionCallOutput, 'string');
+    const functionCallOutput = outputs['function-call' as PortId] ?? outputs['function-calls' as PortId];
 
     return (
       <ChatNodeOutputSingle
@@ -91,7 +87,7 @@ export const ChatNodeOutput: FC<{
         requestTokens={requestTokens}
         responseTokens={responseTokens}
         cost={cost}
-        functionCall={functionCall}
+        functionCall={functionCallOutput?.value as object}
         duration={duration}
         fullscreen={fullscreen}
         renderMarkdown={renderMarkdown}
@@ -182,7 +178,7 @@ export const ChatNodeOutputSingle: FC<{
       </div>
       {functionCall && (
         <div className="function-call">
-          <h4>Function Call:</h4>
+          <h4>{Array.isArray(functionCall) ? 'Function Calls' : 'Function Call'}:</h4>
           <div className="pre-wrap">
             <RenderDataValue value={inferType(functionCall)} />
           </div>
