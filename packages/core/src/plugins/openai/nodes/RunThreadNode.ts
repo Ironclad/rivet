@@ -286,11 +286,15 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
         type: 'toggle',
         dataKey: 'useCodeInterpreterTool',
         label: 'Code Interpreter Tool Enabled',
+        helperMessage:
+          "Note: Only enabled if functions are provided. Otherwise, the assistant's settings will be used.",
       },
       {
         type: 'toggle',
         dataKey: 'useRetrievalTool',
         label: 'Retrieval Tool Enabled',
+        helperMessage:
+          "Note: Only enabled if functions are provided. Otherwise, the assistant's settings will be used.",
       },
       {
         type: 'custom',
@@ -391,18 +395,21 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
 
     const functionTools = coerceTypeOptional(inputData['functions' as PortId], 'gpt-function[]');
     const tools = [...(functionTools?.map((f): OpenAIAssistantTool => ({ type: 'function', function: f })) ?? [])];
-    if (data.useCodeInterpreterTool) {
-      tools.push({ type: 'code_interpreter' });
-    }
-    if (data.useRetrievalTool) {
-      tools.push({ type: 'retrieval' });
+
+    if (tools.length) {
+      if (data.useCodeInterpreterTool) {
+        tools.push({ type: 'code_interpreter' });
+      }
+      if (data.useRetrievalTool) {
+        tools.push({ type: 'retrieval' });
+      }
     }
 
     const requestBody: CreateRunBody = {
       assistant_id: assistantId,
       model: getInputOrData(data, inputData, 'model'),
       instructions: getInputOrData(data, inputData, 'instructions'),
-      tools,
+      tools: tools.length > 0 ? tools : undefined,
       metadata,
     };
 
