@@ -19,6 +19,7 @@ import {
   anthropicModelOptions,
   anthropicModels,
   streamChatCompletions,
+  AnthropicError,
 } from '../anthropic.js';
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
@@ -311,20 +312,28 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
 
     const tokenCount = context.tokenizer.getTokenCountForString(prompt, tokenizerInfo);
 
-    if (tokenCount >= anthropicModels[model].maxTokens) {
+    const modelInfo = anthropicModels[model] ?? {
+      maxTokens: Number.MAX_SAFE_INTEGER,
+      cost: {
+        prompt: 0,
+        completion: 0,
+      },
+    };
+
+    if (tokenCount >= modelInfo.maxTokens) {
       throw new Error(
-        `The model ${model} can only handle ${anthropicModels[model].maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`,
+        `The model ${model} can only handle ${modelInfo.maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`,
       );
     }
 
-    if (tokenCount + maxTokens > anthropicModels[model].maxTokens) {
+    if (tokenCount + maxTokens > modelInfo.maxTokens) {
       const message = `The model can only handle a maximum of ${
-        anthropicModels[model].maxTokens
+        modelInfo.maxTokens
       } tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${
-        anthropicModels[model].maxTokens - tokenCount
+        modelInfo.maxTokens - tokenCount
       }.`;
       addWarning(output, message);
-      maxTokens = Math.floor((anthropicModels[model].maxTokens - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
+      maxTokens = Math.floor((modelInfo.maxTokens - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
     }
 
     try {
@@ -417,29 +426,13 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
               throw new Error('Aborted');
             }
 
-            const { retriesLeft } = err;
-
-            // TODO
-            // if (!(err instanceof OpenAIError)) {
-            //   return; // Just retry?
-            // }
-
-            // if (err.status === 429) {
-            //   if (retriesLeft) {
-            //     context.onPartialOutputs?.({
-            //       ['response' as PortId]: {
-            //         type: 'string',
-            //         value: 'OpenAI API rate limit exceeded, retrying...',
-            //       },
-            //     });
-            //     return;
-            //   }
-            // }
-
-            // // We did something wrong (besides rate limit)
-            // if (err.status >= 400 && err.status < 500) {
-            //   throw new Error(err.message);
-            // }
+            if (err instanceof AnthropicError) {
+              if (err.response.status >= 400 && err.response.status < 500) {
+                if ((err.responseJson as any).error?.message) {
+                  throw new Error((err.responseJson as any).error.message);
+                }
+              }
+            }
           },
         },
       );

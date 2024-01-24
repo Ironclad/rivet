@@ -11,7 +11,7 @@ export type AnthropicModel = {
 
 export const anthropicModels = {
   'claude-instant-1': {
-    maxTokens: 100000,
+    maxTokens: 100_000,
     cost: {
       prompt: 0.00163,
       completion: 0.00551,
@@ -19,12 +19,20 @@ export const anthropicModels = {
     displayName: 'Claude Instant',
   },
   'claude-2': {
-    maxTokens: 100000,
+    maxTokens: 100_000,
     cost: {
       prompt: 0.01102,
       completion: 0.03268,
     },
     displayName: 'Claude 2',
+  },
+  'claude-2.1': {
+    maxTokens: 200_000,
+    cost: {
+      prompt: 0.01102,
+      completion: 0.03268,
+    },
+    displayName: 'Claude 2.1',
   },
 } satisfies Record<string, AnthropicModel>;
 
@@ -99,6 +107,12 @@ export async function* streamChatCompletions({
 
   if (!hadChunks) {
     const responseJson = await response.json();
-    throw new Error(`No chunks received. Response: ${JSON.stringify(responseJson)}`);
+    throw new AnthropicError(`No chunks received. Response: ${JSON.stringify(responseJson)}`, response, responseJson);
+  }
+}
+
+export class AnthropicError extends Error {
+  constructor(message: string, public readonly response: Response, public readonly responseJson: unknown) {
+    super(message);
   }
 }
