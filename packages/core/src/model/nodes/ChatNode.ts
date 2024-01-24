@@ -116,10 +116,10 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         stop: '',
         useStopInput: false,
 
-        presencePenalty: 0,
+        presencePenalty: undefined,
         usePresencePenaltyInput: false,
 
-        frequencyPenalty: 0,
+        frequencyPenalty: undefined,
         useFrequencyPenaltyInput: false,
 
         user: undefined,
@@ -481,6 +481,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             min: 0,
             max: 2,
             step: 0.1,
+            allowEmpty: true,
             helperMessage: `Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.`,
           },
           {
@@ -491,6 +492,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             min: 0,
             max: 2,
             step: 0.1,
+            allowEmpty: true,
             helperMessage: `Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.`,
           },
           {
