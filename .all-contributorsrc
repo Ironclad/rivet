@@ -340,6 +340,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "wayne-chang",
+      "name": "Wayne Chang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/969364?v=4",
+      "profile": "https://chang.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
