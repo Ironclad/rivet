@@ -22,30 +22,41 @@ export const SubGraphNodeBody: FC<{
 
 export const SubGraphNodeOutputSimple: FC<{
   outputs: Outputs;
-}> = ({ outputs }) => {
+  renderMarkdown?: boolean;
+}> = ({ outputs, renderMarkdown }) => {
   const cost = coerceTypeOptional(outputs['cost' as PortId], 'number');
   const duration = coerceTypeOptional(outputs['duration' as PortId], 'number');
 
-  return <div>
-    <div className="metaInfo">
-      {(cost ?? 0) > 0 && (
-        <div>
-          <em>${cost!.toFixed(3)}</em>
-        </div>
-      )}
-      {(duration ?? 0) > 0 && (
-        <div>
-          <em>Duration: {duration}ms</em>
-        </div>
-      )}
-    </div>
+  return (
     <div>
-      <RenderDataOutputs outputs={omit(outputs, ['cost', 'duration'])!} />
+      <div className="metaInfo">
+        {(cost ?? 0) > 0 && (
+          <div>
+            <em>${cost!.toFixed(3)}</em>
+          </div>
+        )}
+        {(duration ?? 0) > 0 && (
+          <div>
+            <em>Duration: {duration}ms</em>
+          </div>
+        )}
+      </div>
+      <div>
+        <RenderDataOutputs outputs={omit(outputs, ['cost', 'duration'])!} renderMarkdown={renderMarkdown} />
+      </div>
     </div>
-  </div>;
+  );
+};
+
+export const FullscreenSubGraphNodeOutputSimple: FC<{
+  outputs: Outputs;
+  renderMarkdown: boolean;
+}> = ({ outputs, renderMarkdown }) => {
+  return <SubGraphNodeOutputSimple outputs={outputs} renderMarkdown={renderMarkdown} />;
 };
 
 export const subgraphNodeDescriptor: NodeComponentDescriptor<'subGraph'> = {
   Body: SubGraphNodeBody,
   OutputSimple: SubGraphNodeOutputSimple,
+  FullscreenOutputSimple: FullscreenSubGraphNodeOutputSimple,
 };
