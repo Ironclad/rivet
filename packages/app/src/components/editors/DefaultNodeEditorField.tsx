@@ -87,8 +87,10 @@ export const DefaultNodeEditorField: FC<
       <div />
     );
 
+  const style = editor.type === 'code' && editor.height != null ? { minHeight: editor.height } : {};
+
   return (
-    <div className={clsx('row', editor.type)}>
+    <div className={clsx('row', editor.type)} style={style}>
       {input}
       {toggle}
     </div>

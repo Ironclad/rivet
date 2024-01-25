@@ -109,6 +109,7 @@ export type CodeEditorDefinition<T extends ChartNode> = SharedEditorDefinitionPr
 
   language: string;
   theme?: string;
+  height?: number;
 };
 
 export type ColorEditorDefinition<T extends ChartNode> = SharedEditorDefinitionProps<T> & {

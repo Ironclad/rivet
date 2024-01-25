@@ -124,10 +124,12 @@ export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
         useInputToggleDataKey: 'useNameInput',
       },
       {
-        type: 'string',
+        type: 'code',
         label: 'Description',
         dataKey: 'description',
         useInputToggleDataKey: 'useDescriptionInput',
+        language: 'markdown',
+        height: 100,
       },
       {
         type: 'code',
