@@ -1047,6 +1047,18 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               }
             }
 
+            if (err.status === 408) {
+              if (retriesLeft) {
+                context.onPartialOutputs?.({
+                  ['response' as PortId]: {
+                    type: 'string',
+                    value: 'OpenAI API timed out, retrying...',
+                  },
+                });
+                return;
+              }
+            }
+
             // We did something wrong (besides rate limit)
             if (err.status >= 400 && err.status < 500) {
               throw new Error(err.message);
