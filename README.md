@@ -156,6 +156,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://reactgular.com"><img src="https://avatars.githubusercontent.com/u/50146659?v=4?s=100" width="100px;" alt="Nick Foscarini"/><br /><sub><b>Nick Foscarini</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=codemile" title="Code">💻</a> <a href="https://github.com/Ironclad/rivet/commits?author=codemile" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://chang.com"><img src="https://avatars.githubusercontent.com/u/969364?v=4?s=100" width="100px;" alt="Wayne Chang"/><br /><sub><b>Wayne Chang</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=wayne-chang" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://twitter.com/lou7s"><img src="https://avatars.githubusercontent.com/u/35469434?v=4?s=100" width="100px;" alt="loui7"/><br /><sub><b>loui7</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=loui7" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
