@@ -568,6 +568,12 @@ export const openAIFilePurposeOptions = [
   { value: 'assistants_output', label: 'Assistants Output' },
 ];
 
+export const openAIFileUploadPurposeOptions = [
+  { value: 'fine-tune', label: 'Fine-tuning' },
+  { value: 'assistants', label: 'Assistants' },
+  { value: 'assistants_output', label: 'Assistants Output' },
+];
+
 export type OpenAIThread = {
   /** The identifier, which can be referenced in API endpoints. */
   id: string;

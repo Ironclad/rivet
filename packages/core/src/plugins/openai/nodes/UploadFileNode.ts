@@ -9,12 +9,12 @@ import {
 import { newId, dedent, getInputOrData, coerceType, coerceTypeOptional } from '../../../utils/index.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
 import { handleOpenAIError } from '../handleOpenaiError.js';
-import { openAIFilePurposeOptions } from '../../../utils/openai.js';
+import { openAIFileUploadPurposeOptions } from '../../../utils/openai.js';
 
 export type UploadFileNode = ChartNode<'openaiUploadFile', UploadFileNodeData>;
 
 export type UploadFileNodeData = {
-  purpose: 'fine-tune' | 'fine-tune-results' | 'assistants' | 'assistants_output';
+  purpose: 'fine-tune' | 'assistants' | 'assistants_output';
 };
 
 export const UploadFileNodeImpl: PluginNodeImpl<UploadFileNode> = {
@@ -91,7 +91,7 @@ export const UploadFileNodeImpl: PluginNodeImpl<UploadFileNode> = {
         type: 'dropdown',
         dataKey: 'purpose',
         label: 'Purpose',
-        options: openAIFilePurposeOptions,
+        options: openAIFileUploadPurposeOptions,
         defaultValue: 'assistants',
       },
     ];
@@ -99,7 +99,7 @@ export const UploadFileNodeImpl: PluginNodeImpl<UploadFileNode> = {
 
   getBody(data) {
     return dedent`
-      Purpose: ${openAIFilePurposeOptions.find(({ value }) => value === data.purpose)?.label ?? 'Unknown'}
+      Purpose: ${openAIFileUploadPurposeOptions.find(({ value }) => value === data.purpose)?.label ?? 'Unknown'}
     `;
   },
 
