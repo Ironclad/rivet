@@ -67,6 +67,9 @@ import assembleMessageNodeImage from '../assets/node_images/assemble_message_nod
 import urlReferenceNodeImage from '../assets/node_images/url_reference_node.png';
 import destructureNodeImage from '../assets/node_images/destructure_node.png';
 import replaceDatasetNodeImage from '../assets/node_images/replace_dataset_node.png';
+import listGraphsNodeImage from '../assets/node_images/list_graphs_node.png';
+import graphReferenceNodeImage from '../assets/node_images/graph_reference_node.png';
+import callGraphNodeImage from '../assets/node_images/call_graph_node.png';
 
 export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
   return {
@@ -137,5 +140,8 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     urlReference: urlReferenceNodeImage,
     destructure: destructureNodeImage,
     replaceDataset: replaceDatasetNodeImage,
+    listGraphs: listGraphsNodeImage,
+    graphReference: graphReferenceNodeImage,
+    callGraph: callGraphNodeImage,
   };
 };

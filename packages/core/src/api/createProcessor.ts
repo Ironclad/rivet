@@ -40,6 +40,26 @@ export type RunGraphOptions = {
   [P in keyof ProcessEvents as `on${PascalCase<P>}`]?: (params: ProcessEvents[P]) => void;
 } & Settings;
 
+export function looseDataValuesToDataValues(values: Record<string, LooseDataValue>): Record<string, DataValue> {
+  return mapValues(values, val => looseDataValueToDataValue(val));
+}
+
+export function looseDataValueToDataValue(value: LooseDataValue): DataValue {
+  if (typeof value === 'string') {
+    return { type: 'string', value };
+  }
+
+  if (typeof value === 'number') {
+    return { type: 'number', value };
+  }
+
+  if (typeof value === 'boolean') {
+    return { type: 'boolean', value };
+  }
+
+  return value;
+}
+
 export function coreCreateProcessor(project: Project, options: RunGraphOptions) {
   const { graph, inputs = {}, context = {} } = options;
 
@@ -119,37 +139,8 @@ export function coreCreateProcessor(project: Project, options: RunGraphOptions) 
     processor.abort();
   });
 
-  const resolvedInputs: Record<string, DataValue> = mapValues(inputs, (value): DataValue => {
-    if (typeof value === 'string') {
-      return { type: 'string', value };
-    }
-
-    if (typeof value === 'number') {
-      return { type: 'number', value };
-    }
-
-    if (typeof value === 'boolean') {
-      return { type: 'boolean', value };
-    }
-
-    return value;
-  });
-
-  const resolvedContextValues: Record<string, DataValue> = mapValues(context, (value): DataValue => {
-    if (typeof value === 'string') {
-      return { type: 'string', value };
-    }
-
-    if (typeof value === 'number') {
-      return { type: 'number', value };
-    }
-
-    if (typeof value === 'boolean') {
-      return { type: 'boolean', value };
-    }
-
-    return value;
-  });
+  const resolvedInputs = looseDataValuesToDataValues(inputs);
+  const resolvedContextValues = looseDataValuesToDataValues(context);
 
   return {
     processor,

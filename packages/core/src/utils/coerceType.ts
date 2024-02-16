@@ -10,6 +10,7 @@ import {
   unwrapDataValue,
 } from '../model/DataValue.js';
 import { expectTypeOptional } from './expectType.js';
+import type { GraphId } from '../index.js';
 
 export function coerceTypeOptional<T extends DataType>(
   wrapped: DataValue | undefined,
@@ -41,6 +42,7 @@ export function coerceTypeOptional<T extends DataType>(
     .with('number', () => coerceToNumber(value))
     .with('object', () => coerceToObject(value))
     .with('binary', () => coerceToBinary(value))
+    .with('graph-reference', () => coerceToGraphReference(value))
     .otherwise(() => {
       if (!value) {
         return value;
@@ -368,6 +370,26 @@ function coerceToBinary(value: DataValue | undefined): Uint8Array | undefined {
   }
 
   return new TextEncoder().encode(JSON.stringify(value.value));
+}
+
+function coerceToGraphReference(value: DataValue | undefined): { graphName: string; graphId: GraphId } | undefined {
+  if (!value || value.value == null) {
+    return undefined;
+  }
+
+  if (value.type === 'graph-reference') {
+    return value.value;
+  }
+
+  if (value.type === 'string') {
+    return { graphName: value.value, graphId: '' as GraphId };
+  }
+
+  if (value.type === 'object' && 'graphName' in value.value && 'graphId' in value.value) {
+    return value.value as { graphName: string; graphId: GraphId };
+  }
+
+  return undefined;
 }
 
 export function canBeCoercedAny(from: DataType | Readonly<DataType[]>, to: DataType | Readonly<DataType[]>) {

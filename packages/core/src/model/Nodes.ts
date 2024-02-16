@@ -203,6 +203,15 @@ export * from './nodes/DestructureNode.js';
 import { replaceDatasetNode } from './nodes/ReplaceDatasetNode.js';
 export * from './nodes/ReplaceDatasetNode.js';
 
+import { listGraphsNode } from './nodes/ListGraphsNode.js';
+export * from './nodes/ListGraphsNode.js';
+
+import { graphReferenceNode } from './nodes/GraphReferenceNode.js';
+export * from './nodes/GraphReferenceNode.js';
+
+import { callGraphNode } from './nodes/CallGraphNode.js';
+export * from './nodes/CallGraphNode.js';
+
 export const registerBuiltInNodes = (registry: NodeRegistration) => {
   return registry
     .register(toYamlNode)
@@ -271,7 +280,10 @@ export const registerBuiltInNodes = (registry: NodeRegistration) => {
     .register(assembleMessageNode)
     .register(urlReferenceNode)
     .register(destructureNode)
-    .register(replaceDatasetNode);
+    .register(replaceDatasetNode)
+    .register(listGraphsNode)
+    .register(graphReferenceNode)
+    .register(callGraphNode);
 };
 
 let globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());
