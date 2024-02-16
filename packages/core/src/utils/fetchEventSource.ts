@@ -123,14 +123,16 @@ function createEventStream(body: ReadableStream<Uint8Array> | null) {
   const eventStream = textStream.pipeThrough(new TransformStream(new LineSplitter())).pipeThrough(
     new TransformStream<string, string>({
       transform(line, controller) {
+        if (line.trim().length === 0) {
+          return;
+        }
+
         if (line.startsWith('data: ')) {
           const data = line.slice(6).trim();
           controller.enqueue(data);
         } else if (line.startsWith('event: ')) {
           const event = line.slice(7).trim();
           controller.enqueue(`[${event}]`);
-        } else {
-          console.log('Unknown event source line: ', line);
         }
       },
     }),
