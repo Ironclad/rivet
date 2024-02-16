@@ -158,6 +158,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://twitter.com/lou7s"><img src="https://avatars.githubusercontent.com/u/35469434?v=4?s=100" width="100px;" alt="loui7"/><br /><sub><b>loui7</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=loui7" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://aschen.tech"><img src="https://avatars.githubusercontent.com/u/4447392?v=4?s=100" width="100px;" alt="Adrien Maret"/><br /><sub><b>Adrien Maret</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=Aschen" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

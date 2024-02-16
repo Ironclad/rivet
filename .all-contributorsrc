@@ -358,6 +358,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Aschen",
+      "name": "Adrien Maret",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4447392?v=4",
+      "profile": "https://aschen.tech",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
