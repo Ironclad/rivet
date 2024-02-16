@@ -2,7 +2,7 @@
   "name": "@ironclad/rivet-node",
   "license": "MIT",
   "repository": "https://github.com/ironclad/rivet",
-  "version": "1.14.2",
+  "version": "1.14.3",
   "main": "dist/cjs/bundle.cjs",
   "module": "dist/esm/index.js",
   "src": "src/index.ts",
