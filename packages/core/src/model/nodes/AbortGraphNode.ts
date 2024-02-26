@@ -87,10 +87,10 @@ export class AbortGraphNodeImpl extends NodeImpl<AbortGraphNode> {
         this.data.useSuccessfullyInput
           ? 'Success depends on input'
           : this.data.successfully
-          ? 'Successfully Abort'
-          : this.data.errorMessage
-          ? `Error Abort: ${this.data.errorMessage}`
-          : 'Error Abort'
+            ? 'Successfully Abort'
+            : this.data.errorMessage
+              ? `Error Abort: ${this.data.errorMessage}`
+              : 'Error Abort'
       }
     `;
   }

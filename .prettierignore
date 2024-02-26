@@ -1,0 +1,14 @@
+**/dist
+.yarn
+.github
+.all-contributorsrc
+.pnp.cjs
+.pnp.loader.mjs
+.vscode
+**/target
+packages/app/sidecars
+**/.next
+**/.docusaurus
+**/build
+**/.vercel
+packages/docs/static

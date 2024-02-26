@@ -29,7 +29,8 @@ export const googlePlugin: RivetPlugin = {
       label: 'Google Application Credentials',
       description: 'The path with the JSON file that contains your credentials.',
       pullEnvironmentVariable: 'GOOGLE_APPLICATION_CREDENTIALS',
-      helperText: 'You may also set the GOOGLE_APPLICATION_CREDENTIALS environment variable. See https://cloud.google.com/vertex-ai/docs/start/client-libraries for more info.',
+      helperText:
+        'You may also set the GOOGLE_APPLICATION_CREDENTIALS environment variable. See https://cloud.google.com/vertex-ai/docs/start/client-libraries for more info.',
     },
   },
 };

@@ -21,13 +21,12 @@ The Transcribe Audio node transcribes audio using the [AssemblyAI](https://www.a
 ### LeMUR Nodes
 
 AssemblyAI's LeMUR (Leveraging Large Language Models to Understand Recognized Speech) is a framework to process audio files with an LLM.
-The AssemblyAI plugin has a dedicated node for each LeMUR endpoint. 
+The AssemblyAI plugin has a dedicated node for each LeMUR endpoint.
 Each node accepts Transcript IDs as input which you can get from the Transcribe Audio Node. Additional parameters are available as inputs and as node configuration. For more information what these parameters do, [check out the LeMUR API reference](https://www.assemblyai.com/docs/api-reference/lemur).
 
 #### LeMUR Summary Node
 
 The LeMUR Summary node uses LeMUR to summarize a given transcript.
-
 
 ![LeMUR Summary Node](./assets/lemur-summary-node.png)
 

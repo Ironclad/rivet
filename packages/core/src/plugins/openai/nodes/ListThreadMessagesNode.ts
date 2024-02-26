@@ -210,8 +210,8 @@ export const ListThreadMessagesNodeImpl: PluginNodeImpl<ListThreadMessagesNode> 
     return dedent`
       Thread ID: ${data.useThreadIdInput ? '(Thread ID From Input)' : data.threadId}
       Limit: ${data.useLimitInput ? '(Limit From Input)' : data.limit}, ${
-      data.useOrderInput ? '(Order From Input)' : data.order === 'asc' ? 'Ascending' : 'Descending'
-    }
+        data.useOrderInput ? '(Order From Input)' : data.order === 'asc' ? 'Ascending' : 'Descending'
+      }
 ${
   data.useAfterInput || data.after?.trim() ? `After: ${data.useAfterInput ? '(After From Input)' : data.after}\n` : ''
 }${

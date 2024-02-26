@@ -19,16 +19,22 @@ export const WhatIsRivetSection: React.FC<{ id?: string }> = ({ id }) => {
           graphs.
         </p>
         <p>
-          <img alt="Ironclad" className={styles.inlineLogo} src="img/ironclad-logo.png" height="16px" /> is the leading digital
-          contracting platform.
-          {' '}
-          <a href="https://ironcladapp.com/product/ai-based-contract-management/" target="_blank">Ironclad AI</a>
-          {' '}
-          helps legal teams with everything from reviewing contracts faster to answering questions about their obligations.
-          {' '}
-          Learn more at <a href="https://www.ironcladapp.com/" target="_blank">ironcladapp.com</a>.
+          <img alt="Ironclad" className={styles.inlineLogo} src="img/ironclad-logo.png" height="16px" /> is the leading
+          digital contracting platform.{' '}
+          <a href="https://ironcladapp.com/product/ai-based-contract-management/" target="_blank">
+            Ironclad AI
+          </a>{' '}
+          helps legal teams with everything from reviewing contracts faster to answering questions about their
+          obligations. Learn more at{' '}
+          <a href="https://www.ironcladapp.com/" target="_blank">
+            ironcladapp.com
+          </a>
+          .
         </p>
-        <p>Rivet is built and used by <img alt="Ironclad" className={styles.inlineLogo} src="img/ironclad-logo.png" height="16px" /> Research.</p>
+        <p>
+          Rivet is built and used by{' '}
+          <img alt="Ironclad" className={styles.inlineLogo} src="img/ironclad-logo.png" height="16px" /> Research.
+        </p>
       </div>
     </Section>
   );

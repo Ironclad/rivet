@@ -42,10 +42,13 @@ export const useNodeHeightCache = (): HeightCache => {
    */
   useEffect(() => {
     if (garbageCollectionCount.current++ % GARBAGE_COLLECTION_INTERVAL !== 0) {
-      ref.current = nodes.reduce((acc, next) => {
-        acc[next.id] = ref.current[next.id];
-        return acc;
-      }, {} as Record<string, number | undefined>);
+      ref.current = nodes.reduce(
+        (acc, next) => {
+          acc[next.id] = ref.current[next.id];
+          return acc;
+        },
+        {} as Record<string, number | undefined>,
+      );
     }
   }, [nodes]);
 

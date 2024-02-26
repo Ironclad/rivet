@@ -19,7 +19,11 @@ export class GptTokenizerTokenizer implements Tokenizer {
     return encode(input).length;
   }
 
-  async getTokenCountForMessages(messages: ChatMessage[], functions: GptFunction[] | undefined,_info: TokenizerCallInfo): Promise<number> {
+  async getTokenCountForMessages(
+    messages: ChatMessage[],
+    functions: GptFunction[] | undefined,
+    _info: TokenizerCallInfo,
+  ): Promise<number> {
     try {
       const openaiMessages = await Promise.all(
         messages.map((message) => chatMessageToOpenAIChatCompletionMessage(message)),
@@ -40,7 +44,8 @@ export class GptTokenizerTokenizer implements Tokenizer {
         });
 
       const encodedChat = encodeChat(validMessages as any, 'gpt-3.5-turbo');
-      const encodedFunctions = functions && functions.length > 0 ? encode(this.convertGptFunctionsToPromptString(functions)) : [];
+      const encodedFunctions =
+        functions && functions.length > 0 ? encode(this.convertGptFunctionsToPromptString(functions)) : [];
 
       return encodedChat.length + encodedFunctions.length;
     } catch (err) {
@@ -62,15 +67,18 @@ export class GptTokenizerTokenizer implements Tokenizer {
 ## functions
 
 namespace functions {
-${
-  functions.map((fn) => `
+${functions
+  .map(
+    (fn) => `
 // ${fn.description}
 type ${fn.name} = (_: {
 ${Object.entries((fn.parameters as any)?.properties ?? {})
-.map(([parameterName, value]: [string, any]) => (`// ${value?.description}\n${parameterName}?: ${value?.type}`)).join('\n')}
+  .map(([parameterName, value]: [string, any]) => `// ${value?.description}\n${parameterName}?: ${value?.type}`)
+  .join('\n')}
 })
-`).join('')
-}
+`,
+  )
+  .join('')}
 } // namespace functions
 `;
   }

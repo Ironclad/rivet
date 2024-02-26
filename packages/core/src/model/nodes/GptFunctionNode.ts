@@ -166,13 +166,16 @@ export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
     } else {
       const inputMap = keys(inputs)
         .filter((key) => key.startsWith('input'))
-        .reduce((acc, key) => {
-          const stringValue = coerceTypeOptional(inputs[key], 'string') ?? '';
+        .reduce(
+          (acc, key) => {
+            const stringValue = coerceTypeOptional(inputs[key], 'string') ?? '';
 
-          const interpolationKey = key.slice('input-'.length);
-          acc[interpolationKey] = stringValue;
-          return acc;
-        }, {} as Record<string, string>);
+            const interpolationKey = key.slice('input-'.length);
+            acc[interpolationKey] = stringValue;
+            return acc;
+          },
+          {} as Record<string, string>,
+        );
 
       const interpolated = interpolate(this.data.schema, inputMap);
 

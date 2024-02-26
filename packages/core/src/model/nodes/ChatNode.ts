@@ -646,8 +646,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             ? '(Using Input)'
             : this.data.top_p
           : this.data.useTemperatureInput
-          ? '(Using Input)'
-          : this.data.temperature
+            ? '(Using Input)'
+            : this.data.temperature
       }
       ${this.data.useStop ? `Stop: ${this.data.useStopInput ? '(Using Input)' : this.data.stop}` : ''}
       ${
@@ -692,28 +692,31 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     const toolChoice: ChatCompletionOptions['tool_choice'] = !toolChoiceMode
       ? undefined
       : toolChoiceMode === 'function'
-      ? {
-          type: 'function',
-          function: {
-            name: getInputOrData(this.data, inputs, 'toolChoiceFunction', 'string'),
-          },
-        }
-      : toolChoiceMode;
+        ? {
+            type: 'function',
+            function: {
+              name: getInputOrData(this.data, inputs, 'toolChoiceFunction', 'string'),
+            },
+          }
+        : toolChoiceMode;
 
     const openaiResponseFormat = !responseFormat?.trim()
       ? undefined
       : responseFormat === 'json'
-      ? ({
-          type: 'json_object',
-        } as const)
-      : ({
-          type: 'text',
-        } as const);
+        ? ({
+            type: 'json_object',
+          } as const)
+        : ({
+            type: 'text',
+          } as const);
 
-    const headersFromData = (this.data.headers ?? []).reduce((acc, header) => {
-      acc[header.key] = header.value;
-      return acc;
-    }, {} as Record<string, string>);
+    const headersFromData = (this.data.headers ?? []).reduce(
+      (acc, header) => {
+        acc[header.key] = header.value;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
     const additionalHeaders = this.data.useHeadersInput
       ? (coerceTypeOptional(inputs['headers' as PortId], 'object') as Record<string, string> | undefined) ??
         headersFromData

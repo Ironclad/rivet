@@ -112,7 +112,11 @@ export async function* streamChatCompletions({
 }
 
 export class AnthropicError extends Error {
-  constructor(message: string, public readonly response: Response, public readonly responseJson: unknown) {
+  constructor(
+    message: string,
+    public readonly response: Response,
+    public readonly responseJson: unknown,
+  ) {
     super(message);
   }
 }

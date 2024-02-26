@@ -153,18 +153,18 @@ export const CreateThreadMessageNodeImpl: PluginNodeImpl<CreateThreadMessageNode
   getBody(data) {
     return dedent`
       Thread ID: ${data.useThreadIdInput ? '(Thread ID From Input)' : data.threadId}${
-      data.useFileIdsInput || data.file_ids.length > 0
-        ? `File IDs: ${data.useFileIdsInput ? '(File IDs From Input)' : JSON.stringify(data.file_ids)}\n`
-        : ''
-    }${
-      data.useMetadataInput || data.metadata.length > 0
-        ? `Metadata: ${
-            data.useMetadataInput
-              ? '(Metadata From Input)'
-              : data.metadata.map(({ key, value }) => `${key}=${value}`).join(', ')
-          }\n`
-        : ''
-    }
+        data.useFileIdsInput || data.file_ids.length > 0
+          ? `File IDs: ${data.useFileIdsInput ? '(File IDs From Input)' : JSON.stringify(data.file_ids)}\n`
+          : ''
+      }${
+        data.useMetadataInput || data.metadata.length > 0
+          ? `Metadata: ${
+              data.useMetadataInput
+                ? '(Metadata From Input)'
+                : data.metadata.map(({ key, value }) => `${key}=${value}`).join(', ')
+            }\n`
+          : ''
+      }
     `;
   },
 
@@ -172,10 +172,13 @@ export const CreateThreadMessageNodeImpl: PluginNodeImpl<CreateThreadMessageNode
     const threadId = getInputOrData(data, inputData, 'threadId');
     const content = coerceTypeOptional(inputData['content' as PortId], 'string') ?? '';
 
-    let metadata = data.metadata.reduce((acc, { key, value }) => {
-      acc[key] = value;
-      return acc;
-    }, {} as Record<string, string>);
+    let metadata = data.metadata.reduce(
+      (acc, { key, value }) => {
+        acc[key] = value;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
     if (data.useMetadataInput && inputData['metadata' as PortId]) {
       metadata = coerceTypeOptional(inputData['metadata' as PortId], 'object') as Record<string, string>;
     }

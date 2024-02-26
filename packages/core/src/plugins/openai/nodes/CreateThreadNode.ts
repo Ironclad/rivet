@@ -133,10 +133,13 @@ export const CreateThreadNodeImpl: PluginNodeImpl<CreateThreadNode> = {
 
     const messages = coerceTypeOptional(inputData['messages' as PortId], 'object[]') ?? [];
 
-    let metadata: Record<string, string> = data.metadata.reduce((acc, { key, value }) => {
-      acc[key] = value;
-      return acc;
-    }, {} as Record<string, string>);
+    let metadata: Record<string, string> = data.metadata.reduce(
+      (acc, { key, value }) => {
+        acc[key] = value;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
 
     if (data.useMetadataInput && inputData['metadata' as PortId]) {
       metadata = coerceTypeOptional(inputData['metadata' as PortId], 'object') as Record<string, string>;

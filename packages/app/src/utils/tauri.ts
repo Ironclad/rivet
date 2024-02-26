@@ -53,8 +53,8 @@ export async function fillMissingSettingsFromEnvironmentVariables(settings: Part
           typeof config.pullEnvironmentVariable === 'string'
             ? config.pullEnvironmentVariable
             : config.pullEnvironmentVariable === true
-            ? configName
-            : undefined;
+              ? configName
+              : undefined;
         if (envVarName) {
           const envVarValue = await getEnvVar(envVarName);
           if (envVarValue) {

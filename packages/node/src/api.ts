@@ -104,8 +104,8 @@ function getPluginEnvFromProcessEnv(registry?: NodeRegistration) {
           typeof config.pullEnvironmentVariable === 'string'
             ? config.pullEnvironmentVariable
             : config.pullEnvironmentVariable === true
-            ? configName
-            : undefined;
+              ? configName
+              : undefined;
         if (envVarName) {
           pluginEnv[envVarName] = process.env[envVarName] ?? '';
         }

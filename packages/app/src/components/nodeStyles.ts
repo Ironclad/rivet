@@ -34,13 +34,17 @@ export const nodeStyles = css`
     border-color: var(--primary);
     transition-duration: 0;
     pointer-events: none;
-    box-shadow: 10px 10px 16px rgba(0, 0, 0, 0.4), 0 0 10px var(--shadow-primary);
+    box-shadow:
+      10px 10px 16px rgba(0, 0, 0, 0.4),
+      0 0 10px var(--shadow-primary);
   }
 
   .node.selected:not(.isComment),
   .node.selected:not(.isComment) {
     border-color: var(--primary);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 0 10px var(--shadow-primary);
+    box-shadow:
+      0 8px 16px rgba(0, 0, 0, 0.4),
+      0 0 10px var(--shadow-primary);
     z-index: 10000 !important;
   }
 
@@ -527,7 +531,9 @@ export const nodeStyles = css`
   }
 
   .node.running {
-    box-shadow: 0 0 16px var(--shadow-primary-bright), 0 8px 16px rgba(0, 0, 0, 0.4);
+    box-shadow:
+      0 0 16px var(--shadow-primary-bright),
+      0 8px 16px rgba(0, 0, 0, 0.4);
   }
 
   .split-output {

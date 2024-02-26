@@ -46,7 +46,9 @@ const styles = css`
     height: 30px;
     padding: 0;
     cursor: pointer;
-    transition: color 0.2s ease-out, background 0.2s ease-out;
+    transition:
+      color 0.2s ease-out,
+      background 0.2s ease-out;
     border-radius: 4px;
 
     svg {
@@ -142,8 +144,8 @@ export const GraphExecutionSelectorBar: FC = () => {
     graphSelectedExecution === 'latest'
       ? `${maxExecutionNum} / ${maxExecutionNum}`
       : graphSelectedExecution === 'mixed'
-      ? '(Mixed)'
-      : `${graphSelectedExecution + 1} / ${maxExecutionNum}`;
+        ? '(Mixed)'
+        : `${graphSelectedExecution + 1} / ${maxExecutionNum}`;
 
   if (maxExecutionNum <= 1) {
     return null;

@@ -106,10 +106,13 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
         items: readonly ContextMenuConfigItem[],
         path: string[] = [],
       ): (ContextMenuConfigItem & { path: string[] })[] => {
-        const allItems = items.reduce((acc, item) => {
-          const newPath = [...path, item.label];
-          return acc.concat({ ...item, path: newPath }, ...flattenItems(item.items || [], newPath));
-        }, [] as (ContextMenuConfigItem & { path: string[] })[]);
+        const allItems = items.reduce(
+          (acc, item) => {
+            const newPath = [...path, item.label];
+            return acc.concat({ ...item, path: newPath }, ...flattenItems(item.items || [], newPath));
+          },
+          [] as (ContextMenuConfigItem & { path: string[] })[],
+        );
 
         const onlyLeaves = allItems.filter((item) => !item.items?.length);
 
@@ -281,7 +284,9 @@ export const ContextMenuItemDiv = styled.div<{ hasSubmenu?: boolean }>`
   padding: 8px 12px;
   border-radius: 4px;
   white-space: nowrap;
-  transition: background-color 0.1s ease-out, color 0.1s ease-out;
+  transition:
+    background-color 0.1s ease-out,
+    color 0.1s ease-out;
 
   .label {
     display: flex;

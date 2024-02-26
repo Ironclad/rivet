@@ -247,8 +247,8 @@ export class GraphProcessor {
     const graph = graphId
       ? project.graphs[graphId]
       : project.metadata.mainGraphId
-      ? project.graphs[project.metadata.mainGraphId]
-      : undefined;
+        ? project.graphs[project.metadata.mainGraphId]
+        : undefined;
 
     if (!graph) {
       throw new Error(`Graph ${graphId} not found in project`);
@@ -359,7 +359,7 @@ export class GraphProcessor {
     this.#scc = this.#tarjanSCC();
     this.#nodesNotInCycle = this.#scc.filter((cycle) => cycle.length === 1).flat();
 
-    this.setExternalFunction('echo', async (value) => ({ type: 'any', value } satisfies DataValue));
+    this.setExternalFunction('echo', async (value) => ({ type: 'any', value }) satisfies DataValue);
 
     this.#emitter.on('globalSet', ({ id, value }) => {
       this.#emitter.emit(`globalSet:${id}`, value);
@@ -1345,7 +1345,9 @@ export class GraphProcessor {
   ) {
     const instance = this.#nodeInstances[node.id]!;
     const nodeAbortController = this.#newAbortController();
-    const abortListener = () => { nodeAbortController.abort(); };
+    const abortListener = () => {
+      nodeAbortController.abort();
+    };
     this.#nodeAbortControllers.set(`${node.id}-${processId}`, nodeAbortController);
     this.#abortController.signal.addEventListener('abort', abortListener);
 
@@ -1568,20 +1570,23 @@ export class GraphProcessor {
 
   #getInputValuesForNode(node: ChartNode): Inputs {
     const connections = this.#connections[node.id];
-    return this.#definitions[node.id]!.inputs.reduce((values, input) => {
-      if (!connections) {
-        return values;
-      }
-      const connection = connections.find((conn) => conn.inputId === input.id && conn.inputNodeId === node.id);
-      if (connection) {
-        const outputNode = this.#nodeInstances[connection.outputNodeId]!.chartNode;
-        const outputNodeOutputs = this.#nodeResults.get(outputNode.id);
-        const outputResult = outputNodeOutputs?.[connection.outputId];
+    return this.#definitions[node.id]!.inputs.reduce(
+      (values, input) => {
+        if (!connections) {
+          return values;
+        }
+        const connection = connections.find((conn) => conn.inputId === input.id && conn.inputNodeId === node.id);
+        if (connection) {
+          const outputNode = this.#nodeInstances[connection.outputNodeId]!.chartNode;
+          const outputNodeOutputs = this.#nodeResults.get(outputNode.id);
+          const outputResult = outputNodeOutputs?.[connection.outputId];
 
-        values[input.id] = outputResult;
-      }
-      return values;
-    }, {} as Record<string, any>);
+          values[input.id] = outputResult;
+        }
+        return values;
+      },
+      {} as Record<string, any>,
+    );
   }
 
   /** Gets the nodes that are inputting to the given node. */

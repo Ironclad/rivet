@@ -141,8 +141,8 @@ export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
         this.data.useFilterGlobsInput
           ? '(Input)'
           : this.data.filterGlobs.length > 0
-          ? this.data.filterGlobs.join(', ')
-          : 'None'
+            ? this.data.filterGlobs.join(', ')
+            : 'None'
       }
     `;
   }

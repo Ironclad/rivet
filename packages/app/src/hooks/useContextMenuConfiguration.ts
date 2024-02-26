@@ -132,7 +132,7 @@ export function useContextMenuConfiguration() {
           },
         },
         commands,
-      } as const satisfies ContextMenuConfig),
+      }) as const satisfies ContextMenuConfig,
     [addMenuConfig, selectedNodeIds.length, commands, clipboard],
   );
 

@@ -145,7 +145,10 @@ export const openAiModelOptions = orderBy(
 );
 
 export class OpenAIError extends Error {
-  constructor(readonly status: number, readonly responseJson: any) {
+  constructor(
+    readonly status: number,
+    readonly responseJson: any,
+  ) {
     super(`OpenAIError: ${status} ${JSON.stringify(responseJson)}`);
     this.name = 'OpenAIError';
   }

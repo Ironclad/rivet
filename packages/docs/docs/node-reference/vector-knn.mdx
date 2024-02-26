@@ -34,12 +34,12 @@ This node is useful when working with vector databases such as Pinecone, where y
 
 ## Inputs
 
-| Title         | Data Type | Description                                                                                           | Default Value | Notes                                                                                                                            |
-| ------------- | --------- | ----------------------------------------------------------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Vector        | `vector`  | The vector to find the nearest neighbors for.                                                         | (required)    | The input will be coerced into a vector if it is not a vector.                                                                   |
-| Integration   | `string`  | The name of the vector database integration to use.                                                   | (optional)    | Only required if `Use Integration Input` is enabled in the editor settings.                                                      |
-| K             | `number`  | The number of nearest neighbors to find.                                                              | (optional)    | Only required if `Use K Input` is enabled in the editor settings.                                                                |
-| Collection ID | `string`  | The ID of the collection in the vector database to search for the nearest neighbors.                  | (optional)    | Only required if `Use Collection ID Input` is enabled in the editor settings.                                                     |
+| Title         | Data Type | Description                                                                          | Default Value | Notes                                                                         |
+| ------------- | --------- | ------------------------------------------------------------------------------------ | ------------- | ----------------------------------------------------------------------------- |
+| Vector        | `vector`  | The vector to find the nearest neighbors for.                                        | (required)    | The input will be coerced into a vector if it is not a vector.                |
+| Integration   | `string`  | The name of the vector database integration to use.                                  | (optional)    | Only required if `Use Integration Input` is enabled in the editor settings.   |
+| K             | `number`  | The number of nearest neighbors to find.                                             | (optional)    | Only required if `Use K Input` is enabled in the editor settings.             |
+| Collection ID | `string`  | The ID of the collection in the vector database to search for the nearest neighbors. | (optional)    | Only required if `Use Collection ID Input` is enabled in the editor settings. |
 
 </TabItem>
 
@@ -47,9 +47,9 @@ This node is useful when working with vector databases such as Pinecone, where y
 
 ## Outputs
 
-| Title   | Data Type | Description                                                                                   | Notes                                                                                      |
-| ------- | --------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Results | `any[]`   | The k nearest neighbors to the input vector, along with their corresponding data.             | If the value is not found, this port is not ran.                                          |
+| Title   | Data Type | Description                                                                       | Notes                                            |
+| ------- | --------- | --------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Results | `any[]`   | The k nearest neighbors to the input vector, along with their corresponding data. | If the value is not found, this port is not ran. |
 
 </TabItem>
 
@@ -57,11 +57,11 @@ This node is useful when working with vector databases such as Pinecone, where y
 
 ## Editor Settings
 
-| Setting               | Description                                                                                                                                        | Default Value | Use Input Toggle | Input Data Type |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------- | --------------- |
-| Integration           | The name of the vector database integration to use.                                                                                                | (empty)       | Yes              | `string`        |
-| K                     | The number of nearest neighbors to find.                                                                                                           | 10            | Yes              | `number`        |
-| Collection ID         | The ID of the collection in the vector database to search for the nearest neighbors.                                                               | (empty)       | Yes              | `string`        |
+| Setting       | Description                                                                          | Default Value | Use Input Toggle | Input Data Type |
+| ------------- | ------------------------------------------------------------------------------------ | ------------- | ---------------- | --------------- |
+| Integration   | The name of the vector database integration to use.                                  | (empty)       | Yes              | `string`        |
+| K             | The number of nearest neighbors to find.                                             | 10            | Yes              | `number`        |
+| Collection ID | The ID of the collection in the vector database to search for the nearest neighbors. | (empty)       | Yes              | `string`        |
 
 </TabItem>
 
@@ -69,7 +69,7 @@ This node is useful when working with vector databases such as Pinecone, where y
 
 ## Example 1: Find the nearest neighbors of a vector in a Pinecone database
 
-1. Create a [Text Node](./text.mdx) with the text you want to search for nearest neighbors of. 
+1. Create a [Text Node](./text.mdx) with the text you want to search for nearest neighbors of.
 2. Connect the Text Node to a [Get Embedding Node](./get-embedding) to convert the text into a vector.
 3. Create a Vector KNN Node and connect the Vector Node to its `Vector` input. Set the `Integration` to `pinecone`, the `K` to `10`, and the `Collection ID` to the ID of your Pinecone collection.
 4. Run the graph. The Vector KNN Node should output the 10 nearest neighbors to the input vector in the Pinecone collection.

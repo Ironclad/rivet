@@ -59,7 +59,7 @@ export type VectorDataValue = DataValueDef<'vector', number[]>;
 export type BinaryDataValue = DataValueDef<'binary', Uint8Array>;
 export type ImageDataValue = DataValueDef<'image', { mediaType: SupportedMediaTypes; data: Uint8Array }>;
 export type AudioDataValue = DataValueDef<'audio', { data: Uint8Array }>;
-export type GraphReferenceValue = DataValueDef<'graph-reference', { graphId: GraphId; graphName: string; }>;
+export type GraphReferenceValue = DataValueDef<'graph-reference', { graphId: GraphId; graphName: string }>;
 
 /** GPT function definition */
 export type GptFunction = {
@@ -274,7 +274,7 @@ export const dataTypeDisplayNames: Record<DataType, string> = {
   'graph-reference': 'Graph Reference',
   'graph-reference[]': 'Graph Reference Array',
   'fn<graph-reference>': 'Function<Graph Reference>',
-  'fn<graph-reference[]>': 'Function<Graph Reference Array>'
+  'fn<graph-reference[]>': 'Function<Graph Reference Array>',
 };
 
 export function isScalarDataValue(value: DataValue | undefined): value is ScalarDataValue {
@@ -397,7 +397,7 @@ export const scalarDefaults: { [P in ScalarDataType]: Extract<ScalarDataValue, {
   },
   binary: new Uint8Array(),
   audio: { data: new Uint8Array() },
-  "graph-reference": { graphId: '' as GraphId, graphName: '', },
+  'graph-reference': { graphId: '' as GraphId, graphName: '' },
 };
 
 export function getDefaultValue<T extends DataType>(type: T): (DataValue & { type: T })['value'] {

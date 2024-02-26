@@ -277,25 +277,29 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
 
     const { messages } = getChatGoogleNodeMessages(inputs);
 
-    const prompt = await Promise.all(messages.map(async (message): Promise<GoogleChatMessage> => {
-      return {
-        role: message.type === 'user' ? 'user' : 'assistant',
-        parts: await Promise.all([message.message].flat().map(async (part): Promise<GoogleChatMessage['parts'][0]> => {
-          if (typeof part === 'string') {
-            return { text: part };
-          } else if (part.type === 'image') {
-            return {
-              inline_data: {
-                mime_type: part.mediaType,
-                data: (await uint8ArrayToBase64(part.data))!,
+    const prompt = await Promise.all(
+      messages.map(async (message): Promise<GoogleChatMessage> => {
+        return {
+          role: message.type === 'user' ? 'user' : 'assistant',
+          parts: await Promise.all(
+            [message.message].flat().map(async (part): Promise<GoogleChatMessage['parts'][0]> => {
+              if (typeof part === 'string') {
+                return { text: part };
+              } else if (part.type === 'image') {
+                return {
+                  inline_data: {
+                    mime_type: part.mediaType,
+                    data: (await uint8ArrayToBase64(part.data))!,
+                  },
+                };
+              } else {
+                throw new Error(`Google Vertex AI does not support message parts of type ${part.type}`);
               }
-            };
-          } else {
-            throw new Error(`Google Vertex AI does not support message parts of type ${part.type}`);
-          }
-        })),
-      };
-    }));
+            }),
+          ),
+        };
+      }),
+    );
 
     let { maxTokens } = data;
 

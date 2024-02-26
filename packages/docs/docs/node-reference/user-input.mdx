@@ -28,9 +28,9 @@ The User Input Node can either use a static prompt defined in the node settings 
 
 ## Inputs
 
-| Title      | Data Type | Description                                                                 | Default Value | Notes                                                                                       |
-| ---------- | --------- | --------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------- |
-| Questions  | `string[]`| An array of questions to prompt the user.                                   | N/A           | This input is only available when the "Use Input" toggle is enabled in the node settings.   |
+| Title     | Data Type  | Description                               | Default Value | Notes                                                                                     |
+| --------- | ---------- | ----------------------------------------- | ------------- | ----------------------------------------------------------------------------------------- |
+| Questions | `string[]` | An array of questions to prompt the user. | N/A           | This input is only available when the "Use Input" toggle is enabled in the node settings. |
 
 </TabItem>
 
@@ -38,10 +38,10 @@ The User Input Node can either use a static prompt defined in the node settings 
 
 ## Outputs
 
-| Title               | Data Type | Description                                                                 | Notes                                                                                       |
-| ------------------- | --------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Answers Only        | `string[]`| An array containing the user's answers to the prompted questions.           |                                                                                             |
-| Q & A               | `string[]`| An array containing the questions and answers formatted as "Question\nAnswer". |                                                                                             |
+| Title        | Data Type  | Description                                                                    | Notes |
+| ------------ | ---------- | ------------------------------------------------------------------------------ | ----- |
+| Answers Only | `string[]` | An array containing the user's answers to the prompted questions.              |       |
+| Q & A        | `string[]` | An array containing the questions and answers formatted as "Question\nAnswer". |       |
 
 </TabItem>
 
@@ -49,9 +49,9 @@ The User Input Node can either use a static prompt defined in the node settings 
 
 ## Editor Settings
 
-| Setting   | Description                                                                 | Default Value | Use Input Toggle | Input Data Type |
-| --------- | --------------------------------------------------------------------------- | ------------- | ---------------- | --------------- |
-| Prompt    | The question to prompt the user.                                            | (required)    | Yes              | `string`        |
+| Setting | Description                      | Default Value | Use Input Toggle | Input Data Type |
+| ------- | -------------------------------- | ------------- | ---------------- | --------------- |
+| Prompt  | The question to prompt the user. | (required)    | Yes              | `string`        |
 
 </TabItem>
 
@@ -74,7 +74,7 @@ The User Input Node can either use a static prompt defined in the node settings 
 4. Add the text "What is your name?" to the first Text Node and "What is your favorite color?" to the second Text Node.
 5. Connect the Array Node to the "Questions" input of the User Input Node.
 6. Run the graph. The graph execution will pause and prompt you for input.
-6. Enter your answers and press "Submit". The graph execution will resume and the output of the User Input Node will be an array containing your answers.
+7. Enter your answers and press "Submit". The graph execution will resume and the output of the User Input Node will be an array containing your answers.
 
 ![User Input Node Example 2](./assets/user-input-node-example-02.png)
 

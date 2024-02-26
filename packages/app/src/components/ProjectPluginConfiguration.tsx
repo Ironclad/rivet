@@ -28,7 +28,9 @@ const styles = css`
     cursor: pointer;
     font-size: 16px;
     color: var(--grey);
-    transition: color 0.2s ease, border-color 0.2s ease;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease;
     border-radius: 4px;
     border: 0;
     width: 24px;

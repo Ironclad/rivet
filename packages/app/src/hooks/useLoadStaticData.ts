@@ -20,10 +20,13 @@ export function useLoadStaticData() {
     (async () => {
       const allData = await database.getAll();
 
-      const dataObj = allData.reduce((acc, { id, data }) => {
-        acc[id] = data;
-        return acc;
-      }, {} as Record<DataId, string>);
+      const dataObj = allData.reduce(
+        (acc, { id, data }) => {
+          acc[id] = data;
+          return acc;
+        },
+        {} as Record<DataId, string>,
+      );
 
       setProjectData((existingData) => ({
         ...existingData,

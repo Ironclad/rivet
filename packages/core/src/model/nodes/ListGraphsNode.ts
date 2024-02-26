@@ -45,7 +45,7 @@ export class ListGraphsNodeImpl extends NodeImpl<ListGraphsNode> {
         id: 'graph-names' as PortId,
         title: 'Graph Names',
         dataType: 'string[]',
-      }
+      },
     ];
   }
 
@@ -70,16 +70,16 @@ export class ListGraphsNodeImpl extends NodeImpl<ListGraphsNode> {
     return {
       ['graphs' as PortId]: {
         type: 'graph-reference[]',
-        value: graphs.map(graph => ({
-          graphId: graph.metadata!.id ?? '' as GraphId,
+        value: graphs.map((graph) => ({
+          graphId: graph.metadata!.id ?? ('' as GraphId),
           graphName: graph.metadata!.name ?? '',
-        }))
+        })),
       },
       ['graph-names' as PortId]: {
         type: 'string[]',
-        value: graphs.map(graph => graph.metadata!.name ?? ''),
-      }
-    }
+        value: graphs.map((graph) => graph.metadata!.name ?? ''),
+      },
+    };
   }
 }
 

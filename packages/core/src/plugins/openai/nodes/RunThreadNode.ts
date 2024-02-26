@@ -385,10 +385,13 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
     const threadId = getInputOrData(data, inputData, 'threadId');
     const assistantId = getInputOrData(data, inputData, 'assistantId');
 
-    let metadata = data.metadata.reduce((acc, { key, value }) => {
-      acc[key] = value;
-      return acc;
-    }, {} as Record<string, string>);
+    let metadata = data.metadata.reduce(
+      (acc, { key, value }) => {
+        acc[key] = value;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
     if (data.useMetadataInput && inputData['metadata' as PortId]) {
       metadata = coerceTypeOptional(inputData['metadata' as PortId], 'object') as Record<string, string>;
     }

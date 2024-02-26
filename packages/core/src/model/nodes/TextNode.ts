@@ -90,12 +90,15 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
   }
 
   async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
-    const inputMap = Object.keys(inputs).reduce((acc, key) => {
-      const stringValue = coerceTypeOptional(inputs[key], 'string') ?? '';
+    const inputMap = Object.keys(inputs).reduce(
+      (acc, key) => {
+        const stringValue = coerceTypeOptional(inputs[key], 'string') ?? '';
 
-      acc[key] = stringValue;
-      return acc;
-    }, {} as Record<string, string>);
+        acc[key] = stringValue;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
 
     const outputValue = interpolate(this.chartNode.data.text, inputMap);
 

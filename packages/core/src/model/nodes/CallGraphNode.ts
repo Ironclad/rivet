@@ -56,8 +56,9 @@ export class CallGraphNodeImpl extends NodeImpl<CallGraphNode> {
       id: 'inputs' as PortId,
       dataType: 'object',
       title: 'Inputs',
-      description: 'The inputs to pass to the graph. Should be an object where the keys are the input names and the values are the input values.',
-    })
+      description:
+        'The inputs to pass to the graph. Should be an object where the keys are the input names and the values are the input values.',
+    });
 
     return inputs;
   }
@@ -69,7 +70,7 @@ export class CallGraphNodeImpl extends NodeImpl<CallGraphNode> {
         dataType: 'object',
         title: 'Outputs',
         description: 'The outputs of the graph.',
-      }
+      },
     ];
 
     if (this.data.useErrorOutput) {
@@ -103,8 +104,8 @@ export class CallGraphNodeImpl extends NodeImpl<CallGraphNode> {
       return {
         ['outputs' as PortId]: {
           type: 'control-flow-excluded',
-          value: undefined
-        }
+          value: undefined,
+        },
       };
     }
 
@@ -114,8 +115,8 @@ export class CallGraphNodeImpl extends NodeImpl<CallGraphNode> {
       return {
         ['outputs' as PortId]: {
           type: 'control-flow-excluded',
-          value: undefined
-        }
+          value: undefined,
+        },
       };
     }
 
@@ -128,11 +129,7 @@ export class CallGraphNodeImpl extends NodeImpl<CallGraphNode> {
 
       const inputData = looseDataValuesToDataValues(graphInputs as Record<string, LooseDataValue>);
 
-      const graphOutputs = await subGraphProcessor.processGraph(
-        context,
-        inputData,
-        context.contextValues,
-      );
+      const graphOutputs = await subGraphProcessor.processGraph(context, inputData, context.contextValues);
 
       const duration = Date.now() - startTime;
 

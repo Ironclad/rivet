@@ -82,7 +82,9 @@ describe('ObjectNodeImpl', () => {
   });
 
   it('does not escape arrays', async () => {
-    const node = createNode({ jsonTemplate: `{"numArray": {{numArray}}, "strArray": {{strArray}}, "anyArray": {{anyArray}}, "objArray": {{objArray}}}` });
+    const node = createNode({
+      jsonTemplate: `{"numArray": {{numArray}}, "strArray": {{strArray}}, "anyArray": {{anyArray}}, "objArray": {{objArray}}}`,
+    });
     const inputs: Record<string, DataValue> = {
       numArray: { type: 'number[]', value: [1, 2, 3] },
       strArray: { type: 'string[]', value: ['hello'] },
@@ -100,13 +102,15 @@ describe('ObjectNodeImpl', () => {
   });
 
   it('allows variables to be used multiple times, both escaped and unescaped', async () => {
-    const node = createNode({ jsonTemplate: `{
+    const node = createNode({
+      jsonTemplate: `{
       "obj": {{obj}},
       "objStr": "{{obj}}",
       "nested": {
         "obj": {{obj}}
       }
-    }` });
+    }`,
+    });
     const inputs: Record<string, DataValue> = {
       obj: { type: 'object', value: { hello: 'world' } },
     };
@@ -129,4 +133,4 @@ describe('ObjectNodeImpl', () => {
     const result = await node.process(inputs);
     assert.deepStrictEqual(result['output'].value, { key: null });
   });
-})
+});

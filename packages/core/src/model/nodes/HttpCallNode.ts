@@ -162,16 +162,16 @@ export class HttpCallNodeImpl extends NodeImpl<HttpCallNode> {
   getBody(): string {
     return dedent`
       ${this.data.useMethodInput ? '(Method Using Input)' : this.data.method} ${
-      this.data.useUrlInput ? '(URL Using Input)' : this.data.url
-    } ${
-      this.data.useHeadersInput
-        ? '\nHeaders: (Using Input)'
-        : this.data.headers.trim()
-        ? `\nHeaders: ${this.data.headers}`
-        : ''
-    }${this.data.useBodyInput ? '\nBody: (Using Input)' : this.data.body.trim() ? `\nBody: ${this.data.body}` : ''}${
-      this.data.errorOnNon200 ? '\nError on non-200' : ''
-    }
+        this.data.useUrlInput ? '(URL Using Input)' : this.data.url
+      } ${
+        this.data.useHeadersInput
+          ? '\nHeaders: (Using Input)'
+          : this.data.headers.trim()
+            ? `\nHeaders: ${this.data.headers}`
+            : ''
+      }${this.data.useBodyInput ? '\nBody: (Using Input)' : this.data.body.trim() ? `\nBody: ${this.data.body}` : ''}${
+        this.data.errorOnNon200 ? '\nError on non-200' : ''
+      }
     `;
   }
 

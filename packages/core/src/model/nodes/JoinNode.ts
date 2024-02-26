@@ -114,12 +114,12 @@ export class JoinNodeImpl extends NodeImpl<JoinNode> {
     return this.data.useJoinStringInput
       ? '(Join value is input)'
       : this.data.joinString === '\n'
-      ? '(New line)'
-      : this.data.joinString === '\t'
-      ? '(Tab)'
-      : this.data.joinString === ' '
-      ? '(Space)'
-      : this.data.joinString;
+        ? '(New line)'
+        : this.data.joinString === '\t'
+          ? '(Tab)'
+          : this.data.joinString === ' '
+            ? '(Space)'
+            : this.data.joinString;
   }
 
   static getUIData(): NodeUIData {

@@ -35,14 +35,17 @@ export const googleModelOptions = Object.entries(googleModels).map(([id, { displ
 
 export interface GoogleChatMessage {
   role: 'user' | 'assistant';
-  parts: ({
-    text: string;
-  } | {
-    inline_data: {
-      mime_type: string;
-      data: string;
-    };
-  })[]
+  parts: (
+    | {
+        text: string;
+      }
+    | {
+        inline_data: {
+          mime_type: string;
+          data: string;
+        };
+      }
+  )[];
 }
 
 export type ChatCompletionOptions = {
@@ -60,7 +63,14 @@ export type ChatCompletionOptions = {
 
 export type ChatCompletionChunk = {
   completion: string;
-  finish_reason: 'FINISH_REASON_UNSPECIFIED' | 'FINISH_REASON_STOP' | 'FINISH_REASON_MAX_TOKENS' | 'FINISH_REASON_SAFETY' | 'FINISH_REASON_RECITATION' | 'FINISH_REASON_OTHER' | undefined;
+  finish_reason:
+    | 'FINISH_REASON_UNSPECIFIED'
+    | 'FINISH_REASON_STOP'
+    | 'FINISH_REASON_MAX_TOKENS'
+    | 'FINISH_REASON_SAFETY'
+    | 'FINISH_REASON_RECITATION'
+    | 'FINISH_REASON_OTHER'
+    | undefined;
   model: string;
 };
 
@@ -91,7 +101,7 @@ export async function* streamChatCompletions({
       temperature,
       top_p,
       top_k,
-    }
+    },
   });
   const response = await generativeModel.generateContentStream({
     contents: prompt,
@@ -100,7 +110,7 @@ export async function* streamChatCompletions({
   let hadChunks = false;
 
   for await (const chunk of response.stream) {
-    console.log('streaming google responses')
+    console.log('streaming google responses');
     hadChunks = true;
 
     if (!signal?.aborted && chunk.candidates[0]?.content.parts[0]?.text) {

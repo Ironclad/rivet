@@ -30,13 +30,13 @@ The Vector Store Node is part of the Input/Output group of nodes.
 
 ## Inputs
 
-| Title         | Data Type | Description                                                                                   | Default Value | Notes                                                                                                 |
-| ------------- | --------- | --------------------------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------- |
-| Vector        | `vector`  | The vector to be stored.                                                                      | (required)    |                                                                                                       |
-| Data          | `any`     | The data to be stored with the vector.                                                        | (required)    |                                                                                                       |
-| ID            | `string`  | The ID to be used for the vector. If not provided, a unique ID will be generated automatically. | (optional)    |                                                                                                       |
-| Integration   | `string`  | The name of the vector database integration to use.                                            | (optional)    | Only required if `Use Integration Input` is enabled in the Editor Settings.                           |
-| Collection ID | `string`  | The ID of the collection in the vector database where the vector will be stored.               | (optional)    | Only required if `Use Collection ID Input` is enabled in the Editor Settings.                          |
+| Title         | Data Type | Description                                                                                     | Default Value | Notes                                                                         |
+| ------------- | --------- | ----------------------------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------- |
+| Vector        | `vector`  | The vector to be stored.                                                                        | (required)    |                                                                               |
+| Data          | `any`     | The data to be stored with the vector.                                                          | (required)    |                                                                               |
+| ID            | `string`  | The ID to be used for the vector. If not provided, a unique ID will be generated automatically. | (optional)    |                                                                               |
+| Integration   | `string`  | The name of the vector database integration to use.                                             | (optional)    | Only required if `Use Integration Input` is enabled in the Editor Settings.   |
+| Collection ID | `string`  | The ID of the collection in the vector database where the vector will be stored.                | (optional)    | Only required if `Use Collection ID Input` is enabled in the Editor Settings. |
 
 </TabItem>
 
@@ -44,9 +44,9 @@ The Vector Store Node is part of the Input/Output group of nodes.
 
 ## Outputs
 
-| Title    | Data Type | Description                                                                                   | Notes                                                                                                 |
-| -------- | --------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Complete | `boolean` | Indicates whether the vector has been successfully stored. Returns `true` if storage is successful. |                                                                                                       |
+| Title    | Data Type | Description                                                                                         | Notes |
+| -------- | --------- | --------------------------------------------------------------------------------------------------- | ----- |
+| Complete | `boolean` | Indicates whether the vector has been successfully stored. Returns `true` if storage is successful. |       |
 
 </TabItem>
 
@@ -54,10 +54,10 @@ The Vector Store Node is part of the Input/Output group of nodes.
 
 ## Editor Settings
 
-| Setting                  | Description                                                                                   | Default Value | Use Input Toggle | Input Data Type |
-| ------------------------ | --------------------------------------------------------------------------------------------- | ------------- | ---------------- | --------------- |
-| Integration              | The name of the vector database integration to use.                                           | `pinecone`    | Yes              | `string`        |
-| Collection ID            | The ID of the collection in the vector database where the vector will be stored.              | (empty)       | Yes              | `string`        |
+| Setting       | Description                                                                      | Default Value | Use Input Toggle | Input Data Type |
+| ------------- | -------------------------------------------------------------------------------- | ------------- | ---------------- | --------------- |
+| Integration   | The name of the vector database integration to use.                              | `pinecone`    | Yes              | `string`        |
+| Collection ID | The ID of the collection in the vector database where the vector will be stored. | (empty)       | Yes              | `string`        |
 
 </TabItem>
 
@@ -69,8 +69,8 @@ The Vector Store Node is part of the Input/Output group of nodes.
 2. Create a [Text Node](./text.mdx) or any other node that outputs data and connect a [Get Embedding Node](./get-embedding) to create a vector of the data.
 3. Connect the `Embedding` output of the Get Embedding Node to the `Vector` input of the Vector Store Node.
 4. Connect the `Output` of the Text Node to the `Data` input of the Vector Store Node.
-3. Create a [Text Node](./text.mdx) and update it's text to a unique ID for the vector. Connect the `Output` of the Text Node to the `ID` input of the Vector Store Node.
-4. Run the graph. The `Complete` output of the Vector Store Node should return `true`, indicating that the vector has been successfully stored.
+5. Create a [Text Node](./text.mdx) and update it's text to a unique ID for the vector. Connect the `Output` of the Text Node to the `ID` input of the Vector Store Node.
+6. Run the graph. The `Complete` output of the Vector Store Node should return `true`, indicating that the vector has been successfully stored.
 
 ![Vector Store Node Example 1](./assets/vector-store-node-example-01.png)
 

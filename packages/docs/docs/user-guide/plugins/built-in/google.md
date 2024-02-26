@@ -26,8 +26,8 @@ The Chat (Google) node allows you to use the Google Vertex API to generate text.
 
 #### Inputs
 
-| Title  | Data Type                                                    | Description                                       | Default Value | Notes                                                                                                                                                      |
-| ------ | ------------------------------------------------------------ | ------------------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Title  | Data Type                                                    | Description                                       | Default Value | Notes                                                                                                               |
+| ------ | ------------------------------------------------------------ | ------------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Prompt | `string` or `string[]` or `chat-message` or `chat-message[]` | The messages to send to Google to get a response. | (Required)    | Google models do not support a system prompt like GPT does. System prompts will be converted to Asssistant prompts. |
 
 #### Outputs
@@ -40,7 +40,7 @@ The Chat (Google) node allows you to use the Google Vertex API to generate text.
 
 | Setting     | Description                                                                                                            | Default Value | Use Input Toggle | Input Data Type |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------- | --------------- |
-| Model       | The Google model to use for the request (Gemini Pro, Gemini Pro Vision, etc)                                            | gemini-pro      | Yes              | `string`        |
+| Model       | The Google model to use for the request (Gemini Pro, Gemini Pro Vision, etc)                                           | gemini-pro    | Yes              | `string`        |
 | Temperature | The sampling temperature to use. Lower values are more deterministic. Higher values are more "creative".               | 0.5           | Yes              | `number`        |
 | Top P       | Alternate sampling mode using the top X% of values. 0.1 corresponds to the top 10%.                                    | 1             | Yes              | `number`        |
 | Use Top P   | Whether to use the Top P sampling mode.                                                                                | false         | Yes              | `boolean`       |

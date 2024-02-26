@@ -7,7 +7,15 @@ import gentracePlugin from './plugins/gentrace/index.js';
 import { openAIPlugin } from './plugins/openai/plugin.js';
 import { googlePlugin } from './plugins/google/plugin.js';
 
-export { anthropicPlugin, autoevalsPlugin, assemblyAiPlugin, pineconePlugin, huggingFacePlugin, gentracePlugin, googlePlugin };
+export {
+  anthropicPlugin,
+  autoevalsPlugin,
+  assemblyAiPlugin,
+  pineconePlugin,
+  huggingFacePlugin,
+  gentracePlugin,
+  googlePlugin,
+};
 
 export const plugins = {
   anthropic: anthropicPlugin,
@@ -17,5 +25,5 @@ export const plugins = {
   huggingFace: huggingFacePlugin,
   gentrace: gentracePlugin,
   openai: openAIPlugin,
-  google: googlePlugin
+  google: googlePlugin,
 };

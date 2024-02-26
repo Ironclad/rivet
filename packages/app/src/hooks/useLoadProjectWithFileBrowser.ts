@@ -33,9 +33,9 @@ export function useLoadProjectWithFileBrowser() {
 
         if (alreadyOpenedProject) {
           toast.error(
-            `"${alreadyOpenedProject.project.metadata.title} [${alreadyOpenedProject.fsPath
-              ?.split('/')
-              .pop() ?? 'no path'}]" shares the same ID (${
+            `"${alreadyOpenedProject.project.metadata.title} [${
+              alreadyOpenedProject.fsPath?.split('/').pop() ?? 'no path'
+            }]" shares the same ID (${
               project.metadata.id
             }) and is already open. Please close that project first to open this one.`,
           );

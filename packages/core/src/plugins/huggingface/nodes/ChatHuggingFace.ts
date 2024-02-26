@@ -251,8 +251,8 @@ export const ChatHuggingFaceNodeImpl: PluginNodeImpl<ChatHuggingFaceNode> = {
         data.useTemperatureInput
           ? 'Temperature: (Using Input)'
           : data.temperature != null
-          ? `Temperature: ${data.temperature}`
-          : ''
+            ? `Temperature: ${data.temperature}`
+            : ''
       }
       Max New Tokens: ${data.useMaxNewTokensInput ? '(Using Input)' : data.maxNewTokens}
     `;

@@ -84,6 +84,7 @@
     "eslint-plugin-n": "^16.2.0",
     "eslint-plugin-promise": "^6.1.1",
     "lodash": "^4.17.21",
+    "prettier": "^3.2.5",
     "rimraf": "^5.0.5",
     "ts-node": "^10.9.1",
     "tsx": "^4.6.2",

@@ -30,7 +30,7 @@ The plugin exposes two buttons in the Rivet graph view that show up next to the 
 
 #### Associating a Gentrace pipeline
 
-The "Change Gentrace Pipeline" button associates a Gentrace pipeline with a Rivet graph. 
+The "Change Gentrace Pipeline" button associates a Gentrace pipeline with a Rivet graph.
 
 ![](./assets/gentrace-change-pipeline.png)
 
@@ -38,19 +38,19 @@ A Gentrace pipeline captures the analytics, test cases, evaluators, and evaluati
 
 #### Running Gentrace tests
 
-The "Run Gentrace tests" button pulls and runs [test cases](https://docs.gentrace.ai/docs/test-cases) defined in the associated Gentrace pipeline through the Rivet graph. 
+The "Run Gentrace tests" button pulls and runs [test cases](https://docs.gentrace.ai/docs/test-cases) defined in the associated Gentrace pipeline through the Rivet graph.
 
 To make this more concrete, let's say you define 100 example test cases for a Gentrace pipeline. Each test case has the following schema.
 
 ```typescript
 type EmailTestCase = {
-  "query": string;
-  "sender": string;
-  "receiver": string;
+  query: string;
+  sender: string;
+  receiver: string;
 };
 ```
 
-The plugin will pull all test cases and invoke the Rivet graph once per case. During each invocation, each key-value pair from a test case maps onto a Graph Input Rivet node with a matching ID. 
+The plugin will pull all test cases and invoke the Rivet graph once per case. During each invocation, each key-value pair from a test case maps onto a Graph Input Rivet node with a matching ID.
 
 With the TestCase schema above, three Graph Input Rivet nodes are required to properly run the graph.
 

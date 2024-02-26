@@ -13,8 +13,6 @@ import TabItem from '@theme/TabItem';
 
 The Trim Chat Messages Node is used to manage the length of chat message chains in terms of tokens. It takes an array of chat messages and trims messages from either the beginning or the end of the list until the total length of the messages is under the configured token length. This is particularly useful for setting up infinite message chains that stay under the language model's context limit.
 
-
-
 <Tabs
   defaultValue="inputs"
   values={[
@@ -28,8 +26,8 @@ The Trim Chat Messages Node is used to manage the length of chat message chains 
 
 ## Inputs
 
-| Title | Data Type      | Description                        | Default Value | Notes |
-| ----- | -------------- | ---------------------------------- | ------------- | ----- |
+| Title | Data Type        | Description                         | Default Value | Notes |
+| ----- | ---------------- | ----------------------------------- | ------------- | ----- |
 | Input | `chat-message[]` | The array of chat messages to trim. | (required)    |       |
 
 </TabItem>
@@ -38,8 +36,8 @@ The Trim Chat Messages Node is used to manage the length of chat message chains 
 
 ## Outputs
 
-| Title   | Data Type      | Description                                                                                           | Notes |
-| ------- | -------------- | ----------------------------------------------------------------------------------------------------- | ----- |
+| Title   | Data Type        | Description                                                                                      | Notes |
+| ------- | ---------------- | ------------------------------------------------------------------------------------------------ | ----- |
 | Trimmed | `chat-message[]` | The array of chat messages after being trimmed to fit within the configured maximum token count. |       |
 
 </TabItem>
@@ -48,9 +46,9 @@ The Trim Chat Messages Node is used to manage the length of chat message chains 
 
 ## Editor Settings
 
-| Setting          | Description                                                                                                                   | Default Value | Use Input Toggle | Input Data Type |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------- | --------------- |
-| Max Token Count  | The maximum token count for the total length of the chat messages.                                                            | 4096          | No               | `number`        |
+| Setting               | Description                                                                                                              | Default Value | Use Input Toggle | Input Data Type |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------- | ---------------- | --------------- |
+| Max Token Count       | The maximum token count for the total length of the chat messages.                                                       | 4096          | No               | `number`        |
 | Remove From Beginning | If enabled, messages will be removed from the beginning of the list. If disabled, messages will be removed from the end. | true          | No               | N/A             |
 
 </TabItem>

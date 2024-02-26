@@ -1,6 +1,12 @@
 import Button from '@atlaskit/button';
 import { Field, HelperMessage } from '@atlaskit/form';
-import { type ImageBrowserEditorDefinition, type ChartNode, type DataId, uint8ArrayToBase64, type DataRef } from '@ironclad/rivet-core';
+import {
+  type ImageBrowserEditorDefinition,
+  type ChartNode,
+  type DataId,
+  uint8ArrayToBase64,
+  type DataRef,
+} from '@ironclad/rivet-core';
 import { nanoid } from 'nanoid/non-secure';
 import { type FC } from 'react';
 import { useRecoilValue } from 'recoil';

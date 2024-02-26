@@ -41,7 +41,7 @@ export type RunGraphOptions = {
 } & Settings;
 
 export function looseDataValuesToDataValues(values: Record<string, LooseDataValue>): Record<string, DataValue> {
-  return mapValues(values, val => looseDataValueToDataValue(val));
+  return mapValues(values, (val) => looseDataValueToDataValue(val));
 }
 
 export function looseDataValueToDataValue(value: LooseDataValue): DataValue {

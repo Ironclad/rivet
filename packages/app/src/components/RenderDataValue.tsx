@@ -221,9 +221,9 @@ const scalarRenderers: {
       </div>
     );
   },
-  "graph-reference": ({ value }) => {
+  'graph-reference': ({ value }) => {
     return <div>(Reference to graph &quot;{value.value.graphName}&quot;)</div>;
-  }
+  },
 };
 /* eslint-enable react-hooks/rules-of-hooks -- These are components (ish) */
 

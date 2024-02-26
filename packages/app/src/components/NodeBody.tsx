@@ -20,7 +20,7 @@ import { useGetRivetUIContext } from '../hooks/useGetRivetUIContext';
 import { useAsyncEffect } from 'use-async-effect';
 import { toast } from 'react-toastify';
 
-export const NodeBody: FC<{ heightCache: HeightCache, node: ChartNode }> = memo(({ heightCache, node }) => {
+export const NodeBody: FC<{ heightCache: HeightCache; node: ChartNode }> = memo(({ heightCache, node }) => {
   const { Body } = useUnknownNodeComponentDescriptorFor(node);
   useDependsOnPlugins();
 
@@ -40,7 +40,7 @@ const UnknownNodeBodyWrapper = styled.div<{
   font-family: ${(props) => (props.fontFamily === 'monospace' ? "'Roboto Mono', monospace" : "'Roboto', sans-serif")};
 `;
 
-const UnknownNodeBody: FC<{ heightCache: HeightCache, node: ChartNode }> = ({ heightCache, node }) => {
+const UnknownNodeBody: FC<{ heightCache: HeightCache; node: ChartNode }> = ({ heightCache, node }) => {
   const getUIContext = useGetRivetUIContext();
 
   const [body, setBody] = useState<RenderedNodeBody | undefined>();

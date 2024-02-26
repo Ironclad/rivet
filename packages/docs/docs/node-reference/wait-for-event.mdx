@@ -28,9 +28,9 @@ This node is useful in scenarios where you want to wait for an external event to
 
 ## Inputs
 
-| Title      | Data Type | Description                                                                 | Default Value | Notes                                                                 |
-| ---------- | --------- | --------------------------------------------------------------------------- | ------------- | --------------------------------------------------------------------- |
-| Data       | `any`     | Any data to be passed through the node.                                     | N/A           | This data will be outputted from the `Data` output port.              |
+| Title | Data Type | Description                             | Default Value | Notes                                                    |
+| ----- | --------- | --------------------------------------- | ------------- | -------------------------------------------------------- |
+| Data  | `any`     | Any data to be passed through the node. | N/A           | This data will be outputted from the `Data` output port. |
 
 </TabItem>
 
@@ -38,10 +38,10 @@ This node is useful in scenarios where you want to wait for an external event to
 
 ## Outputs
 
-| Title     | Data Type | Description                                                                 | Notes                                                                 |
-| --------- | --------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Data      | `any`     | The data passed in through the `Data` input port.                           | If no data is passed into the `Data` input port, this port will not run. |
-| Event Data| `any`     | The data associated with the event that was raised.                         | If the event has no associated data, this port will not run.          |
+| Title      | Data Type | Description                                         | Notes                                                                    |
+| ---------- | --------- | --------------------------------------------------- | ------------------------------------------------------------------------ |
+| Data       | `any`     | The data passed in through the `Data` input port.   | If no data is passed into the `Data` input port, this port will not run. |
+| Event Data | `any`     | The data associated with the event that was raised. | If the event has no associated data, this port will not run.             |
 
 </TabItem>
 
@@ -49,9 +49,9 @@ This node is useful in scenarios where you want to wait for an external event to
 
 ## Editor Settings
 
-| Setting          | Description                                                                                                                         | Default Value  | Use Input Toggle | Input Data Type |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------------- | ---------------- | --------------- |
-| Event Name       | The name of the event to wait for. Must match the name of the event raised by the Raise Event Node or the host project.             | `continue`     | Yes              | `string`        |
+| Setting    | Description                                                                                                             | Default Value | Use Input Toggle | Input Data Type |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------- | --------------- |
+| Event Name | The name of the event to wait for. Must match the name of the event raised by the Raise Event Node or the host project. | `continue`    | Yes              | `string`        |
 
 </TabItem>
 

@@ -11,5 +11,9 @@ export type Tokenizer = {
 
   getTokenCountForString(input: string, info: TokenizerCallInfo): number;
 
-  getTokenCountForMessages(messages: ChatMessage[], gptFunctions: GptFunction[] | undefined, info: TokenizerCallInfo): Promise<number>;
+  getTokenCountForMessages(
+    messages: ChatMessage[],
+    gptFunctions: GptFunction[] | undefined,
+    info: TokenizerCallInfo,
+  ): Promise<number>;
 };

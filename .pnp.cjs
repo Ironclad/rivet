@@ -7202,6 +7202,7 @@ const RAW_RUNTIME_STATE =
             "p-retry",\
             "npm:4.6.2"\
           ]],\
+          ["prettier", "npm:3.2.5"],\
           ["rimraf", "npm:5.0.5"],\
           ["safe-stable-stringify", "npm:2.4.3"],\
           ["ts-dedent", "npm:2.2.0"],\

@@ -71,10 +71,13 @@ export const connectionsState = selector({
 export const nodesByIdState = selector({
   key: 'nodesByIdState',
   get: ({ get }) => {
-    return get(nodesState).reduce((acc, node) => {
-      acc[node.id] = node;
-      return acc;
-    }, {} as Record<NodeId, ChartNode>);
+    return get(nodesState).reduce(
+      (acc, node) => {
+        acc[node.id] = node;
+        return acc;
+      },
+      {} as Record<NodeId, ChartNode>,
+    );
   },
 });
 
@@ -92,14 +95,17 @@ export const nodesForConnectionState = selector({
 export const connectionsForNodeState = selector({
   key: 'connectionsForNodeSelector',
   get: ({ get }) => {
-    return get(connectionsState).reduce((acc, connection) => {
-      acc[connection.inputNodeId] ??= [];
-      acc[connection.inputNodeId]!.push(connection);
+    return get(connectionsState).reduce(
+      (acc, connection) => {
+        acc[connection.inputNodeId] ??= [];
+        acc[connection.inputNodeId]!.push(connection);
 
-      acc[connection.outputNodeId] ??= [];
-      acc[connection.outputNodeId]!.push(connection);
-      return acc;
-    }, {} as Record<NodeId, NodeConnection[]>);
+        acc[connection.outputNodeId] ??= [];
+        acc[connection.outputNodeId]!.push(connection);
+        return acc;
+      },
+      {} as Record<NodeId, NodeConnection[]>,
+    );
   },
 });
 

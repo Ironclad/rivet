@@ -65,8 +65,8 @@ export class GraphReferenceNodeImpl extends NodeImpl<GraphReferenceNode> {
         id: 'graph' as PortId,
         dataType: 'graph-reference',
         title: 'Graph',
-        description: 'A reference to the graph.'
-      }
+        description: 'A reference to the graph.',
+      },
     ];
   }
 
@@ -122,8 +122,8 @@ export class GraphReferenceNodeImpl extends NodeImpl<GraphReferenceNode> {
         return {
           ['graph' as PortId]: {
             type: 'control-flow-excluded',
-            value: undefined
-          }
+            value: undefined,
+          },
         };
       }
 
@@ -131,10 +131,10 @@ export class GraphReferenceNodeImpl extends NodeImpl<GraphReferenceNode> {
         ['graph' as PortId]: {
           type: 'graph-reference',
           value: {
-            graphId: graph.metadata!.id ?? '' as GraphId,
-            graphName: graph.metadata!.name ?? ''
-          }
-        }
+            graphId: graph.metadata!.id ?? ('' as GraphId),
+            graphName: graph.metadata!.name ?? '',
+          },
+        },
       };
     }
 
@@ -144,8 +144,8 @@ export class GraphReferenceNodeImpl extends NodeImpl<GraphReferenceNode> {
       return {
         ['graph' as PortId]: {
           type: 'control-flow-excluded',
-          value: undefined
-        }
+          value: undefined,
+        },
       };
     }
 
@@ -153,10 +153,10 @@ export class GraphReferenceNodeImpl extends NodeImpl<GraphReferenceNode> {
       ['graph' as PortId]: {
         type: 'graph-reference',
         value: {
-          graphId: graph.metadata!.id ?? '' as GraphId,
-          graphName: graph.metadata!.name ?? ''
-        }
-      }
+          graphId: graph.metadata!.id ?? ('' as GraphId),
+          graphName: graph.metadata!.name ?? '',
+        },
+      },
     };
   }
 }

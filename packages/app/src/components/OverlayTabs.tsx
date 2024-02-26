@@ -131,7 +131,9 @@ const styles = css`
     justify-content: flex-start;
     text-align: left;
     font-size: 14px;
-    transition: background-color 0.1s ease-out, color 0.1s ease-out;
+    transition:
+      background-color 0.1s ease-out,
+      color 0.1s ease-out;
 
     &:hover {
       background-color: var(--tertiary-light);

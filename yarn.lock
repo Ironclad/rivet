@@ -4270,6 +4270,7 @@ __metadata:
     p-queue-6: "npm:p-queue@^6.0.0"
     p-retry: "npm:^6.1.0"
     p-retry-4: "npm:p-retry@^4.0.0"
+    prettier: "npm:^3.2.5"
     rimraf: "npm:^5.0.5"
     safe-stable-stringify: "npm:^2.4.3"
     ts-dedent: "npm:^2.2.0"

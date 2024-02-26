@@ -124,8 +124,8 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
         this.data.useObjectPathInput
           ? 'Path: (Using Input)'
           : this.data.objectPath
-          ? `Path: ${this.data.objectPath}`
-          : ``
+            ? `Path: ${this.data.objectPath}`
+            : ``
       }
     `;
   }
@@ -229,14 +229,14 @@ export class ExtractYamlNodeImpl extends NodeImpl<ExtractYamlNode> {
               value: undefined,
             }
           : this.data.objectPath
-          ? {
-              type: 'any',
-              value: yamlObject,
-            }
-          : {
-              type: 'object',
-              value: yamlObject,
-            },
+            ? {
+                type: 'any',
+                value: yamlObject,
+              }
+            : {
+                type: 'object',
+                value: yamlObject,
+              },
       ['noMatch' as PortId]: {
         type: 'control-flow-excluded',
         value: undefined,

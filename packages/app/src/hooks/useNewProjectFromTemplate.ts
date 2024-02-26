@@ -44,10 +44,13 @@ export function useNewProjectFromTemplate() {
         }
       }
 
-      draft.graphs = newGraphs.reduce((acc, graph) => {
-        acc[graph.metadata!.id!] = graph;
-        return acc;
-      }, {} as Record<GraphId, NodeGraph>);
+      draft.graphs = newGraphs.reduce(
+        (acc, graph) => {
+          acc[graph.metadata!.id!] = graph;
+          return acc;
+        },
+        {} as Record<GraphId, NodeGraph>,
+      );
 
       // Also need to update the main graph if it's set
       if (draft.metadata.mainGraphId) {
