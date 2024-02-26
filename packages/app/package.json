@@ -98,7 +98,7 @@
     "p-retry": "^6.1.0",
     "pkg": "^5.8.1",
     "pnpm": "^8.9.2",
-    "prettier": "^3.0.3",
+    "prettier": "^3.2.5",
     "pretty-bytes": "^6.1.1",
     "pretty-ms": "^8.0.0",
     "react": "^18.2.0",

@@ -1,6 +1,13 @@
 import { it, describe, mock } from 'node:test';
 import { strict as assert } from 'node:assert';
-import { ArrayNode, ArrayNodeImpl, NodeConnection, NodeId } from '../../../src/index.js';
+import {
+  ArrayNode,
+  ArrayNodeImpl,
+  ChartNode,
+  NodeConnection,
+  NodeId,
+  StringEditorDefinition,
+} from '../../../src/index.js';
 import { nanoid } from 'nanoid/non-secure';
 
 const createNode = (data: Partial<ArrayNode['data']>) => {
@@ -40,8 +47,8 @@ describe('ArrayNodeImpl', () => {
     const node = new ArrayNodeImpl(ArrayNodeImpl.create());
     const editors = node.getEditors();
 
-    assert.ok(editors.find((e) => e.dataKey === 'flatten'));
-    assert.ok(editors.find((e) => e.dataKey === 'flattenDeep'));
+    assert.ok(editors.find((e) => (e as StringEditorDefinition<ChartNode>).dataKey === 'flatten'));
+    assert.ok(editors.find((e) => (e as StringEditorDefinition<ChartNode>).dataKey === 'flattenDeep'));
   });
 
   it('creates nodes with unique IDs', () => {

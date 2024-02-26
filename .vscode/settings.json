@@ -16,5 +16,7 @@
   "rust-analyzer.linkedProjects": ["packages/app/src-tauri/Cargo.toml"],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
-  }
+  },
+  "prettier.configPath": "./.prettierrc.yml",
+  "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs"
 }
