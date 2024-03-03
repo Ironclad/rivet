@@ -9,6 +9,11 @@ use tauri::{AppHandle, CustomMenuItem, InvokeError, Manager, Menu, MenuItem, Sub
 mod plugins;
 
 fn main() {
+    // Fix $PATH on MacOS and Linux to include the bashrc/zshrc
+    if let Err(err) = fix_path_env::fix() {
+        eprintln!("Error fixing $PATH: {}", err);
+    }
+
     tauri::Builder::default()
         .plugin(tauri_plugin_persisted_scope::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
