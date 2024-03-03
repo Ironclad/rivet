@@ -8,7 +8,6 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { checkForUpdatesState, skippedMaxVersionState, updateModalOpenState } from '../state/settings';
 import { gt, lt, lte } from 'semver';
 import { getVersion } from '@tauri-apps/api/app';
-import { isRunningInBrowser } from 'openai/core.mjs';
 
 const toastStyle = css`
   display: flex;
@@ -50,13 +49,15 @@ export function useCheckForUpdate({
   const [skippedMaxVersion, setSkippedMaxVersion] = useRecoilState(skippedMaxVersionState);
 
   return async () => {
-    if (!checkForUpdates || isRunningInBrowser()) {
+    if (!checkForUpdates || !isInTauri()) {
+      console.log('Skipping update check');
       return;
     }
 
     const { shouldUpdate, manifest } = await checkUpdate();
 
     if (!manifest) {
+      console.log('No manifest found');
       return;
     }
 

@@ -1,6 +1,7 @@
 import { type FC, useState } from 'react';
 import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import {
+  checkForUpdatesState,
   defaultExecutorState,
   executorOptions,
   previousDataPerNodeToKeepState,
@@ -473,7 +474,9 @@ export const PluginsSettingsPage: FC = () => {
 };
 
 export const UpdatesSettingsPage: FC = () => {
-  const checkForUpdates = useCheckForUpdate({ notifyNoUpdates: true, force: true });
+  const checkForUpdatesNow = useCheckForUpdate({ notifyNoUpdates: true, force: true });
+  const [checkForUpdates, setCheckForUpdates] = useRecoilState(checkForUpdatesState);
+
   const [currentVersion, setCurrentVersion] = useState('');
 
   useAsyncEffect(async () => {
@@ -496,9 +499,9 @@ export const UpdatesSettingsPage: FC = () => {
             <div className="toggle-field">
               <Toggle
                 id="check-for-updates"
-                isChecked={true}
+                isChecked={checkForUpdates}
                 onChange={(e) => {
-                  // TODO
+                  setCheckForUpdates(e.target.checked);
                 }}
               />
             </div>
@@ -509,7 +512,7 @@ export const UpdatesSettingsPage: FC = () => {
       <Field name="check-for-updates-now">
         {() => (
           <>
-            <Button appearance="primary" onClick={() => checkForUpdates()}>
+            <Button appearance="primary" onClick={() => checkForUpdatesNow()}>
               Check for updates now
             </Button>
           </>
