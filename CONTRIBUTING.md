@@ -13,6 +13,8 @@ If you have any bug reports, questions, ideas, or unexpected behavior feel free 
 - [Building Packages](#building-packages)
 - [Tests](#tests)
   - [Linting](#linting)
+- [Node Executor](#node-executor)
+- [Releasing](#releasing)
 
 ## Running from Source
 
@@ -115,11 +117,11 @@ Once the release is ready, it will show up on the [Github releases page](https:/
 1. Update the release notes.
 2. Publish the release.
 
-- KEEP "Set as the latest release" CHECKED
+   - KEEP "Set as the latest release" CHECKED
 
 3. Download `latest.json`
 
-- Check that all Darwin builds have the same signature.
+   - Check that all Darwin builds have the same signature.
 
 4. In `latest.json`, update the notes field. This supports Markdown syntax, and will show up in the Rivet UI when it gets updated.
 5. Upload `latest.json` to the release (after deleting the old `latest.json`).
