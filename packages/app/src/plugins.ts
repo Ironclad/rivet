@@ -13,6 +13,8 @@ import BraintrustLogo from './assets/vendor_logos/braintrust_data_logo.jpeg';
 import PythonLogo from './assets/vendor_logos/Python-logo.svg.png';
 import FolderLogo from './assets/vendor_logos/folder-icon.png';
 import GoogleLogo from './assets/vendor_logos/google-logo.png';
+import PDF2MDLogo from './assets/vendor_logos/pdf2md-logo.png';
+import TransformerLabLogo from './assets/vendor_logos/transformerlab-logo.svg';
 
 type SharedPluginInfo = {
   id: string;
@@ -238,5 +240,33 @@ export const pluginInfos: PluginInfo[] = [
     author: 'Rivet Team',
     logoImage: GoogleLogo,
     documentation: 'https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/google',
+  },
+  {
+    type: 'package',
+    id: 'rivet-plugin-pdf2md@latest',
+    name: 'PDF to Markdown',
+    description: dedent`
+      Adds a node 'PDF to Markdown' node that converts PDF contents into markdown for use with LLMs.
+      This plugin is based on: https://github.com/opengovsg/pdf2md
+    `,
+    github: 'https://github.com/ai-made-approachable/rivet-plugin-pdf2md',
+    author: 'Tim Köhler',
+    package: 'rivet-plugin-pdf2md',
+    tag: 'latest',
+    logoImage: PDF2MDLogo,
+  },
+  {
+    type: 'package',
+    id: 'rivet-plugin-transformerlab@latest',
+    name: 'Transformer Lab',
+    description: dedent`
+      Adds nodes to interact with Transformer Lab. Especially useful for fine-tuning and chatting with local models.
+      For video tutorials go to: https://www.youtube.com/channel/UCmKOkBE5i2MQG_2UOi9GoNg/
+    `,
+    github: 'https://github.com/ai-made-approachable/rivet-plugin-transformerlab',
+    author: 'Tim Köhler',
+    package: 'rivet-plugin-transformerlab',
+    tag: 'latest',
+    logoImage: TransformerLabLogo,
   },
 ];
