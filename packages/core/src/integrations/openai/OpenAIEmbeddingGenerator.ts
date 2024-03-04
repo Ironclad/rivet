@@ -1,6 +1,9 @@
 import { type Settings } from '../../index.js';
 import { type EmbeddingGenerator } from '../EmbeddingGenerator.js';
 import { OpenAI } from 'openai';
+import {EmbeddingCreateParams} from 'openai/resources'
+
+type OpenAIOptions = Pick<EmbeddingCreateParams, 'model', 'dimensions'>
 
 export class OpenAIEmbeddingGenerator implements EmbeddingGenerator {
   readonly #settings;
@@ -9,7 +12,7 @@ export class OpenAIEmbeddingGenerator implements EmbeddingGenerator {
     this.#settings = settings;
   }
 
-  async generateEmbedding(text: string): Promise<number[]> {
+  async generateEmbedding(text: string, options?: OpenAIOptions): Promise<number[]> {
     const api = new OpenAI({
       apiKey: this.#settings.openAiKey,
       organization: this.#settings.openAiOrganization,
@@ -18,7 +21,8 @@ export class OpenAIEmbeddingGenerator implements EmbeddingGenerator {
 
     const response = await api.embeddings.create({
       input: text,
-      model: 'text-embedding-ada-002',
+      model: options?.model ?? 'text-embedding-ada-002',
+      dimensions: options?.dimensions
     });
 
     const embeddings = response.data;
