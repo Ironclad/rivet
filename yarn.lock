@@ -4134,7 +4134,7 @@ __metadata:
     minimatch: "npm:^9.0.3"
     monaco-editor: "npm:^0.44.0"
     nanoid: "npm:^3.3.6"
-    openai: "npm:^4.12.4"
+    openai: "npm:^4.28.4"
     p-queue: "npm:^7.4.1"
     p-retry: "npm:^6.1.0"
     pkg: "npm:^5.8.1"
@@ -4265,7 +4265,7 @@ __metadata:
     lodash-es: "npm:^4.17.21"
     minimatch: "npm:^9.0.3"
     nanoid: "npm:^3.3.6"
-    openai: "npm:^4.12.4"
+    openai: "npm:^4.28.4"
     p-queue: "npm:^7.4.1"
     p-queue-6: "npm:p-queue@^6.0.0"
     p-retry: "npm:^6.1.0"
@@ -15556,7 +15556,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openai@npm:^4.12.1, openai@npm:^4.12.4":
+"openai@npm:^4.12.1":
   version: 4.12.4
   resolution: "openai@npm:4.12.4"
   dependencies:
@@ -15572,6 +15572,25 @@ __metadata:
   bin:
     openai: bin/cli
   checksum: 5ec2551772fd29574116bab13ea4a2fc7f3f8291ed599eebaada44e22877b5ad9990402c309c683fd6149f6f61e4a05ff5e58d18c6a4795053e71c9dea3f1254
+  languageName: node
+  linkType: hard
+
+"openai@npm:^4.28.4":
+  version: 4.28.4
+  resolution: "openai@npm:4.28.4"
+  dependencies:
+    "@types/node": "npm:^18.11.18"
+    "@types/node-fetch": "npm:^2.6.4"
+    abort-controller: "npm:^3.0.0"
+    agentkeepalive: "npm:^4.2.1"
+    digest-fetch: "npm:^1.3.0"
+    form-data-encoder: "npm:1.7.2"
+    formdata-node: "npm:^4.3.2"
+    node-fetch: "npm:^2.6.7"
+    web-streams-polyfill: "npm:^3.2.1"
+  bin:
+    openai: bin/cli
+  checksum: 81bf6f832f43aa81c8fca1bd1f8ffde16f02fcfa13d5cb66b64cd9440c7074054a4a766b0c9b6c9217359f96a376619f91e7071121739afe6eb492992ebfd2ec
   languageName: node
   linkType: hard
 

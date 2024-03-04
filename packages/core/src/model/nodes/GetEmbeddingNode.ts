@@ -19,7 +19,11 @@ export type GetEmbeddingNode = ChartNode<'getEmbedding', GetEmbeddingNodeData>;
 
 export type GetEmbeddingNodeData = {
   integration: string;
+  model?: string;
+  dimensions?: number;
   useIntegrationInput?: boolean;
+  useModelInput?: boolean;
+  useDimensionsInput?: boolean;
 };
 
 export class GetEmbeddingNodeImpl extends NodeImpl<GetEmbeddingNode> {
@@ -32,6 +36,8 @@ export class GetEmbeddingNodeImpl extends NodeImpl<GetEmbeddingNode> {
       data: {
         integration: 'openai',
         useIntegrationInput: false,
+        model: undefined,
+        dimensions: undefined
       },
     };
   }
@@ -52,6 +58,24 @@ export class GetEmbeddingNodeImpl extends NodeImpl<GetEmbeddingNode> {
         title: 'Integration',
         dataType: 'string',
         required: true,
+      });
+    }
+
+    if (this.data.useModelInput) {
+      inputDefinitions.push({
+        id: 'model' as PortId,
+        title: 'Model',
+        dataType: 'string',
+        required: false,
+      });
+    }
+
+    if (this.data.useDimensionsInput) {
+      inputDefinitions.push({
+        id: 'dimensions' as PortId,
+        title: 'Dimensions',
+        dataType: 'number',
+        required: false,
       });
     }
 
@@ -79,6 +103,18 @@ export class GetEmbeddingNodeImpl extends NodeImpl<GetEmbeddingNode> {
         options: [{ label: 'OpenAI', value: 'openai' }],
         useInputToggleDataKey: 'useIntegrationInput',
       },
+      {
+        type: 'string',
+        label: 'Model',
+        dataKey: 'model',
+        useInputToggleDataKey: 'useModelInput',
+      },
+      {
+        type: 'number',
+        label: 'Dimensions',
+        dataKey: 'dimensions',
+        useInputToggleDataKey: 'useDimensionsInput',
+      },
     ];
   }
 
@@ -105,10 +141,19 @@ export class GetEmbeddingNodeImpl extends NodeImpl<GetEmbeddingNode> {
     const integrationName = this.data.useIntegrationInput
       ? coerceType(inputs['integration' as PortId], 'string')
       : this.data.integration;
+    
+    const model = this.data.useModelInput ? coerceType(inputs['model' as PortId], 'string') : this.data.model;
+
+    const dimensions = this.data.useDimensionsInput
+      ? coerceType(inputs['dimensions' as PortId], 'number')
+      : this.data.dimensions;
 
     const embeddingGenerator = getIntegration('embeddingGenerator', integrationName, context);
 
-    const embedding = await embeddingGenerator.generateEmbedding(input);
+    const embedding = await embeddingGenerator.generateEmbedding(input, {
+      model,
+      dimensions,
+    });
 
     return {
       ['embedding' as PortId]: {

@@ -7018,7 +7018,7 @@ const RAW_RUNTIME_STATE =
           ["minimatch", "npm:9.0.3"],\
           ["monaco-editor", "npm:0.44.0"],\
           ["nanoid", "npm:3.3.6"],\
-          ["openai", "npm:4.12.4"],\
+          ["openai", "npm:4.28.4"],\
           ["p-queue", "npm:7.4.1"],\
           ["p-retry", "npm:6.1.0"],\
           ["pkg", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.8.1"],\
@@ -7191,7 +7191,7 @@ const RAW_RUNTIME_STATE =
           ["lodash-es", "npm:4.17.21"],\
           ["minimatch", "npm:9.0.3"],\
           ["nanoid", "npm:3.3.6"],\
-          ["openai", "npm:4.12.4"],\
+          ["openai", "npm:4.28.4"],\
           ["p-queue", "npm:7.4.1"],\
           ["p-queue-6", [\
             "p-queue",\
@@ -21699,6 +21699,22 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/openai-npm-4.12.4-580c30a141-5ec2551772.zip/node_modules/openai/",\
         "packageDependencies": [\
           ["openai", "npm:4.12.4"],\
+          ["@types/node", "npm:18.18.6"],\
+          ["@types/node-fetch", "npm:2.6.7"],\
+          ["abort-controller", "npm:3.0.0"],\
+          ["agentkeepalive", "npm:4.3.0"],\
+          ["digest-fetch", "npm:1.3.0"],\
+          ["form-data-encoder", "npm:1.7.2"],\
+          ["formdata-node", "npm:4.4.1"],\
+          ["node-fetch", "virtual:b01bc14c3fb20a565009002ee2e0790039582d5ead51843fa878af651c6a4713382219abd2c6b1a0bc65ff66858b5db4627e960be7fcc9aa9469883e27f8fb1c#npm:2.7.0"],\
+          ["web-streams-polyfill", "npm:3.2.1"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:4.28.4", {\
+        "packageLocation": "./.yarn/cache/openai-npm-4.28.4-3c17cf502b-81bf6f832f.zip/node_modules/openai/",\
+        "packageDependencies": [\
+          ["openai", "npm:4.28.4"],\
           ["@types/node", "npm:18.18.6"],\
           ["@types/node-fetch", "npm:2.6.7"],\
           ["abort-controller", "npm:3.0.0"],\

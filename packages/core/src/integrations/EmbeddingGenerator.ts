@@ -1,3 +1,3 @@
 export interface EmbeddingGenerator {
-  generateEmbedding(text: string): Promise<number[]>;
+  generateEmbedding(text: string, options?: Record<string, unknown>): Promise<number[]>;
 }
