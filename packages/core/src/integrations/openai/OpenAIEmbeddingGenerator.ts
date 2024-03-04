@@ -1,9 +1,8 @@
 import { type Settings } from '../../index.js';
 import { type EmbeddingGenerator } from '../EmbeddingGenerator.js';
 import { OpenAI } from 'openai';
-import {EmbeddingCreateParams} from 'openai/resources'
 
-type OpenAIOptions = Pick<EmbeddingCreateParams, 'model', 'dimensions'>
+type OpenAIOptions = Pick<OpenAI.EmbeddingCreateParams, 'model' | 'dimensions' >
 
 export class OpenAIEmbeddingGenerator implements EmbeddingGenerator {
   readonly #settings;
