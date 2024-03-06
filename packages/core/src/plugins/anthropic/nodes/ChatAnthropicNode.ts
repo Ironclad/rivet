@@ -377,13 +377,11 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
           if (model.startsWith('claude-3')) {
             const image = inputs['image' as PortId];
             if (image && image.type === 'image') {
-              options.images = [
-                {
-                  type: 'base64',
-                  media_type: image.value.mediaType,
-                  data: image.value.data,
-                },
-              ];
+              options.image = {
+                type: 'base64',
+                media_type: image.value.mediaType,
+                data: image.value.data,
+              };
             }
           }
 
