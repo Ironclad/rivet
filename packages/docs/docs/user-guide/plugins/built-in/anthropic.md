@@ -41,7 +41,7 @@ The Chat (Anthropic) node allows you to use the Claude API to generate text.
 
 | Setting     | Description                                                                                                            | Default Value  | Use Input Toggle | Input Data Type |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------- | -------------- | ---------------- | --------------- |
-| Model       | The Claude model to use for the request (Claude 3 Opus, Claude 3 Sonnet, Claude 2.1, Claude 2 or Claude Instant)       | Claude 3 Sonnet | Yes              | `string`        |
+| Model       | The Claude model to use for the request (Claude 3 Opus, Claude 3 Sonnet, Claude 2.1, Claude 2 or Claude Instant)       | Claude 2       | Yes              | `string`        |
 | Temperature | The sampling temperature to use. Lower values are more deterministic. Higher values are more "creative".               | 0.5            | Yes              | `number`        |
 | Top P       | Alternate sampling mode using the top X% of values. 0.1 corresponds to the top 10%.                                    | 1              | Yes              | `number`        |
 | Use Top P   | Whether to use the Top P sampling mode.                                                                                | false          | Yes              | `boolean`       |
