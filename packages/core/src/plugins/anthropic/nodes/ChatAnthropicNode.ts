@@ -64,6 +64,16 @@ export type ChatAnthropicNodeData = ChatAnthropicNodeConfigData & {
 // Temporary
 const cache = new Map<string, Outputs>();
 
+// Claude Vision
+// Extend the ChatCompletionOptions type to include the 'image' property
+type ChatCompletionOptionsWithImage = ChatCompletionOptions & {
+  image?: {
+    type: 'base64';
+    media_type: string;
+    data: string;
+  };
+};
+
 export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
   create(): ChatAnthropicNode {
     const chartNode: ChatAnthropicNode = {
@@ -360,31 +370,33 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
     }
 
     try {
-      return await retry(
-        async () => {
-          const options: Omit<ChatCompletionOptions, 'apiKey' | 'signal'> = {
-            prompt,
-            model,
-            temperature: useTopP ? undefined : temperature,
-            top_p: useTopP ? topP : undefined,
-            max_tokens_to_sample: maxTokens,
-            stop_sequences: stop ? [stop] : undefined,
-          };
+return await retry(
+  async () => {
+    const options: Omit<ChatCompletionOptions, 'apiKey' | 'signal'> = {
+      prompt,
+      model,
+      temperature: useTopP ? undefined : temperature,
+      top_p: useTopP ? topP : undefined,
+      max_tokens_to_sample: maxTokens,
+      stop_sequences: stop ? [stop] : undefined,
+    };
 
-          // Claude Vision
-          // Include the image data in the API options if the Claude 3 and an image input is provided
-          // This is necessary to send the image data to the Claude's Vision-capable models
-          if (model.startsWith('claude-3')) {
-            const image = inputs['image' as PortId];
-            if (image && image.type === 'image') {
-              options.image = {
-                type: 'base64',
-                media_type: image.value.mediaType,
-                data: image.value.data,
-              };
-            }
-          }
-
+    // Claude Vision
+    // Include the image data in the API options if a Claude 3 model is selected.
+    if (model.startsWith('claude-3')) {
+      const image = inputs['image' as PortId];
+      if (image && image.type === 'image') {
+        const optionsWithImage: Omit<ChatCompletionOptions & { image: any }, 'apiKey' | 'signal'> = {
+          ...options,
+          image: {
+            type: 'base64',
+            media_type: image.value.mediaType,
+            data: image.value.data,
+          },
+        };
+        Object.assign(options, optionsWithImage);
+      }
+    }
           const cacheKey = JSON.stringify(options);
 
           if (data.cache) {
