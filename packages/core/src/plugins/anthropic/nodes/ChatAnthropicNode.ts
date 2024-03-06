@@ -164,8 +164,19 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
       title: 'Prompt',
     });
 
-    return inputs;
-  },
+    // Claude Vision
+    // Add an image input port if Claude 3 is selected
+    // This is required to support Claude's Vision capabilities
+    if (data.model.startsWith('claude-3')) {
+      inputs.push({
+        dataType: 'image',
+        id: 'image' as PortId,
+        title: 'Image',
+      });
+    }
+
+  return inputs;
+},
 
   getOutputDefinitions(_data): NodeOutputDefinition[] {
     const outputs: NodeOutputDefinition[] = [];
@@ -359,6 +370,23 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
             max_tokens_to_sample: maxTokens,
             stop_sequences: stop ? [stop] : undefined,
           };
+
+          // Claude Vision
+          // Include the image data in the API options if the Claude 3 and an image input is provided
+          // This is necessary to send the image data to the Claude's Vision-capable models
+          if (model.startsWith('claude-3')) {
+            const image = inputs['image' as PortId];
+            if (image && image.type === 'image') {
+              options.images = [
+                {
+                  type: 'base64',
+                  media_type: image.value.mediaType,
+                  data: image.value.data,
+                },
+              ];
+            }
+          }
+
           const cacheKey = JSON.stringify(options);
 
           if (data.cache) {

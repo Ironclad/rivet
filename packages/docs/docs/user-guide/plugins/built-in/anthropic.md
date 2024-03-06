@@ -30,6 +30,7 @@ The Chat (Anthropic) node allows you to use the Claude API to generate text.
 | Title  | Data Type                                                    | Description                                       | Default Value | Notes                                                                                                                                                      |
 | ------ | ------------------------------------------------------------ | ------------------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Prompt | `string` or `string[]` or `chat-message` or `chat-message[]` | The messages to send to Claude to get a response. | (Required)    | Claude does not support a system prompt like GPT does, so you may have to get inventive to place words into Claude's mouth using Prompt nodes set to `AI`. |
+| Image | `image` | An image to send to Claude for analysis. | (Optional) | This input is only available when using a Claude 3 model (Claude 3 Opus or Claude 3 Sonnet). |
 
 #### Outputs
 
@@ -47,3 +48,12 @@ The Chat (Anthropic) node allows you to use the Claude API to generate text.
 | Use Top P   | Whether to use the Top P sampling mode.                                                                                | false          | Yes              | `boolean`       |
 | Max Tokens  | The maximum number of tokens that GPT is allowed to return. When hitting the max tokens, the response will be cut off. | 1024           | Yes              | `number`        |
 | Stop        | Comma separated list of stop tokens. If any stop token is encountered, the response will end immediately.              | (None)         | Yes              | `string[]`      |
+
+#### Using Vision with Claude 3 Models
+When using a Claude 3 model (Claude 3 Opus or Claude 3 Sonnet), an additional `Image` input becomes available in the Chat (Anthropic) node. This input allows you to send an image to Claude for analysis alongside the text prompt.
+To use Vision with Claude 3 models:
+1. Select a Claude 3 model (Claude 3 Opus or Claude 3 Sonnet) in the node settings.
+2. Connect an image to the `Image` input of the Chat (Anthropic) node.
+3. Provide a text prompt that instructs Claude on how to analyze the image.
+4. Execute the node to receive Claude's response based on the provided image and text prompt.
+Note that the `Image` input is only available when using a Claude 3 model. If you select a different model (Claude 2.1, Claude 2, or Claude Instant), the `Image` input will not be visible.
