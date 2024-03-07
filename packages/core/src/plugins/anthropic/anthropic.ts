@@ -69,6 +69,11 @@ export type ChatCompletionOptions = {
   top_p?: number;
   top_k?: number;
   signal?: AbortSignal;
+  image?: {
+    type: string;
+    media_type: string;
+    data: string;
+  };
 };
 
 export type ChatCompletionChunk = {
