@@ -451,9 +451,10 @@ return await retry(
         
         const endTime = Date.now();
         
-        if (model.startsWith('claude-3') && image) {
+        if (model.startsWith('claude-3') && Image) {
           // Skip token count and duration for Claude 3 models with Vision
         } else {
+          let responseParts: string[] = [];
           if (responseParts.length === 0) {
             throw new Error('No response from Anthropic');
           }
