@@ -136,3 +136,52 @@ export class AnthropicError extends Error {
     super(message);
   }
 }
+
+export const anthropic = {
+  messages: {
+    create: async (options: ChatCompletionOptions) => {
+      const { apiKey, signal, model, prompt, max_tokens_to_sample, stop_sequences, temperature, top_p, top_k, image } = options;
+
+      const defaultSignal = new AbortController().signal;
+
+      const requestBody = {
+        model,
+        prompt,
+        max_tokens_to_sample,
+        stop_sequences,
+        temperature,
+        top_p,
+        top_k,
+        stream: false,
+      };
+
+      if (image) {
+        requestBody['image'] = image;
+      }
+
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify(requestBody),
+        signal: signal ?? defaultSignal,
+      });
+
+      if (!response.ok) {
+        const responseJson = await response.json();
+        throw new AnthropicError(`Error in messages.create: ${response.statusText}`, response, responseJson);
+      }
+
+      const responseJson = await response.json();
+
+      return {
+        completion: responseJson.completion,
+        stop_reason: responseJson.stop_reason,
+        model: responseJson.model,
+      };
+    },
+  },
+};
