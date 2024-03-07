@@ -197,4 +197,5 @@ export type ChatCompletionOptionsWithImage = ChatCompletionOptions & {
     media_type: string;
     data: string;
   };
+  stream?: boolean;
 };
