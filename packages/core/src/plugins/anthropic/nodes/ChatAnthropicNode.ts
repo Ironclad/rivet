@@ -383,59 +383,37 @@ return await retry(
           const startTime = Date.now();
           const apiKey = context.getPluginConfig('anthropicApiKey');
           
-          if (model.startsWith('claude-3')) {
-            const image = inputs['image' as PortId];
-            let responseParts: string[] = [];
-          
-            if (image && image.type === 'image') {
-              // Use the Messages API for Claude 3 models with Vision
-              const response = await anthropic.messages.create({
-                apiKey: apiKey ?? '',
-                signal: context.signal,
-                ...options,
-                image: {
-                  type: 'base64',
-                  media_type: image.value.mediaType,
-                  data: image.value.data.toString(),
-                },
-              });
-          
-              // Process the response and update the output
-              output['response' as PortId] = {
-                type: 'string',
-                value: response.completion.trim(),
-              };
-            } else {
-              // Use the normal chat completion method for Claude 3 models without Vision
-              const chunks = streamChatCompletions({
-                apiKey: apiKey ?? '',
-                signal: context.signal,
-                ...options,
-              });
-          
-              // Process the response chunks and update the output
-              for await (const chunk of chunks) {
-                if (!chunk.completion) {
-                  continue;
-                }
-                responseParts.push(chunk.completion);
-                output['response' as PortId] = {
-                  type: 'string',
-                  value: responseParts.join('').trim(),
-                };
-                context.onPartialOutputs?.(output);
-              }
-            }
+        if (model.startsWith('claude-3')) {
+          const image = inputs['image' as PortId];
+          let responseParts: string[] = [];
+        
+          if (image && image.type === 'image') {
+            // Use the Messages API for Claude 3 models with Vision
+            const response = await anthropic.messages.create({
+              apiKey: apiKey ?? '',
+              signal: context.signal,
+              ...options,
+              image: {
+                type: 'base64',
+                media_type: image.value.mediaType,
+                data: image.value.data.toString(),
+              },
+            });
+        
+            // Process the response and update the output
+            output['response' as PortId] = {
+              type: 'string',
+              value: response.completion.trim(),
+            };
           } else {
-            // Use the normal chat completion method for non-Claude 3 models
+            // Use the normal chat completion method for Claude 3 models without Vision
             const chunks = streamChatCompletions({
               apiKey: apiKey ?? '',
               signal: context.signal,
               ...options,
             });
-          
+        
             // Process the response chunks and update the output
-            const responseParts: string[] = [];
             for await (const chunk of chunks) {
               if (!chunk.completion) {
                 continue;
@@ -448,23 +426,45 @@ return await retry(
               context.onPartialOutputs?.(output);
             }
           }
-          
-          const endTime = Date.now();
-          
-          if (model.startsWith('claude-3') && image) {
-            // Skip token count and duration for Claude 3 models with Vision
-          } else {
-            if (responseParts.length === 0) {
-              throw new Error('No response from Anthropic');
+        } else {
+          // Use the normal chat completion method for non-Claude 3 models
+          const chunks = streamChatCompletions({
+            apiKey: apiKey ?? '',
+            signal: context.signal,
+            ...options,
+          });
+        
+          // Process the response chunks and update the output
+          const responseParts: string[] = [];
+          for await (const chunk of chunks) {
+            if (!chunk.completion) {
+              continue;
             }
-          
-            output['requestTokens' as PortId] = { type: 'number', value: tokenCount };
-            const responseTokenCount = context.tokenizer.getTokenCountForString(responseParts.join(''), tokenizerInfo);
-            output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
-          
-            const duration = endTime - startTime;
-            output['duration' as PortId] = { type: 'number', value: duration };
+            responseParts.push(chunk.completion);
+            output['response' as PortId] = {
+              type: 'string',
+              value: responseParts.join('').trim(),
+            };
+            context.onPartialOutputs?.(output);
           }
+        }
+        
+        const endTime = Date.now();
+        
+        if (model.startsWith('claude-3') && image) {
+          // Skip token count and duration for Claude 3 models with Vision
+        } else {
+          if (responseParts.length === 0) {
+            throw new Error('No response from Anthropic');
+          }
+        
+          output['requestTokens' as PortId] = { type: 'number', value: tokenCount };
+          const responseTokenCount = context.tokenizer.getTokenCountForString(responseParts.join(''), tokenizerInfo);
+          output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
+        
+          const duration = endTime - startTime;
+          output['duration' as PortId] = { type: 'number', value: duration };
+        }
 
           Object.freeze(output);
           cache.set(cacheKey, output);
