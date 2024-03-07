@@ -150,6 +150,7 @@ export const anthropic = {
       const defaultSignal = new AbortController().signal;
 
       const requestBody: ChatCompletionOptionsWithImage = {
+        apiKey,
         model,
         prompt,
         max_tokens_to_sample,
