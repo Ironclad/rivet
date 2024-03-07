@@ -64,16 +64,6 @@ export type ChatAnthropicNodeData = ChatAnthropicNodeConfigData & {
 // Temporary
 const cache = new Map<string, Outputs>();
 
-// Claude Vision
-// Extend the ChatCompletionOptions type to include the 'image' property
-type ChatCompletionOptionsWithImage = ChatCompletionOptions & {
-  image?: {
-    type: 'base64';
-    media_type: string;
-    data: string;
-  };
-};
-
 export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
   create(): ChatAnthropicNode {
     const chartNode: ChatAnthropicNode = {
@@ -380,59 +370,82 @@ return await retry(
       max_tokens_to_sample: maxTokens,
       stop_sequences: stop ? [stop] : undefined,
     };
-
-    // Claude Vision
-    // Include the image data in the API options if a Claude 3 model is selected.
+    
+    const cacheKey = JSON.stringify(options);
+    if (data.cache) {
+      const cached = cache.get(cacheKey);
+      if (cached) {
+        return cached;
+      }
+    }
+    
+    const startTime = Date.now();
+    const apiKey = context.getPluginConfig('anthropicApiKey');
+    
     if (model.startsWith('claude-3')) {
       const image = inputs['image' as PortId];
       if (image && image.type === 'image') {
-        const optionsWithImage: Omit<ChatCompletionOptions & { image: any }, 'apiKey' | 'signal'> = {
+        // Use the Messages API for Claude 3 models with Vision
+        const response = await anthropic.messages.create({
+          apiKey: apiKey ?? '',
+          signal: context.signal,
           ...options,
           image: {
             type: 'base64',
             media_type: image.value.mediaType,
             data: image.value.data,
           },
+        });
+    
+        // Process the response and update the output
+        output['response' as PortId] = {
+          type: 'string',
+          value: response.completion.trim(),
         };
-        Object.assign(options, optionsWithImage);
+      } else {
+        // Use the normal chat completion method for Claude 3 models without Vision
+        const chunks = streamChatCompletions({
+          apiKey: apiKey ?? '',
+          signal: context.signal,
+          ...options,
+        });
+    
+        // Process the response chunks and update the output
+        const responseParts: string[] = [];
+        for await (const chunk of chunks) {
+          if (!chunk.completion) {
+            continue;
+          }
+          responseParts.push(chunk.completion);
+          output['response' as PortId] = {
+            type: 'string',
+            value: responseParts.join('').trim(),
+          };
+          context.onPartialOutputs?.(output);
+        }
+      }
+    } else {
+      // Use the normal chat completion method for non-Claude 3 models
+      const chunks = streamChatCompletions({
+        apiKey: apiKey ?? '',
+        signal: context.signal,
+        ...options,
+      });
+    
+      // Process the response chunks and update the output
+      const responseParts: string[] = [];
+      for await (const chunk of chunks) {
+        if (!chunk.completion) {
+          continue;
+        }
+        responseParts.push(chunk.completion);
+        output['response' as PortId] = {
+          type: 'string',
+          value: responseParts.join('').trim(),
+        };
+        context.onPartialOutputs?.(output);
       }
     }
-          const cacheKey = JSON.stringify(options);
-
-          if (data.cache) {
-            const cached = cache.get(cacheKey);
-            if (cached) {
-              return cached;
-            }
-          }
-
-          const startTime = Date.now();
-
-          const apiKey = context.getPluginConfig('anthropicApiKey');
-
-          const chunks = streamChatCompletions({
-            apiKey: apiKey ?? '',
-            signal: context.signal,
-            ...options,
-          });
-
-          const responseParts: string[] = [];
-
-          for await (const chunk of chunks) {
-            if (!chunk.completion) {
-              // Could be error for some reason 🤷‍♂️ but ignoring has worked for me so far.
-              continue;
-            }
-
-            responseParts.push(chunk.completion);
-
-            output['response' as PortId] = {
-              type: 'string',
-              value: responseParts.join('').trim(),
-            };
-
-            context.onPartialOutputs?.(output);
-          }
 
           const endTime = Date.now();
 
