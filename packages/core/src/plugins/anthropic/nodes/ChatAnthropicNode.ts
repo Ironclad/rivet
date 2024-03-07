@@ -385,6 +385,8 @@ return await retry(
           
           if (model.startsWith('claude-3')) {
             const image = inputs['image' as PortId];
+            let responseParts: string[] = [];
+          
             if (image && image.type === 'image') {
               // Use the Messages API for Claude 3 models with Vision
               const response = await anthropic.messages.create({
@@ -412,7 +414,6 @@ return await retry(
               });
           
               // Process the response chunks and update the output
-              const responseParts: string[] = [];
               for await (const chunk of chunks) {
                 if (!chunk.completion) {
                   continue;
@@ -449,7 +450,7 @@ return await retry(
           }
           
           const endTime = Date.now();
-
+          
           if (model.startsWith('claude-3') && image) {
             // Skip token count and duration for Claude 3 models with Vision
           } else {
