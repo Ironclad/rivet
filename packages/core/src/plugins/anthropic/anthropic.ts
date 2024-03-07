@@ -149,7 +149,7 @@ export const anthropic = {
 
       const defaultSignal = new AbortController().signal;
 
-      const requestBody = {
+      const requestBody: ChatCompletionOptionsWithImage = {
         model,
         prompt,
         max_tokens_to_sample,
@@ -161,7 +161,7 @@ export const anthropic = {
       };
 
       if (image) {
-        requestBody['image'] = image;
+        requestBody.image = image;
       }
 
       const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -189,4 +189,12 @@ export const anthropic = {
       };
     },
   },
+};
+
+export type ChatCompletionOptionsWithImage = ChatCompletionOptions & {
+  image?: {
+    type: string;
+    media_type: string;
+    data: string;
+  };
 };
