@@ -174,6 +174,12 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
         id: 'image' as PortId,
         title: 'Image',
       });
+    // Add the "System" prompt input port for Claude 3 models
+      inputs.push({
+        dataType: 'string',
+        id: 'system' as PortId,
+        title: 'System',
+      });
     }
 
   return inputs;
@@ -316,6 +322,10 @@ async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Ou
     return acc;
   }, '');
   prompt += '\n\nAssistant:';
+  
+  // Get the "System" prompt input for Claude 3 models
+  const system = data.model.startsWith('claude-3') ? coerceTypeOptional(inputs['system' as PortId], 'string') : undefined;
+  
   let { maxTokens } = data;
   const tokenizerInfo: TokenizerCallInfo = {
     node: context.node,
@@ -359,6 +369,8 @@ async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Ou
           top_p: useTopP ? topP : undefined,
           max_tokens: maxTokens,
           stop_sequences: stop ? [stop] : undefined,
+          // Include the "System" prompt for Claude 3 models
+          system: system,
         };
         const cacheKey = JSON.stringify(options);
         if (data.cache) {
