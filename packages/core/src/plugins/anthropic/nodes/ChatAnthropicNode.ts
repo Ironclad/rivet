@@ -383,37 +383,164 @@ return await retry(
           const startTime = Date.now();
           const apiKey = context.getPluginConfig('anthropicApiKey');
           
-        if (model.startsWith('claude-3')) {
-          const image = inputs['image' as PortId];
-          let responseParts: string[] = [];
-        
-          if (image && image.type === 'image') {
-            // Use the Messages API for Claude 3 models with Vision
-            const response = await anthropic.messages.create({
-              apiKey: apiKey ?? '',
-              signal: context.signal,
-              ...options,
-              image: {
-                type: 'base64',
-                media_type: image.value.mediaType,
-                data: image.value.data.toString(),
-              },
-            });
-        
-            // Process the response and update the output
-            output['response' as PortId] = {
-              type: 'string',
-              value: response.completion.trim(),
-            };
+          if (model.startsWith('claude-3')) {
+            const image = inputs['image' as PortId];
+            let responseParts: string[] = [];
+          
+            if (image && image.type === 'image') {
+              // Use the Messages API for Claude 3 models with Vision
+              const response = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'x-api-key': apiKey ?? '',
+                  'anthropic-version': '2023-06-01',
+                  'anthropic-beta': 'messages-2023-12-15',
+                },
+                body: JSON.stringify({
+                  model,
+                  max_tokens: maxTokens,
+                  messages: [
+                    {
+                      role: 'user',
+                      content: [
+                        {
+                          type: 'image',
+                          source: {
+                            type: 'base64',
+                            media_type: image.value.mediaType,
+                            data: btoa(String.fromCharCode.apply(null, [...new Uint8Array(image.value.data)])),
+                          },
+                        },
+                        {
+                          type: 'text',
+                          text: prompt,
+                        },
+                      ],
+                    },
+                  ],
+                  stream: true,
+                }),
+                signal: context.signal,
+              });
+          
+              // Process the streamed response and update the output
+              const reader = response.body?.getReader();
+              if (!reader) {
+                throw new Error('Failed to get reader for streaming response');
+              }
+          
+              const decoder = new TextDecoder('utf-8');
+              let buffer = '';
+              let textContent = '';
+          
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done) {
+                  break;
+                }
+          
+                buffer += decoder.decode(value);
+          
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || '';
+          
+                for (const line of lines) {
+                  if (line.startsWith('data:')) {
+                    const data = JSON.parse(line.slice(5).trim());
+                    if (data.type === 'content_block_delta') {
+                      const delta = data.delta;
+                      if (delta.type === 'text_delta') {
+                        textContent += delta.text;
+                        output['response' as PortId] = {
+                          type: 'string',
+                          value: textContent.trim(),
+                        };
+                        context.onPartialOutputs?.(output);
+                      }
+                    } else if (data.type === 'message_stop') {
+                      // Stop executing when the message_stop event is received
+                      return output;
+                    }
+                  }
+                }
+              }
+            } else {
+              // Use the Messages API for Claude 3 models without Vision
+              const response = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'x-api-key': apiKey ?? '',
+                  'anthropic-version': '2023-06-01',
+                  'anthropic-beta': 'messages-2023-12-15',
+                },
+                body: JSON.stringify({
+                  model,
+                  max_tokens: maxTokens,
+                  messages: [
+                    {
+                      role: 'user',
+                      content: prompt,
+                    },
+                  ],
+                  stream: true,
+                }),
+                signal: context.signal,
+              });
+          
+              // Process the streamed response and update the output
+              const reader = response.body?.getReader();
+              if (!reader) {
+                throw new Error('Failed to get reader for streaming response');
+              }
+          
+              const decoder = new TextDecoder('utf-8');
+              let buffer = '';
+              let textContent = '';
+          
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done) {
+                  break;
+                }
+          
+                buffer += decoder.decode(value);
+          
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || '';
+          
+                for (const line of lines) {
+                  if (line.startsWith('data:')) {
+                    const data = JSON.parse(line.slice(5).trim());
+                    if (data.type === 'content_block_delta') {
+                      const delta = data.delta;
+                      if (delta.type === 'text_delta') {
+                        textContent += delta.text;
+                        output['response' as PortId] = {
+                          type: 'string',
+                          value: textContent.trim(),
+                        };
+                        context.onPartialOutputs?.(output);
+                      }
+                    } else if (data.type === 'message_stop') {
+                      // Stop executing when the message_stop event is received
+                      return output;
+                    }
+                  }
+                }
+              }
+            }
           } else {
-            // Use the normal chat completion method for Claude 3 models without Vision
+            // Use the normal chat completion method for non-Claude 3 models
             const chunks = streamChatCompletions({
               apiKey: apiKey ?? '',
               signal: context.signal,
               ...options,
             });
-        
+          
             // Process the response chunks and update the output
+            const responseParts: string[] = [];
             for await (const chunk of chunks) {
               if (!chunk.completion) {
                 continue;
@@ -426,28 +553,6 @@ return await retry(
               context.onPartialOutputs?.(output);
             }
           }
-        } else {
-          // Use the normal chat completion method for non-Claude 3 models
-          const chunks = streamChatCompletions({
-            apiKey: apiKey ?? '',
-            signal: context.signal,
-            ...options,
-          });
-        
-          // Process the response chunks and update the output
-          const responseParts: string[] = [];
-          for await (const chunk of chunks) {
-            if (!chunk.completion) {
-              continue;
-            }
-            responseParts.push(chunk.completion);
-            output['response' as PortId] = {
-              type: 'string',
-              value: responseParts.join('').trim(),
-            };
-            context.onPartialOutputs?.(output);
-          }
-        }
         
         const endTime = Date.now();
         
