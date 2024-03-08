@@ -288,7 +288,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
     };
   },
 
-  async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
   const output: Outputs = {};
   const rawModel = data.useModelInput
     ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? data.model
@@ -357,7 +357,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
           ],
           temperature: useTopP ? undefined : temperature,
           top_p: useTopP ? topP : undefined,
-          max_tokens,
+          max_tokens: maxTokens,
           stop_sequences: stop ? [stop] : undefined,
         };
         const cacheKey = JSON.stringify(options);
