@@ -62,18 +62,26 @@ export const anthropicModelOptions = Object.entries(anthropicModels).map(([id, {
 export type ChatCompletionOptions = {
   apiKey: string;
   model: AnthropicModels;
-  prompt: string;
-  max_tokens_to_sample: number;
+  messages: {
+    role: string;
+    content: string | {
+      type: string;
+      text?: string;
+      source?: {
+        type: string;
+        media_type: string;
+        data: string;
+      };
+    }[];
+  }[];
+  system?: string;
+  max_tokens: number;
   stop_sequences?: string[];
   temperature?: number;
   top_p?: number;
   top_k?: number;
   signal?: AbortSignal;
-  image?: {
-    type: string;
-    media_type: string;
-    data: string;
-  };
+  stream?: boolean;
 };
 
 export type ChatCompletionChunk = {
@@ -145,25 +153,20 @@ export class AnthropicError extends Error {
 export const anthropic = {
   messages: {
     create: async (options: ChatCompletionOptions) => {
-      const { apiKey, signal, model, prompt, max_tokens_to_sample, stop_sequences, temperature, top_p, top_k, image } = options;
-
+      const { apiKey, signal, model, messages, system, max_tokens, stop_sequences, temperature, top_p, top_k, stream } = options;
       const defaultSignal = new AbortController().signal;
 
-      const requestBody: ChatCompletionOptionsWithImage = {
-        apiKey,
+      const requestBody: Omit<ChatCompletionOptions, 'apiKey'> = {
         model,
-        prompt,
-        max_tokens_to_sample,
+        messages,
+        system,
+        max_tokens,
         stop_sequences,
         temperature,
         top_p,
         top_k,
-        stream: false,
+        stream,
       };
-
-      if (image) {
-        requestBody.image = image;
-      }
 
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -171,6 +174,7 @@ export const anthropic = {
           'Content-Type': 'application/json',
           'x-api-key': apiKey,
           'anthropic-version': '2023-06-01',
+          'anthropic-beta': 'messages-2023-12-15',
         },
         body: JSON.stringify(requestBody),
         signal: signal ?? defaultSignal,
@@ -181,13 +185,41 @@ export const anthropic = {
         throw new AnthropicError(`Error in messages.create: ${response.statusText}`, response, responseJson);
       }
 
-      const responseJson = await response.json();
+      if (stream) {
+        const reader = response.body?.getReader();
+        if (!reader) {
+          throw new Error('Failed to get reader for streaming response');
+        }
 
-      return {
-        completion: responseJson.completion,
-        stop_reason: responseJson.stop_reason,
-        model: responseJson.model,
-      };
+        const decoder = new TextDecoder('utf-8');
+        let buffer = '';
+
+        const events: any[] = [];
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) {
+            break;
+          }
+
+          buffer += decoder.decode(value);
+
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            if (line.startsWith('data:')) {
+              const data = JSON.parse(line.slice(5).trim());
+              events.push(data);
+            }
+          }
+        }
+
+        return events;
+      } else {
+        const responseJson = await response.json();
+        return responseJson;
+      }
     },
   },
 };
