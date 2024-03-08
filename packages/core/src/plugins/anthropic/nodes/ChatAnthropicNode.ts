@@ -289,96 +289,84 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
   },
 
   async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
-    const output: Outputs = {};
-
-    const rawModel = data.useModelInput
-      ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? data.model
-      : data.model;
-
-    const model = rawModel as AnthropicModels;
-
-    const temperature = data.useTemperatureInput
-      ? coerceTypeOptional(inputs['temperature' as PortId], 'number') ?? data.temperature
-      : data.temperature;
-
-    const topP = data.useTopPInput ? coerceTypeOptional(inputs['top_p' as PortId], 'number') ?? data.top_p : data.top_p;
-
-    const useTopP = data.useUseTopPInput
-      ? coerceTypeOptional(inputs['useTopP' as PortId], 'boolean') ?? data.useTopP
-      : data.useTopP;
-
-    const stop = data.useStopInput
-      ? data.useStop
-        ? coerceTypeOptional(inputs['stop' as PortId], 'string') ?? data.stop
-        : undefined
-      : data.stop;
-
-    const { messages } = getChatAnthropicNodeMessages(inputs);
-
-    let prompt = messages.reduce((acc, message) => {
-      if (message.type === 'user') {
-        return `${acc}\n\nHuman: ${message.message}`;
-      } else if (message.type === 'assistant') {
-        return `${acc}\n\nAssistant: ${message.message}`;
-      }
-      return acc;
-    }, '');
-
-    prompt += '\n\nAssistant:';
-
-    let { maxTokens } = data;
-
-    const tokenizerInfo: TokenizerCallInfo = {
-      node: context.node,
-      model,
-      endpoint: undefined,
-    };
-
-    const tokenCount = context.tokenizer.getTokenCountForString(prompt, tokenizerInfo);
-
-    const modelInfo = anthropicModels[model] ?? {
-      maxTokens: Number.MAX_SAFE_INTEGER,
-      cost: {
-        prompt: 0,
-        completion: 0,
-      },
-    };
-
-    if (tokenCount >= modelInfo.maxTokens) {
-      throw new Error(
-        `The model ${model} can only handle ${modelInfo.maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`,
-      );
+  const output: Outputs = {};
+  const rawModel = data.useModelInput
+    ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? data.model
+    : data.model;
+  const model = rawModel as AnthropicModels;
+  const temperature = data.useTemperatureInput
+    ? coerceTypeOptional(inputs['temperature' as PortId], 'number') ?? data.temperature
+    : data.temperature;
+  const topP = data.useTopPInput ? coerceTypeOptional(inputs['top_p' as PortId], 'number') ?? data.top_p : data.top_p;
+  const useTopP = data.useUseTopPInput
+    ? coerceTypeOptional(inputs['useTopP' as PortId], 'boolean') ?? data.useTopP
+    : data.useTopP;
+  const stop = data.useStopInput
+    ? data.useStop
+      ? coerceTypeOptional(inputs['stop' as PortId], 'string') ?? data.stop
+      : undefined
+    : data.stop;
+  const { messages } = getChatAnthropicNodeMessages(inputs);
+  let prompt = messages.reduce((acc, message) => {
+    if (message.type === 'user') {
+      return `${acc}\n\nHuman: ${message.message}`;
+    } else if (message.type === 'assistant') {
+      return `${acc}\n\nAssistant: ${message.message}`;
     }
-
-    if (tokenCount + maxTokens > modelInfo.maxTokens) {
-      const message = `The model can only handle a maximum of ${
-        modelInfo.maxTokens
-      } tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${
-        modelInfo.maxTokens - tokenCount
-      }.`;
-      addWarning(output, message);
-      maxTokens = Math.floor((modelInfo.maxTokens - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
-    }
-
-    try {
-return await retry(
-  async () => {
-          const options: Omit<ChatCompletionOptions, 'apiKey' | 'signal'> = {
-            prompt,
-            model,
-            temperature: useTopP ? undefined : temperature,
-            top_p: useTopP ? topP : undefined,
-            max_tokens_to_sample: maxTokens,
-            stop_sequences: stop ? [stop] : undefined,
-          };
-          
-          const cacheKey = JSON.stringify(options);
-          if (data.cache) {
-            const cached = cache.get(cacheKey);
-            if (cached) {
-              return cached;
-            }
+    return acc;
+  }, '');
+  prompt += '\n\nAssistant:';
+  let { maxTokens } = data;
+  const tokenizerInfo: TokenizerCallInfo = {
+    node: context.node,
+    model,
+    endpoint: undefined,
+  };
+  const tokenCount = context.tokenizer.getTokenCountForString(prompt, tokenizerInfo);
+  const modelInfo = anthropicModels[model] ?? {
+    maxTokens: Number.MAX_SAFE_INTEGER,
+    cost: {
+      prompt: 0,
+      completion: 0,
+    },
+  };
+  if (tokenCount >= modelInfo.maxTokens) {
+    throw new Error(
+      `The model ${model} can only handle ${modelInfo.maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`,
+    );
+  }
+  if (tokenCount + maxTokens > modelInfo.maxTokens) {
+    const message = `The model can only handle a maximum of ${
+      modelInfo.maxTokens
+    } tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${
+      modelInfo.maxTokens - tokenCount
+    }.`;
+    addWarning(output, message);
+    maxTokens = Math.floor((modelInfo.maxTokens - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
+  }
+  try {
+    return await retry(
+      async () => {
+        const options: Omit<ChatCompletionOptions, 'apiKey' | 'signal'> = {
+          model,
+          messages: [
+            {
+              role: 'user',
+              content: prompt,
+            },
+          ],
+          temperature: useTopP ? undefined : temperature,
+          top_p: useTopP ? topP : undefined,
+          max_tokens,
+          stop_sequences: stop ? [stop] : undefined,
+        };
+        const cacheKey = JSON.stringify(options);
+        if (data.cache) {
+          const cached = cache.get(cacheKey);
+          if (cached) {
+            return cached;
           }
+        }
           
           const startTime = Date.now();
           const apiKey = context.getPluginConfig('anthropicApiKey');
