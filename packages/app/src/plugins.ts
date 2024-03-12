@@ -15,6 +15,7 @@ import FolderLogo from './assets/vendor_logos/folder-icon.png';
 import GoogleLogo from './assets/vendor_logos/google-logo.png';
 import PDF2MDLogo from './assets/vendor_logos/pdf2md-logo.png';
 import TransformerLabLogo from './assets/vendor_logos/transformerlab-logo.svg';
+import UtilitiesLogo from './assets/vendor_logos/utilities-logo.png';
 
 type SharedPluginInfo = {
   id: string;
@@ -269,4 +270,17 @@ export const pluginInfos: PluginInfo[] = [
     tag: 'latest',
     logoImage: TransformerLabLogo,
   },
+  {
+    type: 'package',
+    id: "rivet-utilities-plugin@latest",
+    name: "Utilities",
+    description: dedent`
+      Adds a variety of utility nodes to help with common tasks.  Currently has Iterator nodes that let you map over arrays and call a graph reference for each element.
+    `,
+    tag: "latest",
+    author: "Shravan S",
+    github: "https://github.com/ShravanSunder/rivet-utilities-plugin",
+    package: "rivet-utilities-plugin",
+    logoImage: UtilitiesLogo
+  }
 ];
