@@ -23,6 +23,14 @@ export class PineconeVectorDatabase implements VectorDatabase {
       id = CryptoJS.SHA256(vector.value.join(',')).toString(CryptoJS.enc.Hex);
     }
 
+    let metadata: Record<string, unknown> = {}
+    if (data.type === 'object') {
+      metadata = data.value;
+    }
+    else {
+      metadata = { data: data.value };
+    }
+
     const response = await fetch(`${collectionDetails.host}/vectors/upsert`, {
       method: 'POST',
       body: JSON.stringify({
@@ -30,9 +38,7 @@ export class PineconeVectorDatabase implements VectorDatabase {
           {
             id,
             values: vector.value,
-            metadata: {
-              data: data.value,
-            },
+            metadata,
           },
         ],
         ...collectionDetails.options,
