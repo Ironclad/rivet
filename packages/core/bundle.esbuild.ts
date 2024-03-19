@@ -19,7 +19,7 @@ const aliasModule = (moduleFrom: string, moduleTo: string): esbuild.Plugin => ({
   },
 });
 
-esbuild.build({
+const options: esbuild.BuildOptions = {
   entryPoints: ['src/index.ts'],
   bundle: true,
   platform: 'node',
@@ -27,10 +27,18 @@ esbuild.build({
   format: 'cjs',
   target: 'node16',
   packages: 'external',
+  sourcemap: true,
   plugins: [
     aliasModule('lodash-es', 'lodash'),
     aliasModule('p-queue', 'p-queue-6'),
     aliasModule('emittery', 'emittery-0-13'),
     aliasModule('p-retry', 'p-retry-4'),
   ],
-});
+};
+
+if (process.argv.includes('--watch')) {
+  const context = await esbuild.context(options);
+  await context.watch();
+} else {
+  await esbuild.build(options);
+}

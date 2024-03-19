@@ -74,14 +74,21 @@ In VS Code, ESLint is configured to run automatically on save. We also recommend
 
 ## Node Executor
 
-Certain nodes need to run in the "Node Executor." This starts a "sidecar" process, which can be difficult to develop with. If you are developing a feature or plugin that requires the Node Executor, consider running the node executor directly:
+Certain nodes need to run in the "Node Executor." This starts a "sidecar" process, which can be difficult to develop with. If you are developing a feature or plugin that requires the Node Executor, consider using the following setup:
+
+Run a watcher for code changes:
+
+```
+cd packages/core
+yarn watch
+```
+
+Then, start the app-executor in dev mode:
 
 ```
 cd packages/app-executor
-yarn start --port 21889
+yarn dev
 ```
-
-This will reduce the build time. However, you will still need to restart the sidecar whenever you make a code change.
 
 ## Releasing
 

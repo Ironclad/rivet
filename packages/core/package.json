@@ -40,7 +40,8 @@
     "prepack": "yarn build && cp -r ../../LICENSE ../../README.md .",
     "publish": "yarn npm publish --access public",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx ./src",
-    "test": "tsx --test test/**/*.test.ts"
+    "test": "tsx --test test/**/*.test.ts",
+    "watch": "tsc -b -w"
   },
   "dependencies": {
     "@gentrace/core": "^2.2.5",

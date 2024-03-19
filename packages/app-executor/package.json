@@ -7,6 +7,7 @@
   "type": "module",
   "scripts": {
     "build": "tsx scripts/build-executor.mts",
+    "dev": "tsx watch --inspect=9228 --experimental-network-imports bin/executor.mts",
     "start": "yarn build && node --experimental-network-imports bin/executor-bundle.cjs",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx,.mts bin"
   },

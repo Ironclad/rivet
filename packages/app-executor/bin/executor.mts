@@ -154,4 +154,8 @@ const rivetDebugger = startDebuggerServer({
   },
 });
 
+process.on('SIGTERM', () => {
+  rivetDebugger.webSocketServer.close();
+});
+
 console.log(`Node.js executor started on port ${port}.`);
