@@ -195,20 +195,9 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
   },
 
   getBody(data): string {
+    const modelName = anthropicModels[data.model]?.displayName ?? 'Unknown Model';
     return dedent`
-    ${
-      data.model === 'claude-2'
-        ? 'Claude 2'
-        : data.model === 'claude-2.1'
-          ? 'Claude 2.1'
-          : data.model === 'claude-3-opus-20240229'
-            ? 'Claude 3 Opus'
-            : data.model === 'claude-3-sonnet-20240229'
-              ? 'Claude 3 Sonnet'
-              : data.model.startsWith('claude-instant')
-                ? 'Claude Instant'
-                : 'Unknown Model'
-    }
+      ${modelName}
       ${
         data.useTopP
           ? `Top P: ${data.useTopPInput ? '(Using Input)' : data.top_p}`

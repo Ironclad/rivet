@@ -50,6 +50,14 @@ export const anthropicModels = {
     },
     displayName: 'Claude 3 Opus',
   },
+  'claude-3-haiku-20240307': {
+    maxTokens: 200_000,
+    cost: {
+      prompt: 2.5e-7,
+      completion: 1.25e-6,
+    },
+    displayName: 'Claude 3 Haiku',
+  }
 } satisfies Record<string, AnthropicModel>;
 
 export type AnthropicModels = keyof typeof anthropicModels;
