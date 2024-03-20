@@ -59,23 +59,40 @@ export const anthropicModelOptions = Object.entries(anthropicModels).map(([id, {
   label: displayName,
 }));
 
+export type Claude3ChatMessage = {
+  role: 'user' | 'assistant';
+  content: string | Claude3ChatMessageContentPart[];
+}
+
+export type Claude3ChatMessageContentPart = {
+  type: 'text' | 'image';
+  text?: string;
+  source?: {
+    type: 'base64';
+    media_type: string;
+    data: string;
+  };
+};
+
+export type ChatMessageOptions = {
+  apiKey: string;
+  model: AnthropicModels;
+  messages: Claude3ChatMessage[];
+  system?: string;
+  max_tokens: number;
+  stop_sequences?: string[];
+  temperature?: number;
+  top_p?: number;
+  top_k?: number;
+  signal?: AbortSignal;
+  stream?: boolean;
+};
+
 export type ChatCompletionOptions = {
   apiKey: string;
   model: AnthropicModels;
-  messages: {
-    role: string;
-    content: string | {
-      type: string;
-      text?: string;
-      source?: {
-        type: string;
-        media_type: string;
-        data: string;
-      };
-    }[];
-  }[];
-  system?: string;
-  max_tokens: number;
+  prompt: string;
+  max_tokens_to_sample: number;
   stop_sequences?: string[];
   temperature?: number;
   top_p?: number;
@@ -89,6 +106,53 @@ export type ChatCompletionChunk = {
   stop_reason: 'stop_sequence' | null;
   model: string;
 };
+
+export type ChatMessageChunk = {
+  type: 'message_start';
+  message: {
+    id: string;
+    type: string;
+    role: string;
+    content: {
+      type: 'text';
+      text: string;
+    }[];
+    model: AnthropicModels;
+    stop_reason: string | null;
+    stop_sequence: string | null;
+    usage: {
+      input_tokens: number;
+      output_tokens: number;
+    };
+  };
+} | {
+  type: 'content_block_start';
+  index: number;
+  content_block: {
+    type: 'text';
+    text: string;
+  };
+} | {
+  type: 'ping';
+} | {
+  type: 'content_block_delta';
+  index: number;
+  delta: {
+    type: 'text_delta';
+    text: string;
+  }
+} | {
+  type: 'message_delta';
+  delta: {
+    stop_reason: string | null;
+    stop_sequence: string | null;
+    usage: {
+      output_tokens: number;
+    }
+  }
+} | {
+  type: 'message_stop';
+}
 
 export async function* streamChatCompletions({
   apiKey,
@@ -140,6 +204,58 @@ export async function* streamChatCompletions({
   }
 }
 
+export async function* streamClaude3ChatCompletions({
+  apiKey,
+  signal,
+  ...rest
+}: ChatMessageOptions): AsyncGenerator<ChatMessageChunk> {
+  // Use the Messages API for Claude 3 models
+  const defaultSignal = new AbortController().signal;
+  const response = await fetchEventSource('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-beta': 'messages-2023-12-15',
+    },
+    body: JSON.stringify({
+      ...rest,
+      stream: true,
+    }),
+    signal: signal ?? defaultSignal,
+  });
+
+  let hadChunks = false;
+  let nextDataType: string | undefined;
+
+  for await (const chunk of response.events()) {
+    hadChunks = true;
+
+    if (chunk === '[message_stop]') {
+      return;
+    } else if (/\[\w+\]/.test(chunk)) {
+      nextDataType = chunk.slice(1, -1);
+      continue;
+    }
+
+    let data: ChatMessageChunk;
+    try {
+      data = JSON.parse(chunk);
+    } catch (err) {
+      console.error('JSON parse failed on chunk: ', chunk);
+      throw err;
+    }
+
+    yield data;
+  }
+
+  if (!hadChunks) {
+    const responseJson = await response.json();
+    throw new AnthropicError(`No chunks received. Response: ${JSON.stringify(responseJson)}`, response, responseJson);
+  }
+}
+
 export class AnthropicError extends Error {
   constructor(
     message: string,
@@ -149,86 +265,3 @@ export class AnthropicError extends Error {
     super(message);
   }
 }
-
-export const anthropic = {
-  messages: {
-    create: async (options: ChatCompletionOptions) => {
-      const { apiKey, signal, model, messages, system, max_tokens, stop_sequences, temperature, top_p, top_k, stream } = options;
-      const defaultSignal = new AbortController().signal;
-
-      const requestBody: Omit<ChatCompletionOptions, 'apiKey'> = {
-        model,
-        messages,
-        system,
-        max_tokens,
-        stop_sequences,
-        temperature,
-        top_p,
-        top_k,
-        stream,
-      };
-
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-beta': 'messages-2023-12-15',
-        },
-        body: JSON.stringify(requestBody),
-        signal: signal ?? defaultSignal,
-      });
-
-      if (!response.ok) {
-        const responseJson = await response.json();
-        throw new AnthropicError(`Error in messages.create: ${response.statusText}`, response, responseJson);
-      }
-
-      if (stream) {
-        const reader = response.body?.getReader();
-        if (!reader) {
-          throw new Error('Failed to get reader for streaming response');
-        }
-
-        const decoder = new TextDecoder('utf-8');
-        let buffer = '';
-
-        const events: any[] = [];
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) {
-            break;
-          }
-
-          buffer += decoder.decode(value);
-
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-
-          for (const line of lines) {
-            if (line.startsWith('data:')) {
-              const data = JSON.parse(line.slice(5).trim());
-              events.push(data);
-            }
-          }
-        }
-
-        return events;
-      } else {
-        const responseJson = await response.json();
-        return responseJson;
-      }
-    },
-  },
-};
-
-export type ChatCompletionOptionsWithImage = ChatCompletionOptions & {
-  image?: {
-    type: string;
-    media_type: string;
-    data: string;
-  };
-  stream?: boolean;
-};

@@ -1,17 +1,19 @@
-import type {
-  ChartNode,
-  ChatMessage,
-  EditorDefinition,
-  Inputs,
-  InternalProcessContext,
-  NodeId,
-  NodeInputDefinition,
-  NodeOutputDefinition,
-  NodeUIData,
-  Outputs,
-  PluginNodeImpl,
-  PortId,
-  ScalarDataValue,
+import {
+  uint8ArrayToBase64,
+  type ChartNode,
+  type ChatMessage,
+  type EditorDefinition,
+  type Inputs,
+  type InternalProcessContext,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type NodeUIData,
+  type Outputs,
+  type PluginNodeImpl,
+  type PortId,
+  type ScalarDataValue,
+  type ChatMessageMessagePart,
 } from '../../../index.js';
 import {
   type AnthropicModels,
@@ -20,19 +22,23 @@ import {
   anthropicModels,
   streamChatCompletions,
   AnthropicError,
-  anthropic
+  type Claude3ChatMessage,
+  type Claude3ChatMessageContentPart,
+  streamClaude3ChatCompletions,
+  type ChatMessageOptions
 } from '../anthropic.js';
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
 import retry from 'p-retry';
 import { match } from 'ts-pattern';
 import { coerceType, coerceTypeOptional } from '../../../utils/coerceType.js';
-import { expectTypeOptional } from '../../../utils/expectType.js';
 import { addWarning } from '../../../utils/outputs.js';
 import { getError } from '../../../utils/errors.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
 import { getScalarTypeOf, isArrayDataValue } from '../../../model/DataValue.js';
 import type { TokenizerCallInfo } from '../../../integrations/Tokenizer.js';
+import { assertNever } from '../../../utils/assertNever.js';
+import { isNotNull } from '../../../utils/genericUtilFunctions.js';
 
 export type ChatAnthropicNode = ChartNode<'chatAnthropic', ChatAnthropicNodeData>;
 
@@ -294,249 +300,139 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
     };
   },
 
-async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
-  const output: Outputs = {};
-  const rawModel = data.useModelInput
-    ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? data.model
-    : data.model;
-  const model = rawModel as AnthropicModels;
-  const temperature = data.useTemperatureInput
-    ? coerceTypeOptional(inputs['temperature' as PortId], 'number') ?? data.temperature
-    : data.temperature;
-  const topP = data.useTopPInput ? coerceTypeOptional(inputs['top_p' as PortId], 'number') ?? data.top_p : data.top_p;
-  const useTopP = data.useUseTopPInput
-    ? coerceTypeOptional(inputs['useTopP' as PortId], 'boolean') ?? data.useTopP
-    : data.useTopP;
-  const stop = data.useStopInput
-    ? data.useStop
-      ? coerceTypeOptional(inputs['stop' as PortId], 'string') ?? data.stop
-      : undefined
-    : data.stop;
-  const { messages } = getChatAnthropicNodeMessages(inputs);
-  let prompt = messages.reduce((acc, message) => {
-    if (message.type === 'user') {
-      return `${acc}\n\nHuman: ${message.message}`;
-    } else if (message.type === 'assistant') {
-      return `${acc}\n\nAssistant: ${message.message}`;
+  async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+    const output: Outputs = {};
+    const rawModel = data.useModelInput
+      ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? data.model
+      : data.model;
+    const model = rawModel as AnthropicModels;
+    const temperature = data.useTemperatureInput
+      ? coerceTypeOptional(inputs['temperature' as PortId], 'number') ?? data.temperature
+      : data.temperature;
+    const topP = data.useTopPInput ? coerceTypeOptional(inputs['top_p' as PortId], 'number') ?? data.top_p : data.top_p;
+    const useTopP = data.useUseTopPInput
+      ? coerceTypeOptional(inputs['useTopP' as PortId], 'boolean') ?? data.useTopP
+      : data.useTopP;
+    const stop = data.useStopInput
+      ? data.useStop
+        ? coerceTypeOptional(inputs['stop' as PortId], 'string') ?? data.stop
+        : undefined
+      : data.stop;
+    const { messages } = await getChatAnthropicNodeMessages(inputs);
+    let prompt = messages.reduce((acc, message) => {
+      if (message.role === 'user') {
+        return `${acc}\n\nHuman: ${message.content}`;
+      } else if (message.role === 'assistant') {
+        return `${acc}\n\nAssistant: ${message.content}`;
+      }
+      return acc;
+    }, '');
+    prompt += '\n\nAssistant:';
+    
+    // Get the "System" prompt input for Claude 3 models
+    const system = data.model.startsWith('claude-3') ? coerceTypeOptional(inputs['system' as PortId], 'string') : undefined;
+    
+    let { maxTokens } = data;
+    const tokenizerInfo: TokenizerCallInfo = {
+      node: context.node,
+      model,
+      endpoint: undefined,
+    };
+    const tokenCount = context.tokenizer.getTokenCountForString(prompt, tokenizerInfo);
+    const modelInfo = anthropicModels[model] ?? {
+      maxTokens: Number.MAX_SAFE_INTEGER,
+      cost: {
+        prompt: 0,
+        completion: 0,
+      },
+    };
+    if (tokenCount >= modelInfo.maxTokens) {
+      throw new Error(
+        `The model ${model} can only handle ${modelInfo.maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`,
+      );
     }
-    return acc;
-  }, '');
-  prompt += '\n\nAssistant:';
-  
-  // Get the "System" prompt input for Claude 3 models
-  const system = data.model.startsWith('claude-3') ? coerceTypeOptional(inputs['system' as PortId], 'string') : undefined;
-  
-  let { maxTokens } = data;
-  const tokenizerInfo: TokenizerCallInfo = {
-    node: context.node,
-    model,
-    endpoint: undefined,
-  };
-  const tokenCount = context.tokenizer.getTokenCountForString(prompt, tokenizerInfo);
-  const modelInfo = anthropicModels[model] ?? {
-    maxTokens: Number.MAX_SAFE_INTEGER,
-    cost: {
-      prompt: 0,
-      completion: 0,
-    },
-  };
-  if (tokenCount >= modelInfo.maxTokens) {
-    throw new Error(
-      `The model ${model} can only handle ${modelInfo.maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`,
-    );
-  }
-  if (tokenCount + maxTokens > modelInfo.maxTokens) {
-    const message = `The model can only handle a maximum of ${
-      modelInfo.maxTokens
-    } tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${
-      modelInfo.maxTokens - tokenCount
-    }.`;
-    addWarning(output, message);
-    maxTokens = Math.floor((modelInfo.maxTokens - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
-  }
-  try {
-    return await retry(
-      async () => {
-        const options: Omit<ChatCompletionOptions, 'apiKey' | 'signal'> = {
-          model,
-          messages: [
-            {
-              role: 'user',
-              content: prompt,
-            },
-          ],
-          temperature: useTopP ? undefined : temperature,
-          top_p: useTopP ? topP : undefined,
-          max_tokens: maxTokens,
-          stop_sequences: stop ? [stop] : undefined,
-          // Include the "System" prompt for Claude 3 models
-          system: system,
-        };
-        const cacheKey = JSON.stringify(options);
-        if (data.cache) {
-          const cached = cache.get(cacheKey);
-          if (cached) {
-            return cached;
+    if (tokenCount + maxTokens > modelInfo.maxTokens) {
+      const message = `The model can only handle a maximum of ${
+        modelInfo.maxTokens
+      } tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${
+        modelInfo.maxTokens - tokenCount
+      }.`;
+      addWarning(output, message);
+      maxTokens = Math.floor((modelInfo.maxTokens - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
+    }
+    try {
+      return await retry(
+        async () => {
+          const completionOptions: Omit<ChatCompletionOptions, 'apiKey' | 'signal'> = {
+            model,
+            temperature: useTopP ? undefined : temperature,
+            top_p: useTopP ? topP : undefined,
+            max_tokens_to_sample: maxTokens ?? modelInfo.maxTokens,
+            stop_sequences: stop ? [stop] : undefined,
+            prompt,
+          };
+          const messageOptions: Omit<ChatMessageOptions, 'apiKey' | 'signal'> = {
+            model,
+            temperature: useTopP ? undefined : temperature,
+            top_p: useTopP ? topP : undefined,
+            max_tokens: maxTokens ?? modelInfo.maxTokens,
+            stop_sequences: stop ? [stop] : undefined,
+            system: system,
+            messages,
+          };
+          const useMessageApi = model.startsWith('claude-3');
+          const cacheKey = JSON.stringify(useMessageApi ? messageOptions : completionOptions);
+          if (data.cache) {
+            const cached = cache.get(cacheKey);
+            if (cached) {
+              return cached;
+            }
           }
-        }
           
           const startTime = Date.now();
           const apiKey = context.getPluginConfig('anthropicApiKey');
           
-          if (model.startsWith('claude-3')) {
-            const image = inputs['image' as PortId];
-            let responseParts: string[] = [];
+          if (useMessageApi) {
+            // Use the messages API for Claude 3 models
+            const chunks = streamClaude3ChatCompletions({
+              apiKey: apiKey ?? '',
+              signal: context.signal,
+              ...messageOptions,
+            });
           
-            if (image && image.type === 'image') {
-              // Use the Messages API for Claude 3 models with Vision
-              const response = await fetch('https://api.anthropic.com/v1/messages', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'x-api-key': apiKey ?? '',
-                  'anthropic-version': '2023-06-01',
-                  'anthropic-beta': 'messages-2023-12-15',
-                },
-                body: JSON.stringify({
-                  model,
-                  max_tokens: maxTokens,
-                  messages: [
-                    {
-                      role: 'user',
-                      content: [
-                        {
-                          type: 'image',
-                          source: {
-                            type: 'base64',
-                            media_type: image.value.mediaType,
-                            data: btoa(String.fromCharCode.apply(null, [...new Uint8Array(image.value.data)])),
-                          },
-                        },
-                        {
-                          type: 'text',
-                          text: prompt,
-                        },
-                      ],
-                    },
-                  ],
-                  stream: true,
-                }),
-                signal: context.signal,
-              });
-          
-              // Process the streamed response and update the output
-              const reader = response.body?.getReader();
-              if (!reader) {
-                throw new Error('Failed to get reader for streaming response');
+            // Process the response chunks and update the output
+            const responseParts: string[] = [];
+            for await (const chunk of chunks) {
+              let completion: string = '';
+              if (chunk.type === 'content_block_start') {
+                completion = chunk.content_block.text;
+              } else if (chunk.type === 'content_block_delta') {
+                completion = chunk.delta.text; 
               }
-          
-              const decoder = new TextDecoder('utf-8');
-              let buffer = '';
-              let textContent = '';
-          
-              while (true) {
-                const { done, value } = await reader.read();
-                if (done) {
-                  break;
-                }
-          
-                buffer += decoder.decode(value);
-          
-                const lines = buffer.split('\n');
-                buffer = lines.pop() || '';
-          
-                for (const line of lines) {
-                  if (line.startsWith('data:')) {
-                    const data = JSON.parse(line.slice(5).trim());
-                    if (data.type === 'content_block_delta') {
-                      const delta = data.delta;
-                      if (delta.type === 'text_delta') {
-                        textContent += delta.text;
-                        output['response' as PortId] = {
-                          type: 'string',
-                          value: textContent.trim(),
-                        };
-                        context.onPartialOutputs?.(output);
-                      }
-                    } else if (data.type === 'message_stop') {
-                      // Stop executing when the message_stop event is received
-                      return output;
-                    }
-                  }
-                }
+              if (!completion) {
+                continue;
               }
-            } else {
-              // Use the Messages API for Claude 3 models without Vision
-              const response = await fetch('https://api.anthropic.com/v1/messages', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'x-api-key': apiKey ?? '',
-                  'anthropic-version': '2023-06-01',
-                  'anthropic-beta': 'messages-2023-12-15',
-                },
-                body: JSON.stringify({
-                  model,
-                  max_tokens: maxTokens,
-                  messages: [
-                    {
-                      role: 'user',
-                      content: prompt,
-                    },
-                  ],
-                  stream: true,
-                }),
-                signal: context.signal,
-              });
-          
-              // Process the streamed response and update the output
-              const reader = response.body?.getReader();
-              if (!reader) {
-                throw new Error('Failed to get reader for streaming response');
-              }
-          
-              const decoder = new TextDecoder('utf-8');
-              let buffer = '';
-              let textContent = '';
-          
-              while (true) {
-                const { done, value } = await reader.read();
-                if (done) {
-                  break;
-                }
-          
-                buffer += decoder.decode(value);
-          
-                const lines = buffer.split('\n');
-                buffer = lines.pop() || '';
-          
-                for (const line of lines) {
-                  if (line.startsWith('data:')) {
-                    const data = JSON.parse(line.slice(5).trim());
-                    if (data.type === 'content_block_delta') {
-                      const delta = data.delta;
-                      if (delta.type === 'text_delta') {
-                        textContent += delta.text;
-                        output['response' as PortId] = {
-                          type: 'string',
-                          value: textContent.trim(),
-                        };
-                        context.onPartialOutputs?.(output);
-                      }
-                    } else if (data.type === 'message_stop') {
-                      // Stop executing when the message_stop event is received
-                      return output;
-                    }
-                  }
-                }
-              }
+              responseParts.push(completion);
+              output['response' as PortId] = {
+                type: 'string',
+                value: responseParts.join('').trim(),
+              };
+              context.onPartialOutputs?.(output);
             }
+
+            if (responseParts.length === 0) {
+              throw new Error('No response from Anthropic');
+            }
+          
+            output['requestTokens' as PortId] = { type: 'number', value: tokenCount };
+            const responseTokenCount = context.tokenizer.getTokenCountForString(responseParts.join(''), tokenizerInfo);
+            output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
           } else {
             // Use the normal chat completion method for non-Claude 3 models
             const chunks = streamChatCompletions({
               apiKey: apiKey ?? '',
               signal: context.signal,
-              ...options,
+              ...completionOptions,
             });
           
             // Process the response chunks and update the output
@@ -552,25 +448,21 @@ async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Ou
               };
               context.onPartialOutputs?.(output);
             }
+
+            if (responseParts.length === 0) {
+              throw new Error('No response from Anthropic');
+            }
+          
+            output['requestTokens' as PortId] = { type: 'number', value: tokenCount };
+            const responseTokenCount = context.tokenizer.getTokenCountForString(responseParts.join(''), tokenizerInfo);
+            output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
+          
           }
-        
-        const endTime = Date.now();
-        
-        if (model.startsWith('claude-3') && Image) {
-          // Skip token count and duration for Claude 3 models with Vision
-        } else {
-          let responseParts: string[] = [];
-          if (responseParts.length === 0) {
-            throw new Error('No response from Anthropic');
-          }
-        
-          output['requestTokens' as PortId] = { type: 'number', value: tokenCount };
-          const responseTokenCount = context.tokenizer.getTokenCountForString(responseParts.join(''), tokenizerInfo);
-          output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
-        
+
+          const endTime = Date.now();
+          
           const duration = endTime - startTime;
           output['duration' as PortId] = { type: 'number', value: duration };
-        }
 
           Object.freeze(output);
           cache.set(cacheKey, output);
@@ -612,13 +504,13 @@ async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Ou
 
 export const chatAnthropicNode = pluginNodeDefinition(ChatAnthropicNodeImpl, 'Chat');
 
-export function getChatAnthropicNodeMessages(inputs: Inputs) {
+export async function getChatAnthropicNodeMessages(inputs: Inputs) {
   const prompt = inputs['prompt' as PortId];
   if (!prompt) {
     throw new Error('Prompt is required');
   }
 
-  const messages: ChatMessage[] = match(prompt)
+  const chatMessages = match(prompt)
     .with({ type: 'chat-message' }, (p) => [p.value])
     .with({ type: 'chat-message[]' }, (p) => p.value)
     .with({ type: 'string' }, (p): ChatMessage[] => [{ type: 'user', message: p.value }])
@@ -646,5 +538,47 @@ export function getChatAnthropicNodeMessages(inputs: Inputs) {
       const coercedString = coerceType(p, 'string');
       return coercedString != null ? [{ type: 'user', message: coerceType(p, 'string') }] : [];
     });
+
+
+  const messages: Claude3ChatMessage[] = (await Promise.all(chatMessages.map(chatMessageToClaude3ChatMessage))).filter(isNotNull);
+
   return { messages };
+}
+
+async function chatMessageToClaude3ChatMessage(message: ChatMessage): Promise<Claude3ChatMessage | undefined> {
+  if (message.type === 'system') {
+    return undefined;
+  }
+  if (message.type === 'function') {
+    throw new Error('Function messages are not supported by Claude');
+  }
+  const content = Array.isArray(message.message) ? await Promise.all(message.message.map(chatMessageContentToClaude3ChatMessage)) : [await chatMessageContentToClaude3ChatMessage(message.message)];
+  return {
+    role: message.type,
+    content,
+  };
+}
+
+async function chatMessageContentToClaude3ChatMessage(content: ChatMessageMessagePart): Promise<Claude3ChatMessageContentPart> {
+  if (typeof content === 'string') {
+    return {
+      type: 'text',
+      text: content,
+    };
+  }
+  switch (content.type) {
+    case 'image':
+      return {
+        type: 'image',
+        source: {
+          type: 'base64' as const,
+          media_type: content.mediaType as string,
+          data: (await uint8ArrayToBase64(content.data)) ?? '',
+        },
+      };
+    case 'url':
+      throw new Error('unable to convert urls for Claude');
+    default:
+      assertNever(content);
+  }
 }
