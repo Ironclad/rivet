@@ -165,31 +165,22 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
       });
     }
 
+    if (data.model.startsWith('claude-3')) {
+      inputs.push({
+        dataType: 'string',
+        id: 'system' as PortId,
+        title: 'System Prompt',
+      });
+    }
+
     inputs.push({
       dataType: ['chat-message', 'chat-message[]'] as const,
       id: 'prompt' as PortId,
       title: 'Prompt',
     });
 
-    // Claude Vision
-    // Add an image input port if Claude 3 is selected
-    // This is required to support Claude's Vision capabilities
-    if (data.model.startsWith('claude-3')) {
-      inputs.push({
-        dataType: 'image',
-        id: 'image' as PortId,
-        title: 'Image',
-      });
-    // Add the "System" prompt input port for Claude 3 models
-      inputs.push({
-        dataType: 'string',
-        id: 'system' as PortId,
-        title: 'System',
-      });
-    }
-
-  return inputs;
-},
+    return inputs;
+  },
 
   getOutputDefinitions(_data): NodeOutputDefinition[] {
     const outputs: NodeOutputDefinition[] = [];
@@ -330,7 +321,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
     prompt += '\n\nAssistant:';
     
     // Get the "System" prompt input for Claude 3 models
-    const system = data.model.startsWith('claude-3') ? coerceTypeOptional(inputs['system' as PortId], 'string') : undefined;
+    const system = data.model.startsWith('claude-3') ? getSystemPrompt(inputs) : undefined;
     
     let { maxTokens } = data;
     const tokenizerInfo: TokenizerCallInfo = {
@@ -503,6 +494,24 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
 };
 
 export const chatAnthropicNode = pluginNodeDefinition(ChatAnthropicNodeImpl, 'Chat');
+
+export function getSystemPrompt(inputs: Inputs) {
+  const system = coerceTypeOptional(inputs['system' as PortId], 'string');
+  if (system) {
+    return system;
+  }
+  const prompt = inputs['prompt' as PortId];
+  if (prompt && prompt.type === 'chat-message[]') {
+    const systemMessage = prompt.value.find((message) => message.type === 'system');
+    if (systemMessage) {
+      if (typeof systemMessage.message === 'string') {
+        return systemMessage.message;
+      } else if (Array.isArray(systemMessage.message)) {
+        return systemMessage.message.filter((p) => typeof p === 'string').join('');
+      }
+    }
+  }
+}
 
 export async function getChatAnthropicNodeMessages(inputs: Inputs) {
   const prompt = inputs['prompt' as PortId];
