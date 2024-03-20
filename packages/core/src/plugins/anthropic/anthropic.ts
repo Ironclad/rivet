@@ -18,46 +18,54 @@ export const anthropicModels = {
     },
     displayName: 'Claude Instant',
   },
+  'claude-instant-1.2': {
+    maxTokens: 100_000,
+    cost: {
+      prompt: 0.8e-6,
+      completion: 2.4e-6,
+    },
+    displayName: 'Claude Instant 1.2',
+  },
   'claude-2': {
     maxTokens: 100_000,
     cost: {
-      prompt: 0.01102,
-      completion: 0.03268,
+      prompt: 8e-6,
+      completion: 24e-6,
     },
     displayName: 'Claude 2',
   },
   'claude-2.1': {
     maxTokens: 200_000,
     cost: {
-      prompt: 0.01102,
-      completion: 0.03268,
+      prompt: 8e-6,
+      completion: 24e-6,
     },
     displayName: 'Claude 2.1',
+  },
+  'claude-3-haiku-20240307': {
+    maxTokens: 200_000,
+    cost: {
+      prompt: 0.25e-6,
+      completion: 1.25e-6,
+    },
+    displayName: 'Claude 3 Haiku',
   },
   'claude-3-sonnet-20240229': {
     maxTokens: 200_000,
     cost: {
-      prompt: 0.000003,
-      completion: 0.000015,
+      prompt: 3e-6,
+      completion: 15e-6,
     },
     displayName: 'Claude 3 Sonnet',
   },
   'claude-3-opus-20240229': {
     maxTokens: 200_000,
     cost: {
-      prompt: 0.000015,
-      completion: 0.000075,
+      prompt: 15e-6,
+      completion: 75e-6,
     },
     displayName: 'Claude 3 Opus',
   },
-  'claude-3-haiku-20240307': {
-    maxTokens: 200_000,
-    cost: {
-      prompt: 2.5e-7,
-      completion: 1.25e-6,
-    },
-    displayName: 'Claude 3 Haiku',
-  }
 } satisfies Record<string, AnthropicModel>;
 
 export type AnthropicModels = keyof typeof anthropicModels;
@@ -212,7 +220,7 @@ export async function* streamChatCompletions({
   }
 }
 
-export async function* streamClaude3ChatCompletions({
+export async function* streamMessageApi({
   apiKey,
   signal,
   ...rest

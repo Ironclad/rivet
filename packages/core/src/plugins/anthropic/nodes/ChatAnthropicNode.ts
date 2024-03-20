@@ -24,7 +24,7 @@ import {
   AnthropicError,
   type Claude3ChatMessage,
   type Claude3ChatMessageContentPart,
-  streamClaude3ChatCompletions,
+  streamMessageApi,
   type ChatMessageOptions
 } from '../anthropic.js';
 import { nanoid } from 'nanoid/non-secure';
@@ -318,7 +318,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
       model,
       endpoint: undefined,
     };
-    const tokenCount = context.tokenizer.getTokenCountForString(prompt, tokenizerInfo);
+    const tokenCountEstimate = context.tokenizer.getTokenCountForString(prompt, tokenizerInfo);
     const modelInfo = anthropicModels[model] ?? {
       maxTokens: Number.MAX_SAFE_INTEGER,
       cost: {
@@ -326,19 +326,19 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
         completion: 0,
       },
     };
-    if (tokenCount >= modelInfo.maxTokens) {
+    if (tokenCountEstimate >= modelInfo.maxTokens) {
       throw new Error(
-        `The model ${model} can only handle ${modelInfo.maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`,
+        `The model ${model} can only handle ${modelInfo.maxTokens} tokens, but ${tokenCountEstimate} were provided in the prompts alone.`,
       );
     }
-    if (tokenCount + maxTokens > modelInfo.maxTokens) {
+    if (tokenCountEstimate + maxTokens > modelInfo.maxTokens) {
       const message = `The model can only handle a maximum of ${
         modelInfo.maxTokens
       } tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${
-        modelInfo.maxTokens - tokenCount
+        modelInfo.maxTokens - tokenCountEstimate
       }.`;
       addWarning(output, message);
-      maxTokens = Math.floor((modelInfo.maxTokens - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
+      maxTokens = Math.floor((modelInfo.maxTokens - tokenCountEstimate) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
     }
     try {
       return await retry(
@@ -374,7 +374,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
           
           if (useMessageApi) {
             // Use the messages API for Claude 3 models
-            const chunks = streamClaude3ChatCompletions({
+            const chunks = streamMessageApi({
               apiKey: apiKey ?? '',
               signal: context.signal,
               ...messageOptions,
@@ -382,12 +382,17 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
           
             // Process the response chunks and update the output
             const responseParts: string[] = [];
+            let requestTokens: number | undefined = undefined, responseTokens: number | undefined = undefined;
             for await (const chunk of chunks) {
               let completion: string = '';
               if (chunk.type === 'content_block_start') {
                 completion = chunk.content_block.text;
               } else if (chunk.type === 'content_block_delta') {
                 completion = chunk.delta.text; 
+              } else if (chunk.type === 'message_start' && chunk.message?.usage?.input_tokens) {
+                requestTokens = chunk.message.usage.input_tokens;
+              } else if (chunk.type === 'message_delta' && chunk.delta?.usage?.output_tokens) {
+                responseTokens = chunk.delta.usage.output_tokens;
               }
               if (!completion) {
                 continue;
@@ -404,8 +409,8 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
               throw new Error('No response from Anthropic');
             }
           
-            output['requestTokens' as PortId] = { type: 'number', value: tokenCount };
-            const responseTokenCount = context.tokenizer.getTokenCountForString(responseParts.join(''), tokenizerInfo);
+            output['requestTokens' as PortId] = { type: 'number', value: requestTokens ?? tokenCountEstimate };
+            const responseTokenCount = responseTokens ?? context.tokenizer.getTokenCountForString(responseParts.join(''), tokenizerInfo);
             output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
           } else {
             // Use the normal chat completion method for non-Claude 3 models
@@ -433,10 +438,17 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
               throw new Error('No response from Anthropic');
             }
           
-            output['requestTokens' as PortId] = { type: 'number', value: tokenCount };
+            output['requestTokens' as PortId] = { type: 'number', value: tokenCountEstimate };
             const responseTokenCount = context.tokenizer.getTokenCountForString(responseParts.join(''), tokenizerInfo);
             output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
-          
+          }
+
+          const cost = getCostForTokens({
+            requestTokens: output['requestTokens' as PortId]?.value as number,
+            responseTokens: output['responseTokens' as PortId]?.value as number,
+          }, model);
+          if (cost != null) {
+            output['cost' as PortId] = { type: 'number', value: cost };
           }
 
           const endTime = Date.now();
@@ -580,3 +592,11 @@ async function chatMessageContentToClaude3ChatMessage(content: ChatMessageMessag
       assertNever(content);
   }
 }
+function getCostForTokens(tokenCounts: { requestTokens: number; responseTokens: number; }, model: AnthropicModels): number | undefined {
+  const modelInfo = anthropicModels[model];
+  if (modelInfo == null) {
+    return undefined;
+  }
+  return modelInfo.cost.prompt * tokenCounts.requestTokens + modelInfo.cost.completion * tokenCounts.responseTokens;
+}
+
