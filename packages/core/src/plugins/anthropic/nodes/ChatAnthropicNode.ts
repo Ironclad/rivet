@@ -300,10 +300,11 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
       : data.stop;
     const { messages } = await getChatAnthropicNodeMessages(inputs);
     let prompt = messages.reduce((acc, message) => {
+      const content = typeof message.content === 'string' ? message.content : message.content.map((c) => c.text ?? '').join('');
       if (message.role === 'user') {
-        return `${acc}\n\nHuman: ${message.content}`;
+        return `${acc}\n\nHuman: ${content}`;
       } else if (message.role === 'assistant') {
-        return `${acc}\n\nAssistant: ${message.content}`;
+        return `${acc}\n\nAssistant: ${content}`;
       }
       return acc;
     }, '');
