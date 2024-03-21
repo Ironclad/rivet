@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
 import { AssemblyAI } from 'assemblyai';
+import type { TranscriptParams } from 'assemblyai';
 import {
   type AnyDataValue,
   type AudioDataValue,
@@ -23,7 +24,9 @@ import { coerceType } from '../../utils/coerceType.js';
 
 export type TranscribeAudioNode = ChartNode<'assemblyAiTranscribeAudio', TranscribeAudioNodeData>;
 
-export type TranscribeAudioNodeData = {};
+export type TranscribeAudioNodeData = {
+  transcriptParameters?: string;
+};
 
 export const TranscribeAudioNodeImpl: PluginNodeImpl<TranscribeAudioNode> = {
   create(): TranscribeAudioNode {
@@ -73,7 +76,16 @@ export const TranscribeAudioNodeImpl: PluginNodeImpl<TranscribeAudioNode> = {
   },
 
   getEditors(): EditorDefinition<TranscribeAudioNode>[] {
-    return [];
+    return [
+      {
+        type: 'code',
+        label: 'Transcript Parameters (JSON)',
+        language: 'json',
+        dataKey: 'transcriptParameters',
+        helperMessage: `Configure additional parameters using a JSON object. This will override any other fields you have set.
+        For a detailed list of parameters, see [the AssemblyAI API documentation](https://www.assemblyai.com/docs/api-reference/transcript#create-a-transcript).`,
+      },
+    ];
   },
 
   getBody(): string | undefined {
@@ -89,7 +101,7 @@ export const TranscribeAudioNodeImpl: PluginNodeImpl<TranscribeAudioNode> = {
     };
   },
 
-  async process(_data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+  async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const input = inputs['audio' as PortId] as AudioDataValue | StringDataValue | AnyDataValue;
     if (!input) throw new Error('Audio input is required.');
 
@@ -106,7 +118,9 @@ export const TranscribeAudioNodeImpl: PluginNodeImpl<TranscribeAudioNode> = {
       throw new Error('Audio input must be audio or string containing the audio URL.');
     }
 
-    const transcript = await client.transcripts.transcribe({ audio: audioUrl });
+    let transcriptParams: TranscriptParams = { audio: audioUrl };
+    transcriptParams = { ...transcriptParams, ...getAdditionalParameters(data) };
+    const transcript = await client.transcripts.transcribe(transcriptParams);
 
     return {
       ['text' as PortId]: {
@@ -126,3 +140,23 @@ export const TranscribeAudioNodeImpl: PluginNodeImpl<TranscribeAudioNode> = {
 };
 
 export const transcribeAudioNode = pluginNodeDefinition(TranscribeAudioNodeImpl, 'Transcribe Audio');
+
+function getAdditionalParameters(data: TranscribeAudioNodeData): Partial<TranscriptParams> {
+  const transcriptParams: string | null | undefined = data.transcriptParameters?.trim();
+  if (!transcriptParams) {
+    return {};
+  }
+
+  let transcriptParamsObj: Array<unknown> | Partial<TranscriptParams>;
+  try {
+    transcriptParamsObj = JSON.parse(transcriptParams);
+  } catch (e) {
+    throw new Error('The transcript parameters field has to be a valid JSON object, or empty.'); // This message is surfaced to the user
+  }
+
+  if (Array.isArray(transcriptParamsObj)) {
+    throw new Error('The transcript parameters field should be a JSON object, but is a JSON array'); // This message is surfaced to the user
+  }
+
+  return transcriptParamsObj;
+}
