@@ -46,7 +46,7 @@
     "@gentrace/core": "^2.2.5",
     "@google-cloud/vertexai": "^0.1.3",
     "@huggingface/inference": "^2.6.4",
-    "assemblyai": "^4.0.0",
+    "assemblyai": "^4.3.3",
     "autoevals": "^0.0.26",
     "crypto-js": "^4.2.0",
     "emittery": "^1.0.1",
