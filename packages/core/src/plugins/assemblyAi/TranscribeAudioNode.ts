@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
 import { AssemblyAI } from 'assemblyai';
-import type { TranscriptParams } from 'assemblyai';
+import type { TranscribeParams, TranscriptParams } from 'assemblyai';
 import {
   type AnyDataValue,
   type AudioDataValue,
@@ -118,7 +118,7 @@ export const TranscribeAudioNodeImpl: PluginNodeImpl<TranscribeAudioNode> = {
       throw new Error('Audio input must be audio or string containing the audio URL.');
     }
 
-    let transcriptParams: TranscriptParams = { audio: audioUrl };
+    let transcriptParams: TranscribeParams = { audio: audioUrl };
     transcriptParams = { ...transcriptParams, ...getAdditionalParameters(data) };
     const transcript = await client.transcripts.transcribe(transcriptParams);
 
