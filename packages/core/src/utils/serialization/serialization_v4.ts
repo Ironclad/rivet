@@ -93,6 +93,11 @@ export function graphV4Deserializer(data: unknown): NodeGraph {
 }
 
 export function projectV4Serializer(project: Project, attachedData?: AttachedData): unknown {
+  const filteredProject = {
+    ...project
+  }
+  delete filteredProject.metadata.path;
+
   // Make sure all data is ordered deterministically first
   const stabilized = JSON.parse(stableStringify(toSerializedProject(project, attachedData)));
 
