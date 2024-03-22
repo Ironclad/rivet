@@ -240,10 +240,13 @@ export const nodeStyles = css`
     position: relative;
   }
 
+  .port-label-uppercase {
+    text-transform: uppercase;
+  }
+
   .port-label {
     color: var(--grey-lighter);
     font-size: 10px;
-    text-transform: uppercase;
     letter-spacing: 1px;
     margin: 0 4px;
     white-space: nowrap;
