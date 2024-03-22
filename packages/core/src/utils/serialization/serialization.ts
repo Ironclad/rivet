@@ -19,9 +19,12 @@ export function serializeProject(project: Project, attachedData?: AttachedData):
   return projectV4Serializer(project, attachedData);
 }
 
-export function deserializeProject(serializedProject: unknown): [Project, AttachedData] {
+export function deserializeProject(serializedProject: unknown, path: string | null = null): [Project, AttachedData] {
   try {
-    return projectV4Deserializer(serializedProject);
+    const result = projectV4Deserializer(serializedProject);
+    if (path !== null)
+      result[0].metadata.path = path;
+    return result;
   } catch (err) {
     if (err instanceof yaml.YAMLError) {
       yamlProblem(err);

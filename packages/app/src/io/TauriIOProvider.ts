@@ -132,7 +132,7 @@ export class TauriIOProvider implements IOProvider {
 
   async loadProjectDataNoPrompt(path: string): Promise<{ project: Project; testData: TrivetData }> {
     const data = await readTextFile(path);
-    const [projectData, attachedData] = deserializeProject(data);
+    const [projectData, attachedData] = deserializeProject(data, path);
 
     const trivetData = attachedData.trivet
       ? deserializeTrivetData(attachedData.trivet as SerializedTrivetData)
