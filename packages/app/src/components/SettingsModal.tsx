@@ -141,16 +141,17 @@ export const GeneralSettingsPage: FC = () => {
         {() => (
           <>
             <Toggle
-            id="check-for-updates"
-            isChecked={preservePortTextCase}
-            onChange={(e) => {
-              setPreservePortTextCase(e.target.checked);
-            }}
-            />  
+              id="check-for-updates"
+              isChecked={preservePortTextCase}
+              onChange={(e) => {
+                setPreservePortTextCase(e.target.checked);
+              }}
+            />
             <HelperMessage>
-              This WILL preserve the text fromat of the node port names.  e.g. `newInputPort` will be shown instead of `NEWINPUTPORT` when enabled
+              This WILL preserve the text format of the node port names. e.g. `newInputPort` will be shown instead of
+              `NEWINPUTPORT` when enabled
             </HelperMessage>
-        </>  
+          </>
         )}
       </Field>
       <Field name="recording-speed" label="Recording delay between chats (ms)">
