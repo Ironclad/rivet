@@ -99,7 +99,7 @@ export function projectV4Serializer(project: Project, attachedData?: AttachedDat
   delete filteredProject.metadata.path;
 
   // Make sure all data is ordered deterministically first
-  const stabilized = JSON.parse(stableStringify(toSerializedProject(project, attachedData)));
+  const stabilized = JSON.parse(stableStringify(toSerializedProject(filteredProject, attachedData)));
 
   const serialized = yaml.stringify(
     {
