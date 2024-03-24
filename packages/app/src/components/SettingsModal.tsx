@@ -4,6 +4,7 @@ import {
   checkForUpdatesState,
   defaultExecutorState,
   executorOptions,
+  preservePortTextCaseState,
   previousDataPerNodeToKeepState,
   recordExecutionsState,
   settingsState,
@@ -123,6 +124,7 @@ export const GeneralSettingsPage: FC = () => {
   const [defaultExecutor, setDefaultExecutor] = useRecoilState(defaultExecutorState);
   const [previousDataPerNodeToKeep, setPreviousDataPerNodeToKeep] = useRecoilState(previousDataPerNodeToKeepState);
   const [zoomSensitivity, setZoomSensitivity] = useRecoilState(zoomSensitivityState);
+  const [preservePortTextCase, setPreservePortTextCase] = useRecoilState(preservePortTextCaseState);
 
   return (
     <div css={fields}>
@@ -133,6 +135,23 @@ export const GeneralSettingsPage: FC = () => {
             onChange={(e) => e && setTheme(e.value as any)}
             options={themes}
           />
+        )}
+      </Field>
+      <Field name="preserve-port-text-case" label="Preserve text case for node ports">
+        {() => (
+          <>
+            <Toggle
+              id="check-for-updates"
+              isChecked={preservePortTextCase}
+              onChange={(e) => {
+                setPreservePortTextCase(e.target.checked);
+              }}
+            />
+            <HelperMessage>
+              This WILL preserve the text format of the node port names. e.g. `newInputPort` will be shown instead of
+              `NEWINPUTPORT` when enabled
+            </HelperMessage>
+          </>
         )}
       </Field>
       <Field name="recording-speed" label="Recording delay between chats (ms)">

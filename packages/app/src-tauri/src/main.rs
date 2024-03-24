@@ -14,6 +14,8 @@ fn main() {
         eprintln!("Error fixing $PATH: {}", err);
     }
 
+    std::env::remove_var("_VOLTA_TOOL_RECURSION");
+
     tauri::Builder::default()
         .plugin(tauri_plugin_persisted_scope::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())

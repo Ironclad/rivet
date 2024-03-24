@@ -15,6 +15,8 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { LoopControllerNodePorts } from './LoopControllerNodePorts';
 import { type DraggingWireDef } from '../state/graphBuilder';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { preservePortTextCaseState } from '../state/settings.js';
 
 export type NodePortsProps = {
   node: ChartNode;
@@ -64,6 +66,7 @@ export const NodePorts: FC<NodePortsProps> = ({
   onPortMouseOut,
 }) => {
   const { inputDefinitions, outputDefinitions } = useNodeIO(node.id)!;
+  const preservePortTextCase = useRecoilValue(preservePortTextCaseState);
 
   const handlePortMouseDown = useStableCallback((event: MouseEvent<HTMLDivElement>, port: PortId, isInput: boolean) => {
     event.stopPropagation();
@@ -88,6 +91,7 @@ export const NodePorts: FC<NodePortsProps> = ({
             <Port
               title={input.title}
               id={input.id}
+              preservePortCase={preservePortTextCase}
               input
               connected={connected}
               key={`input-${input.id}`}
@@ -111,6 +115,7 @@ export const NodePorts: FC<NodePortsProps> = ({
             (draggingWire?.startNodeId === node.id && draggingWire?.startPortId === output.id);
           return (
             <Port
+              preservePortCase={preservePortTextCase}
               title={output.title}
               id={output.id}
               connected={connected}

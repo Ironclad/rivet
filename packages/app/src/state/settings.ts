@@ -68,6 +68,12 @@ export const previousDataPerNodeToKeepState = atom<number>({
   effects: [persistAtom],
 });
 
+export const preservePortTextCaseState = atom<boolean>({
+  key: 'preservePortTextCase',
+  default: false,
+  effects: [persistAtom],
+});
+
 export const checkForUpdatesState = atom<boolean>({
   key: 'checkForUpdates',
   default: true,

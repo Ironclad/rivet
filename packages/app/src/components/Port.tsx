@@ -19,6 +19,7 @@ export const Port: FC<{
   connected?: boolean;
   canDragTo: boolean;
   closest: boolean;
+  preservePortCase?: boolean;
   definition: NodeInputDefinition | NodeOutputDefinition;
   draggingDataType?: DataType | Readonly<DataType[]>;
   onMouseDown?: (event: MouseEvent<HTMLDivElement>, port: PortId, isInput: boolean) => void;
@@ -52,6 +53,7 @@ export const Port: FC<{
     onMouseUp,
     onMouseOver,
     onMouseOut,
+    preservePortCase,
   }) => {
     const ref = useRef<HTMLDivElement>(null);
 
@@ -114,7 +116,7 @@ export const Port: FC<{
         >
           {canDragTo && <div className={clsx('port-hover-area')} />}
         </div>
-        <div className="port-label" onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
+        <div className={clsx("port-label", preservePortCase ? "" : "port-label-uppercase")} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
           {title}
         </div>
       </div>

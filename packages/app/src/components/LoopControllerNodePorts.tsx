@@ -12,6 +12,8 @@ import { useStableCallback } from '../hooks/useStableCallback.js';
 import { Port } from './Port.js';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { type DraggingWireDef } from '../state/graphBuilder';
+import { useRecoilValue } from 'recoil';
+import { preservePortTextCaseState } from '../state/settings.js';
 
 export type NodePortsProps = {
   node: ChartNode;
@@ -53,6 +55,8 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
   onPortMouseOut,
 }) => {
   const { inputDefinitions, outputDefinitions } = useNodeIO(node.id)!;
+
+  const preservePortTextCase = useRecoilValue(preservePortTextCaseState);
 
   const handlePortMouseDown = useStableCallback((event: MouseEvent<HTMLDivElement>, port: PortId, isInput: boolean) => {
     event.stopPropagation();
@@ -105,6 +109,7 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
                 (draggingWire?.endNodeId === node.id && draggingWire?.endPortId === input.id);
               return (
                 <Port
+                  preservePortCase={preservePortTextCase}
                   title={input.title}
                   id={input.id}
                   input
@@ -132,6 +137,7 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
                 (draggingWire?.startNodeId === node.id && draggingWire?.startPortId === output.id);
               return (
                 <Port
+                  preservePortCase={preservePortTextCase}
                   title={output.title}
                   id={output.id}
                   connected={connected}
@@ -165,6 +171,7 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
                   (draggingWire?.endNodeId === node.id && draggingWire?.endPortId === input.id);
                 return (
                   <Port
+                    preservePortCase={preservePortTextCase}
                     title={input.title}
                     id={input.id}
                     input
@@ -196,6 +203,7 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
                   (draggingWire?.startNodeId === node.id && draggingWire?.startPortId === output.id);
                 return (
                   <Port
+                    preservePortCase={preservePortTextCase}
                     title={output.title}
                     id={output.id}
                     connected={connected}
