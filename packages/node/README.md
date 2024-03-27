@@ -50,6 +50,7 @@ Rivet has embedding/vector database support for:
 
 - [OpenAI Embeddings](https://platform.openai.com/docs/guides/embeddings)
 - [Pinecone](https://www.pinecone.io/)
+- [Qdrant](https://qdrant.tech/)
 
 Rivet also supports these additional integrations:
 

@@ -9,5 +9,6 @@ The available built-in plugins are:
 - [Google](./google.md)
 - [HuggingFace](./huggingface.md)
 - [Pinecone](./pinecone.md)
+- [Qdrant](./qdrant.md)
 
 See each plugin's corresponding documentation for more information.

@@ -16,6 +16,7 @@ import GoogleLogo from './assets/vendor_logos/google-logo.png';
 import PDF2MDLogo from './assets/vendor_logos/pdf2md-logo.png';
 import TransformerLabLogo from './assets/vendor_logos/transformerlab-logo.svg';
 import UtilitiesLogo from './assets/vendor_logos/utilities-logo.png';
+import QdrantLogo from './assets/vendor_logos/qdrant.svg';
 
 type SharedPluginInfo = {
   id: string;
@@ -136,6 +137,17 @@ export const pluginInfos: PluginInfo[] = [
     author: 'Gentrace',
     logoImage: GentraceLogo,
     documentation: 'https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/gentrace',
+  },
+  {
+    type: 'built-in',
+    id: 'qdrant',
+    name: 'Qdrant',
+    description: dedent`
+      An integration to enable Qdrant - https://qdrant.tech to be used as a
+      Vector Store and Vector KNN node.
+    `,
+    author: 'Qdrant Team',
+    logoImage: QdrantLogo,
   },
   {
     type: 'package',

@@ -60,6 +60,7 @@ const sidebars = {
         'user-guide/plugins/built-in/gentrace',
         'user-guide/plugins/built-in/huggingface',
         'user-guide/plugins/built-in/pinecone',
+        'user-guide/plugins/built-in/qdrant',
       ],
     },
     {
