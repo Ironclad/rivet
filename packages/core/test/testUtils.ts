@@ -22,11 +22,11 @@ export async function loadTestGraphInProcessor(graphName: string) {
 
 export async function loadProjectFromFile(path: string): Promise<Project> {
   const content = await readFile(path, { encoding: 'utf8' });
-  return loadProjectFromString(content);
+  return loadProjectFromString(content, path);
 }
 
-export function loadProjectFromString(content: string): Project {
-  const [project] = deserializeProject(content);
+export function loadProjectFromString(content: string, path: string | null = null): Project {
+  const [project] = deserializeProject(content, path);
   return project;
 }
 

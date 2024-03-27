@@ -30,18 +30,23 @@ export function useSaveProject() {
       saving = toast.info('Saving project');
     }, 500);
 
-    await ioProvider.saveProjectDataNoPrompt(newProject, { testSuites }, loadedProject.path);
+    try {
+      await ioProvider.saveProjectDataNoPrompt(newProject, { testSuites }, loadedProject.path);
 
-    if (saving != null) {
-      toast.dismiss(saving);
+      if (saving != null) {
+        toast.dismiss(saving);
+      }
+      clearTimeout(savingTimeout);
+
+      toast.success('Project saved');
+      setLoadedProject({
+        loaded: true,
+        path: loadedProject.path,
+      });
+    } catch (cause) {
+      clearTimeout(savingTimeout);
+      toast.error('Failed to save project');
     }
-    clearTimeout(savingTimeout);
-
-    toast.success('Project saved');
-    setLoadedProject({
-      loaded: true,
-      path: loadedProject.path,
-    });
   }
 
   async function saveProjectAs() {
@@ -57,26 +62,31 @@ export function useSaveProject() {
       saving = toast.info('Saving project');
     }, 500);
 
-    const filePath = await ioProvider.saveProjectData(newProject, { testSuites });
+    try {
+      const filePath = await ioProvider.saveProjectData(newProject, { testSuites });
 
-    if (saving != null) {
-      toast.dismiss(saving);
-    }
-    clearTimeout(savingTimeout);
+      if (saving != null) {
+        toast.dismiss(saving);
+      }
+      clearTimeout(savingTimeout);
 
-    if (filePath) {
-      toast.success('Project saved');
-      setLoadedProject({
-        loaded: true,
-        path: filePath,
-      });
-      setOpenedProjects((projects) => ({
-        ...projects,
-        [project.metadata.id]: {
-          project,
-          fsPath: filePath,
-        },
-      }));
+      if (filePath) {
+        toast.success('Project saved');
+        setLoadedProject({
+          loaded: true,
+          path: filePath,
+        });
+        setOpenedProjects((projects) => ({
+          ...projects,
+          [project.metadata.id]: {
+            project,
+            fsPath: filePath,
+          },
+        }));
+      }
+    } catch (cause) {
+      clearTimeout(savingTimeout);
+      toast.error('Failed to save project');
     }
   }
 
