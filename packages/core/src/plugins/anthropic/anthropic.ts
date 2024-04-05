@@ -80,15 +80,38 @@ export type Claude3ChatMessage = {
   content: string | Claude3ChatMessageContentPart[];
 }
 
-export type Claude3ChatMessageContentPart = {
-  type: 'text' | 'image';
-  text?: string;
-  source?: {
+export type Claude3ChatMessageTextContentPart = {
+  type: 'text';
+  text: string;
+};
+
+export type Claude3ChatMessageImageContentPart = {
+  type: 'image';
+  source: {
     type: 'base64';
     media_type: string;
     data: string;
   };
 };
+
+export type Claude3ChatMessageToolResultContentPart = {
+  type: 'tool_result';
+  tool_use_id: string;
+  content: string | { type: 'text'; text: string; }[];
+};
+
+export type Claude3ChatMessageToolUseContentPart = {
+  type: 'tool_use';
+  id: string;
+  name: string;
+  input: object;
+}
+
+export type Claude3ChatMessageContentPart = 
+  | Claude3ChatMessageTextContentPart
+  | Claude3ChatMessageImageContentPart
+  | Claude3ChatMessageToolResultContentPart
+  | Claude3ChatMessageToolUseContentPart;
 
 export type ChatMessageOptions = {
   apiKey: string;
@@ -102,6 +125,11 @@ export type ChatMessageOptions = {
   top_k?: number;
   signal?: AbortSignal;
   stream?: boolean;
+  tools?: {
+    name: string;
+    description: string;
+    input_schema: object;
+  }[];
 };
 
 export type ChatCompletionOptions = {
@@ -168,7 +196,25 @@ export type ChatMessageChunk = {
   }
 } | {
   type: 'message_stop';
-}
+};
+
+export type ChatMessageResponse = {
+  id: string;
+  content: ({
+    text: string;
+  } | {
+    id: string;
+    name: string;
+    input: object;
+  })[];
+  model: string;
+  stop_reason: 'end_turn';
+  stop_sequence: string;
+  usage: {
+    input_tokens: number;
+    output_tokens: number;
+  };
+};
 
 export async function* streamChatCompletions({
   apiKey,
@@ -218,6 +264,35 @@ export async function* streamChatCompletions({
     const responseJson = await response.json();
     throw new AnthropicError(`No chunks received. Response: ${JSON.stringify(responseJson)}`, response, responseJson);
   }
+}
+
+export async function callMessageApi({
+  apiKey,
+  signal,
+  tools,
+  ...rest
+}: ChatMessageOptions): Promise<ChatMessageResponse> {
+  const defaultSignal = new AbortController().signal;
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-beta': tools ? 'tools-2024-04-04' : 'messages-2023-12-15',
+    },
+    body: JSON.stringify({
+      ...rest,
+      tools,
+      stream: false,
+    }),
+    signal: signal ?? defaultSignal,
+  });
+  const responseJson = await response.json();
+  if (response.status !== 200) {
+    throw new AnthropicError(responseJson?.error?.message ?? 'Request failed', response, responseJson);
+  }
+  return responseJson;
 }
 
 export async function* streamMessageApi({
