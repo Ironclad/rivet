@@ -279,7 +279,7 @@ export const pluginInfos: PluginInfo[] = [
 
       - Iterator node:  The iterator Node will map an array of input objects through a provided graph.  It allows for parallel execution with concurrency controls and caching.  
       - Pipeline node: The PipelineNode will take and input and run it through a pipeline of graphs (stages).  Each stage's output will be the next graph's input.  In addition, the pipeline node can have optional pre/post graph.  
-      - Pinecode Search/Upsert node: These nodes will allow you to search or upsert documents in a pinecone collection.  Allows for metadata, sparse vectors as optional inputs
+      - Pinecone Search/Upsert node: These nodes will allow you to search or upsert documents in a pinecone collection.  Allows for metadata, sparse vectors as optional inputs
     `,
     tag: "latest",
     author: "Shravan S.",
