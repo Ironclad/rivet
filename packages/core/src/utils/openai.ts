@@ -116,7 +116,15 @@ export const openaiModels = {
       prompt: 0.01,
       completion: 0.03,
     },
-    displayName: 'GPT-4 Turbo 128K',
+    displayName: 'GPT-4 Turbo 128K (1106 Preview)',
+  },
+  'gpt-4-turbo': {
+    maxTokens: 128000,
+    cost: {
+      prompt: 0.01,
+      completion: 0.03,
+    },
+    displayName: 'GPT-4 Turbo 128K with Vision',
   },
   'gpt-4-vision-preview': {
     maxTokens: 128000,
@@ -124,7 +132,7 @@ export const openaiModels = {
       prompt: 0.01,
       completion: 0.03,
     },
-    displayName: 'GPT-4 Vision',
+    displayName: 'GPT-4 Vision (Preview)',
   },
   'local-model': {
     maxTokens: Number.MAX_SAFE_INTEGER,

@@ -213,7 +213,7 @@ export const CreateAssistantNodeImpl: PluginNodeImpl<CreateAssistantNode> = {
         useInputToggleDataKey: 'useModelInput',
         label: 'Model',
         options: openAiModelOptions,
-        defaultValue: 'gpt-4-1106-preview',
+        defaultValue: 'gpt-4-turbo',
       },
       {
         type: 'string',
