@@ -275,10 +275,14 @@ export const pluginInfos: PluginInfo[] = [
     id: "rivet-utilities-plugin@latest",
     name: "Utilities",
     description: dedent`
-      Adds a variety of utility nodes to help with common tasks.  Currently has Iterator nodes that let you map over arrays and call a graph reference for each element.
+      Adds several utilities nodes that help with concurrency, pipelines and iterations.
+
+      - Iterator node:  The iterator Node will map an array of input objects through a provided graph.  It allows for parallel execution with concurrency controls and caching.  
+      - Pipeline node: The PipelineNode will take and input and run it through a pipeline of graphs (stages).  Each stage's output will be the next graph's input.  In addition, the pipeline node can have optional pre/post graph.  
+      - Pinecone Search/Upsert node: These nodes will allow you to search or upsert documents in a pinecone collection.  Allows for metadata, sparse vectors as optional inputs
     `,
     tag: "latest",
-    author: "Shravan S",
+    author: "Shravan S.",
     github: "https://github.com/ShravanSunder/rivet-utilities-plugin",
     package: "rivet-utilities-plugin",
     logoImage: UtilitiesLogo
