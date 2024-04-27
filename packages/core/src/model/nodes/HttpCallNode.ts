@@ -105,6 +105,11 @@ export class HttpCallNodeImpl extends NodeImpl<HttpCallNode> {
         title: 'JSON',
       },
       {
+        dataType: 'binary',
+        id: 'binary' as PortId,
+        title: 'Binary',
+      },
+      {
         dataType: 'number',
         id: 'statusCode' as PortId,
         title: 'Status Code',
