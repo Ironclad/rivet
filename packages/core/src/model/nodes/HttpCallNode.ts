@@ -249,15 +249,16 @@ export class HttpCallNodeImpl extends NodeImpl<HttpCallNode> {
         },
       };
 
-      const responseBody = await response.text();
+      const responseBlob = await response.blob();
+      const responseText = await responseBlob.text();
 
       output['res_body' as PortId] = {
         type: 'string',
-        value: responseBody,
+        value: responseText,
       };
 
       if (response.headers.get('content-type')?.includes('application/json')) {
-        const jsonData = JSON.parse(responseBody);
+        const jsonData = JSON.parse(responseText);
         output['json' as PortId] = {
           type: 'object',
           value: jsonData,
@@ -268,6 +269,11 @@ export class HttpCallNodeImpl extends NodeImpl<HttpCallNode> {
           value: undefined,
         };
       }
+
+      output['binary' as PortId] = {
+        type: 'binary',
+        value: new Uint8Array(await responseBlob.arrayBuffer()),
+      };
 
       return output;
     } catch (err) {
