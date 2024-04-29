@@ -16,6 +16,7 @@ import GoogleLogo from './assets/vendor_logos/google-logo.png';
 import PDF2MDLogo from './assets/vendor_logos/pdf2md-logo.png';
 import TransformerLabLogo from './assets/vendor_logos/transformerlab-logo.svg';
 import UtilitiesLogo from './assets/vendor_logos/utilities-logo.png';
+import QdrantLogo from './assets/vendor_logos/qdrant.svg';
 
 type SharedPluginInfo = {
   id: string;
@@ -272,8 +273,8 @@ export const pluginInfos: PluginInfo[] = [
   },
   {
     type: 'package',
-    id: "rivet-utilities-plugin@latest",
-    name: "Utilities",
+    id: 'rivet-utilities-plugin@latest',
+    name: 'Utilities',
     description: dedent`
       Adds several utilities nodes that help with concurrency, pipelines and iterations.
 
@@ -281,10 +282,23 @@ export const pluginInfos: PluginInfo[] = [
       - Pipeline node: The PipelineNode will take and input and run it through a pipeline of graphs (stages).  Each stage's output will be the next graph's input.  In addition, the pipeline node can have optional pre/post graph.  
       - Pinecone Search/Upsert node: These nodes will allow you to search or upsert documents in a pinecone collection.  Allows for metadata, sparse vectors as optional inputs
     `,
-    tag: "latest",
-    author: "Shravan S.",
-    github: "https://github.com/ShravanSunder/rivet-utilities-plugin",
-    package: "rivet-utilities-plugin",
-    logoImage: UtilitiesLogo
+    tag: 'latest',
+    author: 'Shravan S',
+    github: 'https://github.com/ShravanSunder/rivet-utilities-plugin',
+    package: 'rivet-utilities-plugin',
+    logoImage: UtilitiesLogo,
+  },
+  {
+    type: 'package',
+    id: 'rivet-plugin-qdrant@latest',
+    name: 'Qdrant',
+    description: dedent`
+      An integration to enable Qdrant - https://qdrant.tech to be used as a Vector Store.
+    `,
+    github: 'https://github.com/qdrant/rivet-plugin-qdrant',
+    author: 'Qdrant Team',
+    package: 'rivet-plugin-qdrant',
+    tag: 'latest',
+    logoImage: QdrantLogo,
   }
 ];
