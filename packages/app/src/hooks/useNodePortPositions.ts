@@ -10,12 +10,16 @@ import { nodesByIdState } from '../state/graph';
  * It's done this way with a nodePortPositions state using rounded numbers for performance reasons.
  * In the ideal case, no position will have changed, so the state does not update.
  */
-export function useNodePortPositions() {
+export function useNodePortPositions({ enabled }: { enabled: boolean }) {
   const [nodePortPositions, setNodePortPositions] = useState<PortPositions>({});
   const nodesById = useRecoilValue(nodesByIdState);
   const canvasRef = useRef<HTMLDivElement>(null);
 
   const recalculate = useCallback(() => {
+    if (!enabled) {
+      return;
+    }
+
     // Lot of duplication but meh
     const normalPortElements = canvasRef.current?.querySelectorAll(
       '.node:not(.overlayNode) .port-circle',
@@ -121,7 +125,7 @@ export function useNodePortPositions() {
     if (changed) {
       setNodePortPositions(newPositions);
     }
-  }, [nodePortPositions, nodesById]);
+  }, [nodePortPositions, nodesById, enabled]);
 
   useLayoutEffect(() => {
     recalculate();

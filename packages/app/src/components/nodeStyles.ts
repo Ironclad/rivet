@@ -18,6 +18,12 @@ export const nodeStyles = css`
     transition-timing-function: ease-out;
     transition-property: box-shadow, border-color;
     transform-origin: top left;
+    contain: layout;
+  }
+
+  .node-skeleton {
+    background: var(--grey-light);
+    height: 100px;
   }
 
   .node.isComment {

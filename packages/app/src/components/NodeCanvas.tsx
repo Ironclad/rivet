@@ -3,7 +3,7 @@ import { useNodeHeightCache } from '../hooks/useNodeBodyHeight';
 import { DraggableNode } from './DraggableNode.js';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles.js';
-import { type FC, useMemo, useRef, useState, type MouseEvent, useEffect } from 'react';
+import { type FC, useMemo, useRef, useState, type MouseEvent, useEffect, useLayoutEffect } from 'react';
 import { ContextMenu, type ContextMenuContext } from './ContextMenu.js';
 import { CSSTransition } from 'react-transition-group';
 import { WireLayer } from './WireLayer.js';
@@ -35,7 +35,7 @@ import {
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { VisualNode } from './VisualNode.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
-import { useThrottleFn } from 'ahooks';
+import { useThrottle, useThrottleFn } from 'ahooks';
 import { produce } from 'immer';
 import { graphMetadataState } from '../state/graph.js';
 import { useViewportBounds } from '../hooks/useViewportBounds.js';
@@ -157,6 +157,8 @@ export interface NodeCanvasProps {
 
 export type PortPositions = Record<string, { x: number; y: number }>;
 
+const shouldShowNodeBasedOnPosition = new WeakMap<ChartNode, boolean>();
+
 export const NodeCanvas: FC<NodeCanvasProps> = ({
   nodes,
   connections,
@@ -209,7 +211,13 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     setContextMenuData,
   } = useContextMenu();
 
-  const { nodePortPositions, canvasRef, recalculate: recalculatePortPositions } = useNodePortPositions();
+  const shouldRenderWires = canvasPosition.zoom > 0.15;
+
+  const {
+    nodePortPositions,
+    canvasRef,
+    recalculate: recalculatePortPositions,
+  } = useNodePortPositions({ enabled: shouldRenderWires });
 
   useEffect(() => {
     recalculatePortPositions();
@@ -577,6 +585,61 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const selectedProcessPagePerNode = useRecoilValue(selectedProcessPageNodesState);
 
   const isZoomedOut = canvasPosition.zoom < 0.4;
+  const isReallyZoomedOut = canvasPosition.zoom < 0.2;
+
+  const [forceRender, setForceRender] = useState(0);
+  const movingRerenderTimeout = useRef<number | undefined>();
+  const lastNodeRecalculateTime = useRef(0);
+
+  const isLargeGraph = nodes.length > 100;
+  const debounceTime = isLargeGraph ? 500 : 50;
+
+  useLayoutEffect(() => {
+    const recalculateVisibleNodes = () => {
+      let numVisible = 0;
+
+      for (const node of nodes) {
+        const isPinned = pinnedNodes.includes(node.id);
+
+        const shouldHide =
+          (node.visualData.x < viewportBounds.left - (node.visualData.width ?? 300) ||
+            node.visualData.x > viewportBounds.right + (node.visualData.width ?? 300) ||
+            node.visualData.y < viewportBounds.top - 500 ||
+            node.visualData.y > viewportBounds.bottom + 500) &&
+          !isPinned;
+
+        // if (numVisible > 300) {
+        //   shouldHide = true;
+        // }
+
+        shouldShowNodeBasedOnPosition.set(node, !shouldHide);
+
+        if (!shouldHide) {
+          numVisible++;
+        }
+      }
+
+      setForceRender((prev) => prev + 1);
+      lastNodeRecalculateTime.current = Date.now();
+    };
+
+    if (movingRerenderTimeout.current) {
+      window.clearTimeout(movingRerenderTimeout.current);
+    }
+
+    movingRerenderTimeout.current = window.setTimeout(() => {
+      recalculateVisibleNodes();
+    }, debounceTime);
+  }, [
+    pinnedNodes,
+    nodes,
+    viewportBounds.left,
+    viewportBounds.right,
+    viewportBounds.top,
+    viewportBounds.bottom,
+    forceRender,
+    debounceTime,
+  ]);
 
   return (
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
@@ -602,25 +665,19 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           className="canvas-contents"
           style={{
             transform: `scale(${canvasPosition.zoom}, ${canvasPosition.zoom}) translate(${canvasPosition.x}px, ${canvasPosition.y}px) translateZ(-1px)`,
+            willChange: 'transform',
           }}
         >
           <div className="nodes">
             {nodesWithConnections.map(({ node, nodeConnections }) => {
-              const isPinned = pinnedNodes.includes(node.id);
-
-              if (
-                (node.visualData.x < viewportBounds.left - (node.visualData.width ?? 300) ||
-                  node.visualData.x > viewportBounds.right + (node.visualData.width ?? 300) ||
-                  node.visualData.y < viewportBounds.top - 500 ||
-                  node.visualData.y > viewportBounds.bottom + 500) &&
-                !isPinned
-              ) {
+              if (!shouldShowNodeBasedOnPosition.get(node)) {
                 return null;
               }
 
               if (draggingNodes.some((n) => n.id === node.id)) {
                 return null;
               }
+
               return (
                 <DraggableNode
                   key={node.id}
@@ -633,6 +690,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
                   lastRun={lastRunPerNode[node.id]}
                   isPinned={pinnedNodes.includes(node.id)}
                   isZoomedOut={isZoomedOut && node.type !== 'comment'}
+                  isReallyZoomedOut={isReallyZoomedOut && node.type !== 'comment'}
                   processPage={selectedProcessPagePerNode[node.id]!}
                   draggingWire={draggingWire}
                   onWireStartDrag={onWireStartDrag}
@@ -676,6 +734,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
                 isKnownNodeType={node.type in nodeTypes}
                 isPinned={pinnedNodes.includes(node.id)}
                 isZoomedOut={isZoomedOut && node.type !== 'comment'}
+                isReallyZoomedOut={isReallyZoomedOut && node.type !== 'comment'}
                 processPage={selectedProcessPagePerNode[node.id]!}
               />
             ))}
@@ -715,14 +774,16 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           />
         )}
 
-        <WireLayer
-          connections={connections}
-          draggingWire={draggingWire}
-          highlightedNodes={highlightedNodes}
-          highlightedPort={hoveringPort}
-          portPositions={nodePortPositions}
-          draggingNode={draggingNodes.length > 0}
-        />
+        {shouldRenderWires && (
+          <WireLayer
+            connections={connections}
+            draggingWire={draggingWire}
+            highlightedNodes={highlightedNodes}
+            highlightedPort={hoveringPort}
+            portPositions={nodePortPositions}
+            draggingNode={draggingNodes.length > 0}
+          />
+        )}
         {hoveringPort && hoveringShowPortInfo && (
           <PortInfo floatingStyles={floatingStyles} ref={refs.setFloating} port={hoveringPort} />
         )}

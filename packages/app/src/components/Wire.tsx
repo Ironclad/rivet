@@ -37,13 +37,10 @@ export const ConditionallyRenderWire: FC<WireProps> = ({
     return null;
   }
 
-  const start = getNodePortPosition(outputNode, connection.outputId, false, portPositions);
-  const end = getNodePortPosition(inputNode, connection.inputId, true, portPositions);
+  const [outputCacheKey, inputCacheKey] = getConnectionCacheKeys(connection);
 
-  // Optimization might not be needed
-  // if (!lineCrossesViewport(canvasToClientPosition(start.x, start.y), canvasToClientPosition(end.x, end.y))) {
-  //   return null;
-  // }
+  const start = getNodePortPosition(outputNode, connection.outputId, outputCacheKey, portPositions);
+  const end = getNodePortPosition(inputNode, connection.inputId, inputCacheKey, portPositions);
 
   return (
     <ErrorBoundary fallback={<></>}>
@@ -71,7 +68,9 @@ export const PartialWire: FC<{ connection: PartialConnection; portPositions: Por
     return null;
   }
 
-  const start = getNodePortPosition(node, connection.portId, false, portPositions);
+  const cacheKey = `${connection.nodeId}-output-${connection.portId}`;
+
+  const start = getNodePortPosition(node, connection.portId, cacheKey, portPositions);
   const end = { x: connection.toX, y: connection.toY };
 
   return (
@@ -116,7 +115,7 @@ Wire.displayName = 'Wire';
 export function getNodePortPosition(
   node: ChartNode,
   portId: PortId,
-  portIsInput: boolean,
+  cacheKey: string,
   portPositions: PortPositions,
 ): { x: number; y: number } {
   if (!node) {
@@ -124,8 +123,7 @@ export function getNodePortPosition(
   }
 
   if (portId) {
-    const key = `${node.id}-${portIsInput ? 'input' : 'output'}-${portId}`;
-    const portPosition = portPositions[key];
+    const portPosition = portPositions[cacheKey];
     if (portPosition) {
       return { x: portPosition.x, y: portPosition.y };
     } else {
@@ -137,4 +135,22 @@ export function getNodePortPosition(
   }
 
   return { x: 0, y: 0 };
+}
+
+const cacheKeysByConnection = new WeakMap<NodeConnection, readonly [string, string]>();
+
+export function getConnectionCacheKeys(connection: NodeConnection): readonly [string, string] {
+  const cached = cacheKeysByConnection.get(connection);
+  if (cached) {
+    return cached;
+  }
+
+  const cacheKeys = [
+    `${connection.outputNodeId}-output-${connection.outputId}`,
+    `${connection.inputNodeId}-input-${connection.inputId}`,
+  ] as const;
+
+  cacheKeysByConnection.set(connection, cacheKeys);
+
+  return cacheKeys;
 }

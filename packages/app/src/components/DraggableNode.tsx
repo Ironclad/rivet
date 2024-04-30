@@ -16,6 +16,7 @@ import { type ProcessDataForNode } from '../state/dataFlow';
 import { type DraggingWireDef } from '../state/graphBuilder';
 
 interface DraggableNodeProps {
+  renderSkeleton?: boolean;
   heightCache: HeightCache;
   node: ChartNode;
   connections?: NodeConnection[];
@@ -32,6 +33,7 @@ interface DraggableNodeProps {
   processPage: number | 'latest';
   draggingWire?: DraggingWireDef;
   isZoomedOut: boolean;
+  isReallyZoomedOut: boolean;
   isPinned: boolean;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
   onNodeSelected?: (node: ChartNode, multi: boolean) => void;
@@ -66,7 +68,9 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
   processPage,
   draggingWire,
   isZoomedOut,
+  isReallyZoomedOut,
   isPinned,
+  renderSkeleton,
   onWireStartDrag,
   onWireEndDrag,
   onNodeSelected,
@@ -97,7 +101,9 @@ export const DraggableNode: FC<DraggableNodeProps> = ({
         processPage={processPage}
         draggingWire={draggingWire}
         isZoomedOut={isZoomedOut}
+        isReallyZoomedOut={isReallyZoomedOut}
         isPinned={isPinned}
+        renderSkeleton={renderSkeleton}
         onWireEndDrag={onWireEndDrag}
         onWireStartDrag={onWireStartDrag}
         onSelectNode={useStableCallback((multi: boolean) => {

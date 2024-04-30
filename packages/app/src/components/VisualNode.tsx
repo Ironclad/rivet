@@ -55,13 +55,14 @@ export type VisualNodeProps = {
   isDragging?: boolean;
   isOverlay?: boolean;
   isSelected?: boolean;
-  scale?: number;
   isKnownNodeType: boolean;
   isPinned: boolean;
   lastRun?: ProcessDataForNode[];
   processPage: number | 'latest';
   draggingWire?: DraggingWireDef;
   isZoomedOut: boolean;
+  isReallyZoomedOut: boolean;
+  renderSkeleton?: boolean;
   onWireStartDrag?: (
     event: MouseEvent<HTMLElement>,
     startNodeId: NodeId,
@@ -106,13 +107,14 @@ export const VisualNode = memo(
         yDelta = 0,
         isDragging,
         isOverlay,
-        scale,
         isSelected,
         isKnownNodeType,
         isPinned,
         lastRun,
         processPage,
         isZoomedOut,
+        isReallyZoomedOut,
+        renderSkeleton,
         onWireEndDrag,
         onWireStartDrag,
         onSelectNode,
@@ -143,7 +145,7 @@ export const VisualNode = memo(
 
         const style: CSSProperties = {
           opacity: isDragging ? '0' : '',
-          transform: `translate(${node.visualData.x + xDelta}px, ${node.visualData.y + yDelta}px) scale(${scale ?? 1})`,
+          transform: `translate(${node.visualData.x + xDelta}px, ${node.visualData.y + yDelta}px) scale(${1})`,
           zIndex: isComment ? -10000 : node.visualData.zIndex ?? 0,
           width: node.visualData.width,
           height: isComment ? asCommentNode.data.height : undefined,
@@ -162,11 +164,14 @@ export const VisualNode = memo(
         yDelta,
         node.visualData.width,
         isDragging,
-        scale,
         node.visualData.zIndex,
         isComment,
         asCommentNode.data.height,
       ]);
+
+      if (renderSkeleton) {
+        return <div className="node-skeleton" style={style} {...nodeAttributes} />;
+      }
 
       const nodeRef = (refValue: HTMLDivElement | null) => {
         if (typeof ref === 'function') {
@@ -175,8 +180,6 @@ export const VisualNode = memo(
           ref.current = refValue;
         }
       };
-
-      // const isZoomedOut = !isComment && zoom < 0.4;
 
       const selectedProcessRun =
         lastRun && lastRun.length > 0
@@ -222,6 +225,7 @@ export const VisualNode = memo(
               isKnownNodeType={isKnownNodeType}
               lastRun={lastRun}
               processPage={processPage}
+              isReallyZoomedOut={isReallyZoomedOut}
             />
           ) : (
             <NormalVisualNodeContent
@@ -255,6 +259,7 @@ const ZoomedOutVisualNodeContent: FC<{
   isKnownNodeType: boolean;
   lastRun?: ProcessDataForNode[];
   processPage: number | 'latest';
+  isReallyZoomedOut: boolean;
   onSelectNode?: (multi: boolean) => void;
   onStartEditing?: () => void;
   onWireStartDrag?: (event: MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => void;
@@ -281,6 +286,7 @@ const ZoomedOutVisualNodeContent: FC<{
     isKnownNodeType,
     lastRun,
     processPage,
+    isReallyZoomedOut,
     onSelectNode,
     onStartEditing,
     onWireStartDrag,
@@ -316,48 +322,52 @@ const ZoomedOutVisualNodeContent: FC<{
     return (
       <>
         <div className="node-title">
-          <div className="grab-area" {...handleAttributes} onClick={handleGrabClick}>
-            {node.isSplitRun ? <GitForkLine /> : <></>}
-            <div className="title-text">{node.title}</div>
-          </div>
-          <div className="title-controls">
-            <div className="last-run-status">
-              {selectedProcessRun?.status ? (
-                match(selectedProcessRun.status)
-                  .with({ type: 'ok' }, () => (
-                    <div className="success">
-                      <SendIcon />
-                    </div>
-                  ))
-                  .with({ type: 'error' }, () => (
-                    <div className="error">
-                      <SendIcon />
-                    </div>
-                  ))
-                  .with({ type: 'running' }, () => (
-                    <div className="running">
-                      <LoadingSpinner />
-                    </div>
-                  ))
-                  .with({ type: 'interrupted' }, () => (
-                    <div className="interrupted">
-                      <SendIcon />
-                    </div>
-                  ))
-                  .with({ type: 'notRan' }, () => (
-                    <div className="not-ran">
-                      <SendIcon />
-                    </div>
-                  ))
-                  .exhaustive()
-              ) : (
-                <></>
-              )}
+          {!isReallyZoomedOut && (
+            <div className="grab-area" {...handleAttributes} onClick={handleGrabClick}>
+              {node.isSplitRun ? <GitForkLine /> : <></>}
+              <div className="title-text">{node.title}</div>
             </div>
-            <button className="edit-button" onClick={handleEditClick} onMouseDown={handleEditMouseDown} title="Edit">
-              <SettingsCogIcon />
-            </button>
-          </div>
+          )}
+          {!isReallyZoomedOut && (
+            <div className="title-controls">
+              <div className="last-run-status">
+                {selectedProcessRun?.status ? (
+                  match(selectedProcessRun.status)
+                    .with({ type: 'ok' }, () => (
+                      <div className="success">
+                        <SendIcon />
+                      </div>
+                    ))
+                    .with({ type: 'error' }, () => (
+                      <div className="error">
+                        <SendIcon />
+                      </div>
+                    ))
+                    .with({ type: 'running' }, () => (
+                      <div className="running">
+                        <LoadingSpinner />
+                      </div>
+                    ))
+                    .with({ type: 'interrupted' }, () => (
+                      <div className="interrupted">
+                        <SendIcon />
+                      </div>
+                    ))
+                    .with({ type: 'notRan' }, () => (
+                      <div className="not-ran">
+                        <SendIcon />
+                      </div>
+                    ))
+                    .exhaustive()
+                ) : (
+                  <></>
+                )}
+              </div>
+              <button className="edit-button" onClick={handleEditClick} onMouseDown={handleEditMouseDown} title="Edit">
+                <SettingsCogIcon />
+              </button>
+            </div>
+          )}
         </div>
 
         {isKnownNodeType && (

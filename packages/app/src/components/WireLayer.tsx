@@ -1,8 +1,8 @@
-import { type FC, useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import { type FC, useCallback, useEffect, useLayoutEffect, useState, useMemo } from 'react';
 import { type NodeConnection, type NodeId, type PortId } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
-import { ConditionallyRenderWire, PartialWire } from './Wire.js';
-import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
+import { ConditionallyRenderWire, PartialWire, getConnectionCacheKeys, getNodePortPosition } from './Wire.js';
+import { canvasToClientPosition, useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { draggingWireClosestPortState } from '../state/graphBuilder.js';
@@ -12,6 +12,7 @@ import { type PortPositions } from './NodeCanvas';
 import { type RunDataByNodeId, lastRunDataByNodeState, selectedProcessPageNodesState } from '../state/dataFlow';
 import select from '@atlaskit/select/dist/types/entry-points/select';
 import { useStableCallback } from '../hooks/useStableCallback';
+import { lineCrossesViewport } from '../utils/lineClipping';
 
 const wiresStyles = css`
   width: 100%;
@@ -134,10 +135,34 @@ export const WireLayer: FC<WireLayerProps> = ({
 
   useLayoutEffect(() => {}, [draggingWire, mousePosition.x, mousePosition.y, setClosestPort]);
 
-  const { canvasPosition, clientToCanvasPosition } = useCanvasPositioning();
+  const { canvasPosition, clientToCanvasPosition, canvasToClientPosition } = useCanvasPositioning();
   const mousePositionCanvas = clientToCanvasPosition(mousePosition.x, mousePosition.y);
 
   const nodesById = useRecoilValue(nodesByIdState);
+
+  // Despite having to run getNodePortPositions in ConditionallyRenderWire, it's still faster to filter here
+  // using lineCrossesViewport, especially for gigantic graphs when zoomed in. Avoiding rendering thousands of
+  // <ErrorBoundary> and <ConditionallyRenderWire> helps with the performance.
+  const renderableWires = useMemo(() => {
+    return connections.filter((connection) => {
+      const inputNode = nodesById[connection.inputNodeId];
+      const outputNode = nodesById[connection.outputNodeId];
+
+      if (!inputNode || !outputNode) {
+        return false;
+      }
+
+      const [outputCacheKey, inputCacheKey] = getConnectionCacheKeys(connection);
+
+      const start = getNodePortPosition(outputNode, connection.outputId, outputCacheKey, portPositions);
+      const end = getNodePortPosition(inputNode, connection.inputId, inputCacheKey, portPositions);
+
+      const startClient = canvasToClientPosition(start.x, start.y);
+      const endClient = canvasToClientPosition(end.x, end.y);
+
+      return lineCrossesViewport(startClient, endClient);
+    });
+  }, [nodesById, canvasToClientPosition, connections, portPositions]);
 
   return (
     <svg css={wiresStyles}>
@@ -171,7 +196,7 @@ export const WireLayer: FC<WireLayerProps> = ({
             )}
           </ErrorBoundary>
         )}
-        {connections.map((connection) => {
+        {renderableWires.map((connection) => {
           const isHighlightedNode =
             highlightedNodes?.includes(connection.inputNodeId) || highlightedNodes?.includes(connection.outputNodeId);
 
