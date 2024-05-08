@@ -28,6 +28,8 @@ export type HttpCallNodeData = {
   body: string;
   useBodyInput?: boolean;
 
+  isBinaryOutput?: boolean;
+
   errorOnNon200?: boolean;
 };
 
@@ -93,17 +95,29 @@ export class HttpCallNodeImpl extends NodeImpl<HttpCallNode> {
   }
 
   getOutputDefinitions(): NodeOutputDefinition[] {
-    return [
-      {
-        dataType: 'string',
-        id: 'res_body' as PortId,
-        title: 'Body',
-      },
-      {
-        dataType: 'object',
-        id: 'json' as PortId,
-        title: 'JSON',
-      },
+    const outputDefinitions: NodeOutputDefinition[] = [];
+    if (this.data.isBinaryOutput) {
+      outputDefinitions.push({
+        dataType: 'binary',
+        id: 'binary' as PortId,
+        title: 'Binary',
+      });
+    } else {
+      outputDefinitions.push(
+        {
+          dataType: 'string',
+          id: 'res_body' as PortId,
+          title: 'Body',
+        },
+        {
+          dataType: 'object',
+          id: 'json' as PortId,
+          title: 'JSON',
+        },
+      );
+    }
+
+    outputDefinitions.push(
       {
         dataType: 'number',
         id: 'statusCode' as PortId,
@@ -114,7 +128,9 @@ export class HttpCallNodeImpl extends NodeImpl<HttpCallNode> {
         id: 'res_headers' as PortId,
         title: 'Headers',
       },
-    ];
+    );
+
+    return outputDefinitions;
   }
 
   getEditors(): EditorDefinition<HttpCallNode>[] {
@@ -150,6 +166,11 @@ export class HttpCallNodeImpl extends NodeImpl<HttpCallNode> {
         dataKey: 'body',
         useInputToggleDataKey: 'useBodyInput',
         language: 'json',
+      },
+      {
+        type: 'toggle',
+        label: 'Whether response body is expected to be a binary',
+        dataKey: 'isBinaryOutput',
       },
       {
         type: 'toggle',
@@ -244,24 +265,30 @@ export class HttpCallNodeImpl extends NodeImpl<HttpCallNode> {
         },
       };
 
-      const responseBody = await response.text();
-
-      output['res_body' as PortId] = {
-        type: 'string',
-        value: responseBody,
-      };
-
-      if (response.headers.get('content-type')?.includes('application/json')) {
-        const jsonData = JSON.parse(responseBody);
-        output['json' as PortId] = {
-          type: 'object',
-          value: jsonData,
+      if (this.data.isBinaryOutput) {
+        const responseBlob = await response.blob();
+        output['binary' as PortId] = {
+          type: 'binary',
+          value: new Uint8Array(await responseBlob.arrayBuffer()),
         };
       } else {
-        output['json' as PortId] = {
-          type: 'control-flow-excluded',
-          value: undefined,
+        const responseText = await response.text();
+        output['res_body' as PortId] = {
+          type: 'string',
+          value: responseText,
         };
+        if (response.headers.get('content-type')?.includes('application/json')) {
+          const jsonData = JSON.parse(responseText);
+          output['json' as PortId] = {
+            type: 'object',
+            value: jsonData,
+          };
+        } else {
+          output['json' as PortId] = {
+            type: 'control-flow-excluded',
+            value: undefined,
+          };
+        }
       }
 
       return output;

@@ -205,7 +205,14 @@ const scalarRenderers: {
       </div>
     );
   },
-  binary: ({ value }) => <>Binary (length {value.value.length.toLocaleString()})</>,
+  binary: ({ value }) => {
+    // FIXME: Coercing `value.value` into a `Uint8Array` here because `Uint8Array` gets parsed as an
+    //        object of shape `{ [index: number]: number }` when stringified via `JSON.stringify()`.
+    //        Consider coercing it back to `Uint8Array` at the entrypoints of the boundaries between
+    //        browser and node.js instead.
+    const coercedValue = new Uint8Array(Object.values(value.value));
+    return <>Binary (length {coercedValue.length.toLocaleString()})</>;
+  },
   audio: ({ value }) => {
     const {
       value: { data },
