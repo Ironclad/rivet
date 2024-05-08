@@ -12462,7 +12462,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/axios-npm-0.25.0-a1c287d287-7961f4386e.zip/node_modules/axios/",\
         "packageDependencies": [\
           ["axios", "npm:0.25.0"],\
-          ["follow-redirects", "virtual:35a845e191d5a8a7376e256c81e9e855732385142c5dc9e26f0b8393c2fb4673b81fed201d5f2c5ab96fb727142683ac03329eab760f2c4870779d4bda6abe8f#npm:1.15.2"]\
+          ["follow-redirects", "virtual:35a845e191d5a8a7376e256c81e9e855732385142c5dc9e26f0b8393c2fb4673b81fed201d5f2c5ab96fb727142683ac03329eab760f2c4870779d4bda6abe8f#npm:1.15.6"]\
         ],\
         "linkType": "HARD"\
       }],\
@@ -12470,7 +12470,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/axios-npm-1.5.0-35a845e191-128433020b.zip/node_modules/axios/",\
         "packageDependencies": [\
           ["axios", "npm:1.5.0"],\
-          ["follow-redirects", "virtual:35a845e191d5a8a7376e256c81e9e855732385142c5dc9e26f0b8393c2fb4673b81fed201d5f2c5ab96fb727142683ac03329eab760f2c4870779d4bda6abe8f#npm:1.15.2"],\
+          ["follow-redirects", "virtual:35a845e191d5a8a7376e256c81e9e855732385142c5dc9e26f0b8393c2fb4673b81fed201d5f2c5ab96fb727142683ac03329eab760f2c4870779d4bda6abe8f#npm:1.15.6"],\
           ["form-data", "npm:4.0.0"],\
           ["proxy-from-env", "npm:1.1.0"]\
         ],\
@@ -17438,17 +17438,17 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["follow-redirects", [\
-      ["npm:1.15.2", {\
-        "packageLocation": "./.yarn/cache/follow-redirects-npm-1.15.2-1ec1dd82be-8be0d39919.zip/node_modules/follow-redirects/",\
+      ["npm:1.15.6", {\
+        "packageLocation": "./.yarn/cache/follow-redirects-npm-1.15.6-50635fe51d-70c7612c4c.zip/node_modules/follow-redirects/",\
         "packageDependencies": [\
-          ["follow-redirects", "npm:1.15.2"]\
+          ["follow-redirects", "npm:1.15.6"]\
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:35a845e191d5a8a7376e256c81e9e855732385142c5dc9e26f0b8393c2fb4673b81fed201d5f2c5ab96fb727142683ac03329eab760f2c4870779d4bda6abe8f#npm:1.15.2", {\
-        "packageLocation": "./.yarn/__virtual__/follow-redirects-virtual-2e83874824/0/cache/follow-redirects-npm-1.15.2-1ec1dd82be-8be0d39919.zip/node_modules/follow-redirects/",\
+      ["virtual:35a845e191d5a8a7376e256c81e9e855732385142c5dc9e26f0b8393c2fb4673b81fed201d5f2c5ab96fb727142683ac03329eab760f2c4870779d4bda6abe8f#npm:1.15.6", {\
+        "packageLocation": "./.yarn/__virtual__/follow-redirects-virtual-8e23cc0b2f/0/cache/follow-redirects-npm-1.15.6-50635fe51d-70c7612c4c.zip/node_modules/follow-redirects/",\
         "packageDependencies": [\
-          ["follow-redirects", "virtual:35a845e191d5a8a7376e256c81e9e855732385142c5dc9e26f0b8393c2fb4673b81fed201d5f2c5ab96fb727142683ac03329eab760f2c4870779d4bda6abe8f#npm:1.15.2"],\
+          ["follow-redirects", "virtual:35a845e191d5a8a7376e256c81e9e855732385142c5dc9e26f0b8393c2fb4673b81fed201d5f2c5ab96fb727142683ac03329eab760f2c4870779d4bda6abe8f#npm:1.15.6"],\
           ["@types/debug", null],\
           ["debug", null]\
         ],\
@@ -18640,7 +18640,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["http-proxy", "npm:1.18.1"],\
           ["eventemitter3", "npm:4.0.7"],\
-          ["follow-redirects", "virtual:35a845e191d5a8a7376e256c81e9e855732385142c5dc9e26f0b8393c2fb4673b81fed201d5f2c5ab96fb727142683ac03329eab760f2c4870779d4bda6abe8f#npm:1.15.2"],\
+          ["follow-redirects", "virtual:35a845e191d5a8a7376e256c81e9e855732385142c5dc9e26f0b8393c2fb4673b81fed201d5f2c5ab96fb727142683ac03329eab760f2c4870779d4bda6abe8f#npm:1.15.6"],\
           ["requires-port", "npm:1.0.0"]\
         ],\
         "linkType": "HARD"\
