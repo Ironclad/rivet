@@ -12,8 +12,9 @@ import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { type InternalProcessContext } from '../ProcessContext.js';
 import { type EditorDefinition, type VectorDataValue } from '../../index.js';
 import { dedent } from 'ts-dedent';
-import { coerceTypeOptional } from '../../utils/coerceType.js';
 import { getIntegration } from '../../integrations/integrations.js';
+import { getInputOrData } from '../../utils/index.js';
+import { coerceTypeOptional } from '../../utils/coerceType.js';
 
 export type VectorStoreNode = ChartNode<'vectorStore', VectorStoreNodeData>;
 
@@ -133,18 +134,17 @@ export class VectorStoreNodeImpl extends NodeImpl<VectorStoreNode> {
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
-    const integration = this.data.useIntegrationInput
-      ? coerceTypeOptional(inputs['integration' as PortId], 'string') ?? this.data.integration
-      : this.data.integration;
-
+    const integration = getInputOrData(this.data, inputs, 'integration');
     const vectorDb = getIntegration('vectorDatabase', integration, context);
+
+    const indexUrl = getInputOrData(this.data, inputs, 'collectionId');
 
     if (inputs['vector' as PortId]?.type !== 'vector') {
       throw new Error(`Expected vector input, got ${inputs['vector' as PortId]?.type}`);
     }
 
     await vectorDb.store(
-      { type: 'string', value: this.data.collectionId },
+      { type: 'string', value: indexUrl },
       inputs['vector' as PortId] as VectorDataValue,
       inputs['data' as PortId]!,
       {

@@ -12,8 +12,8 @@ import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { type InternalProcessContext } from '../ProcessContext.js';
 import { type DataValue, type EditorDefinition, type VectorDataValue } from '../../index.js';
 import { dedent } from 'ts-dedent';
-import { coerceTypeOptional } from '../../utils/coerceType.js';
 import { getIntegration } from '../../integrations/integrations.js';
+import { getInputOrData } from '../../utils/index.js';
 
 export type VectorNearestNeighborsNode = ChartNode<'vectorNearestNeighbors', VectorNearestNeighborsNodeData>;
 
@@ -143,19 +143,18 @@ export class VectorNearestNeighborsNodeImpl extends NodeImpl<VectorNearestNeighb
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
-    const integration = this.data.useIntegrationInput
-      ? coerceTypeOptional(inputs['integration' as PortId], 'string') ?? this.data.integration
-      : this.data.integration;
+    const integration = getInputOrData(this.data, inputs, 'integration');
     const vectorDb = getIntegration('vectorDatabase', integration, context);
 
-    const k = this.data.useKInput ? coerceTypeOptional(inputs['k' as PortId], 'number') ?? this.data.k : this.data.k;
+    const indexUrl = getInputOrData(this.data, inputs, 'collectionId');
+    const k = getInputOrData(this.data, inputs, 'k', 'number');
 
     if (inputs['vector' as PortId]?.type !== 'vector') {
       throw new Error(`Expected vector input, got ${inputs['vector' as PortId]?.type}`);
     }
 
     const results = await vectorDb.nearestNeighbors(
-      { type: 'string', value: this.data.collectionId },
+      { type: 'string', value: indexUrl },
       inputs['vector' as PortId] as VectorDataValue,
       k,
     );
