@@ -21,7 +21,7 @@ jobs:
       # Make sure mac x64 gets the aarch64 toolchain too
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: aarch64-apple-darwin
+          targets: x86_64-apple-darwin,aarch64-apple-darwin
         if: matrix.platform == 'macos-latest'
       # Otherwise just make sure rust is set up
       - uses: dtolnay/rust-toolchain@stable
