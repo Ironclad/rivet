@@ -1656,7 +1656,7 @@ const RAW_RUNTIME_STATE =
           ["@panva/hkdf", "npm:1.1.1"],\
           ["@types/nodemailer", null],\
           ["cookie", "npm:0.5.0"],\
-          ["jose", "npm:4.15.4"],\
+          ["jose", "npm:4.15.5"],\
           ["nodemailer", null],\
           ["oauth4webapi", "npm:2.3.0"],\
           ["preact", "npm:10.11.3"],\
@@ -1675,7 +1675,7 @@ const RAW_RUNTIME_STATE =
           ["@panva/hkdf", "npm:1.1.1"],\
           ["@types/nodemailer", null],\
           ["cookie", "npm:0.5.0"],\
-          ["jose", "npm:4.15.4"],\
+          ["jose", "npm:4.15.5"],\
           ["nodemailer", null],\
           ["oauth4webapi", "npm:2.3.0"],\
           ["preact", "npm:10.11.3"],\
@@ -19819,10 +19819,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["jose", [\
-      ["npm:4.15.4", {\
-        "packageLocation": "./.yarn/cache/jose-npm-4.15.4-c518ec3da8-20fa941597.zip/node_modules/jose/",\
+      ["npm:4.15.5", {\
+        "packageLocation": "./.yarn/cache/jose-npm-4.15.5-15e487a3a1-17944fcc0d.zip/node_modules/jose/",\
         "packageDependencies": [\
-          ["jose", "npm:4.15.4"]\
+          ["jose", "npm:4.15.5"]\
         ],\
         "linkType": "HARD"\
       }]\
