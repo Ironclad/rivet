@@ -191,15 +191,18 @@ export function useLoadPackagePlugin(options: { onLog?: (message: string) => voi
 
     const main = packageJsonContents.main;
 
+    log(`Reading plugin main file: ${main}\n`);
     const mainContents = await readTextFile(`${pluginFilesPath}/${main}`);
 
     if (!mainContents) {
       throw new Error(`Plugin main file not found: ${spec.package}@${spec.tag}`);
     }
 
-    const b64Contents = btoa(mainContents);
+    log(`Converting plugin main file to base64\n`);
+    const b64Contents = await Rivet.uint8ArrayToBase64(new TextEncoder().encode(mainContents));
 
     try {
+      log(`Initializing plugin: ${spec.package}@${spec.tag}\n`);
       const pluginInitializer = (await import(
         /* @vite-ignore */ `data:application/javascript;base64,${b64Contents}`
       )) as {
