@@ -217,7 +217,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     nodePortPositions,
     canvasRef,
     recalculate: recalculatePortPositions,
-  } = useNodePortPositions({ enabled: shouldRenderWires });
+  } = useNodePortPositions({ enabled: shouldRenderWires, isDraggingNode: draggingNodes.length > 0 });
 
   useEffect(() => {
     recalculatePortPositions();
@@ -594,6 +594,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const isLargeGraph = nodes.length > 100;
   const debounceTime = isLargeGraph ? 500 : 50;
 
+  const previousNodes = useRef<ChartNode[]>([]);
+
   useLayoutEffect(() => {
     const recalculateVisibleNodes = () => {
       let numVisible = 0;
@@ -607,10 +609,6 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
             node.visualData.y < viewportBounds.top - 500 ||
             node.visualData.y > viewportBounds.bottom + 500) &&
           !isPinned;
-
-        // if (numVisible > 300) {
-        //   shouldHide = true;
-        // }
 
         shouldShowNodeBasedOnPosition.set(node, !shouldHide);
 
@@ -630,6 +628,11 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     movingRerenderTimeout.current = window.setTimeout(() => {
       recalculateVisibleNodes();
     }, debounceTime);
+
+    if (previousNodes.current !== nodes) {
+      previousNodes.current = nodes;
+      recalculateVisibleNodes();
+    }
   }, [
     pinnedNodes,
     nodes,

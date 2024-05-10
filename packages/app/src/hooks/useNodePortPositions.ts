@@ -10,7 +10,7 @@ import { nodesByIdState } from '../state/graph';
  * It's done this way with a nodePortPositions state using rounded numbers for performance reasons.
  * In the ideal case, no position will have changed, so the state does not update.
  */
-export function useNodePortPositions({ enabled }: { enabled: boolean }) {
+export function useNodePortPositions({ enabled, isDraggingNode }: { enabled: boolean; isDraggingNode: boolean }) {
   const [nodePortPositions, setNodePortPositions] = useState<PortPositions>({});
   const nodesById = useRecoilValue(nodesByIdState);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -60,7 +60,9 @@ export function useNodePortPositions({ enabled }: { enabled: boolean }) {
         y: Math.round((nodePos.y + positionFromNode.top + elem.offsetHeight / 2) * precision) / precision,
       };
 
-      if (nodePortPositions[key]?.x !== pos.x || nodePortPositions[key]?.y !== pos.y) {
+      const prevPos = nodePortPositions[key];
+
+      if (prevPos?.x !== pos.x || prevPos?.y !== pos.y) {
         changed = true;
         newPositions[key] = pos;
       }
@@ -68,57 +70,64 @@ export function useNodePortPositions({ enabled }: { enabled: boolean }) {
       seen.add(key);
     }
 
-    const overlayPortElements = canvasRef.current?.querySelectorAll(
-      '.overlayNode .port-circle',
-    ) as NodeListOf<HTMLDivElement>;
+    // Fixes a rendering issue where when you drag a node, for one frame the node.visualData.x and node.visualData.y have been updated
+    // to the new position, but the overlay is still active moving the node by the same amount, which causes the wires to flicker
+    // as for one frame they move double the distance.
+    if (isDraggingNode) {
+      const overlayPortElements = canvasRef.current?.querySelectorAll(
+        '.overlayNode .port-circle',
+      ) as NodeListOf<HTMLDivElement>;
 
-    for (const elem of overlayPortElements) {
-      const nodeElem = elem.closest('.node') as HTMLElement;
+      for (const elem of overlayPortElements) {
+        const nodeElem = elem.closest('.node') as HTMLElement;
 
-      const portId = elem.dataset.portid! as PortId;
-      const nodeId = elem.dataset.nodeid! as NodeId;
-      const portType = elem.dataset.porttype! as 'input' | 'output';
-      const key = `${nodeId}-${portType}-${portId}`;
+        const portId = elem.dataset.portid! as PortId;
+        const nodeId = elem.dataset.nodeid! as NodeId;
+        const portType = elem.dataset.porttype! as 'input' | 'output';
+        const key = `${nodeId}-${portType}-${portId}`;
 
-      if (seen.has(key)) {
-        return;
-      }
+        if (seen.has(key)) {
+          return;
+        }
 
-      const node = nodesById[nodeId]!;
+        const node = nodesById[nodeId]!;
 
-      const nodePos = { x: node.visualData.x, y: node.visualData.y };
+        const nodePos = { x: node.visualData.x, y: node.visualData.y };
 
-      // For the overlay nodes, they have an additional transform on the parent element, so we need to account for that
-      const overlayPositionedElement = nodeElem.offsetParent as HTMLDivElement;
-      const translate3dRegexMatch = overlayPositionedElement?.style.transform?.match(
-        /translate3d\((?:([\d.-]+)(?:px?)), *(?:([\d.-]+)(?:px?)), *(?:([\d.-]+)(?:px?))?\)/,
-      );
-      const [, x, y] = translate3dRegexMatch ?? [];
+        // For the overlay nodes, they have an additional transform on the parent element, so we need to account for that
+        const overlayPositionedElement = nodeElem.offsetParent as HTMLDivElement;
+        const translate3dRegexMatch = overlayPositionedElement?.style.transform?.match(
+          /translate3d\((?:([\d.-]+)(?:px?)), *(?:([\d.-]+)(?:px?)), *(?:([\d.-]+)(?:px?))?\)/,
+        );
+        const [, x, y] = translate3dRegexMatch ?? [];
 
-      if (x && y) {
-        nodePos.x += parseFloat(x || '0');
-        nodePos.y += parseFloat(y || '0');
-      }
+        if (x && y) {
+          nodePos.x += parseFloat(x || '0');
+          nodePos.y += parseFloat(y || '0');
+        }
 
-      const positionFromNode = { left: elem.offsetLeft, top: elem.offsetTop };
-      let elemParent = elem.offsetParent as HTMLElement | undefined;
+        const positionFromNode = { left: elem.offsetLeft, top: elem.offsetTop };
+        let elemParent = elem.offsetParent as HTMLElement | undefined;
 
-      while (!elemParent?.classList.contains('node')) {
-        positionFromNode.left += elemParent?.offsetLeft ?? 0;
-        positionFromNode.top += elemParent?.offsetTop ?? 0;
-        elemParent = elemParent?.offsetParent as HTMLElement | undefined;
-      }
+        while (!elemParent?.classList.contains('node')) {
+          positionFromNode.left += elemParent?.offsetLeft ?? 0;
+          positionFromNode.top += elemParent?.offsetTop ?? 0;
+          elemParent = elemParent?.offsetParent as HTMLElement | undefined;
+        }
 
-      const precision = 10;
+        const precision = 10;
 
-      const pos = {
-        x: Math.round((nodePos.x + positionFromNode.left + elem.offsetWidth / 2) * precision) / precision,
-        y: Math.round((nodePos.y + positionFromNode.top + elem.offsetHeight / 2) * precision) / precision,
-      };
+        const pos = {
+          x: Math.round((nodePos.x + positionFromNode.left + elem.offsetWidth / 2) * precision) / precision,
+          y: Math.round((nodePos.y + positionFromNode.top + elem.offsetHeight / 2) * precision) / precision,
+        };
 
-      if (nodePortPositions[key]?.x !== pos.x || nodePortPositions[key]?.y !== pos.y) {
-        changed = true;
-        newPositions[key] = pos;
+        const prevPos = nodePortPositions[key];
+
+        if (prevPos?.x !== pos.x || prevPos?.y !== pos.y) {
+          changed = true;
+          newPositions[key] = pos;
+        }
       }
     }
 

@@ -10,6 +10,7 @@ import {
   globalRivetNodeRegistry,
   type NodeBody as RenderedNodeBody,
   getError,
+  type NodeId,
 } from '@ironclad/rivet-core';
 import { useMarkdown } from '../hooks/useMarkdown';
 import { match } from 'ts-pattern';
@@ -40,10 +41,13 @@ const UnknownNodeBodyWrapper = styled.div<{
   font-family: ${(props) => (props.fontFamily === 'monospace' ? "'Roboto Mono', monospace" : "'Roboto', sans-serif")};
 `;
 
+// Fixes flickering due to async rendering of node body by caching the last rendered body
+const previousRenderedBodyMap = new Map<NodeId, RenderedNodeBody>();
+
 const UnknownNodeBody: FC<{ heightCache: HeightCache; node: ChartNode }> = ({ heightCache, node }) => {
   const getUIContext = useGetRivetUIContext();
 
-  const [body, setBody] = useState<RenderedNodeBody | undefined>();
+  const [body, setBody] = useState<RenderedNodeBody | undefined>(previousRenderedBodyMap.get(node.id));
   const { ref, height } = useNodeBodyHeight(heightCache, node.id, !!body);
 
   useAsyncEffect(async () => {
@@ -53,6 +57,8 @@ const UnknownNodeBody: FC<{ heightCache: HeightCache; node: ChartNode }> = ({ he
       const renderedBody = await impl.getBody(await getUIContext({ node }));
 
       setBody(renderedBody);
+
+      previousRenderedBodyMap.set(node.id, renderedBody);
     } catch (err) {
       toast.error(`Failed to load body for node ${node.id}: ${getError(err).message}`);
     }
