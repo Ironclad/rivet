@@ -134,6 +134,14 @@ export const openaiModels = {
     },
     displayName: 'GPT-4 Vision (Preview)',
   },
+  'gpt-4o': {
+    maxTokens: 128000,
+    cost: {
+      prompt: 0.005,
+      completion: 0.015,
+    },
+    displayName: 'GPT-4o',
+  },
   'local-model': {
     maxTokens: Number.MAX_SAFE_INTEGER,
     cost: {
