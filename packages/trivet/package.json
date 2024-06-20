@@ -35,7 +35,7 @@
     "build:esm": "rimraf dist/esm dist/types dist/tsconfig.tsbuildinfo && tsc -b --verbose",
     "build:cjs": "rimraf dist/cjs && tsx ../core/bundle.esbuild.ts",
     "prepublishOnly": "yarn build && cp -r ../../LICENSE ../../README.md .",
-    "publish": "yarn npm publish",
+    "publish": "yarn npm publish --access public",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx ./src"
   },
   "dependencies": {
