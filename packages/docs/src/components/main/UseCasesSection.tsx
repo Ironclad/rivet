@@ -71,7 +71,7 @@ export const UseCasesSection: React.FC<{ id?: string }> = ({ id }) => {
         />
         <Quote
           attribution="Domenic Donato, VP of Technology"
-          linkUrl="https://www.assemblyai.com/"
+          linkUrl="https://www.assemblyai.com/?utm_source=rivet"
           logoAlt="AssemblyAI"
           logoUrl="img/use-case-quotes/logo-assemblyai.svg"
           profileAlt="Domenic Donato"

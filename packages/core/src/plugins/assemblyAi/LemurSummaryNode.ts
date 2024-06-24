@@ -16,7 +16,7 @@ import {
 } from '../../index.js';
 import {
   type LemurNodeData,
-  getApiKey,
+  getClient,
   getLemurParams,
   lemurEditorDefinitions,
   lemurTranscriptIdsInputDefinition,
@@ -94,8 +94,7 @@ export const LemurSummaryNodeImpl: PluginNodeImpl<LemurSummaryNode> = {
   },
 
   async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
-    const apiKey = getApiKey(context);
-    const client = new AssemblyAI({ apiKey });
+    const client = getClient(context);
     const params: LemurSummaryParams = getLemurParams(inputs, data);
 
     if (data.answer_format) {

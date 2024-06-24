@@ -1,3 +1,4 @@
+import { AssemblyAI } from 'assemblyai';
 import type { LemurBaseParams } from 'assemblyai';
 import {
   type AnyDataValue,
@@ -30,12 +31,18 @@ function getTranscriptIds(inputs: Inputs): string[] {
   throw new Error('Transcript IDs must be a string or string[] of transcript IDs.');
 }
 
-export function getApiKey(context: InternalProcessContext) {
+const userAgent = {
+  integration: {
+    name: 'Rivet',
+    version: '1.0.1',
+  },
+};
+export function getClient(context: InternalProcessContext): AssemblyAI {
   const apiKey = context.getPluginConfig('assemblyAiApiKey');
   if (!apiKey) {
     throw new Error('AssemblyAI API key not set.');
   }
-  return apiKey;
+  return new AssemblyAI({ apiKey, userAgent });
 }
 
 export function getLemurParams(inputs: Inputs, editorData: LemurNodeData): LemurBaseParams {
