@@ -95,6 +95,18 @@ export function coreCreateProcessor(project: Project, options: RunGraphOptions) 
     processor.on('nodeExcluded', options.onNodeExcluded);
   }
 
+  if (options.onGraphStart) {
+    processor.on('graphStart', options.onGraphStart);
+  }
+
+  if (options.onGraphError) {
+    processor.on('graphError', options.onGraphError);
+  }
+
+  if (options.onGraphFinish) {
+    processor.on('graphFinish', options.onGraphFinish);
+  }
+
   if (options.onPartialOutput) {
     processor.on('partialOutput', options.onPartialOutput);
   }
