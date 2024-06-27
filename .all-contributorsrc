@@ -394,6 +394,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "cyppan",
+      "name": "Cyprien Pannier",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1446201?v=4",
+      "profile": "https://github.com/cyppan",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
