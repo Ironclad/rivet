@@ -19,7 +19,7 @@ import {
   getClient,
   getLemurParams,
   lemurEditorDefinitions,
-  lemurTranscriptIdsInputDefinition,
+  lemurInputDefinitions,
 } from './lemurHelpers.js';
 import { pluginNodeDefinition } from '../../model/NodeDefinition.js';
 
@@ -50,7 +50,7 @@ export const LemurSummaryNodeImpl: PluginNodeImpl<LemurSummaryNode> = {
 
   getInputDefinitions(): NodeInputDefinition[] {
     return [
-      lemurTranscriptIdsInputDefinition,
+      ...lemurInputDefinitions,
       {
         id: 'context' as PortId,
         dataType: 'string',

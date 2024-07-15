@@ -23,7 +23,7 @@ import {
   getClient,
   getLemurParams,
   lemurEditorDefinitions,
-  lemurTranscriptIdsInputDefinition,
+  lemurInputDefinitions,
 } from './lemurHelpers.js';
 import { coerceType } from '../../utils/coerceType.js';
 import { pluginNodeDefinition } from '../../model/NodeDefinition.js';
@@ -58,7 +58,7 @@ export const LemurQaNodeImpl = {
 
   getInputDefinitions(): NodeInputDefinition[] {
     return [
-      lemurTranscriptIdsInputDefinition,
+      ...lemurInputDefinitions,
       {
         id: 'questions' as PortId,
         dataType: ['string', 'string[]', 'object', 'object[]', 'any', 'any[]'],

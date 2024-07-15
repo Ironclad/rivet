@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
-import { AssemblyAI, type LemurTaskParams } from 'assemblyai';
+import { type LemurTaskParams } from 'assemblyai';
 import {
   type ChartNode,
   type EditorDefinition,
@@ -19,7 +19,7 @@ import {
   getClient,
   getLemurParams,
   lemurEditorDefinitions,
-  lemurTranscriptIdsInputDefinition,
+  lemurInputDefinitions,
 } from './lemurHelpers.js';
 import { pluginNodeDefinition } from '../../model/NodeDefinition.js';
 import { coerceTypeOptional } from '../../utils/coerceType.js';
@@ -51,7 +51,7 @@ export const LemurTaskNodeImpl: PluginNodeImpl<LemurTaskNode> = {
 
   getInputDefinitions(): NodeInputDefinition[] {
     return [
-      lemurTranscriptIdsInputDefinition,
+      ...lemurInputDefinitions,
       {
         id: 'prompt' as PortId,
         dataType: 'string',
