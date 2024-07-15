@@ -90,7 +90,7 @@ export const pluginInfos: PluginInfo[] = [
     id: 'assemblyAi',
     name: 'AssemblyAI',
     description: dedent`
-      Use [AssemblyAI](https://www.assemblyai.com/) to build AI applications with voice data.
+      Use [AssemblyAI](https://www.assemblyai.com/?utm_source=rivet) to build AI applications with voice data.
 
       - [Transcribe audio files](https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/assemblyai#transcribe-audio-node)
       - [Summarize audio files using LeMUR](https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/assemblyai#lemur-summary-node)
@@ -98,7 +98,7 @@ export const pluginInfos: PluginInfo[] = [
       - [Extract action items from audio files using LeMUR](https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/assemblyai#lemur-action-items)
       - [Run custom LLM tasks against audio files using LeMUR](https://rivet.ironcladapp.com/docs/user-guide/plugins/built-in/assemblyai#lemur-custom-task)
 
-      Follow this [step-by-step tutorial to see these capabilities in action](https://www.assemblyai.com/blog/podcast-qa-application-rivet/).
+      Follow this [step-by-step tutorial to see these capabilities in action](https://www.assemblyai.com/blog/podcast-qa-application-rivet?utm_source=rivet).
     `,
     author: 'AssemblyAI',
     logoImage: AssemblyAiLogo,
@@ -278,8 +278,8 @@ export const pluginInfos: PluginInfo[] = [
     description: dedent`
       Adds several utilities nodes that help with concurrency, pipelines and iterations.
 
-      - Iterator node:  The iterator Node will map an array of input objects through a provided graph.  It allows for parallel execution with concurrency controls and caching.  
-      - Pipeline node: The PipelineNode will take and input and run it through a pipeline of graphs (stages).  Each stage's output will be the next graph's input.  In addition, the pipeline node can have optional pre/post graph.  
+      - Iterator node:  The iterator Node will map an array of input objects through a provided graph.  It allows for parallel execution with concurrency controls and caching.
+      - Pipeline node: The PipelineNode will take and input and run it through a pipeline of graphs (stages).  Each stage's output will be the next graph's input.  In addition, the pipeline node can have optional pre/post graph.
       - Pinecone Search/Upsert node: These nodes will allow you to search or upsert documents in a pinecone collection.  Allows for metadata, sparse vectors as optional inputs
     `,
     tag: 'latest',
@@ -300,5 +300,5 @@ export const pluginInfos: PluginInfo[] = [
     package: 'rivet-plugin-qdrant',
     tag: 'latest',
     logoImage: QdrantLogo,
-  }
+  },
 ];

@@ -1,6 +1,5 @@
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
-import { AssemblyAI } from 'assemblyai';
 import type { TranscribeParams, TranscriptParams } from 'assemblyai';
 import {
   type AnyDataValue,
@@ -18,7 +17,7 @@ import {
   type PortId,
   type StringDataValue,
 } from '../../index.js';
-import { getApiKey } from './lemurHelpers.js';
+import { getClient } from './lemurHelpers.js';
 import { pluginNodeDefinition } from '../../model/NodeDefinition.js';
 import { coerceType } from '../../utils/coerceType.js';
 
@@ -83,7 +82,7 @@ export const TranscribeAudioNodeImpl: PluginNodeImpl<TranscribeAudioNode> = {
         language: 'json',
         dataKey: 'transcriptParameters',
         helperMessage: `Configure additional parameters using a JSON object. This will override any other fields you have set.
-        For a detailed list of parameters, see [the AssemblyAI API documentation](https://www.assemblyai.com/docs/api-reference/transcript#create-a-transcript).`,
+        For a detailed list of parameters, see [the AssemblyAI API documentation](https://www.assemblyai.com/docs/api-reference/transcripts/submit?utm_source=rivet).`,
       },
     ];
   },
@@ -105,8 +104,7 @@ export const TranscribeAudioNodeImpl: PluginNodeImpl<TranscribeAudioNode> = {
     const input = inputs['audio' as PortId] as AudioDataValue | StringDataValue | AnyDataValue;
     if (!input) throw new Error('Audio input is required.');
 
-    const apiKey = getApiKey(context);
-    const client = new AssemblyAI({ apiKey });
+    const client = getClient(context);
 
     let audioUrl: string;
     if (input.type === 'audio') {

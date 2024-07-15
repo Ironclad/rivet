@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
-import { AssemblyAI, type LemurActionItemsParams } from 'assemblyai';
+import type { LemurActionItemsParams } from 'assemblyai';
 import {
   type ChartNode,
   type EditorDefinition,
@@ -17,10 +17,10 @@ import {
 import { pluginNodeDefinition } from '../../model/NodeDefinition.js';
 import {
   type LemurNodeData,
-  getApiKey,
+  getClient,
   getLemurParams,
   lemurEditorDefinitions,
-  lemurTranscriptIdsInputDefinition,
+  lemurInputDefinitions,
 } from './lemurHelpers.js';
 
 export type LemurActionItemsNode = ChartNode<'assemblyAiLemurActionItems', LemurActionItemsNodeData>;
@@ -48,7 +48,7 @@ export const LemurActionItemsNodeImpl: PluginNodeImpl<LemurActionItemsNode> = {
 
   getInputDefinitions(): NodeInputDefinition[] {
     return [
-      lemurTranscriptIdsInputDefinition,
+      ...lemurInputDefinitions,
       {
         id: 'context' as PortId,
         dataType: 'string',
@@ -92,8 +92,7 @@ export const LemurActionItemsNodeImpl: PluginNodeImpl<LemurActionItemsNode> = {
   },
 
   async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
-    const apiKey = getApiKey(context);
-    const client = new AssemblyAI({ apiKey });
+    const client = getClient(context);
 
     const params: LemurActionItemsParams = getLemurParams(inputs, data);
 

@@ -4248,7 +4248,7 @@ __metadata:
     "@types/yaml": "npm:^1.9.7"
     "@typescript-eslint/eslint-plugin": "npm:^6.9.0"
     "@typescript-eslint/parser": "npm:^6.9.0"
-    assemblyai: "npm:^4.4.2"
+    assemblyai: "npm:^4.6.0"
     autoevals: "npm:^0.0.26"
     crypto-js: "npm:^4.2.0"
     emittery: "npm:^1.0.1"
@@ -8249,12 +8249,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"assemblyai@npm:^4.4.2":
-  version: 4.4.2
-  resolution: "assemblyai@npm:4.4.2"
+"assemblyai@npm:^4.6.0":
+  version: 4.6.0
+  resolution: "assemblyai@npm:4.6.0"
   dependencies:
-    ws: "npm:^8.16.0"
-  checksum: 34ab153d34d61b0aadddedc6d9e6aee531931b4e5fc9ac9fb84181742b4f96559fe1cc806b30038fd505d2aa7eb6d49fef80ea0e390f3d66b0d23db0cbbba51b
+    ws: "npm:^8.17.1"
+  checksum: 332d7135c915b4f6a52107b4c3f92a7620cc72dccc322d54b790b6868c249a5ad04e7b62240c92bf87358f62fbbde6f2c451f24a3aad34896f49b06050f34502
   languageName: node
   linkType: hard
 
@@ -20846,9 +20846,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^8.16.0":
-  version: 8.16.0
-  resolution: "ws@npm:8.16.0"
+"ws@npm:^8.17.1":
+  version: 8.18.0
+  resolution: "ws@npm:8.18.0"
   peerDependencies:
     bufferutil: ^4.0.1
     utf-8-validate: ">=5.0.2"
@@ -20857,7 +20857,7 @@ __metadata:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 7c511c59e979bd37b63c3aea4a8e4d4163204f00bd5633c053b05ed67835481995f61a523b0ad2b603566f9a89b34cb4965cb9fab9649fbfebd8f740cea57f17
+  checksum: 70dfe53f23ff4368d46e4c0b1d4ca734db2c4149c6f68bc62cb16fc21f753c47b35fcc6e582f3bdfba0eaeb1c488cddab3c2255755a5c3eecb251431e42b3ff6
   languageName: node
   linkType: hard
 
