@@ -172,7 +172,7 @@ export const ToolCallHandlers: FC<ToolCallHandlersProps> = ({
                     }
                     isDisabled={isDisabled}
                     isReadOnly={isReadonly}
-                    placeholder="Tool ID"
+                    placeholder="Tool/Function"
                     style={{ marginRight: '8px' }}
                   />
                   <GraphSelectorSelect

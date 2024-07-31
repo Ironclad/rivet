@@ -70,6 +70,7 @@ import replaceDatasetNodeImage from '../assets/node_images/replace_dataset_node.
 import listGraphsNodeImage from '../assets/node_images/list_graphs_node.png';
 import graphReferenceNodeImage from '../assets/node_images/graph_reference_node.png';
 import callGraphNodeImage from '../assets/node_images/call_graph_node.png';
+import delegateFunctionCallNodeImage from '../assets/node_images/delegate_function_call_node.png';
 
 export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
   return {
@@ -143,5 +144,6 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     listGraphs: listGraphsNodeImage,
     graphReference: graphReferenceNodeImage,
     callGraph: callGraphNodeImage,
+    delegateFunctionCall: delegateFunctionCallNodeImage,
   };
 };

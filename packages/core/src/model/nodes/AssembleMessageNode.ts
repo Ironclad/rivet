@@ -193,6 +193,7 @@ export class AssembleMessageNodeImpl extends NodeImpl<AssembleMessageNode> {
           type,
           message: [],
           function_call: undefined, // Not supported yet in Assemble Message node
+          function_calls: undefined, // Not supported yet in Assemble Message node
         }),
       )
       .with(

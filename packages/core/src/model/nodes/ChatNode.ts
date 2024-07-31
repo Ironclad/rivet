@@ -97,7 +97,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         width: 200,
       },
       data: {
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o-mini',
         useModelInput: false,
 
         temperature: 0.5,
@@ -962,10 +962,19 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                         id: functionCalls[0][0]!.id,
                       }
                     : undefined,
+                  function_calls: functionCalls[0]
+                    ? functionCalls[0].map((fc) => ({
+                        name: fc.name,
+                        arguments: fc.arguments,
+                        id: fc.id,
+                      }))
+                    : undefined,
                 },
               ],
             };
           }
+
+          console.dir({ output });
 
           const endTime = Date.now();
 

@@ -601,7 +601,8 @@ export const nodeStyles = css`
     /* background-color: rgba(1, 1, 1, 0.5); */
   }
 
-  .node-output .function-call {
+  .node-output .function-call,
+  .node-output .function-calls {
     h4 {
       margin-top: 0;
       margin-bottom: 0;

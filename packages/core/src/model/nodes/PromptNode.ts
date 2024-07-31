@@ -10,6 +10,7 @@ import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import {
   type AssistantChatMessage,
+  type AssistantChatMessageFunctionCall,
   type ChatMessage,
   type EditorDefinition,
   type Inputs,
@@ -245,7 +246,8 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
         return {
           type,
           message: outputValue,
-          function_call: functionCall as AssistantChatMessage['function_call'],
+          function_call: functionCall as AssistantChatMessageFunctionCall,
+          function_calls: functionCall ? [functionCall as AssistantChatMessageFunctionCall] : undefined,
         };
       })
       .with(

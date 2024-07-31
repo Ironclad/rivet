@@ -21,16 +21,26 @@ export type UserChatMessage = {
   message: ChatMessageMessagePart | ChatMessageMessagePart[];
 };
 
+export type AssistantChatMessageFunctionCall = {
+  id: string | undefined;
+  name: string;
+  arguments: string; // JSON string
+};
+
+export type ParsedAssistantChatMessageFunctionCall = {
+  id: string | undefined;
+  name: string;
+  arguments: Record<string, unknown>;
+};
+
 export type AssistantChatMessage = {
   type: 'assistant';
   message: ChatMessageMessagePart | ChatMessageMessagePart[];
-  function_call:
-    | {
-        id: string | undefined;
-        name: string;
-        arguments: string; // JSON string
-      }
-    | undefined;
+
+  /** @deprecated use function_calls instead */
+  function_call: AssistantChatMessageFunctionCall | undefined;
+
+  function_calls: AssistantChatMessageFunctionCall[] | undefined;
 };
 
 export type FunctionResponseChatMessage = {

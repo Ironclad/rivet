@@ -142,13 +142,26 @@ const scalarRenderers: {
             <em>assistant</em>
           </header>
           {messageContent}
-          {message.function_call && (
-            <div className="function-call">
-              <h4>Function Call:</h4>
+          {message.function_calls ? (
+            <div className="function-calls">
+              <h4>Function Calls:</h4>
               <div className="pre-wrap">
-                <RenderDataValue value={inferType(message.function_call)} />
+                {message.function_calls.map((fc, i) => (
+                  <div key={i}>
+                    <RenderDataValue value={inferType(fc)} />
+                  </div>
+                ))}
               </div>
             </div>
+          ) : (
+            message.function_call && (
+              <div className="function-call">
+                <h4>Function Call:</h4>
+                <div className="pre-wrap">
+                  <RenderDataValue value={inferType(message.function_call)} />
+                </div>
+              </div>
+            )
           )}
         </div>
       ))

@@ -142,6 +142,22 @@ export const openaiModels = {
     },
     displayName: 'GPT-4o',
   },
+  'gpt-4o-mini': {
+    maxTokens: 128000,
+    cost: {
+      prompt: 0.00015,
+      completion: 0.00075,
+    },
+    displayName: 'GPT-4o mini',
+  },
+  'gpt-4o-mini-2024-07-18': {
+    maxTokens: 128000,
+    cost: {
+      prompt: 0.00015,
+      completion: 0.00075,
+    },
+    displayName: 'GPT-4o mini (2024-07-18)',
+  },
   'local-model': {
     maxTokens: Number.MAX_SAFE_INTEGER,
     cost: {

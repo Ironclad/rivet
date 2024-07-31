@@ -88,7 +88,7 @@ export class CallGraphNodeImpl extends NodeImpl<CallGraphNode> {
   static getUIData(): NodeUIData {
     return {
       infoBoxBody: dedent`
-        Gets a reference to another graph, that can be used to pass around graphs to call using a Call Graph node.
+        Calls another graph and passes inputs to it. Use in combination with the Graph Reference node to call dynamic graphs.
       `,
       infoBoxTitle: 'Call Graph Node',
       contextMenuTitle: 'Call Graph',

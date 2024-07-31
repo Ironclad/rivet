@@ -53,15 +53,21 @@ export async function chatMessageToOpenAIChatCompletionMessage(
         role: m.type,
         content: onlyStringContent(m),
 
-        tool_calls: m.function_call
-          ? [
-              {
-                id: m.function_call.id ?? 'unknown_function_call',
-                type: 'function',
-                function: m.function_call,
-              },
-            ]
-          : undefined,
+        tool_calls: m.function_calls
+          ? m.function_calls.map((fc) => ({
+              id: fc.id ?? 'unknown_function_call',
+              type: 'function',
+              function: fc,
+            }))
+          : m.function_call
+            ? [
+                {
+                  id: m.function_call.id ?? 'unknown_function_call',
+                  type: 'function',
+                  function: m.function_call,
+                },
+              ]
+            : undefined,
       }),
     )
     .with(
