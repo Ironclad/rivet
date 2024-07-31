@@ -54,7 +54,7 @@ Rivet has embedding/vector database support for:
 
 Rivet also supports these additional integrations:
 
-- [Speech-to-Text from AssemblyAI](https://www.assemblyai.com/products/speech-to-text?utm_source=rivet)
+- [Speech-to-Text from AssemblyAI](https://www.assemblyai.com/discover/products/speech-to-text?utm_source=rivet)
 
 For more information on how to use the application and all of its capabilities, see [the documentation](https://rivet.ironcladapp.com/docs)!
 
@@ -162,6 +162,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://aschen.tech"><img src="https://avatars.githubusercontent.com/u/4447392?v=4?s=100" width="100px;" alt="Adrien Maret"/><br /><sub><b>Adrien Maret</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=Aschen" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ShravanSunder"><img src="https://avatars.githubusercontent.com/u/5294949?v=4?s=100" width="100px;" alt="Shravan Sunder"/><br /><sub><b>Shravan Sunder</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=ShravanSunder" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.liaujianjie.com"><img src="https://avatars.githubusercontent.com/u/3143132?v=4?s=100" width="100px;" alt="Liau Jian Jie"/><br /><sub><b>Liau Jian Jie</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=liaujianjie" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/d-debrock"><img src="https://avatars.githubusercontent.com/u/38040249?v=4?s=100" width="100px;" alt="d-debrock"/><br /><sub><b>d-debrock</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=d-debrock" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/cyppan"><img src="https://avatars.githubusercontent.com/u/1446201?v=4?s=100" width="100px;" alt="Cyprien Pannier"/><br /><sub><b>Cyprien Pannier</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=cyppan" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
