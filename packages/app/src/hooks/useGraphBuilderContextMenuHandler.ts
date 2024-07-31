@@ -16,13 +16,13 @@ import { useFactorIntoSubgraph } from './useFactorIntoSubgraph';
 import { useGraphExecutor } from './useGraphExecutor';
 import { useLoadGraph } from './useLoadGraph';
 import { usePasteNodes } from './usePasteNodes';
-import { connectionsState, nodesByIdState, nodesState } from '../state/graph';
+import { nodesByIdState, nodesState } from '../state/graph';
 import { useCopyNodes } from './useCopyNodes';
 import { useDuplicateNode } from './useDuplicateNode';
+import { useRemoveNodes } from './useRemoveNodes';
 
 export function useGraphBuilderContextMenuHandler() {
   const [nodes, setNodes] = useRecoilState(nodesState);
-  const [connections, setConnections] = useRecoilState(connectionsState);
   const { clientToCanvasPosition } = useCanvasPositioning();
   const loadGraph = useLoadGraph();
   const project = useRecoilValue(projectState);
@@ -34,6 +34,7 @@ export function useGraphBuilderContextMenuHandler() {
   const setEditingNodeId = useSetRecoilState(editingNodeState);
   const [selectedNodeIds, setSelectedNodeIds] = useRecoilState(selectedNodesState);
   const nodesById = useRecoilValue(nodesByIdState);
+  const removeNodes = useRemoveNodes();
 
   const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {
     setNodes?.(newNodes);
@@ -50,22 +51,6 @@ export function useGraphBuilderContextMenuHandler() {
 
     nodesChanged?.([...nodes, newNode]);
     // setSelectedNode(newNode.id);
-  });
-
-  const removeNodes = useStableCallback((...nodeIds: NodeId[]) => {
-    const newNodes = [...nodes];
-    let newConnections = [...connections];
-    for (const nodeId of nodeIds) {
-      const nodeIndex = newNodes.findIndex((n) => n.id === nodeId);
-      if (nodeIndex >= 0) {
-        newNodes.splice(nodeIndex, 1);
-      }
-
-      // Remove all connections associated with the node
-      newConnections = newConnections.filter((c) => c.inputNodeId !== nodeId && c.outputNodeId !== nodeId);
-    }
-    nodesChanged?.(newNodes);
-    setConnections?.(newConnections);
   });
 
   return useStableCallback(

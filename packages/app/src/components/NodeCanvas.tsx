@@ -51,6 +51,7 @@ import { MouseIcon } from './MouseIcon';
 import { PortInfo } from './PortInfo';
 import { useNodeTypes } from '../hooks/useNodeTypes';
 import { lastRunDataByNodeState, selectedProcessPageNodesState } from '../state/dataFlow';
+import { useRemoveNodes } from '../hooks/useRemoveNodes';
 
 const styles = css`
   width: 100vw;
@@ -177,6 +178,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, canvasStartX: 0, canvasStartY: 0 });
   const { clientToCanvasPosition } = useCanvasPositioning();
   const setLastMousePosition = useSetRecoilState(lastMousePositionState);
+  const removeNodes = useRemoveNodes();
 
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-end',
@@ -541,6 +543,19 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         clientY: lastMouseInfoRef.current.y!,
         target: lastMouseInfoRef.current.target!,
       });
+    },
+    { notWhenInputFocused: true },
+  );
+
+  useGlobalHotkey(
+    'Delete',
+    (e) => {
+      e.preventDefault();
+
+      if (selectedNodeIds.length > 0) {
+        removeNodes(...selectedNodeIds);
+        setSelectedNodeIds([]);
+      }
     },
     { notWhenInputFocused: true },
   );
