@@ -14,6 +14,7 @@ import { dedent } from 'ts-dedent';
 import { type EditorDefinition } from '../EditorDefinition.js';
 import { type NodeBodySpec } from '../../index.js';
 import { coerceType } from '../../utils/coerceType.js';
+import { getInputOrData } from '../../utils/index.js';
 
 export type SliceNode = ChartNode<'slice', SliceNodeData>;
 
@@ -85,8 +86,8 @@ export class SliceNodeImpl extends NodeImpl<SliceNode> {
 
   getEditors(): EditorDefinition<SliceNode>[] {
     return [
-      { type: 'number', label: 'Start', dataKey: 'start', allowEmpty: true },
-      { type: 'number', label: 'Count', dataKey: 'count', allowEmpty: true },
+      { type: 'number', label: 'Start', dataKey: 'start', useInputToggleDataKey: 'useStartInput', allowEmpty: true },
+      { type: 'number', label: 'Count', dataKey: 'count', useInputToggleDataKey: 'useCountInput', allowEmpty: true },
     ];
   }
 
@@ -113,8 +114,8 @@ export class SliceNodeImpl extends NodeImpl<SliceNode> {
   async process(inputs: Inputs): Promise<Outputs> {
     const inputArray = coerceType(inputs['input' as PortId], 'any[]');
 
-    const start = this.data.start ?? 0;
-    const count = this.data.count ?? inputArray.length;
+    const start = getInputOrData(this.data, inputs, 'start', 'number') ?? 0;
+    const count = getInputOrData(this.data, inputs, 'count', 'number') ?? inputArray.length;
 
     const outputArray = inputArray.slice(start, start + count);
 
