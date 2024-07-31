@@ -48,13 +48,23 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
   }
 
   getInputDefinitions(): NodeInputDefinition[] {
-    return [
+    const inputs: NodeInputDefinition[] = [
       {
         id: 'input' as PortId,
         title: 'Input',
         dataType: 'string',
       },
     ];
+
+    if (this.data.useModelInput) {
+      inputs.push({
+        id: 'model' as PortId,
+        title: 'Model',
+        dataType: 'string',
+      });
+    }
+
+    return inputs;
   }
 
   getOutputDefinitions(): NodeOutputDefinition[] {
