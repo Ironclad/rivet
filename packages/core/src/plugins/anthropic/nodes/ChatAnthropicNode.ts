@@ -444,12 +444,14 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
                 arguments: functionCall.input, // Matches OpenAI ChatNode
                 id: functionCall.id,
               }));
+
             if (functionCalls.length > 0) {
               output['function-calls' as PortId] = {
                 type: 'object[]',
                 value: functionCalls,
               };
             }
+
             output['all-messages' as PortId] = {
               type: 'chat-message[]',
               value: [
@@ -465,6 +467,11 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
                           id: toolCall.id,
                         }))[0]
                       : undefined,
+                  function_calls: functionCalls.map((toolCall) => ({
+                    name: toolCall.name,
+                    arguments: JSON.stringify(toolCall.arguments),
+                    id: toolCall.id,
+                  })),
                 } satisfies ChatMessage,
               ],
             };
@@ -511,6 +518,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
                     type: 'assistant',
                     message: responseParts.join('').trim(),
                     function_call: undefined,
+                    function_calls: undefined,
                   } satisfies ChatMessage,
                 ],
               };
@@ -559,6 +567,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
                   type: 'assistant',
                   message: responseParts.join('').trim(),
                   function_call: undefined,
+                  function_calls: undefined,
                 } satisfies ChatMessage,
               ],
             };
@@ -684,7 +693,25 @@ export async function chatMessagesToClaude3ChatMessages(chatMessages: ChatMessag
     isNotNull,
   );
 
-  return messages;
+  // Combine sequential tool_result messages into a single user message with multiple content items
+  const combinedMessages = messages.reduce<Claude3ChatMessage[]>((acc, message) => {
+    if (
+      message.role === 'user' &&
+      Array.isArray(message.content) &&
+      message.content.length === 1 &&
+      message.content[0]!.type === 'tool_result'
+    ) {
+      const last = acc.at(-1);
+      if (last?.role === 'user' && Array.isArray(last.content) && last.content.every((c) => c.type === 'tool_result')) {
+        const content = last.content.concat(message.content);
+        return [...acc.slice(0, -1), { ...last, content }];
+      }
+    }
+
+    return [...acc, message];
+  }, []);
+
+  return combinedMessages;
 }
 
 async function chatMessageToClaude3ChatMessage(message: ChatMessage): Promise<Claude3ChatMessage | undefined> {
@@ -707,10 +734,21 @@ async function chatMessageToClaude3ChatMessage(message: ChatMessage): Promise<Cl
       ],
     };
   }
+
   const content = Array.isArray(message.message)
     ? await Promise.all(message.message.map(chatMessageContentToClaude3ChatMessage))
     : [await chatMessageContentToClaude3ChatMessage(message.message)];
-  if (message.type === 'assistant' && message.function_call) {
+
+  if (message.type === 'assistant' && message.function_calls) {
+    content.push(
+      ...message.function_calls.map((fc) => ({
+        type: 'tool_use' as const,
+        id: fc.id!,
+        name: fc.name,
+        input: JSON.parse(fc.arguments),
+      })),
+    );
+  } else if (message.type === 'assistant' && message.function_call) {
     content.push({
       type: 'tool_use',
       id: message.function_call.id!,

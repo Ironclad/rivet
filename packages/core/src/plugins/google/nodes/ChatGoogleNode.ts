@@ -399,6 +399,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
                 type: 'assistant',
                 message: responseParts.join('').trim() ?? '',
                 function_call: undefined,
+                function_calls: undefined,
               },
             ],
           };
