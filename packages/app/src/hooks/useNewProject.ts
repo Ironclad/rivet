@@ -9,12 +9,14 @@ import { emptyNodeGraph } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph.js';
 import { trivetState } from '../state/trivet';
 import { blankProject } from '../utils/blankProject';
+import { canvasPositionState } from '../state/graphBuilder';
 
 export function useNewProject() {
   const setProject = useSetRecoilState(projectState);
   const setLoadedProject = useSetRecoilState(loadedProjectState);
   const setGraphData = useSetRecoilState(graphState);
   const setTrivetData = useSetRecoilState(trivetState);
+  const setPosition = useSetRecoilState(canvasPositionState);
 
   const setOpenedProjectsSortedIds = useSetRecoilState(openedProjectsSortedIdsState);
   const setOpenedProjects = useSetRecoilState(openedProjectsState);
@@ -33,6 +35,8 @@ export function useNewProject() {
 
     setProject(project);
     setLoadedProject({ loaded: false, path: '' });
+
+    setPosition({ x: 0, y: 0, zoom: 1 });
 
     setOpenedProjects((projects) => ({
       ...projects,

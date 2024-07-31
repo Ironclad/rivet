@@ -8,6 +8,11 @@ export function useCenterViewOnGraph() {
   const setPosition = useSetRecoilState(canvasPositionState);
 
   return (graph: NodeGraph) => {
+    if (graph.nodes.length === 0) {
+      setPosition({ x: 0, y: 0, zoom: 1 });
+      return;
+    }
+
     const minNodeX = Math.min(...graph.nodes.map((n) => n.visualData.x));
     const maxNodeX = Math.max(...graph.nodes.map((n) => n.visualData.x + (n.visualData.width ?? 300)));
     const minNodeY = Math.min(...graph.nodes.map((n) => n.visualData.y));
