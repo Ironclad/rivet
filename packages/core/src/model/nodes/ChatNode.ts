@@ -922,7 +922,6 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                 };
               } else {
                 if (this.data.parallelFunctionCalling) {
-                  console.dir({ functionCalls });
                   output['function-calls' as PortId] = {
                     type: 'object[]',
                     value: functionCalls[0]!.map((functionCall) => ({
@@ -973,8 +972,6 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               ],
             };
           }
-
-          console.dir({ output });
 
           const endTime = Date.now();
 
