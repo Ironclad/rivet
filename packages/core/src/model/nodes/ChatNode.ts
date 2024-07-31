@@ -545,6 +545,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               { value: 'none', label: 'None' },
               { value: 'auto', label: 'Auto' },
               { value: 'function', label: 'Function' },
+              { value: 'required', label: 'Required' },
             ],
             defaultValue: '',
             helperMessage:
