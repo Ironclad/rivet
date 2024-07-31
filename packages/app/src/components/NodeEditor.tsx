@@ -244,6 +244,10 @@ const Container = styled.div`
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Fira Sans', 'Droid Sans',
         'Helvetica Neue', sans-serif;
     }
+
+    .split-max-input {
+      min-width: 75px;
+    }
   }
 
   .node-color-picker {
@@ -481,6 +485,7 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
                                 </label>
                                 <label>Max:</label>
                                 <TextField
+                                  className="split-max-input"
                                   type="number"
                                   placeholder="Max"
                                   value={selectedNode.splitRunMax ?? 10}
