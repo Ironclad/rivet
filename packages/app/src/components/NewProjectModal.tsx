@@ -82,20 +82,20 @@ export const NewProjectModal: FC = () => {
                 >
                   From Tutorial
                 </ButtonItem>
-                <ButtonItem
+                {/* <ButtonItem
                   isSelected={selectedTemplate === 'community_templates'}
                   onClick={() => setSelectedTemplate('community_templates')}
                 >
                   ⭐ Community Templates
-                </ButtonItem>
+                </ButtonItem> */}
               </Section>
               <Section title="Examples">
-                <ButtonItem
+                {/* <ButtonItem
                   isSelected={selectedTemplate === 'community_examples'}
                   onClick={() => setSelectedTemplate('community_examples')}
                 >
                   ⭐ Community Examples
-                </ButtonItem>
+                </ButtonItem> */}
               </Section>
             </SideNavigation>
           </nav>

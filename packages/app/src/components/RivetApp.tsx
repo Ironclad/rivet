@@ -31,6 +31,8 @@ import { NewProjectModalRenderer } from './NewProjectModal';
 import { useWindowTitle } from '../hooks/useWindowTitle';
 import { CommunityOverlayRenderer } from './community/CommunityOverlay';
 import { HelpModal } from './HelpModal';
+import { openedProjectsSortedIdsState, projectsState } from '../state/savedGraphs';
+import { NoProject } from './NoProject';
 
 const styles = css`
   overflow: hidden;
@@ -43,6 +45,9 @@ setGlobalTheme({
 export const RivetApp: FC = () => {
   const { tryRunGraph, tryRunTests, tryAbortGraph, tryPauseGraph, tryResumeGraph } = useGraphExecutor();
   const theme = useRecoilValue(themeState);
+  const openedProjectIds = useRecoilValue(openedProjectsSortedIdsState);
+
+  const noProjectOpen = openedProjectIds.length === 0;
 
   useLoadStaticData();
 
@@ -63,28 +68,38 @@ export const RivetApp: FC = () => {
 
   return (
     <div className={clsx('app', theme ? `theme-${theme}` : 'theme-default')} css={styles}>
-      <ProjectSelector />
-      <OverlayTabs />
-      <ActionBar
-        onRunGraph={tryRunGraph}
-        onRunTests={tryRunTests}
-        onAbortGraph={tryAbortGraph}
-        onPauseGraph={tryPauseGraph}
-        onResumeGraph={tryResumeGraph}
-      />
-      <StatusBar />
-      <DebuggerPanelRenderer />
-      <LeftSidebar onRunGraph={(graphId) => tryRunGraph({ graphId })} />
-      <GraphBuilder />
-      <SettingsModal />
-      <PromptDesignerRenderer />
-      <TrivetRenderer tryRunTests={tryRunTests} />
-      <ChatViewerRenderer />
-      <DataStudioRenderer />
-      <PluginsOverlayRenderer />
-      <UpdateModalRenderer />
-      <NewProjectModalRenderer />
-      <CommunityOverlayRenderer />
+      {noProjectOpen ? (
+        <>
+          <NoProject />
+          <NewProjectModalRenderer />
+          <SettingsModal />
+        </>
+      ) : (
+        <>
+          <ProjectSelector />
+          <OverlayTabs />
+          <ActionBar
+            onRunGraph={tryRunGraph}
+            onRunTests={tryRunTests}
+            onAbortGraph={tryAbortGraph}
+            onPauseGraph={tryPauseGraph}
+            onResumeGraph={tryResumeGraph}
+          />
+          <StatusBar />
+          <DebuggerPanelRenderer />
+          <LeftSidebar onRunGraph={(graphId) => tryRunGraph({ graphId })} />
+          <GraphBuilder />
+          <SettingsModal />
+          <PromptDesignerRenderer />
+          <TrivetRenderer tryRunTests={tryRunTests} />
+          <ChatViewerRenderer />
+          <DataStudioRenderer />
+          <PluginsOverlayRenderer />
+          <UpdateModalRenderer />
+          <NewProjectModalRenderer />
+          <CommunityOverlayRenderer />
+        </>
+      )}
       <HelpModal />
       <ToastContainer enableMultiContainer position="bottom-right" hideProgressBar newestOnTop />
       <ToastContainer

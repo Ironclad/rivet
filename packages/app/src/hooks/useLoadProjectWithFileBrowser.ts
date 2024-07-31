@@ -1,33 +1,35 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { loadedProjectState, openedProjectsState, projectState } from '../state/savedGraphs.js';
-import { emptyNodeGraph, getError } from '@ironclad/rivet-core';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { loadedProjectState, openedProjectsState, projectState, projectsState } from '../state/savedGraphs.js';
+import { type NodeGraph, emptyNodeGraph, getError } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph.js';
 import { ioProvider } from '../utils/globals.js';
 import { trivetState } from '../state/trivet.js';
 import { useSetStaticData } from './useSetStaticData';
 import { toast } from 'react-toastify';
 import { graphNavigationStackState } from '../state/graphBuilder';
+import { useCenterViewOnGraph } from './useCenterViewOnGraph';
 
 export function useLoadProjectWithFileBrowser() {
   const setProject = useSetRecoilState(projectState);
   const setLoadedProjectState = useSetRecoilState(loadedProjectState);
-  const setGraphData = useSetRecoilState(graphState);
+  const setGraph = useSetRecoilState(graphState);
   const setTrivetState = useSetRecoilState(trivetState);
   const setStaticData = useSetStaticData();
   const setNavigationStack = useSetRecoilState(graphNavigationStackState);
-  const openedProjects = useRecoilValue(openedProjectsState);
+  const [projects, setProjects] = useRecoilState(projectsState);
+  const centerViewOnGraph = useCenterViewOnGraph();
 
   return async () => {
     try {
       await ioProvider.loadProjectData(({ project, testData, path }) => {
         const { data, ...projectData } = project;
 
-        if (Object.values(openedProjects).some((p) => p.fsPath === path)) {
+        if (Object.values(projects.openedProjects).some((p) => p.fsPath === path)) {
           toast.error(`That project is already open.`);
           return;
         }
 
-        const alreadyOpenedProject = Object.values(openedProjects).find(
+        const alreadyOpenedProject = Object.values(projects.openedProjects).find(
           (p) => p.project.metadata.id === project.metadata.id,
         );
 
@@ -49,7 +51,18 @@ export function useLoadProjectWithFileBrowser() {
           setStaticData(data);
         }
 
-        setGraphData(emptyNodeGraph());
+        let graphToLoad: NodeGraph;
+        if (projectData.metadata.mainGraphId && projectData.graphs[projectData.metadata.mainGraphId]) {
+          graphToLoad = projectData.graphs[projectData.metadata.mainGraphId]!;
+        } else {
+          graphToLoad =
+            Object.values(projectData.graphs).sort((a, b) =>
+              (a.metadata?.name ?? '').localeCompare(b.metadata?.name ?? ''),
+            )[0] ?? emptyNodeGraph();
+        }
+
+        setGraph(graphToLoad);
+        centerViewOnGraph(graphToLoad);
 
         setLoadedProjectState({
           path,
@@ -63,6 +76,17 @@ export function useLoadProjectWithFileBrowser() {
           recentTestResults: undefined,
           runningTests: false,
         });
+
+        setProjects((projects) => ({
+          openedProjects: {
+            ...projects.openedProjects,
+            [project.metadata.id]: {
+              project: projectData,
+              fsPath: path,
+            },
+          },
+          openedProjectsSortedIds: [...projects.openedProjectsSortedIds, project.metadata.id],
+        }));
       });
     } catch (err) {
       toast.error(`Failed to load project: ${getError(err).message}`);

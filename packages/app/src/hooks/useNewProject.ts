@@ -1,5 +1,10 @@
 import { useSetRecoilState } from 'recoil';
-import { loadedProjectState, projectState } from '../state/savedGraphs.js';
+import {
+  loadedProjectState,
+  openedProjectsSortedIdsState,
+  openedProjectsState,
+  projectState,
+} from '../state/savedGraphs.js';
 import { emptyNodeGraph } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph.js';
 import { trivetState } from '../state/trivet';
@@ -10,6 +15,9 @@ export function useNewProject() {
   const setLoadedProject = useSetRecoilState(loadedProjectState);
   const setGraphData = useSetRecoilState(graphState);
   const setTrivetData = useSetRecoilState(trivetState);
+
+  const setOpenedProjectsSortedIds = useSetRecoilState(openedProjectsSortedIdsState);
+  const setOpenedProjects = useSetRecoilState(openedProjectsState);
 
   return ({
     title,
@@ -25,6 +33,16 @@ export function useNewProject() {
 
     setProject(project);
     setLoadedProject({ loaded: false, path: '' });
+
+    setOpenedProjects((projects) => ({
+      ...projects,
+      [project.metadata.id]: {
+        project,
+        fsPath: null,
+      },
+    }));
+    setOpenedProjectsSortedIds((ids) => [...ids, project.metadata.id]);
+
     setGraphData(emptyNodeGraph());
     setTrivetData({
       runningTests: false,

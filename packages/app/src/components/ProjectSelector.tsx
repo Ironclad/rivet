@@ -248,6 +248,7 @@ export const ProjectSelector: FC = () => {
     setProjects((projects) =>
       produce(projects, (draft) => {
         delete draft.openedProjects[projectId];
+
         draft.openedProjectsSortedIds = draft.openedProjectsSortedIds.filter(
           (id) => id !== projectId && draft.openedProjects[id] != null,
         );
@@ -263,8 +264,6 @@ export const ProjectSelector: FC = () => {
     const closestProject = sortedOpenedProjects[indexOfProject + 1] || sortedOpenedProjects[indexOfProject - 1];
     if (closestProject) {
       loadProject(closestProject.project);
-    } else {
-      setNewProjectModalOpen(true);
     }
   };
 
