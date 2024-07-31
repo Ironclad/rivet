@@ -911,37 +911,25 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             }
 
             if (functionCalls.length > 0) {
-              if (isMultiResponse) {
-                output['function-call' as PortId] = {
-                  type: 'object[]',
-                  value: functionCalls.map((functionCalls) => ({
-                    name: functionCalls[0]?.name,
-                    arguments: functionCalls[0]?.lastParsedArguments,
-                    id: functionCalls[0]?.id,
-                  })),
-                };
-              } else {
-                if (this.data.parallelFunctionCalling) {
-                  console.dir({ functionCalls });
-                  output['function-calls' as PortId] = {
-                    type: 'object[]',
-                    value: functionCalls[0]!.map((functionCall) => ({
-                      name: functionCall.name,
-                      arguments: functionCall.lastParsedArguments,
-                      id: functionCall.id,
-                    })),
-                  };
-                } else {
-                  output['function-call' as PortId] = {
-                    type: 'object',
-                    value: {
-                      name: functionCalls[0]![0]?.name,
-                      arguments: functionCalls[0]![0]?.lastParsedArguments,
-                      id: functionCalls[0]![0]?.id,
-                    } as Record<string, unknown>,
-                  };
-                }
-              }
+							if (isMultiResponse) {
+								output['function-call' as PortId] = {
+									type: 'object[]',
+									value: functionCalls.flat().map((functionCall) => ({
+										name: functionCall.name,
+										arguments: functionCall.lastParsedArguments,
+										id: functionCall.id,
+									})),
+								}
+							} else {
+								output['function-call' as PortId] = {
+									type: 'object[]',
+									value: functionCalls[0]!.map((functionCall) => ({
+										name: functionCall.name,
+										arguments: functionCall.lastParsedArguments,
+										id: functionCall.id,
+									})),
+								}
+							}
             }
 
             context.onPartialOutputs?.(output);
