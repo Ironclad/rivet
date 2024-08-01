@@ -54,6 +54,7 @@ export type ChatNodeConfigData = {
   toolChoiceFunction?: string;
   responseFormat?: 'text' | 'json';
   parallelFunctionCalling?: boolean;
+  additionalParameters?: { key: string; value: string }[];
 };
 
 export type ChatNodeData = ChatNodeConfigData & {
@@ -75,6 +76,7 @@ export type ChatNodeData = ChatNodeConfigData & {
   useToolChoiceInput?: boolean;
   useToolChoiceFunctionInput?: boolean;
   useResponseFormatInput?: boolean;
+  useAdditionalParametersInput?: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
@@ -131,6 +133,9 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         useAsGraphPartialOutput: true,
 
         parallelFunctionCalling: true,
+
+        additionalParameters: [],
+        useAdditionalParametersInput: false,
       },
     };
 
@@ -319,6 +324,15 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         title: 'Response Format',
         coerced: true,
         description: 'The format to force the model to reply in.',
+      });
+    }
+
+    if (this.data.useAdditionalParametersInput) {
+      inputs.push({
+        dataType: 'object',
+        id: 'additionalParameters' as PortId,
+        title: 'Additional Parameters',
+        description: 'Additional chat completion parameters to send to the API.',
       });
     }
 
@@ -630,6 +644,16 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             helperMessage:
               'If on, streaming responses from this node will be shown in Subgraph nodes that call this graph.',
           },
+          {
+            type: 'keyValuePair',
+            label: 'Additional Parameters',
+            dataKey: 'additionalParameters',
+            useInputToggleDataKey: 'useAdditionalParametersInput',
+            keyPlaceholder: 'Parameter',
+            valuePlaceholder: 'Value',
+            helperMessage:
+              'Additional chat completion parameters to send to the API. If the value appears to be a number, it will be sent as a number.',
+          },
         ],
       },
     ];
@@ -722,6 +746,19 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       ? (coerceTypeOptional(inputs['headers' as PortId], 'object') as Record<string, string> | undefined) ??
         headersFromData
       : headersFromData;
+
+    const additionalParametersFromData = (this.data.additionalParameters ?? []).reduce(
+      (acc, param) => {
+        acc[param.key] = Number.isNaN(parseFloat(param.value)) ? param.value : parseFloat(param.value);
+        return acc;
+      },
+      {} as Record<string, string | number>,
+    );
+    const additionalParameters = this.data.useAdditionalParametersInput
+      ? (coerceTypeOptional(inputs['additionalParameters' as PortId], 'object') as
+          | Record<string, string>
+          | undefined) ?? additionalParametersFromData
+      : additionalParametersFromData;
 
     // If using a model input, that's priority, otherwise override > main
     const finalModel = this.data.useModelInput && inputs['model' as PortId] != null ? model : overrideModel || model;
@@ -816,7 +853,9 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             seed,
             response_format: openaiResponseFormat,
             tool_choice: toolChoice,
+            ...additionalParameters,
           };
+
           const cacheKey = JSON.stringify(options);
 
           if (this.data.cache) {
