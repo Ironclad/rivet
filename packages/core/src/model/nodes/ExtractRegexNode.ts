@@ -112,6 +112,11 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
   getEditors(): EditorDefinition<ExtractRegexNode>[] {
     return [
       {
+        type: 'custom',
+        customEditorId: 'ExtractRegexNodeAiAssist',
+        label: 'AI Assist',
+      },
+      {
         type: 'toggle',
         label: 'Error on failed',
         dataKey: 'errorOnFailed',

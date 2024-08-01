@@ -1,4 +1,4 @@
-import { useState, type FC, useMemo } from 'react';
+import { useState, type FC } from 'react';
 import { type SharedEditorProps } from '../SharedEditorProps';
 import {
   getError,
@@ -6,9 +6,9 @@ import {
   type CustomEditorDefinition,
   coreCreateProcessor,
   deserializeProject,
-  type CodeNodeData,
   coerceType,
   coerceTypeOptional,
+  type ExtractRegexNodeData,
 } from '@ironclad/rivet-core';
 import { Field } from '@atlaskit/form';
 import TextField from '@atlaskit/textfield';
@@ -38,7 +38,7 @@ const modelOptions = [
   { label: 'GPT-4o mini', value: 'gpt-4o-mini' },
 ];
 
-export const CodeNodeAIAssistEditor: FC<
+export const ExtractRegexNodeAiAssistEditor: FC<
   SharedEditorProps & {
     editor: CustomEditorDefinition<ChartNode>;
   }
@@ -50,13 +50,13 @@ export const CodeNodeAIAssistEditor: FC<
   const settings = useRecoilValue(settingsState);
   const plugins = useDependsOnPlugins();
 
-  const data = node.data as CodeNodeData;
+  const data = node.data as ExtractRegexNodeData;
 
-  const generateCode = async () => {
+  const generateRegex = async () => {
     try {
       const [project] = deserializeProject(codeGeneratorProject);
       const processor = coreCreateProcessor(project, {
-        graph: 'Code Node Generator',
+        graph: 'Extract Regex Node Generator',
         inputs: {
           prompt,
           model,
@@ -67,21 +67,17 @@ export const CodeNodeAIAssistEditor: FC<
       setWorking(true);
 
       const outputs = await processor.run();
-      const code = coerceTypeOptional(outputs.code, 'string');
-      const configuration = coerceTypeOptional(outputs.configuration, 'object') as {
-        inputs: string[];
-        outputs: string[];
-      };
+      const regex = coerceTypeOptional(outputs.regex, 'string');
+      const multiline = coerceTypeOptional(outputs.multiline, 'boolean');
 
-      if (code) {
+      if (regex != null) {
         onChange({
           ...node,
           data: {
             ...data,
-            code,
-            inputNames: configuration.inputs,
-            outputNames: configuration.outputs,
-          } satisfies CodeNodeData,
+            regex,
+            multilineMode: multiline,
+          } satisfies ExtractRegexNodeData,
         });
       } else {
         const markdownResponse = marked(coerceType(outputs.response, 'string'));
@@ -92,7 +88,7 @@ export const CodeNodeAIAssistEditor: FC<
         });
       }
     } catch (err) {
-      toast.error(`Failed to generate code: ${getError(err).message}`);
+      toast.error(`Failed to generate regex: ${getError(err).message}`);
     } finally {
       setWorking(false);
     }
@@ -109,10 +105,10 @@ export const CodeNodeAIAssistEditor: FC<
             isReadOnly={isReadonly}
             value={prompt}
             onChange={(e) => setPrompt((e.target as HTMLInputElement).value)}
-            placeholder="What would you like your code node to do?"
+            placeholder="What would you like your Extract Regex node to do?"
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                generateCode();
+                generateRegex();
               }
             }}
           />
@@ -123,7 +119,7 @@ export const CodeNodeAIAssistEditor: FC<
             isDisabled={isDisabled || working}
             className="model-selector"
           />
-          <Button appearance="primary" onClick={generateCode} isDisabled={isDisabled || working}>
+          <Button appearance="primary" onClick={generateRegex} isDisabled={isDisabled || working}>
             Generate
           </Button>
         </div>

@@ -545,9 +545,325 @@ data:
             - firstBlock->"If" RYDwAKZ3ZmY5efXzi3dke/if
             - firstBlock->"Match" J4bFCY4R2l5RHElPJ-w-n/value
           visualData: 93.22129334676526/626.8160707712718/280/66//
+    jAiJgUaPnUwcZCrrYd8L9:
+      metadata:
+        description: Generates the configuration and code for a Code Node based on a
+          user's request.
+        id: jAiJgUaPnUwcZCrrYd8L9
+        name: Extract Regex Node Generator
+      nodes:
+        '[1v1JhI_bO0XN1c1e6sJ1f]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 1218.6503689348447
+            text: "### Initial question to generate the code"
+          visualData: -1637.2291911884442/228.4700890675118/1639.5188375265523/79//
+        '[4gNuUOCIlWH47c7CevT-m]:gptFunction "GPT Function"':
+          data:
+            description: "Configures the Extract Regex node with certain parameters. "
+            name: configureExtractRegexNode
+            schema: >-
+              {
+                "type": "object",
+                "properties": {
+                  "regex": {
+                    "type": "string",
+                    "description": "The regular expression that will be used to test against the input string."
+                  },
+                  "multiline": {
+                    "type": "boolean",
+                    "description": "Whether the regular expression should be in \"multiline\" mode where beginning and end anchors (^ and $) will match the start and end of a line, instead of the start and end of the whole string."
+                  }
+                },
+                "required": ["regex", "multiline"]
+              }
+          outgoingConnections:
+            - function->"Array" pJeBICA99sgbXnub9h7F6/input1
+          visualData: -733.5260024014706/953.8436938494237/280/110//
+        '[6nbYMNjoJ3_2fb_ivhrCz]:destructure "Destructure"':
+          data:
+            paths:
+              - $.arguments.regex
+              - $.arguments.multiline
+          outgoingConnections:
+            - match_0->"Graph Output" jbk5KmyMXfEDzwZ2cf95r/value
+            - match_1->"Graph Output" fwjFxUTsUiwDvdQNyRjsN/value
+          visualData: 545.6494911633437/495.07322840008135/280/151//
+        '[7VBZ6x9-K6AfrX0S_Lthf]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 977.486391096598
+            text: "### Response Extraction"
+          visualData: 186.03967739541122/100.77978069649924/1163.9263417574475/145//
+        '[GSMGkalRyphL4foJ70C_N]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: Hello, what would you like the Extract Regex Node to do?
+            type: assistant
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" qD_bTJD9QSanaKT9r9i_c/message1
+          visualData: -1131.5264250597115/626.2855847456499/280/111//
+        '[KniQEFryMfVrjj9AU6Bjs]:text "Text"':
+          data:
+            regex: ""
+            text: >-
+              Rivet is a visual programming IDE where you connect together Nodes
+              in order to make programs that interact with large language models
+              (LLMs).
+
+
+              The Extract Regex node is a node which can, given a string input and a regular expression, either:
+
+
+              1. Extract one or more outputs using capture groups in the regular expression
+
+              2. Test if the string matches the regular expression
+
+
+              You are a Extract Regex Node script writer. The user will give you what they want from the Extract Regex Node, and you output the regular expression which accomplishes what the user wants.
+
+
+              ## Code Node Specification
+
+
+              The Code Node has an editor. This editor has 2 parts:
+
+
+              1. The regex block. This is where the regular expression itself goes.
+
+              2. A "multiline" toggle. Toggling this on is equivalent to a regular expression with the multiline flag enabled, e.g. /test/m. 
+
+
+              The code node has N+3 number of output ports, where N is the number of capturing groups in the regular expression. Output ports are where the user can connect wires in their Rivet program. Any or all of the outputs can be used by the user:
+
+
+              1. Output N: This is the contents of the Nth capture group.
+
+              2. Matches: This is an array of all matches the regular expression has against the input string.
+
+              3. Succeeded: This is a boolean port that is true if the regular expression succeeded against the input string.
+
+              4. Failed: This is a boolean port that is true if there were no matches against the input string.
+
+
+              ## Examples
+
+
+              1. Test if a string contains "foo"
+
+
+              ```regex
+
+              foo
+
+              ```
+
+
+              This is designed for use with the `succeeded` or `failed` outputs
+
+
+              2. Extract the text between square brackets
+
+
+              ```regex
+
+              \[(.+)\]
+
+              ```
+
+
+              This will give a single `Output 1` output in addition to the 3 always-present outputs.
+
+
+              3. Extract the text before and after a colon
+
+
+              ```regex
+
+              (.+): (.+)
+
+              ```
+
+
+              This will give an `Output 1` output and an `Output 2` output corresponding to each of the capture groups.
+
+
+              4. Split text by newlines
+
+
+              ```regex
+
+              ^.+$
+
+              ```
+
+
+              MULTILINE: true
+
+
+              This is designed for use with the `matches` output, where an array of matches is desired.
+
+
+              5. Extract the 2nd number
+
+
+              ```regex
+
+              (?:\d+).+(\d+)
+
+              ```
+
+
+              This uses a non-capturing group to skip the first number, so there is only one output.
+
+
+              ## Your Role
+
+
+              The user will give you what they want the regex node to do. You will then call a function with the configuration needed for the Extract Regex node so that the user gets what they want.
+
+
+              If the Extract Regex Node cannot accomplish what the user asks for, you explain (in one short paragraph!) why it cannot be used to accomplish what they are asking for, using the `impossibleRequest` function.
+
+
+              You should attempt even complex requests by calling a function. The user cannot reply to your messages, so either call the `configureExtractRegexNode` if the request is possible at all, or tell the user their request is impossible.
+          outgoingConnections:
+            - output->"Chat" hDyRjVNVVUFwT-10RYalQ/systemPrompt
+          visualData: -726.7897865366365/329.1772579707348/330/33//
+        '[LskrRsF9hS-TY8eatLQwm]:destructure "Destructure"':
+          data:
+            paths:
+              - $.arguments.reason
+          outgoingConnections:
+            - match_0->"Graph Output" ejZlxZkLtMNpXQTRHo7AG/value
+          visualData: 572.7052930301397/802.8085188827602/280/152//
+        '[SGgVxd-yFHIzY3WuteMz9]:match "Match"':
+          data:
+            cases:
+              - configureExtractRegexNode
+              - impossibleRequest
+          outgoingConnections:
+            - case1->"Destructure" 6nbYMNjoJ3_2fb_ivhrCz/object
+            - case2->"Destructure" LskrRsF9hS-TY8eatLQwm/object
+          visualData: 229.05132289300522/653.6214687275316/280/155//
+        '[XvuhFM3f5h6dgWQARxPog]:text "Text"':
+          data:
+            text: >-
+              I would like the extract regex node to follow the following
+              specification:
+
+
+              """
+
+              {{spec}}
+
+              """
+
+
+              Please call the `configureExtractRegexNode` function with the configuration for the Extract Regex node following this specification.
+
+
+              If the specification is invalid for any reason, such as impossible requirements, or things that are not possible for an Extract Regex Node, call the `impossibleRequest` function with a reason why.
+          outgoingConnections:
+            - output->"Assemble Prompt" qD_bTJD9QSanaKT9r9i_c/message2
+          visualData: -1159.414078546703/820.6518251580231/330/44//
+        '[_MMPp2SDYcuMIu-l-6VF4]:gptFunction "GPT Function"':
+          data:
+            description: "Call this function if the request is impossible. "
+            name: impossibleRequest
+            schema: >-
+              {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "description": "A reason for why the user's request is impossible."
+                  }
+                },
+                "required": ["reason"]
+              }
+          outgoingConnections:
+            - function->"Array" pJeBICA99sgbXnub9h7F6/input2
+          visualData: -746.4223083424073/1212.091413058617/280/146//
+        '[ejZlxZkLtMNpXQTRHo7AG]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: response
+          visualData: 927.1071142825798/783.3431099999461/330/153//
+        '[fwjFxUTsUiwDvdQNyRjsN]:graphOutput "Graph Output"':
+          data:
+            dataType: boolean
+            id: multiline
+          visualData: 922.6022844380896/527.374761642198/330/143//
+        '[hDyRjVNVVUFwT-10RYalQ]:chat "Chat"':
+          data:
+            additionalParameters: []
+            cache: false
+            enableFunctionUse: true
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-4o-mini
+            parallelFunctionCalling: false
+            presencePenalty: 0
+            stop: ""
+            temperature: 0
+            toolChoice: required
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: true
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - function-call->"Match" SGgVxd-yFHIzY3WuteMz9/input
+            - function-call->"Match" SGgVxd-yFHIzY3WuteMz9/value
+          visualData: -290.8634551725346/579.3170909210522/230/37//
+        '[jbk5KmyMXfEDzwZ2cf95r]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: regex
+          visualData: 915.0865361282738/300.31027676686/330/142//
+        '[pJeBICA99sgbXnub9h7F6]:array "Array"':
+          data:
+            flatten: true
+            flattenDeep: false
+          outgoingConnections:
+            - output->"Chat" hDyRjVNVVUFwT-10RYalQ/functions
+          visualData: -415.25017808902794/931.6666997986916/230/148//
+        '[qD_bTJD9QSanaKT9r9i_c]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Chat" hDyRjVNVVUFwT-10RYalQ/prompt
+          visualData: -717.0170939371682/713.5432398109425/280/32//
+        '[sMDC9KTP66MkDb-e7tTeA]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            defaultValue: replace "foo" with "bar"
+            id: prompt
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Text" XvuhFM3f5h6dgWQARxPog/spec
+          visualData: -1552.419236105042/873.516337043934/287.64850782584654/51//
+        '[xJ63RAwAntofJn917ykIZ]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            defaultValue: gpt-4o-mini
+            id: model
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Chat" hDyRjVNVVUFwT-10RYalQ/model
+          visualData: -1135.2269437747914/447.68092596305564/294.1641220064855/45//
   metadata:
     description: ""
     id: 4tDjaNgAP-udJg2Uoz6JI
-    mainGraphId: fd-5pfqrBw3YAPli0X_yi
     title: Code Node Generator
   plugins: []
