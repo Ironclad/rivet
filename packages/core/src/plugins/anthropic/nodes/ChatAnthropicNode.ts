@@ -317,6 +317,10 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
   },
 
   async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+    if (context.executor === 'browser') {
+      throw new Error('This node requires using the Node executor');
+    }
+
     const output: Outputs = {};
     const rawModel = data.useModelInput
       ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? data.model
