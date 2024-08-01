@@ -24,7 +24,7 @@
     "passport-local": "^1.0.0",
     "react": "^18",
     "react-dom": "^18",
-    "semver": "^7.5.4"
+    "semver": "^7.6.3"
   },
   "devDependencies": {
     "@types/lodash-es": "^4.17.10",
