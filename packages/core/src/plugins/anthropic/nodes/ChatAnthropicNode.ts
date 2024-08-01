@@ -121,6 +121,14 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
   getInputDefinitions(data): NodeInputDefinition[] {
     const inputs: NodeInputDefinition[] = [];
 
+    if (data.model.startsWith('claude-3')) {
+      inputs.push({
+        dataType: 'string',
+        id: 'system' as PortId,
+        title: 'System Prompt',
+      });
+    }
+
     if (data.useModelInput) {
       inputs.push({
         id: 'model' as PortId,
@@ -170,13 +178,11 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
       });
     }
 
-    if (data.model.startsWith('claude-3')) {
-      inputs.push({
-        dataType: 'string',
-        id: 'system' as PortId,
-        title: 'System Prompt',
-      });
-    }
+    inputs.push({
+      dataType: ['chat-message', 'chat-message[]'] as const,
+      id: 'prompt' as PortId,
+      title: 'Prompt',
+    });
 
     if (data.enableToolUse) {
       inputs.push({
@@ -187,12 +193,6 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
         coerced: false,
       });
     }
-
-    inputs.push({
-      dataType: ['chat-message', 'chat-message[]'] as const,
-      id: 'prompt' as PortId,
-      title: 'Prompt',
-    });
 
     return inputs;
   },
