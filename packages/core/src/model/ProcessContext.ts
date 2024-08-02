@@ -12,6 +12,7 @@ import {
   type DatasetProvider,
   type ChartNode,
   type AttachedNodeData,
+  type AudioProvider,
 } from '../index.js';
 import type { Tokenizer } from '../integrations/Tokenizer.js';
 
@@ -21,6 +22,9 @@ export type ProcessContext = {
 
   /** Sets the dataset provider to be used for all dataset node calls. */
   datasetProvider?: DatasetProvider;
+
+  /** The provider responsible for being able to play audio. Undefined if unsupported in this context. */
+  audioProvider?: AudioProvider;
 
   /** Sets the tokenizer that will be used for all nodes. If unset, the default GptTokenizerTokenizer will be used. */
   tokenizer?: Tokenizer;

@@ -65,6 +65,7 @@ export function createProcessor(
         {
           nativeApi: options.nativeApi ?? new NodeNativeApi(),
           datasetProvider: options.datasetProvider,
+          audioProvider: options.audioProvider,
           settings: {
             openAiKey: options.openAiKey ?? process.env.OPENAI_API_KEY ?? '',
             openAiOrganization: options.openAiOrganization ?? process.env.OPENAI_ORG_ID ?? '',

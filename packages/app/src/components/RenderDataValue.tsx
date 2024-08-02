@@ -1,18 +1,19 @@
-import { type FC } from 'react';
+import { useMemo, type FC } from 'react';
 import {
   type DataValue,
-  type Outputs,
   type ScalarDataType,
-  type ScalarDataValue,
   arrayizeDataValue,
   getScalarTypeOf,
   inferType,
-  isArrayDataValue,
   isFunctionDataValue,
-  coerceTypeOptional,
   type NodeOutputDefinition,
   type ChatMessageMessagePart,
   type DataType,
+  type ImageDataValue,
+  type BinaryDataValue,
+  type AudioDataValue,
+  isArrayDataType,
+  type ScalarOrArrayDataValue,
 } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { keys } from '../../../core/src/utils/typeSafety';
@@ -20,6 +21,8 @@ import { useMarkdown } from '../hooks/useMarkdown';
 import ColorizedPreformattedText from './ColorizedPreformattedText';
 import { P, match } from 'ts-pattern';
 import clsx from 'clsx';
+import { type InputsOrOutputsWithRefs, type DataValueWithRefs, type ScalarDataValueWithRefs } from '../state/dataFlow';
+import { getGlobalDataRef } from '../utils/globals';
 
 const styles = css`
   .chat-message.user header em {
@@ -81,7 +84,7 @@ const multiOutput = css`
 `;
 
 type ScalarRendererProps<T extends DataType = DataType> = {
-  value: Extract<ScalarDataValue, { type: T }>;
+  value: Extract<ScalarDataValueWithRefs, { type: T }>;
   depth?: number;
   renderMarkdown?: boolean;
   truncateLength?: number;
@@ -148,7 +151,7 @@ const scalarRenderers: {
               <div className="pre-wrap">
                 {message.function_calls.map((fc, i) => (
                   <div key={i}>
-                    <RenderDataValue value={inferType(fc)} />
+                    <RenderDataValue value={inferType(fc) as DataValueWithRefs} />
                   </div>
                 ))}
               </div>
@@ -158,7 +161,7 @@ const scalarRenderers: {
               <div className="function-call">
                 <h4>Function Call:</h4>
                 <div className="pre-wrap">
-                  <RenderDataValue value={inferType(message.function_call)} />
+                  <RenderDataValue value={inferType(message.function_call) as DataValueWithRefs} />
                 </div>
               </div>
             )
@@ -191,7 +194,9 @@ const scalarRenderers: {
     if (inferred.type === 'any') {
       return <>{JSON.stringify(inferred.value)}</>;
     }
-    return <RenderDataValue value={inferred} depth={(depth ?? 0) + 1} renderMarkdown={renderMarkdown} />;
+    return (
+      <RenderDataValue value={inferred as DataValueWithRefs} depth={(depth ?? 0) + 1} renderMarkdown={renderMarkdown} />
+    );
   },
   object: ({ value }) => (
     <div className="rendered-object-type">
@@ -205,12 +210,19 @@ const scalarRenderers: {
   ),
   vector: ({ value }) => <>Vector (length {value.value.length})</>,
   image: ({ value }) => {
+    const resolved = getGlobalDataRef(value.value.ref);
+    if (!resolved) {
+      return <div>Could not find data.</div>;
+    }
+
     const {
       value: { data, mediaType },
-    } = value;
+    } = resolved as ImageDataValue;
 
-    const blob = new Blob([data], { type: mediaType });
-    const imageUrl = URL.createObjectURL(blob);
+    const imageUrl = useMemo(() => {
+      const blob = new Blob([data], { type: mediaType });
+      return URL.createObjectURL(blob);
+    }, [data, mediaType]);
 
     return (
       <div>
@@ -219,19 +231,39 @@ const scalarRenderers: {
     );
   },
   binary: ({ value }) => {
+    const resolved = getGlobalDataRef(value.value.ref);
+    if (!resolved) {
+      return <div>Could not find data.</div>;
+    }
+
     // FIXME: Coercing `value.value` into a `Uint8Array` here because `Uint8Array` gets parsed as an
     //        object of shape `{ [index: number]: number }` when stringified via `JSON.stringify()`.
     //        Consider coercing it back to `Uint8Array` at the entrypoints of the boundaries between
     //        browser and node.js instead.
-    const coercedValue = new Uint8Array(Object.values(value.value));
+    const coercedValue = useMemo(() => {
+      const resolved = getGlobalDataRef(value.value.ref);
+      if (resolved!.value instanceof Uint8Array) {
+        return resolved!.value;
+      }
+      return new Uint8Array(Object.values((resolved as BinaryDataValue).value));
+    }, [value.value.ref]);
+
     return <>Binary (length {coercedValue.length.toLocaleString()})</>;
   },
   audio: ({ value }) => {
-    const {
-      value: { data },
-    } = value;
+    const resolved = getGlobalDataRef(value.value.ref);
+    if (!resolved) {
+      return <div>Could not find data.</div>;
+    }
 
-    const dataUri = `data:audio/mp4;base64,${data}`;
+    const {
+      value: { data, mediaType },
+    } = resolved as AudioDataValue;
+
+    const dataUri = useMemo(() => {
+      const blob = new Blob([data], { type: mediaType });
+      return URL.createObjectURL(blob);
+    }, [data, mediaType]);
 
     return (
       <div>
@@ -257,8 +289,14 @@ const RenderChatMessagePart: FC<{ part: ChatMessageMessagePart; renderMarkdown?:
       return <Renderer value={{ type: 'string', value: part }} renderMarkdown={renderMarkdown} />;
     })
     .with({ type: 'image' }, (part) => {
-      const Renderer = scalarRenderers.image;
-      return <Renderer value={{ type: 'image', value: part }} renderMarkdown={renderMarkdown} />;
+      const blob = new Blob([part.data], { type: part.mediaType });
+      const imageUrl = URL.createObjectURL(blob);
+
+      return (
+        <div>
+          <img src={imageUrl} alt="" />
+        </div>
+      );
     })
     .with({ type: 'url' }, (part) => {
       return <img className="chat-message-url-image" src={part.url} alt={part.url} />;
@@ -267,7 +305,7 @@ const RenderChatMessagePart: FC<{ part: ChatMessageMessagePart; renderMarkdown?:
 };
 
 export const RenderDataValue: FC<{
-  value: DataValue | undefined;
+  value: DataValueWithRefs | undefined;
   depth?: number;
   renderMarkdown?: boolean;
   truncateLength?: number;
@@ -280,8 +318,8 @@ export const RenderDataValue: FC<{
   }
 
   const keys = Object.keys(value?.value ?? {});
-  if (isArrayDataValue(value)) {
-    const items = arrayizeDataValue(value);
+  if (isArrayDataType(value.type)) {
+    const items = arrayizeDataValue(value as ScalarOrArrayDataValue);
     return (
       <div
         css={multiOutput}
@@ -296,7 +334,7 @@ export const RenderDataValue: FC<{
           <div className="multi-output-item" key={i}>
             <RenderDataValue
               key={i}
-              value={v}
+              value={v as DataValueWithRefs}
               depth={(depth ?? 0) + 1}
               renderMarkdown={renderMarkdown}
               truncateLength={truncateLength}
@@ -307,7 +345,7 @@ export const RenderDataValue: FC<{
     );
   }
 
-  if (isFunctionDataValue(value)) {
+  if (isFunctionDataValue(value as DataValue)) {
     const type = getScalarTypeOf(value.type);
     return (
       <div>
@@ -325,7 +363,7 @@ export const RenderDataValue: FC<{
   return (
     <div css={styles}>
       <Renderer
-        value={value}
+        value={value as ScalarDataValueWithRefs}
         depth={(depth ?? 0) + 1}
         renderMarkdown={renderMarkdown}
         truncateLength={truncateLength}
@@ -336,7 +374,7 @@ export const RenderDataValue: FC<{
 
 export const RenderDataOutputs: FC<{
   definitions?: NodeOutputDefinition[];
-  outputs: Outputs;
+  outputs: InputsOrOutputsWithRefs;
   renderMarkdown?: boolean;
 }> = ({ definitions, outputs, renderMarkdown }) => {
   const outputPorts = keys(outputs);

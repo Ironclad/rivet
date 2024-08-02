@@ -1,6 +1,7 @@
 import type { PascalCase } from 'type-fest';
 import {
   type AttachedData,
+  type AudioProvider,
   type DataValue,
   type DatasetProvider,
   type ExternalFunction,
@@ -27,6 +28,7 @@ export type RunGraphOptions = {
   context?: Record<string, LooseDataValue>;
   nativeApi?: NativeApi;
   datasetProvider?: DatasetProvider;
+  audioProvider?: AudioProvider;
   externalFunctions?: {
     [key: string]: ExternalFunction;
   };
@@ -166,6 +168,7 @@ export function coreCreateProcessor(project: Project, options: RunGraphOptions) 
         {
           nativeApi: options.nativeApi,
           datasetProvider: options.datasetProvider,
+          audioProvider: options.audioProvider,
           settings: {
             openAiKey: options.openAiKey ?? '',
             openAiOrganization: options.openAiOrganization ?? '',

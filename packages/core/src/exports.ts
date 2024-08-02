@@ -28,6 +28,7 @@ export * from './integrations/DatasetProvider.js';
 export * from './model/Dataset.js';
 export * from './api/streaming.js';
 export * from './api/createProcessor.js';
+export * from './integrations/AudioProvider.js';
 
 import * as openai from './utils/openai.js';
 export { openai };

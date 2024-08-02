@@ -132,6 +132,7 @@ export type FileBrowserEditorDefinition<T extends ChartNode> = SharedEditorDefin
   type: 'fileBrowser';
 
   dataKey: DataOfType<T, DataRef>;
+  mediaTypeDataKey: DataOfType<T, string>;
   useInputToggleDataKey?: DataOfType<T, boolean>;
 
   accept?: string;

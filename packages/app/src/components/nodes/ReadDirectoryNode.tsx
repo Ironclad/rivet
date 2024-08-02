@@ -2,12 +2,20 @@ import { type FC } from 'react';
 import { css } from '@emotion/react';
 import Toggle from '@atlaskit/toggle';
 import Button from '@atlaskit/button';
-import { type ChartNode, type Outputs, type PortId, type ReadDirectoryNode, expectType } from '@ironclad/rivet-core';
+import {
+  type ChartNode,
+  type Outputs,
+  type PortId,
+  type ReadDirectoryNode,
+  expectType,
+  type DataValue,
+} from '@ironclad/rivet-core';
 import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 import { ioProvider } from '../../utils/globals.js';
+import { type InputsOrOutputsWithRefs } from '../../state/dataFlow';
 
-export const ReadDirectoryNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
-  const outputPaths = expectType(outputs['paths' as PortId], 'string[]');
+export const ReadDirectoryNodeOutput: FC<{ outputs: InputsOrOutputsWithRefs }> = ({ outputs }) => {
+  const outputPaths = expectType(outputs['paths' as PortId] as DataValue, 'string[]');
   return (
     <div>
       {outputPaths.length === 0 ? (

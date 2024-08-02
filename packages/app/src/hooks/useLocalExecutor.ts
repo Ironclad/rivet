@@ -25,7 +25,7 @@ import { lastRecordingState, loadedRecordingState } from '../state/execution';
 import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
 import { trivetState } from '../state/trivet';
 import { runTrivet } from '@ironclad/trivet';
-import { datasetProvider } from '../utils/globals';
+import { audioProvider, datasetProvider } from '../utils/globals';
 import { entries } from '../../../core/src/utils/typeSafety';
 
 export function useLocalExecutor() {
@@ -147,6 +147,7 @@ export function useLocalExecutor() {
               ),
               nativeApi: new TauriNativeApi(),
               datasetProvider,
+              audioProvider,
             },
             {},
             contextValues,
@@ -208,6 +209,7 @@ export function useLocalExecutor() {
                 ),
                 nativeApi: new TauriNativeApi(),
                 datasetProvider,
+                audioProvider,
               },
               inputs,
             );

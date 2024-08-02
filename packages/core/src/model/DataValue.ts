@@ -68,7 +68,7 @@ export type ObjectDataValue = DataValueDef<'object', Record<string, unknown>>;
 export type VectorDataValue = DataValueDef<'vector', number[]>;
 export type BinaryDataValue = DataValueDef<'binary', Uint8Array>;
 export type ImageDataValue = DataValueDef<'image', { mediaType: SupportedMediaTypes; data: Uint8Array }>;
-export type AudioDataValue = DataValueDef<'audio', { data: Uint8Array }>;
+export type AudioDataValue = DataValueDef<'audio', { mediaType?: string; data: Uint8Array }>;
 export type GraphReferenceValue = DataValueDef<'graph-reference', { graphId: GraphId; graphName: string }>;
 
 /** GPT function definition */

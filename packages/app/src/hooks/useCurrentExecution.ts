@@ -7,9 +7,11 @@ import {
   type ProcessEvents,
   type ProcessId,
   coerceTypeOptional,
+  getScalarTypeOf,
+  isArrayDataValue,
 } from '@ironclad/rivet-core';
 import { produce } from 'immer';
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep, mapValues } from 'lodash-es';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   type NodeRunData,
@@ -20,6 +22,9 @@ import {
   runningGraphsState,
   selectedProcessPageNodesState,
   graphStartTimeState,
+  type InputsOrOutputsWithRefs,
+  type DataValueWithRefs,
+  type NodeRunDataWithRefs,
 } from '../state/dataFlow';
 import { type ProcessQuestions, userInputModalQuestionsState } from '../state/userInput';
 import { lastRecordingState } from '../state/execution';
@@ -28,6 +33,8 @@ import { useLatest } from 'ahooks';
 import { entries, keys } from '../../../core/src/utils/typeSafety';
 import { match } from 'ts-pattern';
 import { previousDataPerNodeToKeepState } from '../state/settings';
+import { nanoid } from 'nanoid';
+import { setGlobalDataRef } from '../utils/globals';
 
 function sanitizeDataValueForLength(value: DataValue | undefined) {
   return match(value)
@@ -84,6 +91,44 @@ function sanitizeDataValueForLength(value: DataValue | undefined) {
     .otherwise((value): DataValue | undefined => value);
 }
 
+function cloneNodeDataForHistory(data: Partial<NodeRunData>): Partial<NodeRunDataWithRefs> {
+  return {
+    ...data,
+    inputData: cloneNodeInputOrOutputDataForHistory(data.inputData),
+    outputData: cloneNodeInputOrOutputDataForHistory(data.outputData),
+    splitOutputData: data.splitOutputData
+      ? (mapValues(data.splitOutputData, (val) => cloneNodeInputOrOutputDataForHistory(val)) as {
+          [index: number]: InputsOrOutputsWithRefs;
+        })
+      : undefined,
+  };
+}
+
+function cloneNodeInputOrOutputDataForHistory(data: Inputs | Outputs | undefined): InputsOrOutputsWithRefs | undefined {
+  if (data == null) {
+    return undefined;
+  }
+
+  return mapValues(data as Record<PortId, DataValue>, (val) => {
+    if (!val) {
+      return cloneDeep(val);
+    }
+
+    return convertToRef(val);
+  }) as InputsOrOutputsWithRefs;
+}
+
+function convertToRef(value: DataValue): DataValueWithRefs {
+  const scalarType = getScalarTypeOf(value.type);
+  if (scalarType !== 'audio' && scalarType !== 'binary' && scalarType !== 'image') {
+    return cloneDeep(value) as DataValueWithRefs;
+  }
+
+  const refId = nanoid();
+  setGlobalDataRef(refId, value);
+  return { type: value.type, value: { ref: refId } } as DataValueWithRefs;
+}
+
 export function useCurrentExecution() {
   const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
   const setSelectedPage = useSetRecoilState(selectedProcessPageNodesState);
@@ -108,7 +153,7 @@ export function useCurrentExecution() {
         if (existingProcess) {
           existingProcess.data = {
             ...existingProcess.data,
-            ...cloneDeep(data),
+            ...cloneNodeDataForHistory(data),
           };
         } else {
           if (previousDataPerNodeToKeep > -1) {
@@ -131,7 +176,7 @@ export function useCurrentExecution() {
 
           draft[nodeId]!.push({
             processId,
-            data: cloneDeep(data),
+            data: cloneNodeDataForHistory(data)!,
           });
         }
       }),
@@ -314,14 +359,14 @@ export function useCurrentExecution() {
           if (existingProcess) {
             existingProcess.data.splitOutputData = {
               ...existingProcess.data.splitOutputData,
-              [index]: cloneDeep(outputs),
+              [index]: cloneNodeInputOrOutputDataForHistory(outputs)!,
             };
           } else {
             draft[node.id]!.push({
               processId,
               data: {
                 splitOutputData: {
-                  [index]: cloneDeep(outputs),
+                  [index]: cloneNodeInputOrOutputDataForHistory(outputs)!,
                 },
               },
             });

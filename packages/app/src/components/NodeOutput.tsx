@@ -1,10 +1,16 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { type NodeRunData, type ProcessDataForNode, lastRunData, selectedProcessPage } from '../state/dataFlow.js';
+import {
+  type NodeRunData,
+  type ProcessDataForNode,
+  lastRunData,
+  selectedProcessPage,
+  type NodeRunDataWithRefs,
+} from '../state/dataFlow.js';
 import { type FC, type ReactNode, memo, useMemo, useState, type MouseEvent } from 'react';
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { copyToClipboard } from '../utils/copyToClipboard.js';
-import { type ChartNode, type PortId, type ProcessId, getWarnings } from '@ironclad/rivet-core';
+import { type ChartNode, type PortId, type ProcessId, getWarnings, type Outputs } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import CopyIcon from 'majesticons/line/clipboard-line.svg?react';
 import ExpandIcon from 'majesticons/line/maximize-line.svg?react';
@@ -350,7 +356,6 @@ const NodeOutputBase: FC<{ node: ChartNode; children?: ReactNode; onOpenFullscre
   onOpenFullscreenModal,
 }) => {
   const output = useRecoilValue(lastRunData(node.id));
-
   if (!output?.length) {
     return null;
   }
@@ -377,7 +382,7 @@ const NodeOutputBase: FC<{ node: ChartNode; children?: ReactNode; onOpenFullscre
 
 const NodeOutputSingleProcess: FC<{
   node: ChartNode;
-  data: NodeRunData;
+  data: NodeRunDataWithRefs;
   processId: ProcessId;
   onOpenFullscreenModal?: () => void;
 }> = ({ node, data, processId, onOpenFullscreenModal }) => {
@@ -482,9 +487,9 @@ const NodeOutputSingleProcess: FC<{
         </div>
       </div>
       {body}
-      {getWarnings(data.outputData) && (
+      {getWarnings(data.outputData as Outputs) && (
         <div className="node-output-warnings">
-          {getWarnings(data.outputData)!.map((warning) => (
+          {getWarnings(data.outputData as Outputs)!.map((warning) => (
             <div className="node-output-warning" key={warning}>
               {warning}
             </div>

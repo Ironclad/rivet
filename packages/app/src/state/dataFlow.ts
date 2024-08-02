@@ -1,16 +1,26 @@
 import { atom, selectorFamily } from 'recoil';
-import { type GraphId, type Inputs, type NodeId, type Outputs, type ProcessId } from '@ironclad/rivet-core';
+import {
+  type PortId,
+  type GraphId,
+  type Inputs,
+  type NodeId,
+  type Outputs,
+  type ProcessId,
+  type DataType,
+  type DataValue,
+  type ScalarDataType,
+} from '@ironclad/rivet-core';
 
 export type ProcessDataForNode = {
   processId: ProcessId;
-  data: NodeRunData;
+  data: NodeRunDataWithRefs;
 };
 
 export type RunDataByNodeId = {
   [nodeId: NodeId]: ProcessDataForNode[];
 };
 
-export type NodeRunData = {
+export type NodeRunDataBase = {
   startedAt?: number;
   finishedAt?: number;
 
@@ -20,7 +30,9 @@ export type NodeRunData = {
     | { type: 'running' }
     | { type: 'interrupted' }
     | { type: 'notRan'; reason: string };
+};
 
+export type NodeRunData = NodeRunDataBase & {
   inputData?: Inputs;
 
   outputData?: Outputs;
@@ -29,6 +41,29 @@ export type NodeRunData = {
     [index: number]: Outputs;
   };
 };
+
+export type NodeRunDataWithRefs = NodeRunDataBase & {
+  inputData?: InputsOrOutputsWithRefs;
+
+  outputData?: InputsOrOutputsWithRefs;
+
+  splitOutputData?: {
+    [index: number]: InputsOrOutputsWithRefs;
+  };
+};
+
+export type InputsOrOutputsWithRefs = {
+  [portId: PortId]: DataValueWithRefs;
+};
+
+export type DataValueWithRefs = {
+  [P in DataType]: {
+    type: P;
+    value: P extends 'binary' | 'audio' | 'image' ? { ref: string } : Extract<DataValue, { type: P }>['value'];
+  };
+}[DataType];
+
+export type ScalarDataValueWithRefs = Extract<DataValueWithRefs, { type: ScalarDataType }>;
 
 export const lastRunDataByNodeState = atom<RunDataByNodeId>({
   key: 'lastData',

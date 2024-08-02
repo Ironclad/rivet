@@ -14,6 +14,7 @@ import { projectDataState } from '../../state/savedGraphs';
 import { ioProvider } from '../../utils/globals';
 import { type SharedEditorProps } from './SharedEditorProps';
 import { getHelperMessage } from './editorUtils';
+import mime from 'mime';
 
 export const DefaultImageBrowserEditor: FC<
   SharedEditorProps & {
@@ -36,6 +37,7 @@ export const DefaultImageBrowserEditor: FC<
             [editor.dataKey]: {
               refId: dataId,
             } satisfies DataRef,
+            [editor.mediaTypeDataKey]: mime.getType(editor.dataKey) ?? 'image/png',
           },
         },
         {

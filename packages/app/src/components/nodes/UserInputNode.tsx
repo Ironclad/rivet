@@ -1,7 +1,8 @@
 import { type FC } from 'react';
 import { css } from '@emotion/react';
-import { type Outputs, type PortId, expectType, getScalarTypeOf } from '@ironclad/rivet-core';
+import { type Outputs, type PortId, expectType, getScalarTypeOf, type DataValue } from '@ironclad/rivet-core';
 import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
+import { type InputsOrOutputsWithRefs } from '../../state/dataFlow';
 
 const questionsAndAnswersStyles = css`
   display: flex;
@@ -13,14 +14,14 @@ const questionsAndAnswersStyles = css`
   }
 `;
 
-export const UserInputNodeOutput: FC<{ outputs: Outputs }> = ({ outputs }) => {
+export const UserInputNodeOutput: FC<{ outputs: InputsOrOutputsWithRefs }> = ({ outputs }) => {
   const questionsAndAnswers = outputs['questionsAndAnswers' as PortId];
 
   if (!questionsAndAnswers || getScalarTypeOf(questionsAndAnswers.type) === 'control-flow-excluded') {
     return null;
   }
 
-  const qa = expectType(questionsAndAnswers, 'string[]');
+  const qa = expectType(questionsAndAnswers as DataValue, 'string[]');
 
   return (
     <div css={questionsAndAnswersStyles}>

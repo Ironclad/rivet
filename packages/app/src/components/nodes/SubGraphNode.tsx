@@ -1,10 +1,11 @@
 import { type FC } from 'react';
 import { useRecoilValue } from 'recoil';
 import { projectState } from '../../state/savedGraphs.js';
-import { type Outputs, type PortId, type SubGraphNode, coerceTypeOptional } from '@ironclad/rivet-core';
+import { type Outputs, type PortId, type SubGraphNode, coerceTypeOptional, type DataValue } from '@ironclad/rivet-core';
 import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 import { RenderDataOutputs } from '../RenderDataValue.js';
 import { omit } from 'lodash-es';
+import { type InputsOrOutputsWithRefs } from '../../state/dataFlow';
 
 export const SubGraphNodeBody: FC<{
   node: SubGraphNode;
@@ -21,11 +22,11 @@ export const SubGraphNodeBody: FC<{
 };
 
 export const SubGraphNodeOutputSimple: FC<{
-  outputs: Outputs;
+  outputs: InputsOrOutputsWithRefs;
   renderMarkdown?: boolean;
 }> = ({ outputs, renderMarkdown }) => {
-  const cost = coerceTypeOptional(outputs['cost' as PortId], 'number');
-  const duration = coerceTypeOptional(outputs['duration' as PortId], 'number');
+  const cost = coerceTypeOptional(outputs['cost' as PortId] as DataValue, 'number');
+  const duration = coerceTypeOptional(outputs['duration' as PortId] as DataValue, 'number');
 
   return (
     <div>
@@ -42,14 +43,17 @@ export const SubGraphNodeOutputSimple: FC<{
         )}
       </div>
       <div>
-        <RenderDataOutputs outputs={omit(outputs, ['cost', 'duration'])!} renderMarkdown={renderMarkdown} />
+        <RenderDataOutputs
+          outputs={omit(outputs, ['cost', 'duration'])! as InputsOrOutputsWithRefs}
+          renderMarkdown={renderMarkdown}
+        />
       </div>
     </div>
   );
 };
 
 export const FullscreenSubGraphNodeOutputSimple: FC<{
-  outputs: Outputs;
+  outputs: InputsOrOutputsWithRefs;
   renderMarkdown: boolean;
 }> = ({ outputs, renderMarkdown }) => {
   return <SubGraphNodeOutputSimple outputs={outputs} renderMarkdown={renderMarkdown} />;

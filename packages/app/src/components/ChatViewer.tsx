@@ -15,7 +15,13 @@ import {
   arrayizeDataValue,
   coerceTypeOptional,
 } from '@ironclad/rivet-core';
-import { type NodeRunData, lastRunDataByNodeState, graphRunningState } from '../state/dataFlow';
+import {
+  type NodeRunData,
+  lastRunDataByNodeState,
+  graphRunningState,
+  type NodeRunDataWithRefs,
+  type DataValueWithRefs,
+} from '../state/dataFlow';
 import { projectState } from '../state/savedGraphs';
 import { ErrorBoundary } from 'react-error-boundary';
 import TextField from '@atlaskit/textfield';
@@ -324,7 +330,7 @@ const ChatBubble: FC<{
   nodeId: NodeId;
   nodeTitle: string;
   processId: ProcessId;
-  data: NodeRunData;
+  data: NodeRunDataWithRefs;
   splitIndex: number;
   style?: CSSProperties;
   onGoToNode?: (nodeId: NodeId) => void;
@@ -333,16 +339,16 @@ const ChatBubble: FC<{
   const responseRef = useRef<HTMLDivElement>(null);
   const [expanded, toggleExpanded] = useToggle();
 
-  let prompt: DataValue;
+  let prompt: DataValueWithRefs;
 
   if (splitIndex === -1) {
     prompt = data.inputData?.['prompt' as PortId]!;
   } else {
     const values = arrayizeDataValue(data.inputData?.['prompt' as PortId] as ScalarOrArrayDataValue);
     if (values.length === 1) {
-      prompt = values[0]!;
+      prompt = values[0]! as DataValueWithRefs;
     } else {
-      prompt = values[splitIndex]!;
+      prompt = values[splitIndex]! as DataValueWithRefs;
     }
   }
 
@@ -351,8 +357,8 @@ const ChatBubble: FC<{
       ? data.outputData?.['response' as PortId]
       : data.splitOutputData![splitIndex]!['response' as PortId];
 
-  const promptText = coerceTypeOptional(prompt, 'string');
-  const responseText = coerceTypeOptional(chatOutput, 'string');
+  const promptText = coerceTypeOptional(prompt as DataValue, 'string');
+  const responseText = coerceTypeOptional(chatOutput as DataValue, 'string');
 
   useLayoutEffect(() => {
     if (promptRef.current) {

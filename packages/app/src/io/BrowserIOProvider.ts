@@ -90,18 +90,18 @@ export class BrowserIOProvider implements IOProvider {
     await writable.close();
   }
 
-  async readFileAsString(callback: (data: string) => void): Promise<void> {
+  async readFileAsString(callback: (data: string, fileName: string) => void): Promise<void> {
     const [fileHandle] = await window.showOpenFilePicker();
     const file = await fileHandle.getFile();
     const text = await file.text();
-    callback(text);
+    callback(text, file.name);
   }
 
-  async readFileAsBinary(callback: (data: Uint8Array) => void): Promise<void> {
+  async readFileAsBinary(callback: (data: Uint8Array, fileName: string) => void): Promise<void> {
     const [fileHandle] = await window.showOpenFilePicker();
     const file = await fileHandle.getFile();
     const arrayBuffer = await file.arrayBuffer();
-    callback(new Uint8Array(arrayBuffer));
+    callback(new Uint8Array(arrayBuffer), file.name);
   }
 
   async readPathAsString(path: string): Promise<string> {

@@ -12,7 +12,7 @@ import {
   promptDesignerTestGroupResultsByNodeIdState,
 } from '../state/promptDesigner';
 import { nodesByIdState, nodesState } from '../state/graph.js';
-import { lastRunDataByNodeState } from '../state/dataFlow.js';
+import { type InputsOrOutputsWithRefs, lastRunDataByNodeState } from '../state/dataFlow.js';
 import {
   type ChatMessage,
   type ChatNode,
@@ -31,6 +31,9 @@ import {
   getError,
   isArrayDataValue,
   openai,
+  type DataValue,
+  type ScalarDataValue,
+  type Inputs,
 } from '@ironclad/rivet-core';
 import TextField from '@atlaskit/textfield';
 import { Field } from '@atlaskit/form';
@@ -354,9 +357,11 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
       let inputData = nodeDataForAttachedNodeProcess.inputData;
       // If node is a split run, just grab the first input data.
       if (attachedNode.isSplitRun) {
-        inputData = mapValues(inputData, (val) => (isArrayDataValue(val) ? arrayizeDataValue(val)[0] : val));
+        inputData = mapValues(inputData, (val) =>
+          isArrayDataValue(val as DataValue) ? arrayizeDataValue(val as ScalarDataValue)[0] : val,
+        ) as InputsOrOutputsWithRefs;
       }
-      const { messages } = getChatNodeMessages(inputData);
+      const { messages } = getChatNodeMessages(inputData as Inputs);
       setMessages({
         messages,
       });

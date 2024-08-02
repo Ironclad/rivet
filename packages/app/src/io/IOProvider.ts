@@ -22,9 +22,9 @@ export interface IOProvider {
 
   saveString(content: string, defaultFileName: string): Promise<void>;
 
-  readFileAsString(callback: (data: string) => void): Promise<void>;
+  readFileAsString(callback: (data: string, fileName: string) => void): Promise<void>;
 
-  readFileAsBinary(callback: (data: Uint8Array) => void): Promise<void>;
+  readFileAsBinary(callback: (data: Uint8Array, fileName: string) => void): Promise<void>;
 
   readPathAsString(path: string): Promise<string>;
 

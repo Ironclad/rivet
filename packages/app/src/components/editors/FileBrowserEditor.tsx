@@ -16,6 +16,7 @@ import { projectDataState } from '../../state/savedGraphs';
 import { ioProvider } from '../../utils/globals';
 import { type SharedEditorProps } from './SharedEditorProps';
 import { getHelperMessage } from './editorUtils';
+import mime from 'mime';
 
 export const DefaultFileBrowserEditor: FC<
   SharedEditorProps & {
@@ -27,7 +28,7 @@ export const DefaultFileBrowserEditor: FC<
   const helperMessage = getHelperMessage(editor, node.data);
 
   const pickFile = async () => {
-    await ioProvider.readFileAsBinary(async (binaryData) => {
+    await ioProvider.readFileAsBinary(async (binaryData, fileName) => {
       const dataId = nanoid() as DataId;
       onChange(
         {
@@ -37,6 +38,7 @@ export const DefaultFileBrowserEditor: FC<
             [editor.dataKey]: {
               refId: dataId,
             } satisfies DataRef,
+            [editor.mediaTypeDataKey]: mime.getType(fileName) ?? 'application/octet-stream',
           },
         },
         {

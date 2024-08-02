@@ -203,25 +203,29 @@ export class TauriIOProvider implements IOProvider {
     }
   }
 
-  async readFileAsString(callback: (data: string) => void): Promise<void> {
+  async readFileAsString(callback: (data: string, fileName: string) => void): Promise<void> {
     const path = await open({
       multiple: false,
     });
 
     if (path) {
+      const fileName = (path as string).split('/').pop() as string;
+
       const contents = await readTextFile(path as string);
-      callback(contents);
+      callback(contents, fileName);
     }
   }
 
-  async readFileAsBinary(callback: (data: Uint8Array) => void): Promise<void> {
+  async readFileAsBinary(callback: (data: Uint8Array, fileName: string) => void): Promise<void> {
     const path = await open({
       multiple: false,
     });
 
     if (path) {
+      const fileName = (path as string).split('/').pop() as string;
+
       const contents = await readBinaryFile(path as string);
-      callback(contents);
+      callback(contents, fileName);
     }
   }
 

@@ -210,7 +210,14 @@ import { graphReferenceNode } from './nodes/GraphReferenceNode.js';
 export * from './nodes/GraphReferenceNode.js';
 
 import { callGraphNode } from './nodes/CallGraphNode.js';
+export * from './nodes/CallGraphNode.js';
+
 import { delegateFunctionCallNode } from './nodes/DelegateFunctionCallNode.js';
+export * from './nodes/DelegateFunctionCallNode.js';
+
+import { playAudioNode } from './nodes/PlayAudioNode.js';
+export * from './nodes/PlayAudioNode.js';
+
 export * from './nodes/CallGraphNode.js';
 
 export const registerBuiltInNodes = (registry: NodeRegistration) => {
@@ -285,7 +292,8 @@ export const registerBuiltInNodes = (registry: NodeRegistration) => {
     .register(listGraphsNode)
     .register(graphReferenceNode)
     .register(callGraphNode)
-    .register(delegateFunctionCallNode);
+    .register(delegateFunctionCallNode)
+    .register(playAudioNode);
 };
 
 let globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());

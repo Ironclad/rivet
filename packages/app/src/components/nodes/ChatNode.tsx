@@ -8,11 +8,13 @@ import {
   coerceTypeOptional,
   inferType,
   isArrayDataValue,
+  type DataValue,
 } from '@ironclad/rivet-core';
 import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 import styled from '@emotion/styled';
 import clsx from 'clsx';
 import { useMarkdown } from '../../hooks/useMarkdown.js';
+import { type InputsOrOutputsWithRefs, type DataValueWithRefs } from '../../state/dataFlow';
 
 const bodyStyles = css`
   display: flex;
@@ -28,19 +30,23 @@ const bodyStyles = css`
 `;
 
 export const ChatNodeOutput: FC<{
-  outputs: Outputs;
+  outputs: InputsOrOutputsWithRefs;
   fullscreen?: boolean;
   renderMarkdown?: boolean;
 }> = ({ outputs, fullscreen, renderMarkdown }) => {
-  if (isArrayDataValue(outputs['response' as PortId]) || isArrayDataValue(outputs['requestTokens' as PortId])) {
-    const outputTextAll = coerceTypeOptional(outputs['response' as PortId], 'string[]') ?? [];
+  if (
+    isArrayDataValue(outputs['response' as PortId] as DataValue) ||
+    isArrayDataValue(outputs['requestTokens' as PortId] as DataValue)
+  ) {
+    const outputTextAll = coerceTypeOptional(outputs['response' as PortId] as DataValue, 'string[]') ?? [];
 
-    const requestTokensAll = coerceTypeOptional(outputs['requestTokens' as PortId], 'number[]') ?? [];
-    const responseTokensAll = coerceTypeOptional(outputs['responseTokens' as PortId], 'number[]') ?? [];
-    const costAll = coerceTypeOptional(outputs['cost' as PortId], 'number[]') ?? [];
-    const durationAll = coerceTypeOptional(outputs['duration' as PortId], 'number[]') ?? [];
+    const requestTokensAll = coerceTypeOptional(outputs['requestTokens' as PortId] as DataValue, 'number[]') ?? [];
+    const responseTokensAll = coerceTypeOptional(outputs['responseTokens' as PortId] as DataValue, 'number[]') ?? [];
+    const costAll = coerceTypeOptional(outputs['cost' as PortId] as DataValue, 'number[]') ?? [];
+    const durationAll = coerceTypeOptional(outputs['duration' as PortId] as DataValue, 'number[]') ?? [];
 
-    const functionCallOutput = outputs['function-call' as PortId] ?? outputs['function-calls' as PortId];
+    const functionCallOutput =
+      (outputs['function-call' as PortId] as DataValue) ?? (outputs['function-calls' as PortId] as DataValue);
     const functionCallAll =
       functionCallOutput?.type === 'object[]'
         ? functionCallOutput.value
@@ -72,14 +78,15 @@ export const ChatNodeOutput: FC<{
       </div>
     );
   } else {
-    const outputText = coerceTypeOptional(outputs['response' as PortId], 'string');
+    const outputText = coerceTypeOptional(outputs['response' as PortId] as DataValue, 'string');
 
-    const requestTokens = coerceTypeOptional(outputs['requestTokens' as PortId], 'number');
-    const responseTokens = coerceTypeOptional(outputs['responseTokens' as PortId], 'number');
-    const cost = coerceTypeOptional(outputs['cost' as PortId], 'number');
-    const duration = coerceTypeOptional(outputs['duration' as PortId], 'number');
+    const requestTokens = coerceTypeOptional(outputs['requestTokens' as PortId] as DataValue, 'number');
+    const responseTokens = coerceTypeOptional(outputs['responseTokens' as PortId] as DataValue, 'number');
+    const cost = coerceTypeOptional(outputs['cost' as PortId] as DataValue, 'number');
+    const duration = coerceTypeOptional(outputs['duration' as PortId] as DataValue, 'number');
 
-    const functionCallOutput = outputs['function-call' as PortId] ?? outputs['function-calls' as PortId];
+    const functionCallOutput =
+      (outputs['function-call' as PortId] as DataValue) ?? (outputs['function-calls' as PortId] as DataValue);
 
     return (
       <ChatNodeOutputSingle
@@ -172,7 +179,7 @@ export const ChatNodeOutputSingle: FC<{
           <div dangerouslySetInnerHTML={outputHtml} />
         ) : (
           <div className="pre-wrap">
-            <RenderDataValue value={inferType(outputText)} />
+            <RenderDataValue value={inferType(outputText) as DataValueWithRefs} />
           </div>
         )}
       </div>
@@ -180,7 +187,7 @@ export const ChatNodeOutputSingle: FC<{
         <div className="function-call">
           <h4>{Array.isArray(functionCall) ? 'Function Calls' : 'Function Call'}:</h4>
           <div className="pre-wrap">
-            <RenderDataValue value={inferType(functionCall)} />
+            <RenderDataValue value={inferType(functionCall) as DataValueWithRefs} />
           </div>
         </div>
       )}
@@ -189,7 +196,7 @@ export const ChatNodeOutputSingle: FC<{
 };
 
 const ChatNodeFullscreenOutput: FC<{
-  outputs: Outputs;
+  outputs: InputsOrOutputsWithRefs;
   renderMarkdown: boolean;
 }> = ({ outputs, renderMarkdown }) => {
   return <ChatNodeOutput outputs={outputs} fullscreen renderMarkdown={renderMarkdown} />;

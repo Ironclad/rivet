@@ -22,14 +22,15 @@ import { loadDatasetNodeDescriptor } from '../components/nodes/LoadDatasetNode';
 import { datasetNearestNeighborsNodeDescriptor } from '../components/nodes/DatasetNearestNeighborsNode';
 import { getDatasetRowNodeDescriptor } from '../components/nodes/GetDatasetRowNode';
 import { replaceDatasetNodeDescriptor } from '../components/nodes/ReplaceDatasetNode';
+import { type InputsOrOutputsWithRefs } from '../state/dataFlow';
 
 export type UnknownNodeComponentDescriptor = {
   Body?: FC<{ node: ChartNode }>;
   Output?: FC<{ node: ChartNode }>;
   Editor?: FC<{ node: ChartNode; onChange?: (node: ChartNode) => void }>;
   FullscreenOutput?: FC<{ node: ChartNode }>;
-  OutputSimple?: FC<{ outputs: Outputs }>;
-  FullscreenOutputSimple?: FC<{ outputs: Outputs; renderMarkdown: boolean }>;
+  OutputSimple?: FC<{ outputs: InputsOrOutputsWithRefs }>;
+  FullscreenOutputSimple?: FC<{ outputs: InputsOrOutputsWithRefs; renderMarkdown: boolean }>;
   defaultRenderMarkdown?: boolean;
 };
 
@@ -38,8 +39,8 @@ export type NodeComponentDescriptor<T extends BuiltInNodeType> = {
   Output?: FC<{ node: NodeOfType<T> }>;
   Editor?: FC<{ node: NodeOfType<T>; onChange?: (node: NodeOfType<T>) => void }>;
   FullscreenOutput?: FC<{ node: NodeOfType<T> }>;
-  OutputSimple?: FC<{ outputs: Outputs }>;
-  FullscreenOutputSimple?: FC<{ outputs: Outputs; renderMarkdown: boolean }>;
+  OutputSimple?: FC<{ outputs: InputsOrOutputsWithRefs }>;
+  FullscreenOutputSimple?: FC<{ outputs: InputsOrOutputsWithRefs; renderMarkdown: boolean }>;
   defaultRenderMarkdown?: boolean;
 };
 

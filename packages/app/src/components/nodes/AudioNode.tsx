@@ -1,4 +1,4 @@
-import { type FC, useLayoutEffect, useRef } from 'react';
+import { type FC, useLayoutEffect, useRef, useMemo } from 'react';
 import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 import { type AudioNode } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
@@ -16,11 +16,20 @@ type AudioNodeBodyProps = {
 };
 
 export const AudioNodeBody: FC<AudioNodeBodyProps> = ({ node }) => {
+  if (node.data.useDataInput) {
+    return <div>Audio data from input</div>;
+  }
+
   const projectData = useRecoilValue(projectDataState);
 
   const dataRef = node.data.data;
+
   const b64Data = dataRef ? projectData?.[dataRef.refId] : undefined;
-  const dataUri = b64Data ? `data:audio/mp4;base64,${b64Data}` : undefined;
+
+  const dataUri = useMemo(
+    () => `data:${node.data.mediaType ?? 'audio/wav'};base64,${b64Data}`,
+    [b64Data, node.data.mediaType],
+  );
 
   const audioSourceRef = useRef<HTMLAudioElement>(null);
 

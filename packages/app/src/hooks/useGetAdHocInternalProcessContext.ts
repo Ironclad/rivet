@@ -13,7 +13,7 @@ import { nanoid } from 'nanoid/non-secure';
 import { useRecoilValue } from 'recoil';
 import { settingsState } from '../state/settings';
 import { useDependsOnPlugins } from './useDependsOnPlugins';
-import { datasetProvider } from '../utils/globals';
+import { audioProvider, datasetProvider } from '../utils/globals';
 
 export function useGetAdHocInternalProcessContext() {
   const settings = useRecoilValue(settingsState);
@@ -33,6 +33,7 @@ export function useGetAdHocInternalProcessContext() {
         settings: await fillMissingSettingsFromEnvironmentVariables(settings, plugins),
         nativeApi: new TauriNativeApi(),
         datasetProvider,
+        audioProvider,
         processId: nanoid() as ProcessId,
         executionCache: new Map(),
         externalFunctions: {},

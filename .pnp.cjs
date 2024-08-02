@@ -6635,8 +6635,10 @@ const RAW_RUNTIME_STATE =
           ["immer", "npm:10.0.3"],\
           ["jsonpath-plus", "npm:7.2.0"],\
           ["lodash-es", "npm:4.17.21"],\
+          ["lru-cache", "npm:11.0.0"],\
           ["majesticons", "npm:2.1.2"],\
           ["marked", "npm:9.1.2"],\
+          ["mime", "npm:4.0.4"],\
           ["minimatch", "npm:9.0.3"],\
           ["monaco-editor", "npm:0.44.0"],\
           ["nanoid", "npm:3.3.7"],\
@@ -19184,6 +19186,13 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
+      ["npm:11.0.0", {\
+        "packageLocation": "./.yarn/cache/lru-cache-npm-11.0.0-92d560d9d6-41f36fbff8.zip/node_modules/lru-cache/",\
+        "packageDependencies": [\
+          ["lru-cache", "npm:11.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
       ["npm:5.1.1", {\
         "packageLocation": "./.yarn/cache/lru-cache-npm-5.1.1-f475882a51-951d2673dc.zip/node_modules/lru-cache/",\
         "packageDependencies": [\
@@ -19461,6 +19470,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/mime-npm-1.6.0-60ae95038a-b7d98bb1e0.zip/node_modules/mime/",\
         "packageDependencies": [\
           ["mime", "npm:1.6.0"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:4.0.4", {\
+        "packageLocation": "./.yarn/cache/mime-npm-4.0.4-03acf1c40a-28e41053ae.zip/node_modules/mime/",\
+        "packageDependencies": [\
+          ["mime", "npm:4.0.4"]\
         ],\
         "linkType": "HARD"\
       }]\

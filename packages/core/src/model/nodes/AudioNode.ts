@@ -16,12 +16,16 @@ import {
 } from '../../index.js';
 import { base64ToUint8Array, expectType } from '../../utils/index.js';
 import { nodeDefinition } from '../NodeDefinition.js';
+import { getInputOrData } from '../../utils/inputs.js';
 
 export type AudioNode = ChartNode<'audio', AudioNodeData>;
 
 type AudioNodeData = {
   data?: DataRef;
   useDataInput: boolean;
+
+  mediaType?: 'audio/wav' | 'audio/mp3' | 'audio/ogg';
+  useMediaTypeInput: boolean;
 };
 
 export class AudioNodeImpl extends NodeImpl<AudioNode> {
@@ -33,6 +37,7 @@ export class AudioNodeImpl extends NodeImpl<AudioNode> {
       visualData: { x: 0, y: 0, width: 300 },
       data: {
         useDataInput: false,
+        useMediaTypeInput: false,
       },
     };
   }
@@ -44,6 +49,15 @@ export class AudioNodeImpl extends NodeImpl<AudioNode> {
       inputDefinitions.push({
         id: 'data' as PortId,
         title: 'Data',
+        dataType: 'string',
+        coerced: false,
+      });
+    }
+
+    if (this.chartNode.data.useMediaTypeInput) {
+      inputDefinitions.push({
+        id: 'mediaType' as PortId,
+        title: 'Media Type',
         dataType: 'string',
         coerced: false,
       });
@@ -68,8 +82,15 @@ export class AudioNodeImpl extends NodeImpl<AudioNode> {
         type: 'fileBrowser',
         label: 'Audio File',
         dataKey: 'data',
+        mediaTypeDataKey: 'mediaType',
         useInputToggleDataKey: 'useDataInput',
         accept: 'audio/*',
+      },
+      {
+        type: 'string',
+        label: 'Media Type',
+        dataKey: 'mediaType',
+        useInputToggleDataKey: 'useMediaTypeInput',
       },
     ];
   }
@@ -85,6 +106,8 @@ export class AudioNodeImpl extends NodeImpl<AudioNode> {
 
   async process(inputData: Inputs, context: InternalProcessContext): Promise<Outputs> {
     let data: Uint8Array;
+
+    const mediaType = getInputOrData(this.data, inputData, 'mediaType', 'string') || 'audio/wav';
 
     if (this.chartNode.data.useDataInput) {
       data = expectType(inputData['data' as PortId], 'binary');
@@ -106,7 +129,7 @@ export class AudioNodeImpl extends NodeImpl<AudioNode> {
     return {
       ['data' as PortId]: {
         type: 'audio',
-        value: { data },
+        value: { data, mediaType },
       },
     };
   }
