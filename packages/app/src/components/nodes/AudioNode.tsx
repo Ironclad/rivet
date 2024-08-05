@@ -20,6 +20,10 @@ export const AudioNodeBody: FC<AudioNodeBodyProps> = ({ node }) => {
     return <div>Audio data from input</div>;
   }
 
+  return <AudioNodeHasDataInput node={node} />;
+};
+
+export const AudioNodeHasDataInput: FC<AudioNodeBodyProps> = ({ node }) => {
   const projectData = useRecoilValue(projectDataState);
 
   const dataRef = node.data.data;
