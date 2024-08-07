@@ -153,7 +153,7 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
 
     const overlapPercent = this.chartNode.data.overlap / 100;
 
-    const chunked = chunkStringByTokenCount(
+    const chunked = await chunkStringByTokenCount(
       context.tokenizer,
       {
         node: this.chartNode,
@@ -192,7 +192,7 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
 
 export const chunkNode = nodeDefinition(ChunkNodeImpl, 'Chunk');
 
-export function chunkStringByTokenCount(
+export async function chunkStringByTokenCount(
   tokenizer: Tokenizer,
   tokenizerInfo: TokenizerCallInfo,
   input: string,
@@ -202,7 +202,9 @@ export function chunkStringByTokenCount(
   overlapPercent = Number.isNaN(overlapPercent) ? 0 : Math.max(0, Math.min(1, overlapPercent));
 
   const chunks: string[] = [];
-  const guess = Math.floor(targetTokenCount * (input.length / tokenizer.getTokenCountForString(input, tokenizerInfo)));
+  const guess = Math.floor(
+    targetTokenCount * (input.length / (await tokenizer.getTokenCountForString(input, tokenizerInfo))),
+  );
   let remaining = input;
 
   while (remaining.length > 0) {

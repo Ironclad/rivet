@@ -415,7 +415,10 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
 
           output['requestTokens' as PortId] = { type: 'number', value: tokenCount };
 
-          const responseTokenCount = context.tokenizer.getTokenCountForString(responseParts.join(''), tokenizerInfo);
+          const responseTokenCount = await context.tokenizer.getTokenCountForString(
+            responseParts.join(''),
+            tokenizerInfo,
+          );
           output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
 
           // TODO

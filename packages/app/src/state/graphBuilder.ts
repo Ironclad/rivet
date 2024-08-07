@@ -1,18 +1,22 @@
-import { atom, atomFamily, selector, selectorFamily } from 'recoil';
+import { atom, selector, selectorFamily } from 'recoil';
 import {
   type ChartNode,
   type GraphId,
   type NodeId,
-  NodeImpl,
   type NodeInputDefinition,
   type PortId,
   type DataType,
+  type NodeGraph,
 } from '@ironclad/rivet-core';
 import { recoilPersist } from 'recoil-persist';
 import { type WireDef } from '../components/WireLayer.js';
-import { mapValues } from 'lodash-es';
 
 const { persistAtom } = recoilPersist({ key: 'graphBuilder' });
+
+export const viewingNodeChangesState = atom<NodeId | undefined>({
+  key: 'viewingNodeChanges',
+  default: undefined,
+});
 
 export const selectedNodesState = atom<NodeId[]>({
   key: 'selectedNodeState',

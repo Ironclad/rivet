@@ -98,8 +98,8 @@ export function projectV4Serializer(project: Project, attachedData?: AttachedDat
     metadata: {
       ...project.metadata,
       path: undefined,
-    }
-  }
+    },
+  };
 
   // Make sure all data is ordered deterministically first
   const stabilized = JSON.parse(stableStringify(toSerializedProject(filteredProject, attachedData)));
@@ -287,14 +287,18 @@ function toSerializedConnection(connection: NodeConnection, allNodes: ChartNode[
 }
 
 function fromSerializedConnection(connection: SerializedNodeConnection, nodeId: NodeId): NodeConnection {
-  const [, outputId, , inputNodeId, inputId] = connection.match(/(.+)->"(.+)" (.+)\/(.+)/)!;
+  try {
+    const [, outputId, , inputNodeId, inputId] = connection.match(/(.+)->"(.+)"\s+(.+)\/(.+)/)!;
 
-  return {
-    outputId: outputId as PortId,
-    outputNodeId: nodeId,
-    inputId: inputId as PortId,
-    inputNodeId: inputNodeId as NodeId,
-  };
+    return {
+      outputId: outputId as PortId,
+      outputNodeId: nodeId,
+      inputId: inputId as PortId,
+      inputNodeId: inputNodeId as NodeId,
+    };
+  } catch (err) {
+    throw new Error(`Invalid connection: ${connection}`);
+  }
 }
 
 export function datasetV4Serializer(datasets: CombinedDataset[]): string {

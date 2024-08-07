@@ -9,7 +9,7 @@ export type TokenizerCallInfo = {
 export type Tokenizer = {
   on(event: 'error', listener: (err: Error) => void): void;
 
-  getTokenCountForString(input: string, info: TokenizerCallInfo): number;
+  getTokenCountForString(input: string, info: TokenizerCallInfo): Promise<number>;
 
   getTokenCountForMessages(
     messages: ChatMessage[],

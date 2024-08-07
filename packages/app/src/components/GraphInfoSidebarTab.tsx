@@ -4,6 +4,8 @@ import { graphState } from '../state/graph.js';
 import { savedGraphsState } from '../state/savedGraphs.js';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { type NodeGraph } from '@ironclad/rivet-core';
+import { Label } from '@atlaskit/form';
+import { GraphRevisions } from './GraphRevisionList';
 
 export const GraphInfoSidebarTab: FC = () => {
   const [graph, setGraph] = useRecoilState(graphState);
@@ -34,6 +36,8 @@ export const GraphInfoSidebarTab: FC = () => {
         }
         readViewFitContainerWidth
       />
+      <Label htmlFor="">Revisions</Label>
+      <GraphRevisions />
     </div>
   );
 };

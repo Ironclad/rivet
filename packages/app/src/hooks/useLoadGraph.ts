@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { type NodeGraph, emptyNodeGraph } from '@ironclad/rivet-core';
-import { graphState } from '../state/graph.js';
+import { graphState, historicalGraphState, isReadOnlyGraphState } from '../state/graph.js';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph.js';
 import {
   canvasPositionState,
@@ -10,7 +10,6 @@ import {
   sidebarOpenState,
 } from '../state/graphBuilder.js';
 import { useStableCallback } from './useStableCallback.js';
-import { fitBoundsToViewport } from './useViewportBounds.js';
 import { useCenterViewOnGraph } from './useCenterViewOnGraph';
 
 export function useLoadGraph() {
@@ -22,6 +21,8 @@ export function useLoadGraph() {
   const setGraphNavigationStack = useSetRecoilState(graphNavigationStackState);
   const setSelectedNodes = useSetRecoilState(selectedNodesState);
   const centerViewOnGraph = useCenterViewOnGraph();
+  const setHistoricalGraph = useSetRecoilState(historicalGraphState);
+  const setIsReadOnlyGraph = useSetRecoilState(isReadOnlyGraphState);
 
   return useStableCallback((savedGraph: NodeGraph, { pushHistory = true }: { pushHistory?: boolean } = {}) => {
     if (graph.nodes.length > 0 || graph.metadata?.name !== emptyNodeGraph().metadata!.name) {
@@ -30,6 +31,8 @@ export function useLoadGraph() {
 
     setGraph(savedGraph);
     setSelectedNodes([]);
+    setIsReadOnlyGraph(false);
+    setHistoricalGraph(null);
 
     if (pushHistory) {
       setGraphNavigationStack((state) => ({

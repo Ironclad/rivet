@@ -45,6 +45,12 @@
             "args": true,
             "cmd": "pnpm",
             "sidecar": true
+          },
+          {
+            "name": "git",
+            "args": true,
+            "cmd": "git",
+            "sidecar": false
           }
         ]
       },

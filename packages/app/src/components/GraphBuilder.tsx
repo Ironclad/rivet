@@ -1,7 +1,7 @@
 import { type FC, useEffect, useMemo, useState, type MouseEvent } from 'react';
 import { NodeCanvas } from './NodeCanvas.js';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { connectionsState, nodesByIdState, nodesState } from '../state/graph.js';
+import { connectionsState, isReadOnlyGraphState, nodesByIdState, nodesState } from '../state/graph.js';
 import { editingNodeState, selectedNodesState } from '../state/graphBuilder.js';
 import { NodeEditorRenderer } from './NodeEditor.js';
 import styled from '@emotion/styled';
@@ -22,6 +22,8 @@ import { projectState } from '../state/savedGraphs';
 import { useDatasets } from '../hooks/useDatasets';
 import { overlayOpenState } from '../state/ui';
 import { GraphExecutionSelectorBar } from './GraphExecutionSelectorBar';
+import { HistoricalGraphNotice } from './HistoricalGraphNotice';
+import { NodeChangesModal, NodeChangesModalRenderer } from './NodeChangesModal';
 
 const Container = styled.div`
   position: relative;
@@ -35,13 +37,24 @@ const Container = styled.div`
 
   .recording-border {
     position: absolute;
-    top: 0;
+    top: var(--project-selector-height);
     left: 0;
     right: 0;
     bottom: 0;
     pointer-events: none;
-    z-index: 100;
+    z-index: 500;
     box-shadow: inset 0 0 2px 3px var(--warning-dark);
+  }
+
+  .read-only-border {
+    position: absolute;
+    top: var(--project-selector-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 500;
+    box-shadow: inset 0 0 2px 3px var(--grey-light);
   }
 `;
 
@@ -123,6 +136,7 @@ export const GraphBuilder: FC = () => {
   );
 
   const overlay = useRecoilValue(overlayOpenState);
+  const isReadOnly = useRecoilValue(isReadOnlyGraphState);
 
   return (
     <Container onMouseDown={containerMouseDown}>
@@ -138,6 +152,7 @@ export const GraphBuilder: FC = () => {
           onContextMenuItemSelected={contextMenuHandler}
         />
         {loadedRecording && <div className="recording-border" />}
+        {isReadOnly && <div className="read-only-border" />}
         <NodeEditorRenderer />
         {firstNodeQuestions && firstNodeQuestions.length > 0 && (
           <Button onClick={handleOpenUserInputModal} className="user-input-modal-open" appearance="primary">
@@ -146,6 +161,7 @@ export const GraphBuilder: FC = () => {
         )}
         {overlay === undefined && <NavigationBar />}
         <GraphExecutionSelectorBar />
+        <HistoricalGraphNotice />
         <UserInputModal
           open={isUserInputModalOpen}
           questions={lastQuestions}
@@ -153,6 +169,7 @@ export const GraphBuilder: FC = () => {
           onSubmit={handleSubmitUserInputModal}
           onClose={handleCloseUserInputModal}
         />
+        <NodeChangesModalRenderer />
       </ErrorBoundary>
     </Container>
   );

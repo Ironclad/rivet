@@ -21,6 +21,14 @@ export const nodeStyles = css`
     contain: layout;
   }
 
+  .node.changed-added {
+    border-color: var(--success);
+  }
+
+  .node.changed {
+    border-color: var(--warning);
+  }
+
   .node-skeleton {
     background: var(--grey-light);
     height: 100px;

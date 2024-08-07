@@ -3800,12 +3800,11 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^6.9.0"
     "@vitejs/plugin-react": "npm:^4.1.0"
     ahooks: "npm:^3.7.8"
-    chalk: "npm:^5.3.0"
     clsx: "npm:^2.0.0"
     core-js: "npm:^3.33.1"
     csv-parse: "npm:^5.5.2"
     csv-stringify: "npm:^6.4.4"
-    emittery: "npm:^1.0.1"
+    emittery: "npm:^1.0.3"
     enquirer: "npm:^2.4.1"
     esbuild: "npm:^0.19.5"
     eslint: "npm:^8.52.0"
@@ -3817,8 +3816,10 @@ __metadata:
     eslint-plugin-react: "npm:^7.33.2"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     execa: "npm:^8.0.1"
+    fast-deep-equal: "npm:^3.1.3"
     fuse.js: "npm:^6.6.2"
     immer: "npm:^10.0.3"
+    jest-diff: "npm:^29.7.0"
     jsonpath-plus: "npm:^7.2.0"
     lodash-es: "npm:^4.17.21"
     lru-cache: "npm:^11.0.0"
@@ -9188,6 +9189,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"diff-sequences@npm:^29.6.3":
+  version: 29.6.3
+  resolution: "diff-sequences@npm:29.6.3"
+  checksum: 179daf9d2f9af5c57ad66d97cb902a538bcf8ed64963fa7aa0c329b3de3665ce2eb6ffdc2f69f29d445fa4af2517e5e55e5b6e00c00a9ae4f43645f97f7078cb
+  languageName: node
+  linkType: hard
+
 "diff@npm:^4.0.1":
   version: 4.0.2
   resolution: "diff@npm:4.0.2"
@@ -9463,6 +9471,13 @@ __metadata:
   version: 1.0.1
   resolution: "emittery@npm:1.0.1"
   checksum: 65dacfa022e5d412eac767fc1e62c4b89dbdf52d8fe96c25435149ca656907e7d87a325d1e5b1dab063315a154f56f5ea4fdaa0f12f228370af1dc0d91b017c2
+  languageName: node
+  linkType: hard
+
+"emittery@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "emittery@npm:1.0.3"
+  checksum: 5ba4fc3aff76e299e1b3d97ebf22df1b5813f6ae231ba023f7edf9a75c6547dff63fc0445d80291b44044486958ab79a8ca285d3e6fd66f3d6aacaa14d56aa24
   languageName: node
   linkType: hard
 
@@ -12606,6 +12621,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jest-diff@npm:^29.7.0":
+  version: 29.7.0
+  resolution: "jest-diff@npm:29.7.0"
+  dependencies:
+    chalk: "npm:^4.0.0"
+    diff-sequences: "npm:^29.6.3"
+    jest-get-type: "npm:^29.6.3"
+    pretty-format: "npm:^29.7.0"
+  checksum: 6f3a7eb9cd9de5ea9e5aa94aed535631fa6f80221832952839b3cb59dd419b91c20b73887deb0b62230d06d02d6b6cf34ebb810b88d904bb4fe1e2e4f0905c98
+  languageName: node
+  linkType: hard
+
 "jest-environment-jsdom@npm:29.7.0":
   version: 29.7.0
   resolution: "jest-environment-jsdom@npm:29.7.0"
@@ -12624,6 +12651,13 @@ __metadata:
     canvas:
       optional: true
   checksum: 23bbfc9bca914baef4b654f7983175a4d49b0f515a5094ebcb8f819f28ec186f53c0ba06af1855eac04bab1457f4ea79dae05f70052cf899863e8096daa6e0f5
+  languageName: node
+  linkType: hard
+
+"jest-get-type@npm:^29.6.3":
+  version: 29.6.3
+  resolution: "jest-get-type@npm:29.6.3"
+  checksum: 88ac9102d4679d768accae29f1e75f592b760b44277df288ad76ce5bf038c3f5ce3719dea8aa0f035dac30e9eb034b848ce716b9183ad7cc222d029f03e92205
   languageName: node
   linkType: hard
 

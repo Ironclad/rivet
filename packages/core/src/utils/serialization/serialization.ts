@@ -19,17 +19,18 @@ export function serializeProject(project: Project, attachedData?: AttachedData):
   return projectV4Serializer(project, attachedData);
 }
 
+const errMessage = (err: unknown) => `${getError(err).message}\n${getError(err).stack}`;
+
 export function deserializeProject(serializedProject: unknown, path: string | null = null): [Project, AttachedData] {
   try {
     const result = projectV4Deserializer(serializedProject);
-    if (path !== null)
-      result[0].metadata.path = path;
+    if (path !== null) result[0].metadata.path = path;
     return result;
   } catch (err) {
     if (err instanceof yaml.YAMLError) {
       yamlProblem(err);
     }
-    console.warn(`Failed to deserialize project v4: ${getError(err).stack}`);
+    console.warn(`Failed to deserialize project v4: ${errMessage(err)}`);
 
     try {
       const project = projectV3Deserializer(serializedProject);
@@ -38,7 +39,7 @@ export function deserializeProject(serializedProject: unknown, path: string | nu
       if (err instanceof yaml.YAMLError) {
         yamlProblem(err);
       }
-      console.warn(`Failed to deserialize project v3: ${getError(err).stack}`);
+      console.warn(`Failed to deserialize project v3: ${errMessage(err)}`);
 
       try {
         const project = projectV2Deserializer(serializedProject);
@@ -47,13 +48,13 @@ export function deserializeProject(serializedProject: unknown, path: string | nu
         if (err instanceof yaml.YAMLError) {
           yamlProblem(err);
         }
-        console.warn(`Failed to deserialize project v2: ${getError(err).stack}`);
+        console.warn(`Failed to deserialize project v2: ${errMessage(err)}`);
 
         try {
           const project = projectV1Deserializer(serializedProject);
           return [project, {}];
         } catch (err) {
-          console.warn(`Failed to deserialize project v1: ${getError(err).stack}`);
+          console.warn(`Failed to deserialize project v1: ${errMessage(err)}`);
           throw new Error('Could not deserialize project');
         }
       }

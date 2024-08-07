@@ -1021,9 +1021,10 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           output['in-messages' as PortId] = { type: 'chat-message[]', value: messages };
           output['requestTokens' as PortId] = { type: 'number', value: tokenCount * (numberOfChoices ?? 1) };
 
-          const responseTokenCount = responseChoicesParts
-            .map((choiceParts) => context.tokenizer.getTokenCountForString(choiceParts.join(), tokenizerInfo))
-            .reduce((a, b) => a + b, 0);
+          let responseTokenCount = 0;
+          for (const choiceParts of responseChoicesParts) {
+            responseTokenCount += await context.tokenizer.getTokenCountForString(choiceParts.join(), tokenizerInfo);
+          }
 
           output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
 

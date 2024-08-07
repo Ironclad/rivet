@@ -14,8 +14,24 @@ import { recoilPersist } from 'recoil-persist';
 import { mapValues } from 'lodash-es';
 import { projectState } from './savedGraphs';
 import { pluginRefreshCounterState } from './plugins';
+import { type CalculatedRevision } from '../utils/ProjectRevisionCalculator';
 
 const { persistAtom } = recoilPersist({ key: 'graph' });
+
+export const historicalGraphState = atom<CalculatedRevision | null>({
+  key: 'historicalGraph',
+  default: null,
+});
+
+export const isReadOnlyGraphState = atom<boolean>({
+  key: 'isReadOnlyGraph',
+  default: false,
+});
+
+export const historicalChangedNodesState = atom<Set<NodeId>>({
+  key: 'historicalChangedNodes',
+  default: new Set(),
+});
 
 export const graphState = atom<NodeGraph>({
   key: 'graphState',

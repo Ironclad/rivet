@@ -1,6 +1,5 @@
 import { type ChatMessage, type GptFunction } from '../index.js';
 import type { Tokenizer, TokenizerCallInfo } from './Tokenizer.js';
-import { encode, encodeChat } from 'gpt-tokenizer';
 import Emittery from 'emittery';
 import { getError } from '../utils/errors.js';
 import { chatMessageToOpenAIChatCompletionMessage } from '../utils/chatMessageToOpenAIChatCompletionMessage.js';
@@ -15,7 +14,8 @@ export class GptTokenizerTokenizer implements Tokenizer {
     this.emitter.on(event, listener);
   }
 
-  getTokenCountForString(input: string, _info: TokenizerCallInfo): number {
+  async getTokenCountForString(input: string, _info: TokenizerCallInfo): Promise<number> {
+    const { encode } = await import('gpt-tokenizer');
     return encode(input).length;
   }
 
@@ -42,6 +42,8 @@ export class GptTokenizerTokenizer implements Tokenizer {
 
           return message;
         });
+
+      const { encode, encodeChat } = await import('gpt-tokenizer');
 
       const encodedChat = encodeChat(validMessages as any, 'gpt-3.5-turbo');
       const encodedFunctions =

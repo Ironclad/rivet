@@ -369,7 +369,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
       model,
       endpoint: undefined,
     };
-    const tokenCountEstimate = context.tokenizer.getTokenCountForString(prompt, tokenizerInfo);
+    const tokenCountEstimate = await context.tokenizer.getTokenCountForString(prompt, tokenizerInfo);
     const modelInfo = anthropicModels[model] ?? {
       maxTokens: Number.MAX_SAFE_INTEGER,
       cost: {
@@ -535,7 +535,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
 
             output['requestTokens' as PortId] = { type: 'number', value: requestTokens ?? tokenCountEstimate };
             const responseTokenCount =
-              responseTokens ?? context.tokenizer.getTokenCountForString(responseParts.join(''), tokenizerInfo);
+              responseTokens ?? (await context.tokenizer.getTokenCountForString(responseParts.join(''), tokenizerInfo));
             output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
           } else {
             // Use the normal chat completion method for non-Claude 3 models
@@ -576,7 +576,10 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
               ],
             };
             output['requestTokens' as PortId] = { type: 'number', value: tokenCountEstimate };
-            const responseTokenCount = context.tokenizer.getTokenCountForString(responseParts.join(''), tokenizerInfo);
+            const responseTokenCount = await context.tokenizer.getTokenCountForString(
+              responseParts.join(''),
+              tokenizerInfo,
+            );
             output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
           }
 

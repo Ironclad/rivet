@@ -30,6 +30,7 @@ import SendIcon from 'majesticons/solid/send.svg?react';
 import GitForkLine from 'majesticons/line/git-fork-line.svg?react';
 import PinIcon from 'majesticons/line/pin-line.svg?react';
 import PinSolidIcon from 'majesticons/solid/pin.svg?react';
+import BookIcon from 'majesticons/line/book-open-line.svg?react';
 import { ResizeHandle } from './ResizeHandle.js';
 import { useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
@@ -43,8 +44,10 @@ import {
   draggingWireState,
   isPinnedState,
   pinnedNodesState,
+  viewingNodeChangesState,
 } from '../state/graphBuilder';
 import { Tooltip } from './Tooltip';
+import { useHistoricalNodeChangeInfo } from '../hooks/useHistoricalNodeChangeInfo';
 
 export type VisualNodeProps = {
   heightCache: HeightCache;
@@ -130,6 +133,8 @@ export const VisualNode = memo(
       const isComment = node.type === 'comment';
       useDependsOnPlugins();
 
+      const changeInfo = useHistoricalNodeChangeInfo(node.id);
+
       const asCommentNode = node as CommentNode;
       const style = useMemo(() => {
         const bgColor = node.visualData.color?.bg ?? 'var(--grey-darkish)';
@@ -186,20 +191,32 @@ export const VisualNode = memo(
           ? lastRun?.at(processPage === 'latest' ? lastRun.length - 1 : processPage)?.data
           : undefined;
 
+      const changedClass = changeInfo.changed
+        ? !changeInfo.before && changeInfo.after
+          ? 'changed-added'
+          : 'changed'
+        : '';
+
+      const isHistoricalChanged = changeInfo.changed && !!changeInfo.before && !!changeInfo.after;
+
       return (
         <div
-          className={clsx('node', {
-            overlayNode: isOverlay,
-            selected: isSelected,
-            success: selectedProcessRun?.status?.type === 'ok',
-            error: selectedProcessRun?.status?.type === 'error',
-            running: selectedProcessRun?.status?.type === 'running',
-            'not-ran': selectedProcessRun?.status?.type === 'notRan',
-            zoomedOut: isZoomedOut,
-            isComment,
-            isPinned,
-            disabled: node.disabled,
-          })}
+          className={clsx(
+            'node',
+            {
+              overlayNode: isOverlay,
+              selected: isSelected,
+              success: selectedProcessRun?.status?.type === 'ok',
+              error: selectedProcessRun?.status?.type === 'error',
+              running: selectedProcessRun?.status?.type === 'running',
+              'not-ran': selectedProcessRun?.status?.type === 'notRan',
+              zoomedOut: isZoomedOut,
+              isComment,
+              isPinned,
+              disabled: node.disabled,
+            },
+            changedClass,
+          )}
           ref={nodeRef}
           style={style}
           {...nodeAttributes}
@@ -244,6 +261,7 @@ export const VisualNode = memo(
               lastRun={lastRun}
               processPage={processPage}
               isPinned={isPinned}
+              isHistoricalChanged={isHistoricalChanged}
             />
           )}
         </div>
@@ -399,6 +417,7 @@ const NormalVisualNodeContent: FC<{
   lastRun?: ProcessDataForNode[];
   processPage: number | 'latest';
   isPinned: boolean;
+  isHistoricalChanged: boolean;
   onWireStartDrag?: (
     event: MouseEvent<HTMLElement>,
     startNodeId: NodeId,
@@ -440,6 +459,7 @@ const NormalVisualNodeContent: FC<{
     onPortMouseOver,
     onPortMouseOut,
     isKnownNodeType,
+    isHistoricalChanged,
   }) => {
     useDependsOnPlugins();
 
@@ -543,6 +563,16 @@ const NormalVisualNodeContent: FC<{
       });
     });
 
+    const setViewingNodeChanges = useSetRecoilState(viewingNodeChangesState);
+
+    const viewChanges = () => {
+      if (!isHistoricalChanged) {
+        return;
+      }
+
+      setViewingNodeChanges(node.id);
+    };
+
     return (
       <>
         <div className="node-title" onMouseMove={watchShift}>
@@ -555,6 +585,13 @@ const NormalVisualNodeContent: FC<{
             <div className="title-text">{node.title}</div>
           </div>
           <div className="title-controls">
+            {isHistoricalChanged && (
+              <button onClick={viewChanges} className="changed-button">
+                <Tooltip content="This node was changed, click to view changes">
+                  <BookIcon />
+                </Tooltip>
+              </button>
+            )}
             <button className={clsx('pin-button', { pinned: isPinned })} onClick={togglePinned}>
               <Tooltip content="Pin node (always show entire output)">
                 {isPinned ? <PinSolidIcon /> : <PinIcon />}
