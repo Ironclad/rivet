@@ -273,6 +273,7 @@ export type ChatCompletionOptions = {
   tool_choice?:
     | 'none'
     | 'auto'
+    | 'required'
     | {
         type: 'function';
         function: {
@@ -292,6 +293,14 @@ export type ChatCompletionOptions = {
          * Must be one of text or json_object.
          */
         type: 'json_object';
+      }
+    | {
+        type: 'json_schema';
+        json_schema: {
+          name: string;
+          strict: boolean;
+          schema: object;
+        };
       };
 };
 
@@ -402,6 +411,7 @@ export type ChatCompletionFunction = {
   name: string;
   description: string;
   parameters: object;
+  strict: boolean;
 };
 
 export async function* streamChatCompletions({

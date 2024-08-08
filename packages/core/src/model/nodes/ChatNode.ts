@@ -52,7 +52,7 @@ export type ChatNodeConfigData = {
   seed?: number;
   toolChoice?: 'none' | 'auto' | 'function';
   toolChoiceFunction?: string;
-  responseFormat?: 'text' | 'json';
+  responseFormat?: '' | 'text' | 'json' | 'json_schema';
   parallelFunctionCalling?: boolean;
   additionalParameters?: { key: string; value: string }[];
 };
@@ -336,6 +336,23 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       });
     }
 
+    if (this.data.responseFormat === 'json_schema') {
+      inputs.push({
+        dataType: 'object',
+        id: 'responseSchema' as PortId,
+        title: 'Response Schema',
+        description: 'The JSON schema that the response will adhere to (Structured Outputs).',
+        required: true,
+      });
+      inputs.push({
+        dataType: 'string',
+        id: 'responseSchemaName' as PortId,
+        title: 'Response Schema Name',
+        description: 'The name of the JSON schema that the response will adhere to (Structured Outputs).',
+        required: false,
+      });
+    }
+
     return inputs;
   }
 
@@ -518,6 +535,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               { value: '', label: 'Default' },
               { value: 'text', label: 'Text' },
               { value: 'json', label: 'JSON Object' },
+              { value: 'json_schema', label: 'JSON Schema' },
             ],
             defaultValue: '',
             helperMessage: 'The format to force the model to reply in.',
@@ -711,19 +729,20 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     const endpoint = getInputOrData(this.data, inputs, 'endpoint');
     const overrideModel = getInputOrData(this.data, inputs, 'overrideModel');
     const seed = getInputOrData(this.data, inputs, 'seed', 'number');
-    const responseFormat = getInputOrData(this.data, inputs, 'responseFormat') as 'text' | 'json' | '';
+    const responseFormat = getInputOrData(this.data, inputs, 'responseFormat') as 'text' | 'json' | 'json_schema' | '';
     const toolChoiceMode = getInputOrData(this.data, inputs, 'toolChoice', 'string') as 'none' | 'auto' | 'function';
 
-    const toolChoice: ChatCompletionOptions['tool_choice'] = !toolChoiceMode
-      ? undefined
-      : toolChoiceMode === 'function'
-        ? {
-            type: 'function',
-            function: {
-              name: getInputOrData(this.data, inputs, 'toolChoiceFunction', 'string'),
-            },
-          }
-        : toolChoiceMode;
+    const toolChoice: ChatCompletionOptions['tool_choice'] =
+      !toolChoiceMode || !this.data.enableFunctionUse
+        ? undefined
+        : toolChoiceMode === 'function'
+          ? {
+              type: 'function',
+              function: {
+                name: getInputOrData(this.data, inputs, 'toolChoiceFunction', 'string'),
+              },
+            }
+          : toolChoiceMode;
 
     const openaiResponseFormat = !responseFormat?.trim()
       ? undefined
@@ -731,9 +750,18 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         ? ({
             type: 'json_object',
           } as const)
-        : ({
-            type: 'text',
-          } as const);
+        : responseFormat === 'json_schema'
+          ? {
+              type: 'json_schema' as const,
+              json_schema: {
+                name: coerceTypeOptional(inputs['responseSchemaName' as PortId], 'string') || 'response_schema',
+                strict: true,
+                schema: coerceType(inputs['responseSchema' as PortId], 'object'),
+              },
+            }
+          : ({
+              type: 'text',
+            } as const);
 
     const headersFromData = (this.data.headers ?? []).reduce(
       (acc, header) => {

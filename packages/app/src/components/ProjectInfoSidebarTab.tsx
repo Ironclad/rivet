@@ -1,7 +1,7 @@
 import { useMemo, type FC, useState } from 'react';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { ProjectPluginsConfiguration } from './ProjectPluginConfiguration';
-import { Field } from '@atlaskit/form';
+import { Field, Label } from '@atlaskit/form';
 import Select from '@atlaskit/select';
 import { useRecoilState } from 'recoil';
 import { projectContextState, projectState, savedGraphsState } from '../state/savedGraphs';
@@ -14,6 +14,7 @@ import { produce } from 'immer';
 import Toggle from '@atlaskit/toggle';
 import { entries } from '../../../core/src/utils/typeSafety';
 import { css } from '@emotion/react';
+import { ProjectRevisions } from './ProjectRevisionList';
 
 const styles = css`
   .context-list {
@@ -190,6 +191,9 @@ export const ProjectInfoSidebarTab: FC = () => {
           </>
         )}
       </Field>
+
+      <Label htmlFor="">Revisions</Label>
+      <ProjectRevisions />
     </div>
   );
 };

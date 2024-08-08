@@ -5,6 +5,218 @@ data:
       testSuites: []
       version: 1
   graphs:
+    HhKWCMAQ8eQOo8NEUe6WN:
+      metadata:
+        description: Generates the configuration and code for a Code Node based on a
+          user's request.
+        id: HhKWCMAQ8eQOo8NEUe6WN
+        name: Object Node Generator
+      nodes:
+        '[LSw9Od3M7kp4BDWMH2hK5]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 1218.6503689348447
+            text: "### Initial question to generate the code"
+          visualData: -1637.2291911884442/228.4700890675118/1639.5188375265523/79//
+        '[Mn2IP67COwFFtu53CTfR5]:text "Text"':
+          data:
+            text: >-
+              I would like the Object Node to follow the following
+              specification:
+
+
+              """
+
+              {{spec}}
+
+              """
+
+
+              Please respond with a JSON object based on what I am looking for.
+
+
+              If anything is vague with the request, attempt to fill in the gaps and generate something anyway. 
+          outgoingConnections:
+            - output->"Assemble Prompt" skvkJKngOEyUrY9Jw7pAh/message2
+          visualData: -1159.414078546703/820.6518251580231/330/44//
+        '[RoIocLRqGb2NjOUbgzxy8]:match "Match"':
+          data:
+            cases:
+              - configureExtractRegexNode
+              - impossibleRequest
+          outgoingConnections:
+            - case2->"Destructure" vhqBra6P8GrzFTEMk6KhB/object
+          visualData: 229.05132289300522/653.6214687275316/280/155//
+        '[WDAw39mquUZf-znE6HvDQ]:gptFunction "GPT Function"':
+          data:
+            description: "Call this function if the request is impossible. "
+            name: impossibleRequest
+            schema: >-
+              {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "description": "A reason for why the user's request is impossible."
+                  }
+                },
+                "required": ["reason"]
+              }
+          outgoingConnections:
+            - function->"Chat" nAttnxSXzOBWVdLE-nBsA/functions
+          visualData: -746.4223083424073/928.2227958465032/280/156//
+        '[ZT9EfF-eAeWNWqMpb6Lub]:text "Text"':
+          data:
+            regex: ""
+            text: >-
+              Rivet is a visual programming IDE where you connect together Nodes
+              in order to make programs that interact with large language models
+              (LLMs).
+
+
+              The Object Node is a simple node that outputs a JSON object. It has a single code editor where the user can type in a JSON object. This object will be output by the Rivet executor as an object, for future nodes to use.
+
+
+              ## Placeholders
+
+
+              Additionally, placeholders delimited by double curly braces can be used around fields. For example, {\{foo}\} (ignore the backslashes) can be used to cause rivet to create a `foo` input port on the object node, where other objects can be passed in to the node! This allows objects to be composed from other values.
+
+
+              You must use:
+
+
+              {{
+
+              and
+
+              }}
+
+
+              ## Examples
+
+
+              Simple JSON object:
+
+
+              ```json
+
+              {
+                "stringValue": "foo",
+                "numberValue": 5
+              }
+
+              ```
+
+
+              JSON object with a placeholder for a string (again, ignore the backslashes and use {{ directly for example):
+
+
+              ```json
+
+              {
+                "stringValue": "{\{foo}\}",
+                "numberValue": 5
+              }
+
+              ```
+
+
+              ## Your Role
+
+
+              The user will give you what they want the object node to output, in plain english. You are instructed to output JSON conforming to what the user wants the JSON to do. For example, the user may ask for a JSON schema and they will describe the schema they want in plain English. You must output a valid JSON schema for what they want.
+          outgoingConnections:
+            - output->"Chat" nAttnxSXzOBWVdLE-nBsA/systemPrompt
+          visualData: -726.7897865366365/329.1772579707348/330/33//
+        '[bN6cYKrHB1klwU_T2OxQS]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 974.2145513177229
+            text: "### Response Extraction"
+          visualData: 186.03967739541122/100.77978069649924/1213.1380762809863/145//
+        '[bcqJUkQJxLVz6AgBMtuKu]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: Hello, what would you like the Object Node to do?
+            type: assistant
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" skvkJKngOEyUrY9Jw7pAh/message1
+          visualData: -1131.5264250597115/626.2855847456499/280/111//
+        '[hzGuMYMZKFM0yUOBixEA3]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: error
+          visualData: 964.7106714933195/699.7796495316356/330/159//
+        '[lOg785BYP-taQMa0lkK6B]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            defaultValue: gpt-4o-mini
+            id: model
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Chat" nAttnxSXzOBWVdLE-nBsA/model
+          visualData: -1135.2269437747914/447.68092596305564/294.1641220064855/45//
+        '[nAttnxSXzOBWVdLE-nBsA]:chat "Chat"':
+          data:
+            additionalParameters: []
+            cache: false
+            enableFunctionUse: true
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-4o-mini
+            parallelFunctionCalling: false
+            presencePenalty: 0
+            responseFormat: json
+            stop: ""
+            temperature: 0
+            toolChoice: auto
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: true
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - function-call->"Match" RoIocLRqGb2NjOUbgzxy8/input
+            - function-call->"Match" RoIocLRqGb2NjOUbgzxy8/value
+            - response->"Graph Output" xqA4sxEfxVx5KZ3Psdv_Y/value
+          visualData: -290.8634551725346/579.3170909210522/230/37//
+        '[skvkJKngOEyUrY9Jw7pAh]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Chat" nAttnxSXzOBWVdLE-nBsA/prompt
+          visualData: -717.0170939371682/713.5432398109425/280/32//
+        '[vhqBra6P8GrzFTEMk6KhB]:destructure "Destructure"':
+          data:
+            paths:
+              - $.arguments.reason
+          outgoingConnections:
+            - match_0->"Graph Output" hzGuMYMZKFM0yUOBixEA3/value
+          visualData: 629.8069910168186/709.4959880264801/280/158//
+        '[xqA4sxEfxVx5KZ3Psdv_Y]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: object
+          visualData: 219.69149899207565/429.6659119006463/330/161//
+        '[y7uo5P9hy8_yLq51K7xqy]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            defaultValue: a JSON schema for a chair. Be creative
+            id: prompt
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Text" Mn2IP67COwFFtu53CTfR5/spec
+          visualData: -1552.419236105042/873.516337043934/287.64850782584654/51//
     fd-5pfqrBw3YAPli0X_yi:
       metadata:
         description: Generates the configuration and code for a Code Node based on a
@@ -545,6 +757,190 @@ data:
             - firstBlock->"If" RYDwAKZ3ZmY5efXzi3dke/if
             - firstBlock->"Match" J4bFCY4R2l5RHElPJ-w-n/value
           visualData: 93.22129334676526/626.8160707712718/280/66//
+    gBKp-zMF5jubVEiROttP8:
+      metadata:
+        description: Generates the configuration and code for a Code Node based on a
+          user's request.
+        id: gBKp-zMF5jubVEiROttP8
+        name: Structured Outputs JSON Schema Generator
+      nodes:
+        '[0OTOnd4b7LWdEQuKnHopk]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: schema
+          visualData: 219.69149899207565/429.6659119006463/330/161//
+        '[0vyVT0Y-m-O58xbIDYKPz]:destructure "Destructure"':
+          data:
+            paths:
+              - $.arguments.reason
+          outgoingConnections:
+            - match_0->"Graph Output" hJhsH30i2BmmV0oD-_QMg/value
+          visualData: 629.8069910168186/709.4959880264801/280/158//
+        '[4XYS0zR5hAsoOA4ci_1IT]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 974.2145513177229
+            text: "### Response Extraction"
+          visualData: 186.03967739541122/100.77978069649924/1213.1380762809863/145//
+        '[80Ca_FCyXWlaQJka3Ia47]:text "Text"':
+          data:
+            regex: ""
+            text: >-
+              Rivet is a visual programming IDE where you connect together Nodes
+              in order to make programs that interact with large language models
+              (LLMs).
+
+
+              The GPT Function node is used for passing available functions to AIs. It uses JSON Schema to define the functions.
+
+
+              ## JSON Schema Restrictions
+
+
+              For OpenAI Structured Outputs, all schemas must follow these rules:
+
+
+              1. ALL properties of ALL objects must be required. This is accomplished by setting `"required": ["property1", "property2", etc]` for every object type. If a property needs to be optional, then its type should be, for example, `["string", null]`, and `required` should still include the property name.
+
+
+              2. `additionalProperties` must be set to `false` on ALL objects.
+
+
+              3. `description` is required on all properties of all objects.
+
+
+              ## Your Role
+
+
+              The user will give you plain english describing a JSON schema that they want. You output a compatible JSON schema for their request, following the above restructions.
+          outgoingConnections:
+            - output->"Chat" cVukG292qUBt_9g_BUfq-/systemPrompt
+          visualData: -726.7897865366365/329.1772579707348/330/33//
+        '[L9NiwGpPyqIKgD26BcMY3]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Chat" cVukG292qUBt_9g_BUfq-/prompt
+          visualData: -717.0170939371682/713.5432398109425/280/32//
+        '[QUwpC6FcpotEGetEmYaFR]:match "Match"':
+          data:
+            cases:
+              - configureExtractRegexNode
+              - impossibleRequest
+          outgoingConnections:
+            - case2->"Destructure" 0vyVT0Y-m-O58xbIDYKPz/object
+          visualData: 229.05132289300522/653.6214687275316/280/155//
+        '[XOPE_UBUwVuO78aByNTLO]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: Hello, what would you like the schema to be?
+            type: assistant
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" L9NiwGpPyqIKgD26BcMY3/message1
+          visualData: -1131.5264250597115/626.2855847456499/280/111//
+        '[XpZAe_9Wj_feWp9Ck6s-S]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            defaultValue: gpt-4o-mini
+            id: model
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Chat" cVukG292qUBt_9g_BUfq-/model
+          visualData: -1135.2269437747914/447.68092596305564/294.1641220064855/45//
+        '[cVukG292qUBt_9g_BUfq-]:chat "Chat"':
+          data:
+            additionalParameters: []
+            cache: false
+            enableFunctionUse: true
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-4o
+            parallelFunctionCalling: false
+            presencePenalty: 0
+            responseFormat: json
+            stop: ""
+            temperature: 0
+            toolChoice: auto
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: true
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - function-call->"Match" QUwpC6FcpotEGetEmYaFR/input
+            - function-call->"Match" QUwpC6FcpotEGetEmYaFR/value
+            - response->"Graph Output" 0OTOnd4b7LWdEQuKnHopk/value
+          visualData: -290.8634551725346/579.3170909210522/230/37//
+        '[hJhsH30i2BmmV0oD-_QMg]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: error
+          visualData: 964.7106714933195/699.7796495316356/330/159//
+        '[hS4vKuOMPiwyQ-nzEngKa]:gptFunction "GPT Function"':
+          data:
+            description: "Call this function if the request is impossible. "
+            name: impossibleRequest
+            schema: >-
+              {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "description": "A reason for why the user's request is impossible."
+                  }
+                },
+                "required": ["reason"]
+              }
+          outgoingConnections:
+            - function->"Chat" cVukG292qUBt_9g_BUfq-/functions
+          visualData: -731.2406725831552/928.2227958465032/280/163//
+        '[newQ7uMEHaP-_VLfuK_I-]:text "Text"':
+          data:
+            text: >-
+              I would like the schema to follow the following specification:
+
+
+              """
+
+              {{spec}}
+
+              """
+
+
+              Please respond with a JSON schema based on what I am looking for.
+
+
+              If anything is vague with the request, attempt to fill in the gaps and generate something anyway. 
+
+
+              If I have omitted anything, guess what I want based on the context.
+          outgoingConnections:
+            - output->"Assemble Prompt" L9NiwGpPyqIKgD26BcMY3/message2
+          visualData: -1159.414078546703/820.6518251580231/330/44//
+        '[nn8bg4rRre7R9Yfn1LNuU]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 979.6483185797417
+            text: "### Initial question to generate the code"
+          visualData: -1637.2291911884442/228.4700890675118/1646.590817879626/79//
+        '[wzww16NP9VoULLTpuSaMZ]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            defaultValue: a box, with width, height, and depth. also a string contents.
+            id: prompt
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Text" newQ7uMEHaP-_VLfuK_I-/spec
+          visualData: -1528.1286188902386/932.7247165050172/287.64850782584654/164//
     jAiJgUaPnUwcZCrrYd8L9:
       metadata:
         description: Generates the configuration and code for a Code Node based on a

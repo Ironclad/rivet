@@ -21,8 +21,8 @@ export const NodeChangesModal: FC = () => {
     return null;
   }
 
-  const beforeYaml = yaml.stringify(changes.before!);
-  const afterYaml = yaml.stringify(changes.after!);
+  const beforeYaml = changes.before ? yaml.stringify(changes.before) : '';
+  const afterYaml = changes.after ? yaml.stringify(changes.after!) : '';
 
   const yamlDiff = diffStringsUnified(beforeYaml, afterYaml, {
     contextLines: 5,

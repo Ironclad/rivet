@@ -5,6 +5,8 @@ import { match } from 'ts-pattern';
 import { CodeNodeAIAssistEditor } from './custom/CodeNodeAIAssistEditor';
 import { ToolCallHandlersEditor } from './custom/ToolCallHandlersEditor';
 import { ExtractRegexNodeAiAssistEditor } from './custom/ExtractRegexNodeAiAssistEditor';
+import { ObjectNodeAiAssistEditor } from './custom/ObjectNodeAiAssistEditor';
+import { GptFunctionNodeJsonSchemaAiAssistEditor } from './custom/GptFunctionJsonSchemaAiAssistEditor';
 
 export const CustomEditor: FC<
   SharedEditorProps & {
@@ -15,5 +17,9 @@ export const CustomEditor: FC<
     .with('CodeNodeAIAssist', () => <CodeNodeAIAssistEditor {...props} editor={editor} />)
     .with('ToolCallHandlers', () => <ToolCallHandlersEditor {...props} editor={editor} />)
     .with('ExtractRegexNodeAiAssist', () => <ExtractRegexNodeAiAssistEditor {...props} editor={editor} />)
+    .with('ObjectNodeAiAssist', () => <ObjectNodeAiAssistEditor {...props} editor={editor} />)
+    .with('GptFunctionNodeJsonSchemaAiAssist', () => (
+      <GptFunctionNodeJsonSchemaAiAssistEditor {...props} editor={editor} />
+    ))
     .otherwise(() => null);
 };

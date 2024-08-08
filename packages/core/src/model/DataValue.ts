@@ -77,6 +77,7 @@ export type GptFunction = {
   namespace?: string;
   description: string;
   parameters: object;
+  strict: boolean;
 };
 
 export type GptFunctionDataValue = DataValueDef<'gpt-function', GptFunction>;
@@ -399,6 +400,7 @@ export const scalarDefaults: { [P in ScalarDataType]: Extract<ScalarDataValue, {
     description: '',
     parameters: {},
     namespace: undefined,
+    strict: false,
   },
   vector: [],
   image: {

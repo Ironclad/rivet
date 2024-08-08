@@ -6,12 +6,10 @@ import { css } from '@emotion/react';
 import Button from '@atlaskit/button';
 import { type CalculatedRevision } from '../utils/ProjectRevisionCalculator';
 import { graphState, historicalGraphState, isReadOnlyGraphState } from '../state/graph';
-import { GraphId } from '@ironclad/rivet-core';
+import { GraphId, type NodeGraph } from '@ironclad/rivet-core';
 
-const styles = css`
+export const revisionStyles = css`
   .revisions {
-    max-height: 800px;
-    overflow: auto;
     display: flex;
     flex-direction: column;
     margin-right: -12px;
@@ -69,14 +67,14 @@ export const GraphRevisions: FC = () => {
 
   if (!enabled) {
     return (
-      <div css={styles}>
+      <div css={revisionStyles}>
         <Button onClick={() => setEnabled(true)}>Show Revisions</Button>
       </div>
     );
   }
 
   return (
-    <div css={styles}>
+    <div css={revisionStyles}>
       <GraphRevisionList />
     </div>
   );
@@ -86,7 +84,7 @@ export const GraphRevisionList: FC = () => {
   const { revisions, isLoading, stop, resume, numTotalRevisions, numProcessedRevisions } = useGraphRevisions();
 
   return (
-    <div css={styles}>
+    <div css={revisionStyles}>
       <div className="revisions">
         {revisions.map((revision) => (
           <GraphRevisionListEntry key={revision.hash} revision={revision} />
@@ -120,7 +118,17 @@ export const GraphRevisionListEntry: FC<{
   const setHistoricalGraph = useSetRecoilState(historicalGraphState);
 
   function chooseGraph() {
-    setGraph(revision.projectAtRevision!.graphs[currentGraphId]!);
+    const nodesBefore = revision.projectAtRevision!.graphs[currentGraphId]?.nodes ?? [];
+    const nodesAfter = revision.projectAtRevision!.graphs[currentGraphId]?.nodes!;
+
+    const nodesDeleted = nodesAfter?.filter((node) => !nodesBefore?.some((n) => n.id === node.id));
+
+    const combinedGraph: NodeGraph = {
+      ...revision.projectAtRevision!.graphs[currentGraphId]!,
+      nodes: [...nodesAfter, ...nodesDeleted],
+    };
+
+    setGraph(combinedGraph);
     setIsReadOnlyGraph(true);
     setHistoricalGraph(revision);
   }

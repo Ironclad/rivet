@@ -38,6 +38,8 @@ const styles = css`
   .graph-info-section,
   .project-info-section {
     padding: 8px 12px;
+    height: 100%;
+    overflow: auto;
   }
 
   .toggle-tab {

@@ -71,6 +71,11 @@ export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
   getEditors(): EditorDefinition<ObjectNode>[] {
     return [
       {
+        type: 'custom',
+        customEditorId: 'ObjectNodeAiAssist',
+        label: 'AI Assist',
+      },
+      {
         type: 'code',
         label: 'JSON Template',
         dataKey: 'jsonTemplate',

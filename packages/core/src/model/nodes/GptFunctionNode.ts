@@ -28,6 +28,8 @@ export type GptFunctionNodeData = {
 
   schema: string;
   useSchemaInput?: boolean;
+
+  strict?: boolean;
 };
 
 export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
@@ -124,12 +126,23 @@ export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
         useInputToggleDataKey: 'useNameInput',
       },
       {
+        type: 'toggle',
+        label: 'Strict',
+        dataKey: 'strict',
+        helperMessage: 'Sets the strict parameter, which determines if OpenAI Structured Outputs are used.',
+      },
+      {
         type: 'code',
         label: 'Description',
         dataKey: 'description',
         useInputToggleDataKey: 'useDescriptionInput',
         language: 'markdown',
         height: 100,
+      },
+      {
+        type: 'custom',
+        customEditorId: 'GptFunctionNodeJsonSchemaAiAssist',
+        label: 'AI Assist',
       },
       {
         type: 'code',
@@ -189,6 +202,7 @@ export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
           name,
           description,
           parameters: schema as object,
+          strict: this.data.strict ?? false,
         },
       },
     };
