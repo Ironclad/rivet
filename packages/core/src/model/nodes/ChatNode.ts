@@ -758,6 +758,15 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             }
           : toolChoiceMode;
 
+    let responseSchema: object | undefined;
+
+    const responseSchemaInput = inputs['responseSchema' as PortId];
+    if (responseSchemaInput?.type === 'gpt-function') {
+      responseSchema = responseSchemaInput.value.parameters;
+    } else if (responseSchemaInput != null) {
+      responseSchema = coerceType(responseSchemaInput, 'object');
+    }
+
     const openaiResponseFormat = !responseFormat?.trim()
       ? undefined
       : responseFormat === 'json'
@@ -770,7 +779,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               json_schema: {
                 name: getInputOrData(this.data, inputs, 'responseSchemaName', 'string') || 'response_schema',
                 strict: true,
-                schema: coerceType(inputs['responseSchema' as PortId], 'object'),
+                schema: responseSchema,
               },
             }
           : ({
