@@ -1,7 +1,7 @@
 import { useSetRecoilState } from 'recoil';
 import { type OpenedProjectInfo, loadedProjectState, projectState } from '../state/savedGraphs.js';
 import { emptyNodeGraph, getError } from '@ironclad/rivet-core';
-import { graphState } from '../state/graph.js';
+import { graphState, historicalGraphState, isReadOnlyGraphState } from '../state/graph.js';
 import { ioProvider } from '../utils/globals.js';
 import { trivetState } from '../state/trivet.js';
 import { useSetStaticData } from './useSetStaticData';
@@ -15,12 +15,17 @@ export function useLoadProject() {
   const setTrivetState = useSetRecoilState(trivetState);
   const setStaticData = useSetStaticData();
   const setNavigationStack = useSetRecoilState(graphNavigationStackState);
+  const setIsReadOnlyGraph = useSetRecoilState(isReadOnlyGraphState);
+  const setHistoricalGraph = useSetRecoilState(historicalGraphState);
 
   return async (projectInfo: OpenedProjectInfo) => {
     try {
       setProject(projectInfo.project);
 
       setNavigationStack({ stack: [], index: undefined });
+
+      setIsReadOnlyGraph(false);
+      setHistoricalGraph(null);
 
       if (projectInfo.openedGraph) {
         const graphData = projectInfo.project.graphs[projectInfo.openedGraph];
