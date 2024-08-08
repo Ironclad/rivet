@@ -17,7 +17,7 @@ export const NodeChangesModal: FC = () => {
   const changes = useHistoricalNodeChangeInfo(nodeId!);
   const setViewingNodeChanges = useSetRecoilState(viewingNodeChangesState);
 
-  if (changes.changed === false) {
+  if (changes == null || changes.changed === false) {
     return null;
   }
 
