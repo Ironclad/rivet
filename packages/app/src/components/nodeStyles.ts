@@ -29,6 +29,10 @@ export const nodeStyles = css`
     border-color: var(--warning);
   }
 
+  .node.not-changed {
+    opacity: 0.5;
+  }
+
   .node-skeleton {
     background: var(--grey-light);
     height: 100px;

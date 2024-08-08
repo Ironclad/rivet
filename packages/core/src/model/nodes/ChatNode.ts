@@ -779,7 +779,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               json_schema: {
                 name: getInputOrData(this.data, inputs, 'responseSchemaName', 'string') || 'response_schema',
                 strict: true,
-                schema: responseSchema,
+                schema: responseSchema ?? {},
               },
             }
           : ({

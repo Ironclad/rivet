@@ -58,6 +58,7 @@ const styles = css`
 
   .context-list-actions {
     margin-top: 8px;
+    margin-bottom: 8px;
   }
 `;
 

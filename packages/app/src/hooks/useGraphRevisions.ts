@@ -63,6 +63,9 @@ export function useProjectRevisions(options?: { max?: number }) {
     const calculator = revisionCalculators.get(projectState.path);
     if (calculator) {
       calculator.startProcessingRevisions();
+      setRevisions(calculator.processedRevisions);
+      setNumProcessedRevisions(calculator.processedRevisions.length);
+      setNumTotalRevisions(calculator.numTotalRevisions);
     }
     setIsLoading(true);
   }, [projectState.path]);
@@ -94,4 +97,28 @@ export function useGraphRevisions(options?: { max?: number }) {
     numProcessedRevisions,
     resume,
   };
+}
+
+export function useHasGitHistory() {
+  const projectPath = useRecoilValue(loadedProjectState).path;
+
+  const [hasHistory, setHasHistory] = useState(false);
+
+  useAsyncEffect(async () => {
+    if (!projectPath) {
+      return;
+    }
+
+    const pathDirname = projectPath.split('/').slice(0, -1).join('/');
+
+    const result = await new Command('git', ['rev-list', '--count', 'HEAD'], {
+      cwd: pathDirname,
+    }).execute();
+
+    if (result.code === 0) {
+      setHasHistory(true);
+    }
+  }, [projectPath]);
+
+  return hasHistory;
 }

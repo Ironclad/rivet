@@ -66,15 +66,15 @@ export class ProjectRevisionCalculator {
   }
 
   async startProcessingRevisions() {
-    if (!this.#gitRevisions) {
-      await this.loadGitRevisions();
-    }
-
     if (this.#abortController) {
       this.#abortController.abort();
     }
 
     this.#abortController = new AbortController();
+
+    if (!this.#gitRevisions) {
+      await this.loadGitRevisions();
+    }
 
     if (!this.#processQueue) {
       this.#processQueue = this.#gitRevisions!.slice();

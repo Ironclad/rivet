@@ -191,13 +191,15 @@ export const VisualNode = memo(
           ? lastRun?.at(processPage === 'latest' ? lastRun.length - 1 : processPage)?.data
           : undefined;
 
-      const changedClass = changeInfo.changed
-        ? !changeInfo.before && changeInfo.after
-          ? 'changed-added'
-          : 'changed'
+      const changedClass = changeInfo
+        ? changeInfo.changed
+          ? !changeInfo.before && changeInfo.after
+            ? 'changed-added'
+            : 'changed'
+          : 'not-changed'
         : '';
 
-      const isHistoricalChanged = changeInfo.changed && !!changeInfo.before && !!changeInfo.after;
+      const isHistoricalChanged = changeInfo != null && changeInfo.changed && !!changeInfo.before && !!changeInfo.after;
 
       return (
         <div

@@ -7,6 +7,7 @@ import Button from '@atlaskit/button';
 import { type CalculatedRevision } from '../utils/ProjectRevisionCalculator';
 import { graphState, historicalGraphState, isReadOnlyGraphState } from '../state/graph';
 import { GraphId, type NodeGraph } from '@ironclad/rivet-core';
+import { useChooseHistoricalGraph } from '../hooks/useChooseHistoricalGraph';
 
 export const revisionStyles = css`
   .revisions {
@@ -113,28 +114,10 @@ export const GraphRevisionListEntry: FC<{
   revision: CalculatedRevision;
 }> = ({ revision }) => {
   const currentGraphId = useRecoilValue(graphState).metadata!.id!;
-  const setGraph = useSetRecoilState(graphState);
-  const setIsReadOnlyGraph = useSetRecoilState(isReadOnlyGraphState);
-  const setHistoricalGraph = useSetRecoilState(historicalGraphState);
-
-  function chooseGraph() {
-    const nodesBefore = revision.projectAtRevision!.graphs[currentGraphId]?.nodes ?? [];
-    const nodesAfter = revision.projectAtRevision!.graphs[currentGraphId]?.nodes!;
-
-    const nodesDeleted = nodesAfter?.filter((node) => !nodesBefore?.some((n) => n.id === node.id));
-
-    const combinedGraph: NodeGraph = {
-      ...revision.projectAtRevision!.graphs[currentGraphId]!,
-      nodes: [...nodesAfter, ...nodesDeleted],
-    };
-
-    setGraph(combinedGraph);
-    setIsReadOnlyGraph(true);
-    setHistoricalGraph(revision);
-  }
+  const chooseGraph = useChooseHistoricalGraph(revision);
 
   return (
-    <div className="revision" onClick={chooseGraph}>
+    <div className="revision" onClick={() => chooseGraph(currentGraphId)}>
       <div className="hash">
         <span>{revision.hash.slice(0, 6)}</span>
       </div>

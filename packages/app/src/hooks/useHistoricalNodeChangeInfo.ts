@@ -13,12 +13,12 @@ export type HistoricalNodeChangeInfo =
       after: ChartNode | undefined;
     };
 
-export function useHistoricalNodeChangeInfo(nodeId: NodeId): HistoricalNodeChangeInfo {
+export function useHistoricalNodeChangeInfo(nodeId: NodeId): HistoricalNodeChangeInfo | undefined {
   const historicalGraph = useRecoilValue(historicalGraphState);
   const graph = useRecoilValue(graphState);
 
   if (historicalGraph == null) {
-    return { changed: false };
+    return undefined;
   }
 
   const beforeGraph = historicalGraph.projectBeforeRevision?.graphs[graph.metadata!.id!];

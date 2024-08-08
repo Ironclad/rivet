@@ -15,14 +15,13 @@ const styles = css`
   position: fixed;
   top: var(--project-selector-height);
   left: 0;
-  bottom: 0;
   width: 250px; // Adjust the width of the sidebar as needed
   background-color: var(--grey-dark-seethrougher);
   backdrop-filter: blur(2px);
   padding: 0;
   z-index: 50;
   border-right: 1px solid var(--grey);
-  height: 100vh;
+  height: calc(100vh - var(--project-selector-height));
 
   .panel {
     display: flex;
