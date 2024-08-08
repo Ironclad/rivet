@@ -55,6 +55,7 @@ export type ChatNodeConfigData = {
   responseFormat?: '' | 'text' | 'json' | 'json_schema';
   parallelFunctionCalling?: boolean;
   additionalParameters?: { key: string; value: string }[];
+  responseSchemaName?: string;
 };
 
 export type ChatNodeData = ChatNodeConfigData & {
@@ -77,6 +78,7 @@ export type ChatNodeData = ChatNodeConfigData & {
   useToolChoiceFunctionInput?: boolean;
   useResponseFormatInput?: boolean;
   useAdditionalParametersInput?: boolean;
+  useResponseSchemaNameInput?: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
@@ -344,13 +346,16 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         description: 'The JSON schema that the response will adhere to (Structured Outputs).',
         required: true,
       });
-      inputs.push({
-        dataType: 'string',
-        id: 'responseSchemaName' as PortId,
-        title: 'Response Schema Name',
-        description: 'The name of the JSON schema that the response will adhere to (Structured Outputs).',
-        required: false,
-      });
+
+      if (this.data.useResponseSchemaNameInput) {
+        inputs.push({
+          dataType: 'string',
+          id: 'responseSchemaName' as PortId,
+          title: 'Response Schema Name',
+          description: 'The name of the JSON schema that the response will adhere to (Structured Outputs).',
+          required: false,
+        });
+      }
     }
 
     return inputs;
@@ -539,6 +544,15 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             ],
             defaultValue: '',
             helperMessage: 'The format to force the model to reply in.',
+          },
+          {
+            type: 'string',
+            label: 'Response Schema Name',
+            dataKey: 'responseSchemaName',
+            useInputToggleDataKey: 'useResponseSchemaNameInput',
+            helperMessage:
+              'The name of the JSON schema that the response will adhere to (Structured Outputs). Defaults to response_schema',
+            hideIf: (data) => data.responseFormat !== 'json_schema',
           },
           {
             type: 'number',
@@ -754,7 +768,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           ? {
               type: 'json_schema' as const,
               json_schema: {
-                name: coerceTypeOptional(inputs['responseSchemaName' as PortId], 'string') || 'response_schema',
+                name: getInputOrData(this.data, inputs, 'responseSchemaName', 'string') || 'response_schema',
                 strict: true,
                 schema: coerceType(inputs['responseSchema' as PortId], 'object'),
               },
