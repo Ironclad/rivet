@@ -86,11 +86,12 @@ export const anthropicModelOptions = Object.entries(anthropicModels).map(([id, {
 export type Claude3ChatMessage = {
   role: 'user' | 'assistant';
   content: string | Claude3ChatMessageContentPart[];
-}
+};
 
 export type Claude3ChatMessageTextContentPart = {
   type: 'text';
   text: string;
+  cache_control: CacheControl;
 };
 
 export type Claude3ChatMessageImageContentPart = {
@@ -100,12 +101,14 @@ export type Claude3ChatMessageImageContentPart = {
     media_type: string;
     data: string;
   };
+  cache_control: CacheControl;
 };
 
 export type Claude3ChatMessageToolResultContentPart = {
   type: 'tool_result';
   tool_use_id: string;
-  content: string | { type: 'text'; text: string; }[];
+  content: string | { type: 'text'; text: string }[];
+  cache_control: CacheControl;
 };
 
 export type Claude3ChatMessageToolUseContentPart = {
@@ -113,9 +116,10 @@ export type Claude3ChatMessageToolUseContentPart = {
   id: string;
   name: string;
   input: object;
-}
+  cache_control: CacheControl;
+};
 
-export type Claude3ChatMessageContentPart = 
+export type Claude3ChatMessageContentPart =
   | Claude3ChatMessageTextContentPart
   | Claude3ChatMessageImageContentPart
   | Claude3ChatMessageToolResultContentPart
@@ -125,7 +129,7 @@ export type ChatMessageOptions = {
   apiKey: string;
   model: AnthropicModels;
   messages: Claude3ChatMessage[];
-  system?: string;
+  system?: SystemPrompt;
   max_tokens: number;
   stop_sequences?: string[];
   temperature?: number;
@@ -138,6 +142,7 @@ export type ChatMessageOptions = {
     description: string;
     input_schema: object;
   }[];
+  beta?: string;
 };
 
 export type ChatCompletionOptions = {
@@ -159,62 +164,83 @@ export type ChatCompletionChunk = {
   model: string;
 };
 
-export type ChatMessageChunk = {
-  type: 'message_start';
-  message: {
-    id: string;
-    type: string;
-    role: string;
-    content: {
-      type: 'text';
-      text: string;
-    }[];
-    model: AnthropicModels;
-    stop_reason: string | null;
-    stop_sequence: string | null;
-    usage: {
-      input_tokens: number;
-      output_tokens: number;
-    };
-  };
-} | {
-  type: 'content_block_start';
-  index: number;
-  content_block: {
-    type: 'text';
-    text: string;
-  };
-} | {
-  type: 'ping';
-} | {
-  type: 'content_block_delta';
-  index: number;
-  delta: {
-    type: 'text_delta';
-    text: string;
-  }
-} | {
-  type: 'message_delta';
-  delta: {
-    stop_reason: string | null;
-    stop_sequence: string | null;
-    usage: {
-      output_tokens: number;
-    }
-  }
-} | {
-  type: 'message_stop';
+export type CacheControl = null | {
+  type: 'ephemeral';
 };
+
+export type SystemPrompt = string | SystemPromptMessage[];
+
+export type SystemPromptMessage = {
+  cache_control: CacheControl;
+  type: 'text';
+  text: string;
+};
+
+export type ChatMessageChunk =
+  | {
+      type: 'message_start';
+      message: {
+        id: string;
+        type: string;
+        role: string;
+        content: {
+          type: 'text';
+          text: string;
+        }[];
+        model: AnthropicModels;
+        stop_reason: string | null;
+        stop_sequence: string | null;
+        usage: {
+          input_tokens: number;
+          output_tokens: number;
+        };
+      };
+    }
+  | {
+      type: 'content_block_start';
+      index: number;
+      content_block: {
+        type: 'text';
+        text: string;
+      };
+    }
+  | {
+      type: 'ping';
+    }
+  | {
+      type: 'content_block_delta';
+      index: number;
+      delta: {
+        type: 'text_delta';
+        text: string;
+      };
+    }
+  | {
+      type: 'message_delta';
+      delta: {
+        stop_reason: string | null;
+        stop_sequence: string | null;
+        usage: {
+          output_tokens: number;
+        };
+      };
+    }
+  | {
+      type: 'message_stop';
+    };
 
 export type ChatMessageResponse = {
   id: string;
-  content: ({
-    text: string;
-  } | {
-    id: string;
-    name: string;
-    input: object;
-  })[];
+  content: (
+    | {
+        text: string;
+      }
+    | {
+        id: string;
+        name: string;
+        input: object;
+      }
+  )[];
   model: string;
   stop_reason: 'end_turn';
   stop_sequence: string;
@@ -230,7 +256,7 @@ export async function* streamChatCompletions({
   ...rest
 }: ChatCompletionOptions): AsyncGenerator<ChatCompletionChunk> {
   const defaultSignal = new AbortController().signal;
-  const response = await fetchEventSource('https://api.anthropic.com/v1/complete', {
+  const response = await fetchEventSource('https://api.anthropic.com/v1/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -278,6 +304,7 @@ export async function callMessageApi({
   apiKey,
   signal,
   tools,
+  beta,
   ...rest
 }: ChatMessageOptions): Promise<ChatMessageResponse> {
   const defaultSignal = new AbortController().signal;
@@ -287,7 +314,7 @@ export async function callMessageApi({
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
-      'anthropic-beta': tools ? 'tools-2024-04-04' : 'messages-2023-12-15',
+      ...(beta ? { 'anthropic-beta': beta } : {}),
     },
     body: JSON.stringify({
       ...rest,
@@ -306,17 +333,19 @@ export async function callMessageApi({
 export async function* streamMessageApi({
   apiKey,
   signal,
+  beta,
   ...rest
 }: ChatMessageOptions): AsyncGenerator<ChatMessageChunk> {
   // Use the Messages API for Claude 3 models
   const defaultSignal = new AbortController().signal;
+  console.dir({ rest }, { depth: null });
   const response = await fetchEventSource('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
-      'anthropic-beta': 'messages-2023-12-15',
+      ...(beta ? { 'anthropic-beta': beta } : {}),
     },
     body: JSON.stringify({
       ...rest,

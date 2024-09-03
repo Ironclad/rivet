@@ -14,11 +14,17 @@ export type BoolDataValue = DataValueDef<'boolean', boolean>;
 export type SystemChatMessage = {
   type: 'system';
   message: ChatMessageMessagePart | ChatMessageMessagePart[];
+
+  /** If true, this message marks a breakpoint when used with prompt caching (as of right now, Anthropic-only). */
+  isCacheBreakpoint?: boolean;
 };
 
 export type UserChatMessage = {
   type: 'user';
   message: ChatMessageMessagePart | ChatMessageMessagePart[];
+
+  /** If true, this message marks a breakpoint when used with prompt caching (as of right now, Anthropic-only). */
+  isCacheBreakpoint?: boolean;
 };
 
 export type AssistantChatMessageFunctionCall = {
@@ -41,12 +47,18 @@ export type AssistantChatMessage = {
   function_call: AssistantChatMessageFunctionCall | undefined;
 
   function_calls: AssistantChatMessageFunctionCall[] | undefined;
+
+  /** If true, this message marks a breakpoint when used with prompt caching (as of right now, Anthropic-only). */
+  isCacheBreakpoint?: boolean;
 };
 
 export type FunctionResponseChatMessage = {
   type: 'function';
   message: ChatMessageMessagePart | ChatMessageMessagePart[];
   name: string;
+
+  /** If true, this message marks a breakpoint when used with prompt caching (as of right now, Anthropic-only). */
+  isCacheBreakpoint?: boolean;
 };
 
 export type ChatMessage = SystemChatMessage | UserChatMessage | AssistantChatMessage | FunctionResponseChatMessage;
@@ -389,6 +401,7 @@ export const scalarDefaults: { [P in ScalarDataType]: Extract<ScalarDataValue, {
   'chat-message': {
     type: 'user',
     message: '',
+    isCacheBreakpoint: undefined,
   },
   'control-flow-excluded': undefined,
   date: new Date().toISOString(),

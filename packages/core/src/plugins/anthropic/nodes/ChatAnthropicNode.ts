@@ -28,6 +28,7 @@ import {
   type ChatMessageOptions,
   callMessageApi,
   type Claude3ChatMessageTextContentPart,
+  type SystemPrompt,
 } from '../anthropic.js';
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
@@ -341,8 +342,10 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
     const tools = data.enableToolUse
       ? coerceTypeOptional(inputs['tools' as PortId], 'gpt-function[]') ?? []
       : undefined;
+
     const rivetChatMessages = getChatMessages(inputs);
     const messages = await chatMessagesToClaude3ChatMessages(rivetChatMessages);
+
     let prompt = messages.reduce((acc, message) => {
       const content =
         typeof message.content === 'string'
@@ -363,12 +366,18 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
     // Get the "System" prompt input for Claude 3 models
     const system = data.model.startsWith('claude-3') ? getSystemPrompt(inputs) : undefined;
 
+    const systemInput = inputs['system' as PortId];
+    const includesCacheBreakpoint =
+      rivetChatMessages.some((m) => m.isCacheBreakpoint) ||
+      (systemInput?.type === 'chat-message' && systemInput.value.isCacheBreakpoint);
+
     let { maxTokens } = data;
     const tokenizerInfo: TokenizerCallInfo = {
       node: context.node,
       model,
       endpoint: undefined,
     };
+
     const tokenCountEstimate = await context.tokenizer.getTokenCountForString(prompt, tokenizerInfo);
     const modelInfo = anthropicModels[model] ?? {
       maxTokens: Number.MAX_SAFE_INTEGER,
@@ -377,11 +386,13 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
         completion: 0,
       },
     };
+
     if (tokenCountEstimate >= modelInfo.maxTokens) {
       throw new Error(
         `The model ${model} can only handle ${modelInfo.maxTokens} tokens, but ${tokenCountEstimate} were provided in the prompts alone.`,
       );
     }
+
     if (tokenCountEstimate + maxTokens > modelInfo.maxTokens) {
       const message = `The model can only handle a maximum of ${
         modelInfo.maxTokens
@@ -391,6 +402,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
       addWarning(output, message);
       maxTokens = Math.floor((modelInfo.maxTokens - tokenCountEstimate) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
     }
+
     try {
       return await retry(
         async () => {
@@ -430,6 +442,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
             // Streaming is not supported with tool usage.
             const response = await callMessageApi({
               apiKey: apiKey ?? '',
+              beta: includesCacheBreakpoint ? 'prompt-caching-2024-07-31' : undefined,
               ...messageOptions,
             });
             const { input_tokens: requestTokens, output_tokens: responseTokens } = response.usage;
@@ -488,6 +501,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
             const chunks = streamMessageApi({
               apiKey: apiKey ?? '',
               signal: context.signal,
+              beta: includesCacheBreakpoint ? 'prompt-caching-2024-07-31' : undefined,
               ...messageOptions,
             });
 
@@ -639,22 +653,43 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
 
 export const chatAnthropicNode = pluginNodeDefinition(ChatAnthropicNodeImpl, 'Chat');
 
-export function getSystemPrompt(inputs: Inputs) {
-  const system = coerceTypeOptional(inputs['system' as PortId], 'string');
+export function getSystemPrompt(inputs: Inputs): SystemPrompt | undefined {
+  const systemInput = inputs['system' as PortId];
+
+  const system = coerceTypeOptional(systemInput, 'string');
+
   if (system) {
-    return system;
+    return [
+      {
+        type: 'text',
+        text: system,
+        cache_control:
+          systemInput?.type === 'chat-message'
+            ? systemInput.value.isCacheBreakpoint
+              ? { type: 'ephemeral' }
+              : null
+            : null,
+      },
+    ];
   }
+
   const prompt = inputs['prompt' as PortId];
   if (prompt && prompt.type === 'chat-message[]') {
-    const systemMessage = prompt.value.find((message) => message.type === 'system');
-    if (systemMessage) {
-      if (typeof systemMessage.message === 'string') {
-        return systemMessage.message;
-      } else if (Array.isArray(systemMessage.message)) {
-        return systemMessage.message.filter((p) => typeof p === 'string').join('');
-      }
+    const systemMessages = prompt.value.filter((message) => message.type === 'system');
+    if (systemMessages.length) {
+      const converted = systemMessages.map((message) => {
+        return {
+          type: 'text' as const,
+          text: coerceType({ type: 'chat-message', value: message }, 'string'),
+          cache_control: message.isCacheBreakpoint ? { type: 'ephemeral' as const } : null,
+        };
+      });
+
+      return converted;
     }
   }
+
+  return undefined;
 }
 
 function getChatMessages(inputs: Inputs) {
@@ -725,6 +760,7 @@ async function chatMessageToClaude3ChatMessage(message: ChatMessage): Promise<Cl
   if (message.type === 'system') {
     return undefined;
   }
+
   if (message.type === 'function') {
     // Interpret function messages as user messages with tool_result content items (making Claude API more similar to OpenAI's)
     const content = (Array.isArray(message.message) ? message.message : [message.message])
@@ -737,13 +773,14 @@ async function chatMessageToClaude3ChatMessage(message: ChatMessage): Promise<Cl
           type: 'tool_result',
           tool_use_id: message.name,
           content: content.length === 1 ? content[0]!.text : content,
+          cache_control: message.isCacheBreakpoint ? { type: 'ephemeral' } : null,
         },
       ],
     };
   }
 
   const content = Array.isArray(message.message)
-    ? await Promise.all(message.message.map(chatMessageContentToClaude3ChatMessage))
+    ? await Promise.all(message.message.map((part) => chatMessageContentToClaude3ChatMessage(part)))
     : [await chatMessageContentToClaude3ChatMessage(message.message)];
 
   if (message.type === 'assistant' && message.function_calls) {
@@ -753,6 +790,7 @@ async function chatMessageToClaude3ChatMessage(message: ChatMessage): Promise<Cl
         id: fc.id!,
         name: fc.name,
         input: JSON.parse(fc.arguments),
+        cache_control: message.isCacheBreakpoint ? { type: 'ephemeral' as const } : null,
       })),
     );
   } else if (message.type === 'assistant' && message.function_call) {
@@ -761,8 +799,17 @@ async function chatMessageToClaude3ChatMessage(message: ChatMessage): Promise<Cl
       id: message.function_call.id!,
       name: message.function_call.name,
       input: JSON.parse(message.function_call.arguments),
+      cache_control: message.isCacheBreakpoint ? { type: 'ephemeral' } : null,
     });
   }
+
+  // If the message is a cache breakpoint, cache using the last content item of the message
+  if (message.isCacheBreakpoint) {
+    content.at(-1)!.cache_control = { type: 'ephemeral' };
+  }
+
+  console.dir({ content }, { depth: null });
+
   return {
     role: message.type,
     content,
@@ -776,6 +823,7 @@ async function chatMessageContentToClaude3ChatMessage(
     return {
       type: 'text',
       text: content,
+      cache_control: null, // set later
     };
   }
   switch (content.type) {
@@ -787,6 +835,7 @@ async function chatMessageContentToClaude3ChatMessage(
           media_type: content.mediaType as string,
           data: (await uint8ArrayToBase64(content.data)) ?? '',
         },
+        cache_control: null, // set later
       };
     case 'url':
       throw new Error('unable to convert urls for Claude');

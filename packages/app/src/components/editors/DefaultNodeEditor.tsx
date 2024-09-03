@@ -72,6 +72,10 @@ export const defaultEditorContainerStyles = css`
       min-width: 75px;
     }
 
+    label:nth-child(2) {
+      min-width: 32px;
+    }
+
     &.use-input-toggle label:first-child {
       min-width: unset;
     }
