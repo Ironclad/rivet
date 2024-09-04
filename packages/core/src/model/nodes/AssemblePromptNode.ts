@@ -7,8 +7,8 @@ import {
   type PortId,
 } from '../NodeBase.js';
 import { nanoid } from 'nanoid/non-secure';
-import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
-import { type ChatMessage, arrayizeDataValue, unwrapDataValue } from '../DataValue.js';
+import { NodeImpl, type NodeBody, type NodeUIData } from '../NodeImpl.js';
+import { type ChatMessage, arrayizeDataValue, unwrapDataValue, type ChatMessageDataValue } from '../DataValue.js';
 import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { coerceType } from '../../utils/coerceType.js';
 import { orderBy } from 'lodash-es';
@@ -17,11 +17,15 @@ import { nodeDefinition } from '../NodeDefinition.js';
 import type { EditorDefinition } from '../EditorDefinition.js';
 import type { RivetUIContext } from '../RivetUIContext.js';
 import type { InternalProcessContext } from '../ProcessContext.js';
+import { getInputOrData } from '../../utils/inputs.js';
 
 export type AssemblePromptNode = ChartNode<'assemblePrompt', AssemblePromptNodeData>;
 
 export type AssemblePromptNodeData = {
   computeTokenCount?: boolean;
+
+  isLastMessageCacheBreakpoint?: boolean;
+  useIsLastMessageCacheBreakpointInput?: boolean;
 };
 
 export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
@@ -44,6 +48,15 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
   getInputDefinitions(connections: NodeConnection[]): NodeInputDefinition[] {
     const inputs: NodeInputDefinition[] = [];
     const messageCount = this.#getMessagePortCount(connections);
+
+    if (this.data.useIsLastMessageCacheBreakpointInput) {
+      inputs.push({
+        dataType: 'boolean',
+        id: 'isLastMessageCacheBreakpoint' as PortId,
+        title: 'Is Last Message Cache Breakpoint',
+        description: 'Whether the last message in the prompt should be a cache breakpoint.',
+      });
+    }
 
     for (let i = 1; i <= messageCount; i++) {
       inputs.push({
@@ -118,11 +131,24 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
         label: 'Compute Token Count',
         dataKey: 'computeTokenCount',
       },
+      {
+        type: 'toggle',
+        label: 'Is Last Message Cache Breakpoint',
+        dataKey: 'isLastMessageCacheBreakpoint',
+        helperMessage:
+          'For Anthropic, marks the last message as a cache breakpoint - this message and every message before it will be cached using Prompt Caching.',
+      },
     ];
+  }
+
+  getBody(_context: RivetUIContext): NodeBody | Promise<NodeBody> {
+    return this.data.isLastMessageCacheBreakpoint ? 'Last message is cache breakpoint' : '';
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const output: Outputs = {};
+
+    const isLastMessageCacheBreakpoint = getInputOrData(this.data, inputs, 'isLastMessageCacheBreakpoint', 'boolean');
 
     const outMessages: ChatMessage[] = [];
 
@@ -149,6 +175,10 @@ export class AssemblePromptNodeImpl extends NodeImpl<AssemblePromptNode> {
           }
         }
       }
+    }
+
+    if (isLastMessageCacheBreakpoint && outMessages.length > 1) {
+      outMessages.at(-1)!.isCacheBreakpoint = true;
     }
 
     output['prompt' as PortId] = {
