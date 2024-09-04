@@ -96,12 +96,12 @@ export function useContextMenuConfiguration() {
               },
               {
                 id: 'node-run-to-here',
-                label: 'Run to Here',
+                label: 'Run to here',
                 icon: PlayIcon,
               },
               {
                 id: 'node-run-from-here',
-                label: 'Run from Here',
+                label: 'Run from here',
                 icon: PlayIcon,
                 conditional: (context) => {
                   const { canRunFromHere } = context as { canRunFromHere: boolean };
