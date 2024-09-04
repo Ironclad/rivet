@@ -91,6 +91,14 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
       });
     }
 
+    if (this.data.useIsCacheBreakpointInput) {
+      inputs.push({
+        id: 'isCacheBreakpoint' as PortId,
+        title: 'Is Cache Breakpoint',
+        dataType: 'boolean',
+      });
+    }
+
     // Extract inputs from promptText, everything like {{input}}
     const inputNames = [...new Set(this.chartNode.data.promptText.match(/\{\{([^}]+)\}\}/g))];
     inputs = [
