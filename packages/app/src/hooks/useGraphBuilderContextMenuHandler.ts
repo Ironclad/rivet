@@ -111,6 +111,11 @@ export function useGraphBuilderContextMenuHandler() {
 
           tryRunGraph({ to: [nodeId] });
         })
+        .with('node-run-from-here', () => {
+          const { nodeId } = context.data as { nodeId: NodeId };
+
+          tryRunGraph({ from: nodeId });
+        })
         .with('node-copy', () => {
           const { nodeId } = context.data as { nodeId: NodeId };
           copyNodes(nodeId);

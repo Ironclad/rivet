@@ -10,6 +10,7 @@ import {
   type StringArrayDataValue,
   type DataId,
   type DataValue,
+  type Outputs,
 } from '@ironclad/rivet-core';
 import { match } from 'ts-pattern';
 import Emittery from 'emittery';
@@ -41,6 +42,7 @@ export type DynamicGraphRunOptions = {
   graphId: GraphId;
   inputs?: GraphInputs;
   runToNodeIds?: NodeId[];
+  runFromNodeId?: NodeId;
   contextValues: Record<string, DataValue>;
 };
 
@@ -97,14 +99,22 @@ export function startDebuggerServer(
 
         await match(message)
           .with({ type: 'run' }, async () => {
-            const { graphId, inputs, runToNodeIds, contextValues } = message.data as {
+            const { graphId, inputs, runToNodeIds, contextValues, runFromNodeId } = message.data as {
               graphId: GraphId;
               inputs: GraphInputs;
               runToNodeIds?: NodeId[];
+              runFromNodeId?: NodeId;
               contextValues: Record<string, DataValue>;
             };
 
-            await options.dynamicGraphRun?.({ client: socket, graphId, inputs, runToNodeIds, contextValues });
+            await options.dynamicGraphRun?.({
+              client: socket,
+              graphId,
+              inputs,
+              runToNodeIds,
+              contextValues,
+              runFromNodeId,
+            });
           })
           .with({ type: 'set-dynamic-data' }, async () => {
             if (options.allowGraphUpload) {
@@ -137,6 +147,13 @@ export function startDebuggerServer(
                 .with({ type: 'user-input' }, async () => {
                   const { nodeId, answers } = message.data as { nodeId: NodeId; answers: StringArrayDataValue };
                   processor.userInput(nodeId, answers);
+                })
+                .with({ type: 'preload' }, async () => {
+                  const data = (message.data as { nodeData: Record<NodeId, Outputs> }).nodeData;
+
+                  for (const [nodeId, outputs] of Object.entries(data)) {
+                    processor.preloadNodeData(nodeId as NodeId, outputs);
+                  }
                 })
                 .otherwise(async () => {
                   throw new Error(`Unknown message type: ${message.type}`);

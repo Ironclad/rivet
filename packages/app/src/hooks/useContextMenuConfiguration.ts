@@ -61,6 +61,7 @@ export function useContextMenuConfiguration() {
             contextType: type<{
               nodeType: string;
               nodeId: NodeId;
+              canRunFromHere: boolean;
             }>(),
             items: [
               {
@@ -97,6 +98,15 @@ export function useContextMenuConfiguration() {
                 id: 'node-run-to-here',
                 label: 'Run to Here',
                 icon: PlayIcon,
+              },
+              {
+                id: 'node-run-from-here',
+                label: 'Run from Here',
+                icon: PlayIcon,
+                conditional: (context) => {
+                  const { canRunFromHere } = context as { canRunFromHere: boolean };
+                  return canRunFromHere;
+                },
               },
               {
                 id: 'node-delete',

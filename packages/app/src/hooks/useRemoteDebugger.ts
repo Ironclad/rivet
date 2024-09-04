@@ -23,7 +23,6 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
 
   const connectRef = useRef<((url: string) => void) | undefined>();
   const reconnectingTimeout = useRef<ReturnType<typeof setTimeout> | undefined>();
-  const selectedExecutor = useRecoilValue(selectedExecutorState);
 
   connectRef.current = (url: string) => {
     if (!url) {

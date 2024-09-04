@@ -565,6 +565,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     handleContextMenu(e);
   });
 
+  const lastRunPerNode = useRecoilValue(lastRunDataByNodeState);
+
   const hydratedContextMenuData = useMemo((): ContextMenuContext | null => {
     if (contextMenuData.data?.type.startsWith('node-')) {
       const nodeType = contextMenuData.data.type.replace('node-', '');
@@ -574,6 +576,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
         data: {
           nodeType,
           nodeId,
+          canRunFromHere: lastRunPerNode[nodeId] != null,
         },
       };
     }
@@ -582,7 +585,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
       type: 'blankArea',
       data: {},
     };
-  }, [contextMenuData]);
+  }, [contextMenuData, lastRunPerNode]);
 
   // Idk, before we were able to unmount the context menu, but safari be weird,
   // so we move it off screen instead
@@ -596,7 +599,6 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const pinnedNodes = useRecoilValue(pinnedNodesState);
 
   const nodeTypes = useNodeTypes();
-  const lastRunPerNode = useRecoilValue(lastRunDataByNodeState);
   const selectedProcessPagePerNode = useRecoilValue(selectedProcessPageNodesState);
 
   const isZoomedOut = canvasPosition.zoom < 0.4;

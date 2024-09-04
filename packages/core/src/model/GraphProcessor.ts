@@ -192,6 +192,9 @@ export class GraphProcessor {
   /** If set, specifies the node(s) that the graph will run TO, instead of the nodes without any dependents. */
   runToNodeIds?: NodeId[];
 
+  /** If set, specifies the node that the graph will run FROM, instead of the start nodes. Requires preloading data. */
+  runFromNodeId?: NodeId;
+
   /** The node that is executing this graph, almost always a subgraph node. Undefined for root. */
   #executor:
     | {
@@ -229,6 +232,7 @@ export class GraphProcessor {
   #abortError: Error | string | undefined = undefined;
   #totalCost: number = 0;
   #ignoreNodes: Set<NodeId> = undefined!;
+  #hasPreloadedData = false;
 
   #nodeAbortControllers = new Map<`${NodeId}-${ProcessId}`, AbortController>();
 
@@ -460,6 +464,45 @@ export class GraphProcessor {
     }
   }
 
+  preloadNodeData(nodeId: NodeId, data: Outputs): void {
+    this.#nodeResults ??= new Map();
+    this.#visitedNodes ??= new Set();
+
+    for (const value of Object.values(data)) {
+      if (!value || !('type' in value) || !value.type) {
+        throw new Error(`Invalid data value for node ${nodeId}, must be a DataValue`);
+      }
+    }
+
+    this.#nodeResults.set(nodeId, data);
+    this.#visitedNodes.add(nodeId);
+    this.#hasPreloadedData = true;
+  }
+
+  /** Gets all node IDs that a given node ID depends on being complete before the given node ID can start. */
+  getDependencyNodesDeep(nodeId: NodeId): NodeId[] {
+    const node = this.#nodesById[nodeId];
+    if (!node) {
+      return [];
+    }
+
+    const connections = this.#connections[nodeId];
+    if (!connections) {
+      return [];
+    }
+
+    const dependencyNodes = connections
+      .map((conn) => {
+        if (conn.inputNodeId === nodeId) {
+          return this.getDependencyNodesDeep(conn.outputNodeId);
+        }
+        return [];
+      })
+      .flat();
+
+    return [...new Set([nodeId, ...dependencyNodes])];
+  }
+
   async replayRecording(recorder: ExecutionRecorder): Promise<GraphOutputs> {
     const { events } = recorder;
 
@@ -632,9 +675,13 @@ export class GraphProcessor {
 
   #initProcessState() {
     this.#running = true;
-    this.#nodeResults = new Map();
+
+    if (!this.#hasPreloadedData) {
+      this.#nodeResults = new Map();
+      this.#visitedNodes = new Set();
+    }
+
     this.#erroredNodes = new Map();
-    this.#visitedNodes = new Set();
     this.#currentlyProcessing = new Set();
     this.#remainingNodes = new Set(this.#graph.nodes.map((n) => n.id));
     this.#pendingUserInputs = {};
@@ -687,7 +734,7 @@ export class GraphProcessor {
       }
 
       if (!this.#isSubProcessor) {
-        this.#emitter.emit('start', {
+        await this.#emitter.emit('start', {
           contextValues: this.#contextValues,
           inputs: this.#graphInputs,
           project: this.#project,
@@ -695,7 +742,27 @@ export class GraphProcessor {
         });
       }
 
-      this.#emitter.emit('graphStart', { graph: this.#graph, inputs: this.#graphInputs });
+      await this.#emitter.emit('graphStart', { graph: this.#graph, inputs: this.#graphInputs });
+
+      if (this.#hasPreloadedData) {
+        for (const node of this.#graph.nodes) {
+          if (this.#nodeResults.has(node.id)) {
+            this.#emitter.emit('trace', `Node ${node.title} has preloaded data`);
+
+            await this.#emitter.emit('nodeStart', {
+              node,
+              inputs: {},
+              processId: 'preload' as ProcessId,
+            });
+
+            await this.#emitter.emit('nodeFinish', {
+              node,
+              outputs: this.#nodeResults.get(node.id)!,
+              processId: 'preload' as ProcessId,
+            });
+          }
+        }
+      }
 
       const startNodes = this.runToNodeIds
         ? this.#graph.nodes.filter((node) => this.runToNodeIds?.includes(node.id))
@@ -709,6 +776,8 @@ export class GraphProcessor {
         });
       }
 
+      await this.#processingQueue.onIdle();
+
       // Anything not queued at this phase here should be ignored
       if (this.runToNodeIds) {
         // For safety, we'll only activate this if runToNodeIds is set, in case there are bugs in the first pass
@@ -718,8 +787,6 @@ export class GraphProcessor {
           }
         }
       }
-
-      await this.#processingQueue.onIdle();
 
       // If we've aborted successfully, we can treat the graph like it succeeded
       const erroredNodes = [...this.#erroredNodes.entries()].filter(([nodeId]) => {
@@ -737,10 +804,10 @@ export class GraphProcessor {
               .join(', ')}`,
           );
 
-        this.#emitter.emit('graphError', { graph: this.#graph, error });
+        await this.#emitter.emit('graphError', { graph: this.#graph, error });
 
         if (!this.#isSubProcessor) {
-          this.#emitter.emit('error', { error });
+          await this.#emitter.emit('error', { error });
         }
 
         throw error;
@@ -757,11 +824,11 @@ export class GraphProcessor {
 
       this.#running = false;
 
-      this.#emitter.emit('graphFinish', { graph: this.#graph, outputs: outputValues });
+      await this.#emitter.emit('graphFinish', { graph: this.#graph, outputs: outputValues });
 
       if (!this.#isSubProcessor) {
-        this.#emitter.emit('done', { results: outputValues });
-        this.#emitter.emit('finish', undefined);
+        await this.#emitter.emit('done', { results: outputValues });
+        await this.#emitter.emit('finish', undefined);
       }
 
       return outputValues;
@@ -769,7 +836,7 @@ export class GraphProcessor {
       this.#running = false;
 
       if (!this.#isSubProcessor) {
-        this.#emitter.emit('finish', undefined);
+        await this.#emitter.emit('finish', undefined);
       }
     }
   }
@@ -849,6 +916,15 @@ export class GraphProcessor {
       return;
     }
 
+    if (this.runToNodeIds) {
+      const dependencyNodes = this.getDependencyNodesDeep(node.id);
+
+      if (this.runToNodeIds.some((runTo) => runTo != node.id && dependencyNodes.includes(runTo))) {
+        this.#emitter.emit('trace', `Node ${node.title} is excluded due to runToNodeIds`);
+        return;
+      }
+    }
+
     if (this.#currentlyProcessing.has(node.id)) {
       this.#emitter.emit('trace', `Node ${node.title} is already being processed`);
       return;
@@ -883,7 +959,7 @@ export class GraphProcessor {
     });
 
     if (!inputsReady) {
-      this.#emitter.emit(
+      await this.#emitter.emit(
         'trace',
         `Node ${node.title} has required inputs nodes: ${inputNodes.map((n) => n.title).join(', ')}`,
       );

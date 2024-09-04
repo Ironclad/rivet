@@ -8,6 +8,7 @@ import {
   type GraphOutputs,
   globalRivetNodeRegistry,
   type GraphId,
+  type Outputs,
 } from '@ironclad/rivet-core';
 import { produce } from 'immer';
 import { useRef } from 'react';
@@ -27,6 +28,7 @@ import { trivetState } from '../state/trivet';
 import { runTrivet } from '@ironclad/trivet';
 import { audioProvider, datasetProvider } from '../utils/globals';
 import { entries } from '../../../core/src/utils/typeSafety';
+import { type RunDataByNodeId, lastRunData, lastRunDataByNodeState } from '../state/dataFlow';
 
 export function useLocalExecutor() {
   const project = useRecoilValue(projectState);
@@ -43,6 +45,7 @@ export function useLocalExecutor() {
   const recordExecutions = useRecoilValue(recordExecutionsState);
   const projectData = useRecoilValue(projectDataState);
   const projectContext = useRecoilValue(projectContextState(project.metadata.id));
+  const lastRunData = useRecoilValue(lastRunDataByNodeState);
 
   function attachGraphEvents(processor: GraphProcessor) {
     processor.on('nodeStart', currentExecution.onNodeStart);
@@ -90,6 +93,7 @@ export function useLocalExecutor() {
       options: {
         graphId?: GraphId;
         to?: NodeId[];
+        from?: NodeId;
       } = {},
     ) => {
       try {
@@ -118,6 +122,11 @@ export function useLocalExecutor() {
 
         if (options.to) {
           processor.runToNodeIds = options.to;
+        }
+
+        if (options.from) {
+          preloadDependentDataForNode(processor, options.from, lastRunData);
+          processor.runFromNodeId = options.from;
         }
 
         if (recordExecutions) {
@@ -256,4 +265,43 @@ export function useLocalExecutor() {
     tryResumeGraph,
     tryRunTests,
   };
+}
+
+function preloadDependentDataForNode(processor: GraphProcessor, nodeId: NodeId, previousRunData: RunDataByNodeId) {
+  const dependencyNodes = processor.getDependencyNodesDeep(nodeId);
+
+  for (const dependencyNode of dependencyNodes) {
+    const dependencyNodeData = previousRunData[dependencyNode];
+
+    if (!dependencyNodeData) {
+      throw new Error(`Node ${dependencyNode} was not found in the previous run data, cannot continue preloading data`);
+    }
+
+    const firstExecution = dependencyNodeData[0];
+
+    if (!firstExecution?.data.outputData) {
+      throw new Error(
+        `Node ${dependencyNode} has no output data in the previous run data, cannot continue preloading data`,
+      );
+    }
+
+    const { outputData } = firstExecution.data;
+
+    // Convert back to DataValue from DataValueWithRefs
+    const outputDataWithoutRefs = Object.fromEntries(
+      Object.entries(outputData).map(([portId, dataValueWithRefs]) => {
+        if (dataValueWithRefs.type === 'image') {
+          throw new Error('Not implemented yed');
+        } else if (dataValueWithRefs.type === 'binary') {
+          throw new Error('Not implemented yed');
+        } else if (dataValueWithRefs.type === 'audio') {
+          throw new Error('Not implemented yed');
+        } else {
+          return [portId, dataValueWithRefs];
+        }
+      }),
+    ) as Outputs;
+
+    processor.preloadNodeData(dependencyNode, outputDataWithoutRefs);
+  }
 }
