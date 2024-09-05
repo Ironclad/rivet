@@ -442,7 +442,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
             // Streaming is not supported with tool usage.
             const response = await callMessageApi({
               apiKey: apiKey ?? '',
-              beta: includesCacheBreakpoint ? 'prompt-caching-2024-07-31' : undefined,
+              beta: 'prompt-caching-2024-07-31',
               ...messageOptions,
             });
             const { input_tokens: requestTokens, output_tokens: responseTokens } = response.usage;
@@ -501,7 +501,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
             const chunks = streamMessageApi({
               apiKey: apiKey ?? '',
               signal: context.signal,
-              beta: includesCacheBreakpoint ? 'prompt-caching-2024-07-31' : undefined,
+              beta: 'prompt-caching-2024-07-31',
               ...messageOptions,
             });
 
