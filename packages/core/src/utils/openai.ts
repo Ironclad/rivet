@@ -158,6 +158,38 @@ export const openaiModels = {
     },
     displayName: 'GPT-4o mini (2024-07-18)',
   },
+  'o1-preview': {
+    maxTokens: 128000,
+    cost: {
+      prompt: 0.0015,
+      completion: 0.006,
+    },
+    displayName: 'o1-preview',
+  },
+  'o1-preview-2024-09-12': {
+    maxTokens: 128000,
+    cost: {
+      prompt: 0.0015,
+      completion: 0.006,
+    },
+    displayName: 'o1-preview (2024-09-12)',
+  },
+  'o1-mini': {
+    maxTokens: 128000,
+    cost: {
+      prompt: 0.0003,
+      completion: 0.0012,
+    },
+    displayName: 'o1-mini',
+  },
+  'o1-mini-2024-09-12': {
+    maxTokens: 128000,
+    cost: {
+      prompt: 0.0003,
+      completion: 0.0012,
+    },
+    displayName: 'o1-mini (2024-09-12)',
+  },
   'local-model': {
     maxTokens: Number.MAX_SAFE_INTEGER,
     cost: {
@@ -258,6 +290,10 @@ export type ChatCompletionOptions = {
   temperature?: number;
   top_p?: number;
   max_tokens?: number;
+
+  /** Only for o1 series of models. Otherwise max_tokens. */
+  max_completion_tokens?: number;
+
   n?: number;
   stop?: string | string[];
   presence_penalty?: number;
@@ -413,6 +449,31 @@ export type ChatCompletionFunction = {
   parameters: object;
   strict: boolean;
 };
+
+export async function chatCompletions({
+  endpoint,
+  auth,
+  signal,
+  headers,
+  timeout,
+  ...rest
+}: ChatCompletionOptions): Promise<ChatCompletionResponse> {
+  const abortSignal = signal ?? new AbortController().signal;
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${auth.apiKey}`,
+      ...(auth.organization ? { 'OpenAI-Organization': auth.organization } : {}),
+      ...headers,
+    },
+    body: JSON.stringify(rest),
+    signal: abortSignal,
+  });
+
+  return response.json();
+}
 
 export async function* streamChatCompletions({
   endpoint,

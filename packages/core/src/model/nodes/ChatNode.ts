@@ -16,6 +16,7 @@ import {
   openaiModels,
   streamChatCompletions,
   type ChatCompletionTool,
+  chatCompletions,
 } from '../../utils/openai.js';
 import retry from 'p-retry';
 import type { Inputs, Outputs } from '../GraphProcessor.js';
@@ -892,9 +893,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           const options: Omit<ChatCompletionOptions, 'auth' | 'signal'> = {
             messages: completionMessages,
             model: finalModel,
-            temperature: useTopP ? undefined : temperature,
             top_p: useTopP ? topP : undefined,
-            max_tokens: maxTokens,
             n: numberOfChoices,
             frequency_penalty: frequencyPenalty,
             presence_penalty: presencePenalty,
@@ -907,6 +906,15 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             ...additionalParameters,
           };
 
+          const isO1Beta = finalModel.startsWith('o1-preview') || finalModel.startsWith('o1-mini');
+
+          if (isO1Beta) {
+            options.max_completion_tokens = maxTokens;
+          } else {
+            options.temperature = useTopP ? undefined : temperature; // Not supported in o1-preview
+            options.max_tokens = maxTokens;
+          }
+
           const cacheKey = JSON.stringify(options);
 
           if (this.data.cache) {
@@ -917,6 +925,54 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           }
 
           const startTime = Date.now();
+
+          if (isO1Beta) {
+            const response = await chatCompletions({
+              auth: {
+                apiKey: context.settings.openAiKey ?? '',
+                organization: context.settings.openAiOrganization,
+              },
+              headers: allAdditionalHeaders,
+              signal: context.signal,
+              timeout: context.settings.chatNodeTimeout,
+              ...options,
+            });
+
+            if (isMultiResponse) {
+              output['response' as PortId] = {
+                type: 'string[]',
+                value: response.choices.map((c) => c.message.content!),
+              };
+            } else {
+              output['response' as PortId] = {
+                type: 'string',
+                value: response.choices[0]!.message.content!,
+              };
+            }
+
+            if (!isMultiResponse) {
+              output['all-messages' as PortId] = {
+                type: 'chat-message[]',
+                value: [
+                  ...messages,
+                  {
+                    type: 'assistant',
+                    message: response.choices[0]!.message.content!,
+                    function_calls: undefined,
+                    isCacheBreakpoint: false,
+                    function_call: undefined,
+                  },
+                ],
+              };
+            }
+
+            output['duration' as PortId] = { type: 'number', value: Date.now() - startTime };
+
+            Object.freeze(output);
+            cache.set(cacheKey, output);
+
+            return output;
+          }
 
           const chunks = streamChatCompletions({
             auth: {
