@@ -36,7 +36,7 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^3.2.5",
-    "rollup": "^4.1.4",
+    "rollup": "^4.22.4",
     "ts-node": "^10.9.1",
     "tsx": "^4.6.2",
     "typescript": "^5.2.2",
