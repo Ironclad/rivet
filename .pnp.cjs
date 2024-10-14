@@ -6634,7 +6634,7 @@ const RAW_RUNTIME_STATE =
           ["fuse.js", "npm:6.6.2"],\
           ["immer", "npm:10.0.3"],\
           ["jest-diff", "npm:29.7.0"],\
-          ["jsonpath-plus", "npm:7.2.0"],\
+          ["jsonpath-plus", "npm:10.0.0"],\
           ["lodash-es", "npm:4.17.21"],\
           ["lru-cache", "npm:11.0.0"],\
           ["majesticons", "npm:2.1.2"],\
@@ -6811,7 +6811,7 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-n", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:16.2.0"],\
           ["eslint-plugin-promise", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:6.1.1"],\
           ["gpt-tokenizer", "npm:2.1.2"],\
-          ["jsonpath-plus", "npm:7.2.0"],\
+          ["jsonpath-plus", "npm:10.0.0"],\
           ["lodash", "npm:4.17.21"],\
           ["lodash-es", "npm:4.17.21"],\
           ["minimatch", "npm:9.0.3"],\
@@ -7080,6 +7080,50 @@ const RAW_RUNTIME_STATE =
           ["@jridgewell/trace-mapping", "npm:0.3.9"],\
           ["@jridgewell/resolve-uri", "npm:3.1.0"],\
           ["@jridgewell/sourcemap-codec", "npm:1.4.14"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@jsep-plugin/assignment", [\
+      ["npm:1.2.1", {\
+        "packageLocation": "./.yarn/cache/@jsep-plugin-assignment-npm-1.2.1-0f9f2e3305-d8db45f052.zip/node_modules/@jsep-plugin/assignment/",\
+        "packageDependencies": [\
+          ["@jsep-plugin/assignment", "npm:1.2.1"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:7e0c54924106a6b0a43d380c6fde1a3b49bf72b6c473d488eb58bf3188c2b4fdec14ebd5c8f129d0a3f4014c14589ef8e314c8b253a482c6ab88cad4382f786f#npm:1.2.1", {\
+        "packageLocation": "./.yarn/__virtual__/@jsep-plugin-assignment-virtual-0dddf7a241/0/cache/@jsep-plugin-assignment-npm-1.2.1-0f9f2e3305-d8db45f052.zip/node_modules/@jsep-plugin/assignment/",\
+        "packageDependencies": [\
+          ["@jsep-plugin/assignment", "virtual:7e0c54924106a6b0a43d380c6fde1a3b49bf72b6c473d488eb58bf3188c2b4fdec14ebd5c8f129d0a3f4014c14589ef8e314c8b253a482c6ab88cad4382f786f#npm:1.2.1"],\
+          ["@types/jsep", null],\
+          ["jsep", "npm:1.3.9"]\
+        ],\
+        "packagePeers": [\
+          "@types/jsep",\
+          "jsep"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@jsep-plugin/regex", [\
+      ["npm:1.0.3", {\
+        "packageLocation": "./.yarn/cache/@jsep-plugin-regex-npm-1.0.3-7eb18a6a08-c08c7bd79a.zip/node_modules/@jsep-plugin/regex/",\
+        "packageDependencies": [\
+          ["@jsep-plugin/regex", "npm:1.0.3"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:7e0c54924106a6b0a43d380c6fde1a3b49bf72b6c473d488eb58bf3188c2b4fdec14ebd5c8f129d0a3f4014c14589ef8e314c8b253a482c6ab88cad4382f786f#npm:1.0.3", {\
+        "packageLocation": "./.yarn/__virtual__/@jsep-plugin-regex-virtual-a894ac7b5d/0/cache/@jsep-plugin-regex-npm-1.0.3-7eb18a6a08-c08c7bd79a.zip/node_modules/@jsep-plugin/regex/",\
+        "packageDependencies": [\
+          ["@jsep-plugin/regex", "virtual:7e0c54924106a6b0a43d380c6fde1a3b49bf72b6c473d488eb58bf3188c2b4fdec14ebd5c8f129d0a3f4014c14589ef8e314c8b253a482c6ab88cad4382f786f#npm:1.0.3"],\
+          ["@types/jsep", null],\
+          ["jsep", "npm:1.3.9"]\
+        ],\
+        "packagePeers": [\
+          "@types/jsep",\
+          "jsep"\
         ],\
         "linkType": "HARD"\
       }]\
@@ -18705,6 +18749,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["jsep", [\
+      ["npm:1.3.9", {\
+        "packageLocation": "./.yarn/cache/jsep-npm-1.3.9-3dbad7fc74-c60d7064c3.zip/node_modules/jsep/",\
+        "packageDependencies": [\
+          ["jsep", "npm:1.3.9"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["jsesc", [\
       ["npm:0.5.0", {\
         "packageLocation": "./.yarn/cache/jsesc-npm-0.5.0-6827074492-fab949f585.zip/node_modules/jsesc/",\
@@ -18803,10 +18856,13 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["jsonpath-plus", [\
-      ["npm:7.2.0", {\
-        "packageLocation": "./.yarn/cache/jsonpath-plus-npm-7.2.0-c2ddc144a1-f602445b1a.zip/node_modules/jsonpath-plus/",\
+      ["npm:10.0.0", {\
+        "packageLocation": "./.yarn/cache/jsonpath-plus-npm-10.0.0-7e0c549241-cd8d3f9ebf.zip/node_modules/jsonpath-plus/",\
         "packageDependencies": [\
-          ["jsonpath-plus", "npm:7.2.0"]\
+          ["jsonpath-plus", "npm:10.0.0"],\
+          ["@jsep-plugin/assignment", "virtual:7e0c54924106a6b0a43d380c6fde1a3b49bf72b6c473d488eb58bf3188c2b4fdec14ebd5c8f129d0a3f4014c14589ef8e314c8b253a482c6ab88cad4382f786f#npm:1.2.1"],\
+          ["@jsep-plugin/regex", "virtual:7e0c54924106a6b0a43d380c6fde1a3b49bf72b6c473d488eb58bf3188c2b4fdec14ebd5c8f129d0a3f4014c14589ef8e314c8b253a482c6ab88cad4382f786f#npm:1.0.3"],\
+          ["jsep", "npm:1.3.9"]\
         ],\
         "linkType": "HARD"\
       }]\
