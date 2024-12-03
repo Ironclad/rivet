@@ -37,6 +37,7 @@ export type RunGraphOptions = {
   };
   abortSignal?: AbortSignal;
   registry?: NodeRegistration;
+  includeTrace?: boolean;
   getChatNodeEndpoint?: ProcessContext['getChatNodeEndpoint'];
 } & {
   [P in keyof ProcessEvents as `on${PascalCase<P>}`]?: (params: ProcessEvents[P]) => void;
@@ -75,7 +76,7 @@ export function coreCreateProcessor(project: Project, options: RunGraphOptions) 
     throw new Error(`Graph not found, and no main graph specified.`);
   }
 
-  const processor = new GraphProcessor(project, graphId as GraphId, options.registry);
+  const processor = new GraphProcessor(project, graphId as GraphId, options.registry, options.includeTrace);
 
   if (options.onStart) {
     processor.on('start', options.onStart);
