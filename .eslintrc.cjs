@@ -4,7 +4,7 @@ module.exports = {
     es2021: true,
   },
   root: true,
-  extends: ['standard-with-typescript', 'plugin:react/recommended'],
+  extends: ['standard-with-typescript'],
   plugins: ['import', '@typescript-eslint'],
   overrides: [
     {
