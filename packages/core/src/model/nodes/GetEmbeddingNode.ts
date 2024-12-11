@@ -37,7 +37,7 @@ export class GetEmbeddingNodeImpl extends NodeImpl<GetEmbeddingNode> {
         integration: 'openai',
         useIntegrationInput: false,
         model: undefined,
-        dimensions: undefined
+        dimensions: undefined,
       },
     };
   }
@@ -141,7 +141,7 @@ export class GetEmbeddingNodeImpl extends NodeImpl<GetEmbeddingNode> {
     const integrationName = this.data.useIntegrationInput
       ? coerceType(inputs['integration' as PortId], 'string')
       : this.data.integration;
-    
+
     const model = this.data.useModelInput ? coerceType(inputs['model' as PortId], 'string') : this.data.model;
 
     const dimensions = this.data.useDimensionsInput
