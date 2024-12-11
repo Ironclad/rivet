@@ -3882,6 +3882,7 @@ __metadata:
   dependencies:
     "@ironclad/rivet-node": "workspace:^"
     "@types/yargs": "npm:^17.0.29"
+    "@typescript-eslint/eslint-plugin": "npm:^6.9.0"
     eslint: "npm:^8.52.0"
     eslint-config-standard-with-typescript: "npm:^39.1.1"
     eslint-plugin-import: "npm:^2.29.0"
