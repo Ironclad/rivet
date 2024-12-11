@@ -1,5 +1,4 @@
 import {
-  uint8ArrayToBase64,
   type ChartNode,
   type ChatMessage,
   type EditorDefinition,
@@ -29,6 +28,7 @@ import { match } from 'ts-pattern';
 import { coerceType, coerceTypeOptional } from '../../../utils/coerceType.js';
 import { addWarning } from '../../../utils/outputs.js';
 import { getError } from '../../../utils/errors.js';
+import { uint8ArrayToBase64 } from '../../../utils/base64.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
 import { getScalarTypeOf, isArrayDataValue } from '../../../model/DataValue.js';
 import type { TokenizerCallInfo } from '../../../integrations/Tokenizer.js';

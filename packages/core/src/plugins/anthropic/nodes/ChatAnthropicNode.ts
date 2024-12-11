@@ -1,5 +1,4 @@
 import {
-  uint8ArrayToBase64,
   type ChartNode,
   type ChatMessage,
   type EditorDefinition,
@@ -42,6 +41,7 @@ import { getScalarTypeOf, isArrayDataValue } from '../../../model/DataValue.js';
 import type { TokenizerCallInfo } from '../../../integrations/Tokenizer.js';
 import { assertNever } from '../../../utils/assertNever.js';
 import { isNotNull } from '../../../utils/genericUtilFunctions.js';
+import { uint8ArrayToBase64 } from '../../../utils/base64.js';
 
 export type ChatAnthropicNode = ChartNode<'chatAnthropic', ChatAnthropicNodeData>;
 
@@ -508,7 +508,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
             // Process the response chunks and update the output
             const responseParts: string[] = [];
             let requestTokens: number | undefined = undefined;
-              let responseTokens: number | undefined = undefined;
+            let responseTokens: number | undefined = undefined;
             for await (const chunk of chunks) {
               let completion: string = '';
               if (chunk.type === 'content_block_start') {
