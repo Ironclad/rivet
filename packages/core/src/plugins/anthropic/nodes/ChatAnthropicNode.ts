@@ -420,7 +420,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
             top_p: useTopP ? topP : undefined,
             max_tokens: maxTokens ?? modelInfo.maxTokens,
             stop_sequences: stop ? [stop] : undefined,
-            system: system,
+            system,
             messages,
             tools: tools
               ? tools.map((tool) => ({ name: tool.name, description: tool.description, input_schema: tool.parameters }))
@@ -507,8 +507,8 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
 
             // Process the response chunks and update the output
             const responseParts: string[] = [];
-            let requestTokens: number | undefined = undefined,
-              responseTokens: number | undefined = undefined;
+            let requestTokens: number | undefined = undefined;
+              let responseTokens: number | undefined = undefined;
             for await (const chunk of chunks) {
               let completion: string = '';
               if (chunk.type === 'content_block_start') {

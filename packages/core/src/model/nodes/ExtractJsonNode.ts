@@ -94,10 +94,10 @@ export class ExtractJsonNodeImpl extends NodeImpl<ExtractJsonNode> {
 
     // Find the first { or [ and the last } or ], and try parsing everything in between including them.
 
-    let firstBracket = inputString.indexOf('{');
-    let lastBracket = inputString.lastIndexOf('}');
-    let firstSquareBracket = inputString.indexOf('[');
-    let lastSquareBracket = inputString.lastIndexOf(']');
+    const firstBracket = inputString.indexOf('{');
+    const lastBracket = inputString.lastIndexOf('}');
+    const firstSquareBracket = inputString.indexOf('[');
+    const lastSquareBracket = inputString.lastIndexOf(']');
 
     const firstIndex =
       firstBracket >= 0 && firstSquareBracket >= 0

@@ -74,6 +74,7 @@ export type ChatCompletionChunk = {
   model: string;
 };
 
+/* eslint-disable @typescript-eslint/naming-convention */
 export async function* streamChatCompletions({
   project,
   location,
@@ -92,7 +93,7 @@ export async function* streamChatCompletions({
   const { VertexAI } = await import('@google-cloud/vertexai');
 
   // Can't find a way to pass the credentials path in
-  process.env['GOOGLE_APPLICATION_CREDENTIALS'] = applicationCredentials;
+  process.env.GOOGLE_APPLICATION_CREDENTIALS = applicationCredentials;
   const vertexAi = new VertexAI({ project, location });
   const generativeModel = vertexAi.preview.getGenerativeModel({
     model,

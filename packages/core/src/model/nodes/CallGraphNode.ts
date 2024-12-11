@@ -122,7 +122,7 @@ export class CallGraphNodeImpl extends NodeImpl<CallGraphNode> {
 
     const subGraphProcessor = context.createSubProcessor(graphRef.graphId, { signal: context.signal });
 
-    let outputs: Outputs = {};
+    const outputs: Outputs = {};
 
     try {
       const startTime = Date.now();

@@ -211,7 +211,9 @@ export class HttpCallNodeImpl extends NodeImpl<HttpCallNode> {
     const method = getInputOrData(this.data, inputs, 'method', 'string');
     const url = getInputOrData(this.data, inputs, 'url', 'string');
 
+    // TODO: Use URL.canParse when we drop support for Node 18
     try {
+      // eslint-disable-next-line no-new
       new URL(url);
     } catch (err) {
       throw new Error(`Invalid URL: ${url}`);
