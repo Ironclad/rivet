@@ -919,7 +919,7 @@ export class GraphProcessor {
     if (this.runToNodeIds) {
       const dependencyNodes = this.getDependencyNodesDeep(node.id);
 
-      if (this.runToNodeIds.some((runTo) => runTo != node.id && dependencyNodes.includes(runTo))) {
+      if (this.runToNodeIds.some((runTo) => runTo !== node.id && dependencyNodes.includes(runTo))) {
         this.#emitter.emit('trace', `Node ${node.title} is excluded due to runToNodeIds`);
         return;
       }

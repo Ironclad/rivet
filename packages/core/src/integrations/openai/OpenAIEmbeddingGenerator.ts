@@ -2,7 +2,7 @@ import { type Settings } from '../../index.js';
 import { type EmbeddingGenerator } from '../EmbeddingGenerator.js';
 import { OpenAI } from 'openai';
 
-type OpenAIOptions = Pick<OpenAI.EmbeddingCreateParams, 'model' | 'dimensions' >
+type OpenAIOptions = Pick<OpenAI.EmbeddingCreateParams, 'model' | 'dimensions'>;
 
 export class OpenAIEmbeddingGenerator implements EmbeddingGenerator {
   readonly #settings;
@@ -21,7 +21,7 @@ export class OpenAIEmbeddingGenerator implements EmbeddingGenerator {
     const response = await api.embeddings.create({
       input: text,
       model: options?.model ?? 'text-embedding-ada-002',
-      dimensions: options?.dimensions
+      dimensions: options?.dimensions,
     });
 
     const embeddings = response.data;

@@ -116,7 +116,11 @@ export const Port: FC<{
         >
           {canDragTo && <div className={clsx('port-hover-area')} />}
         </div>
-        <div className={clsx("port-label", preservePortCase ? "" : "port-label-uppercase")} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
+        <div
+          className={clsx('port-label', preservePortCase ? '' : 'port-label-uppercase')}
+          onMouseOver={handleMouseOver}
+          onMouseOut={handleMouseOut}
+        >
           {title}
         </div>
       </div>
