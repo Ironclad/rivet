@@ -491,6 +491,8 @@ To do this,
 4. Use `Add NPM Plugin` in rivet, and pass in `<plugin-name>` as the package name. This will install your plugin from the local directory.
 5. If you are using the example plugins, you can run `yarn dev` in the `package` folder to automatically watch for changes and rebuild your plugin. Then, you only need to restart Rivet on each change in order to see your changes in Rivet.
 
+ Note: You do not need to manually create these directories if you are using either of the starter plugin repositories linked earlier in this document. These repositories will automatically create the appropriate directories for you.
+
 ## Further Help
 
 For more help, join the [Rivet Discord](https://discord.gg/qT8B2gv9Mg), we're happy to help with your plugin development!
