@@ -1,13 +1,13 @@
 import { produce } from 'immer';
 import { nanoid } from 'nanoid/non-secure';
-import { type GraphId } from '@ironclad/rivet-core';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { type GraphId, type NodeGraph } from '@ironclad/rivet-core';
+import { useAtom } from 'jotai';
 import { graphState } from '../state/graph.js';
 import { savedGraphsState } from '../state/savedGraphs.js';
 
 export function useSaveCurrentGraph() {
-  const [graphData, setGraphData] = useRecoilState(graphState);
-  const setSavedGraphs = useSetRecoilState(savedGraphsState);
+  const [graphData, setGraphData] = useAtom(graphState);
+  const [savedGraphs, setSavedGraphs] = useAtom(savedGraphsState);
 
   return () => {
     const currentGraph = produce(graphData, (draft) => {
@@ -26,14 +26,12 @@ export function useSaveCurrentGraph() {
 
     setGraphData(currentGraph);
 
-    setSavedGraphs((savedGraphs) => {
-      const existingGraph = savedGraphs.find((g) => g.metadata?.id === currentGraph.metadata?.id);
-      if (existingGraph) {
-        return savedGraphs.map((g) => (g.metadata?.id === currentGraph.metadata?.id ? currentGraph : g));
-      } else {
-        return [...savedGraphs, currentGraph];
-      }
-    });
+    const existingGraph = savedGraphs.find((g) => g.metadata?.id === currentGraph.metadata?.id);
+    if (existingGraph) {
+      setSavedGraphs(savedGraphs.map((g) => (g.metadata?.id === currentGraph.metadata?.id ? currentGraph : g)));
+    } else {
+      setSavedGraphs([...savedGraphs, currentGraph]);
+    }
 
     return currentGraph;
   };

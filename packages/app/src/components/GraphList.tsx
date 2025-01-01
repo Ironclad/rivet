@@ -17,7 +17,7 @@ import {
   type KeyboardEvent,
   memo,
 } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { graphState } from '../state/graph.js';
 import { projectMetadataState, savedGraphsState } from '../state/savedGraphs.js';
 import { orderBy, range } from 'lodash-es';
@@ -312,9 +312,9 @@ function getFolderNames(folderedGraphs: NodeGraphFolderItem[]): string[] {
 }
 
 export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo(({ onRunGraph }) => {
-  const projectMetadata = useRecoilValue(projectMetadataState);
-  const [graph, setGraph] = useRecoilState(graphState);
-  const [savedGraphs, setSavedGraphs] = useRecoilState(savedGraphsState);
+  const projectMetadata = useAtomValue(projectMetadataState);
+  const [savedGraphs, setSavedGraphs] = useAtom(savedGraphsState);
+  const [graph, setGraph] = useAtom(graphState);
   const [searchText, setSearchText] = useState('');
 
   const searchedGraphs = useFuseSearch(
@@ -339,7 +339,7 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo((
     [filteredGraphs, folderNames],
   );
 
-  const runningGraphs = useRecoilValue(runningGraphsState);
+  const runningGraphs = useAtomValue(runningGraphsState);
 
   const deleteGraph = useDeleteGraph();
   const loadGraph = useLoadGraph();
@@ -374,11 +374,11 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo((
       graph.metadata!.name = i === 1 ? `Untitled Graph` : `Untitled Graph ${i}`;
     }
     loadGraph(graph);
-    setSavedGraphs((savedGraphs) => [...savedGraphs, graph]);
+    setSavedGraphs([...savedGraphs, graph]);
     startRename(graph.metadata!.name!);
   });
 
-  const setExpandedFolders = useSetRecoilState(expandedFoldersState);
+  const setExpandedFolders = useSetAtom(expandedFoldersState);
 
   const handleNewFolder = useStableCallback((parentPath?: string) => {
     const newFolderPath = parentPath ? `${parentPath}/New Folder` : 'New Folder';
@@ -400,7 +400,8 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo((
       (graph) => graph.metadata?.name && isInFolder(folderName, graph.metadata?.name),
     );
     graphsToDelete.forEach((graph) => deleteGraph(graph));
-    setFolderNames((prev) => prev.filter((name) => folderName !== name && !isInFolder(folderName, name)));
+    const newFolderNames = folderNames.filter((name) => folderName !== name && !isInFolder(folderName, name));
+    setFolderNames(newFolderNames);
   });
 
   const runGraph = useStableCallback((folderName: string) => {
@@ -429,21 +430,21 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo((
       toast.error('A graph or folder with that name already exists.');
       return;
     }
-    setSavedGraphs(
-      savedGraphs.map((g) => {
-        if (g.metadata?.name && (fullPath === g.metadata.name || isInFolder(fullPath, g.metadata.name))) {
-          return {
-            ...g,
-            metadata: {
-              ...g.metadata,
-              name: g.metadata.name.replace(fullPath, newFullPath),
-            },
-          };
-        } else {
-          return g;
-        }
-      }),
-    );
+
+    const newSavedGraphs = savedGraphs.map((g) => {
+      if (g.metadata?.name && (fullPath === g.metadata.name || isInFolder(fullPath, g.metadata.name))) {
+        return {
+          ...g,
+          metadata: {
+            ...g.metadata,
+            name: g.metadata.name.replace(fullPath, newFullPath),
+          },
+        };
+      }
+      return g;
+    });
+    setSavedGraphs(newSavedGraphs);
+
     setGraph({
       ...graph,
       metadata: {
@@ -451,11 +452,12 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo((
         name: graph.metadata?.name?.replace(fullPath, newFullPath),
       },
     });
-    setFolderNames((prev) =>
-      prev.map((name) =>
-        name === fullPath || isInFolder(fullPath, name) ? name.replace(fullPath, newFullPath) : name,
-      ),
+
+    const newFolderNames = folderNames.map((name) =>
+      name === fullPath || isInFolder(fullPath, name) ? name.replace(fullPath, newFullPath) : name,
     );
+    setFolderNames(newFolderNames);
+
     setRenamingItemFullPath(undefined);
     setExpandedFolders((prev) => ({
       ...prev,
@@ -749,8 +751,8 @@ export const FolderItem: FC<{
     depth,
     dragOverFolderName,
   }) => {
-    const projectMetadata = useRecoilValue(projectMetadataState);
-    const [expandedFolders, setExpandedFolders] = useRecoilState(expandedFoldersState);
+    const projectMetadata = useAtomValue(projectMetadataState);
+    const [expandedFolders, setExpandedFolders] = useAtom(expandedFoldersState);
 
     const savedGraph = item.type === 'graph' ? item.graph : undefined;
     const graphIsRunning = savedGraph && runningGraphs.includes(savedGraph.metadata?.id ?? ('' as GraphId));

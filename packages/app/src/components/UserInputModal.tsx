@@ -1,5 +1,5 @@
 import { type FC, Suspense, useEffect, useRef, useState, useMemo } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 import { type UserInputNode, type ArrayDataValue, type StringDataValue, type NodeId } from '@ironclad/rivet-core';
 import { lastAnswersState } from '../state/userInput.js';
 import Modal, { ModalBody, ModalFooter, ModalHeader, ModalTitle, ModalTransition } from '@atlaskit/modal-dialog';
@@ -45,10 +45,10 @@ type UserInputModalProps = {
 
 export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, questionsNodeId, onSubmit, onClose }) => {
   const [answers, setAnswers] = useState<string[]>([]);
-  const [lastAnswers, setLastAnswers] = useRecoilState(lastAnswersState);
+  const [lastAnswers, setLastAnswers] = useAtom(lastAnswersState);
 
-  const project = useRecoilValue(projectState);
-  const currentGraphNodes = useRecoilValue(nodesState);
+  const project = useAtomValue(projectState);
+  const currentGraphNodes = useAtomValue(nodesState);
 
   const questionsNode = useMemo(() => {
     if (!questionsNodeId) {

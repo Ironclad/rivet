@@ -1,12 +1,12 @@
 import { isInTauri } from '../utils/tauri';
 import { onUpdaterEvent } from '@tauri-apps/api/updater';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 import { updateStatusState } from '../state/settings';
 import { match } from 'ts-pattern';
 import useAsyncEffect from 'use-async-effect';
 
 export function useMonitorUpdateStatus() {
-  const setUpdateStatus = useSetRecoilState(updateStatusState);
+  const setUpdateStatus = useSetAtom(updateStatusState);
 
   useAsyncEffect(async () => {
     let unlisten: any | undefined = undefined;

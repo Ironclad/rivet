@@ -1,5 +1,5 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { loadedProjectState, openedProjectsState, projectState, projectsState } from '../state/savedGraphs.js';
+import { useAtom, useSetAtom } from 'jotai';
+import { loadedProjectState, projectState, projectsState } from '../state/savedGraphs.js';
 import { type NodeGraph, emptyNodeGraph, getError } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph.js';
 import { ioProvider } from '../utils/globals.js';
@@ -10,13 +10,13 @@ import { graphNavigationStackState } from '../state/graphBuilder';
 import { useCenterViewOnGraph } from './useCenterViewOnGraph';
 
 export function useLoadProjectWithFileBrowser() {
-  const setProject = useSetRecoilState(projectState);
-  const setLoadedProjectState = useSetRecoilState(loadedProjectState);
-  const setGraph = useSetRecoilState(graphState);
-  const setTrivetState = useSetRecoilState(trivetState);
+  const setProject = useSetAtom(projectState);
+  const setLoadedProjectState = useSetAtom(loadedProjectState);
+  const [projects, setProjects] = useAtom(projectsState);
+  const setGraph = useSetAtom(graphState);
+  const setTrivetState = useSetAtom(trivetState);
   const setStaticData = useSetStaticData();
-  const setNavigationStack = useSetRecoilState(graphNavigationStackState);
-  const [projects, setProjects] = useRecoilState(projectsState);
+  const setNavigationStack = useSetAtom(graphNavigationStackState);
   const centerViewOnGraph = useCenterViewOnGraph();
 
   return async () => {
@@ -77,7 +77,7 @@ export function useLoadProjectWithFileBrowser() {
           runningTests: false,
         });
 
-        setProjects((projects) => ({
+        setProjects({
           openedProjects: {
             ...projects.openedProjects,
             [project.metadata.id]: {
@@ -86,7 +86,7 @@ export function useLoadProjectWithFileBrowser() {
             },
           },
           openedProjectsSortedIds: [...projects.openedProjectsSortedIds, project.metadata.id],
-        }));
+        });
       });
     } catch (err) {
       toast.error(`Failed to load project: ${getError(err).message}`);

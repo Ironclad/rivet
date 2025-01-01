@@ -1,6 +1,5 @@
 import { type FC, useMemo, useState, type MouseEvent } from 'react';
 import { editingNodeState } from '../state/graphBuilder.js';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { connectionsForSingleNodeState, connectionsState, nodesByIdState, nodesState } from '../state/graph.js';
 import styled from '@emotion/styled';
 import MultiplyIcon from 'majesticons/line/multiply-line.svg?react';
@@ -30,10 +29,11 @@ import { projectDataState, projectState } from '../state/savedGraphs';
 import { useSetStaticData } from '../hooks/useSetStaticData';
 import { DefaultNodeEditor } from './editors/DefaultNodeEditor';
 import { NodeColorPicker } from './NodeColorPicker';
+import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 
 export const NodeEditorRenderer: FC = () => {
-  const nodesById = useRecoilValue(nodesByIdState);
-  const [editingNodeId, setEditingNodeId] = useRecoilState(editingNodeState);
+  const nodesById = useAtomValue(nodesByIdState);
+  const [editingNodeId, setEditingNodeId] = useAtom(editingNodeState);
 
   const deselect = useStableCallback(() => {
     setEditingNodeId(null);
@@ -264,24 +264,25 @@ type NodeEditorProps = { selectedNode: ChartNode; onDeselect: () => void };
 export type NodeChanged = (changed: ChartNode, newData?: Record<DataId, string>) => void;
 
 export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) => {
-  const setNodes = useSetRecoilState(nodesState);
+  const [nodes, setNodes] = useAtom(nodesState);
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
   const [addVariantPopupOpen, setAddVariantPopupOpen] = useState(false);
 
-  const nodesById = useRecoilValue(nodesByIdState);
-  const project = useRecoilValue(projectState);
-  const connectionsForNode = useRecoilValue(connectionsForSingleNodeState(selectedNode.id));
-  const setConnections = useSetRecoilState(connectionsState);
+  const nodesById = useAtomValue(nodesByIdState);
+  const project = useAtomValue(projectState);
+  const connectionsForNode = useAtomValue(connectionsForSingleNodeState(selectedNode.id));
+  const setConnections = useSetAtom(connectionsState);
   const setStaticData = useSetStaticData();
 
   const updateNode = useStableCallback((node: ChartNode, newData?: Record<DataId, string>) => {
-    // Update the node
-    setNodes((nodes) =>
-      produce(nodes, (draft) => {
-        const index = draft.findIndex((n) => n.id === node.id);
-        draft[index] = node;
-      }),
-    );
+    // Get current nodes and create new array with updated node
+    const updatedNodes = produce(nodes, (draft) => {
+      const index = draft.findIndex((n) => n.id === node.id);
+      draft[index] = node;
+    });
+
+    // Direct value assignment
+    setNodes(updatedNodes);
 
     if (newData) {
       setStaticData(newData);
@@ -302,7 +303,10 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
     });
 
     if (invalidConnections?.length) {
-      setConnections((conns) => conns.filter((c) => !invalidConnections.includes(c)));
+      // Get current connections and filter out invalid ones
+      const currentConnections = connectionsForNode ?? [];
+      const newConnections = currentConnections.filter((c) => !invalidConnections.includes(c));
+      setConnections(newConnections);
     }
   });
 

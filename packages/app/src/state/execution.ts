@@ -1,19 +1,14 @@
-import { atom } from 'recoil';
+import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 import { type ExecutionRecorder } from '@ironclad/rivet-core';
-import { recoilPersist } from 'recoil-persist';
 import { defaultExecutorState } from './settings';
 
-const { persistAtom } = recoilPersist({ key: 'execution' });
+export const remoteUploadAllowedState = atom<boolean>(false);
 
-export const remoteUploadAllowedState = atom<boolean>({
-  key: 'remoteUploadAllowed',
-  default: false,
-});
-
-export const selectedExecutorState = atom<'browser' | 'nodejs'>({
-  key: 'selectedExecutor',
-  default: defaultExecutorState,
-});
+export const selectedExecutorState = atom(
+  (get) => get(defaultExecutorState),
+  (get, set, value: 'browser' | 'nodejs') => set(defaultExecutorState, value),
+);
 
 export type RemoteDebuggerState = {
   socket: WebSocket | null;
@@ -24,28 +19,18 @@ export type RemoteDebuggerState = {
   isInternalExecutor: boolean;
 };
 
-export const remoteDebuggerState = atom<RemoteDebuggerState>({
-  key: 'remoteDebuggerState',
-  default: {
-    socket: null,
-    started: false,
-    reconnecting: false,
-    url: '',
-    remoteUploadAllowed: false,
-    isInternalExecutor: false,
-  },
-  effects: [persistAtom],
+export const remoteDebuggerState = atomWithStorage<RemoteDebuggerState>('execution', {
+  socket: null,
+  started: false,
+  reconnecting: false,
+  url: '',
+  remoteUploadAllowed: false,
+  isInternalExecutor: false,
 });
 
 export const loadedRecordingState = atom<{
   path: string;
   recorder: ExecutionRecorder;
-} | null>({
-  key: 'loadedRecording',
-  default: null,
-});
+} | null>(null);
 
-export const lastRecordingState = atom<string | undefined>({
-  key: 'lastRecording',
-  default: undefined,
-});
+export const lastRecordingState = atom<string | undefined>(undefined);

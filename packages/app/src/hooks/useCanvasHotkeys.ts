@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   type CanvasPosition,
   canvasPositionState,
@@ -12,12 +12,12 @@ import { useViewportBounds } from './useViewportBounds';
 import { useCanvasPositioning } from './useCanvasPositioning';
 
 export function useCanvasHotkeys() {
-  const [canvasPosition, setCanvasPosition] = useRecoilState(canvasPositionState);
+  const [canvasPosition, setCanvasPosition] = useAtom(canvasPositionState);
   const viewportBounds = useViewportBounds();
   const { canvasToClientPosition } = useCanvasPositioning();
-  const setSearching = useSetRecoilState(searchingGraphState);
-  const setEditingNode = useSetRecoilState(editingNodeState);
-  const hoveringNode = useRecoilValue(hoveringNodeState);
+  const setSearching = useSetAtom(searchingGraphState);
+  const setEditingNode = useSetAtom(editingNodeState);
+  const hoveringNode = useAtomValue(hoveringNodeState);
 
   const latestHandler = useLatest((e: KeyboardEvent) => {
     // If we're in an input, don't do anything

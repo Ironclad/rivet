@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { type FC, useState } from 'react';
 
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 import clsx from 'clsx';
 import { trivetState } from '../state/trivet.js';
 import { useRunMenuCommand } from '../hooks/useMenuCommands.js';
@@ -177,12 +177,12 @@ const styles = css`
 `;
 
 export const OverlayTabs: FC = () => {
-  const [openOverlay, setOpenOverlay] = useRecoilState(overlayOpenState);
+  const [openOverlay, setOpenOverlay] = useAtom(overlayOpenState);
   const runMenuCommandImpl = useRunMenuCommand();
   const [fileMenuOpen, setFileMenuOpen] = useState(false);
-  const sidebarOpen = useRecoilValue(sidebarOpenState);
+  const sidebarOpen = useAtomValue(sidebarOpenState);
 
-  const trivet = useRecoilValue(trivetState);
+  const trivet = useAtomValue(trivetState);
 
   const runMenuCommand: typeof runMenuCommandImpl = (command) => {
     setFileMenuOpen(false);

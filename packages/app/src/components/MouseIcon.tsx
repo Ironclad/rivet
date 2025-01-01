@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { useEffect, type FC, useState } from 'react';
 import { lastMousePositionState } from '../state/graphBuilder';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 
 const styles = css`
   position: fixed;
@@ -16,7 +16,7 @@ const styles = css`
 `;
 
 export const MouseIcon: FC = () => {
-  const lastMousePosition = useRecoilValue(lastMousePositionState);
+  const lastMousePosition = useAtomValue(lastMousePositionState);
   const [shiftPressed, setShiftPressed] = useState(false);
 
   const offset = {

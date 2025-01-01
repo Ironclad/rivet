@@ -17,7 +17,7 @@ import { css } from '@emotion/react';
 import Select from '@atlaskit/select';
 import { toast } from 'react-toastify';
 import codeGeneratorProject from '../../../../graphs/code-node-generator.rivet-project?raw';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { settingsState } from '../../../state/settings';
 import { fillMissingSettingsFromEnvironmentVariables } from '../../../utils/tauri';
 import { useDependsOnPlugins } from '../../../hooks/useDependsOnPlugins';
@@ -47,7 +47,7 @@ export const ObjectNodeAiAssistEditor: FC<
   const [working, setWorking] = useState(false);
   const [model, setModel] = useState('gpt-4o-mini');
 
-  const settings = useRecoilValue(settingsState);
+  const settings = useAtomValue(settingsState);
   const plugins = useDependsOnPlugins();
 
   const data = node.data as ObjectNodeData;

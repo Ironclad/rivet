@@ -1,4 +1,4 @@
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 import { loadedProjectState, projectState } from '../state/savedGraphs.js';
 import {
   type GraphId,
@@ -14,10 +14,10 @@ import { duplicateGraph } from '../utils/duplicateGraph';
 import { produce } from 'immer';
 
 export function useNewProjectFromTemplate() {
-  const setProject = useSetRecoilState(projectState);
-  const setLoadedProject = useSetRecoilState(loadedProjectState);
-  const setGraphData = useSetRecoilState(graphState);
-  const setTrivetData = useSetRecoilState(trivetState);
+  const setProject = useSetAtom(projectState);
+  const setLoadedProject = useSetAtom(loadedProjectState);
+  const setGraphData = useSetAtom(graphState);
+  const setTrivetData = useSetAtom(trivetState);
 
   return (template: unknown) => {
     let [project] = deserializeProject(template);

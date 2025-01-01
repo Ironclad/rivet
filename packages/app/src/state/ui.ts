@@ -1,34 +1,14 @@
-import { atom } from 'recoil';
-import { recoilPersist } from 'recoil-persist';
+import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 
-const { persistAtom } = recoilPersist({
-  key: 'ui',
-});
-
-export const debuggerPanelOpenState = atom({
-  key: 'debuggerPanelOpenState',
-  default: false,
-});
+export const debuggerPanelOpenState = atom<boolean>(false);
 
 export type OverlayKey = 'promptDesigner' | 'trivet' | 'chatViewer' | 'dataStudio' | 'plugins' | 'community';
 
-export const overlayOpenState = atom<OverlayKey | undefined>({
-  key: 'overlayOpenState',
-  default: undefined,
-});
+export const overlayOpenState = atom<OverlayKey | undefined>(undefined);
 
-export const newProjectModalOpenState = atom({
-  key: 'newProjectModalOpenState',
-  default: false,
-});
+export const newProjectModalOpenState = atom<boolean>(false);
 
-export const expandedFoldersState = atom<Record<string, boolean>>({
-  key: 'expandedFoldersState',
-  default: {},
-  effects: [persistAtom],
-});
+export const expandedFoldersState = atomWithStorage<Record<string, boolean>>('ui-expanded-folders', {});
 
-export const helpModalOpenState = atom<boolean>({
-  key: 'helpModalOpenState',
-  default: false,
-});
+export const helpModalOpenState = atom<boolean>(false);

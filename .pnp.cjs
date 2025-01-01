@@ -6634,6 +6634,7 @@ const RAW_RUNTIME_STATE =
           ["fuse.js", "npm:6.6.2"],\
           ["immer", "npm:10.0.3"],\
           ["jest-diff", "npm:29.7.0"],\
+          ["jotai", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.11.0"],\
           ["jsonpath-plus", "npm:7.2.0"],\
           ["lodash-es", "npm:4.17.21"],\
           ["lru-cache", "npm:11.0.0"],\
@@ -6664,7 +6665,6 @@ const RAW_RUNTIME_STATE =
           ["react-toastify", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:9.1.3"],\
           ["react-transition-group", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.4.5"],\
           ["react-window", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:1.8.9"],\
-          ["recoil", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:0.7.7"],\
           ["recoil-persist", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.1.0"],\
           ["retry", "npm:0.13.1"],\
           ["rollup", "npm:4.17.2"],\
@@ -17027,15 +17027,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["hamt_plus", [\
-      ["npm:1.0.2", {\
-        "packageLocation": "./.yarn/cache/hamt_plus-npm-1.0.2-67a52ee1df-3680a1820b.zip/node_modules/hamt_plus/",\
-        "packageDependencies": [\
-          ["hamt_plus", "npm:1.0.2"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["handle-thing", [\
       ["npm:2.0.1", {\
         "packageLocation": "./.yarn/cache/handle-thing-npm-2.0.1-084baca59e-441ec98b07.zip/node_modules/handle-thing/",\
@@ -18573,6 +18564,28 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/jose-npm-4.15.5-15e487a3a1-17944fcc0d.zip/node_modules/jose/",\
         "packageDependencies": [\
           ["jose", "npm:4.15.5"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["jotai", [\
+      ["npm:2.11.0", {\
+        "packageLocation": "./.yarn/cache/jotai-npm-2.11.0-f1bd5ea76c-607c2ab783.zip/node_modules/jotai/",\
+        "packageDependencies": [\
+          ["jotai", "npm:2.11.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.11.0", {\
+        "packageLocation": "./.yarn/__virtual__/jotai-virtual-44bbcaebaa/0/cache/jotai-npm-2.11.0-f1bd5ea76c-607c2ab783.zip/node_modules/jotai/",\
+        "packageDependencies": [\
+          ["jotai", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.11.0"],\
+          ["@types/react", "npm:18.2.31"],\
+          ["react", "npm:18.2.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
         ],\
         "linkType": "HARD"\
       }]\
@@ -23298,37 +23311,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["recoil", [\
-      ["npm:0.7.7", {\
-        "packageLocation": "./.yarn/cache/recoil-npm-0.7.7-4452f58b67-4ac9dfeddd.zip/node_modules/recoil/",\
-        "packageDependencies": [\
-          ["recoil", "npm:0.7.7"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:0.7.7", {\
-        "packageLocation": "./.yarn/__virtual__/recoil-virtual-48d8d5fa57/0/cache/recoil-npm-0.7.7-4452f58b67-4ac9dfeddd.zip/node_modules/recoil/",\
-        "packageDependencies": [\
-          ["recoil", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:0.7.7"],\
-          ["@types/react", "npm:18.2.31"],\
-          ["@types/react-dom", "npm:18.2.14"],\
-          ["@types/react-native", null],\
-          ["hamt_plus", "npm:1.0.2"],\
-          ["react", "npm:18.2.0"],\
-          ["react-dom", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:18.2.0"],\
-          ["react-native", null]\
-        ],\
-        "packagePeers": [\
-          "@types/react-dom",\
-          "@types/react-native",\
-          "@types/react",\
-          "react-dom",\
-          "react-native",\
-          "react"\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["recoil-persist", [\
       ["npm:5.1.0", {\
         "packageLocation": "./.yarn/cache/recoil-persist-npm-5.1.0-6c9c3d1452-979a199862.zip/node_modules/recoil-persist/",\
@@ -23342,7 +23324,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["recoil-persist", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.1.0"],\
           ["@types/recoil", null],\
-          ["recoil", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:0.7.7"]\
+          ["recoil", null]\
         ],\
         "packagePeers": [\
           "@types/recoil",\

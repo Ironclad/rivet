@@ -10,7 +10,7 @@ import {
   useState,
   useMemo,
 } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { match } from 'ts-pattern';
 import {
   type NodeInputDefinition,
@@ -22,7 +22,7 @@ import {
   type NodeOutputDefinition,
 } from '@ironclad/rivet-core';
 import type { HeightCache } from '../hooks/useNodeBodyHeight';
-import { type ProcessDataForNode, lastRunData, selectedProcessPage } from '../state/dataFlow.js';
+import { type ProcessDataForNode } from '../state/dataFlow.js';
 import { NodeBody } from './NodeBody.js';
 import { NodeOutput } from './NodeOutput.js';
 import SettingsCogIcon from 'majesticons/line/settings-cog-line.svg?react';
@@ -336,8 +336,8 @@ const ZoomedOutVisualNodeContent: FC<{
       onSelectNode?.(event.shiftKey);
     });
 
-    const draggingWire = useRecoilValue(draggingWireState);
-    const closestPortToDraggingWire = useRecoilValue(draggingWireClosestPortState);
+    const draggingWire = useAtomValue(draggingWireState);
+    const closestPortToDraggingWire = useAtomValue(draggingWireClosestPortState);
 
     return (
       <>
@@ -550,10 +550,10 @@ const NormalVisualNodeContent: FC<{
       onSelectNode?.(event.shiftKey);
     });
 
-    const draggingWire = useRecoilValue(draggingWireState);
-    const closestPortToDraggingWire = useRecoilValue(draggingWireClosestPortState);
+    const draggingWire = useAtomValue(draggingWireState);
+    const closestPortToDraggingWire = useAtomValue(draggingWireClosestPortState);
 
-    const setPinnedNodes = useSetRecoilState(pinnedNodesState);
+    const setPinnedNodes = useSetAtom(pinnedNodesState);
 
     const togglePinned = useStableCallback(() => {
       setPinnedNodes((prev) => {
@@ -565,7 +565,7 @@ const NormalVisualNodeContent: FC<{
       });
     });
 
-    const setViewingNodeChanges = useSetRecoilState(viewingNodeChangesState);
+    const setViewingNodeChanges = useSetAtom(viewingNodeChangesState);
 
     const viewChanges = () => {
       if (!isHistoricalChanged) {

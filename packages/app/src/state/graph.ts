@@ -1,4 +1,5 @@
-import { DefaultValue, atom, selector, selectorFamily } from 'recoil';
+import { atom } from 'jotai';
+import { atomWithStorage, atomFamily } from 'jotai/utils';
 import {
   type ChartNode,
   type NodeConnection,
@@ -10,220 +11,124 @@ import {
   emptyNodeGraph,
   globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
-import { recoilPersist } from 'recoil-persist';
 import { mapValues } from 'lodash-es';
 import { projectState } from './savedGraphs';
 import { pluginRefreshCounterState } from './plugins';
 import { type CalculatedRevision } from '../utils/ProjectRevisionCalculator';
 
-const { persistAtom } = recoilPersist({ key: 'graph' });
+// Basic atoms
+export const historicalGraphState = atom<CalculatedRevision | null>(null);
+export const isReadOnlyGraphState = atom<boolean>(false);
+export const historicalChangedNodesState = atom<Set<NodeId>>(new Set<NodeId>());
 
-export const historicalGraphState = atom<CalculatedRevision | null>({
-  key: 'historicalGraph',
-  default: null,
-});
+// Persisted atom using atomWithStorage instead of recoil-persist
+export const graphState = atomWithStorage<NodeGraph>('graph', emptyNodeGraph());
 
-export const isReadOnlyGraphState = atom<boolean>({
-  key: 'isReadOnlyGraph',
-  default: false,
-});
-
-export const historicalChangedNodesState = atom<Set<NodeId>>({
-  key: 'historicalChangedNodes',
-  default: new Set(),
-});
-
-export const graphState = atom<NodeGraph>({
-  key: 'graphState',
-  default: emptyNodeGraph(),
-  effects: [persistAtom],
-});
-
-export const graphMetadataState = selector({
-  key: 'graphMetadataState',
-  get: ({ get }) => {
-    return get(graphState).metadata;
+// Derived atoms
+export const graphMetadataState = atom(
+  (get) => get(graphState).metadata,
+  (get, set, newValue: NodeGraph['metadata']) => {
+    const currentGraph = get(graphState);
+    set(graphState, { ...currentGraph, metadata: newValue });
   },
-  set: ({ set }, newValue) => {
-    set(graphState, (oldValue) => {
-      return {
-        ...oldValue,
-        metadata: newValue instanceof DefaultValue ? emptyNodeGraph().metadata : newValue,
-      };
-    });
-  },
-});
+);
 
-export const nodesState = selector({
-  key: 'nodesState',
-  get: ({ get }) => {
-    return get(graphState).nodes;
+export const nodesState = atom(
+  (get) => get(graphState).nodes,
+  (get, set, newValue: ChartNode[]) => {
+    const currentGraph = get(graphState);
+    set(graphState, { ...currentGraph, nodes: newValue });
   },
-  set: ({ set }, newValue) => {
-    set(graphState, (oldValue) => {
-      return {
-        ...oldValue,
-        nodes: newValue instanceof DefaultValue ? [] : newValue,
-      };
-    });
-  },
-});
+);
 
-export const connectionsState = selector({
-  key: 'connectionsState',
-  get: ({ get }) => {
-    return get(graphState).connections;
+export const connectionsState = atom(
+  (get) => get(graphState).connections,
+  (get, set, newValue: NodeConnection[]) => {
+    const currentGraph = get(graphState);
+    set(graphState, { ...currentGraph, connections: newValue });
   },
-  set: ({ set }, newValue) => {
-    set(graphState, (oldValue) => {
-      return {
-        ...oldValue,
-        connections: newValue instanceof DefaultValue ? [] : newValue,
-      };
-    });
-  },
-});
+);
 
-export const nodesByIdState = selector({
-  key: 'nodesByIdState',
-  get: ({ get }) => {
-    return get(nodesState).reduce(
-      (acc, node) => {
-        acc[node.id] = node;
-        return acc;
-      },
-      {} as Record<NodeId, ChartNode>,
-    );
-  },
-});
-
-export const nodesForConnectionState = selector({
-  key: 'nodesForConnectionSelector',
-  get: ({ get }) => {
-    const nodesById = get(nodesByIdState);
-    return get(connectionsState).map((connection) => ({
-      inputNode: nodesById[connection.inputNodeId],
-      outputNode: nodesById[connection.outputNodeId],
-    }));
-  },
-});
-
-export const connectionsForNodeState = selector({
-  key: 'connectionsForNodeSelector',
-  get: ({ get }) => {
-    return get(connectionsState).reduce(
-      (acc, connection) => {
-        acc[connection.inputNodeId] ??= [];
-        acc[connection.inputNodeId]!.push(connection);
-
-        acc[connection.outputNodeId] ??= [];
-        acc[connection.outputNodeId]!.push(connection);
-        return acc;
-      },
-      {} as Record<NodeId, NodeConnection[]>,
-    );
-  },
-});
-
-/** Gets connections attached to a single node */
-export const connectionsForSingleNodeState = selectorFamily({
-  key: 'connectionsForSingleNodeSelector',
-  get:
-    (nodeId: NodeId) =>
-    ({ get }) => {
-      return get(connectionsForNodeState)[nodeId];
+export const nodesByIdState = atom((get) =>
+  get(nodesState).reduce(
+    (acc, node) => {
+      acc[node.id] = node;
+      return acc;
     },
+    {} as Record<NodeId, ChartNode>,
+  ),
+);
+
+export const nodesForConnectionState = atom((get) => {
+  const nodesById = get(nodesByIdState);
+  return get(connectionsState).map((connection) => ({
+    inputNode: nodesById[connection.inputNodeId],
+    outputNode: nodesById[connection.outputNodeId],
+  }));
 });
 
-/** Gets a single node by its ID */
-export const nodeByIdState = selectorFamily<ChartNode | undefined, NodeId>({
-  key: 'nodeByIdSelector',
-  get:
-    (nodeId) =>
-    ({ get }) => {
-      return get(nodesByIdState)[nodeId];
+export const connectionsForNodeState = atom((get) =>
+  get(connectionsState).reduce(
+    (acc, connection) => {
+      acc[connection.inputNodeId] ??= [];
+      acc[connection.inputNodeId]!.push(connection);
+
+      acc[connection.outputNodeId] ??= [];
+      acc[connection.outputNodeId]!.push(connection);
+      return acc;
     },
-});
+    {} as Record<NodeId, NodeConnection[]>,
+  ),
+);
 
-/** Node instances by node ID */
-export const nodeInstancesState = selector<Record<NodeId, NodeImpl<ChartNode, string> | undefined>>({
-  key: 'nodeInstances',
-  get: ({ get }) => {
-    const nodesById = get(nodesByIdState);
-    get(pluginRefreshCounterState);
+// Convert selectorFamily to atomFamily
+export const connectionsForSingleNodeState = atomFamily((nodeId: NodeId) =>
+  atom((get) => get(connectionsForNodeState)[nodeId]),
+);
 
-    return mapValues(nodesById, (node) => {
-      try {
-        return globalRivetNodeRegistry.createDynamicImpl(node);
-      } catch (err) {
-        return undefined;
-      }
-    });
-  },
-});
+export const nodeByIdState = atomFamily((nodeId: NodeId) => atom((get) => get(nodesByIdState)[nodeId]));
 
-/** Gets a single node instance by a node ID */
-export const nodeInstanceByIdState = selectorFamily<NodeImpl<ChartNode, string> | undefined, NodeId>({
-  key: 'nodeInstanceById',
-  get:
-    (nodeId) =>
-    ({ get }) => {
-      return get(nodeInstancesState)?.[nodeId];
-    },
-});
+export const nodeInstancesState = atom((get) => {
+  const nodesById = get(nodesByIdState);
+  get(pluginRefreshCounterState); // Keep dependency
 
-export const ioDefinitionsState = selector<
-  Record<
-    NodeId,
-    {
-      inputDefinitions: NodeInputDefinition[];
-      outputDefinitions: NodeOutputDefinition[];
+  return mapValues(nodesById, (node) => {
+    try {
+      return globalRivetNodeRegistry.createDynamicImpl(node);
+    } catch (err) {
+      return undefined;
     }
-  >
->({
-  key: 'ioDefinitions',
-  get: ({ get }) => {
-    const nodeInstances = get(nodeInstancesState);
-    const connectionsForNode = get(connectionsForNodeState);
-    const nodesById = get(nodesByIdState);
-    const project = get(projectState);
-
-    return mapValues(nodesById, (node) => {
-      const connections = connectionsForNode[node.id] ?? [];
-
-      const inputDefinitions = nodeInstances[node.id]?.getInputDefinitions(connections, nodesById, project);
-      const outputDefinitions = nodeInstances[node.id]?.getOutputDefinitions(connections, nodesById, project);
-
-      return inputDefinitions && outputDefinitions
-        ? {
-            inputDefinitions,
-            outputDefinitions,
-          }
-        : { inputDefinitions: [], outputDefinitions: [] };
-    });
-  },
+  });
 });
 
-export const ioDefinitionsForNodeState = selectorFamily<
-  {
-    inputDefinitions: NodeInputDefinition[];
-    outputDefinitions: NodeOutputDefinition[];
-  },
-  NodeId | undefined
->({
-  key: 'ioDefinitionsForNode',
-  get:
-    (nodeId) =>
-    ({ get }) => {
-      return nodeId ? get(ioDefinitionsState)[nodeId]! : { inputDefinitions: [], outputDefinitions: [] };
-    },
+export const nodeInstanceByIdState = atomFamily((nodeId: NodeId) => atom((get) => get(nodeInstancesState)?.[nodeId]));
+
+export const ioDefinitionsState = atom((get) => {
+  const nodeInstances = get(nodeInstancesState);
+  const connectionsForNode = get(connectionsForNodeState);
+  const nodesById = get(nodesByIdState);
+  const project = get(projectState);
+
+  return mapValues(nodesById, (node) => {
+    const connections = connectionsForNode[node.id] ?? [];
+
+    const inputDefinitions = nodeInstances[node.id]?.getInputDefinitions(connections, nodesById, project);
+    const outputDefinitions = nodeInstances[node.id]?.getOutputDefinitions(connections, nodesById, project);
+
+    return inputDefinitions && outputDefinitions
+      ? {
+          inputDefinitions,
+          outputDefinitions,
+        }
+      : { inputDefinitions: [], outputDefinitions: [] };
+  });
 });
 
-export const nodeConstructorsState = selector({
-  key: 'nodeConstructorsState',
-  get: ({ get }) => {
-    get(pluginRefreshCounterState);
+export const ioDefinitionsForNodeState = atomFamily((nodeId: NodeId | undefined) =>
+  atom((get) => (nodeId ? get(ioDefinitionsState)[nodeId]! : { inputDefinitions: [], outputDefinitions: [] })),
+);
 
-    return globalRivetNodeRegistry.getNodeConstructors();
-  },
+export const nodeConstructorsState = atom((get) => {
+  get(pluginRefreshCounterState);
+  return globalRivetNodeRegistry.getNodeConstructors();
 });

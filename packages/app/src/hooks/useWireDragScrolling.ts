@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 import { canvasPositionState, draggingWireState } from '../state/graphBuilder';
 import { useViewportBounds } from './useViewportBounds';
 import { useCanvasPositioning } from './useCanvasPositioning';
@@ -6,10 +6,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLatest } from 'ahooks';
 
 export function useWireDragScrolling() {
-  const draggingWire = useRecoilValue(draggingWireState);
+  const draggingWire = useAtomValue(draggingWireState);
   const viewport = useViewportBounds();
   const { clientToCanvasPosition } = useCanvasPositioning();
-  const [canvasPosition, setCanvasPosition] = useRecoilState(canvasPositionState);
+  const [canvasPosition, setCanvasPosition] = useAtom(canvasPositionState);
   const draggingWireLatest = useLatest(draggingWire);
 
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });

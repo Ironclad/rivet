@@ -1,4 +1,4 @@
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { editingNodeState, lastMousePositionState, selectedNodesState } from '../state/graphBuilder';
 import { useLatest } from 'ahooks';
 import { useEffect } from 'react';
@@ -7,10 +7,10 @@ import { usePasteNodes } from './usePasteNodes';
 import { useDuplicateNode } from './useDuplicateNode';
 
 export function useCopyNodesHotkeys() {
-  const selectedNodeIds = useRecoilValue(selectedNodesState);
-  const editingNodeId = useRecoilValue(editingNodeState);
+  const selectedNodeIds = useAtomValue(selectedNodesState);
+  const editingNodeId = useAtomValue(editingNodeState);
 
-  const mousePosition = useRecoilValue(lastMousePositionState);
+  const mousePosition = useAtomValue(lastMousePositionState);
 
   const copyNodes = useCopyNodes();
   const pasteNodes = usePasteNodes();

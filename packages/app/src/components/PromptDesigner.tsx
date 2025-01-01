@@ -1,7 +1,6 @@
-import Button from '@atlaskit/button';
 import { css } from '@emotion/react';
 import { type ChangeEvent, type FC, useEffect, useState, useRef, useLayoutEffect } from 'react';
-import { atom, useRecoilState, useRecoilValue } from 'recoil';
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   type PromptDesignerTestGroupResults,
   promptDesignerAttachedChatNodeState,
@@ -38,6 +37,7 @@ import {
 import TextField from '@atlaskit/textfield';
 import { Field } from '@atlaskit/form';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
+import Button from '@atlaskit/button';
 import Select from '@atlaskit/select';
 import Toggle from '@atlaskit/toggle';
 import { nanoid } from 'nanoid/non-secure';
@@ -290,7 +290,7 @@ const styles = css`
 `;
 
 export const PromptDesignerRenderer: FC = () => {
-  const [openOverlay, setOpenOverlay] = useRecoilState(overlayOpenState);
+  const [openOverlay, setOpenOverlay] = useAtom(overlayOpenState);
 
   if (openOverlay !== 'promptDesigner') {
     return null;
@@ -303,26 +303,23 @@ export type PromptDesignerProps = {
   onClose: () => void;
 };
 
-const lastPromptDesignerAttachedNodeState = atom<NodeId | undefined>({
-  key: 'lastPromptDesignerAttachedNodeState',
-  default: undefined,
-});
+const lastPromptDesignerAttachedNodeState = atom<NodeId | undefined>(undefined);
 
 export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
-  const [{ messages }, setMessages] = useRecoilState(promptDesignerMessagesState);
-  const attachedNodeId = useRecoilValue(promptDesignerAttachedChatNodeState);
-  const [, setNodes] = useRecoilState(nodesState);
-  const nodeOutput = useRecoilValue(lastRunDataByNodeState);
-  const [config, setConfig] = useRecoilState(promptDesignerConfigurationState);
-  const [response, setResponse] = useRecoilState(promptDesignerResponseState);
-  const [promptDesigner, setPromptDesigner] = useRecoilState(promptDesignerState);
-  const nodesById = useRecoilValue(nodesByIdState);
+  const [{ messages }, setMessages] = useAtom(promptDesignerMessagesState);
+  const attachedNodeId = useAtomValue(promptDesignerAttachedChatNodeState);
+  const [nodes, setNodes] = useAtom(nodesState);
+  const nodeOutput = useAtomValue(lastRunDataByNodeState);
+  const [config, setConfig] = useAtom(promptDesignerConfigurationState);
+  const [response, setResponse] = useAtom(promptDesignerResponseState);
+  const [promptDesigner, setPromptDesigner] = useAtom(promptDesignerState);
+  const nodesById = useAtomValue(nodesByIdState);
 
   const attachedNode = attachedNodeId?.nodeId ? (nodesById[attachedNodeId.nodeId] as ChatNode) : undefined;
 
   const testGroups = attachedNode?.tests ?? [];
 
-  const [lastPromptDesignerAttachedNode, setLastPromptDesignerAttachedNode] = useRecoilState(
+  const [lastPromptDesignerAttachedNode, setLastPromptDesignerAttachedNode] = useAtom(
     lastPromptDesignerAttachedNodeState,
   );
 
@@ -379,7 +376,8 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
   ]);
 
   const attachedNodeChanged = (newNode: ChatNode) => {
-    setNodes((s) => s.map((n) => (n.id === newNode.id ? newNode : n)));
+    const updatedNodes = nodes.map((n) => (n.id === newNode.id ? newNode : n));
+    setNodes(updatedNodes);
   };
 
   const messageChanged = (newMessage: ChatMessage, index: number) => {
@@ -446,9 +444,7 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
 
   const runTestGroup = useRunTestGroupSampleCount();
 
-  const [testGroupResultsByNodeId, setTestGroupResultsByNodeId] = useRecoilState(
-    promptDesignerTestGroupResultsByNodeIdState,
-  );
+  const [testGroupResultsByNodeId, setTestGroupResultsByNodeId] = useAtom(promptDesignerTestGroupResultsByNodeIdState);
 
   const resultsForAttachedNode = testGroupResultsByNodeId[attachedNodeId?.nodeId ?? ''];
 
@@ -986,8 +982,8 @@ async function runAdHocChat(messages: ChatMessage[], data: ChatNodeConfigData, c
 }
 
 function useRunTestGroup() {
-  const project = useRecoilValue(projectState);
-  const settings = useRecoilValue(settingsState);
+  const project = useAtomValue(projectState);
+  const settings = useAtomValue(settingsState);
 
   return async (
     testGroup: NodeTestGroup,

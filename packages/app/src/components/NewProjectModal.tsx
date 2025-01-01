@@ -1,5 +1,5 @@
 import { useState, type FC, type FormEvent } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useAtom, useSetAtom } from 'jotai';
 import { newProjectModalOpenState } from '../state/ui';
 import Modal, { ModalTransition, ModalBody, ModalHeader, ModalTitle, ModalFooter } from '@atlaskit/modal-dialog';
 import { ButtonItem, SideNavigation, Section } from '@atlaskit/side-navigation';
@@ -15,7 +15,7 @@ import documentationTutorialProject from '../assets/tutorials/documentation-tuto
 import { useNewProjectFromTemplate } from '../hooks/useNewProjectFromTemplate';
 
 export const NewProjectModalRenderer: FC = () => {
-  const [newProjectModalOpen] = useRecoilState(newProjectModalOpenState);
+  const [newProjectModalOpen] = useAtom(newProjectModalOpenState);
 
   return <ModalTransition>{newProjectModalOpen && <NewProjectModal />}</ModalTransition>;
 };
@@ -48,7 +48,7 @@ const buttonsContainer = css`
 `;
 
 export const NewProjectModal: FC = () => {
-  const setNewProjectModalOpen = useSetRecoilState(newProjectModalOpenState);
+  const setNewProjectModalOpen = useSetAtom(newProjectModalOpenState);
 
   const [selectedTemplate, setSelectedTemplate] = useState<string>('blank_project');
 

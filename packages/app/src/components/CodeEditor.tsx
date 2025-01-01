@@ -1,7 +1,7 @@
 import { useLatest } from 'ahooks';
 import { type FC, type MutableRefObject, useEffect, useRef } from 'react';
 import { monaco } from '../utils/monaco.js';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { themeState } from '../state/settings';
 
 export const CodeEditor: FC<{
@@ -32,7 +32,7 @@ export const CodeEditor: FC<{
 
   const onChangeLatest = useLatest(onChange);
 
-  const appTheme = useRecoilValue(themeState);
+  const appTheme = useAtomValue(themeState);
   const actualTheme = theme === 'prompt-interpolation' ? `prompt-interpolation-${appTheme}` : theme;
 
   useEffect(() => {

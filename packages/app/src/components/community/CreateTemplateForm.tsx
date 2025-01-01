@@ -5,7 +5,7 @@ import { type GraphId } from '@ironclad/rivet-core';
 import clsx from 'clsx';
 import { orderBy } from 'lodash-es';
 import { type FormEvent, Suspense, useMemo, useState, type FC } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { projectState } from '../../state/savedGraphs';
 import { LazyCodeEditor } from '../LazyComponents';
 import { css } from '@emotion/react';
@@ -81,7 +81,7 @@ export const CreateTemplateForm: FC<{
     versionDescription: string;
   }) => void;
 }> = ({ existingTemplate, working, onCreate }) => {
-  const project = useRecoilValue(projectState);
+  const project = useAtomValue(projectState);
 
   const [templateName, setTemplateName] = useState<string>(existingTemplate?.name ?? project.metadata.title);
 

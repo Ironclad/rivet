@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import { useMemo, type FC } from 'react';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { type ProjectId } from '@ironclad/rivet-core';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import CloseIcon from 'majesticons/line/multiply-line.svg?react';
 import BlankFileIcon from 'majesticons/line/file-line.svg?react';
 import FileIcon from 'majesticons/line/file-plus-line.svg?react';
@@ -210,9 +210,9 @@ export const styles = css`
 `;
 
 export const ProjectSelector: FC = () => {
-  const setProjects = useSetRecoilState(projectsState);
-  const [openedProjects, setOpenedProjects] = useRecoilState(openedProjectsState);
-  const [openedProjectsSortedIds, setOpenedProjectsSortedIds] = useRecoilState(openedProjectsSortedIdsState);
+  const setProjects = useSetAtom(projectsState);
+  const [openedProjects, setOpenedProjects] = useAtom(openedProjectsState);
+  const [openedProjectsSortedIds, setOpenedProjectsSortedIds] = useAtom(openedProjectsSortedIdsState);
 
   const sortedOpenedProjects = useMemo(() => {
     return openedProjectsSortedIds
@@ -224,18 +224,17 @@ export const ProjectSelector: FC = () => {
   }, [openedProjectsSortedIds, openedProjects]);
 
   const loadProject = useLoadProject();
-  const setNewProjectModalOpen = useSetRecoilState(newProjectModalOpenState);
+  const setNewProjectModalOpen = useSetAtom(newProjectModalOpenState);
   const loadProjectWithFileBrowser = useLoadProjectWithFileBrowser();
 
   useSyncCurrentStateIntoOpenedProjects();
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (over && active.id !== over.id) {
-      setOpenedProjectsSortedIds((openedProjectsSortedIds) => {
-        const oldIndex = openedProjectsSortedIds.indexOf(active?.id as ProjectId);
-        const newIndex = openedProjectsSortedIds.indexOf(over?.id as ProjectId);
-        return arrayMove(openedProjectsSortedIds, oldIndex, newIndex);
-      });
+      const oldIndex = openedProjectsSortedIds.indexOf(active?.id as ProjectId);
+      const newIndex = openedProjectsSortedIds.indexOf(over?.id as ProjectId);
+      const newSortedIds = arrayMove(openedProjectsSortedIds, oldIndex, newIndex);
+      setOpenedProjectsSortedIds(newSortedIds);
     }
   };
 
@@ -342,8 +341,8 @@ export const ProjectTab: FC<{
   onCloseProject?: () => void;
   onSelectProject?: () => void;
 }> = ({ projectId, dragListeners, onCloseProject, onSelectProject }) => {
-  const openedProjects = useRecoilValue(openedProjectsState);
-  const currentProject = useRecoilValue(projectState);
+  const openedProjects = useAtomValue(openedProjectsState);
+  const currentProject = useAtomValue(projectState);
 
   const project = openedProjects[projectId];
 

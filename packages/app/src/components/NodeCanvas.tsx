@@ -19,7 +19,7 @@ import {
   type NodeInputDefinition,
   type NodeOutputDefinition,
 } from '@ironclad/rivet-core';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   type CanvasPosition,
   canvasPositionState,
@@ -169,15 +169,15 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   onNodeStartEditing,
   onContextMenuItemSelected,
 }) => {
-  const [canvasPosition, setCanvasPosition] = useRecoilState(canvasPositionState);
-  const selectedGraphMetadata = useRecoilValue(graphMetadataState);
+  const [canvasPosition, setCanvasPosition] = useAtom(canvasPositionState);
+  const selectedGraphMetadata = useAtomValue(graphMetadataState);
 
-  const setLastSavedCanvasPosition = useSetRecoilState(lastCanvasPositionByGraphState);
+  const setLastSavedCanvasPosition = useSetAtom(lastCanvasPositionByGraphState);
 
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, canvasStartX: 0, canvasStartY: 0 });
   const { clientToCanvasPosition } = useCanvasPositioning();
-  const setLastMousePosition = useSetRecoilState(lastMousePositionState);
+  const setLastMousePosition = useSetAtom(lastMousePositionState);
   const removeNodes = useRemoveNodes();
 
   const { refs, floatingStyles } = useFloating({
@@ -192,8 +192,8 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     target: undefined,
   });
 
-  const [editingNodeId, setEditingNodeId] = useRecoilState(editingNodeState);
-  const [selectedNodeIds, setSelectedNodeIds] = useRecoilState(selectedNodesState);
+  const [editingNodeId, setEditingNodeId] = useAtom(editingNodeState);
+  const [selectedNodeIds, setSelectedNodeIds] = useAtom(selectedNodesState);
   const [selectionBox, setSelectionBox] = useState<{ x: number; y: number; width: number; height: number } | null>(
     null,
   );
@@ -360,7 +360,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     return false;
   };
 
-  const zoomSensitivity = useRecoilValue(zoomSensitivityState);
+  const zoomSensitivity = useAtomValue(zoomSensitivityState);
 
   // I think safari deals with wheel events differently, so we need to throttle the zooming
   // because otherwise it lags like CRAZY
@@ -440,7 +440,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     );
   });
 
-  const [hoveringNode, setHoveringNode] = useRecoilState(hoveringNodeState);
+  const [hoveringNode, setHoveringNode] = useAtom(hoveringNodeState);
   const [hoveringPort, setHoveringPort] = useState<
     | {
         nodeId: NodeId;
@@ -453,7 +453,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const hoveringPortTimeout = useRef<number | undefined>();
   const [hoveringShowPortInfo, setHoveringPortShowInfo] = useState(false);
 
-  const closestPort = useRecoilValue(draggingWireClosestPortState);
+  const closestPort = useAtomValue(draggingWireClosestPortState);
 
   const { setReference } = refs;
 
@@ -565,7 +565,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     handleContextMenu(e);
   });
 
-  const lastRunPerNode = useRecoilValue(lastRunDataByNodeState);
+  const lastRunPerNode = useAtomValue(lastRunDataByNodeState);
 
   const hydratedContextMenuData = useMemo((): ContextMenuContext | null => {
     if (contextMenuData.data?.type.startsWith('node-')) {
@@ -594,12 +594,12 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   useCanvasHotkeys();
   useSearchGraph();
 
-  const searchMatchingNodes = useRecoilValue(searchMatchingNodeIdsState);
+  const searchMatchingNodes = useAtomValue(searchMatchingNodeIdsState);
 
-  const pinnedNodes = useRecoilValue(pinnedNodesState);
+  const pinnedNodes = useAtomValue(pinnedNodesState);
 
   const nodeTypes = useNodeTypes();
-  const selectedProcessPagePerNode = useRecoilValue(selectedProcessPageNodesState);
+  const selectedProcessPagePerNode = useAtomValue(selectedProcessPageNodesState);
 
   const isZoomedOut = canvasPosition.zoom < 0.4;
   const isReallyZoomedOut = canvasPosition.zoom < 0.2;
@@ -813,9 +813,9 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 };
 
 const DebugOverlay: FC<{ enabled: boolean }> = ({ enabled }) => {
-  const canvasPosition = useRecoilValue(canvasPositionState);
+  const canvasPosition = useAtomValue(canvasPositionState);
 
-  const lastMousePosition = useRecoilValue(lastMousePositionState);
+  const lastMousePosition = useAtomValue(lastMousePositionState);
 
   const { clientToCanvasPosition } = useCanvasPositioning();
 

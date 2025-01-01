@@ -1,4 +1,5 @@
-import { atom, selector, selectorFamily } from 'recoil';
+import { atom } from 'jotai';
+import { atomWithStorage, atomFamily } from 'jotai/utils';
 import {
   type ChartNode,
   type GraphId,
@@ -8,113 +9,69 @@ import {
   type DataType,
   type NodeGraph,
 } from '@ironclad/rivet-core';
-import { recoilPersist } from 'recoil-persist';
 import { type WireDef } from '../components/WireLayer.js';
 
-const { persistAtom } = recoilPersist({ key: 'graphBuilder' });
+export const viewingNodeChangesState = atom<NodeId | undefined>(undefined);
 
-export const viewingNodeChangesState = atom<NodeId | undefined>({
-  key: 'viewingNodeChanges',
-  default: undefined,
-});
+export const selectedNodesState = atom<NodeId[]>([]);
 
-export const selectedNodesState = atom<NodeId[]>({
-  key: 'selectedNodeState',
-  default: [],
-});
-
-export const editingNodeState = atom<NodeId | null>({
-  key: 'editingNodeState',
-  default: null,
-});
+export const editingNodeState = atom<NodeId | null>(null);
 
 export type CanvasPosition = { x: number; y: number; zoom: number; fromSaved?: boolean };
 
 export const canvasPositionState = atom<CanvasPosition>({
-  key: 'canvasPosition',
-  default: { x: 0, y: 0, zoom: 1 },
+  x: 0,
+  y: 0,
+  zoom: 1,
 });
 
-export const lastCanvasPositionByGraphState = atom<Record<GraphId, CanvasPosition | undefined>>({
-  key: 'lastCanvasPositionByGraph',
-  default: {},
-  effects: [persistAtom],
-});
+export const lastCanvasPositionByGraphState = atomWithStorage<Record<GraphId, CanvasPosition | undefined>>(
+  'lastCanvasPositionByGraph',
+  {},
+);
 
-export const draggingNodesState = atom<ChartNode[]>({
-  key: 'draggingNode',
-  default: [],
-});
+export const draggingNodesState = atom<ChartNode[]>([]);
 
 export const lastMousePositionState = atom<{ x: number; y: number }>({
-  key: 'lastMousePosition',
-  default: { x: 0, y: 0 },
+  x: 0,
+  y: 0,
 });
 
-export const sidebarOpenState = atom<boolean>({
-  key: 'sidebarOpen',
-  default: true,
-});
+export const sidebarOpenState = atom<boolean>(true);
 
 export type DraggingWireDef = WireDef & { readonly dataType: DataType | Readonly<DataType[]> };
 
-export const draggingWireState = atom<DraggingWireDef | undefined>({
-  key: 'draggingWire',
-  default: undefined,
-});
+export const draggingWireState = atom<DraggingWireDef | undefined>(undefined);
 
-export const isDraggingWireState = selector<boolean>({
-  key: 'isDraggingWire',
-  get: ({ get }) => {
-    return get(draggingWireState) !== undefined;
-  },
-});
+export const isDraggingWireState = atom((get) => get(draggingWireState) !== undefined);
 
 export const draggingWireClosestPortState = atom<
-  { nodeId: NodeId; portId: PortId; element: HTMLElement; definition: NodeInputDefinition } | undefined
->({
-  key: 'draggingWireClosestPort',
-  default: undefined,
-});
+  | {
+      nodeId: NodeId;
+      portId: PortId;
+      element: HTMLElement;
+      definition: NodeInputDefinition;
+    }
+  | undefined
+>(undefined);
 
 export const graphNavigationStackState = atom<{
   stack: GraphId[];
   index?: number;
 }>({
-  key: 'graphNavigationStack',
-  default: {
-    stack: [],
-    index: undefined,
-  },
+  stack: [],
+  index: undefined,
 });
 
-export const pinnedNodesState = atom<NodeId[]>({
-  key: 'pinnedNodes',
-  default: [],
-});
+export const pinnedNodesState = atom<NodeId[]>([]);
 
-export const isPinnedState = selectorFamily<boolean, NodeId>({
-  key: 'isPinned',
-  get:
-    (nodeId) =>
-    ({ get }) =>
-      get(pinnedNodesState).includes(nodeId),
-});
+export const isPinnedState = atomFamily((nodeId: NodeId) => atom((get) => get(pinnedNodesState).includes(nodeId)));
 
 export const searchingGraphState = atom({
-  key: 'searchingGraph',
-  default: {
-    searching: false,
-    query: '',
-  },
+  searching: false,
+  query: '',
 });
 
-export const searchMatchingNodeIdsState = atom<NodeId[]>({
-  key: 'searchMatchingNodeIds',
-  default: [],
-});
+export const searchMatchingNodeIdsState = atom<NodeId[]>([]);
 
-export const hoveringNodeState = atom<NodeId | undefined>({
-  key: 'hoveringNode',
-  default: undefined,
-});
+export const hoveringNodeState = atom<NodeId | undefined>(undefined);

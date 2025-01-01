@@ -4,7 +4,6 @@ import { css } from '@emotion/react';
 import { ConditionallyRenderWire, PartialWire, getConnectionCacheKeys, getNodePortPosition } from './Wire.js';
 import { canvasToClientPosition, useCanvasPositioning } from '../hooks/useCanvasPositioning.js';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { draggingWireClosestPortState } from '../state/graphBuilder.js';
 import { orderBy } from 'lodash-es';
 import { ioDefinitionsState, nodesByIdState } from '../state/graph';
@@ -13,6 +12,7 @@ import { type RunDataByNodeId, lastRunDataByNodeState, selectedProcessPageNodesS
 import select from '@atlaskit/select/dist/types/entry-points/select';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { lineCrossesViewport } from '../utils/lineClipping';
+import { useAtom, useAtomValue } from 'jotai';
 
 const wiresStyles = css`
   width: 100%;
@@ -66,12 +66,11 @@ export const WireLayer: FC<WireLayerProps> = ({
   highlightedPort,
 }) => {
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [closestPort, setClosestPort] = useRecoilState(draggingWireClosestPortState);
-  const ioByNode = useRecoilValue(ioDefinitionsState);
+  const [closestPort, setClosestPort] = useAtom(draggingWireClosestPortState);
+  const ioByNode = useAtomValue(ioDefinitionsState);
 
-  // Is this too inefficient?
-  const lastRunDataByNode = useRecoilValue(lastRunDataByNodeState);
-  const selectedProcessPageNodes = useRecoilValue(selectedProcessPageNodesState);
+  const lastRunDataByNode = useAtomValue(lastRunDataByNodeState);
+  const selectedProcessPageNodes = useAtomValue(selectedProcessPageNodesState);
 
   const handleMouseDown = useStableCallback((event: MouseEvent) => {
     const { clientX, clientY } = event;
@@ -138,7 +137,7 @@ export const WireLayer: FC<WireLayerProps> = ({
   const { canvasPosition, clientToCanvasPosition, canvasToClientPosition } = useCanvasPositioning();
   const mousePositionCanvas = clientToCanvasPosition(mousePosition.x, mousePosition.y);
 
-  const nodesById = useRecoilValue(nodesByIdState);
+  const nodesById = useAtomValue(nodesByIdState);
 
   // Despite having to run getNodePortPositions in ConditionallyRenderWire, it's still faster to filter here
   // using lineCrossesViewport, especially for gigantic graphs when zoomed in. Avoiding rendering thousands of

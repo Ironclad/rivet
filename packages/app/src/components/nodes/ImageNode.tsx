@@ -2,7 +2,7 @@ import { type FC } from 'react';
 import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 import { type ImageNode } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { projectDataState } from '../../state/savedGraphs';
 
 const styles = css`
@@ -16,7 +16,7 @@ type ImageNodeBodyProps = {
 };
 
 export const ImageNodeBody: FC<ImageNodeBodyProps> = ({ node }) => {
-  const projectData = useRecoilValue(projectDataState);
+  const projectData = useAtomValue(projectDataState);
 
   const dataRef = node.data.data;
   const b64Data = dataRef ? projectData?.[dataRef.refId] : undefined;

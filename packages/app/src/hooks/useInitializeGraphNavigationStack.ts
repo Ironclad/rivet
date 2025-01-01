@@ -1,13 +1,13 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 import { savedGraphsState } from '../state/savedGraphs';
 import { graphState } from '../state/graph';
 import { graphNavigationStackState } from '../state/graphBuilder';
 import { useEffect } from 'react';
 
 export function useInitializeGraphNavigationStack() {
-  const savedGraphs = useRecoilValue(savedGraphsState);
-  const graph = useRecoilValue(graphState);
-  const [graphNavigationStack, setGraphNavigationStack] = useRecoilState(graphNavigationStackState);
+  const savedGraphs = useAtomValue(savedGraphsState);
+  const graph = useAtomValue(graphState);
+  const [graphNavigationStack, setGraphNavigationStack] = useAtom(graphNavigationStackState);
 
   useEffect(() => {
     if (

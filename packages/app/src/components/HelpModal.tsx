@@ -1,5 +1,4 @@
 import { type FC } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { helpModalOpenState } from '../state/ui';
 import Modal, { ModalTransition, ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
 import Button from '@atlaskit/button';
@@ -9,6 +8,7 @@ import TwitterIcon from '../assets/vendor_logos/twitter-logo.svg?react';
 import YoutubeIcon from '../assets/vendor_logos/youtube-icon.png';
 import QuestionIcon from 'majesticons/line/question-circle-line.svg?react';
 import { css } from '@emotion/react';
+import { useAtom } from 'jotai';
 
 const styles = css`
   ul li a,
@@ -30,7 +30,7 @@ const styles = css`
 `;
 
 export const HelpModal: FC = () => {
-  const [helpModalOpen, setHelpModalOpen] = useRecoilState(helpModalOpenState);
+  const [helpModalOpen, setHelpModalOpen] = useAtom(helpModalOpenState);
 
   return (
     <ModalTransition>

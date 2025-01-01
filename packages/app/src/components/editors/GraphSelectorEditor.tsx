@@ -5,7 +5,7 @@ import { Field, HelperMessage } from '@atlaskit/form';
 import Select from '@atlaskit/select';
 import { orderBy, values } from 'lodash-es';
 import { nanoid } from 'nanoid/non-secure';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { projectState } from '../../state/savedGraphs';
 import { getHelperMessage } from './editorUtils';
 
@@ -62,7 +62,7 @@ export const GraphSelectorSelect: FC<{
   isReadonly?: boolean;
   onChange?: (selected: GraphId) => void;
 }> = ({ value, isReadonly, onChange }) => {
-  const project = useRecoilValue(projectState);
+  const project = useAtomValue(projectState);
 
   const graphOptions = orderBy(
     values(project.graphs).map((graph) => ({

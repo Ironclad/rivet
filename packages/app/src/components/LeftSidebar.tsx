@@ -1,9 +1,9 @@
 import { css } from '@emotion/react';
 import { type FC } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 import { projectState } from '../state/savedGraphs.js';
-import ExpandLeftIcon from 'majesticons/line/menu-expand-left-line.svg?react';
-import ExpandRightIcon from 'majesticons/line/menu-expand-right-line.svg?react';
+import ExpandLeftIcon from 'majesticons/line/menu-expand-right-line.svg?react';
+import ExpandRightIcon from 'majesticons/line/menu-expand-left-line.svg?react';
 import { type GraphId } from '@ironclad/rivet-core';
 import { sidebarOpenState } from '../state/graphBuilder.js';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
@@ -73,8 +73,8 @@ const styles = css`
 export const LeftSidebar: FC<{
   onRunGraph?: (graphId: GraphId) => void;
 }> = ({ onRunGraph }) => {
-  const project = useRecoilValue(projectState);
-  const [sidebarOpen, setSidebarOpen] = useRecoilState(sidebarOpenState);
+  const project = useAtomValue(projectState);
+  const [sidebarOpen, setSidebarOpen] = useAtom(sidebarOpenState);
 
   return (
     <div

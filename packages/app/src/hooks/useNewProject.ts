@@ -1,25 +1,27 @@
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom, useAtomValue } from 'jotai';
 import {
   loadedProjectState,
   openedProjectsSortedIdsState,
   openedProjectsState,
   projectState,
+  type OpenedProjectInfo,
 } from '../state/savedGraphs.js';
-import { emptyNodeGraph } from '@ironclad/rivet-core';
+import { emptyNodeGraph, type ProjectId } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph.js';
 import { trivetState } from '../state/trivet';
 import { blankProject } from '../utils/blankProject';
 import { canvasPositionState } from '../state/graphBuilder';
 
 export function useNewProject() {
-  const setProject = useSetRecoilState(projectState);
-  const setLoadedProject = useSetRecoilState(loadedProjectState);
-  const setGraphData = useSetRecoilState(graphState);
-  const setTrivetData = useSetRecoilState(trivetState);
-  const setPosition = useSetRecoilState(canvasPositionState);
+  const setProject = useSetAtom(projectState);
+  const setLoadedProject = useSetAtom(loadedProjectState);
+  const currentIds = useAtomValue(openedProjectsSortedIdsState);
+  const setOpenedProjectsSortedIds = useSetAtom(openedProjectsSortedIdsState);
+  const setOpenedProjects = useSetAtom(openedProjectsState);
 
-  const setOpenedProjectsSortedIds = useSetRecoilState(openedProjectsSortedIdsState);
-  const setOpenedProjects = useSetRecoilState(openedProjectsState);
+  const setGraphData = useSetAtom(graphState);
+  const setTrivetData = useSetAtom(trivetState);
+  const setPosition = useSetAtom(canvasPositionState);
 
   return ({
     title,
@@ -38,14 +40,14 @@ export function useNewProject() {
 
     setPosition({ x: 0, y: 0, zoom: 1 });
 
-    setOpenedProjects((projects) => ({
-      ...projects,
+    const newOpenedProjects: Record<ProjectId, OpenedProjectInfo> = {
       [project.metadata.id]: {
         project,
         fsPath: null,
       },
-    }));
-    setOpenedProjectsSortedIds((ids) => [...ids, project.metadata.id]);
+    };
+    setOpenedProjects(newOpenedProjects);
+    setOpenedProjectsSortedIds([...currentIds, project.metadata.id]);
 
     setGraphData(emptyNodeGraph());
     setTrivetData({

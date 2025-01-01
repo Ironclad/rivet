@@ -1,13 +1,13 @@
 import { type NodeId } from '@ironclad/rivet-core';
 import { useStableCallback } from './useStableCallback';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { canvasPositionState } from '../state/graphBuilder';
 import { graphState } from '../state/graph';
 import { fitBoundsToViewport } from './useViewportBounds';
 
 export function useFocusOnNodes() {
-  const setPosition = useSetRecoilState(canvasPositionState);
-  const graph = useRecoilValue(graphState);
+  const setPosition = useSetAtom(canvasPositionState);
+  const graph = useAtomValue(graphState);
 
   return useStableCallback((nodeIds: NodeId[]) => {
     const node = graph.nodes.filter((n) => nodeIds.includes(n.id))!;
