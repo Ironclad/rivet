@@ -119,7 +119,6 @@
     "react-toastify": "^9.1.3",
     "react-transition-group": "^4.4.5",
     "react-window": "^1.8.9",
-    "recoil-persist": "^5.1.0",
     "retry": "^0.13.1",
     "rollup": "^4.1.4",
     "safe-stable-stringify": "^2.4.3",

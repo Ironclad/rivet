@@ -3851,7 +3851,6 @@ __metadata:
     react-toastify: "npm:^9.1.3"
     react-transition-group: "npm:^4.4.5"
     react-window: "npm:^1.8.9"
-    recoil-persist: "npm:^5.1.0"
     retry: "npm:^0.13.1"
     rollup: "npm:^4.1.4"
     rollup-plugin-visualizer: "npm:^5.9.2"
@@ -16188,15 +16187,6 @@ __metadata:
   dependencies:
     resolve: "npm:^1.1.6"
   checksum: fe76bf9c21875ac16e235defedd7cbd34f333c02a92546142b7911a0f7c7059d2e16f441fe6fb9ae203f459c05a31b2bcf26202896d89e390eda7514d5d2702b
-  languageName: node
-  linkType: hard
-
-"recoil-persist@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "recoil-persist@npm:5.1.0"
-  peerDependencies:
-    recoil: ^0.7.2
-  checksum: 979a199862d6aad63f7917700a23528264801b048ae5c7c6805b468e8d1b485d205802caf9170fc0dcdc7aac084643fe0074340b9607aaacef6097e4283f100a
   languageName: node
   linkType: hard
 

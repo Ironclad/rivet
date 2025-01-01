@@ -6665,7 +6665,6 @@ const RAW_RUNTIME_STATE =
           ["react-toastify", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:9.1.3"],\
           ["react-transition-group", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:4.4.5"],\
           ["react-window", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:1.8.9"],\
-          ["recoil-persist", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.1.0"],\
           ["retry", "npm:0.13.1"],\
           ["rollup", "npm:4.17.2"],\
           ["rollup-plugin-visualizer", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.9.2"],\
@@ -23307,28 +23306,6 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["rechoir", "npm:0.6.2"],\
           ["resolve", "patch:resolve@npm%3A1.22.8#optional!builtin<compat/resolve>::version=1.22.8&hash=c3c19d"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["recoil-persist", [\
-      ["npm:5.1.0", {\
-        "packageLocation": "./.yarn/cache/recoil-persist-npm-5.1.0-6c9c3d1452-979a199862.zip/node_modules/recoil-persist/",\
-        "packageDependencies": [\
-          ["recoil-persist", "npm:5.1.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.1.0", {\
-        "packageLocation": "./.yarn/__virtual__/recoil-persist-virtual-eceea532ff/0/cache/recoil-persist-npm-5.1.0-6c9c3d1452-979a199862.zip/node_modules/recoil-persist/",\
-        "packageDependencies": [\
-          ["recoil-persist", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.1.0"],\
-          ["@types/recoil", null],\
-          ["recoil", null]\
-        ],\
-        "packagePeers": [\
-          "@types/recoil",\
-          "recoil"\
         ],\
         "linkType": "HARD"\
       }]\
