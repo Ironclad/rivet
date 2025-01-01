@@ -1,6 +1,5 @@
 import { type NodeId } from '@ironclad/rivet-core';
-import { useAtomValue } from 'jotai';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { selectedNodesState } from '../state/graphBuilder';
 import { connectionsState, nodesByIdState } from '../state/graph';
 import { clipboardState } from '../state/clipboard';
