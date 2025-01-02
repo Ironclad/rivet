@@ -88,7 +88,7 @@ export const ProjectPluginsConfiguration: FC = () => {
   const [pluginSpecs, setPluginSpecs] = useAtom(projectPluginsState);
 
   const deletePlugin = (spec: PluginLoadSpec) => {
-    setPluginSpecs(pluginSpecs.filter((s) => s.id !== spec.id));
+    setPluginSpecs((prev) => (prev || []).filter((s) => s.id !== spec.id));
   };
 
   return (

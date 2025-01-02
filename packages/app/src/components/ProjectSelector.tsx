@@ -211,7 +211,7 @@ export const styles = css`
 
 export const ProjectSelector: FC = () => {
   const setProjects = useSetAtom(projectsState);
-  const [openedProjects, setOpenedProjects] = useAtom(openedProjectsState);
+  const openedProjects = useAtomValue(openedProjectsState);
   const [openedProjectsSortedIds, setOpenedProjectsSortedIds] = useAtom(openedProjectsSortedIdsState);
 
   const sortedOpenedProjects = useMemo(() => {
@@ -231,10 +231,11 @@ export const ProjectSelector: FC = () => {
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (over && active.id !== over.id) {
-      const oldIndex = openedProjectsSortedIds.indexOf(active?.id as ProjectId);
-      const newIndex = openedProjectsSortedIds.indexOf(over?.id as ProjectId);
-      const newSortedIds = arrayMove(openedProjectsSortedIds, oldIndex, newIndex);
-      setOpenedProjectsSortedIds(newSortedIds);
+      setOpenedProjectsSortedIds((prev) => {
+        const oldIndex = prev.indexOf(active?.id as ProjectId);
+        const newIndex = prev.indexOf(over?.id as ProjectId);
+        return arrayMove(prev, oldIndex, newIndex);
+      });
     }
   };
 

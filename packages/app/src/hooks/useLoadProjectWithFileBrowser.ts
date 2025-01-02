@@ -77,16 +77,16 @@ export function useLoadProjectWithFileBrowser() {
           runningTests: false,
         });
 
-        setProjects({
+        setProjects((prev) => ({
           openedProjects: {
-            ...projects.openedProjects,
+            ...prev.openedProjects,
             [project.metadata.id]: {
               project: projectData,
               fsPath: path,
             },
           },
-          openedProjectsSortedIds: [...projects.openedProjectsSortedIds, project.metadata.id],
-        });
+          openedProjectsSortedIds: [...prev.openedProjectsSortedIds, project.metadata.id],
+        }));
       });
     } catch (err) {
       toast.error(`Failed to load project: ${getError(err).message}`);

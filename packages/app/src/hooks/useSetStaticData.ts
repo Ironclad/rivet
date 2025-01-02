@@ -1,17 +1,19 @@
-import { useAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import { useStaticDataDatabase } from './useStaticDataDatabase';
 import { projectDataState } from '../state/savedGraphs';
 import { type DataId } from '@ironclad/rivet-core';
 import { entries } from '../../../core/src/utils/typeSafety';
 
 export function useSetStaticData() {
-  const [projectData, setProjectData] = useAtom(projectDataState);
+  const setProjectData = useSetAtom(projectDataState);
   const database = useStaticDataDatabase();
 
   return async (data: Record<DataId, string>) => {
-    setProjectData({
-      ...projectData,
-      ...data,
+    setProjectData((prev) => {
+      return {
+        ...prev,
+        ...data,
+      };
     });
 
     for (const [id, dataValue] of entries(data)) {

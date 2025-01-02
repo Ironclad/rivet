@@ -264,7 +264,7 @@ type NodeEditorProps = { selectedNode: ChartNode; onDeselect: () => void };
 export type NodeChanged = (changed: ChartNode, newData?: Record<DataId, string>) => void;
 
 export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) => {
-  const [nodes, setNodes] = useAtom(nodesState);
+  const setNodes = useSetAtom(nodesState);
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
   const [addVariantPopupOpen, setAddVariantPopupOpen] = useState(false);
 
@@ -275,14 +275,12 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
   const setStaticData = useSetStaticData();
 
   const updateNode = useStableCallback((node: ChartNode, newData?: Record<DataId, string>) => {
-    // Get current nodes and create new array with updated node
-    const updatedNodes = produce(nodes, (draft) => {
-      const index = draft.findIndex((n) => n.id === node.id);
-      draft[index] = node;
-    });
-
-    // Direct value assignment
-    setNodes(updatedNodes);
+    setNodes((prev) =>
+      produce(prev, (draft) => {
+        const index = draft.findIndex((n) => n.id === node.id);
+        draft[index] = node;
+      }),
+    );
 
     if (newData) {
       setStaticData(newData);

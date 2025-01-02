@@ -17,6 +17,7 @@ import {
   type KeyboardEvent,
   memo,
 } from 'react';
+import { produce } from 'immer';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { graphState } from '../state/graph.js';
 import { projectMetadataState, savedGraphsState } from '../state/savedGraphs.js';
@@ -374,7 +375,7 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo((
       graph.metadata!.name = i === 1 ? `Untitled Graph` : `Untitled Graph ${i}`;
     }
     loadGraph(graph);
-    setSavedGraphs([...savedGraphs, graph]);
+    setSavedGraphs((prev) => [...prev, graph]);
     startRename(graph.metadata!.name!);
   });
 
@@ -431,27 +432,28 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo((
       return;
     }
 
-    const newSavedGraphs = savedGraphs.map((g) => {
-      if (g.metadata?.name && (fullPath === g.metadata.name || isInFolder(fullPath, g.metadata.name))) {
-        return {
-          ...g,
-          metadata: {
-            ...g.metadata,
-            name: g.metadata.name.replace(fullPath, newFullPath),
-          },
-        };
-      }
-      return g;
+    setSavedGraphs((prev) => {
+      return prev.map((g) => {
+        if (g.metadata?.name && (fullPath === g.metadata.name || isInFolder(fullPath, g.metadata.name))) {
+          return {
+            ...g,
+            metadata: {
+              ...g.metadata,
+              name: g.metadata.name.replace(fullPath, newFullPath),
+            },
+          };
+        }
+        return g;
+      });
     });
-    setSavedGraphs(newSavedGraphs);
 
-    setGraph({
-      ...graph,
-      metadata: {
-        ...graph.metadata,
-        name: graph.metadata?.name?.replace(fullPath, newFullPath),
-      },
-    });
+    setGraph((prev) =>
+      produce(prev, (draft) => {
+        const metadata = draft.metadata ?? { name: '' };
+        metadata.name = metadata.name!.replace(fullPath, newFullPath);
+        draft.metadata = metadata;
+      }),
+    );
 
     const newFolderNames = folderNames.map((name) =>
       name === fullPath || isInFolder(fullPath, name) ? name.replace(fullPath, newFullPath) : name,

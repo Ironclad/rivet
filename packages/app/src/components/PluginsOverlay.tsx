@@ -206,7 +206,7 @@ const addPluginBody = css`
 `;
 
 export const PluginsOverlayRenderer: FC = () => {
-  const [openOverlay] = useAtom(overlayOpenState);
+  const openOverlay = useAtomValue(overlayOpenState);
 
   if (openOverlay !== 'plugins') return null;
 

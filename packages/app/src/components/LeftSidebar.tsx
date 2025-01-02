@@ -83,7 +83,7 @@ export const LeftSidebar: FC<{
       key={project.metadata.id}
     >
       <div className="toggle-tab" onClick={() => setSidebarOpen(!sidebarOpen)}>
-        {sidebarOpen ? <ExpandLeftIcon /> : <ExpandRightIcon />}
+        {!sidebarOpen ? <ExpandLeftIcon /> : <ExpandRightIcon />}
       </div>
       <div className="tabs">
         <Tabs id="sidebar-tabs">

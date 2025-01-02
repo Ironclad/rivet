@@ -72,17 +72,21 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, quest
   }, [open, lastAnswers, questions]);
 
   const handleChange = (index: number, value: string) => {
-    const newAnswers = [...answers];
-    newAnswers[index] = value;
-    setAnswers(newAnswers);
+    setAnswers((prev) => {
+      const newAnswers = [...prev];
+      newAnswers[index] = value;
+      return newAnswers;
+    });
   };
 
   const handleSubmit = () => {
-    const newLastAnswers = { ...lastAnswers };
-    questions.forEach((question, index) => {
-      newLastAnswers[question] = answers[index]!;
+    setLastAnswers((prev) => {
+      const newLastAnswers = { ...prev };
+      questions.forEach((question, index) => {
+        newLastAnswers[question] = answers[index]!;
+      });
+      return newLastAnswers;
     });
-    setLastAnswers(newLastAnswers);
 
     const results: ArrayDataValue<StringDataValue> = { type: 'string[]', value: answers };
     onSubmit(results);

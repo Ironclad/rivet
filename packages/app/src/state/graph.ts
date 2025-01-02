@@ -37,17 +37,25 @@ export const graphMetadataState = atom(
 
 export const nodesState = atom(
   (get) => get(graphState).nodes,
-  (get, set, newValue: ChartNode[]) => {
+  (get, set, newValue: ChartNode[] | ((prev: ChartNode[]) => ChartNode[])) => {
     const currentGraph = get(graphState);
-    set(graphState, { ...currentGraph, nodes: newValue });
+    const currentNodes = currentGraph.nodes;
+
+    const nextNodes = typeof newValue === 'function' ? newValue(currentNodes) : newValue;
+
+    set(graphState, { ...currentGraph, nodes: nextNodes });
   },
 );
 
 export const connectionsState = atom(
   (get) => get(graphState).connections,
-  (get, set, newValue: NodeConnection[]) => {
+  (get, set, newValue: NodeConnection[] | ((prev: NodeConnection[]) => NodeConnection[])) => {
     const currentGraph = get(graphState);
-    set(graphState, { ...currentGraph, connections: newValue });
+    const currentConnections = currentGraph.connections;
+
+    const nextConnections = typeof newValue === 'function' ? newValue(currentConnections) : newValue;
+
+    set(graphState, { ...currentGraph, connections: nextConnections });
   },
 );
 

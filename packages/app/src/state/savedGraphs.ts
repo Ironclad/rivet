@@ -82,11 +82,14 @@ export const loadedProjectState = atomWithStorage(
 
 export const savedGraphsState = atom(
   (get) => values(get(projectState).graphs ?? {}),
-  (get, set, newValue: NodeGraph[]) => {
+  (get, set, newValue: NodeGraph[] | ((prev: NodeGraph[]) => NodeGraph[])) => {
     const project = get(projectState);
+    const currentGraphs = Object.values(project.graphs ?? {});
+    const nextGraphs = typeof newValue === 'function' ? newValue(currentGraphs) : newValue;
+
     const newProject = produce(project, (draft) => {
       draft.graphs = {};
-      for (const graph of newValue) {
+      for (const graph of nextGraphs) {
         if (graph.metadata == null) {
           graph.metadata = {
             id: nanoid() as GraphId,
@@ -107,10 +110,15 @@ export const savedGraphsState = atom(
 
 export const projectPluginsState = atom(
   (get) => get(projectState).plugins ?? [],
-  (get, set, newValue: Project['plugins'] | undefined) => {
+  (get, set, newValue: Project['plugins'] | ((prev: Project['plugins']) => Project['plugins']) | undefined) => {
+    const currentProject = get(projectState);
+    const currentPlugins = currentProject.plugins ?? blankProject().plugins;
+
+    const nextPlugins = typeof newValue === 'function' ? newValue(currentPlugins) : newValue ?? blankProject().plugins;
+
     set(projectState, {
-      ...get(projectState),
-      plugins: newValue ?? blankProject().plugins,
+      ...currentProject,
+      plugins: nextPlugins,
     });
   },
 );
@@ -147,10 +155,15 @@ export const openedProjectsState = atom(
 
 export const openedProjectsSortedIdsState = atom(
   (get) => get(projectsState).openedProjectsSortedIds,
-  (get, set, newValue: ProjectId[] | undefined) => {
+  (get, set, newValue: ProjectId[] | ((prev: ProjectId[]) => ProjectId[]) | undefined) => {
+    const currentProjects = get(projectsState);
+    const currentIds = currentProjects.openedProjectsSortedIds ?? [];
+
+    const nextIds = typeof newValue === 'function' ? newValue(currentIds) : newValue ?? [];
+
     set(projectsState, {
-      ...get(projectsState),
-      openedProjectsSortedIds: newValue ?? [],
+      ...currentProjects,
+      openedProjectsSortedIds: nextIds,
     });
   },
 );

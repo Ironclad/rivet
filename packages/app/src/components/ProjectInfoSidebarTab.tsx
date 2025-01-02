@@ -14,7 +14,7 @@ import Toggle from '@atlaskit/toggle';
 import { entries } from '../../../core/src/utils/typeSafety';
 import { css } from '@emotion/react';
 import { ProjectRevisions } from './ProjectRevisionList';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 
 const styles = css`
   .context-list {
@@ -70,7 +70,7 @@ type ContextValue = {
 
 export const ProjectInfoSidebarTab: FC = () => {
   const [project, setProject] = useAtom(projectState);
-  const [savedGraphs, setSavedGraphs] = useAtom(savedGraphsState);
+  const savedGraphs = useAtomValue(savedGraphsState);
   const [projectContext, setProjectContext] = useAtom(projectContextState(project.metadata.id));
 
   const [projectEditContextModalOpen, toggleProjectEditContextModalOpen] = useToggle(false);

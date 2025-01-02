@@ -376,8 +376,7 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
   ]);
 
   const attachedNodeChanged = (newNode: ChatNode) => {
-    const updatedNodes = nodes.map((n) => (n.id === newNode.id ? newNode : n));
-    setNodes(updatedNodes);
+    setNodes((prev) => prev.map((n) => (n.id === newNode.id ? newNode : n)));
   };
 
   const messageChanged = (newMessage: ChatMessage, index: number) => {

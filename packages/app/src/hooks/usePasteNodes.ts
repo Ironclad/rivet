@@ -53,7 +53,7 @@ export function usePasteNodes() {
       });
     });
 
-    setNodes([...nodes, ...newNodes]);
+    setNodes((prev) => [...prev, ...newNodes]);
     setSelectedNodeIds(newNodes.map((node) => node.id));
 
     const newConnections: NodeConnection[] = clipboard.connections

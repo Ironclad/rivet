@@ -1,5 +1,5 @@
 import { type FC } from 'react';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { graphState } from '../state/graph.js';
 import { savedGraphsState } from '../state/savedGraphs.js';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
@@ -9,11 +9,11 @@ import { GraphRevisions } from './GraphRevisionList';
 
 export const GraphInfoSidebarTab: FC = () => {
   const [graph, setGraph] = useAtom(graphState);
-  const [savedGraphs, setSavedGraphs] = useAtom(savedGraphsState);
+  const setSavedGraphs = useSetAtom(savedGraphsState);
 
   function setGraphAndSavedGraph(graph: NodeGraph) {
     setGraph(graph);
-    setSavedGraphs(savedGraphs.map((g) => (g.metadata!.id === graph.metadata!.id ? graph : g)));
+    setSavedGraphs((prev) => prev.map((g) => (g.metadata!.id === graph.metadata!.id ? graph : g)));
   }
 
   return (
