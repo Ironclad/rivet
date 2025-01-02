@@ -19,6 +19,7 @@ import { getProcessorEvents, getProcessorSSEStream, getSingleNodeStream } from '
 import { GraphProcessor } from '../model/GraphProcessor.js';
 import { deserializeProject } from '../utils/serialization/serialization.js';
 import { DEFAULT_CHAT_NODE_TIMEOUT } from '../utils/defaults.js';
+import type { Tokenizer } from '../integrations/Tokenizer.js';
 
 export type LooseDataValue = DataValue | string | number | boolean;
 
@@ -38,6 +39,7 @@ export type RunGraphOptions = {
   abortSignal?: AbortSignal;
   registry?: NodeRegistration;
   getChatNodeEndpoint?: ProcessContext['getChatNodeEndpoint'];
+  tokenizer?: Tokenizer;
 } & {
   [P in keyof ProcessEvents as `on${PascalCase<P>}`]?: (params: ProcessEvents[P]) => void;
 } & Settings;
