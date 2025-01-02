@@ -156,5 +156,5 @@ export const openedProjectsSortedIdsState = atom(
 );
 
 export const projectContextState = atomFamily((projectId: ProjectId) =>
-  atomWithStorage<ProjectContext>(`projectContext-${projectId}`, {}, storage),
+  atomWithStorage<ProjectContext>(`projectContext__"${projectId}"`, {}, storage),
 );
