@@ -2,8 +2,8 @@ import { css } from '@emotion/react';
 import { type FC } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { projectState } from '../state/savedGraphs.js';
-import ExpandLeftIcon from 'majesticons/line/menu-expand-right-line.svg?react';
-import ExpandRightIcon from 'majesticons/line/menu-expand-left-line.svg?react';
+import ExpandLeftIcon from 'majesticons/line/menu-expand-left-line.svg?react';
+import ExpandRightIcon from 'majesticons/line/menu-expand-right-line.svg?react';
 import { type GraphId } from '@ironclad/rivet-core';
 import { sidebarOpenState } from '../state/graphBuilder.js';
 import Tabs, { Tab, TabList, TabPanel } from '@atlaskit/tabs';
@@ -83,7 +83,7 @@ export const LeftSidebar: FC<{
       key={project.metadata.id}
     >
       <div className="toggle-tab" onClick={() => setSidebarOpen(!sidebarOpen)}>
-        {!sidebarOpen ? <ExpandLeftIcon /> : <ExpandRightIcon />}
+        {sidebarOpen ? <ExpandLeftIcon /> : <ExpandRightIcon />}
       </div>
       <div className="tabs">
         <Tabs id="sidebar-tabs">
