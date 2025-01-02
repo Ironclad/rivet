@@ -1,4 +1,4 @@
-import { atom } from 'recoil';
+import { atom } from 'jotai';
 import { type PluginLoadSpec } from '../../../core/src/model/PluginLoadSpec';
 
 export type PluginState = {
@@ -7,12 +7,6 @@ export type PluginState = {
   spec: PluginLoadSpec;
 };
 
-export const pluginRefreshCounterState = atom({
-  key: 'pluginRefreshCounterState',
-  default: 0,
-});
+export const pluginRefreshCounterState = atom<number>(0);
 
-export const pluginsState = atom<PluginState[]>({
-  key: 'pluginsState',
-  default: [],
-});
+export const pluginsState = atom<PluginState[]>([]);

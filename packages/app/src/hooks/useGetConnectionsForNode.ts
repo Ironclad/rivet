@@ -1,10 +1,10 @@
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { connectionsState } from '../state/graph.js';
 import { type ChartNode } from '@ironclad/rivet-core';
 import { useCallback } from 'react';
 
 export function useGetConnectionsForNode() {
-  const connections = useRecoilValue(connectionsState);
+  const connections = useAtomValue(connectionsState);
 
   return useCallback(
     (node: ChartNode) => {

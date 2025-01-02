@@ -7,16 +7,16 @@ import {
   type NodeGraph,
 } from '@ironclad/rivet-core';
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { lastRunDataByNodeState } from '../state/dataFlow';
 import { graphState } from '../state/graph';
 import { projectState } from '../state/savedGraphs';
 import { entries } from '../../../core/src/utils/typeSafety';
 
 export function useTotalRunCost() {
-  const lastRunData = useRecoilValue(lastRunDataByNodeState);
-  const project = useRecoilValue(projectState);
-  const graph = useRecoilValue(graphState);
+  const lastRunData = useAtomValue(lastRunDataByNodeState);
+  const project = useAtomValue(projectState);
+  const graph = useAtomValue(graphState);
 
   const allNodesById = useMemo(() => {
     if (!project) {

@@ -16,13 +16,13 @@ import { commentNodeDescriptor } from '../components/nodes/CommentNode';
 import { imageNodeDescriptor } from '../components/nodes/ImageNode';
 import { audioNodeDescriptor } from '../components/nodes/AudioNode';
 import { appendToDatasetNodeDescriptor } from '../components/nodes/AppendToDatasetNode';
-import { useRecoilValue } from 'recoil';
 import { pluginRefreshCounterState } from '../state/plugins';
 import { loadDatasetNodeDescriptor } from '../components/nodes/LoadDatasetNode';
 import { datasetNearestNeighborsNodeDescriptor } from '../components/nodes/DatasetNearestNeighborsNode';
 import { getDatasetRowNodeDescriptor } from '../components/nodes/GetDatasetRowNode';
 import { replaceDatasetNodeDescriptor } from '../components/nodes/ReplaceDatasetNode';
 import { type InputsOrOutputsWithRefs } from '../state/dataFlow';
+import { useAtomValue } from 'jotai';
 
 export type UnknownNodeComponentDescriptor = {
   Body?: FC<{ node: ChartNode }>;
@@ -66,7 +66,7 @@ const overriddenDescriptors: Partial<NodeComponentDescriptors> = {
 };
 
 export function useNodeTypes(): NodeComponentDescriptors {
-  const counter = useRecoilValue(pluginRefreshCounterState);
+  const counter = useAtomValue(pluginRefreshCounterState);
 
   return useMemo(() => {
     if (Number.isNaN(counter)) {

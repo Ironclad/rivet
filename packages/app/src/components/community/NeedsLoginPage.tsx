@@ -1,13 +1,13 @@
 import Button from '@atlaskit/button';
 import { WebviewWindow } from '@tauri-apps/api/window';
 import { type FC } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 import { getCommunityLoginUrl } from '../../utils/getCommunityApi';
 import { isLoggedInToCommunityState } from '../../state/community';
 
 export const NeedsLoginPage: FC = () => {
   const loginUrl = getCommunityLoginUrl();
-  const setIsLoggedInToCommunity = useSetRecoilState(isLoggedInToCommunityState);
+  const setIsLoggedInToCommunity = useSetAtom(isLoggedInToCommunityState);
 
   const handleLogInClick = () => {
     const window = new WebviewWindow('login', { alwaysOnTop: true, center: true, url: loginUrl });

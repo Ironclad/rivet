@@ -1,11 +1,11 @@
 import { type ChartNode, type NodeId } from '@ironclad/rivet-core';
 import { useStableCallback } from './useStableCallback';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 import { connectionsState, nodesState } from '../state/graph';
 
 export const useRemoveNodes = () => {
-  const [nodes, setNodes] = useRecoilState(nodesState);
-  const [connections, setConnections] = useRecoilState(connectionsState);
+  const [nodes, setNodes] = useAtom(nodesState);
+  const [connections, setConnections] = useAtom(connectionsState);
 
   const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {
     setNodes?.(newNodes);

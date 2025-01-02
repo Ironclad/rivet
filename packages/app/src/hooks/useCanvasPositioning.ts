@@ -1,4 +1,4 @@
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { canvasPositionState } from '../state/graphBuilder.js';
 import { useCallback } from 'react';
 
@@ -17,7 +17,7 @@ export const clientToCanvasPosition =
   };
 
 export function useCanvasPositioning() {
-  const canvasPosition = useRecoilValue(canvasPositionState);
+  const canvasPosition = useAtomValue(canvasPositionState);
 
   const canvasToClientPositionLocal = useCallback(
     (x: number, y: number) => canvasToClientPosition(canvasPosition)(x, y),

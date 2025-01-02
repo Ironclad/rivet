@@ -1,4 +1,3 @@
-import { useSetRecoilState } from 'recoil';
 import { type OpenedProjectInfo, loadedProjectState, projectState } from '../state/savedGraphs.js';
 import { emptyNodeGraph, getError } from '@ironclad/rivet-core';
 import { graphState, historicalGraphState, isReadOnlyGraphState } from '../state/graph.js';
@@ -7,16 +6,17 @@ import { trivetState } from '../state/trivet.js';
 import { useSetStaticData } from './useSetStaticData';
 import { toast } from 'react-toastify';
 import { graphNavigationStackState } from '../state/graphBuilder';
+import { useSetAtom } from 'jotai';
 
 export function useLoadProject() {
-  const setProject = useSetRecoilState(projectState);
-  const setLoadedProjectState = useSetRecoilState(loadedProjectState);
-  const setGraphData = useSetRecoilState(graphState);
-  const setTrivetState = useSetRecoilState(trivetState);
+  const setProject = useSetAtom(projectState);
+  const setLoadedProjectState = useSetAtom(loadedProjectState);
+  const setGraphData = useSetAtom(graphState);
+  const setTrivetState = useSetAtom(trivetState);
   const setStaticData = useSetStaticData();
-  const setNavigationStack = useSetRecoilState(graphNavigationStackState);
-  const setIsReadOnlyGraph = useSetRecoilState(isReadOnlyGraphState);
-  const setHistoricalGraph = useSetRecoilState(historicalGraphState);
+  const setNavigationStack = useSetAtom(graphNavigationStackState);
+  const setIsReadOnlyGraph = useSetAtom(isReadOnlyGraphState);
+  const setHistoricalGraph = useSetAtom(historicalGraphState);
 
   return async (projectInfo: OpenedProjectInfo) => {
     try {

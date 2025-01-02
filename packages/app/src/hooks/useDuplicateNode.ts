@@ -1,11 +1,11 @@
 import { globalRivetNodeRegistry, type NodeId } from '@ironclad/rivet-core';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { connectionsState, nodesByIdState, nodesState } from '../state/graph';
 
 export function useDuplicateNode() {
-  const nodesById = useRecoilValue(nodesByIdState);
-  const setNodes = useSetRecoilState(nodesState);
-  const [connections, setConnections] = useRecoilState(connectionsState);
+  const nodesById = useAtomValue(nodesByIdState);
+  const setNodes = useSetAtom(nodesState);
+  const setConnections = useSetAtom(connectionsState);
 
   return (nodeId: NodeId) => {
     const node = nodesById[nodeId];
@@ -25,14 +25,16 @@ export function useDuplicateNode() {
     newNode.description = node.description;
     newNode.isSplitRun = node.isSplitRun;
     newNode.splitRunMax = node.splitRunMax;
-    setNodes((nodes) => [...nodes, newNode]);
+    setNodes((prev) => [...prev, newNode]);
 
-    // Copy the connections to the input ports
-    const oldNodeConnections = connections.filter((c) => c.inputNodeId === nodeId);
-    const newNodeConnections = oldNodeConnections.map((c) => ({
-      ...c,
-      inputNodeId: newNode.id,
-    }));
-    setConnections([...connections, ...newNodeConnections]);
+    setConnections((prev) => {
+      const oldNodeConnections = prev.filter((c) => c.inputNodeId === nodeId);
+      const newNodeConnections = oldNodeConnections.map((c) => ({
+        ...c,
+        inputNodeId: newNode.id,
+      }));
+      console.log('newNodeConnections', newNodeConnections);
+      return [...prev, ...newNodeConnections];
+    });
   };
 }

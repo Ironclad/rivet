@@ -11,7 +11,7 @@ import {
 import { nanoid } from 'nanoid/non-secure';
 import prettyBytes from 'pretty-bytes';
 import { type FC } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { projectDataState } from '../../state/savedGraphs';
 import { ioProvider } from '../../utils/globals';
 import { type SharedEditorProps } from './SharedEditorProps';
@@ -24,7 +24,7 @@ export const DefaultFileBrowserEditor: FC<
   }
 > = ({ node, isReadonly, isDisabled, onChange, editor }) => {
   const data = node.data as Record<string, unknown>;
-  const projectData = useRecoilValue(projectDataState);
+  const projectData = useAtomValue(projectDataState);
   const helperMessage = getHelperMessage(editor, node.data);
 
   const pickFile = async () => {

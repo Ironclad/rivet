@@ -1,5 +1,5 @@
 import { type FC, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtomValue, useAtom } from 'jotai';
 import { orderBy } from 'lodash-es';
 import { overlayOpenState } from '../state/ui';
 import { css } from '@emotion/react';
@@ -33,7 +33,7 @@ import { FixedSizeList } from 'react-window';
 import { useCurrentExecution } from '../hooks/useCurrentExecution';
 
 export const ChatViewerRenderer: FC = () => {
-  const [openOverlay, setOpenOverlay] = useRecoilState(overlayOpenState);
+  const [openOverlay, setOpenOverlay] = useAtom(overlayOpenState);
 
   if (openOverlay !== 'chatViewer') return null;
 
@@ -200,11 +200,11 @@ const styles = css`
 export const ChatViewer: FC<{
   onClose: () => void;
 }> = ({ onClose }) => {
-  const project = useRecoilValue(projectState);
-  const allLastRunData = useRecoilValue(lastRunDataByNodeState);
+  const project = useAtomValue(projectState);
+  const allLastRunData = useAtomValue(lastRunDataByNodeState);
   const [graphFilter, setGraphFilter] = useState('');
   const goToNode = useGoToNode();
-  const graphRunning = useRecoilValue(graphRunningState);
+  const graphRunning = useAtomValue(graphRunningState);
 
   const nodesToGraphNameMap = useMemo(() => {
     const map: Record<NodeId, string> = {};

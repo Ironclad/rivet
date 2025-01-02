@@ -2,7 +2,7 @@ import { type FC, useLayoutEffect, useRef, useMemo } from 'react';
 import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 import { type AudioNode } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { projectDataState } from '../../state/savedGraphs';
 
 const styles = css`
@@ -24,7 +24,7 @@ export const AudioNodeBody: FC<AudioNodeBodyProps> = ({ node }) => {
 };
 
 export const AudioNodeHasDataInput: FC<AudioNodeBodyProps> = ({ node }) => {
-  const projectData = useRecoilValue(projectDataState);
+  const projectData = useAtomValue(projectDataState);
 
   const dataRef = node.data.data;
 

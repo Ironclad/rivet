@@ -1,4 +1,4 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { nodesState } from '../state/graph';
 import { useEffect, useMemo } from 'react';
 import { entries } from '../../../core/src/utils/typeSafety';
@@ -10,8 +10,8 @@ import { useNodeTypes } from './useNodeTypes';
 import { useDependsOnPlugins } from './useDependsOnPlugins';
 
 export function useSearchGraph() {
-  const graphNodes = useRecoilValue(nodesState);
-  const setSearchMatchingNodes = useSetRecoilState(searchMatchingNodeIdsState);
+  const graphNodes = useAtomValue(nodesState);
+  const setSearchMatchingNodes = useSetAtom(searchMatchingNodeIdsState);
 
   useDependsOnPlugins();
   const focusOnNodes = useFocusOnNodes();
@@ -37,7 +37,7 @@ export function useSearchGraph() {
     });
   }, [graphNodes, nodeTypes]);
 
-  const searchState = useRecoilValue(searchingGraphState);
+  const searchState = useAtomValue(searchingGraphState);
 
   const searchedNodes = useFuseSearch(
     searchableNodes,

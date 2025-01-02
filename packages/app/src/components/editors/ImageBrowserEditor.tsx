@@ -9,7 +9,7 @@ import {
 } from '@ironclad/rivet-core';
 import { nanoid } from 'nanoid/non-secure';
 import { type FC } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { projectDataState } from '../../state/savedGraphs';
 import { ioProvider } from '../../utils/globals';
 import { type SharedEditorProps } from './SharedEditorProps';
@@ -24,7 +24,7 @@ export const DefaultImageBrowserEditor: FC<
   const data = node.data as Record<string, unknown>;
   const helperMessage = getHelperMessage(editor, node.data);
 
-  const dataState = useRecoilValue(projectDataState);
+  const dataState = useAtomValue(projectDataState);
 
   const pickFile = async () => {
     await ioProvider.readFileAsBinary(async (binaryData) => {

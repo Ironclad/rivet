@@ -1,11 +1,11 @@
 import { type NodeGraph } from '@ironclad/rivet-core';
 import { canvasPositionState, sidebarOpenState } from '../state/graphBuilder';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetAtom, useAtomValue } from 'jotai';
 import { fitBoundsToViewport } from './useViewportBounds';
 
 export function useCenterViewOnGraph() {
-  const sidebarOpen = useRecoilValue(sidebarOpenState);
-  const setPosition = useSetRecoilState(canvasPositionState);
+  const sidebarOpen = useAtomValue(sidebarOpenState);
+  const setPosition = useSetAtom(canvasPositionState);
 
   return (graph: NodeGraph) => {
     if (graph.nodes.length === 0) {

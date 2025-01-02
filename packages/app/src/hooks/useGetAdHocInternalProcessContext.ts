@@ -10,13 +10,13 @@ import { GptTokenizerTokenizer } from '../../../core/src/integrations/GptTokeniz
 import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
 import { TauriNativeApi } from '../model/native/TauriNativeApi';
 import { nanoid } from 'nanoid/non-secure';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { settingsState } from '../state/settings';
 import { useDependsOnPlugins } from './useDependsOnPlugins';
 import { audioProvider, datasetProvider } from '../utils/globals';
 
 export function useGetAdHocInternalProcessContext() {
-  const settings = useRecoilValue(settingsState);
+  const settings = useAtomValue(settingsState);
   const plugins = useDependsOnPlugins();
 
   return useCallback(

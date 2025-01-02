@@ -3,7 +3,6 @@ import { useSaveProject } from './useSaveProject.js';
 import { window } from '@tauri-apps/api';
 import { match } from 'ts-pattern';
 import { useLoadProjectWithFileBrowser } from './useLoadProjectWithFileBrowser.js';
-import { useRecoilState, useSetRecoilState } from 'recoil';
 import { settingsModalOpenState } from '../components/SettingsModal.js';
 import { graphState } from '../state/graph.js';
 import { useLoadRecording } from './useLoadRecording.js';
@@ -13,6 +12,7 @@ import { helpModalOpenState, newProjectModalOpenState } from '../state/ui';
 import { useToggleRemoteDebugger } from '../components/DebuggerConnectPanel';
 import { lastRunDataByNodeState } from '../state/dataFlow';
 import { useImportGraph } from './useImportGraph';
+import { useAtom, useSetAtom } from 'jotai';
 
 export type MenuIds =
   | 'settings'
@@ -58,16 +58,16 @@ export function useMenuCommands(
     onRunGraph?: () => void;
   } = {},
 ) {
-  const [graphData, setGraphData] = useRecoilState(graphState);
+  const [graphData, setGraphData] = useAtom(graphState);
   const { saveProject, saveProjectAs } = useSaveProject();
-  const setNewProjectModalOpen = useSetRecoilState(newProjectModalOpenState);
+  const setNewProjectModalOpen = useSetAtom(newProjectModalOpenState);
   const loadProject = useLoadProjectWithFileBrowser();
-  const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
+  const setSettingsOpen = useSetAtom(settingsModalOpenState);
   const { loadRecording } = useLoadRecording();
   const toggleRemoteDebugger = useToggleRemoteDebugger();
-  const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
+  const setLastRunData = useSetAtom(lastRunDataByNodeState);
   const importGraph = useImportGraph();
-  const setHelpModalOpen = useSetRecoilState(helpModalOpenState);
+  const setHelpModalOpen = useSetAtom(helpModalOpenState);
 
   useEffect(() => {
     const handler: (e: { payload: MenuIds }) => void = ({ payload }) => {

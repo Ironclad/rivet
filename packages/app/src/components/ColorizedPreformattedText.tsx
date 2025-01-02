@@ -1,6 +1,6 @@
 import { type FC, useLayoutEffect, useRef } from 'react';
 import { monaco } from '../utils/monaco';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { themeState } from '../state/settings';
 
 export const ColorizedPreformattedText: FC<{ text: string; language: string; theme?: string }> = ({
@@ -9,7 +9,7 @@ export const ColorizedPreformattedText: FC<{ text: string; language: string; the
   theme,
 }) => {
   const bodyRef = useRef<HTMLPreElement>(null);
-  const appTheme = useRecoilValue(themeState);
+  const appTheme = useAtomValue(themeState);
   const actualTheme = theme === 'prompt-interpolation' ? `prompt-interpolation-${appTheme}` : theme;
 
   useLayoutEffect(() => {

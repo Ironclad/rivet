@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { graphNavigationStackState } from '../state/graphBuilder.js';
 import { projectState } from '../state/savedGraphs.js';
 import { useLoadGraph } from '../hooks/useLoadGraph.js';
+import { useAtom, useAtomValue } from 'jotai';
 
 export const useGraphHistoryNavigation = () => {
-  const [graphNavigationStack, setGraphNavigationStack] = useRecoilState(graphNavigationStackState);
+  const [graphNavigationStack, setGraphNavigationStack] = useAtom(graphNavigationStackState);
   const loadGraph = useLoadGraph();
-  const project = useRecoilValue(projectState);
+  const project = useAtomValue(projectState);
 
   const hasForward =
     graphNavigationStack.index != null && graphNavigationStack.index < graphNavigationStack.stack.length - 1;

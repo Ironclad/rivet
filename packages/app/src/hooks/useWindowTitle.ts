@@ -1,12 +1,12 @@
 import { getVersion } from '@tauri-apps/api/app';
 import { appWindow } from '@tauri-apps/api/window';
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { projectState, loadedProjectState } from '../state/savedGraphs';
 
 export function useWindowTitle() {
-  const project = useRecoilValue(projectState);
-  const loadedProject = useRecoilValue(loadedProjectState);
+  const project = useAtomValue(projectState);
+  const loadedProject = useAtomValue(loadedProjectState);
 
   useEffect(() => {
     (async () => {

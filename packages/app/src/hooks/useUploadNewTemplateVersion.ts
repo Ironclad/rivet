@@ -1,4 +1,3 @@
-import { useRecoilValue } from 'recoil';
 import { projectState } from '../state/savedGraphs';
 import { type GraphId, serializeProject } from '@ironclad/rivet-core';
 import { type UseMutationResult, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -6,6 +5,7 @@ import { getCommunityApi } from '../utils/getCommunityApi';
 import { type PutTemplateVersionBody } from '../utils/communityApi';
 import { useDependsOnPlugins } from './useDependsOnPlugins';
 import { toast } from 'react-toastify';
+import { useAtomValue } from 'jotai';
 
 export type UseUploadNewTemplateVersionParams = {
   version: string;
@@ -21,7 +21,7 @@ export function useUploadNewTemplateVersion({
   templateId: string;
   onCompleted: () => void;
 }): UseMutationResult<void, Error, UseUploadNewTemplateVersionParams, unknown> {
-  const project = useRecoilValue(projectState);
+  const project = useAtomValue(projectState);
   const plugins = useDependsOnPlugins();
   const queryClient = useQueryClient();
 

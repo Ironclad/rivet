@@ -13,7 +13,6 @@ import CopyIcon from 'majesticons/line/clipboard-line.svg?react';
 import GithubMark from '../assets/vendor_logos/github-mark-white.svg?react';
 import { copyToClipboard } from '../utils/copyToClipboard';
 import { useLoadPackagePlugin } from '../hooks/useLoadPackagePlugin';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { pluginsState } from '../state/plugins';
 import useAsyncEffect from 'use-async-effect';
 import { type BuiltInPluginInfo, type PackagePluginInfo, pluginInfos, type PluginInfo } from '../plugins.js';
@@ -25,6 +24,7 @@ import clsx from 'clsx';
 import { useMarkdown } from '../hooks/useMarkdown';
 import { projectPluginsState } from '../state/savedGraphs';
 import { produce } from 'immer';
+import { useAtom, useAtomValue } from 'jotai';
 
 const styles = css`
   position: fixed;
@@ -206,7 +206,7 @@ const addPluginBody = css`
 `;
 
 export const PluginsOverlayRenderer: FC = () => {
-  const [openOverlay] = useRecoilState(overlayOpenState);
+  const openOverlay = useAtomValue(overlayOpenState);
 
   if (openOverlay !== 'plugins') return null;
 
@@ -221,7 +221,7 @@ export const PluginsOverlay: FC = () => {
   const { loadPackagePlugin, packageInstallLog, setPackageInstallLog } = useLoadPackagePlugin({
     onLog: (msg) => console.log(msg),
   });
-  const plugins = useRecoilValue(pluginsState);
+  const plugins = useAtomValue(pluginsState);
   const [searchText, setSearchText] = useState('');
 
   const isPluginInstalledInProject = (plugin: PluginInfo): boolean => {
@@ -230,11 +230,11 @@ export const PluginsOverlay: FC = () => {
 
   const [pluginLogModalOpen, togglePluginLogModal] = useToggle();
   const [addNPMPluginModalOpen, toggleAddNPMPluginModal] = useToggle();
-  const setPluginSpecs = useSetRecoilState(projectPluginsState);
+  const [pluginSpecs, setPluginSpecs] = useAtom(projectPluginsState);
 
   const addPluginSpec = (spec: PluginLoadSpec) => {
-    setPluginSpecs((specs) =>
-      produce(specs, (draft) => {
+    setPluginSpecs(
+      produce(pluginSpecs, (draft) => {
         if (draft.find((s) => s.id === spec.id)) {
           return;
         }

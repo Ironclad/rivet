@@ -1,5 +1,5 @@
 import { type FC } from 'react';
-import { useRecoilState } from 'recoil';
+import { useAtom, useSetAtom } from 'jotai';
 import { graphState } from '../state/graph.js';
 import { savedGraphsState } from '../state/savedGraphs.js';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
@@ -8,12 +8,12 @@ import { Label } from '@atlaskit/form';
 import { GraphRevisions } from './GraphRevisionList';
 
 export const GraphInfoSidebarTab: FC = () => {
-  const [graph, setGraph] = useRecoilState(graphState);
-  const [savedGraphs, setSavedGraphs] = useRecoilState(savedGraphsState);
+  const [graph, setGraph] = useAtom(graphState);
+  const setSavedGraphs = useSetAtom(savedGraphsState);
 
   function setGraphAndSavedGraph(graph: NodeGraph) {
     setGraph(graph);
-    setSavedGraphs(savedGraphs.map((g) => (g.metadata!.id === graph.metadata!.id ? graph : g)));
+    setSavedGraphs((prev) => prev.map((g) => (g.metadata!.id === graph.metadata!.id ? graph : g)));
   }
 
   return (

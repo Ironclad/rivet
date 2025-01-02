@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react';
 import { datasetProvider } from '../utils/globals';
 import { toast } from 'react-toastify';
 import { datasetsState } from '../state/dataStudio';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 import { useStableCallback } from './useStableCallback';
 
 export function useDatasets(projectId: ProjectId) {
-  const [datasets, updateDatasets] = useRecoilState(datasetsState);
+  const [datasets, setDatasets] = useAtom(datasetsState);
 
   const initDatasets = useStableCallback(async () => {
     try {
@@ -21,7 +21,7 @@ export function useDatasets(projectId: ProjectId) {
   const reloadDatasets = async () => {
     try {
       const datasets = await datasetProvider.getDatasetsForProject(projectId);
-      updateDatasets(datasets);
+      setDatasets(datasets);
     } catch (err) {
       toast.error(getError(err).message);
     }

@@ -4,7 +4,7 @@ import Portal from '@atlaskit/portal';
 import { type DatasetId, type DatasetMetadata, newId, getError } from '@ironclad/rivet-core';
 import { type FC, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtomValue, useAtom } from 'jotai';
 import { useContextMenu } from '../../hooks/useContextMenu';
 import { useDatasets } from '../../hooks/useDatasets';
 import { selectedDatasetState } from '../../state/dataStudio';
@@ -27,7 +27,7 @@ const contextMenuStyles = css`
 `;
 
 export const DatasetList: FC<{}> = () => {
-  const [selectedDataset, setSelectedDataset] = useRecoilState(selectedDatasetState);
+  const [selectedDataset, setSelectedDataset] = useAtom(selectedDatasetState);
   const {
     refs,
     floatingStyles,
@@ -39,7 +39,7 @@ export const DatasetList: FC<{}> = () => {
   } = useContextMenu();
   const [renamingDataset, setRenamingDataset] = useState<DatasetId>();
 
-  const project = useRecoilValue(projectState);
+  const project = useAtomValue(projectState);
   const { datasets, ...datasetsMethods } = useDatasets(project.metadata.id);
 
   const newDataset = async () => {

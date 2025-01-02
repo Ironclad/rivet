@@ -25,7 +25,7 @@ import useAsyncEffect from 'use-async-effect';
 import { useGetAdHocInternalProcessContext } from '../../hooks/useGetAdHocInternalProcessContext';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { useDatasets } from '../../hooks/useDatasets';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { projectMetadataState } from '../../state/savedGraphs';
 
 const datasetDisplayStyles = css`
@@ -110,7 +110,7 @@ export const DatasetDisplay: FC<{
 }> = ({ dataset, onChangedId }) => {
   const { dataset: datasetData, ...datasetMethods } = useDataset(dataset.id);
 
-  const projectMetadata = useRecoilValue(projectMetadataState);
+  const projectMetadata = useAtomValue(projectMetadataState);
   const datasetsMethods = useDatasets(projectMetadata.id);
 
   const { contextMenuData, contextMenuRef, handleContextMenu, showContextMenu } = useContextMenu();

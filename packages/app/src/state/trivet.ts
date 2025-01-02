@@ -1,8 +1,7 @@
 import { type TrivetResults, type TrivetTestSuite } from '@ironclad/trivet';
-import { atom, selector } from 'recoil';
-import { recoilPersist } from 'recoil-persist';
-
-const { persistAtom } = recoilPersist({ key: 'trivet' });
+import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
+import { createStorage } from './storage.js';
 
 export type TrivetState = {
   testSuites: TrivetTestSuite[];
@@ -12,16 +11,17 @@ export type TrivetState = {
   runningTests: boolean;
 };
 
-export const trivetState = atom<TrivetState>({
-  key: 'trivetState',
-  default: {
+const storage = createStorage('trivet');
+
+// Convert to persisted atom using atomWithStorage
+export const trivetState = atomWithStorage<TrivetState>(
+  'trivetState',
+  {
     testSuites: [],
     runningTests: false,
   },
-  effects: [persistAtom],
-});
+  storage,
+);
 
-export const trivetTestsRunningState = selector({
-  key: 'trivetTestsRunningState',
-  get: ({ get }) => get(trivetState).runningTests,
-});
+// Convert selector to derived atom
+export const trivetTestsRunningState = atom((get) => get(trivetState).runningTests);

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { selectedExecutorState } from '../state/execution';
 import { useExecutorSidecar } from './useExecutorSidecar';
 import { useLocalExecutor } from './useLocalExecutor';
@@ -13,7 +13,7 @@ import { useRemoteExecutor } from './useRemoteExecutor';
  * @returns
  */
 export function useGraphExecutor() {
-  const selectedExecutor = useRecoilValue(selectedExecutorState);
+  const selectedExecutor = useAtomValue(selectedExecutorState);
   const localExecutor = useLocalExecutor();
   const remoteExecutor = useRemoteExecutor();
 

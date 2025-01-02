@@ -1,7 +1,7 @@
 import { type FC, useCallback, useMemo } from 'react';
 import { TestCaseTable } from './TestCaseTable';
 import { InlineEditableTextfield } from '@atlaskit/inline-edit';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 import { savedGraphsState } from '../../state/savedGraphs';
 import { keyBy } from 'lodash-es';
 import { type GraphId, type NodeGraph } from '@ironclad/rivet-core';
@@ -123,7 +123,7 @@ const styles = css`
 `;
 
 export const TestSuiteRenderer: FC<{ tryRunTests: TryRunTests }> = ({ tryRunTests }) => {
-  const { testSuites, selectedTestSuiteId } = useRecoilValue(trivetState);
+  const { testSuites, selectedTestSuiteId } = useAtomValue(trivetState);
 
   const testSuite = useMemo(
     () => testSuites.find((ts) => ts.id === selectedTestSuiteId),
@@ -147,9 +147,8 @@ export const TestSuiteRenderer: FC<{ tryRunTests: TryRunTests }> = ({ tryRunTest
 };
 
 export const TestSuite: FC<{ testSuite: TrivetTestSuite; tryRunTests: TryRunTests }> = ({ testSuite, tryRunTests }) => {
-  const [{ selectedTestSuiteId, editingTestCaseId, recentTestResults, runningTests }, setState] =
-    useRecoilState(trivetState);
-  const savedGraphs = useRecoilValue(savedGraphsState);
+  const [{ selectedTestSuiteId, editingTestCaseId, recentTestResults, runningTests }, setState] = useAtom(trivetState);
+  const savedGraphs = useAtomValue(savedGraphsState);
 
   const { addTestCase, updateTestSuite, testGraph, setEditingTestCase, deleteTestCase, duplicateTestCase } =
     useTestSuite(testSuite.id);

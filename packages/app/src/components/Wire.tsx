@@ -1,6 +1,6 @@
 import { type FC, memo } from 'react';
 import { type ChartNode, type NodeConnection, type NodeId, type PortId } from '@ironclad/rivet-core';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import clsx from 'clsx';
 import { ErrorBoundary } from 'react-error-boundary';
 import { nodeByIdState } from '../state/graph';
@@ -62,7 +62,7 @@ export const PartialWire: FC<{ connection: PartialConnection; portPositions: Por
   connection,
   portPositions,
 }) => {
-  const node = useRecoilValue(nodeByIdState(connection.nodeId));
+  const node = useAtomValue(nodeByIdState(connection.nodeId));
 
   if (!node) {
     return null;

@@ -17,7 +17,6 @@ import { TauriNativeApi } from '../model/native/TauriNativeApi';
 import { useStableCallback } from './useStableCallback';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph';
 import { useCurrentExecution } from './useCurrentExecution';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
 import { projectContextState, projectDataState, projectState } from '../state/savedGraphs';
 import { recordExecutionsState, settingsState } from '../state/settings';
@@ -28,24 +27,25 @@ import { trivetState } from '../state/trivet';
 import { runTrivet } from '@ironclad/trivet';
 import { audioProvider, datasetProvider } from '../utils/globals';
 import { entries } from '../../../core/src/utils/typeSafety';
-import { type RunDataByNodeId, lastRunData, lastRunDataByNodeState } from '../state/dataFlow';
+import { type RunDataByNodeId, lastRunDataByNodeState } from '../state/dataFlow';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 export function useLocalExecutor() {
-  const project = useRecoilValue(projectState);
-  const graph = useRecoilValue(graphState);
+  const project = useAtomValue(projectState);
+  const graph = useAtomValue(graphState);
   const currentProcessor = useRef<GraphProcessor | null>(null);
   const saveGraph = useSaveCurrentGraph();
   const currentExecution = useCurrentExecution();
-  const setUserInputModalSubmit = useSetRecoilState(userInputModalSubmitState);
-  const setUserInputQuestions = useSetRecoilState(userInputModalQuestionsState);
-  const savedSettings = useRecoilValue(settingsState);
-  const loadedRecording = useRecoilValue(loadedRecordingState);
-  const setLastRecordingState = useSetRecoilState(lastRecordingState);
-  const [{ testSuites }, setTrivetState] = useRecoilState(trivetState);
-  const recordExecutions = useRecoilValue(recordExecutionsState);
-  const projectData = useRecoilValue(projectDataState);
-  const projectContext = useRecoilValue(projectContextState(project.metadata.id));
-  const lastRunData = useRecoilValue(lastRunDataByNodeState);
+  const setUserInputModalSubmit = useSetAtom(userInputModalSubmitState);
+  const setUserInputQuestions = useSetAtom(userInputModalQuestionsState);
+  const savedSettings = useAtomValue(settingsState);
+  const loadedRecording = useAtomValue(loadedRecordingState);
+  const setLastRecordingState = useSetAtom(lastRecordingState);
+  const [{ testSuites }, setTrivetState] = useAtom(trivetState);
+  const recordExecutions = useAtomValue(recordExecutionsState);
+  const projectData = useAtomValue(projectDataState);
+  const projectContext = useAtomValue(projectContextState(project.metadata.id));
+  const lastRunData = useAtomValue(lastRunDataByNodeState);
 
   function attachGraphEvents(processor: GraphProcessor) {
     processor.on('nodeStart', currentExecution.onNodeStart);

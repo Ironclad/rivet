@@ -1,5 +1,5 @@
 import { useState, type FC } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { loadedProjectState } from '../state/savedGraphs';
 import { useGraphRevisions } from '../hooks/useGraphRevisions';
 import { css } from '@emotion/react';
@@ -59,7 +59,7 @@ export const revisionStyles = css`
 `;
 
 export const GraphRevisions: FC = () => {
-  const projectState = useRecoilValue(loadedProjectState);
+  const projectState = useAtomValue(loadedProjectState);
   const [enabled, setEnabled] = useState(false);
 
   if (!projectState.loaded || !projectState.path) {
@@ -113,7 +113,7 @@ export const GraphRevisionList: FC = () => {
 export const GraphRevisionListEntry: FC<{
   revision: CalculatedRevision;
 }> = ({ revision }) => {
-  const currentGraphId = useRecoilValue(graphState).metadata!.id!;
+  const currentGraphId = useAtomValue(graphState).metadata!.id!;
   const chooseGraph = useChooseHistoricalGraph(revision);
 
   return (

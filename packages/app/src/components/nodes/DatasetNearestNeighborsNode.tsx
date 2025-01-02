@@ -2,13 +2,13 @@ import { type DatasetNearestNeighborsNode } from '@ironclad/rivet-core';
 import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes';
 import { type FC } from 'react';
 import { useDatasets } from '../../hooks/useDatasets';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { projectState } from '../../state/savedGraphs';
 
 export const DatasetNearestNeightborsNode: FC<{
   node: DatasetNearestNeighborsNode;
 }> = ({ node }) => {
-  const project = useRecoilValue(projectState);
+  const project = useAtomValue(projectState);
   const { datasets } = useDatasets(project.metadata.id);
 
   const dataset = datasets?.find((d) => d.id === node.data.datasetId);

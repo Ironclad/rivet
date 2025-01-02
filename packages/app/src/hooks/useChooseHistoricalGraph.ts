@@ -1,12 +1,12 @@
 import { type GraphId, type NodeGraph } from '@ironclad/rivet-core';
 import { type CalculatedRevision } from '../utils/ProjectRevisionCalculator';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 import { graphState, historicalGraphState, isReadOnlyGraphState } from '../state/graph';
 
 export function useChooseHistoricalGraph(revision: CalculatedRevision) {
-  const setGraph = useSetRecoilState(graphState);
-  const setIsReadOnlyGraph = useSetRecoilState(isReadOnlyGraphState);
-  const setHistoricalGraph = useSetRecoilState(historicalGraphState);
+  const setGraph = useSetAtom(graphState);
+  const setIsReadOnlyGraph = useSetAtom(isReadOnlyGraphState);
+  const setHistoricalGraph = useSetAtom(historicalGraphState);
 
   return (graphId: GraphId) => {
     const nodesBefore = revision.projectAtRevision!.graphs[graphId]?.nodes ?? [];

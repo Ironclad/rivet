@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import clsx from 'clsx';
 import { type FC } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { useLoadRecording } from '../hooks/useLoadRecording';
 import { useSaveRecording } from '../hooks/useSaveRecording';
 import { graphRunningState, graphPausedState } from '../state/dataFlow';
@@ -134,18 +134,18 @@ export type ActionBarProps = {
 };
 
 export const ActionBar: FC<ActionBarProps> = ({ onRunGraph, onAbortGraph, onPauseGraph, onResumeGraph }) => {
-  const graphMetadata = useRecoilValue(graphMetadataState);
-  const projectMetadata = useRecoilValue(projectMetadataState);
-  const lastRecording = useRecoilValue(lastRecordingState);
+  const graphMetadata = useAtomValue(graphMetadataState);
+  const projectMetadata = useAtomValue(projectMetadataState);
+  const lastRecording = useAtomValue(lastRecordingState);
   const saveRecording = useSaveRecording();
 
-  const graphRunning = useRecoilValue(graphRunningState);
-  const graphPaused = useRecoilValue(graphPausedState);
+  const graphRunning = useAtomValue(graphRunningState);
+  const graphPaused = useAtomValue(graphPausedState);
 
-  const loadedRecording = useRecoilValue(loadedRecordingState);
+  const loadedRecording = useAtomValue(loadedRecordingState);
   const { unloadRecording } = useLoadRecording();
   const [menuIsOpen, toggleMenuIsOpen] = useToggle();
-  const selectedExecutor = useRecoilValue(selectedExecutorState);
+  const selectedExecutor = useAtomValue(selectedExecutorState);
 
   const { remoteDebuggerState: remoteDebugger, disconnect } = useRemoteDebugger();
   const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;

@@ -8,7 +8,7 @@ import useAsyncEffect from 'use-async-effect';
 import { toast } from 'react-toastify';
 import { isNotNull } from '../utils/genericUtilFunctions';
 import { orderBy, uniqBy } from 'lodash-es';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { nodeConstructorsState } from '../state/graph';
 
 export const addContextMenuGroups = [
@@ -61,7 +61,7 @@ export const addContextMenuGroups = [
 };
 
 export function useContextMenuAddNodeConfiguration() {
-  const constructors = useRecoilValue(nodeConstructorsState);
+  const constructors = useAtomValue(nodeConstructorsState);
   const builtInImages = useBuiltInNodeImages();
   const getUIContext = useGetRivetUIContext();
 

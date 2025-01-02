@@ -1,9 +1,9 @@
 import { useState, type FC, useRef, useEffect } from 'react';
 import { css } from '@emotion/react';
 import { useTotalRunCost } from '../hooks/useTotalRunCost';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { graphRunningState, graphStartTimeState } from '../state/dataFlow';
-import { useInterval, useLatest } from 'ahooks';
+import { useLatest } from 'ahooks';
 import prettyMs from 'pretty-ms';
 
 const styles = css`
@@ -28,8 +28,8 @@ const styles = css`
 
 export const StatusBar: FC<{}> = () => {
   const { cost, tokens } = useTotalRunCost();
-  const graphRunning = useRecoilValue(graphRunningState);
-  const graphStartTime = useRecoilValue(graphStartTimeState);
+  const graphRunning = useAtomValue(graphRunningState);
+  const graphStartTime = useAtomValue(graphStartTimeState);
 
   const runtimeRef = useRef<HTMLDivElement>(null);
   const latestGraphRunning = useLatest(graphRunning);

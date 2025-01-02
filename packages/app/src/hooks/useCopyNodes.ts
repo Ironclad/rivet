@@ -1,15 +1,15 @@
 import { type NodeId } from '@ironclad/rivet-core';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { selectedNodesState } from '../state/graphBuilder';
 import { connectionsState, nodesByIdState } from '../state/graph';
 import { clipboardState } from '../state/clipboard';
 import { isNotNull } from '../utils/genericUtilFunctions';
 
 export function useCopyNodes() {
-  const selectedNodeIds = useRecoilValue(selectedNodesState);
-  const nodesById = useRecoilValue(nodesByIdState);
-  const connections = useRecoilValue(connectionsState);
-  const setClipboard = useSetRecoilState(clipboardState);
+  const selectedNodeIds = useAtomValue(selectedNodesState);
+  const nodesById = useAtomValue(nodesByIdState);
+  const connections = useAtomValue(connectionsState);
+  const setClipboard = useSetAtom(clipboardState);
 
   return (additionalNodeId?: NodeId) => {
     const nodeIds = (

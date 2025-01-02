@@ -1,7 +1,7 @@
 import { useState, type FC } from 'react';
 
 import Modal, { ModalTransition, ModalBody, ModalFooter, ModalHeader, ModalTitle } from '@atlaskit/modal-dialog';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useAtom, useSetAtom } from 'jotai';
 import { skippedMaxVersionState, updateModalOpenState, updateStatusState } from '../state/settings';
 import Button from '@atlaskit/button';
 import useAsyncEffect from 'use-async-effect';
@@ -18,16 +18,16 @@ const bodyStyle = css`
 `;
 
 export const UpdateModalRenderer: FC = () => {
-  const [modalOpen] = useRecoilState(updateModalOpenState);
+  const [modalOpen] = useAtom(updateModalOpenState);
 
   return <ModalTransition>{modalOpen && <UpdateModal />}</ModalTransition>;
 };
 
 export const UpdateModal: FC = () => {
-  const setModalOpen = useSetRecoilState(updateModalOpenState);
+  const setModalOpen = useSetAtom(updateModalOpenState);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [updateStatus, setUpdateStatus] = useRecoilState(updateStatusState);
-  const setSkippedMaxVersion = useSetRecoilState(skippedMaxVersionState);
+  const [updateStatus, setUpdateStatus] = useAtom(updateStatusState);
+  const setSkippedMaxVersion = useSetAtom(skippedMaxVersionState);
 
   const [currentVersion, setCurrentVersion] = useState('');
   const [latestVersion, setLatestVersion] = useState('');

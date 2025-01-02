@@ -1,5 +1,5 @@
 import { type ChartNode, type NodeId } from '@ironclad/rivet-core';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { graphState, historicalGraphState } from '../state/graph';
 import isEqual from 'fast-deep-equal';
 
@@ -14,8 +14,8 @@ export type HistoricalNodeChangeInfo =
     };
 
 export function useHistoricalNodeChangeInfo(nodeId: NodeId): HistoricalNodeChangeInfo | undefined {
-  const historicalGraph = useRecoilValue(historicalGraphState);
-  const graph = useRecoilValue(graphState);
+  const historicalGraph = useAtomValue(historicalGraphState);
+  const graph = useAtomValue(graphState);
 
   if (historicalGraph == null) {
     return undefined;

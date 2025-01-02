@@ -2,17 +2,17 @@ import { type DragStartEvent, type DragEndEvent } from '@dnd-kit/core';
 import { produce } from 'immer';
 import { useCallback } from 'react';
 import { type ChartNode, type NodeId } from '@ironclad/rivet-core';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 import { canvasPositionState, draggingNodesState, selectedNodesState } from '../state/graphBuilder.js';
 import { isNotNull } from '../utils/genericUtilFunctions.js';
 import { nodesByIdState, nodesState } from '../state/graph.js';
 
 export const useDraggingNode = (onNodesChanged: (nodes: ChartNode[]) => void) => {
-  const selectedNodeIds = useRecoilValue(selectedNodesState);
-  const [draggingNodes, setDraggingNodes] = useRecoilState(draggingNodesState);
-  const canvasPosition = useRecoilValue(canvasPositionState);
-  const nodes = useRecoilValue(nodesState);
-  const nodesById = useRecoilValue(nodesByIdState);
+  const selectedNodeIds = useAtomValue(selectedNodesState);
+  const [draggingNodes, setDraggingNodes] = useAtom(draggingNodesState);
+  const canvasPosition = useAtomValue(canvasPositionState);
+  const nodes = useAtomValue(nodesState);
+  const nodesById = useAtomValue(nodesByIdState);
 
   const onNodeStartDrag = useCallback(
     (e: DragStartEvent) => {

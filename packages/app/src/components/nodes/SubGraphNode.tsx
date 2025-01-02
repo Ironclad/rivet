@@ -1,5 +1,5 @@
 import { type FC } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { projectState } from '../../state/savedGraphs.js';
 import { type Outputs, type PortId, type SubGraphNode, coerceTypeOptional, type DataValue } from '@ironclad/rivet-core';
 import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
@@ -10,7 +10,7 @@ import { type InputsOrOutputsWithRefs } from '../../state/dataFlow';
 export const SubGraphNodeBody: FC<{
   node: SubGraphNode;
 }> = ({ node }) => {
-  const project = useRecoilValue(projectState);
+  const project = useAtomValue(projectState);
   const selectedGraph = project.graphs[node.data.graphId];
   const selectedGraphName = selectedGraph?.metadata?.name ?? node.data.graphId;
 

@@ -4,12 +4,12 @@ import { css } from '@emotion/react';
 import { type ChangeEvent, type FC, useEffect, useRef, useState } from 'react';
 import { Field } from '@atlaskit/form';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
-import { useRecoilState, useSetRecoilState } from 'recoil';
 import { debuggerPanelOpenState } from '../state/ui';
 import { debuggerDefaultUrlState } from '../state/settings';
+import { useSetAtom, useAtom } from 'jotai';
 
 export function useToggleRemoteDebugger() {
-  const setDebuggerPanelOpen = useSetRecoilState(debuggerPanelOpenState);
+  const setDebuggerPanelOpen = useSetAtom(debuggerPanelOpenState);
   const { remoteDebuggerState: remoteDebugger, connect, disconnect } = useRemoteDebugger();
   const isActuallyRemoteDebugging = remoteDebugger.started && !remoteDebugger.isInternalExecutor;
 
@@ -23,7 +23,7 @@ export function useToggleRemoteDebugger() {
 }
 
 export const DebuggerPanelRenderer: FC = () => {
-  const [debuggerPanelOpen, setDebuggerPanelOpen] = useRecoilState(debuggerPanelOpenState);
+  const [debuggerPanelOpen, setDebuggerPanelOpen] = useAtom(debuggerPanelOpenState);
 
   const { connect } = useRemoteDebugger();
 
@@ -74,7 +74,7 @@ export type DebuggerConnectPanelProps = {
 };
 
 export const DebuggerConnectPanel: FC<DebuggerConnectPanelProps> = ({ onConnect, onCancel }) => {
-  const [defaultConnectUrl, setDefaultConnectUrl] = useRecoilState(debuggerDefaultUrlState);
+  const [defaultConnectUrl, setDefaultConnectUrl] = useAtom(debuggerDefaultUrlState);
   const [connectUrl, setConnectUrl] = useState(defaultConnectUrl);
 
   const textField = useRef<HTMLInputElement>(null);

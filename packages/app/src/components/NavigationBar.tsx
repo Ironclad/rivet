@@ -4,7 +4,7 @@ import { useGraphHistoryNavigation } from '../hooks/useGraphHistoryNavigation';
 import LeftIcon from 'majesticons/line/chevron-left-line.svg?react';
 import RightIcon from 'majesticons/line/chevron-right-line.svg?react';
 import CrossIcon from 'majesticons/line/multiply-line.svg?react';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 import { searchingGraphState } from '../state/graphBuilder';
 import { Tooltip } from './Tooltip';
 
@@ -90,7 +90,7 @@ const styles = css`
 export const NavigationBar: FC = () => {
   const navigationStack = useGraphHistoryNavigation();
 
-  const [searching, setSearching] = useRecoilState(searchingGraphState);
+  const [searching, setSearching] = useAtom(searchingGraphState);
 
   return (
     <div css={styles}>

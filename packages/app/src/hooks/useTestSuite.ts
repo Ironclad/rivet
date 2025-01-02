@@ -2,18 +2,18 @@ import { useCallback, useMemo } from 'react';
 import { useStableCallback } from './useStableCallback';
 import { type TrivetTestSuite } from '@ironclad/trivet';
 import { nanoid } from 'nanoid/non-secure';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 import { trivetState } from '../state/trivet';
 import { type GraphInputNode, type GraphOutputNode, type NodeGraph } from '@ironclad/rivet-core';
 import { keyBy } from 'lodash-es';
 import { savedGraphsState } from '../state/savedGraphs';
 
 export function useTestSuite(testSuiteId: string | undefined) {
-  const [{ testSuites }, setState] = useRecoilState(trivetState);
+  const [{ testSuites }, setState] = useAtom(trivetState);
 
   const testSuite = testSuites.find((ts) => ts.id === testSuiteId);
 
-  const savedGraphs = useRecoilValue(savedGraphsState);
+  const savedGraphs = useAtomValue(savedGraphsState);
 
   const graphsById = useMemo<Record<string, NodeGraph>>(
     () => keyBy(savedGraphs, (g) => g.metadata?.id as string),

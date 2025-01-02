@@ -1,13 +1,11 @@
-import { atom } from 'recoil';
+import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 import { type ArrayDataValue, type NodeId, type ProcessId, type StringDataValue } from '@ironclad/rivet-core';
-import { recoilPersist } from 'recoil-persist';
+import { createStorage } from './storage.js';
 
-const { persistAtom } = recoilPersist({ key: 'userInput' });
+const storage = createStorage('userInput');
 
-export const userInputModalOpenState = atom({
-  key: 'userInputModalOpenState',
-  default: false,
-});
+export const userInputModalOpenState = atom<boolean>(false);
 
 export type ProcessQuestions = {
   nodeId: NodeId;
@@ -15,20 +13,12 @@ export type ProcessQuestions = {
   questions: string[];
 };
 
-export const userInputModalQuestionsState = atom<Record<NodeId, ProcessQuestions[]>>({
-  key: 'usetInputModalQuestionsState',
-  default: {},
-});
+export const userInputModalQuestionsState = atom<Record<NodeId, ProcessQuestions[]>>({});
 
 export const userInputModalSubmitState = atom<{
   submit: (nodeId: NodeId, answers: ArrayDataValue<StringDataValue>) => void;
 }>({
-  key: 'userInputModalSubmitState',
-  default: { submit: () => {} },
+  submit: () => {},
 });
 
-export const lastAnswersState = atom<Record<string, string>>({
-  key: 'lastAnswers',
-  default: {},
-  effects: [persistAtom],
-});
+export const lastAnswersState = atomWithStorage<Record<string, string>>('lastAnswers', {}, storage);

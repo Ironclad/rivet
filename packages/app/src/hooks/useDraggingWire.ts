@@ -1,16 +1,16 @@
 import { useCallback, useEffect } from 'react';
 import { type NodeConnection, type NodeId, type PortId } from '@ironclad/rivet-core';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 import { connectionsState, ioDefinitionsState, nodesByIdState } from '../state/graph.js';
 import { draggingWireClosestPortState, draggingWireState } from '../state/graphBuilder.js';
 import { useLatest } from 'ahooks';
 
 export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnection[]) => void) => {
-  const [draggingWire, setDraggingWire] = useRecoilState(draggingWireState);
-  const ioByNode = useRecoilValue(ioDefinitionsState);
-  const connections = useRecoilValue(connectionsState);
-  const nodesById = useRecoilValue(nodesByIdState);
-  const [closestPortToDraggingWire, setClosestPortToDraggingWire] = useRecoilState(draggingWireClosestPortState);
+  const [draggingWire, setDraggingWire] = useAtom(draggingWireState);
+  const ioByNode = useAtomValue(ioDefinitionsState);
+  const connections = useAtomValue(connectionsState);
+  const nodesById = useAtomValue(nodesByIdState);
+  const [closestPortToDraggingWire, setClosestPortToDraggingWire] = useAtom(draggingWireClosestPortState);
   const isDragging = !!draggingWire;
 
   const latestClosestPort = useLatest(closestPortToDraggingWire);

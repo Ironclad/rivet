@@ -9,9 +9,9 @@ import {
   type PortId,
 } from '@ironclad/rivet-core';
 import { type CSSProperties, forwardRef, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { draggingWireState } from '../state/graphBuilder';
-import { lastRunData, selectedProcessPage } from '../state/dataFlow';
+import { lastRunDataState, selectedProcessPageState } from '../state/dataFlow';
 import clsx from 'clsx';
 import { RenderDataValue } from './RenderDataValue';
 
@@ -109,8 +109,8 @@ export const PortInfo = forwardRef<
   const { definition } = port;
   const { dataType, title, description, id } = definition;
 
-  const lastRun = useRecoilValue(lastRunData(port.nodeId));
-  const selectedPage = useRecoilValue(selectedProcessPage(port.nodeId));
+  const lastRun = useAtomValue(lastRunDataState(port.nodeId));
+  const selectedPage = useAtomValue(selectedProcessPageState(port.nodeId));
 
   const portData = useMemo(() => {
     if (!lastRun || selectedPage == null) {
@@ -132,7 +132,7 @@ export const PortInfo = forwardRef<
 
   const didNotRun = portData?.[port.portId]?.type === 'control-flow-excluded';
 
-  const draggingWire = useRecoilValue(draggingWireState);
+  const draggingWire = useAtomValue(draggingWireState);
 
   const dataTypeDisplay: string = Array.isArray(dataType) ? dataType.join(' or ') : (dataType as string);
   let dataTypeDisplayWithCoerced = dataTypeDisplay;

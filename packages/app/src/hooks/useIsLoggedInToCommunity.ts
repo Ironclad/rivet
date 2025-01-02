@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 import { isLoggedInToCommunityState } from '../state/community';
 import { getCommunityApi } from '../utils/getCommunityApi';
 import { useEffect } from 'react';
 
 export function useIsLoggedInToCommunity() {
   const profileUrl = getCommunityApi('/profile');
-  const [isLoggedInToCommunity, setIsLoggedIntoCommunity] = useRecoilState(isLoggedInToCommunityState);
+  const [isLoggedInToCommunity, setIsLoggedIntoCommunity] = useAtom(isLoggedInToCommunityState);
 
   const { refetch } = useQuery({
     queryKey: ['community-profile'],

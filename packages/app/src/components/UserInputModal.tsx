@@ -1,5 +1,5 @@
 import { type FC, Suspense, useEffect, useRef, useState, useMemo } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 import { type UserInputNode, type ArrayDataValue, type StringDataValue, type NodeId } from '@ironclad/rivet-core';
 import { lastAnswersState } from '../state/userInput.js';
 import Modal, { ModalBody, ModalFooter, ModalHeader, ModalTitle, ModalTransition } from '@atlaskit/modal-dialog';
@@ -45,10 +45,10 @@ type UserInputModalProps = {
 
 export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, questionsNodeId, onSubmit, onClose }) => {
   const [answers, setAnswers] = useState<string[]>([]);
-  const [lastAnswers, setLastAnswers] = useRecoilState(lastAnswersState);
+  const [lastAnswers, setLastAnswers] = useAtom(lastAnswersState);
 
-  const project = useRecoilValue(projectState);
-  const currentGraphNodes = useRecoilValue(nodesState);
+  const project = useAtomValue(projectState);
+  const currentGraphNodes = useAtomValue(nodesState);
 
   const questionsNode = useMemo(() => {
     if (!questionsNodeId) {
@@ -72,17 +72,21 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, quest
   }, [open, lastAnswers, questions]);
 
   const handleChange = (index: number, value: string) => {
-    const newAnswers = [...answers];
-    newAnswers[index] = value;
-    setAnswers(newAnswers);
+    setAnswers((prev) => {
+      const newAnswers = [...prev];
+      newAnswers[index] = value;
+      return newAnswers;
+    });
   };
 
   const handleSubmit = () => {
-    const newLastAnswers = { ...lastAnswers };
-    questions.forEach((question, index) => {
-      newLastAnswers[question] = answers[index]!;
+    setLastAnswers((prev) => {
+      const newLastAnswers = { ...prev };
+      questions.forEach((question, index) => {
+        newLastAnswers[question] = answers[index]!;
+      });
+      return newLastAnswers;
     });
-    setLastAnswers(newLastAnswers);
 
     const results: ArrayDataValue<StringDataValue> = { type: 'string[]', value: answers };
     onSubmit(results);

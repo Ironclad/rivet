@@ -1,7 +1,7 @@
 import { type PortId, type NodeId } from '@ironclad/rivet-core';
 import { useState, useLayoutEffect, useRef, useCallback } from 'react';
 import { type PortPositions } from '../components/NodeCanvas';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { nodesByIdState } from '../state/graph';
 
 /**
@@ -12,7 +12,7 @@ import { nodesByIdState } from '../state/graph';
  */
 export function useNodePortPositions({ enabled, isDraggingNode }: { enabled: boolean; isDraggingNode: boolean }) {
   const [nodePortPositions, setNodePortPositions] = useState<PortPositions>({});
-  const nodesById = useRecoilValue(nodesByIdState);
+  const nodesById = useAtomValue(nodesByIdState);
   const canvasRef = useRef<HTMLDivElement>(null);
 
   const recalculate = useCallback(() => {

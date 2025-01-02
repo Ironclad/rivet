@@ -3,7 +3,6 @@ import { InlineEditableTextfield } from '@atlaskit/inline-edit';
 import { ProjectPluginsConfiguration } from './ProjectPluginConfiguration';
 import { Field, Label } from '@atlaskit/form';
 import Select from '@atlaskit/select';
-import { useRecoilState } from 'recoil';
 import { projectContextState, projectState, savedGraphsState } from '../state/savedGraphs';
 import Button from '@atlaskit/button';
 import Modal, { ModalTransition, ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
@@ -15,6 +14,7 @@ import Toggle from '@atlaskit/toggle';
 import { entries } from '../../../core/src/utils/typeSafety';
 import { css } from '@emotion/react';
 import { ProjectRevisions } from './ProjectRevisionList';
+import { useAtom, useAtomValue } from 'jotai';
 
 const styles = css`
   .context-list {
@@ -69,9 +69,9 @@ type ContextValue = {
 };
 
 export const ProjectInfoSidebarTab: FC = () => {
-  const [project, setProject] = useRecoilState(projectState);
-  const [savedGraphs, setSavedGraphs] = useRecoilState(savedGraphsState);
-  const [projectContext, setProjectContext] = useRecoilState(projectContextState(project.metadata.id));
+  const [project, setProject] = useAtom(projectState);
+  const savedGraphs = useAtomValue(savedGraphsState);
+  const [projectContext, setProjectContext] = useAtom(projectContextState(project.metadata.id));
 
   const [projectEditContextModalOpen, toggleProjectEditContextModalOpen] = useToggle(false);
   const [editContextData, setEditContextData] = useState<ContextValue>();
