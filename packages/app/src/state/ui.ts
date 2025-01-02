@@ -1,5 +1,8 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
+import { createStorage } from './storage.js';
+
+const storage = createStorage('ui');
 
 export const debuggerPanelOpenState = atom<boolean>(false);
 
@@ -9,6 +12,6 @@ export const overlayOpenState = atom<OverlayKey | undefined>(undefined);
 
 export const newProjectModalOpenState = atom<boolean>(false);
 
-export const expandedFoldersState = atomWithStorage<Record<string, boolean>>('ui-expanded-folders', {});
+export const expandedFoldersState = atomWithStorage<Record<string, boolean>>('expandedFoldersState', {}, storage);
 
 export const helpModalOpenState = atom<boolean>(false);

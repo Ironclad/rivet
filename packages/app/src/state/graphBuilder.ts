@@ -10,6 +10,9 @@ import {
   type NodeGraph,
 } from '@ironclad/rivet-core';
 import { type WireDef } from '../components/WireLayer.js';
+import { createStorage } from './storage.js';
+
+const storage = createStorage('graphBuilder');
 
 export const viewingNodeChangesState = atom<NodeId | undefined>(undefined);
 
@@ -28,6 +31,7 @@ export const canvasPositionState = atom<CanvasPosition>({
 export const lastCanvasPositionByGraphState = atomWithStorage<Record<GraphId, CanvasPosition | undefined>>(
   'lastCanvasPositionByGraph',
   {},
+  storage,
 );
 
 export const draggingNodesState = atom<ChartNode[]>([]);

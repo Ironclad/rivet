@@ -15,14 +15,16 @@ import { mapValues } from 'lodash-es';
 import { projectState } from './savedGraphs';
 import { pluginRefreshCounterState } from './plugins';
 import { type CalculatedRevision } from '../utils/ProjectRevisionCalculator';
+import { createStorage } from './storage.js';
+
+const storage = createStorage('graph');
 
 // Basic atoms
 export const historicalGraphState = atom<CalculatedRevision | null>(null);
 export const isReadOnlyGraphState = atom<boolean>(false);
 export const historicalChangedNodesState = atom<Set<NodeId>>(new Set<NodeId>());
 
-// Persisted atom using atomWithStorage instead of recoil-persist
-export const graphState = atomWithStorage<NodeGraph>('graph', emptyNodeGraph());
+export const graphState = atomWithStorage<NodeGraph>('graphState', emptyNodeGraph(), storage);
 
 // Derived atoms
 export const graphMetadataState = atom(
@@ -81,7 +83,6 @@ export const connectionsForNodeState = atom((get) =>
   ),
 );
 
-// Convert selectorFamily to atomFamily
 export const connectionsForSingleNodeState = atomFamily((nodeId: NodeId) =>
   atom((get) => get(connectionsForNodeState)[nodeId]),
 );

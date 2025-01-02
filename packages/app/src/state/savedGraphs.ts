@@ -14,7 +14,7 @@ import {
 } from '@ironclad/rivet-core';
 import { blankProject } from '../utils/blankProject.js';
 import { entries, values } from '../../../core/src/utils/typeSafety';
-
+import { createStorage } from './storage.js';
 /** Project context values stored in the IDE and not in the project file. Available in Context nodes. */
 export type ProjectContext = Record<
   string,
@@ -24,16 +24,22 @@ export type ProjectContext = Record<
   }
 >;
 
+const storage = createStorage('project');
+
 // What's the data of the last loaded project?
-export const projectState = atomWithStorage<Omit<Project, 'data'>>('project', {
-  metadata: {
-    id: nanoid() as ProjectId,
-    description: '',
-    title: 'Untitled Project',
+export const projectState = atomWithStorage<Omit<Project, 'data'>>(
+  'projectState',
+  {
+    metadata: {
+      id: nanoid() as ProjectId,
+      description: '',
+      title: 'Untitled Project',
+    },
+    graphs: {},
+    plugins: [],
   },
-  graphs: {},
-  plugins: [],
-});
+  storage,
+);
 
 export const projectDataState = atom<Record<DataId, string> | undefined>(undefined);
 
@@ -65,10 +71,14 @@ export const projectGraphInfoState = atom((get) => {
 });
 
 // Which project file was loaded last and where is it?
-export const loadedProjectState = atomWithStorage('loadedProject', {
-  path: '',
-  loaded: false,
-});
+export const loadedProjectState = atomWithStorage(
+  'loadedProjectState',
+  {
+    path: '',
+    loaded: false,
+  },
+  storage,
+);
 
 export const savedGraphsState = atom(
   (get) => values(get(projectState).graphs ?? {}),
@@ -116,10 +126,14 @@ export type OpenedProjectsInfo = {
   openedProjectsSortedIds: ProjectId[];
 };
 
-export const projectsState = atomWithStorage<OpenedProjectsInfo>('projects', {
-  openedProjects: {},
-  openedProjectsSortedIds: [],
-});
+export const projectsState = atomWithStorage<OpenedProjectsInfo>(
+  'projectsState',
+  {
+    openedProjects: {},
+    openedProjectsSortedIds: [],
+  },
+  storage,
+);
 
 export const openedProjectsState = atom(
   (get) => get(projectsState).openedProjects,
@@ -142,5 +156,5 @@ export const openedProjectsSortedIdsState = atom(
 );
 
 export const projectContextState = atomFamily((projectId: ProjectId) =>
-  atomWithStorage<ProjectContext>(`projectContext-${projectId}`, {}),
+  atomWithStorage<ProjectContext>(`projectContext-${projectId}`, {}, storage),
 );

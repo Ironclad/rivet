@@ -2,6 +2,9 @@ import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { type ExecutionRecorder } from '@ironclad/rivet-core';
 import { defaultExecutorState } from './settings';
+import { createStorage } from './storage.js';
+
+const storage = createStorage('execution');
 
 export const remoteUploadAllowedState = atom<boolean>(false);
 
@@ -19,14 +22,18 @@ export type RemoteDebuggerState = {
   isInternalExecutor: boolean;
 };
 
-export const remoteDebuggerState = atomWithStorage<RemoteDebuggerState>('execution', {
-  socket: null,
-  started: false,
-  reconnecting: false,
-  url: '',
-  remoteUploadAllowed: false,
-  isInternalExecutor: false,
-});
+export const remoteDebuggerState = atomWithStorage<RemoteDebuggerState>(
+  'remoteDebuggerState',
+  {
+    socket: null,
+    started: false,
+    reconnecting: false,
+    url: '',
+    remoteUploadAllowed: false,
+    isInternalExecutor: false,
+  },
+  storage,
+);
 
 export const loadedRecordingState = atom<{
   path: string;

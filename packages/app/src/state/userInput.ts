@@ -1,6 +1,9 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { type ArrayDataValue, type NodeId, type ProcessId, type StringDataValue } from '@ironclad/rivet-core';
+import { createStorage } from './storage.js';
+
+const storage = createStorage('userInput');
 
 export const userInputModalOpenState = atom<boolean>(false);
 
@@ -18,4 +21,4 @@ export const userInputModalSubmitState = atom<{
   submit: () => {},
 });
 
-export const lastAnswersState = atomWithStorage<Record<string, string>>('userInput', {});
+export const lastAnswersState = atomWithStorage<Record<string, string>>('lastAnswers', {}, storage);
