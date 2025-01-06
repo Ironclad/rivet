@@ -301,10 +301,7 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
     });
 
     if (invalidConnections?.length) {
-      // Get current connections and filter out invalid ones
-      const currentConnections = connectionsForNode ?? [];
-      const newConnections = currentConnections.filter((c) => !invalidConnections.includes(c));
-      setConnections(newConnections);
+      setConnections((conns) => conns.filter((c) => !invalidConnections.includes(c)));
     }
   });
 
