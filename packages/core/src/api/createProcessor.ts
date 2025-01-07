@@ -78,6 +78,7 @@ export function coreCreateProcessor(project: Project, options: RunGraphOptions) 
     throw new Error(`Graph not found, and no main graph specified.`);
   }
 
+  // TODO: Consolidate options into one object
   const processor = new GraphProcessor(project, graphId as GraphId, options.registry, options.includeTrace);
 
   if (options.onStart) {
