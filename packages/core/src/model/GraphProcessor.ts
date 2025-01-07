@@ -187,7 +187,7 @@ export class GraphProcessor {
   readonly #registry: NodeRegistration;
   id = nanoid();
 
-  #includeTrace?: boolean = true;
+  readonly #includeTrace?: boolean = true;
 
   executor?: 'nodejs' | 'browser';
 
@@ -750,7 +750,7 @@ export class GraphProcessor {
       if (this.#hasPreloadedData) {
         for (const node of this.#graph.nodes) {
           if (this.#nodeResults.has(node.id)) {
-            if(this.#includeTrace){
+            if (this.#includeTrace) {
               this.#emitter.emit('trace', `Node ${node.title} has preloaded data`);
             }
 
@@ -874,7 +874,7 @@ export class GraphProcessor {
     if (!inputsReady) {
       return;
     }
-    if(this.#includeTrace){
+    if (this.#includeTrace) {
       this.#emitter.emit(
         'trace',
         `Node ${node.title} has required inputs nodes: ${inputNodes.map((n) => n.title).join(', ')}`,
@@ -905,7 +905,7 @@ export class GraphProcessor {
     this.#processingQueue.addAll(
       inputNodes.map((inputNode) => {
         return async () => {
-          if(this.#includeTrace){
+          if (this.#includeTrace) {
             this.#emitter.emit('trace', `Fetching required data for node ${inputNode.title} (${inputNode.id})`);
           }
           await this.#fetchNodeDataAndProcessNode(inputNode);
@@ -921,7 +921,7 @@ export class GraphProcessor {
     const builtInNode = node as BuiltInNodes;
 
     if (this.#ignoreNodes.has(node.id)) {
-      if(this.#includeTrace){
+      if (this.#includeTrace) {
         this.#emitter.emit('trace', `Node ${node.title} is ignored`);
       }
       return;
@@ -931,7 +931,7 @@ export class GraphProcessor {
       const dependencyNodes = this.getDependencyNodesDeep(node.id);
 
       if (this.runToNodeIds.some((runTo) => runTo !== node.id && dependencyNodes.includes(runTo))) {
-        if(this.#includeTrace){
+        if (this.#includeTrace) {
           this.#emitter.emit('trace', `Node ${node.title} is excluded due to runToNodeIds`);
         }
         return;
@@ -939,7 +939,7 @@ export class GraphProcessor {
     }
 
     if (this.#currentlyProcessing.has(node.id)) {
-      if(this.#includeTrace){
+      if (this.#includeTrace) {
         this.#emitter.emit('trace', `Node ${node.title} is already being processed`);
       }
       return;
@@ -947,14 +947,14 @@ export class GraphProcessor {
 
     // For a loop controller, it can run multiple times, otherwise we already processed this node so bail out
     if (this.#visitedNodes.has(node.id) && node.type !== 'loopController') {
-      if(this.#includeTrace){
+      if (this.#includeTrace) {
         this.#emitter.emit('trace', `Node ${node.title} has already been processed`);
       }      
       return;
     }
 
     if (this.#erroredNodes.has(node.id)) {
-      if(this.#includeTrace){
+      if (this.#includeTrace) {
         this.#emitter.emit('trace', `Node ${node.title} has already errored`);
       }
       return;
@@ -965,7 +965,7 @@ export class GraphProcessor {
     // Check if all input nodes are free of errors
     for (const inputNode of inputNodes) {
       if (this.#erroredNodes.has(inputNode.id)) {
-        if(this.#includeTrace){
+        if (this.#includeTrace) {
           this.#emitter.emit('trace', `Node ${node.title} has errored input node ${inputNode.title}`);
         }
         return;
@@ -980,7 +980,7 @@ export class GraphProcessor {
     });
 
     if (!inputsReady) {
-      if(this.#includeTrace){
+      if (this.#includeTrace) {
         await this.#emitter.emit(
           'trace',
           `Node ${node.title} has required inputs nodes: ${inputNodes.map((n) => n.title).join(', ')}`,
@@ -993,7 +993,7 @@ export class GraphProcessor {
     const inputValues = this.#getInputValuesForNode(node);
 
     if (this.#excludedDueToControlFlow(node, inputValues, nanoid() as ProcessId, 'loop-not-broken')) {
-      if(this.#includeTrace){
+      if (this.#includeTrace) {
         this.#emitter.emit('trace', `Node ${node.title} is excluded due to control flow`);
       }
       return;
@@ -1026,7 +1026,7 @@ export class GraphProcessor {
     }
 
     if (waitingForInputNode) {
-      if(this.#includeTrace){
+      if (this.#includeTrace) {
         this.#emitter.emit('trace', `Node ${node.title} is waiting for input node ${waitingForInputNode}`);
       }
       return;
@@ -1045,7 +1045,7 @@ export class GraphProcessor {
     }
 
     if (attachedData.races?.completed) {
-      if(this.#includeTrace){
+      if (this.#includeTrace) {
         this.#emitter.emit('trace', `Node ${node.title} is part of a race that was completed`);
       }
       return;
@@ -1056,7 +1056,7 @@ export class GraphProcessor {
     if (this.slowMode) {
       await new Promise((resolve) => setTimeout(resolve, 250));
     }
-    if(this.#includeTrace){
+    if (this.#includeTrace) {
       this.#emitter.emit('trace', `Finished processing node ${node.title} (${node.id})`);
     }
     this.#visitedNodes.add(node.id);
@@ -1076,12 +1076,12 @@ export class GraphProcessor {
         this.#excludedDueToControlFlow(node, this.#getInputValuesForNode(node), nanoid() as ProcessId);
 
       if (!didBreak) {
-        if(this.#includeTrace){
+        if (this.#includeTrace) {
           this.#emitter.emit('trace', `Loop controller ${node.title} did not break, so we're looping again`);
         }
         for (const loopNodeId of attachedData.loopInfo?.nodes ?? []) {
           const cycleNode = this.#nodesById[loopNodeId]!;
-          if(this.#includeTrace){
+          if (this.#includeTrace) {
             this.#emitter.emit('trace', `Clearing cycle node ${cycleNode.title} (${cycleNode.id})`);
           }
           this.#visitedNodes.delete(cycleNode.id);
@@ -1101,7 +1101,7 @@ export class GraphProcessor {
       for (const [nodeId] of allNodesForRace) {
         for (const [key, abortController] of this.#nodeAbortControllers.entries()) {
           if (key.startsWith(nodeId)) {
-            if(this.#includeTrace){
+            if (this.#includeTrace) {
               this.#emitter.emit('trace', `Aborting node ${nodeId} because other race branch won`);
             }
             abortController.abort();
@@ -1169,7 +1169,7 @@ export class GraphProcessor {
     // Node is finished, check if we can run any more nodes that depend on this one
     this.#processingQueue.addAll(
       outputNodes.nodes.map((outputNode) => async () => {
-        if(this.#includeTrace){
+        if (this.#includeTrace) {
           this.#emitter.emit(
             'trace',
             `Trying to run output node from ${node.title}: ${outputNode.title} (${outputNode.id})`,
@@ -1423,7 +1423,7 @@ export class GraphProcessor {
   #nodeErrored(node: ChartNode, e: unknown, processId: ProcessId) {
     const error = getError(e);
     this.#emitter.emit('nodeError', { node, error, processId });
-    if(this.#includeTrace){
+    if (this.#includeTrace) {
       this.#emitter.emit('trace', `Node ${node.title} (${node.id}-${processId}) errored: ${error.stack}`);
     }
     this.#erroredNodes.set(node.id, error.toString());
@@ -1586,7 +1586,7 @@ export class GraphProcessor {
         return processor;
       },
       trace: (message) => {
-        if(this.#includeTrace){
+        if (this.#includeTrace) {
           this.#emitter.emit('trace', message);
         }
       },
@@ -1615,7 +1615,7 @@ export class GraphProcessor {
     typeOfExclusion: ControlFlowExcludedDataValue['value'] = undefined,
   ) {
     if (node.disabled) {
-      if(this.#includeTrace){
+      if (this.#includeTrace) {
         this.#emitter.emit('trace', `Excluding node ${node.title} because it's disabled`);
       }
 
@@ -1651,7 +1651,7 @@ export class GraphProcessor {
     if (inputIsExcludedValue && !allowedToConsumedExcludedValue) {
       if (!isWaitingForLoop) {
         if (inputIsExcludedValue) {
-          if(this.#includeTrace){
+          if (this.#includeTrace) {
             this.#emitter.emit(
               'trace',
               `Excluding node ${node.title} because of control flow. Input is has excluded value: ${controlFlowExcludedValues[0]?.[0]}`,
