@@ -2,7 +2,7 @@
   "name": "@ironclad/rivet-cli",
   "license": "MIT",
   "repository": "https://github.com/ironclad/rivet",
-  "version": "1.20.0",
+  "version": "1.20.1",
   "src": "bin/cli.ts",
   "bin": {
     "rivet": "bin/cli.js"
@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@types/yargs": "^17.0.29",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
     "eslint": "^8.52.0",
     "eslint-config-standard-with-typescript": "^39.1.1",
     "eslint-plugin-import": "^2.29.0",

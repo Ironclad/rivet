@@ -23,11 +23,10 @@ export class PineconeVectorDatabase implements VectorDatabase {
       id = CryptoJS.SHA256(vector.value.join(',')).toString(CryptoJS.enc.Hex);
     }
 
-    let metadata: Record<string, unknown> = {}
+    let metadata: Record<string, unknown> = {};
     if (data.type === 'object') {
       metadata = data.value;
-    }
-    else {
+    } else {
       metadata = { data: data.value };
     }
 

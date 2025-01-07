@@ -23,3 +23,7 @@ jobs:
           NODE_OPTIONS: --max_old_space_size=6000
       - name: Test
         run: yarn test
+      - name: Lint
+        run: yarn lint
+      - name: Prettier
+        run: yarn prettier --check

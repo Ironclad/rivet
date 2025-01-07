@@ -930,7 +930,7 @@ export class GraphProcessor {
     if (this.runToNodeIds) {
       const dependencyNodes = this.getDependencyNodesDeep(node.id);
 
-      if (this.runToNodeIds.some((runTo) => runTo != node.id && dependencyNodes.includes(runTo))) {
+      if (this.runToNodeIds.some((runTo) => runTo !== node.id && dependencyNodes.includes(runTo))) {
         if(this.#includeTrace){
           this.#emitter.emit('trace', `Node ${node.title} is excluded due to runToNodeIds`);
         }
@@ -1553,6 +1553,7 @@ export class GraphProcessor {
         processor.on('graphStart', (e) => this.#emitter.emit('graphStart', e));
         processor.on('graphFinish', (e) => this.#emitter.emit('graphFinish', e));
         processor.on('globalSet', (e) => this.#emitter.emit('globalSet', e));
+        processor.on('newAbortController', (e) => this.#emitter.emit('newAbortController', e));
         processor.on('pause', () => {
           if (!this.#isPaused) {
             this.pause();

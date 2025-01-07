@@ -8,10 +8,6 @@ import {
   type GptFunction,
   type GraphId,
   type GraphInputs,
-  type ScalarDataValue,
-  isArrayDataValue,
-  arrayizeDataValue,
-  unwrapDataValue,
 } from '../../../index.js';
 import {
   openAiModelOptions,
@@ -25,10 +21,10 @@ import {
   type OpenAIThreadMessage,
 } from '../../../utils/openai.js';
 import { dedent, newId, coerceTypeOptional, getInputOrData } from '../../../utils/index.js';
+import { arrayizeDataValue, unwrapDataValue } from '../../../model/DataValue.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
 import { handleOpenAIError } from '../handleOpenaiError.js';
 import { type DataValue } from '../../../model/DataValue.js';
-import { match } from 'ts-pattern';
 
 export type RunThreadNode = ChartNode<'openaiRunThread', RunThreadNodeData>;
 
