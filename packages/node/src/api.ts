@@ -27,7 +27,7 @@ export async function loadProjectAndAttachedDataFromFile(path: string): Promise<
   return loadProjectAndAttachedDataFromString(content);
 }
 
-export async function runGraphInFile(path: string, options: RunGraphOptions): Promise<Record<string, DataValue>> {
+export async function runGraphInFile(path: string, options: NodeRunGraphOptions): Promise<Record<string, DataValue>> {
   const project = await loadProjectFromFile(path);
   return runGraph(project, options);
 }
@@ -88,7 +88,7 @@ export function createProcessor(
   };
 }
 
-export async function runGraph(project: Project, options: RunGraphOptions): Promise<Record<string, DataValue>> {
+export async function runGraph(project: Project, options: NodeRunGraphOptions): Promise<Record<string, DataValue>> {
   const processorInfo = createProcessor(project, options);
   return processorInfo.run();
 }
