@@ -59,6 +59,9 @@ export interface NodeBase {
 
   /** If true, the node is disabled and effectively "not ran" */
   disabled?: boolean;
+
+  /** If true, the node exposes an `if` port that lets it run conditionally. */
+  isConditional?: boolean;
 }
 
 /** Base type for a typed node. */
@@ -150,3 +153,16 @@ export type NodeConnection = {
   /** The unique identifier of the input. */
   inputId: PortId;
 };
+
+export const IF_PORT: NodeInputDefinition = {
+  id: `$if` as PortId,
+  title: 'if',
+  dataType: 'boolean',
+  coerced: true,
+  description: 'Only run the node if this condition is true',
+  defaultValue: 'false',
+};
+
+export function isBuiltInInputDefinition(input: NodeInputDefinition): boolean {
+  return input.id === IF_PORT.id;
+}

@@ -1,5 +1,12 @@
 import type { Inputs, Outputs } from './GraphProcessor.js';
-import type { ChartNode, NodeConnection, NodeId, NodeInputDefinition, NodeOutputDefinition } from './NodeBase.js';
+import {
+  IF_PORT,
+  type ChartNode,
+  type NodeConnection,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+} from './NodeBase.js';
 import type { Project } from './Project.js';
 import type { InternalProcessContext } from './ProcessContext.js';
 import type { EditorDefinition } from './EditorDefinition.js';
@@ -64,6 +71,20 @@ export abstract class NodeImpl<T extends ChartNode, Type extends T['type'] = T['
     nodes: Record<NodeId, ChartNode>,
     project: Project,
   ): NodeInputDefinition[];
+
+  getInputDefinitionsIncludingBuiltIn(
+    connections: NodeConnection[],
+    nodes: Record<NodeId, ChartNode>,
+    project: Project,
+  ): NodeInputDefinition[] {
+    const ports = [...this.getInputDefinitions(connections, nodes, project)];
+
+    if (this.chartNode.isConditional) {
+      ports.push(IF_PORT);
+    }
+
+    return ports;
+  }
 
   abstract getOutputDefinitions(
     connections: NodeConnection[],

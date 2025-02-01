@@ -52,7 +52,7 @@ export function useFactorIntoSubgraph() {
 
         const inputDefs = globalRivetNodeRegistry
           .createDynamicImpl(inputNode)
-          .getInputDefinitions(connections, nodesById, project);
+          .getInputDefinitionsIncludingBuiltIn(connections, nodesById, project);
 
         if (!inputDefs.find((d) => d.id === connection.inputId)) {
           return undefined;
@@ -122,7 +122,7 @@ export function useFactorIntoSubgraph() {
 
         const inputDefs = globalRivetNodeRegistry
           .createDynamicImpl(inputNode)
-          .getInputDefinitions(connections, nodesById, project);
+          .getInputDefinitionsIncludingBuiltIn(connections, nodesById, project);
         const inputDef = inputDefs.find((d) => d.id === connection.inputId);
 
         if (!inputDef) {

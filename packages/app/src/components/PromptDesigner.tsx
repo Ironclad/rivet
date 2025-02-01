@@ -997,7 +997,7 @@ function useRunTestGroup() {
   ): Promise<PromptDesignerTestGroupResults> => {
     const response = await runAdHocChat(messages, data, context);
 
-    const processor = new GraphProcessor(project, testGroup.evaluatorGraphId);
+    const processor = new GraphProcessor(project, testGroup.evaluatorGraphId, undefined, true);
     processor.executor = 'browser';
 
     processor.on('trace', (value) => console.log(value));

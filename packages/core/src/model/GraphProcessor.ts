@@ -10,13 +10,14 @@ import {
   type ScalarOrArrayDataValue,
   getScalarTypeOf,
 } from './DataValue.js';
-import type {
-  ChartNode,
-  NodeConnection,
-  NodeId,
-  NodeInputDefinition,
-  NodeOutputDefinition,
-  PortId,
+import {
+  IF_PORT,
+  type ChartNode,
+  type NodeConnection,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
 } from './NodeBase.js';
 import type { GraphId, NodeGraph } from './NodeGraph.js';
 import type { NodeImpl } from './NodeImpl.js';
@@ -306,7 +307,7 @@ export class GraphProcessor {
     this.#definitions = {};
     for (const node of this.#graph.nodes) {
       const connectionsForNode = this.#connections[node.id] ?? [];
-      const inputDefs = this.#nodeInstances[node.id]!.getInputDefinitions(
+      const inputDefs = this.#nodeInstances[node.id]!.getInputDefinitionsIncludingBuiltIn(
         connectionsForNode,
         this.#nodesById,
         this.#project,
@@ -375,10 +376,7 @@ export class GraphProcessor {
 
   #emitTraceEvent(eventData: string) {
     if (this.#includeTrace) {
-      this.#emitter.emit(
-        'trace',
-        eventData,
-      );
+      this.#emitter.emit('trace', eventData);
     }
   }
 
@@ -759,7 +757,6 @@ export class GraphProcessor {
       if (this.#hasPreloadedData) {
         for (const node of this.#graph.nodes) {
           if (this.#nodeResults.has(node.id)) {
-            
             this.#emitTraceEvent(`Node ${node.title} has preloaded data`);
 
             await this.#emitter.emit('nodeStart', {
@@ -909,9 +906,8 @@ export class GraphProcessor {
     this.#processingQueue.addAll(
       inputNodes.map((inputNode) => {
         return async () => {
-
           this.#emitTraceEvent(`Fetching required data for node ${inputNode.title} (${inputNode.id})`);
-          
+
           await this.#fetchNodeDataAndProcessNode(inputNode);
         };
       }),
@@ -971,8 +967,10 @@ export class GraphProcessor {
       return connectionToInput || !input.required;
     });
 
-    if (!inputsReady) {      
-      this.#emitTraceEvent(`Node ${node.title} has required inputs nodes: ${inputNodes.map((n) => n.title).join(', ')}`);
+    if (!inputsReady) {
+      this.#emitTraceEvent(
+        `Node ${node.title} has required inputs nodes: ${inputNodes.map((n) => n.title).join(', ')}`,
+      );
       return;
     }
 
@@ -1587,6 +1585,17 @@ export class GraphProcessor {
       return true;
     }
 
+    if (node.isConditional) {
+      const ifValue = coerceTypeOptional(inputValues[IF_PORT.id], 'boolean');
+      if (ifValue === false) {
+        this.#emitTraceEvent(`Excluding node ${node.title} because if port is false`);
+
+        this.#visitedNodes.add(node.id);
+        this.#markAsExcluded(node, processId, inputValues, 'if port is false');
+        return true;
+      }
+    }
+
     const inputsWithValues = entries(inputValues);
     const controlFlowExcludedValues = inputsWithValues.filter(
       ([, value]) =>
@@ -1613,7 +1622,9 @@ export class GraphProcessor {
     if (inputIsExcludedValue && !allowedToConsumedExcludedValue) {
       if (!isWaitingForLoop) {
         if (inputIsExcludedValue) {
-          this.#emitTraceEvent(`Excluding node ${node.title} because of control flow. Input is has excluded value: ${controlFlowExcludedValues[0]?.[0]}`);
+          this.#emitTraceEvent(
+            `Excluding node ${node.title} because of control flow. Input is has excluded value: ${controlFlowExcludedValues[0]?.[0]}`,
+          );
         }
 
         this.#visitedNodes.add(node.id);

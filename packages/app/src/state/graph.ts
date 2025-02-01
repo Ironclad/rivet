@@ -191,7 +191,11 @@ export const ioDefinitionsState = selector<
     return mapValues(nodesById, (node) => {
       const connections = connectionsForNode[node.id] ?? [];
 
-      const inputDefinitions = nodeInstances[node.id]?.getInputDefinitions(connections, nodesById, project);
+      const inputDefinitions = nodeInstances[node.id]?.getInputDefinitionsIncludingBuiltIn(
+        connections,
+        nodesById,
+        project,
+      );
       const outputDefinitions = nodeInstances[node.id]?.getOutputDefinitions(connections, nodesById, project);
 
       return inputDefinitions && outputDefinitions

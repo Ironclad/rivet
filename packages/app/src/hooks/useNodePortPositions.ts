@@ -134,7 +134,7 @@ export function useNodePortPositions({ enabled, isDraggingNode }: { enabled: boo
     if (changed) {
       setNodePortPositions(newPositions);
     }
-  }, [nodePortPositions, nodesById, enabled]);
+  }, [nodePortPositions, nodesById, enabled, isDraggingNode]);
 
   useLayoutEffect(() => {
     recalculate();
