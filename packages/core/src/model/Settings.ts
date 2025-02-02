@@ -18,4 +18,6 @@ export interface Settings<PluginSettings = Record<string, Record<string, unknown
   chatNodeTimeout?: number;
 
   chatNodeHeaders?: Record<string, string>;
+
+  throttleChatNode?: number;
 }

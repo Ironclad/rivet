@@ -1067,6 +1067,15 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
           let usage: ChatCompletionChunkUsage | undefined;
 
+          let throttleLastCalledTime = Date.now();
+          const onPartialOutput = (output: Outputs) => {
+            const now = Date.now();
+            if (now - throttleLastCalledTime > (context.settings.throttleChatNode ?? 100)) {
+              context.onPartialOutputs?.(output);
+              throttleLastCalledTime = now;
+            }
+          };
+
           for await (const chunk of chunks) {
             if (chunk.usage) {
               usage = chunk.usage;
@@ -1164,7 +1173,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               }
             }
 
-            context.onPartialOutputs?.(output);
+            onPartialOutput(output);
           }
 
           if (!isMultiResponse) {

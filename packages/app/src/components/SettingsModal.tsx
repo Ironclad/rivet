@@ -263,6 +263,33 @@ export const GeneralSettingsPage: FC = () => {
           </>
         )}
       </Field>
+      <Field name="throttleChatNode">
+        {() => (
+          <>
+            <Label htmlFor="throttleChatNode" testId="throttleChatNode">
+              Chat node throttle milliseconds
+            </Label>
+            <div className="toggle-field">
+              <TextField
+                type="number"
+                value={settings.throttleChatNode ?? 100}
+                onChange={(e) => {
+                  if ((e.target as HTMLInputElement).valueAsNumber >= 0) {
+                    setSettings((s) => ({
+                      ...s,
+                      throttleChatNode: (e.target as HTMLInputElement).valueAsNumber,
+                    }));
+                  }
+                }}
+              />
+            </div>
+            <HelperMessage>
+              Throttles the stream of chat node data into Rivet. Increasing this can improve performance. Set to 0 to
+              disable.
+            </HelperMessage>
+          </>
+        )}
+      </Field>
     </div>
   );
 };
