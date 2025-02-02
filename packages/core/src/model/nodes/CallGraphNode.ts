@@ -12,7 +12,7 @@ import { nanoid } from 'nanoid/non-secure';
 import { type InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
 import { coerceTypeOptional } from '../../utils/coerceType.js';
-import { looseDataValuesToDataValues, type LooseDataValue } from '../../api/createProcessor.js';
+import { looseDataValuesToDataValues, type LooseDataValue } from '../../api/looseDataValue.js';
 import { getError } from '../../utils/errors.js';
 
 export type CallGraphNode = ChartNode<'callGraph', CallGraphNodeData>;
