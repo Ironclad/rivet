@@ -1160,6 +1160,55 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
             output['duration' as PortId] = { type: 'number', value: Date.now() - startTime };
 
+            if (response.usage) {
+              output['usage' as PortId] = {
+                type: 'object',
+                value: response.usage,
+              };
+
+              const costs =
+                finalModel in openaiModels ? openaiModels[finalModel as keyof typeof openaiModels].cost : undefined;
+
+              const promptCostPerThousand = costs?.prompt ?? 0;
+              const completionCostPerThousand = costs?.completion ?? 0;
+              const audioPromptCostPerThousand = costs
+                ? 'audioPrompt' in costs
+                  ? (costs.audioPrompt as number)
+                  : 0
+                : 0;
+              const audioCompletionCostPerThousand = costs
+                ? 'audioCompletion' in costs
+                  ? (costs.audioCompletion as number)
+                  : 0
+                : 0;
+
+              const promptCost = getCostForTokens(
+                response.usage.prompt_tokens_details.text_tokens,
+                'prompt',
+                promptCostPerThousand,
+              );
+              const completionCost = getCostForTokens(
+                response.usage.completion_tokens_details.text_tokens,
+                'completion',
+                completionCostPerThousand,
+              );
+              const audioPromptCost = getCostForTokens(
+                response.usage.prompt_tokens_details.audio_tokens,
+                'prompt',
+                audioPromptCostPerThousand,
+              );
+              const audioCompletionCost = getCostForTokens(
+                response.usage.completion_tokens_details.audio_tokens,
+                'completion',
+                audioCompletionCostPerThousand,
+              );
+
+              output['cost' as PortId] = {
+                type: 'number',
+                value: promptCost + completionCost + audioPromptCost + audioCompletionCost,
+              };
+            }
+
             Object.freeze(output);
             cache.set(cacheKey, output);
 

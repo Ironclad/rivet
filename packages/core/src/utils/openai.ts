@@ -9,6 +9,9 @@ export type OpenAIModel = {
   cost: {
     prompt: number;
     completion: number;
+
+    audioPrompt?: number;
+    audioCompletion?: number;
   };
   displayName: string;
 };
@@ -171,6 +174,8 @@ export const openaiModels = {
     cost: {
       prompt: 0.0025,
       completion: 0.01,
+      audioPrompt: 0.04,
+      audioCompletion: 0.08,
     },
     displayName: 'GPT-4o Audio (Preview)',
   },
@@ -365,6 +370,34 @@ export type ChatCompletionResponse = {
 
     /** Total number of tokens used in the request (prompt + completion). */
     total_tokens: number;
+
+    prompt_tokens_details: {
+      /** Number of tokens used from the cache. */
+      cached_tokens: number;
+
+      /** Number of tokens used for audio. */
+      audio_tokens: number;
+
+      text_tokens: number;
+
+      image_tokens: number;
+    };
+
+    completion_tokens_details: {
+      /** Number of tokens used for reasoning. */
+      reasoning_tokens: number;
+
+      /** Number of tokens used for audio. */
+      audio_tokens: number;
+
+      /** Number of tokens used for accepted predictions. */
+      accepted_prediction_tokens: number;
+
+      /** Number of tokens used for rejected predictions. */
+      rejected_prediction_tokens: number;
+
+      text_tokens: number;
+    };
   };
 
   /** A list of chat completion choices. Can be more than one if n is greater than 1. */
