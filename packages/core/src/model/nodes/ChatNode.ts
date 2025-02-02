@@ -158,7 +158,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         usePredictedOutput: false,
 
         modalitiesIncludeAudio: false,
-        modalitiesIncludeText: true,
+        modalitiesIncludeText: false,
       },
     };
 
@@ -1036,7 +1036,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         : { type: 'content' as const, content: predictedOutput.map((part) => ({ type: 'text', text: part })) }
       : undefined;
 
-    const modalities: ('text' | 'audio')[] = [];
+    let modalities: ('text' | 'audio')[] | undefined = [];
     if (this.data.modalitiesIncludeText) {
       modalities.push('text');
     }
@@ -1044,7 +1044,12 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       modalities.push('audio');
     }
 
-    const audio = modalities.includes('audio')
+    // Errors happen if modalities isn't supported, so omit it if it's empty
+    if (modalities.length === 0) {
+      modalities = undefined;
+    }
+
+    const audio = modalities?.includes('audio')
       ? {
           voice: getInputOrData(this.data, inputs, 'audioVoice'),
           format:
@@ -1081,8 +1086,9 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           };
 
           const isO1Beta = finalModel.startsWith('o1-preview') || finalModel.startsWith('o1-mini');
+          const isReasoningModel = finalModel.startsWith('o1') || finalModel.startsWith('o3');
 
-          if (isO1Beta) {
+          if (isReasoningModel) {
             options.max_completion_tokens = maxTokens;
           } else {
             options.temperature = useTopP ? undefined : temperature; // Not supported in o1-preview
@@ -1141,7 +1147,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               };
             }
 
-            if (modalities.includes('audio')) {
+            if (modalities?.includes('audio')) {
               const audioData = response.choices[0]!.message.audio;
 
               output['audio' as PortId] = {

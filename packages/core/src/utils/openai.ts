@@ -333,7 +333,7 @@ export type ChatCompletionOptions = {
     content: string | { type: string; text: string }[];
   };
 
-  modalities: ('text' | 'audio')[];
+  modalities: ('text' | 'audio')[] | undefined;
 
   audio?: {
     voice: string;
