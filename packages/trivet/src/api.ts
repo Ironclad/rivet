@@ -65,6 +65,7 @@ export function createTestGraphRunner(opts: { openAiKey: string; executor?: 'nod
           recordingPlaybackLatency: 1000,
           chatNodeHeaders: {},
           chatNodeTimeout: DEFAULT_CHAT_NODE_TIMEOUT,
+          throttleChatNode: 100,
         } satisfies Required<Settings>,
       },
       inputs,

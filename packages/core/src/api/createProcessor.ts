@@ -160,6 +160,7 @@ export function coreCreateProcessor(project: Project, options: RunGraphOptions) 
             recordingPlaybackLatency: 1000,
             chatNodeHeaders: options.chatNodeHeaders ?? {},
             chatNodeTimeout: options.chatNodeTimeout ?? DEFAULT_CHAT_NODE_TIMEOUT,
+            throttleChatNode: options.throttleChatNode ?? 100,
           } satisfies Required<Settings>,
           getChatNodeEndpoint: options.getChatNodeEndpoint,
         },
