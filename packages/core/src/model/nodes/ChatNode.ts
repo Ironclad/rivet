@@ -61,6 +61,9 @@ export type ChatNodeConfigData = {
   useServerTokenCalculation?: boolean;
   outputUsage?: boolean;
   usePredictedOutput?: boolean;
+
+  modalitiesIncludeText?: boolean;
+  modalitiesIncludeAudio?: boolean;
 };
 
 export type ChatNodeData = ChatNodeConfigData & {
@@ -646,6 +649,18 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             dataKey: 'usePredictedOutput',
             helperMessage:
               'If on, enables an input port for the predicted output from the model, when many of the output tokens are known ahead of time.',
+          },
+          {
+            type: 'toggle',
+            label: 'Modalities: Text',
+            dataKey: 'modalitiesIncludeText',
+            helperMessage: 'If on, the model will include text in its responses. Only relevant for multimodal models.',
+          },
+          {
+            type: 'toggle',
+            label: 'Modalities: Audio',
+            dataKey: 'modalitiesIncludeAudio',
+            helperMessage: 'If on, the model will include audio in its responses. Only relevant for multimodal models.',
           },
         ],
       },

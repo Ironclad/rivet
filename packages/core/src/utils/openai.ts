@@ -46,54 +46,6 @@ export const openaiModels = {
     },
     displayName: 'GPT-4 32k (v0613)',
   },
-  'gpt-3.5-turbo': {
-    maxTokens: 4096,
-    cost: {
-      prompt: 0.002,
-      completion: 0.002,
-    },
-    displayName: 'GPT-3.5 Turbo',
-  },
-  'gpt-3.5-turbo-16k': {
-    maxTokens: 16384,
-    cost: {
-      prompt: 0.001,
-      completion: 0.002,
-    },
-    displayName: 'GPT-3.5 16k',
-  },
-  'gpt-3.5-turbo-0613': {
-    maxTokens: 16384,
-    cost: {
-      prompt: 0.002,
-      completion: 0.002,
-    },
-    displayName: 'GPT-3.5 (v0613)',
-  },
-  'gpt-3.5-turbo-1106': {
-    maxTokens: 16385,
-    cost: {
-      prompt: 0.001,
-      completion: 0.002,
-    },
-    displayName: 'GPT-3.5 (v1106)',
-  },
-  'gpt-3.5-turbo-16k-0613': {
-    maxTokens: 16384,
-    cost: {
-      prompt: 0.001,
-      completion: 0.002,
-    },
-    displayName: 'GPT-3.5 16k (v0613)',
-  },
-  'gpt-3.5-turbo-0301': {
-    maxTokens: 16384,
-    cost: {
-      prompt: 0.002,
-      completion: 0.002,
-    },
-    displayName: 'GPT-3.5 (v0301)',
-  },
   'gpt-4-0314': {
     maxTokens: 8192,
     cost: {
