@@ -110,37 +110,61 @@ export const openaiModels = {
     },
     displayName: 'GPT-4o mini (2024-07-18)',
   },
+  o1: {
+    maxTokens: 128000,
+    cost: {
+      prompt: 0.015,
+      completion: 0.6,
+    },
+    displayName: 'o1',
+  },
   'o1-preview': {
     maxTokens: 128000,
     cost: {
-      prompt: 0.0015,
-      completion: 0.006,
+      prompt: 0.015,
+      completion: 0.06,
     },
     displayName: 'o1-preview',
   },
   'o1-preview-2024-09-12': {
     maxTokens: 128000,
     cost: {
-      prompt: 0.0015,
-      completion: 0.006,
+      prompt: 0.015,
+      completion: 0.06,
     },
     displayName: 'o1-preview (2024-09-12)',
   },
   'o1-mini': {
     maxTokens: 128000,
     cost: {
-      prompt: 0.0003,
-      completion: 0.0012,
+      prompt: 0.0011,
+      completion: 0.0044,
     },
     displayName: 'o1-mini',
   },
   'o1-mini-2024-09-12': {
     maxTokens: 128000,
     cost: {
-      prompt: 0.0003,
-      completion: 0.0012,
+      prompt: 0.0011,
+      completion: 0.0044,
     },
     displayName: 'o1-mini (2024-09-12)',
+  },
+  'o3-mini': {
+    maxTokens: 200000,
+    cost: {
+      prompt: 0.0011,
+      completion: 0.0044,
+    },
+    displayName: 'o3-mini',
+  },
+  'o3-mini-2025-01-31': {
+    maxTokens: 200000,
+    cost: {
+      prompt: 0.0011,
+      completion: 0.0044,
+    },
+    displayName: 'o3-mini (2025-01-31)',
   },
   'local-model': {
     maxTokens: Number.MAX_SAFE_INTEGER,
