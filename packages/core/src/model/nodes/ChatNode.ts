@@ -60,6 +60,7 @@ export type ChatNodeConfigData = {
   responseSchemaName?: string;
   useServerTokenCalculation?: boolean;
   outputUsage?: boolean;
+  usePredictedOutput?: boolean;
 };
 
 export type ChatNodeData = ChatNodeConfigData & {
@@ -145,6 +146,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
         useServerTokenCalculation: true,
         outputUsage: false,
+        usePredictedOutput: false,
       },
     };
 
@@ -363,6 +365,16 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
           required: false,
         });
       }
+    }
+
+    if (this.data.usePredictedOutput) {
+      inputs.push({
+        dataType: 'string[]',
+        id: 'predictedOutput' as PortId,
+        title: 'Predicted Output',
+        description: 'The predicted output from the model.',
+        coerced: true,
+      });
     }
 
     return inputs;
@@ -626,6 +638,19 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       },
       {
         type: 'group',
+        label: 'Features',
+        editors: [
+          {
+            type: 'toggle',
+            label: 'Enable Predicted Output',
+            dataKey: 'usePredictedOutput',
+            helperMessage:
+              'If on, enables an input port for the predicted output from the model, when many of the output tokens are known ahead of time.',
+          },
+        ],
+      },
+      {
+        type: 'group',
         label: 'Advanced',
         editors: [
           {
@@ -775,6 +800,10 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     const responseFormat = getInputOrData(this.data, inputs, 'responseFormat') as 'text' | 'json' | 'json_schema' | '';
     const toolChoiceMode = getInputOrData(this.data, inputs, 'toolChoice', 'string') as 'none' | 'auto' | 'function';
 
+    const predictedOutput = this.data.usePredictedOutput
+      ? coerceTypeOptional(inputs['predictedOutput' as PortId], 'string[]')
+      : undefined;
+
     const toolChoice: ChatCompletionOptions['tool_choice'] =
       !toolChoiceMode || !this.data.enableFunctionUse
         ? undefined
@@ -920,6 +949,12 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       }
     }
 
+    const predictionObject = predictedOutput
+      ? predictedOutput.length === 1
+        ? { type: 'content' as const, content: predictedOutput[0]! }
+        : { type: 'content' as const, content: predictedOutput.map((part) => ({ type: 'text', text: part })) }
+      : undefined;
+
     try {
       return await retry(
         async () => {
@@ -936,6 +971,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             seed,
             response_format: openaiResponseFormat,
             tool_choice: toolChoice,
+            prediction: predictionObject,
             ...additionalParameters,
           };
 
@@ -1184,13 +1220,23 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
           output['responseTokens' as PortId] = { type: 'number', value: outputTokenCount };
 
+          const outputTokensForCostCalculation = usage?.completion_tokens_details
+            ? usage.completion_tokens_details.rejected_prediction_tokens > 0
+              ? usage.completion_tokens_details.rejected_prediction_tokens
+              : usage.completion_tokens
+            : outputTokenCount;
+
           const promptCostPerThousand =
             model in openaiModels ? openaiModels[model as keyof typeof openaiModels].cost.prompt : 0;
           const completionCostPerThousand =
             model in openaiModels ? openaiModels[model as keyof typeof openaiModels].cost.completion : 0;
 
           const promptCost = getCostForTokens(inputTokenCount, 'prompt', promptCostPerThousand);
-          const completionCost = getCostForTokens(outputTokenCount, 'completion', completionCostPerThousand);
+          const completionCost = getCostForTokens(
+            outputTokensForCostCalculation,
+            'completion',
+            completionCostPerThousand,
+          );
 
           const cost = promptCost + completionCost;
 

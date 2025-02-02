@@ -338,6 +338,11 @@ export type ChatCompletionOptions = {
           schema: object;
         };
       };
+
+  prediction?: {
+    type: 'content';
+    content: string | { type: string; text: string }[];
+  };
 };
 
 export type ChatCompletionResponse = {
@@ -414,12 +419,12 @@ export type ChatCompletionChunkUsage = {
   completion_tokens: number;
   total_tokens: number;
 
-  prompt_token_details: {
+  prompt_tokens_details: {
     cached_tokens: number;
     audio_tokens: number;
   };
 
-  completion_token_details: {
+  completion_tokens_details: {
     reasoning_tokens: number;
     audio_tokens: number;
     accepted_prediction_tokens: number;
