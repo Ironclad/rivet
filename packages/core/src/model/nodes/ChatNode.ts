@@ -32,6 +32,7 @@ import { nodeDefinition } from '../NodeDefinition.js';
 import type { TokenizerCallInfo } from '../../integrations/Tokenizer.js';
 import { DEFAULT_CHAT_ENDPOINT } from '../../utils/defaults.js';
 import { chatMessageToOpenAIChatCompletionMessage } from '../../utils/chatMessageToOpenAIChatCompletionMessage.js';
+import { base64ToUint8Array } from '../../utils/base64.js';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 
@@ -64,6 +65,9 @@ export type ChatNodeConfigData = {
 
   modalitiesIncludeText?: boolean;
   modalitiesIncludeAudio?: boolean;
+
+  audioVoice?: string;
+  audioFormat?: 'wav' | 'mp3' | 'flac' | 'opus' | 'pcm16';
 };
 
 export type ChatNodeData = ChatNodeConfigData & {
@@ -87,6 +91,8 @@ export type ChatNodeData = ChatNodeConfigData & {
   useResponseFormatInput?: boolean;
   useAdditionalParametersInput?: boolean;
   useResponseSchemaNameInput?: boolean;
+  useAudioVoiceInput?: boolean;
+  useAudioFormatInput?: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
@@ -150,6 +156,9 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         useServerTokenCalculation: true,
         outputUsage: false,
         usePredictedOutput: false,
+
+        modalitiesIncludeAudio: false,
+        modalitiesIncludeText: true,
       },
     };
 
@@ -380,6 +389,24 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       });
     }
 
+    if (this.data.useAudioVoiceInput) {
+      inputs.push({
+        dataType: 'string',
+        id: 'audioVoice' as PortId,
+        title: 'Audio Voice',
+        description: 'The voice to use for audio responses. See your model for supported voices.',
+      });
+    }
+
+    if (this.data.useAudioFormatInput) {
+      inputs.push({
+        dataType: 'string',
+        id: 'audioFormat' as PortId,
+        title: 'Audio Format',
+        description: 'The format to use for audio responses.',
+      });
+    }
+
     return inputs;
   }
 
@@ -449,6 +476,22 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         id: 'usage' as PortId,
         title: 'Usage',
         description: 'Usage statistics for the model.',
+      });
+    }
+
+    if (this.data.modalitiesIncludeAudio) {
+      outputs.push({
+        dataType: 'audio',
+        id: 'audio' as PortId,
+        title: 'Audio',
+        description: 'The audio response from the model.',
+      });
+
+      outputs.push({
+        dataType: 'string',
+        id: 'audioTranscript' as PortId,
+        title: 'Transcript',
+        description: 'The transcript of the audio response.',
       });
     }
 
@@ -661,6 +704,29 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             label: 'Modalities: Audio',
             dataKey: 'modalitiesIncludeAudio',
             helperMessage: 'If on, the model will include audio in its responses. Only relevant for multimodal models.',
+          },
+          {
+            type: 'string',
+            label: 'Audio Voice',
+            dataKey: 'audioVoice',
+            useInputToggleDataKey: 'useAudioVoiceInput',
+            helperMessage: 'The voice to use for audio responses. See your model for supported voices.',
+            hideIf: (data) => !data.modalitiesIncludeAudio,
+          },
+          {
+            type: 'dropdown',
+            label: 'Audio Format',
+            dataKey: 'audioFormat',
+            useInputToggleDataKey: 'useAudioFormatInput',
+            options: [
+              { value: 'wav', label: 'WAV' },
+              { value: 'mp3', label: 'MP3' },
+              { value: 'flac', label: 'FLAC' },
+              { value: 'opus', label: 'OPUS' },
+              { value: 'pcm16', label: 'PCM16' },
+            ],
+            defaultValue: 'wav',
+            hideIf: (data) => !data.modalitiesIncludeAudio,
           },
         ],
       },
@@ -970,6 +1036,28 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         : { type: 'content' as const, content: predictedOutput.map((part) => ({ type: 'text', text: part })) }
       : undefined;
 
+    const modalities: ('text' | 'audio')[] = [];
+    if (this.data.modalitiesIncludeText) {
+      modalities.push('text');
+    }
+    if (this.data.modalitiesIncludeAudio) {
+      modalities.push('audio');
+    }
+
+    const audio = modalities.includes('audio')
+      ? {
+          voice: getInputOrData(this.data, inputs, 'audioVoice'),
+          format:
+            (getInputOrData(this.data, inputs, 'audioFormat') as
+              | 'wav'
+              | 'mp3'
+              | 'flac'
+              | 'opus'
+              | 'pcm16'
+              | undefined) ?? 'wav',
+        }
+      : undefined;
+
     try {
       return await retry(
         async () => {
@@ -987,6 +1075,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             response_format: openaiResponseFormat,
             tool_choice: toolChoice,
             prediction: predictionObject,
+            modalities,
+            audio,
             ...additionalParameters,
           };
 
@@ -1010,7 +1100,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
           const startTime = Date.now();
 
-          if (isO1Beta) {
+          // Non-streaming APIs
+          if (isO1Beta || audio) {
             const response = await chatCompletions({
               auth: {
                 apiKey: context.settings.openAiKey ?? '',
@@ -1047,6 +1138,23 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
                     function_call: undefined,
                   },
                 ],
+              };
+            }
+
+            if (modalities.includes('audio')) {
+              const audioData = response.choices[0]!.message.audio;
+
+              output['audio' as PortId] = {
+                type: 'audio',
+                value: {
+                  data: base64ToUint8Array(audioData!.data),
+                  mediaType: audioFormatToMediaType(audio!.format),
+                },
+              };
+
+              output['audioTranscript' as PortId] = {
+                type: 'string',
+                value: response.choices[0]!.message.audio!.transcript,
               };
             }
 
@@ -1417,4 +1525,19 @@ export function getChatNodeMessages(inputs: Inputs) {
 
 export function getCostForTokens(tokenCount: number, type: 'prompt' | 'completion', costPerThousand: number) {
   return (tokenCount / 1000) * costPerThousand;
+}
+
+function audioFormatToMediaType(format: 'wav' | 'mp3' | 'flac' | 'opus' | 'pcm16') {
+  switch (format) {
+    case 'wav':
+      return 'audio/wav';
+    case 'mp3':
+      return 'audio/mpeg';
+    case 'flac':
+      return 'audio/flac';
+    case 'opus':
+      return 'audio/opus';
+    case 'pcm16':
+      return 'audio/wav';
+  }
 }
