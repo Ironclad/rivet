@@ -17,6 +17,7 @@ import {
   streamChatCompletions,
   type ChatCompletionTool,
   chatCompletions,
+  type ChatCompletionChunkUsage,
 } from '../../utils/openai.js';
 import retry from 'p-retry';
 import type { Inputs, Outputs } from '../GraphProcessor.js';
@@ -57,6 +58,8 @@ export type ChatNodeConfigData = {
   parallelFunctionCalling?: boolean;
   additionalParameters?: { key: string; value: string }[];
   responseSchemaName?: string;
+  useServerTokenCalculation?: boolean;
+  outputUsage?: boolean;
 };
 
 export type ChatNodeData = ChatNodeConfigData & {
@@ -139,6 +142,9 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
         additionalParameters: [],
         useAdditionalParametersInput: false,
+
+        useServerTokenCalculation: true,
+        outputUsage: false,
       },
     };
 
@@ -422,6 +428,15 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       description: 'The number of tokens in the response from the LLM. For a multi-response, this is the sum.',
     });
 
+    if (this.data.outputUsage) {
+      outputs.push({
+        dataType: 'object',
+        id: 'usage' as PortId,
+        title: 'Usage',
+        description: 'Usage statistics for the model.',
+      });
+    }
+
     return outputs;
   }
 
@@ -613,6 +628,19 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
         type: 'group',
         label: 'Advanced',
         editors: [
+          {
+            type: 'toggle',
+            label: 'Use Server Token Calculation',
+            dataKey: 'useServerTokenCalculation',
+            helperMessage:
+              'If on, do not calculate token counts on the client side, and rely on the server providing the token count.',
+          },
+          {
+            type: 'toggle',
+            label: 'Output Usage Statistics',
+            dataKey: 'outputUsage',
+            helperMessage: 'If on, output usage statistics for the model, such as token counts and cost.',
+          },
           {
             type: 'string',
             label: 'User',
@@ -864,27 +892,32 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       ...resolvedEndpointAndHeaders.headers,
     });
 
+    let inputTokenCount: number = 0;
+
     const tokenizerInfo: TokenizerCallInfo = {
       node: this.chartNode,
       model: finalModel,
       endpoint: resolvedEndpointAndHeaders.endpoint,
     };
-    const tokenCount = await context.tokenizer.getTokenCountForMessages(messages, functions, tokenizerInfo);
 
-    if (tokenCount >= openaiModel.maxTokens) {
-      throw new Error(
-        `The model ${model} can only handle ${openaiModel.maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`,
-      );
-    }
+    if (!this.data.useServerTokenCalculation) {
+      inputTokenCount = await context.tokenizer.getTokenCountForMessages(messages, functions, tokenizerInfo);
 
-    if (tokenCount + maxTokens > openaiModel.maxTokens) {
-      const message = `The model can only handle a maximum of ${
-        openaiModel.maxTokens
-      } tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${
-        openaiModel.maxTokens - tokenCount
-      }.`;
-      addWarning(output, message);
-      maxTokens = Math.floor((openaiModel.maxTokens - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
+      if (inputTokenCount >= openaiModel.maxTokens) {
+        throw new Error(
+          `The model ${model} can only handle ${openaiModel.maxTokens} tokens, but ${inputTokenCount} were provided in the prompts alone.`,
+        );
+      }
+
+      if (inputTokenCount + maxTokens > openaiModel.maxTokens) {
+        const message = `The model can only handle a maximum of ${
+          openaiModel.maxTokens
+        } tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${
+          openaiModel.maxTokens - inputTokenCount
+        }.`;
+        addWarning(output, message);
+        maxTokens = Math.floor((openaiModel.maxTokens - inputTokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
+      }
     }
 
     try {
@@ -996,7 +1029,13 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             lastParsedArguments?: unknown;
           }[][] = [];
 
+          let usage: ChatCompletionChunkUsage | undefined;
+
           for await (const chunk of chunks) {
+            if (chunk.usage) {
+              usage = chunk.usage;
+            }
+
             if (!chunk.choices) {
               // Could be error for some reason 🤷‍♂️ but ignoring has worked for me so far.
               continue;
@@ -1125,28 +1164,58 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             throw new Error('No response from OpenAI');
           }
 
-          output['in-messages' as PortId] = { type: 'chat-message[]', value: messages };
-          output['requestTokens' as PortId] = { type: 'number', value: tokenCount * (numberOfChoices ?? 1) };
+          let outputTokenCount = 0;
 
-          let responseTokenCount = 0;
-          for (const choiceParts of responseChoicesParts) {
-            responseTokenCount += await context.tokenizer.getTokenCountForString(choiceParts.join(), tokenizerInfo);
+          if (usage) {
+            inputTokenCount = usage.prompt_tokens;
+            outputTokenCount = usage.completion_tokens;
           }
 
-          output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
+          output['in-messages' as PortId] = { type: 'chat-message[]', value: messages };
+          output['requestTokens' as PortId] = { type: 'number', value: inputTokenCount * (numberOfChoices ?? 1) };
+
+          if (!this.data.useServerTokenCalculation) {
+            let responseTokenCount = 0;
+            for (const choiceParts of responseChoicesParts) {
+              responseTokenCount += await context.tokenizer.getTokenCountForString(choiceParts.join(), tokenizerInfo);
+            }
+            outputTokenCount = responseTokenCount;
+          }
+
+          output['responseTokens' as PortId] = { type: 'number', value: outputTokenCount };
 
           const promptCostPerThousand =
             model in openaiModels ? openaiModels[model as keyof typeof openaiModels].cost.prompt : 0;
           const completionCostPerThousand =
             model in openaiModels ? openaiModels[model as keyof typeof openaiModels].cost.completion : 0;
 
-          const promptCost = getCostForTokens(tokenCount, 'prompt', promptCostPerThousand);
-          const completionCost = getCostForTokens(responseTokenCount, 'completion', completionCostPerThousand);
+          const promptCost = getCostForTokens(inputTokenCount, 'prompt', promptCostPerThousand);
+          const completionCost = getCostForTokens(outputTokenCount, 'completion', completionCostPerThousand);
 
           const cost = promptCost + completionCost;
 
+          if (usage) {
+            output['usage' as PortId] = {
+              type: 'object',
+              value: {
+                ...usage,
+                prompt_cost: promptCost,
+                completion_cost: completionCost,
+                total_cost: cost,
+              },
+            };
+          } else {
+            output['usage' as PortId] = {
+              type: 'object',
+              value: {
+                prompt_tokens: inputTokenCount,
+                completion_tokens: outputTokenCount,
+              },
+            };
+          }
+
           output['cost' as PortId] = { type: 'number', value: cost };
-          output['__hidden_token_count' as PortId] = { type: 'number', value: tokenCount + responseTokenCount };
+          output['__hidden_token_count' as PortId] = { type: 'number', value: inputTokenCount + outputTokenCount };
 
           const duration = endTime - startTime;
 

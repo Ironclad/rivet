@@ -406,6 +406,25 @@ export type ChatCompletionChunk = {
   created: number;
   model: string;
   choices?: ChatCompletionChunkChoice[];
+  usage?: ChatCompletionChunkUsage;
+};
+
+export type ChatCompletionChunkUsage = {
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+
+  prompt_token_details: {
+    cached_tokens: number;
+    audio_tokens: number;
+  };
+
+  completion_token_details: {
+    reasoning_tokens: number;
+    audio_tokens: number;
+    accepted_prediction_tokens: number;
+    rejected_prediction_tokens: number;
+  };
 };
 
 export type GptFunctionCall = {
@@ -498,6 +517,9 @@ export async function* streamChatCompletions({
       body: JSON.stringify({
         ...rest,
         stream: true,
+        stream_options: {
+          include_usage: true,
+        },
       }),
       signal: abortSignal,
     },
