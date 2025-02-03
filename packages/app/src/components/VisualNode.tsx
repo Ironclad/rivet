@@ -10,7 +10,7 @@ import {
   useState,
   useMemo,
 } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { match } from 'ts-pattern';
 import {
   type NodeInputDefinition,
@@ -348,7 +348,7 @@ const ZoomedOutVisualNodeContent: FC<{
     const draggingWire = useAtomValue(draggingWireState);
     const closestPortToDraggingWire = useAtomValue(draggingWireClosestPortState);
 
-    const preservePortTextCase = useRecoilValue(preservePortTextCaseState);
+    const preservePortTextCase = useAtomValue(preservePortTextCaseState);
 
     const handleIfPortMouseDown = useStableCallback(
       (event: MouseEvent<HTMLDivElement>, port: PortId, isInput: boolean) => {
@@ -622,7 +622,7 @@ const NormalVisualNodeContent: FC<{
       setViewingNodeChanges(node.id);
     };
 
-    const preservePortTextCase = useRecoilValue(preservePortTextCaseState);
+    const preservePortTextCase = useAtomValue(preservePortTextCaseState);
 
     const handleIfPortMouseDown = useStableCallback(
       (event: MouseEvent<HTMLDivElement>, port: PortId, isInput: boolean) => {
