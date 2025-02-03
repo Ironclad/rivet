@@ -69,6 +69,11 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
   getEditors(): EditorDefinition<TextNode>[] {
     return [
       {
+        type: 'custom',
+        label: 'AI Assist',
+        customEditorId: 'TextNodeAiAssist',
+      },
+      {
         type: 'code',
         label: 'Text',
         dataKey: 'text',

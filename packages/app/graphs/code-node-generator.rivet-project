@@ -30,7 +30,7 @@ data:
             useAsGraphPartialOutput: true
             useFrequencyPenaltyInput: false
             useMaxTokensInput: false
-            useModelInput: false
+            useModelInput: true
             usePredictedOutput: false
             usePresencePenaltyInput: false
             useServerTokenCalculation: true
@@ -50,6 +50,14 @@ data:
           outgoingConnections:
             - output->"Graph Input" kEtuBXk_bxNGM7sxUVg24/default
           visualData: -731/504/330/6//
+        '[MfdVwuxb1tvfu-bpu2R1w]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: model
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Chat" 3QXnW84Zbchm2y3R52fuI/model
+          visualData: 164/121/330/29//
         '[VlgfDbEb2LGwftSNlu8D5]:text "Text"':
           data:
             text: >-
@@ -915,11 +923,11 @@ data:
           data:
             dataType: string
             id: output
-          visualData: 2028.7247398168884/448.9452698494575/330/28//
+          visualData: 2024.7247398168884/453.9452698494575/330/31//
         '[kEtuBXk_bxNGM7sxUVg24]:graphInput "Graph Input"':
           data:
             dataType: string
-            id: input
+            id: prompt
             useDefaultValueInput: true
           outgoingConnections:
             - data->"Text" VlgfDbEb2LGwftSNlu8D5/TASK
@@ -927,8 +935,9 @@ data:
         '[lVCj44WT-p1FsIT_sxbSt]:code "Code"':
           data:
             code: >
-              const replacedString = inputs.input.value.replace(/\{\$(.*?)\}/g,
-              (match, p1) => `{{${p1.trim()}}}`);
+              const replacedString =
+              inputs.input.value.trim().replace(/\{\$(.*?)\}/g, (match, p1) =>
+              `{{${p1.trim()}}}`);
 
               return {
                   output: {
@@ -952,6 +961,147 @@ data:
           outgoingConnections:
             - output1->"Code" lVCj44WT-p1FsIT_sxbSt/input
           visualData: 1309.4843833361037/472.8836780833111/386.63472758716625/26//
+    Eg0g4u-SevOdu7iZY7Unm:
+      metadata:
+        description: ""
+        id: Eg0g4u-SevOdu7iZY7Unm
+        name: Text Node Generator
+      nodes:
+        '[8rU2QepE2ZJVgEl47XRVO]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: prompt
+            useDefaultValueInput: true
+          outgoingConnections:
+            - data->"Prompt" nWW3rMWLbMqb0dpBbDka6/USER_REQUEST
+          visualData: -220/491/330/5//
+        '[Akpz3F9J3jNxXLToRWcl4]:code "Code"':
+          data:
+            code: >
+              const result = inputs.input.value.replace(/\[\[(.*?)\]\]/g,
+              '{{$1}}');
+
+              return {
+                  output: {
+                      type: 'string',
+                      value: result
+                  }
+              };
+            inputNames:
+              - input
+            outputNames:
+              - output
+          outgoingConnections:
+            - output->"Graph Output" WHpSEQ9OirLyJexp8NuGi/value
+          visualData: 1846.3241215434768/418.0614464081649/230/39//
+        '[CNBYroUh4N0aMMil3hZKy]:code "Code"':
+          data:
+            code: |
+              const trimmed = inputs.input.value.trim();
+              return {
+                  output: {
+                      type: 'string',
+                      value: trimmed
+                  }
+              };
+            inputNames:
+              - input
+            outputNames:
+              - output
+          outgoingConnections:
+            - output->"Code" Akpz3F9J3jNxXLToRWcl4/input
+          visualData: 1553/419/230/38//
+        '[WHpSEQ9OirLyJexp8NuGi]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 2129.3377680893223/495.86295136177955/330/40//
+        '[YaMxKm_J8HUfOGRHOKyKb]:chat "Chat"':
+          data:
+            additionalParameters: []
+            cache: false
+            enableFunctionUse: false
+            maxTokens: 1024
+            modalitiesIncludeAudio: false
+            modalitiesIncludeText: false
+            model: gpt-4o-mini
+            outputUsage: false
+            parallelFunctionCalling: true
+            regex: ""
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAdditionalParametersInput: false
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: true
+            usePredictedOutput: false
+            usePresencePenaltyInput: false
+            useServerTokenCalculation: true
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Extract Regex" qzzEASjJPEtR8KpLIQ2DE/input
+          visualData: 773.9379418379947/462.09385804304884/230/30//
+        '[m--X6BWn9nUddYXrZQS5U]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: model
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Chat" YaMxKm_J8HUfOGRHOKyKb/model
+          visualData: 49.65091397217884/197.05269771862402/330/null//
+        '[nWW3rMWLbMqb0dpBbDka6]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: >
+              You are going to generate text based on the user's request. Here
+              is the user's request:
+
+
+              <user_request>
+
+              {{USER_REQUEST}}
+
+              </user_request>
+
+
+              Your task is to output exactly what the user wants without any additional text or commentary. 
+
+
+              If the user requests variables, that means they want your generated text to include interpolation variables between [[ and ]] tokens. The user wiil then supply their own values for these
+
+
+              If the user does not mention variables, do not generate variables.
+
+
+              Simply process the request and provide the result directly inside <answer> tags.
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Chat" YaMxKm_J8HUfOGRHOKyKb/prompt
+          visualData: 271.34907951735977/378.9248596019562/280/35//
+        '[qzzEASjJPEtR8KpLIQ2DE]:extractRegex "Extract Regex"':
+          data:
+            errorOnFailed: false
+            multilineMode: false
+            regex: <answer>([\s\S]+?)</answer>
+            useRegexInput: false
+          outgoingConnections:
+            - output1->"Code" CNBYroUh4N0aMMil3hZKy/input
+          visualData: 1080.976114069596/507.54504476980384/386.63472758716625/31//
+        '[zNMmUYLsgwkzzPdCixe0h]:text "Text"':
+          data:
+            text: Write a structured document with title, body, footer variables
+          outgoingConnections:
+            - output->"Graph Input" 8rU2QepE2ZJVgEl47XRVO/default
+          visualData: -731/504/330/6//
     HhKWCMAQ8eQOo8NEUe6WN:
       metadata:
         description: Generates the configuration and code for a Code Node based on a
