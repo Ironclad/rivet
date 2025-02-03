@@ -3,7 +3,7 @@ import Select from '@atlaskit/select';
 import { css } from '@emotion/react';
 import { type FC, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 import { getGentracePipelines } from '../../../../core/src/plugins/gentrace/plugin';
 import { graphState } from '../../state/graph';
 import { settingsState } from '../../state/settings';
@@ -27,9 +27,9 @@ const pickerContainerStyles = css`
 `;
 
 const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) => {
-  const savedSettings = useRecoilValue(settingsState);
+  const savedSettings = useAtomValue(settingsState);
 
-  const [graph, setGraph] = useRecoilState(graphState);
+  const [graph, setGraph] = useAtom(graphState);
 
   const gentracePipelineSettings = graph?.metadata?.attachedData?.gentracePipeline as GentracePipeline | undefined;
   const currentGentracePipelineSlug = gentracePipelineSettings?.slug;
@@ -80,16 +80,16 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
 
     const { cases, ...selectedPipelineNoCases } = selectedPipeline;
 
-    setGraph({
-      ...graph,
+    setGraph((prev) => ({
+      ...prev,
       metadata: {
-        ...graph.metadata,
+        ...prev.metadata,
         attachedData: {
-          ...(graph.metadata?.attachedData ?? {}),
+          ...(prev.metadata?.attachedData ?? {}),
           gentracePipeline: selectedPipelineNoCases,
         },
       },
-    });
+    }));
 
     setSelectedPipeline(null);
 

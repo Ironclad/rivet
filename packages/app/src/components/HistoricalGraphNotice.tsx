@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { type FC } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 import { graphState, historicalGraphState, isReadOnlyGraphState } from '../state/graph';
 import Button from '@atlaskit/button';
 import { useLoadGraph } from '../hooks/useLoadGraph';
@@ -33,10 +33,10 @@ const styles = css`
 export const HistoricalGraphNotice: FC = () => {
   const loadGraph = useLoadGraph();
 
-  const project = useRecoilValue(projectState);
-  const graph = useRecoilValue(graphState);
-  const [historicalGraph, setHistoricalGraph] = useRecoilState(historicalGraphState);
-  const [isReadOnlyGraph, setIsReadOnlyGraph] = useRecoilState(isReadOnlyGraphState);
+  const project = useAtomValue(projectState);
+  const graph = useAtomValue(graphState);
+  const [historicalGraph, setHistoricalGraph] = useAtom(historicalGraphState);
+  const [isReadOnlyGraph, setIsReadOnlyGraph] = useAtom(isReadOnlyGraphState);
 
   const currentGraphExists = graph.metadata!.id! in project.graphs;
 

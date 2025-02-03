@@ -1,6 +1,6 @@
 import { type NodeId } from '@ironclad/rivet-core';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { nodesState } from '../state/graph';
 
 const GARBAGE_COLLECTION_INTERVAL = 100;
@@ -19,7 +19,7 @@ export interface HeightCache {
  * is first rendered in the dragging list.
  */
 export const useNodeHeightCache = (): HeightCache => {
-  const nodes = useRecoilValue(nodesState);
+  const nodes = useAtomValue(nodesState);
 
   const ref = useRef<Record<string, number | undefined>>({});
   const garbageCollectionCount = useRef(0);

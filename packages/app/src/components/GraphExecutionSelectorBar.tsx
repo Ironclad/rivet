@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { useMemo, type FC } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 import { lastRunDataByNodeState, selectedProcessPageNodesState } from '../state/dataFlow';
 import { nodesState } from '../state/graph';
 import LeftIcon from 'majesticons/line/chevron-left-line.svg?react';
@@ -69,9 +69,9 @@ const styles = css`
 `;
 
 export const GraphExecutionSelectorBar: FC = () => {
-  const nodes = useRecoilValue(nodesState);
-  const [selectedExecutionByNode, setSelectedExecutionByNode] = useRecoilState(selectedProcessPageNodesState);
-  const lastRunDataByNode = useRecoilValue(lastRunDataByNodeState);
+  const nodes = useAtomValue(nodesState);
+  const [selectedExecutionByNode, setSelectedExecutionByNode] = useAtom(selectedProcessPageNodesState);
+  const lastRunDataByNode = useAtomValue(lastRunDataByNodeState);
 
   const nodeIds = useMemo(() => nodes.map((n) => n.id), [nodes]);
 

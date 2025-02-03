@@ -1,4 +1,4 @@
-import { atom } from 'recoil';
+import { atom } from 'jotai';
 import { type ChatMessage, type ChatNodeConfigData, type NodeId, type ProcessId } from '@ironclad/rivet-core';
 
 export type PromptDesignerMessagesState = {
@@ -6,34 +6,25 @@ export type PromptDesignerMessagesState = {
 };
 
 export const promptDesignerMessagesState = atom<PromptDesignerMessagesState>({
-  key: 'promptDesignerMessagesState',
-  default: {
-    messages: [],
-  },
+  messages: [],
 });
 
 export type PromptDesignerResponseState = {
   response?: string;
 };
 
-export const promptDesignerResponseState = atom<PromptDesignerResponseState>({
-  key: 'promptDesignerResponseState',
-  default: {},
-});
+export const promptDesignerResponseState = atom<PromptDesignerResponseState>({});
 
 export type PromptDesignerConfigurationState = {
   data: ChatNodeConfigData;
 };
 
 export const promptDesignerConfigurationState = atom<PromptDesignerConfigurationState>({
-  key: 'promptDesignerConfigurationState',
-  default: {
-    data: {
-      model: 'gpt-4',
-      maxTokens: 1024,
-      temperature: 0.2,
-      useTopP: false,
-    },
+  data: {
+    model: 'gpt-4',
+    maxTokens: 1024,
+    temperature: 0.2,
+    useTopP: false,
   },
 });
 
@@ -43,20 +34,14 @@ export const promptDesignerAttachedChatNodeState = atom<
       processId: ProcessId;
     }
   | undefined
->({
-  key: 'promptDesignerAttachedChatNodeState',
-  default: undefined,
-});
+>(undefined);
 
 export type PromptDesignerState = {
   samples: number;
 };
 
 export const promptDesignerState = atom<PromptDesignerState>({
-  key: 'promptDesignerState',
-  default: {
-    samples: 10,
-  },
+  samples: 10,
 });
 
 export type PromptDesignerTestGroupResults = {
@@ -72,7 +57,4 @@ export type PromptDesignerTestGroupResultsByNodeIdState = {
   [nodeId: string]: PromptDesignerTestGroupResults[];
 };
 
-export const promptDesignerTestGroupResultsByNodeIdState = atom<PromptDesignerTestGroupResultsByNodeIdState>({
-  key: 'promptDesignerTestGroupResultsByNodeIdState',
-  default: {},
-});
+export const promptDesignerTestGroupResultsByNodeIdState = atom<PromptDesignerTestGroupResultsByNodeIdState>({});

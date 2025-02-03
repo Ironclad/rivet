@@ -45,7 +45,7 @@ export function deserializeProjectAsync(serializedProject: unknown): Promise<Pro
   });
 
   waiting.set(id, resolvers);
-  worker.postMessage({ id, type: 'deserializeProject', data: serializedProject });
+  // worker.postMessage({ id, type: 'deserializeProject', data: serializedProject });
 
   return promise;
 }

@@ -11,7 +11,6 @@ import {
   type Outputs,
 } from '@ironclad/rivet-core';
 import { useCurrentExecution } from './useCurrentExecution';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { graphState } from '../state/graph';
 import { settingsState } from '../state/settings';
 import { setCurrentDebuggerMessageHandler, useRemoteDebugger } from './useRemoteDebugger';
@@ -28,6 +27,7 @@ import { entries } from '../../../core/src/utils/typeSafety';
 import { selectedExecutorState } from '../state/execution';
 import { datasetProvider } from '../utils/globals';
 import { type RunDataByNodeId, lastRunDataByNodeState } from '../state/dataFlow';
+import { useAtomValue, useSetAtom, useAtom } from 'jotai';
 
 // TODO: This allows us to retrieve the GraphOutputs from the remote debugger.
 // If the remote debugger events had a unique ID for each run, this would feel a lot less hacky.
@@ -39,17 +39,18 @@ let graphExecutionPromise: {
 };
 
 export function useRemoteExecutor() {
+  const project = useAtomValue(projectState);
+  const projectData = useAtomValue(projectDataState);
+  const projectContext = useAtomValue(projectContextState(project.metadata.id));
+
   const currentExecution = useCurrentExecution();
-  const graph = useRecoilValue(graphState);
-  const savedSettings = useRecoilValue(settingsState);
-  const project = useRecoilValue(projectState);
-  const projectData = useRecoilValue(projectDataState);
-  const [{ testSuites }, setTrivetState] = useRecoilState(trivetState);
-  const setUserInputModalSubmit = useSetRecoilState(userInputModalSubmitState);
-  const setUserInputQuestions = useSetRecoilState(userInputModalQuestionsState);
-  const selectedExecutor = useRecoilValue(selectedExecutorState);
-  const projectContext = useRecoilValue(projectContextState(project.metadata.id));
-  const lastRunData = useRecoilValue(lastRunDataByNodeState);
+  const graph = useAtomValue(graphState);
+  const savedSettings = useAtomValue(settingsState);
+  const [{ testSuites }, setTrivetState] = useAtom(trivetState);
+  const setUserInputModalSubmit = useSetAtom(userInputModalSubmitState);
+  const setUserInputQuestions = useSetAtom(userInputModalQuestionsState);
+  const selectedExecutor = useAtomValue(selectedExecutorState);
+  const lastRunData = useAtomValue(lastRunDataByNodeState);
 
   const remoteDebugger = useRemoteDebugger({
     onDisconnect: () => {

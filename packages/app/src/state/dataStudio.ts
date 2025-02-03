@@ -1,12 +1,6 @@
 import { Dataset, type DatasetId, type DatasetMetadata } from '@ironclad/rivet-core';
-import { atom } from 'recoil';
+import { atom } from 'jotai';
 
-export const datasetsState = atom<DatasetMetadata[]>({
-  key: 'datasets',
-  default: [],
-});
+export const datasetsState = atom<DatasetMetadata[]>([]);
 
-export const selectedDatasetState = atom<DatasetId | undefined>({
-  key: 'selectedDataset',
-  default: undefined,
-});
+export const selectedDatasetState = atom<DatasetId | undefined>(undefined);

@@ -1,6 +1,6 @@
 import { useState, type FC } from 'react';
 import { loadedProjectState, projectState } from '../state/savedGraphs';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { revisionStyles } from './GraphRevisionList';
 import Button from '@atlaskit/button';
 import { useHasGitHistory, useProjectRevisions } from '../hooks/useGraphRevisions';
@@ -11,7 +11,7 @@ import { type GraphId } from '@ironclad/rivet-core';
 import { useChooseHistoricalGraph } from '../hooks/useChooseHistoricalGraph';
 
 export const ProjectRevisions: FC = () => {
-  const projectState = useRecoilValue(loadedProjectState);
+  const projectState = useAtomValue(loadedProjectState);
 
   const [enabled, setEnabled] = useState(false);
 

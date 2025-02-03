@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { projectGraphInfoState } from '../state/savedGraphs.js';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { type ContextMenuItem } from './useContextMenuConfiguration.js';
 import { values } from '../../../core/src/utils/typeSafety';
 
 export function useContextMenuCommands() {
-  const projectInfo = useRecoilValue(projectGraphInfoState);
+  const projectInfo = useAtomValue(projectGraphInfoState);
 
   const commands = useMemo(() => {
     const goToGraphCommands = values(projectInfo.graphs).map(

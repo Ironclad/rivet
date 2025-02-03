@@ -1,4 +1,4 @@
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { projectState } from '../state/savedGraphs';
 import { type GraphId, serializeProject } from '@ironclad/rivet-core';
 import { type UseMutationResult, useMutation } from '@tanstack/react-query';
@@ -18,7 +18,7 @@ export function useUploadNewTemplate({ onCompleted }: { onCompleted: () => void 
   },
   unknown
 > {
-  const project = useRecoilValue(projectState);
+  const project = useAtomValue(projectState);
   const plugins = useDependsOnPlugins();
 
   const mutation = useMutation({

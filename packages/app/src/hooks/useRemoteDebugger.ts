@@ -1,5 +1,5 @@
 import { useLatest } from 'ahooks';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtomValue, useAtom } from 'jotai';
 import { remoteDebuggerState, selectedExecutorState } from '../state/execution.js';
 import { useRef, useState } from 'react';
 import { set } from 'lodash-es';
@@ -16,7 +16,7 @@ export function setCurrentDebuggerMessageHandler(handler: (message: string, data
 let manuallyDisconnecting = false;
 
 export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnect?: () => void } = {}) {
-  const [remoteDebugger, setRemoteDebuggerState] = useRecoilState(remoteDebuggerState);
+  const [remoteDebugger, setRemoteDebuggerState] = useAtom(remoteDebuggerState);
   const onConnectLatest = useLatest(options.onConnect ?? (() => {}));
   const onDisconnectLatest = useLatest(options.onDisconnect ?? (() => {}));
   const [retryDelay, setRetryDelay] = useState(0);

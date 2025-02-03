@@ -1,5 +1,5 @@
 import { type FC, useState } from 'react';
-import { atom, useRecoilState, useRecoilValue } from 'recoil';
+import { atom, useAtom, useAtomValue } from 'jotai';
 import {
   checkForUpdatesState,
   defaultExecutorState,
@@ -35,10 +35,7 @@ import { getVersion } from '@tauri-apps/api/app';
 
 interface SettingsModalProps {}
 
-export const settingsModalOpenState = atom({
-  key: 'settingsModalOpen',
-  default: false,
-});
+export const settingsModalOpenState = atom(false);
 
 const modalBody = css`
   min-height: 300px;
@@ -64,7 +61,7 @@ const buttonsContainer = css`
 `;
 
 export const SettingsModal: FC<SettingsModalProps> = () => {
-  const [isOpen, setIsOpen] = useRecoilState(settingsModalOpenState);
+  const [isOpen, setIsOpen] = useAtom(settingsModalOpenState);
   const [page, setPage] = useState<Pages>('general');
 
   const closeModal = () => setIsOpen(false);
@@ -118,13 +115,13 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
 };
 
 export const GeneralSettingsPage: FC = () => {
-  const [settings, setSettings] = useRecoilState(settingsState);
-  const [theme, setTheme] = useRecoilState(themeState);
-  const [recordExecutions, setRecordExecutions] = useRecoilState(recordExecutionsState);
-  const [defaultExecutor, setDefaultExecutor] = useRecoilState(defaultExecutorState);
-  const [previousDataPerNodeToKeep, setPreviousDataPerNodeToKeep] = useRecoilState(previousDataPerNodeToKeepState);
-  const [zoomSensitivity, setZoomSensitivity] = useRecoilState(zoomSensitivityState);
-  const [preservePortTextCase, setPreservePortTextCase] = useRecoilState(preservePortTextCaseState);
+  const [settings, setSettings] = useAtom(settingsState);
+  const [theme, setTheme] = useAtom(themeState);
+  const [recordExecutions, setRecordExecutions] = useAtom(recordExecutionsState);
+  const [defaultExecutor, setDefaultExecutor] = useAtom(defaultExecutorState);
+  const [previousDataPerNodeToKeep, setPreviousDataPerNodeToKeep] = useAtom(previousDataPerNodeToKeepState);
+  const [zoomSensitivity, setZoomSensitivity] = useAtom(zoomSensitivityState);
+  const [preservePortTextCase, setPreservePortTextCase] = useAtom(preservePortTextCaseState);
 
   return (
     <div css={fields}>
@@ -307,7 +304,7 @@ const fields = css`
 `;
 
 export const OpenAiSettingsPage: FC = () => {
-  const [settings, setSettings] = useRecoilState(settingsState);
+  const [settings, setSettings] = useAtom(settingsState);
 
   const chatNodeHeadersPairs = entries(settings.chatNodeHeaders ?? {}).map(([key, value]) => ({
     key,
@@ -460,7 +457,7 @@ export const OpenAiSettingsPage: FC = () => {
 
 export const PluginsSettingsPage: FC = () => {
   const plugins = useDependsOnPlugins();
-  const [settings, setSettings] = useRecoilState(settingsState);
+  const [settings, setSettings] = useAtom(settingsState);
 
   if (plugins.length === 0) {
     return (
@@ -521,7 +518,7 @@ export const PluginsSettingsPage: FC = () => {
 
 export const UpdatesSettingsPage: FC = () => {
   const checkForUpdatesNow = useCheckForUpdate({ notifyNoUpdates: true, force: true });
-  const [checkForUpdates, setCheckForUpdates] = useRecoilState(checkForUpdatesState);
+  const [checkForUpdates, setCheckForUpdates] = useAtom(checkForUpdatesState);
 
   const [currentVersion, setCurrentVersion] = useState('');
 
@@ -529,7 +526,7 @@ export const UpdatesSettingsPage: FC = () => {
     setCurrentVersion(await getVersion());
   }, []);
 
-  const skippedMaxVersion = useRecoilValue(skippedMaxVersionState);
+  const skippedMaxVersion = useAtomValue(skippedMaxVersionState);
 
   return (
     <div css={fields}>

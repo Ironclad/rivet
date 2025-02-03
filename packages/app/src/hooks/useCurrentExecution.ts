@@ -12,7 +12,7 @@ import {
 } from '@ironclad/rivet-core';
 import { produce } from 'immer';
 import { cloneDeep, mapValues } from 'lodash-es';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtomValue, useSetAtom } from 'jotai';
 import {
   type NodeRunData,
   graphPausedState,
@@ -130,18 +130,18 @@ function convertToRef(value: DataValue): DataValueWithRefs {
 }
 
 export function useCurrentExecution() {
-  const setLastRunData = useSetRecoilState(lastRunDataByNodeState);
-  const setSelectedPage = useSetRecoilState(selectedProcessPageNodesState);
-  const setUserInputQuestions = useSetRecoilState(userInputModalQuestionsState);
-  const setGraphRunning = useSetRecoilState(graphRunningState);
-  const setGraphPaused = useSetRecoilState(graphPausedState);
-  const setRunningGraphsState = useSetRecoilState(runningGraphsState);
-  const setLastRecordingState = useSetRecoilState(lastRecordingState);
-  const trivetRunning = useRecoilValue(trivetTestsRunningState);
+  const setLastRunData = useSetAtom(lastRunDataByNodeState);
+  const setSelectedPage = useSetAtom(selectedProcessPageNodesState);
+  const setUserInputQuestions = useSetAtom(userInputModalQuestionsState);
+  const setGraphRunning = useSetAtom(graphRunningState);
+  const setGraphPaused = useSetAtom(graphPausedState);
+  const setRunningGraphsState = useSetAtom(runningGraphsState);
+  const setLastRecordingState = useSetAtom(lastRecordingState);
+  const trivetRunning = useAtomValue(trivetTestsRunningState);
   const trivetRunningLatest = useLatest(trivetRunning);
-  const setRootGraph = useSetRecoilState(rootGraphState);
-  const previousDataPerNodeToKeep = useRecoilValue(previousDataPerNodeToKeepState);
-  const setGraphStartTime = useSetRecoilState(graphStartTimeState);
+  const setRootGraph = useSetAtom(rootGraphState);
+  const previousDataPerNodeToKeep = useAtomValue(previousDataPerNodeToKeepState);
+  const setGraphStartTime = useSetAtom(graphStartTimeState);
 
   const setDataForNode = (nodeId: NodeId, processId: ProcessId, data: Partial<NodeRunData>) => {
     setLastRunData((prev) =>

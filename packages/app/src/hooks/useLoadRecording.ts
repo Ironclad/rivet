@@ -1,9 +1,9 @@
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 import { loadedRecordingState } from '../state/execution.js';
 import { ioProvider } from '../utils/globals.js';
 
 export function useLoadRecording() {
-  const setLoadedRecording = useSetRecoilState(loadedRecordingState);
+  const setLoadedRecording = useSetAtom(loadedRecordingState);
 
   return {
     loadRecording: () => {

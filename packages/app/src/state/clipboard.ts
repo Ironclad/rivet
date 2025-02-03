@@ -1,5 +1,5 @@
 import { type NodeConnection, type ChartNode } from '@ironclad/rivet-core';
-import { atom } from 'recoil';
+import { atom } from 'jotai';
 
 export type NodesClipboardItem = {
   type: 'nodes';
@@ -9,7 +9,4 @@ export type NodesClipboardItem = {
 
 export type ClipboardItem = NodesClipboardItem;
 
-export const clipboardState = atom<ClipboardItem | undefined>({
-  key: 'clipboard',
-  default: undefined,
-});
+export const clipboardState = atom<ClipboardItem | undefined>(undefined);

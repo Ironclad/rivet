@@ -1,12 +1,16 @@
-import { atom } from 'recoil';
-import { persistAtom } from './persist.js';
+import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 import { type Settings } from '@ironclad/rivet-core';
 import { isInTauri } from '../utils/tauri';
 import { DEFAULT_CHAT_NODE_TIMEOUT } from '../../../core/src/utils/defaults';
+import { createStorage } from './storage.js';
 
-export const settingsState = atom<Settings>({
-  key: 'settings',
-  default: {
+// Legacy storage key for recoil-persist to avoid breaking existing users' settings
+const storage = createStorage('recoil-persist');
+
+export const settingsState = atomWithStorage<Settings>(
+  'settings',
+  {
     recordingPlaybackLatency: 1000,
 
     openAiKey: '',
@@ -17,8 +21,8 @@ export const settingsState = atom<Settings>({
     pluginEnv: {},
     pluginSettings: {},
   },
-  effects: [persistAtom],
-});
+  storage,
+);
 
 export const themes = [
   {
@@ -37,23 +41,11 @@ export const themes = [
 
 export type Theme = (typeof themes)[number]['value'];
 
-export const themeState = atom<Theme>({
-  key: 'theme',
-  default: 'molten',
-  effects: [persistAtom],
-});
+export const themeState = atomWithStorage<Theme>('theme', 'molten', storage);
 
-export const recordExecutionsState = atom<boolean>({
-  key: 'recordExecutions',
-  default: true,
-  effects: [persistAtom],
-});
+export const recordExecutionsState = atomWithStorage<boolean>('recordExecutions', true, storage);
 
-export const defaultExecutorState = atom<'browser' | 'nodejs'>({
-  key: 'defaultExecutor',
-  default: 'browser',
-  effects: [persistAtom],
-});
+export const defaultExecutorState = atomWithStorage<'browser' | 'nodejs'>('defaultExecutor', 'browser', storage);
 
 export const executorOptions = isInTauri()
   ? ([
@@ -62,48 +54,18 @@ export const executorOptions = isInTauri()
     ] as const)
   : ([{ label: 'Browser', value: 'browser' }] as const);
 
-export const previousDataPerNodeToKeepState = atom<number>({
-  key: 'previousDataPerNodeToKeep',
-  default: -1,
-  effects: [persistAtom],
-});
+export const previousDataPerNodeToKeepState = atomWithStorage<number>('previousDataPerNodeToKeep', -1, storage);
 
-export const preservePortTextCaseState = atom<boolean>({
-  key: 'preservePortTextCase',
-  default: false,
-  effects: [persistAtom],
-});
+export const preservePortTextCaseState = atomWithStorage<boolean>('preservePortTextCase', false, storage);
 
-export const checkForUpdatesState = atom<boolean>({
-  key: 'checkForUpdates',
-  default: true,
-  effects: [persistAtom],
-});
+export const checkForUpdatesState = atomWithStorage<boolean>('checkForUpdates', true, storage);
 
-export const skippedMaxVersionState = atom<string | undefined>({
-  key: 'skippedMaxVersion',
-  default: undefined,
-  effects: [persistAtom],
-});
+export const skippedMaxVersionState = atomWithStorage<string | undefined>('skippedMaxVersion', undefined, storage);
 
-export const updateModalOpenState = atom<boolean>({
-  key: 'updateModalOpen',
-  default: false,
-});
+export const updateModalOpenState = atom<boolean>(false);
 
-export const updateStatusState = atom<string | undefined>({
-  key: 'updateStatus',
-  default: undefined,
-});
+export const updateStatusState = atom<string | undefined>(undefined);
 
-export const zoomSensitivityState = atom<number>({
-  key: 'zoomSensitivity',
-  default: 0.25,
-  effects: [persistAtom],
-});
+export const zoomSensitivityState = atomWithStorage<number>('zoomSensitivity', 0.25, storage);
 
-export const debuggerDefaultUrlState = atom({
-  key: 'debuggerDefaultUrl',
-  default: 'ws://localhost:21888',
-  effects: [persistAtom],
-});
+export const debuggerDefaultUrlState = atomWithStorage('debuggerDefaultUrl', 'ws://localhost:21888', storage);

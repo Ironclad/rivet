@@ -1,14 +1,14 @@
 import { type NodeId } from '@ironclad/rivet-core';
 import { useStableCallback } from './useStableCallback';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useLoadGraph } from './useLoadGraph';
 import { projectState } from '../state/savedGraphs';
 import { canvasPositionState } from '../state/graphBuilder';
+import { useAtomValue, useSetAtom } from 'jotai';
 
 export function useGoToNode() {
-  const project = useRecoilValue(projectState);
+  const project = useAtomValue(projectState);
   const loadGraph = useLoadGraph();
-  const setPosition = useSetRecoilState(canvasPositionState);
+  const setPosition = useSetAtom(canvasPositionState);
 
   return useStableCallback((nodeId: NodeId) => {
     const graphForNode = Object.values(project.graphs).find((graph) => graph.nodes.some((n) => n.id === nodeId));

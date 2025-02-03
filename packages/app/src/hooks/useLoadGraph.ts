@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { type NodeGraph, emptyNodeGraph } from '@ironclad/rivet-core';
 import { graphState, historicalGraphState, isReadOnlyGraphState } from '../state/graph.js';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph.js';
@@ -13,16 +13,16 @@ import { useStableCallback } from './useStableCallback.js';
 import { useCenterViewOnGraph } from './useCenterViewOnGraph';
 
 export function useLoadGraph() {
-  const [graph, setGraph] = useRecoilState(graphState);
+  const [graph, setGraph] = useAtom(graphState);
 
-  const setPosition = useSetRecoilState(canvasPositionState);
+  const setPosition = useSetAtom(canvasPositionState);
   const saveCurrentGraph = useSaveCurrentGraph();
-  const lastSavedPositions = useRecoilValue(lastCanvasPositionByGraphState);
-  const setGraphNavigationStack = useSetRecoilState(graphNavigationStackState);
-  const setSelectedNodes = useSetRecoilState(selectedNodesState);
+  const lastSavedPositions = useAtomValue(lastCanvasPositionByGraphState);
+  const setGraphNavigationStack = useSetAtom(graphNavigationStackState);
+  const setSelectedNodes = useSetAtom(selectedNodesState);
   const centerViewOnGraph = useCenterViewOnGraph();
-  const setHistoricalGraph = useSetRecoilState(historicalGraphState);
-  const setIsReadOnlyGraph = useSetRecoilState(isReadOnlyGraphState);
+  const setHistoricalGraph = useSetAtom(historicalGraphState);
+  const setIsReadOnlyGraph = useSetAtom(isReadOnlyGraphState);
 
   return useStableCallback((savedGraph: NodeGraph, { pushHistory = true }: { pushHistory?: boolean } = {}) => {
     if (graph.nodes.length > 0 || graph.metadata?.name !== emptyNodeGraph().metadata!.name) {

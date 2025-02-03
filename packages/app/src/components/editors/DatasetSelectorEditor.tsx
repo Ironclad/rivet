@@ -3,7 +3,7 @@ import Select from '@atlaskit/select';
 import { type DatasetSelectorEditorDefinition, type ChartNode } from '@ironclad/rivet-core';
 import { orderBy } from 'lodash-es';
 import { type FC } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { useDatasets } from '../../hooks/useDatasets';
 import { projectState } from '../../state/savedGraphs';
 import { type SharedEditorProps } from './SharedEditorProps';
@@ -47,7 +47,7 @@ export const DatasetSelector: FC<{
   helperMessage?: string;
   onChange?: (selected: string) => void;
 }> = ({ value, isReadonly, isDisabled = false, onChange, label, name, helperMessage }) => {
-  const project = useRecoilValue(projectState);
+  const project = useAtomValue(projectState);
   const { datasets } = useDatasets(project.metadata.id);
 
   const datasetOptions = orderBy(

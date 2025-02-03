@@ -3,8 +3,8 @@ import { type FC, useState } from 'react';
 import Select from '@atlaskit/select';
 import TextField from '@atlaskit/textfield';
 import { LazyCodeEditor } from './LazyComponents';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { lastRunData, lastRunDataByNodeState } from '../state/dataFlow';
+import { useAtomValue, useAtom, useSetAtom } from 'jotai';
+import { lastRunDataByNodeState } from '../state/dataFlow';
 import { graphState } from '../state/graph';
 import { BuiltInNodeType, type BuiltInNodes, type GraphInputNode, type PortId } from '@ironclad/rivet-core';
 import { max, maxBy, range } from 'lodash-es';
@@ -42,13 +42,13 @@ export const CopyAsTestCaseModal: FC<{
   open: boolean;
   onClose: () => void;
 }> = ({ open, onClose }) => {
-  const lastRunData = useRecoilValue(lastRunDataByNodeState);
-  const graph = useRecoilValue(graphState);
+  const lastRunData = useAtomValue(lastRunDataByNodeState);
+  const graph = useAtomValue(graphState);
   const [selectedExecutionNum, setSelectedExecutionNum] = useState(1);
   const [selectedTestSuiteId, setSelectedTestSuiteId] = useState<string | undefined>(undefined);
-  const [{ testSuites }, setTrivetState] = useRecoilState(trivetState);
+  const [{ testSuites }, setTrivetState] = useAtom(trivetState);
   const { addTestCase } = useTestSuite(selectedTestSuiteId);
-  const setOverlay = useSetRecoilState(overlayOpenState);
+  const setOverlay = useSetAtom(overlayOpenState);
 
   const inputNodes = graph.nodes.filter((n) => (n as BuiltInNodes).type === 'graphInput') as GraphInputNode[];
   const lastRunDataForInputNodes = inputNodes.map((n) => lastRunData[n.id]);

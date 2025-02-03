@@ -1,4 +1,4 @@
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { useStableCallback } from './useStableCallback.js';
 import { selectedNodesState } from '../state/graphBuilder.js';
 import { connectionsState, nodesByIdState } from '../state/graph.js';
@@ -20,11 +20,11 @@ import { nanoid } from 'nanoid/non-secure';
 import { useLoadGraph } from './useLoadGraph.js';
 
 export function useFactorIntoSubgraph() {
-  const project = useRecoilValue(projectState);
-  const selectedNodeIds = useRecoilValue(selectedNodesState);
-  const connections = useRecoilValue(connectionsState);
+  const project = useAtomValue(projectState);
+  const selectedNodeIds = useAtomValue(selectedNodesState);
+  const connections = useAtomValue(connectionsState);
   const loadGraph = useLoadGraph();
-  const nodesById = useRecoilValue(nodesByIdState);
+  const nodesById = useAtomValue(nodesByIdState);
 
   return useStableCallback(() => {
     if (selectedNodeIds.length === 0) {

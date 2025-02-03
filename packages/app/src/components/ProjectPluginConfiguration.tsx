@@ -1,6 +1,6 @@
 import { Label } from '@atlaskit/form';
 import { type FC } from 'react';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 import { projectPluginsState } from '../state/savedGraphs';
 import MoreMenuVerticalIcon from 'majesticons/line/more-menu-vertical-line.svg?react';
 import DeleteBinIcon from 'majesticons/line/delete-bin-line.svg?react';
@@ -85,10 +85,10 @@ const styles = css`
 `;
 
 export const ProjectPluginsConfiguration: FC = () => {
-  const [pluginSpecs, setPluginSpecs] = useRecoilState(projectPluginsState);
+  const [pluginSpecs, setPluginSpecs] = useAtom(projectPluginsState);
 
   const deletePlugin = (spec: PluginLoadSpec) => {
-    setPluginSpecs((specs) => specs.filter((s) => s.id !== spec.id));
+    setPluginSpecs((prev) => (prev || []).filter((s) => s.id !== spec.id));
   };
 
   return (

@@ -16,7 +16,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { LoopControllerNodePorts } from './LoopControllerNodePorts';
 import { type DraggingWireDef } from '../state/graphBuilder';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { preservePortTextCaseState } from '../state/settings.js';
 
 export type NodePortsProps = {
@@ -67,7 +67,7 @@ export const NodePorts: FC<NodePortsProps> = ({
   onPortMouseOut,
 }) => {
   const { inputDefinitions, outputDefinitions } = useNodeIO(node.id)!;
-  const preservePortTextCase = useRecoilValue(preservePortTextCaseState);
+  const preservePortTextCase = useAtomValue(preservePortTextCaseState);
 
   const renderedInputDefinitions = inputDefinitions.filter((input) => !isBuiltInInputDefinition(input));
 

@@ -1,4 +1,4 @@
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { loadedProjectState } from '../state/savedGraphs';
 import { Command } from '@tauri-apps/api/shell';
 import useAsyncEffect from 'use-async-effect';
@@ -13,7 +13,7 @@ const revisionCalculators = new Map<string, ProjectRevisionCalculator>();
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export function useProjectRevisions(options?: { max?: number }) {
-  const projectState = useRecoilValue(loadedProjectState);
+  const projectState = useAtomValue(loadedProjectState);
   const [isLoading, setIsLoading] = useState(true);
 
   const [revisions, setRevisions] = useState<CalculatedRevision[]>([]);
@@ -76,7 +76,7 @@ export function useProjectRevisions(options?: { max?: number }) {
 export function useGraphRevisions(options?: { max?: number }) {
   const { revisions, isLoading, stop, numTotalRevisions, numProcessedRevisions, resume } = useProjectRevisions(options);
 
-  const graph = useRecoilValue(graphState);
+  const graph = useAtomValue(graphState);
 
   if (!graph) {
     return {
@@ -100,7 +100,7 @@ export function useGraphRevisions(options?: { max?: number }) {
 }
 
 export function useHasGitHistory() {
-  const projectPath = useRecoilValue(loadedProjectState).path;
+  const projectPath = useAtomValue(loadedProjectState).path;
 
   const [hasHistory, setHasHistory] = useState(false);
 

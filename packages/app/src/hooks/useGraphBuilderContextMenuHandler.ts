@@ -7,7 +7,6 @@ import {
   type GraphId,
   type ChartNode,
 } from '@ironclad/rivet-core';
-import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
 import { type ContextMenuContext } from '../components/ContextMenu';
 import { editingNodeState, selectedNodesState } from '../state/graphBuilder';
 import { projectState } from '../state/savedGraphs';
@@ -20,20 +19,21 @@ import { nodesByIdState, nodesState } from '../state/graph';
 import { useCopyNodes } from './useCopyNodes';
 import { useDuplicateNode } from './useDuplicateNode';
 import { useRemoveNodes } from './useRemoveNodes';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 export function useGraphBuilderContextMenuHandler() {
-  const [nodes, setNodes] = useRecoilState(nodesState);
+  const [nodes, setNodes] = useAtom(nodesState);
   const { clientToCanvasPosition } = useCanvasPositioning();
   const loadGraph = useLoadGraph();
-  const project = useRecoilValue(projectState);
+  const project = useAtomValue(projectState);
   const { tryRunGraph } = useGraphExecutor();
   const pasteNodes = usePasteNodes();
   const copyNodes = useCopyNodes();
   const duplicateNode = useDuplicateNode();
   const factorIntoSubgraph = useFactorIntoSubgraph();
-  const setEditingNodeId = useSetRecoilState(editingNodeState);
-  const [selectedNodeIds, setSelectedNodeIds] = useRecoilState(selectedNodesState);
-  const nodesById = useRecoilValue(nodesByIdState);
+  const setEditingNodeId = useSetAtom(editingNodeState);
+  const [selectedNodeIds, setSelectedNodeIds] = useAtom(selectedNodesState);
+  const nodesById = useAtomValue(nodesByIdState);
   const removeNodes = useRemoveNodes();
 
   const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {

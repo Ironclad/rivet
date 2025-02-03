@@ -1,9 +1,9 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   type NodeRunData,
   type ProcessDataForNode,
-  lastRunData,
-  selectedProcessPage,
+  lastRunDataState,
+  selectedProcessPageState,
   type NodeRunDataWithRefs,
 } from '../state/dataFlow.js';
 import { type FC, type ReactNode, memo, useMemo, useState, type MouseEvent } from 'react';
@@ -32,7 +32,7 @@ export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   useDependsOnPlugins();
 
-  const isPinned = useRecoilValue(pinnedNodesState).includes(node.id);
+  const isPinned = useAtomValue(pinnedNodesState).includes(node.id);
 
   const handleWheel = useStableCallback((e: MouseEvent<HTMLDivElement>) => {
     if (isPinned) {
@@ -169,16 +169,16 @@ const fullscreenOutputButtonsCss = css`
 `;
 
 const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
-  const output = useRecoilValue(lastRunData(node.id));
-  const [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
+  const output = useAtomValue(lastRunDataState(node.id));
+  const [selectedPage, setSelectedPage] = useAtom(selectedProcessPageState(node.id));
 
   const { FullscreenOutput, Output, OutputSimple, FullscreenOutputSimple, defaultRenderMarkdown } =
     useUnknownNodeComponentDescriptorFor(node);
 
   const [renderMarkdown, toggleRenderMarkdown] = useToggle(defaultRenderMarkdown ?? false);
 
-  const setOverlayOpen = useSetRecoilState(overlayOpenState);
-  const setPromptDesignerAttachedNode = useSetRecoilState(promptDesignerAttachedChatNodeState);
+  const setOverlayOpen = useSetAtom(overlayOpenState);
+  const setPromptDesignerAttachedNode = useSetAtom(promptDesignerAttachedChatNodeState);
 
   const io = useNodeIO(node.id);
 
@@ -355,7 +355,7 @@ const NodeOutputBase: FC<{ node: ChartNode; children?: ReactNode; onOpenFullscre
   children,
   onOpenFullscreenModal,
 }) => {
-  const output = useRecoilValue(lastRunData(node.id));
+  const output = useAtomValue(lastRunDataState(node.id));
   if (!output?.length) {
     return null;
   }
@@ -388,8 +388,8 @@ const NodeOutputSingleProcess: FC<{
 }> = ({ node, data, processId, onOpenFullscreenModal }) => {
   const { Output, OutputSimple } = useUnknownNodeComponentDescriptorFor(node);
 
-  const setOverlayOpen = useSetRecoilState(overlayOpenState);
-  const setPromptDesignerAttachedNode = useSetRecoilState(promptDesignerAttachedChatNodeState);
+  const setOverlayOpen = useSetAtom(overlayOpenState);
+  const setPromptDesignerAttachedNode = useSetAtom(promptDesignerAttachedChatNodeState);
   const io = useNodeIO(node.id);
 
   const handleOpenPromptDesigner = () => {
@@ -505,7 +505,7 @@ const NodeOutputMultiProcess: FC<{
   data: ProcessDataForNode[];
   onOpenFullscreenModal?: () => void;
 }> = ({ node, data, onOpenFullscreenModal }) => {
-  const [selectedPage, setSelectedPage] = useRecoilState(selectedProcessPage(node.id));
+  const [selectedPage, setSelectedPage] = useAtom(selectedProcessPageState(node.id));
 
   const prevPage = useStableCallback(() => {
     setSelectedPage((page) => {

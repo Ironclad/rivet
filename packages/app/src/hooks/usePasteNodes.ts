@@ -1,18 +1,18 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { clipboardState } from '../state/clipboard';
-import { connectionsState, graphState, nodesState } from '../state/graph';
+import { connectionsState, nodesState } from '../state/graph';
 import { type NodeId, newId, type NodeConnection } from '@ironclad/rivet-core';
 import { useCanvasPositioning } from './useCanvasPositioning';
 import { produce } from 'immer';
 import { selectedNodesState } from '../state/graphBuilder';
 import { isNotNull } from '../utils/genericUtilFunctions';
+import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 
 export function usePasteNodes() {
-  const clipboard = useRecoilValue(clipboardState);
+  const clipboard = useAtomValue(clipboardState);
   const { clientToCanvasPosition } = useCanvasPositioning();
-  const setNodes = useSetRecoilState(nodesState);
-  const setSelectedNodeIds = useSetRecoilState(selectedNodesState);
-  const setConnections = useSetRecoilState(connectionsState);
+  const [nodes, setNodes] = useAtom(nodesState);
+  const setSelectedNodeIds = useSetAtom(selectedNodesState);
+  const [connections, setConnections] = useAtom(connectionsState);
 
   const pasteNodes = (mousePosition: { x: number; y: number }) => {
     if (clipboard?.type !== 'nodes') {
@@ -53,7 +53,7 @@ export function usePasteNodes() {
       });
     });
 
-    setNodes((nodes) => [...nodes, ...newNodes]);
+    setNodes((prev) => [...prev, ...newNodes]);
     setSelectedNodeIds(newNodes.map((node) => node.id));
 
     const newConnections: NodeConnection[] = clipboard.connections
@@ -73,7 +73,7 @@ export function usePasteNodes() {
       })
       .filter(isNotNull);
 
-    setConnections((connections) => [...connections, ...newConnections]);
+    setConnections([...connections, ...newConnections]);
   };
 
   return pasteNodes;

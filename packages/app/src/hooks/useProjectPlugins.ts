@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { projectPluginsState } from '../state/savedGraphs';
 import { globalRivetNodeRegistry, resetGlobalRivetNodeRegistry, plugins as rivetPlugins } from '@ironclad/rivet-core';
 import { pluginRefreshCounterState, pluginsState } from '../state/plugins';
@@ -11,9 +11,9 @@ import { useLoadPackagePlugin } from './useLoadPackagePlugin';
 import useAsyncEffect from 'use-async-effect';
 
 export function useProjectPlugins() {
-  const pluginSpecs = useRecoilValue(projectPluginsState);
-  const [plugins, setPlugins] = useRecoilState(pluginsState);
-  const setPluginRefreshCounter = useSetRecoilState(pluginRefreshCounterState);
+  const pluginSpecs = useAtomValue(projectPluginsState);
+  const [plugins, setPlugins] = useAtom(pluginsState);
+  const setPluginRefreshCounter = useSetAtom(pluginRefreshCounterState);
   const { loadPackagePlugin } = useLoadPackagePlugin({
     onLog: (message) => console.log(message),
   });

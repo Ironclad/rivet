@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { useState, type FC } from 'react';
-import { useRecoilState } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { overlayOpenState } from '../../state/ui';
 import { ErrorBoundary } from 'react-error-boundary';
 import { SideNavigation, ButtonItem, Section } from '@atlaskit/side-navigation';
@@ -44,7 +44,7 @@ const styles = css`
 `;
 
 export const CommunityOverlayRenderer: FC = () => {
-  const [openOverlay] = useRecoilState(overlayOpenState);
+  const openOverlay = useAtomValue(overlayOpenState);
 
   if (openOverlay !== 'community') return null;
 

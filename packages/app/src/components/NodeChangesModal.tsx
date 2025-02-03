@@ -1,21 +1,21 @@
 import { type FC } from 'react';
 import Modal, { ModalBody, ModalTransition, ModalTitle, ModalFooter, ModalHeader } from '@atlaskit/modal-dialog';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { viewingNodeChangesState } from '../state/graphBuilder';
 import { useHistoricalNodeChangeInfo } from '../hooks/useHistoricalNodeChangeInfo';
 import * as yaml from 'yaml';
 import { diffStringsUnified } from 'jest-diff';
 
 export const NodeChangesModalRenderer: FC = () => {
-  const changes = useRecoilValue(viewingNodeChangesState);
+  const changes = useAtomValue(viewingNodeChangesState);
 
   return <ModalTransition>{changes == null ? null : <NodeChangesModal />}</ModalTransition>;
 };
 
 export const NodeChangesModal: FC = () => {
-  const nodeId = useRecoilValue(viewingNodeChangesState);
+  const nodeId = useAtomValue(viewingNodeChangesState);
   const changes = useHistoricalNodeChangeInfo(nodeId!);
-  const setViewingNodeChanges = useSetRecoilState(viewingNodeChangesState);
+  const setViewingNodeChanges = useSetAtom(viewingNodeChangesState);
 
   if (changes == null || changes.changed === false) {
     return null;

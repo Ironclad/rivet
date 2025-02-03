@@ -1,10 +1,10 @@
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { lastRecordingState } from '../state/execution';
 import { ioProvider } from '../utils/globals';
 import { useCallback } from 'react';
 
 export function useSaveRecording() {
-  const recording = useRecoilValue(lastRecordingState);
+  const recording = useAtomValue(lastRecordingState);
 
   return useCallback(async () => {
     if (!recording) {

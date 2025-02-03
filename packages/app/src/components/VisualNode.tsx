@@ -10,7 +10,7 @@ import {
   useState,
   useMemo,
 } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { match } from 'ts-pattern';
 import {
   type NodeInputDefinition,
@@ -23,7 +23,7 @@ import {
   IF_PORT,
 } from '@ironclad/rivet-core';
 import type { HeightCache } from '../hooks/useNodeBodyHeight';
-import { type ProcessDataForNode, lastRunData, selectedProcessPage } from '../state/dataFlow.js';
+import { type ProcessDataForNode } from '../state/dataFlow.js';
 import { NodeBody } from './NodeBody.js';
 import { NodeOutput } from './NodeOutput.js';
 import SettingsCogIcon from 'majesticons/line/settings-cog-line.svg?react';
@@ -345,10 +345,10 @@ const ZoomedOutVisualNodeContent: FC<{
       onSelectNode?.(event.shiftKey);
     });
 
-    const draggingWire = useRecoilValue(draggingWireState);
-    const closestPortToDraggingWire = useRecoilValue(draggingWireClosestPortState);
+    const draggingWire = useAtomValue(draggingWireState);
+    const closestPortToDraggingWire = useAtomValue(draggingWireClosestPortState);
 
-    const preservePortTextCase = useRecoilValue(preservePortTextCaseState);
+    const preservePortTextCase = useAtomValue(preservePortTextCaseState);
 
     const handleIfPortMouseDown = useStableCallback(
       (event: MouseEvent<HTMLDivElement>, port: PortId, isInput: boolean) => {
@@ -597,10 +597,10 @@ const NormalVisualNodeContent: FC<{
       onSelectNode?.(event.shiftKey);
     });
 
-    const draggingWire = useRecoilValue(draggingWireState);
-    const closestPortToDraggingWire = useRecoilValue(draggingWireClosestPortState);
+    const draggingWire = useAtomValue(draggingWireState);
+    const closestPortToDraggingWire = useAtomValue(draggingWireClosestPortState);
 
-    const setPinnedNodes = useSetRecoilState(pinnedNodesState);
+    const setPinnedNodes = useSetAtom(pinnedNodesState);
 
     const togglePinned = useStableCallback(() => {
       setPinnedNodes((prev) => {
@@ -612,7 +612,7 @@ const NormalVisualNodeContent: FC<{
       });
     });
 
-    const setViewingNodeChanges = useSetRecoilState(viewingNodeChangesState);
+    const setViewingNodeChanges = useSetAtom(viewingNodeChangesState);
 
     const viewChanges = () => {
       if (!isHistoricalChanged) {
@@ -622,7 +622,7 @@ const NormalVisualNodeContent: FC<{
       setViewingNodeChanges(node.id);
     };
 
-    const preservePortTextCase = useRecoilValue(preservePortTextCaseState);
+    const preservePortTextCase = useAtomValue(preservePortTextCaseState);
 
     const handleIfPortMouseDown = useStableCallback(
       (event: MouseEvent<HTMLDivElement>, port: PortId, isInput: boolean) => {

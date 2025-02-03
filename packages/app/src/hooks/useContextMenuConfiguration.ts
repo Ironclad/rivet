@@ -8,10 +8,10 @@ import CopyIcon from '../assets/icons/copy-icon.svg?react';
 import PasteIcon from '../assets/icons/paste-icon.svg?react';
 import PlusIcon from 'majesticons/line/plus-line.svg?react';
 import { type NodeId } from '@ironclad/rivet-core';
-import { useRecoilValue } from 'recoil';
 import { selectedNodesState } from '../state/graphBuilder.js';
 import { useContextMenuCommands } from './useContextMenuCommands.js';
 import { clipboardState } from '../state/clipboard';
+import { useAtomValue } from 'jotai';
 
 export type ContextMenuConfig = {
   contexts: ContextMenuContextConfig;
@@ -49,8 +49,8 @@ const type = <T>() => undefined! as T;
 export function useContextMenuConfiguration() {
   const addMenuConfig = useContextMenuAddNodeConfiguration();
   const commands = useContextMenuCommands();
-  const selectedNodeIds = useRecoilValue(selectedNodesState);
-  const clipboard = useRecoilValue(clipboardState);
+  const selectedNodeIds = useAtomValue(selectedNodesState);
+  const clipboard = useAtomValue(clipboardState);
 
   const config = useMemo(
     () =>

@@ -2,7 +2,6 @@ import Portal from '@atlaskit/portal';
 import Select from '@atlaskit/select';
 import { css } from '@emotion/react';
 import { type FC, useRef } from 'react';
-import { useSetRecoilState, useRecoilState } from 'recoil';
 import { useLoadRecording } from '../hooks/useLoadRecording';
 import { useRemoteDebugger } from '../hooks/useRemoteDebugger';
 import { selectedExecutorState } from '../state/execution';
@@ -18,6 +17,7 @@ import { CopyAsTestCaseModal } from './CopyAsTestCaseModal';
 import { useToggle } from 'ahooks';
 import { executorOptions } from '../state/settings';
 import QuestionIcon from 'majesticons/line/question-circle-line.svg?react';
+import { useSetAtom, useAtom } from 'jotai';
 
 const moreMenuStyles = css`
   background-color: var(--grey-darkish);
@@ -77,12 +77,12 @@ export const ActionBarMoreMenu: FC<{
   onCopyAsTestCase: () => void;
 }> = ({ onClose, onCopyAsTestCase }) => {
   const dropdownTarget = useRef<HTMLDivElement>(null);
-  const setSettingsOpen = useSetRecoilState(settingsModalOpenState);
-  const setDebuggerPanelOpen = useSetRecoilState(debuggerPanelOpenState);
-  const [selectedExecutor, setSelectedExecutor] = useRecoilState(selectedExecutorState);
+  const setSettingsOpen = useSetAtom(settingsModalOpenState);
+  const setDebuggerPanelOpen = useSetAtom(debuggerPanelOpenState);
+  const [selectedExecutor, setSelectedExecutor] = useAtom(selectedExecutorState);
   const selectedExecutorOption = executorOptions.find((option) => option.value === selectedExecutor);
   const { loadRecording } = useLoadRecording();
-  const setHelpModalOpen = useSetRecoilState(helpModalOpenState);
+  const setHelpModalOpen = useSetAtom(helpModalOpenState);
 
   const openDebuggerPanel = () => {
     setDebuggerPanelOpen(true);

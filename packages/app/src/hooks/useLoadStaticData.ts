@@ -1,12 +1,12 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtom, useSetAtom } from 'jotai';
 import { loadedProjectState, projectDataState } from '../state/savedGraphs';
 import { useEffect } from 'react';
 import { useStaticDataDatabase } from './useStaticDataDatabase';
 import { type DataId } from '@ironclad/rivet-core';
 
 export function useLoadStaticData() {
-  const [data, setData] = useRecoilState(projectDataState);
-  const setProjectData = useSetRecoilState(projectDataState);
+  const [data, setData] = useAtom(projectDataState);
+  const setProjectData = useSetAtom(projectDataState);
 
   const database = useStaticDataDatabase();
 

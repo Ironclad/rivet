@@ -12,7 +12,7 @@ import { useStableCallback } from '../hooks/useStableCallback.js';
 import { Port } from './Port.js';
 import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { type DraggingWireDef } from '../state/graphBuilder';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { preservePortTextCaseState } from '../state/settings.js';
 
 export type NodePortsProps = {
@@ -56,7 +56,7 @@ export const LoopControllerNodePorts: FC<NodePortsProps> = ({
 }) => {
   const { inputDefinitions, outputDefinitions } = useNodeIO(node.id)!;
 
-  const preservePortTextCase = useRecoilValue(preservePortTextCaseState);
+  const preservePortTextCase = useAtomValue(preservePortTextCaseState);
 
   const handlePortMouseDown = useStableCallback((event: MouseEvent<HTMLDivElement>, port: PortId, isInput: boolean) => {
     event.stopPropagation();

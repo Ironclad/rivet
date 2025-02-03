@@ -1,6 +1,5 @@
 import { type ChartNode, getPluginConfig, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { datasetProvider } from '../utils/globals';
-import { useRecoilValue } from 'recoil';
 import { selectedExecutorState } from '../state/execution';
 import { type RivetUIContext } from '../../../core/src/model/RivetUIContext';
 import { settingsState } from '../state/settings';
@@ -9,13 +8,14 @@ import { useDependsOnPlugins } from './useDependsOnPlugins';
 import { projectState } from '../state/savedGraphs';
 import { graphState } from '../state/graph';
 import { useStableCallback } from './useStableCallback';
+import { useAtomValue } from 'jotai';
 
 export function useGetRivetUIContext() {
-  const selectedExecutor = useRecoilValue(selectedExecutorState);
-  const settings = useRecoilValue(settingsState);
+  const selectedExecutor = useAtomValue(selectedExecutorState);
+  const settings = useAtomValue(settingsState);
   const plugins = useDependsOnPlugins();
-  const project = useRecoilValue(projectState);
-  const graph = useRecoilValue(graphState);
+  const project = useAtomValue(projectState);
+  const graph = useAtomValue(graphState);
 
   return useStableCallback(async ({ node }: { node?: ChartNode }) => {
     let getPluginConfigFn: RivetUIContext['getPluginConfig'] = () => undefined;

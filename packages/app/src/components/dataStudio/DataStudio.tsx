@@ -1,5 +1,4 @@
 import { type FC } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { css } from '@emotion/react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useDatasets } from '../../hooks/useDatasets';
@@ -8,9 +7,10 @@ import { projectState } from '../../state/savedGraphs';
 import { overlayOpenState } from '../../state/ui';
 import { DatasetList } from './DatasetList';
 import { DatasetDisplay } from './DatasetDisplay';
+import { useAtom, useAtomValue } from 'jotai';
 
 export const DataStudioRenderer: FC = () => {
-  const [openOverlay, setOpenOverlay] = useRecoilState(overlayOpenState);
+  const [openOverlay, setOpenOverlay] = useAtom(overlayOpenState);
 
   if (openOverlay !== 'dataStudio') return null;
 
@@ -62,9 +62,9 @@ const styles = css`
 export const DataStudio: FC<{
   onClose: () => void;
 }> = ({ onClose }) => {
-  const [selectedDataset, setSelectedDataset] = useRecoilState(selectedDatasetState);
+  const [selectedDataset, setSelectedDataset] = useAtom(selectedDatasetState);
 
-  const project = useRecoilValue(projectState);
+  const project = useAtomValue(projectState);
   const { datasets } = useDatasets(project.metadata.id);
 
   const selectedDatasetMeta = datasets?.find((d) => d.id === selectedDataset);
