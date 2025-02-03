@@ -7,6 +7,7 @@ import { ToolCallHandlersEditor } from './custom/ToolCallHandlersEditor';
 import { ExtractRegexNodeAiAssistEditor } from './custom/ExtractRegexNodeAiAssistEditor';
 import { ObjectNodeAiAssistEditor } from './custom/ObjectNodeAiAssistEditor';
 import { GptFunctionNodeJsonSchemaAiAssistEditor } from './custom/GptFunctionJsonSchemaAiAssistEditor';
+import { PromptNodeAiAssistEditor } from './custom/PromptNodeAiAssistEditor';
 
 export const CustomEditor: FC<
   SharedEditorProps & {
@@ -21,5 +22,6 @@ export const CustomEditor: FC<
     .with('GptFunctionNodeJsonSchemaAiAssist', () => (
       <GptFunctionNodeJsonSchemaAiAssistEditor {...props} editor={editor} />
     ))
+    .with('PromptNodeAiAssist', () => <PromptNodeAiAssistEditor {...props} editor={editor} />)
     .otherwise(() => null);
 };

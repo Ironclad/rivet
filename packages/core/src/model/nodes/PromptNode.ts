@@ -140,6 +140,11 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
   getEditors(): EditorDefinition<PromptNode>[] {
     return [
       {
+        type: 'custom',
+        customEditorId: 'PromptNodeAiAssist',
+        label: 'Generate Using AI',
+      },
+      {
         type: 'dropdown',
         label: 'Type',
         options: [
