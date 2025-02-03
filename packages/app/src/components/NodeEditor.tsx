@@ -29,7 +29,8 @@ import { projectDataState, projectState } from '../state/savedGraphs';
 import { useSetStaticData } from '../hooks/useSetStaticData';
 import { DefaultNodeEditor } from './editors/DefaultNodeEditor';
 import { NodeColorPicker } from './NodeColorPicker';
-import { useAtom, useSetAtom, useAtomValue } from 'jotai';
+import { Tooltip } from './Tooltip';
+import { useAtomValue, useAtom, useSetAtom } from 'jotai';
 
 export const NodeEditorRenderer: FC = () => {
   const nodesById = useAtomValue(nodesByIdState);
@@ -217,7 +218,7 @@ const Container = styled.div`
   .section-global-controls {
     display: grid;
     grid-template-columns: auto 1fr 1fr;
-    row-gap: 8px;
+    row-gap: 0;
     column-gap: 16px;
     margin-bottom: 16px;
     padding-bottom: 16px;
@@ -289,7 +290,7 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
     // Check for any invalid connections
     const instance = globalRivetNodeRegistry.createDynamicImpl(node);
 
-    const inputDefs = instance.getInputDefinitions(connectionsForNode ?? [], nodesById, project);
+    const inputDefs = instance.getInputDefinitionsIncludingBuiltIn(connectionsForNode ?? [], nodesById, project);
     const outputDefs = instance.getOutputDefinitions(connectionsForNode ?? [], nodesById, project);
 
     const invalidConnections = connectionsForNode?.filter((connection) => {
@@ -555,6 +556,24 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
                               )}
                             />
                           )}
+                        </section>
+                      )}
+                    </Field>
+                    <div />
+                    <Field name="conditional" label="Conditional Node">
+                      {({ fieldProps }) => (
+                        <section className="split-controls">
+                          <div className="split-controls-toggle">
+                            <Tooltip content="Exposes a conditional input port to the node, allowing to be executed only if the condition is met.">
+                              <Toggle
+                                {...fieldProps}
+                                isChecked={selectedNode.isConditional}
+                                onChange={(conditional) =>
+                                  updateNode({ ...selectedNode, isConditional: conditional.target.checked })
+                                }
+                              />
+                            </Tooltip>
+                          </div>
                         </section>
                       )}
                     </Field>

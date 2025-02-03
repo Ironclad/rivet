@@ -17,6 +17,7 @@ import {
   streamChatCompletions,
   type ChatCompletionTool,
   chatCompletions,
+  type ChatCompletionChunkUsage,
 } from '../../utils/openai.js';
 import retry from 'p-retry';
 import type { Inputs, Outputs } from '../GraphProcessor.js';
@@ -31,6 +32,7 @@ import { nodeDefinition } from '../NodeDefinition.js';
 import type { TokenizerCallInfo } from '../../integrations/Tokenizer.js';
 import { DEFAULT_CHAT_ENDPOINT } from '../../utils/defaults.js';
 import { chatMessageToOpenAIChatCompletionMessage } from '../../utils/chatMessageToOpenAIChatCompletionMessage.js';
+import { base64ToUint8Array } from '../../utils/base64.js';
 
 export type ChatNode = ChartNode<'chat', ChatNodeData>;
 
@@ -57,6 +59,15 @@ export type ChatNodeConfigData = {
   parallelFunctionCalling?: boolean;
   additionalParameters?: { key: string; value: string }[];
   responseSchemaName?: string;
+  useServerTokenCalculation?: boolean;
+  outputUsage?: boolean;
+  usePredictedOutput?: boolean;
+
+  modalitiesIncludeText?: boolean;
+  modalitiesIncludeAudio?: boolean;
+
+  audioVoice?: string;
+  audioFormat?: 'wav' | 'mp3' | 'flac' | 'opus' | 'pcm16';
 };
 
 export type ChatNodeData = ChatNodeConfigData & {
@@ -80,6 +91,8 @@ export type ChatNodeData = ChatNodeConfigData & {
   useResponseFormatInput?: boolean;
   useAdditionalParametersInput?: boolean;
   useResponseSchemaNameInput?: boolean;
+  useAudioVoiceInput?: boolean;
+  useAudioFormatInput?: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
@@ -139,6 +152,13 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
         additionalParameters: [],
         useAdditionalParametersInput: false,
+
+        useServerTokenCalculation: true,
+        outputUsage: false,
+        usePredictedOutput: false,
+
+        modalitiesIncludeAudio: false,
+        modalitiesIncludeText: false,
       },
     };
 
@@ -359,6 +379,34 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       }
     }
 
+    if (this.data.usePredictedOutput) {
+      inputs.push({
+        dataType: 'string[]',
+        id: 'predictedOutput' as PortId,
+        title: 'Predicted Output',
+        description: 'The predicted output from the model.',
+        coerced: true,
+      });
+    }
+
+    if (this.data.useAudioVoiceInput) {
+      inputs.push({
+        dataType: 'string',
+        id: 'audioVoice' as PortId,
+        title: 'Audio Voice',
+        description: 'The voice to use for audio responses. See your model for supported voices.',
+      });
+    }
+
+    if (this.data.useAudioFormatInput) {
+      inputs.push({
+        dataType: 'string',
+        id: 'audioFormat' as PortId,
+        title: 'Audio Format',
+        description: 'The format to use for audio responses.',
+      });
+    }
+
     return inputs;
   }
 
@@ -421,6 +469,31 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       title: 'Response Tokens',
       description: 'The number of tokens in the response from the LLM. For a multi-response, this is the sum.',
     });
+
+    if (this.data.outputUsage) {
+      outputs.push({
+        dataType: 'object',
+        id: 'usage' as PortId,
+        title: 'Usage',
+        description: 'Usage statistics for the model.',
+      });
+    }
+
+    if (this.data.modalitiesIncludeAudio) {
+      outputs.push({
+        dataType: 'audio',
+        id: 'audio' as PortId,
+        title: 'Audio',
+        description: 'The audio response from the model.',
+      });
+
+      outputs.push({
+        dataType: 'string',
+        id: 'audioTranscript' as PortId,
+        title: 'Transcript',
+        description: 'The transcript of the audio response.',
+      });
+    }
 
     return outputs;
   }
@@ -611,8 +684,69 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       },
       {
         type: 'group',
+        label: 'Features',
+        editors: [
+          {
+            type: 'toggle',
+            label: 'Enable Predicted Output',
+            dataKey: 'usePredictedOutput',
+            helperMessage:
+              'If on, enables an input port for the predicted output from the model, when many of the output tokens are known ahead of time.',
+          },
+          {
+            type: 'toggle',
+            label: 'Modalities: Text',
+            dataKey: 'modalitiesIncludeText',
+            helperMessage: 'If on, the model will include text in its responses. Only relevant for multimodal models.',
+          },
+          {
+            type: 'toggle',
+            label: 'Modalities: Audio',
+            dataKey: 'modalitiesIncludeAudio',
+            helperMessage: 'If on, the model will include audio in its responses. Only relevant for multimodal models.',
+          },
+          {
+            type: 'string',
+            label: 'Audio Voice',
+            dataKey: 'audioVoice',
+            useInputToggleDataKey: 'useAudioVoiceInput',
+            helperMessage: 'The voice to use for audio responses. See your model for supported voices.',
+            hideIf: (data) => !data.modalitiesIncludeAudio,
+          },
+          {
+            type: 'dropdown',
+            label: 'Audio Format',
+            dataKey: 'audioFormat',
+            useInputToggleDataKey: 'useAudioFormatInput',
+            options: [
+              { value: 'wav', label: 'WAV' },
+              { value: 'mp3', label: 'MP3' },
+              { value: 'flac', label: 'FLAC' },
+              { value: 'opus', label: 'OPUS' },
+              { value: 'pcm16', label: 'PCM16' },
+            ],
+            defaultValue: 'wav',
+            hideIf: (data) => !data.modalitiesIncludeAudio,
+          },
+        ],
+      },
+      {
+        type: 'group',
         label: 'Advanced',
         editors: [
+          {
+            type: 'toggle',
+            label: 'Use Server Token Calculation',
+            dataKey: 'useServerTokenCalculation',
+            helperMessage:
+              'If on, do not calculate token counts on the client side, and rely on the server providing the token count.',
+          },
+          {
+            type: 'toggle',
+            label: 'Output Usage Statistics',
+            dataKey: 'outputUsage',
+            helperMessage: 'If on, output usage statistics for the model, such as token counts and cost.',
+          },
           {
             type: 'string',
             label: 'User',
@@ -747,6 +881,10 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
     const responseFormat = getInputOrData(this.data, inputs, 'responseFormat') as 'text' | 'json' | 'json_schema' | '';
     const toolChoiceMode = getInputOrData(this.data, inputs, 'toolChoice', 'string') as 'none' | 'auto' | 'function';
 
+    const predictedOutput = this.data.usePredictedOutput
+      ? coerceTypeOptional(inputs['predictedOutput' as PortId], 'string[]')
+      : undefined;
+
     const toolChoice: ChatCompletionOptions['tool_choice'] =
       !toolChoiceMode || !this.data.enableFunctionUse
         ? undefined
@@ -864,28 +1002,66 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
       ...resolvedEndpointAndHeaders.headers,
     });
 
+    let inputTokenCount: number = 0;
+
     const tokenizerInfo: TokenizerCallInfo = {
       node: this.chartNode,
       model: finalModel,
       endpoint: resolvedEndpointAndHeaders.endpoint,
     };
-    const tokenCount = await context.tokenizer.getTokenCountForMessages(messages, functions, tokenizerInfo);
 
-    if (tokenCount >= openaiModel.maxTokens) {
-      throw new Error(
-        `The model ${model} can only handle ${openaiModel.maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`,
-      );
+    if (!this.data.useServerTokenCalculation) {
+      inputTokenCount = await context.tokenizer.getTokenCountForMessages(messages, functions, tokenizerInfo);
+
+      if (inputTokenCount >= openaiModel.maxTokens) {
+        throw new Error(
+          `The model ${model} can only handle ${openaiModel.maxTokens} tokens, but ${inputTokenCount} were provided in the prompts alone.`,
+        );
+      }
+
+      if (inputTokenCount + maxTokens > openaiModel.maxTokens) {
+        const message = `The model can only handle a maximum of ${
+          openaiModel.maxTokens
+        } tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${
+          openaiModel.maxTokens - inputTokenCount
+        }.`;
+        addWarning(output, message);
+        maxTokens = Math.floor((openaiModel.maxTokens - inputTokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
+      }
     }
 
-    if (tokenCount + maxTokens > openaiModel.maxTokens) {
-      const message = `The model can only handle a maximum of ${
-        openaiModel.maxTokens
-      } tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${
-        openaiModel.maxTokens - tokenCount
-      }.`;
-      addWarning(output, message);
-      maxTokens = Math.floor((openaiModel.maxTokens - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
+    const predictionObject = predictedOutput
+      ? predictedOutput.length === 1
+        ? { type: 'content' as const, content: predictedOutput[0]! }
+        : { type: 'content' as const, content: predictedOutput.map((part) => ({ type: 'text', text: part })) }
+      : undefined;
+
+    let modalities: ('text' | 'audio')[] | undefined = [];
+    if (this.data.modalitiesIncludeText) {
+      modalities.push('text');
     }
+    if (this.data.modalitiesIncludeAudio) {
+      modalities.push('audio');
+    }
+
+    // Errors happen if modalities isn't supported, so omit it if it's empty
+    if (modalities.length === 0) {
+      modalities = undefined;
+    }
+
+    const audio = modalities?.includes('audio')
+      ? {
+          voice: getInputOrData(this.data, inputs, 'audioVoice'),
+          format:
+            (getInputOrData(this.data, inputs, 'audioFormat') as
+              | 'wav'
+              | 'mp3'
+              | 'flac'
+              | 'opus'
+              | 'pcm16'
+              | undefined) ?? 'wav',
+        }
+      : undefined;
 
     try {
       return await retry(
@@ -903,12 +1079,16 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             seed,
             response_format: openaiResponseFormat,
             tool_choice: toolChoice,
+            prediction: predictionObject,
+            modalities,
+            audio,
             ...additionalParameters,
           };
 
           const isO1Beta = finalModel.startsWith('o1-preview') || finalModel.startsWith('o1-mini');
+          const isReasoningModel = finalModel.startsWith('o1') || finalModel.startsWith('o3');
 
-          if (isO1Beta) {
+          if (isReasoningModel) {
             options.max_completion_tokens = maxTokens;
           } else {
             options.temperature = useTopP ? undefined : temperature; // Not supported in o1-preview
@@ -926,7 +1106,8 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
 
           const startTime = Date.now();
 
-          if (isO1Beta) {
+          // Non-streaming APIs
+          if (isO1Beta || audio) {
             const response = await chatCompletions({
               auth: {
                 apiKey: context.settings.openAiKey ?? '',
@@ -966,7 +1147,73 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               };
             }
 
+            if (modalities?.includes('audio')) {
+              const audioData = response.choices[0]!.message.audio;
+
+              output['audio' as PortId] = {
+                type: 'audio',
+                value: {
+                  data: base64ToUint8Array(audioData!.data),
+                  mediaType: audioFormatToMediaType(audio!.format),
+                },
+              };
+
+              output['audioTranscript' as PortId] = {
+                type: 'string',
+                value: response.choices[0]!.message.audio!.transcript,
+              };
+            }
+
             output['duration' as PortId] = { type: 'number', value: Date.now() - startTime };
+
+            if (response.usage) {
+              output['usage' as PortId] = {
+                type: 'object',
+                value: response.usage,
+              };
+
+              const costs =
+                finalModel in openaiModels ? openaiModels[finalModel as keyof typeof openaiModels].cost : undefined;
+
+              const promptCostPerThousand = costs?.prompt ?? 0;
+              const completionCostPerThousand = costs?.completion ?? 0;
+              const audioPromptCostPerThousand = costs
+                ? 'audioPrompt' in costs
+                  ? (costs.audioPrompt as number)
+                  : 0
+                : 0;
+              const audioCompletionCostPerThousand = costs
+                ? 'audioCompletion' in costs
+                  ? (costs.audioCompletion as number)
+                  : 0
+                : 0;
+
+              const promptCost = getCostForTokens(
+                response.usage.prompt_tokens_details.text_tokens,
+                'prompt',
+                promptCostPerThousand,
+              );
+              const completionCost = getCostForTokens(
+                response.usage.completion_tokens_details.text_tokens,
+                'completion',
+                completionCostPerThousand,
+              );
+              const audioPromptCost = getCostForTokens(
+                response.usage.prompt_tokens_details.audio_tokens,
+                'prompt',
+                audioPromptCostPerThousand,
+              );
+              const audioCompletionCost = getCostForTokens(
+                response.usage.completion_tokens_details.audio_tokens,
+                'completion',
+                audioCompletionCostPerThousand,
+              );
+
+              output['cost' as PortId] = {
+                type: 'number',
+                value: promptCost + completionCost + audioPromptCost + audioCompletionCost,
+              };
+            }
 
             Object.freeze(output);
             cache.set(cacheKey, output);
@@ -996,7 +1243,22 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             lastParsedArguments?: unknown;
           }[][] = [];
 
+          let usage: ChatCompletionChunkUsage | undefined;
+
+          let throttleLastCalledTime = Date.now();
+          const onPartialOutput = (output: Outputs) => {
+            const now = Date.now();
+            if (now - throttleLastCalledTime > (context.settings.throttleChatNode ?? 100)) {
+              context.onPartialOutputs?.(output);
+              throttleLastCalledTime = now;
+            }
+          };
+
           for await (const chunk of chunks) {
+            if (chunk.usage) {
+              usage = chunk.usage;
+            }
+
             if (!chunk.choices) {
               // Could be error for some reason 🤷‍♂️ but ignoring has worked for me so far.
               continue;
@@ -1089,7 +1351,7 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
               }
             }
 
-            context.onPartialOutputs?.(output);
+            onPartialOutput(output);
           }
 
           if (!isMultiResponse) {
@@ -1125,28 +1387,68 @@ export class ChatNodeImpl extends NodeImpl<ChatNode> {
             throw new Error('No response from OpenAI');
           }
 
-          output['in-messages' as PortId] = { type: 'chat-message[]', value: messages };
-          output['requestTokens' as PortId] = { type: 'number', value: tokenCount * (numberOfChoices ?? 1) };
+          let outputTokenCount = 0;
 
-          let responseTokenCount = 0;
-          for (const choiceParts of responseChoicesParts) {
-            responseTokenCount += await context.tokenizer.getTokenCountForString(choiceParts.join(), tokenizerInfo);
+          if (usage) {
+            inputTokenCount = usage.prompt_tokens;
+            outputTokenCount = usage.completion_tokens;
           }
 
-          output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
+          output['in-messages' as PortId] = { type: 'chat-message[]', value: messages };
+          output['requestTokens' as PortId] = { type: 'number', value: inputTokenCount * (numberOfChoices ?? 1) };
+
+          if (!this.data.useServerTokenCalculation) {
+            let responseTokenCount = 0;
+            for (const choiceParts of responseChoicesParts) {
+              responseTokenCount += await context.tokenizer.getTokenCountForString(choiceParts.join(), tokenizerInfo);
+            }
+            outputTokenCount = responseTokenCount;
+          }
+
+          output['responseTokens' as PortId] = { type: 'number', value: outputTokenCount };
+
+          const outputTokensForCostCalculation = usage?.completion_tokens_details
+            ? usage.completion_tokens_details.rejected_prediction_tokens > 0
+              ? usage.completion_tokens_details.rejected_prediction_tokens
+              : usage.completion_tokens
+            : outputTokenCount;
 
           const promptCostPerThousand =
             model in openaiModels ? openaiModels[model as keyof typeof openaiModels].cost.prompt : 0;
           const completionCostPerThousand =
             model in openaiModels ? openaiModels[model as keyof typeof openaiModels].cost.completion : 0;
 
-          const promptCost = getCostForTokens(tokenCount, 'prompt', promptCostPerThousand);
-          const completionCost = getCostForTokens(responseTokenCount, 'completion', completionCostPerThousand);
+          const promptCost = getCostForTokens(inputTokenCount, 'prompt', promptCostPerThousand);
+          const completionCost = getCostForTokens(
+            outputTokensForCostCalculation,
+            'completion',
+            completionCostPerThousand,
+          );
 
           const cost = promptCost + completionCost;
 
+          if (usage) {
+            output['usage' as PortId] = {
+              type: 'object',
+              value: {
+                ...usage,
+                prompt_cost: promptCost,
+                completion_cost: completionCost,
+                total_cost: cost,
+              },
+            };
+          } else {
+            output['usage' as PortId] = {
+              type: 'object',
+              value: {
+                prompt_tokens: inputTokenCount,
+                completion_tokens: outputTokenCount,
+              },
+            };
+          }
+
           output['cost' as PortId] = { type: 'number', value: cost };
-          output['__hidden_token_count' as PortId] = { type: 'number', value: tokenCount + responseTokenCount };
+          output['__hidden_token_count' as PortId] = { type: 'number', value: inputTokenCount + outputTokenCount };
 
           const duration = endTime - startTime;
 
@@ -1278,4 +1580,19 @@ export function getChatNodeMessages(inputs: Inputs) {
 
 export function getCostForTokens(tokenCount: number, type: 'prompt' | 'completion', costPerThousand: number) {
   return (tokenCount / 1000) * costPerThousand;
+}
+
+function audioFormatToMediaType(format: 'wav' | 'mp3' | 'flac' | 'opus' | 'pcm16') {
+  switch (format) {
+    case 'wav':
+      return 'audio/wav';
+    case 'mp3':
+      return 'audio/mpeg';
+    case 'flac':
+      return 'audio/flac';
+    case 'opus':
+      return 'audio/opus';
+    case 'pcm16':
+      return 'audio/wav';
+  }
 }

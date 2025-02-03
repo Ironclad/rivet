@@ -81,6 +81,10 @@ export const nodeStyles = css`
     hyphens: auto;
   }
 
+  .node.conditional .node-title {
+    padding-left: 30px;
+  }
+
   .node.node.isComment .node-title {
     padding: 4px;
     background-color: var(--grey-darkish-seethrough);
@@ -203,6 +207,15 @@ export const nodeStyles = css`
 
   .node.isComment .node-body {
     height: 100%;
+  }
+
+  .node-title-ports {
+    position: absolute;
+    left: 10px;
+    top: 16px;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 0 -12px;
   }
 
   .node-ports {

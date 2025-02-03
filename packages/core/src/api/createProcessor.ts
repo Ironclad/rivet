@@ -14,13 +14,12 @@ import {
   type RivetEventStreamFilterSpec,
   type Settings,
 } from '../index.js';
-import { mapValues } from '../utils/typeSafety.js';
 import { getProcessorEvents, getProcessorSSEStream, getSingleNodeStream } from './streaming.js';
 import { GraphProcessor } from '../model/GraphProcessor.js';
 import { deserializeProject } from '../utils/serialization/serialization.js';
 import { DEFAULT_CHAT_NODE_TIMEOUT } from '../utils/defaults.js';
-
-export type LooseDataValue = DataValue | string | number | boolean;
+import type { Tokenizer } from '../integrations/Tokenizer.js';
+import { looseDataValuesToDataValues, type LooseDataValue } from './looseDataValue.js';
 
 export type RunGraphOptions = {
   graph?: string;
@@ -37,30 +36,12 @@ export type RunGraphOptions = {
   };
   abortSignal?: AbortSignal;
   registry?: NodeRegistration;
+  includeTrace?: boolean;
   getChatNodeEndpoint?: ProcessContext['getChatNodeEndpoint'];
+  tokenizer?: Tokenizer;
 } & {
   [P in keyof ProcessEvents as `on${PascalCase<P>}`]?: (params: ProcessEvents[P]) => void;
 } & Settings;
-
-export function looseDataValuesToDataValues(values: Record<string, LooseDataValue>): Record<string, DataValue> {
-  return mapValues(values, (val) => looseDataValueToDataValue(val));
-}
-
-export function looseDataValueToDataValue(value: LooseDataValue): DataValue {
-  if (typeof value === 'string') {
-    return { type: 'string', value };
-  }
-
-  if (typeof value === 'number') {
-    return { type: 'number', value };
-  }
-
-  if (typeof value === 'boolean') {
-    return { type: 'boolean', value };
-  }
-
-  return value;
-}
 
 export function coreCreateProcessor(project: Project, options: RunGraphOptions) {
   const { graph, inputs = {}, context = {} } = options;
@@ -75,7 +56,8 @@ export function coreCreateProcessor(project: Project, options: RunGraphOptions) 
     throw new Error(`Graph not found, and no main graph specified.`);
   }
 
-  const processor = new GraphProcessor(project, graphId as GraphId, options.registry);
+  // TODO: Consolidate options into one object
+  const processor = new GraphProcessor(project, graphId as GraphId, options.registry, options.includeTrace);
 
   if (options.onStart) {
     processor.on('start', options.onStart);
@@ -178,6 +160,7 @@ export function coreCreateProcessor(project: Project, options: RunGraphOptions) 
             recordingPlaybackLatency: 1000,
             chatNodeHeaders: options.chatNodeHeaders ?? {},
             chatNodeTimeout: options.chatNodeTimeout ?? DEFAULT_CHAT_NODE_TIMEOUT,
+            throttleChatNode: options.throttleChatNode ?? 100,
           } satisfies Required<Settings>,
           getChatNodeEndpoint: options.getChatNodeEndpoint,
         },

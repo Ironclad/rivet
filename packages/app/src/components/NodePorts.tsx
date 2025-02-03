@@ -6,6 +6,7 @@ import {
   type PortId,
   type NodeOutputDefinition,
   type DataType,
+  isBuiltInInputDefinition,
 } from '@ironclad/rivet-core';
 import { type FC, type MouseEvent } from 'react';
 import { useNodeIO } from '../hooks/useGetNodeIO.js';
@@ -68,6 +69,8 @@ export const NodePorts: FC<NodePortsProps> = ({
   const { inputDefinitions, outputDefinitions } = useNodeIO(node.id)!;
   const preservePortTextCase = useAtomValue(preservePortTextCaseState);
 
+  const renderedInputDefinitions = inputDefinitions.filter((input) => !isBuiltInInputDefinition(input));
+
   const handlePortMouseDown = useStableCallback((event: MouseEvent<HTMLDivElement>, port: PortId, isInput: boolean) => {
     event.stopPropagation();
     event.preventDefault();
@@ -83,7 +86,7 @@ export const NodePorts: FC<NodePortsProps> = ({
   return (
     <div className="node-ports">
       <div className="input-ports">
-        {inputDefinitions.map((input) => {
+        {renderedInputDefinitions.map((input) => {
           const connected =
             connections.some((conn) => conn.inputNodeId === node.id && conn.inputId === input.id) ||
             (draggingWire?.endNodeId === node.id && draggingWire?.endPortId === input.id);

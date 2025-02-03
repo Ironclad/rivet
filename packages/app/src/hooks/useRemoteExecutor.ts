@@ -178,7 +178,7 @@ export function useRemoteExecutor() {
 
       if (options.from) {
         // Use a local graph processor to get dependency nodes instead of asking the remote debugger
-        const processor = new GraphProcessor(project, graph.metadata!.id!);
+        const processor = new GraphProcessor(project, graph.metadata!.id!, undefined, true);
         const dependencyNodes = processor.getDependencyNodesDeep(options.from);
         const preloadData = getDependentDataForNodeForPreload(dependencyNodes, lastRunData);
 

@@ -27,7 +27,7 @@ export async function loadProjectAndAttachedDataFromFile(path: string): Promise<
   return loadProjectAndAttachedDataFromString(content);
 }
 
-export async function runGraphInFile(path: string, options: RunGraphOptions): Promise<Record<string, DataValue>> {
+export async function runGraphInFile(path: string, options: NodeRunGraphOptions): Promise<Record<string, DataValue>> {
   const project = await loadProjectFromFile(path);
   return runGraph(project, options);
 }
@@ -66,6 +66,7 @@ export function createProcessor(
           nativeApi: options.nativeApi ?? new NodeNativeApi(),
           datasetProvider: options.datasetProvider,
           audioProvider: options.audioProvider,
+          tokenizer: options.tokenizer,
           settings: {
             openAiKey: options.openAiKey ?? process.env.OPENAI_API_KEY ?? '',
             openAiOrganization: options.openAiOrganization ?? process.env.OPENAI_ORG_ID ?? '',
@@ -75,6 +76,7 @@ export function createProcessor(
             recordingPlaybackLatency: 1000,
             chatNodeHeaders: options.chatNodeHeaders ?? {},
             chatNodeTimeout: options.chatNodeTimeout ?? DEFAULT_CHAT_NODE_TIMEOUT,
+            throttleChatNode: options.throttleChatNode ?? 100,
           } satisfies Required<Settings>,
           getChatNodeEndpoint: options.getChatNodeEndpoint,
         },
@@ -87,7 +89,7 @@ export function createProcessor(
   };
 }
 
-export async function runGraph(project: Project, options: RunGraphOptions): Promise<Record<string, DataValue>> {
+export async function runGraph(project: Project, options: NodeRunGraphOptions): Promise<Record<string, DataValue>> {
   const processorInfo = createProcessor(project, options);
   return processorInfo.run();
 }

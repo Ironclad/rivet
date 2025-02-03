@@ -20,6 +20,7 @@ import {
   type NodeId,
   type PortId,
   type NodeOutputDefinition,
+  IF_PORT,
 } from '@ironclad/rivet-core';
 import type { HeightCache } from '../hooks/useNodeBodyHeight';
 import { type ProcessDataForNode } from '../state/dataFlow.js';
@@ -48,6 +49,8 @@ import {
 } from '../state/graphBuilder';
 import { Tooltip } from './Tooltip';
 import { useHistoricalNodeChangeInfo } from '../hooks/useHistoricalNodeChangeInfo';
+import { Port } from './Port';
+import { preservePortTextCaseState } from '../state/settings';
 
 export type VisualNodeProps = {
   heightCache: HeightCache;
@@ -216,6 +219,7 @@ export const VisualNode = memo(
               isComment,
               isPinned,
               disabled: node.disabled,
+              conditional: !!node.isConditional,
             },
             changedClass,
           )}
@@ -282,7 +286,12 @@ const ZoomedOutVisualNodeContent: FC<{
   isReallyZoomedOut: boolean;
   onSelectNode?: (multi: boolean) => void;
   onStartEditing?: () => void;
-  onWireStartDrag?: (event: MouseEvent<HTMLElement>, startNodeId: NodeId, startPortId: PortId) => void;
+  onWireStartDrag?: (
+    event: MouseEvent<HTMLElement>,
+    startNodeId: NodeId,
+    startPortId: PortId,
+    isInput: boolean,
+  ) => void;
   onWireEndDrag?: (event: MouseEvent<HTMLElement>, endNodeId: NodeId, endPortId: PortId) => void;
   onPortMouseOver?: (
     event: MouseEvent<HTMLElement>,
@@ -339,6 +348,24 @@ const ZoomedOutVisualNodeContent: FC<{
     const draggingWire = useAtomValue(draggingWireState);
     const closestPortToDraggingWire = useAtomValue(draggingWireClosestPortState);
 
+    const preservePortTextCase = useRecoilValue(preservePortTextCaseState);
+
+    const handleIfPortMouseDown = useStableCallback(
+      (event: MouseEvent<HTMLDivElement>, port: PortId, isInput: boolean) => {
+        event.stopPropagation();
+        event.preventDefault();
+        onWireStartDrag?.(event, node.id, port, isInput);
+      },
+    );
+
+    const handleIfPortMouseUp = useStableCallback((event: MouseEvent<HTMLDivElement>, port: PortId) => {
+      onWireEndDrag?.(event, node.id, port);
+    });
+
+    const ifConnected =
+      connections.some((conn) => conn.inputNodeId === node.id && conn.inputId === IF_PORT.id) ||
+      (draggingWire?.endNodeId === node.id && draggingWire?.endPortId === IF_PORT.id);
+
     return (
       <>
         <div className="node-title">
@@ -389,6 +416,26 @@ const ZoomedOutVisualNodeContent: FC<{
             </div>
           )}
         </div>
+
+        {node.isConditional && (
+          <div className="node-title-ports input-ports">
+            <Port
+              connected={ifConnected}
+              canDragTo={draggingWire ? !draggingWire.startPortIsInput : false}
+              closest={closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === IF_PORT.id}
+              id={`$if` as PortId}
+              definition={IF_PORT}
+              nodeId={node.id}
+              title="if"
+              input
+              preservePortCase={preservePortTextCase}
+              onMouseOver={onPortMouseOver}
+              onMouseOut={onPortMouseOut}
+              onMouseDown={handleIfPortMouseDown}
+              onMouseUp={handleIfPortMouseUp}
+            />
+          </div>
+        )}
 
         {isKnownNodeType && (
           <NodePortsRenderer
@@ -575,6 +622,24 @@ const NormalVisualNodeContent: FC<{
       setViewingNodeChanges(node.id);
     };
 
+    const preservePortTextCase = useRecoilValue(preservePortTextCaseState);
+
+    const handleIfPortMouseDown = useStableCallback(
+      (event: MouseEvent<HTMLDivElement>, port: PortId, isInput: boolean) => {
+        event.stopPropagation();
+        event.preventDefault();
+        onWireStartDrag?.(event, node.id, port, isInput);
+      },
+    );
+
+    const handleIfPortMouseUp = useStableCallback((event: MouseEvent<HTMLDivElement>, port: PortId) => {
+      onWireEndDrag?.(event, node.id, port);
+    });
+
+    const ifConnected =
+      connections.some((conn) => conn.inputNodeId === node.id && conn.inputId === IF_PORT.id) ||
+      (draggingWire?.endNodeId === node.id && draggingWire?.endPortId === IF_PORT.id);
+
     return (
       <>
         <div className="node-title" onMouseMove={watchShift}>
@@ -657,6 +722,27 @@ const NormalVisualNodeContent: FC<{
             </Tooltip>
           </div>
         </div>
+
+        {node.isConditional && (
+          <div className="node-title-ports input-ports">
+            <Port
+              connected={ifConnected}
+              canDragTo={draggingWire ? !draggingWire.startPortIsInput : false}
+              closest={closestPortToDraggingWire?.nodeId === node.id && closestPortToDraggingWire.portId === IF_PORT.id}
+              id={`$if` as PortId}
+              definition={IF_PORT}
+              nodeId={node.id}
+              title="if"
+              input
+              preservePortCase={preservePortTextCase}
+              onMouseOver={onPortMouseOver}
+              onMouseOut={onPortMouseOut}
+              onMouseDown={handleIfPortMouseDown}
+              onMouseUp={handleIfPortMouseUp}
+            />
+          </div>
+        )}
+
         <ErrorBoundary fallback={<div>Error rendering node body</div>}>
           {isKnownNodeType ? (
             <NodeBody heightCache={heightCache} node={node} />
