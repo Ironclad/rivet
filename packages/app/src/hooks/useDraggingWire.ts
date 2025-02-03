@@ -126,8 +126,12 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
 
       onConnectionsChanged?.([...newConnections, connection]);
 
-      setDraggingWire(undefined);
-      setClosestPortToDraggingWire(undefined);
+      const isControlPressed = event.ctrlKey || event.metaKey;
+
+      if (!isControlPressed) {
+        setDraggingWire(undefined);
+        setClosestPortToDraggingWire(undefined);
+      }
     },
     [
       draggingWire,
@@ -143,8 +147,10 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
 
   useEffect(() => {
     const handleWindowClick = (event: MouseEvent) => {
+      const isControlPressed = event.ctrlKey || event.metaKey;
+
       // If mouse is released without connecting to another port, remove the dragging wire
-      if (draggingWire && event.type === 'mouseup') {
+      if (draggingWire && event.type === 'mouseup' && !isControlPressed) {
         if (!latestClosestPort.current) {
           setDraggingWire(undefined);
         }
