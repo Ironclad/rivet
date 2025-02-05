@@ -65,7 +65,8 @@ export const CodeEditor: FC<{
     if (editorInstance.current) {
       const currentValue = value;
 
-      if (editorInstance.current.getValue() !== currentValue) {
+      // Only set the text explicitly if we're not editing it and have a cursor position.
+      if (editorInstance.current.getValue() !== currentValue && !editorInstance.current.hasTextFocus()) {
         editorInstance.current.setValue(currentValue ?? '');
       }
 
@@ -73,7 +74,6 @@ export const CodeEditor: FC<{
         readOnly: isReadonly,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, isReadonly]);
 
   const handleKeyDown = (e: monaco.IKeyboardEvent) => {
