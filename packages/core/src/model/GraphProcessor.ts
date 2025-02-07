@@ -1587,7 +1587,6 @@ export class GraphProcessor {
 
     if (node.isConditional && typeOfExclusion === undefined) {
       const ifValue = coerceTypeOptional(inputValues[IF_PORT.id], 'boolean');
-      console.dir({ ifValue, inputValues });
       if (ifValue === false) {
         this.#emitTraceEvent(`Excluding node ${node.title} because if port is false`);
 

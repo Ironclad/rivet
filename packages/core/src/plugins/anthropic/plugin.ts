@@ -17,5 +17,14 @@ export const anthropicPlugin: RivetPlugin = {
       pullEnvironmentVariable: 'ANTHROPIC_API_KEY',
       helperText: 'You may also set the ANTHROPIC_API_KEY environment variable.',
     },
+    anthropicApiEndpoint: {
+      type: 'string',
+      label: 'Anthropic API Endpoint',
+      description: 'The API endpoint for the Anthropic service.',
+      pullEnvironmentVariable: 'ANTHROPIC_API_ENDPOINT',
+      helperText:
+        'Defaults to https://api.anthropic.com/v1. You may also set the ANTHROPIC_API_ENDPOINT environment variable.',
+      default: 'https://api.anthropic.com/v1',
+    },
   },
 };

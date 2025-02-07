@@ -126,6 +126,7 @@ export type Claude3ChatMessageContentPart =
   | Claude3ChatMessageToolUseContentPart;
 
 export type ChatMessageOptions = {
+  apiEndpoint: string;
   apiKey: string;
   model: AnthropicModels;
   messages: Claude3ChatMessage[];
@@ -146,6 +147,7 @@ export type ChatMessageOptions = {
 };
 
 export type ChatCompletionOptions = {
+  apiEndpoint: string;
   apiKey: string;
   model: AnthropicModels;
   prompt: string;
@@ -251,12 +253,13 @@ export type ChatMessageResponse = {
 };
 
 export async function* streamChatCompletions({
+  apiEndpoint,
   apiKey,
   signal,
   ...rest
 }: ChatCompletionOptions): AsyncGenerator<ChatCompletionChunk> {
   const defaultSignal = new AbortController().signal;
-  const response = await fetchEventSource('https://api.anthropic.com/v1/completions', {
+  const response = await fetchEventSource(`${apiEndpoint}/completions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -301,6 +304,7 @@ export async function* streamChatCompletions({
 }
 
 export async function callMessageApi({
+  apiEndpoint,
   apiKey,
   signal,
   tools,
@@ -308,7 +312,7 @@ export async function callMessageApi({
   ...rest
 }: ChatMessageOptions): Promise<ChatMessageResponse> {
   const defaultSignal = new AbortController().signal;
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+  const response = await fetch(`${apiEndpoint}/messages`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -331,6 +335,7 @@ export async function callMessageApi({
 }
 
 export async function* streamMessageApi({
+  apiEndpoint,
   apiKey,
   signal,
   beta,
@@ -338,8 +343,7 @@ export async function* streamMessageApi({
 }: ChatMessageOptions): AsyncGenerator<ChatMessageChunk> {
   // Use the Messages API for Claude 3 models
   const defaultSignal = new AbortController().signal;
-  console.dir({ rest }, { depth: null });
-  const response = await fetchEventSource('https://api.anthropic.com/v1/messages', {
+  const response = await fetchEventSource(`${apiEndpoint}/messages`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

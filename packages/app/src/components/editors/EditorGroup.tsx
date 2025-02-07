@@ -111,7 +111,9 @@ export const EditorGroup: FC<
       >
         <div className="editor-group">
           {editors.map((editor, i) => {
-            return <DefaultNodeEditorField key={i} {...sharedProps} editor={editor} />;
+            const isDisabled = editor.disableIf?.(sharedProps.node.data) || sharedProps.isDisabled;
+
+            return <DefaultNodeEditorField key={i} {...sharedProps} editor={editor} isDisabled={isDisabled} />;
           })}
         </div>
       </Collapsible>

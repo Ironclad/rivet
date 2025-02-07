@@ -42,6 +42,7 @@ import type { TokenizerCallInfo } from '../../../integrations/Tokenizer.js';
 import { assertNever } from '../../../utils/assertNever.js';
 import { isNotNull } from '../../../utils/genericUtilFunctions.js';
 import { uint8ArrayToBase64 } from '../../../utils/base64.js';
+import { getInputOrData } from '../../../utils/inputs.js';
 
 export type ChatAnthropicNode = ChartNode<'chatAnthropic', ChatAnthropicNodeData>;
 
@@ -54,6 +55,8 @@ export type ChatAnthropicNodeConfigData = {
   maxTokens: number;
   stop?: string;
   enableToolUse?: boolean;
+  endpoint?: string;
+  overrideModel?: string;
 };
 
 export type ChatAnthropicNodeData = ChatAnthropicNodeConfigData & {
@@ -65,6 +68,8 @@ export type ChatAnthropicNodeData = ChatAnthropicNodeConfigData & {
   useMaxTokensInput: boolean;
   useStop: boolean;
   useStopInput: boolean;
+  useEndpointInput: boolean;
+  useOverrideModelInput: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
@@ -113,6 +118,12 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
         useAsGraphPartialOutput: true,
 
         enableToolUse: false,
+
+        endpoint: '',
+        useEndpointInput: false,
+
+        overrideModel: undefined,
+        useOverrideModelInput: false,
       },
     };
 
@@ -227,7 +238,10 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
   },
 
   getBody(data): string {
-    const modelName = anthropicModels[data.model]?.displayName ?? 'Unknown Model';
+    const modelName = data.overrideModel
+      ? data.overrideModel
+      : anthropicModels[data.model]?.displayName ?? 'Unknown Model';
+
     return dedent`
       ${modelName}
       ${
@@ -243,65 +257,101 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
   getEditors(): EditorDefinition<ChatAnthropicNode>[] {
     return [
       {
-        type: 'dropdown',
-        label: 'Model',
-        dataKey: 'model',
-        useInputToggleDataKey: 'useModelInput',
-        options: anthropicModelOptions,
+        type: 'group',
+        label: 'Parameters',
+        defaultOpen: true,
+        editors: [
+          {
+            type: 'dropdown',
+            label: 'Model',
+            dataKey: 'model',
+            useInputToggleDataKey: 'useModelInput',
+            options: anthropicModelOptions,
+            disableIf: (d) => !!d.overrideModel?.trim(),
+            helperMessage: (d) => (!!d.overrideModel ? `Model is overridden to: ${d.overrideModel}` : ''),
+          },
+          {
+            type: 'number',
+            label: 'Temperature',
+            dataKey: 'temperature',
+            useInputToggleDataKey: 'useTemperatureInput',
+            min: 0,
+            max: 2,
+            step: 0.1,
+          },
+          {
+            type: 'number',
+            label: 'Top P',
+            dataKey: 'top_p',
+            useInputToggleDataKey: 'useTopPInput',
+            min: 0,
+            max: 1,
+            step: 0.1,
+          },
+          {
+            type: 'toggle',
+            label: 'Use Top P',
+            dataKey: 'useTopP',
+            useInputToggleDataKey: 'useUseTopPInput',
+          },
+          {
+            type: 'number',
+            label: 'Max Tokens',
+            dataKey: 'maxTokens',
+            useInputToggleDataKey: 'useMaxTokensInput',
+            min: 0,
+            max: Number.MAX_SAFE_INTEGER,
+            step: 1,
+          },
+          {
+            type: 'string',
+            label: 'Stop',
+            dataKey: 'stop',
+            useInputToggleDataKey: 'useStopInput',
+          },
+        ],
       },
       {
-        type: 'number',
-        label: 'Temperature',
-        dataKey: 'temperature',
-        useInputToggleDataKey: 'useTemperatureInput',
-        min: 0,
-        max: 2,
-        step: 0.1,
+        type: 'group',
+        label: 'Tools',
+        editors: [
+          {
+            type: 'toggle',
+            label: 'Enable Tool Use (disables streaming)',
+            dataKey: 'enableToolUse',
+          },
+        ],
       },
       {
-        type: 'number',
-        label: 'Top P',
-        dataKey: 'top_p',
-        useInputToggleDataKey: 'useTopPInput',
-        min: 0,
-        max: 1,
-        step: 0.1,
-      },
-      {
-        type: 'toggle',
-        label: 'Use Top P',
-        dataKey: 'useTopP',
-        useInputToggleDataKey: 'useUseTopPInput',
-      },
-      {
-        type: 'number',
-        label: 'Max Tokens',
-        dataKey: 'maxTokens',
-        useInputToggleDataKey: 'useMaxTokensInput',
-        min: 0,
-        max: Number.MAX_SAFE_INTEGER,
-        step: 1,
-      },
-      {
-        type: 'string',
-        label: 'Stop',
-        dataKey: 'stop',
-        useInputToggleDataKey: 'useStopInput',
-      },
-      {
-        type: 'toggle',
-        label: 'Cache (same inputs, same outputs)',
-        dataKey: 'cache',
-      },
-      {
-        type: 'toggle',
-        label: 'Use for subgraph partial output',
-        dataKey: 'useAsGraphPartialOutput',
-      },
-      {
-        type: 'toggle',
-        label: 'Enable Tool Use (disables streaming)',
-        dataKey: 'enableToolUse',
+        type: 'group',
+        label: 'Advanced',
+        editors: [
+          {
+            type: 'toggle',
+            label: 'Cache (same inputs, same outputs)',
+            dataKey: 'cache',
+          },
+          {
+            type: 'toggle',
+            label: 'Use for subgraph partial output',
+            dataKey: 'useAsGraphPartialOutput',
+          },
+          {
+            type: 'string',
+            label: 'Endpoint',
+            dataKey: 'endpoint',
+            useInputToggleDataKey: 'useEndpointInput',
+            helperMessage:
+              'Overrides the Anthropic API endpoint. Leave blank to use the default configured endpoint in settings, or https://api.anthropic.com/v1 if none is configured.',
+          },
+          {
+            type: 'string',
+            label: 'Override Model',
+            dataKey: 'overrideModel',
+            useInputToggleDataKey: 'useOverrideModelInput',
+            helperMessage: 'Overrides the AI model used for the chat node to this value.',
+          },
+        ],
       },
     ];
   },
@@ -406,7 +456,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
     try {
       return await retry(
         async () => {
-          const completionOptions: Omit<ChatCompletionOptions, 'apiKey' | 'signal'> = {
+          const completionOptions: Omit<ChatCompletionOptions, 'apiKey' | 'apiEndpoint' | 'signal'> = {
             model,
             temperature: useTopP ? undefined : temperature,
             top_p: useTopP ? topP : undefined,
@@ -414,7 +464,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
             stop_sequences: stop ? [stop] : undefined,
             prompt,
           };
-          const messageOptions: Omit<ChatMessageOptions, 'apiKey' | 'signal'> = {
+          const messageOptions: Omit<ChatMessageOptions, 'apiKey' | 'apiEndpoint' | 'signal'> = {
             model,
             temperature: useTopP ? undefined : temperature,
             top_p: useTopP ? topP : undefined,
@@ -437,10 +487,16 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
 
           const startTime = Date.now();
           const apiKey = context.getPluginConfig('anthropicApiKey');
+          const defaultApiEndpoint = context.getPluginConfig('anthropicApiEndpoint') ?? 'https://api.anthropic.com/v1';
+
+          const configuredEndpoint = getInputOrData(data, inputs, 'endpoint');
+
+          const apiEndpoint = configuredEndpoint?.trim() ? configuredEndpoint : defaultApiEndpoint;
 
           if (useMessageApi && data.enableToolUse) {
             // Streaming is not supported with tool usage.
             const response = await callMessageApi({
+              apiEndpoint,
               apiKey: apiKey ?? '',
               beta: 'prompt-caching-2024-07-31',
               ...messageOptions,
@@ -499,6 +555,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
           } else if (useMessageApi) {
             // Use the messages API for Claude 3 models
             const chunks = streamMessageApi({
+              apiEndpoint,
               apiKey: apiKey ?? '',
               signal: context.signal,
               beta: 'prompt-caching-2024-07-31',
@@ -554,6 +611,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
           } else {
             // Use the normal chat completion method for non-Claude 3 models
             const chunks = streamChatCompletions({
+              apiEndpoint,
               apiKey: apiKey ?? '',
               signal: context.signal,
               ...completionOptions,
@@ -807,8 +865,6 @@ async function chatMessageToClaude3ChatMessage(message: ChatMessage): Promise<Cl
   if (message.isCacheBreakpoint) {
     content.at(-1)!.cache_control = { type: 'ephemeral' };
   }
-
-  console.dir({ content }, { depth: null });
 
   return {
     role: message.type,
