@@ -60,7 +60,9 @@ export type InputsOrOutputsWithRefs = {
 export type DataValueWithRefs = {
   [P in DataType]: {
     type: P;
-    value: P extends 'binary' | 'audio' | 'image' ? { ref: string } : Extract<DataValue, { type: P }>['value'];
+    value: P extends 'binary' | 'audio' | 'image' | 'document' | 'chat-message'
+      ? { ref: string }
+      : Extract<DataValue, { type: P }>['value'];
   };
 }[DataType];
 

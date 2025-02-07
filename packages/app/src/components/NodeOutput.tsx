@@ -10,7 +10,14 @@ import { type FC, type ReactNode, memo, useMemo, useState, type MouseEvent } fro
 import { useUnknownNodeComponentDescriptorFor } from '../hooks/useNodeTypes.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { copyToClipboard } from '../utils/copyToClipboard.js';
-import { type ChartNode, type PortId, type ProcessId, getWarnings, type Outputs } from '@ironclad/rivet-core';
+import {
+  type ChartNode,
+  type PortId,
+  type ProcessId,
+  getWarnings,
+  type Outputs,
+  type ChatMessageDataValue,
+} from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import CopyIcon from 'majesticons/line/clipboard-line.svg?react';
 import ExpandIcon from 'majesticons/line/maximize-line.svg?react';
@@ -27,6 +34,7 @@ import Toggle from '@atlaskit/toggle';
 import { pinnedNodesState } from '../state/graphBuilder';
 import { useNodeIO } from '../hooks/useGetNodeIO';
 import { Tooltip } from './Tooltip';
+import { getGlobalDataRef } from '../utils/globals';
 
 export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -217,11 +225,19 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
     if (outputValue.type === 'string') {
       copyToClipboard(outputValue.value);
     } else if (outputValue.type === 'chat-message') {
-      if (Array.isArray(outputValue.value)) {
-        const singleString = outputValue.value.map((v) => (typeof v === 'string' ? v : '(Image)')).join('\n\n');
+      const resolved = getGlobalDataRef(outputValue.value.ref);
+
+      if (!resolved) {
+        return;
+      }
+
+      const chatMessage = resolved as ChatMessageDataValue | ChatMessageDataValue[];
+
+      if (Array.isArray(chatMessage)) {
+        const singleString = chatMessage.map((v) => (typeof v === 'string' ? v : '(Image)')).join('\n\n');
         copyToClipboard(singleString);
       } else {
-        copyToClipboard(typeof outputValue.value.message === 'string' ? outputValue.value.message : '(Image)');
+        copyToClipboard(typeof chatMessage.value.message === 'string' ? chatMessage.value.message : '(Image)');
       }
     } else {
       copyToClipboard(JSON.stringify(outputValue, null, 2));
@@ -408,11 +424,19 @@ const NodeOutputSingleProcess: FC<{
       if (outputValue.type === 'string') {
         copyToClipboard(outputValue.value);
       } else if (outputValue.type === 'chat-message') {
-        if (Array.isArray(outputValue.value)) {
-          const singleString = outputValue.value.map((v) => (typeof v === 'string' ? v : '(Image)')).join('\n\n');
+        const resolved = getGlobalDataRef(outputValue.value.ref);
+
+        if (!resolved) {
+          return;
+        }
+
+        const chatMessage = resolved as ChatMessageDataValue | ChatMessageDataValue;
+
+        if (Array.isArray(chatMessage.value)) {
+          const singleString = chatMessage.value.map((v) => (typeof v === 'string' ? v : '(Image)')).join('\n\n');
           copyToClipboard(singleString);
         } else {
-          copyToClipboard(typeof outputValue.value.message === 'string' ? outputValue.value.message : '(Image)');
+          copyToClipboard(typeof chatMessage.value.message === 'string' ? chatMessage.value.message : '(Image)');
         }
       } else {
         copyToClipboard(JSON.stringify(outputValue, null, 2));

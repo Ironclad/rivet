@@ -365,7 +365,7 @@ function coerceToBinary(value: DataValue | undefined): Uint8Array | undefined {
     return new Uint8Array([value.value]);
   }
 
-  if (value.type === 'audio' || value.type === 'image') {
+  if (value.type === 'audio' || value.type === 'image' || value.type === 'document') {
     return value.value.data;
   }
 

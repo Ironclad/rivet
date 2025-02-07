@@ -104,6 +104,23 @@ export type Claude3ChatMessageImageContentPart = {
   cache_control: CacheControl;
 };
 
+export type Claude3ChatMessageDocumentContentPart = {
+  type: 'document';
+  source: {
+    type: 'base64';
+    media_type: string;
+    data: string;
+  };
+  title: string | undefined;
+  context: string | undefined;
+  citations:
+    | undefined
+    | {
+        enabled: true;
+      };
+  cache_control: CacheControl;
+};
+
 export type Claude3ChatMessageToolResultContentPart = {
   type: 'tool_result';
   tool_use_id: string;
@@ -123,7 +140,8 @@ export type Claude3ChatMessageContentPart =
   | Claude3ChatMessageTextContentPart
   | Claude3ChatMessageImageContentPart
   | Claude3ChatMessageToolResultContentPart
-  | Claude3ChatMessageToolUseContentPart;
+  | Claude3ChatMessageToolUseContentPart
+  | Claude3ChatMessageDocumentContentPart;
 
 export type ChatMessageOptions = {
   apiEndpoint: string;
@@ -212,10 +230,15 @@ export type ChatMessageChunk =
   | {
       type: 'content_block_delta';
       index: number;
-      delta: {
-        type: 'text_delta';
-        text: string;
-      };
+      delta:
+        | {
+            type: 'text_delta';
+            text: string;
+          }
+        | {
+            type: 'citations_delta';
+            citation: ChatMessageCitation;
+          };
     }
   | {
       type: 'message_delta';
@@ -233,16 +256,7 @@ export type ChatMessageChunk =
 
 export type ChatMessageResponse = {
   id: string;
-  content: (
-    | {
-        text: string;
-      }
-    | {
-        id: string;
-        name: string;
-        input: object;
-      }
-  )[];
+  content: ChatMessageContentItem[];
   model: string;
   stop_reason: 'end_turn';
   stop_sequence: string;
@@ -251,6 +265,39 @@ export type ChatMessageResponse = {
     output_tokens: number;
   };
 };
+
+export type ChatMessageTextContentItem = {
+  type: 'text';
+  text: string;
+  citations?: ChatMessageCitation[];
+};
+
+export type ChatMessageToolUseContentItem = {
+  type: 'tool_use';
+  id: string;
+  name: string;
+  input: object;
+};
+
+export type ChatMessageContentItem = ChatMessageTextContentItem | ChatMessageToolUseContentItem;
+
+export type ChatMessageCitation =
+  | {
+      type: 'char_location';
+      cited_text: string;
+      document_index: number;
+      document_title: string | null;
+      start_char_index: number;
+      end_chat_index: number;
+    }
+  | {
+      type: 'page_location';
+      cited_text: string;
+      document_index: number;
+      document_title: string | null;
+      page_number: number;
+      end_page_number: number;
+    };
 
 export async function* streamChatCompletions({
   apiEndpoint,

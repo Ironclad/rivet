@@ -764,9 +764,9 @@ const NormalVisualNodeContent: FC<{
           />
         )}
 
-        <ErrorBoundary fallback={<div>Error rendering node output</div>}>
-          <NodeOutput node={node} />
-        </ErrorBoundary>
+        {/* <ErrorBoundary fallback={<div>Error rendering node output</div>}> */}
+        <NodeOutput node={node} />
+        {/* </ErrorBoundary> */}
         <div className="node-resize">
           <ResizeHandle onResizeStart={handleResizeStart} onResizeMove={handleResizeMove} />
         </div>

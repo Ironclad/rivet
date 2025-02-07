@@ -80,7 +80,7 @@ export class AssembleMessageNodeImpl extends NodeImpl<AssembleMessageNode> {
 
     for (let i = 1; i <= messageCount; i++) {
       inputs.push({
-        dataType: ['string', 'image', 'string[]', 'image[]', 'object', 'object[]'] as const,
+        dataType: ['string', 'image', 'string[]', 'image[]', 'object', 'object[]', 'document', 'document[]'] as const,
         id: `part${i}` as PortId,
         title: `Part ${i}`,
         description: 'A part of the message to assemble.',
@@ -147,7 +147,7 @@ export class AssembleMessageNodeImpl extends NodeImpl<AssembleMessageNode> {
     return {
       infoBoxBody: dedent`
         Assembles a single chat message from multiple parts. This is similar to a Prompt node, but works with multimodal
-        models, as you can include both text and images in the message.
+        models, as you can include text, images, and documents in the message.
       `,
       infoBoxTitle: 'Assemble Message Node',
       contextMenuTitle: 'Assemble Message',
@@ -241,6 +241,15 @@ export class AssembleMessageNodeImpl extends NodeImpl<AssembleMessageNode> {
               url: message.value.url,
             });
           }
+        } else if (message.type === 'document') {
+          outMessage.message.push({
+            type: 'document',
+            data: message.value.data,
+            mediaType: message.value.mediaType,
+            context: message.value.context,
+            title: message.value.title,
+            enableCitations: message.value.enableCitations,
+          });
         } else {
           const coerced = coerceTypeOptional(message, 'string');
 

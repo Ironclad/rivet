@@ -9,6 +9,10 @@ import {
   coerceTypeOptional,
   getScalarTypeOf,
   isArrayDataValue,
+  isScalarDataType,
+  isScalarDataValue,
+  arrayizeDataValue,
+  type ChatMessageMessagePart,
 } from '@ironclad/rivet-core';
 import { produce } from 'immer';
 import { cloneDeep, mapValues } from 'lodash-es';
@@ -31,7 +35,7 @@ import { lastRecordingState } from '../state/execution';
 import { trivetTestsRunningState } from '../state/trivet';
 import { useLatest } from 'ahooks';
 import { entries, keys } from '../../../core/src/utils/typeSafety';
-import { match } from 'ts-pattern';
+import { P, match } from 'ts-pattern';
 import { previousDataPerNodeToKeepState } from '../state/settings';
 import { nanoid } from 'nanoid';
 import { setGlobalDataRef } from '../utils/globals';
@@ -91,6 +95,95 @@ function sanitizeDataValueForLength(value: DataValue | undefined) {
     .otherwise((value): DataValue | undefined => value);
 }
 
+export function fixDataValueUint8Arrays(value: DataValue | undefined): DataValue | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  if (isArrayDataValue(value)) {
+    const arrayized = arrayizeDataValue(value);
+
+    const fixed = arrayized.map((val) => fixDataValueUint8Arrays(val));
+
+    return {
+      ...value,
+      value: fixed.map((v) => v!.value),
+    } as DataValue;
+  }
+
+  const fix = (value: Uint8Array | object) =>
+    value instanceof Uint8Array ? value : Uint8Array.from(Object.values(value));
+
+  const fixed = match(value)
+    .with({ type: 'binary' }, (value): DataValue => {
+      return {
+        ...value,
+        value: fix(value.value),
+      };
+    })
+    .with({ type: 'audio' }, (value): DataValue => {
+      return {
+        ...value,
+        value: {
+          ...value.value,
+          data: fix(value.value.data),
+        },
+      };
+    })
+    .with({ type: 'document' }, (value): DataValue => {
+      return {
+        ...value,
+        value: {
+          ...value.value,
+          data: fix(value.value.data),
+        },
+      };
+    })
+    .with({ type: 'image' }, (value): DataValue => {
+      return {
+        ...value,
+        value: {
+          ...value.value,
+          data: fix(value.value.data),
+        },
+      };
+    })
+    .with({ type: 'chat-message' }, (value): DataValue => {
+      if (Array.isArray(value.value.message)) {
+        return {
+          ...value,
+          value: {
+            ...value.value,
+            message: value.value.message.map((part) => fixChatMessagePartUint8Arrays(part)),
+          },
+        };
+      }
+
+      return {
+        ...value,
+        value: {
+          ...value.value,
+          message: fixChatMessagePartUint8Arrays(value.value.message),
+        },
+      };
+    })
+    .otherwise((value): DataValue => value);
+
+  return fixed;
+}
+
+function fixChatMessagePartUint8Arrays(part: ChatMessageMessagePart): ChatMessageMessagePart {
+  return match(part)
+    .with(P.string, (part) => part)
+    .with({ type: 'document' }, (part) => {
+      return {
+        ...part,
+        data: Uint8Array.from(Object.values(part.data)),
+      };
+    })
+    .otherwise((part) => part);
+}
+
 function cloneNodeDataForHistory(data: Partial<NodeRunData>): Partial<NodeRunDataWithRefs> {
   return {
     ...data,
@@ -120,13 +213,30 @@ function cloneNodeInputOrOutputDataForHistory(data: Inputs | Outputs | undefined
 
 function convertToRef(value: DataValue): DataValueWithRefs {
   const scalarType = getScalarTypeOf(value.type);
-  if (scalarType !== 'audio' && scalarType !== 'binary' && scalarType !== 'image') {
+  if (
+    scalarType !== 'audio' &&
+    scalarType !== 'binary' &&
+    scalarType !== 'image' &&
+    scalarType !== 'document' &&
+    scalarType !== 'chat-message'
+  ) {
     return cloneDeep(value) as DataValueWithRefs;
   }
 
-  const refId = nanoid();
-  setGlobalDataRef(refId, value);
-  return { type: value.type, value: { ref: refId } } as DataValueWithRefs;
+  if (isScalarDataValue(value)) {
+    const refId = nanoid();
+    setGlobalDataRef(refId, value);
+    return { type: value.type, value: { ref: refId } } as DataValueWithRefs;
+  } else if (isArrayDataValue(value)) {
+    const mappedValues = value.value.map((val) => {
+      const asRef = convertToRef({ type: getScalarTypeOf(value.type), value: val } as DataValue);
+      return asRef.value;
+    });
+
+    return { type: value.type, value: mappedValues } as DataValueWithRefs;
+  } else {
+    return cloneDeep(value) as DataValueWithRefs;
+  }
 }
 
 export function useCurrentExecution() {
@@ -190,7 +300,8 @@ export function useCurrentExecution() {
   const onNodeStart = ({ node, inputs, processId }: ProcessEvents['nodeStart']) => {
     const sanitizedInputs: Inputs = {};
     for (const [key, value] of entries(inputs)) {
-      sanitizedInputs[key] = sanitizeDataValueForLength(value) as DataValue;
+      const uint8ArrayFixed = fixDataValueUint8Arrays(value) as DataValue;
+      sanitizedInputs[key] = sanitizeDataValueForLength(uint8ArrayFixed) as DataValue;
     }
 
     setDataForNode(node.id, processId, {
@@ -204,7 +315,8 @@ export function useCurrentExecution() {
   const onNodeFinish = ({ node, outputs, processId }: ProcessEvents['nodeFinish']) => {
     const sanitizedOutputs: Outputs = {};
     for (const [key, value] of entries(outputs)) {
-      sanitizedOutputs[key] = sanitizeDataValueForLength(value) as DataValue;
+      const uint8ArrayFixed = fixDataValueUint8Arrays(value) as DataValue;
+      sanitizedOutputs[key] = sanitizeDataValueForLength(uint8ArrayFixed) as DataValue;
     }
 
     setDataForNode(node.id, processId, {

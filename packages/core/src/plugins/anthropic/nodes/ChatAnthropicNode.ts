@@ -28,6 +28,8 @@ import {
   callMessageApi,
   type Claude3ChatMessageTextContentPart,
   type SystemPrompt,
+  type ChatMessageTextContentItem,
+  type ChatMessageCitation,
 } from '../anthropic.js';
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
@@ -57,6 +59,7 @@ export type ChatAnthropicNodeConfigData = {
   enableToolUse?: boolean;
   endpoint?: string;
   overrideModel?: string;
+  enableCitations?: boolean;
 };
 
 export type ChatAnthropicNodeData = ChatAnthropicNodeConfigData & {
@@ -124,6 +127,8 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
 
         overrideModel: undefined,
         useOverrideModelInput: false,
+
+        enableCitations: false,
       },
     };
 
@@ -217,6 +222,15 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
       id: 'response' as PortId,
       title: 'Response',
     });
+
+    if (data.enableCitations) {
+      outputs.push({
+        dataType: 'object[]',
+        id: 'citations' as PortId,
+        title: 'Citations',
+        description: 'Citations from the response, if any.',
+      });
+    }
 
     if (data.enableToolUse) {
       outputs.push({
@@ -320,6 +334,11 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
             label: 'Enable Tool Use (disables streaming)',
             dataKey: 'enableToolUse',
           },
+          {
+            type: 'toggle',
+            label: 'Enable Citations',
+            dataKey: 'enableCitations',
+          },
         ],
       },
       {
@@ -373,10 +392,11 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
     }
 
     const output: Outputs = {};
-    const rawModel = data.useModelInput
-      ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? data.model
-      : data.model;
-    const model = rawModel as AnthropicModels;
+    const rawModel = getInputOrData(data, inputs, 'model');
+    const overrideModel = getInputOrData(data, inputs, 'overrideModel');
+
+    const model = (overrideModel || rawModel) as AnthropicModels;
+
     const temperature = data.useTemperatureInput
       ? coerceTypeOptional(inputs['temperature' as PortId], 'number') ?? data.temperature
       : data.temperature;
@@ -502,14 +522,31 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
               ...messageOptions,
             });
             const { input_tokens: requestTokens, output_tokens: responseTokens } = response.usage;
+
             const responseText = response.content
               .map((c): string | undefined => (c as any).text)
               .filter(isNotNull)
               .join('');
+
             output['response' as PortId] = {
               type: 'string',
               value: responseText,
             };
+
+            const citations = response.content
+              .filter((c): c is ChatMessageTextContentItem => c.type === 'text')
+              .flatMap((c) => c.citations ?? []);
+
+            output['citations' as PortId] = {
+              type: 'object[]',
+              value: citations,
+            };
+
+            output['raw_response' as PortId] = {
+              type: 'object[]',
+              value: response.content,
+            };
+
             const functionCalls = response.content
               .filter((content) => (content as any).name && (content as any).id)
               .map((functionCall: any) => ({
@@ -548,6 +585,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
                 } satisfies ChatMessage,
               ],
             };
+
             output['requestTokens' as PortId] = { type: 'number', value: requestTokens ?? tokenCountEstimate };
             const responseTokenCount =
               responseTokens ?? context.tokenizer.getTokenCountForString(responseText, tokenizerInfo);
@@ -566,25 +604,40 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
             const responseParts: string[] = [];
             let requestTokens: number | undefined = undefined;
             let responseTokens: number | undefined = undefined;
+
+            const citations: ChatMessageCitation[] = [];
+
             for await (const chunk of chunks) {
               let completion: string = '';
               if (chunk.type === 'content_block_start') {
                 completion = chunk.content_block.text;
               } else if (chunk.type === 'content_block_delta') {
-                completion = chunk.delta.text;
+                if (chunk.delta.type === 'text_delta') {
+                  completion = chunk.delta.text;
+                } else {
+                  citations.push(chunk.delta.citation);
+                }
               } else if (chunk.type === 'message_start' && chunk.message?.usage?.input_tokens) {
                 requestTokens = chunk.message.usage.input_tokens;
               } else if (chunk.type === 'message_delta' && chunk.delta?.usage?.output_tokens) {
                 responseTokens = chunk.delta.usage.output_tokens;
               }
+
               if (!completion) {
                 continue;
               }
+
               responseParts.push(completion);
               output['response' as PortId] = {
                 type: 'string',
                 value: responseParts.join('').trim(),
               };
+
+              output['citations' as PortId] = {
+                type: 'object[]',
+                value: citations,
+              };
+
               output['all-messages' as PortId] = {
                 type: 'chat-message[]',
                 value: [
@@ -895,6 +948,19 @@ async function chatMessageContentToClaude3ChatMessage(
       };
     case 'url':
       throw new Error('unable to convert urls for Claude');
+    case 'document':
+      return {
+        type: 'document',
+        source: {
+          type: 'base64' as const,
+          data: (await uint8ArrayToBase64(content.data)) ?? '',
+          media_type: content.mediaType as string,
+        },
+        title: content.title,
+        context: content.context,
+        citations: content.enableCitations ? { enabled: true } : undefined,
+        cache_control: null, // set later
+      };
     default:
       assertNever(content);
   }

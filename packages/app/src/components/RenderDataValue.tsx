@@ -14,6 +14,8 @@ import {
   type AudioDataValue,
   isArrayDataType,
   type ScalarOrArrayDataValue,
+  type DocumentDataValue,
+  type ChatMessageDataValue,
 } from '@ironclad/rivet-core';
 import { css } from '@emotion/react';
 import { keys } from '../../../core/src/utils/typeSafety';
@@ -23,6 +25,7 @@ import { P, match } from 'ts-pattern';
 import clsx from 'clsx';
 import { type InputsOrOutputsWithRefs, type DataValueWithRefs, type ScalarDataValueWithRefs } from '../state/dataFlow';
 import { getGlobalDataRef } from '../utils/globals';
+import prettyBytes from 'pretty-bytes';
 
 const styles = css`
   .chat-message.user header em {
@@ -108,9 +111,17 @@ const scalarRenderers: {
     return <pre className="pre-wrap">{truncated}</pre>;
   },
   'chat-message': ({ value, renderMarkdown }) => {
-    const parts = Array.isArray(value.value.message) ? value.value.message : [value.value.message];
+    const resolved = getGlobalDataRef(value.value.ref);
 
-    const message = value.value;
+    if (!resolved) {
+      return <div>Could not find data.</div>;
+    }
+
+    const { value: realValue } = resolved as ChatMessageDataValue;
+
+    const parts = Array.isArray(realValue.message) ? realValue.message : [realValue.message];
+
+    const message = realValue;
 
     const messageContent = (
       <div className="message-content">
@@ -276,6 +287,27 @@ const scalarRenderers: {
   'graph-reference': ({ value }) => {
     return <div>(Reference to graph &quot;{value.value.graphName}&quot;)</div>;
   },
+  document: ({ value }) => {
+    const resolved = getGlobalDataRef(value.value.ref);
+    if (!resolved) {
+      return <div>Could not find data.</div>;
+    }
+
+    const {
+      value: { context, data, title, enableCitations, mediaType },
+    } = resolved as DocumentDataValue;
+
+    return (
+      <div>
+        <p>
+          {title ? `Document: ${title}` : 'Document'} ({mediaType})
+        </p>
+        {context && <p>{context}</p>}
+        {enableCitations && <p>(Citations enabled)</p>}
+        Size: {data.length > 0 ? prettyBytes(data.length) : '0 bytes'}
+      </div>
+    );
+  },
 };
 /* eslint-enable react-hooks/rules-of-hooks -- These are components (ish) */
 
@@ -301,6 +333,20 @@ const RenderChatMessagePart: FC<{ part: ChatMessageMessagePart; renderMarkdown?:
     .with({ type: 'url' }, (part) => {
       return <img className="chat-message-url-image" src={part.url} alt={part.url} />;
     })
+    .with({ type: 'document' }, (part) => {
+      const { data, mediaType, context, title, enableCitations } = part;
+
+      return (
+        <div>
+          <p>
+            {title ? `Document: ${title}` : 'Document'} ({mediaType})
+          </p>
+          {context && <p>{context}</p>}
+          {enableCitations && <p>(Citations enabled)</p>}
+          Size: {data.length > 0 ? prettyBytes(data.length) : '0 bytes'}
+        </div>
+      );
+    })
     .exhaustive();
 };
 
@@ -317,9 +363,9 @@ export const RenderDataValue: FC<{
     return <>undefined</>;
   }
 
-  const keys = Object.keys(value?.value ?? {});
   if (isArrayDataType(value.type)) {
     const items = arrayizeDataValue(value as ScalarOrArrayDataValue);
+
     return (
       <div
         css={multiOutput}
