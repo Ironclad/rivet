@@ -148,7 +148,10 @@ export const openedProjectsState = atom(
   (get, set, newValue: Record<ProjectId, OpenedProjectInfo> | undefined) => {
     set(projectsState, {
       ...get(projectsState),
-      openedProjects: newValue ?? {},
+      openedProjects: {
+        ...get(projectsState).openedProjects,
+        ...newValue,
+      },
     });
   },
 );
