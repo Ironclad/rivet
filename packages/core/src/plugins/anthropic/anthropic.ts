@@ -66,13 +66,21 @@ export const anthropicModels = {
     },
     displayName: 'Claude 3 Opus',
   },
-  'claude-3-5-sonnet-20240620': {
+  'claude-3-5-sonnet-latest': {
     maxTokens: 200_000,
     cost: {
       prompt: 3e-6,
       completion: 15e-6,
     },
     displayName: 'Claude 3.5 Sonnet',
+  },
+  'claude-3-5-haiku-latest': {
+    maxTokens: 200_000,
+    cost: {
+      prompt: 0.8e-6,
+      completion: 4e-6,
+    },
+    displayName: 'Claude 3.5 Haiku',
   },
 } satisfies Record<string, AnthropicModel>;
 

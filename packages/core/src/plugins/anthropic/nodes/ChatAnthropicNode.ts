@@ -95,7 +95,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
         width: 275,
       },
       data: {
-        model: 'claude-3-5-sonnet-20240620',
+        model: 'claude-3-5-sonnet-latest',
         useModelInput: false,
 
         temperature: 0.5,
