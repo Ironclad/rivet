@@ -4,7 +4,8 @@
     "**/.pnp.*": true,
     "**/*-bundle.js": true,
     "**/.docusaurus": true,
-    "packages/docs/build": true
+    "packages/docs/build": true,
+    "pacakges/cli/bin": true,
   },
   "eslint.nodePath": ".yarn/sdks",
   "typescript.tsdk": ".yarn/sdks/typescript/lib",

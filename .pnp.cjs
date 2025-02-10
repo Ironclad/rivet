@@ -4493,6 +4493,14 @@ const RAW_RUNTIME_STATE =
           ["regenerator-runtime", "npm:0.14.0"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:7.26.7", {\
+        "packageLocation": "./.yarn/cache/@babel-runtime-npm-7.26.7-685f05ad2c-c7a661a683.zip/node_modules/@babel/runtime/",\
+        "packageDependencies": [\
+          ["@babel/runtime", "npm:7.26.7"],\
+          ["regenerator-runtime", "npm:0.14.0"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["@babel/runtime-corejs3", [\
@@ -6459,6 +6467,28 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@hono/node-server", [\
+      ["npm:1.13.8", {\
+        "packageLocation": "./.yarn/cache/@hono-node-server-npm-1.13.8-8f90b77492-60b1d1e2c6.zip/node_modules/@hono/node-server/",\
+        "packageDependencies": [\
+          ["@hono/node-server", "npm:1.13.8"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:bbd91125264a56425cb84647dbdb3897ebf3aa2cdf8c02bff68076c228ddd912fb3bb6659c03fbe9e3e3898d8847f372ce79bb07d1395c306ae5ef774f9a7fa3#npm:1.13.8", {\
+        "packageLocation": "./.yarn/__virtual__/@hono-node-server-virtual-c957e29fd1/0/cache/@hono-node-server-npm-1.13.8-8f90b77492-60b1d1e2c6.zip/node_modules/@hono/node-server/",\
+        "packageDependencies": [\
+          ["@hono/node-server", "virtual:bbd91125264a56425cb84647dbdb3897ebf3aa2cdf8c02bff68076c228ddd912fb3bb6659c03fbe9e3e3898d8847f372ce79bb07d1395c306ae5ef774f9a7fa3#npm:1.13.8"],\
+          ["@types/hono", null],\
+          ["hono", "npm:4.7.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/hono",\
+          "hono"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@huggingface/inference", [\
       ["npm:2.6.4", {\
         "packageLocation": "./.yarn/cache/@huggingface-inference-npm-2.6.4-ba6fc3cca8-77390671d5.zip/node_modules/@huggingface/inference/",\
@@ -6727,14 +6757,20 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./packages/cli/",\
         "packageDependencies": [\
           ["@ironclad/rivet-cli", "workspace:packages/cli"],\
+          ["@hono/node-server", "virtual:bbd91125264a56425cb84647dbdb3897ebf3aa2cdf8c02bff68076c228ddd912fb3bb6659c03fbe9e3e3898d8847f372ce79bb07d1395c306ae5ef774f9a7fa3#npm:1.13.8"],\
           ["@ironclad/rivet-node", "workspace:packages/node"],\
+          ["@types/dotenv", "npm:8.2.3"],\
           ["@types/yargs", "npm:17.0.29"],\
           ["@typescript-eslint/eslint-plugin", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:6.9.0"],\
+          ["chalk", "npm:5.4.1"],\
+          ["didyoumean2", "npm:7.0.4"],\
+          ["dotenv", "npm:16.4.7"],\
           ["eslint", "npm:8.52.0"],\
           ["eslint-config-standard-with-typescript", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:39.1.1"],\
           ["eslint-plugin-import", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:2.29.0"],\
           ["eslint-plugin-n", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:16.2.0"],\
           ["eslint-plugin-promise", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:6.1.1"],\
+          ["hono", "npm:4.7.0"],\
           ["tsx", "npm:4.6.2"],\
           ["typescript", "patch:typescript@npm%3A5.2.2#optional!builtin<compat/typescript>::version=5.2.2&hash=f3b441"],\
           ["yargs", "npm:17.7.2"]\
@@ -9078,6 +9114,16 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-crypto-js-npm-4.1.3-2aa04b4dd5-66d2153d10.zip/node_modules/@types/crypto-js/",\
         "packageDependencies": [\
           ["@types/crypto-js", "npm:4.1.3"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@types/dotenv", [\
+      ["npm:8.2.3", {\
+        "packageLocation": "./.yarn/cache/@types-dotenv-npm-8.2.3-a2011f322f-3075371abb.zip/node_modules/@types/dotenv/",\
+        "packageDependencies": [\
+          ["@types/dotenv", "npm:8.2.3"],\
+          ["dotenv", "npm:16.4.7"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -12267,6 +12313,13 @@ const RAW_RUNTIME_STATE =
           ["chalk", "npm:5.3.0"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:5.4.1", {\
+        "packageLocation": "./.yarn/cache/chalk-npm-5.4.1-2f3fe4660a-29df3ffcdf.zip/node_modules/chalk/",\
+        "packageDependencies": [\
+          ["chalk", "npm:5.4.1"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["character-entities", [\
@@ -13663,6 +13716,18 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["didyoumean2", [\
+      ["npm:7.0.4", {\
+        "packageLocation": "./.yarn/cache/didyoumean2-npm-7.0.4-26e057a162-c03f0d90f8.zip/node_modules/didyoumean2/",\
+        "packageDependencies": [\
+          ["didyoumean2", "npm:7.0.4"],\
+          ["@babel/runtime", "npm:7.26.7"],\
+          ["fastest-levenshtein", "npm:1.0.16"],\
+          ["lodash.deburr", "npm:4.1.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["diff", [\
       ["npm:4.0.2", {\
         "packageLocation": "./.yarn/cache/diff-npm-4.0.2-73133c7102-ec09ec2101.zip/node_modules/diff/",\
@@ -13921,6 +13986,15 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["dot-prop", "npm:5.3.0"],\
           ["is-obj", "npm:2.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["dotenv", [\
+      ["npm:16.4.7", {\
+        "packageLocation": "./.yarn/cache/dotenv-npm-16.4.7-29680c94f8-f13bfe97db.zip/node_modules/dotenv/",\
+        "packageDependencies": [\
+          ["dotenv", "npm:16.4.7"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -15993,6 +16067,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["fastest-levenshtein", [\
+      ["npm:1.0.16", {\
+        "packageLocation": "./.yarn/cache/fastest-levenshtein-npm-1.0.16-192d328856-ee85d33b5c.zip/node_modules/fastest-levenshtein/",\
+        "packageDependencies": [\
+          ["fastest-levenshtein", "npm:1.0.16"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["fastq", [\
       ["npm:1.15.0", {\
         "packageLocation": "./.yarn/cache/fastq-npm-1.15.0-1013f6514e-67c01b1c97.zip/node_modules/fastq/",\
@@ -17253,6 +17336,15 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["hoist-non-react-statics", "npm:3.3.2"],\
           ["react-is", "npm:16.13.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["hono", [\
+      ["npm:4.7.0", {\
+        "packageLocation": "./.yarn/cache/hono-npm-4.7.0-e87d7296a2-b827180fd9.zip/node_modules/hono/",\
+        "packageDependencies": [\
+          ["hono", "npm:4.7.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -19056,6 +19148,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/lodash.debounce-npm-4.0.8-f1d6e09799-cd0b281978.zip/node_modules/lodash.debounce/",\
         "packageDependencies": [\
           ["lodash.debounce", "npm:4.0.8"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["lodash.deburr", [\
+      ["npm:4.1.0", {\
+        "packageLocation": "./.yarn/cache/lodash.deburr-npm-4.1.0-ccda5a50b5-165ce8f8a0.zip/node_modules/lodash.deburr/",\
+        "packageDependencies": [\
+          ["lodash.deburr", "npm:4.1.0"]\
         ],\
         "linkType": "HARD"\
       }]\
