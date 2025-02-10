@@ -8,16 +8,19 @@ import {
 import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nanoid } from 'nanoid/non-secure';
 import {
+  dedent,
   type DataRef,
   type EditorDefinition,
   type Inputs,
   type InternalProcessContext,
+  type NodeBody,
   type Outputs,
   type SupportedDocumentMediaTypes,
 } from '../../index.js';
 import { base64ToUint8Array, expectType } from '../../utils/index.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import { getInputOrData } from '../../utils/inputs.js';
+import type { RivetUIContext } from '../RivetUIContext.js';
 
 export type DocumentNode = ChartNode<'document', DocumentNodeData>;
 
@@ -169,6 +172,27 @@ export class DocumentNodeImpl extends NodeImpl<DocumentNode> {
       infoBoxBody:
         'Defines a document for use with other nodes such as Assemble Message. Can accept text and PDF files.',
     };
+  }
+
+  getBody(_context: RivetUIContext): NodeBody | Promise<NodeBody> {
+    const parts = [
+      this.data.useDataInput ? '(Data from input)' : '(Data stored in node)',
+      this.data.useMediaTypeInput
+        ? '(Media type from input)'
+        : this.data.mediaType
+          ? `(${this.data.mediaType.trim()})`
+          : undefined,
+      this.data.useTitleInput ? '(Title from input)' : this.data.title ? `Title: ${this.data.title}` : undefined,
+      this.data.useContextInput
+        ? '(Context from input)'
+        : this.data.context
+          ? `Context: ${this.data.context}`
+          : undefined,
+    ].filter((x) => x != null);
+
+    return dedent`
+      ${parts.join('\n')}
+    `;
   }
 
   async process(inputData: Inputs, context: InternalProcessContext): Promise<Outputs> {
