@@ -1,6 +1,6 @@
 import { HelperMessage, Label } from '@atlaskit/form';
 import { type CodeEditorDefinition, type ChartNode } from '@ironclad/rivet-core';
-import { useLatest, useDebounceFn } from 'ahooks';
+import { useLatest, useDebounceFn, usePrevious } from 'ahooks';
 import { type FC, useRef, useEffect, Suspense } from 'react';
 import { type monaco } from '../../utils/monaco';
 import { LazyCodeEditor } from '../LazyComponents';
@@ -40,6 +40,7 @@ export const DefaultCodeEditor: FC<
       onClose={onClose}
       language={editorDef.language}
       theme={editorDef.theme}
+      id={node.id}
     />
   );
 };
@@ -56,17 +57,36 @@ export const CodeEditor: FC<{
   onClose?: () => void;
   theme?: string;
   language?: string;
-}> = ({ value, onChange, isReadonly, isDisabled, autoFocus, label, name, helperMessage, onClose, theme, language }) => {
+  id?: string;
+}> = ({
+  value,
+  onChange,
+  isReadonly,
+  isDisabled,
+  autoFocus,
+  label,
+  name,
+  helperMessage,
+  onClose,
+  theme,
+  language,
+  id,
+}) => {
   const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
 
   const onChangeLatest = useLatest(onChange);
+  const previousId = usePrevious(id);
 
   useEffect(() => {
     if (editorInstance.current) {
       const currentValue = value;
 
+      const textChanged = editorInstance.current.getValue() !== currentValue;
+      const hasTextFocus = editorInstance.current.hasTextFocus();
+      const isNewId = previousId !== id;
+
       // Only set the text explicitly if we're not editing it and have a cursor position.
-      if (editorInstance.current.getValue() !== currentValue && !editorInstance.current.hasTextFocus()) {
+      if ((textChanged && !hasTextFocus) || isNewId) {
         editorInstance.current.setValue(currentValue ?? '');
       }
 
@@ -74,7 +94,7 @@ export const CodeEditor: FC<{
         readOnly: isReadonly,
       });
     }
-  }, [value, isReadonly]);
+  }, [value, isReadonly, id, previousId]);
 
   const handleKeyDown = (e: monaco.IKeyboardEvent) => {
     if (e.keyCode === 9 /* Escape */) {
