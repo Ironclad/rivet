@@ -12,7 +12,7 @@ import { type DataValue } from '../DataValue.js';
 import { type EditorDefinition, type NodeBodySpec } from '../../index.js';
 import { dedent } from 'ts-dedent';
 import { coerceTypeOptional } from '../../utils/coerceType.js';
-import { interpolate } from '../../utils/interpolation.js';
+import { TOKEN_MATCH_REGEX, interpolate } from '../../utils/interpolation.js';
 
 export type TextNode = ChartNode<'text', TextNodeData>;
 
@@ -41,7 +41,7 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
 
   getInputDefinitions(): NodeInputDefinition[] {
     // Extract inputs from text, everything like {{input}}
-    const inputNames = [...new Set(this.chartNode.data.text.match(/\{\{([^{}]+)\}\}/g))];
+    const inputNames = [...new Set(this.chartNode.data.text.match(TOKEN_MATCH_REGEX))];
     return (
       inputNames?.map((inputName) => {
         return {
