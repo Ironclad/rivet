@@ -83,10 +83,11 @@ export const CodeEditor: FC<{
 
       const textChanged = editorInstance.current.getValue() !== currentValue;
       const hasTextFocus = editorInstance.current.hasTextFocus();
-      const isNewId = previousId !== id;
+      const isNewId = previousId !== id && previousId !== undefined;
 
       // Only set the text explicitly if we're not editing it and have a cursor position.
       if ((textChanged && !hasTextFocus) || isNewId) {
+        console.dir({ textChanged, hasTextFocus, isNewId, previousId, id });
         editorInstance.current.setValue(currentValue ?? '');
       }
 
