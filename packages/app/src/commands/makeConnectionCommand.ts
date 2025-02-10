@@ -47,7 +47,13 @@ export function useMakeConnectionCommand() {
     undo(_data, _appliedData, currentState) {
       let newConnections = [...currentState.connections];
 
-      newConnections = newConnections.filter((conn) => conn !== _appliedData.newConnection);
+      newConnections = newConnections.filter(
+        (conn) =>
+          conn.inputId !== _appliedData.newConnection.inputId &&
+          conn.inputNodeId !== _appliedData.newConnection.inputNodeId &&
+          conn.outputId !== _appliedData.newConnection.outputId &&
+          conn.outputNodeId !== _appliedData.newConnection.outputNodeId,
+      );
 
       if (_appliedData.previousConnectionToInput) {
         newConnections.push(_appliedData.previousConnectionToInput);
