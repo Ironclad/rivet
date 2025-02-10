@@ -51,7 +51,8 @@ import { MouseIcon } from './MouseIcon';
 import { PortInfo } from './PortInfo';
 import { useNodeTypes } from '../hooks/useNodeTypes';
 import { lastRunDataByNodeState, selectedProcessPageNodesState } from '../state/dataFlow';
-import { useRemoveNodes } from '../hooks/useRemoveNodes';
+import { useDeleteNodesCommand } from '../commands/deleteNodeCommand';
+import { useEditNodeCommand } from '../commands/editNodeCommand';
 
 const styles = css`
   width: 100vw;
@@ -178,7 +179,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, canvasStartX: 0, canvasStartY: 0 });
   const { clientToCanvasPosition } = useCanvasPositioning();
   const setLastMousePosition = useSetAtom(lastMousePositionState);
-  const removeNodes = useRemoveNodes();
+  const removeNodes = useDeleteNodesCommand();
 
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-end',
@@ -553,7 +554,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
       e.preventDefault();
 
       if (selectedNodeIds.length > 0) {
-        removeNodes(...selectedNodeIds);
+        removeNodes({ nodeIds: selectedNodeIds });
         setSelectedNodeIds([]);
       }
     },
@@ -661,6 +662,20 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     debounceTime,
   ]);
 
+  const editNode = useEditNodeCommand();
+
+  const onResizeFinish = useStableCallback((node: ChartNode, width: number, height: number) => {
+    editNode({
+      nodeId: node.id,
+      newNode: {
+        visualData: {
+          ...node.visualData,
+          width,
+        },
+      },
+    });
+  });
+
   return (
     <DndContext onDragStart={onNodeStartDrag} onDragEnd={onNodeDragged}>
       <div
@@ -722,6 +737,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
                   onMouseOut={onNodeMouseOut}
                   onPortMouseOver={onPortMouseOver}
                   onPortMouseOut={onPortMouseOut}
+                  onResizeFinish={onResizeFinish}
                 />
               );
             })}

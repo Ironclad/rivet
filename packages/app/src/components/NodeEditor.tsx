@@ -25,12 +25,13 @@ import Popup from '@atlaskit/popup';
 import { orderBy } from 'lodash-es';
 import { nanoid } from 'nanoid/non-secure';
 import { ErrorBoundary } from 'react-error-boundary';
-import { projectDataState, projectState } from '../state/savedGraphs';
+import { projectState } from '../state/savedGraphs';
 import { useSetStaticData } from '../hooks/useSetStaticData';
 import { DefaultNodeEditor } from './editors/DefaultNodeEditor';
 import { NodeColorPicker } from './NodeColorPicker';
 import { Tooltip } from './Tooltip';
 import { useAtomValue, useAtom, useSetAtom } from 'jotai';
+import { useEditNodeCommand } from '../commands/editNodeCommand';
 
 export const NodeEditorRenderer: FC = () => {
   const nodesById = useAtomValue(nodesByIdState);
@@ -265,44 +266,17 @@ type NodeEditorProps = { selectedNode: ChartNode; onDeselect: () => void };
 export type NodeChanged = (changed: ChartNode, newData?: Record<DataId, string>) => void;
 
 export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) => {
-  const setNodes = useSetAtom(nodesState);
   const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
   const [addVariantPopupOpen, setAddVariantPopupOpen] = useState(false);
 
-  const nodesById = useAtomValue(nodesByIdState);
-  const project = useAtomValue(projectState);
-  const connectionsForNode = useAtomValue(connectionsForSingleNodeState(selectedNode.id));
-  const setConnections = useSetAtom(connectionsState);
   const setStaticData = useSetStaticData();
+  const editNode = useEditNodeCommand();
 
   const updateNode = useStableCallback((node: ChartNode, newData?: Record<DataId, string>) => {
-    setNodes((prev) =>
-      produce(prev, (draft) => {
-        const index = draft.findIndex((n) => n.id === node.id);
-        draft[index] = node;
-      }),
-    );
+    editNode({ nodeId: node.id, newNode: node });
 
     if (newData) {
       setStaticData(newData);
-    }
-
-    // Check for any invalid connections
-    const instance = globalRivetNodeRegistry.createDynamicImpl(node);
-
-    const inputDefs = instance.getInputDefinitionsIncludingBuiltIn(connectionsForNode ?? [], nodesById, project);
-    const outputDefs = instance.getOutputDefinitions(connectionsForNode ?? [], nodesById, project);
-
-    const invalidConnections = connectionsForNode?.filter((connection) => {
-      if (connection.inputNodeId === node.id) {
-        return !inputDefs.find((def) => def.id === connection.inputId);
-      } else {
-        return !outputDefs.find((def) => def.id === connection.outputId);
-      }
-    });
-
-    if (invalidConnections?.length) {
-      setConnections((conns) => conns.filter((c) => !invalidConnections.includes(c)));
     }
   });
 

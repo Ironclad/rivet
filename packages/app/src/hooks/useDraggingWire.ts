@@ -4,6 +4,8 @@ import { useAtom, useAtomValue } from 'jotai';
 import { connectionsState, ioDefinitionsState, nodesByIdState } from '../state/graph.js';
 import { draggingWireClosestPortState, draggingWireState } from '../state/graphBuilder.js';
 import { useLatest } from 'ahooks';
+import { useMakeConnectionCommand } from '../commands/makeConnectionCommand';
+import { useBreakConnectionCommand } from '../commands/breakConnectionCommand';
 
 export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnection[]) => void) => {
   const [draggingWire, setDraggingWire] = useAtom(draggingWireState);
@@ -14,6 +16,9 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
   const isDragging = !!draggingWire;
 
   const latestClosestPort = useLatest(closestPortToDraggingWire);
+
+  const makeConnection = useMakeConnectionCommand();
+  const breakConnection = useBreakConnectionCommand();
 
   useEffect(() => {
     if (closestPortToDraggingWire && isDragging) {
@@ -38,9 +43,7 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
         );
 
         if (existingConnectionIndex !== -1) {
-          const newConnections = [...connections];
-          newConnections.splice(existingConnectionIndex, 1);
-          onConnectionsChanged(newConnections);
+          breakConnection({ connectionToBreak: connections[existingConnectionIndex]! });
 
           const { outputId, outputNodeId } = connections[existingConnectionIndex]!;
 
@@ -104,27 +107,12 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
         }
       }
 
-      // Check if there's an existing connection to the input port
-      const existingConnectionIndex = connections.findIndex(
-        (c) => inputNode != null && input != null && c.inputNodeId === inputNode.id && c.inputId === input.id,
-      );
-
-      const newConnections = [...connections];
-
-      // If there's an existing connection, remove it
-      if (existingConnectionIndex !== -1) {
-        newConnections.splice(existingConnectionIndex, 1);
-      }
-
-      // Add the new connection
-      const connection: NodeConnection = {
-        inputNodeId: inputNode.id,
-        inputId: input.id,
+      makeConnection({
         outputNodeId: outputNode.id,
-        outputId: output.id,
-      };
-
-      onConnectionsChanged?.([...newConnections, connection]);
+        outputId: draggingWire.startPortId,
+        inputNodeId: inputNode.id,
+        inputId: endPortId,
+      });
 
       const isControlPressed = event.ctrlKey || event.metaKey;
 
@@ -135,13 +123,12 @@ export const useDraggingWire = (onConnectionsChanged: (connections: NodeConnecti
     },
     [
       draggingWire,
-      connections,
       nodesById,
-      onConnectionsChanged,
       ioByNode,
       setDraggingWire,
       closestPortToDraggingWire,
       setClosestPortToDraggingWire,
+      makeConnection,
     ],
   );
 

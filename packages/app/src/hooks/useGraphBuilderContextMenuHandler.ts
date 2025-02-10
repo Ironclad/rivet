@@ -1,28 +1,22 @@
 import { P, match } from 'ts-pattern';
 import { useStableCallback } from './useStableCallback';
-import {
-  globalRivetNodeRegistry,
-  type NodeId,
-  type BuiltInNodes,
-  type GraphId,
-  type ChartNode,
-} from '@ironclad/rivet-core';
+import { type NodeId, type BuiltInNodes, type GraphId } from '@ironclad/rivet-core';
 import { type ContextMenuContext } from '../components/ContextMenu';
-import { editingNodeState, selectedNodesState } from '../state/graphBuilder';
+import { editingNodeState } from '../state/graphBuilder';
 import { projectState } from '../state/savedGraphs';
 import { useCanvasPositioning } from './useCanvasPositioning';
 import { useFactorIntoSubgraph } from './useFactorIntoSubgraph';
 import { useGraphExecutor } from './useGraphExecutor';
 import { useLoadGraph } from './useLoadGraph';
 import { usePasteNodes } from './usePasteNodes';
-import { nodesByIdState, nodesState } from '../state/graph';
+import { nodesByIdState } from '../state/graph';
 import { useCopyNodes } from './useCopyNodes';
 import { useDuplicateNode } from './useDuplicateNode';
-import { useRemoveNodes } from './useRemoveNodes';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { useAddNodeCommand } from '../commands/addNodeCommand';
+import { useDeleteNodesCommand } from '../commands/deleteNodeCommand';
 
 export function useGraphBuilderContextMenuHandler() {
-  const [nodes, setNodes] = useAtom(nodesState);
   const { clientToCanvasPosition } = useCanvasPositioning();
   const loadGraph = useLoadGraph();
   const project = useAtomValue(projectState);
@@ -32,40 +26,24 @@ export function useGraphBuilderContextMenuHandler() {
   const duplicateNode = useDuplicateNode();
   const factorIntoSubgraph = useFactorIntoSubgraph();
   const setEditingNodeId = useSetAtom(editingNodeState);
-  const [selectedNodeIds, setSelectedNodeIds] = useAtom(selectedNodesState);
   const nodesById = useAtomValue(nodesByIdState);
-  const removeNodes = useRemoveNodes();
+  const removeNodes = useDeleteNodesCommand();
 
-  const nodesChanged = useStableCallback((newNodes: ChartNode[]) => {
-    setNodes?.(newNodes);
-  });
-
-  const addNode = useStableCallback((nodeType: string, position: { x: number; y: number }) => {
-    const newNode = globalRivetNodeRegistry.createDynamic(nodeType);
-
-    newNode.visualData.x = position.x;
-    newNode.visualData.y = position.y;
-
-    // We've added more buttons at the top so just... increase the width of every node a little bit :/
-    newNode.visualData.width = (newNode.visualData.width ?? 200) + 30;
-
-    nodesChanged?.([...nodes, newNode]);
-    // setSelectedNode(newNode.id);
-  });
+  const addNode = useAddNodeCommand();
 
   return useStableCallback(
     (menuItemId: string, data: unknown, context: ContextMenuContext, meta: { x: number; y: number }) => {
       match(menuItemId)
         .with(P.string.startsWith('add-node:'), () => {
           const nodeType = data as string;
-          addNode(nodeType, clientToCanvasPosition(meta.x, meta.y));
+          addNode({
+            nodeType,
+            position: clientToCanvasPosition(meta.x, meta.y),
+          });
         })
         .with('node-delete', () => {
           const { nodeId } = context.data as { nodeId: NodeId };
-          const nodes = selectedNodeIds.length > 0 ? [...new Set([...selectedNodeIds, nodeId])] : [nodeId];
-
-          removeNodes(...nodes);
-          setSelectedNodeIds([]);
+          removeNodes({ nodeIds: [nodeId] });
         })
         .with('paste', () => {
           pasteNodes(meta);

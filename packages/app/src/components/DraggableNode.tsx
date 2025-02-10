@@ -55,6 +55,7 @@ interface DraggableNodeProps {
     portId: PortId,
     definition: NodeInputDefinition | NodeOutputDefinition,
   ) => void;
+  onResizeFinish?: (node: ChartNode, startWidth: number, startHeight: number) => void;
 }
 
 export const DraggableNode: FC<DraggableNodeProps> = ({

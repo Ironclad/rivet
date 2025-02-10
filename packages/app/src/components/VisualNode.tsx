@@ -95,6 +95,7 @@ export type VisualNodeProps = {
     portId: PortId,
     definition: NodeInputDefinition | NodeOutputDefinition,
   ) => void;
+  onResizeFinish?: (node: ChartNode, startWidth: number, startHeight: number) => void;
 
   nodeAttributes?: HTMLAttributes<HTMLDivElement>;
   handleAttributes?: HTMLAttributes<HTMLDivElement>;
@@ -130,6 +131,7 @@ export const VisualNode = memo(
         onMouseOut,
         onPortMouseOver,
         onPortMouseOut,
+        onResizeFinish,
       },
       ref,
     ) => {
@@ -268,6 +270,7 @@ export const VisualNode = memo(
               processPage={processPage}
               isPinned={isPinned}
               isHistoricalChanged={isHistoricalChanged}
+              onResizeFinish={onResizeFinish}
             />
           )}
         </div>
@@ -491,6 +494,7 @@ const NormalVisualNodeContent: FC<{
     portId: PortId,
     definition: NodeInputDefinition | NodeOutputDefinition,
   ) => void;
+  onResizeFinish?: (node: ChartNode, startWidth: number, startHeight: number) => void;
 }> = memo(
   ({
     heightCache,
@@ -509,6 +513,7 @@ const NormalVisualNodeContent: FC<{
     onPortMouseOut,
     isKnownNodeType,
     isHistoricalChanged,
+    onResizeFinish,
   }) => {
     useDependsOnPlugins();
 
@@ -575,6 +580,18 @@ const NormalVisualNodeContent: FC<{
       if (newWidth != null && newHeight != null && (newWidth !== initialWidth || newHeight !== initialHeight)) {
         onNodeSizeChanged?.(newWidth, newHeight);
       }
+    });
+
+    const handleResizeEnd = useStableCallback((event: MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      onResizeFinish?.(node, initialWidth ?? 200, initialHeight ?? 200);
+
+      setInitialWidth(undefined);
+      setInitialHeight(undefined);
+      setInitialMouseX(0);
+      setInitialMouseY(0);
     });
 
     const selectedProcessRun =
@@ -768,7 +785,11 @@ const NormalVisualNodeContent: FC<{
         <NodeOutput node={node} />
         {/* </ErrorBoundary> */}
         <div className="node-resize">
-          <ResizeHandle onResizeStart={handleResizeStart} onResizeMove={handleResizeMove} />
+          <ResizeHandle
+            onResizeStart={handleResizeStart}
+            onResizeMove={handleResizeMove}
+            onResizeEnd={handleResizeEnd}
+          />
         </div>
       </>
     );

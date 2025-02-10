@@ -10,6 +10,7 @@ import {
 import { useLatest } from 'ahooks';
 import { useViewportBounds } from './useViewportBounds';
 import { useCanvasPositioning } from './useCanvasPositioning';
+import { useRedo, useUndo } from '../commands/Command';
 
 export function useCanvasHotkeys() {
   const [canvasPosition, setCanvasPosition] = useAtom(canvasPositionState);
@@ -18,6 +19,9 @@ export function useCanvasHotkeys() {
   const setSearching = useSetAtom(searchingGraphState);
   const setEditingNode = useSetAtom(editingNodeState);
   const hoveringNode = useAtomValue(hoveringNodeState);
+
+  const undo = useUndo();
+  const redo = useRedo();
 
   const latestHandler = useLatest((e: KeyboardEvent) => {
     // If we're in an input, don't do anything
@@ -98,6 +102,27 @@ export function useCanvasHotkeys() {
       if (hoveringNode) {
         setEditingNode(hoveringNode);
       }
+    }
+
+    if (e.key === 'z' && (e.metaKey || e.ctrlKey) && !e.shiftKey) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      undo();
+    }
+
+    if (e.key === 'y' && (e.metaKey || e.ctrlKey) && !e.shiftKey) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      redo();
+    }
+
+    if (e.key === 'z' && (e.metaKey || e.ctrlKey) && e.shiftKey) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      redo();
     }
   });
 
