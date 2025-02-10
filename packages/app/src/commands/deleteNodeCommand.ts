@@ -1,7 +1,7 @@
 import { useAtomValue, useSetAtom } from 'jotai';
 import { connectionsState, nodesState } from '../state/graph';
 import { useCommand } from './Command';
-import { selectedNodesState } from '../state/graphBuilder';
+import { editingNodeState, selectedNodesState } from '../state/graphBuilder';
 import { type NodeConnection, type ChartNode, type NodeId } from '@ironclad/rivet-core';
 import { partition } from 'lodash-es';
 
@@ -11,6 +11,7 @@ export const useDeleteNodesCommand = () => {
   const setNodes = useSetAtom(nodesState);
   const setConnections = useSetAtom(connectionsState);
   const setSelectedNodeIds = useSetAtom(selectedNodesState);
+  const setEditingNodeId = useSetAtom(editingNodeState);
 
   return useCommand<{ nodeIds: NodeId[] }, { removedNodes: ChartNode[]; removedConnections: NodeConnection[] }>({
     type: 'deleteNode',
@@ -38,6 +39,10 @@ export const useDeleteNodesCommand = () => {
         );
         newConnections = keepConnections;
         removedConnections.push(...removeConnections);
+      }
+
+      if (currentState.editingNodeId && nodeIds.includes(currentState.editingNodeId)) {
+        setEditingNodeId(null);
       }
 
       setNodes?.(newNodes);

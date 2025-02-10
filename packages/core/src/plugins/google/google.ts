@@ -111,7 +111,6 @@ export async function* streamChatCompletions({
   let hadChunks = false;
 
   for await (const chunk of response.stream) {
-    console.log('streaming google responses');
     hadChunks = true;
 
     if (!signal?.aborted && chunk.candidates[0]?.content.parts[0]?.text) {

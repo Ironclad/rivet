@@ -1,8 +1,9 @@
-import { type Project, type ChartNode, type NodeConnection, type GraphId } from '@ironclad/rivet-core';
+import { type Project, type ChartNode, type NodeConnection, type GraphId, type NodeId } from '@ironclad/rivet-core';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { connectionsState, graphMetadataState, nodesState } from '../state/graph';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { projectState } from '../state/savedGraphs';
+import { editingNodeState } from '../state/graphBuilder';
 
 export interface Command<T, U> {
   type: string;
@@ -26,6 +27,7 @@ export type GraphCommandState = {
   project: Project;
   commandHistoryStack: CommandData<any, any>[];
   graphId: GraphId | undefined;
+  editingNodeId: NodeId | null;
 };
 
 export const commandHistoryStackStatePerGraph = atom<Record<GraphId, CommandData<any, any>[]>>({});
@@ -38,6 +40,7 @@ function useGraphCommandState(): GraphCommandState {
   const project = useAtomValue(projectState);
   const commandHistoryStacks = useAtomValue(commandHistoryStackStatePerGraph);
   const commandHistoryStack = graphId ? commandHistoryStacks[graphId] ?? [] : [];
+  const editingNodeId = useAtomValue(editingNodeState);
 
   return {
     nodes,
@@ -45,6 +48,7 @@ function useGraphCommandState(): GraphCommandState {
     project,
     commandHistoryStack,
     graphId,
+    editingNodeId,
   };
 }
 

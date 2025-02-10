@@ -22,7 +22,7 @@ import TextField from '@atlaskit/textfield';
 import Select from '@atlaskit/select';
 import Button from '@atlaskit/button';
 import Popup from '@atlaskit/popup';
-import { orderBy } from 'lodash-es';
+import { isEqual, orderBy } from 'lodash-es';
 import { nanoid } from 'nanoid/non-secure';
 import { ErrorBoundary } from 'react-error-boundary';
 import { projectState } from '../state/savedGraphs';
@@ -273,6 +273,11 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
   const editNode = useEditNodeCommand();
 
   const updateNode = useStableCallback((node: ChartNode, newData?: Record<DataId, string>) => {
+    // Otherwise the editor "changes" and causes deleted nodes to reappear...
+    if (isEqual(node, selectedNode)) {
+      return;
+    }
+
     editNode({ nodeId: node.id, newNode: node });
 
     if (newData) {
