@@ -1,5 +1,5 @@
-import { useSetAtom, useAtomValue } from 'jotai';
-import { type GraphCommandState, commandHistoryStackState, useCommand } from './Command';
+import { useSetAtom } from 'jotai';
+import { type GraphCommandState, commandHistoryStackStatePerGraph, useCommand } from './Command';
 import {
   type NodeId,
   type NodeConnection,
@@ -15,7 +15,7 @@ const MERGE_WINDOW_MS = 5000; // 5 seconds in milliseconds
 export function useEditNodeCommand() {
   const setNodes = useSetAtom(nodesState);
   const setConnections = useSetAtom(connectionsState);
-  const setCommandHistory = useSetAtom(commandHistoryStackState);
+  const setCommandHistories = useSetAtom(commandHistoryStackStatePerGraph);
 
   const findBrokenConnections = (
     nodeId: NodeId,
@@ -115,7 +115,17 @@ export function useEditNodeCommand() {
 
       if (shouldMerge) {
         // Remove the previous command
-        setCommandHistory((stack) => stack.slice(0, -1));
+        setCommandHistories((stacks) => {
+          if (!currentState.graphId) {
+            return stacks;
+          }
+
+          const stack = stacks[currentState.graphId] ?? [];
+          return {
+            ...stacks,
+            [currentState.graphId]: stack.slice(0, -1),
+          };
+        });
 
         const commandToMergeWith = lastCommand;
 

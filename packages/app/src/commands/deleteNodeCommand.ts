@@ -32,12 +32,12 @@ export const useDeleteNodesCommand = () => {
         }
 
         // Remove all connections associated with the node
-        const [keepConnections, removedConnections] = partition(
+        const [removeConnections, keepConnections] = partition(
           newConnections,
-          (c) => c.inputNodeId !== nodeId && c.outputNodeId !== nodeId,
+          (c) => c.inputNodeId === nodeId || c.outputNodeId === nodeId,
         );
         newConnections = keepConnections;
-        removedConnections.push(...removedConnections);
+        removedConnections.push(...removeConnections);
       }
 
       setNodes?.(newNodes);

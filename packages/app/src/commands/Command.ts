@@ -1,6 +1,6 @@
-import { type Project, type ChartNode, type NodeConnection } from '@ironclad/rivet-core';
+import { type Project, type ChartNode, type NodeConnection, type GraphId } from '@ironclad/rivet-core';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
-import { connectionsState, nodesState } from '../state/graph';
+import { connectionsState, graphMetadataState, nodesState } from '../state/graph';
 import { useStableCallback } from '../hooks/useStableCallback';
 import { projectState } from '../state/savedGraphs';
 
@@ -25,100 +25,150 @@ export type GraphCommandState = {
   connections: NodeConnection[];
   project: Project;
   commandHistoryStack: CommandData<any, any>[];
+  graphId: GraphId | undefined;
 };
 
-export const commandHistoryStackState = atom<CommandData<any, any>[]>([]);
-
-export const redoStackState = atom<CommandData<any, any>[]>([]);
+export const commandHistoryStackStatePerGraph = atom<Record<GraphId, CommandData<any, any>[]>>({});
+export const redoStackStatePerGraph = atom<Record<GraphId, CommandData<any, any>[]>>({});
 
 function useGraphCommandState(): GraphCommandState {
+  const graphId = useAtomValue(graphMetadataState)?.id;
   const nodes = useAtomValue(nodesState);
   const connections = useAtomValue(connectionsState);
   const project = useAtomValue(projectState);
-  const commandHistoryStack = useAtomValue(commandHistoryStackState);
+  const commandHistoryStacks = useAtomValue(commandHistoryStackStatePerGraph);
+  const commandHistoryStack = graphId ? commandHistoryStacks[graphId] ?? [] : [];
 
   return {
     nodes,
     connections,
     project,
     commandHistoryStack,
+    graphId,
   };
 }
 
 export function useCommand<T, U>(command: Command<T, U>) {
-  const setCommandHistoryStack = useSetAtom(commandHistoryStackState);
-  const setRedoStack = useSetAtom(redoStackState);
+  const graphId = useAtomValue(graphMetadataState)?.id;
+  const setCommandHistoryStacks = useSetAtom(commandHistoryStackStatePerGraph);
+  const setRedoStacks = useSetAtom(redoStackStatePerGraph);
 
   const currentState = useGraphCommandState();
 
   return useStableCallback((data: T) => {
     const appliedData = command.apply(data, undefined, currentState);
 
-    setCommandHistoryStack((stack) => [
-      ...stack,
-      {
-        command,
-        data,
-        appliedData,
-        timestamp: Date.now(),
-      },
-    ]);
+    setCommandHistoryStacks((stacks) => {
+      if (!graphId) {
+        return stacks;
+      }
 
-    setRedoStack([]);
+      const stack = stacks[graphId] ?? [];
+
+      return {
+        ...stacks,
+        [graphId]: [
+          ...stack,
+          {
+            command,
+            data,
+            appliedData,
+            timestamp: Date.now(),
+          },
+        ],
+      };
+    });
+
+    setRedoStacks((redoStacks) => {
+      if (!graphId) {
+        return redoStacks;
+      }
+
+      return {
+        ...redoStacks,
+        [graphId]: [],
+      };
+    });
 
     return appliedData;
   });
 }
 
 export function useUndo() {
-  const setCommandHistoryStack = useSetAtom(commandHistoryStackState);
-  const setRedoStack = useSetAtom(redoStackState);
+  const graphId = useAtomValue(graphMetadataState)?.id;
+  const setCommandHistoryStacks = useSetAtom(commandHistoryStackStatePerGraph);
+  const setRedoStacks = useSetAtom(redoStackStatePerGraph);
 
   const currentState = useGraphCommandState();
 
   return () => {
-    setCommandHistoryStack((stack) => {
-      const lastCommand = stack[stack.length - 1];
+    setCommandHistoryStacks((stacks) => {
+      if (!graphId) {
+        return stacks;
+      }
+
+      const stack = stacks[graphId] ?? [];
+
+      const lastCommand = stack.at(-1);
 
       if (!lastCommand) {
-        return stack;
+        return stacks;
       }
 
       lastCommand.command.undo(lastCommand.data, lastCommand.appliedData, currentState);
 
-      setRedoStack((redoStack) => [...redoStack, lastCommand]);
+      setRedoStacks((redoStacks) => {
+        const redoStack = redoStacks[graphId] ?? [];
 
-      return stack.slice(0, -1);
+        return {
+          ...redoStacks,
+          [graphId]: [...redoStack, lastCommand],
+        };
+      });
+
+      return {
+        ...stacks,
+        [graphId]: stack.slice(0, -1),
+      };
     });
   };
 }
 
 export function useRedo() {
-  const setCommandHistoryStack = useSetAtom(commandHistoryStackState);
-  const setRedoStack = useSetAtom(redoStackState);
+  const graphId = useAtomValue(graphMetadataState)?.id;
+  const setCommandHistoryStacks = useSetAtom(commandHistoryStackStatePerGraph);
+  const setRedoStacks = useSetAtom(redoStackStatePerGraph);
 
   const currentState = useGraphCommandState();
 
   return () => {
-    setRedoStack((stack) => {
-      const lastCommand = stack[stack.length - 1];
+    setRedoStacks((stacks) => {
+      if (!graphId) {
+        return stacks;
+      }
+
+      const stack = stacks[graphId] ?? [];
+
+      const lastCommand = stack.at(-1);
       if (!lastCommand) {
-        return stack;
+        return stacks;
       }
 
       lastCommand.command.apply(lastCommand.data, lastCommand.appliedData, currentState);
 
-      setCommandHistoryStack((commandHistoryStack) => [
-        ...commandHistoryStack,
-        {
-          command: lastCommand.command,
-          data: lastCommand.data,
-          appliedData: lastCommand.appliedData,
-          timestamp: Date.now(),
-        },
-      ]);
+      setCommandHistoryStacks((commandHistoryStacks) => {
+        const commandHistoryStack = commandHistoryStacks[graphId] ?? [];
 
-      return stack.slice(0, -1);
+        return {
+          ...commandHistoryStacks,
+          [graphId]: [...commandHistoryStack, lastCommand],
+        };
+      });
+
+      return {
+        ...stacks,
+        [graphId]: stack.slice(0, -1),
+      };
     });
   };
 }
