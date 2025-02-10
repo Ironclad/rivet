@@ -37,7 +37,7 @@ export function useMakeConnectionCommand() {
         outputId: params.outputId,
       };
 
-      setConnections([...currentState.connections, newConnection]);
+      setConnections([...connections, newConnection]);
 
       return {
         newConnection,
