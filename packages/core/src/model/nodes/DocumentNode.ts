@@ -8,7 +8,6 @@ import {
 import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nanoid } from 'nanoid/non-secure';
 import {
-  dedent,
   type DataRef,
   type EditorDefinition,
   type Inputs,
@@ -21,6 +20,7 @@ import { base64ToUint8Array, expectType } from '../../utils/index.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import { getInputOrData } from '../../utils/inputs.js';
 import type { RivetUIContext } from '../RivetUIContext.js';
+import { dedent } from '../../utils/misc.js';
 
 export type DocumentNode = ChartNode<'document', DocumentNodeData>;
 
