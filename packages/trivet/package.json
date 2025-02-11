@@ -57,7 +57,7 @@
     "rimraf": "^5.0.5",
     "ts-node": "^10.9.1",
     "tsx": "^4.6.2",
-    "typescript": "^5.2.2"
+    "typescript": "^5.7.3"
   },
   "volta": {
     "node": "20.4.0"
