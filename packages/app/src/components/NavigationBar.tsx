@@ -333,27 +333,10 @@ const SearchResultItem: FC<{
         <HighlightedText text={entry.item.description} searchText={searchText} />
       </div>
       <div className="data">
-        <HighlightedText text={trimAroundMatches(entry.item.joinedData, entry.matches ?? [])} searchText={searchText} />
+        <HighlightedText text={entry.item.joinedData} searchText={searchText} />
       </div>
     </div>
   );
-};
-
-/** The data strings can be very long, so trim them around any matches to just show part of the data with the highlighted text. */
-const trimAroundMatches = (text: string, matches: readonly FuseResultMatch[]) => {
-  const firstMatch = matches[0];
-  const lastMatch = matches[matches.length - 1];
-
-  if (!firstMatch || !lastMatch) {
-    return text.substring(0, 100);
-  }
-
-  const CONTEXT_AMOUNT = 200;
-
-  const start = Math.max(0, firstMatch.indices[0]![0] - CONTEXT_AMOUNT);
-  const end = Math.min(text.length, lastMatch.indices[0]![1] + CONTEXT_AMOUNT);
-
-  return text.slice(start, end);
 };
 
 interface HighlightedTextProps {
@@ -361,6 +344,12 @@ interface HighlightedTextProps {
   searchText: string;
   className?: string;
   highlightClassName?: string;
+  contextAmount?: number;
+}
+
+interface Range {
+  start: number;
+  end: number;
 }
 
 const HighlightedText: FC<HighlightedTextProps> = ({
@@ -368,8 +357,9 @@ const HighlightedText: FC<HighlightedTextProps> = ({
   searchText,
   className = '',
   highlightClassName = 'highlighted',
+  contextAmount = 100,
 }) => {
-  if (!searchText.trim()) {
+  if (!searchText.trim() || !text) {
     return <span className={className}>{text}</span>;
   }
 
@@ -384,7 +374,7 @@ const HighlightedText: FC<HighlightedTextProps> = ({
   }
 
   // Find all matching ranges
-  const ranges: [number, number][] = [];
+  const ranges: Range[] = [];
 
   searchWords.forEach((word) => {
     const textLower = text.toLowerCase();
@@ -394,27 +384,33 @@ const HighlightedText: FC<HighlightedTextProps> = ({
       const matchIndex = textLower.indexOf(word, startIndex);
       if (matchIndex === -1) break;
 
-      ranges.push([matchIndex, matchIndex + word.length]);
+      ranges.push({
+        start: matchIndex,
+        end: matchIndex + word.length,
+      });
       startIndex = matchIndex + 1;
     }
   });
 
   if (ranges.length === 0) {
-    return <span className={className}>{text}</span>;
+    return <span className={className}>{text.substring(0, contextAmount)}</span>;
   }
 
   // Sort ranges by start position
-  const sortedRanges = ranges.sort((a, b) => a[0] - b[0]);
+  const sortedRanges = ranges.sort((a, b) => a.start - b.start);
 
   // Merge overlapping ranges
-  const mergedRanges = sortedRanges.reduce<[number, number][]>((acc, curr) => {
+  const mergedRanges = sortedRanges.reduce<Range[]>((acc, curr) => {
     if (acc.length === 0) return [curr];
 
     const prev = acc[acc.length - 1]!;
 
-    if (curr[0] <= prev[1]) {
+    if (curr.start <= prev.end) {
       // Ranges overlap, merge them
-      acc[acc.length - 1] = [prev[0], Math.max(prev[1], curr[1])];
+      acc[acc.length - 1] = {
+        start: prev.start,
+        end: Math.max(prev.end, curr.end),
+      };
     } else {
       // Ranges don't overlap, add new range
       acc.push(curr);
@@ -422,26 +418,55 @@ const HighlightedText: FC<HighlightedTextProps> = ({
     return acc;
   }, []);
 
+  // Calculate the visible text range with context
+  const firstMatch = mergedRanges[0]!;
+  const lastMatch = mergedRanges[mergedRanges.length - 1];
+
+  if (!firstMatch || !lastMatch) {
+    return <span className={className}>{text}</span>;
+  }
+
+  const visibleStart = Math.max(0, firstMatch.start - contextAmount);
+  const visibleEnd = Math.min(text.length, lastMatch.end + contextAmount);
+
+  // Adjust ranges to be relative to the trimmed text
+  const adjustedRanges = mergedRanges.map((range) => ({
+    start: range.start - visibleStart,
+    end: range.end - visibleStart,
+  }));
+
+  const trimmedText = text.slice(visibleStart, visibleEnd);
+  const showStartEllipsis = visibleStart > 0;
+  const showEndEllipsis = visibleEnd < text.length;
+
   // Build the highlighted text segments
   const segments: JSX.Element[] = [];
   let lastIndex = 0;
 
-  mergedRanges.forEach(([start, end], idx) => {
-    if (start > lastIndex) {
-      segments.push(<span key={`text-${idx}`}>{text.substring(lastIndex, start)}</span>);
+  if (showStartEllipsis) {
+    segments.push(<span key="start-ellipsis">...</span>);
+  }
+
+  adjustedRanges.forEach((range, idx) => {
+    if (range.start > lastIndex) {
+      segments.push(<span key={`text-${idx}`}>{trimmedText.substring(lastIndex, range.start)}</span>);
     }
 
     segments.push(
       <span key={`highlight-${idx}`} className={highlightClassName}>
-        {text.substring(start, end)}
+        {trimmedText.substring(range.start, range.end)}
       </span>,
     );
 
-    lastIndex = end;
+    lastIndex = range.end;
   });
 
-  if (lastIndex < text.length) {
-    segments.push(<span key={`text-${mergedRanges.length}`}>{text.substring(lastIndex)}</span>);
+  if (lastIndex < trimmedText.length) {
+    segments.push(<span key={`text-${adjustedRanges.length}`}>{trimmedText.substring(lastIndex)}</span>);
+  }
+
+  if (showEndEllipsis) {
+    segments.push(<span key="end-ellipsis">...</span>);
   }
 
   return <span className={className}>{segments}</span>;

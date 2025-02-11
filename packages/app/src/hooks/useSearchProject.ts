@@ -1,16 +1,14 @@
-import { useAtomValue, useSetAtom } from 'jotai';
-import { graphState, nodesState } from '../state/graph';
-import { useEffect, useMemo } from 'react';
+import { useAtomValue } from 'jotai';
+import { useMemo } from 'react';
 import { entries } from '../../../core/src/utils/typeSafety';
-import { searchMatchingNodeIdsState, searchingGraphState } from '../state/graphBuilder';
 import { useFuseSearch } from './useFuseSearch';
 import { type GraphId, globalRivetNodeRegistry } from '@ironclad/rivet-core';
-import { useFocusOnNodes } from './useFocusOnNodes';
 import { useNodeTypes } from './useNodeTypes';
 import { useDependsOnPlugins } from './useDependsOnPlugins';
 import { projectState } from '../state/savedGraphs';
 
 export type SearchableItem = {
+  type: 'node';
   id: string;
   title: string;
   description: string;
@@ -57,6 +55,7 @@ export function useSearchProject(query: string, enabled: boolean): SearchedItem[
         const isKnownNodeType = node.type in nodeTypes;
 
         const searchableNode: SearchableItem = {
+          type: 'node',
           title: node.title,
           description: node.description ?? '',
           id: node.id,
