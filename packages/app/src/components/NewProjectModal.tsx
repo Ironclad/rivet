@@ -89,14 +89,14 @@ export const NewProjectModal: FC = () => {
                   ⭐ Community Templates
                 </ButtonItem> */}
               </Section>
-              <Section title="Examples">
-                {/* <ButtonItem
+              {/*<Section title="Examples">
+                 <ButtonItem
                   isSelected={selectedTemplate === 'community_examples'}
                   onClick={() => setSelectedTemplate('community_examples')}
                 >
                   ⭐ Community Examples
-                </ButtonItem> */}
-              </Section>
+                </ButtonItem>
+              </Section>*/}
             </SideNavigation>
           </nav>
           <main>

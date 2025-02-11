@@ -30,6 +30,7 @@ import {
   type SystemPrompt,
   type ChatMessageTextContentItem,
   type ChatMessageCitation,
+  type Claude3ChatMessageToolResultContentPart,
 } from '../anthropic.js';
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
@@ -856,7 +857,7 @@ export async function chatMessagesToClaude3ChatMessages(chatMessages: ChatMessag
     ) {
       const last = acc.at(-1);
       if (last?.role === 'user' && Array.isArray(last.content) && last.content.every((c) => c.type === 'tool_result')) {
-        const content = last.content.concat(message.content);
+        const content = last.content.concat(message.content as Claude3ChatMessageToolResultContentPart[]);
         return [...acc.slice(0, -1), { ...last, content }];
       }
     }

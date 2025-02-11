@@ -679,7 +679,7 @@ export class GraphProcessor {
           .with({ type: 'finish' }, () => {
             this.#emitter.emit('finish', undefined);
           })
-          .with(undefined, () => {})
+          .with(P.nullish, () => {})
           .exhaustive();
       }
     } catch (err) {
@@ -1056,7 +1056,9 @@ export class GraphProcessor {
 
       // If the loop controller is excluded, we have to "break" it or else it'll loop forever...
       const breakValue = loopControllerResults['break' as PortId];
+
       const didBreak =
+        // @ts-ignore
         !(breakValue?.type === 'control-flow-excluded' && breakValue?.value === 'loop-not-broken') ??
         this.#excludedDueToControlFlow(node, this.#getInputValuesForNode(node), nanoid() as ProcessId);
 
