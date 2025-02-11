@@ -6448,6 +6448,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@google/generative-ai", [\
+      ["npm:0.21.0", {\
+        "packageLocation": "./.yarn/cache/@google-generative-ai-npm-0.21.0-4b1f39d77c-68c4163b7a.zip/node_modules/@google/generative-ai/",\
+        "packageDependencies": [\
+          ["@google/generative-ai", "npm:0.21.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@hapi/hoek", [\
       ["npm:9.3.0", {\
         "packageLocation": "./.yarn/cache/@hapi-hoek-npm-9.3.0-447eb8d274-ad83a22378.zip/node_modules/@hapi/hoek/",\
@@ -6819,6 +6828,7 @@ const RAW_RUNTIME_STATE =
           ["@ironclad/rivet-core", "workspace:packages/core"],\
           ["@gentrace/core", "npm:2.2.5"],\
           ["@google-cloud/vertexai", "npm:0.1.3"],\
+          ["@google/generative-ai", "npm:0.21.0"],\
           ["@huggingface/inference", "npm:2.6.4"],\
           ["@swc/core", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:1.3.94"],\
           ["@types/crypto-js", "npm:4.1.3"],\

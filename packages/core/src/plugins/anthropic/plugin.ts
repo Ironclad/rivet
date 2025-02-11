@@ -11,7 +11,7 @@ export const anthropicPlugin: RivetPlugin = {
 
   configSpec: {
     anthropicApiKey: {
-      type: 'string',
+      type: 'secret',
       label: 'Anthropic API Key',
       description: 'The API key for the Anthropic service.',
       pullEnvironmentVariable: 'ANTHROPIC_API_KEY',

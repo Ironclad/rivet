@@ -14,12 +14,15 @@ import {
   type ScalarDataValue,
 } from '../../../index.js';
 import {
-  type GoogleModels,
-  type ChatCompletionOptions,
-  googleModelOptions,
-  googleModels,
   streamChatCompletions,
   type GoogleChatMessage,
+  streamGenerativeAi,
+  type GenerativeAiGoogleModel,
+  generativeAiGoogleModels,
+  type StreamGenerativeAiOptions,
+  type ChatCompletionChunk,
+  type GoogleModelsDeprecated,
+  generativeAiOptions,
 } from '../google.js';
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
@@ -32,11 +35,12 @@ import { uint8ArrayToBase64 } from '../../../utils/base64.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
 import { getScalarTypeOf, isArrayDataValue } from '../../../model/DataValue.js';
 import type { TokenizerCallInfo } from '../../../integrations/Tokenizer.js';
+import { getInputOrData } from '../../../utils/inputs.js';
 
 export type ChatGoogleNode = ChartNode<'chatGoogle', ChatGoogleNodeData>;
 
 export type ChatGoogleNodeConfigData = {
-  model: GoogleModels;
+  model: GenerativeAiGoogleModel;
   temperature: number;
   useTopP: boolean;
   top_p?: number;
@@ -73,7 +77,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
         width: 275,
       },
       data: {
-        model: 'gemini-pro',
+        model: 'gemini-2.0-flash-001',
         useModelInput: false,
 
         temperature: 0.5,
@@ -101,6 +105,14 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
 
   getInputDefinitions(data): NodeInputDefinition[] {
     const inputs: NodeInputDefinition[] = [];
+
+    inputs.push({
+      id: 'systemPrompt' as PortId,
+      title: 'System Prompt',
+      dataType: 'string',
+      required: false,
+      description: 'An optional system prompt for the model to use.',
+    });
 
     if (data.useModelInput) {
       inputs.push({
@@ -180,7 +192,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
 
   getBody(data): string {
     return dedent`
-      ${googleModels[data.model]?.displayName ?? `Google (${data.model})`}
+      ${generativeAiGoogleModels[data.model]?.displayName ?? `Google (${data.model})`}
       ${
         data.useTopP
           ? `Top P: ${data.useTopPInput ? '(Using Input)' : data.top_p}`
@@ -197,7 +209,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
         label: 'Model',
         dataKey: 'model',
         useInputToggleDataKey: 'useModelInput',
-        options: googleModelOptions,
+        options: generativeAiOptions,
       },
       {
         type: 'number',
@@ -259,21 +271,14 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
   async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const output: Outputs = {};
 
-    const rawModel = data.useModelInput
-      ? coerceTypeOptional(inputs['model' as PortId], 'string') ?? data.model
-      : data.model;
+    const systemPrompt = coerceTypeOptional(inputs['systemPrompt' as PortId], 'string');
 
-    const model = rawModel as GoogleModels;
+    const rawModel = getInputOrData(data, inputs, 'model');
+    const model = rawModel as GenerativeAiGoogleModel;
 
-    const temperature = data.useTemperatureInput
-      ? coerceTypeOptional(inputs['temperature' as PortId], 'number') ?? data.temperature
-      : data.temperature;
-
-    const topP = data.useTopPInput ? coerceTypeOptional(inputs['top_p' as PortId], 'number') ?? data.top_p : data.top_p;
-
-    const useTopP = data.useUseTopPInput
-      ? coerceTypeOptional(inputs['useTopP' as PortId], 'boolean') ?? data.useTopP
-      : data.useTopP;
+    const temperature = getInputOrData(data, inputs, 'temperature', 'number');
+    const topP = getInputOrData(data, inputs, 'top_p', 'number');
+    const useTopP = getInputOrData(data, inputs, 'useTopP', 'boolean');
 
     const { messages } = getChatGoogleNodeMessages(inputs);
 
@@ -312,45 +317,50 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
     // TODO Better token counting for Google models.
     const tokenCount = await context.tokenizer.getTokenCountForMessages(messages, undefined, tokenizerInfo);
 
-    if (googleModels[model] && tokenCount >= googleModels[model].maxTokens) {
+    if (generativeAiGoogleModels[model] && tokenCount >= generativeAiGoogleModels[model].maxTokens) {
       throw new Error(
-        `The model ${model} can only handle ${googleModels[model].maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`,
+        `The model ${model} can only handle ${generativeAiGoogleModels[model].maxTokens} tokens, but ${tokenCount} were provided in the prompts alone.`,
       );
     }
 
-    if (googleModels[model] && tokenCount + maxTokens > googleModels[model].maxTokens) {
+    if (generativeAiGoogleModels[model] && tokenCount + maxTokens > generativeAiGoogleModels[model].maxTokens) {
       const message = `The model can only handle a maximum of ${
-        googleModels[model].maxTokens
+        generativeAiGoogleModels[model].maxTokens
       } tokens, but the prompts and max tokens together exceed this limit. The max tokens has been reduced to ${
-        googleModels[model].maxTokens - tokenCount
+        generativeAiGoogleModels[model].maxTokens - tokenCount
       }.`;
       addWarning(output, message);
-      maxTokens = Math.floor((googleModels[model].maxTokens - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
+      maxTokens = Math.floor((generativeAiGoogleModels[model].maxTokens - tokenCount) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
     }
 
     const project = context.getPluginConfig('googleProjectId');
     const location = context.getPluginConfig('googleRegion');
     const applicationCredentials = context.getPluginConfig('googleApplicationCredentials');
+    const apiKey = context.getPluginConfig('googleApiKey');
 
-    if (project == null) {
-      throw new Error('Google Project ID is not defined.');
-    }
-    if (location == null) {
-      throw new Error('Google Region is not defined.');
-    }
-    if (applicationCredentials == null) {
-      throw new Error('Google Application Credentials is not defined.');
+    if (!apiKey) {
+      if (project == null) {
+        throw new Error('Google Project ID or Google API Key is not defined.');
+      }
+      if (location == null) {
+        throw new Error('Google Region or Google API Key is not defined.');
+      }
+      if (applicationCredentials == null) {
+        throw new Error('Google Application Credentials or Google API Key is not defined.');
+      }
     }
 
     try {
       return await retry(
         async () => {
-          const options: Omit<ChatCompletionOptions, 'project' | 'location' | 'applicationCredentials' | 'signal'> = {
+          const options: Omit<StreamGenerativeAiOptions, 'apiKey' | 'signal'> = {
             prompt,
             model,
             temperature: useTopP ? undefined : temperature,
-            top_p: useTopP ? topP : undefined,
-            max_output_tokens: maxTokens,
+            topP: useTopP ? topP : undefined,
+            maxOutputTokens: maxTokens,
+            systemPrompt,
+            topK: undefined,
           };
           const cacheKey = JSON.stringify(options);
 
@@ -363,13 +373,33 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
 
           const startTime = Date.now();
 
-          const chunks = streamChatCompletions({
-            signal: context.signal,
-            project,
-            location,
-            applicationCredentials,
-            ...options,
-          });
+          let chunks: AsyncGenerator<ChatCompletionChunk>;
+          if (apiKey) {
+            chunks = streamGenerativeAi({
+              signal: context.signal,
+              model,
+              prompt,
+              maxOutputTokens: maxTokens,
+              temperature: useTopP ? undefined : temperature,
+              topP: useTopP ? topP : undefined,
+              topK: undefined,
+              apiKey,
+              systemPrompt,
+            });
+          } else {
+            chunks = streamChatCompletions({
+              signal: context.signal,
+              model: model as GoogleModelsDeprecated,
+              prompt,
+              max_output_tokens: maxTokens,
+              temperature: useTopP ? undefined : temperature,
+              top_p: useTopP ? topP : undefined,
+              top_k: undefined,
+              project: project!,
+              location: location!,
+              applicationCredentials: applicationCredentials!,
+            });
+          }
 
           const responseParts: string[] = [];
 

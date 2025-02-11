@@ -9,7 +9,7 @@ import { NodeImpl, type NodeUIData } from '../../model/NodeImpl.js';
 import { nanoid } from 'nanoid/non-secure';
 import { coerceType } from '../../utils/coerceType.js';
 import { dedent } from 'ts-dedent';
-import { openAiModelOptions, openaiModels } from '../../utils/openai.js';
+import { openAiModelOptions } from '../../utils/openai.js';
 import { type EditorDefinition, type Inputs, type InternalProcessContext, type Outputs } from '../../index.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import type { Tokenizer, TokenizerCallInfo } from '../../integrations/Tokenizer.js';
@@ -37,7 +37,7 @@ export class ChunkNodeImpl extends NodeImpl<ChunkNode> {
         width: 200,
       },
       data: {
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o',
         useModelInput: false,
         numTokensPerChunk: 1024,
         overlap: 0,
