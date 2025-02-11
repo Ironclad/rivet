@@ -956,8 +956,8 @@ async function chatMessageContentToClaude3ChatMessage(
           data: (await uint8ArrayToBase64(content.data)) ?? '',
           media_type: content.mediaType as string,
         },
-        title: content.title,
-        context: content.context,
+        title: content.title?.trim() ? content.title.trim() : undefined,
+        context: content.context?.trim() ? content.context.trim() : undefined,
         citations: content.enableCitations ? { enabled: true } : undefined,
         cache_control: null, // set later
       };
