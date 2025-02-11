@@ -75,7 +75,7 @@ export const CodeEditor: FC<{
   const editorInstance = useRef<monaco.editor.IStandaloneCodeEditor>();
 
   const onChangeLatest = useLatest(onChange);
-  const previousId = usePrevious(id);
+  const previousId = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     if (editorInstance.current) {
@@ -83,7 +83,9 @@ export const CodeEditor: FC<{
 
       const textChanged = editorInstance.current.getValue() !== currentValue;
       const hasTextFocus = editorInstance.current.hasTextFocus();
-      const isNewId = previousId !== id && previousId !== undefined;
+      const isNewId = previousId.current !== id && previousId.current !== undefined;
+
+      previousId.current = id;
 
       // Only set the text explicitly if we're not editing it and have a cursor position.
       if ((textChanged && !hasTextFocus) || isNewId) {
