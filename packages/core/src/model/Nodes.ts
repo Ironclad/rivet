@@ -8,6 +8,7 @@ export * from './nodes/TextNode.js';
 
 import { chatNode } from './nodes/ChatNode.js';
 export * from './nodes/ChatNode.js';
+export * from './nodes/ChatNodeBase.js';
 
 import { promptNode } from './nodes/PromptNode.js';
 export * from './nodes/PromptNode.js';
@@ -219,6 +220,9 @@ export * from './nodes/PlayAudioNode.js';
 import { documentNode } from './nodes/DocumentNode.js';
 export * from './nodes/DocumentNode.js';
 
+import { chatLoopNode } from './nodes/ChatLoopNode.js';
+export * from './nodes/ChatLoopNode.js';
+
 export const registerBuiltInNodes = (registry: NodeRegistration) => {
   return registry
     .register(toYamlNode)
@@ -293,7 +297,8 @@ export const registerBuiltInNodes = (registry: NodeRegistration) => {
     .register(callGraphNode)
     .register(delegateFunctionCallNode)
     .register(playAudioNode)
-    .register(documentNode);
+    .register(documentNode)
+    .register(chatLoopNode);
 };
 
 let globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());

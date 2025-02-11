@@ -15,7 +15,6 @@ import { type InputsOrOutputsWithRefs, lastRunDataByNodeState } from '../state/d
 import {
   type ChatMessage,
   type ChatNode,
-  type ChatNodeConfigData,
   ChatNodeImpl,
   type GraphId,
   GraphProcessor,
@@ -26,7 +25,6 @@ import {
   arrayizeDataValue,
   coerceType,
   coerceTypeOptional,
-  getChatNodeMessages,
   getError,
   isArrayDataValue,
   openai,
@@ -53,6 +51,7 @@ import { overlayOpenState } from '../state/ui';
 import { datasetProvider } from '../utils/globals';
 import { GraphSelector } from './editors/GraphSelectorEditor';
 import { useGetAdHocInternalProcessContext } from '../hooks/useGetAdHocInternalProcessContext';
+import { type ChatNodeConfigData, getChatNodeMessages } from '../../../core/src/model/nodes/ChatNodeBase';
 
 const styles = css`
   position: fixed;

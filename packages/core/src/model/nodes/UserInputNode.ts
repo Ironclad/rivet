@@ -1,12 +1,12 @@
 import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import type { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import { nanoid } from 'nanoid/non-secure';
-import type { ArrayDataValue, StringDataValue } from '../DataValue.js';
 import { zip } from 'lodash-es';
 import { type Outputs, type Inputs, type EditorDefinition, type NodeBodySpec } from '../../index.js';
 import { dedent } from 'ts-dedent';
 import { nodeDefinition } from '../NodeDefinition.js';
 import { coerceType } from '../../utils/coerceType.js';
+import { type InternalProcessContext } from '../ProcessContext.js';
 
 export type UserInputNode = ChartNode<'userInput', UserInputNodeData>;
 
@@ -108,23 +108,21 @@ export class UserInputNodeImpl extends NodeImpl<UserInputNode> {
     };
   }
 
-  async process(): Promise<Outputs> {
-    return {
-      ['output' as PortId]: undefined!,
-      ['questionsAndAnswers' as PortId]: undefined!,
-    };
-  }
+  async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+    const questions = this.data.useInput ? coerceType(inputs['questions' as PortId], 'string[]') : [this.data.prompt];
 
-  getOutputValuesFromUserInput(questions: Inputs, answers: ArrayDataValue<StringDataValue>): Outputs {
-    const questionsList = this.data.useInput
-      ? coerceType(questions['questions' as PortId], 'string[]')
-      : [this.data.prompt];
+    const renderingFormat = this.data.renderingFormat === 'preformatted' ? 'text' : 'markdown';
+
+    const response = await context.requestUserInput(questions, renderingFormat);
 
     return {
-      ['output' as PortId]: answers,
+      ['output' as PortId]: {
+        type: 'string[]',
+        value: response.value,
+      },
       ['questionsAndAnswers' as PortId]: {
         type: 'string[]',
-        value: zip(questionsList, answers.value).map(([q, a]) => `${q}\n${a}`),
+        value: zip(questions, response.value).map(([q, a]) => `${q}\n${a}`),
       },
     };
   }

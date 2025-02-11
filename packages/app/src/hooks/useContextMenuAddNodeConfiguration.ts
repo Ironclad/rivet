@@ -49,6 +49,10 @@ export const addContextMenuGroups = [
     label: 'Input/Output',
   },
   {
+    id: 'add-node-group:convenience',
+    label: 'Convenience',
+  },
+  {
     id: 'add-node-group:advanced',
     label: 'Advanced',
   },

@@ -47,9 +47,11 @@ export type RecordedEventsMap = OverrideProperties<
     /** Called when a user input node requires user input. Call the callback when finished, or call userInput() on the GraphProcessor with the results. */
     userInput: {
       nodeId: NodeId;
+      inputStrings: string[];
       inputs: Inputs;
       callback: (values: StringArrayDataValue) => void;
       processId: ProcessId;
+      renderingType: 'text' | 'markdown';
     };
 
     /** Called when a node has partially processed, with the current partial output values for the node. */

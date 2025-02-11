@@ -412,22 +412,12 @@ export function useCurrentExecution() {
     console.error(data.error);
   }
 
-  const onUserInput = ({ node, inputs, processId }: ProcessEvents['userInput']) => {
-    let questions: ProcessQuestions;
-
-    if (node.data.useInput) {
-      questions = {
-        nodeId: node.id,
-        processId,
-        questions: coerceTypeOptional(inputs?.['questions' as PortId], 'string[]') ?? [],
-      };
-    } else {
-      questions = {
-        nodeId: node.id,
-        processId,
-        questions: [node.data.prompt],
-      };
-    }
+  const onUserInput = ({ node, inputs, processId, inputStrings }: ProcessEvents['userInput']) => {
+    const questions = {
+      nodeId: node.id,
+      processId,
+      questions: inputStrings,
+    };
 
     setUserInputQuestions((q) => {
       const prevQuestions = q[node.id] ?? [];

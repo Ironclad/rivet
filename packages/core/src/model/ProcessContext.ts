@@ -13,6 +13,7 @@ import {
   type ChartNode,
   type AttachedNodeData,
   type AudioProvider,
+  type StringArrayDataValue,
 } from '../index.js';
 import type { Tokenizer } from '../integrations/Tokenizer.js';
 
@@ -110,4 +111,7 @@ export type InternalProcessContext<T extends ChartNode = ChartNode> = ProcessCon
 
   /** Gets a string plugin config value from the settings, falling back to a specified environment variable if set. */
   getPluginConfig(name: string): string | undefined;
+
+  /** Requests that the user input some text in response to the specified prompt. */
+  requestUserInput(inputs: string[], renderingType: 'text' | 'markdown'): Promise<StringArrayDataValue>;
 };

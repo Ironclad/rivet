@@ -76,10 +76,16 @@ export type ProcessEvents = {
 
   /** Called when a user input node requires user input. Call the callback when finished, or call userInput() on the GraphProcessor with the results. */
   userInput: {
-    node: UserInputNode;
+    node: ChartNode;
+    inputStrings: string[];
+
+    /** @deprecated use inputStrings instead */
     inputs: Inputs;
+
     callback: (values: StringArrayDataValue) => void;
     processId: ProcessId;
+
+    renderingType: 'text' | 'markdown';
   };
 
   /** Called when a node has partially processed, with the current partial output values for the node. */
@@ -656,9 +662,11 @@ export class GraphProcessor {
           .with({ type: 'userInput' }, ({ data }) => {
             this.#emitter.emit('userInput', {
               callback: undefined!,
+              inputStrings: data.inputStrings,
               inputs: data.inputs,
               node: getNode(data.nodeId) as UserInputNode,
               processId: data.processId,
+              renderingType: data.renderingType,
             });
           })
           .with({ type: P.string.startsWith('globalSet:') }, ({ type, data }) => {
@@ -1177,65 +1185,13 @@ export class GraphProcessor {
       return processId;
     }
 
-    if (this.#isNodeOfType('userInput', node)) {
-      await this.#processUserInputNode(node, processId);
-    } else if (node.isSplitRun) {
+    if (node.isSplitRun) {
       await this.#processSplitRunNode(node, processId);
     } else {
       await this.#processNormalNode(node, processId);
     }
 
     return processId;
-  }
-
-  #isNodeOfType<T extends BuiltInNodes['type']>(type: T, node: ChartNode): node is Extract<BuiltInNodes, { type: T }> {
-    return node.type === type;
-  }
-
-  async #processUserInputNode(node: UserInputNode, processId: ProcessId) {
-    try {
-      const inputValues = this.#getInputValuesForNode(node);
-      if (this.#excludedDueToControlFlow(node, inputValues, processId)) {
-        return;
-      }
-
-      this.#emitter.emit('nodeStart', { node, inputs: inputValues, processId });
-
-      const results = await new Promise<StringArrayDataValue>((resolve, reject) => {
-        this.#pendingUserInputs[node.id] = {
-          resolve,
-          reject,
-        };
-
-        this.#abortController.signal.addEventListener('abort', () => {
-          delete this.#pendingUserInputs[node.id];
-          reject(new Error('Processing aborted'));
-        });
-
-        this.#emitter.emit('userInput', {
-          node,
-          inputs: inputValues,
-          callback: (results) => {
-            resolve(results);
-
-            delete this.#pendingUserInputs[node.id];
-          },
-          processId,
-        });
-      });
-
-      const outputValues = (this.#nodeInstances[node.id] as UserInputNodeImpl).getOutputValuesFromUserInput(
-        inputValues,
-        results,
-      );
-
-      this.#nodeResults.set(node.id, outputValues);
-      this.#visitedNodes.add(node.id);
-
-      this.#emitter.emit('nodeFinish', { node, outputs: outputValues, processId });
-    } catch (e) {
-      this.#nodeErrored(node, e, processId);
-    }
   }
 
   async #processSplitRunNode(node: ChartNode, processId: ProcessId) {
@@ -1556,6 +1512,34 @@ export class GraphProcessor {
         this.abort(error === undefined, error);
       },
       getPluginConfig: (name) => getPluginConfig(plugin, this.#context.settings, name),
+      requestUserInput: async (inputStrings, renderingType) => {
+        const results = await new Promise<StringArrayDataValue>((resolve, reject) => {
+          this.#pendingUserInputs[node.id] = {
+            resolve,
+            reject,
+          };
+
+          this.#abortController.signal.addEventListener('abort', () => {
+            delete this.#pendingUserInputs[node.id];
+            reject(new Error('Processing aborted'));
+          });
+
+          this.#emitter.emit('userInput', {
+            node,
+            inputStrings,
+            inputs: inputValues,
+            renderingType,
+            callback: (results) => {
+              resolve(results);
+
+              delete this.#pendingUserInputs[node.id];
+            },
+            processId,
+          });
+        });
+
+        return results;
+      },
     };
 
     await this.#waitUntilUnpaused();

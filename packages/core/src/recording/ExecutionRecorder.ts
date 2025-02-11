@@ -61,11 +61,13 @@ const toRecordedEventMap: {
     outputs,
     reason,
   }),
-  userInput: ({ node, inputs, callback, processId }) => ({
+  userInput: ({ node, inputs, callback, processId, inputStrings, renderingType }) => ({
     nodeId: node.id,
     inputs,
     callback,
     processId,
+    inputStrings,
+    renderingType,
   }),
   partialOutput: ({ node, outputs, index, processId }) => ({
     nodeId: node.id,
