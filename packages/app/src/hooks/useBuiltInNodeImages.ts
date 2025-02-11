@@ -73,6 +73,8 @@ import callGraphNodeImage from '../assets/node_images/call_graph_node.png';
 import delegateFunctionCallNodeImage from '../assets/node_images/delegate_function_call_node.png';
 import playAudioNodeImage from '../assets/node_images/play_audio_node.png';
 import documentNodeImage from '../assets/node_images/document_node.png';
+import readAllFilesNodeImage from '../assets/node_images/read_all_files_node.png';
+import chatLoopNodeImage from '../assets/node_images/chat_loop_node.png';
 
 export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
   return {
@@ -149,5 +151,7 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     delegateFunctionCall: delegateFunctionCallNodeImage,
     playAudio: playAudioNodeImage,
     document: documentNodeImage,
+    readAllFiles: readAllFilesNodeImage,
+    chatLoop: chatLoopNodeImage,
   };
 };
