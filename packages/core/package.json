@@ -65,8 +65,8 @@
     "p-retry-4": "npm:p-retry@^4.0.0",
     "safe-stable-stringify": "^2.4.3",
     "ts-dedent": "^2.2.0",
-    "ts-pattern": "^5.0.5",
-    "type-fest": "^4.5.0",
+    "ts-pattern": "^5.6.2",
+    "type-fest": "^4.34.1",
     "yaml": "^2.3.3"
   },
   "devDependencies": {
