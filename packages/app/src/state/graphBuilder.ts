@@ -11,6 +11,7 @@ import {
 } from '@ironclad/rivet-core';
 import { type WireDef } from '../components/WireLayer.js';
 import { createStorage } from './storage.js';
+import { type SearchedItem, type SearchableItem } from '../hooks/useSearchProject';
 
 const storage = createStorage('graphBuilder');
 
@@ -74,6 +75,18 @@ export const isPinnedState = atomFamily((nodeId: NodeId) => atom((get) => get(pi
 export const searchingGraphState = atom({
   searching: false,
   query: '',
+});
+
+export const goToSearchState = atom<{
+  searching: boolean;
+  query: string;
+  selectedIndex: number;
+  entries: SearchedItem[];
+}>({
+  searching: false,
+  query: '',
+  selectedIndex: 0,
+  entries: [],
 });
 
 export const searchMatchingNodeIdsState = atom<NodeId[]>([]);

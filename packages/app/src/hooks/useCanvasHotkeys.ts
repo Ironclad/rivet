@@ -6,6 +6,7 @@ import {
   searchingGraphState,
   editingNodeState,
   hoveringNodeState,
+  goToSearchState,
 } from '../state/graphBuilder';
 import { useLatest } from 'ahooks';
 import { useViewportBounds } from './useViewportBounds';
@@ -19,6 +20,7 @@ export function useCanvasHotkeys() {
   const setSearching = useSetAtom(searchingGraphState);
   const setEditingNode = useSetAtom(editingNodeState);
   const hoveringNode = useAtomValue(hoveringNodeState);
+  const setGoToSearch = useSetAtom(goToSearchState);
 
   const undo = useUndo();
   const redo = useRedo();
@@ -123,6 +125,13 @@ export function useCanvasHotkeys() {
       e.stopPropagation();
 
       redo();
+    }
+
+    if (e.key === 'p' && (e.metaKey || e.ctrlKey) && !e.shiftKey) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      setGoToSearch({ searching: true, query: '', selectedIndex: 0, entries: [] });
     }
   });
 

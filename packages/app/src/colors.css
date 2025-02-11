@@ -44,6 +44,10 @@
   --warning-light: #f5d76e;
   --warning-lighter: rgba(241, 196, 15, 0.3);
 
+  /* Highlighted Text */
+  --highlighted-text: #ff9900;
+  --highlighted-text-contrast: #1e1e1e;
+
   /* Shadows */
   --shadow: rgba(0, 0, 0, 0.2);
   --shadow-dark: rgba(0, 0, 0, 0.4);
