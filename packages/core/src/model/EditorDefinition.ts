@@ -138,6 +138,13 @@ export type FileBrowserEditorDefinition<T extends ChartNode> = SharedEditorDefin
   accept?: string;
 };
 
+export type DirectoryBrowserEditorDefinition<T extends ChartNode> = SharedEditorDefinitionProps<T> & {
+  type: 'directoryBrowser';
+
+  dataKey: DataOfType<T, string>;
+  useInputToggleDataKey?: DataOfType<T, boolean>;
+};
+
 export type ImageBrowserEditorDefinition<T extends ChartNode> = SharedEditorDefinitionProps<T> & {
   type: 'imageBrowser';
 
@@ -212,4 +219,5 @@ export type EditorDefinition<T extends ChartNode> =
   | StringListEditorDefinition<T>
   | CustomEditorDefinition<T>
   | DynamicEditorDefinition<T>
-  | FilePathBrowserEditorDefinition<T>;
+  | FilePathBrowserEditorDefinition<T>
+  | DirectoryBrowserEditorDefinition<T>;

@@ -23,6 +23,7 @@ import { StringListEditor } from './StringListEditor';
 import { CustomEditor } from './CustomEditor';
 import { DefaultDynamicEditor } from './DynamicEditor';
 import { Tooltip } from '../Tooltip';
+import { DefaultDirectoryBrowserEditor } from './DirectoryBrowserEditor';
 
 export const DefaultNodeEditorField: FC<
   SharedEditorProps & {
@@ -62,6 +63,7 @@ export const DefaultNodeEditorField: FC<
     .with({ type: 'custom' }, (editor) => <CustomEditor {...sharedProps} editor={editor} />)
     .with({ type: 'dynamic' }, (editor) => <DefaultDynamicEditor {...sharedProps} editor={editor} />)
     .with({ type: 'filePathBrowser' }, (editor) => <DefaultFilePathBrowserEditor {...sharedProps} editor={editor} />)
+    .with({ type: 'directoryBrowser' }, (editor) => <DefaultDirectoryBrowserEditor {...sharedProps} editor={editor} />)
     .exhaustive();
 
   const toggle =
