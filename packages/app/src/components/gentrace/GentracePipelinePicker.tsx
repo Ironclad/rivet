@@ -80,16 +80,19 @@ const GentracePipelinePicker: FC<GentracePipelinePickerProps> = ({ onClose }) =>
 
     const { cases, ...selectedPipelineNoCases } = selectedPipeline;
 
-    setGraph((prev) => ({
-      ...prev,
-      metadata: {
-        ...prev.metadata,
-        attachedData: {
-          ...(prev.metadata?.attachedData ?? {}),
-          gentracePipeline: selectedPipelineNoCases,
+    setGraph(async (prevPromise) => {
+      const prev = await prevPromise;
+      return {
+        ...prev,
+        metadata: {
+          ...prev.metadata,
+          attachedData: {
+            ...(prev.metadata?.attachedData ?? {}),
+            gentracePipeline: selectedPipelineNoCases,
+          },
         },
-      },
-    }));
+      };
+    });
 
     setSelectedPipeline(null);
 

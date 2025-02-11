@@ -77,18 +77,23 @@ export function useLoadProjectWithFileBrowser() {
           runningTests: false,
         });
 
-        setProjects((prev) => ({
-          openedProjects: {
-            ...prev.openedProjects,
-            [project.metadata.id]: {
-              project: projectData,
-              fsPath: path,
+        setProjects(async (prev) => {
+          const { openedProjects, openedProjectsSortedIds } = await prev;
+          return {
+            openedProjects: {
+              ...openedProjects,
+              [project.metadata.id]: {
+                project: projectData,
+                fsPath: path,
+              },
             },
-          },
-          openedProjectsSortedIds: [...prev.openedProjectsSortedIds, project.metadata.id],
-        }));
+
+            openedProjectsSortedIds: [...openedProjectsSortedIds, project.metadata.id],
+          };
+        });
       });
     } catch (err) {
+      console.error(getError(err).toString());
       toast.error(`Failed to load project: ${getError(err).message}`);
     }
   };

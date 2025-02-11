@@ -29,10 +29,13 @@ export function useTestSuite(testSuiteId: string | undefined) {
 
   const updateTestSuite = useCallback(
     (testSuite: TrivetTestSuite) => {
-      setState((s) => ({
-        ...s,
-        testSuites: s.testSuites.map((ts) => (ts.id === testSuite.id ? testSuite : ts)),
-      }));
+      setState(async (s) => {
+        const suite = await s;
+        return {
+          ...s,
+          testSuites: suite.testSuites.map((ts) => (ts.id === testSuite.id ? testSuite : ts)),
+        };
+      });
     },
     [setState],
   );
@@ -85,12 +88,16 @@ export function useTestSuite(testSuiteId: string | undefined) {
   });
 
   const deleteTestCase = useStableCallback((id: string) => {
-    setState((s) => ({
-      ...s,
-      testSuites: s.testSuites.map((ts) =>
-        ts.id === testSuiteId ? { ...ts, testCases: ts.testCases.filter((tc) => tc.id !== id) } : ts,
-      ),
-    }));
+    setState(async (s) => {
+      const suite = await s;
+      return {
+        ...s,
+
+        testSuites: suite.testSuites.map((ts) =>
+          ts.id === testSuiteId ? { ...ts, testCases: ts.testCases.filter((tc) => tc.id !== id) } : ts,
+        ),
+      };
+    });
   });
 
   const duplicateTestCase = useStableCallback((id: string) => {

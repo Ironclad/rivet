@@ -489,16 +489,19 @@ export const PluginsSettingsPage: FC = () => {
                             value={(settings.pluginSettings?.[plugin.id]?.[key] as string | undefined) ?? ''}
                             type={config.type === 'secret' ? 'password' : 'text'}
                             onChange={(e) =>
-                              setSettings((s) => ({
-                                ...s,
-                                pluginSettings: {
-                                  ...s.pluginSettings,
-                                  [plugin.id]: {
-                                    ...s.pluginSettings?.[plugin.id],
-                                    [key]: (e.target as HTMLInputElement).value,
+                              setSettings(async (sPromise) => {
+                                const s = await sPromise;
+                                return {
+                                  ...s,
+                                  pluginSettings: {
+                                    ...s.pluginSettings,
+                                    [plugin.id]: {
+                                      ...s.pluginSettings?.[plugin.id],
+                                      [key]: (e.target as HTMLInputElement).value,
+                                    },
                                   },
-                                },
-                              }))
+                                };
+                              })
                             }
                           />
                           {config.helperText && <HelperMessage>{config.helperText}</HelperMessage>}

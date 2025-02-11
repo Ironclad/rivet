@@ -99,8 +99,8 @@ export const ProjectInfoSidebarTab: FC = () => {
   };
 
   const deleteProjectContextValue = (key: string) => {
-    setProjectContext((context) =>
-      produce(context, (draft) => {
+    setProjectContext(async (context) =>
+      produce(await context, (draft) => {
         delete draft[key];
       }),
     );
