@@ -20,9 +20,11 @@ export function useSaveProject() {
 
     const savedGraph = saveGraph();
 
-    const newProject = produce(project, (draft) => {
-      draft.graphs[savedGraph.metadata!.id!] = savedGraph;
-    });
+    const newProject = savedGraph
+      ? produce(project, (draft) => {
+          draft.graphs[savedGraph.metadata!.id!] = savedGraph;
+        })
+      : project;
 
     // Large datasets can save slowly because of indexeddb, so show a "saving..." toast if it's a slow save
     let saving: ToastId | undefined;
@@ -52,9 +54,11 @@ export function useSaveProject() {
   async function saveProjectAs() {
     const savedGraph = saveGraph();
 
-    const newProject = produce(project, (draft) => {
-      draft.graphs[savedGraph.metadata!.id!] = savedGraph;
-    });
+    const newProject = savedGraph
+      ? produce(project, (draft) => {
+          draft.graphs[savedGraph.metadata!.id!] = savedGraph;
+        })
+      : project;
 
     // Large datasets can save slowly because of indexeddb, so show a "saving..." toast if it's a slow save
     let saving: ToastId | undefined;

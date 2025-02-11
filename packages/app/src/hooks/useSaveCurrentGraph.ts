@@ -1,6 +1,6 @@
 import { produce } from 'immer';
 import { nanoid } from 'nanoid/non-secure';
-import { type GraphId, type NodeGraph } from '@ironclad/rivet-core';
+import { type GraphId } from '@ironclad/rivet-core';
 import { useAtom } from 'jotai';
 import { graphState } from '../state/graph.js';
 import { savedGraphsState } from '../state/savedGraphs.js';
@@ -10,6 +10,10 @@ export function useSaveCurrentGraph() {
   const [savedGraphs, setSavedGraphs] = useAtom(savedGraphsState);
 
   return () => {
+    if (graphData.nodes.length === 0 && graphData.connections.length === 0) {
+      return;
+    }
+
     const currentGraph = produce(graphData, (draft) => {
       if (!draft.metadata) {
         draft.metadata = {
