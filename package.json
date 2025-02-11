@@ -2,7 +2,7 @@
   "name": "@ironclad/rivet",
   "license": "MIT",
   "repository": "https://github.com/ironclad/rivet",
-  "packageManager": "yarn@4.0.0",
+  "packageManager": "yarn@4.6.0",
   "workspaces": [
     "packages/*"
   ],
