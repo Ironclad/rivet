@@ -81,7 +81,7 @@ export function startDebuggerServer(
       };
     }
 
-    socket.on('message', async (data) => {
+    const handleMessage = async (data: WebSocket.RawData) => {
       try {
         const stringData = data.toString();
 
@@ -167,6 +167,10 @@ export function startDebuggerServer(
           // noop, just prevent unhandled rejection
         }
       }
+    };
+
+    socket.on('message', (data) => {
+      void handleMessage(data);
     });
 
     if (options.allowGraphUpload) {
