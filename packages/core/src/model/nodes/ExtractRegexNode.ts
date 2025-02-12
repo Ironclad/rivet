@@ -197,18 +197,7 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
       };
     }
 
-    const output: Record<PortId, DataValue> = {
-      ['succeeded' as PortId]: {
-        type: 'boolean',
-        value: true,
-      },
-      ['failed' as PortId]: {
-        type: 'boolean',
-        value: false,
-      },
-    };
-
-    output['matches' as PortId] = outputArray;
+    const output: Record<PortId, DataValue> = {};
 
     for (let i = 1; i < firstMatch.length; i++) {
       output[`output${i}` as PortId] = {
@@ -216,6 +205,17 @@ export class ExtractRegexNodeImpl extends NodeImpl<ExtractRegexNode> {
         value: firstMatch[i]!,
       };
     }
+
+    output['matches' as PortId] = outputArray;
+
+    output['succeeded' as PortId] = {
+      type: 'boolean',
+      value: true,
+    };
+    output['failed' as PortId] = {
+      type: 'boolean',
+      value: false,
+    };
 
     return output;
   }
