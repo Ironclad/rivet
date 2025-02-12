@@ -51,6 +51,7 @@ export class GptTokenizerTokenizer implements Tokenizer {
 
       return encodedChat.length + encodedFunctions.length;
     } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.emitter.emit('error', getError(err));
       return 0;
     }

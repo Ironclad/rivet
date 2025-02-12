@@ -55,7 +55,7 @@ export class EventSourceResponse extends Response {
   private async raceWithTimeout<T>(promise: Promise<T>, timeout?: number): Promise<T> {
     const raceTimeout = timeout ?? DEFAULT_CHAT_NODE_TIMEOUT;
 
-    // eslint-disable-next-line no-async-promise-executor -- Error handled correctly
+    // eslint-disable-next-line no-async-promise-executor,@typescript-eslint/no-misused-promises -- Error handled correctly
     return new Promise(async (resolve, reject) => {
       const timer = setTimeout(() => {
         reject(new Error('Timeout: API response took too long.'));

@@ -132,6 +132,7 @@ export function coreCreateProcessor(project: Project, options: RunGraphOptions) 
   }
 
   options.abortSignal?.addEventListener('abort', () => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     processor.abort();
   });
 

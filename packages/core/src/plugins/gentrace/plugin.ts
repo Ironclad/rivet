@@ -84,9 +84,9 @@ export const runGentraceTests = async (
 
     const stepRuns = convertRecordingToStepRuns(fullRecording, project, graphId);
 
-    stepRuns.forEach((stepRun) => {
-      runner.addStepRunNode(stepRun);
-    });
+    for (const stepRun of stepRuns) {
+      await runner.addStepRunNode(stepRun);
+    }
 
     if (stepRuns.length === 0) {
       throw new Error('No Rivet steps found. You need operations which are not Graph Input or Graph Output nodes.');
@@ -131,9 +131,9 @@ export const runRemoteGentraceTests = async (
     const fullRecording = await runAndRecord(rivetFormattedInputs);
     const stepRuns = convertRecordingToStepRuns(fullRecording, project, graphId);
 
-    stepRuns.forEach((stepRun) => {
-      runner.addStepRunNode(stepRun);
-    });
+    for (const stepRun of stepRuns) {
+      await runner.addStepRunNode(stepRun);
+    }
 
     if (stepRuns.length === 0) {
       throw new Error('No Rivet steps found. You need operations which are not Graph Input or Graph Output nodes.');

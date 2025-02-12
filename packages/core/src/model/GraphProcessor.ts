@@ -376,12 +376,14 @@ export class GraphProcessor {
     this.setExternalFunction('echo', async (value) => ({ type: 'any', value }) satisfies DataValue);
 
     this.#emitter.on('globalSet', ({ id, value }) => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.#emitter.emit(`globalSet:${id}`, value);
     });
   }
 
   #emitTraceEvent(eventData: string) {
     if (this.#includeTrace) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.#emitter.emit('trace', eventData);
     }
   }
@@ -435,9 +437,11 @@ export class GraphProcessor {
     this.#abortSuccessfully = successful;
     this.#abortError = error;
 
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.#emitter.emit('graphAbort', { successful, error, graph: this.#graph });
 
     if (!this.#isSubProcessor) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.#emitter.emit('abort', { successful, error });
     }
 
@@ -447,6 +451,7 @@ export class GraphProcessor {
   pause(): void {
     if (this.#isPaused === false) {
       this.#isPaused = true;
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.#emitter.emit('pause', void 0);
     }
   }
@@ -454,6 +459,7 @@ export class GraphProcessor {
   resume(): void {
     if (this.#isPaused) {
       this.#isPaused = false;
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.#emitter.emit('resume', void 0);
     }
   }
@@ -559,6 +565,7 @@ export class GraphProcessor {
 
         await match(event)
           .with({ type: 'start' }, ({ data }) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('start', {
               project: this.#project,
               contextValues: data.contextValues,
@@ -569,43 +576,52 @@ export class GraphProcessor {
             this.#graphInputs = data.inputs;
           })
           .with({ type: 'abort' }, ({ data }) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('abort', data);
           })
           .with({ type: 'pause' }, () => {})
           .with({ type: 'resume' }, () => {})
           .with({ type: 'done' }, ({ data }) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('done', data);
             this.#graphOutputs = data.results;
             this.#running = false;
           })
           .with({ type: 'error' }, ({ data }) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('error', data);
           })
           .with({ type: 'globalSet' }, ({ data }) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('globalSet', data);
           })
           .with({ type: 'trace' }, ({ data }) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('trace', data);
           })
           .with({ type: 'graphStart' }, ({ data }) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('graphStart', {
               graph: getGraph(data.graphId),
               inputs: data.inputs,
             });
           })
           .with({ type: 'graphFinish' }, ({ data }) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('graphFinish', {
               graph: getGraph(data.graphId),
               outputs: data.outputs,
             });
           })
           .with({ type: 'graphError' }, ({ data }) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('graphError', {
               graph: getGraph(data.graphId),
               error: data.error,
             });
           })
           .with({ type: 'graphAbort' }, ({ data }) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('graphAbort', {
               graph: getGraph(data.graphId),
               error: data.error,
@@ -614,6 +630,7 @@ export class GraphProcessor {
           })
           .with({ type: 'nodeStart' }, async ({ data }) => {
             const node = getNode(data.nodeId);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('nodeStart', {
               node: getNode(data.nodeId),
               inputs: data.inputs,
@@ -627,6 +644,7 @@ export class GraphProcessor {
           })
           .with({ type: 'nodeFinish' }, ({ data }) => {
             const node = getNode(data.nodeId);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('nodeFinish', {
               node,
               outputs: data.outputs,
@@ -637,6 +655,7 @@ export class GraphProcessor {
             this.#visitedNodes.add(data.nodeId);
           })
           .with({ type: 'nodeError' }, ({ data }) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('nodeError', {
               node: getNode(data.nodeId),
               error: data.error,
@@ -647,6 +666,7 @@ export class GraphProcessor {
             this.#visitedNodes.add(data.nodeId);
           })
           .with({ type: 'nodeExcluded' }, ({ data }) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('nodeExcluded', {
               node: getNode(data.nodeId),
               processId: data.processId,
@@ -660,6 +680,7 @@ export class GraphProcessor {
           .with({ type: 'nodeOutputsCleared' }, () => {})
           .with({ type: 'partialOutput' }, () => {})
           .with({ type: 'userInput' }, ({ data }) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('userInput', {
               callback: undefined!,
               inputStrings: data.inputStrings,
@@ -670,19 +691,23 @@ export class GraphProcessor {
             });
           })
           .with({ type: P.string.startsWith('globalSet:') }, ({ type, data }) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit(type, data);
           })
           .with({ type: P.string.startsWith('userEvent:') }, ({ type, data }) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit(type, data);
           })
           .with({ type: 'newAbortController' }, () => {})
           .with({ type: 'finish' }, () => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('finish', undefined);
           })
           .with(P.nullish, () => {})
           .exhaustive();
       }
     } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.#emitter.emit('error', { error: getError(err) });
     } finally {
       this.#running = false;
@@ -747,6 +772,7 @@ export class GraphProcessor {
 
       if (this.#context.tokenizer) {
         this.#context.tokenizer.on('error', (error) => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           this.#emitter.emit('error', { error });
         });
       }
@@ -789,6 +815,7 @@ export class GraphProcessor {
       await this.#waitUntilUnpaused();
 
       for (const startNode of startNodes) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         this.#processingQueue.add(async () => {
           await this.#fetchNodeDataAndProcessNode(startNode);
         });
@@ -911,6 +938,7 @@ export class GraphProcessor {
 
     this.#queuedNodes.add(node.id);
 
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.#processingQueue.addAll(
       inputNodes.map((inputNode) => {
         return async () => {
@@ -1148,6 +1176,7 @@ export class GraphProcessor {
     }
 
     // Node is finished, check if we can run any more nodes that depend on this one
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.#processingQueue.addAll(
       outputNodes.nodes.map((outputNode) => async () => {
         this.#emitTraceEvent(`Trying to run output node from ${node.title}: ${outputNode.title} (${outputNode.id})`);
@@ -1208,6 +1237,7 @@ export class GraphProcessor {
       node.splitRunMax ?? 10,
     );
 
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.#emitter.emit('nodeStart', { node, inputs: inputValues, processId });
 
     try {
@@ -1243,8 +1273,10 @@ export class GraphProcessor {
               inputs as Inputs,
               i,
               processId,
-              (node, partialOutputs, index) =>
-                this.#emitter.emit('partialOutput', { node, outputs: partialOutputs, index, processId }),
+              (node, partialOutputs, index) => {
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                this.#emitter.emit('partialOutput', { node, outputs: partialOutputs, index, processId });
+              },
             );
 
             if (output['cost' as PortId]?.type === 'number') {
@@ -1271,8 +1303,10 @@ export class GraphProcessor {
                 inputs as Inputs,
                 i,
                 processId,
-                (node, partialOutputs, index) =>
-                  this.#emitter.emit('partialOutput', { node, outputs: partialOutputs, index, processId }),
+                (node, partialOutputs, index) => {
+                  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                  this.#emitter.emit('partialOutput', { node, outputs: partialOutputs, index, processId });
+                },
               );
 
               if (output['cost' as PortId]?.type === 'number') {
@@ -1308,6 +1342,7 @@ export class GraphProcessor {
       this.#nodeResults.set(node.id, aggregateResults);
       this.#visitedNodes.add(node.id);
       this.#totalCost += sum(results.map((r) => coerceTypeOptional(r.output?.['cost' as PortId], 'number') ?? 0));
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.#emitter.emit('nodeFinish', { node, outputs: aggregateResults, processId });
     } catch (error) {
       this.#nodeErrored(node, error, processId);
@@ -1321,6 +1356,7 @@ export class GraphProcessor {
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.#emitter.emit('nodeStart', { node, inputs: inputValues, processId });
 
     try {
@@ -1329,8 +1365,10 @@ export class GraphProcessor {
         inputValues,
         0,
         processId,
-        (node, partialOutputs, index) =>
-          this.#emitter.emit('partialOutput', { node, outputs: partialOutputs, index, processId }),
+        (node, partialOutputs, index) => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          this.#emitter.emit('partialOutput', { node, outputs: partialOutputs, index, processId });
+        },
       );
 
       this.#nodeResults.set(node.id, outputValues);
@@ -1338,6 +1376,7 @@ export class GraphProcessor {
       if (outputValues['cost' as PortId]?.type === 'number') {
         this.#totalCost += coerceTypeOptional(outputValues['cost' as PortId], 'number') ?? 0;
       }
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.#emitter.emit('nodeFinish', { node, outputs: outputValues, processId });
     } catch (error) {
       this.#nodeErrored(node, error, processId);
@@ -1346,6 +1385,7 @@ export class GraphProcessor {
 
   #nodeErrored(node: ChartNode, e: unknown, processId: ProcessId) {
     const error = getError(e);
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.#emitter.emit('nodeError', { node, error, processId });
     this.#emitTraceEvent(`Node ${node.title} (${node.id}-${processId}) errored: ${error.stack}`);
     this.#erroredNodes.set(node.id, error.toString());
@@ -1361,6 +1401,7 @@ export class GraphProcessor {
 
   /** Raise a user event on the processor, all subprocessors, and their children. */
   raiseEvent(event: string, data: DataValue) {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.#emitter.emit(`userEvent:${event}`, data);
 
     for (const subprocessor of this.#subprocessors) {
@@ -1370,6 +1411,7 @@ export class GraphProcessor {
 
   #newAbortController() {
     const controller = new AbortController();
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.#emitter.emit('newAbortController', controller);
     return controller;
   }
@@ -1394,7 +1436,11 @@ export class GraphProcessor {
     let tokenizer = this.#context.tokenizer;
     if (!tokenizer) {
       tokenizer = new GptTokenizerTokenizer();
-      tokenizer.on('error', (e) => this.#emitter.emit('error', { error: e }));
+
+      tokenizer.on('error', (e) => {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        this.#emitter.emit('error', { error: e });
+      });
     }
 
     const context: InternalProcessContext = {
@@ -1428,6 +1474,7 @@ export class GraphProcessor {
         if (useAsGraphPartialOutput && this.#executor && this.#parent) {
           const executorNode = this.#parent.#nodesById[this.#executor.nodeId];
           if (executorNode) {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit('partialOutput', {
               index: this.#executor.index,
               node: executorNode,
@@ -1442,6 +1489,7 @@ export class GraphProcessor {
       getGlobal: (id) => this.#globals.get(id),
       setGlobal: (id, value) => {
         this.#globals.set(id, value);
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         this.#emitter.emit('globalSet', { id, value, processId });
       },
       waitForGlobal: async (id) => {
@@ -1489,6 +1537,7 @@ export class GraphProcessor {
 
         processor.onAny((event, data) => {
           if (event.startsWith('globalSet:')) {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.#emitter.emit(event, data);
           }
         });
@@ -1496,11 +1545,17 @@ export class GraphProcessor {
         this.#subprocessors.add(processor);
 
         if (signal) {
-          signal.addEventListener('abort', () => processor.abort());
+          signal.addEventListener('abort', () => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            processor.abort();
+          });
         }
 
         // If parent is aborted, abort subgraph with error (it's fine, success state is on the parent)
-        this.#abortController.signal.addEventListener('abort', () => processor.abort());
+        this.#abortController.signal.addEventListener('abort', () => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          processor.abort();
+        });
 
         this.on('pause', () => processor.pause());
         this.on('resume', () => processor.resume());
@@ -1511,6 +1566,7 @@ export class GraphProcessor {
         this.#emitTraceEvent(message);
       },
       abortGraph: (error) => {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         this.abort(error === undefined, error);
       },
       getPluginConfig: (name) => getPluginConfig(plugin, this.#context.settings, name),
@@ -1526,6 +1582,7 @@ export class GraphProcessor {
             reject(new Error('Processing aborted'));
           });
 
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           this.#emitter.emit('userInput', {
             node,
             inputStrings,
@@ -1636,6 +1693,7 @@ export class GraphProcessor {
 
     this.#nodeResults.set(node.id, outputs);
 
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.#emitter.emit('nodeExcluded', {
       node,
       processId,

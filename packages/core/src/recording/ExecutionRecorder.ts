@@ -165,6 +165,7 @@ export class ExecutionRecorder {
         this.#events.push(toRecordedEvent(message, data) as RecordedEvents);
 
         if (message === 'done' || message === 'abort' || message === 'error') {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           this.#emitter.emit('finish', {
             recording: this.getRecording(),
           });
@@ -193,6 +194,7 @@ export class ExecutionRecorder {
       this.#events.push(toRecordedEvent(event, data) as RecordedEvents);
 
       if (event === 'done' || event === 'abort' || event === 'error') {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         this.#emitter.emit('finish', {
           recording: this.getRecording(),
         });
