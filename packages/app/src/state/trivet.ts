@@ -24,4 +24,4 @@ export const trivetState = atomWithStorage<TrivetState>(
 );
 
 // Convert selector to derived atom
-export const trivetTestsRunningState = atom(async (get) => (await get(trivetState)).runningTests);
+export const trivetTestsRunningState = atom((get) => get(trivetState).runningTests);

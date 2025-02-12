@@ -91,28 +91,23 @@ export const TestCaseEditor: FC = () => {
       <Button className="close-trivet" appearance="subtle" onClick={onClose}>
         &times;
       </Button>
+
       <div className="group">
         <label>Input</label>
         <InputOutputEditor
           json={selectedTestCase?.input ?? {}}
           setJson={(input) =>
-            swallowPromise(
-              setState(async (sPromise) => {
-                const s = await sPromise;
-                return {
-                  ...s,
-
-                  testSuites: s.testSuites.map((ts) =>
-                    ts.id === selectedTestSuiteId
-                      ? {
-                          ...ts,
-                          testCases: ts.testCases.map((tc) => (tc.id === editingTestCaseId ? { ...tc, input } : tc)),
-                        }
-                      : ts,
-                  ),
-                };
-              }),
-            )
+            setState((s) => ({
+              ...s,
+              testSuites: s.testSuites.map((ts) =>
+                ts.id === selectedTestSuiteId
+                  ? {
+                      ...ts,
+                      testCases: ts.testCases.map((tc) => (tc.id === editingTestCaseId ? { ...tc, input } : tc)),
+                    }
+                  : ts,
+              ),
+            }))
           }
         />
       </div>
@@ -121,24 +116,19 @@ export const TestCaseEditor: FC = () => {
         <InputOutputEditor
           json={selectedTestCase?.expectedOutput ?? {}}
           setJson={(expectedOutput) =>
-            swallowPromise(
-              setState(async (sPromise) => {
-                const s = await sPromise;
-                return {
-                  ...s,
-                  testSuites: s.testSuites.map((ts) =>
-                    ts.id === selectedTestSuiteId
-                      ? {
-                          ...ts,
-                          testCases: ts.testCases.map((tc) =>
-                            tc.id === editingTestCaseId ? { ...tc, expectedOutput } : tc,
-                          ),
-                        }
-                      : ts,
-                  ),
-                };
-              }),
-            )
+            setState((s) => ({
+              ...s,
+              testSuites: s.testSuites.map((ts) =>
+                ts.id === selectedTestSuiteId
+                  ? {
+                      ...ts,
+                      testCases: ts.testCases.map((tc) =>
+                        tc.id === editingTestCaseId ? { ...tc, expectedOutput } : tc,
+                      ),
+                    }
+                  : ts,
+              ),
+            }))
           }
         />
       </div>

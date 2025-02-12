@@ -28,17 +28,17 @@ export const graphState = atomWithStorage<NodeGraph>('graphState', emptyNodeGrap
 
 // Derived atoms
 export const graphMetadataState = atom(
-  async (get) => (await get(graphState)).metadata,
-  async (get, set, newValue: NodeGraph['metadata']) => {
-    const currentGraph = await get(graphState);
+  (get) => get(graphState).metadata,
+  (get, set, newValue: NodeGraph['metadata']) => {
+    const currentGraph = get(graphState);
     set(graphState, { ...currentGraph, metadata: newValue });
   },
 );
 
 export const nodesState = atom(
-  async (get) => (await get(graphState)).nodes,
-  async (get, set, newValue: ChartNode[] | ((prev: ChartNode[]) => ChartNode[])) => {
-    const currentGraph = await get(graphState);
+  (get) => get(graphState).nodes,
+  (get, set, newValue: ChartNode[] | ((prev: ChartNode[]) => ChartNode[])) => {
+    const currentGraph = get(graphState);
     const currentNodes = currentGraph.nodes;
 
     const nextNodes = typeof newValue === 'function' ? newValue(currentNodes) : newValue;
@@ -48,9 +48,9 @@ export const nodesState = atom(
 );
 
 export const connectionsState = atom(
-  async (get) => (await get(graphState)).connections,
-  async (get, set, newValue: NodeConnection[] | ((prev: NodeConnection[]) => NodeConnection[])) => {
-    const currentGraph = await get(graphState);
+  (get) => get(graphState).connections,
+  (get, set, newValue: NodeConnection[] | ((prev: NodeConnection[]) => NodeConnection[])) => {
+    const currentGraph = get(graphState);
     const currentConnections = currentGraph.connections;
 
     const nextConnections = typeof newValue === 'function' ? newValue(currentConnections) : newValue;
@@ -59,8 +59,8 @@ export const connectionsState = atom(
   },
 );
 
-export const nodesByIdState = atom(async (get) =>
-  (await get(nodesState)).reduce(
+export const nodesByIdState = atom((get) =>
+  get(nodesState).reduce(
     (acc, node) => {
       acc[node.id] = node;
       return acc;
@@ -69,16 +69,16 @@ export const nodesByIdState = atom(async (get) =>
   ),
 );
 
-export const nodesForConnectionState = atom(async (get) => {
-  const nodesById = await get(nodesByIdState);
-  return (await get(connectionsState)).map((connection) => ({
+export const nodesForConnectionState = atom((get) => {
+  const nodesById = get(nodesByIdState);
+  return get(connectionsState).map((connection) => ({
     inputNode: nodesById[connection.inputNodeId],
     outputNode: nodesById[connection.outputNodeId],
   }));
 });
 
-export const connectionsForNodeState = atom(async (get) =>
-  (await get(connectionsState)).reduce(
+export const connectionsForNodeState = atom((get) =>
+  get(connectionsState).reduce(
     (acc, connection) => {
       acc[connection.inputNodeId] ??= [];
       acc[connection.inputNodeId]!.push(connection);
@@ -92,13 +92,13 @@ export const connectionsForNodeState = atom(async (get) =>
 );
 
 export const connectionsForSingleNodeState = atomFamily((nodeId: NodeId) =>
-  atom(async (get) => (await get(connectionsForNodeState))[nodeId]),
+  atom((get) => get(connectionsForNodeState)[nodeId]),
 );
 
-export const nodeByIdState = atomFamily((nodeId: NodeId) => atom(async (get) => (await get(nodesByIdState))[nodeId]));
+export const nodeByIdState = atomFamily((nodeId: NodeId) => atom((get) => get(nodesByIdState)[nodeId]));
 
-export const nodeInstancesState = atom(async (get) => {
-  const nodesById = await get(nodesByIdState);
+export const nodeInstancesState = atom((get) => {
+  const nodesById = get(nodesByIdState);
   get(pluginRefreshCounterState); // Keep dependency
 
   return mapValues(nodesById, (node) => {
@@ -110,15 +110,13 @@ export const nodeInstancesState = atom(async (get) => {
   });
 });
 
-export const nodeInstanceByIdState = atomFamily((nodeId: NodeId) =>
-  atom(async (get) => (await get(nodeInstancesState))?.[nodeId]),
-);
+export const nodeInstanceByIdState = atomFamily((nodeId: NodeId) => atom((get) => get(nodeInstancesState)?.[nodeId]));
 
-export const ioDefinitionsState = atom(async (get) => {
-  const nodeInstances = await get(nodeInstancesState);
-  const connectionsForNode = await get(connectionsForNodeState);
-  const nodesById = await get(nodesByIdState);
-  const project = await get(projectState);
+export const ioDefinitionsState = atom((get) => {
+  const nodeInstances = get(nodeInstancesState);
+  const connectionsForNode = get(connectionsForNodeState);
+  const nodesById = get(nodesByIdState);
+  const project = get(projectState);
 
   return mapValues(nodesById, (node) => {
     const connections = connectionsForNode[node.id] ?? [];
@@ -140,9 +138,7 @@ export const ioDefinitionsState = atom(async (get) => {
 });
 
 export const ioDefinitionsForNodeState = atomFamily((nodeId: NodeId | undefined) =>
-  atom(async (get) =>
-    nodeId ? (await get(ioDefinitionsState))[nodeId]! : { inputDefinitions: [], outputDefinitions: [] },
-  ),
+  atom((get) => (nodeId ? get(ioDefinitionsState)[nodeId]! : { inputDefinitions: [], outputDefinitions: [] })),
 );
 
 export const nodeConstructorsState = atom((get) => {

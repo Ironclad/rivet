@@ -445,8 +445,8 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo((
       });
     });
 
-    setGraph(async (prev) =>
-      produce(await prev, (draft) => {
+    setGraph((prev) =>
+      produce(prev, (draft) => {
         const metadata = draft.metadata ?? { name: '' };
         metadata.name = metadata.name!.replace(fullPath, newFullPath);
         draft.metadata = metadata;
@@ -459,13 +459,10 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo((
     setFolderNames(newFolderNames);
 
     setRenamingItemFullPath(undefined);
-    setExpandedFolders(async (prev) => {
-      const prevExpanded = await prev;
-      return {
-        ...prevExpanded,
-        [`${projectMetadata.id}/${newFullPath}`]: prevExpanded[`${projectMetadata.id}/${fullPath}`] ?? false,
-      };
-    });
+    setExpandedFolders((prev) => ({
+      ...prev,
+      [`${projectMetadata.id}/${newFullPath}`]: prev[`${projectMetadata.id}/${fullPath}`] ?? false,
+    }));
   });
 
   const handleDragStart = useStableCallback((drag: DragStartEvent) => {

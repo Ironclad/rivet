@@ -44,17 +44,17 @@ export const projectState = atomWithStorage<Omit<Project, 'data'>>(
 export const projectDataState = atom<Record<DataId, string> | undefined>(undefined);
 
 export const projectMetadataState = atom(
-  async (get) => (await get(projectState)).metadata,
-  async (get, set, newValue: Project['metadata'] | undefined) => {
+  (get) => get(projectState).metadata,
+  (get, set, newValue: Project['metadata'] | undefined) => {
     set(projectState, {
-      ...(await get(projectState)),
+      ...get(projectState),
       metadata: newValue ?? blankProject().metadata,
     });
   },
 );
 
-export const projectGraphInfoState = atom(async (get) => {
-  const project = await get(projectState);
+export const projectGraphInfoState = atom((get) => {
+  const project = get(projectState);
   return {
     graphs: Object.fromEntries(
       entries(project.graphs).map(([id, graph]) => [
@@ -81,9 +81,9 @@ export const loadedProjectState = atomWithStorage(
 );
 
 export const savedGraphsState = atom(
-  async (get) => values((await get(projectState)).graphs ?? {}),
-  async (get, set, newValue: NodeGraph[] | ((prev: NodeGraph[]) => NodeGraph[])) => {
-    const project = await get(projectState);
+  (get) => values(get(projectState).graphs ?? {}),
+  (get, set, newValue: NodeGraph[] | ((prev: NodeGraph[]) => NodeGraph[])) => {
+    const project = get(projectState);
     const currentGraphs = Object.values(project.graphs ?? {});
     const nextGraphs = typeof newValue === 'function' ? newValue(currentGraphs) : newValue;
 
@@ -109,9 +109,9 @@ export const savedGraphsState = atom(
 );
 
 export const projectPluginsState = atom(
-  async (get) => (await get(projectState)).plugins ?? [],
-  async (get, set, newValue: Project['plugins'] | ((prev: Project['plugins']) => Project['plugins']) | undefined) => {
-    const currentProject = await get(projectState);
+  (get) => get(projectState).plugins ?? [],
+  (get, set, newValue: Project['plugins'] | ((prev: Project['plugins']) => Project['plugins']) | undefined) => {
+    const currentProject = get(projectState);
     const currentPlugins = currentProject.plugins ?? blankProject().plugins;
 
     const nextPlugins = typeof newValue === 'function' ? newValue(currentPlugins) : newValue ?? blankProject().plugins;
@@ -144,13 +144,12 @@ export const projectsState = atomWithStorage<OpenedProjectsInfo>(
 );
 
 export const openedProjectsState = atom(
-  async (get) => (await get(projectsState)).openedProjects,
-  async (get, set, newValue: Record<ProjectId, OpenedProjectInfo> | undefined) => {
-    const currentProjects = await get(projectsState);
+  (get) => get(projectsState).openedProjects,
+  (get, set, newValue: Record<ProjectId, OpenedProjectInfo> | undefined) => {
     set(projectsState, {
-      ...currentProjects,
+      ...get(projectsState),
       openedProjects: {
-        ...currentProjects.openedProjects,
+        ...get(projectsState).openedProjects,
         ...newValue,
       },
     });
@@ -158,9 +157,9 @@ export const openedProjectsState = atom(
 );
 
 export const openedProjectsSortedIdsState = atom(
-  async (get) => (await get(projectsState)).openedProjectsSortedIds,
-  async (get, set, newValue: ProjectId[] | ((prev: ProjectId[]) => ProjectId[]) | undefined) => {
-    const currentProjects = await get(projectsState);
+  (get) => get(projectsState).openedProjectsSortedIds,
+  (get, set, newValue: ProjectId[] | ((prev: ProjectId[]) => ProjectId[]) | undefined) => {
+    const currentProjects = get(projectsState);
     const currentIds = currentProjects.openedProjectsSortedIds ?? [];
 
     const nextIds = typeof newValue === 'function' ? newValue(currentIds) : newValue ?? [];

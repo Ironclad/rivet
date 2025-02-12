@@ -67,7 +67,6 @@ export function useLoadProject() {
         });
       }
     } catch (err) {
-      console.error(getError(err).toString());
       toast.error(`Failed to load project: ${getError(err).message}`);
     }
   };

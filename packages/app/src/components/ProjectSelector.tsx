@@ -246,8 +246,8 @@ export const ProjectSelector: FC = () => {
       return;
     }
 
-    setProjects(async (projects) =>
-      produce(await projects, (draft) => {
+    setProjects((projects) =>
+      produce(projects, (draft) => {
         delete draft.openedProjects[projectId];
 
         draft.openedProjectsSortedIds = draft.openedProjectsSortedIds.filter(

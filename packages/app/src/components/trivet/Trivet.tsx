@@ -64,8 +64,7 @@ export const TrivetContainer: FC<TrivetContainerProps> = ({ tryRunTests, onClose
     [testSuites, selectedTestSuiteId],
   );
   const createNewTestSuite = useCallback(() => {
-    setState(async (sPromise) => {
-      const s = await sPromise;
+    setState((s) => {
       const newSuiteId = nanoid();
       return {
         ...s,
@@ -76,13 +75,10 @@ export const TrivetContainer: FC<TrivetContainerProps> = ({ tryRunTests, onClose
   }, [setState]);
   const deleteTestSuite = useCallback(
     (id: string) => {
-      setState(async (sPromise) => {
-        const s = await sPromise;
-        return {
-          ...s,
-          testSuites: s.testSuites.filter((ts) => ts.id !== id),
-        };
-      });
+      setState((s) => ({
+        ...s,
+        testSuites: s.testSuites.filter((ts) => ts.id !== id),
+      }));
     },
     [setState],
   );

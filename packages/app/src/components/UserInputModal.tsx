@@ -80,8 +80,8 @@ export const UserInputModal: FC<UserInputModalProps> = ({ open, questions, quest
   };
 
   const handleSubmit = () => {
-    setLastAnswers(async (prev) => {
-      const newLastAnswers = { ...(await prev) };
+    setLastAnswers((prev) => {
+      const newLastAnswers = { ...prev };
       questions.forEach((question, index) => {
         newLastAnswers[question] = answers[index]!;
       });

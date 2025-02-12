@@ -29,6 +29,7 @@ export function useTestSuite(testSuiteId: string | undefined) {
 
   const updateTestSuite = useCallback(
     (testSuite: TrivetTestSuite) => {
+<<<<<<< HEAD
       setState(async (s) => {
         const suite = await s;
         return {
@@ -36,6 +37,12 @@ export function useTestSuite(testSuiteId: string | undefined) {
           testSuites: suite.testSuites.map((ts) => (ts.id === testSuite.id ? testSuite : ts)),
         };
       });
+=======
+      setState((s) => ({
+        ...s,
+        testSuites: s.testSuites.map((ts) => (ts.id === testSuite.id ? testSuite : ts)),
+      }));
+>>>>>>> parent of 137800df (async storage)
     },
     [setState],
   );
@@ -90,16 +97,12 @@ export function useTestSuite(testSuiteId: string | undefined) {
   });
 
   const deleteTestCase = useStableCallback((id: string) => {
-    setState(async (s) => {
-      const suite = await s;
-      return {
-        ...suite,
-
-        testSuites: suite.testSuites.map((ts) =>
-          ts.id === testSuiteId ? { ...ts, testCases: ts.testCases.filter((tc) => tc.id !== id) } : ts,
-        ),
-      };
-    });
+    setState((s) => ({
+      ...s,
+      testSuites: s.testSuites.map((ts) =>
+        ts.id === testSuiteId ? { ...ts, testCases: ts.testCases.filter((tc) => tc.id !== id) } : ts,
+      ),
+    }));
   });
 
   const duplicateTestCase = useStableCallback((id: string) => {
