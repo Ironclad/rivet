@@ -13,8 +13,7 @@
     "allowlist": {
       "all": false,
       "fs": {
-        "all": true,
-        "scope": ["$APPLOCALDATA/**", "$APPLOCALDATA/**/.*", "$TEMP/**"]
+        "all": true
       },
       "path": {
         "all": true
