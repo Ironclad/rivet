@@ -17,7 +17,7 @@
     "immer": "^10.0.3",
     "lodash-es": "^4.17.21",
     "nanoid": "^5.0.2",
-    "next": "14.0.1",
+    "next": "^15.1.7",
     "next-auth": "^5.0.0-beta.3",
     "next-connect": "1.0.0-next.4",
     "octokit": "^3.1.2",
