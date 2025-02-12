@@ -9,7 +9,6 @@ import {
   loadProjectFromFile,
   type GraphId,
   type Outputs,
-  type Inputs,
   type Project,
   type LooseDataValue,
 } from '@ironclad/rivet-node';
@@ -252,7 +251,7 @@ function throwIfInvalidGraph(project: Project, graph: string | undefined, projec
 async function getProjectFile(initialProjectFilePath: string | undefined): Promise<string> {
   let projectFilePath = initialProjectFilePath ?? (await getProjectFilePathFromDirectory(process.cwd()));
 
-  throwIfMissingFile(projectFilePath);
+  await throwIfMissingFile(projectFilePath);
 
   if ((await stat(projectFilePath)).isDirectory()) {
     projectFilePath = await getProjectFilePathFromDirectory(projectFilePath);
