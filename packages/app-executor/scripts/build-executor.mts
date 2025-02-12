@@ -18,24 +18,16 @@ const resolveRivet: esbuild.Plugin = {
 
 console.log(`Bundling to ${chalk.cyan('bin/executor-bundle.cjs')}...`);
 
-esbuild
-  .build({
-    entryPoints: ['bin/executor.mts'],
-    bundle: true,
-    platform: 'node',
-    outfile: './bin/executor-bundle.cjs',
-    format: 'cjs',
-    target: 'node16',
-    external: [],
-    plugins: [resolveRivet],
-  })
-  .then(() => {
-    console.log(`Bundled to ${chalk.cyan('bin/executor-bundle.cjs')}`);
-  })
-  .catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+await esbuild.build({
+  entryPoints: ['bin/executor.mts'],
+  bundle: true,
+  platform: 'node',
+  outfile: './bin/executor-bundle.cjs',
+  format: 'cjs',
+  target: 'node16',
+  external: [],
+  plugins: [resolveRivet],
+});
 
 console.log(`Compiling to native binary for ${chalk.cyan(process.platform)}...`);
 
