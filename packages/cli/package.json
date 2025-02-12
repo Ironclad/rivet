@@ -7,10 +7,11 @@
   "bin": {
     "rivet": "bin/cli.js"
   },
-  "types": "dist/types/index.d.ts",
+  "types": "dist/types/cli.d.ts",
   "type": "module",
   "files": [
-    "bin/cli.js"
+    "bin",
+    "dist"
   ],
   "scripts": {
     "build": "tsc -b",
