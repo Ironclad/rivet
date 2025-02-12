@@ -120,7 +120,7 @@
     "react-transition-group": "^4.4.5",
     "react-window": "^1.8.9",
     "retry": "^0.13.1",
-    "rollup": "^4.1.4",
+    "rollup": "^4.34.6",
     "safe-stable-stringify": "^2.4.3",
     "ts-dedent": "^2.2.0",
     "ts-node": "^10.9.1",
