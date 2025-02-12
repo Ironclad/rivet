@@ -3906,7 +3906,7 @@ __metadata:
     eslint-plugin-n: "npm:^16.2.0"
     eslint-plugin-promise: "npm:^6.1.1"
     eslint-plugin-react: "npm:^7.37.4"
-    eslint-plugin-react-hooks: "npm:^5.1.0"
+    eslint-plugin-react-hooks: "npm:5.2.0-canary-cd90a4d8-20250210"
     execa: "npm:^8.0.1"
     fast-deep-equal: "npm:^3.1.3"
     fuse.js: "npm:^6.6.2"
@@ -10633,6 +10633,15 @@ __metadata:
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
   checksum: 10/216c4348f796c5e90984224532d42a8f8d0455b8cbb1955bcb328b3aa10a52e9718f6fb044b6fe19825eda3a2d62a32b1042d9cbb10731353cf61b7a6cab2d71
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-react-hooks@npm:5.2.0-canary-cd90a4d8-20250210":
+  version: 5.2.0-canary-cd90a4d8-20250210
+  resolution: "eslint-plugin-react-hooks@npm:5.2.0-canary-cd90a4d8-20250210"
+  peerDependencies:
+    eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0
+  checksum: 10/62c325cc5b71f0a1c733773adc867c8282fb14472e85d4a6fb5dc4c81a389ee59e7ddfb7df6771a2ed7f9765b16866149d194918a77cae8e4dd57ba3c5e35da4
   languageName: node
   linkType: hard
 

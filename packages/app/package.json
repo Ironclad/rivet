@@ -162,7 +162,7 @@
     "eslint-plugin-n": "^16.2.0",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.37.4",
-    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-hooks": "5.2.0-canary-cd90a4d8-20250210",
     "execa": "^8.0.1",
     "rollup-plugin-visualizer": "^5.9.2",
     "semver": "^7.6.3",
