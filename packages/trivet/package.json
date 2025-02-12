@@ -36,7 +36,7 @@
     "build:cjs": "rimraf dist/cjs && tsx ../core/bundle.esbuild.ts",
     "prepublishOnly": "yarn build && cp -r ../../LICENSE ../../README.md .",
     "publish": "yarn npm publish --access public",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx ./src"
+    "lint": "eslint ./src"
   },
   "dependencies": {
     "@ironclad/rivet-core": "workspace:^",
@@ -48,10 +48,10 @@
     "@types/lodash-es": "^4.17.10",
     "@types/node": "^20.8.7",
     "@types/yaml": "^1.9.7",
-    "@typescript-eslint/eslint-plugin": "^6.9.0",
-    "eslint": "^8.52.0",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "eslint": "^9.20.1",
     "eslint-config-standard-with-typescript": "^39.1.1",
-    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-n": "^16.2.0",
     "eslint-plugin-promise": "^6.1.1",
     "rimraf": "^5.0.5",
