@@ -79,7 +79,7 @@ export const TestCaseEditor: FC = () => {
   const costAvg = mean(testCaseResults?.map((res) => res.cost).filter((c) => c > 0));
 
   function onClose() {
-    setState((s) => ({ ...(await s), editingTestCaseId: undefined }));
+    setState((s) => ({ ...s, editingTestCaseId: undefined }));
   }
 
   if (selectedTestCase == null) {

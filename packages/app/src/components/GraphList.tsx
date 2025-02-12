@@ -383,8 +383,8 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo((
     const newFolderPath = parentPath ? `${parentPath}/New Folder` : 'New Folder';
     setFolderNames((prev) => [...prev, newFolderPath]);
     startRename(newFolderPath);
-    setExpandedFolders(async (prev) => ({
-      ...(await prev),
+    setExpandedFolders((prev) => ({
+      ...prev,
       [`${projectMetadata.id}/${newFolderPath}`]: true,
     }));
   });
@@ -789,8 +789,8 @@ export const FolderItem: FC<{
     );
 
     const setExpanded = useStableCallback((expanded: boolean) => {
-      setExpandedFolders(async (prev) => ({
-        ...(await prev),
+      setExpandedFolders((prev) => ({
+        ...prev,
         [`${projectMetadata.id}/${fullPath}`]: expanded,
       }));
     });

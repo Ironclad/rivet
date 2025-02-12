@@ -108,9 +108,7 @@ export const TrivetContainer: FC<TrivetContainerProps> = ({ tryRunTests, onClose
           <TestSuiteList
             testSuites={testSuites}
             selectedTestSuite={selectedTestSuite}
-            setSelectedTestSuite={(id) =>
-              swallowPromise(setState(async (s) => ({ ...(await s), selectedTestSuiteId: id })))
-            }
+            setSelectedTestSuite={(id) => setState((s) => ({ ...s, selectedTestSuiteId: id }))}
             createNewTestSuite={createNewTestSuite}
             deleteTestSuite={deleteTestSuite}
             runningTestSuiteId={runningTestSuiteId}

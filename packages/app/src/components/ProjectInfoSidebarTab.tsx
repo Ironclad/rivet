@@ -88,8 +88,8 @@ export const ProjectInfoSidebarTab: FC = () => {
   const selectedMainGraph = graphOptions.find((g) => g.value === project.metadata.mainGraphId);
 
   const setProjectContextValue = ({ key, value, secret }: ContextValue) => {
-    setProjectContext(async (context) => ({
-      ...(await context),
+    setProjectContext((context) => ({
+      ...context,
       [key]: {
         value,
         secret,
@@ -126,9 +126,7 @@ export const ProjectInfoSidebarTab: FC = () => {
         placeholder="Project Name"
         readViewFitContainerWidth
         defaultValue={project.metadata.title}
-        onConfirm={(newValue) =>
-          swallowPromise(setProject({ ...project, metadata: { ...project.metadata, title: newValue } }))
-        }
+        onConfirm={(newValue) => setProject({ ...project, metadata: { ...project.metadata, title: newValue } })}
       />
 
       <InlineEditableTextfield
@@ -136,9 +134,7 @@ export const ProjectInfoSidebarTab: FC = () => {
         label="Description"
         placeholder="Project Description"
         defaultValue={project.metadata?.description ?? ''}
-        onConfirm={(newValue) =>
-          swallowPromise(setProject({ ...project, metadata: { ...project.metadata, description: newValue } }))
-        }
+        onConfirm={(newValue) => setProject({ ...project, metadata: { ...project.metadata, description: newValue } })}
         readViewFitContainerWidth
       />
 

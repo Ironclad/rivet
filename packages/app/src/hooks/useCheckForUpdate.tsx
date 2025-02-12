@@ -74,7 +74,7 @@ export function useCheckForUpdate({
               <button className="primary" onClick={() => setUpdateModalOpen(true)}>
                 Install
               </button>
-              <button onClick={() => swallowPromise(setSkippedMaxVersion(manifest?.version))}>Skip</button>
+              <button onClick={() => setSkippedMaxVersion(manifest?.version)}>Skip</button>
               <button onClick={() => closeToast?.()}>Not Now</button>
             </div>
           </div>

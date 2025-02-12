@@ -146,7 +146,7 @@ export const GraphBuilder: FC = () => {
           nodes={nodes}
           connections={connections}
           onNodesChanged={nodesChanged}
-          onConnectionsChanged={syncWrapper(setConnections)}
+          onConnectionsChanged={setConnections}
           onNodeSelected={nodeSelected}
           selectedNodes={selectedNodes}
           onNodeStartEditing={nodeStartEditing}

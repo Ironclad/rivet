@@ -126,7 +126,7 @@ export const ActionBarMoreMenu: FC<{
             appearance="subtle"
             options={executorOptions}
             value={selectedExecutorOption}
-            onChange={(selected) => swallowPromise(setSelectedExecutor(selected!.value))}
+            onChange={(selected) => setSelectedExecutor(selected!.value)}
             isSearchable={false}
             isClearable={false}
             menuPortalTarget={dropdownTarget.current}

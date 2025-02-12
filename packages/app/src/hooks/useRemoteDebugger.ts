@@ -31,8 +31,8 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
     const socket = new WebSocket(url);
     onConnectLatest.current?.();
 
-    setRemoteDebuggerState(async (prevState) => ({
-      ...(await prevState),
+    setRemoteDebuggerState((prevState) => ({
+      ...prevState,
       socket,
       started: true,
       url,
@@ -40,8 +40,8 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
     }));
 
     socket.onopen = () => {
-      setRemoteDebuggerState(async (prevState) => ({
-        ...(await prevState),
+      setRemoteDebuggerState((prevState) => ({
+        ...prevState,
         reconnecting: false,
       }));
       setRetryDelay(0);
@@ -49,15 +49,15 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
 
     socket.onclose = () => {
       if (manuallyDisconnecting) {
-        setRemoteDebuggerState(async (prevState) => ({
-          ...(await prevState),
+        setRemoteDebuggerState((prevState) => ({
+          ...prevState,
           started: false,
           reconnecting: false,
           remoteUploadAllowed: false,
         }));
       } else {
-        setRemoteDebuggerState(async (prevState) => ({
-          ...(await prevState),
+        setRemoteDebuggerState((prevState) => ({
+          ...prevState,
           started: false,
           reconnecting: true,
         }));
@@ -76,8 +76,8 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
 
       if (message === 'graph-upload-allowed') {
         console.log('Graph uploading is allowed.');
-        setRemoteDebuggerState(async (prevState) => ({
-          ...(await prevState),
+        setRemoteDebuggerState((prevState) => ({
+          ...prevState,
           remoteUploadAllowed: true,
         }));
       } else if (message.startsWith('datasets:')) {
@@ -96,8 +96,8 @@ export function useRemoteDebugger(options: { onConnect?: () => void; onDisconnec
       connectRef.current?.(url);
     },
     disconnect: () => {
-      setRemoteDebuggerState(async (prevState) => ({
-        ...(await prevState),
+      setRemoteDebuggerState((prevState) => ({
+        ...prevState,
         started: false,
         reconnecting: false,
       }));

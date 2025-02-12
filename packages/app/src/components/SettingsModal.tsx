@@ -130,7 +130,7 @@ export const GeneralSettingsPage: FC = () => {
         {() => (
           <Select
             value={themes.find((o) => o.value === theme)}
-            onChange={(e) => e && swallowPromise(setTheme(e.value as any))}
+            onChange={(e) => e && setTheme(e.value as any)}
             options={themes}
           />
         )}
@@ -159,12 +159,10 @@ export const GeneralSettingsPage: FC = () => {
               type="number"
               value={settings.recordingPlaybackLatency}
               onChange={(e) =>
-                swallowPromise(
-                  setSettings(async (s) => ({
-                    ...(await s),
-                    recordingPlaybackLatency: (e.target as HTMLInputElement).valueAsNumber,
-                  })),
-                )
+                setSettings((s) => ({
+                  ...s,
+                  recordingPlaybackLatency: (e.target as HTMLInputElement).valueAsNumber,
+                }))
               }
             />
             <HelperMessage>
@@ -184,7 +182,7 @@ export const GeneralSettingsPage: FC = () => {
               <Toggle
                 id="recordExecutions"
                 isChecked={recordExecutions}
-                onChange={(e) => swallowPromise(setRecordExecutions(e.target.checked))}
+                onChange={(e) => setRecordExecutions(e.target.checked)}
               />
             </div>
             <HelperMessage>Disabling may help performance when dealing with very large data values</HelperMessage>
@@ -200,7 +198,7 @@ export const GeneralSettingsPage: FC = () => {
             <div className="toggle-field">
               <Select
                 value={executorOptions.find((o) => o.value === defaultExecutor)}
-                onChange={(e) => swallowPromise(setDefaultExecutor(e!.value))}
+                onChange={(e) => setDefaultExecutor(e!.value)}
                 options={executorOptions}
               />
             </div>
@@ -226,7 +224,7 @@ export const GeneralSettingsPage: FC = () => {
                   if (Number.isNaN(value) || value == null) {
                     return;
                   }
-                  return swallowPromise(setPreviousDataPerNodeToKeep(value));
+                  return setPreviousDataPerNodeToKeep(value);
                 }}
               />
             </div>
@@ -275,8 +273,8 @@ export const GeneralSettingsPage: FC = () => {
                 value={settings.throttleChatNode ?? 100}
                 onChange={(e) => {
                   if ((e.target as HTMLInputElement).valueAsNumber >= 0) {
-                    setSettings(async (s) => ({
-                      ...(await s),
+                    setSettings((s) => ({
+                      ...s,
                       throttleChatNode: (e.target as HTMLInputElement).valueAsNumber,
                     }));
                   }
@@ -318,15 +316,15 @@ export const OpenAiSettingsPage: FC = () => {
 
   const onSetHeaders = (newHeaders: { key: string; value: string }[]) => {
     setHeaders(newHeaders);
-    setSettings(async (s) => ({
-      ...(await s),
+    setSettings((s) => ({
+      ...s,
       chatNodeHeaders: Object.fromEntries(newHeaders.map(({ key, value }) => [key, value])),
     }));
   };
 
   const configureAzure = () => {
-    setSettings(async (s) => ({
-      ...(await s),
+    setSettings((s) => ({
+      ...s,
       openAiEndpoint:
         'https://{your-resource-name}.openai.azure.com/openai/deployments/{deployment-id}/chat/completions?api-version=2023-05-15',
       chatNodeHeaders: {
@@ -343,8 +341,8 @@ export const OpenAiSettingsPage: FC = () => {
   };
 
   const configureLmStudio = () => {
-    setSettings(async (s) => ({
-      ...(await s),
+    setSettings((s) => ({
+      ...s,
       openAiEndpoint: 'http://localhost:1234/v1/chat/completions',
     }));
   };
@@ -357,11 +355,7 @@ export const OpenAiSettingsPage: FC = () => {
             <TextField
               type="password"
               value={settings.openAiKey}
-              onChange={(e) =>
-                swallowPromise(
-                  setSettings(async (s) => ({ ...(await s), openAiKey: (e.target as HTMLInputElement).value })),
-                )
-              }
+              onChange={(e) => setSettings((s) => ({ ...s, openAiKey: (e.target as HTMLInputElement).value }))}
             />
             <HelperMessage>You may also set the OPENAI_API_KEY environment variable</HelperMessage>
           </>
@@ -373,12 +367,10 @@ export const OpenAiSettingsPage: FC = () => {
             <TextField
               value={settings.openAiOrganization}
               onChange={(e) =>
-                swallowPromise(
-                  setSettings(async (s) => ({
-                    ...(await s),
-                    openAiOrganization: (e.target as HTMLInputElement).value,
-                  })),
-                )
+                setSettings((s) => ({
+                  ...s,
+                  openAiOrganization: (e.target as HTMLInputElement).value,
+                }))
               }
             />
             <HelperMessage>
@@ -396,8 +388,8 @@ export const OpenAiSettingsPage: FC = () => {
               value={settings.chatNodeTimeout ?? DEFAULT_CHAT_NODE_TIMEOUT}
               onChange={(e) => {
                 if ((e.target as HTMLInputElement).valueAsNumber > 0) {
-                  setSettings(async (s) => ({
-                    ...(await s),
+                  setSettings((s) => ({
+                    ...s,
                     chatNodeTimeout: (e.target as HTMLInputElement).valueAsNumber,
                   }));
                 }
@@ -442,11 +434,7 @@ export const OpenAiSettingsPage: FC = () => {
           <>
             <TextField
               value={settings.openAiEndpoint}
-              onChange={(e) =>
-                swallowPromise(
-                  setSettings(async (s) => ({ ...(await s), openAiEndpoint: (e.target as HTMLInputElement).value })),
-                )
-              }
+              onChange={(e) => setSettings((s) => ({ ...s, openAiEndpoint: (e.target as HTMLInputElement).value }))}
             />
             <HelperMessage>
               Default endpoint to use for Chat nodes. Set to any OpenAI-compatible API endpoint. Leave blank to use

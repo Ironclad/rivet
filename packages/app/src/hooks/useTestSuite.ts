@@ -29,20 +29,10 @@ export function useTestSuite(testSuiteId: string | undefined) {
 
   const updateTestSuite = useCallback(
     (testSuite: TrivetTestSuite) => {
-<<<<<<< HEAD
-      setState(async (s) => {
-        const suite = await s;
-        return {
-          ...suite,
-          testSuites: suite.testSuites.map((ts) => (ts.id === testSuite.id ? testSuite : ts)),
-        };
-      });
-=======
       setState((s) => ({
         ...s,
         testSuites: s.testSuites.map((ts) => (ts.id === testSuite.id ? testSuite : ts)),
       }));
->>>>>>> parent of 137800df (async storage)
     },
     [setState],
   );
@@ -88,9 +78,9 @@ export function useTestSuite(testSuiteId: string | undefined) {
   });
 
   const setEditingTestCase = useStableCallback((id: string | undefined) => {
-    setState(async (s) => {
+    setState((s) => {
       return {
-        ...(await s),
+        ...s,
         editingTestCaseId: id,
       };
     });

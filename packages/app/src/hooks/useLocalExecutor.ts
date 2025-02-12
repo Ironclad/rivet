@@ -180,8 +180,8 @@ export function useLocalExecutor() {
       console.log(`trying to run tests`);
       currentExecution.onTrivetStart();
 
-      setTrivetState(async (s) => ({
-        ...(await s),
+      setTrivetState((s) => ({
+        ...s,
         runningTests: true,
         recentTestResults: undefined,
       }));
@@ -201,8 +201,8 @@ export function useLocalExecutor() {
           iterationCount: options.iterationCount,
           testSuites: testSuitesToRun,
           onUpdate: (results) => {
-            setTrivetState(async (s) => ({
-              ...(await s),
+            setTrivetState((s) => ({
+              ...s,
               recentTestResults: results,
             }));
           },
@@ -224,8 +224,8 @@ export function useLocalExecutor() {
             );
           },
         });
-        setTrivetState(async (s) => ({
-          ...(await s),
+        setTrivetState((s) => ({
+          ...s,
           recentTestResults: result,
           runningTests: false,
         }));
@@ -237,8 +237,8 @@ export function useLocalExecutor() {
         console.log(result);
       } catch (e) {
         console.log(e);
-        setTrivetState(async (s) => ({
-          ...(await s),
+        setTrivetState((s) => ({
+          ...s,
           runningTests: false,
         }));
         toast.error('Error running tests');
