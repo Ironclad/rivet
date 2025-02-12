@@ -3,10 +3,10 @@ import { atomWithStorage } from 'jotai/utils';
 import { type Settings } from '@ironclad/rivet-core';
 import { isInTauri } from '../utils/tauri';
 import { DEFAULT_CHAT_NODE_TIMEOUT } from '../../../core/src/utils/defaults';
-import { createStorage } from './storage.js';
+import { createHybridStorage } from './storage.js';
 
 // Legacy storage key for recoil-persist to avoid breaking existing users' settings
-const storage = createStorage('recoil-persist');
+const { storage } = createHybridStorage('recoil-persist');
 
 export const settingsState = atomWithStorage<Settings>(
   'settings',

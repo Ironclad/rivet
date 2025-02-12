@@ -1,7 +1,7 @@
 import { type TrivetResults, type TrivetTestSuite } from '@ironclad/trivet';
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
-import { createStorage } from './storage.js';
+import { createHybridStorage } from './storage.js';
 
 export type TrivetState = {
   testSuites: TrivetTestSuite[];
@@ -11,7 +11,7 @@ export type TrivetState = {
   runningTests: boolean;
 };
 
-const storage = createStorage('trivet');
+const { storage } = createHybridStorage('trivet');
 
 // Convert to persisted atom using atomWithStorage
 export const trivetState = atomWithStorage<TrivetState>(

@@ -10,10 +10,10 @@ import {
   type NodeGraph,
 } from '@ironclad/rivet-core';
 import { type WireDef } from '../components/WireLayer.js';
-import { createStorage } from './storage.js';
+import { createHybridStorage } from './storage.js';
 import { type SearchedItem, type SearchableItem } from '../hooks/useSearchProject';
 
-const storage = createStorage('graphBuilder');
+const { storage } = createHybridStorage('graphBuilder');
 
 export const viewingNodeChangesState = atom<NodeId | undefined>(undefined);
 

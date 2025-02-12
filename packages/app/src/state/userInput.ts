@@ -1,9 +1,9 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { type ArrayDataValue, type NodeId, type ProcessId, type StringDataValue } from '@ironclad/rivet-core';
-import { createStorage } from './storage.js';
+import { createHybridStorage } from './storage.js';
 
-const storage = createStorage('userInput');
+const { storage } = createHybridStorage('userInput');
 
 export const userInputModalOpenState = atom<boolean>(false);
 

@@ -14,7 +14,7 @@ import {
 } from '@ironclad/rivet-core';
 import { blankProject } from '../utils/blankProject.js';
 import { entries, values } from '../../../core/src/utils/typeSafety';
-import { createStorage } from './storage.js';
+import { createHybridStorage } from './storage.js';
 /** Project context values stored in the IDE and not in the project file. Available in Context nodes. */
 export type ProjectContext = Record<
   string,
@@ -24,7 +24,7 @@ export type ProjectContext = Record<
   }
 >;
 
-const storage = createStorage('project');
+const { storage } = createHybridStorage('project');
 
 // What's the data of the last loaded project?
 export const projectState = atomWithStorage<Omit<Project, 'data'>>(

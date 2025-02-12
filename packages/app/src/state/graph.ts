@@ -15,9 +15,9 @@ import { mapValues } from 'lodash-es';
 import { projectState } from './savedGraphs';
 import { pluginRefreshCounterState } from './plugins';
 import { type CalculatedRevision } from '../utils/ProjectRevisionCalculator';
-import { createStorage } from './storage.js';
+import { createHybridStorage } from './storage.js';
 
-const storage = createStorage('graph');
+const { storage } = createHybridStorage('graph');
 
 // Basic atoms
 export const historicalGraphState = atom<CalculatedRevision | null>(null);

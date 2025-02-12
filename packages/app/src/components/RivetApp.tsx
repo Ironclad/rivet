@@ -34,6 +34,7 @@ import { HelpModal } from './HelpModal';
 import { openedProjectsSortedIdsState } from '../state/savedGraphs';
 import { NoProject } from './NoProject';
 import { swallowPromise, syncWrapper } from '../utils/syncWrapper';
+import { allInitializeStoreFns } from '../state/storage';
 
 const styles = css`
   overflow: hidden;

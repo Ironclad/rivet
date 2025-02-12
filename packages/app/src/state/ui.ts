@@ -1,8 +1,8 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
-import { createStorage } from './storage.js';
+import { createHybridStorage } from './storage.js';
 
-const storage = createStorage('ui');
+const { storage } = createHybridStorage('ui');
 
 export const debuggerPanelOpenState = atom<boolean>(false);
 

@@ -2,9 +2,9 @@ import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { type ExecutionRecorder } from '@ironclad/rivet-core';
 import { defaultExecutorState } from './settings';
-import { createStorage } from './storage.js';
+import { createHybridStorage } from './storage.js';
 
-const storage = createStorage('execution');
+const { storage } = createHybridStorage('execution');
 
 export const remoteUploadAllowedState = atom<boolean>(false);
 
