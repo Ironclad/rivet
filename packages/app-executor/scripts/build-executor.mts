@@ -18,16 +18,24 @@ const resolveRivet: esbuild.Plugin = {
 
 console.log(`Bundling to ${chalk.cyan('bin/executor-bundle.cjs')}...`);
 
-esbuild.build({
-  entryPoints: ['bin/executor.mts'],
-  bundle: true,
-  platform: 'node',
-  outfile: './bin/executor-bundle.cjs',
-  format: 'cjs',
-  target: 'node16',
-  external: [],
-  plugins: [resolveRivet],
-});
+esbuild
+  .build({
+    entryPoints: ['bin/executor.mts'],
+    bundle: true,
+    platform: 'node',
+    outfile: './bin/executor-bundle.cjs',
+    format: 'cjs',
+    target: 'node16',
+    external: [],
+    plugins: [resolveRivet],
+  })
+  .then(() => {
+    console.log(`Bundled to ${chalk.cyan('bin/executor-bundle.cjs')}`);
+  })
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
 
 console.log(`Compiling to native binary for ${chalk.cyan(process.platform)}...`);
 
@@ -51,7 +59,7 @@ await execaCommand(
   },
 );
 
-let { from: sourceFrom, to } = {
+const platformParams = {
   darwin: {
     from: 'dist/rivet-app-executor',
     to: [
@@ -69,6 +77,9 @@ let { from: sourceFrom, to } = {
     to: ['dist/app-executor-x86_64-pc-windows-msvc.exe'],
   },
 }[platform];
+
+const sourceFrom = platformParams.from;
+let to = platformParams.to;
 
 const { stdout } = await execaCommand('rustc -Vv');
 const host = stdout

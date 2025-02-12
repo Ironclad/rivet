@@ -11,7 +11,7 @@ export default [
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
-        project: ['./packages/*/tsconfig.json'],
+        project: ['./packages/*/tsconfig.eslint.json'],
       },
       globals: {
         ...globals.browser,
@@ -119,7 +119,7 @@ export default [
 
   // Configuration for ESLint config files
   {
-    files: ['.eslintrc.{js,cjs,mjs}'],
+    files: ['.eslint.config.mjs'],
     languageOptions: {
       sourceType: 'script',
       globals: {

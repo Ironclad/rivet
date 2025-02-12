@@ -3819,6 +3819,7 @@ __metadata:
     chalk: "npm:^5.3.0"
     esbuild: "npm:0.19.5"
     esbuild-plugin-copy: "npm:^2.1.1"
+    eslint: "npm:^9.20.1"
     eslint-config-standard-with-typescript: "npm:^39.1.1"
     eslint-plugin-import: "npm:^2.31.0"
     eslint-plugin-n: "npm:^16.2.0"
