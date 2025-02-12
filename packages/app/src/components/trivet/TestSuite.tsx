@@ -22,6 +22,7 @@ import AlertCircleIcon from 'majesticons/line/alert-circle-line.svg?react';
 import { NoTestCasesSplash } from './NoTestCasesSplash';
 import { useTestSuite } from '../../hooks/useTestSuite';
 import { GraphSelector } from '../editors/GraphSelectorEditor';
+import { swallowPromise, syncWrapper } from '../../utils/syncWrapper';
 
 const styles = css`
   min-height: 100%;
@@ -300,7 +301,10 @@ export const TestSuite: FC<{ testSuite: TrivetTestSuite; tryRunTests: TryRunTest
           ) : (
             <>
               <div className="test-suite-controls">
-                <Button appearance="primary" onClick={() => tryRunTests({ testSuiteIds: [testSuite.id] })}>
+                <Button
+                  appearance="primary"
+                  onClick={() => swallowPromise(tryRunTests({ testSuiteIds: [testSuite.id] }))}
+                >
                   Run Test Suite
                 </Button>
               </div>
@@ -325,7 +329,7 @@ export const TestSuite: FC<{ testSuite: TrivetTestSuite; tryRunTests: TryRunTest
         </div>
       )}
       <div className="view-documentation">
-        <a onClick={viewDocumentation}>
+        <a onClick={syncWrapper(viewDocumentation)}>
           {/* TODO wrong icon, want external url icon */}
           <BrowserLineIcon /> Trivet Documentation
         </a>

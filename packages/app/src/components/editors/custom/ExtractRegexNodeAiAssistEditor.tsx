@@ -22,6 +22,7 @@ import { settingsState } from '../../../state/settings';
 import { fillMissingSettingsFromEnvironmentVariables } from '../../../utils/tauri';
 import { useDependsOnPlugins } from '../../../hooks/useDependsOnPlugins';
 import { marked } from 'marked';
+import { syncWrapper } from '../../../utils/syncWrapper';
 
 const styles = css`
   display: flex;
@@ -119,7 +120,7 @@ export const ExtractRegexNodeAiAssistEditor: FC<
             isDisabled={isDisabled || working}
             className="model-selector"
           />
-          <Button appearance="primary" onClick={generateRegex} isDisabled={isDisabled || working}>
+          <Button appearance="primary" onClick={syncWrapper(generateRegex)} isDisabled={isDisabled || working}>
             Generate
           </Button>
         </div>

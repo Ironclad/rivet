@@ -1,12 +1,11 @@
-import { useEffect } from 'react';
-import { checkUpdate, installUpdate, onUpdaterEvent } from '@tauri-apps/api/updater';
+import { checkUpdate } from '@tauri-apps/api/updater';
 import { toast } from 'react-toastify';
 import { css } from '@emotion/react';
 import { isInTauri } from '../utils/tauri';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { checkForUpdatesState, skippedMaxVersionState, updateModalOpenState } from '../state/settings';
-import { gt, lt, lte } from 'semver';
-import { getVersion } from '@tauri-apps/api/app';
+import { lte } from 'semver';
+import { swallowPromise } from '../utils/syncWrapper';
 
 const toastStyle = css`
   display: flex;
@@ -75,7 +74,7 @@ export function useCheckForUpdate({
               <button className="primary" onClick={() => setUpdateModalOpen(true)}>
                 Install
               </button>
-              <button onClick={() => setSkippedMaxVersion(manifest?.version)}>Skip</button>
+              <button onClick={() => swallowPromise(setSkippedMaxVersion(manifest?.version))}>Skip</button>
               <button onClick={() => closeToast?.()}>Not Now</button>
             </div>
           </div>

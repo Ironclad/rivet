@@ -40,6 +40,7 @@ export default [
     rules: {
       'react/no-unknown-property': ['error', { ignore: ['css'] }],
       'react/prop-types': 'off',
+      '@typescript-eslint/no-floating-promises': 'off', // jotai :/
     },
   },
   // TypeScript-specific overrides

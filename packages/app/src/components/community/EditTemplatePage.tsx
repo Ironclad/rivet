@@ -18,6 +18,7 @@ import { getError } from '@ironclad/rivet-core';
 import { CreateTemplateVersionPage } from './CreateTemplateVersionPage';
 import { orderBy } from 'lodash-es';
 import { useMarkdown } from '../../hooks/useMarkdown';
+import { syncWrapper } from '../../utils/syncWrapper';
 
 const styles = css`
   display: flex;
@@ -314,7 +315,7 @@ const UnpublishTemplateModal: FC<{
               <Button appearance="subtle" onClick={onClose} isDisabled={mutation.isPending}>
                 Cancel
               </Button>
-              <Button appearance="danger" onClick={doDelete} isDisabled={mutation.isPending}>
+              <Button appearance="danger" onClick={syncWrapper(doDelete)} isDisabled={mutation.isPending}>
                 Unpublish
               </Button>
             </div>

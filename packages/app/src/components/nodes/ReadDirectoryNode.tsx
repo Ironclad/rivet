@@ -13,6 +13,7 @@ import {
 import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 import { ioProvider } from '../../utils/globals.js';
 import { type InputsOrOutputsWithRefs } from '../../state/dataFlow';
+import { syncWrapper } from '../../utils/syncWrapper';
 
 export const ReadDirectoryNodeOutput: FC<{ outputs: InputsOrOutputsWithRefs }> = ({ outputs }) => {
   const outputPaths = expectType(outputs['paths' as PortId] as DataValue, 'string[]');
@@ -99,7 +100,7 @@ export const ReadDirectoryNodeEditor: FC<ReadDirectoryNodeEditorProps> = ({ node
           Pick Directory
         </label>
         <div>
-          <Button onClick={handleBrowseClick}>Browse...</Button>
+          <Button onClick={syncWrapper(handleBrowseClick)}>Browse...</Button>
           <div>Current Directory: {node.data.path}</div>
         </div>
         <Toggle

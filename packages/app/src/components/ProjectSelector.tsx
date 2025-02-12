@@ -21,6 +21,7 @@ import { newProjectModalOpenState } from '../state/ui';
 import DiscordLogo from '../assets/vendor_logos/discord-mark-white.svg?react';
 import { useOpenUrl } from '../hooks/useOpenUrl';
 import { keys } from '../../../core/src/utils/typeSafety';
+import { syncWrapper } from '../utils/syncWrapper';
 
 export const styles = css`
   position: absolute;
@@ -300,10 +301,10 @@ export const ProjectSelector: FC = () => {
         <button className="new-project" onClick={() => setNewProjectModalOpen(true)} title="New Project">
           <FileIcon />
         </button>
-        <button className="open-project" onClick={loadProjectWithFileBrowser} title="Open Project">
+        <button className="open-project" onClick={syncWrapper(loadProjectWithFileBrowser)} title="Open Project">
           <FolderIcon />
         </button>
-        <button className="get-help" onClick={openDiscord}>
+        <button className="get-help" onClick={syncWrapper(openDiscord)}>
           <DiscordLogo /> Discord
         </button>
       </div>

@@ -80,7 +80,7 @@ export function useContextMenuAddNodeConfiguration() {
           try {
             const { type } = constructor.create();
 
-            const uiData = constructor.getUIData // eslint-disable-next-line @typescript-eslint/await-thenable -- it is thenable you dummy
+            const uiData = constructor.getUIData
               ? await constructor.getUIData(context)
               : ({
                   group: 'Custom',

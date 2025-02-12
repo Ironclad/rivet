@@ -52,6 +52,7 @@ import { datasetProvider } from '../utils/globals';
 import { GraphSelector } from './editors/GraphSelectorEditor';
 import { useGetAdHocInternalProcessContext } from '../hooks/useGetAdHocInternalProcessContext';
 import { type ChatNodeConfigData, getChatNodeMessages } from '../../../core/src/model/nodes/ChatNodeBase';
+import { syncWrapper } from '../utils/syncWrapper';
 
 const styles = css`
   position: fixed;
@@ -697,7 +698,7 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
                     </Field>
                   </div>
                   <div className="controls-buttons">
-                    <Button appearance="primary" onClick={tryRunSingle}>
+                    <Button appearance="primary" onClick={syncWrapper(tryRunSingle)}>
                       Run
                     </Button>
                   </div>
@@ -734,7 +735,7 @@ export const PromptDesigner: FC<PromptDesignerProps> = ({ onClose }) => {
                         key={`test-${index}`}
                         onChange={(newTestGroup) => testGroupChanged(newTestGroup, index)}
                         onDelete={() => deleteTestGroup(index)}
-                        onStart={handleStartTestGroup}
+                        onStart={syncWrapper(handleStartTestGroup)}
                         inProgress={inProgress}
                         onCancel={handleCancel}
                       />

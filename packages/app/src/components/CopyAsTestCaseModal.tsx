@@ -94,8 +94,8 @@ export const CopyAsTestCaseModal: FC<{
     addTestCase(asJson);
     setOverlay('trivet');
 
-    setTrivetState((state) => ({
-      ...state,
+    setTrivetState(async (state) => ({
+      ...(await state),
       selectedTestSuiteId,
     }));
     onClose();

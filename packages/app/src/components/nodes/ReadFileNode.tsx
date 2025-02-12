@@ -5,6 +5,7 @@ import Button from '@atlaskit/button';
 import { type ChartNode, type ReadFileNode } from '@ironclad/rivet-core';
 import { type NodeComponentDescriptor } from '../../hooks/useNodeTypes.js';
 import { ioProvider } from '../../utils/globals.js';
+import { syncWrapper } from '../../utils/syncWrapper';
 
 type ReadFileNodeBodyProps = {
   node: ReadFileNode;
@@ -101,7 +102,7 @@ export const ReadFileNodeEditor: FC<ReadFileNodeEditorProps> = ({ node, onChange
             <label className="label" htmlFor="baseDirectory">
               Pick File
             </label>
-            <Button onClick={handleBrowseClick}>Browse...</Button>
+            <Button onClick={syncWrapper(handleBrowseClick)}>Browse...</Button>
           </>
         )}
         <Toggle

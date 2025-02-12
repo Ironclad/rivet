@@ -134,5 +134,6 @@ export function useMenuCommands(
     toggleRemoteDebugger,
     setLastRunData,
     setNewProjectModalOpen,
+    setHelpModalOpen,
   ]);
 }

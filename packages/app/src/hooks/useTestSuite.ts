@@ -32,7 +32,7 @@ export function useTestSuite(testSuiteId: string | undefined) {
       setState(async (s) => {
         const suite = await s;
         return {
-          ...s,
+          ...suite,
           testSuites: suite.testSuites.map((ts) => (ts.id === testSuite.id ? testSuite : ts)),
         };
       });
@@ -81,17 +81,19 @@ export function useTestSuite(testSuiteId: string | undefined) {
   });
 
   const setEditingTestCase = useStableCallback((id: string | undefined) => {
-    setState((s) => ({
-      ...s,
-      editingTestCaseId: id,
-    }));
+    setState(async (s) => {
+      return {
+        ...(await s),
+        editingTestCaseId: id,
+      };
+    });
   });
 
   const deleteTestCase = useStableCallback((id: string) => {
     setState(async (s) => {
       const suite = await s;
       return {
-        ...s,
+        ...suite,
 
         testSuites: suite.testSuites.map((ts) =>
           ts.id === testSuiteId ? { ...ts, testCases: ts.testCases.filter((tc) => tc.id !== id) } : ts,

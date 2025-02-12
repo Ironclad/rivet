@@ -18,6 +18,7 @@ import { fillMissingSettingsFromEnvironmentVariables } from '../../utils/tauri';
 import GentracePipelinePicker, { type GentracePipeline } from './GentracePipelinePicker';
 import { entries } from '../../../../core/src/utils/typeSafety';
 import { useAtomValue } from 'jotai';
+import { syncWrapper } from '../../utils/syncWrapper';
 
 export const GentraceInteractors = () => {
   const project = useAtomValue(projectState);
@@ -192,7 +193,7 @@ export const GentraceInteractors = () => {
       />
 
       <div className={clsx('run-gentrace-button')}>
-        <button onClick={onRun} css={``}>
+        <button onClick={syncWrapper(onRun)} css={``}>
           <div>
             <GentraceImage height="17px" width="17px" />
           </div>

@@ -18,6 +18,7 @@ import { useToggle } from 'ahooks';
 import { executorOptions } from '../state/settings';
 import QuestionIcon from 'majesticons/line/question-circle-line.svg?react';
 import { useSetAtom, useAtom } from 'jotai';
+import { swallowPromise, syncWrapper } from '../utils/syncWrapper';
 
 const moreMenuStyles = css`
   background-color: var(--grey-darkish);
@@ -125,7 +126,7 @@ export const ActionBarMoreMenu: FC<{
             appearance="subtle"
             options={executorOptions}
             value={selectedExecutorOption}
-            onChange={(selected) => setSelectedExecutor(selected!.value)}
+            onChange={(selected) => swallowPromise(setSelectedExecutor(selected!.value))}
             isSearchable={false}
             isClearable={false}
             menuPortalTarget={dropdownTarget.current}

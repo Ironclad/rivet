@@ -334,7 +334,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
           zoom: canvasPosition.zoom,
         };
         setCanvasPosition(position);
-        setLastSavedCanvasPosition((saved) => ({ ...saved, [selectedGraphMetadata!.id!]: position }));
+        setLastSavedCanvasPosition(async (saved) => ({ ...(await saved), [selectedGraphMetadata!.id!]: position }));
       }
     },
     { wait: 10 },
@@ -393,7 +393,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
       setCanvasPosition(position);
 
-      setLastSavedCanvasPosition((saved) => ({ ...saved, [selectedGraphMetadata!.id!]: position }));
+      setLastSavedCanvasPosition(async (saved) => ({ ...(await saved), [selectedGraphMetadata!.id!]: position }));
     },
     { wait: 25 },
   );

@@ -9,6 +9,7 @@ import { useSetAtom } from 'jotai';
 import { newProjectModalOpenState } from '../state/ui';
 import { settingsModalOpenState } from './SettingsModal';
 import { useLoadProjectWithFileBrowser } from '../hooks/useLoadProjectWithFileBrowser';
+import { syncWrapper } from '../utils/syncWrapper';
 
 const styles = css`
   background: var(--grey-darker);
@@ -98,7 +99,7 @@ export const NoProject: FC = () => {
 
         <ul>
           <li>
-            <Button appearance="primary" onClick={openProject}>
+            <Button appearance="primary" onClick={syncWrapper(openProject)}>
               Open
             </Button>{' '}
             an existing project
@@ -112,7 +113,7 @@ export const NoProject: FC = () => {
           <li>
             <p>
               Check out the{' '}
-              <a href="#" onClick={openDocumentation}>
+              <a href="#" onClick={syncWrapper(openDocumentation)}>
                 Rivet documentation
               </a>
             </p>
@@ -120,7 +121,7 @@ export const NoProject: FC = () => {
           <li>
             <p>
               Need help? join the{' '}
-              <a href="#" onClick={joinDiscord}>
+              <a href="#" onClick={syncWrapper(joinDiscord)}>
                 <DiscordIcon /> Discord Server
               </a>{' '}
               for ideas, support, and community

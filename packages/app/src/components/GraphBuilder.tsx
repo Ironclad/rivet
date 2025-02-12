@@ -24,6 +24,7 @@ import { overlayOpenState } from '../state/ui';
 import { GraphExecutionSelectorBar } from './GraphExecutionSelectorBar';
 import { HistoricalGraphNotice } from './HistoricalGraphNotice';
 import { NodeChangesModal, NodeChangesModalRenderer } from './NodeChangesModal';
+import { syncWrapper } from '../utils/syncWrapper';
 
 const Container = styled.div`
   position: relative;
@@ -145,7 +146,7 @@ export const GraphBuilder: FC = () => {
           nodes={nodes}
           connections={connections}
           onNodesChanged={nodesChanged}
-          onConnectionsChanged={setConnections}
+          onConnectionsChanged={syncWrapper(setConnections)}
           onNodeSelected={nodeSelected}
           selectedNodes={selectedNodes}
           onNodeStartEditing={nodeStartEditing}

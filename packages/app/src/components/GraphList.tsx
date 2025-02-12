@@ -356,7 +356,6 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo((
         i++;
       }
 
-      // eslint-disable-next-line no-loop-func
       while (savedGraphs.some((g) => g.metadata?.name === `${folderPath}/Untitled Graph ${i}`)) {
         i++;
       }
@@ -367,7 +366,6 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo((
         i++;
       }
 
-      // eslint-disable-next-line no-loop-func
       while (savedGraphs.some((g) => g.metadata?.name === `Untitled Graph ${i}`)) {
         i++;
       }
@@ -385,8 +383,8 @@ export const GraphList: FC<{ onRunGraph?: (graphId: GraphId) => void }> = memo((
     const newFolderPath = parentPath ? `${parentPath}/New Folder` : 'New Folder';
     setFolderNames((prev) => [...prev, newFolderPath]);
     startRename(newFolderPath);
-    setExpandedFolders((prev) => ({
-      ...prev,
+    setExpandedFolders(async (prev) => ({
+      ...(await prev),
       [`${projectMetadata.id}/${newFolderPath}`]: true,
     }));
   });
@@ -794,8 +792,8 @@ export const FolderItem: FC<{
     );
 
     const setExpanded = useStableCallback((expanded: boolean) => {
-      setExpandedFolders((prev) => ({
-        ...prev,
+      setExpandedFolders(async (prev) => ({
+        ...(await prev),
         [`${projectMetadata.id}/${fullPath}`]: expanded,
       }));
     });

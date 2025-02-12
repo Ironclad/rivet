@@ -22,6 +22,7 @@ import { settingsState } from '../../../state/settings';
 import { fillMissingSettingsFromEnvironmentVariables } from '../../../utils/tauri';
 import { useDependsOnPlugins } from '../../../hooks/useDependsOnPlugins';
 import { marked } from 'marked';
+import { syncWrapper } from '../../../utils/syncWrapper';
 
 const styles = css`
   display: flex;
@@ -117,7 +118,7 @@ export const PromptNodeAiAssistEditor: FC<
             isDisabled={isDisabled || working}
             className="model-selector"
           />
-          <Button appearance="primary" onClick={generatePrompt} isDisabled={isDisabled || working}>
+          <Button appearance="primary" onClick={syncWrapper(generatePrompt)} isDisabled={isDisabled || working}>
             Generate
           </Button>
         </div>

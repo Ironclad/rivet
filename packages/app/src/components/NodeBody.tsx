@@ -53,7 +53,6 @@ const UnknownNodeBody: FC<{ heightCache: HeightCache; node: ChartNode }> = ({ he
   useAsyncEffect(async () => {
     try {
       const impl = globalRivetNodeRegistry.createDynamicImpl(node);
-      // eslint-disable-next-line @typescript-eslint/await-thenable -- it is thenable you dummy
       const renderedBody = await impl.getBody(await getUIContext({ node }));
 
       setBody(renderedBody);

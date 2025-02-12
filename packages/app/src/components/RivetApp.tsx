@@ -33,6 +33,7 @@ import { CommunityOverlayRenderer } from './community/CommunityOverlay';
 import { HelpModal } from './HelpModal';
 import { openedProjectsSortedIdsState } from '../state/savedGraphs';
 import { NoProject } from './NoProject';
+import { swallowPromise, syncWrapper } from '../utils/syncWrapper';
 
 const styles = css`
   overflow: hidden;
@@ -52,7 +53,7 @@ export const RivetApp: FC = () => {
   useLoadStaticData();
 
   useMenuCommands({
-    onRunGraph: tryRunGraph,
+    onRunGraph: syncWrapper(tryRunGraph),
   });
 
   useWindowsHotkeysFix();
@@ -79,15 +80,15 @@ export const RivetApp: FC = () => {
           <ProjectSelector />
           <OverlayTabs />
           <ActionBar
-            onRunGraph={tryRunGraph}
-            onRunTests={tryRunTests}
+            onRunGraph={syncWrapper(tryRunGraph)}
+            onRunTests={syncWrapper(tryRunTests)}
             onAbortGraph={tryAbortGraph}
             onPauseGraph={tryPauseGraph}
             onResumeGraph={tryResumeGraph}
           />
           <StatusBar />
           <DebuggerPanelRenderer />
-          <LeftSidebar onRunGraph={(graphId) => tryRunGraph({ graphId })} />
+          <LeftSidebar onRunGraph={(graphId) => swallowPromise(tryRunGraph({ graphId }))} />
           <GraphBuilder />
           <SettingsModal />
           <PromptDesignerRenderer />

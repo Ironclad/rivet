@@ -10,6 +10,7 @@ import { getVersion } from '@tauri-apps/api/app';
 import { css } from '@emotion/react';
 import { useMarkdown } from '../hooks/useMarkdown';
 import { relaunch } from '@tauri-apps/api/process';
+import { syncWrapper } from '../utils/syncWrapper';
 
 const bodyStyle = css`
   pre {
@@ -88,7 +89,7 @@ export const UpdateModal: FC = () => {
         <ModalFooter>
           {isUpdating ? (
             updateStatus === 'Installed.' ? (
-              <Button appearance="primary" onClick={relaunch}>
+              <Button appearance="primary" onClick={syncWrapper(relaunch)}>
                 Update complete! Click to restart.
               </Button>
             ) : (
@@ -96,7 +97,7 @@ export const UpdateModal: FC = () => {
             )
           ) : (
             <>
-              <Button appearance="primary" onClick={doUpdate}>
+              <Button appearance="primary" onClick={syncWrapper(doUpdate)}>
                 Update
               </Button>
               <Button appearance="subtle" onClick={skipUpdate}>

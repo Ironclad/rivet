@@ -25,6 +25,7 @@ import { useMarkdown } from '../hooks/useMarkdown';
 import { projectPluginsState } from '../state/savedGraphs';
 import { produce } from 'immer';
 import { useAtom, useAtomValue } from 'jotai';
+import { syncWrapper } from '../utils/syncWrapper';
 
 const styles = css`
   position: fixed;
@@ -356,7 +357,7 @@ export const PluginsOverlay: FC = () => {
           <AddNPMPluginModal
             isOpen={addNPMPluginModalOpen}
             onClose={toggleAddNPMPluginModal.setLeft}
-            onAddPlugin={addPackagePlugin}
+            onAddPlugin={syncWrapper(addPackagePlugin)}
           />
 
           <PluginLogModal isOpen={pluginLogModalOpen} log={packageInstallLog} onClose={togglePluginLogModal.setLeft} />

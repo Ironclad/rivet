@@ -205,8 +205,8 @@ export function useRemoteExecutor() {
       console.log('trying to run tests');
       currentExecution.onTrivetStart();
 
-      setTrivetState((s) => ({
-        ...s,
+      setTrivetState(async (s) => ({
+        ...(await s),
         runningTests: true,
         recentTestResults: undefined,
       }));
@@ -226,8 +226,8 @@ export function useRemoteExecutor() {
           iterationCount: options.iterationCount,
           testSuites: testSuitesToRun,
           onUpdate: (results) => {
-            setTrivetState((s) => ({
-              ...s,
+            setTrivetState(async (s) => ({
+              ...(await s),
               recentTestResults: results,
             }));
           },
@@ -276,8 +276,8 @@ export function useRemoteExecutor() {
             return results;
           },
         });
-        setTrivetState((s) => ({
-          ...s,
+        setTrivetState(async (s) => ({
+          ...(await s),
           recentTestResults: result,
           runningTests: false,
         }));
@@ -289,8 +289,8 @@ export function useRemoteExecutor() {
         console.log(result);
       } catch (e) {
         console.log(e);
-        setTrivetState((s) => ({
-          ...s,
+        setTrivetState(async (s) => ({
+          ...(await s),
           runningTests: false,
         }));
         toast.error('Error running tests');

@@ -12,6 +12,7 @@ import { projectState } from '../../state/savedGraphs';
 import { DatasetListItem } from './DatasetListItem';
 import { css } from '@emotion/react';
 import { autoUpdate, shift, useFloating } from '@floating-ui/react';
+import { swallowPromise, syncWrapper } from '../../utils/syncWrapper';
 
 const contextMenuStyles = css`
   position: absolute;
@@ -90,7 +91,7 @@ export const DatasetList: FC<{}> = () => {
     >
       <header>
         <h2>Datasets</h2>
-        <Button appearance="primary" onClick={newDataset}>
+        <Button appearance="primary" onClick={syncWrapper(newDataset)}>
           +
         </Button>
       </header>
@@ -123,7 +124,9 @@ export const DatasetList: FC<{}> = () => {
           >
             <div ref={refs.setFloating} style={floatingStyles} css={contextMenuStyles}>
               <DropdownItem onClick={() => setRenamingDataset(selectedDatasetForContextMenu?.id)}>Rename</DropdownItem>
-              <DropdownItem onClick={() => deleteDataset(selectedDatasetForContextMenu!)}>Delete</DropdownItem>
+              <DropdownItem onClick={() => swallowPromise(deleteDataset(selectedDatasetForContextMenu!))}>
+                Delete
+              </DropdownItem>
             </div>
           </div>
         )}

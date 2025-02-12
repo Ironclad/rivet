@@ -6,6 +6,7 @@ import { css } from '@emotion/react';
 import { isEqual, mean } from 'lodash-es';
 import { LazyCodeEditor } from '../LazyComponents';
 import type { monaco } from '../../utils/monaco';
+import { swallowPromise } from '../../utils/syncWrapper';
 
 const styles = css`
   display: flex;
@@ -78,7 +79,7 @@ export const TestCaseEditor: FC = () => {
   const costAvg = mean(testCaseResults?.map((res) => res.cost).filter((c) => c > 0));
 
   function onClose() {
-    setState((s) => ({ ...s, editingTestCaseId: undefined }));
+    setState((s) => ({ ...(await s), editingTestCaseId: undefined }));
   }
 
   if (selectedTestCase == null) {
@@ -95,21 +96,23 @@ export const TestCaseEditor: FC = () => {
         <InputOutputEditor
           json={selectedTestCase?.input ?? {}}
           setJson={(input) =>
-            setState(async (sPromise) => {
-              const s = await sPromise;
-              return {
-                ...s,
+            swallowPromise(
+              setState(async (sPromise) => {
+                const s = await sPromise;
+                return {
+                  ...s,
 
-                testSuites: s.testSuites.map((ts) =>
-                  ts.id === selectedTestSuiteId
-                    ? {
-                        ...ts,
-                        testCases: ts.testCases.map((tc) => (tc.id === editingTestCaseId ? { ...tc, input } : tc)),
-                      }
-                    : ts,
-                ),
-              };
-            })
+                  testSuites: s.testSuites.map((ts) =>
+                    ts.id === selectedTestSuiteId
+                      ? {
+                          ...ts,
+                          testCases: ts.testCases.map((tc) => (tc.id === editingTestCaseId ? { ...tc, input } : tc)),
+                        }
+                      : ts,
+                  ),
+                };
+              }),
+            )
           }
         />
       </div>
@@ -118,22 +121,24 @@ export const TestCaseEditor: FC = () => {
         <InputOutputEditor
           json={selectedTestCase?.expectedOutput ?? {}}
           setJson={(expectedOutput) =>
-            setState(async (sPromise) => {
-              const s = await sPromise;
-              return {
-                ...s,
-                testSuites: s.testSuites.map((ts) =>
-                  ts.id === selectedTestSuiteId
-                    ? {
-                        ...ts,
-                        testCases: ts.testCases.map((tc) =>
-                          tc.id === editingTestCaseId ? { ...tc, expectedOutput } : tc,
-                        ),
-                      }
-                    : ts,
-                ),
-              };
-            })
+            swallowPromise(
+              setState(async (sPromise) => {
+                const s = await sPromise;
+                return {
+                  ...s,
+                  testSuites: s.testSuites.map((ts) =>
+                    ts.id === selectedTestSuiteId
+                      ? {
+                          ...ts,
+                          testCases: ts.testCases.map((tc) =>
+                            tc.id === editingTestCaseId ? { ...tc, expectedOutput } : tc,
+                          ),
+                        }
+                      : ts,
+                  ),
+                };
+              }),
+            )
           }
         />
       </div>

@@ -15,6 +15,7 @@ import { entries } from '../../../core/src/utils/typeSafety';
 import { css } from '@emotion/react';
 import { ProjectRevisions } from './ProjectRevisionList';
 import { useAtom, useAtomValue } from 'jotai';
+import { swallowPromise } from '../utils/syncWrapper';
 
 const styles = css`
   .context-list {
@@ -87,8 +88,8 @@ export const ProjectInfoSidebarTab: FC = () => {
   const selectedMainGraph = graphOptions.find((g) => g.value === project.metadata.mainGraphId);
 
   const setProjectContextValue = ({ key, value, secret }: ContextValue) => {
-    setProjectContext((context) => ({
-      ...context,
+    setProjectContext(async (context) => ({
+      ...(await context),
       [key]: {
         value,
         secret,
@@ -125,7 +126,9 @@ export const ProjectInfoSidebarTab: FC = () => {
         placeholder="Project Name"
         readViewFitContainerWidth
         defaultValue={project.metadata.title}
-        onConfirm={(newValue) => setProject({ ...project, metadata: { ...project.metadata, title: newValue } })}
+        onConfirm={(newValue) =>
+          swallowPromise(setProject({ ...project, metadata: { ...project.metadata, title: newValue } }))
+        }
       />
 
       <InlineEditableTextfield
@@ -133,7 +136,9 @@ export const ProjectInfoSidebarTab: FC = () => {
         label="Description"
         placeholder="Project Description"
         defaultValue={project.metadata?.description ?? ''}
-        onConfirm={(newValue) => setProject({ ...project, metadata: { ...project.metadata, description: newValue } })}
+        onConfirm={(newValue) =>
+          swallowPromise(setProject({ ...project, metadata: { ...project.metadata, description: newValue } }))
+        }
         readViewFitContainerWidth
       />
 

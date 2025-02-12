@@ -3,6 +3,7 @@ import { type FC } from 'react';
 import { useMarkdown } from '../../hooks/useMarkdown';
 import Button from '@atlaskit/button';
 import { useOpenUrl } from '../../hooks/useOpenUrl';
+import { syncWrapper } from '../../utils/syncWrapper';
 
 const styles = css`
   display: flex;
@@ -67,7 +68,7 @@ export const NoTestCasesSplash: FC<{
           <Button appearance="primary" onClick={() => onCreateNewTestCase?.()}>
             Create Test Case
           </Button>
-          <Button appearance="default" onClick={viewDocumentation}>
+          <Button appearance="default" onClick={syncWrapper(viewDocumentation)}>
             View Trivet Documentation
           </Button>
         </div>

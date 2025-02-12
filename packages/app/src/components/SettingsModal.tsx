@@ -32,6 +32,7 @@ import Range from '@atlaskit/range';
 import { DEFAULT_CHAT_NODE_TIMEOUT } from '../../../core/src/utils/defaults';
 import useAsyncEffect from 'use-async-effect';
 import { getVersion } from '@tauri-apps/api/app';
+import { swallowPromise } from '../utils/syncWrapper';
 
 interface SettingsModalProps {}
 
@@ -129,7 +130,7 @@ export const GeneralSettingsPage: FC = () => {
         {() => (
           <Select
             value={themes.find((o) => o.value === theme)}
-            onChange={(e) => e && setTheme(e.value as any)}
+            onChange={(e) => e && swallowPromise(setTheme(e.value as any))}
             options={themes}
           />
         )}
@@ -158,10 +159,12 @@ export const GeneralSettingsPage: FC = () => {
               type="number"
               value={settings.recordingPlaybackLatency}
               onChange={(e) =>
-                setSettings((s) => ({
-                  ...s,
-                  recordingPlaybackLatency: (e.target as HTMLInputElement).valueAsNumber,
-                }))
+                swallowPromise(
+                  setSettings(async (s) => ({
+                    ...(await s),
+                    recordingPlaybackLatency: (e.target as HTMLInputElement).valueAsNumber,
+                  })),
+                )
               }
             />
             <HelperMessage>
@@ -181,7 +184,7 @@ export const GeneralSettingsPage: FC = () => {
               <Toggle
                 id="recordExecutions"
                 isChecked={recordExecutions}
-                onChange={(e) => setRecordExecutions(e.target.checked)}
+                onChange={(e) => swallowPromise(setRecordExecutions(e.target.checked))}
               />
             </div>
             <HelperMessage>Disabling may help performance when dealing with very large data values</HelperMessage>
@@ -197,7 +200,7 @@ export const GeneralSettingsPage: FC = () => {
             <div className="toggle-field">
               <Select
                 value={executorOptions.find((o) => o.value === defaultExecutor)}
-                onChange={(e) => setDefaultExecutor(e!.value)}
+                onChange={(e) => swallowPromise(setDefaultExecutor(e!.value))}
                 options={executorOptions}
               />
             </div>
@@ -223,7 +226,7 @@ export const GeneralSettingsPage: FC = () => {
                   if (Number.isNaN(value) || value == null) {
                     return;
                   }
-                  return setPreviousDataPerNodeToKeep(value);
+                  return swallowPromise(setPreviousDataPerNodeToKeep(value));
                 }}
               />
             </div>
@@ -272,8 +275,8 @@ export const GeneralSettingsPage: FC = () => {
                 value={settings.throttleChatNode ?? 100}
                 onChange={(e) => {
                   if ((e.target as HTMLInputElement).valueAsNumber >= 0) {
-                    setSettings((s) => ({
-                      ...s,
+                    setSettings(async (s) => ({
+                      ...(await s),
                       throttleChatNode: (e.target as HTMLInputElement).valueAsNumber,
                     }));
                   }
@@ -315,15 +318,15 @@ export const OpenAiSettingsPage: FC = () => {
 
   const onSetHeaders = (newHeaders: { key: string; value: string }[]) => {
     setHeaders(newHeaders);
-    setSettings((s) => ({
-      ...s,
+    setSettings(async (s) => ({
+      ...(await s),
       chatNodeHeaders: Object.fromEntries(newHeaders.map(({ key, value }) => [key, value])),
     }));
   };
 
   const configureAzure = () => {
-    setSettings((s) => ({
-      ...s,
+    setSettings(async (s) => ({
+      ...(await s),
       openAiEndpoint:
         'https://{your-resource-name}.openai.azure.com/openai/deployments/{deployment-id}/chat/completions?api-version=2023-05-15',
       chatNodeHeaders: {
@@ -340,8 +343,8 @@ export const OpenAiSettingsPage: FC = () => {
   };
 
   const configureLmStudio = () => {
-    setSettings((s) => ({
-      ...s,
+    setSettings(async (s) => ({
+      ...(await s),
       openAiEndpoint: 'http://localhost:1234/v1/chat/completions',
     }));
   };
@@ -354,7 +357,11 @@ export const OpenAiSettingsPage: FC = () => {
             <TextField
               type="password"
               value={settings.openAiKey}
-              onChange={(e) => setSettings((s) => ({ ...s, openAiKey: (e.target as HTMLInputElement).value }))}
+              onChange={(e) =>
+                swallowPromise(
+                  setSettings(async (s) => ({ ...(await s), openAiKey: (e.target as HTMLInputElement).value })),
+                )
+              }
             />
             <HelperMessage>You may also set the OPENAI_API_KEY environment variable</HelperMessage>
           </>
@@ -365,7 +372,14 @@ export const OpenAiSettingsPage: FC = () => {
           <>
             <TextField
               value={settings.openAiOrganization}
-              onChange={(e) => setSettings((s) => ({ ...s, openAiOrganization: (e.target as HTMLInputElement).value }))}
+              onChange={(e) =>
+                swallowPromise(
+                  setSettings(async (s) => ({
+                    ...(await s),
+                    openAiOrganization: (e.target as HTMLInputElement).value,
+                  })),
+                )
+              }
             />
             <HelperMessage>
               You may also set the OPENAI_ORG_ID environment variable. This is only required if you are a member of a
@@ -382,8 +396,8 @@ export const OpenAiSettingsPage: FC = () => {
               value={settings.chatNodeTimeout ?? DEFAULT_CHAT_NODE_TIMEOUT}
               onChange={(e) => {
                 if ((e.target as HTMLInputElement).valueAsNumber > 0) {
-                  setSettings((s) => ({
-                    ...s,
+                  setSettings(async (s) => ({
+                    ...(await s),
                     chatNodeTimeout: (e.target as HTMLInputElement).valueAsNumber,
                   }));
                 }
@@ -428,7 +442,11 @@ export const OpenAiSettingsPage: FC = () => {
           <>
             <TextField
               value={settings.openAiEndpoint}
-              onChange={(e) => setSettings((s) => ({ ...s, openAiEndpoint: (e.target as HTMLInputElement).value }))}
+              onChange={(e) =>
+                swallowPromise(
+                  setSettings(async (s) => ({ ...(await s), openAiEndpoint: (e.target as HTMLInputElement).value })),
+                )
+              }
             />
             <HelperMessage>
               Default endpoint to use for Chat nodes. Set to any OpenAI-compatible API endpoint. Leave blank to use
@@ -489,19 +507,21 @@ export const PluginsSettingsPage: FC = () => {
                             value={(settings.pluginSettings?.[plugin.id]?.[key] as string | undefined) ?? ''}
                             type={config.type === 'secret' ? 'password' : 'text'}
                             onChange={(e) =>
-                              setSettings(async (sPromise) => {
-                                const s = await sPromise;
-                                return {
-                                  ...s,
-                                  pluginSettings: {
-                                    ...s.pluginSettings,
-                                    [plugin.id]: {
-                                      ...s.pluginSettings?.[plugin.id],
-                                      [key]: (e.target as HTMLInputElement).value,
+                              swallowPromise(
+                                setSettings(async (sPromise) => {
+                                  const s = await sPromise;
+                                  return {
+                                    ...s,
+                                    pluginSettings: {
+                                      ...s.pluginSettings,
+                                      [plugin.id]: {
+                                        ...s.pluginSettings?.[plugin.id],
+                                        [key]: (e.target as HTMLInputElement).value,
+                                      },
                                     },
-                                  },
-                                };
-                              })
+                                  };
+                                }),
+                              )
                             }
                           />
                           {config.helperText && <HelperMessage>{config.helperText}</HelperMessage>}
@@ -558,7 +578,7 @@ export const UpdatesSettingsPage: FC = () => {
       <Field name="check-for-updates-now">
         {() => (
           <>
-            <Button appearance="primary" onClick={() => checkForUpdatesNow()}>
+            <Button appearance="primary" onClick={() => swallowPromise(checkForUpdatesNow())}>
               Check for updates now
             </Button>
           </>

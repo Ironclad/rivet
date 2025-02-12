@@ -5,6 +5,7 @@ import { type FC } from 'react';
 import { type SharedEditorProps } from './SharedEditorProps';
 import { getHelperMessage } from './editorUtils';
 import { ioProvider } from '../../utils/globals';
+import { syncWrapper } from '../../utils/syncWrapper';
 
 export const DefaultDirectoryBrowserEditor: FC<
   SharedEditorProps & {
@@ -31,7 +32,7 @@ export const DefaultDirectoryBrowserEditor: FC<
     <Field name={editor.dataKey} label={editor.label}>
       {() => (
         <div>
-          <Button onClick={pickDirectory} isDisabled={isReadonly || isDisabled}>
+          <Button onClick={syncWrapper(pickDirectory)} isDisabled={isReadonly || isDisabled}>
             Pick Directory
           </Button>
           <div className="current">{data[editor.dataKey] != null && <span>{data[editor.dataKey] as string}</span>}</div>

@@ -9,6 +9,7 @@ import { nanoid } from 'nanoid/non-secure';
 import { type TryRunTests } from './api';
 import { overlayOpenState } from '../../state/ui';
 import { NoTestSuitesSplash } from './NoTestSuitesSplash';
+import { swallowPromise } from '../../utils/syncWrapper';
 
 const styles = css`
   position: fixed;
@@ -111,7 +112,9 @@ export const TrivetContainer: FC<TrivetContainerProps> = ({ tryRunTests, onClose
           <TestSuiteList
             testSuites={testSuites}
             selectedTestSuite={selectedTestSuite}
-            setSelectedTestSuite={(id) => setState((s) => ({ ...s, selectedTestSuiteId: id }))}
+            setSelectedTestSuite={(id) =>
+              swallowPromise(setState(async (s) => ({ ...(await s), selectedTestSuiteId: id })))
+            }
             createNewTestSuite={createNewTestSuite}
             deleteTestSuite={deleteTestSuite}
             runningTestSuiteId={runningTestSuiteId}

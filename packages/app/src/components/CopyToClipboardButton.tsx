@@ -3,6 +3,7 @@ import CopyIcon from '../assets/icons/copy-icon.svg?react';
 import { css } from '@emotion/react';
 import { copyToClipboard } from '../utils/copyToClipboard';
 import { toast } from 'react-toastify';
+import { syncWrapper } from '../utils/syncWrapper';
 
 const styles = css`
   background: none;
@@ -36,7 +37,7 @@ export const CopyToClipboardButton: FC<{ text?: string }> = ({ text }) => {
   };
 
   return (
-    <button css={styles} onClick={doCopy}>
+    <button css={styles} onClick={syncWrapper(doCopy)}>
       <CopyIcon />
     </button>
   );
