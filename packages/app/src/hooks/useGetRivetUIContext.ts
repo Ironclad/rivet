@@ -9,6 +9,7 @@ import { projectState } from '../state/savedGraphs';
 import { graphState } from '../state/graph';
 import { useStableCallback } from './useStableCallback';
 import { useAtomValue } from 'jotai';
+import { TauriNativeApi } from '../model/native/TauriNativeApi';
 
 export function useGetRivetUIContext() {
   const selectedExecutor = useAtomValue(selectedExecutorState);
@@ -34,6 +35,7 @@ export function useGetRivetUIContext() {
       graph,
       node,
       getPluginConfig: getPluginConfigFn,
+      nativeApi: new TauriNativeApi(),
     };
 
     return context;

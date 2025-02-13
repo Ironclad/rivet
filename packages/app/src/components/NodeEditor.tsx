@@ -1,6 +1,6 @@
 import { type FC, useMemo, useState, type MouseEvent } from 'react';
 import { editingNodeState } from '../state/graphBuilder.js';
-import { connectionsForSingleNodeState, connectionsState, nodesByIdState, nodesState } from '../state/graph.js';
+import { nodesByIdState } from '../state/graph.js';
 import styled from '@emotion/styled';
 import MultiplyIcon from 'majesticons/line/multiply-line.svg?react';
 import {
@@ -25,7 +25,6 @@ import Popup from '@atlaskit/popup';
 import { isEqual, orderBy } from 'lodash-es';
 import { nanoid } from 'nanoid/non-secure';
 import { ErrorBoundary } from 'react-error-boundary';
-import { projectState } from '../state/savedGraphs';
 import { useSetStaticData } from '../hooks/useSetStaticData';
 import { DefaultNodeEditor } from './editors/DefaultNodeEditor';
 import { NodeColorPicker } from './NodeColorPicker';
