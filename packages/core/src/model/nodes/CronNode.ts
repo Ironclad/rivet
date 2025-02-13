@@ -10,7 +10,7 @@ import { nodeDefinition } from '../NodeDefinition.js';
 import type { InternalProcessContext } from '../ProcessContext.js';
 import type { Inputs, Outputs } from '../GraphProcessor.js';
 import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
-import { parseExpression } from 'cron-parser';
+import * as cronParser from 'cron-parser';
 
 type TimeUnit = 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks';
 type ScheduleType = 'interval' | 'cron';
@@ -219,7 +219,7 @@ export class CronNodeImpl extends NodeImpl<CronNode> {
     }
 
     if (schedule.type === 'cron') {
-      const cron = parseExpression(schedule.expression, { currentDate: now });
+      const cron = cronParser.parseExpression(schedule.expression, { currentDate: now });
 
       const next = cron.next().toDate();
       return next;
