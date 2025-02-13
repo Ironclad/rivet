@@ -226,6 +226,9 @@ export * from './nodes/ChatLoopNode.js';
 import { readAllFilesNode } from './nodes/ReadAllFilesNode.js';
 export * from './nodes/ReadAllFilesNode.js';
 
+import { toMarkdownTableNode } from './nodes/ToMarkdownTableNode.js';
+export * from './nodes/ToMarkdownTableNode.js';
+
 export const registerBuiltInNodes = (registry: NodeRegistration) => {
   return registry
     .register(toYamlNode)
@@ -302,7 +305,8 @@ export const registerBuiltInNodes = (registry: NodeRegistration) => {
     .register(playAudioNode)
     .register(documentNode)
     .register(chatLoopNode)
-    .register(readAllFilesNode);
+    .register(readAllFilesNode)
+    .register(toMarkdownTableNode);
 };
 
 let globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());
