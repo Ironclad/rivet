@@ -76,6 +76,7 @@ import documentNodeImage from '../assets/node_images/document_node.png';
 import readAllFilesNodeImage from '../assets/node_images/read_all_files_node.png';
 import chatLoopNodeImage from '../assets/node_images/chat_loop_node.png';
 import toMarkdownTableNodeImage from '../assets/node_images/to_markdown_table_node.png';
+import cronNodeImage from '../assets/node_images/cron_node.png';
 
 export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
   return {
@@ -155,5 +156,6 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     readAllFiles: readAllFilesNodeImage,
     chatLoop: chatLoopNodeImage,
     toMarkdownTable: toMarkdownTableNodeImage,
+    cron: cronNodeImage,
   };
 };

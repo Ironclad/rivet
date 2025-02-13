@@ -4213,6 +4213,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^8.24.0"
     assemblyai: "npm:^4.6.0"
     autoevals: "npm:^0.0.26"
+    cron-parser: "npm:^4.9.0"
     crypto-js: "npm:^4.2.0"
     emittery: "npm:^1.0.1"
     emittery-0-13: "npm:emittery@^0.13.1"
@@ -9085,6 +9086,15 @@ __metadata:
   version: 1.1.1
   resolution: "create-require@npm:1.1.1"
   checksum: 10/a9a1503d4390d8b59ad86f4607de7870b39cad43d929813599a23714831e81c520bddf61bcdd1f8e30f05fd3a2b71ae8538e946eb2786dc65c2bbc520f692eff
+  languageName: node
+  linkType: hard
+
+"cron-parser@npm:^4.9.0":
+  version: 4.9.0
+  resolution: "cron-parser@npm:4.9.0"
+  dependencies:
+    luxon: "npm:^3.2.1"
+  checksum: 10/ffca5e532a5ee0923412ee6e4c7f9bbceacc6ddf8810c16d3e9fb4fe5ec7e2de1b6896d7956f304bb6bc96b0ce37ad7e3935304179d52951c18d84107184faa7
   languageName: node
   linkType: hard
 
@@ -14032,6 +14042,13 @@ __metadata:
   version: 7.18.3
   resolution: "lru-cache@npm:7.18.3"
   checksum: 10/6029ca5aba3aacb554e919d7ef804fffd4adfc4c83db00fac8248c7c78811fb6d4b6f70f7fd9d55032b3823446546a007edaa66ad1f2377ae833bd983fac5d98
+  languageName: node
+  linkType: hard
+
+"luxon@npm:^3.2.1":
+  version: 3.5.0
+  resolution: "luxon@npm:3.5.0"
+  checksum: 10/48f86e6c1c96815139f8559456a3354a276ba79bcef0ae0d4f2172f7652f3ba2be2237b0e103b8ea0b79b47715354ac9fac04eb1db3485dcc72d5110491dd47f
   languageName: node
   linkType: hard
 
