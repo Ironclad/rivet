@@ -7,11 +7,13 @@ import {
   editingNodeState,
   hoveringNodeState,
   goToSearchState,
+  selectedNodesState,
 } from '../state/graphBuilder';
 import { useLatest } from 'ahooks';
 import { useViewportBounds } from './useViewportBounds';
 import { useCanvasPositioning } from './useCanvasPositioning';
 import { useRedo, useUndo } from '../commands/Command';
+import { nodesState } from '../state/graph';
 
 export function useCanvasHotkeys() {
   const [canvasPosition, setCanvasPosition] = useAtom(canvasPositionState);
@@ -21,6 +23,9 @@ export function useCanvasHotkeys() {
   const setEditingNode = useSetAtom(editingNodeState);
   const hoveringNode = useAtomValue(hoveringNodeState);
   const setGoToSearch = useSetAtom(goToSearchState);
+
+  const nodes = useAtomValue(nodesState);
+  const [selectedNodeIds, setSelectedNodes] = useAtom(selectedNodesState);
 
   const undo = useUndo();
   const redo = useRedo();
@@ -132,6 +137,21 @@ export function useCanvasHotkeys() {
       e.stopPropagation();
 
       setGoToSearch({ searching: true, query: '', selectedIndex: 0, entries: [] });
+    }
+
+    if (e.key === 'a' && (e.metaKey || e.ctrlKey) && !e.shiftKey) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (
+        selectedNodeIds.length === nodes.length &&
+        selectedNodeIds.length > 0 &&
+        selectedNodeIds.every((id) => nodes.find((n) => n.id === id))
+      ) {
+        setSelectedNodes([]);
+      } else {
+        setSelectedNodes(nodes.map((n) => n.id));
+      }
     }
   });
 
