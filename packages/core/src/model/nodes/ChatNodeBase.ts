@@ -52,6 +52,7 @@ export type ChatNodeConfigData = {
   useServerTokenCalculation?: boolean;
   outputUsage?: boolean;
   usePredictedOutput?: boolean;
+  reasoningEffort?: 'low' | 'medium' | 'high';
 
   modalitiesIncludeText?: boolean;
   modalitiesIncludeAudio?: boolean;
@@ -83,6 +84,7 @@ export type ChatNodeData = ChatNodeConfigData & {
   useResponseSchemaNameInput?: boolean;
   useAudioVoiceInput?: boolean;
   useAudioFormatInput?: boolean;
+  useReasoningEffortInput?: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
@@ -125,6 +127,8 @@ export const ChatNodeBase = {
     usePredictedOutput: false,
     modalitiesIncludeAudio: false,
     modalitiesIncludeText: false,
+    reasoningEffort: 'medium',
+    useReasoningEffortInput: false,
   }),
 
   getInputDefinitions: (data: ChatNodeData): NodeInputDefinition[] => {
@@ -551,6 +555,20 @@ export const ChatNodeBase = {
             step: 0.1,
             allowEmpty: true,
             helperMessage: `Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.`,
+          },
+          {
+            type: 'dropdown',
+            label: 'Reasoning Effort',
+            dataKey: 'reasoningEffort',
+            useInputToggleDataKey: 'useReasoningEffortInput',
+            options: [
+              { value: 'low', label: 'Low' },
+              { value: 'medium', label: 'Medium' },
+              { value: 'high', label: 'High' },
+            ],
+            defaultValue: 'medium',
+            helperMessage:
+              'Adjust the level of reasoning depth the model should apply. Only applies to reasoning models such as o3-mini.',
           },
           {
             type: 'dropdown',
@@ -1015,6 +1033,9 @@ export const ChatNodeBase = {
         }
       : undefined;
 
+    const reasoningEffort = getInputOrData(data, inputs, 'reasoningEffort') as 'low' | 'medium' | 'high';
+    const includeReasoningEffort = finalModel.startsWith('o1') || finalModel.startsWith('o3');
+
     try {
       return await retry(
         async () => {
@@ -1034,6 +1055,7 @@ export const ChatNodeBase = {
             prediction: predictionObject,
             modalities,
             audio,
+            reasoning_effort: includeReasoningEffort ? reasoningEffort : undefined,
             ...additionalParameters,
           };
 

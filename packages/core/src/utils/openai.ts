@@ -339,6 +339,8 @@ export type ChatCompletionOptions = {
     voice: string;
     format: 'wav' | 'mp3' | 'flac' | 'opus' | 'pcm16';
   };
+
+  reasoning_effort?: 'low' | 'medium' | 'high';
 };
 
 export type ChatCompletionResponse = {
