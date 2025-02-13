@@ -657,7 +657,8 @@ export const ChatNodeBase = {
             label: 'Audio Voice',
             dataKey: 'audioVoice',
             useInputToggleDataKey: 'useAudioVoiceInput',
-            helperMessage: 'The voice to use for audio responses. See your model for supported voices.',
+            helperMessage:
+              'The voice to use for audio responses. See your model for supported voices. OpenAI voices are: alloy, ash, coral, echo, fable, onyx, nova, sage, and shimmer.',
             hideIf: (data) => !data.modalitiesIncludeAudio,
           },
           {
@@ -986,12 +987,18 @@ export const ChatNodeBase = {
         : { type: 'content' as const, content: predictedOutput.map((part) => ({ type: 'text', text: part })) }
       : undefined;
 
+    const voice = getInputOrData(data, inputs, 'audioVoice');
+
     let modalities: ('text' | 'audio')[] | undefined = [];
     if (data.modalitiesIncludeText) {
       modalities.push('text');
     }
     if (data.modalitiesIncludeAudio) {
       modalities.push('audio');
+
+      if (!voice) {
+        throw new Error('Audio voice must be specified if audio is enabled.');
+      }
     }
 
     // Errors happen if modalities isn't supported, so omit it if it's empty
@@ -1001,7 +1008,7 @@ export const ChatNodeBase = {
 
     const audio = modalities?.includes('audio')
       ? {
-          voice: getInputOrData(data, inputs, 'audioVoice'),
+          voice,
           format:
             (getInputOrData(data, inputs, 'audioFormat') as 'wav' | 'mp3' | 'flac' | 'opus' | 'pcm16' | undefined) ??
             'wav',
@@ -1072,7 +1079,7 @@ export const ChatNodeBase = {
             } else {
               output['response' as PortId] = {
                 type: 'string',
-                value: response.choices[0]!.message.content!,
+                value: response.choices[0]!.message.content! ?? '',
               };
             }
 
@@ -1083,7 +1090,7 @@ export const ChatNodeBase = {
                   ...messages,
                   {
                     type: 'assistant',
-                    message: response.choices[0]!.message.content!,
+                    message: response.choices[0]!.message.content! ?? '',
                     function_calls: undefined,
                     isCacheBreakpoint: false,
                     function_call: undefined,
