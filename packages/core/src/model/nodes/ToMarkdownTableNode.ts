@@ -80,8 +80,8 @@ export class ToMarkdownTableNodeImpl extends NodeImpl<ToMarkdownTableNode> {
 
   getBody(): string | undefined {
     const parts = [];
-    if (this.data.includeHeaders) parts.push('Headers');
-    if (this.data.alignPipes) parts.push('Aligned');
+    if (this.data.includeHeaders) parts.push('With Header Row');
+    if (this.data.alignPipes) parts.push('Pipes Aligned');
     return parts.length > 0 ? parts.join(', ') : undefined;
   }
 
@@ -109,8 +109,11 @@ export class ToMarkdownTableNodeImpl extends NodeImpl<ToMarkdownTableNode> {
           ...(this.data.includeHeaders
             ? [
                 {
-                  type: 'tableRow',
-                  children: keys.map((key) => ({ type: 'tableCell', children: [{ type: 'text', value: key }] })),
+                  type: 'tableRow' as const,
+                  children: keys.map((key) => ({
+                    type: 'tableCell' as const,
+                    children: [{ type: 'text' as const, value: key }],
+                  })),
                 },
               ]
             : []),
