@@ -169,8 +169,9 @@ export class HttpCallNodeImpl extends NodeImpl<HttpCallNode> {
       },
       {
         type: 'toggle',
-        label: 'Whether response body is expected to be a binary',
+        label: 'Binary Output',
         dataKey: 'isBinaryOutput',
+        helperMessage: 'Toggle on if the response is expected to be binary data',
       },
       {
         type: 'toggle',
@@ -213,7 +214,6 @@ export class HttpCallNodeImpl extends NodeImpl<HttpCallNode> {
 
     // TODO: Use URL.canParse when we drop support for Node 18
     try {
-      // eslint-disable-next-line no-new
       new URL(url);
     } catch (err) {
       throw new Error(`Invalid URL: ${url}`);
