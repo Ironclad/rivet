@@ -49,7 +49,7 @@ jobs:
           releaseDraft: true
           prerelease: false
           updaterJsonKeepUniversal: true
-          args: --verbose ${{ matrix.platform == 'macos-latest' && ' --target universal-apple-darwin' || '' }} ${{ matrix.platform == 'windows-latest' && '--bundles nsis' || '' }}
+          args: --verbose ${{ matrix.platform == 'macos-latest' && ' --target universal-apple-darwin' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
