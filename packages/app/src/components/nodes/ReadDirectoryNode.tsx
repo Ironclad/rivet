@@ -15,23 +15,6 @@ import { ioProvider } from '../../utils/globals.js';
 import { type InputsOrOutputsWithRefs } from '../../state/dataFlow';
 import { syncWrapper } from '../../utils/syncWrapper';
 
-export const ReadDirectoryNodeOutput: FC<{ outputs: InputsOrOutputsWithRefs }> = ({ outputs }) => {
-  const outputPaths = expectType(outputs['paths' as PortId] as DataValue, 'string[]');
-  return (
-    <div>
-      {outputPaths.length === 0 ? (
-        <div>No files found</div>
-      ) : (
-        <div>
-          {outputPaths.map((path) => (
-            <div key={path}>{path}</div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
 const container = css`
   font-family: 'Roboto', sans-serif;
   color: var(--foreground);
@@ -243,6 +226,5 @@ export const ReadDirectoryNodeEditor: FC<ReadDirectoryNodeEditorProps> = ({ node
 };
 
 export const readDirectoryNodeDescriptor: NodeComponentDescriptor<'readDirectory'> = {
-  OutputSimple: ReadDirectoryNodeOutput,
   Editor: ReadDirectoryNodeEditor,
 };

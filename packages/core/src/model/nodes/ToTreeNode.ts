@@ -49,7 +49,7 @@ export class ToTreeNodeImpl extends NodeImpl<ToTreeNode> {
       {
         id: 'objects' as PortId,
         title: 'Objects',
-        dataType: 'object[]',
+        dataType: ['object[]', 'object'],
         required: true,
       },
     ];
