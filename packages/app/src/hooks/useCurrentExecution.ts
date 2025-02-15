@@ -92,6 +92,17 @@ function sanitizeDataValueForLength(value: DataValue | undefined) {
         };
       }
     })
+    .with({ type: 'string[]' }, (value): DataValue => {
+      const sumLength = value.value.reduce((acc, str) => acc + str.length, 0);
+      if (sumLength > 300_000) {
+        return {
+          type: 'string',
+          value: `string[] (${value.value.length.toLocaleString()} elements, total length ${sumLength.toLocaleString()}`,
+        };
+      }
+
+      return value;
+    })
     .otherwise((value): DataValue | undefined => value);
 }
 
