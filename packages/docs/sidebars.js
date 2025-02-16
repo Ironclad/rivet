@@ -296,6 +296,17 @@ const sidebars = {
       ],
     },
   ],
+  cli: [
+    'cli',
+    {
+      type: 'category',
+      label: 'Commands',
+      collapsible: true,
+      collapsed: false,
+      items: ['cli/run', 'cli/serve'],
+    },
+    'cli/docker',
+  ],
 };
 
 module.exports = sidebars;

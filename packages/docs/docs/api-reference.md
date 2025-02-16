@@ -20,6 +20,12 @@ You will most likely want to use Rivet node in your application. All types from 
 
 See the [Rivet node overview](./api-reference/node/overview.mdx) for more information.
 
+## `@ironclad/rivet-cli`
+
+The Rivet CLI is a command-line interface for running Rivet graphs from the command line. It is built on top of Rivet node and provides a convenient way to run graphs from the command line, as well as a local HTTP server for running graphs via HTTP requests.
+
+See the [Rivet CLI overview](./cli.md) for more information.
+
 ### Requirements
 
 Rivet node requires Node.js 16 or later.

@@ -90,6 +90,12 @@ const config = {
             label: 'Node Reference',
           },
           {
+            type: 'doc',
+            docId: 'cli',
+            position: 'left',
+            label: 'CLI',
+          },
+          {
             href: 'https://github.com/ironclad/rivet',
             label: 'GitHub',
             position: 'right',
