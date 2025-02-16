@@ -11,9 +11,11 @@ import {
   type Outputs,
   type Project,
   type LooseDataValue,
+  getSingleNodeStream,
 } from '@ironclad/rivet-node';
 import chalk from 'chalk';
 import { configDotenv } from 'dotenv';
+import { stream } from 'hono/streaming';
 
 export function makeCommand<T>(y: yargs.Argv<T>) {
   return y
@@ -60,6 +62,17 @@ export function makeCommand<T>(y: yargs.Argv<T>) {
       type: 'boolean',
       default: false,
     })
+    .option('stream', {
+      describe:
+        'Turns on streaming mode. Rivet events will be sent to the client using SSE (Server-Sent Events). If this is set to a Node ID or node title, only events for that node will be sent.',
+      type: 'string',
+      demandOption: false,
+    })
+    .option('stream-node', {
+      describe: 'Streams the partial outputs of a specific node. Requires --stream to be set.',
+      type: 'string',
+      demandOption: false,
+    })
     .positional('projectFile', {
       describe:
         'The project file to serve. If omitted, the project file in the current directory is used. There cannot be multiple project files in the current directory.',
@@ -78,6 +91,8 @@ export async function serve(args: {
   openaiEndpoint: string | undefined;
   openaiOrganization: string | undefined;
   exposeCost: boolean;
+  stream: string | undefined;
+  streamNode: string | undefined;
 }) {
   try {
     configDotenv();
@@ -89,6 +104,14 @@ export async function serve(args: {
 
     throwIfNoMainGraph(initialProject, args.graph, projectFilePath);
     throwIfInvalidGraph(initialProject, args.graph, projectFilePath);
+
+    if (args.stream != null) {
+      console.log('Streaming is enabled');
+    }
+
+    if (args.streamNode != null) {
+      console.log(`Streaming node ${chalk.bold(args.streamNode)}`);
+    }
 
     app.post('/', async (c) => {
       const project = args.dev ? await loadProjectFromFile(projectFilePath) : initialProject;
@@ -103,9 +126,21 @@ export async function serve(args: {
         }
       }
 
-      const outputs = await runGraph({ project, inputs, graphId: args.graph as GraphId, ...args });
+      if (args.stream != null) {
+        const stream = await streamGraph({ project, inputs, graphId: args.graph as GraphId, ...args });
 
-      return c.json(outputs);
+        return new Response(stream, {
+          headers: {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            Connection: 'keep-alive',
+          },
+        });
+      } else {
+        const outputs = await runGraph({ project, inputs, graphId: args.graph as GraphId, ...args });
+
+        return c.json(outputs);
+      }
     });
 
     if (args.allowSpecifyingGraphId) {
@@ -160,6 +195,56 @@ export async function serve(args: {
   } catch (err) {
     console.error(chalk.red(err));
     process.exit(1);
+  }
+}
+
+async function streamGraph({
+  project,
+  inputs,
+  graphId,
+  openaiApiKey,
+  openaiEndpoint,
+  openaiOrganization,
+  exposeCost,
+  streamNode,
+}: {
+  project: Project;
+  inputs: Record<string, LooseDataValue>;
+  graphId: GraphId | undefined;
+  openaiApiKey: string | undefined;
+  openaiEndpoint: string | undefined;
+  openaiOrganization: string | undefined;
+  exposeCost: boolean;
+  streamNode: string | undefined;
+}): Promise<ReadableStream> {
+  const { run, processor, getSSEStream } = createProcessor(project, {
+    inputs,
+    graph: graphId,
+    openAiKey: openaiApiKey,
+    openAiEndpoint: openaiEndpoint,
+    openAiOrganization: openaiOrganization,
+  });
+
+  if (streamNode) {
+    const stream = getSingleNodeStream(processor, streamNode);
+
+    run().catch((err) => {
+      console.error(err);
+    });
+
+    return stream;
+  } else {
+    const stream = getSSEStream({
+      nodeStart: streamNode ? [streamNode] : true,
+      nodeFinish: streamNode ? [streamNode] : true,
+      partialOutputs: streamNode ? [streamNode] : true,
+    });
+
+    run().catch((err) => {
+      console.error(err);
+    });
+
+    return stream;
   }
 }
 

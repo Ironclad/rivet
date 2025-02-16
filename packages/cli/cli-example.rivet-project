@@ -64,11 +64,12 @@ data:
           visualData: 742/554/330/null//
         '[vzC9lcEyXZ2Q1-cCaG0v4]:chat "Chat"':
           data:
+            additionalParameters: []
             cache: false
             enableFunctionUse: false
             frequencyPenalty: 0
             maxTokens: 1024
-            model: gpt-3.5-turbo
+            model: gpt-4o-mini
             presencePenalty: 0
             stop: ""
             temperature: 0.5
