@@ -9,12 +9,11 @@ import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import { nanoid } from 'nanoid/non-secure';
 import { type Inputs, type Outputs } from '../GraphProcessor.js';
-import { getInputOrData, type NodeBodySpec } from '../../index.js';
+import { type NodeBodySpec } from '../../index.js';
 import { type InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
-import { expectType } from '../../utils/expectType.js';
-import _ from 'lodash';
 import { createTreeFromPaths } from '../../utils/paths.js';
+import { getInputOrData } from '../../utils/inputs.js';
 
 export type ReadDirectoryNode = ChartNode<'readDirectory', ReadDirectoryNodeData>;
 

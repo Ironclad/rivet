@@ -13,7 +13,7 @@ import { type EditorDefinition } from '../EditorDefinition.js';
 import { dedent } from 'ts-dedent';
 import { coerceTypeOptional } from '../../utils/coerceType.js';
 import { TOKEN_MATCH_REGEX, interpolate } from '../../utils/interpolation.js';
-import { get, sortBy } from 'lodash';
+import { get, sortBy } from 'lodash-es';
 
 export type ToTreeNode = ChartNode<'toTree', ToTreeNodeData>;
 
