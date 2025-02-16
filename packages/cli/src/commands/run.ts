@@ -116,7 +116,7 @@ export async function run(args: {
       delete outputs.cost;
     }
 
-    console.log(outputs);
+    console.log(JSON.stringify(outputs, null, 2));
   } catch (err) {
     console.error(err);
     process.exit(1);
