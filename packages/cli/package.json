@@ -17,6 +17,7 @@
     "build": "tsc -b",
     "prepack": "yarn build && cp -r ../../LICENSE ../../README.md .",
     "publish": "yarn npm publish --access public",
+    "docker-publish": "./docker-publish.sh",
     "lint": "eslint ./src",
     "test": "tsx --test test/**/*.test.ts",
     "start": "yarn build && node bin/cli.js"
