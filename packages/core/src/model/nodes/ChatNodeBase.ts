@@ -1328,6 +1328,9 @@ export const ChatNodeBase = {
             onPartialOutput(output);
           }
 
+          // Call one last time manually to ensure the last output is sent
+          context.onPartialOutputs?.(output);
+
           if (!isMultiResponse) {
             output['all-messages' as PortId] = {
               type: 'chat-message[]',
