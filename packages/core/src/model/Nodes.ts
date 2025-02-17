@@ -235,6 +235,9 @@ export * from './nodes/CronNode.js';
 import { toTreeNode } from './nodes/ToTreeNode.js';
 export * from './nodes/ToTreeNode.js';
 
+import { loopUntilNode } from './nodes/LoopUntilNode.js';
+export * from './nodes/LoopUntilNode.js';
+
 export const registerBuiltInNodes = (registry: NodeRegistration) => {
   return registry
     .register(toYamlNode)
@@ -314,7 +317,8 @@ export const registerBuiltInNodes = (registry: NodeRegistration) => {
     .register(readAllFilesNode)
     .register(toMarkdownTableNode)
     .register(cronNode)
-    .register(toTreeNode);
+    .register(toTreeNode)
+    .register(loopUntilNode);
 };
 
 let globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());
