@@ -1547,6 +1547,11 @@ export function getChatNodeMessages(inputs: Inputs) {
 
   const systemPrompt = inputs['systemPrompt' as PortId];
   if (systemPrompt) {
+    if (messages.length > 0 && messages.at(0)!.type === 'system') {
+      // Delete the first system message if it's already there
+      messages.splice(0, 1);
+    }
+
     messages = [{ type: 'system', message: coerceType(systemPrompt, 'string') }, ...messages];
   }
 
