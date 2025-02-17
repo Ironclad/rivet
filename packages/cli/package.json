@@ -2,7 +2,7 @@
   "name": "@ironclad/rivet-cli",
   "license": "MIT",
   "repository": "https://github.com/ironclad/rivet",
-  "version": "1.22.1",
+  "version": "1.23.0",
   "src": "bin/cli.ts",
   "bin": {
     "rivet": "bin/cli.js"
