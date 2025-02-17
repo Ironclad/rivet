@@ -22,7 +22,7 @@ import { mapValues } from 'lodash-es';
 import { dedent } from 'ts-dedent';
 import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 import { getInputOrData } from '../../utils/index.js';
-import { TOKEN_MATCH_REGEX, interpolate } from '../../utils/interpolation.js';
+import { interpolate, extractInterpolationVariables } from '../../utils/interpolation.js';
 import { match } from 'ts-pattern';
 
 export type PromptNode = ChartNode<'prompt', PromptNodeData>;
@@ -100,14 +100,13 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
     }
 
     // Extract inputs from promptText, everything like {{input}}
-    const inputNames = [...new Set(this.chartNode.data.promptText.match(TOKEN_MATCH_REGEX))];
+    const inputNames = extractInterpolationVariables(this.data.promptText);
     inputs = [
       ...inputs,
       ...(inputNames?.map((inputName): NodeInputDefinition => {
         return {
-          // id and title should not have the {{ and }}
-          id: inputName.slice(2, -2) as PortId,
-          title: inputName.slice(2, -2),
+          id: inputName as PortId,
+          title: inputName,
           dataType: 'string',
           required: false,
         };

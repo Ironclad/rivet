@@ -12,7 +12,7 @@ import { type DataValue } from '../DataValue.js';
 import { type EditorDefinition } from '../EditorDefinition.js';
 import { dedent } from 'ts-dedent';
 import { coerceTypeOptional } from '../../utils/coerceType.js';
-import { TOKEN_MATCH_REGEX, interpolate } from '../../utils/interpolation.js';
+import { extractInterpolationVariables, interpolate } from '../../utils/interpolation.js';
 import { get, sortBy } from 'lodash-es';
 
 export type ToTreeNode = ChartNode<'toTree', ToTreeNodeData>;
@@ -125,10 +125,10 @@ export class ToTreeNodeImpl extends NodeImpl<ToTreeNode> {
       const indent = level === 0 ? '' : '    '.repeat(level - 1) + (isLast ? '    ' : '│   ');
 
       // Get all potential interpolation variables from the format string
-      const matches = [...new Set(this.data.format.match(TOKEN_MATCH_REGEX) ?? [])];
+      const matches = extractInterpolationVariables(this.data.format);
       const interpolationVars = matches.reduce(
         (acc, match) => {
-          const key = match.slice(2, -2); // Remove {{ and }}
+          const key = match;
           acc[key] = String(get(obj, key, ''));
           return acc;
         },
