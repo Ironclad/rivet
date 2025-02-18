@@ -5,6 +5,7 @@ import type { ChatCompletionRequestMessage, ChatCompletionRequestUserMessageCont
 
 export async function chatMessageToOpenAIChatCompletionMessage(
   message: ChatMessage,
+  options: { isReasoningModel: boolean },
 ): Promise<ChatCompletionRequestMessage> {
   const onlyStringContent = (message: ChatMessage): string => {
     const parts = Array.isArray(message.message) ? message.message : [message.message];
@@ -21,7 +22,19 @@ export async function chatMessageToOpenAIChatCompletionMessage(
   };
 
   return match(message)
-    .with({ type: 'system' }, (m): ChatCompletionRequestMessage => ({ role: m.type, content: onlyStringContent(m) }))
+    .with({ type: 'system' }, (m): ChatCompletionRequestMessage => {
+      if (options.isReasoningModel) {
+        return {
+          role: 'developer',
+          content: onlyStringContent(m),
+        };
+      } else {
+        return {
+          role: m.type,
+          content: onlyStringContent(m),
+        };
+      }
+    })
     .with({ type: 'user' }, async (m): Promise<ChatCompletionRequestMessage> => {
       const parts = Array.isArray(m.message) ? m.message : [m.message];
 

@@ -934,8 +934,10 @@ export const ChatNodeBase = {
 
     const { messages } = getChatNodeMessages(inputs);
 
+    const isReasoningModel = finalModel.startsWith('o1') || finalModel.startsWith('o3');
+
     const completionMessages = await Promise.all(
-      messages.map((message) => chatMessageToOpenAIChatCompletionMessage(message)),
+      messages.map((message) => chatMessageToOpenAIChatCompletionMessage(message, { isReasoningModel })),
     );
 
     let { maxTokens } = data;
@@ -1060,7 +1062,6 @@ export const ChatNodeBase = {
           };
 
           const isO1Beta = finalModel.startsWith('o1-preview') || finalModel.startsWith('o1-mini');
-          const isReasoningModel = finalModel.startsWith('o1') || finalModel.startsWith('o3');
 
           if (isReasoningModel) {
             options.max_completion_tokens = maxTokens;

@@ -213,10 +213,16 @@ export type ChatCompletionRequestMessage =
   | ChatCompletionRequestSystemMessage
   | ChatCompletionRequestUserMessage
   | ChatCompletionRequestAssistantMessage
-  | ChatCompletionRequestToolMessage;
+  | ChatCompletionRequestToolMessage
+  | ChatCompletionRequestDeveloperMessage;
 
 export type ChatCompletionRequestSystemMessage = {
   role: 'system';
+  content: string | null;
+};
+
+export type ChatCompletionRequestDeveloperMessage = {
+  role: 'developer';
   content: string | null;
 };
 
