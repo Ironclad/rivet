@@ -343,68 +343,74 @@ export type ChatCompletionOptions = {
   reasoning_effort?: 'low' | 'medium' | 'high';
 };
 
-export type ChatCompletionResponse = {
-  /** A unique identifier for the chat completion. */
-  id: string;
+export type ChatCompletionResponse =
+  | {
+      /** A unique identifier for the chat completion. */
+      id: string;
 
-  /** The object type, which is always chat.completion. */
-  object: 'text_completion';
+      /** The object type, which is always chat.completion. */
+      object: 'text_completion';
 
-  /** The Unix timestamp (in seconds) of when the chat completion was created. */
-  created: number;
+      /** The Unix timestamp (in seconds) of when the chat completion was created. */
+      created: number;
 
-  /** The model used for the chat completion. */
-  model: string;
+      /** The model used for the chat completion. */
+      model: string;
 
-  /**
-   * This fingerprint represents the backend configuration that the model runs with.
-   * Can be used in conjunction with the seed request parameter to understand when backend changes have been made that might impact determinism.
-   */
-  system_fingerprint: string;
+      /**
+       * This fingerprint represents the backend configuration that the model runs with.
+       * Can be used in conjunction with the seed request parameter to understand when backend changes have been made that might impact determinism.
+       */
+      system_fingerprint: string;
 
-  /** Usage statistics for the completion request. */
-  usage: {
-    /** Number of tokens in the generated completion. */
-    completion_tokens: number;
+      /** Usage statistics for the completion request. */
+      usage: {
+        /** Number of tokens in the generated completion. */
+        completion_tokens: number;
 
-    /** Number of tokens in the prompt. */
-    prompt_tokens: number;
+        /** Number of tokens in the prompt. */
+        prompt_tokens: number;
 
-    /** Total number of tokens used in the request (prompt + completion). */
-    total_tokens: number;
+        /** Total number of tokens used in the request (prompt + completion). */
+        total_tokens: number;
 
-    prompt_tokens_details: {
-      /** Number of tokens used from the cache. */
-      cached_tokens: number;
+        prompt_tokens_details: {
+          /** Number of tokens used from the cache. */
+          cached_tokens: number;
 
-      /** Number of tokens used for audio. */
-      audio_tokens: number;
+          /** Number of tokens used for audio. */
+          audio_tokens: number;
 
-      text_tokens: number;
+          text_tokens: number;
 
-      image_tokens: number;
+          image_tokens: number;
+        };
+
+        completion_tokens_details: {
+          /** Number of tokens used for reasoning. */
+          reasoning_tokens: number;
+
+          /** Number of tokens used for audio. */
+          audio_tokens: number;
+
+          /** Number of tokens used for accepted predictions. */
+          accepted_prediction_tokens: number;
+
+          /** Number of tokens used for rejected predictions. */
+          rejected_prediction_tokens: number;
+
+          text_tokens: number;
+        };
+      };
+
+      /** A list of chat completion choices. Can be more than one if n is greater than 1. */
+      choices: ChatCompletionResponseChoice[];
+    }
+  | {
+      error: {
+        message: string;
+      };
     };
-
-    completion_tokens_details: {
-      /** Number of tokens used for reasoning. */
-      reasoning_tokens: number;
-
-      /** Number of tokens used for audio. */
-      audio_tokens: number;
-
-      /** Number of tokens used for accepted predictions. */
-      accepted_prediction_tokens: number;
-
-      /** Number of tokens used for rejected predictions. */
-      rejected_prediction_tokens: number;
-
-      text_tokens: number;
-    };
-  };
-
-  /** A list of chat completion choices. Can be more than one if n is greater than 1. */
-  choices: ChatCompletionResponseChoice[];
-};
 
 export type ChatCompletionResponseChoice = {
   /** The index of the choice in the list of choices. */

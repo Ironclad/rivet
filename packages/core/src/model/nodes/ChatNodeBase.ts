@@ -1093,6 +1093,10 @@ export const ChatNodeBase = {
               ...options,
             });
 
+            if ('error' in response) {
+              throw new OpenAIError(400, response.error);
+            }
+
             if (isMultiResponse) {
               output['response' as PortId] = {
                 type: 'string[]',
