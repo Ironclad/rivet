@@ -26,7 +26,7 @@ export class GptTokenizerTokenizer implements Tokenizer {
   ): Promise<number> {
     try {
       const openaiMessages = await Promise.all(
-        messages.map((message) => chatMessageToOpenAIChatCompletionMessage(message)),
+        messages.map((message) => chatMessageToOpenAIChatCompletionMessage(message, { isReasoningModel: false })),
       );
 
       const validMessages = openaiMessages
