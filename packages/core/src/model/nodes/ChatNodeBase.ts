@@ -562,11 +562,12 @@ export const ChatNodeBase = {
             dataKey: 'reasoningEffort',
             useInputToggleDataKey: 'useReasoningEffortInput',
             options: [
+              { value: '', label: 'Unset' },
               { value: 'low', label: 'Low' },
               { value: 'medium', label: 'Medium' },
               { value: 'high', label: 'High' },
             ],
-            defaultValue: 'medium',
+            defaultValue: '',
             helperMessage:
               'Adjust the level of reasoning depth the model should apply. Only applies to reasoning models such as o3-mini.',
           },
@@ -1033,8 +1034,7 @@ export const ChatNodeBase = {
         }
       : undefined;
 
-    const reasoningEffort = getInputOrData(data, inputs, 'reasoningEffort') as 'low' | 'medium' | 'high';
-    const includeReasoningEffort = finalModel.startsWith('o1') || finalModel.startsWith('o3');
+    const reasoningEffort = getInputOrData(data, inputs, 'reasoningEffort') as '' | 'low' | 'medium' | 'high';
 
     try {
       return await retry(
@@ -1055,7 +1055,7 @@ export const ChatNodeBase = {
             prediction: predictionObject,
             modalities,
             audio,
-            reasoning_effort: includeReasoningEffort ? reasoningEffort : undefined,
+            reasoning_effort: reasoningEffort || undefined,
             ...additionalParameters,
           };
 
