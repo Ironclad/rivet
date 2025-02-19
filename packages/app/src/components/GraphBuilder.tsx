@@ -1,4 +1,4 @@
-import { type FC, useEffect, useMemo, useState, type MouseEvent } from 'react';
+import { type FC, useEffect, useMemo, useState, type MouseEvent, useRef } from 'react';
 import { NodeCanvas } from './NodeCanvas.js';
 import { useAtomValue, useAtom, useSetAtom } from 'jotai';
 import { connectionsState, isReadOnlyGraphState, nodesByIdState, nodesState } from '../state/graph.js';
@@ -66,6 +66,7 @@ export const GraphBuilder: FC = () => {
   const setEditingNodeId = useSetAtom(editingNodeState);
   const loadedRecording = useAtomValue(loadedRecordingState);
   const project = useAtomValue(projectState);
+  const autoLayoutGraph = useRef(() => {});
 
   useDatasets(project.metadata.id);
 
@@ -77,7 +78,11 @@ export const GraphBuilder: FC = () => {
   });
 
   const nodesById = useAtomValue(nodesByIdState);
-  const contextMenuHandler = useGraphBuilderContextMenuHandler();
+  const contextMenuHandler = useGraphBuilderContextMenuHandler({
+    onAutoLayoutGraph: () => {
+      autoLayoutGraph.current();
+    },
+  });
 
   const nodeSelected = useStableCallback((node: ChartNode, multi: boolean) => {
     if (!multi) {
@@ -151,6 +156,7 @@ export const GraphBuilder: FC = () => {
           selectedNodes={selectedNodes}
           onNodeStartEditing={nodeStartEditing}
           onContextMenuItemSelected={contextMenuHandler}
+          autoLayoutGraph={autoLayoutGraph}
         />
         {loadedRecording && <div className="recording-border" />}
         {isReadOnly && <div className="read-only-border" />}

@@ -138,7 +138,12 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(
     const searchResults = useFuseSearch(searchItems, searchTerm, ['label', 'subLabel'], { max: 5 });
     const searchResultsItems = useMemo(() => searchResults.map((r) => r.item), [searchResults]);
 
-    const shownItems = searchTerm.trim().length > 0 ? searchResultsItems : items;
+    const shownItemsNotSearching = useMemo(
+      () => items.filter((i) => !(i as ContextMenuConfigItem).hiddenUntilSearched),
+      [items],
+    );
+
+    const shownItems = searchTerm.trim().length > 0 ? searchResultsItems : shownItemsNotSearching;
 
     useEffect(() => {
       if (searchTerm.length > 0 && searchResults.length > 0 && selectedResultIndex >= searchResults.length) {

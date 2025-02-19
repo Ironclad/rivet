@@ -15,8 +15,9 @@ import { useDuplicateNode } from './useDuplicateNode';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useAddNodeCommand } from '../commands/addNodeCommand';
 import { useDeleteNodesCommand } from '../commands/deleteNodeCommand';
+import { useAutoLayoutGraph } from './useAutoLayoutGraph';
 
-export function useGraphBuilderContextMenuHandler() {
+export function useGraphBuilderContextMenuHandler({ onAutoLayoutGraph }: { onAutoLayoutGraph: () => void }) {
   const { clientToCanvasPosition } = useCanvasPositioning();
   const loadGraph = useLoadGraph();
   const project = useAtomValue(projectState);
@@ -47,6 +48,9 @@ export function useGraphBuilderContextMenuHandler() {
         })
         .with('paste', () => {
           pasteNodes(meta);
+        })
+        .with('auto-layout', () => {
+          onAutoLayoutGraph();
         })
         .with('node-edit', () => {
           const { nodeId } = context.data as { nodeId: NodeId };

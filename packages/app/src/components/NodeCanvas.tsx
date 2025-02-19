@@ -3,7 +3,17 @@ import { useNodeHeightCache } from '../hooks/useNodeBodyHeight';
 import { DraggableNode } from './DraggableNode.js';
 import { css } from '@emotion/react';
 import { nodeStyles } from './nodeStyles.js';
-import { type FC, useMemo, useRef, useState, type MouseEvent, useEffect, useLayoutEffect } from 'react';
+import {
+  type FC,
+  useMemo,
+  useRef,
+  useState,
+  type MouseEvent,
+  useEffect,
+  useLayoutEffect,
+  type RefObject,
+  type MutableRefObject,
+} from 'react';
 import { ContextMenu, type ContextMenuContext } from './ContextMenu.js';
 import { CSSTransition } from 'react-transition-group';
 import { WireLayer } from './WireLayer.js';
@@ -53,6 +63,7 @@ import { useNodeTypes } from '../hooks/useNodeTypes';
 import { lastRunDataByNodeState, selectedProcessPageNodesState } from '../state/dataFlow';
 import { useDeleteNodesCommand } from '../commands/deleteNodeCommand';
 import { useEditNodeCommand } from '../commands/editNodeCommand';
+import { useAutoLayoutGraph } from '../hooks/useAutoLayoutGraph';
 
 const styles = css`
   width: 100vw;
@@ -155,6 +166,7 @@ export interface NodeCanvasProps {
     context: ContextMenuContext,
     meta: { x: number; y: number },
   ) => void;
+  autoLayoutGraph: MutableRefObject<() => void>;
 }
 
 export type PortPositions = Record<string, { x: number; y: number }>;
@@ -169,6 +181,7 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
   onNodeSelected,
   onNodeStartEditing,
   onContextMenuItemSelected,
+  autoLayoutGraph,
 }) => {
   const [canvasPosition, setCanvasPosition] = useAtom(canvasPositionState);
   const selectedGraphMetadata = useAtomValue(graphMetadataState);
@@ -221,6 +234,15 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
     canvasRef,
     recalculate: recalculatePortPositions,
   } = useNodePortPositions({ enabled: shouldRenderWires, isDraggingNode: draggingNodes.length > 0 });
+
+  const autoLayout = useAutoLayoutGraph();
+
+  useEffect(() => {
+    autoLayoutGraph.current = () => {
+      autoLayout();
+      recalculatePortPositions();
+    };
+  }, [autoLayout, autoLayoutGraph, recalculatePortPositions]);
 
   useEffect(() => {
     recalculatePortPositions();
