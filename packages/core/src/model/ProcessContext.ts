@@ -16,6 +16,7 @@ import {
   type StringArrayDataValue,
 } from '../index.js';
 import type { Tokenizer } from '../integrations/Tokenizer.js';
+import type { CodeRunner } from '../integrations/CodeRunner.js';
 
 export type ProcessContext = {
   settings: Settings;
@@ -29,6 +30,9 @@ export type ProcessContext = {
 
   /** Sets the tokenizer that will be used for all nodes. If unset, the default GptTokenizerTokenizer will be used. */
   tokenizer?: Tokenizer;
+
+  /** The provider for running arbitrary code in the Code Node. */
+  codeRunner?: CodeRunner;
 
   /**
    * If implemented, chat nodes will first call this to resolve their configured endpoint to a final endpoint.
@@ -114,4 +118,7 @@ export type InternalProcessContext<T extends ChartNode = ChartNode> = ProcessCon
 
   /** Requests that the user input some text in response to the specified prompt. */
   requestUserInput(inputs: string[], renderingType: 'text' | 'markdown'): Promise<StringArrayDataValue>;
+
+  /** The object used for running arbitrary code with the Code Node. */
+  codeRunner: CodeRunner;
 };

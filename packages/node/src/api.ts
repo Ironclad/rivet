@@ -16,6 +16,7 @@ import { readFile } from 'node:fs/promises';
 import { type RivetDebuggerServer, type Settings } from './index.js';
 import { NodeNativeApi } from './native/NodeNativeApi.js';
 import * as events from 'node:events';
+import { NodeCodeRunner } from './native/NodeCodeRunner.js';
 
 export async function loadProjectFromFile(path: string): Promise<Project> {
   const content = await readFile(path, { encoding: 'utf8' });
@@ -67,6 +68,7 @@ export function createProcessor(
           datasetProvider: options.datasetProvider,
           audioProvider: options.audioProvider,
           tokenizer: options.tokenizer,
+          codeRunner: options.codeRunner ?? new NodeCodeRunner(),
           settings: {
             openAiKey: options.openAiKey ?? process.env.OPENAI_API_KEY ?? '',
             openAiOrganization: options.openAiOrganization ?? process.env.OPENAI_ORG_ID ?? '',

@@ -57,6 +57,7 @@ export function useGetAdHocInternalProcessContext() {
         getPluginConfig: undefined!,
         attachedData: {},
         requestUserInput: undefined!,
+        codeRunner: undefined!,
       };
     },
     [plugins, settings],

@@ -39,6 +39,7 @@ import type { BuiltInNodeType, BuiltInNodes } from './Nodes.js';
 import type { NodeRegistration } from './NodeRegistration.js';
 import { getPluginConfig } from '../utils/index.js';
 import { GptTokenizerTokenizer } from '../integrations/GptTokenizerTokenizer.js';
+import { IsomorphicCodeRunner } from '../integrations/CodeRunner.js';
 
 // CJS compatibility, gets default.default for whatever reason
 let PQueue = PQueueImport;
@@ -1453,6 +1454,7 @@ export class GraphProcessor {
       graphInputs: this.#graphInputs,
       graphOutputs: this.#graphOutputs,
       attachedData: this.#getAttachedDataTo(node),
+      codeRunner: this.#context.codeRunner ?? new IsomorphicCodeRunner(),
       waitEvent: async (event) => {
         return new Promise((resolve, reject) => {
           this.#emitter.once(`userEvent:${event}`).then(resolve).catch(reject);
