@@ -27,6 +27,7 @@ export type CodeNodeData = {
   allowFetch?: boolean;
   allowRequire?: boolean;
   allowRivet?: boolean;
+  allowProcess?: boolean;
 };
 
 export class CodeNodeImpl extends NodeImpl<CodeNode> {
@@ -57,6 +58,7 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
         allowFetch: false,
         allowRequire: false,
         allowRivet: false,
+        allowProcess: false,
       },
     };
 
@@ -136,6 +138,12 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
         label: 'Allow using `Rivet`',
         dataKey: 'allowRivet',
       },
+      {
+        type: 'toggle',
+        label: 'Allow using `process`',
+        dataKey: 'allowProcess',
+        helperMessage: 'This is only available when using the Node executor.',
+      },
     ];
   }
 
@@ -172,6 +180,7 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
       includeFetch: this.data.allowFetch ?? false,
       includeRequire: this.data.allowRequire ?? false,
       includeRivet: this.data.allowRivet ?? false,
+      includeProcess: this.data.allowProcess ?? false,
     });
 
     if (outputs == null || typeof outputs !== 'object' || ('then' in outputs && typeof outputs.then === 'function')) {

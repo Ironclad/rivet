@@ -1,5 +1,6 @@
 import type { CodeRunner, CodeRunnerOptions, Inputs, Outputs } from '@ironclad/rivet-core';
 import { createRequire } from 'node:module';
+import * as process from 'node:process';
 
 export class NodeCodeRunner implements CodeRunner {
   async runCode(code: string, inputs: Inputs, options: CodeRunnerOptions): Promise<Outputs> {
@@ -10,6 +11,11 @@ export class NodeCodeRunner implements CodeRunner {
       argNames.push('require');
       const require = createRequire(import.meta.url);
       args.push(require);
+    }
+
+    if (options.includeProcess) {
+      argNames.push('process');
+      args.push(process);
     }
 
     if (options.includeFetch) {

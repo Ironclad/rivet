@@ -1324,8 +1324,9 @@ data:
         '[-P4jrioMlRwwAvby_BgqI]:graphInput "Graph Input"':
           data:
             dataType: string
-            defaultValue: Sum two inputs
+            defaultValue: Compute the HMAC of a secret and a value
             id: prompt
+            text: ""
             useDefaultValueInput: false
           outgoingConnections:
             - data->"Text" fIZiW_3xLyXZ3t1oXaTJY/spec
@@ -1370,19 +1371,19 @@ data:
               ### Code Node Code
 
 
-              The code you write in the code node runs in the body of a function. This function has roughly this definition:
+              The code you write in the code node runs in the body of an async function. This function has roughly this definition:
 
 
               ```js
 
-              function codeNode(inputs) {
+              async function codeNode(inputs) {
                   // Your code is pasted in here
               }
 
               ```
 
 
-              You do not write the `function codeNode` part, just the body, when writing the code node's code.
+              You do not write the `async function codeNode` part, just the body, when writing the code node's code.
 
 
               The code node must return an object. The object must have a property for each of the outputs configured above. 
@@ -1448,9 +1449,9 @@ data:
               By default, the Code Node has:
 
 
-              - One input named `input`, accessible via `inputs.input`
+              - One input named `input1`, accessible via `inputs.input1`
 
-              - One output named `output`, so you must `return { output: { type: 'etc', value: 'etc' } }`
+              - One output named `output1`, so you must `return { output1: { type: 'etc', value: 'etc' } }`
 
 
               ## Examples
@@ -1526,22 +1527,50 @@ data:
               ```
 
 
+              4. Join the current working directory with a path
+
+
+              Configure the code node with:
+
+
+              - An output named `path`
+
+              - An input named `path`
+
+              - `allowProcess` turned on
+
+              - `allowRequire` turned on
+
+
+              ```js
+
+              const { join } = require('node:path');
+
+
+              return {
+                  path: {
+                      type: 'string',
+                      value: join(process.cwd(), inputs.path.value),
+                  }
+              }
+
+              ```
+
+
+
+
               ## Restrictions
 
 
               You must take into account that the code node has the following restrictions:
 
 
-              - The code node is not ran using node.js. You cannot use `require`.
-
-              - The code node cannot `import` any packages. It is ran in a sandboxed `new Function(...)` sandbox. The variables accessible in this sandboxed environment are `console` and `inputs`
-
-              - The code node cannot use `async` nor `await`. The code node cannot use Promises.
+              - The code node must use `require` to import packages. The variables accessible are `console`, `inputs`, `require`, `fetch`, `process` and `Rivet` (the Rivet library).
 
               - The code node must return an object. The properties of the object must correspond with configured input and output values.
 
 
-              Other than those things explicitly mentioned above, all JavaScript is valid inside a code node!
+              Other than those things explicitly mentioned above, all JavaScript is valid inside a code node! If you enable `allowRequire`, then any built-in node modules can be `require`ed. Any module can be required with `allowRequire` turned on.
 
 
               You must keep these restrictions in mind when generating code for the Code Node. You cannot generate code that violates these restrictions. You can only generate valid Code Node code.
@@ -1563,6 +1592,18 @@ data:
               * Using the External Call node to write the code in a parent application that Rivet can call into
 
 
+              ## Permissions
+
+
+              The Code Node is allowed to use `fetch` provided that `allowFetch` is enabled.
+
+
+              The Code Node is allowed to use `require` provided that `allowRequire` is enabled.
+
+
+              The Code Node is allowed to use `process` provided that `allowProcess` is enabled.
+
+
               ## Your Role
 
 
@@ -1578,7 +1619,7 @@ data:
             color: rgba(255,255,255,1)
             height: 915.0097396180166
             text: "### 2nd query to make sure the code is correct"
-          visualData: 23.178858803127127/408.94922493616093/1533.2626014642121/81//
+          visualData: 23.178858803127127/408.94922493616093/1533.2626014642121/109//
         '[9GsfADpgO48OoS-fdwjdA]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Chat" CjLJbPjhdruU-zmPW6Jhm/prompt
@@ -1616,6 +1657,7 @@ data:
           visualData: 3028.8834235770914/632.0288899270461/230/null//
         '[EzziKQsubxlludQlCSmS5]:chat "Chat"':
           data:
+            additionalParameters: []
             cache: false
             enableFunctionUse: false
             frequencyPenalty: 0
@@ -1681,7 +1723,11 @@ data:
               ```json
               {
                 "inputs": ["these", "are", "the", "inputs"],
-                "outputs": ["these", "are", "the", "outputs"]
+                "outputs": ["these", "are", "the", "outputs"],
+                "allowFetch": boolean,
+                "allowRequire": boolean,
+                "allowProcess": boolean,
+                "allowRivet": boolean
               }
               ```
           outgoingConnections:
@@ -1711,7 +1757,7 @@ data:
             text: >-
               Thank you. Just to double check, you didn't violate any of the
               code node restrictions, did you? Be permissive, I'm just making
-              sure you're not using `require`, `import`, `async`, or `await`.
+              sure you're not using `import`.
 
 
               Reply LOOKS OK or RESTRICTED. You can only reply with LOOKS OK or RESTRICTED and you may include a reason.
@@ -1768,6 +1814,7 @@ data:
           visualData: -1159.414078546703/820.6518251580231/330/44//
         '[fmAm9-8tUxSxBq8W6oHmo]:chat "Chat"':
           data:
+            additionalParameters: []
             cache: false
             enableFunctionUse: false
             frequencyPenalty: 0
@@ -1781,7 +1828,7 @@ data:
             useAsGraphPartialOutput: true
             useFrequencyPenaltyInput: false
             useMaxTokensInput: false
-            useModelInput: false
+            useModelInput: true
             usePresencePenaltyInput: false
             useStop: false
             useStopInput: false
@@ -1796,15 +1843,18 @@ data:
         '[girfWNhmDz24NtWgpIXQU]:graphInput "Graph Input"':
           data:
             dataType: string
-            defaultValue: gpt-3.5-turbo
+            defaultValue: gpt-4o
             id: model
             useDefaultValueInput: false
           outgoingConnections:
             - data->"Chat" CjLJbPjhdruU-zmPW6Jhm/model
             - data->"Chat" EzziKQsubxlludQlCSmS5/model
+            - data->"Chat" fmAm9-8tUxSxBq8W6oHmo/model
+            - data->"Chat" iV_N5g9y64eD9t9_oRU2S/model
           visualData: -1135.2269437747914/447.68092596305564/294.1641220064855/45//
         '[iV_N5g9y64eD9t9_oRU2S]:chat "Chat"':
           data:
+            additionalParameters: []
             cache: false
             enableFunctionUse: false
             frequencyPenalty: 0
@@ -1817,7 +1867,7 @@ data:
             useAsGraphPartialOutput: true
             useFrequencyPenaltyInput: false
             useMaxTokensInput: false
-            useModelInput: false
+            useModelInput: true
             usePresencePenaltyInput: false
             useStop: false
             useStopInput: false
@@ -1835,7 +1885,7 @@ data:
             color: rgba(255,255,255,1)
             height: 976.1863868724195
             text: "### If incorrect, explain why it's impossible with the code node"
-          visualData: 1579.1467316866808/452.2108448546919/1758.5591606172588/83//
+          visualData: 1579.1467316866808/452.2108448546919/1758.5591606172588/110//
         '[puu83XM1fKYrGzNF4j1U-]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Chat" iV_N5g9y64eD9t9_oRU2S/prompt
