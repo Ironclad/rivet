@@ -6,6 +6,7 @@ export interface CodeRunnerOptions {
   includeFetch: boolean;
   includeRivet: boolean;
   includeProcess: boolean;
+  includeConsole: boolean;
 }
 
 /** An object that can run arbitrary code (evals it). */
@@ -24,6 +25,11 @@ export class IsomorphicCodeRunner implements CodeRunner {
 
     if (options.includeProcess) {
       throw new Error('process requires the Node executor.');
+    }
+
+    if (options.includeConsole) {
+      argNames.push('console');
+      args.push(console);
     }
 
     if (options.includeFetch) {

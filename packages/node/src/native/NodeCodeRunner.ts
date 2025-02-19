@@ -7,6 +7,11 @@ export class NodeCodeRunner implements CodeRunner {
     const argNames = ['inputs'];
     const args: any[] = [inputs];
 
+    if (options.includeConsole) {
+      argNames.push('console');
+      args.push(console);
+    }
+
     if (options.includeRequire) {
       argNames.push('require');
       const require = createRequire(import.meta.url);

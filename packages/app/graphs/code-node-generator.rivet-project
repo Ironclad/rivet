@@ -1604,6 +1604,9 @@ data:
               The Code Node is allowed to use `process` provided that `allowProcess` is enabled.
 
 
+              The Code Node is allowed to use `console` provided that `allowConsole` is enabled.
+
+
               ## Your Role
 
 
@@ -1727,7 +1730,8 @@ data:
                 "allowFetch": boolean,
                 "allowRequire": boolean,
                 "allowProcess": boolean,
-                "allowRivet": boolean
+                "allowRivet": boolean,
+                "allowConsole": boolean,
               }
               ```
           outgoingConnections:

@@ -28,6 +28,7 @@ export type CodeNodeData = {
   allowRequire?: boolean;
   allowRivet?: boolean;
   allowProcess?: boolean;
+  allowConsole?: boolean;
 };
 
 export class CodeNodeImpl extends NodeImpl<CodeNode> {
@@ -59,6 +60,7 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
         allowRequire: false,
         allowRivet: false,
         allowProcess: false,
+        allowConsole: false,
       },
     };
 
@@ -144,6 +146,11 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
         dataKey: 'allowProcess',
         helperMessage: 'This is only available when using the Node executor.',
       },
+      {
+        type: 'toggle',
+        label: 'Allow using `console`',
+        dataKey: 'allowConsole',
+      },
     ];
   }
 
@@ -181,6 +188,7 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
       includeRequire: this.data.allowRequire ?? false,
       includeRivet: this.data.allowRivet ?? false,
       includeProcess: this.data.allowProcess ?? false,
+      includeConsole: this.data.allowConsole ?? false,
     });
 
     if (outputs == null || typeof outputs !== 'object' || ('then' in outputs && typeof outputs.then === 'function')) {
