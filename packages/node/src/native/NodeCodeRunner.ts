@@ -37,8 +37,6 @@ export class NodeCodeRunner implements CodeRunner {
 
     argNames.push(code);
 
-    console.dir({ argNames, args });
-
     const AsyncFunction = async function () {}.constructor as new (...args: string[]) => Function;
     const codeFunction = new AsyncFunction(...argNames);
     const outputs = await codeFunction(...args);

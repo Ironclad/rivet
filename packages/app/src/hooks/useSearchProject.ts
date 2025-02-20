@@ -81,8 +81,6 @@ export function useSearchProject(query: string, enabled: boolean): SearchedItem[
     },
   );
 
-  console.dir({ searchedNodes });
-
   return searchedNodes.map((node): SearchedItem => {
     return {
       item: node.item,
