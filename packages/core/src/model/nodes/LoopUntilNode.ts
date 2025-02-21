@@ -227,8 +227,7 @@ export class LoopUntilNodeImpl extends NodeImpl<LoopUntilNode> {
       const anyInputIsExcluded = Object.values(outputs)
         .filter((o) => o != null)
         .some((output) => output.type === 'control-flow-excluded');
-
-      return !anyInputIsExcluded;
+      return anyInputIsExcluded;
     } else if (this.data.conditionType === 'inputEqual' && this.data.inputToCheck && this.data.targetValue) {
       const inputValue = outputs[this.data.inputToCheck as PortId];
       return inputValue?.value?.toString() === this.data.targetValue;
