@@ -127,7 +127,7 @@ export const ChatNodeBase = {
     usePredictedOutput: false,
     modalitiesIncludeAudio: false,
     modalitiesIncludeText: false,
-    reasoningEffort: 'medium',
+    reasoningEffort: 'unset',
     useReasoningEffortInput: false,
   }),
 
