@@ -14,6 +14,7 @@ import { useViewportBounds } from './useViewportBounds';
 import { useCanvasPositioning } from './useCanvasPositioning';
 import { useRedo, useUndo } from '../commands/Command';
 import { nodesState } from '../state/graph';
+import { showAiGraphCreatorInputState } from '../components/AiGraphCreatorInput';
 
 export function useCanvasHotkeys() {
   const [canvasPosition, setCanvasPosition] = useAtom(canvasPositionState);
@@ -23,6 +24,7 @@ export function useCanvasHotkeys() {
   const setEditingNode = useSetAtom(editingNodeState);
   const hoveringNode = useAtomValue(hoveringNodeState);
   const setGoToSearch = useSetAtom(goToSearchState);
+  const setShowAiGraphCreatorInput = useSetAtom(showAiGraphCreatorInputState);
 
   const nodes = useAtomValue(nodesState);
   const [selectedNodeIds, setSelectedNodes] = useAtom(selectedNodesState);
@@ -152,6 +154,13 @@ export function useCanvasHotkeys() {
       } else {
         setSelectedNodes(nodes.map((n) => n.id));
       }
+    }
+
+    if (e.key === 'i' && (e.metaKey || e.ctrlKey) && !e.shiftKey) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      setShowAiGraphCreatorInput(true);
     }
   });
 

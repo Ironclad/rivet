@@ -119,7 +119,7 @@ data:
             text: "Error: {{error}}"
           outgoingConnections:
             - output->"Coalesce" qdWOKno5C9hgImmzAlyXS/input2
-          visualData: 1363.4620000913644/682.6930061035998/330/null//
+          visualData: 1371.0673751911788/732.1279442523941/330/7//
         '[gAwA3wqZqn84MLtdHT73Z]:externalCall "External Call"':
           data:
             functionName: connectNodes
@@ -174,7 +174,7 @@ data:
           visualData: 1383.597830981039/405.7637121080456/180/3//
         '[PZjZ8u66XDA4cldD85PdD]:array "Array"':
           data:
-            flatten: true
+            flatten: false
             flattenDeep: false
           outgoingConnections:
             - output->"External Call" Lv0KsUKfJvrQbYNzYT4iy/arguments
@@ -468,6 +468,421 @@ data:
             - response->"Match" T3H-VATXWOwjkQQ8b2ETP/input
             - response->"Match" T3H-VATXWOwjkQQ8b2ETP/value
           visualData: 463/610/230/9//
+    JG6fqOxqWML87jVUkPh-r:
+      metadata:
+        description: ""
+        id: JG6fqOxqWML87jVUkPh-r
+        name: "Function: updateUser"
+      nodes:
+        '[MXQWZdpPtexuhaA7KVZDr]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1076/584/330/2//
+        '[WQvvSoAA80VWy0_f_1fnW]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: update
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Raise Event" b19yIpsr24kPPNIFMiDUX/data
+          visualData: 522/418/330/null//
+        '[b19yIpsr24kPPNIFMiDUX]:raiseEvent "Raise Event"':
+          data:
+            eventName: updateUser
+            useEventNameInput: false
+          visualData: 960/419/180/1//
+        '[u0B4kGIzRvqKz1uOtnxRH]:text "Text"':
+          data:
+            text: OK
+          outgoingConnections:
+            - output->"Graph Output" MXQWZdpPtexuhaA7KVZDr/value
+          visualData: 622/614/330/3//
+    K8xT505hvFD7lGCIfcjTf:
+      metadata:
+        description: ""
+        id: K8xT505hvFD7lGCIfcjTf
+        name: All Functions
+      nodes:
+        '[0fSAlrZUgERZRoRLQn5FU]:gptFunction "GPT Function"':
+          data:
+            description: Edits the data of a node. Use this function to configure nodes.
+              Returns whether the setting was successful.
+            name: editNode
+            schema: >-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "nodeId": {
+                    "type": "string",
+                    "description": "The unique identifier for the node."
+                  },
+                  "key": {
+                    "type": "string",
+                    "description": "The key associated with the value."
+                  },
+                  "value": {
+                    "description": "The value associated with the key, can be of any type."
+                  }
+                },
+                "required": ["nodeId", "key", "value"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input5
+          visualData: 22.90484052573106/1361.2991302509854/280/24//
+        '[14zqOwVi1hOOFcgUCCkt7]:gptFunction "GPT Function"':
+          data:
+            description: Provides the markdown documentation for a specific node. May return
+              no documentation if no documentation exists.
+            name: readNodeDocumentation
+            schema: |-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "nodeType": {
+                    "type": "string",
+                    "description": "The type of the node."
+                  }
+                },
+                "required": ["nodeType"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input1
+          visualData: 18.035767646707654/563.5748293406305/280/24//
+        '[2cmwwy-5zwUTwBsVHAHBc]:gptFunction "GPT Function"':
+          data:
+            description: Deletes a node from the graph. Returns OK.
+            name: deleteNode
+            schema: >-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "nodeId": {
+                    "type": "string",
+                    "description": "The ID of the node."
+                  },
+                  "data": {
+                    "type": "string",
+                    "description": "A stringified JSON representing a record of key-value pairs."
+                  }
+                },
+                "required": ["nodeId", "data"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input6
+          visualData: 22.90484052573106/1561.2991302509854/280/24//
+        '[3qC1uQHv8uARl-Ba8gV7d]:gptFunction "GPT Function"':
+          data:
+            description: Creates the specified node in the graph. It will be given a unique
+              ID. Outputs the YAML of the created node.
+            name: createNode
+            schema: |-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "nodeType": {
+                    "type": "string",
+                    "description": "The type of the node."
+                  }
+                },
+                "required": ["nodeType"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input4
+          visualData: 22.90484052573106/1161.2991302509854/280/24//
+        '[69riDeeZGtaa7pi4UGAy5]:gptFunction "GPT Function"':
+          data:
+            description: Disconnects a wire between two ports on two nodes.
+            name: disconnectNodes
+            schema: >-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "sourceNodeId": {
+                    "type": "string",
+                    "description": "The identifier for the source node."
+                  },
+                  "destNodeId": {
+                    "type": "string",
+                    "description": "The identifier for the destination node."
+                  },
+                  "sourcePortId": {
+                    "type": "string",
+                    "description": "The identifier for the source port."
+                  },
+                  "destPortId": {
+                    "type": "string",
+                    "description": "The identifier for the destination port."
+                  }
+                },
+                "required": ["sourceNodeId", "destNodeId", "sourcePortId", "destPortId"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input9
+          visualData: -341.84126795172665/812.4282098109859/280/null//
+        '[6HIySJhJ2oDJS_QyvTmjY]:gptFunction "GPT Function"':
+          data:
+            description: Gives the user a short update about what you are doing. Limit to 1
+              sentence. Useful so the user knows what you are thinking and
+              trying. You may call this along with other commands.
+            name: updateUser
+            schema: |-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "update": {
+                    "type": "string",
+                    "description": "The update to give the user."
+                  }
+                },
+                "required": ["update"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input13
+          visualData: -335.83484746358397/1713.5413116839397/280/64//
+        '[EWm6Q9VbBCxmJteIvT6zO]:gptFunction "GPT Function"':
+          data:
+            description: Gets the currently configured data for a node. Use this to see what
+              data is available to change on a node.
+            name: getNodeData
+            schema: |-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "nodeId": {
+                    "type": "string",
+                    "description": "A unique identifier for the node."
+                  }
+                },
+                "required": ["nodeId"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input11
+          visualData: -339.78929182391/1241.1558756004192/280/54//
+        '[HUCCnjn-SipYqn7HKBsYY]:gptFunction "GPT Function"':
+          data:
+            description: Outputs the YAML of the current state of the graph. Use this to
+              re-examine the current state to see values, or double check that
+              your previous actions had the intended effect. This will also
+              perform linting on your graph, making sure it is correct.
+            name: reviewGraph
+            schema: |-
+              {
+                "type": "object",
+                "properties": {}
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input7
+          visualData: 26.06954017987506/1705.6058159397205/280/53//
+        '[J8XMOPkb7_VZp356rgrqu]:gptFunction "GPT Function"':
+          data:
+            description: Call this function when you are done calling functions and have
+              accomplished what the user wants.
+            name: finished
+            schema: |-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "description": "The final message to send to the user."
+                  }
+                },
+                "required": ["message"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input3
+          visualData: 21.08050259592187/968.83147865614/280/24//
+        '[KdwQGf2veD-f7ngbb9Ltq]:gptFunction "GPT Function"':
+          data:
+            description: If you are stuck and need help, call the help function. It will
+              remind you of your capabilities.
+            name: help
+            schema: |-
+              {
+                "type": "object",
+                "properties": {}
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input16
+          visualData: -696.5934698174597/907.6406169278446/280/67//
+        '[Nt5MVP95-cqyzP9o8HSdh]:gptFunction "GPT Function"':
+          data:
+            description: Provides the source code for a specified node for reading.
+            name: readNodeSourceCode
+            schema: |-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "nodeType": {
+                    "type": "string",
+                    "description": "The type of the node."
+                  }
+                },
+                "required": ["nodeType"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input2
+          visualData: 17.819420627416775/782.2790164437884/280/24//
+        '[RfU2wgOU0IYNAAoRGqsva]:gptFunction "GPT Function"':
+          data:
+            description: Connects the output port of a source node to the input port of a
+              destination node.
+            name: connectNodes
+            schema: >-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "sourceNodeId": {
+                    "type": "string",
+                    "description": "The identifier for the source node."
+                  },
+                  "destNodeId": {
+                    "type": "string",
+                    "description": "The identifier for the destination node."
+                  },
+                  "sourcePortId": {
+                    "type": "string",
+                    "description": "The identifier for the source port."
+                  },
+                  "destPortId": {
+                    "type": "string",
+                    "description": "The identifier for the destination port."
+                  }
+                },
+                "required": ["sourceNodeId", "destNodeId", "sourcePortId", "destPortId"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input8
+          visualData: -341.84126795172665/612.4282098109859/280/null//
+        '[WmKc7S_4I5Zq5HPCzNFyR]:gptFunction "GPT Function"':
+          data:
+            description: Toggles whether splitting is enabled for a node. Splitting is a
+              powerful feature to cause a node to take in an array, and output
+              an array of values, running the node N times, once for each
+              element in the array.
+            name: toggleSplitting
+            schema: >-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "nodeId": {
+                    "type": "string",
+                    "description": "The unique identifier for the node."
+                  },
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Indicates whether splitting should be enabled or disabled."
+                  },
+                  "maxSplitAmount": {
+                    "type": "number",
+                    "description": "The maximum amount that can be split, with a recommended value of 100. This value must be greater than 0."
+                  }
+                },
+                "required": ["nodeId", "enabled", "maxSplitAmount"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input15
+          visualData: -701.2292408057227/598.5892177103038/280/66//
+        '[igpzEGeSFPH2l_MOSwaCw]:gptFunction "GPT Function"':
+          data:
+            description: Call this to research Rivet and figure out what nodes to use, and
+              how to use them, in order to accomplish your task. Use this
+              function when you are unsure of how to accomplish a task.
+            name: brainstorm
+            schema: >-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "description": "The query for another AI to use to brainstorm what nodes to use and how to use them."
+                  }
+                },
+                "required": ["query"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input12
+          visualData: -342.8107988889039/1434.055847887948/280/61//
+        '[m0SrL2RPY5BRzI3Axgnmm]:gptFunction "GPT Function"':
+          data:
+            description: Gets the input and outputs available on a node. Call this before
+              doing any connections, to make sure that you are making valid
+              connections.
+            name: getNodePorts
+            schema: |-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "nodeId": {
+                    "type": "string",
+                    "description": "A unique identifier for the node."
+                  }
+                },
+                "required": ["nodeId"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input10
+          visualData: -339.78929182391/1041.1558756004192/280/54//
+        '[sAnxJ1k5aqXR_fckQIop5]:array "Array"':
+          data:
+            flatten: true
+            flattenDeep: false
+          outgoingConnections:
+            - output->"Graph Output" uoi46lrZlpdzOEvr_xpFs/value
+          visualData: 445.6695740190561/815.2088134576862/230/25//
+        '[spaP3dBwP9q-Jh1yIYtzc]:gptFunction "GPT Function"':
+          data:
+            description: Plans your next actions. Use this liberally to think about your
+              plan for moving foward.
+            name: plan
+            schema: |-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "plan": {
+                    "type": "string",
+                    "description": "A single string representing the plan."
+                  }
+                },
+                "required": ["plan"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input14
+          visualData: -327.9503028618001/2003.6925530295864/280/65//
+        '[uoi46lrZlpdzOEvr_xpFs]:graphOutput "Graph Output"':
+          data:
+            dataType: gpt-function[]
+            id: output
+          visualData: 821.7427071059172/780.4468464386234/300/62//
     QmZnWsOLqDt0orLK9mwyq:
       metadata:
         description: ""
@@ -633,7 +1048,7 @@ data:
         '[Znsp6LR-Cr-9AQ9NgK1PX]:text "Text"':
           data:
             text: |
-              ```yaml
+              ```json
               {{graph}}
               ```
 
@@ -664,7 +1079,7 @@ data:
           visualData: 1907.1214802677803/265.8690352607646/180/13//
         '[QgHfyhFa0sPV2LCHczdc9]:array "Array"':
           data:
-            flatten: true
+            flatten: false
             flattenDeep: false
           outgoingConnections:
             - output->"External Call" ILF-cETPVEALGoIZcQITV/arguments
@@ -714,17 +1129,17 @@ data:
           data:
             dataType: string
             id: output
-          visualData: 1690/326/330/5//
+          visualData: 2184/487/330/7//
         '[5qq82_G7GbI_qObEA1Ooy]:coalesce "Coalesce"':
           outgoingConnections:
             - output->"Graph Output" 3q1U_r4lrq7EQ9BUXor-B/value
-          visualData: 1119/272/180/6//
+          visualData: 1613/433/180/7//
         '[QVI0PhVxT2qry-3qro_37]:text "Text"':
           data:
             text: "Error: {{error}}"
           outgoingConnections:
             - output->"Coalesce" 5qq82_G7GbI_qObEA1Ooy/input2
-          visualData: 1003/540/330/null//
+          visualData: 1065/609/330/8//
         '[X1FrlDLKPKTMxbBE53j2t]:graphInput "Graph Input"':
           data:
             dataType: string
@@ -740,8 +1155,98 @@ data:
             useFunctionNameInput: false
           outgoingConnections:
             - error->"Text" QVI0PhVxT2qry-3qro_37/error
-            - result->"Coalesce" 5qq82_G7GbI_qObEA1Ooy/input1
+            - result->"Text" jmzccCIec4fpHWG2Yt9hy/input
           visualData: 677/341/180/2//
+        '[jmzccCIec4fpHWG2Yt9hy]:text "Text"':
+          data:
+            text: >-
+              {{input}}
+
+
+              As a reminder, some input or output ports may not be visible until the appropriate `data` is toggled on the node. For example, `useFooInput` will toggle whether the `foo` input is present.
+
+
+              Other nodes, such as Text and Prompt, may have dynamic inputs based on {{{interpolation}}} values.
+          outgoingConnections:
+            - output->"Coalesce" 5qq82_G7GbI_qObEA1Ooy/input1
+          visualData: 1071/275/330/null//
+    aZaxcfuQyhMBZYvuE187H:
+      metadata:
+        description: ""
+        id: aZaxcfuQyhMBZYvuE187H
+        name: "Function: toggleSplitting"
+      nodes:
+        '[0KCcDB1M6vvOfh-uq27SZ]:graphInput "Graph Input"':
+          data:
+            dataType: number
+            id: maxSplitAmount
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Array" b61msKF7RQ4M7-ZOoyiGA/input3
+          visualData: 458/595/330/1//
+        '[2dlBgbgael0OV_dIn4utZ]:externalCall "External Call"':
+          data:
+            functionName: toggleSplitting
+            useErrorOutput: true
+            useFunctionNameInput: false
+          outgoingConnections:
+            - error->"Text" oCEFqzi4rMS5tNvPol4Hc/error
+            - result->"Text" 65VFcR7wybQI3iSO-aMMc/input
+          visualData: 1324/355/180/7//
+        '[65VFcR7wybQI3iSO-aMMc]:text "Text"':
+          data:
+            text: >-
+              {{input}}
+
+
+              Reminder: You may want to toggle splitting on downstream nodes if you are chaining splitting together. Chaining splitting accomplishes maps and for-each loops.
+
+
+              Make sure that each node in a chain of splitting has split enabled.
+
+
+              You can terminate a split chain by, for example, using a Join node.
+          outgoingConnections:
+            - output->"Coalesce" UYA3xKP6evrfAyfjFB4Gk/input1
+          visualData: 1650/323/330/null//
+        '[UYA3xKP6evrfAyfjFB4Gk]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" shYoQszMIyW-j3mWClHHJ/value
+          visualData: 2568/322/180/10//
+        '[b61msKF7RQ4M7-ZOoyiGA]:array "Array"':
+          data:
+            flatten: false
+            flattenDeep: false
+          outgoingConnections:
+            - output->"External Call" 2dlBgbgael0OV_dIn4utZ/arguments
+          visualData: 953/378/230/5//
+        '[ewMxCiRStTJ7WT-Jzn2on]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: nodeId
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Array" b61msKF7RQ4M7-ZOoyiGA/input1
+          visualData: 460/162/330/3//
+        '[oCEFqzi4rMS5tNvPol4Hc]:text "Text"':
+          data:
+            text: "Error: {{error}}"
+          outgoingConnections:
+            - output->"Coalesce" UYA3xKP6evrfAyfjFB4Gk/input2
+          visualData: 1635/600/330/null//
+        '[rtvuGqEb4Xe0wcpEv004z]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: enabled
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Array" b61msKF7RQ4M7-ZOoyiGA/input2
+          visualData: 458/395/330/1//
+        '[shYoQszMIyW-j3mWClHHJ]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 2901/358/330/10//
     bL17XjGocrGzWJyBr0k5i:
       metadata:
         description: ""
@@ -768,12 +1273,13 @@ data:
             id: request
             useDefaultValueInput: true
           outgoingConnections:
+            - data->"Loop Until" yTUWxJP4rllqx5XkOnp0D/task
             - data->"Text" Xq2ntE7Xytwn3QF7E58G9/request
           visualData: 4489.172585743625/2434.3705938977528/330/16//
         '[Xq2ntE7Xytwn3QF7E58G9]:text "Text"':
           data:
             text: >-
-              The current Rivet graph looks like this (in YAML format):
+              The current Rivet graph looks like this (in JSON format):
 
 
               <graph>
@@ -803,9 +1309,18 @@ data:
           outgoingConnections:
             - output->"Graph Input" Xgiabh0fJMGfS06J9ptI1/default
           visualData: 3956.4659102394085/2441.6679456169886/330/18//
+        '[kb2p_u3gJG3Dw19Y7zCzK]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: model
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Loop Until" yTUWxJP4rllqx5XkOnp0D/model
+          visualData: 4692.87233319327/2036.1186772095705/330/27//
         '[yTUWxJP4rllqx5XkOnp0D]:loopUntil "Loop Until"':
           data:
             conditionType: allOutputsSet
+            maxIterations: 50
             targetGraph: lK3NTnVYWoxGt6cnEO9gp
           visualData: 5505.414440365536/2236.357543199284/230/26//
     cnwBxMpFgu4UsiPNtrWT-:
@@ -859,17 +1374,48 @@ data:
           visualData: 148.89757405283854/1.6297195291977005/330/3//
         '[KFGUplLNTsxLNMsvmiOnk]:text "Text"':
           data:
-            text: |-
+            text: >-
               The following is a summary of every node in Rivet:
+
+
+              <summaries>
 
               {{summaries}}
 
-              You are to brainstorm ways to accomplish the following task:
+              </summaries>
+
+
+              The following commands are available for the questioner to run. These are provided so that you can get a better idea of the capabilities of the person asking the question:
+
+
+              <functions>
+
+              {{functions}}
+
+              </functions>
+
+
+              Brainstorm ways to accomplish the following task:
+
 
               {{task | quote}}
           outgoingConnections:
             - output->"Chat" yXH_UosXKvIFjuHIphzCM/prompt
           visualData: 672.2346244227379/350.5699049988241/330/8//
+        '[cqxS47_isRTfE4pIFbmUl]:subGraph "Subgraph"':
+          data:
+            graphId: K8xT505hvFD7lGCIfcjTf
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - output->"Text" KFGUplLNTsxLNMsvmiOnk/functions
+          visualData: -62.6415442056051/897.0505467606282/330/null//
+        '[gbXw1WOJC1HUkIqT2HN7U]:text "Text"':
+          data:
+            text: I want to delete the extra nodes
+          outgoingConnections:
+            - output->"Graph Input" sQ5VE-3KCmznYo1J5py0g/default
+          visualData: -471.49992166064675/644.5203724501614/330/15//
         '[qYnYFY9Fbowp_jLvWEc5r]:graphOutput "Graph Output"':
           data:
             dataType: string
@@ -879,10 +1425,10 @@ data:
           data:
             dataType: string
             id: query
-            useDefaultValueInput: false
+            useDefaultValueInput: true
           outgoingConnections:
             - data->"Text" KFGUplLNTsxLNMsvmiOnk/task
-          visualData: 100.3945666237286/613.1182966348422/330/13//
+          visualData: -27.87472826412764/603.765327215936/330/14//
         '[yXH_UosXKvIFjuHIphzCM]:chat "Chat"':
           data:
             additionalParameters: []
@@ -917,6 +1463,152 @@ data:
           outgoingConnections:
             - response->"Graph Output" qYnYFY9Fbowp_jLvWEc5r/value
           visualData: 1133.2024029259712/211.6115022036465/230/10//
+    gArlO_-PftskEfEPHc9j-:
+      metadata:
+        description: ""
+        id: gArlO_-PftskEfEPHc9j-
+        name: Help
+      nodes:
+        '[r-EN1bzcNXmEUYbNZE2KX]:text "Text"':
+          data:
+            text: >-
+              You may use commands to read the node files, or the documentation
+              for the nodes, so that you understand nodes better before calling
+              commands to create, delete, or connect/disconnect nodes.
+
+
+              You should read the documentation of nodes to understand them before working with them.
+
+
+              If there is no documentation available for a node, you should read its source code to understand the node before working with it.
+
+
+              ## Ports
+
+
+              Nodes have input ports and output ports. You can use `getNodePorts` to see the names of these ports so that you can accurately make connections between nodes.
+
+
+              The output port of source nodes can connect to multiple input ports on destination nodes. HOWEVER, an input port on a destination node can ONLY connect to one output port on a source node. IF you try to connect to a port that is already connected, it will error.
+
+
+              ## Dynamic Ports
+
+
+              Sometimes, ports are only enabled if the node is configured to show them. For example, the data key `useFooInput` may toggle on the `foo` input port on a node. Experiment to discover new ports on nodes and connect them.
+
+
+              ## Brainstorming
+
+
+              You should liberally use the `brainstorm` command in order to understand more about Rivet and the nodes you have available to you to accomplish certain tasks. If you are not sure of what node to use, or especially when you have done something wrong, use `brainstorm` to figure out how to do things right.
+
+
+              ## Reviewing
+
+
+              Before finishing and returning to the user, you should call `reviewGraph` to make sure the graph is OK for the user.
+
+
+              ## Updating the User
+
+
+              You may update the user while you are processing by calling `updateUser`. This is useful to tell the user what you are trying and thinking. You do not have to call this, but it is helpful. You must update the user every now and then.
+
+
+              ## Reading Source Code
+
+
+              As you often make mistakes, you review the Rivet source code for nodes to make sure you are configuring them correctly. Reviewing source code is quick and easy using `readNodeSourceCode`.
+
+
+              ## Internal Thoughts
+
+
+              You use brief text responses as internal thought tracking. This helps you stay on track. You do not only call functions, but you include short text chain of thought as well.
+
+
+              ## Simply replying to the user
+
+
+              Sometimes the user may just ask you a question, and not to do something. You can simply reply to the user using `finished`. 
+
+
+              You MUST call a function with every reply.
+
+
+              ## Giving Up
+
+
+              Sometimes, after trying something over and over, you must stop. You must rethink your approach using `brainstorm`, or you must cut your losses and give up with `finished`. You cannot just keep trying over and over.
+
+
+              ## Prompting and Interpolation
+
+
+              Prompting and interpolation are Rivet's most important features. Using Text nodes and Prompt nodes, you can interpolate values into broader text, combiing data and text fluently.
+
+
+              For exmaple, you can make a text node with:
+
+
+              ```
+
+              Summarize the following text for the user "{{{user}}}": 
+
+
+              <text>
+
+              {{{text}}}
+
+              </text>
+
+              ```
+
+
+              To instruct an AI to summarize some text. This is incredibly powerful and you use this technique often.  
+
+
+              Text nodes have dynamic input ports that depend on interpolations like {{{value}}} in order for the ports to appear. Make sure text nodes have interpolation placeholders!
+
+
+              ## Splitting
+
+
+              Splitting is one of the most powerful features in Rivet. When splitting is enabled on a node, it causes it to take in an array of values, and run that node N times, once for each element in the array. For example, if you split a text node and input a list of files into it, you can MAP an array to an array of strings!
+
+
+              You can enable splitting with the `toggleSplitting` command.
+
+
+              Splitting is even more effective when it is chained. You can use this like a for loop - mapping data and running all nodes for each item in an array. For example, an array into a split Text node into a split Chat node will run a Chat for every item in the array, after the text has been mapped to a new value.
+          outgoingConnections:
+            - output->"Graph Output" w8K53elMsbr8gS7pi1_UF/value
+          visualData: 671/502/330/null//
+        '[w8K53elMsbr8gS7pi1_UF]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1121/491/330/null//
+    gdy3Un3l2XDlYW_kGamAl:
+      metadata:
+        description: ""
+        id: gdy3Un3l2XDlYW_kGamAl
+        name: "Function: help"
+      nodes:
+        '[4JKxIidsJE-f8cmx7xUM2]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 839.2242564849015/681.2840567290982/330/1//
+        '[JKPheYaA3p2Kd7g1LWvyz]:subGraph "Subgraph"':
+          data:
+            graphId: gArlO_-PftskEfEPHc9j-
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - output->"Graph Output" 4JKxIidsJE-f8cmx7xUM2/value
+          visualData: 448.74502449023794/678.6636169630146/330/null//
     hSfShPEc75aEEYbcUj-XC:
       metadata:
         description: ""
@@ -1028,110 +1720,29 @@ data:
                 value: 2OBM3-fhu5naPmUnBb8t7
               - key: brainstorm
                 value: cnwBxMpFgu4UsiPNtrWT-
+              - key: updateUser
+                value: JG6fqOxqWML87jVUkPh-r
+              - key: plan
+                value: rbKmsS2zrTbG42yeQBxOi
+              - key: toggleSplitting
+                value: aZaxcfuQyhMBZYvuE187H
+              - key: help
+                value: gdy3Un3l2XDlYW_kGamAl
           isSplitRun: true
           outgoingConnections:
             - message->"Assemble Prompt" ow1008xcfQ03MBc-kJyQD/message2
             - message->"Text" fH6k2cjPkUWeXbNlVs1n6/input
+          splitRunMax: 50
           visualData: 2005.26872224941/543.4784880437732/355/57//
-        '[4RYMEkbsTfrmJ70xfvGE4]:gptFunction "GPT Function"':
+        '[7dU1_alxlz-eIRNL4IWUe]:graphOutput "Graph Output"':
           data:
-            description: Disconnects a wire between two ports on two nodes.
-            name: disconnectNodes
-            schema: >-
-              
-              {
-                "type": "object",
-                "properties": {
-                  "sourceNodeId": {
-                    "type": "string",
-                    "description": "The identifier for the source node."
-                  },
-                  "destNodeId": {
-                    "type": "string",
-                    "description": "The identifier for the destination node."
-                  },
-                  "sourcePortId": {
-                    "type": "string",
-                    "description": "The identifier for the source port."
-                  },
-                  "destPortId": {
-                    "type": "string",
-                    "description": "The identifier for the destination port."
-                  }
-                },
-                "required": ["sourceNodeId", "destNodeId", "sourcePortId", "destPortId"],
-                "additionalProperties": false
-              }
+            dataType: string
+            id: task
+          visualData: -416.70135313384867/917.2251986350482/330/null//
+        '[8Rd20PR_oasOBJO98i-LP]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
-            - function->"Array" YGhxtSey20ED62dGAfZPh/input9
-          visualData: -341.84126795172665/812.4282098109859/280/null//
-        '[6guEL5tNAjqV9iiDErU6k]:gptFunction "GPT Function"':
-          data:
-            description: Gets the input and outputs available on a node. Call this before
-              doing any connections, to make sure that you are making valid
-              connections.
-            name: getNodePorts
-            schema: |-
-              
-              {
-                "type": "object",
-                "properties": {
-                  "nodeId": {
-                    "type": "string",
-                    "description": "A unique identifier for the node."
-                  }
-                },
-                "required": ["nodeId"],
-                "additionalProperties": false
-              }
-          outgoingConnections:
-            - function->"Array" YGhxtSey20ED62dGAfZPh/input10
-          visualData: -339.78929182391/1041.1558756004192/280/54//
-        '[7IOMwSokN87TVy4oEMFfo]:gptFunction "GPT Function"':
-          data:
-            description: Deletes a node from the graph. Returns OK.
-            name: deleteNode
-            schema: >-
-              
-              {
-                "type": "object",
-                "properties": {
-                  "nodeId": {
-                    "type": "string",
-                    "description": "The ID of the node."
-                  },
-                  "data": {
-                    "type": "string",
-                    "description": "A stringified JSON representing a record of key-value pairs."
-                  }
-                },
-                "required": ["nodeId", "data"],
-                "additionalProperties": false
-              }
-          outgoingConnections:
-            - function->"Array" YGhxtSey20ED62dGAfZPh/input6
-          visualData: 22.90484052573106/1561.2991302509854/280/24//
-        '[A4Iuf58qZpDCqZksVUMMx]:gptFunction "GPT Function"':
-          data:
-            description: Provides the markdown documentation for a specific node. May return
-              no documentation if no documentation exists.
-            name: readNodeDocumentation
-            schema: |-
-              
-              {
-                "type": "object",
-                "properties": {
-                  "nodeType": {
-                    "type": "string",
-                    "description": "The type of the node."
-                  }
-                },
-                "required": ["nodeType"],
-                "additionalProperties": false
-              }
-          outgoingConnections:
-            - function->"Array" YGhxtSey20ED62dGAfZPh/input1
-          visualData: 18.035767646707654/563.5748293406305/280/24//
+            - prompt->"Chat" wFHe0yhVFbC2makMpT-WL/prompt
+          visualData: 156.75052288406812/492.30957337179973/523.8566745509079/71//
         '[BPt5fPBc8jmzUd4SrR_ee]:readDirectory "Read Directory"':
           data:
             filterGlobs: []
@@ -1149,53 +1760,19 @@ data:
           outgoingConnections:
             - tree->"Extract Object Path" ds0aV04r78bgxU0WTcFgI/object
           visualData: -1189.8525071559793/140.5229365743248/230/26//
-        '[CwvOFMW_C9e4oe1m3kku4]:gptFunction "GPT Function"':
+        '[CEej0ffK7GBNd8U64FPOS]:subGraph "Subgraph"':
           data:
-            description: Call this to research Rivet and figure out what nodes to use, and
-              how to use them, in order to accomplish your task. Use this
-              function when you are unsure of how to accomplish a task.
-            name: brainstorm
-            schema: >-
-              
-              {
-                "type": "object",
-                "properties": {
-                  "query": {
-                    "type": "string",
-                    "description": "The query for another AI to use to brainstorm what nodes to use and how to use them."
-                  }
-                },
-                "required": ["query"],
-                "additionalProperties": false
-              }
+            graphId: gArlO_-PftskEfEPHc9j-
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
           outgoingConnections:
-            - function->"Array" YGhxtSey20ED62dGAfZPh/input12
-          visualData: -342.8107988889039/1434.055847887948/280/61//
+            - output->"Text" sFByS2knXHjq_Dc0ObwSA/help
+          visualData: -207.18287836017882/154.7173877807871/330/74//
         '[FW59LI8kmoFU38oNEFImN]:coalesce "Coalesce"':
           outgoingConnections:
             - output->"External Call" bMAzJbOPDqPhz37-_L-aM/arguments
             - output->"Graph Output" hEYv9sQmI7-mV0jswTRMA/value
           visualData: 3975.7118433992396/361.5744161293211/180/57//
-        '[GuANs5gxOdst0GGlBPFcM]:gptFunction "GPT Function"':
-          data:
-            description: Provides the source code for a specified node for reading.
-            name: readNodeSourceCode
-            schema: |-
-              
-              {
-                "type": "object",
-                "properties": {
-                  "nodeType": {
-                    "type": "string",
-                    "description": "The type of the node."
-                  }
-                },
-                "required": ["nodeType"],
-                "additionalProperties": false
-              }
-          outgoingConnections:
-            - function->"Array" YGhxtSey20ED62dGAfZPh/input2
-          visualData: 17.819420627416775/782.2790164437884/280/24//
         '[ITkxP4aiS91UqNdKSIMDD]:graphOutput "Graph Output"':
           data:
             dataType: string
@@ -1217,55 +1794,28 @@ data:
               0cqheENSin-CqueDgmCU4/function-call
             - output->"Raise Event" tEJHVYS29o5twVfp9Nxx1/data
           visualData: 1200.4812122785534/440.2761768899573/155/60//
-        '[LXSayHeSjHEKD_wAKZhQM]:gptFunction "GPT Function"':
+        '[MMO0U6L19Jt8hZ2TaLEo9]:graphOutput "Graph Output"':
           data:
-            description: Creates the specified node in the graph. It will be given a unique
-              ID. Outputs the YAML of the created node.
-            name: createNode
-            schema: |-
-              
-              {
-                "type": "object",
-                "properties": {
-                  "nodeType": {
-                    "type": "string",
-                    "description": "The type of the node."
-                  }
-                },
-                "required": ["nodeType"],
-                "additionalProperties": false
-              }
-          outgoingConnections:
-            - function->"Array" YGhxtSey20ED62dGAfZPh/input4
-          visualData: 22.90484052573106/1161.2991302509854/280/24//
-        '[SxR3T0JT0nSrtTvhcC9tX]:gptFunction "GPT Function"':
+            dataType: string
+            id: model
+          visualData: -75.47138993490998/-195.1378946115334/330/62//
+        '[NjKf9JFAsfStjO1yQcydF]:subGraph "Subgraph"':
           data:
-            description: Edits the data of a node. Use this function to configure nodes.
-              Returns whether the setting was successful.
-            name: editNode
-            schema: >-
-              
-              {
-                "type": "object",
-                "properties": {
-                  "nodeId": {
-                    "type": "string",
-                    "description": "The unique identifier for the node."
-                  },
-                  "key": {
-                    "type": "string",
-                    "description": "The key associated with the value."
-                  },
-                  "value": {
-                    "description": "The value associated with the key, can be of any type."
-                  }
-                },
-                "required": ["nodeId", "key", "value"],
-                "additionalProperties": false
-              }
+            graphId: K8xT505hvFD7lGCIfcjTf
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
           outgoingConnections:
-            - function->"Array" YGhxtSey20ED62dGAfZPh/input5
-          visualData: 22.90484052573106/1361.2991302509854/280/24//
+            - output->"Chat" wFHe0yhVFbC2makMpT-WL/functions
+          visualData: 343.72774001720757/818.2628787587782/330/65//
+        '[Qv66Vf-LSLXWcZ4jmczXs]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: model
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Chat" wFHe0yhVFbC2makMpT-WL/model
+            - data->"Graph Output" MMO0U6L19Jt8hZ2TaLEo9/value
+          visualData: -493.31963326097434/-65.62035793481971/330/null//
         '[TxbYSPRcg0R8BKnOvaVV5]:match "Match"':
           data:
             cases:
@@ -1273,34 +1823,6 @@ data:
           outgoingConnections:
             - case1->"If" hqyv1T4DHKLWrUGHU90Lq/if
           visualData: 2889.453888526921/795.6136239967695/280/57//
-        '[WZSVeXEhD8kh77PPF3br4]:gptFunction "GPT Function"':
-          data:
-            description: Gets the currently configured data for a node. Use this to see what
-              data is available to change on a node.
-            name: getNodeData
-            schema: |-
-              
-              {
-                "type": "object",
-                "properties": {
-                  "nodeId": {
-                    "type": "string",
-                    "description": "A unique identifier for the node."
-                  }
-                },
-                "required": ["nodeId"],
-                "additionalProperties": false
-              }
-          outgoingConnections:
-            - function->"Array" YGhxtSey20ED62dGAfZPh/input11
-          visualData: -339.78929182391/1241.1558756004192/280/54//
-        '[YGhxtSey20ED62dGAfZPh]:array "Array"':
-          data:
-            flatten: true
-            flattenDeep: false
-          outgoingConnections:
-            - output->"Chat" wFHe0yhVFbC2makMpT-WL/functions
-          visualData: 445.6695740190561/815.2088134576862/230/25//
         '[Z5qy7nB76IVy2Zj_HU0D9]:if "If"':
           data:
             unconnectedControlFlowExcluded: true
@@ -1313,42 +1835,15 @@ data:
             useErrorOutput: false
             useFunctionNameInput: false
           visualData: 4637.205674621156/169.81543089797083/180/57//
-        '[bs6OzsoFr_XiDiLQo_wdX]:gptFunction "GPT Function"':
+        '[bwYoHyNJEbzIcc1CacSbd]:graphInput "Graph Input"':
           data:
-            description: Outputs the YAML of the current state of the graph. Use this to
-              re-examine the current state to see values, or double check that
-              your previous actions had the intended effect. This will also
-              perform linting on your graph, making sure it is correct.
-            name: reviewGraph
-            schema: |-
-              {
-                "type": "object",
-                "properties": {}
-              }
+            dataType: string
+            id: task
+            useDefaultValueInput: false
           outgoingConnections:
-            - function->"Array" YGhxtSey20ED62dGAfZPh/input7
-          visualData: 26.06954017987506/1705.6058159397205/280/53//
-        '[dIjBcFpv1E35PTnqTafky]:gptFunction "GPT Function"':
-          data:
-            description: Call this function when you are done calling functions and have
-              accomplished what the user wants.
-            name: finished
-            schema: |-
-              
-              {
-                "type": "object",
-                "properties": {
-                  "message": {
-                    "type": "string",
-                    "description": "The final message to send to the user."
-                  }
-                },
-                "required": ["message"],
-                "additionalProperties": false
-              }
-          outgoingConnections:
-            - function->"Array" YGhxtSey20ED62dGAfZPh/input3
-          visualData: 21.08050259592187/968.83147865614/280/24//
+            - data->"Graph Output" 7dU1_alxlz-eIRNL4IWUe/value
+            - data->"Prompt" tozCLMATvR3heb8dTCOVV/task
+          visualData: -949.4039388250712/642.0973472258075/330/72//
         '[ds0aV04r78bgxU0WTcFgI]:extractObjectPath "Extract Object Path"':
           data:
             path: $.children
@@ -1385,8 +1880,8 @@ data:
             id: messages
             useDefaultValueInput: false
           outgoingConnections:
-            - data->"Chat" wFHe0yhVFbC2makMpT-WL/prompt
-          visualData: 338.9514965868126/429.6790477846235/330/27//
+            - data->"Assemble Prompt" 8Rd20PR_oasOBJO98i-LP/message1
+          visualData: -250.06093521082164/420.12749483655375/330/64//
         '[ow1008xcfQ03MBc-kJyQD]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Coalesce" FW59LI8kmoFU38oNEFImN/input1
@@ -1432,31 +1927,7 @@ data:
               </nodes>
 
 
-              You may use commands to read the node files, or the documentation for the nodes, so that you understand nodes better before calling commands to create, delete, or connect/disconnect nodes.
-
-
-              You should read the documentation of nodes to understand them before working with them.
-
-
-              If there is no documentation available for a node, you should read its source code to understand the node before working with it.
-
-
-              ## Ports
-
-
-              Nodes have input ports and output ports. You can use `getNodePorts` to see the names of these ports so that you can accurately make connections between nodes.
-
-
-              ## Dynamic Ports
-
-
-              Sometimes, ports are only enabled if the node is configured to show them. For example, the data key `useFooInput` may toggle on the `foo` input port on a node. Experiment to discover new ports on nodes and connect them.
-
-
-              ## Brainstorming
-
-
-              You should liberally use the `brainstorm` command in order to understand more about Rivet and the nodes you have available to you to accomplish certain tasks. If you are not sure of what node to use, or especially when you have done something wrong, use `brainstorm` to figure out how to do things right.
+              {{help}}
           outgoingConnections:
             - output->"Chat" wFHe0yhVFbC2makMpT-WL/systemPrompt
           visualData: 194.97774721221572/-9.411359809503006/330/26//
@@ -1466,27 +1937,47 @@ data:
             useEventNameInput: false
           isSplitRun: true
           visualData: 1598.0412435716544/361.99746608087503/180/59//
+        '[tozCLMATvR3heb8dTCOVV]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: >-
+              As a reminder, you are trying to accomplish this task:
+
+
+              {{task | quote}}
+
+
+              Do not try forever to accomplish the task. If something does not work, rethink your approach or bail out.
+
+
+              As a reminder, think out loud and call `updateUser` and `plan` frequently.
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" 8Rd20PR_oasOBJO98i-LP/message2
+          visualData: -220.6889317905332/587.6583310431927/280/67//
         '[wFHe0yhVFbC2makMpT-WL]:chat "Chat"':
           data:
             additionalParameters: []
             cache: false
             enableFunctionUse: true
             headers: []
-            maxTokens: 1024
+            maxTokens: 2044
             modalitiesIncludeAudio: false
             modalitiesIncludeText: false
-            model: gpt-4o
+            model: gpt-4o-mini
             outputUsage: false
             parallelFunctionCalling: true
             reasoningEffort: ""
             stop: ""
             temperature: 0.5
+            toolChoice: ""
             top_p: 1
             useAdditionalParametersInput: false
             useAsGraphPartialOutput: true
             useFrequencyPenaltyInput: false
             useMaxTokensInput: false
-            useModelInput: false
+            useModelInput: true
             usePredictedOutput: false
             usePresencePenaltyInput: false
             useReasoningEffortInput: false
@@ -1505,39 +1996,23 @@ data:
             - function-calls->"If" IpB9s4ttbNGzYsD2l8DPN/value
             - function-calls->"If" Z5qy7nB76IVy2Zj_HU0D9/if
           visualData: 807/345/230/6//
-        '[yIQLzeej9Jri2voIMQBw4]:gptFunction "GPT Function"':
+    rbKmsS2zrTbG42yeQBxOi:
+      metadata:
+        description: ""
+        id: rbKmsS2zrTbG42yeQBxOi
+        name: "Function: plan"
+      nodes:
+        '[0GuWpLSU5_8v0IbVlh9X8]:text "Text"':
           data:
-            description: Connects the output port of a source node to the input port of a
-              destination node.
-            name: connectNodes
-            schema: >-
-              
-              {
-                "type": "object",
-                "properties": {
-                  "sourceNodeId": {
-                    "type": "string",
-                    "description": "The identifier for the source node."
-                  },
-                  "destNodeId": {
-                    "type": "string",
-                    "description": "The identifier for the destination node."
-                  },
-                  "sourcePortId": {
-                    "type": "string",
-                    "description": "The identifier for the source port."
-                  },
-                  "destPortId": {
-                    "type": "string",
-                    "description": "The identifier for the destination port."
-                  }
-                },
-                "required": ["sourceNodeId", "destNodeId", "sourcePortId", "destPortId"],
-                "additionalProperties": false
-              }
+            text: Plan recorded.
           outgoingConnections:
-            - function->"Array" YGhxtSey20ED62dGAfZPh/input8
-          visualData: -341.84126795172665/612.4282098109859/280/null//
+            - output->"Graph Output" oZpaX_NVj8pg2NY13ECR0/value
+          visualData: 445/424/330/2//
+        '[oZpaX_NVj8pg2NY13ECR0]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 880/418/330/1//
   metadata:
     description: ""
     id: wHxyeNIJLo2ZrylGbkznh
