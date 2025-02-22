@@ -248,7 +248,10 @@ export function useAiGraphBuilder({ record, onFeedback }: { record: boolean; onF
 
             return {
               type: 'object',
-              value: node.data as Record<string, unknown>,
+              value: {
+                data: node.data as Record<string, unknown>,
+                splittingEnabled: node.isSplitRun,
+              },
             };
           },
           deleteNode: async (_ctx, nodeId) => {

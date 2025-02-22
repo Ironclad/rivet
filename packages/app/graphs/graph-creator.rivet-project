@@ -1582,6 +1582,24 @@ data:
 
 
               Splitting is even more effective when it is chained. You can use this like a for loop - mapping data and running all nodes for each item in an array. For example, an array into a split Text node into a split Chat node will run a Chat for every item in the array, after the text has been mapped to a new value.
+
+
+              ## Loops
+
+
+              Do not use the Loop Controller as it is difficult to use and prone to error. Instead, use splitting and the Loop Until node. 
+
+
+              ## Subgraphs
+
+
+              You cannot edit subgraphs, but you can create a Subgraph node and ask the user to set up the node with specific inputs and outputs.
+
+
+              ## Reading Node Source Code
+
+
+              If you encounter errors, you should review the source code of the node before proceeding, by calling `readNodeSourceCode`. That way you understand the nodes that you are working with.
           outgoingConnections:
             - output->"Graph Output" w8K53elMsbr8gS7pi1_UF/value
           visualData: 671/502/330/null//
@@ -1970,7 +1988,7 @@ data:
             parallelFunctionCalling: true
             reasoningEffort: ""
             stop: ""
-            temperature: 0.5
+            temperature: 0.2
             toolChoice: ""
             top_p: 1
             useAdditionalParametersInput: false
