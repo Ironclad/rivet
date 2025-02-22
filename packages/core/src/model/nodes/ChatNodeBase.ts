@@ -52,7 +52,7 @@ export type ChatNodeConfigData = {
   useServerTokenCalculation?: boolean;
   outputUsage?: boolean;
   usePredictedOutput?: boolean;
-  reasoningEffort?: 'low' | 'medium' | 'high';
+  reasoningEffort?: '' | 'low' | 'medium' | 'high';
 
   modalitiesIncludeText?: boolean;
   modalitiesIncludeAudio?: boolean;
@@ -127,7 +127,7 @@ export const ChatNodeBase = {
     usePredictedOutput: false,
     modalitiesIncludeAudio: false,
     modalitiesIncludeText: false,
-    reasoningEffort: 'unset',
+    reasoningEffort: '',
     useReasoningEffortInput: false,
   }),
 

@@ -47,7 +47,7 @@ import { VisualNode } from './VisualNode.js';
 import { useStableCallback } from '../hooks/useStableCallback.js';
 import { useThrottle, useThrottleFn } from 'ahooks';
 import { produce } from 'immer';
-import { graphMetadataState } from '../state/graph.js';
+import { graphMetadataState, graphState, nodesState } from '../state/graph.js';
 import { useViewportBounds } from '../hooks/useViewportBounds.js';
 import { useGlobalHotkey } from '../hooks/useGlobalHotkey.js';
 import { useWireDragScrolling } from '../hooks/useWireDragScrolling';
@@ -218,6 +218,9 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   const cache = useNodeHeightCache();
 
+  const graph = useAtomValue(graphState);
+  const setNodes = useSetAtom(nodesState);
+
   const {
     contextMenuRef,
     showContextMenu,
@@ -239,10 +242,11 @@ export const NodeCanvas: FC<NodeCanvasProps> = ({
 
   useEffect(() => {
     autoLayoutGraph.current = () => {
-      autoLayout();
+      const nodes = autoLayout(graph);
+      setNodes(nodes);
       recalculatePortPositions();
     };
-  }, [autoLayout, autoLayoutGraph, recalculatePortPositions]);
+  }, [autoLayout, autoLayoutGraph, recalculatePortPositions, setNodes, graph]);
 
   useEffect(() => {
     recalculatePortPositions();

@@ -1,6 +1,4 @@
-import { useAtomValue, useSetAtom } from 'jotai';
-import { graphState, nodesState } from '../state/graph';
-import { type ChartNode, type NodeId } from '@ironclad/rivet-core';
+import { type NodeGraph, type ChartNode, type NodeId } from '@ironclad/rivet-core';
 
 // Force-directed layout parameters
 const REPULSION_STRENGTH = 10000;
@@ -17,11 +15,9 @@ const DIRECTIONAL_BIAS = 300;
 const MIN_HORIZONTAL_DISTANCE = 400;
 
 export function useAutoLayoutGraph() {
-  const graph = useAtomValue(graphState);
-  const { nodes, connections } = graph;
-  const setNodes = useSetAtom(nodesState);
+  return (graph: NodeGraph) => {
+    const { nodes, connections } = graph;
 
-  return () => {
     // Build connection maps
     const outgoing = new Map<NodeId, Set<NodeId>>();
     const incoming = new Map<NodeId, Set<NodeId>>();
@@ -267,6 +263,6 @@ export function useAutoLayoutGraph() {
     }
 
     // Update the UI once with final positions
-    setNodes(positionedNodes);
+    return positionedNodes;
   };
 }

@@ -25,6 +25,7 @@ import { GraphExecutionSelectorBar } from './GraphExecutionSelectorBar';
 import { HistoricalGraphNotice } from './HistoricalGraphNotice';
 import { NodeChangesModal, NodeChangesModalRenderer } from './NodeChangesModal';
 import { syncWrapper } from '../utils/syncWrapper';
+import { AiGraphCreatorInput } from './AiGraphCreatorInput';
 
 const Container = styled.div`
   position: relative;
@@ -177,6 +178,7 @@ export const GraphBuilder: FC = () => {
           onClose={handleCloseUserInputModal}
         />
         <NodeChangesModalRenderer />
+        <AiGraphCreatorInput />
       </ErrorBoundary>
     </Container>
   );
