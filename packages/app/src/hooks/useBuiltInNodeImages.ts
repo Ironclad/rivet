@@ -79,6 +79,7 @@ import toMarkdownTableNodeImage from '../assets/node_images/to_markdown_table_no
 import cronNodeImage from '../assets/node_images/cron_node.png';
 import loopUntilNodeImage from '../assets/node_images/loop_until_node.png';
 import toTreeNode from '../assets/node_images/to_tree_node.png';
+import mcpNodeImage from '../assets/node_images/mcp_node.png';
 
 export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
   return {
@@ -161,5 +162,6 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     cron: cronNodeImage,
     loopUntil: loopUntilNodeImage,
     toTree: toTreeNode,
+    mcp: mcpNodeImage,
   };
 };

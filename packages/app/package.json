@@ -60,6 +60,7 @@
     "@floating-ui/react": "^0.26.1",
     "@ironclad/rivet-core": "workspace:^",
     "@ironclad/trivet": "workspace:^",
+    "@modelcontextprotocol/sdk": "^1.5.0",
     "@recoiljs/refine": "^0.1.1",
     "@swc/core": "^1.3.94",
     "@tanstack/react-query": "^5.4.3",
