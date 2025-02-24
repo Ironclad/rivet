@@ -2,12 +2,18 @@ import { css } from '@emotion/react';
 import { type FC } from 'react';
 import SparklesIcon from '../assets/icons/ai-sparks-solid.svg?react';
 import { showAiGraphCreatorInputState } from './AiGraphCreatorInput';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { sidebarOpenState } from '../state/graphBuilder';
+import clsx from 'clsx';
 
 const styles = css`
   position: absolute;
   left: 16px;
   bottom: 16px;
+
+  &.sidebar-open {
+    left: 270px;
+  }
 
   button {
     width: 48px;
@@ -34,13 +40,14 @@ const styles = css`
 
 export const AiGraphCreatorToggle: FC = () => {
   const setShowAiGraphCreatorInput = useSetAtom(showAiGraphCreatorInputState);
+  const isSidebarOpen = useAtomValue(sidebarOpenState);
 
   const handleClick = () => {
     setShowAiGraphCreatorInput((prev) => !prev);
   };
 
   return (
-    <div css={styles}>
+    <div css={styles} className={clsx({ 'sidebar-open': isSidebarOpen })}>
       <button onClick={handleClick}>
         <SparklesIcon />
       </button>
