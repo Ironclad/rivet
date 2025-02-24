@@ -45,6 +45,7 @@ const styles = css`
 const modelOptions = [
   { label: 'GPT-4o', value: 'gpt-4o' },
   { label: 'GPT-4o mini', value: 'gpt-4o-mini' },
+  { label: 'o3-mini', value: 'o3-mini' },
 ] as const;
 
 export const showAiGraphCreatorInputState = atom(false);

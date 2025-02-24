@@ -254,7 +254,7 @@ data:
           data:
             dataType: string
             id: output
-          visualData: 1058.9934932886258/360.92842617488594/330/16//
+          visualData: 1741.760260868777/384.978918966359/330/19//
         '[QUHs-HJl5DW-MfOrRUymS]:chat "Chat"':
           data:
             additionalParameters: []
@@ -289,6 +289,19 @@ data:
           outgoingConnections:
             - response->"External Call" xcX_2iyt7CLbRDdDPZzh7/arguments
           visualData: 372.0122702942299/313.26932617238106/230/14//
+        '[duWJBH9d5Xb1s_sBv-ed2]:text "Text"':
+          data:
+            text: >-
+              {{input}}
+
+
+              The node has been created.
+
+
+              Next, you should run `readNodeDocumentation` or `readNodeSourceCode` to understand the node better, then run `getNodePorts`/`getNodeData` to see the current state of the node.
+          outgoingConnections:
+            - output->"Graph Output" 1CnfGcyldKfcdauUbZ7N2/value
+          visualData: 1248.2438275125526/401.15775836797843/330/null//
         '[fD4NRCPR0COe9G9S0r628]:context "Context"':
           data:
             dataType: string[]
@@ -331,7 +344,7 @@ data:
             useErrorOutput: false
             useFunctionNameInput: false
           outgoingConnections:
-            - result->"Graph Output" 1CnfGcyldKfcdauUbZ7N2/value
+            - result->"Text" duWJBH9d5Xb1s_sBv-ed2/input
           visualData: 713.0455469796179/377.431679530573/296/15//
     GclkPKrrBXX88jIhSRlgX:
       metadata:
@@ -339,6 +352,20 @@ data:
         id: GclkPKrrBXX88jIhSRlgX
         name: "Function: readNodeDocumentation"
       nodes:
+        '[0bHEYvBizo6FZQfE-jDpC]:loadDataset "Load Dataset"':
+          data:
+            datasetId: tFwViTH9Bmi4b3GGXmkFS
+          outgoingConnections:
+            - dataset->"Destructure" 4wLk3dTc1kFXOvpt-S5Pp/object
+            - dataset->"Extract Object Path" 1AZBLrzB1wnPHjMPW4F5O/object
+          visualData: -785.6409912148162/344.4058715095922/280/33//
+        '[1AZBLrzB1wnPHjMPW4F5O]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $[?(@.data[0]=='to-json.mdx')].data[1]
+            usePathInput: true
+          outgoingConnections:
+            - match->"Coalesce" ryK3JNBmu-L2gMI21G83A/input1
+          visualData: 1581.6391091315022/366.4341056187761/280/42//
         '[2fy8rnQHdT6LJy4PoQQh1]:text "Text"':
           data:
             text: "{{input}}"
@@ -350,39 +377,16 @@ data:
             dataType: string
             id: output
           visualData: 2507.424607988899/480.6459111866651/330/26//
-        '[7E5pC3r5z74zO_7Pdykoe]:readFile "Read File"':
+        '[4wLk3dTc1kFXOvpt-S5Pp]:destructure "Destructure"':
           data:
-            asBinary: false
-            errorOnMissingFile: false
-            path: ""
-            usePathInput: true
+            paths:
+              - $.data[0]
+              - $.data[1]
+          isSplitRun: true
           outgoingConnections:
-            - content->"Coalesce" ryK3JNBmu-L2gMI21G83A/input1
-          visualData: 1659.210055348904/414.78394518221785/280/18//
-        '[Bm_GOVhIXCU_kmdln2mJ5]:readDirectory "Read Directory"':
-          data:
-            filterGlobs: []
-            ignores: []
-            includeDirectories: false
-            path: /usr/local/repos/rivet/packages/docs/docs/node-reference
-            recursive: false
-            relative: true
-            useFilterGlobsInput: false
-            useIgnoresInput: false
-            useIncludeDirectoriesInput: false
-            usePathInput: false
-            useRecursiveInput: false
-            useRelativeInput: false
-          outgoingConnections:
-            - paths->"Text" eDUb3vcZaj1XhOJcS9YKX/files
-            - rootPath->"Text" KYQr3NRSB0JETQonrqWxi/base_path
-          visualData: -438/305/230/7//
-        '[KYQr3NRSB0JETQonrqWxi]:text "Text"':
-          data:
-            text: "{{base_path}}/{{file_name}}"
-          outgoingConnections:
-            - output->"Read File" 7E5pC3r5z74zO_7Pdykoe/path
-          visualData: 1277.0050016400714/400.5222574350423/330/19//
+            - match_0->"Text" eDUb3vcZaj1XhOJcS9YKX/files
+          splitRunMax: 1000
+          visualData: -442.17795673177636/359.440333367917/280/32//
         '[Lc4ArddQSl3uE7WBON5HK]:graphInput "Graph Input"':
           data:
             dataType: string
@@ -391,13 +395,20 @@ data:
           outgoingConnections:
             - data->"Text" eDUb3vcZaj1XhOJcS9YKX/node
           visualData: -498/694/330/5//
+        '[Maqa2lW9f9AhX59e3nJOa]:text "Text"':
+          data:
+            path: ""
+            text: $[?(@.data[0]=='{{filename}}')].data[1]
+          outgoingConnections:
+            - output->"Extract Object Path" 1AZBLrzB1wnPHjMPW4F5O/path
+          visualData: 1163.066448389611/458.971351319502/330/43//
         '[T3H-VATXWOwjkQQ8b2ETP]:match "Match"':
           data:
             cases:
               - NONE
           outgoingConnections:
             - case1->"If" jD_RIxhvBN807mnDJzSCN/if
-            - unmatched->"Text" KYQr3NRSB0JETQonrqWxi/file_name
+            - unmatched->"Text" Maqa2lW9f9AhX59e3nJOa/filename
           visualData: 783.8189534089511/585.8770973372707/280/20//
         '[eDUb3vcZaj1XhOJcS9YKX]:text "Text"':
           data:
@@ -468,6 +479,53 @@ data:
             - response->"Match" T3H-VATXWOwjkQQ8b2ETP/input
             - response->"Match" T3H-VATXWOwjkQQ8b2ETP/value
           visualData: 463/610/230/9//
+    H7kJaGEerxRnWoHkH7dza:
+      metadata:
+        description: ""
+        id: H7kJaGEerxRnWoHkH7dza
+        name: Load Node Source Code
+      nodes:
+        '[I5qYzDChQyisavw5FqOWp]:array "Array"':
+          data:
+            flatten: true
+            flattenDeep: false
+          isSplitRun: true
+          outgoingConnections:
+            - output->"Append to Dataset" TiU0et989CTz9TZGAZdPv/data
+          splitRunMax: 1000
+          visualData: 1193.2476128346893/553.9479804709298/230/5//
+        '[TiU0et989CTz9TZGAZdPv]:appendToDataset "Append to Dataset"':
+          data:
+            datasetId: kA30RgfCwAlUV5PttKa3E
+          isSplitRun: true
+          splitRunMax: 1000
+          visualData: 1548.3194225410352/563.1946421820326/280/6//
+        '[Z19ARNkFchNgKX2QEjf6j]:destructure "Destructure"':
+          data:
+            paths:
+              - $.path
+              - $.content
+          isSplitRun: true
+          outgoingConnections:
+            - match_0->"Array" I5qYzDChQyisavw5FqOWp/input1
+            - match_1->"Array" I5qYzDChQyisavw5FqOWp/input2
+          splitRunMax: 1000
+          visualData: 795.6411592572706/587.2359626308997/280/4//
+        '[nRaPVJ7dhtBGa952AM_eD]:readAllFiles "Read All Files"':
+          data:
+            asBinary: false
+            errorOnMissingFile: false
+            filterGlobs: []
+            ignores: []
+            path: /usr/local/repos/rivet/packages/core/src/model/nodes
+            recursive: false
+            useFilterGlobsInput: false
+            useIgnoresInput: false
+            usePathInput: false
+            useRecursiveInput: false
+          outgoingConnections:
+            - files->"Destructure" Z19ARNkFchNgKX2QEjf6j/object
+          visualData: 472/498/280/null//
     JG6fqOxqWML87jVUkPh-r:
       metadata:
         description: ""
@@ -898,39 +956,23 @@ data:
         '[B21gdRxNZn4gyWx3iiVug]:graphInput "Graph Input"':
           data:
             dataType: string
+            defaultValue: ChatNode
             id: nodeType
             useDefaultValueInput: false
           outgoingConnections:
             - data->"Text" RX3uucTsRUNqrQIneJxRl/node
           visualData: 654/686/330/5//
-        '[BJnQR4yRe_lxpZhohq-Iv]:text "Text"':
+        '[ELn_nmawCSffgGbkoVT-Q]:text "Text"':
           data:
-            text: "{{base_path}}/{{file_name}}"
+            path: ""
+            text: $[?(@.data[0]=='{{filename}}')].data[1]
           outgoingConnections:
-            - output->"Read File" zk3GooRCnFoq0DTjWQYhU/path
-          visualData: 2429.0050016400714/392.5222574350423/330/19//
-        '[JMKa3iXXHRvu-uTCd6FUi]:readDirectory "Read Directory"':
-          data:
-            filterGlobs: []
-            ignores: []
-            includeDirectories: false
-            path: /usr/local/repos/rivet/packages/core/src/model/nodes
-            recursive: false
-            relative: true
-            useFilterGlobsInput: false
-            useIgnoresInput: false
-            useIncludeDirectoriesInput: false
-            usePathInput: false
-            useRecursiveInput: false
-            useRelativeInput: false
-          outgoingConnections:
-            - paths->"Text" RX3uucTsRUNqrQIneJxRl/files
-            - rootPath->"Text" BJnQR4yRe_lxpZhohq-Iv/base_path
-          visualData: 714/297/230/7//
+            - output->"Extract Object Path" P6lH9qzSsEWlw3W7Anaua/path
+          visualData: 2467.388574219139/371.7386911548589/330/48//
         '[Le6jjwly25Z3G7jNQxmVM]:coalesce "Coalesce"':
           outgoingConnections:
             - output->"Graph Output" nO0XPCZb9V5_qVP5kDfBr/value
-          visualData: 3190/575/180/22//
+          visualData: 3297.2236675616327/441.4098568084575/180/49//
         '[OnPRxjZ6CtHEfEfp74Dha]:chat "Chat"':
           data:
             additionalParameters: []
@@ -967,6 +1009,13 @@ data:
             - response->"Match" qDJBBWbLLaV5hdshFhxq8/input
             - response->"Match" qDJBBWbLLaV5hdshFhxq8/value
           visualData: 1615/602/230/9//
+        '[P6lH9qzSsEWlw3W7Anaua]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $
+            usePathInput: true
+          outgoingConnections:
+            - match->"Coalesce" Le6jjwly25Z3G7jNQxmVM/input1
+          visualData: 2889.717604230714/154.95809862232161/280/46//
         '[RX3uucTsRUNqrQIneJxRl]:text "Text"':
           data:
             text: >-
@@ -990,6 +1039,15 @@ data:
           outgoingConnections:
             - output->"Chat" OnPRxjZ6CtHEfEfp74Dha/prompt
           visualData: 1143.6459111866652/504.60765186444416/330/27//
+        '[b7ekhp_HDG7GXL4Gv3_P4]:destructure "Destructure"':
+          data:
+            paths:
+              - $.data[0]
+          isSplitRun: true
+          outgoingConnections:
+            - match_0->"Text" RX3uucTsRUNqrQIneJxRl/files
+          splitRunMax: 1000
+          visualData: 671.3669811645952/379.6011996923084/280/31//
         '[nO0XPCZb9V5_qVP5kDfBr]:graphOutput "Graph Output"':
           data:
             dataType: string
@@ -1001,7 +1059,7 @@ data:
               - NONE
           outgoingConnections:
             - case1->"If" tNYIJZ1sXcWHlRhx1DIJZ/if
-            - unmatched->"Text" BJnQR4yRe_lxpZhohq-Iv/file_name
+            - unmatched->"Text" ELn_nmawCSffgGbkoVT-Q/filename
           visualData: 1935.818953408951/577.8770973372707/280/20//
         '[tNYIJZ1sXcWHlRhx1DIJZ]:if "If"':
           data:
@@ -1009,15 +1067,60 @@ data:
           outgoingConnections:
             - output->"Coalesce" Le6jjwly25Z3G7jNQxmVM/input2
           visualData: 2632/674/155/24//
-        '[zk3GooRCnFoq0DTjWQYhU]:readFile "Read File"':
+        '[vHVQZk_nqfGo565L27Dtn]:loadDataset "Load Dataset"':
+          data:
+            datasetId: kA30RgfCwAlUV5PttKa3E
+          outgoingConnections:
+            - dataset->"Destructure" b7ekhp_HDG7GXL4Gv3_P4/object
+            - dataset->"Extract Object Path" P6lH9qzSsEWlw3W7Anaua/object
+          visualData: 319.80052799006586/370.6154756495089/280/29//
+    TzI-CBrILp1EHK5gmVzAd:
+      metadata:
+        description: ""
+        id: TzI-CBrILp1EHK5gmVzAd
+        name: Load Node Documentation Files
+      nodes:
+        '[cYsRwfu28kI8mdBewBfyp]:destructure "Destructure"':
+          data:
+            paths:
+              - $.path
+              - $.content
+          isSplitRun: true
+          outgoingConnections:
+            - match_0->"Array" mwGefSwq5p5MzQnOOmjT9/input1
+            - match_1->"Array" mwGefSwq5p5MzQnOOmjT9/input2
+          splitRunMax: 1000
+          visualData: 795.6411592572706/587.2359626308997/280/4//
+        '[lw2jTX9Rn_Oxs18QSjPnn]:readAllFiles "Read All Files"':
           data:
             asBinary: false
             errorOnMissingFile: false
-            path: ""
-            usePathInput: true
+            filterGlobs: []
+            ignores: []
+            path: /usr/local/repos/rivet/packages/docs/docs/node-reference
+            recursive: false
+            useFilterGlobsInput: false
+            useIgnoresInput: false
+            usePathInput: false
+            useRecursiveInput: false
           outgoingConnections:
-            - content->"Coalesce" Le6jjwly25Z3G7jNQxmVM/input1
-          visualData: 2811.210055348904/406.78394518221785/280/18//
+            - files->"Destructure" cYsRwfu28kI8mdBewBfyp/object
+          visualData: 472/498/280/null//
+        '[mwGefSwq5p5MzQnOOmjT9]:array "Array"':
+          data:
+            flatten: true
+            flattenDeep: false
+          isSplitRun: true
+          outgoingConnections:
+            - output->"Append to Dataset" pannTaVzvzJ_CWLGaumz4/data
+          splitRunMax: 1000
+          visualData: 1193.2476128346893/553.9479804709298/230/5//
+        '[pannTaVzvzJ_CWLGaumz4]:appendToDataset "Append to Dataset"':
+          data:
+            datasetId: tFwViTH9Bmi4b3GGXmkFS
+          isSplitRun: true
+          splitRunMax: 1000
+          visualData: 1548.3194225410352/563.1946421820326/280/6//
     WxyQFm3N0w38pIgS75lHN:
       metadata:
         description: ""
@@ -1064,6 +1167,16 @@ data:
         id: _UFm-kutJD0gbxzqRLbwG
         name: "Function: editNode"
       nodes:
+        '[0Ehrp5WfZyX80I-s_V4GG]:text "Text"':
+          data:
+            text: >-
+              {{input}}
+
+
+              It is recommended to run `readNodeSourceCode` to make sure that you configured the node correctly.
+          outgoingConnections:
+            - output->"Coalesce" Q5tqvNG08kw7LCdBxst7P/input1
+          visualData: 1872.177419326416/274.12724676008753/330/null//
         '[ILF-cETPVEALGoIZcQITV]:externalCall "External Call"':
           data:
             functionName: editNode
@@ -1071,12 +1184,12 @@ data:
             useFunctionNameInput: false
           outgoingConnections:
             - error->"Text" gUAE_jH6JSTGOItTdfTie/error
-            - result->"Coalesce" Q5tqvNG08kw7LCdBxst7P/input1
+            - result->"Text" 0Ehrp5WfZyX80I-s_V4GG/input
           visualData: 1383.597830981039/405.7637121080456/180/3//
         '[Q5tqvNG08kw7LCdBxst7P]:coalesce "Coalesce"':
           outgoingConnections:
             - output->"Graph Output" j4VXpOKMoaRnHWNy2tIFl/value
-          visualData: 1907.1214802677803/265.8690352607646/180/13//
+          visualData: 2323.1080933551425/281.71614433075933/180/16//
         '[QgHfyhFa0sPV2LCHczdc9]:array "Array"':
           data:
             flatten: false
@@ -1102,7 +1215,7 @@ data:
           data:
             dataType: string
             id: output
-          visualData: 2313.4798409058435/331.64702948850805/330/10//
+          visualData: 2719.562010824459/323.7234749535107/330/15//
         '[sOM_RzIQIO9Ic2BkMQDnq]:graphInput "Graph Input"':
           data:
             dataType: any
