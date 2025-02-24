@@ -52,6 +52,7 @@ type SerializedNode = {
   data?: unknown;
   variants?: ChartNodeVariant<unknown>[];
   disabled?: boolean;
+  isConditional?: boolean;
 };
 
 /** x/y/width/zIndex */
@@ -238,6 +239,7 @@ function toSerializedNode(node: ChartNode, allNodes: ChartNode[], allConnections
     outgoingConnections: outgoingConnections.length > 0 ? outgoingConnections : undefined,
     variants: (node.variants?.length ?? 0) > 0 ? node.variants : undefined,
     disabled: node.disabled ? true : undefined,
+    isConditional: node.isConditional,
   };
 }
 
@@ -275,6 +277,7 @@ function fromSerializedNode(
       data: serializedNode.data ?? {},
       variants: serializedNode.variants ?? [],
       disabled: serializedNode.disabled,
+      isConditional: serializedNode.isConditional,
     },
     connections,
   ];
