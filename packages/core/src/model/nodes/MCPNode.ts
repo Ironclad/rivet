@@ -53,6 +53,7 @@ export interface MCPNodeData {
   useHeadersInput: boolean;
   configuration: { [key: string]: unknown };
   availableTools?: MCPToolDefinition[];
+  config?: string;
 }
 
 interface MCPConfig {
@@ -109,20 +110,23 @@ async function loadMCPConfiguration(context: InternalProcessContext | RivetUICon
 
 async function handleStdioServerCommunication(
   serverId: string,
+  configFile: MCPConfig | object,
   input: unknown,
   configuration: unknown,
   signal: AbortSignal,
   context: InternalProcessContext | RivetUIContext,
 ): Promise<{ output: string; metadata: Record<string, unknown> }> {
-  const mcpConfig = await loadMCPConfiguration(context);
-  const serverConfig = mcpConfig.mcpServers[serverId];
+  let mcpConfig: MCPConfig;
+  const serverConfig = Object.keys(configFile).length === 0
+    ? (mcpConfig = await loadMCPConfiguration(context), mcpConfig.mcpServers[serverId])
+    : (configFile as MCPConfig).mcpServers[serverId];
   
   if (!serverConfig) {
     throw new MCPError(MCPErrorType.SERVER_NOT_FOUND, `Server ${serverId} not found in MCP config`);
   }
-
   let transport: StdioClientTransport | null = null;
   let client: Client | null = null;
+
 
   try {
     transport = new StdioClientTransport({
@@ -146,12 +150,14 @@ async function handleStdioServerCommunication(
       toolArgs = JSON.parse(args);
     } catch {}
 
+
     const response = await client.callTool({
       name: toolName,
       arguments: toolArgs
     });
 
-    let output = "";
+
+    let output: any = "";
     let metadata: Record<string, unknown> = {};
 
     if (typeof response === "string") {
@@ -273,12 +279,24 @@ export class MCPNodeImpl extends NodeImpl<MCPNode> {
           description: 'The endpoint URL for the MCP server',
         });
       } else {
+
+        inputs.push({
+          dataType: 'any',
+          id: 'config' as PortId,
+          title: 'Configuration',
+          description: 'Configuration for the MCP server (fixed or dynamic)',
+          required: true,
+        });
+
         inputs.push({
           dataType: 'string',
           id: 'serverId' as PortId,
           title: 'Server ID',
-          description: 'The MCP server ID from configuration',
+          description: 'The MCP server ID from configuration (fixed)',
+          required: false,
         });
+        
+
       }
     }
 
@@ -292,10 +310,10 @@ export class MCPNodeImpl extends NodeImpl<MCPNode> {
     }
 
     inputs.push({
-      dataType: 'string',
+      dataType: 'object',
       id: 'input' as PortId,
       title: 'Input',
-      description: 'The input to send to the MCP server',
+      description: 'The input object to send to the MCP server',
       required: true,
     });
 
@@ -305,10 +323,10 @@ export class MCPNodeImpl extends NodeImpl<MCPNode> {
   getOutputDefinitions(): NodeOutputDefinition[] {
     return [
       {
-        dataType: 'string',
+        dataType: 'any',
         id: 'output' as PortId,
         title: 'Output',
-        description: 'The response from the MCP server',
+        description: 'The response from the MCP server, can be a string or an object',
       },
       {
         dataType: 'object',
@@ -358,15 +376,23 @@ export class MCPNodeImpl extends NodeImpl<MCPNode> {
         },
       );
     } else {
-      const serverOptions = await this.getServerOptions(context);
       editors.push({
-        type: 'dropdown',
-        label: 'Server ID',
-        dataKey: 'serverId',
+        type: 'string',
+        label: 'Configuration',
+        dataKey: 'config',
         useInputToggleDataKey: 'useEndpointInput',
-        helperMessage: this.getServerHelperMessage(context, serverOptions.length),
-        options: serverOptions,
-      });
+        helperMessage: 'Configuration for the MCP server' });
+
+      if (!this.data.useEndpointInput) {
+        const serverOptions = await this.getServerOptions(context);
+        editors.push({
+          type: 'dropdown',
+          label: 'Server ID',
+          dataKey: 'serverId',
+          helperMessage: this.getServerHelperMessage(context, serverOptions.length),
+          options: serverOptions,
+        });
+      }
     }
 
     return editors;
@@ -416,17 +442,25 @@ export class MCPNodeImpl extends NodeImpl<MCPNode> {
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     try {
-      const input = coerceType(inputs['input' as PortId], 'string');
-      const response = await this.handleCommunication(inputs, input, context);
-      return this.formatSuccessResponse(response);
+        const input = coerceType(inputs['input' as PortId], 'object');
+        const serverId = this.data.communicationMode === 'stdio' 
+            ? coerceType(inputs['serverId' as PortId], 'string') 
+            : this.data.serverId;
+        const config = this.data.communicationMode === 'stdio' 
+            ? inputs['config' as PortId] 
+            : this.data.configuration;
+
+        // Process the inputs as needed
+        const response = await this.handleCommunication(inputs, input, context);
+        return this.formatSuccessResponse(response);
     } catch (error) {
-      return this.formatErrorResponse(error as MCPError);
+        return this.formatErrorResponse(error as MCPError);
     }
   }
 
   private async handleCommunication(
     inputs: Inputs,
-    input: string,
+    input: object,
     context: InternalProcessContext
   ): Promise<{ output: string; metadata: Record<string, unknown> }> {
     if (this.data.communicationMode === 'http') {
@@ -435,7 +469,7 @@ export class MCPNodeImpl extends NodeImpl<MCPNode> {
     return this.handleStdioCommunication(inputs, input, context);
   }
 
-  private async handleHttpCommunication(inputs: Inputs, input: string): Promise<{ output: string; metadata: Record<string, unknown> }> {
+  private async handleHttpCommunication(inputs: Inputs, input: object): Promise<{ output: string; metadata: Record<string, unknown> }> {
     const endpoint = this.data.useEndpointInput
       ? coerceType(inputs['endpoint' as PortId], 'string')
       : this.data.endpoint;
@@ -465,9 +499,18 @@ export class MCPNodeImpl extends NodeImpl<MCPNode> {
 
   private async handleStdioCommunication(
     inputs: Inputs,
-    input: string,
+    input: object,
     context: InternalProcessContext
   ): Promise<{ output: string; metadata: Record<string, unknown> }> {
+    let configFile: object;
+    try {
+      configFile = this.data.useEndpointInput
+        ? JSON.parse(coerceType(inputs['config' as PortId], 'string'))
+        : {};
+    } catch (error) {
+      throw new MCPError(MCPErrorType.INVALID_RESPONSE, 'Invalid format for MCP configuration');
+    }
+
     const serverId = this.data.useEndpointInput
       ? coerceType(inputs['serverId' as PortId], 'string')
       : this.data.serverId;
@@ -483,7 +526,8 @@ export class MCPNodeImpl extends NodeImpl<MCPNode> {
       );
     }
 
-    return handleStdioServerCommunication(serverId, input, this.data.configuration, context.signal, context);
+   
+    return handleStdioServerCommunication(serverId, configFile, input, this.data.configuration, context.signal, context);
   }
 
   private formatSuccessResponse(response: { output: string; metadata: Record<string, unknown> }): Outputs {
@@ -494,7 +538,7 @@ export class MCPNodeImpl extends NodeImpl<MCPNode> {
 
     return {
       ['output' as PortId]: {
-        type: 'string',
+        type: 'any',
         value: response.output ?? '',
       },
       ['metadata' as PortId]: {
