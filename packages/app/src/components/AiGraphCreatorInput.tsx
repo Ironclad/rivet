@@ -108,7 +108,7 @@ export const AiGraphCreatorInput: FC = () => {
           isDisabled={running}
           isInvalid={false}
           isReadOnly={false}
-          placeholder="Enter your prompt here"
+          placeholder="Enter instructions for creating or editing the current graph..."
           value={prompt}
           autoFocus
           onChange={(e) => setPrompt(e.target.value)}

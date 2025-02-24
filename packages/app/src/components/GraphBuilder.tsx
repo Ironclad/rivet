@@ -26,6 +26,7 @@ import { HistoricalGraphNotice } from './HistoricalGraphNotice';
 import { NodeChangesModal, NodeChangesModalRenderer } from './NodeChangesModal';
 import { syncWrapper } from '../utils/syncWrapper';
 import { AiGraphCreatorInput } from './AiGraphCreatorInput';
+import { AiGraphCreatorToggle } from './AiGraphCreatorToggle';
 
 const Container = styled.div`
   position: relative;
@@ -179,6 +180,7 @@ export const GraphBuilder: FC = () => {
         />
         <NodeChangesModalRenderer />
         <AiGraphCreatorInput />
+        <AiGraphCreatorToggle />
       </ErrorBoundary>
     </Container>
   );
