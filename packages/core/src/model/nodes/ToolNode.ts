@@ -36,7 +36,7 @@ export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
   static create(): GptFunctionNode {
     const chartNode: GptFunctionNode = {
       type: 'gptFunction',
-      title: 'GPT Function',
+      title: 'Tool',
       id: nanoid() as NodeId,
       visualData: {
         x: 0,
@@ -44,7 +44,7 @@ export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
         width: 250,
       },
       data: {
-        name: 'newFunction',
+        name: 'newTool',
         description: 'No description provided',
         schema: dedent`
           {
@@ -65,7 +65,7 @@ export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
         id: 'name' as PortId,
         title: 'Name',
         dataType: 'string',
-        description: 'The name of the function that GPT will see as available to call',
+        description: 'The name of the tool that the LLM will see as available to call',
       });
     }
 
@@ -74,7 +74,7 @@ export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
         id: 'description' as PortId,
         title: 'Description',
         dataType: 'string',
-        description: 'The description of the function that GPT will see as available to call',
+        description: 'The description of the tool that the LLM will see as available to call',
       });
     }
 
@@ -83,7 +83,7 @@ export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
         id: 'schema' as PortId,
         title: 'Schema',
         dataType: 'object',
-        description: 'The schema of the function that GPT will see as available to call',
+        description: 'The schema of the tool that the LLM will see as available to call',
       });
     }
 
@@ -112,7 +112,7 @@ export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
         id: 'function' as PortId,
         title: 'Function',
         dataType: 'gpt-function',
-        description: 'The GPT function that can be called by the LLM.',
+        description: 'The tool that can be called by the LLM.',
       },
     ];
   }
@@ -161,10 +161,10 @@ export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
   static getUIData(): NodeUIData {
     return {
       infoBoxBody: dedent`
-        Defines a GPT function, which is a method that the LLM can call in its responses.
+        Defines a tool, which is a method that the LLM can call in its responses.
       `,
-      infoBoxTitle: 'GPT Function Node',
-      contextMenuTitle: 'GPT Function',
+      infoBoxTitle: 'Tool Node',
+      contextMenuTitle: 'Tool',
       group: ['AI'],
     };
   }
@@ -209,4 +209,4 @@ export class GptFunctionNodeImpl extends NodeImpl<GptFunctionNode> {
   }
 }
 
-export const gptFunctionNode = nodeDefinition(GptFunctionNodeImpl, 'GPT Function');
+export const gptFunctionNode = nodeDefinition(GptFunctionNodeImpl, 'Tool');

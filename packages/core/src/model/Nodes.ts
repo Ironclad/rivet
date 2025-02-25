@@ -94,8 +94,8 @@ export * from './nodes/GetGlobalNode.js';
 import { waitForEventNode } from './nodes/WaitForEventNode.js';
 export * from './nodes/WaitForEventNode.js';
 
-import { gptFunctionNode } from './nodes/GptFunctionNode.js';
-export * from './nodes/GptFunctionNode.js';
+import { gptFunctionNode } from './nodes/ToolNode.js';
+export * from './nodes/ToolNode.js';
 
 import { toYamlNode } from './nodes/ToYamlNode.js';
 export * from './nodes/ToYamlNode.js';
