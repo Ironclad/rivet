@@ -510,84 +510,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
 
           const apiEndpoint = configuredEndpoint?.trim() ? configuredEndpoint : defaultApiEndpoint;
 
-          if (useMessageApi && data.enableToolUse) {
-            // Streaming is not supported with tool usage.
-            const response = await callMessageApi({
-              apiEndpoint,
-              apiKey: apiKey ?? '',
-              beta: 'prompt-caching-2024-07-31',
-              ...messageOptions,
-            });
-            const { input_tokens: requestTokens, output_tokens: responseTokens } = response.usage;
-
-            const responseText = response.content
-              .map((c): string | undefined => (c as any).text)
-              .filter(isNotNull)
-              .join('');
-
-            output['response' as PortId] = {
-              type: 'string',
-              value: responseText,
-            };
-
-            const citations = response.content
-              .filter((c): c is ChatMessageTextContentItem => c.type === 'text')
-              .flatMap((c) => c.citations ?? []);
-
-            output['citations' as PortId] = {
-              type: 'object[]',
-              value: citations,
-            };
-
-            output['raw_response' as PortId] = {
-              type: 'object[]',
-              value: response.content,
-            };
-
-            const functionCalls = response.content
-              .filter((content) => (content as any).name && (content as any).id)
-              .map((functionCall: any) => ({
-                name: functionCall.name,
-                arguments: functionCall.input, // Matches OpenAI ChatNode
-                id: functionCall.id,
-              }));
-
-            if (functionCalls.length > 0) {
-              output['function-calls' as PortId] = {
-                type: 'object[]',
-                value: functionCalls,
-              };
-            }
-
-            output['all-messages' as PortId] = {
-              type: 'chat-message[]',
-              value: [
-                ...rivetChatMessages,
-                {
-                  type: 'assistant',
-                  message: responseText,
-                  function_call:
-                    functionCalls.length > 0
-                      ? functionCalls.map((toolCall) => ({
-                          name: toolCall.name,
-                          arguments: JSON.stringify(toolCall.arguments),
-                          id: toolCall.id,
-                        }))[0]
-                      : undefined,
-                  function_calls: functionCalls.map((toolCall) => ({
-                    name: toolCall.name,
-                    arguments: JSON.stringify(toolCall.arguments),
-                    id: toolCall.id,
-                  })),
-                } satisfies ChatMessage,
-              ],
-            };
-
-            output['requestTokens' as PortId] = { type: 'number', value: requestTokens ?? tokenCountEstimate };
-            const responseTokenCount =
-              responseTokens ?? context.tokenizer.getTokenCountForString(responseText, tokenizerInfo);
-            output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
-          } else if (useMessageApi) {
+          if (useMessageApi) {
             // Use the messages API for Claude 3 models
             const chunks = streamMessageApi({
               apiEndpoint,
@@ -601,18 +524,53 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
             const responseParts: string[] = [];
             let requestTokens: number | undefined = undefined;
             let responseTokens: number | undefined = undefined;
-
             const citations: ChatMessageCitation[] = [];
+
+            // Track tool calls
+            const toolCalls: any[] = [];
+            let currentToolCall: any = null;
 
             for await (const chunk of chunks) {
               let completion: string = '';
+
               if (chunk.type === 'content_block_start') {
-                completion = chunk.content_block.text;
+                if (chunk.content_block.type === 'text') {
+                  completion = chunk.content_block.text || '';
+                } else if (chunk.content_block.type === 'tool_use') {
+                  // Initialize a new tool call
+                  currentToolCall = {
+                    id: chunk.content_block.id,
+                    name: chunk.content_block.name,
+                    input: chunk.content_block.input || {},
+                  };
+                }
               } else if (chunk.type === 'content_block_delta') {
                 if (chunk.delta.type === 'text_delta') {
                   completion = chunk.delta.text;
-                } else {
+                } else if (chunk.delta.type === 'input_json_delta') {
+                  // Handle partial JSON updates for tool calls
+                  if (currentToolCall && chunk.delta.partial_json !== undefined) {
+                    // Merge the partial JSON into the current tool call's input
+                    try {
+                      // If it's a valid JSON string, parse it
+                      if (chunk.delta.partial_json && chunk.delta.partial_json.trim()) {
+                        const partialJson = JSON.parse(chunk.delta.partial_json);
+                        currentToolCall.input = { ...currentToolCall.input, ...partialJson };
+                      }
+                    } catch (e) {
+                      // If it's not valid JSON yet, just store it as is
+                      // This handles cases where JSON comes in multiple chunks
+                      currentToolCall.partialInput = chunk.delta.partial_json;
+                    }
+                  }
+                } else if (chunk.delta.type === 'citations_delta') {
                   citations.push(chunk.delta.citation);
+                }
+              } else if (chunk.type === 'content_block_stop') {
+                // When a tool use block stops, add the complete tool call to our array
+                if (currentToolCall) {
+                  toolCalls.push({ ...currentToolCall });
+                  currentToolCall = null; // Reset for the next tool call
                 }
               } else if (chunk.type === 'message_start' && chunk.message?.usage?.input_tokens) {
                 requestTokens = chunk.message.usage.input_tokens;
@@ -620,20 +578,33 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
                 responseTokens = chunk.delta.usage.output_tokens;
               }
 
-              if (!completion) {
-                continue;
+              if (completion) {
+                responseParts.push(completion);
+                output['response' as PortId] = {
+                  type: 'string',
+                  value: responseParts.join('').trim(),
+                };
               }
 
-              responseParts.push(completion);
-              output['response' as PortId] = {
-                type: 'string',
-                value: responseParts.join('').trim(),
-              };
+              // Always update tool calls if we have any
+              if (toolCalls.length > 0) {
+                output['toolCalls' as PortId] = {
+                  type: 'object[]',
+                  value: toolCalls,
+                };
+              }
 
               output['citations' as PortId] = {
                 type: 'object[]',
                 value: citations,
               };
+
+              // Update the final message with both text and tool calls
+              const functionCalls = toolCalls.map((tool) => ({
+                name: tool.name,
+                arguments: JSON.stringify(tool.input),
+                id: tool.id,
+              }));
 
               output['all-messages' as PortId] = {
                 type: 'chat-message[]',
@@ -642,15 +613,17 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
                   {
                     type: 'assistant',
                     message: responseParts.join('').trim(),
-                    function_call: undefined,
-                    function_calls: undefined,
+                    function_call: functionCalls.length === 1 ? functionCalls[0] : undefined,
+                    function_calls: functionCalls.length > 0 ? functionCalls : undefined,
                   } satisfies ChatMessage,
                 ],
               };
+
               context.onPartialOutputs?.(output);
             }
 
-            if (responseParts.length === 0) {
+            // Final processing after stream ends
+            if (responseParts.length === 0 && toolCalls.length === 0) {
               throw new Error('No response from Anthropic');
             }
 
