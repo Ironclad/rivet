@@ -388,10 +388,6 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
   },
 
   async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
-    if (context.executor === 'browser') {
-      throw new Error('This node requires using the Node executor');
-    }
-
     const output: Outputs = {};
     const rawModel = getInputOrData(data, inputs, 'model');
     const overrideModel = getInputOrData(data, inputs, 'overrideModel');

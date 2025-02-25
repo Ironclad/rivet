@@ -328,6 +328,7 @@ export async function* streamChatCompletions({
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
     },
     body: JSON.stringify({
       ...rest,
@@ -381,6 +382,7 @@ export async function callMessageApi({
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
       ...(beta ? { 'anthropic-beta': beta } : {}),
     },
     body: JSON.stringify({
@@ -412,6 +414,7 @@ export async function* streamMessageApi({
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
       ...(beta ? { 'anthropic-beta': beta } : {}),
     },
     body: JSON.stringify({
