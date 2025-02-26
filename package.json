@@ -55,8 +55,7 @@
   },
   "dependencies": {
     "@ironclad/rivet-core": "workspace:^",
-    "@ironclad/rivet-node": "workspace:^",
-    "@modelcontextprotocol/sdk": "^1.5.0"
+    "@ironclad/rivet-node": "workspace:^"
   },
   "dependenciesMeta": {
     "@pnpm/exe@8.8.0": {

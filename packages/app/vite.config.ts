@@ -17,26 +17,7 @@ export default defineConfig({
     preserveSymlinks: true,
     alias: {
       '@ironclad/rivet-core': resolve('../core/src/index.ts'),
-      '@ironclad/trivet': resolve('../trivet/src/index.ts'),
-      // 'node:child_process': resolve('./src/mocks/node-polyfills.ts'),
-      // 'node:process': resolve('./src/mocks/node-polyfills.ts'),
-      // 'child_process': resolve('./src/mocks/node-polyfills.ts'),
-      // 'process': resolve('./src/mocks/node-polyfills.ts'),
-      // 'fs': resolve('./src/mocks/node-polyfills.ts'),
-      // 'path': resolve('./src/mocks/node-polyfills.ts'),
-      // 'os': resolve('./src/mocks/node-polyfills.ts'),
-      // 'stream': resolve('./src/mocks/node-polyfills.ts'),
-      // 'util': resolve('./src/mocks/node-polyfills.ts'),
-      // 'events': resolve('./src/mocks/node-polyfills.ts'),
-      // 'buffer': resolve('./src/mocks/node-polyfills.ts'),
-      // 'crypto': resolve('./src/mocks/node-polyfills.ts'),
-      // 'querystring': resolve('./src/mocks/node-polyfills.ts'),
-      // 'url': resolve('./src/mocks/node-polyfills.ts'),
-      // 'http': resolve('./src/mocks/node-polyfills.ts'),
-      // 'https': resolve('./src/mocks/node-polyfills.ts'),
-      // 'net': resolve('./src/mocks/node-polyfills.ts'),
-      // 'tls': resolve('./src/mocks/node-polyfills.ts'),
-      // 'assert': resolve('./src/mocks/node-polyfills.ts'),
+      '@ironclad/trivet': resolve('../trivet/src/index.ts')
     },
   },
   build: {
@@ -52,10 +33,6 @@ export default defineConfig({
       plugins: [visualizer()],
     },
   },
-  // define: {
-  //   'process.env': {},
-  //   'global': {},
-  // },
   plugins: [
     react(),
     viteTsconfigPaths(),

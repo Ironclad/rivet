@@ -90,7 +90,6 @@ export class NodeNativeApi implements NativeApi {
     } = options;
 
     const resolvedPath = await resolveBaseDir(baseDir, path);
-    console.log('Reading directory from path:', resolvedPath);
 
     let results: string[] = [];
     if (recursive) {
@@ -127,21 +126,18 @@ export class NodeNativeApi implements NativeApi {
 
   async readTextFile(path: string, baseDir?: BaseDir): Promise<string> {
     const resolvedPath = await resolveBaseDir(baseDir, path);
-    console.log('Reading file from path:', resolvedPath);
     const result = await readFile(resolvedPath, 'utf-8');
     return result;
   }
 
   async readBinaryFile(path: string, baseDir?: BaseDir): Promise<Blob> {
     const resolvedPath = await resolveBaseDir(baseDir, path);
-    console.log('Reading binary file from path:', resolvedPath);
     const result = await readFile(resolvedPath);
     return new Blob([result]);
   }
 
   async writeTextFile(path: string, data: string, baseDir?: BaseDir): Promise<void> {
     const resolvedPath = await resolveBaseDir(baseDir, path);
-    console.log('Writing file to path:', resolvedPath);
     await writeFile(resolvedPath, data, 'utf-8');
   }
 

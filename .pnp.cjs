@@ -69,7 +69,6 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@ironclad/rivet-core", "workspace:packages/core"],\
           ["@ironclad/rivet-node", "workspace:packages/node"],\
-          ["@modelcontextprotocol/sdk", "npm:1.5.0"],\
           ["@octokit/rest", "npm:20.0.2"],\
           ["@swc/core", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:1.3.94"],\
           ["@types/eslint", "npm:8.44.6"],\
@@ -6799,7 +6798,6 @@ const RAW_RUNTIME_STATE =
           ["@ironclad/rivet", "workspace:."],\
           ["@ironclad/rivet-core", "workspace:packages/core"],\
           ["@ironclad/rivet-node", "workspace:packages/node"],\
-          ["@modelcontextprotocol/sdk", "npm:1.5.0"],\
           ["@octokit/rest", "npm:20.0.2"],\
           ["@swc/core", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:1.3.94"],\
           ["@types/eslint", "npm:8.44.6"],\
