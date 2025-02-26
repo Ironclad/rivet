@@ -15,10 +15,9 @@ export default defineConfig({
   },
   resolve: {
     preserveSymlinks: true,
-
     alias: {
       '@ironclad/rivet-core': resolve('../core/src/index.ts'),
-      '@ironclad/trivet': resolve('../trivet/src/index.ts'),
+      '@ironclad/trivet': resolve('../trivet/src/index.ts')
     },
   },
   build: {
