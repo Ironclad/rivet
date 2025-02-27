@@ -237,8 +237,8 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
       outputs.push({
         dataType: 'object[]',
         id: 'function-calls' as PortId,
-        title: 'Function Calls',
-        description: 'The function calls that were made, if any.',
+        title: 'Tool Calls',
+        description: 'The tool calls that were made, if any.',
       });
     }
 
@@ -588,7 +588,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
 
               // Always update tool calls if we have any
               if (toolCalls.length > 0) {
-                output['toolCalls' as PortId] = {
+                output['function-calls' as PortId] = {
                   type: 'object[]',
                   value: toolCalls,
                 };
