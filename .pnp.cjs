@@ -6861,6 +6861,7 @@ const RAW_RUNTIME_STATE =
           ["@floating-ui/react", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:0.26.1"],\
           ["@ironclad/rivet-core", "workspace:packages/core"],\
           ["@ironclad/trivet", "workspace:packages/trivet"],\
+          ["@modelcontextprotocol/sdk", "npm:1.5.0"],\
           ["@recoiljs/refine", "npm:0.1.1"],\
           ["@swc/core", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:1.3.94"],\
           ["@tanstack/react-query", "virtual:388c29633752d7c364e0487c276ae72861ce5d69c069bff16a49b35801303d87d39cb24723bbac1721c48df59f346575324fe3c6de8ead4fb7d83d6ae4a0e521#npm:5.4.3"],\
@@ -7059,7 +7060,9 @@ const RAW_RUNTIME_STATE =
           ["@google-cloud/vertexai", "npm:0.1.3"],\
           ["@google/generative-ai", "npm:0.21.0"],\
           ["@huggingface/inference", "npm:2.6.4"],\
+          ["@modelcontextprotocol/sdk", "npm:1.5.0"],\
           ["@swc/core", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:1.3.94"],\
+          ["@tauri-apps/api", "npm:1.6.0"],\
           ["@types/crypto-js", "npm:4.1.3"],\
           ["@types/eslint", "npm:8.44.6"],\
           ["@types/jsonpath-plus", "npm:5.0.4"],\
@@ -7490,6 +7493,20 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@mdx-js-util-npm-1.6.22-8e56495eac-4b393907e3.zip/node_modules/@mdx-js/util/",\
         "packageDependencies": [\
           ["@mdx-js/util", "npm:1.6.22"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@modelcontextprotocol/sdk", [\
+      ["npm:1.5.0", {\
+        "packageLocation": "./.yarn/cache/@modelcontextprotocol-sdk-npm-1.5.0-4c6da5d24b-1ed6083cff.zip/node_modules/@modelcontextprotocol/sdk/",\
+        "packageDependencies": [\
+          ["@modelcontextprotocol/sdk", "npm:1.5.0"],\
+          ["content-type", "npm:1.0.5"],\
+          ["eventsource", "npm:3.0.5"],\
+          ["raw-body", "npm:3.0.0"],\
+          ["zod", "npm:3.24.2"],\
+          ["zod-to-json-schema", "virtual:4c6da5d24b66868a94324a26e5973905b4c9962ad2f4be92ecf2e072ac2cb79ff3defeafc24cc6bfb44d559666d16960080968bd4b8531768ba631de8547ebe4#npm:3.24.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -9168,6 +9185,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@tauri-apps-api-npm-1.5.1-8d9396c3a0-ee8a1e8b0e.zip/node_modules/@tauri-apps/api/",\
         "packageDependencies": [\
           ["@tauri-apps/api", "npm:1.5.1"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:1.6.0", {\
+        "packageLocation": "./.yarn/cache/@tauri-apps-api-npm-1.6.0-0f6545399d-98015a9391.zip/node_modules/@tauri-apps/api/",\
+        "packageDependencies": [\
+          ["@tauri-apps/api", "npm:1.6.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -16284,6 +16308,25 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["eventsource", [\
+      ["npm:3.0.5", {\
+        "packageLocation": "./.yarn/cache/eventsource-npm-3.0.5-37f5fe4794-ac55b78d6f.zip/node_modules/eventsource/",\
+        "packageDependencies": [\
+          ["eventsource", "npm:3.0.5"],\
+          ["eventsource-parser", "npm:3.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["eventsource-parser", [\
+      ["npm:3.0.0", {\
+        "packageLocation": "./.yarn/cache/eventsource-parser-npm-3.0.0-491e8c3c27-8215adf5d8.zip/node_modules/eventsource-parser/",\
+        "packageDependencies": [\
+          ["eventsource-parser", "npm:3.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["execa", [\
       ["npm:5.1.1", {\
         "packageLocation": "./.yarn/cache/execa-npm-5.1.1-191347acf5-8ada91f2d7.zip/node_modules/execa/",\
@@ -23308,6 +23351,17 @@ const RAW_RUNTIME_STATE =
           ["unpipe", "npm:1.0.0"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:3.0.0", {\
+        "packageLocation": "./.yarn/cache/raw-body-npm-3.0.0-cd8403b401-2443429bbb.zip/node_modules/raw-body/",\
+        "packageDependencies": [\
+          ["raw-body", "npm:3.0.0"],\
+          ["bytes", "npm:3.1.2"],\
+          ["http-errors", "npm:2.0.0"],\
+          ["iconv-lite", "npm:0.6.3"],\
+          ["unpipe", "npm:1.0.0"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["rc", [\
@@ -28489,6 +28543,37 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/yocto-queue-npm-0.1.0-c6c9a7db29-f77b3d8d00.zip/node_modules/yocto-queue/",\
         "packageDependencies": [\
           ["yocto-queue", "npm:0.1.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["zod", [\
+      ["npm:3.24.2", {\
+        "packageLocation": "./.yarn/cache/zod-npm-3.24.2-ab80dc0969-604c62a8cf.zip/node_modules/zod/",\
+        "packageDependencies": [\
+          ["zod", "npm:3.24.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["zod-to-json-schema", [\
+      ["npm:3.24.1", {\
+        "packageLocation": "./.yarn/cache/zod-to-json-schema-npm-3.24.1-5292a81488-d31fd05b67.zip/node_modules/zod-to-json-schema/",\
+        "packageDependencies": [\
+          ["zod-to-json-schema", "npm:3.24.1"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:4c6da5d24b66868a94324a26e5973905b4c9962ad2f4be92ecf2e072ac2cb79ff3defeafc24cc6bfb44d559666d16960080968bd4b8531768ba631de8547ebe4#npm:3.24.1", {\
+        "packageLocation": "./.yarn/__virtual__/zod-to-json-schema-virtual-50c2a0b5d5/0/cache/zod-to-json-schema-npm-3.24.1-5292a81488-d31fd05b67.zip/node_modules/zod-to-json-schema/",\
+        "packageDependencies": [\
+          ["zod-to-json-schema", "virtual:4c6da5d24b66868a94324a26e5973905b4c9962ad2f4be92ecf2e072ac2cb79ff3defeafc24cc6bfb44d559666d16960080968bd4b8531768ba631de8547ebe4#npm:3.24.1"],\
+          ["@types/zod", null],\
+          ["zod", "npm:3.24.2"]\
+        ],\
+        "packagePeers": [\
+          "@types/zod",\
+          "zod"\
         ],\
         "linkType": "HARD"\
       }]\
