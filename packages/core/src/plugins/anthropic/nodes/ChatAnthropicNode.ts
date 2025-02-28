@@ -526,9 +526,16 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
             let responseTokens: number | undefined = undefined;
             const citations: ChatMessageCitation[] = [];
 
+            type ToolCall = {
+              id: string;
+              name: string;
+              input: object;
+            };
+
             // Track tool calls
-            const toolCalls: any[] = [];
-            let currentToolCall: any = null;
+            const toolCalls: ToolCall[] = [];
+            let currentToolCall: ToolCall | null = null;
+            let accumulatedJsonString = '';
 
             for await (const chunk of chunks) {
               let completion: string = '';
@@ -537,40 +544,46 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
                 if (chunk.content_block.type === 'text') {
                   completion = chunk.content_block.text || '';
                 } else if (chunk.content_block.type === 'tool_use') {
-                  // Initialize a new tool call
                   currentToolCall = {
                     id: chunk.content_block.id,
                     name: chunk.content_block.name,
                     input: chunk.content_block.input || {},
                   };
+                  accumulatedJsonString = '';
                 }
               } else if (chunk.type === 'content_block_delta') {
                 if (chunk.delta.type === 'text_delta') {
                   completion = chunk.delta.text;
                 } else if (chunk.delta.type === 'input_json_delta') {
-                  // Handle partial JSON updates for tool calls
-                  if (currentToolCall && chunk.delta.partial_json !== undefined) {
-                    // Merge the partial JSON into the current tool call's input
+                  if (currentToolCall) {
+                    accumulatedJsonString += chunk.delta.partial_json || '';
+
                     try {
-                      // If it's a valid JSON string, parse it
-                      if (chunk.delta.partial_json && chunk.delta.partial_json.trim()) {
-                        const partialJson = JSON.parse(chunk.delta.partial_json);
-                        currentToolCall.input = { ...currentToolCall.input, ...partialJson };
-                      }
+                      // Try to parse the accumulated JSON
+                      const parsedJson = JSON.parse(accumulatedJsonString);
+                      currentToolCall.input = parsedJson;
+                      accumulatedJsonString = '';
                     } catch (e) {
-                      // If it's not valid JSON yet, just store it as is
-                      // This handles cases where JSON comes in multiple chunks
-                      currentToolCall.partialInput = chunk.delta.partial_json;
+                      // Not valid JSON yet, keep accumulating
                     }
                   }
                 } else if (chunk.delta.type === 'citations_delta') {
                   citations.push(chunk.delta.citation);
                 }
               } else if (chunk.type === 'content_block_stop') {
-                // When a tool use block stops, add the complete tool call to our array
                 if (currentToolCall) {
+                  if (accumulatedJsonString) {
+                    try {
+                      const parsedJson = JSON.parse(accumulatedJsonString);
+                      currentToolCall.input = parsedJson;
+                    } catch (e) {
+                      console.warn('Failed to parse tool call JSON input:', accumulatedJsonString);
+                    }
+                  }
+
                   toolCalls.push({ ...currentToolCall });
-                  currentToolCall = null; // Reset for the next tool call
+                  currentToolCall = null;
+                  accumulatedJsonString = '';
                 }
               } else if (chunk.type === 'message_start' && chunk.message?.usage?.input_tokens) {
                 requestTokens = chunk.message.usage.input_tokens;
@@ -580,17 +593,26 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
 
               if (completion) {
                 responseParts.push(completion);
-                output['response' as PortId] = {
-                  type: 'string',
-                  value: responseParts.join('').trim(),
-                };
               }
 
-              // Always update tool calls if we have any
+              output['response' as PortId] = {
+                type: 'string',
+                value: responseParts.join('').trim(),
+              };
+
               if (toolCalls.length > 0) {
                 output['function-calls' as PortId] = {
                   type: 'object[]',
-                  value: toolCalls,
+                  value: toolCalls.map((tool) => ({
+                    id: tool.id,
+                    name: tool.name,
+                    arguments: tool.input,
+                  })),
+                };
+              } else {
+                output['function-calls' as PortId] = {
+                  type: 'control-flow-excluded',
+                  value: undefined,
                 };
               }
 
@@ -599,10 +621,10 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
                 value: citations,
               };
 
-              // Update the final message with both text and tool calls
+              // Format function calls for the ChatMessage interface
               const functionCalls = toolCalls.map((tool) => ({
                 name: tool.name,
-                arguments: JSON.stringify(tool.input),
+                arguments: typeof tool.input === 'object' ? JSON.stringify(tool.input) : tool.input,
                 id: tool.id,
               }));
 
@@ -622,9 +644,9 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
               context.onPartialOutputs?.(output);
             }
 
-            // Final processing after stream ends
+            // Final validation
             if (responseParts.length === 0 && toolCalls.length === 0) {
-              throw new Error('No response from Anthropic');
+              throw new Error('No response or tool calls received from Anthropic');
             }
 
             output['requestTokens' as PortId] = { type: 'number', value: requestTokens ?? tokenCountEstimate };
