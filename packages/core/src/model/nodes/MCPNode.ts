@@ -119,7 +119,7 @@ async function handleStdioServerCommunication(
   context: InternalProcessContext | RivetUIContext,
 ): Promise<{ output: string; metadata: Record<string, unknown> }> {
   let mcpConfig: MCPConfig;
-  let serverConfig: MCPServerConfigWithId;
+  let serverConfig: MCPServerConfigWithId | { config: undefined; serverId: string };
 
   if (Object.keys(configFile).length === 0) {
     mcpConfig = await loadMCPConfiguration(context);
@@ -129,7 +129,7 @@ async function handleStdioServerCommunication(
     };
   } else {
     serverConfig = {
-      config: (configFile as MCPConfig).mcpServers[serverId],
+      config: (configFile as MCPConfig).mcpServers?.[serverId],
       serverId,
     };
   }
@@ -151,7 +151,6 @@ async function handleStdioServerCommunication(
       { name: 'mcp-client', version: '1.0.0' },
       { capabilities: { prompts: {}, resources: {}, tools: {} } },
     );
-
     await client.connect(transport);
 
     const toolInput = typeof input === 'string' ? JSON.parse(input) : input;
@@ -197,8 +196,8 @@ async function fetchServerTools(
   context: InternalProcessContext | RivetUIContext,
 ): Promise<MCPServerInfo> {
   const mcpConfig = await loadMCPConfiguration(context);
-  const serverConfig: MCPServerConfigWithId = {
-    config: mcpConfig.mcpServers[serverId],
+  const serverConfig: MCPServerConfigWithId | { config: undefined; serverId: string } = {
+    config: mcpConfig.mcpServers?.[serverId],
     serverId,
   };
 
@@ -395,10 +394,6 @@ export class MCPNodeImpl extends NodeImpl<MCPNode> {
         type: 'toggle',
         label: 'Use Configuration and Server ID Inputs',
         dataKey: 'useConfigurationInput',
-        onChange: (newValue) => {
-          this.data.useServerIdInput = newValue;
-          return this.data;
-        },
         helperMessage: 'Whether to use inputs for configuration and server ID',
       });
 
@@ -466,6 +461,8 @@ export class MCPNodeImpl extends NodeImpl<MCPNode> {
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     try {
+      this.data.useServerIdInput = this.data.useConfigurationInput;
+      
       const input = coerceType(inputs['input' as PortId], 'object');
       const serverId =
         this.data.communicationMode === 'stdio' && this.data.useConfigurationInput
@@ -619,6 +616,12 @@ export class MCPNodeImpl extends NodeImpl<MCPNode> {
       contextMenuTitle: 'MCP',
       group: ['AI', 'Integration'],
     };
+  }
+
+  onDataChanged(oldData: MCPNodeData, newData: MCPNodeData): void {
+    if (oldData.useConfigurationInput !== newData.useConfigurationInput) {
+      this.data.useServerIdInput = newData.useConfigurationInput;
+    }
   }
 
   async updateAvailableTools(context: InternalProcessContext): Promise<void> {
