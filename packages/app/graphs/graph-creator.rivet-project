@@ -941,6 +941,144 @@ data:
             dataType: gpt-function[]
             id: output
           visualData: 821.7427071059172/780.4468464386234/300/62//
+    Q1I0B31c3UNKRSscuOcMm:
+      metadata:
+        description: ""
+        id: Q1I0B31c3UNKRSscuOcMm
+        name: Chat
+      nodes:
+        '[6Sq4eXr-F9u4LCQRCQSXy]:match "Match"':
+          data:
+            cases:
+              - openai
+              - anthropic
+          outgoingConnections:
+            - case1->"Chat" BcmMNftAd1gGeS8wxkQoy/systemPrompt
+            - case2->"Chat (Anthropic)" BXmnIPObcoDx2Iaqz8sl2/system
+          visualData: 181.76672343915334/211.65480179211588/280/13//
+        '[7Q7CZ-pKFyKlFx2nGbCdP]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            defaultValue: claude-3-7-sonnet-latest
+            id: model
+          outgoingConnections:
+            - data->"Chat (Anthropic)" BXmnIPObcoDx2Iaqz8sl2/model
+            - data->"Chat" BcmMNftAd1gGeS8wxkQoy/model
+          visualData: -275.067172362353/504.3906623933242/300/9//
+        '[BXmnIPObcoDx2Iaqz8sl2]:chatAnthropic "Chat (Anthropic)"':
+          data:
+            cache: false
+            enableCitations: false
+            enableToolUse: true
+            endpoint: ""
+            maxTokens: 1024
+            model: claude-3-7-sonnet-latest
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useEndpointInput: false
+            useMaxTokensInput: false
+            useModelInput: true
+            useOverrideModelInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopKInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+          outgoingConnections:
+            - all-messages->"Coalesce" iem_GrN-_h9d4vwBMci51/input2
+            - function-calls->"Coalesce" EJXEibAyApSK3e9K9vjg-/input2
+          visualData: 778.154380459147/609.5846628131387/305/22//
+        '[BcmMNftAd1gGeS8wxkQoy]:chat "Chat"':
+          data:
+            additionalParameters: []
+            cache: false
+            enableFunctionUse: true
+            headers: []
+            maxTokens: 2044
+            modalitiesIncludeAudio: false
+            modalitiesIncludeText: false
+            model: gpt-4o-mini
+            outputUsage: false
+            parallelFunctionCalling: true
+            reasoningEffort: ""
+            stop: ""
+            temperature: 0.2
+            toolChoice: ""
+            top_p: 1
+            useAdditionalParametersInput: false
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: true
+            usePredictedOutput: false
+            usePresencePenaltyInput: false
+            useReasoningEffortInput: false
+            useServerTokenCalculation: true
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - all-messages->"Coalesce" iem_GrN-_h9d4vwBMci51/input1
+            - function-calls->"Coalesce" EJXEibAyApSK3e9K9vjg-/input1
+          visualData: 811.0888906043161/247.4176293052908/230/14//
+        '[EJXEibAyApSK3e9K9vjg-]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" JFz873DhRP8ss-oeqHafU/value
+          visualData: 1411.7492177241127/583.0811701435468/180/21//
+        '[JFz873DhRP8ss-oeqHafU]:graphOutput "Graph Output"':
+          data:
+            dataType: object[]
+            id: function-calls
+          visualData: 1720.3405803121937/574.2362849489112/300/19//
+        '[KV4Ilhw9S90ZCfo_X2Lpx]:graphInput "Graph Input"':
+          data:
+            dataType: gpt-function[]
+            id: functions
+          outgoingConnections:
+            - data->"Chat (Anthropic)" BXmnIPObcoDx2Iaqz8sl2/tools
+            - data->"Chat" BcmMNftAd1gGeS8wxkQoy/functions
+          visualData: -275.067172362353/704.3906623933242/300/9//
+        '[_skuDHO-AhK2Ezc6yOB3u]:graphInput "Graph Input"':
+          data:
+            dataType: chat-message[]
+            id: prompt
+          outgoingConnections:
+            - data->"Chat (Anthropic)" BXmnIPObcoDx2Iaqz8sl2/prompt
+            - data->"Chat" BcmMNftAd1gGeS8wxkQoy/prompt
+          visualData: -275.067172362353/904.3906623933242/300/9//
+        '[iem_GrN-_h9d4vwBMci51]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" jIu7DQnG2ajlgo9LxHKzz/value
+          visualData: 1408.7247744535357/368.34569793257793/180/18//
+        '[jIu7DQnG2ajlgo9LxHKzz]:graphOutput "Graph Output"':
+          data:
+            dataType: chat-message[]
+            id: all-messages
+          visualData: 1701.1857729318726/346.008147756859/300/17//
+        '[vih1p2KNuJh2get62XzhG]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: systemPrompt
+          outgoingConnections:
+            - data->"Match" 6Sq4eXr-F9u4LCQRCQSXy/value
+          visualData: -275.067172362353/304.3906623933242/300/9//
+        '[xhifsATCLcQnOPeyP_ITw]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            defaultValue: anthropic
+            id: api
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Match" 6Sq4eXr-F9u4LCQRCQSXy/input
+          visualData: -290.5820986290441/97.37103184525296/330/11//
     QmZnWsOLqDt0orLK9mwyq:
       metadata:
         description: ""
@@ -1430,6 +1568,14 @@ data:
           outgoingConnections:
             - data->"Loop Until" yTUWxJP4rllqx5XkOnp0D/model
           visualData: 4692.87233319327/2036.1186772095705/330/27//
+        '[sRphbDbsmASF7IeKMawlA]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: api
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Loop Until" yTUWxJP4rllqx5XkOnp0D/api
+          visualData: 4688.30946224796/1862.3673821644313/330/29//
         '[yTUWxJP4rllqx5XkOnp0D]:loopUntil "Loop Until"':
           data:
             conditionType: allOutputsSet
@@ -1508,6 +1654,16 @@ data:
               </functions>
 
 
+              Here is helpful information on working with Rivet graphs:
+
+
+              <help>
+
+              {{help}}
+
+              </help>
+
+
               Brainstorm ways to accomplish the following task:
 
 
@@ -1525,10 +1681,19 @@ data:
           visualData: -62.6415442056051/897.0505467606282/330/null//
         '[gbXw1WOJC1HUkIqT2HN7U]:text "Text"':
           data:
-            text: I want to delete the extra nodes
+            text: I want to have a calculator AI agent that runs function calls to calculate
+              steps
           outgoingConnections:
             - output->"Graph Input" sQ5VE-3KCmznYo1J5py0g/default
           visualData: -471.49992166064675/644.5203724501614/330/15//
+        '[qNh6QltA6Lb0-iwjN_0iT]:subGraph "Subgraph"':
+          data:
+            graphId: gArlO_-PftskEfEPHc9j-
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - output->"Text" KFGUplLNTsxLNMsvmiOnk/help
+          visualData: 173.27675488915008/784.421805970389/330/17//
         '[qYnYFY9Fbowp_jLvWEc5r]:graphOutput "Graph Output"':
           data:
             dataType: string
@@ -1547,10 +1712,11 @@ data:
             additionalParameters: []
             cache: false
             enableFunctionUse: false
+            headers: []
             maxTokens: 1024
             modalitiesIncludeAudio: false
             modalitiesIncludeText: false
-            model: gpt-4o-mini
+            model: gpt-4o
             outputUsage: false
             parallelFunctionCalling: true
             reasoningEffort: ""
@@ -1865,6 +2031,11 @@ data:
             - message->"Text" fH6k2cjPkUWeXbNlVs1n6/input
           splitRunMax: 50
           visualData: 2005.26872224941/543.4784880437732/355/57//
+        '[2ftwj8CDXUcLDz-t0l9ga]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: api
+          visualData: -52.48136252828813/-370.2847507322745/330/84//
         '[7dU1_alxlz-eIRNL4IWUe]:graphOutput "Graph Output"':
           data:
             dataType: string
@@ -1872,7 +2043,7 @@ data:
           visualData: -416.70135313384867/917.2251986350482/330/null//
         '[8Rd20PR_oasOBJO98i-LP]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
-            - prompt->"Chat" wFHe0yhVFbC2makMpT-WL/prompt
+            - prompt->"Subgraph" T0nduuBs9Girl8YpbIK9Q/prompt
           visualData: 156.75052288406812/492.30957337179973/523.8566745509079/71//
         '[BPt5fPBc8jmzUd4SrR_ee]:readDirectory "Read Directory"':
           data:
@@ -1898,7 +2069,7 @@ data:
             useErrorOutput: false
           outgoingConnections:
             - output->"Text" sFByS2knXHjq_Dc0ObwSA/help
-          visualData: -207.18287836017882/154.7173877807871/330/74//
+          visualData: -295.21756239489844/127.92422307456809/330/86//
         '[FW59LI8kmoFU38oNEFImN]:coalesce "Coalesce"':
           outgoingConnections:
             - output->"External Call" bMAzJbOPDqPhz37-_L-aM/arguments
@@ -1936,7 +2107,7 @@ data:
             useAsGraphPartialOutput: false
             useErrorOutput: false
           outgoingConnections:
-            - output->"Chat" wFHe0yhVFbC2makMpT-WL/functions
+            - output->"Subgraph" T0nduuBs9Girl8YpbIK9Q/functions
           visualData: 343.72774001720757/818.2628787587782/330/65//
         '[Qv66Vf-LSLXWcZ4jmczXs]:graphInput "Graph Input"':
           data:
@@ -1944,9 +2115,21 @@ data:
             id: model
             useDefaultValueInput: false
           outgoingConnections:
-            - data->"Chat" wFHe0yhVFbC2makMpT-WL/model
             - data->"Graph Output" MMO0U6L19Jt8hZ2TaLEo9/value
-          visualData: -493.31963326097434/-65.62035793481971/330/null//
+            - data->"Subgraph" T0nduuBs9Girl8YpbIK9Q/model
+          visualData: -497.6166372667918/-124.34607934765899/330/85//
+        '[T0nduuBs9Girl8YpbIK9Q]:subGraph "Subgraph"':
+          data:
+            graphId: Q1I0B31c3UNKRSscuOcMm
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - all-messages->"Assemble Prompt" ow1008xcfQ03MBc-kJyQD/message1
+            - all-messages->"If" Z5qy7nB76IVy2Zj_HU0D9/value
+            - function-calls->"If" IpB9s4ttbNGzYsD2l8DPN/if
+            - function-calls->"If" IpB9s4ttbNGzYsD2l8DPN/value
+            - function-calls->"If" Z5qy7nB76IVy2Zj_HU0D9/if
+          visualData: 755.3183118437032/324.29049717806504/330/82//
         '[TxbYSPRcg0R8BKnOvaVV5]:match "Match"':
           data:
             cases:
@@ -1999,12 +2182,21 @@ data:
           outgoingConnections:
             - falseOutput->"Graph Output" ITkxP4aiS91UqNdKSIMDD/value
           visualData: 3405.034236550739/829.9078183093532/155/57//
+        '[luWgdxg_GaPTm94v20yFm]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: api
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Graph Output" 2ftwj8CDXUcLDz-t0l9ga/value
+            - data->"Subgraph" T0nduuBs9Girl8YpbIK9Q/api
+          visualData: -505.09911780773234/-307.26202531361776/330/83//
         '[nTL6xJSmQZR05BXue76gH]:text "Text"':
           data:
             text: not finished
           outgoingConnections:
             - output->"If" hqyv1T4DHKLWrUGHU90Lq/value
-          visualData: 2932.8295610159353/1013.2498571343193/330/57//
+          visualData: 2900.929682736813/1014.7688989571346/330/87//
         '[nyTLkLu_jpPwz984FoDII]:graphInput "Graph Input"':
           data:
             dataType: chat-message[]
@@ -2060,7 +2252,7 @@ data:
 
               {{help}}
           outgoingConnections:
-            - output->"Chat" wFHe0yhVFbC2makMpT-WL/systemPrompt
+            - output->"Subgraph" T0nduuBs9Girl8YpbIK9Q/systemPrompt
           visualData: 194.97774721221572/-9.411359809503006/330/26//
         '[tEJHVYS29o5twVfp9Nxx1]:raiseEvent "Raise Event"':
           data:
@@ -2087,46 +2279,6 @@ data:
           outgoingConnections:
             - output->"Assemble Prompt" 8Rd20PR_oasOBJO98i-LP/message2
           visualData: -220.6889317905332/587.6583310431927/280/67//
-        '[wFHe0yhVFbC2makMpT-WL]:chat "Chat"':
-          data:
-            additionalParameters: []
-            cache: false
-            enableFunctionUse: true
-            headers: []
-            maxTokens: 2044
-            modalitiesIncludeAudio: false
-            modalitiesIncludeText: false
-            model: gpt-4o-mini
-            outputUsage: false
-            parallelFunctionCalling: true
-            reasoningEffort: ""
-            stop: ""
-            temperature: 0.2
-            toolChoice: ""
-            top_p: 1
-            useAdditionalParametersInput: false
-            useAsGraphPartialOutput: true
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: true
-            usePredictedOutput: false
-            usePresencePenaltyInput: false
-            useReasoningEffortInput: false
-            useServerTokenCalculation: true
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-            useUserInput: false
-          outgoingConnections:
-            - all-messages->"Assemble Prompt" ow1008xcfQ03MBc-kJyQD/message1
-            - all-messages->"If" Z5qy7nB76IVy2Zj_HU0D9/value
-            - function-calls->"If" IpB9s4ttbNGzYsD2l8DPN/if
-            - function-calls->"If" IpB9s4ttbNGzYsD2l8DPN/value
-            - function-calls->"If" Z5qy7nB76IVy2Zj_HU0D9/if
-          visualData: 807/345/230/6//
     rbKmsS2zrTbG42yeQBxOi:
       metadata:
         description: ""
@@ -2148,4 +2300,7 @@ data:
     description: ""
     id: wHxyeNIJLo2ZrylGbkznh
     title: Rivet Graph Creator
-  plugins: []
+  plugins:
+    - id: anthropic
+      name: Anthropic
+      type: built-in

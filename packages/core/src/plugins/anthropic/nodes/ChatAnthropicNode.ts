@@ -25,10 +25,8 @@ import {
   type Claude3ChatMessageContentPart,
   streamMessageApi,
   type ChatMessageOptions,
-  callMessageApi,
   type Claude3ChatMessageTextContentPart,
   type SystemPrompt,
-  type ChatMessageTextContentItem,
   type ChatMessageCitation,
   type Claude3ChatMessageToolResultContentPart,
 } from '../anthropic.js';

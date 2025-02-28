@@ -31,7 +31,7 @@ const styles = css`
     padding: 8px;
 
     .model-selector {
-      min-width: 150px;
+      min-width: 200px;
     }
   }
 
@@ -43,9 +43,11 @@ const styles = css`
 `;
 
 const modelOptions = [
-  { label: 'GPT-4o', value: 'gpt-4o' },
-  { label: 'GPT-4o mini', value: 'gpt-4o-mini' },
-  { label: 'o3-mini', value: 'o3-mini' },
+  { label: 'OpenAI: GPT-4o', value: 'openai:gpt-4o' },
+  { label: 'OpenAI: GPT-4o mini', value: 'openai:gpt-4o-mini' },
+  { label: 'OpenAI: o3-mini', value: 'openai:o3-mini' },
+  { label: 'Anthropic: Claude 3.7 Sonnet', value: 'anthropic:claude-3-7-sonnet-latest' },
+  { label: 'Anthropic: Claude 3.5 Sonnet', value: 'anthropic:claude-3-5-sonnet-latest' },
 ] as const;
 
 export const showAiGraphCreatorInputState = atom(false);
