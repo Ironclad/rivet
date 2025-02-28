@@ -36,7 +36,7 @@ import { useNodeIO } from '../hooks/useGetNodeIO';
 import { Tooltip } from './Tooltip';
 import { getGlobalDataRef } from '../utils/globals';
 
-export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
+export const NodeOutput: FC<{ node: ChartNode; isHovered: boolean }> = memo(({ node, isHovered }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   useDependsOnPlugins();
 
@@ -57,7 +57,7 @@ export const NodeOutput: FC<{ node: ChartNode }> = memo(({ node }) => {
         <NodeFullscreenOutput node={node} />
       </FullScreenModal>
       <div onWheel={handleWheel}>
-        <NodeOutputBase node={node} onOpenFullscreenModal={() => setIsModalOpen(true)} />
+        <NodeOutputBase node={node} onOpenFullscreenModal={() => setIsModalOpen(true)} isHovered={isHovered} />
       </div>
     </div>
   );
@@ -288,7 +288,7 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
   if (FullscreenOutput) {
     body = <FullscreenOutput node={node} />;
   } else if (Output) {
-    body = <Output node={node} />;
+    body = <Output node={node} isCompact={false} />;
   } else if (data.splitOutputData) {
     const outputs = orderBy(
       entries(data.splitOutputData).map(([key, value]) => ({ key, value })),
@@ -301,13 +301,14 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
           FullscreenOutputSimple ? (
             <FullscreenOutputSimple key={`outputs-${key}`} outputs={value} renderMarkdown={renderMarkdown} />
           ) : OutputSimple ? (
-            <OutputSimple key={`outputs-${key}`} outputs={value} />
+            <OutputSimple key={`outputs-${key}`} outputs={value} isCompact={false} />
           ) : (
             <RenderDataOutputs
               key={`outputs-${key}`}
               definitions={io.outputDefinitions}
               outputs={value}
               renderMarkdown={renderMarkdown}
+              isCompact={false}
             />
           ),
         )}
@@ -317,12 +318,13 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
     body = FullscreenOutputSimple ? (
       <FullscreenOutputSimple outputs={data.outputData!} renderMarkdown={renderMarkdown} />
     ) : OutputSimple ? (
-      <OutputSimple outputs={data.outputData!} />
+      <OutputSimple outputs={data.outputData!} isCompact={false} />
     ) : (
       <RenderDataOutputs
         definitions={io.outputDefinitions}
         outputs={data.outputData!}
         renderMarkdown={renderMarkdown}
+        isCompact={false}
       />
     );
   }
@@ -366,11 +368,12 @@ const NodeFullscreenOutput: FC<{ node: ChartNode }> = ({ node }) => {
   );
 };
 
-const NodeOutputBase: FC<{ node: ChartNode; children?: ReactNode; onOpenFullscreenModal?: () => void }> = ({
-  node,
-  children,
-  onOpenFullscreenModal,
-}) => {
+const NodeOutputBase: FC<{
+  node: ChartNode;
+  children?: ReactNode;
+  onOpenFullscreenModal?: () => void;
+  isHovered: boolean;
+}> = ({ node, onOpenFullscreenModal, isHovered }) => {
   const output = useAtomValue(lastRunDataState(node.id));
   if (!output?.length) {
     return null;
@@ -384,13 +387,19 @@ const NodeOutputBase: FC<{ node: ChartNode; children?: ReactNode; onOpenFullscre
           data={output[0]!.data}
           processId={output[0]!.processId}
           onOpenFullscreenModal={onOpenFullscreenModal}
+          isHovered={isHovered}
         />
       </div>
     );
   } else {
     return (
       <div className="node-output multi">
-        <NodeOutputMultiProcess node={node} data={output} onOpenFullscreenModal={onOpenFullscreenModal} />
+        <NodeOutputMultiProcess
+          node={node}
+          data={output}
+          onOpenFullscreenModal={onOpenFullscreenModal}
+          isHovered={isHovered}
+        />
       </div>
     );
   }
@@ -400,8 +409,9 @@ const NodeOutputSingleProcess: FC<{
   node: ChartNode;
   data: NodeRunDataWithRefs;
   processId: ProcessId;
+  isHovered: boolean;
   onOpenFullscreenModal?: () => void;
-}> = ({ node, data, processId, onOpenFullscreenModal }) => {
+}> = ({ node, data, processId, isHovered, onOpenFullscreenModal }) => {
   const { Output, OutputSimple } = useUnknownNodeComponentDescriptorFor(node);
 
   const setOverlayOpen = useSetAtom(overlayOpenState);
@@ -458,7 +468,7 @@ const NodeOutputSingleProcess: FC<{
   let body: ReactNode;
 
   if (Output) {
-    body = <Output node={node} />;
+    body = <Output node={node} isCompact={!isHovered} />;
   } else if (data.splitOutputData) {
     const outputs = orderBy(
       entries(data.splitOutputData).map(([key, value]) => ({ key, value })),
@@ -469,18 +479,23 @@ const NodeOutputSingleProcess: FC<{
       <div className="split-output">
         {outputs.map(({ key, value }) =>
           OutputSimple ? (
-            <OutputSimple key={`outputs-${key}`} outputs={value} />
+            <OutputSimple key={`outputs-${key}`} outputs={value} isCompact={!isHovered} />
           ) : (
-            <RenderDataOutputs definitions={io.outputDefinitions} key={`outputs-${key}`} outputs={value} />
+            <RenderDataOutputs
+              definitions={io.outputDefinitions}
+              key={`outputs-${key}`}
+              outputs={value}
+              isCompact={!isHovered}
+            />
           ),
         )}
       </div>
     );
   } else {
     body = OutputSimple ? (
-      <OutputSimple outputs={data.outputData!} />
+      <OutputSimple outputs={data.outputData!} isCompact={!isHovered} />
     ) : (
-      <RenderDataOutputs definitions={io.outputDefinitions} outputs={data.outputData!} />
+      <RenderDataOutputs definitions={io.outputDefinitions} outputs={data.outputData!} isCompact={!isHovered} />
     );
   }
 
@@ -527,8 +542,9 @@ const NodeOutputSingleProcess: FC<{
 const NodeOutputMultiProcess: FC<{
   node: ChartNode;
   data: ProcessDataForNode[];
+  isHovered: boolean;
   onOpenFullscreenModal?: () => void;
-}> = ({ node, data, onOpenFullscreenModal }) => {
+}> = ({ node, data, isHovered, onOpenFullscreenModal }) => {
   const [selectedPage, setSelectedPage] = useAtom(selectedProcessPageState(node.id));
 
   const prevPage = useStableCallback(() => {
@@ -569,6 +585,7 @@ const NodeOutputMultiProcess: FC<{
           node={node}
           processId={selectedData.processId}
           onOpenFullscreenModal={onOpenFullscreenModal}
+          isHovered={isHovered}
         />
       )}
     </div>

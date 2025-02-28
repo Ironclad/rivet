@@ -140,6 +140,8 @@ export const VisualNode = memo(
 
       const changeInfo = useHistoricalNodeChangeInfo(node.id);
 
+      const [isHovered, setIsHovered] = useState(false);
+
       const asCommentNode = node as CommentNode;
       const style = useMemo(() => {
         const bgColor = node.visualData.color?.bg ?? 'var(--grey-darkish)';
@@ -206,6 +208,16 @@ export const VisualNode = memo(
 
       const isHistoricalChanged = changeInfo != null && changeInfo.changed && !!changeInfo.before && !!changeInfo.after;
 
+      const handleMouseOver = (event: MouseEvent<HTMLElement>) => {
+        onMouseOver?.(event, node.id);
+        setIsHovered(true);
+      };
+
+      const handleMouseOut = (event: MouseEvent<HTMLElement>) => {
+        onMouseOut?.(event, node.id);
+        setIsHovered(false);
+      };
+
       return (
         <div
           className={clsx(
@@ -230,8 +242,8 @@ export const VisualNode = memo(
           {...nodeAttributes}
           data-nodeid={node.id}
           data-contextmenutype={`node-${node.type}`}
-          onMouseOver={(event) => onMouseOver?.(event, node.id)}
-          onMouseOut={(event) => onMouseOut?.(event, node.id)}
+          onMouseOver={handleMouseOver}
+          onMouseOut={handleMouseOut}
           onDoubleClick={() => {
             if (isKnownNodeType) {
               onStartEditing?.();
@@ -271,6 +283,7 @@ export const VisualNode = memo(
               isPinned={isPinned}
               isHistoricalChanged={isHistoricalChanged}
               onResizeFinish={onResizeFinish}
+              isHovered={isHovered}
             />
           )}
         </div>
@@ -470,6 +483,7 @@ const NormalVisualNodeContent: FC<{
   processPage: number | 'latest';
   isPinned: boolean;
   isHistoricalChanged: boolean;
+  isHovered: boolean;
   onWireStartDrag?: (
     event: MouseEvent<HTMLElement>,
     startNodeId: NodeId,
@@ -514,6 +528,7 @@ const NormalVisualNodeContent: FC<{
     isKnownNodeType,
     isHistoricalChanged,
     onResizeFinish,
+    isHovered,
   }) => {
     useDependsOnPlugins();
 
@@ -782,7 +797,7 @@ const NormalVisualNodeContent: FC<{
         )}
 
         <ErrorBoundary fallback={<div>Error rendering node output</div>}>
-          <NodeOutput node={node} />
+          <NodeOutput node={node} isHovered={isHovered} />
         </ErrorBoundary>
         <div className="node-resize">
           <ResizeHandle
