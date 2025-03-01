@@ -9,6 +9,7 @@ import Button from '@atlaskit/button';
 import { atom, useAtom } from 'jotai';
 import Toggle from '@atlaskit/toggle';
 import { Label } from '@atlaskit/form';
+import { modelSelectorOptions } from '../utils/modelSelectorOptions';
 
 const styles = css`
   position: fixed;
@@ -42,14 +43,6 @@ const styles = css`
   }
 `;
 
-const modelOptions = [
-  { label: 'OpenAI: GPT-4o', value: 'openai:gpt-4o' },
-  { label: 'OpenAI: GPT-4o mini', value: 'openai:gpt-4o-mini' },
-  { label: 'OpenAI: o3-mini', value: 'openai:o3-mini' },
-  { label: 'Anthropic: Claude 3.7 Sonnet', value: 'anthropic:claude-3-7-sonnet-latest' },
-  { label: 'Anthropic: Claude 3.5 Sonnet', value: 'anthropic:claude-3-5-sonnet-latest' },
-] as const;
-
 export const showAiGraphCreatorInputState = atom(false);
 
 export const AiGraphCreatorInput: FC = () => {
@@ -57,7 +50,7 @@ export const AiGraphCreatorInput: FC = () => {
 
   const [running, setRunning] = useState(false);
   const [feedbackItems, setFeedbackItems] = useState<string[]>([]);
-  const [model, setModel] = useState<(typeof modelOptions)[number]>(modelOptions[1]);
+  const [model, setModel] = useState<(typeof modelSelectorOptions)[number]>(modelSelectorOptions[1]);
   const [record, setRecord] = useState(true);
 
   const [show, setShow] = useAtom(showAiGraphCreatorInputState);
@@ -118,10 +111,10 @@ export const AiGraphCreatorInput: FC = () => {
         />
         <div className="model-selector">
           <Select
-            options={modelOptions}
+            options={modelSelectorOptions}
             value={model}
             isDisabled={running}
-            onChange={(selectedOption) => setModel(selectedOption as (typeof modelOptions)[number])}
+            onChange={(selectedOption) => setModel(selectedOption as (typeof modelSelectorOptions)[number])}
           />
         </div>
         <div className="go-button">
