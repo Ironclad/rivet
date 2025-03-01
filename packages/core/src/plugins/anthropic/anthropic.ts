@@ -447,7 +447,7 @@ export async function* streamMessageApi({
 
     if (chunk === '[message_stop]') {
       return;
-    } else if (/\[\w+\]/.test(chunk)) {
+    } else if (/^\[\w+\]$/.test(chunk)) {
       nextDataType = chunk.slice(1, -1);
       continue;
     }
