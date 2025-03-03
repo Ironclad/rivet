@@ -18,7 +18,7 @@ import { useStableCallback } from './useStableCallback';
 import { useSaveCurrentGraph } from './useSaveCurrentGraph';
 import { useCurrentExecution } from './useCurrentExecution';
 import { userInputModalQuestionsState, userInputModalSubmitState } from '../state/userInput';
-import { projectContextState, projectDataState, projectState } from '../state/savedGraphs';
+import { loadedProjectState, projectContextState, projectDataState, projectState } from '../state/savedGraphs';
 import { recordExecutionsState, settingsState } from '../state/settings';
 import { graphState } from '../state/graph';
 import { lastRecordingState, loadedRecordingState } from '../state/execution';
@@ -29,6 +29,7 @@ import { audioProvider, datasetProvider } from '../utils/globals';
 import { entries } from '../../../core/src/utils/typeSafety';
 import { type RunDataByNodeId, lastRunDataByNodeState } from '../state/dataFlow';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { TauriProjectReferenceLoader } from '../model/TauriProjectReferenceLoader';
 
 export function useLocalExecutor() {
   const project = useAtomValue(projectState);
@@ -46,6 +47,7 @@ export function useLocalExecutor() {
   const projectData = useAtomValue(projectDataState);
   const projectContext = useAtomValue(projectContextState(project.metadata.id));
   const lastRunData = useAtomValue(lastRunDataByNodeState);
+  const loadedProject = useAtomValue(loadedProjectState);
 
   function attachGraphEvents(processor: GraphProcessor) {
     processor.on('nodeStart', currentExecution.onNodeStart);
@@ -157,6 +159,8 @@ export function useLocalExecutor() {
               nativeApi: new TauriNativeApi(),
               datasetProvider,
               audioProvider,
+              projectPath: loadedProject.path ?? undefined,
+              projectReferenceLoader: new TauriProjectReferenceLoader(),
             },
             {},
             contextValues,
@@ -167,6 +171,7 @@ export function useLocalExecutor() {
           setLastRecordingState(recorder.serialize());
         }
       } catch (e) {
+        toast.error('Internal error running graph, see console for details');
         console.log(e);
       }
     },

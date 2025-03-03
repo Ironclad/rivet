@@ -27,6 +27,7 @@ import { NodeChangesModal, NodeChangesModalRenderer } from './NodeChangesModal';
 import { syncWrapper } from '../utils/syncWrapper';
 import { AiGraphCreatorInput } from './AiGraphCreatorInput';
 import { AiGraphCreatorToggle } from './AiGraphCreatorToggle';
+import { useReloadProjectReferences } from '../hooks/useReloadProjectReferences';
 
 const Container = styled.div`
   position: relative;
@@ -69,6 +70,8 @@ export const GraphBuilder: FC = () => {
   const loadedRecording = useAtomValue(loadedRecordingState);
   const project = useAtomValue(projectState);
   const autoLayoutGraph = useRef(() => {});
+
+  useReloadProjectReferences();
 
   useDatasets(project.metadata.id);
 

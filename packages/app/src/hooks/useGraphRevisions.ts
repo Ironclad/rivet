@@ -22,6 +22,10 @@ export function useProjectRevisions(options?: { max?: number }) {
   const [numProcessedRevisions, setNumProcessedRevisions] = useState(0);
 
   useEffect(() => {
+    if (!projectState.path) {
+      return;
+    }
+
     let calculator = revisionCalculators.get(projectState.path);
     if (!calculator) {
       calculator = new ProjectRevisionCalculator(projectState.path);
@@ -52,6 +56,10 @@ export function useProjectRevisions(options?: { max?: number }) {
   }, [projectState.path]);
 
   const stop = useCallback(() => {
+    if (!projectState.path) {
+      return;
+    }
+
     const calculator = revisionCalculators.get(projectState.path);
     if (calculator) {
       calculator.abortProcessing();
@@ -60,6 +68,10 @@ export function useProjectRevisions(options?: { max?: number }) {
   }, [projectState.path]);
 
   const resume = useCallback(() => {
+    if (!projectState.path) {
+      return;
+    }
+
     const calculator = revisionCalculators.get(projectState.path);
     if (calculator) {
       calculator.startProcessingRevisions();

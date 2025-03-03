@@ -238,6 +238,9 @@ export * from './nodes/ToTreeNode.js';
 import { loopUntilNode } from './nodes/LoopUntilNode.js';
 export * from './nodes/LoopUntilNode.js';
 
+import { referencedGraphAliasNode } from './nodes/ReferencedGraphAliasNode.js';
+export * from './nodes/ReferencedGraphAliasNode.js';
+
 export const registerBuiltInNodes = (registry: NodeRegistration) => {
   return registry
     .register(toYamlNode)
@@ -318,7 +321,8 @@ export const registerBuiltInNodes = (registry: NodeRegistration) => {
     .register(toMarkdownTableNode)
     .register(cronNode)
     .register(toTreeNode)
-    .register(loopUntilNode);
+    .register(loopUntilNode)
+    .register(referencedGraphAliasNode);
 };
 
 let globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());

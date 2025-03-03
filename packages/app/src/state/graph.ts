@@ -13,7 +13,7 @@ import {
   globalRivetNodeRegistry,
 } from '@ironclad/rivet-core';
 import { mapValues } from 'lodash-es';
-import { projectState } from './savedGraphs';
+import { projectState, referencedProjectsState } from './savedGraphs';
 import { pluginRefreshCounterState } from './plugins';
 import { type CalculatedRevision } from '../utils/ProjectRevisionCalculator';
 import { createHybridStorage } from './storage.js';
@@ -118,6 +118,7 @@ export const ioDefinitionsState = atom((get) => {
   const connectionsForNode = get(connectionsForNodeState);
   const nodesById = get(nodesByIdState);
   const project = get(projectState);
+  const referencedProjects = get(referencedProjectsState);
 
   return mapValues(nodesById, (node) => {
     const connections = connectionsForNode[node.id] ?? [];
@@ -126,7 +127,12 @@ export const ioDefinitionsState = atom((get) => {
     let outputDefinitions: NodeOutputDefinition[] | undefined;
 
     try {
-      inputDefinitions = nodeInstances[node.id]?.getInputDefinitionsIncludingBuiltIn(connections, nodesById, project);
+      inputDefinitions = nodeInstances[node.id]?.getInputDefinitionsIncludingBuiltIn(
+        connections,
+        nodesById,
+        project,
+        referencedProjects,
+      );
     } catch (err) {
       const error = getError(err);
       console.error('Error getting node input definitions', error);
@@ -134,7 +140,12 @@ export const ioDefinitionsState = atom((get) => {
     }
 
     try {
-      outputDefinitions = nodeInstances[node.id]?.getOutputDefinitions(connections, nodesById, project);
+      outputDefinitions = nodeInstances[node.id]?.getOutputDefinitions(
+        connections,
+        nodesById,
+        project,
+        referencedProjects,
+      );
     } catch (err) {
       const error = getError(err);
       console.error('Error getting node output definitions', error);

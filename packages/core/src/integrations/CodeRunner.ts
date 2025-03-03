@@ -1,4 +1,6 @@
 import type { Inputs, Outputs } from '../index.js';
+
+// eslint-disable-next-line import/no-cycle -- There has to be a cycle if we're to import the entirety of Rivet here.
 import * as Rivet from '../exports.js';
 
 export interface CodeRunnerOptions {

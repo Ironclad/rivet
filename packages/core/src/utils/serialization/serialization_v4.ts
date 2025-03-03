@@ -16,18 +16,22 @@ import { type AttachedData, doubleCheckProject } from './serializationUtils.js';
 import { entries } from '../typeSafety.js';
 import type { PluginLoadSpec } from '../../model/PluginLoadSpec.js';
 import type { CombinedDataset } from './serialization.js';
+import { type ProjectMetadata } from '../../model/Project.js';
 
 type SerializedProject = {
-  metadata: {
-    id: ProjectId;
-    title: string;
-    description: string;
-  };
+  metadata: ProjectMetadata;
 
   graphs: Record<GraphId, SerializedGraph>;
 
   attachedData?: AttachedData;
   plugins?: PluginLoadSpec[];
+  references?: SerializedProjectReference[];
+};
+
+type SerializedProjectReference = {
+  id: ProjectId;
+  hintPaths?: string[];
+  title?: string;
 };
 
 type SerializedGraphMetadata = {
@@ -143,6 +147,7 @@ function toSerializedProject(project: Project, attachedData?: AttachedData): Ser
     graphs: mapValues(project.graphs, (graph) => toSerializedGraph(graph)),
     attachedData,
     plugins: project.plugins ?? [],
+    references: project.references ?? [],
   };
 }
 
@@ -152,6 +157,7 @@ function fromSerializedProject(serializedProject: SerializedProject): [Project, 
       metadata: serializedProject.metadata,
       graphs: mapValues(serializedProject.graphs, (graph) => fromSerializedGraph(graph)) as Record<GraphId, NodeGraph>,
       plugins: serializedProject.plugins ?? [],
+      references: serializedProject.references ?? [],
     },
     serializedProject.attachedData ?? {},
   ];

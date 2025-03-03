@@ -15,7 +15,7 @@ import { graphState } from '../state/graph';
 import { settingsState } from '../state/settings';
 import { setCurrentDebuggerMessageHandler, useRemoteDebugger } from './useRemoteDebugger';
 import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
-import { projectContextState, projectDataState, projectState } from '../state/savedGraphs';
+import { loadedProjectState, projectContextState, projectDataState, projectState } from '../state/savedGraphs';
 import { useStableCallback } from './useStableCallback';
 import { toast } from 'react-toastify';
 import { trivetState } from '../state/trivet';
@@ -51,6 +51,7 @@ export function useRemoteExecutor() {
   const setUserInputQuestions = useSetAtom(userInputModalQuestionsState);
   const selectedExecutor = useAtomValue(selectedExecutorState);
   const lastRunData = useAtomValue(lastRunDataByNodeState);
+  const loadedProject = useAtomValue(loadedProjectState);
 
   const remoteDebugger = useRemoteDebugger({
     onDisconnect: () => {
@@ -190,6 +191,7 @@ export function useRemoteExecutor() {
         runToNodeIds: options.to,
         contextValues,
         runFromNodeIds: options.from,
+        projectPath: loadedProject.path,
       });
     } catch (e) {
       console.error(e);
@@ -270,7 +272,7 @@ export function useRemoteExecutor() {
               {} as Record<string, DataValue>,
             );
 
-            remoteDebugger.send('run', { graphId, inputs, contextValues });
+            remoteDebugger.send('run', { graphId, inputs, contextValues, projectPath: loadedProject.path });
 
             const results = await graphExecutionPromise.promise!;
             return results;

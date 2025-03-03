@@ -16,6 +16,7 @@ import { css } from '@emotion/react';
 import { ProjectRevisions } from './ProjectRevisionList';
 import { useAtom, useAtomValue } from 'jotai';
 import { swallowPromise } from '../utils/syncWrapper';
+import { ProjectReferencesConfiguration } from './ProjectReferencesConfiguration';
 
 const styles = css`
   .context-list {
@@ -154,6 +155,8 @@ export const ProjectInfoSidebarTab: FC = () => {
       </Field>
 
       <ProjectPluginsConfiguration />
+
+      <ProjectReferencesConfiguration />
 
       <Field name="context" label="Context">
         {() => (

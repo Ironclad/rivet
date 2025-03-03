@@ -26,6 +26,7 @@ import { useCenterViewOnGraph } from './useCenterViewOnGraph';
 import { useDependsOnPlugins } from './useDependsOnPlugins';
 import graphBuilderProject from '../../graphs/graph-creator.rivet-project?raw';
 import graphBuilderData from '../../graphs/graph-creator.rivet-data?raw';
+import { referencedProjectsState } from '../state/savedGraphs';
 
 export function useAiGraphBuilder({ record, onFeedback }: { record: boolean; onFeedback: (feedback: string) => void }) {
   const [graph, setGraph] = useAtom(graphState);
@@ -35,6 +36,8 @@ export function useAiGraphBuilder({ record, onFeedback }: { record: boolean; onF
 
   const centerView = useCenterViewOnGraph();
   const autoLayout = useAutoLayoutGraph();
+
+  const referencedProjects = useAtomValue(referencedProjectsState);
 
   return async function applyPrompt(prompt: string, modelAndApi: `${string}:${string}`, abort: AbortSignal) {
     const recorder = new ExecutionRecorder({ includePartialOutputs: false, includeTrace: false });
@@ -93,11 +96,11 @@ export function useAiGraphBuilder({ record, onFeedback }: { record: boolean; onF
           const nodesById = Object.fromEntries(workingGraph.nodes.map((node) => [node.id, node]));
 
           const sourcePort = sourceInstance
-            .getOutputDefinitions(sourceNodeConnections, nodesById, project)
+            .getOutputDefinitions(sourceNodeConnections, nodesById, project, referencedProjects)
             .find((port) => port.id === sourcePortId);
 
           const destPort = destInstance
-            .getInputDefinitions(destNodeConnections, nodesById, project)
+            .getInputDefinitions(destNodeConnections, nodesById, project, referencedProjects)
             .find((port) => port.id === destPortId);
 
           if (!sourcePort) {
@@ -175,8 +178,8 @@ export function useAiGraphBuilder({ record, onFeedback }: { record: boolean; onF
 
           const nodesById = Object.fromEntries(workingGraph.nodes.map((node) => [node.id, node]));
 
-          const inputs = instance.getInputDefinitions(connectionsToNode, nodesById, project);
-          const outputs = instance.getOutputDefinitions(connectionsToNode, nodesById, project);
+          const inputs = instance.getInputDefinitions(connectionsToNode, nodesById, project, referencedProjects);
+          const outputs = instance.getOutputDefinitions(connectionsToNode, nodesById, project, referencedProjects);
 
           const inputsWithConnections = inputs.map((input) => ({
             definition: input,
@@ -299,7 +302,7 @@ export function useAiGraphBuilder({ record, onFeedback }: { record: boolean; onF
 
             try {
               const sourcePort = sourceInstance
-                .getOutputDefinitions(sourceConnections, nodesById, project)
+                .getOutputDefinitions(sourceConnections, nodesById, project, referencedProjects)
                 .find((port) => port.id === connection.outputId);
 
               if (!sourcePort) {
@@ -313,7 +316,7 @@ export function useAiGraphBuilder({ record, onFeedback }: { record: boolean; onF
 
             try {
               const destPort = destInstance
-                .getInputDefinitions(destConnections, nodesById, project)
+                .getInputDefinitions(destConnections, nodesById, project, referencedProjects)
                 .find((port) => port.id === connection.inputId);
 
               if (!destPort) {
@@ -372,7 +375,7 @@ export function useAiGraphBuilder({ record, onFeedback }: { record: boolean; onF
 
             try {
               const sourcePort = sourceInstance
-                .getOutputDefinitions(sourceConnections, nodesById, project)
+                .getOutputDefinitions(sourceConnections, nodesById, project, referencedProjects)
                 .find((port) => port.id === connection.outputId);
 
               if (!sourcePort) {
@@ -380,7 +383,7 @@ export function useAiGraphBuilder({ record, onFeedback }: { record: boolean; onF
               }
 
               const destPort = destInstance
-                .getInputDefinitions(destConnections, nodesById, project)
+                .getInputDefinitions(destConnections, nodesById, project, referencedProjects)
                 .find((port) => port.id === connection.inputId);
 
               if (!destPort) {

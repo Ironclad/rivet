@@ -13,7 +13,7 @@ import {
 } from '@ironclad/rivet-core';
 
 import { readFile } from 'node:fs/promises';
-import { type RivetDebuggerServer, type Settings } from './index.js';
+import { NodeProjectReferenceLoader, type RivetDebuggerServer, type Settings } from './index.js';
 import { NodeNativeApi } from './native/NodeNativeApi.js';
 import * as events from 'node:events';
 import { NodeCodeRunner } from './native/NodeCodeRunner.js';
@@ -69,6 +69,8 @@ export function createProcessor(
           audioProvider: options.audioProvider,
           tokenizer: options.tokenizer,
           codeRunner: options.codeRunner ?? new NodeCodeRunner(),
+          projectPath: options.projectPath,
+          projectReferenceLoader: options.projectReferenceLoader ?? new NodeProjectReferenceLoader(),
           settings: {
             openAiKey: options.openAiKey ?? process.env.OPENAI_API_KEY ?? '',
             openAiOrganization: options.openAiOrganization ?? process.env.OPENAI_ORG_ID ?? '',
