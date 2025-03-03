@@ -47,4 +47,7 @@ export default defineConfig({
     topLevelAwait(),
     splitVendorChunkPlugin(),
   ],
+  worker: {
+    format: 'es',
+  },
 });
