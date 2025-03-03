@@ -171,7 +171,6 @@ export function useLocalExecutor() {
           setLastRecordingState(recorder.serialize());
         }
       } catch (e) {
-        toast.error('Internal error running graph, see console for details');
         console.log(e);
       }
     },
