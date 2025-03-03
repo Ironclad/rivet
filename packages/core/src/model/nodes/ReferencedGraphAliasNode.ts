@@ -27,6 +27,7 @@ export type ReferencedGraphAliasNode = ChartNode & {
     projectId: ProjectId;
     graphId: GraphId;
     useErrorOutput?: boolean;
+    outputCostDuration?: boolean;
 
     /** Data for each of the inputs of the referenced graph */
     inputData?: Record<string, DataValue>;
@@ -135,6 +136,11 @@ export class ReferencedGraphAliasNodeImpl extends NodeImpl<ReferencedGraphAliasN
         label: 'Use Error Output',
         dataKey: 'useErrorOutput',
       },
+      {
+        type: 'toggle',
+        label: 'Output Cost & Duration',
+        dataKey: 'outputCostDuration',
+      },
     ];
 
     const referencedProject = context.referencedProjects[this.data.projectId];
@@ -241,6 +247,11 @@ export class ReferencedGraphAliasNodeImpl extends NodeImpl<ReferencedGraphAliasN
           type: 'number',
           value: duration,
         };
+      }
+
+      if (!this.data.outputCostDuration) {
+        delete outputs['cost' as PortId];
+        delete outputs['duration' as PortId];
       }
 
       return outputs;
