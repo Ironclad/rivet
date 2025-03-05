@@ -46,7 +46,7 @@ export function createProcessor(
   processor.processor.executor = 'nodejs';
 
   processor.processor.on('newAbortController', (controller) => {
-    events.setMaxListeners(100, controller.signal);
+    events.setMaxListeners(0, controller.signal);
   });
 
   if (options.remoteDebugger) {
