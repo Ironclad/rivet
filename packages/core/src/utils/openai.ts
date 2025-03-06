@@ -311,6 +311,7 @@ export type ChatCompletionOptions = {
           name: string;
         };
       };
+  parallel_tool_calls?: boolean;
 
   /** An object specifying the format that the model must output. Used to enable JSON mode. */
   response_format?:
