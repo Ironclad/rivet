@@ -850,6 +850,7 @@ export const ChatNodeBase = {
     const seed = getInputOrData(data, inputs, 'seed', 'number');
     const responseFormat = getInputOrData(data, inputs, 'responseFormat') as 'text' | 'json' | 'json_schema' | '';
     const toolChoiceMode = getInputOrData(data, inputs, 'toolChoice', 'string') as 'none' | 'auto' | 'function';
+    const parallelFunctionCalling = getInputOrData(data, inputs, 'parallelFunctionCalling', 'boolean');
 
     const predictedOutput = data.usePredictedOutput
       ? coerceTypeOptional(inputs['predictedOutput' as PortId], 'string[]')
@@ -1054,6 +1055,7 @@ export const ChatNodeBase = {
             seed,
             response_format: openaiResponseFormat,
             tool_choice: toolChoice,
+            parallel_tool_calls: parallelFunctionCalling,
             prediction: predictionObject,
             modalities,
             audio,
