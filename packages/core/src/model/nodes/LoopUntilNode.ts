@@ -271,8 +271,6 @@ export class LoopUntilNodeImpl extends NodeImpl<LoopUntilNode> {
       iteration++;
 
       // Check if the condition is met
-      console.dir(this.shouldBreak(lastOutputs));
-      console.dir(lastOutputs);
       if (this.shouldBreak(lastOutputs)) {
         break;
       }
