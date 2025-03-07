@@ -1055,7 +1055,7 @@ export const ChatNodeBase = {
             seed,
             response_format: openaiResponseFormat,
             tool_choice: toolChoice,
-            parallel_tool_calls: parallelFunctionCalling,
+            parallel_tool_calls: tools.length > 0 ? parallelFunctionCalling : undefined,
             prediction: predictionObject,
             modalities,
             audio,
