@@ -1462,11 +1462,11 @@ export const ChatNodeBase = {
               err = cause;
             }
 
-            context.trace(`ChatNode failed, retrying: ${err.toString()}`);
-
             if (context.signal.aborted) {
               throw new Error('Aborted');
             }
+
+            context.trace(`ChatNode failed, retrying: ${err.toString()}`);
 
             const { retriesLeft } = err;
 
@@ -1511,7 +1511,7 @@ export const ChatNodeBase = {
       );
     } catch (error) {
       context.trace(getError(error).stack ?? 'Missing stack');
-      throw new Error(`Error processing ChatNode: ${(error as Error).message}`);
+      throw new Error(`Error processing ChatNode: ${(error as Error).message}`, { cause: error });
     }
   },
 };
