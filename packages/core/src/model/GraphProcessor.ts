@@ -219,7 +219,7 @@ export class GraphProcessor {
   warnOnInvalidGraph = false;
 
   // Per-process state
-  #erroredNodes: Map<NodeId, string> = undefined!;
+  #erroredNodes: Map<NodeId, Error | string> = undefined!; // Values are strings in recordings
   #remainingNodes: Set<NodeId> = undefined!;
   #visitedNodes: Set<NodeId> = undefined!;
   #currentlyProcessing: Set<NodeId> = undefined!;
@@ -857,16 +857,21 @@ export class GraphProcessor {
         return erroredNodeAttachedData.races == null || erroredNodeAttachedData.races.completed === false;
       });
       if (erroredNodes.length && !this.#abortSuccessfully) {
-        const error =
-          this.#abortError ??
-          Error(
-            `Graph ${this.#graph.metadata!.name} (${
+        let error = this.#abortError;
+        if (!error) {
+          const message = `Graph ${this.#graph.metadata!.name} (${
               this.#graph.metadata!.id
-            }) failed to process due to errors in nodes: ${erroredNodes
-              .map(([nodeId, error]) => `${this.#nodesById[nodeId]!.title} (${nodeId}): ${error}`)
-              .join(', ')}`,
-          );
-
+            }) failed to process due to errors in nodes:\n${erroredNodes
+              .map(([nodeId]) => `- ${this.#nodesById[nodeId]!.title} (${nodeId})`)
+              .join('\n')}`;
+          if (erroredNodes.length === 1) {
+            const [, nodeError] = erroredNodes[0]!;
+            error = new Error(message, { cause: nodeError });
+          } else {
+            error = new AggregateError(erroredNodes.map(([, nodeError]) => nodeError), message);
+          }
+        }
+        
         await this.#emitter.emit('graphError', { graph: this.#graph, error });
 
         if (!this.#isSubProcessor) {
@@ -1375,7 +1380,7 @@ export class GraphProcessor {
         const e = errors[0]!;
         throw e;
       } else if (errors.length > 0) {
-        throw new Error(errors.join('\n'));
+        throw new AggregateError(errors);
       }
 
       // Combine the parallel results into the final output
@@ -1438,7 +1443,7 @@ export class GraphProcessor {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.#emitter.emit('nodeError', { node, error, processId });
     this.#emitTraceEvent(`Node ${node.title} (${node.id}-${processId}) errored: ${error.stack}`);
-    this.#erroredNodes.set(node.id, error.toString());
+    this.#erroredNodes.set(node.id, error);
   }
 
   getRootProcessor(): GraphProcessor {
