@@ -1,4 +1,13 @@
-import type { Content, InlineDataPart, Part, TextPart } from '@google/generative-ai';
+import {
+  FunctionCallingMode,
+  type Content,
+  type FunctionCall,
+  type InlineDataPart,
+  type Part,
+  type TextPart,
+  type Tool,
+  type ToolConfig,
+} from '@google/generative-ai';
 import { P, match } from 'ts-pattern';
 
 export type GoogleModelDeprecated = {
@@ -110,27 +119,12 @@ export const generativeAiOptions = Object.entries(generativeAiGoogleModels).map(
   label: displayName,
 }));
 
-export interface GoogleChatMessage {
-  role: 'user' | 'assistant';
-  parts: (
-    | {
-        text: string;
-      }
-    | {
-        inline_data: {
-          mime_type: string;
-          data: string;
-        };
-      }
-  )[];
-}
-
 export type ChatCompletionOptions = {
   project: string;
   location: string;
   applicationCredentials: string;
   model: GoogleModelsDeprecated;
-  prompt: GoogleChatMessage[];
+  prompt: Content[];
   max_output_tokens: number;
   temperature?: number;
   top_p?: number;
@@ -139,7 +133,8 @@ export type ChatCompletionOptions = {
 };
 
 export type ChatCompletionChunk = {
-  completion: string;
+  completion?: string;
+  function_calls?: FunctionCall[];
   finish_reason:
     | 'FINISH_REASON_UNSPECIFIED'
     | 'FINISH_REASON_STOP'
@@ -155,12 +150,13 @@ export type StreamGenerativeAiOptions = {
   apiKey: string;
   model: GenerativeAiGoogleModel;
   systemPrompt: string | undefined;
-  prompt: GoogleChatMessage[];
+  prompt: Content[];
   maxOutputTokens: number;
   temperature: number | undefined;
   topP: number | undefined;
   topK: number | undefined;
   signal?: AbortSignal;
+  tools: Tool[] | undefined;
 };
 
 export async function* streamGenerativeAi({
@@ -173,6 +169,7 @@ export async function* streamGenerativeAi({
   topP,
   topK,
   signal,
+  tools,
 }: StreamGenerativeAiOptions): AsyncGenerator<ChatCompletionChunk> {
   const { GoogleGenerativeAI } = await import('@google/generative-ai');
   const genAi = new GoogleGenerativeAI(apiKey);
@@ -186,48 +183,40 @@ export async function* streamGenerativeAi({
       topP,
       topK,
     },
-  });
-
-  const contentParts = prompt.map(({ role, parts }): Content => {
-    return {
-      role,
-      parts: parts.map((part): Part => {
-        return match(part)
-          .with({ text: P.string }, ({ text }): TextPart => {
-            return { text };
-          })
-          .with({ inline_data: P.any }, ({ inline_data: inlineData }): InlineDataPart => {
-            return {
-              inlineData: {
-                data: inlineData.data,
-                mimeType: inlineData.mime_type,
-              },
-            };
-          })
-          .exhaustive();
-      }),
-    };
+    tools,
   });
 
   const result = await genaiModel.generateContentStream(
     {
-      contents: contentParts,
+      contents: prompt,
     },
     { signal },
   );
 
   for await (const chunk of result.stream) {
+    const outChunk: ChatCompletionChunk = {
+      completion: undefined,
+      finish_reason: undefined,
+      function_calls: undefined,
+      model,
+    };
+
+    const functionCalls = chunk.functionCalls();
+    if (functionCalls) {
+      outChunk.function_calls = functionCalls;
+    }
+
     if (chunk.candidates) {
-      yield {
-        completion: chunk.candidates[0]?.content.parts[0]?.text ?? '',
-        finish_reason: chunk.candidates[0]?.finishReason as any,
-        model,
-      };
+      outChunk.completion = chunk.candidates[0]?.content.parts[0]?.text;
+      outChunk.finish_reason = chunk.candidates[0]?.finishReason as any;
+    }
+
+    if (outChunk.completion || outChunk.function_calls) {
+      yield outChunk;
     }
   }
 }
 
-/* eslint-disable @typescript-eslint/naming-convention */
 export async function* streamChatCompletions({
   project,
   location,
@@ -258,7 +247,7 @@ export async function* streamChatCompletions({
     },
   });
   const response = await generativeModel.generateContentStream({
-    contents: prompt,
+    contents: prompt as any, // crazy type stuff but... this is good enough, this is legacy
   });
 
   let hadChunks = false;

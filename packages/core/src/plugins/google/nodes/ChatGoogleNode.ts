@@ -15,7 +15,6 @@ import {
 } from '../../../index.js';
 import {
   streamChatCompletions,
-  type GoogleChatMessage,
   streamGenerativeAi,
   type GenerativeAiGoogleModel,
   generativeAiGoogleModels,
@@ -36,6 +35,18 @@ import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
 import { getScalarTypeOf, isArrayDataValue } from '../../../model/DataValue.js';
 import type { TokenizerCallInfo } from '../../../integrations/Tokenizer.js';
 import { getInputOrData } from '../../../utils/inputs.js';
+import {
+  GoogleGenerativeAIError,
+  type GoogleGenerativeAIFetchError,
+  SchemaType,
+  type Content,
+  type FunctionDeclaration,
+  type FunctionDeclarationSchema,
+  type FunctionDeclarationsTool,
+  type Part,
+  type Tool,
+  type FunctionCall,
+} from '@google/generative-ai';
 
 export type ChatGoogleNode = ChartNode<'chatGoogle', ChatGoogleNodeData>;
 
@@ -55,6 +66,7 @@ export type ChatGoogleNodeData = ChatGoogleNodeConfigData & {
   useTopKInput: boolean;
   useUseTopPInput: boolean;
   useMaxTokensInput: boolean;
+  useToolCalling: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
@@ -97,6 +109,8 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
 
         cache: false,
         useAsGraphPartialOutput: true,
+
+        useToolCalling: false,
       },
     };
 
@@ -155,6 +169,15 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
       });
     }
 
+    if (data.useToolCalling) {
+      inputs.push({
+        dataType: 'gpt-function[]',
+        id: 'functions' as PortId,
+        title: 'Tools',
+        description: 'Tools available for the model to call.',
+      });
+    }
+
     inputs.push({
       dataType: ['chat-message', 'chat-message[]'] as const,
       id: 'prompt' as PortId,
@@ -186,6 +209,15 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
       title: 'All Messages',
       description: 'All messages, with the response appended.',
     });
+
+    if (data.useToolCalling) {
+      outputs.push({
+        dataType: 'object[]',
+        id: 'function-calls' as PortId,
+        title: 'Tool Calls',
+        description: 'Tool calls made by the model.',
+      });
+    }
 
     return outputs;
   },
@@ -246,6 +278,11 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
       },
       {
         type: 'toggle',
+        label: 'Enable Tool Calling',
+        dataKey: 'useToolCalling',
+      },
+      {
+        type: 'toggle',
         label: 'Cache (same inputs, same outputs)',
         dataKey: 'cache',
       },
@@ -283,17 +320,16 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
     const { messages } = getChatGoogleNodeMessages(inputs);
 
     const prompt = await Promise.all(
-      messages.map(async (message): Promise<GoogleChatMessage> => {
-        return {
-          role: message.type === 'user' ? 'user' : 'assistant',
-          parts: await Promise.all(
-            [message.message].flat().map(async (part): Promise<GoogleChatMessage['parts'][0]> => {
+      messages.map(async (message): Promise<Content> => {
+        if (message.type === 'user' || message.type === 'assistant') {
+          const parts = await Promise.all(
+            [message.message].flat().map(async (part): Promise<Part> => {
               if (typeof part === 'string') {
                 return { text: part };
               } else if (part.type === 'image') {
                 return {
-                  inline_data: {
-                    mime_type: part.mediaType,
+                  inlineData: {
+                    mimeType: part.mediaType,
                     data: (await uint8ArrayToBase64(part.data))!,
                   },
                 };
@@ -301,8 +337,46 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
                 throw new Error(`Google Vertex AI does not support message parts of type ${part.type}`);
               }
             }),
-          ),
-        };
+          );
+
+          if (message.type === 'assistant' && (message.function_calls?.length ?? 0) > 0) {
+            if (parts[0]!.text === '') {
+              parts.shift(); // remove empty text part
+            }
+
+            for (const call of message.function_calls ?? []) {
+              parts.push({
+                functionCall: {
+                  name: call.name,
+                  args: JSON.parse(call.arguments),
+                },
+              });
+            }
+          }
+
+          return {
+            role: message.type,
+            parts,
+          };
+        }
+
+        if (message.type === 'function') {
+          return {
+            role: 'function',
+            parts: [
+              {
+                functionResponse: {
+                  name: message.name,
+                  response: {
+                    result: typeof message.message === 'string' ? message.message : '',
+                  },
+                },
+              },
+            ],
+          };
+        }
+
+        throw new Error(`Google Vertex AI does not support message type ${message.type}`);
       }),
     );
 
@@ -338,6 +412,33 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
     const applicationCredentials = context.getPluginConfig('googleApplicationCredentials');
     const apiKey = context.getPluginConfig('googleApiKey');
 
+    let tools: Tool[] = [];
+
+    if (data.useToolCalling) {
+      const gptTools = coerceTypeOptional(inputs['functions' as PortId], 'gpt-function[]') ?? [];
+
+      if (gptTools) {
+        tools = [
+          {
+            functionDeclarations: gptTools.map(
+              (tool): FunctionDeclaration => ({
+                name: tool.name,
+                description: tool.description,
+                parameters:
+                  Object.keys((tool.parameters as any).properties).length === 0
+                    ? undefined
+                    : {
+                        type: SchemaType.OBJECT,
+                        properties: (tool.parameters as any).properties,
+                        required: (tool.parameters as any).required || [],
+                      },
+              }),
+            ),
+          },
+        ];
+      }
+    }
+
     if (!apiKey) {
       if (project == null) {
         throw new Error('Google Project ID or Google API Key is not defined.');
@@ -361,6 +462,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
             maxOutputTokens: maxTokens,
             systemPrompt,
             topK: undefined,
+            tools,
           };
           const cacheKey = JSON.stringify(options);
 
@@ -374,6 +476,11 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
           const startTime = Date.now();
 
           let chunks: AsyncGenerator<ChatCompletionChunk>;
+
+          if (data.useToolCalling && !apiKey) {
+            throw new Error('Tool calling is only supported when using a generative API key.');
+          }
+
           if (apiKey) {
             chunks = streamGenerativeAi({
               signal: context.signal,
@@ -385,6 +492,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
               topK: undefined,
               apiKey,
               systemPrompt,
+              tools,
             });
           } else {
             chunks = streamChatCompletions({
@@ -402,19 +510,26 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
           }
 
           const responseParts: string[] = [];
+          const functionCalls: FunctionCall[] = [];
 
           for await (const chunk of chunks) {
-            if (!chunk.completion) {
-              // Could be error for some reason 🤷‍♂️ but ignoring has worked for me so far.
-              continue;
+            if (chunk.completion) {
+              responseParts.push(chunk.completion);
+
+              output['response' as PortId] = {
+                type: 'string',
+                value: responseParts.join('').trim(),
+              };
             }
 
-            responseParts.push(chunk.completion);
+            if (chunk.function_calls) {
+              functionCalls.push(...chunk.function_calls);
 
-            output['response' as PortId] = {
-              type: 'string',
-              value: responseParts.join('').trim(),
-            };
+              output['function-calls' as PortId] = {
+                type: 'object[]',
+                value: chunk.function_calls as unknown as Record<string, unknown>[],
+              };
+            }
 
             context.onPartialOutputs?.(output);
           }
@@ -429,7 +544,14 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
                 type: 'assistant',
                 message: responseParts.join('').trim() ?? '',
                 function_call: undefined,
-                function_calls: undefined,
+                function_calls:
+                  functionCalls.length === 0
+                    ? undefined
+                    : functionCalls.map((fc) => ({
+                        id: fc.name,
+                        name: fc.name,
+                        arguments: JSON.stringify(fc.args),
+                      })),
               },
             ],
           };
@@ -439,7 +561,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
             value: messages,
           };
 
-          if (responseParts.length === 0) {
+          if (responseParts.length === 0 && functionCalls.length === 0) {
             throw new Error('No response from Google');
           }
 
@@ -476,6 +598,16 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
           signal: context.signal,
           onFailedAttempt(err) {
             context.trace(`ChatGoogleNode failed, retrying: ${err.toString()}`);
+
+            const googleError = err as GoogleGenerativeAIFetchError;
+
+            if (googleError.status && googleError.status >= 400 && googleError.status < 500) {
+              if (googleError.status === 429) {
+                context.trace('Google API rate limit exceeded, retrying...');
+              } else {
+                throw new Error(`Google API error: ${googleError.status} ${googleError.message}`);
+              }
+            }
 
             if (context.signal.aborted) {
               throw new Error('Aborted');
