@@ -173,7 +173,7 @@ export class DelegateFunctionCallNodeImpl extends NodeImpl<DelegateFunctionCallN
       },
     };
 
-    for (const [argName, argument] of Object.entries(functionCall.arguments)) {
+    for (const [argName, argument] of Object.entries(functionCall.arguments ?? {})) {
       subgraphInputs[argName] = {
         type: 'any',
         value: argument,
