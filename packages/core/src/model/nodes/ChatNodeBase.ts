@@ -1459,23 +1459,29 @@ export const ChatNodeBase = {
           maxTimeout: 5000,
           randomize: true,
           signal: context.signal,
-          onFailedAttempt(err) {
-            if (err.toString().includes('fetch failed') && err.cause) {
+          onFailedAttempt(originalError) {
+            let err = originalError;
+            if (originalError.toString().includes('fetch failed') && originalError.cause) {
               const cause =
-                getError(err.cause) instanceof AggregateError
-                  ? (err.cause as AggregateError).errors[0]
-                  : getError(err.cause);
+                getError(originalError.cause) instanceof AggregateError
+                  ? (originalError.cause as AggregateError).errors[0]
+                  : getError(originalError.cause);
 
               err = cause;
             }
-
-            context.trace(`ChatNode failed, retrying: ${err.toString()}`);
 
             if (context.signal.aborted) {
               throw new Error('Aborted');
             }
 
+            context.trace(`ChatNode failed, retrying: ${err.toString()}`);
+
             const { retriesLeft } = err;
+
+            // Retry network errors
+            if (err.toString().includes('terminated') || originalError.toString().includes('terminated') || err.toString().includes('fetch failed')) {
+              return;
+            }
 
             if (!(err instanceof OpenAIError)) {
               if ('code' in err) {
@@ -1518,7 +1524,7 @@ export const ChatNodeBase = {
       );
     } catch (error) {
       context.trace(getError(error).stack ?? 'Missing stack');
-      throw new Error(`Error processing ChatNode: ${(error as Error).message}`);
+      throw new Error(`Error processing ChatNode: ${(error as Error).message}`, { cause: error });
     }
   },
 };
