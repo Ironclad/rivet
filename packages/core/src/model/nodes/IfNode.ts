@@ -140,6 +140,12 @@ export class IfNodeImpl extends NodeImpl<IfNode> {
       }
     }
 
+    if (ifValue.type === 'object' || ifValue.type === 'any') {
+      if (!ifValue.value) {
+        return isFalse;
+      }
+    }
+
     if (ifValue.type.endsWith('[]')) {
       const value = ifValue as ArrayDataValue<ScalarDataValue>;
 
