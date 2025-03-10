@@ -29,19 +29,22 @@ export class GptTokenizerTokenizer implements Tokenizer {
         messages.map((message) => chatMessageToOpenAIChatCompletionMessage(message, { isReasoningModel: false })),
       );
 
-      const validMessages = openaiMessages
-        .filter((message) => message.role !== 'tool')
-        .map((message) => {
-          if (Array.isArray(message.content)) {
-            const textContent = message.content
-              .filter((c): c is ChatCompletionRequestUserMessageTextContent => c.type === 'text')
-              .map((c) => c.text)
-              .join('');
-            return { ...message, content: textContent };
-          }
+      const validMessages = openaiMessages.map((message) => {
+        // Tools not supported to calculate token count so we convert them to user messages
+        if (message.role === 'tool') {
+          return { role: 'user', content: message.content };
+        }
 
-          return message;
-        });
+        if (Array.isArray(message.content)) {
+          const textContent = message.content
+            .filter((c): c is ChatCompletionRequestUserMessageTextContent => c.type === 'text')
+            .map((c) => c.text)
+            .join('');
+          return { ...message, content: textContent };
+        }
+
+        return message;
+      });
 
       const { encode, encodeChat } = await import('gpt-tokenizer');
 
