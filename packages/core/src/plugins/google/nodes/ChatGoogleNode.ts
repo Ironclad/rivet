@@ -47,6 +47,7 @@ import {
   type Tool,
   type FunctionCall,
 } from '@google/generative-ai';
+import { mapValues } from 'lodash-es';
 
 export type ChatGoogleNode = ChartNode<'chatGoogle', ChatGoogleNodeData>;
 
@@ -319,7 +320,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
 
     const { messages } = getChatGoogleNodeMessages(inputs);
 
-    const prompt = await Promise.all(
+    let prompt = await Promise.all(
       messages.map(async (message): Promise<Content> => {
         if (message.type === 'user' || message.type === 'assistant') {
           const parts = await Promise.all(
@@ -380,6 +381,19 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
       }),
     );
 
+    // Collapse sequential function responses into a single function response with mutliple parts
+    prompt = prompt.reduce((acc: Content[], message) => {
+      const lastMessage = acc.at(-1);
+
+      if (lastMessage && message.role === 'function' && lastMessage.role === 'function') {
+        lastMessage.parts.push(...message.parts);
+      } else {
+        acc.push(message);
+      }
+
+      return acc;
+    }, [] as Content[]);
+
     let { maxTokens } = data;
 
     const tokenizerInfo: TokenizerCallInfo = {
@@ -429,7 +443,11 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
                     ? undefined
                     : {
                         type: SchemaType.OBJECT,
-                        properties: (tool.parameters as any).properties,
+                        properties: mapValues((tool.parameters as any).properties, (p: any) => ({
+                          // gemini doesn't support union property types, it uses openapi style not jsonschema, what a mess
+                          type: Array.isArray(p.type) ? p.type.filter((t: any) => t !== 'null')[0] : p.type,
+                          description: p.description,
+                        })),
                         required: (tool.parameters as any).required || [],
                       },
               }),
@@ -527,7 +545,11 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
 
               output['function-calls' as PortId] = {
                 type: 'object[]',
-                value: chunk.function_calls as unknown as Record<string, unknown>[],
+                value: chunk.function_calls.map((fc) => ({
+                  id: fc.name,
+                  name: fc.name,
+                  arguments: fc.args,
+                })),
               };
             }
 
