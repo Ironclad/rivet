@@ -11,6 +11,8 @@ import {
   chatCompletions,
   streamChatCompletions,
   type ChatCompletionChunkUsage,
+  defaultOpenaiSupported,
+  type OpenAIModel,
 } from '../../utils/openai.js';
 import { isArrayDataValue, type ChatMessage, getScalarTypeOf, type ScalarDataValue } from '../DataValue.js';
 import type { EditorDefinition } from '../EditorDefinition.js';
@@ -1039,6 +1041,10 @@ export const ChatNodeBase = {
 
     const reasoningEffort = getInputOrData(data, inputs, 'reasoningEffort') as '' | 'low' | 'medium' | 'high';
 
+    const supported =
+      (openaiModels[finalModel as keyof typeof openaiModels] as OpenAIModel | undefined)?.supported ??
+      defaultOpenaiSupported;
+
     try {
       return await retry(
         async () => {
@@ -1055,7 +1061,8 @@ export const ChatNodeBase = {
             seed,
             response_format: openaiResponseFormat,
             tool_choice: toolChoice,
-            parallel_tool_calls: tools.length > 0 ? parallelFunctionCalling : undefined,
+            parallel_tool_calls:
+              tools.length > 0 && supported.parallelFunctionCalls ? parallelFunctionCalling : undefined,
             prediction: predictionObject,
             modalities,
             audio,

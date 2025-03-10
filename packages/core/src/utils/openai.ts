@@ -14,6 +14,14 @@ export type OpenAIModel = {
     audioCompletion?: number;
   };
   displayName: string;
+
+  supported?: {
+    parallelFunctionCalls: boolean;
+  };
+};
+
+export const defaultOpenaiSupported: NonNullable<OpenAIModel['supported']> = {
+  parallelFunctionCalls: true,
 };
 
 export const openaiModels = {
@@ -120,6 +128,9 @@ export const openaiModels = {
       completion: 0.6,
     },
     displayName: 'o1',
+    supported: {
+      parallelFunctionCalls: false,
+    },
   },
   'o1-preview': {
     maxTokens: 128000,
@@ -128,6 +139,9 @@ export const openaiModels = {
       completion: 0.06,
     },
     displayName: 'o1-preview',
+    supported: {
+      parallelFunctionCalls: false,
+    },
   },
   'o1-preview-2024-09-12': {
     maxTokens: 128000,
@@ -136,6 +150,9 @@ export const openaiModels = {
       completion: 0.06,
     },
     displayName: 'o1-preview (2024-09-12)',
+    supported: {
+      parallelFunctionCalls: false,
+    },
   },
   'o1-mini': {
     maxTokens: 128000,
@@ -144,6 +161,9 @@ export const openaiModels = {
       completion: 0.0044,
     },
     displayName: 'o1-mini',
+    supported: {
+      parallelFunctionCalls: false,
+    },
   },
   'o1-mini-2024-09-12': {
     maxTokens: 128000,
@@ -152,6 +172,9 @@ export const openaiModels = {
       completion: 0.0044,
     },
     displayName: 'o1-mini (2024-09-12)',
+    supported: {
+      parallelFunctionCalls: false,
+    },
   },
   'o3-mini': {
     maxTokens: 200000,
@@ -160,6 +183,9 @@ export const openaiModels = {
       completion: 0.0044,
     },
     displayName: 'o3-mini',
+    supported: {
+      parallelFunctionCalls: false,
+    },
   },
   'o3-mini-2025-01-31': {
     maxTokens: 200000,
@@ -168,6 +194,9 @@ export const openaiModels = {
       completion: 0.0044,
     },
     displayName: 'o3-mini (2025-01-31)',
+    supported: {
+      parallelFunctionCalls: false,
+    },
   },
   'gpt-4o-audio-preview': {
     maxTokens: 128000,
