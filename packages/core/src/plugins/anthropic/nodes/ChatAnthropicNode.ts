@@ -502,7 +502,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
 
           const startTime = Date.now();
           const apiKey = context.getPluginConfig('anthropicApiKey');
-          const defaultApiEndpoint = context.getPluginConfig('anthropicApiEndpoint') ?? 'https://api.anthropic.com/v1';
+          const defaultApiEndpoint = context.getPluginConfig('anthropicApiEndpoint') || 'https://api.anthropic.com/v1';
 
           const configuredEndpoint = getInputOrData(data, inputs, 'endpoint');
 
