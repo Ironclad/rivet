@@ -385,7 +385,14 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
     prompt = prompt.reduce((acc: Content[], message) => {
       const lastMessage = acc.at(-1);
 
-      if (lastMessage && message.role === 'function' && lastMessage.role === 'function') {
+      // Shouldn't be undefined but not sure if this is where the crash is happening...
+      if (
+        lastMessage &&
+        message.role === 'function' &&
+        lastMessage.role === 'function' &&
+        lastMessage?.parts &&
+        message.parts
+      ) {
         lastMessage.parts.push(...message.parts);
       } else {
         acc.push(message);
@@ -545,7 +552,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
 
               output['function-calls' as PortId] = {
                 type: 'object[]',
-                value: chunk.function_calls.map((fc) => ({
+                value: functionCalls.map((fc) => ({
                   id: fc.name,
                   name: fc.name,
                   arguments: fc.args,
