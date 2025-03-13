@@ -89,7 +89,7 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
     return (
       <div>
         {pluginsWithCustomPages.map((plugin) => {
-          const configPage = pluginsWithCustomPages.find((p) => p.id === plugin.id).configPage;
+          const configPage = pluginsWithCustomPages.find((p) => p.id === plugin.id)!.configPage!;
           return (
             <ButtonItem key={plugin.id} isSelected={page === plugin.id} onClick={() => setPage(plugin.id)}>
               {configPage.label}
