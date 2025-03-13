@@ -26,6 +26,7 @@ export type RivetPlugin = {
 export type RivetPluginConfigSpecs = Record<string, PluginConfigurationSpec>;
 
 export type RivetPluginConfigPage = {
+  id: string;
   label: string;
   description?: string;
 };

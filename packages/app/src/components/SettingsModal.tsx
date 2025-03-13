@@ -1,4 +1,4 @@
-import { type FC, useState, useMemo } from 'react';
+import { type FC, useState } from 'react';
 import { atom, useAtom, useAtomValue } from 'jotai';
 import {
   checkForUpdatesState,
@@ -71,21 +71,34 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
 
   const plugins = useDependsOnPlugins();
 
-  const pluginsWithCustomPages = useMemo(() => {
-    return plugins.filter((plugin) => {
-      const configPage = plugin.configPage;
+  const pluginsWithCustomPages = plugins.filter((plugin) => {
+    const configPage = plugin.configPage;
 
-      return configPage !== undefined;
-    });
-  }, [plugins]);
+    return configPage !== undefined;
+  });
 
-  const customPluginsPages = useMemo(() => {
-    const customPages = pluginsWithCustomPages.map((plugin) => {
+  const customPluginsPages = Object.fromEntries(
+    pluginsWithCustomPages.map((plugin) => {
       return [plugin.id, <CustomPluginsSettingsPage key={plugin.id} pluginId={plugin.id} />];
-    });
+    }),
+  );
 
-    return Object.fromEntries(customPages);
-  }, [pluginsWithCustomPages]);
+  const CustomPluginsTabs = (props: { page: string }) => {
+    const { page } = props;
+
+    return (
+      <div>
+        {pluginsWithCustomPages.map((plugin) => {
+          const configPage = pluginsWithCustomPages.find((p) => p.id === plugin.id).configPage;
+          return (
+            <ButtonItem key={plugin.id} isSelected={page === plugin.id} onClick={() => setPage(plugin.id)}>
+              {configPage.label}
+            </ButtonItem>
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <ModalTransition>
@@ -115,14 +128,7 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
                       <ButtonItem isSelected={page === 'updates'} onClick={() => setPage('updates')}>
                         Updates
                       </ButtonItem>
-                      {Object.entries(customPluginsPages).map(([id, page]) => {
-                        const configPage = pluginsWithCustomPages.find((plugin) => plugin.id === id).configPage;
-                        return (
-                          <ButtonItem key={id} isSelected={page === id} onClick={() => setPage(id)}>
-                            {configPage?.label}
-                          </ButtonItem>
-                        );
-                      })}
+                      <CustomPluginsTabs page={page} />
                     </div>
                   </NavigationContent>
                 </SideNavigation>
@@ -510,7 +516,7 @@ export const PluginsSettingsPage: FC = () => {
         const configPage = plugin.configPage;
 
         if (configPage) {
-          return <></>;
+          return null;
         }
 
         return (
@@ -561,17 +567,17 @@ export const CustomPluginsSettingsPage: FC<{ pluginId: string }> = ({ pluginId }
   const [settings, setSettings] = useAtom(settingsState);
 
   const plugin = plugins.find((p) => p.id === pluginId);
-
   if (!plugin) {
     return <div>Plugin not found</div>;
   }
 
   const configOptions = entries(plugin.configSpec ?? {});
-  const configPage = plugin.configPage;
 
+  const configPage = plugin.configPage;
   if (!configPage) {
     return <>Config page not found</>;
   }
+
   return (
     <div css={fields}>
       <section key={plugin.id}>
