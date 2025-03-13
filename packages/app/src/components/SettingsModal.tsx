@@ -123,7 +123,7 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
                         OpenAI
                       </ButtonItem>
                       <ButtonItem isSelected={page === 'plugins'} onClick={() => setPage('plugins')}>
-                        Plugins here
+                        Plugins
                       </ButtonItem>
                       <ButtonItem isSelected={page === 'updates'} onClick={() => setPage('updates')}>
                         Updates
