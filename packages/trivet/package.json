@@ -2,7 +2,7 @@
   "name": "@ironclad/trivet",
   "license": "MIT",
   "repository": "https://github.com/ironclad/rivet",
-  "version": "1.23.1",
+  "version": "1.24.0-beta.1",
   "main": "dist/cjs/bundle.cjs",
   "module": "dist/esm/index.js",
   "src": "src/index.ts",
