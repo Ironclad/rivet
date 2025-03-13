@@ -14,6 +14,8 @@ export type RivetPlugin = {
   /** The available configuration items and their specification, for configuring a plugin in the UI. */
   configSpec?: RivetPluginConfigSpecs;
 
+  configPage?: RivetPluginConfigPage;
+
   /** Defines additional context menu groups that the plugin adds. */
   contextMenuGroups?: Array<{
     id: string;
@@ -22,6 +24,12 @@ export type RivetPlugin = {
 };
 
 export type RivetPluginConfigSpecs = Record<string, PluginConfigurationSpec>;
+
+export type RivetPluginConfigPage = {
+  id: string;
+  label: string;
+  description?: string;
+};
 
 export type PluginConfigurationSpecBase<T> = {
   /** The type of the config value, how it should show as an editor in the UI. */
