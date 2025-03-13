@@ -1,4 +1,4 @@
-import { type FC, useState } from 'react';
+import { type FC, useState, useMemo } from 'react';
 import { atom, useAtom, useAtomValue } from 'jotai';
 import {
   checkForUpdatesState,
@@ -52,7 +52,9 @@ const modalBody = css`
   }
 `;
 
-type Pages = 'general' | 'openai' | 'plugins' | 'updates';
+type DefaultPages = 'general' | 'openai' | 'plugins' | 'updates';
+
+type Pages = DefaultPages | string;
 
 const buttonsContainer = css`
   > button span {
@@ -66,6 +68,24 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
   const [page, setPage] = useState<Pages>('general');
 
   const closeModal = () => setIsOpen(false);
+
+  const plugins = useDependsOnPlugins();
+
+  const pluginsWithCustomPages = useMemo(() => {
+    return plugins.filter((plugin) => {
+      const configPage = plugin.configPage;
+
+      return configPage !== undefined;
+    });
+  }, [plugins]);
+
+  const customPluginsPages = useMemo(() => {
+    const customPages = pluginsWithCustomPages.map((plugin) => {
+      return [plugin.id, <CustomPluginsSettingsPage key={plugin.id} pluginId={plugin.id} />];
+    });
+
+    return Object.fromEntries(customPages);
+  }, [pluginsWithCustomPages]);
 
   return (
     <ModalTransition>
@@ -90,11 +110,19 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
                         OpenAI
                       </ButtonItem>
                       <ButtonItem isSelected={page === 'plugins'} onClick={() => setPage('plugins')}>
-                        Plugins
+                        Plugins here
                       </ButtonItem>
                       <ButtonItem isSelected={page === 'updates'} onClick={() => setPage('updates')}>
                         Updates
                       </ButtonItem>
+                      {Object.entries(customPluginsPages).map(([id, page]) => {
+                        const configPage = pluginsWithCustomPages.find((plugin) => plugin.id === id).configPage;
+                        return (
+                          <ButtonItem key={id} isSelected={page === id} onClick={() => setPage(id)}>
+                            {configPage?.label}
+                          </ButtonItem>
+                        );
+                      })}
                     </div>
                   </NavigationContent>
                 </SideNavigation>
@@ -105,6 +133,7 @@ export const SettingsModal: FC<SettingsModalProps> = () => {
                   .with('openai', () => <OpenAiSettingsPage />)
                   .with('plugins', () => <PluginsSettingsPage />)
                   .with('updates', () => <UpdatesSettingsPage />)
+                  .with(P.string, (id) => customPluginsPages[id])
                   .exhaustive()}
               </main>
             </div>
@@ -478,6 +507,11 @@ export const PluginsSettingsPage: FC = () => {
     <div css={fields}>
       {plugins.map((plugin) => {
         const configOptions = entries(plugin.configSpec ?? {});
+        const configPage = plugin.configPage;
+
+        if (configPage) {
+          return <></>;
+        }
 
         return (
           <section key={plugin.id}>
@@ -518,6 +552,64 @@ export const PluginsSettingsPage: FC = () => {
           </section>
         );
       })}
+    </div>
+  );
+};
+
+export const CustomPluginsSettingsPage: FC<{ pluginId: string }> = ({ pluginId }) => {
+  const plugins = useDependsOnPlugins();
+  const [settings, setSettings] = useAtom(settingsState);
+
+  const plugin = plugins.find((p) => p.id === pluginId);
+
+  if (!plugin) {
+    return <div>Plugin not found</div>;
+  }
+
+  const configOptions = entries(plugin.configSpec ?? {});
+  const configPage = plugin.configPage;
+
+  if (!configPage) {
+    return <>Config page not found</>;
+  }
+  return (
+    <div css={fields}>
+      <section key={plugin.id}>
+        <Header>{configPage.label ?? plugin.id}</Header>
+        {configOptions.map(([key, config]) => (
+          <Field key={key} name={`plugin-${plugin.id}-${key}`} label={`${config.label} (${plugin.id})`}>
+            {() =>
+              match(config)
+                .with(
+                  { type: 'string' },
+                  { type: 'secret' },
+                  (config: StringPluginConfigurationSpec | SecretPluginConfigurationSpec) => (
+                    <>
+                      <TextField
+                        value={(settings.pluginSettings?.[plugin.id]?.[key] as string | undefined) ?? ''}
+                        type={config.type === 'secret' ? 'password' : 'text'}
+                        onChange={(e) =>
+                          setSettings((s) => ({
+                            ...s,
+                            pluginSettings: {
+                              ...s.pluginSettings,
+                              [plugin.id]: {
+                                ...s.pluginSettings?.[plugin.id],
+                                [key]: (e.target as HTMLInputElement).value,
+                              },
+                            },
+                          }))
+                        }
+                      />
+                      {config.helperText && <HelperMessage>{config.helperText}</HelperMessage>}
+                    </>
+                  ),
+                )
+                .otherwise(() => null)
+            }
+          </Field>
+        ))}
+      </section>
     </div>
   );
 };
