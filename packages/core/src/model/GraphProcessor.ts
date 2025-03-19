@@ -23,7 +23,8 @@ import type { GraphId, NodeGraph } from './NodeGraph.js';
 import type { NodeImpl } from './NodeImpl.js';
 import type { UserInputNode } from './nodes/UserInputNode.js';
 import PQueueImport from 'p-queue';
-import { getError, NodeError } from '../utils/errors.js';
+import { getError } from '../utils/errors.js';
+import type { NodeError } from '../utils/errors.js';
 import Emittery from 'emittery';
 import { entries, fromEntries, values } from '../utils/typeSafety.js';
 import { isNotNull } from '../utils/genericUtilFunctions.js';
@@ -1440,10 +1441,11 @@ export class GraphProcessor {
 
   #nodeErrored(node: ChartNode, e: unknown, processId: ProcessId) {
     const error = getError(e);
+    (error as NodeError).node = node;
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.#emitter.emit('nodeError', { node, error, processId });
     this.#emitTraceEvent(`Node ${node.title} (${node.id}-${processId}) errored: ${error.stack}`);
-    this.#erroredNodes.set(node.id, new NodeError(error.message, node, { cause: error }));
+    this.#erroredNodes.set(node.id, error);
   }
 
   getRootProcessor(): GraphProcessor {

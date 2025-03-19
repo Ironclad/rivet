@@ -6,18 +6,21 @@ import { NodeError, rivetErrorToString } from '../../src/utils/errors.js';
 
 describe('rivetErrorToString', () => {
   it('should handle AggregateError', () => {
+    const nodeError = new Error('Error 2');
+    (nodeError as NodeError).node = {
+      data: undefined,
+      id: 'nodeId' as NodeId,
+      title: 'Node title',
+      type: 'type',
+      visualData: {} as any, // Unused
+    };
+
     assert.equal(
       rivetErrorToString(
         new AggregateError(
           [
-            new Error('Error 1', { cause: new Error('Root cause') }),
-            new NodeError('Error 2', {
-              data: undefined,
-              id: 'nodeId' as NodeId,
-              title: 'Node title',
-              type: 'type',
-              visualData: {} as any, // Unused
-            }),
+            new Error('Error 1', { cause: new Error('Root cause') }), //
+            nodeError,
             'Error 3',
             null,
           ],

@@ -1,13 +1,11 @@
 import type { ChartNode } from '../model/NodeBase.js';
 
-export class NodeError extends Error {
-  constructor(
-    message: string,
-    public readonly node: ChartNode,
-    options?: ErrorOptions,
-  ) {
-    super(message, options);
-  }
+export interface NodeError extends Error {
+  node: ChartNode;
+}
+
+export function isNodeError(error: Error): error is NodeError {
+  return 'node' in error && typeof (error.node as ChartNode)?.id === 'string';
 }
 
 /** Gets an Error from an unknown error object (strict unknown errors is enabled, helper util). */
@@ -33,7 +31,7 @@ export function rivetErrorToString(error: unknown, spaces = 0): string {
   }
 
   let message = error.message;
-  if (error instanceof NodeError) {
+  if (isNodeError(error)) {
     const { node } = error;
     message = `${node.title} (${node.id}): ${error.message}`;
   }
