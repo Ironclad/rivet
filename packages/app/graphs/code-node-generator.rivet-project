@@ -1692,12 +1692,6 @@ data:
 
               * The `rivet-plugin-example-python-exec` plugin to run python code
 
-              * The `Read File`, `Read Directory` Nodes built-in to Rivet
-
-              * The `Write File` and `Shell Command` nodes in the FS plugin
-
-              * The HTTP Call node can make HTTP requests
-
               * Writing a custom Rivet plugin to accomplish what you are wanting
 
               * Using the External Call node to write the code in a parent application that Rivet can call into
@@ -2454,3 +2448,4 @@ data:
     - id: anthropic
       name: Anthropic
       type: built-in
+  references: []
