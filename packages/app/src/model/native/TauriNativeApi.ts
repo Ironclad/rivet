@@ -1,4 +1,5 @@
 import { readDir, BaseDirectory, readTextFile, readBinaryFile, writeFile, type FileEntry } from '@tauri-apps/api/fs';
+import { resolveResource } from '@tauri-apps/api/path';
 import { type BaseDir, type NativeApi, type ReadDirOptions } from '@ironclad/rivet-core';
 
 import { minimatch } from 'minimatch';
@@ -86,5 +87,16 @@ export class TauriNativeApi implements NativeApi {
 
   async exec(command: string, args: string[], options?: { cwd?: string | undefined } | undefined): Promise<void> {
     throw new Error('Method not implemented.');
+  }
+
+  async resolveBaseDir(baseDir?: BaseDir, path?: string): Promise<string> {
+    if (!baseDir || !path) {
+      return path ?? '';
+    }
+    const baseDirectory = baseDirToBaseDirectory(baseDir);
+    if (!baseDirectory) {
+      throw new Error(`Unsupported base directory: ${baseDir}`);
+    }
+    return await resolveResource(path);
   }
 }

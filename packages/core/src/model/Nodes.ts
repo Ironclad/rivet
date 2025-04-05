@@ -238,6 +238,9 @@ export * from './nodes/ToTreeNode.js';
 import { loopUntilNode } from './nodes/LoopUntilNode.js';
 export * from './nodes/LoopUntilNode.js';
 
+import { mcpNode } from './nodes/MCPNode.js';
+export * from './nodes/MCPNode.js';
+
 import { referencedGraphAliasNode } from './nodes/ReferencedGraphAliasNode.js';
 export * from './nodes/ReferencedGraphAliasNode.js';
 
@@ -322,6 +325,7 @@ export const registerBuiltInNodes = (registry: NodeRegistration) => {
     .register(cronNode)
     .register(toTreeNode)
     .register(loopUntilNode)
+    .register(mcpNode)
     .register(referencedGraphAliasNode);
 };
 
