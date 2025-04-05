@@ -20,6 +20,8 @@ import { deserializeProject } from '../utils/serialization/serialization.js';
 import { DEFAULT_CHAT_NODE_TIMEOUT } from '../utils/defaults.js';
 import type { Tokenizer } from '../integrations/Tokenizer.js';
 import { looseDataValuesToDataValues, type LooseDataValue } from './looseDataValue.js';
+import type { CodeRunner } from '../integrations/CodeRunner.js';
+import type { ProjectReferenceLoader } from '../model/ProjectReferenceLoader.js';
 
 export type RunGraphOptions = {
   graph?: string;
@@ -39,6 +41,9 @@ export type RunGraphOptions = {
   includeTrace?: boolean;
   getChatNodeEndpoint?: ProcessContext['getChatNodeEndpoint'];
   tokenizer?: Tokenizer;
+  codeRunner?: CodeRunner;
+  projectPath?: string;
+  projectReferenceLoader?: ProjectReferenceLoader;
 } & {
   [P in keyof ProcessEvents as `on${PascalCase<P>}`]?: (params: ProcessEvents[P]) => void;
 } & Settings;
@@ -152,6 +157,9 @@ export function coreCreateProcessor(project: Project, options: RunGraphOptions) 
           nativeApi: options.nativeApi,
           datasetProvider: options.datasetProvider,
           audioProvider: options.audioProvider,
+          codeRunner: options.codeRunner,
+          projectPath: options.projectPath,
+          projectReferenceLoader: options.projectReferenceLoader,
           settings: {
             openAiKey: options.openAiKey ?? '',
             openAiOrganization: options.openAiOrganization ?? '',

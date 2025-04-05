@@ -25,10 +25,8 @@ import {
   type Claude3ChatMessageContentPart,
   streamMessageApi,
   type ChatMessageOptions,
-  callMessageApi,
   type Claude3ChatMessageTextContentPart,
   type SystemPrompt,
-  type ChatMessageTextContentItem,
   type ChatMessageCitation,
   type Claude3ChatMessageToolResultContentPart,
 } from '../anthropic.js';
@@ -96,7 +94,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
         width: 275,
       },
       data: {
-        model: 'claude-3-5-sonnet-latest',
+        model: 'claude-3-7-sonnet-latest',
         useModelInput: false,
 
         temperature: 0.5,
@@ -237,8 +235,8 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
       outputs.push({
         dataType: 'object[]',
         id: 'function-calls' as PortId,
-        title: 'Function Calls',
-        description: 'The function calls that were made, if any.',
+        title: 'Tool Calls',
+        description: 'The tool calls that were made, if any.',
       });
     }
 
@@ -388,10 +386,6 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
   },
 
   async process(data, inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
-    if (context.executor === 'browser') {
-      throw new Error('This node requires using the Node executor');
-    }
-
     const output: Outputs = {};
     const rawModel = getInputOrData(data, inputs, 'model');
     const overrideModel = getInputOrData(data, inputs, 'overrideModel');
@@ -508,90 +502,13 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
 
           const startTime = Date.now();
           const apiKey = context.getPluginConfig('anthropicApiKey');
-          const defaultApiEndpoint = context.getPluginConfig('anthropicApiEndpoint') ?? 'https://api.anthropic.com/v1';
+          const defaultApiEndpoint = context.getPluginConfig('anthropicApiEndpoint') || 'https://api.anthropic.com/v1';
 
           const configuredEndpoint = getInputOrData(data, inputs, 'endpoint');
 
           const apiEndpoint = configuredEndpoint?.trim() ? configuredEndpoint : defaultApiEndpoint;
 
-          if (useMessageApi && data.enableToolUse) {
-            // Streaming is not supported with tool usage.
-            const response = await callMessageApi({
-              apiEndpoint,
-              apiKey: apiKey ?? '',
-              beta: 'prompt-caching-2024-07-31',
-              ...messageOptions,
-            });
-            const { input_tokens: requestTokens, output_tokens: responseTokens } = response.usage;
-
-            const responseText = response.content
-              .map((c): string | undefined => (c as any).text)
-              .filter(isNotNull)
-              .join('');
-
-            output['response' as PortId] = {
-              type: 'string',
-              value: responseText,
-            };
-
-            const citations = response.content
-              .filter((c): c is ChatMessageTextContentItem => c.type === 'text')
-              .flatMap((c) => c.citations ?? []);
-
-            output['citations' as PortId] = {
-              type: 'object[]',
-              value: citations,
-            };
-
-            output['raw_response' as PortId] = {
-              type: 'object[]',
-              value: response.content,
-            };
-
-            const functionCalls = response.content
-              .filter((content) => (content as any).name && (content as any).id)
-              .map((functionCall: any) => ({
-                name: functionCall.name,
-                arguments: functionCall.input, // Matches OpenAI ChatNode
-                id: functionCall.id,
-              }));
-
-            if (functionCalls.length > 0) {
-              output['function-calls' as PortId] = {
-                type: 'object[]',
-                value: functionCalls,
-              };
-            }
-
-            output['all-messages' as PortId] = {
-              type: 'chat-message[]',
-              value: [
-                ...rivetChatMessages,
-                {
-                  type: 'assistant',
-                  message: responseText,
-                  function_call:
-                    functionCalls.length > 0
-                      ? functionCalls.map((toolCall) => ({
-                          name: toolCall.name,
-                          arguments: JSON.stringify(toolCall.arguments),
-                          id: toolCall.id,
-                        }))[0]
-                      : undefined,
-                  function_calls: functionCalls.map((toolCall) => ({
-                    name: toolCall.name,
-                    arguments: JSON.stringify(toolCall.arguments),
-                    id: toolCall.id,
-                  })),
-                } satisfies ChatMessage,
-              ],
-            };
-
-            output['requestTokens' as PortId] = { type: 'number', value: requestTokens ?? tokenCountEstimate };
-            const responseTokenCount =
-              responseTokens ?? context.tokenizer.getTokenCountForString(responseText, tokenizerInfo);
-            output['responseTokens' as PortId] = { type: 'number', value: responseTokenCount };
-          } else if (useMessageApi) {
+          if (useMessageApi) {
             // Use the messages API for Claude 3 models
             const chunks = streamMessageApi({
               apiEndpoint,
@@ -605,18 +522,66 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
             const responseParts: string[] = [];
             let requestTokens: number | undefined = undefined;
             let responseTokens: number | undefined = undefined;
-
             const citations: ChatMessageCitation[] = [];
+
+            type ToolCall = {
+              id: string;
+              name: string;
+              input: object;
+            };
+
+            // Track tool calls
+            const toolCalls: ToolCall[] = [];
+            let currentToolCall: ToolCall | null = null;
+            let accumulatedJsonString = '';
 
             for await (const chunk of chunks) {
               let completion: string = '';
+
               if (chunk.type === 'content_block_start') {
-                completion = chunk.content_block.text;
+                if (chunk.content_block.type === 'text') {
+                  completion = chunk.content_block.text || '';
+                } else if (chunk.content_block.type === 'tool_use') {
+                  currentToolCall = {
+                    id: chunk.content_block.id,
+                    name: chunk.content_block.name,
+                    input: chunk.content_block.input || {},
+                  };
+                  accumulatedJsonString = '';
+                }
               } else if (chunk.type === 'content_block_delta') {
                 if (chunk.delta.type === 'text_delta') {
                   completion = chunk.delta.text;
-                } else {
+                } else if (chunk.delta.type === 'input_json_delta') {
+                  if (currentToolCall) {
+                    accumulatedJsonString += chunk.delta.partial_json || '';
+
+                    try {
+                      // Try to parse the accumulated JSON
+                      const parsedJson = JSON.parse(accumulatedJsonString);
+                      currentToolCall.input = parsedJson;
+                      accumulatedJsonString = '';
+                    } catch (e) {
+                      // Not valid JSON yet, keep accumulating
+                    }
+                  }
+                } else if (chunk.delta.type === 'citations_delta') {
                   citations.push(chunk.delta.citation);
+                }
+              } else if (chunk.type === 'content_block_stop') {
+                if (currentToolCall) {
+                  if (accumulatedJsonString) {
+                    try {
+                      const parsedJson = JSON.parse(accumulatedJsonString);
+                      currentToolCall.input = parsedJson;
+                    } catch (e) {
+                      console.warn('Failed to parse tool call JSON input:', accumulatedJsonString);
+                    }
+                  }
+
+                  toolCalls.push({ ...currentToolCall });
+                  currentToolCall = null;
+                  accumulatedJsonString = '';
                 }
               } else if (chunk.type === 'message_start' && chunk.message?.usage?.input_tokens) {
                 requestTokens = chunk.message.usage.input_tokens;
@@ -624,20 +589,42 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
                 responseTokens = chunk.delta.usage.output_tokens;
               }
 
-              if (!completion) {
-                continue;
+              if (completion) {
+                responseParts.push(completion);
               }
 
-              responseParts.push(completion);
               output['response' as PortId] = {
                 type: 'string',
                 value: responseParts.join('').trim(),
               };
 
+              if (toolCalls.length > 0) {
+                output['function-calls' as PortId] = {
+                  type: 'object[]',
+                  value: toolCalls.map((tool) => ({
+                    id: tool.id,
+                    name: tool.name,
+                    arguments: tool.input,
+                  })),
+                };
+              } else {
+                output['function-calls' as PortId] = {
+                  type: 'control-flow-excluded',
+                  value: undefined,
+                };
+              }
+
               output['citations' as PortId] = {
                 type: 'object[]',
                 value: citations,
               };
+
+              // Format function calls for the ChatMessage interface
+              const functionCalls = toolCalls.map((tool) => ({
+                name: tool.name,
+                arguments: typeof tool.input === 'object' ? JSON.stringify(tool.input) : tool.input,
+                id: tool.id,
+              }));
 
               output['all-messages' as PortId] = {
                 type: 'chat-message[]',
@@ -646,16 +633,18 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
                   {
                     type: 'assistant',
                     message: responseParts.join('').trim(),
-                    function_call: undefined,
-                    function_calls: undefined,
+                    function_call: functionCalls.length === 1 ? functionCalls[0] : undefined,
+                    function_calls: functionCalls.length > 0 ? functionCalls : undefined,
                   } satisfies ChatMessage,
                 ],
               };
+
               context.onPartialOutputs?.(output);
             }
 
-            if (responseParts.length === 0) {
-              throw new Error('No response from Anthropic');
+            // Final validation
+            if (responseParts.length === 0 && toolCalls.length === 0) {
+              throw new Error('No response or tool calls received from Anthropic');
             }
 
             output['requestTokens' as PortId] = { type: 'number', value: requestTokens ?? tokenCountEstimate };

@@ -1,4 +1,4 @@
-import { type NodeUIData, getError, globalRivetNodeRegistry } from '@ironclad/rivet-core';
+import { type BuiltInNodeType, type NodeUIData, getError, globalRivetNodeRegistry } from '@ironclad/rivet-core';
 import { type ContextMenuItem } from './useContextMenuConfiguration';
 import { useMemo, useState } from 'react';
 import { useBuiltInNodeImages } from './useBuiltInNodeImages';
@@ -10,6 +10,7 @@ import { isNotNull } from '../utils/genericUtilFunctions';
 import { orderBy, uniqBy } from 'lodash-es';
 import { useAtomValue } from 'jotai';
 import { nodeConstructorsState } from '../state/graph';
+import { referencedProjectsState } from '../state/savedGraphs';
 
 export const addContextMenuGroups = [
   {
@@ -65,16 +66,17 @@ export const addContextMenuGroups = [
 };
 
 export function useContextMenuAddNodeConfiguration() {
+  const referencedProjects = useAtomValue(referencedProjectsState);
   const constructors = useAtomValue(nodeConstructorsState);
   const builtInImages = useBuiltInNodeImages();
   const getUIContext = useGetRivetUIContext();
 
-  const [uiData, setUiData] = useState<readonly { type: string; uiData: NodeUIData }[]>([]);
+  const [nodeTypesWithUiData, setNodeTypesWithUiData] = useState<readonly { type: string; uiData: NodeUIData }[]>([]);
 
   useAsyncEffect(async () => {
     const context = await getUIContext({});
 
-    const uiData = (
+    let nodeTypesWithUiData = (
       await Promise.all(
         constructors.map(async (constructor) => {
           try {
@@ -98,8 +100,28 @@ export function useContextMenuAddNodeConfiguration() {
       )
     ).filter(isNotNull);
 
-    setUiData(uiData);
-  }, [constructors, getUIContext]);
+    nodeTypesWithUiData = nodeTypesWithUiData.filter((x) => x.type !== 'referencedGraphAlias');
+
+    for (const project of Object.values(referencedProjects)) {
+      for (const graph of Object.values(project.graphs)) {
+        const type: BuiltInNodeType = 'referencedGraphAlias';
+
+        const uiData: NodeUIData = {
+          group: 'Library',
+          contextMenuTitle: graph.metadata?.name ?? 'Unknown Graph',
+          infoBoxBody: graph.metadata?.description ?? 'Creates a node that references a graph from another project.',
+          infoBoxTitle: graph.metadata?.name ?? 'Unknown Graph',
+        };
+
+        nodeTypesWithUiData.push({
+          type: `${type}:${project.metadata!.id!}:${graph.metadata!.id!}`,
+          uiData,
+        });
+      }
+    }
+
+    setNodeTypesWithUiData(nodeTypesWithUiData);
+  }, [constructors, referencedProjects, getUIContext]);
 
   const plugins = useDependsOnPlugins();
   const groupsWithItems = useMemo(() => {
@@ -108,8 +130,15 @@ export function useContextMenuAddNodeConfiguration() {
       (g) => g.id,
     );
 
+    if (Object.values(referencedProjects).length > 0) {
+      allGroups.push({
+        id: 'add-node-group:references',
+        label: 'Library',
+      });
+    }
+
     const groups = allGroups.map((group) => {
-      let items = uiData
+      let items = nodeTypesWithUiData
         .filter((item) =>
           Array.isArray(item.uiData.group)
             ? item.uiData.group.includes(group.label)
@@ -136,7 +165,7 @@ export function useContextMenuAddNodeConfiguration() {
     });
 
     return groups.filter((group) => group.items.length > 0);
-  }, [builtInImages, uiData, plugins]);
+  }, [builtInImages, nodeTypesWithUiData, plugins, referencedProjects]);
 
   return groupsWithItems;
 }

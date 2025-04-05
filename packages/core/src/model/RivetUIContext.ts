@@ -4,6 +4,7 @@ import {
   type NativeApi,
   type NodeGraph,
   type Project,
+  type ProjectId,
   type Settings,
 } from '../index.js';
 
@@ -20,6 +21,9 @@ export type RivetUIContext = {
 
   /** The current project loaded in the UI. */
   project: Project;
+
+  /** Other projects referenced by the current project. */
+  referencedProjects: Record<ProjectId, Project>;
 
   /** The current graph selected in the UI. */
   graph?: NodeGraph;

@@ -12,6 +12,8 @@ import { dedent } from 'ts-dedent';
 import { type EditorDefinition } from '../EditorDefinition.js';
 import { type NodeBodySpec } from '../NodeBodySpec.js';
 import { nodeDefinition } from '../NodeDefinition.js';
+import type { InternalProcessContext } from '../ProcessContext.js';
+import type { Inputs, Outputs } from '../GraphProcessor.js';
 
 export type CodeNode = ChartNode<'code', CodeNodeData>;
 
@@ -22,6 +24,11 @@ export type CodeNodeData = {
   code: string;
   inputNames: string | string[];
   outputNames: string | string[];
+  allowFetch?: boolean;
+  allowRequire?: boolean;
+  allowRivet?: boolean;
+  allowProcess?: boolean;
+  allowConsole?: boolean;
 };
 
 export class CodeNodeImpl extends NodeImpl<CodeNode> {
@@ -49,6 +56,11 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
         `,
         inputNames: 'input1',
         outputNames: 'output1',
+        allowFetch: false,
+        allowRequire: false,
+        allowRivet: false,
+        allowProcess: false,
+        allowConsole: false,
       },
     };
 
@@ -112,6 +124,33 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
         label: 'Outputs',
         dataKey: 'outputNames',
       },
+      {
+        type: 'toggle',
+        label: 'Allow using `fetch`',
+        dataKey: 'allowFetch',
+      },
+      {
+        type: 'toggle',
+        label: 'Allow using `require`',
+        dataKey: 'allowRequire',
+        helperMessage: 'This is only available when using the Node executor.',
+      },
+      {
+        type: 'toggle',
+        label: 'Allow using `Rivet`',
+        dataKey: 'allowRivet',
+      },
+      {
+        type: 'toggle',
+        label: 'Allow using `process`',
+        dataKey: 'allowProcess',
+        helperMessage: 'This is only available when using the Node executor.',
+      },
+      {
+        type: 'toggle',
+        label: 'Allow using `console`',
+        dataKey: 'allowConsole',
+      },
     ];
   }
 
@@ -143,10 +182,14 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
     };
   }
 
-  async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
-    // eslint-disable-next-line no-new-func
-    const codeFunction = new Function('inputs', this.chartNode.data.code);
-    const outputs = codeFunction(inputs);
+  async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+    const outputs = await context.codeRunner.runCode(this.data.code, inputs, {
+      includeFetch: this.data.allowFetch ?? false,
+      includeRequire: this.data.allowRequire ?? false,
+      includeRivet: this.data.allowRivet ?? false,
+      includeProcess: this.data.allowProcess ?? false,
+      includeConsole: this.data.allowConsole ?? false,
+    });
 
     if (outputs == null || typeof outputs !== 'object' || ('then' in outputs && typeof outputs.then === 'function')) {
       throw new Error('Code node must return an object with output values.');

@@ -1,0 +1,2306 @@
+version: 4
+data:
+  attachedData:
+    trivet:
+      testSuites: []
+      version: 1
+  graphs:
+    2OBM3-fhu5naPmUnBb8t7:
+      metadata:
+        description: ""
+        id: 2OBM3-fhu5naPmUnBb8t7
+        name: "Function: disconnectNodes"
+      nodes:
+        '[Ej28Nm7UIJ4f7RnUDFEXy]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: sourceNodeId
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Object" iZ2pAOqtadkyuuUcOeoqH/sourceNodeId
+          visualData: 299/238/330/1//
+        '[IZZN_iHERQCUqPWuif9b1]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: destPortId
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Object" iZ2pAOqtadkyuuUcOeoqH/destPortId
+          visualData: 299/838/330/1//
+        '[OmPRoj5ya9czF6iIj7es8]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: destNodeId
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Object" iZ2pAOqtadkyuuUcOeoqH/destNodeId
+          visualData: 299/438/330/1//
+        '[eaaS_qJ6Lr1WGRrue7ywg]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: sourcePortId
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Object" iZ2pAOqtadkyuuUcOeoqH/sourcePortId
+          visualData: 299/638/330/1//
+        '[iZ2pAOqtadkyuuUcOeoqH]:object "Object"':
+          data:
+            jsonTemplate: |-
+              {
+                "sourceNodeId": "{{sourceNodeId}}",
+                "sourcePortId": "{{sourcePortId}}",
+                "destNodeId": "{{destNodeId}}",
+                "destPortId": "{{destPortId}}"
+              }
+          outgoingConnections:
+            - output->"External Call" z7lYcjuAqLnL2r41NNda8/arguments
+          visualData: 786.7210550220988/405.0968149603709/230/2//
+        '[mfBS46B47pbvenLp9rp5K]:text "Text"':
+          data:
+            text: "Error: {{error}}"
+          outgoingConnections:
+            - output->"Coalesce" u7jWN34tVH1RTRVVuY-Fs/input2
+          visualData: 1363.4620000913644/682.6930061035998/330/null//
+        '[u7jWN34tVH1RTRVVuY-Fs]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" vyHFnukMJyAlqJoFrl20D/value
+          visualData: 1439.5157510895094/413.96975257682107/180/6//
+        '[vyHFnukMJyAlqJoFrl20D]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1937.667820127359/496.3613161581448/330/5//
+        '[z7lYcjuAqLnL2r41NNda8]:externalCall "External Call"':
+          data:
+            functionName: disconnectNodes
+            useErrorOutput: true
+            useFunctionNameInput: false
+          outgoingConnections:
+            - error->"Text" mfBS46B47pbvenLp9rp5K/error
+            - result->"Coalesce" u7jWN34tVH1RTRVVuY-Fs/input1
+          visualData: 1064.317246165328/533.1206291405814/180/3//
+    3yMuliAwHP1Pz3rD26P2Q:
+      metadata:
+        description: ""
+        id: 3yMuliAwHP1Pz3rD26P2Q
+        name: "Function: connectNodes"
+      nodes:
+        '[1zKRH8o_SO3DukUj_E8ki]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: destNodeId
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Object" j9rHPqJ7gimknvYemAJ3z/destNodeId
+          visualData: 299/438/330/1//
+        '[7xbr13Bdw65itU0YCqK0c]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1937.667820127359/496.3613161581448/330/5//
+        '[DVtHYKf9fBZbafWSwexvn]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: sourceNodeId
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Object" j9rHPqJ7gimknvYemAJ3z/sourceNodeId
+          visualData: 299/238/330/1//
+        '[N53PUuDH9Cnr60VjUK_Yd]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: destPortId
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Object" j9rHPqJ7gimknvYemAJ3z/destPortId
+          visualData: 299/838/330/1//
+        '[SZBPuGAeeRf8A_Qn3dmml]:text "Text"':
+          data:
+            text: "Error: {{error}}"
+          outgoingConnections:
+            - output->"Coalesce" qdWOKno5C9hgImmzAlyXS/input2
+          visualData: 1371.0673751911788/732.1279442523941/330/7//
+        '[gAwA3wqZqn84MLtdHT73Z]:externalCall "External Call"':
+          data:
+            functionName: connectNodes
+            useErrorOutput: true
+            useFunctionNameInput: false
+          outgoingConnections:
+            - error->"Text" SZBPuGAeeRf8A_Qn3dmml/error
+            - result->"Coalesce" qdWOKno5C9hgImmzAlyXS/input1
+          visualData: 1064.317246165328/533.1206291405814/180/3//
+        '[j9rHPqJ7gimknvYemAJ3z]:object "Object"':
+          data:
+            jsonTemplate: |-
+              {
+                "sourceNodeId": "{{sourceNodeId}}",
+                "sourcePortId": "{{sourcePortId}}",
+                "destNodeId": "{{destNodeId}}",
+                "destPortId": "{{destPortId}}"
+              }
+          outgoingConnections:
+            - output->"External Call" gAwA3wqZqn84MLtdHT73Z/arguments
+          visualData: 786.7210550220988/405.0968149603709/230/2//
+        '[nTqsPbYC2TDk2nPk0gIJN]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: sourcePortId
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Object" j9rHPqJ7gimknvYemAJ3z/sourcePortId
+          visualData: 299/638/330/1//
+        '[qdWOKno5C9hgImmzAlyXS]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" 7xbr13Bdw65itU0YCqK0c/value
+          visualData: 1439.5157510895094/413.96975257682107/180/6//
+    63Z2eYieO0XxjDXixrDSR:
+      metadata:
+        description: ""
+        id: 63Z2eYieO0XxjDXixrDSR
+        name: "Function: addNodeData"
+      nodes:
+        '[DOJzaWE4mJWV5n-lCPzxp]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" PpA5PSWDo2xdbI6XsKmHP/value
+          visualData: 1907.1214802677803/265.8690352607646/180/13//
+        '[Lv0KsUKfJvrQbYNzYT4iy]:externalCall "External Call"':
+          data:
+            functionName: addNodeData
+            useErrorOutput: true
+            useFunctionNameInput: false
+          outgoingConnections:
+            - error->"Text" p0302RhU4iTqaTjplqKLt/error
+            - result->"Coalesce" DOJzaWE4mJWV5n-lCPzxp/input1
+          visualData: 1383.597830981039/405.7637121080456/180/3//
+        '[PZjZ8u66XDA4cldD85PdD]:array "Array"':
+          data:
+            flatten: false
+            flattenDeep: false
+          outgoingConnections:
+            - output->"External Call" Lv0KsUKfJvrQbYNzYT4iy/arguments
+          visualData: 1060.2501654472028/422.43111754793404/230/2//
+        '[PpA5PSWDo2xdbI6XsKmHP]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 2313.4798409058435/331.64702948850805/330/10//
+        '[UNzw56KcSDevrlwlN4MHI]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: key
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Array" PZjZ8u66XDA4cldD85PdD/input2
+          visualData: 604.6744167569182/565.7708043309748/330/7//
+        '[o8-dUMVsD68fnKLuDcVvx]:graphInput "Graph Input"':
+          data:
+            dataType: any
+            id: value
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Array" PZjZ8u66XDA4cldD85PdD/input3
+          visualData: 618.0083411088289/792.4386530347963/330/6//
+        '[p0302RhU4iTqaTjplqKLt]:text "Text"':
+          data:
+            text: "Error: {{error}}"
+          outgoingConnections:
+            - output->"Coalesce" DOJzaWE4mJWV5n-lCPzxp/input2
+          visualData: 1820.8713653293707/553.6720503710369/330/14//
+        '[xLeA7V9NmeIWVApVDyL9d]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: nodeId
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Array" PZjZ8u66XDA4cldD85PdD/input1
+          visualData: 608.0078978448958/341.3164110738102/330/1//
+    C1y5MaS645eBCwJkTWtgJ:
+      metadata:
+        description: ""
+        id: C1y5MaS645eBCwJkTWtgJ
+        name: "Function: finished"
+      nodes:
+        '[Hbh5HJm5xDGDfX7D5B2J_]:text "Text"':
+          data:
+            text: COMPLETELY_FINISHED_VALUE
+          outgoingConnections:
+            - output->"Graph Output" cqtib36tTS-CpEpUtmzyb/value
+          visualData: 488/409/330/3//
+        '[NwrvpKIFtyMVZwXADX7HK]:raiseEvent "Raise Event"':
+          data:
+            eventName: finalMessage
+            useEventNameInput: false
+          visualData: 486/616/180/5//
+        '[cqtib36tTS-CpEpUtmzyb]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 900/388/330/1//
+        '[nV303p59j44oLNj1iesoK]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: message
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Raise Event" NwrvpKIFtyMVZwXADX7HK/data
+          visualData: -4/626/330/4//
+    DNpnkEaXvzD3ZbRxQEg-d:
+      metadata:
+        description: ""
+        id: DNpnkEaXvzD3ZbRxQEg-d
+        name: "Function: createNode"
+      nodes:
+        '[1CnfGcyldKfcdauUbZ7N2]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1741.760260868777/384.978918966359/330/19//
+        '[QUHs-HJl5DW-MfOrRUymS]:chat "Chat"':
+          data:
+            additionalParameters: []
+            cache: false
+            enableFunctionUse: false
+            maxTokens: 1024
+            modalitiesIncludeAudio: false
+            modalitiesIncludeText: false
+            model: gpt-4o-mini
+            outputUsage: false
+            parallelFunctionCalling: true
+            reasoningEffort: ""
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAdditionalParametersInput: false
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePredictedOutput: false
+            usePresencePenaltyInput: false
+            useReasoningEffortInput: false
+            useServerTokenCalculation: true
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"External Call" xcX_2iyt7CLbRDdDPZzh7/arguments
+          visualData: 372.0122702942299/313.26932617238106/230/14//
+        '[duWJBH9d5Xb1s_sBv-ed2]:text "Text"':
+          data:
+            text: >-
+              {{input}}
+
+
+              The node has been created.
+
+
+              Next, you should run `readNodeDocumentation` or `readNodeSourceCode` to understand the node better, then run `getNodePorts`/`getNodeData` to see the current state of the node.
+          outgoingConnections:
+            - output->"Graph Output" 1CnfGcyldKfcdauUbZ7N2/value
+          visualData: 1248.2438275125526/401.15775836797843/330/null//
+        '[fD4NRCPR0COe9G9S0r628]:context "Context"':
+          data:
+            dataType: string[]
+            id: allNodeTypes
+            useDefaultValueInput: true
+          outgoingConnections:
+            - data->"Text" qJUKBVw7nXN0tdWauF7wd/node_types
+          visualData: -570.5631804132291/186.17893722561422/330/17//
+        '[fzc0lAU0xDICXQ4owFzss]:array "Array"':
+          data:
+            flatten: true
+            flattenDeep: false
+          outgoingConnections:
+            - output->"Context" fD4NRCPR0COe9G9S0r628/default
+          visualData: -908.2836927895302/223.451339408761/230/18//
+        '[qEvLb9IjoZlG1cLFsM4o_]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: nodeType
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Text" qJUKBVw7nXN0tdWauF7wd/node_type
+          visualData: -545.5731132075472/409/330/9//
+        '[qJUKBVw7nXN0tdWauF7wd]:text "Text"':
+          data:
+            text: |-
+              The following are all node types in Rivet:
+
+              {{node_types}}
+
+              Reply with the corresponding node type to the "{{node_type}}"
+
+              Reply with only the corresponding node type.
+          outgoingConnections:
+            - output->"Chat" QUHs-HJl5DW-MfOrRUymS/prompt
+          visualData: -142.40629429944877/269.4623924478585/330/13//
+        '[xcX_2iyt7CLbRDdDPZzh7]:externalCall "External Call"':
+          data:
+            functionName: createNode
+            useErrorOutput: false
+            useFunctionNameInput: false
+          outgoingConnections:
+            - result->"Text" duWJBH9d5Xb1s_sBv-ed2/input
+          visualData: 713.0455469796179/377.431679530573/296/15//
+    GclkPKrrBXX88jIhSRlgX:
+      metadata:
+        description: ""
+        id: GclkPKrrBXX88jIhSRlgX
+        name: "Function: readNodeDocumentation"
+      nodes:
+        '[0bHEYvBizo6FZQfE-jDpC]:loadDataset "Load Dataset"':
+          data:
+            datasetId: tFwViTH9Bmi4b3GGXmkFS
+          outgoingConnections:
+            - dataset->"Destructure" 4wLk3dTc1kFXOvpt-S5Pp/object
+            - dataset->"Extract Object Path" 1AZBLrzB1wnPHjMPW4F5O/object
+          visualData: -785.6409912148162/344.4058715095922/280/33//
+        '[1AZBLrzB1wnPHjMPW4F5O]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $[?(@.data[0]=='to-json.mdx')].data[1]
+            usePathInput: true
+          outgoingConnections:
+            - match->"Coalesce" ryK3JNBmu-L2gMI21G83A/input1
+          visualData: 1581.6391091315022/366.4341056187761/280/42//
+        '[2fy8rnQHdT6LJy4PoQQh1]:text "Text"':
+          data:
+            text: "{{input}}"
+          outgoingConnections:
+            - output->"If" jD_RIxhvBN807mnDJzSCN/value
+          visualData: 1076/811/330/25//
+        '[4ScAjCsTsiek85eDudUti]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 2507.424607988899/480.6459111866651/330/26//
+        '[4wLk3dTc1kFXOvpt-S5Pp]:destructure "Destructure"':
+          data:
+            paths:
+              - $.data[0]
+              - $.data[1]
+          isSplitRun: true
+          outgoingConnections:
+            - match_0->"Text" eDUb3vcZaj1XhOJcS9YKX/files
+          splitRunMax: 1000
+          visualData: -442.17795673177636/359.440333367917/280/32//
+        '[Lc4ArddQSl3uE7WBON5HK]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: nodeType
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Text" eDUb3vcZaj1XhOJcS9YKX/node
+          visualData: -498/694/330/5//
+        '[Maqa2lW9f9AhX59e3nJOa]:text "Text"':
+          data:
+            path: ""
+            text: $[?(@.data[0]=='{{filename}}')].data[1]
+          outgoingConnections:
+            - output->"Extract Object Path" 1AZBLrzB1wnPHjMPW4F5O/path
+          visualData: 1163.066448389611/458.971351319502/330/43//
+        '[T3H-VATXWOwjkQQ8b2ETP]:match "Match"':
+          data:
+            cases:
+              - NONE
+          outgoingConnections:
+            - case1->"If" jD_RIxhvBN807mnDJzSCN/if
+            - unmatched->"Text" Maqa2lW9f9AhX59e3nJOa/filename
+          visualData: 783.8189534089511/585.8770973372707/280/20//
+        '[eDUb3vcZaj1XhOJcS9YKX]:text "Text"':
+          data:
+            text: >-
+              The following is a list of all node documentation files in Rivet:
+
+
+              <files>
+
+              {{files}}
+
+              </files>
+
+
+              I need the documentation for the {{node}} node. In general, the file names of the documentation are the node names without the word "node" - so ChatNode becomes chat.
+
+
+              Reply with the file name of the node, or NONE if there is no documentation for the node.
+
+
+              Reply with only the file name, or NONE.
+          outgoingConnections:
+            - output->"Chat" tyiFjvGEnQqyPZzsc3gFO/prompt
+          visualData: -8.354088813334897/512.6076518644442/330/27//
+        '[jD_RIxhvBN807mnDJzSCN]:if "If"':
+          data:
+            unconnectedControlFlowExcluded: true
+          outgoingConnections:
+            - output->"Coalesce" ryK3JNBmu-L2gMI21G83A/input2
+          visualData: 1480/682/155/24//
+        '[ryK3JNBmu-L2gMI21G83A]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" 4ScAjCsTsiek85eDudUti/value
+          visualData: 2038/583/180/22//
+        '[tyiFjvGEnQqyPZzsc3gFO]:chat "Chat"':
+          data:
+            additionalParameters: []
+            cache: false
+            enableFunctionUse: false
+            headers: []
+            maxTokens: 1024
+            modalitiesIncludeAudio: false
+            modalitiesIncludeText: false
+            model: gpt-4o-mini
+            outputUsage: false
+            parallelFunctionCalling: true
+            reasoningEffort: ""
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAdditionalParametersInput: false
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePredictedOutput: false
+            usePresencePenaltyInput: false
+            useReasoningEffortInput: false
+            useServerTokenCalculation: true
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Match" T3H-VATXWOwjkQQ8b2ETP/input
+            - response->"Match" T3H-VATXWOwjkQQ8b2ETP/value
+          visualData: 463/610/230/9//
+    H7kJaGEerxRnWoHkH7dza:
+      metadata:
+        description: ""
+        id: H7kJaGEerxRnWoHkH7dza
+        name: Load Node Source Code
+      nodes:
+        '[I5qYzDChQyisavw5FqOWp]:array "Array"':
+          data:
+            flatten: true
+            flattenDeep: false
+          isSplitRun: true
+          outgoingConnections:
+            - output->"Append to Dataset" TiU0et989CTz9TZGAZdPv/data
+          splitRunMax: 1000
+          visualData: 1193.2476128346893/553.9479804709298/230/5//
+        '[TiU0et989CTz9TZGAZdPv]:appendToDataset "Append to Dataset"':
+          data:
+            datasetId: kA30RgfCwAlUV5PttKa3E
+          isSplitRun: true
+          splitRunMax: 1000
+          visualData: 1548.3194225410352/563.1946421820326/280/6//
+        '[Z19ARNkFchNgKX2QEjf6j]:destructure "Destructure"':
+          data:
+            paths:
+              - $.path
+              - $.content
+          isSplitRun: true
+          outgoingConnections:
+            - match_0->"Array" I5qYzDChQyisavw5FqOWp/input1
+            - match_1->"Array" I5qYzDChQyisavw5FqOWp/input2
+          splitRunMax: 1000
+          visualData: 795.6411592572706/587.2359626308997/280/4//
+        '[nRaPVJ7dhtBGa952AM_eD]:readAllFiles "Read All Files"':
+          data:
+            asBinary: false
+            errorOnMissingFile: false
+            filterGlobs: []
+            ignores: []
+            path: /usr/local/repos/rivet/packages/core/src/model/nodes
+            recursive: false
+            useFilterGlobsInput: false
+            useIgnoresInput: false
+            usePathInput: false
+            useRecursiveInput: false
+          outgoingConnections:
+            - files->"Destructure" Z19ARNkFchNgKX2QEjf6j/object
+          visualData: 472/498/280/null//
+    JG6fqOxqWML87jVUkPh-r:
+      metadata:
+        description: ""
+        id: JG6fqOxqWML87jVUkPh-r
+        name: "Function: updateUser"
+      nodes:
+        '[MXQWZdpPtexuhaA7KVZDr]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1076/584/330/2//
+        '[WQvvSoAA80VWy0_f_1fnW]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: update
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Raise Event" b19yIpsr24kPPNIFMiDUX/data
+          visualData: 522/418/330/null//
+        '[b19yIpsr24kPPNIFMiDUX]:raiseEvent "Raise Event"':
+          data:
+            eventName: updateUser
+            useEventNameInput: false
+          visualData: 960/419/180/1//
+        '[u0B4kGIzRvqKz1uOtnxRH]:text "Text"':
+          data:
+            text: OK
+          outgoingConnections:
+            - output->"Graph Output" MXQWZdpPtexuhaA7KVZDr/value
+          visualData: 622/614/330/3//
+    K8xT505hvFD7lGCIfcjTf:
+      metadata:
+        description: ""
+        id: K8xT505hvFD7lGCIfcjTf
+        name: All Functions
+      nodes:
+        '[0fSAlrZUgERZRoRLQn5FU]:gptFunction "GPT Function"':
+          data:
+            description: Edits the data of a node. Use this function to configure nodes.
+              Returns whether the setting was successful.
+            name: editNode
+            schema: >-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "nodeId": {
+                    "type": "string",
+                    "description": "The unique identifier for the node."
+                  },
+                  "key": {
+                    "type": "string",
+                    "description": "The key associated with the value."
+                  },
+                  "value": {
+                    "description": "The value associated with the key, can be of any type."
+                  }
+                },
+                "required": ["nodeId", "key", "value"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input5
+          visualData: 22.90484052573106/1361.2991302509854/280/24//
+        '[14zqOwVi1hOOFcgUCCkt7]:gptFunction "GPT Function"':
+          data:
+            description: Provides the markdown documentation for a specific node. May return
+              no documentation if no documentation exists.
+            name: readNodeDocumentation
+            schema: |-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "nodeType": {
+                    "type": "string",
+                    "description": "The type of the node."
+                  }
+                },
+                "required": ["nodeType"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input1
+          visualData: 18.035767646707654/563.5748293406305/280/24//
+        '[2cmwwy-5zwUTwBsVHAHBc]:gptFunction "GPT Function"':
+          data:
+            description: Deletes a node from the graph. Returns OK.
+            name: deleteNode
+            schema: >-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "nodeId": {
+                    "type": "string",
+                    "description": "The ID of the node."
+                  },
+                  "data": {
+                    "type": "string",
+                    "description": "A stringified JSON representing a record of key-value pairs."
+                  }
+                },
+                "required": ["nodeId", "data"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input6
+          visualData: 22.90484052573106/1561.2991302509854/280/24//
+        '[3qC1uQHv8uARl-Ba8gV7d]:gptFunction "GPT Function"':
+          data:
+            description: Creates the specified node in the graph. It will be given a unique
+              ID. Outputs the YAML of the created node.
+            name: createNode
+            schema: |-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "nodeType": {
+                    "type": "string",
+                    "description": "The type of the node."
+                  }
+                },
+                "required": ["nodeType"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input4
+          visualData: 22.90484052573106/1161.2991302509854/280/24//
+        '[69riDeeZGtaa7pi4UGAy5]:gptFunction "GPT Function"':
+          data:
+            description: Disconnects a wire between two ports on two nodes.
+            name: disconnectNodes
+            schema: >-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "sourceNodeId": {
+                    "type": "string",
+                    "description": "The identifier for the source node."
+                  },
+                  "destNodeId": {
+                    "type": "string",
+                    "description": "The identifier for the destination node."
+                  },
+                  "sourcePortId": {
+                    "type": "string",
+                    "description": "The identifier for the source port."
+                  },
+                  "destPortId": {
+                    "type": "string",
+                    "description": "The identifier for the destination port."
+                  }
+                },
+                "required": ["sourceNodeId", "destNodeId", "sourcePortId", "destPortId"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input9
+          visualData: -341.84126795172665/812.4282098109859/280/null//
+        '[6HIySJhJ2oDJS_QyvTmjY]:gptFunction "GPT Function"':
+          data:
+            description: Gives the user a short update about what you are doing. Limit to 1
+              sentence. Useful so the user knows what you are thinking and
+              trying. You may call this along with other commands.
+            name: updateUser
+            schema: |-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "update": {
+                    "type": "string",
+                    "description": "The update to give the user."
+                  }
+                },
+                "required": ["update"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input13
+          visualData: -335.83484746358397/1713.5413116839397/280/64//
+        '[EWm6Q9VbBCxmJteIvT6zO]:gptFunction "GPT Function"':
+          data:
+            description: Gets the currently configured data for a node. Use this to see what
+              data is available to change on a node.
+            name: getNodeData
+            schema: |-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "nodeId": {
+                    "type": "string",
+                    "description": "A unique identifier for the node."
+                  }
+                },
+                "required": ["nodeId"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input11
+          visualData: -339.78929182391/1241.1558756004192/280/54//
+        '[HUCCnjn-SipYqn7HKBsYY]:gptFunction "GPT Function"':
+          data:
+            description: Outputs the YAML of the current state of the graph. Use this to
+              re-examine the current state to see values, or double check that
+              your previous actions had the intended effect. This will also
+              perform linting on your graph, making sure it is correct.
+            name: reviewGraph
+            schema: |-
+              {
+                "type": "object",
+                "properties": {}
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input7
+          visualData: 26.06954017987506/1705.6058159397205/280/53//
+        '[J8XMOPkb7_VZp356rgrqu]:gptFunction "GPT Function"':
+          data:
+            description: Call this function when you are done calling functions and have
+              accomplished what the user wants.
+            name: finished
+            schema: |-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "description": "The final message to send to the user."
+                  }
+                },
+                "required": ["message"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input3
+          visualData: 21.08050259592187/968.83147865614/280/24//
+        '[KdwQGf2veD-f7ngbb9Ltq]:gptFunction "GPT Function"':
+          data:
+            description: If you are stuck and need help, call the help function. It will
+              remind you of your capabilities.
+            name: help
+            schema: |-
+              {
+                "type": "object",
+                "properties": {}
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input16
+          visualData: -696.5934698174597/907.6406169278446/280/67//
+        '[Nt5MVP95-cqyzP9o8HSdh]:gptFunction "GPT Function"':
+          data:
+            description: Provides the source code for a specified node for reading.
+            name: readNodeSourceCode
+            schema: |-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "nodeType": {
+                    "type": "string",
+                    "description": "The type of the node."
+                  }
+                },
+                "required": ["nodeType"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input2
+          visualData: 17.819420627416775/782.2790164437884/280/24//
+        '[RfU2wgOU0IYNAAoRGqsva]:gptFunction "GPT Function"':
+          data:
+            description: Connects the output port of a source node to the input port of a
+              destination node.
+            name: connectNodes
+            schema: >-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "sourceNodeId": {
+                    "type": "string",
+                    "description": "The identifier for the source node."
+                  },
+                  "destNodeId": {
+                    "type": "string",
+                    "description": "The identifier for the destination node."
+                  },
+                  "sourcePortId": {
+                    "type": "string",
+                    "description": "The identifier for the source port."
+                  },
+                  "destPortId": {
+                    "type": "string",
+                    "description": "The identifier for the destination port."
+                  }
+                },
+                "required": ["sourceNodeId", "destNodeId", "sourcePortId", "destPortId"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input8
+          visualData: -341.84126795172665/612.4282098109859/280/null//
+        '[WmKc7S_4I5Zq5HPCzNFyR]:gptFunction "GPT Function"':
+          data:
+            description: Toggles whether splitting is enabled for a node. Splitting is a
+              powerful feature to cause a node to take in an array, and output
+              an array of values, running the node N times, once for each
+              element in the array.
+            name: toggleSplitting
+            schema: >-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "nodeId": {
+                    "type": "string",
+                    "description": "The unique identifier for the node."
+                  },
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Indicates whether splitting should be enabled or disabled."
+                  },
+                  "maxSplitAmount": {
+                    "type": "number",
+                    "description": "The maximum amount that can be split, with a recommended value of 100. This value must be greater than 0."
+                  }
+                },
+                "required": ["nodeId", "enabled", "maxSplitAmount"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input15
+          visualData: -701.2292408057227/598.5892177103038/280/66//
+        '[igpzEGeSFPH2l_MOSwaCw]:gptFunction "GPT Function"':
+          data:
+            description: Call this to research Rivet and figure out what nodes to use, and
+              how to use them, in order to accomplish your task. Use this
+              function when you are unsure of how to accomplish a task.
+            name: brainstorm
+            schema: >-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "description": "The query for another AI to use to brainstorm what nodes to use and how to use them."
+                  }
+                },
+                "required": ["query"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input12
+          visualData: -342.8107988889039/1434.055847887948/280/61//
+        '[m0SrL2RPY5BRzI3Axgnmm]:gptFunction "GPT Function"':
+          data:
+            description: Gets the input and outputs available on a node. Call this before
+              doing any connections, to make sure that you are making valid
+              connections.
+            name: getNodePorts
+            schema: |-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "nodeId": {
+                    "type": "string",
+                    "description": "A unique identifier for the node."
+                  }
+                },
+                "required": ["nodeId"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input10
+          visualData: -339.78929182391/1041.1558756004192/280/54//
+        '[sAnxJ1k5aqXR_fckQIop5]:array "Array"':
+          data:
+            flatten: true
+            flattenDeep: false
+          outgoingConnections:
+            - output->"Graph Output" uoi46lrZlpdzOEvr_xpFs/value
+          visualData: 445.6695740190561/815.2088134576862/230/25//
+        '[spaP3dBwP9q-Jh1yIYtzc]:gptFunction "GPT Function"':
+          data:
+            description: Plans your next actions. Use this liberally to think about your
+              plan for moving foward.
+            name: plan
+            schema: |-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "plan": {
+                    "type": "string",
+                    "description": "A single string representing the plan."
+                  }
+                },
+                "required": ["plan"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input14
+          visualData: -327.9503028618001/2003.6925530295864/280/65//
+        '[uoi46lrZlpdzOEvr_xpFs]:graphOutput "Graph Output"':
+          data:
+            dataType: gpt-function[]
+            id: output
+          visualData: 821.7427071059172/780.4468464386234/300/62//
+    Q1I0B31c3UNKRSscuOcMm:
+      metadata:
+        description: ""
+        id: Q1I0B31c3UNKRSscuOcMm
+        name: Chat
+      nodes:
+        '[6Sq4eXr-F9u4LCQRCQSXy]:match "Match"':
+          data:
+            cases:
+              - openai
+              - anthropic
+          outgoingConnections:
+            - case1->"Chat" BcmMNftAd1gGeS8wxkQoy/systemPrompt
+            - case2->"Chat (Anthropic)" BXmnIPObcoDx2Iaqz8sl2/system
+          visualData: 181.76672343915334/211.65480179211588/280/13//
+        '[7Q7CZ-pKFyKlFx2nGbCdP]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            defaultValue: claude-3-7-sonnet-latest
+            id: model
+          outgoingConnections:
+            - data->"Chat (Anthropic)" BXmnIPObcoDx2Iaqz8sl2/model
+            - data->"Chat" BcmMNftAd1gGeS8wxkQoy/model
+          visualData: -275.067172362353/504.3906623933242/300/9//
+        '[BXmnIPObcoDx2Iaqz8sl2]:chatAnthropic "Chat (Anthropic)"':
+          data:
+            cache: false
+            enableCitations: false
+            enableToolUse: true
+            endpoint: ""
+            maxTokens: 1024
+            model: claude-3-7-sonnet-latest
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useEndpointInput: false
+            useMaxTokensInput: false
+            useModelInput: true
+            useOverrideModelInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopKInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+          outgoingConnections:
+            - all-messages->"Coalesce" iem_GrN-_h9d4vwBMci51/input2
+            - function-calls->"Coalesce" EJXEibAyApSK3e9K9vjg-/input2
+          visualData: 778.154380459147/609.5846628131387/305/22//
+        '[BcmMNftAd1gGeS8wxkQoy]:chat "Chat"':
+          data:
+            additionalParameters: []
+            cache: false
+            enableFunctionUse: true
+            headers: []
+            maxTokens: 2044
+            modalitiesIncludeAudio: false
+            modalitiesIncludeText: false
+            model: gpt-4o-mini
+            outputUsage: false
+            parallelFunctionCalling: true
+            reasoningEffort: ""
+            stop: ""
+            temperature: 0.2
+            toolChoice: ""
+            top_p: 1
+            useAdditionalParametersInput: false
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: true
+            usePredictedOutput: false
+            usePresencePenaltyInput: false
+            useReasoningEffortInput: false
+            useServerTokenCalculation: true
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - all-messages->"Coalesce" iem_GrN-_h9d4vwBMci51/input1
+            - function-calls->"Coalesce" EJXEibAyApSK3e9K9vjg-/input1
+          visualData: 811.0888906043161/247.4176293052908/230/14//
+        '[EJXEibAyApSK3e9K9vjg-]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" JFz873DhRP8ss-oeqHafU/value
+          visualData: 1411.7492177241127/583.0811701435468/180/21//
+        '[JFz873DhRP8ss-oeqHafU]:graphOutput "Graph Output"':
+          data:
+            dataType: object[]
+            id: function-calls
+          visualData: 1720.3405803121937/574.2362849489112/300/19//
+        '[KV4Ilhw9S90ZCfo_X2Lpx]:graphInput "Graph Input"':
+          data:
+            dataType: gpt-function[]
+            id: functions
+          outgoingConnections:
+            - data->"Chat (Anthropic)" BXmnIPObcoDx2Iaqz8sl2/tools
+            - data->"Chat" BcmMNftAd1gGeS8wxkQoy/functions
+          visualData: -275.067172362353/704.3906623933242/300/9//
+        '[_skuDHO-AhK2Ezc6yOB3u]:graphInput "Graph Input"':
+          data:
+            dataType: chat-message[]
+            id: prompt
+          outgoingConnections:
+            - data->"Chat (Anthropic)" BXmnIPObcoDx2Iaqz8sl2/prompt
+            - data->"Chat" BcmMNftAd1gGeS8wxkQoy/prompt
+          visualData: -275.067172362353/904.3906623933242/300/9//
+        '[iem_GrN-_h9d4vwBMci51]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" jIu7DQnG2ajlgo9LxHKzz/value
+          visualData: 1408.7247744535357/368.34569793257793/180/18//
+        '[jIu7DQnG2ajlgo9LxHKzz]:graphOutput "Graph Output"':
+          data:
+            dataType: chat-message[]
+            id: all-messages
+          visualData: 1701.1857729318726/346.008147756859/300/17//
+        '[vih1p2KNuJh2get62XzhG]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: systemPrompt
+          outgoingConnections:
+            - data->"Match" 6Sq4eXr-F9u4LCQRCQSXy/value
+          visualData: -275.067172362353/304.3906623933242/300/9//
+        '[xhifsATCLcQnOPeyP_ITw]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            defaultValue: anthropic
+            id: api
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Match" 6Sq4eXr-F9u4LCQRCQSXy/input
+          visualData: -290.5820986290441/97.37103184525296/330/11//
+    QmZnWsOLqDt0orLK9mwyq:
+      metadata:
+        description: ""
+        id: QmZnWsOLqDt0orLK9mwyq
+        name: "Function: readNodeSourceCode"
+      nodes:
+        '[21iCf7VK_MY6E5iy41_yq]:text "Text"':
+          data:
+            text: "{{input}}"
+          outgoingConnections:
+            - output->"If" tNYIJZ1sXcWHlRhx1DIJZ/value
+          visualData: 2228/803/330/25//
+        '[B21gdRxNZn4gyWx3iiVug]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            defaultValue: ChatNode
+            id: nodeType
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Text" RX3uucTsRUNqrQIneJxRl/node
+          visualData: 654/686/330/5//
+        '[ELn_nmawCSffgGbkoVT-Q]:text "Text"':
+          data:
+            path: ""
+            text: $[?(@.data[0]=='{{filename}}')].data[1]
+          outgoingConnections:
+            - output->"Extract Object Path" P6lH9qzSsEWlw3W7Anaua/path
+          visualData: 2467.388574219139/371.7386911548589/330/48//
+        '[Le6jjwly25Z3G7jNQxmVM]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" nO0XPCZb9V5_qVP5kDfBr/value
+          visualData: 3297.2236675616327/441.4098568084575/180/49//
+        '[OnPRxjZ6CtHEfEfp74Dha]:chat "Chat"':
+          data:
+            additionalParameters: []
+            cache: false
+            enableFunctionUse: false
+            headers: []
+            maxTokens: 1024
+            modalitiesIncludeAudio: false
+            modalitiesIncludeText: false
+            model: gpt-4o-mini
+            outputUsage: false
+            parallelFunctionCalling: true
+            reasoningEffort: ""
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAdditionalParametersInput: false
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePredictedOutput: false
+            usePresencePenaltyInput: false
+            useReasoningEffortInput: false
+            useServerTokenCalculation: true
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Match" qDJBBWbLLaV5hdshFhxq8/input
+            - response->"Match" qDJBBWbLLaV5hdshFhxq8/value
+          visualData: 1615/602/230/9//
+        '[P6lH9qzSsEWlw3W7Anaua]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $
+            usePathInput: true
+          outgoingConnections:
+            - match->"Coalesce" Le6jjwly25Z3G7jNQxmVM/input1
+          visualData: 2889.717604230714/154.95809862232161/280/46//
+        '[RX3uucTsRUNqrQIneJxRl]:text "Text"':
+          data:
+            text: >-
+              The following is a list of all node source code files in Rivet:
+
+
+              <files>
+
+              {{files}}
+
+              </files>
+
+
+              I need the source code for the {{node}} node.
+
+
+              Reply with the file name of the node, or NONE if there is no source code file for the node.
+
+
+              Reply with only the file name, or NONE.
+          outgoingConnections:
+            - output->"Chat" OnPRxjZ6CtHEfEfp74Dha/prompt
+          visualData: 1143.6459111866652/504.60765186444416/330/27//
+        '[b7ekhp_HDG7GXL4Gv3_P4]:destructure "Destructure"':
+          data:
+            paths:
+              - $.data[0]
+          isSplitRun: true
+          outgoingConnections:
+            - match_0->"Text" RX3uucTsRUNqrQIneJxRl/files
+          splitRunMax: 1000
+          visualData: 671.3669811645952/379.6011996923084/280/31//
+        '[nO0XPCZb9V5_qVP5kDfBr]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 3659.424607988899/472.6459111866651/330/26//
+        '[qDJBBWbLLaV5hdshFhxq8]:match "Match"':
+          data:
+            cases:
+              - NONE
+          outgoingConnections:
+            - case1->"If" tNYIJZ1sXcWHlRhx1DIJZ/if
+            - unmatched->"Text" ELn_nmawCSffgGbkoVT-Q/filename
+          visualData: 1935.818953408951/577.8770973372707/280/20//
+        '[tNYIJZ1sXcWHlRhx1DIJZ]:if "If"':
+          data:
+            unconnectedControlFlowExcluded: true
+          outgoingConnections:
+            - output->"Coalesce" Le6jjwly25Z3G7jNQxmVM/input2
+          visualData: 2632/674/155/24//
+        '[vHVQZk_nqfGo565L27Dtn]:loadDataset "Load Dataset"':
+          data:
+            datasetId: kA30RgfCwAlUV5PttKa3E
+          outgoingConnections:
+            - dataset->"Destructure" b7ekhp_HDG7GXL4Gv3_P4/object
+            - dataset->"Extract Object Path" P6lH9qzSsEWlw3W7Anaua/object
+          visualData: 319.80052799006586/370.6154756495089/280/29//
+    TzI-CBrILp1EHK5gmVzAd:
+      metadata:
+        description: ""
+        id: TzI-CBrILp1EHK5gmVzAd
+        name: Load Node Documentation Files
+      nodes:
+        '[cYsRwfu28kI8mdBewBfyp]:destructure "Destructure"':
+          data:
+            paths:
+              - $.path
+              - $.content
+          isSplitRun: true
+          outgoingConnections:
+            - match_0->"Array" mwGefSwq5p5MzQnOOmjT9/input1
+            - match_1->"Array" mwGefSwq5p5MzQnOOmjT9/input2
+          splitRunMax: 1000
+          visualData: 795.6411592572706/587.2359626308997/280/4//
+        '[lw2jTX9Rn_Oxs18QSjPnn]:readAllFiles "Read All Files"':
+          data:
+            asBinary: false
+            errorOnMissingFile: false
+            filterGlobs: []
+            ignores: []
+            path: /usr/local/repos/rivet/packages/docs/docs/node-reference
+            recursive: false
+            useFilterGlobsInput: false
+            useIgnoresInput: false
+            usePathInput: false
+            useRecursiveInput: false
+          outgoingConnections:
+            - files->"Destructure" cYsRwfu28kI8mdBewBfyp/object
+          visualData: 472/498/280/null//
+        '[mwGefSwq5p5MzQnOOmjT9]:array "Array"':
+          data:
+            flatten: true
+            flattenDeep: false
+          isSplitRun: true
+          outgoingConnections:
+            - output->"Append to Dataset" pannTaVzvzJ_CWLGaumz4/data
+          splitRunMax: 1000
+          visualData: 1193.2476128346893/553.9479804709298/230/5//
+        '[pannTaVzvzJ_CWLGaumz4]:appendToDataset "Append to Dataset"':
+          data:
+            datasetId: tFwViTH9Bmi4b3GGXmkFS
+          isSplitRun: true
+          splitRunMax: 1000
+          visualData: 1548.3194225410352/563.1946421820326/280/6//
+    WxyQFm3N0w38pIgS75lHN:
+      metadata:
+        description: ""
+        id: WxyQFm3N0w38pIgS75lHN
+        name: "Function: reviewGraph"
+      nodes:
+        '[5OrbiAl9UfKgvI_3TSXZt]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1340/442/330/2//
+        '[NYHY6NdUCUL0TNAdOeaep]:externalCall "External Call"':
+          data:
+            functionName: getSerializedGraph
+            useErrorOutput: false
+            useFunctionNameInput: false
+          outgoingConnections:
+            - result->"Text" Znsp6LR-Cr-9AQ9NgK1PX/graph
+          visualData: 483/605/180/3//
+        '[ZDVxQnZ93TWoTT1CsATAL]:externalCall "External Call"':
+          data:
+            functionName: lintGraph
+            useErrorOutput: false
+            useFunctionNameInput: false
+          outgoingConnections:
+            - result->"Text" Znsp6LR-Cr-9AQ9NgK1PX/lint_results
+          visualData: 459/256/180/4//
+        '[Znsp6LR-Cr-9AQ9NgK1PX]:text "Text"':
+          data:
+            text: |
+              ```json
+              {{graph}}
+              ```
+
+              GRAPH LINTING RESULTS:
+
+              {{lint_results}}
+          outgoingConnections:
+            - output->"Graph Output" 5OrbiAl9UfKgvI_3TSXZt/value
+          visualData: 850/401/330/5//
+    _UFm-kutJD0gbxzqRLbwG:
+      metadata:
+        description: ""
+        id: _UFm-kutJD0gbxzqRLbwG
+        name: "Function: editNode"
+      nodes:
+        '[0Ehrp5WfZyX80I-s_V4GG]:text "Text"':
+          data:
+            text: >-
+              {{input}}
+
+
+              It is recommended to run `readNodeSourceCode` to make sure that you configured the node correctly.
+          outgoingConnections:
+            - output->"Coalesce" Q5tqvNG08kw7LCdBxst7P/input1
+          visualData: 1872.177419326416/274.12724676008753/330/null//
+        '[ILF-cETPVEALGoIZcQITV]:externalCall "External Call"':
+          data:
+            functionName: editNode
+            useErrorOutput: true
+            useFunctionNameInput: false
+          outgoingConnections:
+            - error->"Text" gUAE_jH6JSTGOItTdfTie/error
+            - result->"Text" 0Ehrp5WfZyX80I-s_V4GG/input
+          visualData: 1383.597830981039/405.7637121080456/180/3//
+        '[Q5tqvNG08kw7LCdBxst7P]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" j4VXpOKMoaRnHWNy2tIFl/value
+          visualData: 2323.1080933551425/281.71614433075933/180/16//
+        '[QgHfyhFa0sPV2LCHczdc9]:array "Array"':
+          data:
+            flatten: false
+            flattenDeep: false
+          outgoingConnections:
+            - output->"External Call" ILF-cETPVEALGoIZcQITV/arguments
+          visualData: 1060.2501654472028/422.43111754793404/230/2//
+        '[_CxjhaMcMSjgAas7QY7LL]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: nodeId
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Array" QgHfyhFa0sPV2LCHczdc9/input1
+          visualData: 608.0078978448958/341.3164110738102/330/1//
+        '[gUAE_jH6JSTGOItTdfTie]:text "Text"':
+          data:
+            text: "Error: {{error}}"
+          outgoingConnections:
+            - output->"Coalesce" Q5tqvNG08kw7LCdBxst7P/input2
+          visualData: 1820.8713653293707/553.6720503710369/330/14//
+        '[j4VXpOKMoaRnHWNy2tIFl]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 2719.562010824459/323.7234749535107/330/15//
+        '[sOM_RzIQIO9Ic2BkMQDnq]:graphInput "Graph Input"':
+          data:
+            dataType: any
+            id: value
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Array" QgHfyhFa0sPV2LCHczdc9/input3
+          visualData: 618.0083411088289/792.4386530347963/330/6//
+        '[yudOwQoBMJQZZ-ec5i0-r]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: key
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Array" QgHfyhFa0sPV2LCHczdc9/input2
+          visualData: 604.6744167569182/565.7708043309748/330/7//
+    aMgBVYqJwgyFJgf4lJw92:
+      metadata:
+        description: ""
+        id: aMgBVYqJwgyFJgf4lJw92
+        name: "Function: getNodePorts"
+      nodes:
+        '[3q1U_r4lrq7EQ9BUXor-B]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 2184/487/330/7//
+        '[5qq82_G7GbI_qObEA1Ooy]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" 3q1U_r4lrq7EQ9BUXor-B/value
+          visualData: 1613/433/180/7//
+        '[QVI0PhVxT2qry-3qro_37]:text "Text"':
+          data:
+            text: "Error: {{error}}"
+          outgoingConnections:
+            - output->"Coalesce" 5qq82_G7GbI_qObEA1Ooy/input2
+          visualData: 1065/609/330/8//
+        '[X1FrlDLKPKTMxbBE53j2t]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: nodeId
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"External Call" YYDEL6IwJ8dSDKGeP0-_Z/arguments
+          visualData: 274/342/330/1//
+        '[YYDEL6IwJ8dSDKGeP0-_Z]:externalCall "External Call"':
+          data:
+            functionName: getPorts
+            useErrorOutput: true
+            useFunctionNameInput: false
+          outgoingConnections:
+            - error->"Text" QVI0PhVxT2qry-3qro_37/error
+            - result->"Text" jmzccCIec4fpHWG2Yt9hy/input
+          visualData: 677/341/180/2//
+        '[jmzccCIec4fpHWG2Yt9hy]:text "Text"':
+          data:
+            text: >-
+              {{input}}
+
+
+              As a reminder, some input or output ports may not be visible until the appropriate `data` is toggled on the node. For example, `useFooInput` will toggle whether the `foo` input is present.
+
+
+              Other nodes, such as Text and Prompt, may have dynamic inputs based on {{{interpolation}}} values.
+          outgoingConnections:
+            - output->"Coalesce" 5qq82_G7GbI_qObEA1Ooy/input1
+          visualData: 1071/275/330/null//
+    aZaxcfuQyhMBZYvuE187H:
+      metadata:
+        description: ""
+        id: aZaxcfuQyhMBZYvuE187H
+        name: "Function: toggleSplitting"
+      nodes:
+        '[0KCcDB1M6vvOfh-uq27SZ]:graphInput "Graph Input"':
+          data:
+            dataType: number
+            id: maxSplitAmount
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Array" b61msKF7RQ4M7-ZOoyiGA/input3
+          visualData: 458/595/330/1//
+        '[2dlBgbgael0OV_dIn4utZ]:externalCall "External Call"':
+          data:
+            functionName: toggleSplitting
+            useErrorOutput: true
+            useFunctionNameInput: false
+          outgoingConnections:
+            - error->"Text" oCEFqzi4rMS5tNvPol4Hc/error
+            - result->"Text" 65VFcR7wybQI3iSO-aMMc/input
+          visualData: 1324/355/180/7//
+        '[65VFcR7wybQI3iSO-aMMc]:text "Text"':
+          data:
+            text: >-
+              {{input}}
+
+
+              Reminder: You may want to toggle splitting on downstream nodes if you are chaining splitting together. Chaining splitting accomplishes maps and for-each loops.
+
+
+              Make sure that each node in a chain of splitting has split enabled.
+
+
+              You can terminate a split chain by, for example, using a Join node.
+          outgoingConnections:
+            - output->"Coalesce" UYA3xKP6evrfAyfjFB4Gk/input1
+          visualData: 1650/323/330/null//
+        '[UYA3xKP6evrfAyfjFB4Gk]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" shYoQszMIyW-j3mWClHHJ/value
+          visualData: 2568/322/180/10//
+        '[b61msKF7RQ4M7-ZOoyiGA]:array "Array"':
+          data:
+            flatten: false
+            flattenDeep: false
+          outgoingConnections:
+            - output->"External Call" 2dlBgbgael0OV_dIn4utZ/arguments
+          visualData: 953/378/230/5//
+        '[ewMxCiRStTJ7WT-Jzn2on]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: nodeId
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Array" b61msKF7RQ4M7-ZOoyiGA/input1
+          visualData: 460/162/330/3//
+        '[oCEFqzi4rMS5tNvPol4Hc]:text "Text"':
+          data:
+            text: "Error: {{error}}"
+          outgoingConnections:
+            - output->"Coalesce" UYA3xKP6evrfAyfjFB4Gk/input2
+          visualData: 1635/600/330/null//
+        '[rtvuGqEb4Xe0wcpEv004z]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: enabled
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Array" b61msKF7RQ4M7-ZOoyiGA/input2
+          visualData: 458/395/330/1//
+        '[shYoQszMIyW-j3mWClHHJ]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 2901/358/330/10//
+    bL17XjGocrGzWJyBr0k5i:
+      metadata:
+        description: ""
+        id: bL17XjGocrGzWJyBr0k5i
+        name: Main
+      nodes:
+        '[1dapKPSibr_IpgIwLFTji]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: graph
+            useDefaultValueInput: true
+          outgoingConnections:
+            - data->"Text" Xq2ntE7Xytwn3QF7E58G9/graph
+          visualData: 4680.728068373566/2199.943169917302/330/12//
+        '[Ifzz3iL9_VSWUeJwPGlDo]:text "Text"':
+          data:
+            text: ""
+          outgoingConnections:
+            - output->"Graph Input" 1dapKPSibr_IpgIwLFTji/default
+          visualData: 4254.745161763175/2229.1325767942444/330/14//
+        '[Xgiabh0fJMGfS06J9ptI1]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: request
+            useDefaultValueInput: true
+          outgoingConnections:
+            - data->"Loop Until" yTUWxJP4rllqx5XkOnp0D/task
+            - data->"Text" Xq2ntE7Xytwn3QF7E58G9/request
+          visualData: 4489.172585743625/2434.3705938977528/330/16//
+        '[Xq2ntE7Xytwn3QF7E58G9]:text "Text"':
+          data:
+            text: >-
+              The current Rivet graph looks like this (in JSON format):
+
+
+              <graph>
+
+              {{graph}}
+
+              </graph>
+
+
+              The user's request is this:
+
+
+              {{request | quote}}
+
+
+              Now, repeatedly call functions to both understand more, and take actions on the graph to accomplish the user's request.
+
+
+              You may also reply with text, so that you may think about what you are doing out loud.
+          outgoingConnections:
+            - output->"Loop Until" yTUWxJP4rllqx5XkOnp0D/messages
+          visualData: 5084.818919826252/2054.908304497489/330/15//
+        '[jwDbFcNjckgiZPubLdqsL]:text "Text"':
+          data:
+            text: Make a super simple graph that asks the user for text, then sends it to
+              OpenAI.
+          outgoingConnections:
+            - output->"Graph Input" Xgiabh0fJMGfS06J9ptI1/default
+          visualData: 3956.4659102394085/2441.6679456169886/330/18//
+        '[kb2p_u3gJG3Dw19Y7zCzK]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: model
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Loop Until" yTUWxJP4rllqx5XkOnp0D/model
+          visualData: 4692.87233319327/2036.1186772095705/330/27//
+        '[sRphbDbsmASF7IeKMawlA]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: api
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Loop Until" yTUWxJP4rllqx5XkOnp0D/api
+          visualData: 4688.30946224796/1862.3673821644313/330/29//
+        '[yTUWxJP4rllqx5XkOnp0D]:loopUntil "Loop Until"':
+          data:
+            conditionType: allOutputsSet
+            maxIterations: 50
+            targetGraph: lK3NTnVYWoxGt6cnEO9gp
+          visualData: 5505.414440365536/2236.357543199284/230/26//
+    cnwBxMpFgu4UsiPNtrWT-:
+      metadata:
+        description: ""
+        id: cnwBxMpFgu4UsiPNtrWT-
+        name: "Function: brainstorm"
+      nodes:
+        '[C2u6_ZS3GI6GrVul6eG10]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $[*].data
+            usePathInput: false
+          outgoingConnections:
+            - all_matches->"Text" KFGUplLNTsxLNMsvmiOnk/summaries
+          visualData: -6.523727692167991/342.5530740683331/280/12//
+        '[CZfdLOigWdpbZ1xNeVH70]:loadDataset "Load Dataset"':
+          data:
+            datasetId: JSKwa7CCs75tPqXRToLj4
+          outgoingConnections:
+            - dataset->"Extract Object Path" C2u6_ZS3GI6GrVul6eG10/object
+          visualData: -464.819229218571/342.55307406833305/280/9//
+        '[Jrj-ukXC0wLafsrlxn5Du]:text "Text"':
+          data:
+            text: >-
+              Rivet is a powerful Integrated Development Environment (IDE) and
+              library designed for creating AI agents using a visual,
+              graph-based interface. It is made up of two main components: the
+              Rivet Application and the Rivet Core/Rivet Node. The Rivet
+              Application is an editor that allows you to create complex AI
+              prompt chains and agents. It comes with a suite of tools for
+              designing and enhancing AI agents, such as a prompt designer,
+              variations on nodes for A/B testing, and integrated testing to
+              ensure your graphs work as expected for all inputs.
+
+
+              Rivet Core/Rivet Node, on the other hand, are TypeScript libraries that allow you to execute projects generated by the Rivet Application. They provide a simple API for integrating Rivet with your application. This makes it easy to integrate Rivet's AI capabilities into your existing projects. Once you've created a graph in the Rivet App, you can execute it within your application like a function call.
+
+
+              One of the key features of Rivet is its node-based editor. This enables you to create, configure, and debug complex AI prompt chains and AI agent chains visually. This approach makes it easier to understand the flow of data and the state of your AI agent at any point in time. The editor allows you to view the input and output of every node, as well as AI responses in real-time, making it simple to identify and fix issues.
+
+
+              Rivet also offers live debugging of AI chains as they run, allowing you to monitor the state of your AI agent in real-time and quickly identify any issues that may arise. It also supports remote debugging, allowing you to debug AI chains running on a remote server. This is useful for debugging AI agents that are running in a production environment.
+
+
+              Lastly, Rivet features a library of node types to execute common functionality for nodes. Some essential node types include Text, Chat, Match, Loop Controller, Extract YAML, Extract JSON, Chunk, Trim Chat Messages, and External Call. These nodes can be connected together using wires, allowing data to flow between them. Documentation for all nodes can be found in the Node Reference.
+
+
+              You are a Rivet brainstorming agent. You are given a query, and based on what you know about Rivet, you should try to answer the query as best you can. You are used in order to brainstorm what nodes to use in Rivet, and how to use them to accomplish a task.
+          outgoingConnections:
+            - output->"Chat" yXH_UosXKvIFjuHIphzCM/systemPrompt
+          visualData: 148.89757405283854/1.6297195291977005/330/3//
+        '[KFGUplLNTsxLNMsvmiOnk]:text "Text"':
+          data:
+            text: >-
+              The following is a summary of every node in Rivet:
+
+
+              <summaries>
+
+              {{summaries}}
+
+              </summaries>
+
+
+              The following commands are available for the questioner to run. These are provided so that you can get a better idea of the capabilities of the person asking the question:
+
+
+              <functions>
+
+              {{functions}}
+
+              </functions>
+
+
+              Here is helpful information on working with Rivet graphs:
+
+
+              <help>
+
+              {{help}}
+
+              </help>
+
+
+              Brainstorm ways to accomplish the following task:
+
+
+              {{task | quote}}
+          outgoingConnections:
+            - output->"Chat" yXH_UosXKvIFjuHIphzCM/prompt
+          visualData: 672.2346244227379/350.5699049988241/330/8//
+        '[cqxS47_isRTfE4pIFbmUl]:subGraph "Subgraph"':
+          data:
+            graphId: K8xT505hvFD7lGCIfcjTf
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - output->"Text" KFGUplLNTsxLNMsvmiOnk/functions
+          visualData: -62.6415442056051/897.0505467606282/330/null//
+        '[gbXw1WOJC1HUkIqT2HN7U]:text "Text"':
+          data:
+            text: I want to have a calculator AI agent that runs function calls to calculate
+              steps
+          outgoingConnections:
+            - output->"Graph Input" sQ5VE-3KCmznYo1J5py0g/default
+          visualData: -471.49992166064675/644.5203724501614/330/15//
+        '[qNh6QltA6Lb0-iwjN_0iT]:subGraph "Subgraph"':
+          data:
+            graphId: gArlO_-PftskEfEPHc9j-
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - output->"Text" KFGUplLNTsxLNMsvmiOnk/help
+          visualData: 173.27675488915008/784.421805970389/330/17//
+        '[qYnYFY9Fbowp_jLvWEc5r]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1567.447411660901/281.0907036012353/330/11//
+        '[sQ5VE-3KCmznYo1J5py0g]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: query
+            useDefaultValueInput: true
+          outgoingConnections:
+            - data->"Text" KFGUplLNTsxLNMsvmiOnk/task
+          visualData: -27.87472826412764/603.765327215936/330/14//
+        '[yXH_UosXKvIFjuHIphzCM]:chat "Chat"':
+          data:
+            additionalParameters: []
+            cache: false
+            enableFunctionUse: false
+            headers: []
+            maxTokens: 1024
+            modalitiesIncludeAudio: false
+            modalitiesIncludeText: false
+            model: gpt-4o
+            outputUsage: false
+            parallelFunctionCalling: true
+            reasoningEffort: ""
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAdditionalParametersInput: false
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePredictedOutput: false
+            usePresencePenaltyInput: false
+            useReasoningEffortInput: false
+            useServerTokenCalculation: true
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Graph Output" qYnYFY9Fbowp_jLvWEc5r/value
+          visualData: 1133.2024029259712/211.6115022036465/230/10//
+    gArlO_-PftskEfEPHc9j-:
+      metadata:
+        description: ""
+        id: gArlO_-PftskEfEPHc9j-
+        name: Help
+      nodes:
+        '[r-EN1bzcNXmEUYbNZE2KX]:text "Text"':
+          data:
+            text: >-
+              You may use commands to read the node files, or the documentation
+              for the nodes, so that you understand nodes better before calling
+              commands to create, delete, or connect/disconnect nodes.
+
+
+              You should read the documentation of nodes to understand them before working with them.
+
+
+              If there is no documentation available for a node, you should read its source code to understand the node before working with it.
+
+
+              ## Ports
+
+
+              Nodes have input ports and output ports. You can use `getNodePorts` to see the names of these ports so that you can accurately make connections between nodes.
+
+
+              The output port of source nodes can connect to multiple input ports on destination nodes. HOWEVER, an input port on a destination node can ONLY connect to one output port on a source node. IF you try to connect to a port that is already connected, it will error.
+
+
+              ## Dynamic Ports
+
+
+              Sometimes, ports are only enabled if the node is configured to show them. For example, the data key `useFooInput` may toggle on the `foo` input port on a node. Experiment to discover new ports on nodes and connect them.
+
+
+              ## Brainstorming
+
+
+              You should liberally use the `brainstorm` command in order to understand more about Rivet and the nodes you have available to you to accomplish certain tasks. If you are not sure of what node to use, or especially when you have done something wrong, use `brainstorm` to figure out how to do things right.
+
+
+              ## Reviewing
+
+
+              Before finishing and returning to the user, you should call `reviewGraph` to make sure the graph is OK for the user.
+
+
+              ## Updating the User
+
+
+              You may update the user while you are processing by calling `updateUser`. This is useful to tell the user what you are trying and thinking. You do not have to call this, but it is helpful. You must update the user every now and then.
+
+
+              ## Reading Source Code
+
+
+              As you often make mistakes, you review the Rivet source code for nodes to make sure you are configuring them correctly. Reviewing source code is quick and easy using `readNodeSourceCode`.
+
+
+              ## Internal Thoughts
+
+
+              You use brief text responses as internal thought tracking. This helps you stay on track. You do not only call functions, but you include short text chain of thought as well.
+
+
+              ## Simply replying to the user
+
+
+              Sometimes the user may just ask you a question, and not to do something. You can simply reply to the user using `finished`. 
+
+
+              You MUST call a function with every reply.
+
+
+              ## Giving Up
+
+
+              Sometimes, after trying something over and over, you must stop. You must rethink your approach using `brainstorm`, or you must cut your losses and give up with `finished`. You cannot just keep trying over and over.
+
+
+              ## Prompting and Interpolation
+
+
+              Prompting and interpolation are Rivet's most important features. Using Text nodes and Prompt nodes, you can interpolate values into broader text, combiing data and text fluently.
+
+
+              For exmaple, you can make a text node with:
+
+
+              ```
+
+              Summarize the following text for the user "{{{user}}}": 
+
+
+              <text>
+
+              {{{text}}}
+
+              </text>
+
+              ```
+
+
+              To instruct an AI to summarize some text. This is incredibly powerful and you use this technique often.  
+
+
+              Text nodes have dynamic input ports that depend on interpolations like {{{value}}} in order for the ports to appear. Make sure text nodes have interpolation placeholders!
+
+
+              ## Splitting
+
+
+              Splitting is one of the most powerful features in Rivet. When splitting is enabled on a node, it causes it to take in an array of values, and run that node N times, once for each element in the array. For example, if you split a text node and input a list of files into it, you can MAP an array to an array of strings!
+
+
+              You can enable splitting with the `toggleSplitting` command.
+
+
+              Splitting is even more effective when it is chained. You can use this like a for loop - mapping data and running all nodes for each item in an array. For example, an array into a split Text node into a split Chat node will run a Chat for every item in the array, after the text has been mapped to a new value.
+
+
+              ## Loops
+
+
+              Do not use the Loop Controller as it is difficult to use and prone to error. Instead, use splitting and the Loop Until node. 
+
+
+              ## Subgraphs
+
+
+              You cannot edit subgraphs, but you can create a Subgraph node and ask the user to set up the node with specific inputs and outputs.
+
+
+              ## Reading Node Source Code
+
+
+              If you encounter errors, you should review the source code of the node before proceeding, by calling `readNodeSourceCode`. That way you understand the nodes that you are working with.
+          outgoingConnections:
+            - output->"Graph Output" w8K53elMsbr8gS7pi1_UF/value
+          visualData: 671/502/330/null//
+        '[w8K53elMsbr8gS7pi1_UF]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1121/491/330/null//
+    gdy3Un3l2XDlYW_kGamAl:
+      metadata:
+        description: ""
+        id: gdy3Un3l2XDlYW_kGamAl
+        name: "Function: help"
+      nodes:
+        '[4JKxIidsJE-f8cmx7xUM2]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 839.2242564849015/681.2840567290982/330/1//
+        '[JKPheYaA3p2Kd7g1LWvyz]:subGraph "Subgraph"':
+          data:
+            graphId: gArlO_-PftskEfEPHc9j-
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - output->"Graph Output" 4JKxIidsJE-f8cmx7xUM2/value
+          visualData: 448.74502449023794/678.6636169630146/330/null//
+    hSfShPEc75aEEYbcUj-XC:
+      metadata:
+        description: ""
+        id: hSfShPEc75aEEYbcUj-XC
+        name: "Function: deleteNode"
+      nodes:
+        '[2e-V6NXQGw0PT3rMX7DXJ]:externalCall "External Call"':
+          data:
+            functionName: deleteNode
+            useErrorOutput: true
+            useFunctionNameInput: false
+          outgoingConnections:
+            - error->"Text" B11bWTFw97s_HMUO3H5PQ/error
+            - result->"Coalesce" 85MnfU4quHn0EJpT5CEpQ/input1
+          visualData: 679/393/180/2//
+        '[85MnfU4quHn0EJpT5CEpQ]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" WUvavqRs6P4jijQhbwWgC/value
+          visualData: 1025/257/180/3//
+        '[B11bWTFw97s_HMUO3H5PQ]:text "Text"':
+          data:
+            text: "Error: {{error}}"
+          outgoingConnections:
+            - output->"Coalesce" 85MnfU4quHn0EJpT5CEpQ/input2
+          visualData: 977/591/330/4//
+        '[WUvavqRs6P4jijQhbwWgC]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1475/411/330/5//
+        '[sZFPCEbztJ4XDfN9cJ8Vz]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: nodeId
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"External Call" 2e-V6NXQGw0PT3rMX7DXJ/arguments
+          visualData: 294/398/330/1//
+    jGyIFX7lHjYGtvz6q74Va:
+      metadata:
+        description: ""
+        id: jGyIFX7lHjYGtvz6q74Va
+        name: "Function: getNodeData"
+      nodes:
+        '[IbSTpL6dx0nVfbaoLDieM]:text "Text"':
+          data:
+            text: "Error: {{error}}"
+          outgoingConnections:
+            - output->"Coalesce" vltjoo9z1_GC6-1Fo6-Hv/input2
+          visualData: 959/437/330/null//
+        '[M8G6g4_-r2zJ0I4lnUv1b]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: nodeId
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"External Call" rCJ92oSfpmKjLw2FOMnCD/arguments
+          visualData: 214/378/330/1//
+        '[bWHmNjCbkjHBWYXoGl_s3]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1405/214/330/5//
+        '[rCJ92oSfpmKjLw2FOMnCD]:externalCall "External Call"':
+          data:
+            functionName: getNodeData
+            useErrorOutput: true
+            useFunctionNameInput: false
+          outgoingConnections:
+            - error->"Text" IbSTpL6dx0nVfbaoLDieM/error
+            - result->"Coalesce" vltjoo9z1_GC6-1Fo6-Hv/input1
+          visualData: 619/375/180/3//
+        '[vltjoo9z1_GC6-1Fo6-Hv]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" bWHmNjCbkjHBWYXoGl_s3/value
+          visualData: 1077/237/180/4//
+    lK3NTnVYWoxGt6cnEO9gp:
+      metadata:
+        description: ""
+        id: lK3NTnVYWoxGt6cnEO9gp
+        name: Loop
+      nodes:
+        '[0cqheENSin-CqueDgmCU4]:delegateFunctionCall "Delegate Function Call"':
+          data:
+            handlers:
+              - key: readNodeDocumentation
+                value: GclkPKrrBXX88jIhSRlgX
+              - key: readNodeSourceCode
+                value: QmZnWsOLqDt0orLK9mwyq
+              - key: createNode
+                value: DNpnkEaXvzD3ZbRxQEg-d
+              - key: finished
+                value: C1y5MaS645eBCwJkTWtgJ
+              - key: connectNodes
+                value: 3yMuliAwHP1Pz3rD26P2Q
+              - key: reviewGraph
+                value: WxyQFm3N0w38pIgS75lHN
+              - key: getNodePorts
+                value: aMgBVYqJwgyFJgf4lJw92
+              - key: editNode
+                value: _UFm-kutJD0gbxzqRLbwG
+              - key: getNodeData
+                value: jGyIFX7lHjYGtvz6q74Va
+              - key: deleteNode
+                value: hSfShPEc75aEEYbcUj-XC
+              - key: addNodeData
+                value: 63Z2eYieO0XxjDXixrDSR
+              - key: disconnectNodes
+                value: 2OBM3-fhu5naPmUnBb8t7
+              - key: brainstorm
+                value: cnwBxMpFgu4UsiPNtrWT-
+              - key: updateUser
+                value: JG6fqOxqWML87jVUkPh-r
+              - key: plan
+                value: rbKmsS2zrTbG42yeQBxOi
+              - key: toggleSplitting
+                value: aZaxcfuQyhMBZYvuE187H
+              - key: help
+                value: gdy3Un3l2XDlYW_kGamAl
+          isSplitRun: true
+          outgoingConnections:
+            - message->"Assemble Prompt" ow1008xcfQ03MBc-kJyQD/message2
+            - message->"Text" fH6k2cjPkUWeXbNlVs1n6/input
+          splitRunMax: 50
+          visualData: 2005.26872224941/543.4784880437732/355/57//
+        '[2ftwj8CDXUcLDz-t0l9ga]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: api
+          visualData: -52.48136252828813/-370.2847507322745/330/84//
+        '[7dU1_alxlz-eIRNL4IWUe]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: task
+          visualData: -416.70135313384867/917.2251986350482/330/null//
+        '[8Rd20PR_oasOBJO98i-LP]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Subgraph" T0nduuBs9Girl8YpbIK9Q/prompt
+          visualData: 156.75052288406812/492.30957337179973/523.8566745509079/71//
+        '[BPt5fPBc8jmzUd4SrR_ee]:readDirectory "Read Directory"':
+          data:
+            filterGlobs: []
+            ignores: []
+            includeDirectories: false
+            path: /usr/local/repos/rivet/packages/core/src/model/nodes
+            recursive: false
+            relative: true
+            useFilterGlobsInput: false
+            useIgnoresInput: false
+            useIncludeDirectoriesInput: false
+            usePathInput: false
+            useRecursiveInput: false
+            useRelativeInput: false
+          outgoingConnections:
+            - tree->"Extract Object Path" ds0aV04r78bgxU0WTcFgI/object
+          visualData: -1189.8525071559793/140.5229365743248/230/26//
+        '[CEej0ffK7GBNd8U64FPOS]:subGraph "Subgraph"':
+          data:
+            graphId: gArlO_-PftskEfEPHc9j-
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - output->"Text" sFByS2knXHjq_Dc0ObwSA/help
+          visualData: -295.21756239489844/127.92422307456809/330/86//
+        '[FW59LI8kmoFU38oNEFImN]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"External Call" bMAzJbOPDqPhz37-_L-aM/arguments
+            - output->"Graph Output" hEYv9sQmI7-mV0jswTRMA/value
+          visualData: 3975.7118433992396/361.5744161293211/180/57//
+        '[ITkxP4aiS91UqNdKSIMDD]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 3707.0869479961875/804.8466763116959/330/57//
+        '[IZDH9R5O-n99UeIF7vxLq]:toTree "To Tree"':
+          data:
+            childrenProperty: children
+            format: "{{path}}"
+            useSortAlphabetically: true
+          outgoingConnections:
+            - tree->"Text" sFByS2knXHjq_Dc0ObwSA/nodes
+          visualData: -479.272883495389/210.75994687196973/330/26//
+        '[IpB9s4ttbNGzYsD2l8DPN]:if "If"':
+          data:
+            unconnectedControlFlowExcluded: true
+          outgoingConnections:
+            - output->"Delegate Function Call"
+              0cqheENSin-CqueDgmCU4/function-call
+            - output->"Raise Event" tEJHVYS29o5twVfp9Nxx1/data
+          visualData: 1200.4812122785534/440.2761768899573/155/60//
+        '[MMO0U6L19Jt8hZ2TaLEo9]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: model
+          visualData: -75.47138993490998/-195.1378946115334/330/62//
+        '[NjKf9JFAsfStjO1yQcydF]:subGraph "Subgraph"':
+          data:
+            graphId: K8xT505hvFD7lGCIfcjTf
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - output->"Subgraph" T0nduuBs9Girl8YpbIK9Q/functions
+          visualData: 343.72774001720757/818.2628787587782/330/65//
+        '[Qv66Vf-LSLXWcZ4jmczXs]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: model
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Graph Output" MMO0U6L19Jt8hZ2TaLEo9/value
+            - data->"Subgraph" T0nduuBs9Girl8YpbIK9Q/model
+          visualData: -497.6166372667918/-124.34607934765899/330/85//
+        '[T0nduuBs9Girl8YpbIK9Q]:subGraph "Subgraph"':
+          data:
+            graphId: Q1I0B31c3UNKRSscuOcMm
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - all-messages->"Assemble Prompt" ow1008xcfQ03MBc-kJyQD/message1
+            - all-messages->"If" Z5qy7nB76IVy2Zj_HU0D9/value
+            - function-calls->"If" IpB9s4ttbNGzYsD2l8DPN/if
+            - function-calls->"If" IpB9s4ttbNGzYsD2l8DPN/value
+            - function-calls->"If" Z5qy7nB76IVy2Zj_HU0D9/if
+          visualData: 755.3183118437032/324.29049717806504/330/82//
+        '[TxbYSPRcg0R8BKnOvaVV5]:match "Match"':
+          data:
+            cases:
+              - COMPLETELY_FINISHED_VALUE
+          outgoingConnections:
+            - case1->"If" hqyv1T4DHKLWrUGHU90Lq/if
+          visualData: 2889.453888526921/795.6136239967695/280/57//
+        '[Z5qy7nB76IVy2Zj_HU0D9]:if "If"':
+          data:
+            unconnectedControlFlowExcluded: true
+          outgoingConnections:
+            - falseOutput->"Coalesce" FW59LI8kmoFU38oNEFImN/input2
+          visualData: 1193.45484639091/207.84354883720624/155/40//
+        '[bMAzJbOPDqPhz37-_L-aM]:externalCall "External Call"':
+          data:
+            functionName: showChanges
+            useErrorOutput: false
+            useFunctionNameInput: false
+          visualData: 4637.205674621156/169.81543089797083/180/57//
+        '[bwYoHyNJEbzIcc1CacSbd]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: task
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Graph Output" 7dU1_alxlz-eIRNL4IWUe/value
+            - data->"Prompt" tozCLMATvR3heb8dTCOVV/task
+          visualData: -949.4039388250712/642.0973472258075/330/72//
+        '[ds0aV04r78bgxU0WTcFgI]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $.children
+            usePathInput: false
+          outgoingConnections:
+            - match->"To Tree" IZDH9R5O-n99UeIF7vxLq/objects
+          visualData: -847.7891453167989/286.4699709590416/280/26//
+        '[fH6k2cjPkUWeXbNlVs1n6]:text "Text"':
+          data:
+            text: "{{input}}"
+          outgoingConnections:
+            - output->"Match" TxbYSPRcg0R8BKnOvaVV5/input
+          visualData: 2483.4758808692195/807.365618955282/330/57//
+        '[hEYv9sQmI7-mV0jswTRMA]:graphOutput "Graph Output"':
+          data:
+            dataType: chat-message[]
+            id: messages
+          visualData: 4667.62236965799/343.17930433872175/330/57//
+        '[hqyv1T4DHKLWrUGHU90Lq]:if "If"':
+          data:
+            unconnectedControlFlowExcluded: true
+          outgoingConnections:
+            - falseOutput->"Graph Output" ITkxP4aiS91UqNdKSIMDD/value
+          visualData: 3405.034236550739/829.9078183093532/155/57//
+        '[luWgdxg_GaPTm94v20yFm]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: api
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Graph Output" 2ftwj8CDXUcLDz-t0l9ga/value
+            - data->"Subgraph" T0nduuBs9Girl8YpbIK9Q/api
+          visualData: -505.09911780773234/-307.26202531361776/330/83//
+        '[nTL6xJSmQZR05BXue76gH]:text "Text"':
+          data:
+            text: not finished
+          outgoingConnections:
+            - output->"If" hqyv1T4DHKLWrUGHU90Lq/value
+          visualData: 2900.929682736813/1014.7688989571346/330/87//
+        '[nyTLkLu_jpPwz984FoDII]:graphInput "Graph Input"':
+          data:
+            dataType: chat-message[]
+            id: messages
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Assemble Prompt" 8Rd20PR_oasOBJO98i-LP/message1
+          visualData: -250.06093521082164/420.12749483655375/330/64//
+        '[ow1008xcfQ03MBc-kJyQD]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Coalesce" FW59LI8kmoFU38oNEFImN/input1
+          visualData: 3469.230010457471/413.10631148616255/280/57//
+        '[sFByS2knXHjq_Dc0ObwSA]:text "Text"':
+          data:
+            text: >-
+              Rivet is a powerful Integrated Development Environment (IDE) and
+              library designed for creating AI agents using a visual,
+              graph-based interface. It is made up of two main components: the
+              Rivet Application and the Rivet Core/Rivet Node. The Rivet
+              Application is an editor that allows you to create complex AI
+              prompt chains and agents. It comes with a suite of tools for
+              designing and enhancing AI agents, such as a prompt designer,
+              variations on nodes for A/B testing, and integrated testing to
+              ensure your graphs work as expected for all inputs.
+
+
+              Rivet Core/Rivet Node, on the other hand, are TypeScript libraries that allow you to execute projects generated by the Rivet Application. They provide a simple API for integrating Rivet with your application. This makes it easy to integrate Rivet's AI capabilities into your existing projects. Once you've created a graph in the Rivet App, you can execute it within your application like a function call.
+
+
+              One of the key features of Rivet is its node-based editor. This enables you to create, configure, and debug complex AI prompt chains and AI agent chains visually. This approach makes it easier to understand the flow of data and the state of your AI agent at any point in time. The editor allows you to view the input and output of every node, as well as AI responses in real-time, making it simple to identify and fix issues.
+
+
+              Rivet also offers live debugging of AI chains as they run, allowing you to monitor the state of your AI agent in real-time and quickly identify any issues that may arise. It also supports remote debugging, allowing you to debug AI chains running on a remote server. This is useful for debugging AI agents that are running in a production environment.
+
+
+              Lastly, Rivet features a library of node types to execute common functionality for nodes. Some essential node types include Text, Chat, Match, Loop Controller, Extract YAML, Extract JSON, Chunk, Trim Chat Messages, and External Call. These nodes can be connected together using wires, allowing data to flow between them. Documentation for all nodes can be found in the Node Reference.
+
+
+
+
+              You are a Rivet graph creator. You call functions provided to you, to assemble a Rivet graph from scratch, or edit an existing Rivet graph.
+
+
+              The following is a list of every Node source file in Rivet. The node name is the name of the file:
+
+
+              <nodes>
+
+              {{nodes}}
+
+              </nodes>
+
+
+              {{help}}
+          outgoingConnections:
+            - output->"Subgraph" T0nduuBs9Girl8YpbIK9Q/systemPrompt
+          visualData: 194.97774721221572/-9.411359809503006/330/26//
+        '[tEJHVYS29o5twVfp9Nxx1]:raiseEvent "Raise Event"':
+          data:
+            eventName: runningCommands
+            useEventNameInput: false
+          isSplitRun: true
+          visualData: 1598.0412435716544/361.99746608087503/180/59//
+        '[tozCLMATvR3heb8dTCOVV]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: >-
+              As a reminder, you are trying to accomplish this task:
+
+
+              {{task | quote}}
+
+
+              Do not try forever to accomplish the task. If something does not work, rethink your approach or bail out.
+
+
+              As a reminder, think out loud and call `updateUser` and `plan` frequently.
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" 8Rd20PR_oasOBJO98i-LP/message2
+          visualData: -220.6889317905332/587.6583310431927/280/67//
+    rbKmsS2zrTbG42yeQBxOi:
+      metadata:
+        description: ""
+        id: rbKmsS2zrTbG42yeQBxOi
+        name: "Function: plan"
+      nodes:
+        '[0GuWpLSU5_8v0IbVlh9X8]:text "Text"':
+          data:
+            text: Plan recorded.
+          outgoingConnections:
+            - output->"Graph Output" oZpaX_NVj8pg2NY13ECR0/value
+          visualData: 445/424/330/2//
+        '[oZpaX_NVj8pg2NY13ECR0]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 880/418/330/1//
+  metadata:
+    description: ""
+    id: wHxyeNIJLo2ZrylGbkznh
+    title: Rivet Graph Creator
+  plugins:
+    - id: anthropic
+      name: Anthropic
+      type: built-in

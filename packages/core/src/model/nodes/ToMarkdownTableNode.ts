@@ -12,8 +12,6 @@ import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { type EditorDefinition } from '../../index.js';
 import { dedent } from 'ts-dedent';
 import { coerceType } from '../../utils/coerceType.js';
-import { toMarkdown } from 'mdast-util-to-markdown';
-import { gfmTableToMarkdown } from 'mdast-util-gfm-table';
 
 export type ToMarkdownTableNode = ChartNode<'toMarkdownTable', ToMarkdownTableNodeData>;
 
@@ -101,6 +99,11 @@ export class ToMarkdownTableNodeImpl extends NodeImpl<ToMarkdownTableNode> {
     const data = coerceType(inputs['data' as PortId], 'object[]');
 
     const keys = data.length === 0 ? [] : Object.keys(data[0]!);
+
+    // Dynamic import because these are ESM-only, and top level imports are converted to CommonJS for rivet-node.
+    // Dynamic import is able to load ESM-only modules.
+    const { toMarkdown } = await import('mdast-util-to-markdown');
+    const { gfmTableToMarkdown } = await import('mdast-util-gfm-table');
 
     const markdownTable = toMarkdown(
       {

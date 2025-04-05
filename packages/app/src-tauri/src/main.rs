@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use tauri::{AppHandle, CustomMenuItem, InvokeError, Manager, Menu, MenuItem, Submenu};
 mod plugins;
@@ -22,7 +22,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             get_environment_variable,
             plugins::extract_package_plugin_tarball,
-            allow_data_file_scope
+            allow_data_file_scope,
+            read_relative_project_file
         ])
         .menu(create_menu())
         .on_menu_event(|event| match event.menu_item_id() {
@@ -68,6 +69,22 @@ fn allow_data_file_scope(
     scope.allow_file(&data_file_path)?;
 
     Ok(())
+}
+
+#[tauri::command]
+fn read_relative_project_file(
+    relative_from: &str,
+    project_file_path: &str,
+) -> Result<String, InvokeError> {
+    let mut source_dir = PathBuf::from(relative_from);
+    source_dir.pop();
+
+    if project_file_path.ends_with(".rivet-project") == false {
+        return Err(InvokeError::from("Invalid project file path"));
+    }
+
+    let full_path = source_dir.join(project_file_path);
+    std::fs::read_to_string(full_path).map_err(|_| InvokeError::from("Failed to read file"))
 }
 
 fn create_menu() -> Menu {

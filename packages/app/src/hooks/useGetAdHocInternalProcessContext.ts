@@ -14,10 +14,14 @@ import { useAtomValue } from 'jotai';
 import { settingsState } from '../state/settings';
 import { useDependsOnPlugins } from './useDependsOnPlugins';
 import { audioProvider, datasetProvider } from '../utils/globals';
+import { loadedProjectState, referencedProjectsState } from '../state/savedGraphs';
+import { TauriProjectReferenceLoader } from '../model/TauriProjectReferenceLoader';
 
 export function useGetAdHocInternalProcessContext() {
   const settings = useAtomValue(settingsState);
   const plugins = useDependsOnPlugins();
+  const referencedProjects = useAtomValue(referencedProjectsState);
+  const loadedProject = useAtomValue(loadedProjectState);
 
   return useCallback(
     async (options?: {
@@ -57,8 +61,12 @@ export function useGetAdHocInternalProcessContext() {
         getPluginConfig: undefined!,
         attachedData: {},
         requestUserInput: undefined!,
+        codeRunner: undefined!,
+        referencedProjects,
+        projectPath: loadedProject.path ?? undefined,
+        projectReferenceLoader: new TauriProjectReferenceLoader(),
       };
     },
-    [plugins, settings],
+    [plugins, settings, loadedProject, referencedProjects],
   );
 }

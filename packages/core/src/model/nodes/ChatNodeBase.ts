@@ -11,6 +11,8 @@ import {
   chatCompletions,
   streamChatCompletions,
   type ChatCompletionChunkUsage,
+  defaultOpenaiSupported,
+  type OpenAIModel,
 } from '../../utils/openai.js';
 import { isArrayDataValue, type ChatMessage, getScalarTypeOf, type ScalarDataValue } from '../DataValue.js';
 import type { EditorDefinition } from '../EditorDefinition.js';
@@ -52,7 +54,7 @@ export type ChatNodeConfigData = {
   useServerTokenCalculation?: boolean;
   outputUsage?: boolean;
   usePredictedOutput?: boolean;
-  reasoningEffort?: 'low' | 'medium' | 'high';
+  reasoningEffort?: '' | 'low' | 'medium' | 'high';
 
   modalitiesIncludeText?: boolean;
   modalitiesIncludeAudio?: boolean;
@@ -127,7 +129,7 @@ export const ChatNodeBase = {
     usePredictedOutput: false,
     modalitiesIncludeAudio: false,
     modalitiesIncludeText: false,
-    reasoningEffort: 'medium',
+    reasoningEffort: '',
     useReasoningEffortInput: false,
   }),
 
@@ -850,6 +852,7 @@ export const ChatNodeBase = {
     const seed = getInputOrData(data, inputs, 'seed', 'number');
     const responseFormat = getInputOrData(data, inputs, 'responseFormat') as 'text' | 'json' | 'json_schema' | '';
     const toolChoiceMode = getInputOrData(data, inputs, 'toolChoice', 'string') as 'none' | 'auto' | 'function';
+    const parallelFunctionCalling = getInputOrData(data, inputs, 'parallelFunctionCalling', 'boolean');
 
     const predictedOutput = data.usePredictedOutput
       ? coerceTypeOptional(inputs['predictedOutput' as PortId], 'string[]')
@@ -1038,6 +1041,10 @@ export const ChatNodeBase = {
 
     const reasoningEffort = getInputOrData(data, inputs, 'reasoningEffort') as '' | 'low' | 'medium' | 'high';
 
+    const supported =
+      (openaiModels[finalModel as keyof typeof openaiModels] as OpenAIModel | undefined)?.supported ??
+      defaultOpenaiSupported;
+
     try {
       return await retry(
         async () => {
@@ -1054,6 +1061,8 @@ export const ChatNodeBase = {
             seed,
             response_format: openaiResponseFormat,
             tool_choice: toolChoice,
+            parallel_tool_calls:
+              tools.length > 0 && supported.parallelFunctionCalls ? parallelFunctionCalling : undefined,
             prediction: predictionObject,
             modalities,
             audio,
@@ -1450,23 +1459,29 @@ export const ChatNodeBase = {
           maxTimeout: 5000,
           randomize: true,
           signal: context.signal,
-          onFailedAttempt(err) {
-            if (err.toString().includes('fetch failed') && err.cause) {
+          onFailedAttempt(originalError) {
+            let err = originalError;
+            if (originalError.toString().includes('fetch failed') && originalError.cause) {
               const cause =
-                getError(err.cause) instanceof AggregateError
-                  ? (err.cause as AggregateError).errors[0]
-                  : getError(err.cause);
+                getError(originalError.cause) instanceof AggregateError
+                  ? (originalError.cause as AggregateError).errors[0]
+                  : getError(originalError.cause);
 
               err = cause;
             }
-
-            context.trace(`ChatNode failed, retrying: ${err.toString()}`);
 
             if (context.signal.aborted) {
               throw new Error('Aborted');
             }
 
+            context.trace(`ChatNode failed, retrying: ${err.toString()}`);
+
             const { retriesLeft } = err;
+
+            // Retry network errors
+            if (err.toString().includes('terminated') || originalError.toString().includes('terminated') || err.toString().includes('fetch failed')) {
+              return;
+            }
 
             if (!(err instanceof OpenAIError)) {
               if ('code' in err) {
@@ -1509,7 +1524,7 @@ export const ChatNodeBase = {
       );
     } catch (error) {
       context.trace(getError(error).stack ?? 'Missing stack');
-      throw new Error(`Error processing ChatNode: ${(error as Error).message}`);
+      throw new Error(`Error processing ChatNode: ${(error as Error).message}`, { cause: error });
     }
   },
 };

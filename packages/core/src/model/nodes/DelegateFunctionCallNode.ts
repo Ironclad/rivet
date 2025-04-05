@@ -1,10 +1,5 @@
 import { nanoid } from 'nanoid';
-import type {
-  AssistantChatMessageFunctionCall,
-  DataValue,
-  GptFunction,
-  ParsedAssistantChatMessageFunctionCall,
-} from '../DataValue.js';
+import type { DataValue, ParsedAssistantChatMessageFunctionCall } from '../DataValue.js';
 import type { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
 import type { GraphId } from '../NodeGraph.js';
 import { NodeImpl, type NodeBody, type NodeUIData } from '../NodeImpl.js';
@@ -21,13 +16,14 @@ export type DelegateFunctionCallNode = ChartNode<'delegateFunctionCall', Delegat
 export type DelegateFunctionCallNodeData = {
   handlers: { key: string; value: GraphId }[];
   unknownHandler: GraphId | undefined;
+  autoDelegate: boolean;
 };
 
 export class DelegateFunctionCallNodeImpl extends NodeImpl<DelegateFunctionCallNode> {
   static create(): DelegateFunctionCallNode {
     const chartNode: DelegateFunctionCallNode = {
       type: 'delegateFunctionCall',
-      title: 'Delegate Function Call',
+      title: 'Delegate Tool Call',
       id: nanoid() as NodeId,
       visualData: {
         x: 0,
@@ -37,6 +33,7 @@ export class DelegateFunctionCallNodeImpl extends NodeImpl<DelegateFunctionCallN
       data: {
         handlers: [],
         unknownHandler: undefined,
+        autoDelegate: true,
       },
     };
 
@@ -49,10 +46,10 @@ export class DelegateFunctionCallNodeImpl extends NodeImpl<DelegateFunctionCallN
     inputs.push({
       id: 'function-call' as PortId,
       dataType: 'object',
-      title: 'Function Call',
+      title: 'Tool Call',
       coerced: true,
       required: true,
-      description: 'The function call to delegate to a subgraph.',
+      description: 'The tool call to delegate to a subgraph.',
     });
 
     return inputs;
@@ -65,7 +62,7 @@ export class DelegateFunctionCallNodeImpl extends NodeImpl<DelegateFunctionCallN
       id: 'output' as PortId,
       dataType: 'string',
       title: 'Output',
-      description: 'The output of the function call.',
+      description: 'The output of the tool call.',
     });
 
     outputs.push({
@@ -81,10 +78,10 @@ export class DelegateFunctionCallNodeImpl extends NodeImpl<DelegateFunctionCallN
   static getUIData(): NodeUIData {
     return {
       infoBoxBody: dedent`
-        Handles a function call by delegating it to a different subgraph depending on the function call.
+        Handles a tool call by delegating it to a different subgraph depending on the tool call.
       `,
-      infoBoxTitle: 'Delegate Function Call Node',
-      contextMenuTitle: 'Delegate Function Call',
+      infoBoxTitle: 'Delegate Tool Call Node',
+      contextMenuTitle: 'Delegate Tool Call',
       group: ['Advanced'],
     };
   }
@@ -92,21 +89,32 @@ export class DelegateFunctionCallNodeImpl extends NodeImpl<DelegateFunctionCallN
   getEditors(): EditorDefinition<DelegateFunctionCallNode>[] {
     return [
       {
+        type: 'toggle',
+        label: 'Auto Delegate',
+        dataKey: 'autoDelegate',
+        helperMessage: 'Automatically delegates tool calls to the subgraph containing the same name as the tool.',
+      },
+      {
         type: 'custom',
         customEditorId: 'ToolCallHandlers',
         label: 'Handlers',
         dataKey: 'handlers',
+        hideIf: (data) => data.autoDelegate,
       },
       {
         type: 'graphSelector',
         dataKey: 'unknownHandler',
         label: 'Unknown Handler',
-        helperMessage: 'The subgraph to delegate to if the function call does not match any handlers.',
+        helperMessage: 'The subgraph to delegate to if the tool call does not match any handlers.',
       },
     ];
   }
 
   getBody(context: RivetUIContext): NodeBody {
+    if (this.data.autoDelegate) {
+      return 'Auto Delegate To Subgraphs';
+    }
+
     if (this.data.handlers.length === 0) {
       return 'No handlers defined';
     }
@@ -127,13 +135,30 @@ export class DelegateFunctionCallNodeImpl extends NodeImpl<DelegateFunctionCallN
       'object',
     ) as ParsedAssistantChatMessageFunctionCall;
 
-    let handler = this.data.handlers.find((handler) => handler.key === functionCall.name);
+    let handler: { key: string; value: GraphId } | undefined;
+
+    if (this.data.autoDelegate) {
+      const matchingGraph = Object.values(context.project.graphs).find((graph) =>
+        graph.metadata?.name?.includes(functionCall.name),
+      );
+      if (matchingGraph) {
+        handler = { key: undefined!, value: matchingGraph.metadata!.id! };
+      }
+    } else {
+      handler = this.data.handlers.find((handler) => handler.key === functionCall.name);
+    }
 
     if (!handler) {
       if (this.data.unknownHandler) {
         handler = { key: undefined!, value: this.data.unknownHandler };
       } else {
-        throw new Error(`No handler found for function call: ${functionCall.name}`);
+        if (this.data.autoDelegate) {
+          throw new Error(
+            `No handler found for tool call: ${functionCall.name}, no graph containing the name "${functionCall.name}" was found.`,
+          );
+        } else {
+          throw new Error(`No handler found for tool call: ${functionCall.name}`);
+        }
       }
     }
 
@@ -148,7 +173,7 @@ export class DelegateFunctionCallNodeImpl extends NodeImpl<DelegateFunctionCallN
       },
     };
 
-    for (const [argName, argument] of Object.entries(functionCall.arguments)) {
+    for (const [argName, argument] of Object.entries(functionCall.arguments ?? {})) {
       subgraphInputs[argName] = {
         type: 'any',
         value: argument,
@@ -179,4 +204,4 @@ export class DelegateFunctionCallNodeImpl extends NodeImpl<DelegateFunctionCallN
   }
 }
 
-export const delegateFunctionCallNode = nodeDefinition(DelegateFunctionCallNodeImpl, 'Delegate Function Call');
+export const delegateFunctionCallNode = nodeDefinition(DelegateFunctionCallNodeImpl, 'Delegate Tool Call');

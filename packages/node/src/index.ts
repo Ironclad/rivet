@@ -5,3 +5,4 @@ export * from './api.js';
 export * from './debugger.js';
 export * from './native/NodeDatasetProvider.js';
 export * from './native/DebuggerDatasetProvider.js';
+export * from './native/NodeProjectReferenceLoader.js';

@@ -51,7 +51,7 @@ export class DestructureNodeImpl extends NodeImpl<DestructureNode> {
   }
 
   getOutputDefinitions(): NodeOutputDefinition[] {
-    return this.chartNode.data.paths.map((path, index) => ({
+    return this.data.paths.map((path, index) => ({
       id: `match_${index}` as PortId,
       title: path,
       dataType: 'any',

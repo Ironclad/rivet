@@ -221,13 +221,12 @@ export class LoopUntilNodeImpl extends NodeImpl<LoopUntilNode> {
     return `Executes ${graphName}\nuntil ${condition}${maxIterations}`;
   }
 
-  private checkCondition(outputs: Outputs): boolean {
+  private shouldBreak(outputs: Outputs): boolean {
     if (this.data.conditionType === 'allOutputsSet') {
       // Check if any output is control-flow-excluded
       const anyInputIsExcluded = Object.values(outputs)
         .filter((o) => o != null)
         .some((output) => output.type === 'control-flow-excluded');
-
       return !anyInputIsExcluded;
     } else if (this.data.conditionType === 'inputEqual' && this.data.inputToCheck && this.data.targetValue) {
       const inputValue = outputs[this.data.inputToCheck as PortId];
@@ -272,7 +271,7 @@ export class LoopUntilNodeImpl extends NodeImpl<LoopUntilNode> {
       iteration++;
 
       // Check if the condition is met
-      if (this.checkCondition(lastOutputs)) {
+      if (this.shouldBreak(lastOutputs)) {
         break;
       }
 

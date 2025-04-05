@@ -166,6 +166,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/cyppan"><img src="https://avatars.githubusercontent.com/u/1446201?v=4?s=100" width="100px;" alt="Cyprien Pannier"/><br /><sub><b>Cyprien Pannier</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=cyppan" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/StephenGrider"><img src="https://avatars.githubusercontent.com/u/5003903?v=4?s=100" width="100px;" alt="Stephen Grider"/><br /><sub><b>Stephen Grider</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=StephenGrider" title="Code">💻</a> <a href="#ideas-StephenGrider" title="Ideas, Planning, & Feedback">🤔</a> <a href="#maintenance-StephenGrider" title="Maintenance">🚧</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://getenter.ai"><img src="https://avatars.githubusercontent.com/u/65794514?v=4?s=100" width="100px;" alt="Juliano Amadeu"/><br /><sub><b>Juliano Amadeu</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=julianolm" title="Code">💻</a> <a href="#ideas-julianolm" title="Ideas, Planning, & Feedback">🤔</a></td>
+    </tr>
   </tbody>
 </table>
 

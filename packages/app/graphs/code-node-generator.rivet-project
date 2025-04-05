@@ -11,53 +11,36 @@ data:
         id: EVbgfvapd3zwWW6met5Km
         name: Prompt Node Generator
       nodes:
-        '[3QXnW84Zbchm2y3R52fuI]:chat "Chat"':
-          data:
-            additionalParameters: []
-            cache: false
-            enableFunctionUse: false
-            maxTokens: 1024
-            modalitiesIncludeAudio: false
-            modalitiesIncludeText: false
-            model: gpt-4o-mini
-            outputUsage: false
-            parallelFunctionCalling: true
-            regex: ""
-            stop: ""
-            temperature: 0.5
-            top_p: 1
-            useAdditionalParametersInput: false
-            useAsGraphPartialOutput: true
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: true
-            usePredictedOutput: false
-            usePresencePenaltyInput: false
-            useServerTokenCalculation: true
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-            useUserInput: false
-          outgoingConnections:
-            - response->"Extract Regex" q-OyIX5kp6dMOG-7vn-o3/input
-          visualData: 1014/430/230/3//
         '[7HCWbZ6JuTNHJ8y4vs7q5]:text "Text"':
           data:
             text: I'd like you to write a prompt for a math tutor AI agent
           outgoingConnections:
             - output->"Graph Input" kEtuBXk_bxNGM7sxUVg24/default
-          visualData: -731/504/330/6//
+          visualData: -617.6223259480174/504/330/39//
         '[MfdVwuxb1tvfu-bpu2R1w]:graphInput "Graph Input"':
           data:
             dataType: string
             id: model
             useDefaultValueInput: false
           outgoingConnections:
-            - data->"Chat" 3QXnW84Zbchm2y3R52fuI/model
+            - data->"Subgraph" Qq4FjOi3N3JJCfhxzSCwH/model
           visualData: 164/121/330/29//
+        '[Qq4FjOi3N3JJCfhxzSCwH]:subGraph "Subgraph"':
+          data:
+            graphId: M3eks8XsGx7edJRM6OMUq
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - response->"Extract Regex" q-OyIX5kp6dMOG-7vn-o3/input
+          visualData: 980.4011678812968/443.6935753164939/330/34//
+        '[Ui8RR1NsCpsRPv3O1mnmn]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: api
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Subgraph" Qq4FjOi3N3JJCfhxzSCwH/api
+          visualData: 157.25132892547722/-32.630364304993236/330/33//
         '[VlgfDbEb2LGwftSNlu8D5]:text "Text"':
           data:
             text: >-
@@ -917,13 +900,13 @@ data:
 
               Note: If you want the AI to output its entire response or parts of its response inside certain tags, specify the name of these tags (e.g. "write your answer inside <answer> tags") but do not include closing tags or unnecessary open-and-close tag sections.
           outgoingConnections:
-            - output->"Chat" 3QXnW84Zbchm2y3R52fuI/prompt
-          visualData: 206/276/746/1//
+            - output->"Subgraph" Qq4FjOi3N3JJCfhxzSCwH/prompt
+          visualData: 162.80850512305426/290.8470763639501/746/38//
         '[Ws0u0jueFQ5RskTIh7ujK]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: output
-          visualData: 2024.7247398168884/453.9452698494575/330/31//
+          visualData: 2130.0040085794435/449.8960672047438/330/37//
         '[kEtuBXk_bxNGM7sxUVg24]:graphInput "Graph Input"':
           data:
             dataType: string
@@ -951,7 +934,7 @@ data:
               - output
           outgoingConnections:
             - output->"Graph Output" Ws0u0jueFQ5RskTIh7ujK/value
-          visualData: 1756.6973735230968/377.1300451478965/230/27//
+          visualData: 1794.4899315404243/369.0316398584692/230/36//
         '[q-OyIX5kp6dMOG-7vn-o3]:extractRegex "Extract Regex"':
           data:
             errorOnFailed: false
@@ -960,7 +943,7 @@ data:
             useRegexInput: false
           outgoingConnections:
             - output1->"Code" lVCj44WT-p1FsIT_sxbSt/input
-          visualData: 1309.4843833361037/472.8836780833111/386.63472758716625/26//
+          visualData: 1351.326143998145/471.53394386840654/386.63472758716625/35//
     Eg0g4u-SevOdu7iZY7Unm:
       metadata:
         description: ""
@@ -1011,51 +994,26 @@ data:
           outgoingConnections:
             - output->"Code" Akpz3F9J3jNxXLToRWcl4/input
           visualData: 1553/419/230/38//
+        '[LWgQBmZiWzb0btF5p9cN9]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: api
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Subgraph" rXMjhJu6of2eXjMbqpMb6/api
+          visualData: 44.62366267061501/30.063352704464364/330/42//
         '[WHpSEQ9OirLyJexp8NuGi]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: output
           visualData: 2129.3377680893223/495.86295136177955/330/40//
-        '[YaMxKm_J8HUfOGRHOKyKb]:chat "Chat"':
-          data:
-            additionalParameters: []
-            cache: false
-            enableFunctionUse: false
-            maxTokens: 1024
-            modalitiesIncludeAudio: false
-            modalitiesIncludeText: false
-            model: gpt-4o-mini
-            outputUsage: false
-            parallelFunctionCalling: true
-            regex: ""
-            stop: ""
-            temperature: 0.5
-            top_p: 1
-            useAdditionalParametersInput: false
-            useAsGraphPartialOutput: true
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: true
-            usePredictedOutput: false
-            usePresencePenaltyInput: false
-            useServerTokenCalculation: true
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-            useUserInput: false
-          outgoingConnections:
-            - response->"Extract Regex" qzzEASjJPEtR8KpLIQ2DE/input
-          visualData: 773.9379418379947/462.09385804304884/230/30//
         '[m--X6BWn9nUddYXrZQS5U]:graphInput "Graph Input"':
           data:
             dataType: string
             id: model
             useDefaultValueInput: false
           outgoingConnections:
-            - data->"Chat" YaMxKm_J8HUfOGRHOKyKb/model
+            - data->"Subgraph" rXMjhJu6of2eXjMbqpMb6/model
           visualData: 49.65091397217884/197.05269771862402/330/null//
         '[nWW3rMWLbMqb0dpBbDka6]:prompt "Prompt"':
           data:
@@ -1085,7 +1043,7 @@ data:
             type: user
             useTypeInput: false
           outgoingConnections:
-            - output->"Chat" YaMxKm_J8HUfOGRHOKyKb/prompt
+            - output->"Subgraph" rXMjhJu6of2eXjMbqpMb6/prompt
           visualData: 271.34907951735977/378.9248596019562/280/35//
         '[qzzEASjJPEtR8KpLIQ2DE]:extractRegex "Extract Regex"':
           data:
@@ -1096,6 +1054,14 @@ data:
           outgoingConnections:
             - output1->"Code" CNBYroUh4N0aMMil3hZKy/input
           visualData: 1080.976114069596/507.54504476980384/386.63472758716625/31//
+        '[rXMjhJu6of2eXjMbqpMb6]:subGraph "Subgraph"':
+          data:
+            graphId: M3eks8XsGx7edJRM6OMUq
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - response->"Extract Regex" qzzEASjJPEtR8KpLIQ2DE/input
+          visualData: 660.2525516600923/464.42672181190323/330/43//
         '[zNMmUYLsgwkzzPdCixe0h]:text "Text"':
           data:
             text: Write a structured document with title, body, footer variables
@@ -1109,13 +1075,35 @@ data:
         id: HhKWCMAQ8eQOo8NEUe6WN
         name: Object Node Generator
       nodes:
+        '[0h5FsFzT3iMPW5ujCXOU1]:extractMarkdownCodeBlocks "Extract Markdown Code Blocks"':
+          outgoingConnections:
+            - firstBlock->"Graph Output" xqA4sxEfxVx5KZ3Psdv_Y/value
+          visualData: 467.0221800242008/213.48381798209005/280/172//
+        '[7QLMTCzeU3-tOk99u6pvn]:subGraph "Subgraph"':
+          data:
+            graphId: M3eks8XsGx7edJRM6OMUq
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - function-calls->"Destructure" JFpTQ2jUKsNegh67caQXw/object
+            - response->"Extract Markdown Code Blocks"
+              0h5FsFzT3iMPW5ujCXOU1/input
+          visualData: -311.3815092798563/431.92317191811037/330/170//
+        '[JFpTQ2jUKsNegh67caQXw]:destructure "Destructure"':
+          data:
+            paths:
+              - $[0]
+          outgoingConnections:
+            - match_0->"Match" RoIocLRqGb2NjOUbgzxy8/input
+            - match_0->"Match" RoIocLRqGb2NjOUbgzxy8/value
+          visualData: 117.56909022097736/478.8377609653742/280/167//
         '[LSw9Od3M7kp4BDWMH2hK5]:comment "Comment"':
           data:
             backgroundColor: rgba(0,0,0,0.05)
             color: rgba(255,255,255,1)
             height: 1218.6503689348447
             text: "### Initial question to generate the code"
-          visualData: -1637.2291911884442/228.4700890675118/1639.5188375265523/79//
+          visualData: -1637.2291911884442/-61.37199271223582/1639.5188375265523/163//
         '[Mn2IP67COwFFtu53CTfR5]:text "Text"':
           data:
             text: >-
@@ -1144,7 +1132,7 @@ data:
               - impossibleRequest
           outgoingConnections:
             - case2->"Destructure" vhqBra6P8GrzFTEMk6KhB/object
-          visualData: 229.05132289300522/653.6214687275316/280/155//
+          visualData: 470.93926720094584/554.4455900947927/280/168//
         '[WDAw39mquUZf-znE6HvDQ]:gptFunction "GPT Function"':
           data:
             description: "Call this function if the request is impossible. "
@@ -1161,7 +1149,7 @@ data:
                 "required": ["reason"]
               }
           outgoingConnections:
-            - function->"Chat" nAttnxSXzOBWVdLE-nBsA/functions
+            - function->"Subgraph" 7QLMTCzeU3-tOk99u6pvn/functions
           visualData: -746.4223083424073/928.2227958465032/280/156//
         '[ZT9EfF-eAeWNWqMpb6Lub]:text "Text"':
           data:
@@ -1178,17 +1166,7 @@ data:
               ## Placeholders
 
 
-              Additionally, placeholders delimited by double curly braces can be used around fields. For example, {\{foo}\} (ignore the backslashes) can be used to cause rivet to create a `foo` input port on the object node, where other objects can be passed in to the node! This allows objects to be composed from other values.
-
-
-              You must use:
-
-
-              {{
-
-              and
-
-              }}
+              Additionally, placeholders delimited by double curly braces can be used around fields. For example, {{{foo}}} can be used to cause rivet to create a `foo` input port on the object node, where other objects can be passed in to the node! This allows objects to be composed from other values.
 
 
               ## Examples
@@ -1225,15 +1203,15 @@ data:
 
               The user will give you what they want the object node to output, in plain english. You are instructed to output JSON conforming to what the user wants the JSON to do. For example, the user may ask for a JSON schema and they will describe the schema they want in plain English. You must output a valid JSON schema for what they want.
           outgoingConnections:
-            - output->"Chat" nAttnxSXzOBWVdLE-nBsA/systemPrompt
+            - output->"Subgraph" 7QLMTCzeU3-tOk99u6pvn/systemPrompt
           visualData: -726.7897865366365/329.1772579707348/330/33//
         '[bN6cYKrHB1klwU_T2OxQS]:comment "Comment"':
           data:
             backgroundColor: rgba(0,0,0,0.05)
             color: rgba(255,255,255,1)
-            height: 974.2145513177229
+            height: 972.0898889592952
             text: "### Response Extraction"
-          visualData: 186.03967739541122/100.77978069649924/1213.1380762809863/145//
+          visualData: 89.8379674986083/1.6039020637603159/1612.213207507296/169//
         '[bcqJUkQJxLVz6AgBMtuKu]:prompt "Prompt"':
           data:
             enableFunctionCall: false
@@ -1243,11 +1221,19 @@ data:
           outgoingConnections:
             - output->"Assemble Prompt" skvkJKngOEyUrY9Jw7pAh/message1
           visualData: -1131.5264250597115/626.2855847456499/280/111//
+        '[cF7JrCOVzaCHv8qKfzzkU]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: api
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Subgraph" 7QLMTCzeU3-tOk99u6pvn/api
+          visualData: -1154.5937390403158/267.7663778186812/330/164//
         '[hzGuMYMZKFM0yUOBixEA3]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: error
-          visualData: 964.7106714933195/699.7796495316356/330/159//
+          visualData: 1206.5986158012602/600.6037708988968/330/168//
         '[lOg785BYP-taQMa0lkK6B]:graphInput "Graph Input"':
           data:
             dataType: string
@@ -1255,43 +1241,11 @@ data:
             id: model
             useDefaultValueInput: false
           outgoingConnections:
-            - data->"Chat" nAttnxSXzOBWVdLE-nBsA/model
+            - data->"Subgraph" 7QLMTCzeU3-tOk99u6pvn/model
           visualData: -1135.2269437747914/447.68092596305564/294.1641220064855/45//
-        '[nAttnxSXzOBWVdLE-nBsA]:chat "Chat"':
-          data:
-            additionalParameters: []
-            cache: false
-            enableFunctionUse: true
-            frequencyPenalty: 0
-            maxTokens: 1024
-            model: gpt-4o-mini
-            parallelFunctionCalling: false
-            presencePenalty: 0
-            responseFormat: json
-            stop: ""
-            temperature: 0
-            toolChoice: auto
-            top_p: 1
-            useAsGraphPartialOutput: true
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: true
-            usePresencePenaltyInput: false
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-            useUserInput: false
-          outgoingConnections:
-            - function-call->"Match" RoIocLRqGb2NjOUbgzxy8/input
-            - function-call->"Match" RoIocLRqGb2NjOUbgzxy8/value
-            - response->"Graph Output" xqA4sxEfxVx5KZ3Psdv_Y/value
-          visualData: -290.8634551725346/579.3170909210522/230/37//
         '[skvkJKngOEyUrY9Jw7pAh]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
-            - prompt->"Chat" nAttnxSXzOBWVdLE-nBsA/prompt
+            - prompt->"Subgraph" 7QLMTCzeU3-tOk99u6pvn/prompt
           visualData: -717.0170939371682/713.5432398109425/280/32//
         '[vhqBra6P8GrzFTEMk6KhB]:destructure "Destructure"':
           data:
@@ -1299,12 +1253,12 @@ data:
               - $.arguments.reason
           outgoingConnections:
             - match_0->"Graph Output" hzGuMYMZKFM0yUOBixEA3/value
-          visualData: 629.8069910168186/709.4959880264801/280/158//
+          visualData: 871.6949353247594/610.3201093937412/280/168//
         '[xqA4sxEfxVx5KZ3Psdv_Y]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: object
-          visualData: 219.69149899207565/429.6659119006463/330/161//
+          visualData: 805.867944456127/202.3567723198402/330/173//
         '[y7uo5P9hy8_yLq51K7xqy]:graphInput "Graph Input"':
           data:
             dataType: string
@@ -1314,6 +1268,155 @@ data:
           outgoingConnections:
             - data->"Text" Mn2IP67COwFFtu53CTfR5/spec
           visualData: -1552.419236105042/873.516337043934/287.64850782584654/51//
+    M3eks8XsGx7edJRM6OMUq:
+      metadata:
+        description: ""
+        id: M3eks8XsGx7edJRM6OMUq
+        name: Chat
+      nodes:
+        '[0TkHaJ2fG7FaJ-Ge0QvX-]:graphInput "Graph Input"':
+          data:
+            dataType: chat-message[]
+            id: prompt
+          outgoingConnections:
+            - data->"Chat (Anthropic)" Rv5MxLY3518_Yf6me2g8m/prompt
+            - data->"Chat" y9Z7DZhgOThYAfYwElEII/prompt
+          visualData: 149.66020273340712/946.4795465916277/300/23//
+        '[1rdTBJBF0atKnTh7jXVYc]:graphOutput "Graph Output"':
+          data:
+            dataType: object[]
+            id: function-calls
+          visualData: 2145.067955407954/616.3251691472146/300/23//
+        '[1srZqvsVVY8O8_7TfaT8S]:graphInput "Graph Input"':
+          data:
+            dataType: gpt-function[]
+            id: functions
+          outgoingConnections:
+            - data->"Chat (Anthropic)" Rv5MxLY3518_Yf6me2g8m/tools
+            - data->"Chat" y9Z7DZhgOThYAfYwElEII/functions
+          visualData: 149.66020273340712/746.4795465916277/300/23//
+        '[4LfCjl6S3VUN47UYF3h6u]:graphOutput "Graph Output"':
+          data:
+            dataType: chat-message[]
+            id: all-messages
+          visualData: 2125.913148027633/388.09703195516244/300/23//
+        '[Ib4SlW6W5JQYB37PfuSBH]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" 4LfCjl6S3VUN47UYF3h6u/value
+          visualData: 1833.4521495492959/410.43458213088144/180/23//
+        '[P7Cw3KQrbY4vRq9CpIfEk]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            defaultValue: claude-3-7-sonnet-latest
+            id: model
+          outgoingConnections:
+            - data->"Chat (Anthropic)" Rv5MxLY3518_Yf6me2g8m/model
+            - data->"Chat" y9Z7DZhgOThYAfYwElEII/model
+          visualData: 149.66020273340712/546.4795465916277/300/23//
+        '[QfbUn0AwBlzG-tA9VS2Mv]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: systemPrompt
+          outgoingConnections:
+            - data->"Match" _ikdv5KFl0iRXcxWoMw2U/value
+          visualData: 149.66020273340712/346.47954659162764/300/23//
+        '[Rv5MxLY3518_Yf6me2g8m]:chatAnthropic "Chat (Anthropic)"':
+          data:
+            cache: false
+            enableCitations: false
+            enableToolUse: true
+            endpoint: ""
+            maxTokens: 1024
+            model: claude-3-7-sonnet-latest
+            stop: ""
+            temperature: 0.2
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useEndpointInput: false
+            useMaxTokensInput: false
+            useModelInput: true
+            useOverrideModelInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopKInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+          outgoingConnections:
+            - all-messages->"Coalesce" Ib4SlW6W5JQYB37PfuSBH/input2
+            - function-calls->"Coalesce" xIEquK9xuVWZtlMQWTG3W/input2
+            - response->"Coalesce" _bn0QpU7HhwO68QbKdBy1/input2
+          visualData: 1202.8817555549072/651.6735470114422/305/23//
+        '[_bn0QpU7HhwO68QbKdBy1]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" wUqrQnnf1HDxCdkCN4Unk/value
+          visualData: 1819.6537455380853/166.43646432268417/180/24//
+        '[_ikdv5KFl0iRXcxWoMw2U]:match "Match"':
+          data:
+            cases:
+              - openai
+              - anthropic
+          outgoingConnections:
+            - case1->"Chat" y9Z7DZhgOThYAfYwElEII/systemPrompt
+            - case2->"Chat (Anthropic)" Rv5MxLY3518_Yf6me2g8m/system
+          visualData: 606.4940985349134/253.74368599041935/280/23//
+        '[r0uBLvfajb1wGyqlvNLXp]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            defaultValue: anthropic
+            id: api
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Match" _ikdv5KFl0iRXcxWoMw2U/input
+          visualData: 134.14527646671604/139.4599160435564/330/23//
+        '[wUqrQnnf1HDxCdkCN4Unk]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: response
+          visualData: 2121.2368575577257/174.81377298989645/330/25//
+        '[xIEquK9xuVWZtlMQWTG3W]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" 1rdTBJBF0atKnTh7jXVYc/value
+          visualData: 1836.4765928198726/625.1700543418503/180/23//
+        '[y9Z7DZhgOThYAfYwElEII]:chat "Chat"':
+          data:
+            additionalParameters: []
+            cache: false
+            enableFunctionUse: true
+            headers: []
+            maxTokens: 2044
+            modalitiesIncludeAudio: false
+            modalitiesIncludeText: false
+            model: gpt-4o-mini
+            outputUsage: false
+            parallelFunctionCalling: true
+            reasoningEffort: ""
+            stop: ""
+            temperature: 0.2
+            toolChoice: ""
+            top_p: 1
+            useAdditionalParametersInput: false
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: true
+            usePredictedOutput: false
+            usePresencePenaltyInput: false
+            useReasoningEffortInput: false
+            useServerTokenCalculation: true
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - all-messages->"Coalesce" Ib4SlW6W5JQYB37PfuSBH/input1
+            - function-calls->"Coalesce" xIEquK9xuVWZtlMQWTG3W/input1
+            - response->"Coalesce" _bn0QpU7HhwO68QbKdBy1/input1
+          visualData: 1235.8162657000762/289.50651350359425/230/23//
     fd-5pfqrBw3YAPli0X_yi:
       metadata:
         description: Generates the configuration and code for a Code Node based on a
@@ -1324,8 +1427,9 @@ data:
         '[-P4jrioMlRwwAvby_BgqI]:graphInput "Graph Input"':
           data:
             dataType: string
-            defaultValue: Sum two inputs
+            defaultValue: Compute the HMAC of a secret and a value
             id: prompt
+            text: ""
             useDefaultValueInput: false
           outgoingConnections:
             - data->"Text" fIZiW_3xLyXZ3t1oXaTJY/spec
@@ -1339,6 +1443,14 @@ data:
           outgoingConnections:
             - output->"Assemble Prompt" puu83XM1fKYrGzNF4j1U-/message2
           visualData: 2090.7014733701326/112.03155291957617/155/96//
+        '[2LYrHiBxhYLZYkkCefFqS]:subGraph "Subgraph"':
+          data:
+            graphId: M3eks8XsGx7edJRM6OMUq
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - response->"Extract JSON" TpMSdJZ0PrSBT12aZZkUY/input
+          visualData: 2658.0141307710314/-226.71270383106432/330/118//
         '[319YuflbBPMYioT5fIS3g]:text "Text"':
           data:
             text: >-
@@ -1370,19 +1482,19 @@ data:
               ### Code Node Code
 
 
-              The code you write in the code node runs in the body of a function. This function has roughly this definition:
+              The code you write in the code node runs in the body of an async function. This function has roughly this definition:
 
 
               ```js
 
-              function codeNode(inputs) {
+              async function codeNode(inputs) {
                   // Your code is pasted in here
               }
 
               ```
 
 
-              You do not write the `function codeNode` part, just the body, when writing the code node's code.
+              You do not write the `async function codeNode` part, just the body, when writing the code node's code.
 
 
               The code node must return an object. The object must have a property for each of the outputs configured above. 
@@ -1448,9 +1560,9 @@ data:
               By default, the Code Node has:
 
 
-              - One input named `input`, accessible via `inputs.input`
+              - One input named `input1`, accessible via `inputs.input1`
 
-              - One output named `output`, so you must `return { output: { type: 'etc', value: 'etc' } }`
+              - One output named `output1`, so you must `return { output1: { type: 'etc', value: 'etc' } }`
 
 
               ## Examples
@@ -1526,22 +1638,50 @@ data:
               ```
 
 
+              4. Join the current working directory with a path
+
+
+              Configure the code node with:
+
+
+              - An output named `path`
+
+              - An input named `path`
+
+              - `allowProcess` turned on
+
+              - `allowRequire` turned on
+
+
+              ```js
+
+              const { join } = require('node:path');
+
+
+              return {
+                  path: {
+                      type: 'string',
+                      value: join(process.cwd(), inputs.path.value),
+                  }
+              }
+
+              ```
+
+
+
+
               ## Restrictions
 
 
               You must take into account that the code node has the following restrictions:
 
 
-              - The code node is not ran using node.js. You cannot use `require`.
-
-              - The code node cannot `import` any packages. It is ran in a sandboxed `new Function(...)` sandbox. The variables accessible in this sandboxed environment are `console` and `inputs`
-
-              - The code node cannot use `async` nor `await`. The code node cannot use Promises.
+              - The code node must use `require` to import packages. The variables accessible are `console`, `inputs`, `require`, `fetch`, `process` and `Rivet` (the Rivet library).
 
               - The code node must return an object. The properties of the object must correspond with configured input and output values.
 
 
-              Other than those things explicitly mentioned above, all JavaScript is valid inside a code node!
+              Other than those things explicitly mentioned above, all JavaScript is valid inside a code node! If you enable `allowRequire`, then any built-in node modules can be `require`ed. Any module can be required with `allowRequire` turned on.
 
 
               You must keep these restrictions in mind when generating code for the Code Node. You cannot generate code that violates these restrictions. You can only generate valid Code Node code.
@@ -1552,15 +1692,24 @@ data:
 
               * The `rivet-plugin-example-python-exec` plugin to run python code
 
-              * The `Read File`, `Read Directory` Nodes built-in to Rivet
-
-              * The `Write File` and `Shell Command` nodes in the FS plugin
-
-              * The HTTP Call node can make HTTP requests
-
               * Writing a custom Rivet plugin to accomplish what you are wanting
 
               * Using the External Call node to write the code in a parent application that Rivet can call into
+
+
+              ## Permissions
+
+
+              The Code Node is allowed to use `fetch` provided that `allowFetch` is enabled.
+
+
+              The Code Node is allowed to use `require` provided that `allowRequire` is enabled.
+
+
+              The Code Node is allowed to use `process` provided that `allowProcess` is enabled.
+
+
+              The Code Node is allowed to use `console` provided that `allowConsole` is enabled.
 
 
               ## Your Role
@@ -1568,9 +1717,9 @@ data:
 
               The user will give you what they want the code node to do. You will then explain how they should configure the code node, and what the code of the node should be.
           outgoingConnections:
-            - output->"Chat" CjLJbPjhdruU-zmPW6Jhm/systemPrompt
-            - output->"Chat" EzziKQsubxlludQlCSmS5/systemPrompt
-            - output->"Chat" fmAm9-8tUxSxBq8W6oHmo/systemPrompt
+            - output->"Subgraph" 60Z7xq9sEGmH25o_dwBTY/systemPrompt
+            - output->"Subgraph" CJZbhw0QjcnATz-Z3Ay5g/systemPrompt
+            - output->"Subgraph" f1vCmlmuFyb4Qh2LPhBLf/systemPrompt
           visualData: -726.7897865366365/329.1772579707348/330/33//
         '[5oPR0odAnmYwwA4Zs_Mvb]:comment "Comment"':
           data:
@@ -1578,73 +1727,32 @@ data:
             color: rgba(255,255,255,1)
             height: 915.0097396180166
             text: "### 2nd query to make sure the code is correct"
-          visualData: 23.178858803127127/408.94922493616093/1533.2626014642121/81//
+          visualData: 4.040614911631248/434.46688345815545/1533.2626014642121/124//
+        '[60Z7xq9sEGmH25o_dwBTY]:subGraph "Subgraph"':
+          data:
+            graphId: M3eks8XsGx7edJRM6OMUq
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - response->"Match" J4bFCY4R2l5RHElPJ-w-n/input
+          visualData: 1185.5380383183758/911.0769865203519/330/121//
         '[9GsfADpgO48OoS-fdwjdA]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
-            - prompt->"Chat" CjLJbPjhdruU-zmPW6Jhm/prompt
+            - prompt->"Subgraph" CJZbhw0QjcnATz-Z3Ay5g/prompt
           visualData: 2357.279661622449/812.5298061807753/280/71//
         '[9p_ku4OqApb_u5QXegpdA]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
-            - prompt->"Chat" EzziKQsubxlludQlCSmS5/prompt
             - prompt->"If" GfukJD1rWUaD_KOq-DE0A/value
+            - prompt->"Subgraph" f1vCmlmuFyb4Qh2LPhBLf/prompt
           visualData: -717.0170939371682/713.5432398109425/280/32//
-        '[CjLJbPjhdruU-zmPW6Jhm]:chat "Chat"':
+        '[CJZbhw0QjcnATz-Z3Ay5g]:subGraph "Subgraph"':
           data:
-            cache: false
-            enableFunctionUse: false
-            frequencyPenalty: 0
-            maxTokens: 1024
-            model: gpt-3.5-turbo
-            presencePenalty: 0
-            stop: ""
-            temperature: 0
-            top_p: 1
-            useAsGraphPartialOutput: true
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: true
-            usePresencePenaltyInput: false
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-            useUserInput: false
+            graphId: M3eks8XsGx7edJRM6OMUq
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
           outgoingConnections:
             - response->"Coalesce" f7Q_XCvM9ug7p7cB-6YBh/input1
-          visualData: 3028.8834235770914/632.0288899270461/230/null//
-        '[EzziKQsubxlludQlCSmS5]:chat "Chat"':
-          data:
-            cache: false
-            enableFunctionUse: false
-            frequencyPenalty: 0
-            maxTokens: 1024
-            model: gpt-4
-            presencePenalty: 0
-            stop: ""
-            temperature: 0
-            top_p: 1
-            useAsGraphPartialOutput: true
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: true
-            usePresencePenaltyInput: false
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-            useUserInput: false
-          outgoingConnections:
-            - all-messages->"Assemble Prompt" LYpyRywQiXi08XUJRl0yn/message1
-            - all-messages->"Assemble Prompt" puu83XM1fKYrGzNF4j1U-/message1
-            - response->"Coalesce" f7Q_XCvM9ug7p7cB-6YBh/input2
-            - response->"Extract Markdown Code Blocks"
-              sxDLlmtDGO0riiWWEEi6X/input
-            - response->"Prompt" sNGzZfMWBnJ2zRrtaPU66/input
-          visualData: -290.8634551725346/579.3170909210522/230/37//
+          visualData: 2872.298233588708/726.7411600468816/330/123//
         '[G9KtaAPXalxXbUbZiDbl0]:graphOutput "Graph Output"':
           data:
             dataType: string
@@ -1681,15 +1789,32 @@ data:
               ```json
               {
                 "inputs": ["these", "are", "the", "inputs"],
-                "outputs": ["these", "are", "the", "outputs"]
+                "outputs": ["these", "are", "the", "outputs"],
+                "allowFetch": boolean,
+                "allowRequire": boolean,
+                "allowProcess": boolean,
+                "allowRivet": boolean,
+                "allowConsole": boolean,
               }
               ```
           outgoingConnections:
             - output->"If" 1mEM9EWEILNeNqexuK0Bp/value
           visualData: 1647.3827227737963/13.5088698504415/330/108//
+        '[L-_b5Ed2ROolTnxPVJcrs]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            defaultValue: ""
+            id: api
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Subgraph" 2LYrHiBxhYLZYkkCefFqS/api
+            - data->"Subgraph" 60Z7xq9sEGmH25o_dwBTY/api
+            - data->"Subgraph" CJZbhw0QjcnATz-Z3Ay5g/api
+            - data->"Subgraph" f1vCmlmuFyb4Qh2LPhBLf/api
+          visualData: -1164.4410786029887/273.9896342476352/330/113//
         '[LYpyRywQiXi08XUJRl0yn]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
-            - prompt->"Chat" fmAm9-8tUxSxBq8W6oHmo/prompt
+            - prompt->"Subgraph" 60Z7xq9sEGmH25o_dwBTY/prompt
           visualData: 850.0992506853411/1004.51270259952/280/64//
         '[RYDwAKZ3ZmY5efXzi3dke]:if "If"':
           outgoingConnections:
@@ -1711,7 +1836,7 @@ data:
             text: >-
               Thank you. Just to double check, you didn't violate any of the
               code node restrictions, did you? Be permissive, I'm just making
-              sure you're not using `require`, `import`, `async`, or `await`.
+              sure you're not using `import`.
 
 
               Reply LOOKS OK or RESTRICTED. You can only reply with LOOKS OK or RESTRICTED and you may include a reason.
@@ -1727,9 +1852,9 @@ data:
           data:
             backgroundColor: rgba(0,0,0,0.05)
             color: rgba(255,255,255,1)
-            height: 976.9015417959613
+            height: 1055.742682881233
             text: "### Initial question to generate the code"
-          visualData: -1637.2291911884442/228.4700890675118/1607.5652234243616/79//
+          visualData: -1634.039483873195/89.71782085416666/1607/112//
         '[eMWn7HRkScN6rAMo7NDsq]:prompt "Prompt"':
           data:
             enableFunctionCall: false
@@ -1739,6 +1864,19 @@ data:
           outgoingConnections:
             - output->"Assemble Prompt" 9p_ku4OqApb_u5QXegpdA/message1
           visualData: -1108.4581203475575/638.8682964068248/280/27//
+        '[f1vCmlmuFyb4Qh2LPhBLf]:subGraph "Subgraph"':
+          data:
+            graphId: M3eks8XsGx7edJRM6OMUq
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - all-messages->"Assemble Prompt" LYpyRywQiXi08XUJRl0yn/message1
+            - all-messages->"Assemble Prompt" puu83XM1fKYrGzNF4j1U-/message1
+            - response->"Coalesce" f7Q_XCvM9ug7p7cB-6YBh/input2
+            - response->"Extract Markdown Code Blocks"
+              sxDLlmtDGO0riiWWEEi6X/input
+            - response->"Prompt" sNGzZfMWBnJ2zRrtaPU66/input
+          visualData: -327.3993184700132/493.74682570145984/303.2594574965826/116//
         '[f7Q_XCvM9ug7p7cB-6YBh]:coalesce "Coalesce"':
           outgoingConnections:
             - output->"Graph Output" G9KtaAPXalxXbUbZiDbl0/value
@@ -1766,79 +1904,28 @@ data:
           outgoingConnections:
             - output->"Assemble Prompt" 9p_ku4OqApb_u5QXegpdA/message2
           visualData: -1159.414078546703/820.6518251580231/330/44//
-        '[fmAm9-8tUxSxBq8W6oHmo]:chat "Chat"':
-          data:
-            cache: false
-            enableFunctionUse: false
-            frequencyPenalty: 0
-            maxTokens: 8
-            model: gpt-3.5-turbo
-            numberOfChoices: 1
-            presencePenalty: 0
-            stop: ""
-            temperature: 0
-            top_p: 1
-            useAsGraphPartialOutput: true
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: false
-            usePresencePenaltyInput: false
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-            useUserInput: false
-          outgoingConnections:
-            - response->"Match" J4bFCY4R2l5RHElPJ-w-n/input
-          visualData: 1227.5570074908946/921.4156591236706/230/64//
         '[girfWNhmDz24NtWgpIXQU]:graphInput "Graph Input"':
           data:
             dataType: string
-            defaultValue: gpt-3.5-turbo
+            defaultValue: gpt-4o
             id: model
             useDefaultValueInput: false
           outgoingConnections:
-            - data->"Chat" CjLJbPjhdruU-zmPW6Jhm/model
-            - data->"Chat" EzziKQsubxlludQlCSmS5/model
-          visualData: -1135.2269437747914/447.68092596305564/294.1641220064855/45//
-        '[iV_N5g9y64eD9t9_oRU2S]:chat "Chat"':
-          data:
-            cache: false
-            enableFunctionUse: false
-            frequencyPenalty: 0
-            maxTokens: 1024
-            model: gpt-3.5-turbo
-            presencePenalty: 0
-            stop: ""
-            temperature: 0.5
-            top_p: 1
-            useAsGraphPartialOutput: true
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: false
-            usePresencePenaltyInput: false
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-            useUserInput: false
-          outgoingConnections:
-            - response->"Extract JSON" TpMSdJZ0PrSBT12aZZkUY/input
-          visualData: 2703.048336692004/-194.010038589744/230/100//
+            - data->"Subgraph" 2LYrHiBxhYLZYkkCefFqS/model
+            - data->"Subgraph" 60Z7xq9sEGmH25o_dwBTY/model
+            - data->"Subgraph" CJZbhw0QjcnATz-Z3Ay5g/model
+            - data->"Subgraph" f1vCmlmuFyb4Qh2LPhBLf/model
+          visualData: -1138.4166510900407/450.870633278305/294.1641220064855/111//
         '[ooYA3jXKgPtNL6pYgLLt3]:comment "Comment"':
           data:
             backgroundColor: rgba(0,0,0,0.05)
             color: rgba(255,255,255,1)
             height: 976.1863868724195
             text: "### If incorrect, explain why it's impossible with the code node"
-          visualData: 1579.1467316866808/452.2108448546919/1758.5591606172588/83//
+          visualData: 1579.1467316866808/452.2108448546919/1758.5591606172588/110//
         '[puu83XM1fKYrGzNF4j1U-]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
-            - prompt->"Chat" iV_N5g9y64eD9t9_oRU2S/prompt
+            - prompt->"Subgraph" 2LYrHiBxhYLZYkkCefFqS/prompt
           visualData: 2319.182735344136/-111.75488860290679/280/94//
         '[sNGzZfMWBnJ2zRrtaPU66]:prompt "Prompt"':
           data:
@@ -1865,21 +1952,21 @@ data:
           data:
             dataType: string
             id: schema
-          visualData: 219.69149899207565/429.6659119006463/330/161//
+          visualData: 1056.9454216769564/330.9223628163682/330/176//
         '[0vyVT0Y-m-O58xbIDYKPz]:destructure "Destructure"':
           data:
             paths:
               - $.arguments.reason
           outgoingConnections:
             - match_0->"Graph Output" hJhsH30i2BmmV0oD-_QMg/value
-          visualData: 629.8069910168186/709.4959880264801/280/158//
+          visualData: 1072.9564069768267/705.833596159042/280/170//
         '[4XYS0zR5hAsoOA4ci_1IT]:comment "Comment"':
           data:
             backgroundColor: rgba(0,0,0,0.05)
             color: rgba(255,255,255,1)
-            height: 974.2145513177229
+            height: 966.1896680437867
             text: "### Response Extraction"
-          visualData: 186.03967739541122/100.77978069649924/1213.1380762809863/145//
+          visualData: 168.37950793883334/85.4018908947412/1634.7579256355189/172//
         '[80Ca_FCyXWlaQJka3Ia47]:text "Text"':
           data:
             regex: ""
@@ -1910,13 +1997,19 @@ data:
               ## Your Role
 
 
-              The user will give you plain english describing a JSON schema that they want. You output a compatible JSON schema for their request, following the above restructions.
+              The user will give you plain english describing a JSON schema that they want. You output a compatible JSON schema for their request, following the above restrictions.
+
+
+              If the user's request does not mention the restrictions, then you must assume that the user is abiding by the restrictions, and you must add them in to the final generated schema. 
+
+
+              The above restrictions are restrictions on the code you generate, not restrictions on what the user can request. You should always generate code that follows the restrictions, even if the user does not mention them.
           outgoingConnections:
-            - output->"Chat" cVukG292qUBt_9g_BUfq-/systemPrompt
+            - output->"Subgraph" QrYf-4BJUCPlYx1T8uM5D/systemPrompt
           visualData: -726.7897865366365/329.1772579707348/330/33//
         '[L9NiwGpPyqIKgD26BcMY3]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
-            - prompt->"Chat" cVukG292qUBt_9g_BUfq-/prompt
+            - prompt->"Subgraph" QrYf-4BJUCPlYx1T8uM5D/prompt
           visualData: -717.0170939371682/713.5432398109425/280/32//
         '[QUwpC6FcpotEGetEmYaFR]:match "Match"':
           data:
@@ -1925,7 +2018,21 @@ data:
               - impossibleRequest
           outgoingConnections:
             - case2->"Destructure" 0vyVT0Y-m-O58xbIDYKPz/object
-          visualData: 229.05132289300522/653.6214687275316/280/155//
+          visualData: 672.200738853013/649.9590768600935/280/170//
+        '[QrYf-4BJUCPlYx1T8uM5D]:subGraph "Subgraph"':
+          data:
+            graphId: M3eks8XsGx7edJRM6OMUq
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - function-calls->"Destructure" dEZiaAhQAMsttsIBcK-BX/object
+            - response->"Extract Markdown Code Blocks"
+              V5xjUurcyNvL0N4TzcuM6/input
+          visualData: -254.26415400444347/452.79698998710467/330/173//
+        '[V5xjUurcyNvL0N4TzcuM6]:extractMarkdownCodeBlocks "Extract Markdown Code Blocks"':
+          outgoingConnections:
+            - firstBlock->"Graph Output" 0OTOnd4b7LWdEQuKnHopk/value
+          visualData: 643.5524232962164/360.22229551673956/280/175//
         '[XOPE_UBUwVuO78aByNTLO]:prompt "Prompt"':
           data:
             enableFunctionCall: false
@@ -1942,45 +2049,21 @@ data:
             id: model
             useDefaultValueInput: false
           outgoingConnections:
-            - data->"Chat" cVukG292qUBt_9g_BUfq-/model
+            - data->"Subgraph" QrYf-4BJUCPlYx1T8uM5D/model
           visualData: -1135.2269437747914/447.68092596305564/294.1641220064855/45//
-        '[cVukG292qUBt_9g_BUfq-]:chat "Chat"':
+        '[dEZiaAhQAMsttsIBcK-BX]:destructure "Destructure"':
           data:
-            additionalParameters: []
-            cache: false
-            enableFunctionUse: true
-            frequencyPenalty: 0
-            maxTokens: 1024
-            model: gpt-4o
-            parallelFunctionCalling: false
-            presencePenalty: 0
-            responseFormat: json
-            stop: ""
-            temperature: 0
-            toolChoice: auto
-            top_p: 1
-            useAsGraphPartialOutput: true
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: true
-            usePresencePenaltyInput: false
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-            useUserInput: false
+            paths:
+              - $[0]
           outgoingConnections:
-            - function-call->"Match" QUwpC6FcpotEGetEmYaFR/input
-            - function-call->"Match" QUwpC6FcpotEGetEmYaFR/value
-            - response->"Graph Output" 0OTOnd4b7LWdEQuKnHopk/value
-          visualData: -290.8634551725346/579.3170909210522/230/37//
+            - match_0->"Match" QUwpC6FcpotEGetEmYaFR/input
+            - match_0->"Match" QUwpC6FcpotEGetEmYaFR/value
+          visualData: 217.6598007872938/460.92536973664215/280/171//
         '[hJhsH30i2BmmV0oD-_QMg]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: error
-          visualData: 964.7106714933195/699.7796495316356/330/159//
+          visualData: 1407.8600874533272/696.1172576641976/330/170//
         '[hS4vKuOMPiwyQ-nzEngKa]:gptFunction "GPT Function"':
           data:
             description: "Call this function if the request is impossible. "
@@ -1997,8 +2080,16 @@ data:
                 "required": ["reason"]
               }
           outgoingConnections:
-            - function->"Chat" cVukG292qUBt_9g_BUfq-/functions
+            - function->"Subgraph" QrYf-4BJUCPlYx1T8uM5D/functions
           visualData: -731.2406725831552/928.2227958465032/280/163//
+        '[mZ461xEwtyshmx39ncVHE]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: api
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Subgraph" QrYf-4BJUCPlYx1T8uM5D/api
+          visualData: -1135.280707916379/265.2265303747239/330/168//
         '[newQ7uMEHaP-_VLfuK_I-]:text "Text"':
           data:
             text: >-
@@ -2026,9 +2117,9 @@ data:
           data:
             backgroundColor: rgba(0,0,0,0.05)
             color: rgba(255,255,255,1)
-            height: 979.6483185797417
+            height: 1163.4667827350431
             text: "### Initial question to generate the code"
-          visualData: -1637.2291911884442/228.4700890675118/1646.590817879626/79//
+          visualData: -1641.4277107409077/-1.0489798004909971/1759.2010446153886/167//
         '[wzww16NP9VoULLTpuSaMZ]:graphInput "Graph Input"':
           data:
             dataType: string
@@ -2049,9 +2140,9 @@ data:
           data:
             backgroundColor: rgba(0,0,0,0.05)
             color: rgba(255,255,255,1)
-            height: 1218.6503689348447
+            height: 1340.0653317395363
             text: "### Initial question to generate the code"
-          visualData: -1637.2291911884442/228.4700890675118/1639.5188375265523/79//
+          visualData: -1641.9240116399649/54.76173236124873/1646.8247007525345/157//
         '[4gNuUOCIlWH47c7CevT-m]:gptFunction "GPT Function"':
           data:
             description: "Configures the Extract Regex node with certain parameters. "
@@ -2082,14 +2173,30 @@ data:
           outgoingConnections:
             - match_0->"Graph Output" jbk5KmyMXfEDzwZ2cf95r/value
             - match_1->"Graph Output" fwjFxUTsUiwDvdQNyRjsN/value
-          visualData: 545.6494911633437/495.07322840008135/280/151//
+          visualData: 716.631992254388/477.9749782909769/280/165//
         '[7VBZ6x9-K6AfrX0S_Lthf]:comment "Comment"':
           data:
             backgroundColor: rgba(0,0,0,0.05)
             color: rgba(255,255,255,1)
-            height: 977.486391096598
+            height: 910.3044719433999
             text: "### Response Extraction"
-          visualData: 186.03967739541122/100.77978069649924/1163.9263417574475/145//
+          visualData: 45.4540653872192/110.2788085348906/1531.129359280581/164//
+        '[8OyIjMz2J4mO-flwFDwiR]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: api
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Subgraph" Eo7GPDXJQGxkUI9Y5uYEa/api
+          visualData: -1140.5493789551256/265.79191354642694/330/158//
+        '[Eo7GPDXJQGxkUI9Y5uYEa]:subGraph "Subgraph"':
+          data:
+            graphId: M3eks8XsGx7edJRM6OMUq
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - function-calls->"Destructure" NOnuo5SPVXAmrVYzw7mng/object
+          visualData: -319.7827292077991/620.816078345524/330/161//
         '[GSMGkalRyphL4foJ70C_N]:prompt "Prompt"':
           data:
             enableFunctionCall: false
@@ -2224,7 +2331,7 @@ data:
 
               You should attempt even complex requests by calling a function. The user cannot reply to your messages, so either call the `configureExtractRegexNode` if the request is possible at all, or tell the user their request is impossible.
           outgoingConnections:
-            - output->"Chat" hDyRjVNVVUFwT-10RYalQ/systemPrompt
+            - output->"Subgraph" Eo7GPDXJQGxkUI9Y5uYEa/systemPrompt
           visualData: -726.7897865366365/329.1772579707348/330/33//
         '[LskrRsF9hS-TY8eatLQwm]:destructure "Destructure"':
           data:
@@ -2232,7 +2339,15 @@ data:
               - $.arguments.reason
           outgoingConnections:
             - match_0->"Graph Output" ejZlxZkLtMNpXQTRHo7AG/value
-          visualData: 572.7052930301397/802.8085188827602/280/152//
+          visualData: 743.687794121184/785.7102687736557/280/165//
+        '[NOnuo5SPVXAmrVYzw7mng]:destructure "Destructure"':
+          data:
+            paths:
+              - $[0]
+          outgoingConnections:
+            - match_0->"Match" SGgVxd-yFHIzY3WuteMz9/input
+            - match_0->"Match" SGgVxd-yFHIzY3WuteMz9/value
+          visualData: 70.47527974570039/675.2182305949445/280/163//
         '[SGgVxd-yFHIzY3WuteMz9]:match "Match"':
           data:
             cases:
@@ -2241,7 +2356,7 @@ data:
           outgoingConnections:
             - case1->"Destructure" 6nbYMNjoJ3_2fb_ivhrCz/object
             - case2->"Destructure" LskrRsF9hS-TY8eatLQwm/object
-          visualData: 229.05132289300522/653.6214687275316/280/155//
+          visualData: 400.03382398404955/636.5232186184271/280/165//
         '[XvuhFM3f5h6dgWQARxPog]:text "Text"':
           data:
             text: >-
@@ -2285,57 +2400,27 @@ data:
           data:
             dataType: string
             id: response
-          visualData: 927.1071142825798/783.3431099999461/330/153//
+          visualData: 1098.089615373624/766.2448598908417/330/165//
         '[fwjFxUTsUiwDvdQNyRjsN]:graphOutput "Graph Output"':
           data:
             dataType: boolean
             id: multiline
-          visualData: 922.6022844380896/527.374761642198/330/143//
-        '[hDyRjVNVVUFwT-10RYalQ]:chat "Chat"':
-          data:
-            additionalParameters: []
-            cache: false
-            enableFunctionUse: true
-            frequencyPenalty: 0
-            maxTokens: 1024
-            model: gpt-4o-mini
-            parallelFunctionCalling: false
-            presencePenalty: 0
-            stop: ""
-            temperature: 0
-            toolChoice: required
-            top_p: 1
-            useAsGraphPartialOutput: true
-            useFrequencyPenaltyInput: false
-            useMaxTokensInput: false
-            useModelInput: true
-            usePresencePenaltyInput: false
-            useStop: false
-            useStopInput: false
-            useTemperatureInput: false
-            useTopP: false
-            useTopPInput: false
-            useUseTopPInput: false
-            useUserInput: false
-          outgoingConnections:
-            - function-call->"Match" SGgVxd-yFHIzY3WuteMz9/input
-            - function-call->"Match" SGgVxd-yFHIzY3WuteMz9/value
-          visualData: -290.8634551725346/579.3170909210522/230/37//
+          visualData: 1093.5847855291338/510.2765115330935/330/165//
         '[jbk5KmyMXfEDzwZ2cf95r]:graphOutput "Graph Output"':
           data:
             dataType: string
             id: regex
-          visualData: 915.0865361282738/300.31027676686/330/142//
+          visualData: 1086.069037219318/283.21202665775553/330/165//
         '[pJeBICA99sgbXnub9h7F6]:array "Array"':
           data:
             flatten: true
             flattenDeep: false
           outgoingConnections:
-            - output->"Chat" hDyRjVNVVUFwT-10RYalQ/functions
+            - output->"Subgraph" Eo7GPDXJQGxkUI9Y5uYEa/functions
           visualData: -415.25017808902794/931.6666997986916/230/148//
         '[qD_bTJD9QSanaKT9r9i_c]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
-            - prompt->"Chat" hDyRjVNVVUFwT-10RYalQ/prompt
+            - prompt->"Subgraph" Eo7GPDXJQGxkUI9Y5uYEa/prompt
           visualData: -717.0170939371682/713.5432398109425/280/32//
         '[sMDC9KTP66MkDb-e7tTeA]:graphInput "Graph Input"':
           data:
@@ -2353,10 +2438,14 @@ data:
             id: model
             useDefaultValueInput: false
           outgoingConnections:
-            - data->"Chat" hDyRjVNVVUFwT-10RYalQ/model
+            - data->"Subgraph" Eo7GPDXJQGxkUI9Y5uYEa/model
           visualData: -1135.2269437747914/447.68092596305564/294.1641220064855/45//
   metadata:
     description: ""
     id: 4tDjaNgAP-udJg2Uoz6JI
     title: Code Node Generator
-  plugins: []
+  plugins:
+    - id: anthropic
+      name: Anthropic
+      type: built-in
+  references: []

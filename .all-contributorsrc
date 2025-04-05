@@ -432,6 +432,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "julianolm",
+      "name": "Juliano Amadeu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/65794514?v=4",
+      "profile": "http://getenter.ai",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -16,18 +16,22 @@ import { type AttachedData, doubleCheckProject } from './serializationUtils.js';
 import { entries } from '../typeSafety.js';
 import type { PluginLoadSpec } from '../../model/PluginLoadSpec.js';
 import type { CombinedDataset } from './serialization.js';
+import { type ProjectMetadata } from '../../model/Project.js';
 
 type SerializedProject = {
-  metadata: {
-    id: ProjectId;
-    title: string;
-    description: string;
-  };
+  metadata: ProjectMetadata;
 
   graphs: Record<GraphId, SerializedGraph>;
 
   attachedData?: AttachedData;
   plugins?: PluginLoadSpec[];
+  references?: SerializedProjectReference[];
+};
+
+type SerializedProjectReference = {
+  id: ProjectId;
+  hintPaths?: string[];
+  title?: string;
 };
 
 type SerializedGraphMetadata = {
@@ -52,6 +56,7 @@ type SerializedNode = {
   data?: unknown;
   variants?: ChartNodeVariant<unknown>[];
   disabled?: boolean;
+  isConditional?: boolean;
 };
 
 /** x/y/width/zIndex */
@@ -142,6 +147,7 @@ function toSerializedProject(project: Project, attachedData?: AttachedData): Ser
     graphs: mapValues(project.graphs, (graph) => toSerializedGraph(graph)),
     attachedData,
     plugins: project.plugins ?? [],
+    references: project.references ?? [],
   };
 }
 
@@ -151,6 +157,7 @@ function fromSerializedProject(serializedProject: SerializedProject): [Project, 
       metadata: serializedProject.metadata,
       graphs: mapValues(serializedProject.graphs, (graph) => fromSerializedGraph(graph)) as Record<GraphId, NodeGraph>,
       plugins: serializedProject.plugins ?? [],
+      references: serializedProject.references ?? [],
     },
     serializedProject.attachedData ?? {},
   ];
@@ -238,6 +245,7 @@ function toSerializedNode(node: ChartNode, allNodes: ChartNode[], allConnections
     outgoingConnections: outgoingConnections.length > 0 ? outgoingConnections : undefined,
     variants: (node.variants?.length ?? 0) > 0 ? node.variants : undefined,
     disabled: node.disabled ? true : undefined,
+    isConditional: node.isConditional,
   };
 }
 
@@ -275,6 +283,7 @@ function fromSerializedNode(
       data: serializedNode.data ?? {},
       variants: serializedNode.variants ?? [],
       disabled: serializedNode.disabled,
+      isConditional: serializedNode.isConditional,
     },
     connections,
   ];

@@ -71,12 +71,15 @@ export function useSearchProject(query: string, enabled: boolean): SearchedItem[
     return items;
   }, [nodeTypes, project]);
 
-  const searchedNodes = useFuseSearch(searchableNodes, query, ['title', 'description', 'joinedData', 'nodeType'], {
-    enabled,
-    noInputEmptyList: true,
-  });
-
-  console.dir({ searchedNodes });
+  const searchedNodes = useFuseSearch(
+    searchableNodes,
+    query,
+    ['id', 'title', 'description', 'joinedData', 'nodeType'],
+    {
+      enabled,
+      noInputEmptyList: true,
+    },
+  );
 
   return searchedNodes.map((node): SearchedItem => {
     return {

@@ -5,7 +5,7 @@ import { type RivetUIContext } from '../../../core/src/model/RivetUIContext';
 import { settingsState } from '../state/settings';
 import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri';
 import { useDependsOnPlugins } from './useDependsOnPlugins';
-import { projectState } from '../state/savedGraphs';
+import { projectState, referencedProjectsState } from '../state/savedGraphs';
 import { graphState } from '../state/graph';
 import { useStableCallback } from './useStableCallback';
 import { useAtomValue } from 'jotai';
@@ -17,6 +17,7 @@ export function useGetRivetUIContext() {
   const plugins = useDependsOnPlugins();
   const project = useAtomValue(projectState);
   const graph = useAtomValue(graphState);
+  const referencedProjects = useAtomValue(referencedProjectsState);
 
   return useStableCallback(async ({ node }: { node?: ChartNode }) => {
     let getPluginConfigFn: RivetUIContext['getPluginConfig'] = () => undefined;
@@ -36,6 +37,7 @@ export function useGetRivetUIContext() {
       node,
       getPluginConfig: getPluginConfigFn,
       nativeApi: new TauriNativeApi(),
+      referencedProjects,
     };
 
     return context;

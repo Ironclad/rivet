@@ -94,8 +94,8 @@ export * from './nodes/GetGlobalNode.js';
 import { waitForEventNode } from './nodes/WaitForEventNode.js';
 export * from './nodes/WaitForEventNode.js';
 
-import { gptFunctionNode } from './nodes/GptFunctionNode.js';
-export * from './nodes/GptFunctionNode.js';
+import { gptFunctionNode } from './nodes/ToolNode.js';
+export * from './nodes/ToolNode.js';
 
 import { toYamlNode } from './nodes/ToYamlNode.js';
 export * from './nodes/ToYamlNode.js';
@@ -241,6 +241,9 @@ export * from './nodes/LoopUntilNode.js';
 import { mcpNode } from './nodes/MCPNode.js';
 export * from './nodes/MCPNode.js';
 
+import { referencedGraphAliasNode } from './nodes/ReferencedGraphAliasNode.js';
+export * from './nodes/ReferencedGraphAliasNode.js';
+
 export const registerBuiltInNodes = (registry: NodeRegistration) => {
   return registry
     .register(toYamlNode)
@@ -322,7 +325,8 @@ export const registerBuiltInNodes = (registry: NodeRegistration) => {
     .register(cronNode)
     .register(toTreeNode)
     .register(loopUntilNode)
-    .register(mcpNode);
+    .register(mcpNode)
+    .register(referencedGraphAliasNode);
 };
 
 let globalRivetNodeRegistry = registerBuiltInNodes(new NodeRegistration());

@@ -1,4 +1,4 @@
-import { type FC, useEffect, useMemo, useState, type MouseEvent } from 'react';
+import { type FC, useEffect, useMemo, useState, type MouseEvent, useRef } from 'react';
 import { NodeCanvas } from './NodeCanvas.js';
 import { useAtomValue, useAtom, useSetAtom } from 'jotai';
 import { connectionsState, isReadOnlyGraphState, nodesByIdState, nodesState } from '../state/graph.js';
@@ -25,6 +25,9 @@ import { GraphExecutionSelectorBar } from './GraphExecutionSelectorBar';
 import { HistoricalGraphNotice } from './HistoricalGraphNotice';
 import { NodeChangesModal, NodeChangesModalRenderer } from './NodeChangesModal';
 import { syncWrapper } from '../utils/syncWrapper';
+import { AiGraphCreatorInput } from './AiGraphCreatorInput';
+import { AiGraphCreatorToggle } from './AiGraphCreatorToggle';
+import { useReloadProjectReferences } from '../hooks/useReloadProjectReferences';
 
 const Container = styled.div`
   position: relative;
@@ -66,6 +69,9 @@ export const GraphBuilder: FC = () => {
   const setEditingNodeId = useSetAtom(editingNodeState);
   const loadedRecording = useAtomValue(loadedRecordingState);
   const project = useAtomValue(projectState);
+  const autoLayoutGraph = useRef(() => {});
+
+  useReloadProjectReferences();
 
   useDatasets(project.metadata.id);
 
@@ -77,7 +83,11 @@ export const GraphBuilder: FC = () => {
   });
 
   const nodesById = useAtomValue(nodesByIdState);
-  const contextMenuHandler = useGraphBuilderContextMenuHandler();
+  const contextMenuHandler = useGraphBuilderContextMenuHandler({
+    onAutoLayoutGraph: () => {
+      autoLayoutGraph.current();
+    },
+  });
 
   const nodeSelected = useStableCallback((node: ChartNode, multi: boolean) => {
     if (!multi) {
@@ -151,6 +161,7 @@ export const GraphBuilder: FC = () => {
           selectedNodes={selectedNodes}
           onNodeStartEditing={nodeStartEditing}
           onContextMenuItemSelected={contextMenuHandler}
+          autoLayoutGraph={autoLayoutGraph}
         />
         {loadedRecording && <div className="recording-border" />}
         {isReadOnly && <div className="read-only-border" />}
@@ -171,6 +182,8 @@ export const GraphBuilder: FC = () => {
           onClose={handleCloseUserInputModal}
         />
         <NodeChangesModalRenderer />
+        <AiGraphCreatorInput />
+        <AiGraphCreatorToggle />
       </ErrorBoundary>
     </Container>
   );

@@ -1,4 +1,4 @@
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { type GraphCommandState, commandHistoryStackStatePerGraph, useCommand } from './Command';
 import {
   type NodeId,
@@ -9,6 +9,7 @@ import {
 } from '@ironclad/rivet-core';
 import { nodesState, connectionsState } from '../state/graph';
 import { produce } from 'immer';
+import { referencedProjectsState } from '../state/savedGraphs';
 
 const MERGE_WINDOW_MS = 5000; // 5 seconds in milliseconds
 
@@ -16,6 +17,7 @@ export function useEditNodeCommand() {
   const setNodes = useSetAtom(nodesState);
   const setConnections = useSetAtom(connectionsState);
   const setCommandHistories = useSetAtom(commandHistoryStackStatePerGraph);
+  const referencedProjects = useAtomValue(referencedProjectsState);
 
   const findBrokenConnections = (
     nodeId: NodeId,
@@ -40,8 +42,13 @@ export function useEditNodeCommand() {
     const updatedNode = nodesById[nodeId]!;
     const instance = globalRivetNodeRegistry.createDynamicImpl(updatedNode);
 
-    const inputDefs = instance.getInputDefinitionsIncludingBuiltIn(connectionsForNode, nodesById, project);
-    const outputDefs = instance.getOutputDefinitions(connectionsForNode, nodesById, project);
+    const inputDefs = instance.getInputDefinitionsIncludingBuiltIn(
+      connectionsForNode,
+      nodesById,
+      project,
+      referencedProjects,
+    );
+    const outputDefs = instance.getOutputDefinitions(connectionsForNode, nodesById, project, referencedProjects);
 
     return connectionsForNode.filter((connection) => {
       if (connection.inputNodeId === nodeId) {

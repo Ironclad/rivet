@@ -41,6 +41,8 @@ export const projectState = atomWithStorage<Omit<Project, 'data'>>(
   storage,
 );
 
+export const referencedProjectsState = atom<Record<ProjectId, Project>>({});
+
 export const projectDataState = atom<Record<DataId, string> | undefined>(undefined);
 
 export const projectMetadataState = atom(
@@ -71,10 +73,13 @@ export const projectGraphInfoState = atom((get) => {
 });
 
 // Which project file was loaded last and where is it?
-export const loadedProjectState = atomWithStorage(
+export const loadedProjectState = atomWithStorage<{
+  loaded: boolean;
+  path: string | null;
+}>(
   'loadedProjectState',
   {
-    path: '',
+    path: null,
     loaded: false,
   },
   storage,

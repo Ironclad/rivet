@@ -82,6 +82,14 @@ export const anthropicModels = {
     },
     displayName: 'Claude 3.5 Haiku',
   },
+  'claude-3-7-sonnet-latest': {
+    maxTokens: 200_000,
+    cost: {
+      prompt: 3e-6,
+      completion: 15e-6,
+    },
+    displayName: 'Claude 3.7 Sonnet',
+  },
 } satisfies Record<string, AnthropicModel>;
 
 export type AnthropicModels = keyof typeof anthropicModels;
@@ -227,10 +235,17 @@ export type ChatMessageChunk =
   | {
       type: 'content_block_start';
       index: number;
-      content_block: {
-        type: 'text';
-        text: string;
-      };
+      content_block:
+        | {
+            type: 'text';
+            text: string;
+          }
+        | {
+            type: 'tool_use';
+            id: string;
+            name: string;
+            input?: object;
+          };
     }
   | {
       type: 'ping';
@@ -246,6 +261,10 @@ export type ChatMessageChunk =
         | {
             type: 'citations_delta';
             citation: ChatMessageCitation;
+          }
+        | {
+            type: 'input_json_delta';
+            partial_json: string;
           };
     }
   | {
@@ -260,6 +279,10 @@ export type ChatMessageChunk =
     }
   | {
       type: 'message_stop';
+    }
+  | {
+      type: 'content_block_stop';
+      index: number;
     };
 
 export type ChatMessageResponse = {
@@ -320,6 +343,7 @@ export async function* streamChatCompletions({
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
     },
     body: JSON.stringify({
       ...rest,
@@ -373,6 +397,7 @@ export async function callMessageApi({
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
       ...(beta ? { 'anthropic-beta': beta } : {}),
     },
     body: JSON.stringify({
@@ -404,6 +429,7 @@ export async function* streamMessageApi({
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
       ...(beta ? { 'anthropic-beta': beta } : {}),
     },
     body: JSON.stringify({
@@ -421,7 +447,7 @@ export async function* streamMessageApi({
 
     if (chunk === '[message_stop]') {
       return;
-    } else if (/\[\w+\]/.test(chunk)) {
+    } else if (/^\[\w+\]$/.test(chunk)) {
       nextDataType = chunk.slice(1, -1);
       continue;
     }

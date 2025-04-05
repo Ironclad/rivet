@@ -1,3 +1,5 @@
+import { DEFAULT_CHAT_NODE_TIMEOUT } from '../../utils/defaults.js';
+
 // https://github.com/openai/openai-node/issues/18#issuecomment-1518715285
 export class EventSourceResponse extends Response {
   name: string;
@@ -31,7 +33,7 @@ export class EventSourceResponse extends Response {
 
     try {
       while (true) {
-        const { done, value } = await this.raceWithTimeout(reader.read());
+        const { done, value } = await this.raceWithTimeout(reader.read(), DEFAULT_CHAT_NODE_TIMEOUT);
         if (done) {
           break;
         }
