@@ -24,6 +24,7 @@ import type { NodeImpl } from './NodeImpl.js';
 import type { UserInputNode } from './nodes/UserInputNode.js';
 import PQueueImport from 'p-queue';
 import { getError } from '../utils/errors.js';
+import type { NodeError } from '../utils/errors.js';
 import Emittery from 'emittery';
 import { entries, fromEntries, values } from '../utils/typeSafety.js';
 import { isNotNull } from '../utils/genericUtilFunctions.js';
@@ -859,19 +860,19 @@ export class GraphProcessor {
       if (erroredNodes.length && !this.#abortSuccessfully) {
         let error = this.#abortError;
         if (!error) {
-          const message = `Graph ${this.#graph.metadata!.name} (${
-              this.#graph.metadata!.id
-            }) failed to process due to errors in nodes:\n${erroredNodes
-              .map(([nodeId]) => `- ${this.#nodesById[nodeId]!.title} (${nodeId})`)
-              .join('\n')}`;
+          const { name, id } = this.#graph.metadata!;
+          const message = `Graph ${name} (${id}) failed to process due to errors in nodes`;
           if (erroredNodes.length === 1) {
             const [, nodeError] = erroredNodes[0]!;
             error = new Error(message, { cause: nodeError });
           } else {
-            error = new AggregateError(erroredNodes.map(([, nodeError]) => nodeError), message);
+            error = new AggregateError(
+              erroredNodes.map(([, nodeError]) => nodeError),
+              message,
+            );
           }
         }
-        
+
         await this.#emitter.emit('graphError', { graph: this.#graph, error });
 
         if (!this.#isSubProcessor) {
@@ -1440,6 +1441,7 @@ export class GraphProcessor {
 
   #nodeErrored(node: ChartNode, e: unknown, processId: ProcessId) {
     const error = getError(e);
+    (error as NodeError).node = node;
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.#emitter.emit('nodeError', { node, error, processId });
     this.#emitTraceEvent(`Node ${node.title} (${node.id}-${processId}) errored: ${error.stack}`);
