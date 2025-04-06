@@ -356,7 +356,10 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
           }
 
           return {
-            role: message.type,
+            role: match(message.type)
+              .with('user', () => 'user')
+              .with('assistant', () => 'model')
+              .exhaustive(),
             parts,
           };
         }

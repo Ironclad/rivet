@@ -46,7 +46,7 @@
   "dependencies": {
     "@gentrace/core": "^2.2.5",
     "@google-cloud/vertexai": "^0.1.3",
-    "@google/generative-ai": "^0.21.0",
+    "@google/generative-ai": "^0.24.0",
     "@huggingface/inference": "^2.6.4",
     "assemblyai": "^4.6.0",
     "autoevals": "^0.0.26",

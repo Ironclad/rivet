@@ -3713,10 +3713,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@google/generative-ai@npm:^0.21.0":
-  version: 0.21.0
-  resolution: "@google/generative-ai@npm:0.21.0"
-  checksum: 10/68c4163b7ac0c449cdbdf83b85dd77b8d96ee2b883b0190bcb1c7e76d98b56968d3e554ff62c555c3a3814855bac3bfc1cf2035f2b7ddf71f313b5c846b60f31
+"@google/generative-ai@npm:^0.24.0":
+  version: 0.24.0
+  resolution: "@google/generative-ai@npm:0.24.0"
+  checksum: 10/6e6a3c9f45953d78ea1945c7a4824ea204d7a417b6ba9b13ef3f2e366575c22bfaf3ee08e63c4c82ac0be266caa7e49995cc2ed981d135a3a5e9270e8ed76766
   languageName: node
   linkType: hard
 
@@ -4200,7 +4200,7 @@ __metadata:
   dependencies:
     "@gentrace/core": "npm:^2.2.5"
     "@google-cloud/vertexai": "npm:^0.1.3"
-    "@google/generative-ai": "npm:^0.21.0"
+    "@google/generative-ai": "npm:^0.24.0"
     "@huggingface/inference": "npm:^2.6.4"
     "@swc/core": "npm:^1.3.94"
     "@types/crypto-js": "npm:^4.1.3"
