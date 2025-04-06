@@ -1,7 +1,3 @@
-// Mock implementation for node:child_process
-export const spawn = () => {
-  throw new Error('child_process.spawn is not supported in browser environment');
-};
 
 const process = {
   env: {},
@@ -102,4 +98,4 @@ export const tls = {
 
 export const assert = {
   ok: () => {},
-}; 
+};

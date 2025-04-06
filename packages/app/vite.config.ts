@@ -18,7 +18,6 @@ export default defineConfig({
     alias: {
       '@ironclad/rivet-core': resolve('../core/src/index.ts'),
       '@ironclad/trivet': resolve('../trivet/src/index.ts'),
-      'node:child_process': resolve('./src/mocks/node-polyfills.ts'),
       'node:process': resolve('./src/mocks/node-polyfills.ts'),
       'child_process': resolve('./src/mocks/node-polyfills.ts'),
       'process': resolve('./src/mocks/node-polyfills.ts'),

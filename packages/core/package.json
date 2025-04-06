@@ -49,7 +49,6 @@
     "@google/generative-ai": "^0.21.0",
     "@huggingface/inference": "^2.6.4",
     "@modelcontextprotocol/sdk": "^1.5.0",
-    "@tauri-apps/api": "^1.5.3",
     "assemblyai": "^4.6.0",
     "autoevals": "^0.0.26",
     "cron-parser": "^4.9.0",

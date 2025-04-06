@@ -7062,7 +7062,6 @@ const RAW_RUNTIME_STATE =
           ["@huggingface/inference", "npm:2.6.4"],\
           ["@modelcontextprotocol/sdk", "npm:1.5.0"],\
           ["@swc/core", "virtual:36b10b38a2f3e49d8cd162fbeda8e49e065ae2d0ebbbd25b0a3339d0203e0ec0394d852d27989cf9f4297d5cf181367ebbc4ea51690fe53337f9c0c2783178a4#npm:1.3.94"],\
-          ["@tauri-apps/api", "npm:1.6.0"],\
           ["@types/crypto-js", "npm:4.1.3"],\
           ["@types/eslint", "npm:8.44.6"],\
           ["@types/jsonpath-plus", "npm:5.0.4"],\
@@ -9185,13 +9184,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@tauri-apps-api-npm-1.5.1-8d9396c3a0-ee8a1e8b0e.zip/node_modules/@tauri-apps/api/",\
         "packageDependencies": [\
           ["@tauri-apps/api", "npm:1.5.1"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:1.6.0", {\
-        "packageLocation": "./.yarn/cache/@tauri-apps-api-npm-1.6.0-0f6545399d-98015a9391.zip/node_modules/@tauri-apps/api/",\
-        "packageDependencies": [\
-          ["@tauri-apps/api", "npm:1.6.0"]\
         ],\
         "linkType": "HARD"\
       }]\

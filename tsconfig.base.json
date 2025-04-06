@@ -14,7 +14,9 @@
     "composite": true,
     "declaration": true,
     "verbatimModuleSyntax": true,
-    "emitDecoratorMetadata": false
+    "emitDecoratorMetadata": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
   },
   "ts-node": {
     "swc": true,

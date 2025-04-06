@@ -12,8 +12,6 @@ import { type EditorDefinition, type Inputs, type Outputs, type InternalProcessC
 import { dedent } from 'ts-dedent';
 import { coerceType } from '../../utils/coerceType.js';
 import type { RivetUIContext } from '../RivetUIContext.js';
-import { baseDirs } from '../../native/BaseDir.js';
-import { invoke } from '@tauri-apps/api/tauri';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
@@ -114,8 +112,6 @@ async function handleStdioServerCommunication(
   serverId: string,
   configFile: MCPConfig | object,
   input: unknown,
-  configuration: unknown,
-  signal: AbortSignal,
   context: InternalProcessContext | RivetUIContext,
 ): Promise<{ output: string; metadata: Record<string, unknown> }> {
   let mcpConfig: MCPConfig;
@@ -462,12 +458,8 @@ export class MCPNodeImpl extends NodeImpl<MCPNode> {
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     try {
       this.data.useServerIdInput = this.data.useConfigurationInput;
-      
+
       const input = coerceType(inputs['input' as PortId], 'object');
-      const serverId =
-        this.data.communicationMode === 'stdio' && this.data.useConfigurationInput
-          ? coerceType(inputs['serverId' as PortId], 'string')
-          : this.data.serverId;
 
       const response = await this.handleCommunication(inputs, input, context);
       return this.formatSuccessResponse(response);
@@ -496,7 +488,7 @@ export class MCPNodeImpl extends NodeImpl<MCPNode> {
       : this.data.endpoint;
 
     const headers = this.data.useHeadersInput
-      ? ((inputs['headers' as PortId] as { type: 'object'; value: Record<string, string> })?.value ?? {})
+      ? (inputs['headers' as PortId] as { type: 'object'; value: Record<string, string> })?.value ?? {}
       : Object.fromEntries(this.data.headers.map(({ key, value }) => [key, value]));
 
     const response = await fetch(endpoint, {
@@ -552,14 +544,7 @@ export class MCPNodeImpl extends NodeImpl<MCPNode> {
       );
     }
 
-    return handleStdioServerCommunication(
-      serverId,
-      configFile,
-      input,
-      this.data.configuration,
-      context.signal,
-      context,
-    );
+    return handleStdioServerCommunication(serverId, configFile, input, context);
   }
 
   private formatSuccessResponse(response: { output: string; metadata: Record<string, unknown> }): Outputs {
