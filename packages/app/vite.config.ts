@@ -4,7 +4,6 @@ import viteTsconfigPaths from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
 import monacoEditorPlugin from 'vite-plugin-monaco-editor';
 import topLevelAwait from 'vite-plugin-top-level-await';
-import nodePolyfills from 'vite-plugin-node-polyfills';
 import { resolve } from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { splitVendorChunkPlugin } from 'vite';
@@ -55,7 +54,6 @@ export default defineConfig({
     },
   },
   plugins: [
-    // nodePolyfills(),
     react(),
     viteTsconfigPaths(),
     svgr({
