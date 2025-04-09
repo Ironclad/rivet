@@ -1,16 +1,15 @@
 import type { ChartNode, NodeId, PortId, NodeInputDefinition, NodeOutputDefinition } from '../NodeBase.js';
-import { NodeImpl, type NodeBody, type NodeUIData } from '../NodeImpl.js';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nanoid } from 'nanoid/non-secure';
 
 import type { InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
 import { nodeDefinition } from '../NodeDefinition.js';
 import { getInputOrData, coerceType, newId, inferType } from '../../utils/index.js';
-import { arrayizeDataValue, unwrapDataValue } from '../DataValue.js';
+import { unwrapDataValue } from '../DataValue.js';
 import type { DatasetId, DatasetRow } from '../Dataset.js';
 import type { EditorDefinition } from '../EditorDefinition.js';
 import type { Inputs, Outputs } from '../GraphProcessor.js';
-import type { RivetUIContext } from '../RivetUIContext.js';
 
 export type ReplaceDatasetNode = ChartNode<'replaceDataset', ReplaceDatasetNodeData>;
 

@@ -18,7 +18,7 @@ export class BrowserNativeApi implements NativeApi {
     throw new Error('Method not implemented.');
   }
 
-  exec(command: string, args: string[], options?: { cwd?: string | undefined } | undefined): Promise<void> {
+  exec(): Promise<void> {
     throw new Error('Method not supported.');
   }
 }

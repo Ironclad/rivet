@@ -14,16 +14,6 @@ export type ExecutionRecorderEvents = {
   finish: { recording: Recording };
 };
 
-type ProcessEventsUnion = Pick<
-  {
-    [P in keyof ProcessEvents]: {
-      type: P;
-      data: ProcessEvents[P];
-    };
-  },
-  keyof ProcessEvents
->[keyof ProcessEvents];
-
 const toRecordedEventMap: {
   [P in keyof ProcessEvents]: (data: ProcessEvents[P]) => RecordedEvent<P>['data'];
 } = {
@@ -148,7 +138,7 @@ export class ExecutionRecorder {
   once: Emittery<ExecutionRecorderEvents>['once'] = undefined!;
 
   recordSocket(channel: WebSocket) {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve) => {
       this.recordingId = nanoid() as RecordingId;
 
       const listener = (event: MessageEvent) => {

@@ -14,7 +14,7 @@ import { coerceType } from '../../utils/coerceType.js';
 import { type InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
 import { type EditorDefinition } from '../../index.js';
-import { entries, values } from '../../utils/typeSafety.js';
+import { entries } from '../../utils/typeSafety.js';
 
 export type LoopControllerNode = ChartNode<'loopController', LoopControllerNodeData>;
 

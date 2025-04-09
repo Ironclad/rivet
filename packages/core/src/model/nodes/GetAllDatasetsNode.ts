@@ -58,7 +58,7 @@ export class GetAllDatasetsNodeImpl extends NodeImpl<GetAllDatasetsNode> {
     return [];
   }
 
-  async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+  async process(context: InternalProcessContext): Promise<Outputs> {
     const { datasetProvider } = context;
 
     if (datasetProvider == null) {

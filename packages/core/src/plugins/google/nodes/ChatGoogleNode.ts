@@ -36,13 +36,10 @@ import { getScalarTypeOf, isArrayDataValue } from '../../../model/DataValue.js';
 import type { TokenizerCallInfo } from '../../../integrations/Tokenizer.js';
 import { getInputOrData } from '../../../utils/inputs.js';
 import {
-  GoogleGenerativeAIError,
   type GoogleGenerativeAIFetchError,
   SchemaType,
   type Content,
   type FunctionDeclaration,
-  type FunctionDeclarationSchema,
-  type FunctionDeclarationsTool,
   type Part,
   type Tool,
   type FunctionCall,

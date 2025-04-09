@@ -11,7 +11,7 @@ import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { type GraphId } from '../NodeGraph.js';
 import { nanoid } from 'nanoid/non-secure';
 import { type InternalProcessContext } from '../ProcessContext.js';
-import { type EditorDefinition, type NodeBody } from '../../index.js';
+import { type EditorDefinition } from '../../index.js';
 import { dedent } from 'ts-dedent';
 import type { RivetUIContext } from '../RivetUIContext.js';
 import { coerceType } from '../../utils/index.js';

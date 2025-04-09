@@ -227,8 +227,6 @@ export async function* streamChatCompletions({
   top_k,
   prompt,
 }: ChatCompletionOptions): AsyncGenerator<ChatCompletionChunk> {
-  const defaultSignal = new AbortController().signal;
-
   // If you import normally, the Google auth library throws a fit.
   const { VertexAI } = await import('@google-cloud/vertexai');
 

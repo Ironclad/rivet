@@ -860,18 +860,21 @@ export class GraphProcessor {
         let error = this.#abortError;
         if (!error) {
           const message = `Graph ${this.#graph.metadata!.name} (${
-              this.#graph.metadata!.id
-            }) failed to process due to errors in nodes:\n${erroredNodes
-              .map(([nodeId]) => `- ${this.#nodesById[nodeId]!.title} (${nodeId})`)
-              .join('\n')}`;
+            this.#graph.metadata!.id
+          }) failed to process due to errors in nodes:\n${erroredNodes
+            .map(([nodeId]) => `- ${this.#nodesById[nodeId]!.title} (${nodeId})`)
+            .join('\n')}`;
           if (erroredNodes.length === 1) {
             const [, nodeError] = erroredNodes[0]!;
             error = new Error(message, { cause: nodeError });
           } else {
-            error = new AggregateError(erroredNodes.map(([, nodeError]) => nodeError), message);
+            error = new AggregateError(
+              erroredNodes.map(([, nodeError]) => nodeError),
+              message,
+            );
           }
         }
-        
+
         await this.#emitter.emit('graphError', { graph: this.#graph, error });
 
         if (!this.#isSubProcessor) {
@@ -1887,10 +1890,6 @@ export class GraphProcessor {
     }
 
     return sccs;
-  }
-
-  #nodeIsInCycle(nodeId: NodeId) {
-    return this.#nodesNotInCycle.find((node) => node.id === nodeId) == null;
   }
 
   #nodesAreInSameCycle(a: NodeId, b: NodeId) {
