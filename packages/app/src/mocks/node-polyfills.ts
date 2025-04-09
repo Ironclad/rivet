@@ -1,3 +1,6 @@
+export const spawn = () => {
+  throw new Error('child_process.spawn is not supported in browser environment');
+};
 
 const process = {
   env: {},
@@ -32,7 +35,9 @@ export const os = {
 
 export const stream = {
   Readable: class {
-    pipe() { return this; }
+    pipe() {
+      return this;
+    }
   },
   Writable: class {},
   Transform: class {},
