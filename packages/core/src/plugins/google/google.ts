@@ -1,14 +1,4 @@
-import {
-  FunctionCallingMode,
-  type Content,
-  type FunctionCall,
-  type InlineDataPart,
-  type Part,
-  type TextPart,
-  type Tool,
-  type ToolConfig,
-} from '@google/generative-ai';
-import { P, match } from 'ts-pattern';
+import { type Content, type FunctionCall, type Tool } from '@google/generative-ai';
 
 export type GoogleModelDeprecated = {
   maxTokens: number;
@@ -56,6 +46,14 @@ export const generativeAiGoogleModels = {
       completion: 0, // Unknown
     },
     displayName: 'Gemini 2.0 Pro',
+  },
+  'gemini-2.5-pro-exp-03-25': {
+    maxTokens: 1000000,
+    cost: {
+      prompt: 0, // Unknown
+      completion: 0, // Unknown
+    },
+    displayName: 'Gemini 2.5 Pro Experimental',
   },
   'gemini-2.0-flash-lite-preview-02-05': {
     maxTokens: 1048576,
@@ -229,8 +227,6 @@ export async function* streamChatCompletions({
   top_k,
   prompt,
 }: ChatCompletionOptions): AsyncGenerator<ChatCompletionChunk> {
-  const defaultSignal = new AbortController().signal;
-
   // If you import normally, the Google auth library throws a fit.
   const { VertexAI } = await import('@google-cloud/vertexai');
 

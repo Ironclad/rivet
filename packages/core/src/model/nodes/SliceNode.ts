@@ -9,7 +9,6 @@ import { nanoid } from 'nanoid/non-secure';
 import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import { type Inputs, type Outputs } from '../GraphProcessor.js';
-import { entries } from '../../utils/typeSafety.js';
 import { dedent } from 'ts-dedent';
 import { type EditorDefinition } from '../EditorDefinition.js';
 import { type NodeBodySpec } from '../../index.js';

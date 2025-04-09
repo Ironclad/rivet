@@ -13,7 +13,6 @@ import { getInputOrData } from '../../utils/index.js';
 import { type InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
 import type { EditorDefinition } from '../EditorDefinition.js';
-import type { RivetUIContext } from '../RivetUIContext.js';
 
 export type ReadFileNode = ChartNode<'readFile', ReadFileNodeData>;
 

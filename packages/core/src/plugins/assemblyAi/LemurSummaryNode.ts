@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid/non-secure';
 import { dedent } from 'ts-dedent';
-import { AssemblyAI, type LemurSummaryParams } from 'assemblyai';
+import { type LemurSummaryParams } from 'assemblyai';
 import {
   type ChartNode,
   type EditorDefinition,

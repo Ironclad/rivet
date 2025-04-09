@@ -1,7 +1,7 @@
 import { type ProjectReference, type Project, deserializeProject } from '@ironclad/rivet-core';
 import type { ProjectReferenceLoader } from '../../../core/src/model/ProjectReferenceLoader.js';
 
-import { dirname, relative, resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { readFile } from 'node:fs/promises';
 
 export class NodeProjectReferenceLoader implements ProjectReferenceLoader {
@@ -16,7 +16,7 @@ export class NodeProjectReferenceLoader implements ProjectReferenceLoader {
 
         const projectData = await readFile(fullPath, 'utf-8');
 
-        const [project, attachedData] = deserializeProject(projectData);
+        const [project] = deserializeProject(projectData);
 
         return project;
       } catch (error) {

@@ -353,7 +353,6 @@ export async function* streamChatCompletions({
   });
 
   let hadChunks = false;
-  let nextDataType: string | undefined;
 
   for await (const chunk of response.events()) {
     hadChunks = true;
@@ -361,7 +360,6 @@ export async function* streamChatCompletions({
     if (chunk === '[DONE]') {
       return;
     } else if (/\[\w+\]/.test(chunk)) {
-      nextDataType = chunk.slice(1, -1);
       continue;
     }
 
@@ -440,7 +438,6 @@ export async function* streamMessageApi({
   });
 
   let hadChunks = false;
-  let nextDataType: string | undefined;
 
   for await (const chunk of response.events()) {
     hadChunks = true;
@@ -448,7 +445,6 @@ export async function* streamMessageApi({
     if (chunk === '[message_stop]') {
       return;
     } else if (/^\[\w+\]$/.test(chunk)) {
-      nextDataType = chunk.slice(1, -1);
       continue;
     }
 

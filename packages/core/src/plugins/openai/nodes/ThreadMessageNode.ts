@@ -6,10 +6,10 @@ import {
   type EditorDefinition,
   type PluginNodeImpl,
 } from '../../../index.js';
-import { dedent, newId, coerceTypeOptional, getInputOrData, coerceType } from '../../../utils/index.js';
+import { newId, coerceTypeOptional, getInputOrData, coerceType } from '../../../utils/index.js';
 import { interpolate } from '../../../utils/interpolation.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
-import type { CreateMessageBody, OpenAIThreadMessage } from '../../../utils/openai.js';
+import type { CreateMessageBody } from '../../../utils/openai.js';
 import { mapValues } from 'lodash-es';
 
 export type ThreadMessageNode = ChartNode<'threadMessage', ThreadMessageNodeData>;

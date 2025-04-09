@@ -121,7 +121,7 @@ export function startDebuggerServer(
           })
           .with({ type: 'set-dynamic-data' }, async () => {
             if (options.allowGraphUpload) {
-              const { project, settings, datasets } = message.data as {
+              const { project, settings } = message.data as {
                 project: Project;
                 settings: Settings;
                 datasets: string;

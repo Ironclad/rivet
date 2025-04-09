@@ -12,7 +12,6 @@ import { type DataValue } from '../DataValue.js';
 import { type EditorDefinition, type Inputs, type NodeBody, type Outputs } from '../../index.js';
 import { dedent } from 'ts-dedent';
 import { coerceType } from '../../utils/coerceType.js';
-import type { RivetUIContext } from '../RivetUIContext.js';
 
 export type MatchNode = ChartNode<'match', MatchNodeData>;
 

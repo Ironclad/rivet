@@ -18,7 +18,6 @@ import type {
   Inputs,
   InternalProcessContext,
   NodeId,
-  NodeImpl,
   NodeInputDefinition,
   NodeOutputDefinition,
   NodeUIData,

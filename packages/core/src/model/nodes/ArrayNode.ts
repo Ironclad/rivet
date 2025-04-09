@@ -14,7 +14,6 @@ import { flattenDeep } from 'lodash-es';
 import { dedent } from 'ts-dedent';
 import { type EditorDefinition } from '../EditorDefinition.js';
 import { nodeDefinition } from '../NodeDefinition.js';
-import type { RivetUIContext } from '../RivetUIContext.js';
 
 export type ArrayNode = ChartNode<'array', ArrayNodeData>;
 

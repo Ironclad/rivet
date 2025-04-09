@@ -431,11 +431,6 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
     // Get the "System" prompt input for Claude 3 models
     const system = data.model.startsWith('claude-3') ? getSystemPrompt(inputs) : undefined;
 
-    const systemInput = inputs['system' as PortId];
-    const includesCacheBreakpoint =
-      rivetChatMessages.some((m) => m.isCacheBreakpoint) ||
-      (systemInput?.type === 'chat-message' && systemInput.value.isCacheBreakpoint);
-
     let { maxTokens } = data;
     const tokenizerInfo: TokenizerCallInfo = {
       node: context.node,

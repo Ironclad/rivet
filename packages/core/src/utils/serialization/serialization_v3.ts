@@ -51,7 +51,7 @@ export type SerializedNode = {
 };
 
 /** x/y/width/zIndex */
-type SerializedVisualData = `${string}/${string}/${string}/${string}`;
+// type SerializedVisualData = `${string}/${string}/${string}/${string}`;
 
 // portId->nodeId/portId
 type SerializedNodeConnection = `${string}->"${string}" ${string}/${string}`;

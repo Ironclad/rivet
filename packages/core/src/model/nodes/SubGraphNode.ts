@@ -16,10 +16,10 @@ import { type GraphInputNode } from './GraphInputNode.js';
 import { type GraphOutputNode } from './GraphOutputNode.js';
 import { type DataValue } from '../DataValue.js';
 import { type InternalProcessContext } from '../ProcessContext.js';
-import { type DynamicEditorEditor, type EditorDefinition } from '../../index.js';
+import { type EditorDefinition } from '../../index.js';
 import { dedent } from 'ts-dedent';
 import { getError } from '../../utils/errors.js';
-import { match } from 'ts-pattern';
+
 import type { RivetUIContext } from '../RivetUIContext.js';
 
 export type SubGraphNode = ChartNode & {

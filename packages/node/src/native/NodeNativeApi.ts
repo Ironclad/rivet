@@ -80,16 +80,10 @@ async function* walk(dir: string): AsyncGenerator<string> {
 }
 
 export class NodeNativeApi implements NativeApi {
-  async readdir(path: string, baseDir?: BaseDir, options: ReadDirOptions = {}): Promise<string[]> {
-    const {
-      recursive = false,
-      includeDirectories = false,
-      filterGlobs = [],
-      relative = false,
-      ignores = [],
-    } = options;
+  async readdir(path: string, _baseDir?: BaseDir, options: ReadDirOptions = {}): Promise<string[]> {
+    const { recursive = false, includeDirectories = false, filterGlobs = [], relative = false, ignores = [] } = options;
 
-    const resolvedPath = await resolveBaseDir(baseDir, path);
+    const resolvedPath = await resolveBaseDir(_baseDir, path);
 
     let results: string[] = [];
     if (recursive) {
@@ -142,7 +136,7 @@ export class NodeNativeApi implements NativeApi {
   }
 
   async exec(command: string, args: string[], options?: { cwd?: string }): Promise<void> {
-    throw new Error('Method not implemented.');
+    throw new Error(`Method not implemented. ${command} ${args} ${options}`);
   }
 
   async resolveBaseDir(baseDir?: BaseDir, path?: string): Promise<string> {

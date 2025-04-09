@@ -1,4 +1,4 @@
-import { Hono, type Context } from 'hono';
+import { Hono } from 'hono';
 import { serve as serveHono } from '@hono/node-server';
 import type * as yargs from 'yargs';
 import { readdir, stat } from 'node:fs/promises';
@@ -15,7 +15,6 @@ import {
 } from '@ironclad/rivet-node';
 import chalk from 'chalk';
 import { configDotenv } from 'dotenv';
-import { stream } from 'hono/streaming';
 
 export function makeCommand<T>(y: yargs.Argv<T>) {
   return y
@@ -103,7 +102,7 @@ export async function serve(args: {
     const initialProject = await loadProjectFromFile(projectFilePath);
 
     throwIfNoMainGraph(initialProject, args.graph, projectFilePath);
-    throwIfInvalidGraph(initialProject, args.graph, projectFilePath);
+    throwIfInvalidGraph(initialProject, args.graph);
 
     if (args.stream != null) {
       console.log('Streaming is enabled');
@@ -205,7 +204,6 @@ async function streamGraph({
   openaiApiKey,
   openaiEndpoint,
   openaiOrganization,
-  exposeCost,
   streamNode,
 }: {
   project: Project;
@@ -303,7 +301,7 @@ function throwIfNoMainGraph(project: Project, graph: string | undefined, project
   }
 }
 
-function throwIfInvalidGraph(project: Project, graph: string | undefined, projectFilePath: string) {
+function throwIfInvalidGraph(project: Project, graph: string | undefined) {
   if (project.metadata.mainGraphId && !graph) {
     return;
   }
