@@ -1,7 +1,6 @@
 import type {
   ChartNode,
   EditorDefinition,
-  Inputs,
   InternalProcessContext,
   NodeId,
   NodeInputDefinition,

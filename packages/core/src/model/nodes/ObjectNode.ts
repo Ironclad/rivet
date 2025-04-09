@@ -1,6 +1,5 @@
 import {
   type ChartNode,
-  type NodeConnection,
   type NodeId,
   type NodeInputDefinition,
   type NodeOutputDefinition,

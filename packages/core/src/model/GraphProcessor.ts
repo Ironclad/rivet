@@ -245,6 +245,8 @@ export class GraphProcessor {
   #loadedProjects: Record<ProjectId, Project> = undefined!;
   #definitions: Record<NodeId, { inputs: NodeInputDefinition[]; outputs: NodeOutputDefinition[] }> = undefined!;
   #scc: ChartNode[][] = undefined!;
+
+  // @ts-expect-error
   #nodesNotInCycle: ChartNode[] = undefined!;
 
   #nodeAbortControllers = new Map<`${NodeId}-${ProcessId}`, AbortController>();

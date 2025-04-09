@@ -1178,22 +1178,18 @@ export const ChatNodeBase = {
 
               const promptCost = getCostForTokens(
                 response.usage.prompt_tokens_details.text_tokens,
-                'prompt',
                 promptCostPerThousand,
               );
               const completionCost = getCostForTokens(
                 response.usage.completion_tokens_details.text_tokens,
-                'completion',
                 completionCostPerThousand,
               );
               const audioPromptCost = getCostForTokens(
                 response.usage.prompt_tokens_details.audio_tokens,
-                'prompt',
                 audioPromptCostPerThousand,
               );
               const audioCompletionCost = getCostForTokens(
                 response.usage.completion_tokens_details.audio_tokens,
-                'completion',
                 audioCompletionCostPerThousand,
               );
 
@@ -1409,12 +1405,8 @@ export const ChatNodeBase = {
           const completionCostPerThousand =
             model in openaiModels ? openaiModels[model as keyof typeof openaiModels].cost.completion : 0;
 
-          const promptCost = getCostForTokens(inputTokenCount, 'prompt', promptCostPerThousand);
-          const completionCost = getCostForTokens(
-            outputTokensForCostCalculation,
-            'completion',
-            completionCostPerThousand,
-          );
+          const promptCost = getCostForTokens(inputTokenCount, promptCostPerThousand);
+          const completionCost = getCostForTokens(outputTokensForCostCalculation, completionCostPerThousand);
 
           const cost = promptCost + completionCost;
 
@@ -1479,7 +1471,11 @@ export const ChatNodeBase = {
             const { retriesLeft } = err;
 
             // Retry network errors
-            if (err.toString().includes('terminated') || originalError.toString().includes('terminated') || err.toString().includes('fetch failed')) {
+            if (
+              err.toString().includes('terminated') ||
+              originalError.toString().includes('terminated') ||
+              err.toString().includes('fetch failed')
+            ) {
               return;
             }
 
@@ -1578,7 +1574,7 @@ export function getChatNodeMessages(inputs: Inputs) {
   return { messages, systemPrompt };
 }
 
-export function getCostForTokens(tokenCount: number, type: 'prompt' | 'completion', costPerThousand: number) {
+export function getCostForTokens(tokenCount: number, costPerThousand: number) {
   return (tokenCount / 1000) * costPerThousand;
 }
 
