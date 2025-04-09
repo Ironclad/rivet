@@ -32,19 +32,19 @@ function validateOutput(v: DataValue) {
 
 export class DummyNativeApi implements NativeApi {
   readdir(path: string, baseDir?: BaseDir | undefined, options?: ReadDirOptions | undefined): Promise<string[]> {
-    throw new Error('Method not implemented.');
+    throw new Error(`Method not implemented. ${path}  ${baseDir} ${options}`);
   }
   readTextFile(path: string, baseDir?: BaseDir | undefined): Promise<string> {
-    throw new Error('Method not implemented.');
+    throw new Error(`Method not implemented. ${path}  ${baseDir}`);
   }
   readBinaryFile(path: string, baseDir?: BaseDir | undefined): Promise<Blob> {
-    throw new Error('Method not implemented.');
+    throw new Error(`Method not implemented. ${path}  ${baseDir}`);
   }
   writeTextFile(path: string, data: string, baseDir?: BaseDir | undefined): Promise<void> {
-    throw new Error('Method not implemented.');
+    throw new Error(`Method not implemented. ${path}  ${baseDir} ${data}`);
   }
   exec(command: string, args: string[], options?: { cwd?: string | undefined } | undefined): Promise<void> {
-    throw new Error('Method not implemented.');
+    throw new Error(`Method not implemented. ${command}  ${args} ${options}`);
   }
 }
 
