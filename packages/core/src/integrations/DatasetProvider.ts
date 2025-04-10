@@ -37,7 +37,7 @@ export class InMemoryDatasetProvider implements DatasetProvider {
     return dataset?.meta;
   }
 
-  async getDatasetsForProject(projectId: ProjectId): Promise<DatasetMetadata[]> {
+  async getDatasetsForProject(): Promise<DatasetMetadata[]> {
     return this.#datasets.map((d) => d.meta);
   }
 

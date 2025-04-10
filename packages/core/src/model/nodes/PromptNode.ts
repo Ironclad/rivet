@@ -9,7 +9,6 @@ import { nanoid } from 'nanoid/non-secure';
 import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import {
-  type AssistantChatMessage,
   type AssistantChatMessageFunctionCall,
   type ChatMessage,
   type EditorDefinition,

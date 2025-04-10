@@ -1,6 +1,5 @@
 import {
   type ChartNode,
-  type NodeConnection,
   type NodeId,
   type NodeInputDefinition,
   type NodeOutputDefinition,
@@ -42,7 +41,7 @@ export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
     return chartNode;
   }
 
-  getInputDefinitions(connections: NodeConnection[]): NodeInputDefinition[] {
+  getInputDefinitions(): NodeInputDefinition[] {
     // Extract inputs from text, everything like {{input}}
     const inputNames = [...new Set(this.chartNode.data.jsonTemplate.match(/\{\{([^}]+)\}\}/g))];
     return (

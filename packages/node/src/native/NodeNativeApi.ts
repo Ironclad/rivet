@@ -13,7 +13,7 @@ async function* walk(dir: string): AsyncGenerator<string> {
 }
 
 export class NodeNativeApi implements NativeApi {
-  async readdir(path: string, baseDir?: BaseDir, options: ReadDirOptions = {}): Promise<string[]> {
+  async readdir(path: string, _baseDir?: BaseDir, options: ReadDirOptions = {}): Promise<string[]> {
     const {
       recursive = false,
       includeDirectories = false,
@@ -55,22 +55,22 @@ export class NodeNativeApi implements NativeApi {
     return results;
   }
 
-  async readTextFile(path: string, baseDir?: BaseDir): Promise<string> {
+  async readTextFile(path: string, _baseDir?: BaseDir): Promise<string> {
     const result = await readFile(path, 'utf-8');
     return result;
   }
 
-  async readBinaryFile(path: string, baseDir?: BaseDir): Promise<Blob> {
+  async readBinaryFile(path: string, _baseDir?: BaseDir): Promise<Blob> {
     const result = await readFile(path);
 
     return new Blob([result]);
   }
 
-  async writeTextFile(path: string, data: string, baseDir?: BaseDir): Promise<void> {
+  async writeTextFile(path: string, data: string, _baseDir?: BaseDir): Promise<void> {
     await writeFile(path, data, 'utf-8');
   }
 
-  exec(command: string, args: string[], options?: { cwd?: string | undefined } | undefined): Promise<void> {
+  exec(_command: string, _args: string[], _options?: { cwd?: string | undefined } | undefined): Promise<void> {
     throw new Error('Not Implemented');
   }
 }

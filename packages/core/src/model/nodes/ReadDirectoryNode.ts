@@ -37,13 +37,6 @@ type ReadDirectoryNodeData = {
   useIgnoresInput: boolean;
 };
 
-type TreeNode = {
-  path: string;
-  name: string;
-  isDirectory: boolean;
-  children: TreeNode[];
-};
-
 export class ReadDirectoryNodeImpl extends NodeImpl<ReadDirectoryNode> {
   static create(): ReadDirectoryNode {
     return {

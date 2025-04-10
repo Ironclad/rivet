@@ -7,7 +7,6 @@ import type {
   EditorDefinition,
   PortId,
   Inputs,
-  InternalProcessContext,
   Outputs,
   NodeBodySpec,
 } from '../../index.js';
@@ -121,7 +120,7 @@ export class SplitNodeImpl extends NodeImpl<SplitNode> {
     return normalized;
   }
 
-  async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+  async process(inputs: Inputs): Promise<Outputs> {
     const delimiter = getInputOrData(this.data, inputs, 'delimiter');
 
     const normalizedDelimiter = this.data.regex ? new RegExp(delimiter) : handleEscapeCharacters(delimiter);

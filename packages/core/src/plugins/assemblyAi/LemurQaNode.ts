@@ -27,7 +27,7 @@ import {
 } from './lemurHelpers.js';
 import { coerceType } from '../../utils/coerceType.js';
 import { pluginNodeDefinition } from '../../model/NodeDefinition.js';
-import { AssemblyAI, type LemurQuestion, type LemurQuestionAnswerParams } from 'assemblyai';
+import { type LemurQuestion, type LemurQuestionAnswerParams } from 'assemblyai';
 
 export type LemurQaNode = ChartNode<'assemblyAiLemurQa', LemurQaNodeData>;
 

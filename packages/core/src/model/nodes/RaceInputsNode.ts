@@ -10,7 +10,6 @@ import { nanoid } from 'nanoid/non-secure';
 import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import { type Inputs, type Outputs } from '../GraphProcessor.js';
-import { type InternalProcessContext } from '../ProcessContext.js';
 import { dedent } from 'ts-dedent';
 import { type EditorDefinition } from '../../index.js';
 
@@ -92,7 +91,7 @@ export class RaceInputsNodeImpl extends NodeImpl<RaceInputsNode> {
     };
   }
 
-  async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
+  async process(inputs: Inputs): Promise<Outputs> {
     // GraphProcessor handles most of the racing/aborting logic for us.
     const value = Object.entries(inputs).find(
       ([key, value]) => key.startsWith('input') && value !== undefined && value.type !== 'control-flow-excluded',

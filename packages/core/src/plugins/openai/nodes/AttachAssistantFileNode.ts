@@ -6,7 +6,7 @@ import {
   type PortId,
   type EditorDefinition,
 } from '../../../index.js';
-import type { OpenAIAssistantFile, OpenAIFile } from '../../../utils/openai.js';
+import type { OpenAIAssistantFile } from '../../../utils/openai.js';
 import { dedent, newId, getInputOrData } from '../../../utils/index.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
 import { handleOpenAIError } from '../handleOpenaiError.js';

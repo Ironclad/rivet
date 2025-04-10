@@ -10,13 +10,16 @@ import {
   loadProjectAndAttachedDataFromString,
   type RunGraphOptions,
   DEFAULT_CHAT_NODE_TIMEOUT,
+  type Settings,
 } from '@ironclad/rivet-core';
 
 import { readFile } from 'node:fs/promises';
-import { NodeProjectReferenceLoader, type RivetDebuggerServer, type Settings } from './index.js';
+
 import { NodeNativeApi } from './native/NodeNativeApi.js';
 import * as events from 'node:events';
 import { NodeCodeRunner } from './native/NodeCodeRunner.js';
+import type { RivetDebuggerServer } from './debugger.js';
+import { NodeProjectReferenceLoader } from './native/NodeProjectReferenceLoader.js';
 
 export async function loadProjectFromFile(path: string): Promise<Project> {
   const content = await readFile(path, { encoding: 'utf8' });

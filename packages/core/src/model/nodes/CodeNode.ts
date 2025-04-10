@@ -7,7 +7,6 @@ import {
 } from '../NodeBase.js';
 import { nanoid } from 'nanoid/non-secure';
 import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
-import { type DataValue } from '../DataValue.js';
 import { dedent } from 'ts-dedent';
 import { type EditorDefinition } from '../EditorDefinition.js';
 import { type NodeBodySpec } from '../NodeBodySpec.js';

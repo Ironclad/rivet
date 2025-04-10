@@ -8,7 +8,7 @@ import {
 } from '../NodeBase.js';
 import { nanoid } from 'nanoid/non-secure';
 import { NodeImpl, type NodeBody, type NodeUIData } from '../NodeImpl.js';
-import { type ChatMessage, arrayizeDataValue, unwrapDataValue, type ChatMessageDataValue } from '../DataValue.js';
+import { type ChatMessage, arrayizeDataValue, unwrapDataValue } from '../DataValue.js';
 import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { coerceType } from '../../utils/coerceType.js';
 import { orderBy } from 'lodash-es';
