@@ -74,7 +74,6 @@ export function useGraphBuilderContextMenuHandler({ onAutoLayoutGraph }: { onAut
           // if the node to be deleted is an "graph input / output" node then
           // check subgraphs in other graphs in the project
           if (node?.type === 'graphInput' || node?.type === 'graphOutput') {
-            console.log(node);
             // find all the subgraphs in the project pointing to that graph
             Object.values(project.graphs).filter(g => g.metadata?.id !== graph.id).forEach(g => {
               g.nodes.filter(n => n.type === "subGraph").forEach((node) => {
