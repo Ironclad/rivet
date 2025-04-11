@@ -68,8 +68,13 @@ export function useContextMenuConfiguration() {
             items: [
               {
                 id: 'node-copy',
-                label: 'Copy',
+                label: 'Copy Node',
                 icon: CopyIcon,
+              },
+              {
+                id: 'copy-id',
+                label: 'Copy ID',
+                icon : CopyIcon,
               },
               {
                 id: 'node-go-to-subgraph',
