@@ -53,24 +53,6 @@ export function useGraphBuilderContextMenuHandler({ onAutoLayoutGraph }: { onAut
           const node = nodesById[toDeleteNodeId] as BuiltInNodes;
           const nodeIdGraphIdMap = new Map<NodeWithName, GraphWithName>();
 
-          // find connections in the current state graph (unsaved)
-          connections.forEach((connection) => {
-            let connectedNodeId: NodeId | undefined;
-            if (connection.outputNodeId === toDeleteNodeId) {
-              connectedNodeId = connection.inputNodeId;
-            } else if (connection.inputNodeId === toDeleteNodeId) {
-              connectedNodeId = connection.outputNodeId;
-            }
-            if (connectedNodeId && graph.id) {
-              const node = nodesById[connectedNodeId] as BuiltInNodes;
-              const connectedNode = {
-                nodeId: node.id,
-                name: node.title,
-              };
-              nodeIdGraphIdMap.set(connectedNode, graph);
-            }
-          });
-
           // if the node to be deleted is an "graph input / output" node then
           // check subgraphs in other graphs in the project
           if (node?.type === 'graphInput' || node?.type === 'graphOutput') {
@@ -160,10 +142,6 @@ export function useGraphBuilderContextMenuHandler({ onAutoLayoutGraph }: { onAut
         .with('node-copy', () => {
           const { nodeId } = context.data as { nodeId: NodeId };
           copyNodes(nodeId);
-        })
-        .with('copy-id', () => {
-          const { nodeId } = context.data as { nodeId: NodeId };
-          copyToClipboard(nodeId);
         })
         .otherwise(() => {
           console.log('Unknown menu item selected', menuItemId);

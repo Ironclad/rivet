@@ -12,7 +12,7 @@ interface ToastConfirmProps {
 }
 
 // Define the App component
-export const ToastConfirm: React.FC<ToastConfirmProps> = ({ 
+export const ToastConfirm: React.FC<ToastConfirmProps> = ({
   confirmText = 'Ok',
   cancelText = 'Cancel',
   onConfirm,
@@ -25,7 +25,7 @@ export const ToastConfirm: React.FC<ToastConfirmProps> = ({
     <span style={{ fontSize: '12px' }}>
       {children}
     </span>
-    
+
     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
       <Button onClick={onConfirm} style={{ margin: '5px', marginTop: '10px', fontSize: '12px' }} appearance="primary">
         {confirmText}

@@ -22,7 +22,7 @@ export const ToastDeleteNodeConfirm: React.FC<ToastDeleteNodeConfirmProps> = ({
   nodeGraphMap,
   onDelete,
 }) => {
-  const message = "This node has existing connections to: ";
+  const message = "This node is connected to other graphs in this project: ";
   const confirmMessage = "Are you sure you want to delete the node?";
   return (
 
