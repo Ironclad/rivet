@@ -205,7 +205,7 @@ export async function* streamGenerativeAi({
     }
 
     if (chunk.candidates) {
-      outChunk.completion = chunk.candidates[0]?.content?.parts[0]?.text;
+      outChunk.completion = chunk.candidates[0]?.content?.parts?.[0]?.text;
       outChunk.finish_reason = chunk.candidates[0]?.finishReason as any;
     }
 

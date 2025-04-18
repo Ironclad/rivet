@@ -645,8 +645,11 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
         },
       );
     } catch (error) {
-      context.trace(getError(error).stack ?? 'Missing stack');
-      throw new Error(`Error processing ChatGoogleNode: ${(error as Error).message}`);
+      const raisedError = getError(error);
+      context.trace(raisedError.stack ?? 'Missing stack');
+      const err = new Error(`Error processing ChatGoogleNode: ${raisedError.message}`);
+      err.cause = raisedError;
+      throw err;
     }
   },
 };
