@@ -1,6 +1,5 @@
 import { nanoid } from 'nanoid/non-secure';
 import {
-  base64ToUint8Array,
   type GraphProcessor,
   type ProcessEvents,
   type RecordedEvent,
@@ -10,8 +9,8 @@ import {
   type SerializedRecording,
 } from '../index.js';
 import Emittery from 'emittery';
-import { uint8ArrayToBase64Sync } from '../utils/base64.js';
-import { isPlainObject } from 'lodash';
+import { uint8ArrayToBase64Sync, base64ToUint8Array } from '../utils/base64.js';
+import { isPlainObject } from 'lodash-es';
 
 export type ExecutionRecorderEvents = {
   finish: { recording: Recording };
