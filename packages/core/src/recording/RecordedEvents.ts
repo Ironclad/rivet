@@ -92,4 +92,5 @@ export type Recording = {
 export type SerializedRecording = {
   version: number;
   recording: Recording;
+  assets: Record<string, string>;
 };

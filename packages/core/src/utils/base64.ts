@@ -14,6 +14,19 @@ export async function uint8ArrayToBase64(uint8Array: Uint8Array) {
   }
 }
 
+export function uint8ArrayToBase64Sync(uint8Array: Uint8Array) {
+  if (typeof window === 'undefined') {
+    // Node executor
+    return Buffer.from(uint8Array).toString('base64');
+  } else {
+    // Browser executor
+    const binary = Array.from(uint8Array)
+      .map((byte) => String.fromCharCode(byte))
+      .join('');
+    return btoa(binary);
+  }
+}
+
 export function base64ToUint8Array(base64: string) {
   const binaryString = atob(base64);
   const len = binaryString.length;
