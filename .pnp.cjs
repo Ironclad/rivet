@@ -7505,6 +7505,7 @@ const RAW_RUNTIME_STATE =
           ["cors", "npm:2.8.5"],\
           ["cross-spawn", "npm:7.0.6"],\
           ["eventsource", "npm:3.0.5"],\
+          ["eventsource-parser", "npm:3.0.1"],\
           ["express", "npm:5.1.0"],\
           ["express-rate-limit", "virtual:d2159cf30df38d326e584bbf58ba958697e0595a9150c49aa46492a29b43f40373c6d23be1ca4efb773fdd9c4bb4a8b769359fda614cc1977e4f0a4df8cfd9c1#npm:7.5.0"],\
           ["pkce-challenge", "npm:5.0.0"],\
@@ -7520,6 +7521,7 @@ const RAW_RUNTIME_STATE =
           ["@modelcontextprotocol/sdk", "npm:1.5.0"],\
           ["content-type", "npm:1.0.5"],\
           ["eventsource", "npm:3.0.5"],\
+          ["eventsource-parser", "npm:3.0.1"],\
           ["raw-body", "npm:3.0.0"],\
           ["zod", "npm:3.24.2"],\
           ["zod-to-json-schema", "virtual:d2159cf30df38d326e584bbf58ba958697e0595a9150c49aa46492a29b43f40373c6d23be1ca4efb773fdd9c4bb4a8b769359fda614cc1977e4f0a4df8cfd9c1#npm:3.24.1"]\
@@ -16390,6 +16392,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/eventsource-parser-npm-3.0.0-491e8c3c27-8215adf5d8.zip/node_modules/eventsource-parser/",\
         "packageDependencies": [\
           ["eventsource-parser", "npm:3.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:3.0.1", {\
+        "packageLocation": "./.yarn/cache/eventsource-parser-npm-3.0.1-4edb8913c9-2730c54c3c.zip/node_modules/eventsource-parser/",\
+        "packageDependencies": [\
+          ["eventsource-parser", "npm:3.0.1"]\
         ],\
         "linkType": "HARD"\
       }]\

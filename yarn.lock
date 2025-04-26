@@ -11086,6 +11086,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eventsource-parser@npm:*":
+  version: 3.0.1
+  resolution: "eventsource-parser@npm:3.0.1"
+  checksum: 10/2730c54c3cb47d55d2967f2ece843f9fc95d8a11c2fef6fece8d17d9080193cbe3cd9ac7b04a325977f63cbf8c1664fdd0512dec1aec601666a5c5bd8564b61f
+  languageName: node
+  linkType: hard
+
 "eventsource-parser@npm:^3.0.0":
   version: 3.0.0
   resolution: "eventsource-parser@npm:3.0.0"

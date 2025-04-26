@@ -1,5 +1,3 @@
-import { mcpClientNode, type BuiltInNodeType } from '@ironclad/rivet-core';
-
 import textNodeImage from '../assets/node_images/text_node.png';
 import chatNodeImage from '../assets/node_images/chat_node.png';
 import chunkNodeImage from '../assets/node_images/chunk_node.png';
@@ -81,6 +79,7 @@ import loopUntilNodeImage from '../assets/node_images/loop_until_node.png';
 import toTreeNode from '../assets/node_images/to_tree_node.png';
 import mcpNodeImage from '../assets/node_images/mcp_node.png';
 import libraryNode from '../assets/node_images/library_node.png';
+import { type BuiltInNodeType } from '@ironclad/rivet-core';
 
 export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
   return {
@@ -163,7 +162,7 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     cron: cronNodeImage,
     loopUntil: loopUntilNodeImage,
     toTree: toTreeNode,
-    mcpClient: mcpNodeImage,
+    mcp: mcpNodeImage,
     referencedGraphAlias: libraryNode,
   };
 };
