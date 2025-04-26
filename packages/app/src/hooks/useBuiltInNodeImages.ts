@@ -1,4 +1,4 @@
-import { type BuiltInNodeType } from '@ironclad/rivet-core';
+import { mcpClientNode, type BuiltInNodeType } from '@ironclad/rivet-core';
 
 import textNodeImage from '../assets/node_images/text_node.png';
 import chatNodeImage from '../assets/node_images/chat_node.png';
@@ -163,7 +163,7 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     cron: cronNodeImage,
     loopUntil: loopUntilNodeImage,
     toTree: toTreeNode,
-    mcp: mcpNodeImage,
-    referencedGraphAlias: libraryNode
+    mcpClient: mcpNodeImage,
+    referencedGraphAlias: libraryNode,
   };
 };

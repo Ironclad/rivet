@@ -15,6 +15,7 @@ import {
   type AudioProvider,
   type StringArrayDataValue,
   type ProjectId,
+  type MCPProvider,
 } from '../index.js';
 import type { Tokenizer } from '../integrations/Tokenizer.js';
 import type { CodeRunner } from '../integrations/CodeRunner.js';
@@ -26,6 +27,9 @@ export type ProcessContext = {
 
   /** Sets the dataset provider to be used for all dataset node calls. */
   datasetProvider?: DatasetProvider;
+
+  /** Provider for all MCP node functionality */
+  mcpProvider?: MCPProvider;
 
   /** The provider responsible for being able to play audio. Undefined if unsupported in this context. */
   audioProvider?: AudioProvider;

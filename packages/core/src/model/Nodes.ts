@@ -238,8 +238,8 @@ export * from './nodes/ToTreeNode.js';
 import { loopUntilNode } from './nodes/LoopUntilNode.js';
 export * from './nodes/LoopUntilNode.js';
 
-import { mcpNode } from './nodes/MCPNode.js';
-export * from './nodes/MCPNode.js';
+import { mcpNode } from './nodes/MCPConnectNode.js';
+export * from './nodes/MCPConnectNode.js';
 
 import { referencedGraphAliasNode } from './nodes/ReferencedGraphAliasNode.js';
 export * from './nodes/ReferencedGraphAliasNode.js';

@@ -14,6 +14,7 @@ import TabItem from '@theme/TabItem';
 The Model Context Protocol (MCP) Node enables communication with MCP-compliant servers through either HTTP or stdio interfaces. It allows you to send requests to external AI services or tools that implement the MCP protocol.
 
 The MCP Node supports two communication modes:
+
 1. **HTTP Mode**: Uses standard HTTP POST requests to communicate with MCP servers. Works in both browser and Node environments.
 2. **STDIO Mode**: Launches and communicates with local MCP servers using standard input/output. **Requires Node Executor**.
 
@@ -30,13 +31,13 @@ The MCP Node supports two communication modes:
 
 ## Inputs
 
-| Title | Data Type | Description | Default Value | Notes |
-| ----- | --------- | ----------- | ------------- | ----- |
-| Input | `object` | The input object to send to the MCP server | None | Required. Format depends on the MCP server's expected input format |
-| Configuration | `string` | JSON configuration for the MCP server | None | Only available when using STDIO mode with Configuration Input enabled |
-| Server ID | `string` | The MCP server ID from configuration | None | Only available when using STDIO mode with Configuration Input enabled |
-| Endpoint | `string` | The endpoint URL for the MCP server | None | Only available when using HTTP mode with Endpoint Input enabled |
-| Headers | `object` | Headers to send with requests | None | Only available when using HTTP mode with Headers Input enabled |
+| Title         | Data Type | Description                                | Default Value | Notes                                                                 |
+| ------------- | --------- | ------------------------------------------ | ------------- | --------------------------------------------------------------------- |
+| Input         | `object`  | The input object to send to the MCP server | None          | Required. Format depends on the MCP server's expected input format    |
+| Configuration | `string`  | JSON configuration for the MCP server      | None          | Only available when using STDIO mode with Configuration Input enabled |
+| Server ID     | `string`  | The MCP server ID from configuration       | None          | Only available when using STDIO mode with Configuration Input enabled |
+| Endpoint      | `string`  | The endpoint URL for the MCP server        | None          | Only available when using HTTP mode with Endpoint Input enabled       |
+| Headers       | `object`  | Headers to send with requests              | None          | Only available when using HTTP mode with Headers Input enabled        |
 
 </TabItem>
 
@@ -44,11 +45,11 @@ The MCP Node supports two communication modes:
 
 ## Outputs
 
-| Title | Data Type | Description | Notes |
-| ----- | --------- | ----------- | ----- |
-| Output | `string` | The response from the MCP server as a string | The primary output from the MCP server |
-| Metadata | `object` | Additional metadata from the MCP server response | Contains metadata and available tools information |
-| Error | `string` | Error message if the request fails | Empty if the request succeeds |
+| Title    | Data Type | Description                                      | Notes                                             |
+| -------- | --------- | ------------------------------------------------ | ------------------------------------------------- |
+| Output   | `string`  | The response from the MCP server as a string     | The primary output from the MCP server            |
+| Metadata | `object`  | Additional metadata from the MCP server response | Contains metadata and available tools information |
+| Error    | `string`  | Error message if the request fails               | Empty if the request succeeds                     |
 
 </TabItem>
 
@@ -56,13 +57,13 @@ The MCP Node supports two communication modes:
 
 ## Editor Settings
 
-| Setting | Description | Default Value | Use Input Toggle | Input Data Type |
-| ------- | ----------- | ------------- | ---------------- | --------------- |
-| Communication Mode | The mode of communication with the MCP server (HTTP or STDIO) | HTTP | No | N/A |
-| Endpoint | The endpoint URL for the MCP server | http://localhost:8080 | Yes | `string` |
-| Headers | Headers to send with HTTP requests | [] | Yes | `object` |
-| Use Configuration and Server ID Inputs | Whether to use inputs for configuration and server ID | False | No | N/A |
-| Server ID | The MCP server ID from configuration | (empty) | No | N/A |
+| Setting                                | Description                                                   | Default Value         | Use Input Toggle | Input Data Type |
+| -------------------------------------- | ------------------------------------------------------------- | --------------------- | ---------------- | --------------- |
+| Communication Mode                     | The mode of communication with the MCP server (HTTP or STDIO) | HTTP                  | No               | N/A             |
+| Endpoint                               | The endpoint URL for the MCP server                           | http://localhost:8080 | Yes              | `string`        |
+| Headers                                | Headers to send with HTTP requests                            | []                    | Yes              | `object`        |
+| Use Configuration and Server ID Inputs | Whether to use inputs for configuration and server ID         | False                 | No               | N/A             |
+| Server ID                              | The MCP server ID from configuration                          | (empty)               | No               | N/A             |
 
 </TabItem>
 
@@ -96,7 +97,7 @@ Example configuration:
 }
 ```
 
-## Example 1: Using HTTP Mode
+## Example 1: Using SSE Mode
 
 1. Add an MCP Node to your graph
 2. Set "Communication Mode" to "HTTP"
@@ -152,10 +153,7 @@ Example configuration:
   "mcpServers": {
     "mongodb": {
       "command": "/path/to/node",
-      "args": [
-        "/path/to/mcp-mongo-server/build/index.js",
-        "mongodb://localhost:27017/your-database"
-      ]
+      "args": ["/path/to/mcp-mongo-server/build/index.js", "mongodb://localhost:27017/your-database"]
     }
   }
 }
@@ -194,16 +192,19 @@ The MCP Node provides detailed error handling with specific error types:
 ## Troubleshooting
 
 **STDIO Server Not Found**
+
 - Check `mcp-config.json` location and format
 - Verify file permissions
 - Ensure absolute paths in configuration
 
 **HTTP Connection Failed**
+
 - Verify server URL
 - Check CORS settings
 - Confirm network connectivity
 
 **Node Executor Issues**
+
 - Enable Node executor in Rivet settings
 - Verify Node.js installation
 - Check server executable permissions
@@ -232,4 +233,4 @@ A: The input should be an object with at least a `toolName` property and an `arg
 - [Object Node](./object.mdx)
 - [Text Node](./text.mdx)
 - [To JSON Node](./to-json.mdx)
-- [Extract JSON Node](./extract-json.mdx) 
+- [Extract JSON Node](./extract-json.mdx)

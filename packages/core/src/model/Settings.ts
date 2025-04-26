@@ -20,4 +20,6 @@ export interface Settings<PluginSettings = Record<string, Record<string, unknown
   chatNodeHeaders?: Record<string, string>;
 
   throttleChatNode?: number;
+
+  // Global Settings here
 }
