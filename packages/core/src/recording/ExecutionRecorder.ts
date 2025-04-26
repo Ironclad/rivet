@@ -9,6 +9,8 @@ import {
   type SerializedRecording,
 } from '../index.js';
 import Emittery from 'emittery';
+import { uint8ArrayToBase64Sync, base64ToUint8Array } from '../utils/base64.js';
+import { isPlainObject } from 'lodash-es';
 
 export type ExecutionRecorderEvents = {
   finish: { recording: Recording };
@@ -118,6 +120,30 @@ export type ExecutionRecorderOptions = {
   includeTrace?: boolean;
 };
 
+function mapValuesDeep(obj: any, fn: (value: any) => any): any {
+  if (Array.isArray(obj)) {
+    return obj.map((value) => {
+      if (isPlainObject(value) || Array.isArray(value)) {
+        return mapValuesDeep(value, fn);
+      }
+      return fn(value);
+    });
+  }
+
+  if (isPlainObject(obj)) {
+    return Object.fromEntries(
+      Object.entries(obj).map(([key, value]) => {
+        if (isPlainObject(value) || Array.isArray(value)) {
+          return [key, mapValuesDeep(value, fn)];
+        }
+        return [key, fn(value)];
+      }),
+    );
+  }
+
+  return fn(obj);
+}
+
 export class ExecutionRecorder {
   #events: RecordedEvents[] = [];
   recordingId: RecordingId | undefined;
@@ -207,14 +233,28 @@ export class ExecutionRecorder {
 
   static deserializeFromString(serialized: string) {
     const recorder = new ExecutionRecorder();
+
     const serializedRecording = JSON.parse(serialized) as SerializedRecording;
 
     if (serializedRecording.version !== 1) {
       throw new Error('Unsupported serialized events version');
     }
 
-    recorder.recordingId = serializedRecording.recording.recordingId;
-    recorder.#events = serializedRecording.recording.events;
+    const recording = mapValuesDeep(serializedRecording.recording, (val) => {
+      if (typeof val === 'string' && val.startsWith('$ASSET:')) {
+        const id = val.slice('$ASSET:'.length);
+        const asset = serializedRecording.assets?.[id];
+        if (asset) {
+          return new Uint8Array(base64ToUint8Array(asset));
+        } else {
+          return val;
+        }
+      }
+      return val;
+    });
+
+    recorder.recordingId = recording.recordingId;
+    recorder.#events = recording.events;
     return recorder;
   }
 
@@ -222,7 +262,26 @@ export class ExecutionRecorder {
     const serialized: SerializedRecording = {
       version: 1,
       recording: this.getRecording(),
+      assets: {},
     };
+
+    serialized.recording = mapValuesDeep(serialized.recording, (val) => {
+      if (val instanceof Uint8Array) {
+        const asString = uint8ArrayToBase64Sync(val);
+        const existingAsset = Object.entries(serialized.assets).find(([, asset]) => asset === asString);
+
+        if (!existingAsset) {
+          const id = nanoid();
+          serialized.assets[id] = asString;
+          return `$ASSET:${id}`;
+        } else {
+          const [id] = existingAsset;
+          return `$ASSET:${id}`;
+        }
+      }
+
+      return val;
+    }) as SerializedRecording['recording'];
 
     return JSON.stringify(serialized);
   }
