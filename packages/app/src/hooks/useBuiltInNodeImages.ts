@@ -163,6 +163,7 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     loopUntil: loopUntilNodeImage,
     toTree: toTreeNode,
     mcpDiscovery: mcpNodeImage,
+    mcpToolCall: mcpNodeImage,
     referencedGraphAlias: libraryNode,
   };
 };

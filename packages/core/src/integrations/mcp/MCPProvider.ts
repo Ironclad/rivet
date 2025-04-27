@@ -33,8 +33,39 @@ export interface MCPTool {
 }
 
 export interface MCPToolCall {
+  [key: string]: unknown;
   name: string;
-  arguments: { [x: string]: unknown };
+  arguments?: { [x: string]: unknown };
+  id?: string;
+}
+
+interface MCPBaseContent {
+  type: MCPContentType;
+}
+
+type MCPContentType = 'text' | 'image' | 'audio';
+interface MCPTextContent extends MCPBaseContent {
+  type: 'text';
+  text: string;
+}
+
+interface MCPImageContent extends MCPBaseContent {
+  type: 'image';
+  data: string;
+  mimeType: string;
+}
+
+interface MCPAudioContent extends MCPBaseContent {
+  type: 'audio';
+  data: string;
+  mimeType: string;
+}
+
+type MCPToolResponseContent = MCPTextContent | MCPImageContent | MCPAudioContent | { [key: string]: unknown };
+
+export interface MCPToolResponse {
+  content: MCPToolResponseContent[];
+  isError?: boolean;
 }
 
 export interface MCPProvider {
@@ -45,6 +76,18 @@ export interface MCPProvider {
     serverConfig: MCPServerConfigWithId,
     cwd: string | undefined,
   ): Promise<MCPTool[]>;
+
+  httpToolCall(
+    clientConfig: { name: string; version: string },
+    serverUrl: string,
+    toolCall: MCPToolCall,
+  ): Promise<MCPToolResponse>;
+  stdioToolCall(
+    clientConfig: { name: string; version: string },
+    serverConfig: MCPServerConfigWithId,
+    cwd: string | undefined,
+    toolCall: MCPToolCall,
+  ): Promise<MCPToolResponse>;
 }
 
 export enum MCPErrorType {

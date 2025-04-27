@@ -109,7 +109,7 @@ export const getStdioConfig = async (
 };
 
 export const getServerHelperMessage = (context: RivetUIContext, optionsLength: number): string => {
-  if (optionsLength > 0) return 'Select an MCP server from configuration';
+  if (optionsLength > 0) return 'Select an MCP server from local configuration';
   if (context.executor !== 'nodejs') return 'STDIO mode requires Node Executor';
   if (!context.nativeApi) return 'Native API not available';
   return 'No MCP servers found in config';

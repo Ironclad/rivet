@@ -151,25 +151,3 @@ export const getMCPBaseEditors = async (context: RivetUIContext, data: MCPBaseNo
   }
   return editors;
 };
-
-// export interface MCPDiscoveryNodeData {
-//   name: string;
-//   version: string;
-//   transportType: MCPTransportType;
-//   serverUrl?: string;
-//   serverId?: string;
-//   headers?: { key: string; value: string }[];
-//   config?: string;
-
-//   // Input toggles
-//   useNameInput?: boolean;
-//   useVersionInput?: boolean;
-//   useServerUrlInput?: boolean;
-//   useHeadersInput?: boolean;
-//   useConfigInput?: boolean;
-//   useServerIdInput?: boolean;
-
-//   // Output toggles
-//   useToolsOutput?: boolean;
-//   usePromptsOutput?: boolean;
-// }
