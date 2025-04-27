@@ -32,7 +32,8 @@ export const getServerOptions = async (context: RivetUIContext): Promise<{ label
   if (context.executor === 'nodejs' && context.nativeApi) {
     try {
       const config = await loadMCPConfiguration(context);
-      return Object.entries(config)
+
+      return Object.entries(config.mcpServers)
         .filter(([, config]) => !config.disabled)
         .map(([id]) => ({
           label: id,
@@ -41,6 +42,17 @@ export const getServerOptions = async (context: RivetUIContext): Promise<{ label
     } catch {}
   }
   return [];
+};
+
+export const getServerConfig = async (context: RivetUIContext): Promise<string> => {
+  if (context.executor === 'nodejs' && context.nativeApi) {
+    try {
+      const config = await loadMCPConfiguration(context);
+
+      return JSON.stringify(config);
+    } catch {}
+  }
+  return '';
 };
 
 export const getStdioConfig = async (
@@ -79,12 +91,12 @@ export const getStdioConfig = async (
   if (Object.keys(configFile).length === 0) {
     mcpConfig = await loadMCPConfiguration(context);
     serverConfig = {
-      config: mcpConfig[serverId],
+      config: mcpConfig.mcpServers[serverId],
       serverId,
     };
   } else {
     serverConfig = {
-      config: (configFile as MCPConfig)[serverId],
+      config: (configFile as MCPConfig).mcpServers[serverId],
       serverId,
     };
   }

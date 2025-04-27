@@ -162,7 +162,7 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     cron: cronNodeImage,
     loopUntil: loopUntilNodeImage,
     toTree: toTreeNode,
-    mcp: mcpNodeImage,
+    mcpDiscovery: mcpNodeImage,
     referencedGraphAlias: libraryNode,
   };
 };

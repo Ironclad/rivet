@@ -13,7 +13,9 @@ export type MCPServerConfigWithId = {
   serverId: string;
 };
 
-export type MCPConfig = Record<string, MCPServerConfig>;
+export interface MCPConfig {
+  mcpServers: Record<string, MCPServerConfig>;
+}
 
 export interface MCPToolAnnotations {
   title?: string;

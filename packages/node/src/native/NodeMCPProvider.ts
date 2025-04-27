@@ -6,63 +6,32 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 
 export type MCPClient = Client;
 export class NodeMCPProvider implements MCPProvider {
-  async createClient(name: string, version: string): Promise<Client> {
-    let client: Client;
-    try {
-      client = new Client({ name, version });
-      return client;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async createHTTPConnection(baseUrl: string, client: any): Promise<any> {
-    let transport: StreamableHTTPClientTransport | SSEClientTransport;
-    const url = new URL(baseUrl);
-    const mcpClient = client as Client;
-    try {
-      transport = new StreamableHTTPClientTransport(url);
-      await mcpClient.connect(transport);
-      console.log('Connected using Streamable HTTP transport');
-      return mcpClient;
-    } catch (err) {
-      console.log('Streamable HTTP connection failed, falling back to SSE transport');
-      const sseTransport = new SSEClientTransport(url);
-      try {
-        await mcpClient.connect(sseTransport);
-        return mcpClient;
-      } catch (err) {
-        console.log('Failed to establish HTTP connection');
-        throw err;
-      }
-    }
-  }
-
-  async createStdioConnection(serverConfig: MCPServerConfigWithId, cwd: string | undefined, client: any): Promise<any> {
-    const mcpClient = client as Client;
-
-    const transport = new StdioClientTransport({
-      command: serverConfig.config.command,
-      args: serverConfig.config.args || [],
-      cwd: cwd,
-    });
-
-    try {
-      await mcpClient.connect(transport);
-      console.log('Connected using Stdio transport');
-      return mcpClient;
-    } catch (err) {
-      console.log('Stdio connection failed');
-      throw err;
-    }
-  }
-
   async getHTTPTools(clientConfig: { name: string; version: string }, serverUrl: string): Promise<MCPTool[]> {
-    let client: Client;
+    const url = new URL(serverUrl);
 
-    client = await this.createClient(clientConfig.name, clientConfig.version);
-    client = await this.createHTTPConnection(serverUrl, client);
-    return this.getTools(client);
+    try {
+      const client = new Client(clientConfig);
+
+      let transport: StreamableHTTPClientTransport | SSEClientTransport;
+
+      try {
+        transport = new StreamableHTTPClientTransport(url);
+        await client.connect(transport);
+      } catch (err) {
+        const sseTransport = new SSEClientTransport(url);
+        try {
+          await client.connect(sseTransport);
+        } catch (err) {
+          throw err;
+        }
+      }
+      const tools = await this.#getTools(client);
+      await client.close();
+
+      return tools;
+    } catch (err) {
+      throw err;
+    }
   }
 
   async getStdioTools(
@@ -70,15 +39,30 @@ export class NodeMCPProvider implements MCPProvider {
     serverConfig: MCPServerConfigWithId,
     cwd: string | undefined,
   ): Promise<MCPTool[]> {
-    let client: Client;
+    try {
+      const client = new Client(clientConfig);
+      console.log(serverConfig);
 
-    client = await this.createClient(clientConfig.name, clientConfig.version);
-    client = await this.createStdioConnection(serverConfig, cwd, client);
-    return this.getTools(client);
+      const transport = new StdioClientTransport({
+        command: serverConfig.config.command,
+        args: serverConfig.config.args || [],
+        cwd: cwd,
+      });
+
+      await client.connect(transport);
+      const tools = await this.#getTools(client);
+
+      await client.close();
+
+      return tools;
+    } catch (err) {
+      throw err;
+    }
   }
 
-  async getTools(client: Client): Promise<MCPTool[]> {
+  async #getTools(client: Client): Promise<MCPTool[]> {
     const toolsResult = await client.listTools();
+
     const mcpTools: MCPTool[] = toolsResult.tools.map((tool) => ({
       name: tool.name,
       description: tool.description,

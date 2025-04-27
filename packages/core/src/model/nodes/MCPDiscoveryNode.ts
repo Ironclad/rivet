@@ -4,12 +4,13 @@ import { NodeImpl } from '../NodeImpl.js';
 import type { EditorDefinition } from '../EditorDefinition.js';
 import {
   coerceType,
+  getError,
   MCPError,
   MCPErrorType,
+  type GptFunction,
   type Inputs,
   type InternalProcessContext,
   type MCPTool,
-  type MCPTransportType,
   type NodeUIData,
   type Outputs,
 } from '../../index.js';
@@ -17,37 +18,17 @@ import { dedent, getInputOrData } from '../../utils/index.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import type { RivetUIContext } from '../RivetUIContext.js';
 import { getServerHelperMessage, getServerOptions, getStdioConfig } from '../../integrations/mcp/MCPUtils.js';
+import { getMCPBaseInputs, type MCPBaseNodeData } from '../../integrations/mcp/MCPBase.js';
 
-type MCPNode = ChartNode<'mcp', MCPNodeData>;
+type MCPDiscoveryNode = ChartNode<'mcpDiscovery', MCPDiscoveryNodeData>;
 
-export interface MCPNodeData {
-  name: string;
-  version: string;
-  transportType: MCPTransportType;
-  serverUrl?: string;
-  serverId?: string;
-  // headers?: { key: string; value: string }[];
-  config?: string;
+export type MCPDiscoveryNodeData = MCPBaseNodeData & { useToolsOutput?: boolean; usePromptsOutput?: boolean };
 
-  // Input toggles
-  useNameInput?: boolean;
-  useVersionInput?: boolean;
-  useTransportTypeInput?: boolean;
-  useServerUrlInput?: boolean;
-  // useHeadersInput?: boolean;
-  useConfigInput?: boolean;
-  useServerIdInput?: boolean;
-
-  // Output toggles
-  useToolsOutput?: boolean;
-  usePromptsOutput?: boolean;
-}
-
-class MCPNodeImpl extends NodeImpl<MCPNode> {
-  static create(): MCPNode {
-    const chartNode: MCPNode = {
-      type: 'mcp',
-      title: 'MCP Client',
+class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
+  static create(): MCPDiscoveryNode {
+    const chartNode: MCPDiscoveryNode = {
+      type: 'mcpDiscovery',
+      title: 'MCP Discovery',
       id: nanoid() as NodeId,
       visualData: {
         x: 0,
@@ -58,10 +39,12 @@ class MCPNodeImpl extends NodeImpl<MCPNode> {
         name: 'mcp-client',
         version: '1.0.0',
         transportType: 'stdio',
-        serverUrl: 'http://localhost:8080',
+        serverUrl: 'http://localhost:8080/mcp',
         serverId: '',
-        // headers: [],
+        headers: [],
         config: '',
+        useNameInput: false,
+        useVersionInput: false,
         useToolsOutput: true,
         usePromptsOutput: true,
       },
@@ -71,61 +54,7 @@ class MCPNodeImpl extends NodeImpl<MCPNode> {
   }
 
   getInputDefinitions(): NodeInputDefinition[] {
-    const inputs: NodeInputDefinition[] = [];
-
-    if (this.data.name) {
-      inputs.push({
-        dataType: 'string',
-        id: 'name' as PortId,
-        title: 'Name',
-      });
-    }
-
-    if (this.data.version) {
-      inputs.push({
-        dataType: 'string',
-        id: 'version' as PortId,
-        title: 'Version',
-      });
-    }
-
-    if (this.data.transportType === 'http' && this.data.useServerUrlInput) {
-      inputs.push({
-        dataType: 'string',
-        id: 'serverUrl' as PortId,
-        title: 'Server URL',
-        description: 'The endpoint URL for the MCP server to connect',
-      });
-    } else if (this.data.transportType === 'stdio') {
-      if (this.data.useConfigInput) {
-        inputs.push({
-          dataType: 'object',
-          id: 'config' as PortId,
-          title: 'Configuration',
-          description: 'JSON local configuration for the MCP server',
-          required: true,
-        });
-      }
-
-      if (this.data.useServerIdInput) {
-        inputs.push({
-          dataType: 'string',
-          id: 'serverId' as PortId,
-          title: 'Server ID',
-          description: 'The MCP server ID from the local configuration',
-          required: true,
-        });
-      }
-    }
-
-    // if (this.data.useHeadersInput) {
-    //   inputs.push({
-    //     dataType: 'object',
-    //     id: 'headers' as PortId,
-    //     title: 'Headers',
-    //     description: 'Headers to send with the MCP requests',
-    //   });
-    // }
+    const inputs: NodeInputDefinition[] = getMCPBaseInputs(this.data);
 
     return inputs;
   }
@@ -150,19 +79,23 @@ class MCPNodeImpl extends NodeImpl<MCPNode> {
         description: 'Prompts returned from the MCP server',
       });
     }
-
-    outputDefinitions.push({
-      id: 'error' as PortId,
-      title: 'Error',
-      dataType: 'string',
-      description: 'Error message if the request fails',
-    });
-
     return outputDefinitions;
   }
 
-  async getEditors(context: RivetUIContext): Promise<EditorDefinition<MCPNode>[]> {
-    const editors: EditorDefinition<MCPNode>[] = [
+  async getEditors(context: RivetUIContext): Promise<EditorDefinition<MCPDiscoveryNode>[]> {
+    const editors: EditorDefinition<MCPDiscoveryNode>[] = [
+      {
+        type: 'toggle',
+        label: 'Output Tools',
+        dataKey: 'useToolsOutput',
+        helperMessage: 'Toggle on if you want to get a Tools output',
+      },
+      {
+        type: 'toggle',
+        label: 'Output Prompts',
+        dataKey: 'usePromptsOutput',
+        helperMessage: 'Toggle on if you want to get a Prompts output',
+      },
       {
         type: 'string',
         label: 'Name',
@@ -177,6 +110,7 @@ class MCPNodeImpl extends NodeImpl<MCPNode> {
         useInputToggleDataKey: 'useVersionInput',
         helperMessage: 'A version for the MCP Client',
       },
+
       {
         type: 'dropdown',
         label: 'Transport Type',
@@ -185,14 +119,6 @@ class MCPNodeImpl extends NodeImpl<MCPNode> {
           { label: 'HTTP', value: 'http' },
           { label: 'STDIO', value: 'stdio' },
         ],
-        useInputToggleDataKey: 'useTransportTypeInput',
-      },
-      {
-        type: 'code',
-        label: 'Configuration',
-        dataKey: 'config',
-        language: 'json',
-        useInputToggleDataKey: 'useConfigInput',
       },
     ];
 
@@ -205,15 +131,15 @@ class MCPNodeImpl extends NodeImpl<MCPNode> {
           useInputToggleDataKey: 'useServerUrlInput',
           helperMessage: 'The endpoint URL for the MCP server to connect',
         },
-        // {
-        //   type: 'keyValuePair',
-        //   label: 'Headers',
-        //   dataKey: 'headers',
-        //   useInputToggleDataKey: 'useHeadersInput',
-        //   keyPlaceholder: 'Header',
-        //   valuePlaceholder: 'Value',
-        //   helperMessage: 'Headers to send with requests',
-        // },
+        {
+          type: 'keyValuePair',
+          label: 'Headers',
+          dataKey: 'headers',
+          useInputToggleDataKey: 'useHeadersInput',
+          keyPlaceholder: 'Header',
+          valuePlaceholder: 'Value',
+          helperMessage: 'Headers to send with requests',
+        },
       );
     } else if (this.data.transportType === 'stdio') {
       editors.push({
@@ -225,6 +151,7 @@ class MCPNodeImpl extends NodeImpl<MCPNode> {
 
       if (!this.data.useConfigInput) {
         const serverOptions = await getServerOptions(context);
+
         editors.push({
           type: 'dropdown',
           label: 'Server ID',
@@ -248,28 +175,24 @@ class MCPNodeImpl extends NodeImpl<MCPNode> {
         base = `Server ID: ${this.data.serverId || '(None)'}`;
       }
     }
-
-    const parts = [base];
+    const namePart = `Name: ${this.data.name}`;
+    const versionPart = `Version: ${this.data.version}`;
+    const parts = [namePart, versionPart, base];
 
     if (this.data.transportType === 'stdio' && context.executor !== 'nodejs') {
       parts.push('(Requires Node Executor)');
     }
 
-    // if (this.data.availableTools?.length) {
-    //   parts.push(`(${this.data.availableTools.length} tools)`);
-    // }
-
-    return parts.join(' ');
+    return parts.join('\n');
   }
 
   static getUIData(): NodeUIData {
     return {
       infoBoxBody: dedent`
-        Connects to an MCP (Model Context Protocol) server to access external AI capabilities, tools, and resources.
-        The node sends requests to the configured MCP server endpoint and returns the response.
+        Connects to an MCP (Model Context Protocol) server to discover capabilities like tools and prompts.
       `,
-      infoBoxTitle: 'MCP Node',
-      contextMenuTitle: 'MCP',
+      infoBoxTitle: 'MCP Discovery Node',
+      contextMenuTitle: 'MCP Discovery Node',
       group: ['AI', 'Integration'],
     };
   }
@@ -282,7 +205,6 @@ class MCPNodeImpl extends NodeImpl<MCPNode> {
 
     let tools: MCPTool[] = [];
 
-    let error;
     try {
       if (!context.mcpProvider) {
         throw new Error('MCP Provider not found');
@@ -293,43 +215,65 @@ class MCPNodeImpl extends NodeImpl<MCPNode> {
         if (!serverUrl || serverUrl === '') {
           throw new MCPError(MCPErrorType.SERVER_NOT_FOUND, 'No server URL was provided');
         }
+        if (!serverUrl.includes('/mcp')) {
+          throw new MCPError(
+            MCPErrorType.SERVER_COMMUNICATION_FAILED,
+            'Include /mcp in your server URL. For example: http://localhost:8080/mcp',
+          );
+        }
 
         tools = await context.mcpProvider.getHTTPTools({ name, version }, serverUrl);
-
-        console.log('Connected using Streamable HTTP transport');
       } else if (transportType === 'stdio') {
-        const config = coerceType(inputs['config' as PortId], 'string');
-        const serverId = coerceType(inputs['config' as PortId], 'string');
+        const config = this.data.useConfigInput
+          ? coerceType(inputs['config' as PortId], 'string')
+          : this.data.config ?? '';
+        const serverId = this.data.useConfigInput
+          ? coerceType(inputs['config' as PortId], 'string')
+          : this.data.serverId ?? '';
+
         const serverConfig = await getStdioConfig(context, config, serverId, this.data.useConfigInput);
         const cwd = context.nativeApi ? await context.nativeApi.resolveBaseDir('appConfig', '.') : undefined;
 
         tools = await context.mcpProvider.getStdioTools({ name, version }, serverConfig, cwd);
       }
-    } catch (err) {
-      error = err;
-    }
 
-    const output: Outputs = {
-      ['tools' as PortId]: {
-        type: 'object',
-        value: tools as unknown as Record<string, unknown>,
-      },
-      ['errors' as PortId]: {
-        type: 'string',
-        value: error as string,
-      },
-    };
+      const output: Outputs = {};
 
-    try {
+      const gptFunctions: GptFunction[] = tools.map((tool) => ({
+        name: tool.name,
+        description: tool.description ?? '',
+        parameters: tool.inputSchema,
+        strict: false,
+      }));
+
+      if (this.data.useToolsOutput) {
+        output['tools' as PortId] = {
+          type: 'gpt-function[]',
+          value: gptFunctions,
+        };
+      }
+
+      if (this.data.usePromptsOutput) {
+        output['prompts' as PortId] = {
+          type: 'object[]',
+          value: tools.map((tool) => ({
+            name: tool.name,
+            description: tool.name,
+            inputSchema: tool.inputSchema,
+          })),
+        };
+      }
+
       return output;
     } catch (err) {
+      const { message } = getError(err);
       if (context.executor === 'browser') {
         throw new Error('Failed to create Client without a node executor');
       }
-
+      console.log(message);
       throw err;
     }
   }
 }
 
-export const mcpNode = nodeDefinition(MCPNodeImpl, 'MCP Client');
+export const mcpNode = nodeDefinition(MCPDiscoveryNodeImpl, 'MCP Discovery');
