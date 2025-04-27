@@ -17,7 +17,7 @@ export interface MCPConfig {
   mcpServers: Record<string, MCPServerConfig>;
 }
 
-export interface MCPToolAnnotations {
+interface MCPToolAnnotations {
   title?: string;
   readOnlyHint?: boolean;
   destructiveHint?: boolean;
@@ -32,6 +32,16 @@ export interface MCPTool {
   annotations?: MCPToolAnnotations;
 }
 
+interface MCPPromptArgument {
+  name: string;
+  description?: string;
+  required?: boolean;
+}
+export interface MCPPrompt {
+  name: string;
+  description?: string;
+  arugments?: MCPPromptArgument[];
+}
 export interface MCPToolCall {
   [key: string]: unknown;
   name: string;
@@ -77,11 +87,20 @@ export interface MCPProvider {
     cwd: string | undefined,
   ): Promise<MCPTool[]>;
 
+  getHTTPrompts(clientConfig: { name: string; version: string }, serverUrl: string): Promise<MCPPrompt[]>;
+
+  getStdioPrompts(
+    clientConfig: { name: string; version: string },
+    serverConfig: MCPServerConfigWithId,
+    cwd: string | undefined,
+  ): Promise<MCPPrompt[]>;
+
   httpToolCall(
     clientConfig: { name: string; version: string },
     serverUrl: string,
     toolCall: MCPToolCall,
   ): Promise<MCPToolResponse>;
+
   stdioToolCall(
     clientConfig: { name: string; version: string },
     serverConfig: MCPServerConfigWithId,

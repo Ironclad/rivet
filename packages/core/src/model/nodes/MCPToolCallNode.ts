@@ -47,7 +47,7 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
         width: 250,
       },
       data: {
-        name: 'mcp-client',
+        name: 'mcp-toolCall-client',
         version: '1.0.0',
         transportType: 'stdio',
         serverUrl: 'http://localhost:8080/mcp',

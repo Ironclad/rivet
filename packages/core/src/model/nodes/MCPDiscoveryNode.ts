@@ -10,6 +10,7 @@ import {
   type GptFunction,
   type Inputs,
   type InternalProcessContext,
+  type MCPPrompt,
   type MCPTool,
   type NodeUIData,
   type Outputs,
@@ -204,6 +205,7 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
     const transportType = getInputOrData(this.data, inputs, 'transportType', 'string') as 'http' | 'stdio';
 
     let tools: MCPTool[] = [];
+    let prompts: MCPPrompt[] = [];
 
     try {
       if (!context.mcpProvider) {
@@ -223,6 +225,7 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
         }
 
         tools = await context.mcpProvider.getHTTPTools({ name, version }, serverUrl);
+        prompts = await context.mcpProvider.getHTTPrompts({ name, version }, serverUrl);
       } else if (transportType === 'stdio') {
         const config = this.data.useConfigInput
           ? coerceType(inputs['config' as PortId], 'string')
@@ -235,6 +238,7 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
         const cwd = context.nativeApi ? await context.nativeApi.resolveBaseDir('appConfig', '.') : undefined;
 
         tools = await context.mcpProvider.getStdioTools({ name, version }, serverConfig, cwd);
+        prompts = await context.mcpProvider.getStdioPrompts({ name, version }, serverConfig, cwd);
       }
 
       const output: Outputs = {};
@@ -256,10 +260,10 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
       if (this.data.usePromptsOutput) {
         output['prompts' as PortId] = {
           type: 'object[]',
-          value: tools.map((tool) => ({
-            name: tool.name,
-            description: tool.name,
-            inputSchema: tool.inputSchema,
+          value: prompts.map((prompt) => ({
+            name: prompt.name,
+            description: prompt.description,
+            arguemnts: prompt.arugments,
           })),
         };
       }
