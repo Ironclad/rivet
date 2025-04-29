@@ -1,22 +1,20 @@
 import type { NodeInputDefinition, PortId } from '../../model/NodeBase.js';
 import type { RivetUIContext } from '../../model/RivetUIContext.js';
-import type { MCPTransportType } from './MCPProvider.js';
+import type { MCP } from './MCPProvider.js';
 import { getServerHelperMessage, getServerOptions } from './MCPUtils.js';
 
 export interface MCPBaseNodeData {
   name: string;
   version: string;
-  transportType: MCPTransportType;
+  transportType: MCP.TransportType;
   serverUrl?: string;
   serverId?: string;
-  headers?: { key: string; value: string }[];
   config?: string;
 
   // Input toggles
   useNameInput?: boolean;
   useVersionInput?: boolean;
   useServerUrlInput?: boolean;
-  useHeadersInput?: boolean;
   useConfigInput?: boolean;
   useServerIdInput?: boolean;
 }
@@ -68,15 +66,6 @@ export const getMCPBaseInputs = (data: MCPBaseNodeData) => {
     }
   }
 
-  if (data.useHeadersInput) {
-    inputs.push({
-      dataType: 'object',
-      id: 'headers' as PortId,
-      title: 'Headers',
-      description: 'Headers to send with the MCP requests',
-    });
-  }
-
   return inputs;
 };
 
@@ -84,6 +73,18 @@ export const getMCPBaseEditors = async (context: RivetUIContext, data: MCPBaseNo
   const editors = [];
 
   editors.push([
+    {
+      type: 'toggle',
+      label: 'Output Tools',
+      dataKey: 'useToolsOutput',
+      helperMessage: 'Toggle on if you want to get a Tools output',
+    },
+    {
+      type: 'toggle',
+      label: 'Output Prompts',
+      dataKey: 'usePromptsOutput',
+      helperMessage: 'Toggle on if you want to get a Prompts output',
+    },
     {
       type: 'string',
       label: 'Name',
@@ -111,24 +112,13 @@ export const getMCPBaseEditors = async (context: RivetUIContext, data: MCPBaseNo
   ]);
 
   if (data.transportType === 'http') {
-    editors.push(
-      {
-        type: 'string',
-        label: 'Server URL',
-        dataKey: 'serverUrl',
-        useInputToggleDataKey: 'useServerUrlInput',
-        helperMessage: 'The endpoint URL for the MCP server to connect',
-      },
-      {
-        type: 'keyValuePair',
-        label: 'Headers',
-        dataKey: 'headers',
-        useInputToggleDataKey: 'useHeadersInput',
-        keyPlaceholder: 'Header',
-        valuePlaceholder: 'Value',
-        helperMessage: 'Headers to send with requests',
-      },
-    );
+    editors.push({
+      type: 'string',
+      label: 'Server URL',
+      dataKey: 'serverUrl',
+      useInputToggleDataKey: 'useServerUrlInput',
+      helperMessage: 'The endpoint URL for the MCP server to connect',
+    });
   } else if (data.transportType === 'stdio') {
     editors.push({
       type: 'toggle',

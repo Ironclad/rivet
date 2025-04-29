@@ -244,6 +244,9 @@ export * from './nodes/MCPDiscoveryNode.js';
 import { mcpToolCallNode } from './nodes/MCPToolCallNode.js';
 export * from './nodes/MCPToolCallNode.js';
 
+import { mcpGetPromptNode } from './nodes/MCPGetPromptNode.js';
+export * from './nodes/MCPGetPromptNode.js';
+
 import { referencedGraphAliasNode } from './nodes/ReferencedGraphAliasNode.js';
 export * from './nodes/ReferencedGraphAliasNode.js';
 
@@ -330,6 +333,7 @@ export const registerBuiltInNodes = (registry: NodeRegistration) => {
     .register(loopUntilNode)
     .register(mcpDiscoveryNode)
     .register(mcpToolCallNode)
+    .register(mcpGetPromptNode)
     .register(referencedGraphAliasNode);
 };
 

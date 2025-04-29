@@ -1,11 +1,4 @@
-import {
-  type MCPPrompt,
-  type MCPProvider,
-  type MCPServerConfigWithId,
-  type MCPTool,
-  type MCPToolCall,
-  type MCPToolResponse,
-} from '@ironclad/rivet-core';
+import { type MCP, type MCPProvider } from '@ironclad/rivet-core';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
@@ -45,8 +38,8 @@ export class NodeMCPProvider implements MCPProvider {
   async httpToolCall(
     clientConfig: { name: string; version: string },
     serverUrl: string,
-    toolCall: MCPToolCall,
-  ): Promise<MCPToolResponse> {
+    toolCall: MCP.ToolCallRequest,
+  ): Promise<MCP.ToolCallResponse> {
     try {
       const client = await this.#getHTTPClient(clientConfig, serverUrl);
 
@@ -59,7 +52,7 @@ export class NodeMCPProvider implements MCPProvider {
     }
   }
 
-  async getHTTPTools(clientConfig: { name: string; version: string }, serverUrl: string): Promise<MCPTool[]> {
+  async getHTTPTools(clientConfig: { name: string; version: string }, serverUrl: string): Promise<MCP.Tool[]> {
     try {
       const client = await this.#getHTTPClient(clientConfig, serverUrl);
 
@@ -71,7 +64,8 @@ export class NodeMCPProvider implements MCPProvider {
       throw err;
     }
   }
-  async getHTTPrompts(clientConfig: { name: string; version: string }, serverUrl: string): Promise<MCPPrompt[]> {
+
+  async getHTTPrompts(clientConfig: { name: string; version: string }, serverUrl: string): Promise<MCP.Prompt[]> {
     try {
       const client = await this.#getHTTPClient(clientConfig, serverUrl);
 
@@ -84,13 +78,30 @@ export class NodeMCPProvider implements MCPProvider {
     }
   }
 
+  async getHTTPrompt(
+    clientConfig: { name: string; version: string },
+    serverUrl: string,
+    getPromptRequest: MCP.GetPromptRequest,
+  ): Promise<MCP.GetPromptResponse> {
+    try {
+      const client = await this.#getHTTPClient(clientConfig, serverUrl);
+
+      const prompt = await this.#getPrompt(client, getPromptRequest);
+      await client.close();
+
+      return prompt;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   /**
    * STDIO
    */
 
   async #getStdioClient(
     clientConfig: { name: string; version: string },
-    serverConfig: MCPServerConfigWithId,
+    serverConfig: MCP.ServerConfigWithId,
     cwd: string | undefined,
   ) {
     try {
@@ -113,10 +124,10 @@ export class NodeMCPProvider implements MCPProvider {
 
   async stdioToolCall(
     clientConfig: { name: string; version: string },
-    serverConfig: MCPServerConfigWithId,
+    serverConfig: MCP.ServerConfigWithId,
     cwd: string | undefined,
-    toolCall: MCPToolCall,
-  ): Promise<MCPToolResponse> {
+    toolCall: MCP.ToolCallRequest,
+  ): Promise<MCP.ToolCallResponse> {
     try {
       const client = await this.#getStdioClient(clientConfig, serverConfig, cwd);
 
@@ -131,9 +142,9 @@ export class NodeMCPProvider implements MCPProvider {
 
   async getStdioTools(
     clientConfig: { name: string; version: string },
-    serverConfig: MCPServerConfigWithId,
+    serverConfig: MCP.ServerConfigWithId,
     cwd: string | undefined,
-  ): Promise<MCPTool[]> {
+  ): Promise<MCP.Tool[]> {
     try {
       const client = await this.#getStdioClient(clientConfig, serverConfig, cwd);
 
@@ -148,9 +159,9 @@ export class NodeMCPProvider implements MCPProvider {
 
   async getStdioPrompts(
     clientConfig: { name: string; version: string },
-    serverConfig: MCPServerConfigWithId,
+    serverConfig: MCP.ServerConfigWithId,
     cwd: string | undefined,
-  ): Promise<MCPPrompt[]> {
+  ): Promise<MCP.Prompt[]> {
     const client = await this.#getStdioClient(clientConfig, serverConfig, cwd);
 
     const response = await this.#getPrompts(client);
@@ -159,11 +170,26 @@ export class NodeMCPProvider implements MCPProvider {
     return response;
   }
 
-  async #getPrompts(client: Client): Promise<MCPPrompt[]> {
-    try {
-      const toolsResult = await client.listPrompts();
+  async getStdioPrompt(
+    clientConfig: { name: string; version: string },
+    serverConfig: MCP.ServerConfigWithId,
+    cwd: string | undefined,
+    getPromptRequest: MCP.GetPromptRequest,
+  ): Promise<MCP.GetPromptResponse> {
+    const client = await this.#getStdioClient(clientConfig, serverConfig, cwd);
 
-      const mcpPrompts: MCPPrompt[] = toolsResult.prompts.map((prompt) => ({
+    const response = await this.#getPrompt(client, getPromptRequest);
+
+    await client.close();
+
+    return response;
+  }
+
+  async #getPrompts(client: Client): Promise<MCP.Prompt[]> {
+    try {
+      const promptsResult = await client.listPrompts();
+
+      const mcpPrompts: MCP.Prompt[] = promptsResult.prompts.map((prompt) => ({
         name: prompt.name,
         description: prompt.description,
         arugments: prompt.arguments,
@@ -174,11 +200,25 @@ export class NodeMCPProvider implements MCPProvider {
     }
   }
 
-  async #getTools(client: Client): Promise<MCPTool[]> {
+  async #getPrompt(client: Client, getPrompt: MCP.GetPromptRequest): Promise<MCP.GetPromptResponse> {
+    try {
+      const promptResult = await client.getPrompt(getPrompt);
+      const mcpPrompt: MCP.GetPromptResponse = {
+        description: promptResult.description,
+        messages: promptResult.messages,
+      };
+
+      return mcpPrompt;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async #getTools(client: Client): Promise<MCP.Tool[]> {
     try {
       const toolsResult = await client.listTools();
 
-      const mcpTools: MCPTool[] = toolsResult.tools.map((tool) => ({
+      const mcpTools: MCP.Tool[] = toolsResult.tools.map((tool) => ({
         name: tool.name,
         description: tool.description,
         inputSchema: tool.inputSchema,
@@ -189,13 +229,13 @@ export class NodeMCPProvider implements MCPProvider {
     }
   }
 
-  async #callTool(client: Client, toolCall: MCPToolCall): Promise<MCPToolResponse> {
+  async #callTool(client: Client, toolCall: MCP.ToolCallRequest): Promise<MCP.ToolCallResponse> {
     try {
       const toolResponse = await client.callTool(toolCall);
       const response = {
         content: toolResponse.content,
         isError: toolResponse.isError,
-      } as MCPToolResponse;
+      } as MCP.ToolCallResponse;
 
       return response;
     } catch (err) {

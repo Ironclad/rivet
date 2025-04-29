@@ -1,33 +1,46 @@
-import { nanoid } from 'nanoid';
-import type { ChartNode, NodeId, NodeInputDefinition, NodeOutputDefinition, PortId } from '../NodeBase.js';
-import { NodeImpl } from '../NodeImpl.js';
-import type { EditorDefinition } from '../EditorDefinition.js';
 import {
-  type GptFunction,
-  type Inputs,
-  type InternalProcessContext,
-  type NodeUIData,
-  type Outputs,
-} from '../../index.js';
+  type ChartNode,
+  type NodeId,
+  type NodeInputDefinition,
+  type NodeOutputDefinition,
+  type PortId,
+} from '../NodeBase.js';
+import { nanoid } from 'nanoid/non-secure';
+import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
+import { nodeDefinition } from '../NodeDefinition.js';
+import { type Inputs, type Outputs } from '../GraphProcessor.js';
+
+import { type EditorDefinition, type InternalProcessContext } from '../../index.js';
 
 import { MCPError, MCPErrorType, type MCP } from '../../integrations/mcp/MCPProvider.js';
 import { coerceType } from '../../utils/coerceType.js';
 
 import { dedent, getInputOrData } from '../../utils/index.js';
-import { nodeDefinition } from '../NodeDefinition.js';
-import type { RivetUIContext } from '../RivetUIContext.js';
-import { getServerHelperMessage, getServerOptions, getStdioConfig } from '../../integrations/mcp/MCPUtils.js';
+import { getError } from '../../utils/errors.js';
 import { getMCPBaseInputs, type MCPBaseNodeData } from '../../integrations/mcp/MCPBase.js';
+import {
+  getServerHelperMessage,
+  getServerOptions,
+  getStdioConfig,
+  sanitizeArguments,
+} from '../../integrations/mcp/MCPUtils.js';
+import type { RivetUIContext } from '../RivetUIContext.js';
 
-type MCPDiscoveryNode = ChartNode<'mcpDiscovery', MCPDiscoveryNodeData>;
+export type MCPGetPromptNode = ChartNode<'mcpGetPrompt', MCPGetPromptNodeData>;
 
-export type MCPDiscoveryNodeData = MCPBaseNodeData & { useToolsOutput?: boolean; usePromptsOutput?: boolean };
+export type MCPGetPromptNodeData = MCPBaseNodeData & {
+  promptName: string;
+  promptArguments?: string;
 
-class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
-  static create(): MCPDiscoveryNode {
-    const chartNode: MCPDiscoveryNode = {
-      type: 'mcpDiscovery',
-      title: 'MCP Discovery',
+  usePromptNameInput?: boolean;
+  usePromptArgumentsInput?: boolean;
+};
+
+export class MCPGetPromptNodeImpl extends NodeImpl<MCPGetPromptNode> {
+  static create(): MCPGetPromptNode {
+    const chartNode: MCPGetPromptNode = {
+      type: 'mcpGetPrompt',
+      title: 'MCP Get Prompt',
       id: nanoid() as NodeId,
       visualData: {
         x: 0,
@@ -35,16 +48,18 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
         width: 250,
       },
       data: {
-        name: 'mcp-client',
+        name: 'mcp-get-prompt-client',
         version: '1.0.0',
         transportType: 'stdio',
         serverUrl: 'http://localhost:8080/mcp',
         serverId: '',
         config: '',
+        promptName: 'Name',
+        promptArguments: '',
         useNameInput: false,
         useVersionInput: false,
-        useToolsOutput: true,
-        usePromptsOutput: true,
+        usePromptNameInput: true,
+        usePromptArgumentsInput: true,
       },
     };
 
@@ -54,46 +69,40 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
   getInputDefinitions(): NodeInputDefinition[] {
     const inputs: NodeInputDefinition[] = getMCPBaseInputs(this.data);
 
+    if (this.data.usePromptNameInput) {
+      inputs.push({
+        dataType: 'string',
+        id: 'promptName' as PortId,
+        title: 'Prompt Name',
+      });
+    }
+
+    if (this.data.usePromptArgumentsInput) {
+      inputs.push({
+        dataType: 'object',
+        id: 'promptArguments' as PortId,
+        title: 'Prompt Arguments',
+      });
+    }
+
     return inputs;
   }
 
   getOutputDefinitions(): NodeOutputDefinition[] {
     const outputDefinitions: NodeOutputDefinition[] = [];
 
-    if (this.data.useToolsOutput) {
-      outputDefinitions.push({
-        id: 'tools' as PortId,
-        title: 'Tools',
-        dataType: 'object[]',
-        description: 'Tools returned from the MCP server',
-      });
-    }
+    outputDefinitions.push({
+      id: 'prompt' as PortId,
+      title: 'Prompt',
+      dataType: 'object',
+      description: 'Prompt response result',
+    });
 
-    if (this.data.usePromptsOutput) {
-      outputDefinitions.push({
-        id: 'prompts' as PortId,
-        title: 'Prompts',
-        dataType: 'object[]',
-        description: 'Prompts returned from the MCP server',
-      });
-    }
     return outputDefinitions;
   }
 
-  async getEditors(context: RivetUIContext): Promise<EditorDefinition<MCPDiscoveryNode>[]> {
-    const editors: EditorDefinition<MCPDiscoveryNode>[] = [
-      {
-        type: 'toggle',
-        label: 'Output Tools',
-        dataKey: 'useToolsOutput',
-        helperMessage: 'Toggle on if you want to get a Tools output',
-      },
-      {
-        type: 'toggle',
-        label: 'Output Prompts',
-        dataKey: 'usePromptsOutput',
-        helperMessage: 'Toggle on if you want to get a Prompts output',
-      },
+  async getEditors(context: RivetUIContext): Promise<EditorDefinition<MCPGetPromptNode>[]> {
+    const editors: EditorDefinition<MCPGetPromptNode>[] = [
       {
         type: 'string',
         label: 'Name',
@@ -108,7 +117,6 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
         useInputToggleDataKey: 'useVersionInput',
         helperMessage: 'A version for the MCP Client',
       },
-
       {
         type: 'dropdown',
         label: 'Transport Type',
@@ -118,6 +126,21 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
           { label: 'STDIO', value: 'stdio' },
         ],
       },
+      {
+        type: 'string',
+        label: 'Prompt Name',
+        dataKey: 'promptName',
+        useInputToggleDataKey: 'usePromptNameInput',
+        helperMessage: 'The name for the MCP prompt',
+      },
+      {
+        type: 'code',
+        label: 'Prompt Arguments',
+        dataKey: 'promptArguments',
+        useInputToggleDataKey: 'usePromptArgumentsInput',
+        language: 'json',
+        helperMessage: 'Arguments to provide the prompt',
+      },
     ];
 
     if (this.data.transportType === 'http') {
@@ -126,7 +149,7 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
         label: 'Server URL',
         dataKey: 'serverUrl',
         useInputToggleDataKey: 'useServerUrlInput',
-        helperMessage: 'The base URL endpoint for the MCP server with `/mcp`',
+        helperMessage: 'The endpoint URL for the MCP server to connect',
       });
     } else if (this.data.transportType === 'stdio') {
       if (!this.data.useConfigInput) {
@@ -148,6 +171,7 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
         helperMessage: 'Whether to use inputs for configuration and server ID',
       });
     }
+
     return editors;
   }
 
@@ -169,17 +193,17 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
     if (this.data.transportType === 'stdio' && context.executor !== 'nodejs') {
       parts.push('(Requires Node Executor)');
     }
-
+    parts.push(this.data.promptArguments);
     return parts.join('\n');
   }
 
   static getUIData(): NodeUIData {
     return {
       infoBoxBody: dedent`
-        Connects to an MCP (Model Context Protocol) server to discover capabilities like tools and prompts.
+        Connects to an MCP (Model Context Protocol) server and calls a tool.
       `,
-      infoBoxTitle: 'MCP Discovery Node',
-      contextMenuTitle: 'MCP Discovery',
+      infoBoxTitle: 'MCP Get Prompt Node',
+      contextMenuTitle: 'MCP Get Prompt',
       group: ['AI', 'Integration'],
     };
   }
@@ -188,10 +212,18 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
     const name = getInputOrData(this.data, inputs, 'name', 'string');
     const version = getInputOrData(this.data, inputs, 'version', 'string');
 
+    const promptName = getInputOrData(this.data, inputs, 'promptName', 'string');
+    const promptArguments = getInputOrData(this.data, inputs, 'promptArguments', 'object');
+    const sanitizedPromptArguments = sanitizeArguments(promptArguments);
+    const getPromptRequest: MCP.GetPromptRequest = {
+      name: promptName,
+      arguments: sanitizedPromptArguments,
+    };
+    console.log({ sanitizedPromptArguments });
+
     const transportType = getInputOrData(this.data, inputs, 'transportType', 'string') as 'http' | 'stdio';
 
-    let tools: MCP.Tool[] = [];
-    let prompts: MCP.Prompt[] = [];
+    let getPromptResponse: MCP.GetPromptResponse | undefined = undefined;
 
     try {
       if (!context.mcpProvider) {
@@ -210,8 +242,7 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
           );
         }
 
-        tools = await context.mcpProvider.getHTTPTools({ name, version }, serverUrl);
-        prompts = await context.mcpProvider.getHTTPrompts({ name, version }, serverUrl);
+        getPromptResponse = await context.mcpProvider.getHTTPrompt({ name, version }, serverUrl, getPromptRequest);
       } else if (transportType === 'stdio') {
         const config = this.data.useConfigInput
           ? coerceType(inputs['config' as PortId], 'string')
@@ -223,46 +254,31 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
         const serverConfig = await getStdioConfig(context, config, serverId, this.data.useConfigInput);
         const cwd = context.nativeApi ? await context.nativeApi.resolveBaseDir('appConfig', '.') : undefined;
 
-        tools = await context.mcpProvider.getStdioTools({ name, version }, serverConfig, cwd);
-        prompts = await context.mcpProvider.getStdioPrompts({ name, version }, serverConfig, cwd);
+        getPromptResponse = await context.mcpProvider.getStdioPrompt(
+          { name, version },
+          serverConfig,
+          cwd,
+          getPromptRequest,
+        );
       }
 
       const output: Outputs = {};
 
-      const gptFunctions: GptFunction[] = tools.map((tool) => ({
-        name: tool.name,
-        description: tool.description ?? '',
-        parameters: tool.inputSchema,
-        strict: false,
-      }));
-
-      if (this.data.useToolsOutput) {
-        output['tools' as PortId] = {
-          type: 'gpt-function[]',
-          value: gptFunctions,
-        };
-      }
-
-      if (this.data.usePromptsOutput) {
-        output['prompts' as PortId] = {
-          type: 'object[]',
-          value: prompts.map((prompt) => ({
-            name: prompt.name,
-            description: prompt.description,
-            arguments: prompt.arugments,
-          })),
-        };
-      }
+      output['response' as PortId] = {
+        type: 'object',
+        value: getPromptResponse as unknown as Record<string, unknown>,
+      };
 
       return output;
     } catch (err) {
+      const { message } = getError(err);
       if (context.executor === 'browser') {
-        throw new Error('Failed to create Client without Node Executor');
+        throw new Error('Failed to create Client without a node executor');
       }
-
+      console.log(message);
       throw err;
     }
   }
 }
 
-export const mcpDiscoveryNode = nodeDefinition(MCPDiscoveryNodeImpl, 'MCP Discovery');
+export const mcpGetPromptNode = nodeDefinition(MCPGetPromptNodeImpl, 'MCP Get Prompt');

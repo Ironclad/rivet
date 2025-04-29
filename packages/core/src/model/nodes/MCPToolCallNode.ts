@@ -10,18 +10,20 @@ import { NodeImpl, type NodeUIData } from '../NodeImpl.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import { type Inputs, type Outputs } from '../GraphProcessor.js';
 
-import {
-  type EditorDefinition,
-  type InternalProcessContext,
-  MCPError,
-  MCPErrorType,
-  type MCPToolResponse,
-} from '../../index.js';
-import { coerceType, dedent, getInputOrData } from '../../utils/index.js';
+import { type InternalProcessContext } from '../../index.js';
+
+import { MCPError, MCPErrorType, type MCP } from '../../integrations/mcp/MCPProvider.js';
+import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
+
+import { getInputOrData } from '../../utils/index.js';
 import { getError } from '../../utils/errors.js';
 import { getMCPBaseInputs, type MCPBaseNodeData } from '../../integrations/mcp/MCPBase.js';
 import { getServerHelperMessage, getServerOptions, getStdioConfig } from '../../integrations/mcp/MCPUtils.js';
 import type { RivetUIContext } from '../RivetUIContext.js';
+import { dedent } from 'ts-dedent';
+import { type EditorDefinition } from '../EditorDefinition.js';
+import { interpolate } from '../../utils/interpolation.js';
+import { keys } from '../../utils/typeSafety.js';
 
 export type MCPToolCallNode = ChartNode<'mcpToolCall', MCPToolCallNodeData>;
 
@@ -47,12 +49,11 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
         width: 250,
       },
       data: {
-        name: 'mcp-toolCall-client',
+        name: 'mcp-tool-call-client',
         version: '1.0.0',
         transportType: 'stdio',
         serverUrl: 'http://localhost:8080/mcp',
         serverId: '',
-        headers: [],
         config: '',
         toolName: 'Name',
         toolArguments: dedent`
@@ -170,32 +171,14 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
     ];
 
     if (this.data.transportType === 'http') {
-      editors.push(
-        {
-          type: 'string',
-          label: 'Server URL',
-          dataKey: 'serverUrl',
-          useInputToggleDataKey: 'useServerUrlInput',
-          helperMessage: 'The endpoint URL for the MCP server to connect',
-        },
-        {
-          type: 'keyValuePair',
-          label: 'Headers',
-          dataKey: 'headers',
-          useInputToggleDataKey: 'useHeadersInput',
-          keyPlaceholder: 'Header',
-          valuePlaceholder: 'Value',
-          helperMessage: 'Headers to send with requests',
-        },
-      );
-    } else if (this.data.transportType === 'stdio') {
       editors.push({
-        type: 'toggle',
-        label: 'Use Configuration and Server ID Inputs',
-        dataKey: 'useConfigInput',
-        helperMessage: 'Whether to use inputs for configuration and server ID',
+        type: 'string',
+        label: 'Server URL',
+        dataKey: 'serverUrl',
+        useInputToggleDataKey: 'useServerUrlInput',
+        helperMessage: 'The endpoint URL for the MCP server to connect',
       });
-
+    } else if (this.data.transportType === 'stdio') {
       if (!this.data.useConfigInput) {
         const serverOptions = await getServerOptions(context);
 
@@ -207,6 +190,13 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
           options: serverOptions,
         });
       }
+
+      editors.push({
+        type: 'toggle',
+        label: 'Use Configuration and Server ID Inputs',
+        dataKey: 'useConfigInput',
+        helperMessage: 'Whether to use inputs for configuration and server ID',
+      });
     }
 
     return editors;
@@ -250,17 +240,40 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
     const version = getInputOrData(this.data, inputs, 'version', 'string');
 
     const toolName = getInputOrData(this.data, inputs, 'toolName', 'string');
-    const toolArguments = getInputOrData(this.data, inputs, 'toolArguments', 'object');
+
     const toolCallId = getInputOrData(this.data, inputs, 'toolCallId', 'string');
 
-    const toolCall = {
+    let toolArguments;
+
+    if (this.data.useToolArgumentsInput) {
+      toolArguments = getInputOrData(this.data, inputs, 'toolArguments', 'object');
+    } else {
+      const inputMap = keys(inputs)
+        .filter((key) => key.startsWith('input'))
+        .reduce(
+          (acc, key) => {
+            const stringValue = coerceTypeOptional(inputs[key], 'string') ?? '';
+
+            const interpolationKey = key.slice('input-'.length);
+            acc[interpolationKey] = stringValue;
+            return acc;
+          },
+          {} as Record<string, string>,
+        );
+
+      const interpolated = interpolate(this.data.toolArguments, inputMap);
+
+      toolArguments = JSON.parse(interpolated);
+    }
+
+    const toolCall: MCP.ToolCallRequest = {
       name: toolName,
       arguments: toolArguments,
     };
 
     const transportType = getInputOrData(this.data, inputs, 'transportType', 'string') as 'http' | 'stdio';
 
-    let toolResponse: MCPToolResponse | undefined = undefined;
+    let toolResponse: MCP.ToolCallResponse | undefined = undefined;
 
     try {
       if (!context.mcpProvider) {
@@ -285,7 +298,7 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
           ? coerceType(inputs['config' as PortId], 'string')
           : this.data.config ?? '';
         const serverId = this.data.useConfigInput
-          ? coerceType(inputs['config' as PortId], 'string')
+          ? coerceType(inputs['serverId' as PortId], 'string')
           : this.data.serverId ?? '';
 
         const serverConfig = await getStdioConfig(context, config, serverId, this.data.useConfigInput);

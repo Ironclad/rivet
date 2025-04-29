@@ -1,8 +1,8 @@
 import type { InternalProcessContext } from '../../model/ProcessContext.js';
 import type { RivetUIContext } from '../../model/RivetUIContext.js';
-import { MCPError, MCPErrorType, type MCPConfig, type MCPServerConfigWithId } from './MCPProvider.js';
+import { MCPError, MCPErrorType, type MCP } from './MCPProvider.js';
 
-export const loadMCPConfiguration = async (context: InternalProcessContext | RivetUIContext): Promise<MCPConfig> => {
+export const loadMCPConfiguration = async (context: InternalProcessContext | RivetUIContext): Promise<MCP.Config> => {
   if (context.executor !== 'nodejs') {
     throw new MCPError(MCPErrorType.CONFIG_NOT_FOUND, 'MCP config loading is not supported in browser environment');
   }
@@ -60,7 +60,7 @@ export const getStdioConfig = async (
   config: string,
   serverId: string,
   useConfigInput?: boolean,
-): Promise<MCPServerConfigWithId> => {
+): Promise<MCP.ServerConfigWithId> => {
   let configFile: object = {};
 
   if (useConfigInput) {
@@ -85,8 +85,8 @@ export const getStdioConfig = async (
     );
   }
 
-  let mcpConfig: MCPConfig;
-  let serverConfig: MCPServerConfigWithId | { config: undefined; serverId: string };
+  let mcpConfig: MCP.Config;
+  let serverConfig: MCP.ServerConfigWithId | { config: undefined; serverId: string };
 
   if (Object.keys(configFile).length === 0) {
     mcpConfig = await loadMCPConfiguration(context);
@@ -96,7 +96,7 @@ export const getStdioConfig = async (
     };
   } else {
     serverConfig = {
-      config: (configFile as MCPConfig).mcpServers[serverId],
+      config: (configFile as MCP.Config).mcpServers[serverId],
       serverId,
     };
   }
@@ -109,8 +109,19 @@ export const getStdioConfig = async (
 };
 
 export const getServerHelperMessage = (context: RivetUIContext, optionsLength: number): string => {
-  if (optionsLength > 0) return 'Select an MCP server from local configuration';
+  if (optionsLength > 0) return 'Select an MCP server from local configuration located at';
   if (context.executor !== 'nodejs') return 'STDIO mode requires Node Executor';
   if (!context.nativeApi) return 'Native API not available';
   return 'No MCP servers found in config';
+};
+
+export const sanitizeArguments = (obj: { [key: string]: unknown }): { [key: string]: string } => {
+  const result: { [key: string]: string } = {};
+  for (const key in obj) {
+    const val = obj[key];
+    if (typeof val === 'string') {
+      result[key] = val;
+    }
+  }
+  return result;
 };
