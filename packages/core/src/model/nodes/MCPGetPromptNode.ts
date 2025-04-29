@@ -200,11 +200,11 @@ export class MCPGetPromptNodeImpl extends NodeImpl<MCPGetPromptNode> {
   static getUIData(): NodeUIData {
     return {
       infoBoxBody: dedent`
-        Connects to an MCP (Model Context Protocol) server and calls a tool.
+        Connects to an MCP (Model Context Protocol) server and gets a prompt response.
       `,
       infoBoxTitle: 'MCP Get Prompt Node',
       contextMenuTitle: 'MCP Get Prompt',
-      group: ['AI', 'Integration'],
+      group: ['MCP'],
     };
   }
 

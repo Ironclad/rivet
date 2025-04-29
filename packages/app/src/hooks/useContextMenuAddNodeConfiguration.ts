@@ -61,6 +61,10 @@ export const addContextMenuGroups = [
     id: 'add-node-group:custom',
     label: 'Custom',
   },
+  {
+    id: 'add-node-group:mcp',
+    label: 'MCP',
+  },
 ] as const satisfies readonly ContextMenuItem[] & {
   items?: readonly ContextMenuItem[];
 };

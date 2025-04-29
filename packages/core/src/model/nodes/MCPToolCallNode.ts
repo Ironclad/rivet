@@ -227,11 +227,11 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
   static getUIData(): NodeUIData {
     return {
       infoBoxBody: dedent`
-        Connects to an MCP (Model Context Protocol) server and calls a tool.
+        Connects to an MCP (Model Context Protocol) server and gets a tool call response.
       `,
       infoBoxTitle: 'MCP Tool Call Node',
       contextMenuTitle: 'MCP Tool Call',
-      group: ['AI', 'Integration'],
+      group: ['MCP'],
     };
   }
 

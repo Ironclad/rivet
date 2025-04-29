@@ -180,7 +180,7 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
       `,
       infoBoxTitle: 'MCP Discovery Node',
       contextMenuTitle: 'MCP Discovery',
-      group: ['AI', 'Integration'],
+      group: ['MCP'],
     };
   }
 
