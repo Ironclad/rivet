@@ -1,4 +1,5 @@
-import type { NodeInputDefinition, PortId } from '../../model/NodeBase.js';
+import type { EditorDefinition } from '../../model/EditorDefinition.js';
+import type { ChartNode, NodeInputDefinition, PortId } from '../../model/NodeBase.js';
 import type { RivetUIContext } from '../../model/RivetUIContext.js';
 import type { MCP } from './MCPProvider.js';
 import { getServerHelperMessage, getServerOptions } from './MCPUtils.js';
@@ -18,6 +19,8 @@ export interface MCPBaseNodeData {
   useConfigInput?: boolean;
   useServerIdInput?: boolean;
 }
+
+export type MCPBaseNode = ChartNode<'mcpBase', MCPBaseNodeData>;
 
 export const getMCPBaseInputs = (data: MCPBaseNodeData) => {
   const inputs: NodeInputDefinition[] = [];
@@ -69,7 +72,10 @@ export const getMCPBaseInputs = (data: MCPBaseNodeData) => {
   return inputs;
 };
 
-export const getMCPBaseEditors = async (context: RivetUIContext, data: MCPBaseNodeData) => {
+export const getMCPBaseEditors = async (
+  context: RivetUIContext,
+  data: MCPBaseNodeData,
+): Promise<EditorDefinition<MCPBaseNode>[]> => {
   const editors = [];
 
   editors.push([
@@ -139,5 +145,5 @@ export const getMCPBaseEditors = async (context: RivetUIContext, data: MCPBaseNo
       });
     }
   }
-  return editors;
+  return editors as EditorDefinition<MCPBaseNode>[];
 };

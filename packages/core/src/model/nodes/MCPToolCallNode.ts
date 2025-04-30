@@ -29,7 +29,7 @@ export type MCPToolCallNode = ChartNode<'mcpToolCall', MCPToolCallNodeData>;
 
 export type MCPToolCallNodeData = MCPBaseNodeData & {
   toolName: string;
-  toolArguments: string;
+  toolArguments?: string;
   toolCallId?: string;
 
   useToolNameInput?: boolean;
@@ -55,12 +55,12 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
         serverUrl: 'http://localhost:8080/mcp',
         serverId: '',
         config: '',
-        toolName: 'Name',
+        toolName: '',
         toolArguments: dedent`
         {
           "key": "value",
         }`,
-        toolCallId: 'Id',
+        toolCallId: '',
         useNameInput: false,
         useVersionInput: false,
         useToolNameInput: true,
@@ -75,7 +75,7 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
   getInputDefinitions(): NodeInputDefinition[] {
     const inputs: NodeInputDefinition[] = getMCPBaseInputs(this.data);
 
-    if (this.data.toolName) {
+    if (this.data.useToolNameInput) {
       inputs.push({
         dataType: 'string',
         id: 'toolName' as PortId,
@@ -83,7 +83,7 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
       });
     }
 
-    if (this.data.toolArguments) {
+    if (this.data.useToolArgumentsInput) {
       inputs.push({
         dataType: 'object',
         id: 'toolArguments' as PortId,
@@ -91,7 +91,7 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
       });
     }
 
-    if (this.data.toolCallId) {
+    if (this.data.useToolCallIdInput) {
       inputs.push({
         dataType: 'object',
         id: 'toolCallId' as PortId,
@@ -247,6 +247,9 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
 
     if (this.data.useToolArgumentsInput) {
       toolArguments = getInputOrData(this.data, inputs, 'toolArguments', 'object');
+      if (toolArguments == null) {
+        throw new MCPError(MCPErrorType.INVALID_SCHEMA, 'Cannot parse tool argument with input toggle on');
+      }
     } else {
       const inputMap = keys(inputs)
         .filter((key) => key.startsWith('input'))
@@ -261,7 +264,7 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
           {} as Record<string, string>,
         );
 
-      const interpolated = interpolate(this.data.toolArguments, inputMap);
+      const interpolated = interpolate(this.data.toolArguments ?? '', inputMap);
 
       toolArguments = JSON.parse(interpolated);
     }

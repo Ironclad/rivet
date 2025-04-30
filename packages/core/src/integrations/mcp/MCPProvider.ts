@@ -1,3 +1,7 @@
+/**
+ * Derived from types here - https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/types.ts
+ */
+
 export namespace MCP {
   export type TransportType = 'stdio' | 'http';
 
@@ -113,6 +117,7 @@ export enum MCPErrorType {
   SERVER_START_FAILED = 'SERVER_START_FAILED',
   SERVER_COMMUNICATION_FAILED = 'SERVER_COMMUNICATION_FAILED',
   INVALID_RESPONSE = 'INVALID_RESPONSE',
+  INVALID_SCHEMA = 'INVALID_SCHEMA',
   HTTP_ERROR = 'HTTP_ERROR',
   UNKNOWN_ERROR = 'UNKNOWN_ERROR',
 }

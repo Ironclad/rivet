@@ -114,14 +114,3 @@ export const getServerHelperMessage = (context: RivetUIContext, optionsLength: n
   if (!context.nativeApi) return 'Native API not available';
   return 'No MCP servers found in config';
 };
-
-export const sanitizeArguments = (obj: { [key: string]: unknown }): { [key: string]: string } => {
-  const result: { [key: string]: string } = {};
-  for (const key in obj) {
-    const val = obj[key];
-    if (typeof val === 'string') {
-      result[key] = val;
-    }
-  }
-  return result;
-};

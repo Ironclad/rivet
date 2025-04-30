@@ -13,18 +13,16 @@ import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { type EditorDefinition, type InternalProcessContext } from '../../index.js';
 
 import { MCPError, MCPErrorType, type MCP } from '../../integrations/mcp/MCPProvider.js';
-import { coerceType } from '../../utils/coerceType.js';
+
+import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
 
 import { dedent, getInputOrData } from '../../utils/index.js';
 import { getError } from '../../utils/errors.js';
 import { getMCPBaseInputs, type MCPBaseNodeData } from '../../integrations/mcp/MCPBase.js';
-import {
-  getServerHelperMessage,
-  getServerOptions,
-  getStdioConfig,
-  sanitizeArguments,
-} from '../../integrations/mcp/MCPUtils.js';
+import { getServerHelperMessage, getServerOptions, getStdioConfig } from '../../integrations/mcp/MCPUtils.js';
 import type { RivetUIContext } from '../RivetUIContext.js';
+import { keys } from '../../utils/typeSafety.js';
+import { interpolate } from '../../utils/interpolation.js';
 
 export type MCPGetPromptNode = ChartNode<'mcpGetPrompt', MCPGetPromptNodeData>;
 
@@ -54,12 +52,15 @@ export class MCPGetPromptNodeImpl extends NodeImpl<MCPGetPromptNode> {
         serverUrl: 'http://localhost:8080/mcp',
         serverId: '',
         config: '',
-        promptName: 'Name',
-        promptArguments: '',
+        promptName: '',
+        promptArguments: dedent`
+        {
+          "key": "value",
+        }`,
         useNameInput: false,
         useVersionInput: false,
-        usePromptNameInput: true,
-        usePromptArgumentsInput: true,
+        usePromptNameInput: false,
+        usePromptArgumentsInput: false,
       },
     };
 
@@ -193,7 +194,7 @@ export class MCPGetPromptNodeImpl extends NodeImpl<MCPGetPromptNode> {
     if (this.data.transportType === 'stdio' && context.executor !== 'nodejs') {
       parts.push('(Requires Node Executor)');
     }
-    parts.push(this.data.promptArguments);
+
     return parts.join('\n');
   }
 
@@ -213,13 +214,38 @@ export class MCPGetPromptNodeImpl extends NodeImpl<MCPGetPromptNode> {
     const version = getInputOrData(this.data, inputs, 'version', 'string');
 
     const promptName = getInputOrData(this.data, inputs, 'promptName', 'string');
-    const promptArguments = getInputOrData(this.data, inputs, 'promptArguments', 'object');
-    const sanitizedPromptArguments = sanitizeArguments(promptArguments);
+
+    let promptArguments;
+
+    if (this.data.usePromptArgumentsInput) {
+      promptArguments = getInputOrData(this.data, inputs, 'promptArguments', 'object');
+
+      if (promptArguments == null) {
+        throw new MCPError(MCPErrorType.INVALID_SCHEMA, 'Cannot parse tool argument with input toggle on');
+      }
+    } else {
+      const inputMap = keys(inputs)
+        .filter((key) => key.startsWith('input'))
+        .reduce(
+          (acc, key) => {
+            const stringValue = coerceTypeOptional(inputs[key], 'string') ?? '';
+
+            const interpolationKey = key.slice('input-'.length);
+            acc[interpolationKey] = stringValue;
+            return acc;
+          },
+          {} as Record<string, string>,
+        );
+
+      const interpolated = interpolate(this.data.promptArguments ?? '', inputMap);
+
+      promptArguments = JSON.parse(interpolated);
+    }
+
     const getPromptRequest: MCP.GetPromptRequest = {
       name: promptName,
-      arguments: sanitizedPromptArguments,
+      arguments: promptArguments,
     };
-    console.log({ sanitizedPromptArguments });
 
     const transportType = getInputOrData(this.data, inputs, 'transportType', 'string') as 'http' | 'stdio';
 
