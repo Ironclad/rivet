@@ -46,9 +46,6 @@ export class DummyNativeApi implements NativeApi {
   exec(command: string, args: string[], options?: { cwd?: string | undefined } | undefined): Promise<void> {
     throw new Error(`Method not implemented. ${command}  ${args} ${options}`);
   }
-  async resolveBaseDir(_baseDir?: BaseDir, path?: string): Promise<string> {
-    return path ?? '';
-  }
 }
 
 export function createTestGraphRunner(opts: { openAiKey: string; executor?: 'nodejs' | 'browser' }): TrivetGraphRunner {

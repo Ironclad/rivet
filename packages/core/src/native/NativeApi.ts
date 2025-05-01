@@ -18,6 +18,4 @@ export interface NativeApi {
   writeTextFile(path: string, data: string, baseDir?: BaseDir): Promise<void>;
 
   exec(command: string, args: string[], options?: { cwd?: string }): Promise<void>;
-
-  resolveBaseDir(baseDir?: BaseDir, path?: string): Promise<string>;
 }

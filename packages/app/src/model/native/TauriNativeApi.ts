@@ -88,15 +88,4 @@ export class TauriNativeApi implements NativeApi {
   async exec(command: string, args: string[], options?: { cwd?: string | undefined } | undefined): Promise<void> {
     throw new Error('Method not implemented.');
   }
-
-  async resolveBaseDir(baseDir?: BaseDir, path?: string): Promise<string> {
-    if (!baseDir || !path) {
-      return path ?? '';
-    }
-    const baseDirectory = baseDirToBaseDirectory(baseDir);
-    if (!baseDirectory) {
-      throw new Error(`Unsupported base directory: ${baseDir}`);
-    }
-    return await resolveResource(path);
-  }
 }
