@@ -9,7 +9,7 @@ export const loadMCPConfiguration = async (context: InternalProcessContext | Riv
 
   const mcpConfig = context.project.metadata.mcpServer;
   if (!mcpConfig || mcpConfig.mcpServers == null) {
-    throw new MCPError(MCPErrorType.CONFIG_NOT_FOUND, 'MCP config not defined in Project settings');
+    throw new MCPError(MCPErrorType.CONFIG_NOT_FOUND, 'MCP configuration not defined in Project tab');
   }
 
   return mcpConfig;
@@ -33,7 +33,6 @@ export const getServerOptions = async (context: RivetUIContext): Promise<{ label
 
 export const getServerHelperMessage = (context: RivetUIContext, optionsLength: number): string => {
   if (optionsLength > 0) return 'Select an MCP server from local configuration located in the Project tab';
-  if (context.executor !== 'nodejs') return 'STDIO mode requires Node Executor';
-  if (!context.nativeApi) return 'Native API not available';
+  if (context.executor !== 'nodejs') return 'MCP nodes require Node Executor';
   return 'No MCP servers found in config';
 };
