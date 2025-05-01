@@ -43,8 +43,8 @@ export const getMCPBaseInputs = (data: MCPBaseNodeData) => {
     inputs.push({
       dataType: 'string',
       id: 'serverUrl' as PortId,
-      title: 'MCP Server URL',
-      description: 'The endpoint URL for the MCP server to connect',
+      title: 'Server URL',
+      description: 'The endpoint URL for the MCP server',
     });
   }
 

@@ -177,7 +177,7 @@ export class MCPGetPromptNodeImpl extends NodeImpl<MCPGetPromptNode> {
     const versionPart = `Version: ${this.data.version}`;
     const parts = [namePart, versionPart, base];
 
-    if (this.data.transportType === 'stdio' && context.executor !== 'nodejs') {
+    if (context.executor !== 'nodejs') {
       parts.push('(Requires Node Executor)');
     }
 
