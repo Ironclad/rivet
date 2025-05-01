@@ -57,7 +57,7 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
         toolName: '',
         toolArguments: dedent`
         {
-          "key": "value",
+          "key": "value"
         }`,
         toolCallId: '',
         useNameInput: false,

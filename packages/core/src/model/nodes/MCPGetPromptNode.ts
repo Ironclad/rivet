@@ -54,7 +54,7 @@ export class MCPGetPromptNodeImpl extends NodeImpl<MCPGetPromptNode> {
         promptName: '',
         promptArguments: dedent`
         {
-          "key": "value",
+          "key": "value"
         }`,
         useNameInput: false,
         useVersionInput: false,

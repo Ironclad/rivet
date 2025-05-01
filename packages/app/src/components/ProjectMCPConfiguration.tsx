@@ -1,14 +1,14 @@
 import { Field,  } from '@atlaskit/form';
-import { useState, type FC } from 'react';
+import { Suspense, useState, type FC } from 'react';
 import { useAtom,  } from 'jotai';
 import { projectMetadataState, } from '../state/savedGraphs';
 import { useToggle } from 'ahooks';
 import Modal, { ModalTransition, ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@atlaskit/modal-dialog';
 import { css } from '@emotion/react';
 import Button from '@atlaskit/button';
-import TextArea from '@atlaskit/textarea';
 import { type MCP } from '@ironclad/rivet-core';
 import { toast } from 'react-toastify';
+import { LazyCodeEditor } from './LazyComponents';
 
 
 export const ProjectMCPConfiguration: FC = () => {
@@ -39,7 +39,7 @@ export const ProjectMCPConfiguration: FC = () => {
       toast.success('MCP Configuration saved successfully');
       onClose();
     } catch (err) {
-      console.log(err);
+      console.error(err);
       toast.error('Failed to save MCP Configuration: Please make sure your configuration is correctly JSON formatted.');
     }
   };
@@ -76,8 +76,9 @@ export const MCPConfigModal: FC<{
   onSave: (config: string) => void;
   onClose: () => void;
 }> = ({initialConfig, onSave, onClose}) => {
+
   const [config, setConfig] = useState(JSON.stringify(initialConfig, null, 2) ?? '');
-  console.log({config});
+
   const handleSave = () => {
       onSave?.(config);
   };
@@ -88,6 +89,17 @@ export const MCPConfigModal: FC<{
           <ModalTitle>Edit MCP Configuration</ModalTitle>
         </ModalHeader>
         <ModalBody>
+          <div css={css`
+          .editor {
+            height: 400px;
+            display: flex;
+            resize: vertical;
+
+            > div {
+              width: 100%;
+            }
+          }
+          `}>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -99,18 +111,20 @@ export const MCPConfigModal: FC<{
               The configuration must be a JSON parsable string.
               MCP Configuration mentioned here will be saved with the Rivet project file.
             </p>
+
             <Field name="config" label="Configuration (JSON)">
-              {() => (
-                <TextArea
-                  placeholder="MCP Configuration"
-                  value={config}
-                  isMonospaced
-                  isRequired
-                  onChange={(e) => setConfig((e.target).value)}
-                />
-              )}
+            {() => <div className="editor">
+                  <Suspense fallback={<div />}>
+                    <LazyCodeEditor
+                      text={config}
+                      onChange={(v) => setConfig(v)}
+                      autoFocus
+                    />
+                  </Suspense>
+                </div>}
             </Field>
           </form>
+          </div>
         </ModalBody>
         <ModalFooter>
           <div
