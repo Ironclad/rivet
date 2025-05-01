@@ -1,6 +1,7 @@
 import type { Opaque } from 'type-fest';
 import { type GraphId, type NodeGraph } from './NodeGraph.js';
 import { type PluginLoadSpec } from './PluginLoadSpec.js';
+import type { MCP } from '../integrations/mcp/MCPProvider.js';
 
 export type ProjectId = Opaque<string, 'ProjectId'>;
 
@@ -25,6 +26,8 @@ export type ProjectMetadata = {
   description: string;
   mainGraphId?: GraphId;
   path?: string;
+
+  mcpServer?: MCP.Config;
 };
 
 /** A reference to another project file. Project references cannot be cyclic. */

@@ -11,12 +11,11 @@ import {
 } from '../../index.js';
 
 import { MCPError, MCPErrorType, type MCP } from '../../integrations/mcp/MCPProvider.js';
-import { coerceType } from '../../utils/coerceType.js';
 
 import { dedent, getInputOrData } from '../../utils/index.js';
 import { nodeDefinition } from '../NodeDefinition.js';
 import type { RivetUIContext } from '../RivetUIContext.js';
-import { getServerHelperMessage, getServerOptions, getStdioConfig } from '../../integrations/mcp/MCPUtils.js';
+import { getServerHelperMessage, getServerOptions, loadMCPConfiguration } from '../../integrations/mcp/MCPUtils.js';
 import { getMCPBaseInputs, type MCPBaseNodeData } from '../../integrations/mcp/MCPBase.js';
 
 type MCPDiscoveryNode = ChartNode<'mcpDiscovery', MCPDiscoveryNodeData>;
@@ -40,7 +39,6 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
         transportType: 'stdio',
         serverUrl: 'http://localhost:8080/mcp',
         serverId: '',
-        config: '',
         useNameInput: false,
         useVersionInput: false,
         useToolsOutput: true,
@@ -129,23 +127,14 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
         helperMessage: 'The base URL endpoint for the MCP server with `/mcp`',
       });
     } else if (this.data.transportType === 'stdio') {
-      if (!this.data.useConfigInput) {
-        const serverOptions = await getServerOptions(context);
-
-        editors.push({
-          type: 'dropdown',
-          label: 'Server ID',
-          dataKey: 'serverId',
-          helperMessage: getServerHelperMessage(context, serverOptions.length),
-          options: serverOptions,
-        });
-      }
+      const serverOptions = await getServerOptions(context);
 
       editors.push({
-        type: 'toggle',
-        label: 'Use Configuration and Server ID Inputs',
-        dataKey: 'useConfigInput',
-        helperMessage: 'Whether to use inputs for configuration and server ID',
+        type: 'dropdown',
+        label: 'Server ID',
+        dataKey: 'serverId',
+        helperMessage: getServerHelperMessage(context, serverOptions.length),
+        options: serverOptions,
       });
     }
     return editors;
@@ -156,11 +145,7 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
     if (this.data.transportType === 'http') {
       base = this.data.useServerUrlInput ? '(Using Server URL Input)' : this.data.serverUrl;
     } else {
-      if (this.data.useConfigInput) {
-        base = `Config: Input, Server ID: Input`;
-      } else {
-        base = `Server ID: ${this.data.serverId || '(None)'}`;
-      }
+      base = `Server ID: ${this.data.serverId || '(None)'}`;
     }
     const namePart = `Name: ${this.data.name}`;
     const versionPart = `Version: ${this.data.version}`;
@@ -213,18 +198,20 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
         tools = await context.mcpProvider.getHTTPTools({ name, version }, serverUrl);
         prompts = await context.mcpProvider.getHTTPrompts({ name, version }, serverUrl);
       } else if (transportType === 'stdio') {
-        const config = this.data.useConfigInput
-          ? coerceType(inputs['config' as PortId], 'string')
-          : this.data.config ?? '';
-        const serverId = this.data.useConfigInput
-          ? coerceType(inputs['serverId' as PortId], 'string')
-          : this.data.serverId ?? '';
+        const serverId = this.data.serverId ?? '';
 
-        const serverConfig = await getStdioConfig(context, config, serverId, this.data.useConfigInput);
-        const cwd = context.nativeApi ? await context.nativeApi.resolveBaseDir('appConfig', '.') : undefined;
+        const mcpConfig = await loadMCPConfiguration(context);
+        if (!mcpConfig.mcpServers[serverId]) {
+          throw new MCPError(MCPErrorType.SERVER_NOT_FOUND, `Server ${serverId} not found in MCP config`);
+        }
 
-        tools = await context.mcpProvider.getStdioTools({ name, version }, serverConfig, cwd);
-        prompts = await context.mcpProvider.getStdioPrompts({ name, version }, serverConfig, cwd);
+        const serverConfig = {
+          config: mcpConfig.mcpServers[serverId],
+          serverId,
+        };
+
+        tools = await context.mcpProvider.getStdioTools({ name, version }, serverConfig);
+        prompts = await context.mcpProvider.getStdioPrompts({ name, version }, serverConfig);
       }
 
       const output: Outputs = {};

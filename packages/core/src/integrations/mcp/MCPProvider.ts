@@ -143,7 +143,6 @@ export interface MCPProvider {
   getStdioTools(
     clientConfig: { name: string; version: string },
     serverConfig: MCP.ServerConfigWithId,
-    cwd: string | undefined,
   ): Promise<MCP.Tool[]>;
 
   getHTTPrompts(clientConfig: { name: string; version: string }, serverUrl: string): Promise<MCP.Prompt[]>;
@@ -151,7 +150,6 @@ export interface MCPProvider {
   getStdioPrompts(
     clientConfig: { name: string; version: string },
     serverConfig: MCP.ServerConfigWithId,
-    cwd: string | undefined,
   ): Promise<MCP.Prompt[]>;
 
   httpToolCall(
@@ -163,7 +161,6 @@ export interface MCPProvider {
   stdioToolCall(
     clientConfig: { name: string; version: string },
     serverConfig: MCP.ServerConfigWithId,
-    cwd: string | undefined,
     toolCall: MCP.ToolCallRequest,
   ): Promise<MCP.ToolCallResponse>;
 
@@ -176,7 +173,6 @@ export interface MCPProvider {
   getStdioPrompt(
     clientConfig: { name: string; version: string },
     serverConfig: MCP.ServerConfigWithId,
-    cwd: string | undefined,
     getPromptRequest: MCP.GetPromptRequest,
   ): Promise<MCP.GetPromptResponse>;
 }

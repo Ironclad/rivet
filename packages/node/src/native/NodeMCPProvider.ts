@@ -99,11 +99,7 @@ export class NodeMCPProvider implements MCPProvider {
    * STDIO
    */
 
-  async #getStdioClient(
-    clientConfig: { name: string; version: string },
-    serverConfig: MCP.ServerConfigWithId,
-    cwd: string | undefined,
-  ) {
+  async #getStdioClient(clientConfig: { name: string; version: string }, serverConfig: MCP.ServerConfigWithId) {
     try {
       const client = new Client(clientConfig);
       console.log(serverConfig);
@@ -111,7 +107,6 @@ export class NodeMCPProvider implements MCPProvider {
       const transport = new StdioClientTransport({
         command: serverConfig.config.command,
         args: serverConfig.config.args || [],
-        cwd: cwd,
       });
 
       await client.connect(transport);
@@ -125,11 +120,10 @@ export class NodeMCPProvider implements MCPProvider {
   async stdioToolCall(
     clientConfig: { name: string; version: string },
     serverConfig: MCP.ServerConfigWithId,
-    cwd: string | undefined,
     toolCall: MCP.ToolCallRequest,
   ): Promise<MCP.ToolCallResponse> {
     try {
-      const client = await this.#getStdioClient(clientConfig, serverConfig, cwd);
+      const client = await this.#getStdioClient(clientConfig, serverConfig);
 
       const response = await this.#callTool(client, toolCall);
       await client.close();
@@ -143,10 +137,9 @@ export class NodeMCPProvider implements MCPProvider {
   async getStdioTools(
     clientConfig: { name: string; version: string },
     serverConfig: MCP.ServerConfigWithId,
-    cwd: string | undefined,
   ): Promise<MCP.Tool[]> {
     try {
-      const client = await this.#getStdioClient(clientConfig, serverConfig, cwd);
+      const client = await this.#getStdioClient(clientConfig, serverConfig);
 
       const response = await this.#getTools(client);
       await client.close();
@@ -160,9 +153,8 @@ export class NodeMCPProvider implements MCPProvider {
   async getStdioPrompts(
     clientConfig: { name: string; version: string },
     serverConfig: MCP.ServerConfigWithId,
-    cwd: string | undefined,
   ): Promise<MCP.Prompt[]> {
-    const client = await this.#getStdioClient(clientConfig, serverConfig, cwd);
+    const client = await this.#getStdioClient(clientConfig, serverConfig);
 
     const response = await this.#getPrompts(client);
     await client.close();
@@ -173,10 +165,9 @@ export class NodeMCPProvider implements MCPProvider {
   async getStdioPrompt(
     clientConfig: { name: string; version: string },
     serverConfig: MCP.ServerConfigWithId,
-    cwd: string | undefined,
     getPromptRequest: MCP.GetPromptRequest,
   ): Promise<MCP.GetPromptResponse> {
-    const client = await this.#getStdioClient(clientConfig, serverConfig, cwd);
+    const client = await this.#getStdioClient(clientConfig, serverConfig);
 
     const response = await this.#getPrompt(client, getPromptRequest);
 

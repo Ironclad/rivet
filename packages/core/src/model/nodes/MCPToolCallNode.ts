@@ -13,12 +13,12 @@ import { type Inputs, type Outputs } from '../GraphProcessor.js';
 import { type InternalProcessContext } from '../../index.js';
 
 import { MCPError, MCPErrorType, type MCP } from '../../integrations/mcp/MCPProvider.js';
-import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
+import { coerceTypeOptional } from '../../utils/coerceType.js';
 
 import { getInputOrData } from '../../utils/index.js';
 import { getError } from '../../utils/errors.js';
 import { getMCPBaseInputs, type MCPBaseNodeData } from '../../integrations/mcp/MCPBase.js';
-import { getServerHelperMessage, getServerOptions, getStdioConfig } from '../../integrations/mcp/MCPUtils.js';
+import { getServerHelperMessage, getServerOptions, loadMCPConfiguration } from '../../integrations/mcp/MCPUtils.js';
 import type { RivetUIContext } from '../RivetUIContext.js';
 import { dedent } from 'ts-dedent';
 import { type EditorDefinition } from '../EditorDefinition.js';
@@ -54,7 +54,6 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
         transportType: 'stdio',
         serverUrl: 'http://localhost:8080/mcp',
         serverId: '',
-        config: '',
         toolName: '',
         toolArguments: dedent`
         {
@@ -179,23 +178,14 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
         helperMessage: 'The endpoint URL for the MCP server to connect',
       });
     } else if (this.data.transportType === 'stdio') {
-      if (!this.data.useConfigInput) {
-        const serverOptions = await getServerOptions(context);
-
-        editors.push({
-          type: 'dropdown',
-          label: 'Server ID',
-          dataKey: 'serverId',
-          helperMessage: getServerHelperMessage(context, serverOptions.length),
-          options: serverOptions,
-        });
-      }
+      const serverOptions = await getServerOptions(context);
 
       editors.push({
-        type: 'toggle',
-        label: 'Use Configuration and Server ID Inputs',
-        dataKey: 'useConfigInput',
-        helperMessage: 'Whether to use inputs for configuration and server ID',
+        type: 'dropdown',
+        label: 'Server ID',
+        dataKey: 'serverId',
+        helperMessage: getServerHelperMessage(context, serverOptions.length),
+        options: serverOptions,
       });
     }
 
@@ -207,11 +197,7 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
     if (this.data.transportType === 'http') {
       base = this.data.useServerUrlInput ? '(Using Server URL Input)' : this.data.serverUrl;
     } else {
-      if (this.data.useConfigInput) {
-        base = `Config: Input, Server ID: Input`;
-      } else {
-        base = `Server ID: ${this.data.serverId || '(None)'}`;
-      }
+      base = `Server ID: ${this.data.serverId || '(None)'}`;
     }
     const namePart = `Name: ${this.data.name}`;
     const versionPart = `Version: ${this.data.version}`;
@@ -297,17 +283,19 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
 
         toolResponse = await context.mcpProvider.httpToolCall({ name, version }, serverUrl, toolCall);
       } else if (transportType === 'stdio') {
-        const config = this.data.useConfigInput
-          ? coerceType(inputs['config' as PortId], 'string')
-          : this.data.config ?? '';
-        const serverId = this.data.useConfigInput
-          ? coerceType(inputs['serverId' as PortId], 'string')
-          : this.data.serverId ?? '';
+        const serverId = this.data.serverId ?? '';
 
-        const serverConfig = await getStdioConfig(context, config, serverId, this.data.useConfigInput);
-        const cwd = context.nativeApi ? await context.nativeApi.resolveBaseDir('appConfig', '.') : undefined;
+        const mcpConfig = await loadMCPConfiguration(context);
+        if (!mcpConfig.mcpServers[serverId]) {
+          throw new MCPError(MCPErrorType.SERVER_NOT_FOUND, `Server ${serverId} not found in MCP config`);
+        }
 
-        toolResponse = await context.mcpProvider.stdioToolCall({ name, version }, serverConfig, cwd, toolCall);
+        const serverConfig = {
+          config: mcpConfig.mcpServers[serverId],
+          serverId,
+        };
+
+        toolResponse = await context.mcpProvider.stdioToolCall({ name, version }, serverConfig, toolCall);
       }
 
       const output: Outputs = {};
@@ -334,4 +322,4 @@ export class MCPToolCallNodeImpl extends NodeImpl<MCPToolCallNode> {
   }
 }
 
-export const mcpToolCallNode = nodeDefinition(MCPToolCallNodeImpl, 'Http Call');
+export const mcpToolCallNode = nodeDefinition(MCPToolCallNodeImpl, 'MCP Tool Call');
