@@ -1,0 +1,84 @@
+---
+id: mcp-tool-call
+title: MCP Tool Call Node
+sidebar_label: MCP Tool Call Node
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+![MCP Tool Call Node Screenshot](./assets/mcp_tool_call_node.png)
+
+## Overview
+
+The [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) enables communication with MCP-compliant servers through either HTTP or Stdio transports.
+
+The MCP Tool Call Node enables the ability to call a function on an MCP server. [MCP Tools](https://modelcontextprotocol.io/docs/concepts/tools).
+
+For all communication purposes the MCP Tool Call Node follows the precedent of the [MCP Discovery Node](./mcp-discovery.mdx).
+
+Please refer to the MCP Discovery Node for all MCP communication configuration details.
+
+This page is dedicated to MCP Tool Call Node specific details only.
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+## Inputs
+
+| Title             | Data Type | Description                              | Default Value        | Notes                                                                             |
+| ----------------- | --------- | ---------------------------------------- | -------------------- | --------------------------------------------------------------------------------- |
+| Name              | `string`  | The name for the MCP Client instance     | mcp-tool-call-client | Standard required parameter for an MCP Client                                     |
+| Version           | `string`  | The version for the MCP Client instance  | 1.0.0                | Standard required parameter for an MCP Client                                     |
+| Server URL (HTTP) | `string`  | The endpoint URL for the MCP server      | None                 | Only available when using HTTP mode with Server URL Input enabled                 |
+| Tool Name         | `string`  | The name for the tool to call            | None                 | The string should match the tool name retrived from the server                    |
+| Tool Arguments    | `object`  | The arguments to supply to the tool call | None                 | The arguments should be a JSON parsable and correct shape based on the MCP schema |
+| Tool ID           | `string`  | The ID associated with the tool call     | None                 | This is passthrough input to help with message history consistency                |
+
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title    | Data Type | Description                                 |
+| -------- | --------- | ------------------------------------------- |
+| Response | `object`  | Result response returned from the tool call |
+| Tool ID  | `string`  | The ID associated with the tool call        |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting        | Description                                                   | Default Value             | Use Input Toggle | Input Data Type |
+| -------------- | ------------------------------------------------------------- | ------------------------- | ---------------- | --------------- |
+| Name           | The name to use for the MCP Client instance                   | mcp-tool-call-client      | Yes              | `string`        |
+| Version        | The version to use for the MCP Client instance                | 1.0.0                     | Yes              | `string`        |
+| Transport Type | The mode of communication with the MCP server (HTTP or STDIO) | STDIO                     | No               | N/A             |
+| Server URL     | The endpoint URL for the MCP server (Only HTTP)               | http://localhost:8080/mcp | Yes              | `string`        |
+| Server ID      | The MCP server ID from configuration (Only STDIO)             | (empty)                   | No               | N/A             |
+| Tool Name      | The name for the tool to call                                 | None                      | Yes              | `string`        |
+| Tool Arguments | The arguments to supply to the tool call                      | `{ "key": "value", }`     | Yes              | `object`        |
+| Tool ID        | The ID for the tool call                                      | None                      | Yes              | `string`        |
+
+</TabItem>
+
+</Tabs>
+
+## See Also
+
+- [MCP Discovery Node](./mcp-discovery.mdx)
+- [MCP Get Prompt Node](./mcp-get-prompt.mdx)
+- [Object Node](./object.mdx)
+- [Text Node](./text.mdx)
+- [To JSON Node](./to-json.mdx)

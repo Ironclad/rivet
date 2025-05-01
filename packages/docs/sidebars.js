@@ -190,7 +190,17 @@ const sidebars = {
         'node-reference/trim-chat-messages',
       ],
     },
-
+    {
+      type: 'category',
+      label: 'MCP',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        'node-reference/mcp-discovery',
+        'node-reference/mcp-tool-call',
+        'node-reference/mcp-get-prompt',
+      ],
+    },
     {
       type: 'category',
       label: 'Lists',
