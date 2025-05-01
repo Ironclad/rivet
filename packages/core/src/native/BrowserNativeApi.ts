@@ -21,8 +21,4 @@ export class BrowserNativeApi implements NativeApi {
   exec(): Promise<void> {
     throw new Error('Method not supported.');
   }
-
-  async resolveBaseDir(_baseDir?: BaseDir, path?: string): Promise<string> {
-    return path ?? '';
-  }
 }

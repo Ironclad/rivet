@@ -1,5 +1,4 @@
 import { readDir, BaseDirectory, readTextFile, readBinaryFile, writeFile, type FileEntry } from '@tauri-apps/api/fs';
-import { resolveResource } from '@tauri-apps/api/path';
 import { type BaseDir, type NativeApi, type ReadDirOptions } from '@ironclad/rivet-core';
 
 import { minimatch } from 'minimatch';
