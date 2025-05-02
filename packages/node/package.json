@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@ironclad/rivet-core": "workspace:^",
+    "@modelcontextprotocol/sdk": "^1.10.2",
     "emittery": "^1.0.1",
     "emittery-0-13": "npm:emittery@^0.13.1",
     "lodash": "^4.17.21",

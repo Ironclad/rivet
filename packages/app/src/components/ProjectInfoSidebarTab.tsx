@@ -17,6 +17,7 @@ import { ProjectRevisions } from './ProjectRevisionList';
 import { useAtom, useAtomValue } from 'jotai';
 import { swallowPromise } from '../utils/syncWrapper';
 import { ProjectReferencesConfiguration } from './ProjectReferencesConfiguration';
+import { ProjectMCPConfiguration } from './ProjectMCPConfiguration';
 
 const styles = css`
   .context-list {
@@ -138,6 +139,7 @@ export const ProjectInfoSidebarTab: FC = () => {
         onConfirm={(newValue) => setProject({ ...project, metadata: { ...project.metadata, description: newValue } })}
         readViewFitContainerWidth
       />
+      <ProjectMCPConfiguration />
 
       <Field name="mainGraph" label="Main Graph">
         {() => (

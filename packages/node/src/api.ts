@@ -20,6 +20,7 @@ import * as events from 'node:events';
 import { NodeCodeRunner } from './native/NodeCodeRunner.js';
 import type { RivetDebuggerServer } from './debugger.js';
 import { NodeProjectReferenceLoader } from './native/NodeProjectReferenceLoader.js';
+import { NodeMCPProvider } from './native/NodeMCPProvider.js';
 
 export async function loadProjectFromFile(path: string): Promise<Project> {
   const content = await readFile(path, { encoding: 'utf8' });
@@ -69,6 +70,7 @@ export function createProcessor(
         {
           nativeApi: options.nativeApi ?? new NodeNativeApi(),
           datasetProvider: options.datasetProvider,
+          mcpProvider: options.mcpProvider ?? new NodeMCPProvider(),
           audioProvider: options.audioProvider,
           tokenizer: options.tokenizer,
           codeRunner: options.codeRunner ?? new NodeCodeRunner(),

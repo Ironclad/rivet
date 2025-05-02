@@ -1,0 +1,81 @@
+---
+id: mcp-get-prompt
+title: MCP Get Prompt Node
+sidebar_label: MCP Get Prompt Node
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+![MCP Get Prompt Node Screenshot](./assets/mcp_get_prompt_node.png)
+
+## Overview
+
+The [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) enables communication with MCP-compliant servers through either HTTP or Stdio transports.
+
+The MCP Get Prompt Node enables the ability to fetch a prompt from an MCP server using the `prompts/get` request method. [MCP Prompts](https://modelcontextprotocol.io/docs/concepts/prompts).
+
+For all communication purposes the MCP Get Prompt Node follows the precedent of the [MCP Discovery Node](./mcp-discovery.mdx).
+
+Please refer to the MCP Discovery Node for all MCP communication configuration details.
+
+This page is dedicated to MCP Get Prompt Node specific details only.
+
+<Tabs
+  defaultValue="inputs"
+  values={[
+    {label: 'Inputs', value: 'inputs'},
+    {label: 'Outputs', value: 'outputs'},
+    {label: 'Editor Settings', value: 'settings'},
+  ]
+}>
+
+<TabItem value="inputs">
+
+## Inputs
+
+| Title             | Data Type | Description                                         | Default Value         | Notes                                                                             |
+| ----------------- | --------- | --------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------- |
+| Name              | `string`  | The name for the MCP Client instance                | mcp-get-prompt-client | Standard required parameter for an MCP Client                                     |
+| Version           | `string`  | The version for the MCP Client instance             | 1.0.0                 | Standard required parameter for an MCP Client                                     |
+| Server URL (HTTP) | `string`  | The endpoint URL for the MCP server                 | None                  | Only available when using HTTP mode with Server URL Input enabled                 |
+| Prompt Name       | `string`  | The name for the prompt to get from the server      | None                  | The string should match the prompt name retrived from the server                  |
+| Prompt Arguments  | `object`  | The arguments for the prompt to get from the server | None                  | The arguments should be a JSON parsable and correct shape based on the MCP schema |
+
+</TabItem>
+
+<TabItem value="outputs">
+
+## Outputs
+
+| Title  | Data Type | Description                           | Notes                                   |
+| ------ | --------- | ------------------------------------- | --------------------------------------- |
+| Prompt | `object`  | MCP prompt returned by the MCP server | Returned from the `prompts/get` method. |
+
+</TabItem>
+
+<TabItem value="settings">
+
+## Editor Settings
+
+| Setting          | Description                                                   | Default Value             | Use Input Toggle | Input Data Type |
+| ---------------- | ------------------------------------------------------------- | ------------------------- | ---------------- | --------------- |
+| Name             | The name to use for the MCP Client instance                   | mcp-get-prompt-client     | Yes              | `string`        |
+| Version          | The version to use for the MCP Client instance                | 1.0.0                     | Yes              | `string`        |
+| Transport Type   | The mode of communication with the MCP server (HTTP or STDIO) | STDIO                     | No               | N/A             |
+| Server URL       | The endpoint URL for the MCP server (Only HTTP)               | http://localhost:8080/mcp | Yes              | `string`        |
+| Server ID        | The MCP server ID from configuration (Only STDIO)             | (empty)                   | No               | N/A             |
+| Prompt Name      | The name for the prompt to get                                | None                      | Yes              | `string`        |
+| Prompt Arguments | The arguments to supply to the prompt                         | `{ "key": "value", }`     | Yes              | `object`        |
+
+</TabItem>
+
+</Tabs>
+
+## See Also
+
+- [MCP Discovery Node](./mcp-discovery.mdx)
+- [MCP Tool Call Node](./mcp-tool-call.mdx)
+- [Object Node](./object.mdx)
+- [Text Node](./text.mdx)
+- [To JSON Node](./to-json.mdx)

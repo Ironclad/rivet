@@ -14,6 +14,7 @@ export * from './model/ProcessContext.js';
 export * from './integrations/integrations.js';
 import './integrations/enableIntegrations.js';
 export * from './integrations/VectorDatabase.js';
+export * from './integrations/mcp/MCPProvider.js';
 export * from './integrations/EmbeddingGenerator.js';
 export * from './integrations/LLMProvider.js';
 export * from './recording/ExecutionRecorder.js';

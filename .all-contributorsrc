@@ -59,6 +59,19 @@
       ]
     },
     {
+      "login": "AryamanAgrawalIronclad",
+      "name": "Aryaman Agrawal",
+      "avatar_url": "https://avatars.githubusercontent.com/u/107009412?v=4",
+      "profile": "https://github.com/AryamanAgrawal",
+      "contributions": [
+        "code",
+        "doc",
+        "ideas",
+        "promotion",
+        "bug"
+      ]
+    },
+    {
       "login": "a-rothwell",
       "name": "Andrew Rothwell",
       "avatar_url": "https://avatars.githubusercontent.com/u/12634659?v=4",
@@ -413,6 +426,15 @@
         "code",
         "ideas",
         "maintenance"
+      ]
+    },
+    {
+      "login": "suhail-ak-s",
+      "name": "Suhail AK",
+      "avatar_url": "https://avatars.githubusercontent.com/u/157091287?v=4",
+      "profile": "https://github.com/suhail-ak-s",
+      "contributions": [
+        "code"
       ]
     },
     {

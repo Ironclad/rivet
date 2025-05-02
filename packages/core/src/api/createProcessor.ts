@@ -6,6 +6,7 @@ import {
   type DatasetProvider,
   type ExternalFunction,
   type GraphId,
+  type MCPProvider,
   type NativeApi,
   type NodeRegistration,
   type ProcessContext,
@@ -30,6 +31,7 @@ export type RunGraphOptions = {
   nativeApi?: NativeApi;
   datasetProvider?: DatasetProvider;
   audioProvider?: AudioProvider;
+  mcpProvider?: MCPProvider;
   externalFunctions?: {
     [key: string]: ExternalFunction;
   };
@@ -157,6 +159,7 @@ export function coreCreateProcessor(project: Project, options: RunGraphOptions) 
           nativeApi: options.nativeApi,
           datasetProvider: options.datasetProvider,
           audioProvider: options.audioProvider,
+          mcpProvider: options.mcpProvider,
           codeRunner: options.codeRunner,
           projectPath: options.projectPath,
           projectReferenceLoader: options.projectReferenceLoader,

@@ -1,5 +1,3 @@
-import { type BuiltInNodeType } from '@ironclad/rivet-core';
-
 import textNodeImage from '../assets/node_images/text_node.png';
 import chatNodeImage from '../assets/node_images/chat_node.png';
 import chunkNodeImage from '../assets/node_images/chunk_node.png';
@@ -79,7 +77,11 @@ import toMarkdownTableNodeImage from '../assets/node_images/to_markdown_table_no
 import cronNodeImage from '../assets/node_images/cron_node.png';
 import loopUntilNodeImage from '../assets/node_images/loop_until_node.png';
 import toTreeNode from '../assets/node_images/to_tree_node.png';
+import mcpDiscoveryNodeImage from '../assets/node_images/mcp_discovery_node.png';
+import mcpToolCallNodeImage from '../assets/node_images/mcp_tool_call_node.png';
+import mcpGetPromptNodeImage from '../assets/node_images/mcp_get_prompt_node.png';
 import libraryNode from '../assets/node_images/library_node.png';
+import { type BuiltInNodeType } from '@ironclad/rivet-core';
 
 export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
   return {
@@ -162,6 +164,9 @@ export const useBuiltInNodeImages = (): Record<BuiltInNodeType, string> => {
     cron: cronNodeImage,
     loopUntil: loopUntilNodeImage,
     toTree: toTreeNode,
+    mcpDiscovery: mcpDiscoveryNodeImage,
+    mcpToolCall: mcpToolCallNodeImage,
+    mcpGetPrompt: mcpGetPromptNodeImage,
     referencedGraphAlias: libraryNode,
   };
 };

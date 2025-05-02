@@ -30,6 +30,14 @@ The following is all of the nodes built-in to the core of Rivet.
 | [Get Embedding](./get-embedding.mdx)           | Generates a vector embedding for a given input text, allowing text to be converted into a numerical representation for operations such as K-nearest neighbor search. Requires an integration, such as OpenAI, to generate the embedding.                                                                    |
 | [Trim Chat Messages](./trim-chat-messages.mdx) | Manages the length of chat message chains in terms of tokens. Trims messages from either the beginning or the end of the list until the total length of the messages is under the configured token length. Ideal for setting up infinite message chains that stay under the language model's context limit. |
 
+## MCP
+
+| Node                                        | Description                                                                                         |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| [MCP Discovery Node](./mcp-discovery.mdx)   | Connects to an MCP (Model Context Protocol) server to discover capabilities like tools and prompts. |
+| [MCP Tool Call Node](./mcp-tool-call.mdx)   | Connects to an MCP (Model Context Protocol) server and gets a tool call response.                   |
+| [MCP Get Prompt Node](./mcp-get-prompt.mdx) | Connects to an MCP (Model Context Protocol) server and gets a prompt response.                      |
+
 ## Lists
 
 | Node                     | Description                                                                                                                                                                                                                                          |
