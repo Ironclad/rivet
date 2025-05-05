@@ -1,9 +1,14 @@
-import type { CodeRunner, CodeRunnerOptions, Inputs, Outputs } from '@ironclad/rivet-core';
+import type { CodeRunner, CodeRunnerOptions, DataValue, Inputs, Outputs } from '@ironclad/rivet-core';
 import { createRequire } from 'node:module';
 import * as process from 'node:process';
 
 export class NodeCodeRunner implements CodeRunner {
-  async runCode(code: string, inputs: Inputs, options: CodeRunnerOptions): Promise<Outputs> {
+  async runCode(
+    code: string,
+    inputs: Inputs,
+    options: CodeRunnerOptions,
+    graphInputs?: Record<string, DataValue>
+  ): Promise<Outputs> {
     const argNames = ['inputs'];
     const args: any[] = [inputs];
 
@@ -33,6 +38,11 @@ export class NodeCodeRunner implements CodeRunner {
 
       argNames.push('Rivet');
       args.push(Rivet);
+    }
+
+    if (graphInputs) {
+      argNames.push('graphInputs');
+      args.push(graphInputs);
     }
 
     argNames.push(code);

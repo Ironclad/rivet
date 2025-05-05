@@ -251,6 +251,8 @@ export class GraphProcessor {
 
   #nodeAbortControllers = new Map<`${NodeId}-${ProcessId}`, AbortController>();
 
+  #graphInputNodeValues: Record<string, DataValue> = {};
+
   /** User input nodes that are pending user input. */
   #pendingUserInputs: Record<
     NodeId,
@@ -762,6 +764,7 @@ export class GraphProcessor {
     this.#abortSuccessfully = false;
     this.#nodeAbortControllers = new Map();
     this.#loadedProjects = {};
+    this.#graphInputNodeValues = {};
   }
 
   /** Main function for running a graph. Runs a graph and returns the outputs from the output nodes of the graph. */
@@ -1051,7 +1054,6 @@ export class GraphProcessor {
     // Check if all input nodes are free of errors
     for (const inputNode of inputNodes) {
       if (this.#erroredNodes.has(inputNode.id)) {
-        this.#emitTraceEvent(`Node ${node.title} has errored input node ${inputNode.title}`);
         return;
       }
     }
@@ -1664,6 +1666,7 @@ export class GraphProcessor {
 
         return results;
       },
+      graphInputNodeValues: this.#graphInputNodeValues,
     };
 
     await this.#waitUntilUnpaused();
@@ -1799,12 +1802,7 @@ export class GraphProcessor {
     const connectionsToNode = connections.filter((conn) => conn.inputNodeId === node.id).filter(isNotNull);
 
     // Filter out invalid connections
-    const inputDefinitions = this.#definitions[node.id]?.inputs ?? [];
     return connectionsToNode
-      .filter((connection) => {
-        const connectionDefinition = inputDefinitions.find((def) => def.id === connection.inputId);
-        return connectionDefinition != null;
-      })
       .map((conn) => this.#nodesById[conn.outputNodeId])
       .filter(isNotNull);
   }

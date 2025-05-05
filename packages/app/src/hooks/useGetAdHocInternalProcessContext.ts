@@ -44,6 +44,7 @@ export function useGetAdHocInternalProcessContext() {
         getGlobal: undefined!,
         graphInputs: {},
         graphOutputs: {},
+        graphInputNodeValues: {}, // Added missing property
         project: undefined!,
         raiseEvent: undefined!,
         setGlobal: undefined!,
