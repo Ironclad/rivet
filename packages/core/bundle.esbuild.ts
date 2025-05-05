@@ -1,12 +1,22 @@
 import * as esbuild from 'esbuild';
 
+// Modified aliasModule function
 const aliasModule = (moduleFrom: string, moduleTo: string): esbuild.Plugin => ({
   name: 'alias-module',
   setup(build) {
-    build.onResolve({ filter: new RegExp(`^${moduleFrom}$`) }, async (args) => {
-      const resolved = await build.resolve(moduleTo, {
+    // Modified filter to catch moduleFrom or moduleFrom/subpath
+    const filter = new RegExp(`^${moduleFrom}($|\\/)`);
+
+    build.onResolve({ filter }, async (args) => {
+      // args.path will be like 'lodash-es' or 'lodash-es/get'
+      // Calculate the path relative to the module root (e.g., '' or '/get')
+      const subPath = args.path.substring(moduleFrom.length);
+      const targetPath = moduleTo + subPath; // Construct the target path (e.g., 'lodash' or 'lodash/get')
+
+      // Resolve the new target path
+      const resolved = await build.resolve(targetPath, {
         importer: args.importer,
-        kind: 'import-statement',
+        kind: args.kind, // Pass original kind
         resolveDir: args.resolveDir,
       });
 
@@ -14,7 +24,9 @@ const aliasModule = (moduleFrom: string, moduleTo: string): esbuild.Plugin => ({
         return { errors: resolved.errors };
       }
 
-      return { path: resolved.path, namespace: 'alias-module', external: true };
+      // Return the resolved path and mark it as external so it's not bundled,
+      // resulting in require('lodash/get') in the CJS output.
+      return { path: resolved.path, external: true };
     });
   },
 });

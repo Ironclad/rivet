@@ -1,8 +1,10 @@
 import { dedent } from './misc.js';
+import { type DataValue } from '../model/DataValue.js';
+import { get } from 'lodash-es';
 
-export const TOKEN_MATCH_REGEX = /\{\{(?!\{)([^{}\s][^{}]*[^{}\s]|[^{}\s])\}\}(?!\})/g;
-
-export const ESCAPED_TOKEN_REGEX = /\{{3}([^{}]+)\}{3}/g;
+// Simpler regex allowing spaces, relies on trim() later
+export const TOKEN_MATCH_REGEX = /\{\{([^}]+?)\}\}/g;
+export const ESCAPED_TOKEN_REGEX = /\{\{\{([^}]+?)\}\}\}/g;
 
 // Processing functions
 type ProcessingFunction = (input: string, param?: number) => string;
@@ -105,11 +107,72 @@ function applyProcessing(value: string, processingChain: string): string {
   }, value);
 }
 
-export function interpolate(baseString: string, values: Record<string, string>): string {
+export function interpolate(
+  baseString: string,
+  values: Record<string, string>,
+  graphInputValues?: Record<string, DataValue>,
+): string {
   return baseString
     .replace(TOKEN_MATCH_REGEX, (_m, p1) => {
-      const [token, ...processing] = p1.split('|');
-      const value = values[token.trim()];
+      const [tokenPart, ...processing] = p1.trim().split('|');
+      const token = tokenPart.trim();
+
+      let value: string | undefined;
+
+      const graphInputPrefix = '@input.';
+      if (token.startsWith(graphInputPrefix) && graphInputValues) {
+        const expression = token.substring(graphInputPrefix.length);
+
+        // Find the end of the input_id and the start of the path
+        const pathStartIndex = expression.search(/[.[]/);
+        let graphInputId: string;
+        let path: string | undefined;
+
+        if (pathStartIndex === -1) {
+          graphInputId = expression; // No path, just the ID
+          path = undefined;
+        } else {
+          graphInputId = expression.substring(0, pathStartIndex);
+          const rawPath = expression.substring(pathStartIndex);
+          // Clean the path: remove spaces around '.' and '[]'
+          const cleanedPath = rawPath.replace(/\s*\.\s*/g, '.').replace(/\s*\[\s*/g, '[').replace(/\s*\]\s*/g, ']');
+          // Remove leading dot for lodash/get (it handles paths like 'a.b' or '[0].a')
+          path = cleanedPath.replace(/^\./, '');
+        }
+
+        const graphInputValue = graphInputValues[graphInputId];
+
+        if (graphInputValue) {
+          let targetValue: any;
+          if (path !== undefined) {
+            // Use lodash/get to safely access the nested value
+            targetValue = get(graphInputValue.value, path);
+          } else {
+            // No path, use the value directly from the DataValue
+            targetValue = graphInputValue.value;
+          }
+
+          // Coerce the final target value to string
+          if (targetValue === null || targetValue === undefined) {
+            value = undefined;
+          } else if (typeof targetValue === 'string') {
+            value = targetValue;
+          } else if (typeof targetValue === 'number' || typeof targetValue === 'boolean') {
+            value = String(targetValue);
+          } else {
+            // For objects, arrays, etc., attempt to stringify
+            try {
+              value = JSON.stringify(targetValue);
+            } catch (e) {
+              value = undefined; // Could not stringify
+            }
+          }
+        } else {
+          value = undefined; // graphInputId not found
+        }
+      } else {
+        value = values[token]; // Regular input variable
+      }
 
       if (value === undefined) return '';
 
@@ -120,18 +183,27 @@ export function interpolate(baseString: string, values: Record<string, string>):
       return value;
     })
     .replace(ESCAPED_TOKEN_REGEX, (_m, p1) => {
-      return `{{${p1}}}`;
+      // Restore escaped tokens like {{{token}}}
+      return `{{${p1}}}`; // Note: This restores to {{token}}, maybe should be {{{token}}}? Needs check.
     });
 }
 
 // Extract all unique variable names from a template string
+// Ignores variables starting with @input., as they are treated as special graph input references.
 export function extractInterpolationVariables(template: string): string[] {
   const matches = template.matchAll(TOKEN_MATCH_REGEX);
   const variables = new Set<string>();
 
   for (const match of matches) {
-    const [token] = match[1]!.split('|');
-    variables.add(token!.trim());
+    if (match[1]) {
+      const [tokenPart] = match[1].split('|');
+      if (tokenPart) {
+        const token = tokenPart.trim();
+        if (!token.startsWith('@input.')) {
+          variables.add(token);
+        }
+      }
+    }
   }
 
   return Array.from(variables);

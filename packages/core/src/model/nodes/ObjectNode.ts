@@ -11,6 +11,8 @@ import { nodeDefinition } from '../NodeDefinition.js';
 import { type DataValue } from '../DataValue.js';
 import { dedent } from 'ts-dedent';
 import { type EditorDefinition } from '../EditorDefinition.js';
+import get from 'lodash-es/get.js';
+import type { InternalProcessContext } from '../ProcessContext.js';
 
 export type ObjectNode = ChartNode<'object', ObjectNodeData>;
 
@@ -42,19 +44,19 @@ export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
   }
 
   getInputDefinitions(): NodeInputDefinition[] {
-    // Extract inputs from text, everything like {{input}}
-    const inputNames = [...new Set(this.chartNode.data.jsonTemplate.match(/\{\{([^}]+)\}\}/g))];
-    return (
-      inputNames?.map((inputName) => {
-        return {
-          // id and title should not have the {{ and }}
-          id: inputName.slice(2, -2) as PortId,
-          title: inputName.slice(2, -2),
-          dataType: 'any',
-          required: false,
-        };
-      }) ?? []
-    );
+    const allTokens = this.chartNode.data.jsonTemplate.match(/\{\{([^}]+?)\}\}/g) ?? [];
+    const inputTokens = allTokens
+      .map((token) => token.slice(2, -2).trim()) // Get content inside braces and trim
+      .filter((tokenContent) => !tokenContent.startsWith('@input.')); // Filter out @input tokens
+
+    return [...new Set(inputTokens)].map((inputName) => {
+      return {
+        id: inputName as PortId,
+        title: inputName,
+        dataType: 'any',
+        required: false,
+      };
+    });
   }
 
   getOutputDefinitions(): NodeOutputDefinition[] {
@@ -99,27 +101,40 @@ export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
     };
   }
 
-  interpolate(baseString: string, values: Record<string, any>): string {
-    return baseString.replace(/("?)\{\{([^}]+)\}\}("?)/g, (_m, openQuote, key, _closeQuote) => {
+  interpolate(
+    baseString: string,
+    values: Record<string, any>,
+    graphInputNodeValues?: Record<string, DataValue>
+  ): string {
+    return baseString.replace(/("?)\{\{([^}]+?)\}\}("?)/g, (_m, openQuote, key, _closeQuote) => {
       const isQuoted = Boolean(openQuote);
-      const value = values[key];
-      if (value == null) {
+      const trimmedKey = key.trim();
+      let resolvedValue: any;
+
+      const graphInputPrefix = '@input.';
+      if (trimmedKey.startsWith(graphInputPrefix) && graphInputNodeValues) {
+        let expression = trimmedKey.substring(graphInputPrefix.length);
+        // Clean up expression: remove spaces around dots and brackets
+        expression = expression.replace(/\s*\.\s*/g, '.').replace(/\s*\[\s*/g, '[').replace(/\s*\]\s*/g, ']');
+        resolvedValue = get(graphInputNodeValues, expression)?.value; // Get the .value property
+      } else {
+        resolvedValue = values[trimmedKey];
+      }
+
+      if (resolvedValue == null) {
         return 'null';
       }
-      if (isQuoted && typeof value === 'string') {
-        // Adds double-quotes back.
-        return JSON.stringify(value);
+      if (isQuoted && typeof resolvedValue === 'string') {
+        return JSON.stringify(resolvedValue);
       }
       if (isQuoted) {
-        // Non-strings require a double-stringify, first to turn them into a string, then to escape that string and add quotes.
-        return JSON.stringify(JSON.stringify(value));
+        return JSON.stringify(JSON.stringify(resolvedValue));
       }
-      // Otherwise, it was not quoted, so no need to double-stringify
-      return JSON.stringify(value);
+      return JSON.stringify(resolvedValue);
     });
   }
 
-  async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
+  async process(inputs: Record<string, DataValue>, context: InternalProcessContext): Promise<Record<string, DataValue>> {
     const inputMap = Object.keys(inputs).reduce(
       (acc, key) => {
         acc[key] = (inputs[key] as any)?.value;
@@ -128,25 +143,28 @@ export class ObjectNodeImpl extends NodeImpl<ObjectNode> {
       {} as Record<string, any>,
     );
 
-    const outputValue = JSON.parse(this.interpolate(this.chartNode.data.jsonTemplate, inputMap)) as Record<
-      string,
-      unknown
-    >;
+    // Pass context.graphInputNodeValues as the third argument
+    const interpolatedString = this.interpolate(
+      this.chartNode.data.jsonTemplate,
+      inputMap,
+      context.graphInputNodeValues // <-- Add this
+    );
 
-    if (Array.isArray(outputValue)) {
-      return {
-        output: {
-          type: 'object[]',
-          value: outputValue,
-        },
-      };
+    let outputValue: Record<string, unknown> | unknown[];
+
+    try {
+      outputValue = JSON.parse(interpolatedString) as Record<string, unknown> | unknown[];
+    } catch (err) {
+      throw new Error(`Failed to parse JSON template: ${(err as Error).message}`);
     }
+
+    const outputType = Array.isArray(outputValue) ? 'object[]' : 'object';
 
     return {
       output: {
-        type: 'object',
+        type: outputType,
         value: outputValue,
-      },
+      } as DataValue, // Explicitly assert type to satisfy TS
     };
   }
 }
