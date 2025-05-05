@@ -3713,10 +3713,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@google/generative-ai@npm:^0.24.0":
-  version: 0.24.0
-  resolution: "@google/generative-ai@npm:0.24.0"
-  checksum: 10/6e6a3c9f45953d78ea1945c7a4824ea204d7a417b6ba9b13ef3f2e366575c22bfaf3ee08e63c4c82ac0be266caa7e49995cc2ed981d135a3a5e9270e8ed76766
+"@google/genai@npm:^0.12.0":
+  version: 0.12.0
+  resolution: "@google/genai@npm:0.12.0"
+  dependencies:
+    google-auth-library: "npm:^9.14.2"
+    ws: "npm:^8.18.0"
+    zod: "npm:^3.22.4"
+    zod-to-json-schema: "npm:^3.22.4"
+  checksum: 10/4ea246876a163bd87dcc3efb602d26010dadb68fe4010c59fd57beb4f88a063872639653cf4607f8a7e5e60d9027741dd817136af1305f9610355dfe12eb4c09
   languageName: node
   linkType: hard
 
@@ -4200,7 +4205,7 @@ __metadata:
   dependencies:
     "@gentrace/core": "npm:^2.2.5"
     "@google-cloud/vertexai": "npm:^0.1.3"
-    "@google/generative-ai": "npm:^0.24.0"
+    "@google/genai": "npm:^0.12.0"
     "@huggingface/inference": "npm:^2.6.4"
     "@swc/core": "npm:^1.3.94"
     "@types/crypto-js": "npm:^4.1.3"
@@ -12146,6 +12151,20 @@ __metadata:
     gtoken: "npm:^7.0.0"
     jws: "npm:^4.0.0"
   checksum: 10/3fb1b26bec40568edfb9deeac2fdbf4d5d539ea6ed79895f411e508d6ef173f772648bd7ad4cab65a250df60660909e22f3f6863162de794ee065efb9974f723
+  languageName: node
+  linkType: hard
+
+"google-auth-library@npm:^9.14.2":
+  version: 9.15.1
+  resolution: "google-auth-library@npm:9.15.1"
+  dependencies:
+    base64-js: "npm:^1.3.0"
+    ecdsa-sig-formatter: "npm:^1.0.11"
+    gaxios: "npm:^6.1.1"
+    gcp-metadata: "npm:^6.1.0"
+    gtoken: "npm:^7.0.0"
+    jws: "npm:^4.0.0"
+  checksum: 10/6b977dd20f4f1ab6b2d2b78650d1e1c79ca84b951720b1064b85ebbb32af469547db7505a6609265e806be11c823bd6e07323b5073a98729b43b29fe34f05717
   languageName: node
   linkType: hard
 
@@ -21170,12 +21189,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"zod-to-json-schema@npm:^3.22.4":
+  version: 3.24.5
+  resolution: "zod-to-json-schema@npm:3.24.5"
+  peerDependencies:
+    zod: ^3.24.1
+  checksum: 10/1af291b4c429945c9568c2e924bdb7c66ab8d139cbeb9a99b6e9fc9e1b02863f85d07759b9303714f07ceda3993dcaf0ebcb80d2c18bb2aaf5502b2c1016affd
+  languageName: node
+  linkType: hard
+
 "zod-to-json-schema@npm:^3.24.1":
   version: 3.24.1
   resolution: "zod-to-json-schema@npm:3.24.1"
   peerDependencies:
     zod: ^3.24.1
   checksum: 10/d31fd05b67b428d8e0d5ecad2c3e80a1c2fc370e4c22f9111ffd11cbe05cfcab00f3228f84295830952649d15ea4494ef42c2ee1cbe723c865b13f4cf2b80c09
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.22.4":
+  version: 3.24.4
+  resolution: "zod@npm:3.24.4"
+  checksum: 10/3d545792fa54bb27ee5dbc34a5709e81f603185fcc94c8204b5d95c20dc4c81d870ff9c51f3884a30ef05cdc601449f4c4df254ac4783f0827b1faed7c1cdb48
   languageName: node
   linkType: hard
 

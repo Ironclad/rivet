@@ -35,15 +35,7 @@ import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
 import { getScalarTypeOf, isArrayDataValue } from '../../../model/DataValue.js';
 import type { TokenizerCallInfo } from '../../../integrations/Tokenizer.js';
 import { getInputOrData } from '../../../utils/inputs.js';
-import {
-  type GoogleGenerativeAIFetchError,
-  SchemaType,
-  type Content,
-  type FunctionDeclaration,
-  type Part,
-  type Tool,
-  type FunctionCall,
-} from '@google/generative-ai';
+import { type Content, type FunctionDeclaration, type Part, type Tool, type FunctionCall, Type } from '@google/genai';
 import { mapValues } from 'lodash-es';
 
 export type ChatGoogleNode = ChartNode<'chatGoogle', ChatGoogleNodeData>;
@@ -449,7 +441,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
                   Object.keys((tool.parameters as any).properties).length === 0
                     ? undefined
                     : {
-                        type: SchemaType.OBJECT,
+                        type: Type.OBJECT,
                         properties: mapValues((tool.parameters as any).properties, (p: any) => ({
                           // gemini doesn't support union property types, it uses openapi style not jsonschema, what a mess
                           type: Array.isArray(p.type) ? p.type.filter((t: any) => t !== 'null')[0] : p.type,
@@ -577,8 +569,8 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
                   functionCalls.length === 0
                     ? undefined
                     : functionCalls.map((fc) => ({
-                        id: fc.name,
-                        name: fc.name,
+                        id: fc.name!,
+                        name: fc.name!,
                         arguments: JSON.stringify(fc.args),
                       })),
               },
@@ -628,7 +620,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
           onFailedAttempt(err) {
             context.trace(`ChatGoogleNode failed, retrying: ${err.toString()}`);
 
-            const googleError = err as GoogleGenerativeAIFetchError;
+            const googleError = err as { status?: number; message?: string };
 
             if (googleError.status && googleError.status >= 400 && googleError.status < 500) {
               if (googleError.status === 429) {

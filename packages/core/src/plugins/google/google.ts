@@ -1,4 +1,4 @@
-import { type Content, type FunctionCall, type Tool } from '@google/generative-ai';
+import { type Content, type FunctionCall, type Tool } from '@google/genai';
 
 export type GoogleModelDeprecated = {
   maxTokens: number;
@@ -169,29 +169,24 @@ export async function* streamGenerativeAi({
   signal,
   tools,
 }: StreamGenerativeAiOptions): AsyncGenerator<ChatCompletionChunk> {
-  const { GoogleGenerativeAI } = await import('@google/generative-ai');
-  const genAi = new GoogleGenerativeAI(apiKey);
+  const { GoogleGenAI } = await import('@google/genai');
+  const genAi = new GoogleGenAI({ apiKey });
 
-  const genaiModel = genAi.getGenerativeModel({
+  const result = await genAi.models.generateContentStream({
     model,
-    systemInstruction: systemPrompt,
-    generationConfig: {
+    contents: prompt,
+    config: {
+      systemInstruction: systemPrompt,
       maxOutputTokens,
       temperature,
       topP,
       topK,
+      tools,
+      abortSignal: signal,
     },
-    tools,
   });
 
-  const result = await genaiModel.generateContentStream(
-    {
-      contents: prompt,
-    },
-    { signal },
-  );
-
-  for await (const chunk of result.stream) {
+  for await (const chunk of result) {
     const outChunk: ChatCompletionChunk = {
       completion: undefined,
       finish_reason: undefined,
@@ -199,7 +194,7 @@ export async function* streamGenerativeAi({
       model,
     };
 
-    const functionCalls = chunk.functionCalls();
+    const functionCalls = chunk.functionCalls;
     if (functionCalls) {
       outChunk.function_calls = functionCalls;
     }
