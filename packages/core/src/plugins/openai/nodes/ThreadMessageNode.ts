@@ -10,7 +10,7 @@ import { newId, coerceTypeOptional, getInputOrData, coerceType } from '../../../
 import { interpolate } from '../../../utils/interpolation.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
 import type { CreateMessageBody } from '../../../utils/openai.js';
-import { mapValues } from 'lodash-es';
+import { mapValues } from 'lodash';
 
 export type ThreadMessageNode = ChartNode<'threadMessage', ThreadMessageNodeData>;
 

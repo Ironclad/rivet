@@ -44,7 +44,7 @@ import {
   type Tool,
   type FunctionCall,
 } from '@google/generative-ai';
-import { mapValues } from 'lodash-es';
+import { mapValues } from 'lodash';
 
 export type ChatGoogleNode = ChartNode<'chatGoogle', ChatGoogleNodeData>;
 

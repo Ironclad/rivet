@@ -1,4 +1,4 @@
-import { mapValues } from 'lodash-es';
+import { mapValues } from 'lodash';
 import type {
   NodeGraph,
   Project,

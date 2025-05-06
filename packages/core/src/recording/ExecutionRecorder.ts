@@ -10,7 +10,7 @@ import {
 } from '../index.js';
 import Emittery from 'emittery';
 import { uint8ArrayToBase64Sync, base64ToUint8Array } from '../utils/base64.js';
-import { isPlainObject } from 'lodash-es';
+import { isPlainObject } from 'lodash';
 
 export type ExecutionRecorderEvents = {
   finish: { recording: Recording };
