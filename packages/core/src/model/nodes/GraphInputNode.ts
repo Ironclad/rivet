@@ -155,6 +155,9 @@ export class GraphInputNodeImpl extends NodeImpl<GraphInputNode> {
       value: inputValue,
     } as DataValue;
 
+    // Store the resolved value in the context for access by other nodes
+    context.graphInputNodeValues[this.data.id] = value;
+
     return { ['data' as PortId]: value };
   }
 }

@@ -32,6 +32,8 @@ const processor = Rivet.createProcessor({
 });
 ```
 
+P.S.: Context Node is not the only way to access context values. You can also access them in the [Text Node](./text.mdx) using `{{@context.<id>}}` syntax (same thing in the Prompt Node and Object Node) and in the [Code Node](./code.mdx) using `context.<id>.value`.
+
 <Tabs
   defaultValue="inputs"
   values={[

@@ -182,13 +182,19 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
   }
 
   async process(inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
-    const outputs = await context.codeRunner.runCode(this.data.code, inputs, {
-      includeFetch: this.data.allowFetch ?? false,
-      includeRequire: this.data.allowRequire ?? false,
-      includeRivet: this.data.allowRivet ?? false,
-      includeProcess: this.data.allowProcess ?? false,
-      includeConsole: this.data.allowConsole ?? false,
-    });
+    const outputs = await context.codeRunner.runCode(
+      this.data.code,
+      inputs,
+      {
+        includeFetch: this.data.allowFetch ?? false,
+        includeRequire: this.data.allowRequire ?? false,
+        includeRivet: this.data.allowRivet ?? false,
+        includeProcess: this.data.allowProcess ?? false,
+        includeConsole: this.data.allowConsole ?? false,
+      },
+      context.graphInputNodeValues,
+      context.contextValues
+    );
 
     if (outputs == null || typeof outputs !== 'object' || ('then' in outputs && typeof outputs.then === 'function')) {
       throw new Error('Code node must return an object with output values.');

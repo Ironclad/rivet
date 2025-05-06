@@ -88,6 +88,9 @@ export type InternalProcessContext<T extends ChartNode = ChartNode> = ProcessCon
   /** Outputs from the graph. A GraphOutputNode will set these. */
   graphOutputs: Record<string, DataValue>;
 
+  /** Stores the resolved output values of GraphInput nodes during execution, keyed by the node's data.id. */
+  graphInputNodeValues: Record<string, DataValue>;
+
   /** The tokenizer to use to tokenize all strings.s */
   tokenizer: Tokenizer;
 
