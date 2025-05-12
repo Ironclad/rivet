@@ -61,8 +61,13 @@ export function useNewProjectFromTemplate() {
     });
 
     setLoadedProject({ loaded: false, path: '' });
-    setProject(project);
-    setProject({ ...project, metadata: { ...project.metadata, id: nanoid() as ProjectId } });
+    setProject({
+      ...project,
+      metadata: {
+        ...project.metadata,
+        id: nanoid() as ProjectId,
+      },
+    });
 
     const firstGraph = orderBy(Object.values(project.graphs), (g) => g.metadata!.name!)[0];
 
