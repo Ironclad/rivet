@@ -31,11 +31,19 @@ export const googleModelsDeprecated = {
 export type GoogleModelsDeprecated = keyof typeof googleModelsDeprecated;
 
 export const generativeAiGoogleModels = {
-  'gemini-2.0-flash-001': {
+  'gemini-2.5-flash-preview-04-17': {
     maxTokens: 1048576,
     cost: {
       prompt: 0.15 / 1000,
       completion: 0.6 / 1000,
+    },
+    displayName: 'Gemini 2.5 Flash Preview',
+  },
+  'gemini-2.0-flash-001': {
+    maxTokens: 1048576,
+    cost: {
+      prompt: 0.1 / 1000,
+      completion: 0.4 / 1000,
     },
     displayName: 'Gemini 2.0 Flash',
   },
@@ -155,6 +163,7 @@ export type StreamGenerativeAiOptions = {
   topK: number | undefined;
   signal?: AbortSignal;
   tools: Tool[] | undefined;
+  thinkingBudget?: number;
 };
 
 export async function* streamGenerativeAi({
@@ -168,6 +177,7 @@ export async function* streamGenerativeAi({
   topK,
   signal,
   tools,
+  thinkingBudget,
 }: StreamGenerativeAiOptions): AsyncGenerator<ChatCompletionChunk> {
   const { GoogleGenAI } = await import('@google/genai');
   const genAi = new GoogleGenAI({ apiKey });
@@ -183,6 +193,9 @@ export async function* streamGenerativeAi({
       topK,
       tools,
       abortSignal: signal,
+      thinkingConfig: {
+        thinkingBudget,
+      },
     },
   });
 

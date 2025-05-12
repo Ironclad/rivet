@@ -47,6 +47,7 @@ export type ChatGoogleNodeConfigData = {
   top_p?: number;
   top_k?: number;
   maxTokens: number;
+  thinkingBudget: number | undefined;
 };
 
 export type ChatGoogleNodeData = ChatGoogleNodeConfigData & {
@@ -57,6 +58,7 @@ export type ChatGoogleNodeData = ChatGoogleNodeConfigData & {
   useUseTopPInput: boolean;
   useMaxTokensInput: boolean;
   useToolCalling: boolean;
+  useThinkingBudgetInput: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
@@ -79,7 +81,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
         width: 275,
       },
       data: {
-        model: 'gemini-2.0-flash-001',
+        model: 'gemini-2.5-flash-preview-04-17',
         useModelInput: false,
 
         temperature: 0.5,
@@ -101,6 +103,9 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
         useAsGraphPartialOutput: true,
 
         useToolCalling: false,
+
+        thinkingBudget: undefined,
+        useThinkingBudgetInput: false,
       },
     };
 
@@ -168,6 +173,15 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
       });
     }
 
+    if (data.useThinkingBudgetInput) {
+      inputs.push({
+        dataType: 'number',
+        id: 'thinkingBudget' as PortId,
+        title: 'Thinking Budget',
+        description: 'The token budget for the model to think before responding.',
+      });
+    }
+
     inputs.push({
       dataType: ['chat-message', 'chat-message[]'] as const,
       id: 'prompt' as PortId,
@@ -221,6 +235,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
           : `Temperature: ${data.useTemperatureInput ? '(Using Input)' : data.temperature}`
       }
       Max Tokens: ${data.maxTokens}
+      Thinking Budget: ${data.thinkingBudget ?? 'Automatic'}
     `;
   },
 
@@ -267,6 +282,17 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
         step: 1,
       },
       {
+        type: 'number',
+        label: 'Thinking Budget',
+        dataKey: 'thinkingBudget',
+        allowEmpty: true,
+        step: 1,
+        min: 0,
+        max: Number.MAX_SAFE_INTEGER,
+        useInputToggleDataKey: 'useThinkingBudgetInput',
+        helperMessage: 'The token budget for the model to think before responding. Leave blank for automatic budget.',
+      },
+      {
         type: 'toggle',
         label: 'Enable Tool Calling',
         dataKey: 'useToolCalling',
@@ -306,6 +332,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
     const temperature = getInputOrData(data, inputs, 'temperature', 'number');
     const topP = getInputOrData(data, inputs, 'top_p', 'number');
     const useTopP = getInputOrData(data, inputs, 'useTopP', 'boolean');
+    const thinkingBudget = getInputOrData(data, inputs, 'thinkingBudget', 'number');
 
     const { messages } = getChatGoogleNodeMessages(inputs);
 
@@ -480,6 +507,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
             systemPrompt,
             topK: undefined,
             tools,
+            thinkingBudget,
           };
           const cacheKey = JSON.stringify(options);
 
@@ -510,6 +538,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
               apiKey,
               systemPrompt,
               tools,
+              thinkingBudget,
             });
           } else {
             chunks = streamChatCompletions({
@@ -528,6 +557,15 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
 
           const responseParts: string[] = [];
           const functionCalls: FunctionCall[] = [];
+
+          let throttleLastCalledTime = Date.now();
+          const onPartialOutput = (output: Outputs) => {
+            const now = Date.now();
+            if (now - throttleLastCalledTime > (context.settings.throttleChatNode ?? 100)) {
+              context.onPartialOutputs?.(output);
+              throttleLastCalledTime = now;
+            }
+          };
 
           for await (const chunk of chunks) {
             if (chunk.completion) {
@@ -552,8 +590,11 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
               };
             }
 
-            context.onPartialOutputs?.(output);
+            onPartialOutput?.(output);
           }
+
+          // Call one last time manually to ensure the last output is sent
+          context.onPartialOutputs?.(output);
 
           const endTime = Date.now();
 
