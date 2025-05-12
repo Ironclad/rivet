@@ -6,12 +6,14 @@ import {
   deserializeProject,
   emptyNodeGraph,
   type BuiltInNodes,
+  type ProjectId,
 } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph.js';
 import { trivetState } from '../state/trivet';
 import { orderBy } from 'lodash-es';
 import { duplicateGraph } from '../utils/duplicateGraph';
 import { produce } from 'immer';
+import { nanoid } from 'nanoid';
 
 export function useNewProjectFromTemplate() {
   const setProject = useSetAtom(projectState);
@@ -60,6 +62,7 @@ export function useNewProjectFromTemplate() {
 
     setLoadedProject({ loaded: false, path: '' });
     setProject(project);
+    setProject({ ...project, metadata: { ...project.metadata, id: nanoid() as ProjectId } });
 
     const firstGraph = orderBy(Object.values(project.graphs), (g) => g.metadata!.name!)[0];
 
