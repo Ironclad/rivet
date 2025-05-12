@@ -1,0 +1,181 @@
+version: 4
+data:
+  attachedData:
+    trivet:
+      testSuites: []
+      version: 1
+  graphs:
+    OBB836B-R7o-8zNMlRxl6:
+      metadata:
+        description: ""
+        id: OBB836B-R7o-8zNMlRxl6
+        name: Process Command
+      nodes:
+        '[App2Nwuhjya9e4KlvcgLq]:destructure "Destructure"':
+          data:
+            paths:
+              - $.name
+              - $.arguments
+              - $.id
+          outgoingConnections:
+            - match_0->"MCP Tool Call" qF6l1YWAAs789uHIz3bkR/toolName
+            - match_1->"MCP Tool Call" qF6l1YWAAs789uHIz3bkR/toolArguments
+          visualData: 3104.9393275540597/431.0227543212446/280/194//
+        '[BL-o2XkvJ4LSUqkODJqhm]:mcpDiscovery "MCP Discovery"':
+          data:
+            name: mcp-client
+            serverId: ""
+            serverUrl: http://localhost:8080/mcp
+            transportType: stdio
+            useNameInput: false
+            usePromptsOutput: true
+            useToolsOutput: true
+            useVersionInput: false
+            version: 1.0.0
+          outgoingConnections:
+            - tools->"Chat" ckceKV9IKaqaCj-54W_JW/functions
+          visualData: 1817.9317657863987/785.4649493900479/280/186//
+        '[GGCqvZvITg8sl5cAvtBW5]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: messages
+          visualData: 5295.826227048038/782.1351458708705/330/185//
+        '[KV5NyI4VuU07F7KH6H4a3]:graphInput "Graph Input"':
+          data:
+            dataType: chat-message
+            id: messages
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Chat" ckceKV9IKaqaCj-54W_JW/prompt
+          visualData: 1332.928340018517/536.7178649288994/330/36//
+        '[Ms6A_mARvyU-N3plJDVrx]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Graph Output" GGCqvZvITg8sl5cAvtBW5/value
+          visualData: 4647.626825132587/788.7758512562114/280/180//
+        '[ONLywxggVWrL11BWJHMN0]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: You are a test tool calling agent. You use the prompt to come up
+              with the next best tool to use. You MUST choose a tool everytime.
+            type: system
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Chat" ckceKV9IKaqaCj-54W_JW/systemPrompt
+          visualData: 1967.3645243568342/264.4171700985719/280/182//
+        '[ckceKV9IKaqaCj-54W_JW]:chat "Chat"':
+          data:
+            additionalParameters: []
+            cache: false
+            enableFunctionUse: true
+            headers: []
+            maxTokens: 16384
+            modalitiesIncludeAudio: false
+            modalitiesIncludeText: false
+            model: gpt-4o-mini-2024-07-18
+            outputUsage: false
+            overrideMaxTokens: 128000
+            parallelFunctionCalling: false
+            reasoningEffort: ""
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAdditionalParametersInput: false
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePredictedOutput: false
+            usePresencePenaltyInput: false
+            useReasoningEffortInput: false
+            useServerTokenCalculation: true
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - function-call->"Destructure" App2Nwuhjya9e4KlvcgLq/object
+            - response->"Assemble Prompt" Ms6A_mARvyU-N3plJDVrx/message2
+          visualData: 2593.978671057842/452.1671769286448/230/33//
+        '[e0TnRMMNF1TJrNs2cA6Vq]:text "Text"':
+          data:
+            text: You did not run a function. If you meant to reply to the user, use the
+              `replyToUser` function.
+          outgoingConnections:
+            - output->"Coalesce" eIfYE5mplq1mZ1TXTpgy9/input2
+          visualData: 3748.8063130176106/610.5649434519203/330/183//
+        '[eIfYE5mplq1mZ1TXTpgy9]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Assemble Prompt" Ms6A_mARvyU-N3plJDVrx/message1
+          visualData: 4252.119990997284/479.91658586794205/180/177//
+        '[qF6l1YWAAs789uHIz3bkR]:mcpToolCall "MCP Tool Call"':
+          data:
+            name: mcp-tool-call-client
+            serverId: ""
+            serverUrl: http://localhost:8080/mcp
+            toolArguments: |-
+              {
+                "key": "value"
+              }
+            toolCallId: ""
+            toolName: ""
+            transportType: stdio
+            useNameInput: false
+            useToolArgumentsInput: true
+            useToolCallIdInput: true
+            useToolNameInput: true
+            useVersionInput: false
+            version: 1.0.0
+          outgoingConnections:
+            - response->"Coalesce" eIfYE5mplq1mZ1TXTpgy9/input1
+          visualData: 3610.1898940761703/321.3200319265354/280/193//
+    iSjs9OgpMuYZ2-8_aN2l3:
+      metadata:
+        description: ""
+        id: iSjs9OgpMuYZ2-8_aN2l3
+        name: "*Run Command"
+      nodes:
+        '[ORCVZ5XApZCbCJ4TUBmGH]:assembleMessage "Assemble Message"':
+          data:
+            toolCallId: ""
+            type: user
+            useToolCallIdInput: false
+            useTypeInput: false
+          outgoingConnections:
+            - message->"Subgraph" nHl0G1072UbWs3Gir5Ie3/messages
+          visualData: 974.1985789291693/73.40685023043204/280/16//
+        '[bJBuUUiDV5PAKFx0nLDFg]:text "Text"':
+          data:
+            text: 'Use tool1 to execute the first task. Use the following values as
+              arguments: argument1: "value1"; argument2: "2"'
+          outgoingConnections:
+            - output->"Assemble Message" ORCVZ5XApZCbCJ4TUBmGH/part1
+          visualData: 292.5180271818999/74.63289438825086/330/13//
+        '[nHl0G1072UbWs3Gir5Ie3]:subGraph "Subgraph"':
+          data:
+            graphId: OBB836B-R7o-8zNMlRxl6
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - messages->"Graph Output" x3zvcCIKX4ZVOCFBPNu6y/value
+          visualData: 1678.3970474595608/103.34976594573925/330/null//
+        '[x3zvcCIKX4ZVOCFBPNu6y]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 2669.817649192611/110.18817496499707/330/15//
+  metadata:
+    description: Use this template to build your own MCP AI Agent using Rivet
+    id: lXfguTf8I89oaa_hiekMz
+    mainGraphId: iSjs9OgpMuYZ2-8_aN2l3
+    mcpServer:
+      mcpServers:
+        weather:
+          args:
+            - /absolute-path-for-server/index.js
+          command: node
+    title: MCP AI Agent
+  plugins: []
+  references: []
