@@ -13,7 +13,7 @@
     "release-node": "node --loader ts-node/esm --loader ./.pnp.loader.mjs release-node.mts",
     "publish-docs": "tsx publish-docs.mts",
     "build": "yarn workspace @ironclad/rivet-core run build && yarn workspace @ironclad/rivet-node run build && yarn workspace @ironclad/rivet-app-executor run build && yarn workspace @ironclad/trivet run build && yarn workspace @ironclad/rivet-app run build && yarn workspace @ironclad/rivet-cli run build",
-    "publish": "yarn workspace @ironclad/rivet-core run publish && yarn workspace @ironclad/rivet-node run publish && yarn workspace @ironclad/rivet-cli run publish && yarn workspace @ironclad/trivet run publish && (cd packages/cli && yarn docker-publish)",
+    "publish": "tsx publish-packages.mts",
     "test": "yarn workspace @ironclad/rivet-core run test",
     "lint": "yarn workspace @ironclad/rivet-core run lint && yarn workspace @ironclad/rivet-node run lint && yarn workspace @ironclad/rivet-app run lint && yarn workspace @ironclad/trivet run lint && yarn workspace @ironclad/rivet-app-executor run lint && yarn workspace @ironclad/rivet-cli run lint",
     "prettier:fix": "prettier --write ."
@@ -42,7 +42,7 @@
     "tsx": "^4.6.2",
     "typescript": "^5.7.3",
     "yargs": "^17.7.2",
-    "zx": "^7.2.3"
+    "zx": "^8.5.4"
   },
   "resolutions": {
     "jest-mock": "^28.1.0",
