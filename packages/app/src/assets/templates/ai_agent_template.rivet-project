@@ -5,6 +5,89 @@ data:
       testSuites: []
       version: 1
   graphs:
+    2gYFjPlVpy_Ie3vPZrDaq:
+      metadata:
+        description: ""
+        id: 2gYFjPlVpy_Ie3vPZrDaq
+        name: Tools/reply
+      nodes:
+        '[-nqRzr70N6wUSM5TOq3Zf]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: You are an AI Agent that helping compose the right reply to deliver
+              to the user based on the results of the conversation.
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Chat" 5MQFXvDzN3e5kHVR-kk70/systemPrompt
+          visualData: 916/233/280/null//
+        '[5MQFXvDzN3e5kHVR-kk70]:chat "Chat"':
+          data:
+            additionalParameters: []
+            cache: false
+            enableFunctionUse: false
+            headers: []
+            maxTokens: 16384
+            modalitiesIncludeAudio: false
+            modalitiesIncludeText: false
+            model: gpt-4o-mini
+            outputUsage: false
+            overrideMaxTokens: 128000
+            parallelFunctionCalling: true
+            reasoningEffort: ""
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAdditionalParametersInput: false
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePredictedOutput: false
+            usePresencePenaltyInput: false
+            useReasoningEffortInput: false
+            useServerTokenCalculation: true
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Graph Output" alcji0DL3ILn13eno_fV-/value
+          visualData: 1553/469/230/null//
+        '[aOV1wCPsa5o787_cnQhYu]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: command
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Prompt" b41oGLVyKdUVbowPrmHV1/command
+          visualData: 339/477/330/4//
+        '[alcji0DL3ILn13eno_fV-]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 2350.44529646035/547.1265486725663/330/null//
+        '[b41oGLVyKdUVbowPrmHV1]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: >-
+              You are provided with the messages in the conversation. You are
+              provided with the command to execute on. Use all the context
+              provided to you to come up with a reply for the user in plain
+              text.
+
+
+              ## Command
+
+              {{command}}
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Chat" 5MQFXvDzN3e5kHVR-kk70/prompt
+          visualData: 940.720056961399/631.7688002822683/280/5//
     74ffrsTA7BWR6UVhD5PaP:
       metadata:
         description: ""
@@ -137,34 +220,61 @@ data:
             useToolCallIdInput: false
             useTypeInput: false
           outgoingConnections:
-            - message->"Subgraph" DRoMnXEesj52MnkCltf4c/messages
+            - message->"Loop Until" 29G9PFrqlsMAkLic7dysQ/messages
           visualData: 510.06460249187296/457.89880637436636/280/16//
-        '[DRoMnXEesj52MnkCltf4c]:subGraph "Subgraph"':
+        '[29G9PFrqlsMAkLic7dysQ]:loopUntil "Loop Until"':
           data:
-            graphId: 74ffrsTA7BWR6UVhD5PaP
-            useAsGraphPartialOutput: false
-            useErrorOutput: false
+            conditionType: allOutputsSet
+            targetGraph: 74ffrsTA7BWR6UVhD5PaP
           outgoingConnections:
             - messages->"Graph Output" rj_ZqwkM-MY2LHrCcNtkG/value
-          visualData: 1445.5005480576635/475.7677294816771/330/4//
+          visualData: 1347.4952588278252/430.08364807721415/230/20//
         '[HvK-GeiC4sv1RUs9h6vMv]:text "Text"':
           data:
-            text: 'Use tool1 to execute the first task. Use the following values as
-              arguments: argument1: "value1"; argument2: "2"'
+            text: >-
+              Use tool1 to execute the first task. Use the following values as
+              arguments: argument1: "value1"; argument2: "2".
+
+              Then use the reply tool to finish your reply
           outgoingConnections:
             - output->"Assemble Message" 1SMNJX5gxZobvviaRTrdK/part1
           visualData: -171.61594925539646/459.1248505321852/330/13//
         '[rj_ZqwkM-MY2LHrCcNtkG]:graphOutput "Graph Output"':
           data:
-            dataType: string
+            dataType: string[]
             id: output
-          visualData: 2205.6836727553145/494.6801311089314/330/15//
+          visualData: 2160.3310457132325/415.6369811213029/330/19//
     Fmi9-DvqI78afZj-y20YC:
       metadata:
         description: ""
         id: Fmi9-DvqI78afZj-y20YC
         name: Tools
       nodes:
+        '[Am6oJ2yOgU5vaDLGnl8ym]:gptFunction "Tool"':
+          data:
+            description: Use this tool to give a reply to the user. This should ideally be
+              the last function you use on each execution.
+            name: reply
+            schema: >-
+              
+              {
+                "type": "object",
+                "properties": {
+                  "command": {
+                    "type": "string",
+                    "description": "What should the reply be to the user"
+                  },
+                  "finished": {
+                    "type": "boolean",
+                    "description": "Whether you are finished calling functions and this is your final reply to the user."
+                  }
+                },
+                "required": ["command", "finished"],
+                "additionalProperties": false
+              }
+          outgoingConnections:
+            - function->"Array" Ocn_d1Verpyi49srr1XSe/input3
+          visualData: 893.5535423345082/896.5494325817152/280/3//
         '[Ocn_d1Verpyi49srr1XSe]:array "Array"':
           data:
             flatten: true
