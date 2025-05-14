@@ -7,6 +7,28 @@ use std::path::{Path, PathBuf};
 
 use tauri::{AppHandle, CustomMenuItem, InvokeError, Manager, Menu, MenuItem, Submenu};
 mod plugins;
+mod db;
+
+use db::{DbConfig, test_connection, init_db, get_tables};
+use anyhow::Result;
+use serde::Serialize;
+use sqlx::FromRow;
+use chrono::{NaiveDateTime, Duration};
+
+#[derive(Debug, Serialize, FromRow)]
+struct ChatMessage {
+    id: i32,
+    #[sqlx(rename = "start_dt")]
+    start_dt: NaiveDateTime,
+    company_id: String,
+    user_id: String,
+    chat_id: String,
+    function_call: serde_json::Value,
+    inputs: serde_json::Value,
+    outputs: serde_json::Value,
+    #[sqlx(rename = "time_lapsed")]
+    time_lapsed: i64, // Store as seconds
+}
 
 fn main() {
     // Fix $PATH on MacOS and Linux to include the bashrc/zshrc
@@ -23,7 +45,11 @@ fn main() {
             get_environment_variable,
             plugins::extract_package_plugin_tarball,
             allow_data_file_scope,
-            read_relative_project_file
+            read_relative_project_file,
+            test_db_connection,
+            initialize_database,
+            fetch_database_tables,
+            execute_query
         ])
         .menu(create_menu())
         .on_menu_event(|event| match event.menu_item_id() {
@@ -85,6 +111,44 @@ fn read_relative_project_file(
 
     let full_path = source_dir.join(project_file_path);
     std::fs::read_to_string(full_path).map_err(|_| InvokeError::from("Failed to read file"))
+}
+
+#[tauri::command]
+async fn test_db_connection(connection_string: String) -> Result<(), String> {
+    test_connection(&connection_string)
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn initialize_database(connection_string: String) -> Result<(), String> {
+    let config = DbConfig { connection_string };
+    init_db(config)
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn fetch_database_tables() -> Result<Vec<String>, String> {
+    get_tables()
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn execute_query(query: String) -> Result<Vec<ChatMessage>, String> {
+    let pool = db::get_pool().ok_or_else(|| "Database not initialized".to_string())?;
+    
+    // Modify the query to convert interval to seconds
+    let modified_query = query.replace(
+        "SELECT * FROM chat_messages",
+        "SELECT id, start_dt, company_id, user_id, chat_id, function_call, inputs::jsonb, outputs::jsonb, EXTRACT(EPOCH FROM time_lapsed)::bigint as time_lapsed FROM chat_messages"
+    );
+    
+    sqlx::query_as::<_, ChatMessage>(&modified_query)
+        .fetch_all(pool)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 fn create_menu() -> Menu {
