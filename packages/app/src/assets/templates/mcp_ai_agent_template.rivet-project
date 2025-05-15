@@ -92,7 +92,7 @@ data:
       metadata:
         description: ""
         id: OBB836B-R7o-8zNMlRxl6
-        name: Process Command
+        name: Run Command
       nodes:
         '[5M2NJ82s30kLsDW_UtY-s]:extractObjectPath "Extract Object Path"':
           data:
@@ -275,7 +275,7 @@ data:
       metadata:
         description: ""
         id: iSjs9OgpMuYZ2-8_aN2l3
-        name: "*Run Command"
+        name: "*Main"
       nodes:
         '[-V2rQtxqT6EbiotCDoSzj]:loopUntil "Loop Until"':
           data:
