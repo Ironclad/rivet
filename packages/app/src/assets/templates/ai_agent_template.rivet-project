@@ -92,7 +92,7 @@ data:
       metadata:
         description: ""
         id: 74ffrsTA7BWR6UVhD5PaP
-        name: Process Command
+        name: Run Command
       nodes:
         '[0qGLk26zUTHG9Q2bq8gLi]:coalesce "Coalesce"':
           outgoingConnections:
@@ -228,7 +228,7 @@ data:
       metadata:
         description: ""
         id: D_uj8Jh1Xtba4RE1cnE7o
-        name: "*Run Command"
+        name: "*Main"
       nodes:
         '[1SMNJX5gxZobvviaRTrdK]:assembleMessage "Assemble Message"':
           data:
@@ -247,7 +247,7 @@ data:
             targetValue: "true"
           outgoingConnections:
             - messages->"Graph Output" rj_ZqwkM-MY2LHrCcNtkG/value
-          visualData: 899.4253052779644/439.5166997308954/230/22//
+          visualData: 979.4832967030976/425.679516027786/230/28//
         '[HvK-GeiC4sv1RUs9h6vMv]:text "Text"':
           data:
             text: >-
@@ -262,7 +262,7 @@ data:
           data:
             dataType: string[]
             id: output
-          visualData: 1314.0603028302985/489.9388875228172/330/25//
+          visualData: 1431.6763643067286/463.25289038110617/330/26//
     Fmi9-DvqI78afZj-y20YC:
       metadata:
         description: ""
@@ -424,3 +424,4 @@ data:
     mainGraphId: D_uj8Jh1Xtba4RE1cnE7o
     title: AI Agent Template
   plugins: []
+  references: []
