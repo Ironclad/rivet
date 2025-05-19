@@ -12,6 +12,8 @@ import Textarea from '@atlaskit/textarea';
 import { useNewProject } from '../hooks/useNewProject';
 import Select, { type OptionType, type GroupType } from '@atlaskit/select';
 import documentationTutorialProject from '../assets/tutorials/documentation-tutorial.rivet-project?raw';
+import aiAgentTemplateProject from '../assets/templates/ai_agent_template.rivet-project?raw';
+import mcpAiAgentTemplateProject from '../assets/templates/mcp_ai_agent_template.rivet-project?raw';
 import { useNewProjectFromTemplate } from '../hooks/useNewProjectFromTemplate';
 
 export const NewProjectModalRenderer: FC = () => {
@@ -82,27 +84,27 @@ export const NewProjectModal: FC = () => {
                 >
                   From Tutorial
                 </ButtonItem>
-                {/* <ButtonItem
-                  isSelected={selectedTemplate === 'community_templates'}
-                  onClick={() => setSelectedTemplate('community_templates')}
+                <ButtonItem
+                  isSelected={selectedTemplate === 'ai_agent'}
+                  onClick={() => setSelectedTemplate('ai_agent')}
                 >
-                  ⭐ Community Templates
-                </ButtonItem> */}
-              </Section>
-              {/*<Section title="Examples">
-                 <ButtonItem
-                  isSelected={selectedTemplate === 'community_examples'}
-                  onClick={() => setSelectedTemplate('community_examples')}
-                >
-                  ⭐ Community Examples
+                  AI Agent Template
                 </ButtonItem>
-              </Section>*/}
+                <ButtonItem
+                  isSelected={selectedTemplate === 'mcp_ai_agent'}
+                  onClick={() => setSelectedTemplate('mcp_ai_agent')}
+                >
+                  MCP AI Agent Template
+                </ButtonItem>
+              </Section>
             </SideNavigation>
           </nav>
           <main>
             {match(selectedTemplate)
               .with('blank_project', () => <BlankProjectTemplate onCreated={onProjectCreated} />)
               .with('tutorial', () => <FromTutorialTemplate onCreated={onProjectCreated} />)
+              .with('ai_agent', () => <AiAgentTemplate onCreated={onProjectCreated}/>)
+              .with('mcp_ai_agent', () => <MCPAiAgentTemplate onCreated={onProjectCreated}/>)
               .with('community_templates', () => <div>Coming soon!</div>)
               .with('community_examples', () => <div>Coming soon!</div>)
               .otherwise((template) => (
@@ -167,6 +169,61 @@ const BlankProjectTemplate: FC<{
             Create Project
           </Button>
         </div>
+      </form>
+    </div>
+  );
+};
+
+
+const AiAgentTemplate: FC<{
+  onCreated: () => void;
+}> = ({ onCreated }) => {
+  const newProjectFromTemplate = useNewProjectFromTemplate();
+
+  const createProject = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    newProjectFromTemplate(aiAgentTemplateProject);
+    onCreated();
+  };
+
+  return (
+    <div className="template ai-agent">
+      <h1>AI Agent Template</h1>
+      <p>
+        Creates a new project from the Rivet AI Agent Template. The template constructs the basic flow for an AI Agent that can use tools to perform specified commands.
+      </p>
+      <p>Run the AI Agent by clicking &quot;Run Main&quot; or &quot;Run&quot; while on the &quot;* Run Command&quot; Graph.</p>
+      <form onSubmit={createProject}>
+        <Button appearance="primary" type="submit">
+          Create Project
+        </Button>
+      </form>
+    </div>
+  );
+};
+
+const MCPAiAgentTemplate: FC<{
+  onCreated: () => void;
+}> = ({ onCreated }) => {
+  const newProjectFromTemplate = useNewProjectFromTemplate();
+
+  const createProject = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    newProjectFromTemplate(mcpAiAgentTemplateProject);
+    onCreated();
+  };
+
+  return (
+    <div className="template ai-agent">
+      <h1>MCP AI Agent Template</h1>
+      <p>
+        Creates a new project from the Rivet MCP AI Agent Template. The template constructs the basic flow for an AI Agent that can use tools from an MCP server to perform specified commands by calling the tools on the MCP server.
+      </p>
+      <p>Run the AI Agent by clicking &quot;Run Main&quot; or &quot;Run&quot; while on the &quot;* Run Command&quot; Graph.</p>
+      <form onSubmit={createProject}>
+        <Button appearance="primary" type="submit">
+          Create Project
+        </Button>
       </form>
     </div>
   );
