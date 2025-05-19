@@ -88,6 +88,102 @@ data:
           outgoingConnections:
             - output->"Chat" FUl-zXryQEyVFZ0E8J5LB/systemPrompt
           visualData: 1074.6300161989654/540.575588555077/280/7//
+    HlMyI9tkQP87aMUlSMx3e:
+      metadata:
+        description: ""
+        id: HlMyI9tkQP87aMUlSMx3e
+        name: Run Function
+      nodes:
+        '[BpZV51KLmIN_rxSj4hyEC]:text "Text"':
+          data:
+            text: You did not run a function. If you meant to reply to the user, use the
+              `replyToUser` function.
+          outgoingConnections:
+            - output->"Coalesce" YfB2Y4A8mmEKmUiOknmG-/input3
+          visualData: 2461/699.4185136273333/330/296//
+        '[FNA0PozVuHvomcYXkGE6B]:match "Match"':
+          data:
+            cases:
+              - reply
+          outgoingConnections:
+            - case1->"Delegate Tool Call" fNTQgF6rr7A6ktut1K8Zb/function-call
+            - unmatched->"Destructure" x1g57WDQnICifg-OFxhDa/object
+          visualData: 1262/209/280/7//
+        '[VhjQofrHER9R5hgC4uXJH]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: "{{response}}"
+            type: function
+            useNameInput: true
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Coalesce" YfB2Y4A8mmEKmUiOknmG-/input2
+          visualData: 2504.507536870882/446/280/294//
+        '[YfB2Y4A8mmEKmUiOknmG-]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" otd825ZNv3SWb6jrXmY7q/value
+          visualData: 3050.976597562498/409.43783667552384/180/291//
+        '[YrQQeOFwQWQFwo5h3tfWo]:graphInput "Graph Input"':
+          data:
+            dataType: object
+            id: tool_call
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Destructure" d57w_QWqBWNz38QaOhBOU/object
+            - data->"Match" FNA0PozVuHvomcYXkGE6B/value
+          visualData: 232/371/330/1//
+        '[d57w_QWqBWNz38QaOhBOU]:destructure "Destructure"':
+          data:
+            paths:
+              - $.name
+          outgoingConnections:
+            - match_0->"Match" FNA0PozVuHvomcYXkGE6B/input
+          visualData: 790/424/280/8//
+        '[fNTQgF6rr7A6ktut1K8Zb]:delegateFunctionCall "Delegate Tool Call"':
+          data:
+            autoDelegate: true
+            handlers: []
+          outgoingConnections:
+            - message->"Coalesce" YfB2Y4A8mmEKmUiOknmG-/input1
+          visualData: 2404/226/355/295//
+        '[otd825ZNv3SWb6jrXmY7q]:graphOutput "Graph Output"':
+          data:
+            dataType: chat-message
+            id: tool_call_response
+          visualData: 3455/396/330/298//
+        '[qMzbJ1igonRRt4jum1AsT]:mcpToolCall "MCP Tool Call"':
+          data:
+            name: mcp-tool-call-client
+            serverId: server-name
+            serverUrl: http://localhost:8080/mcp
+            toolArguments: |-
+              {
+                "key": "value"
+              }
+            toolCallId: ""
+            toolName: ""
+            transportType: stdio
+            useNameInput: false
+            useToolArgumentsInput: true
+            useToolCallIdInput: true
+            useToolNameInput: true
+            useVersionInput: false
+            version: 1.0.0
+          outgoingConnections:
+            - response->"Prompt" VhjQofrHER9R5hgC4uXJH/response
+            - toolCallId->"Prompt" VhjQofrHER9R5hgC4uXJH/name
+          visualData: 2110/436/280/14//
+        '[x1g57WDQnICifg-OFxhDa]:destructure "Destructure"':
+          data:
+            paths:
+              - $.name
+              - $.arguments
+              - $.id
+          outgoingConnections:
+            - match_0->"MCP Tool Call" qMzbJ1igonRRt4jum1AsT/toolName
+            - match_1->"MCP Tool Call" qMzbJ1igonRRt4jum1AsT/toolArguments
+            - match_2->"MCP Tool Call" qMzbJ1igonRRt4jum1AsT/toolCallId
+          visualData: 1635/469/280/12//
     OBB836B-R7o-8zNMlRxl6:
       metadata:
         description: ""
@@ -96,37 +192,30 @@ data:
       nodes:
         '[5M2NJ82s30kLsDW_UtY-s]:extractObjectPath "Extract Object Path"':
           data:
-            path: $.arguments.finished
+            path: $[?(@.arguments.finished == true)].arguments.finished
             usePathInput: false
           outgoingConnections:
-            - match->"If" qIk63o_Pj-HX_CaEY8J8Q/if
-            - match->"If" qIk63o_Pj-HX_CaEY8J8Q/value
-          visualData: 2919.6676644263152/887.2451340383076/280/229//
-        '[9B7IkbsNuMNNfbhDP5GCO]:coalesce "Coalesce"':
+            - match->"Graph Output" ZEbraXmwEx05Y7UYZJhYP/value
+          visualData: 3335.715293995301/821.4598250893654/280/301//
+        '[7K055jlvlYZ3frlZB1VoZ]:array "Array"':
+          data:
+            flatten: true
+            flattenDeep: false
           outgoingConnections:
-            - output->"Graph Output" ZEbraXmwEx05Y7UYZJhYP/value
-          visualData: 3625.1237968773653/842.5038159035064/180/232//
+            - output->"Extract Object Path" 5M2NJ82s30kLsDW_UtY-s/object
+            - output->"Subgraph" OPAI0ED_u-AX1nAN6-kCH/tool_call
+          visualData: 2878.0643850989213/537.2718892760213/230/303//
         '[AjDUwWKH3Fs-kfdIUO6HP]:array "Array"':
           data:
             flatten: true
             flattenDeep: false
           outgoingConnections:
             - output->"Chat" ckceKV9IKaqaCj-54W_JW/functions
-          visualData: 2075.493317668629/726.0671221334836/230/226//
-        '[App2Nwuhjya9e4KlvcgLq]:destructure "Destructure"':
-          data:
-            paths:
-              - $.name
-              - $.arguments
-              - $.id
-          outgoingConnections:
-            - match_0->"MCP Tool Call" qF6l1YWAAs789uHIz3bkR/toolName
-            - match_1->"MCP Tool Call" qF6l1YWAAs789uHIz3bkR/toolArguments
-          visualData: 2897.39338739515/556.056635665888/280/225//
+          visualData: 2075.493317668629/786.4309169235833/230/277//
         '[BL-o2XkvJ4LSUqkODJqhm]:mcpDiscovery "MCP Discovery"':
           data:
             name: mcp-client
-            serverId: ""
+            serverId: server-name
             serverUrl: http://localhost:8080/mcp
             transportType: stdio
             useNameInput: false
@@ -136,24 +225,24 @@ data:
             version: 1.0.0
           outgoingConnections:
             - tools->"Array" AjDUwWKH3Fs-kfdIUO6HP/input1
-          visualData: 1657.8815617065602/705.6327662157775/280/202//
+          visualData: 1657.8815617065602/754.1862533295532/280/278//
         '[GGCqvZvITg8sl5cAvtBW5]:graphOutput "Graph Output"':
           data:
-            dataType: string
+            dataType: chat-message[]
             id: messages
-          visualData: 4201.976047706333/543.1736947762081/330/220//
+          visualData: 4235.527310307989/612.4904699976555/330/293//
         '[KV5NyI4VuU07F7KH6H4a3]:graphInput "Graph Input"':
           data:
-            dataType: chat-message
+            dataType: chat-message[]
             id: messages
             useDefaultValueInput: false
           outgoingConnections:
             - data->"Chat" ckceKV9IKaqaCj-54W_JW/prompt
-          visualData: 1960.3820567802813/567.47540006428/330/199//
+          visualData: 1961.6943131887617/535.9812462607498/330/282//
         '[Ms6A_mARvyU-N3plJDVrx]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Graph Output" GGCqvZvITg8sl5cAvtBW5/value
-          visualData: 3856.22303363483/542.8344932284477/280/219//
+          visualData: 3845.162259344278/618.5754879333747/280/293//
         '[ONLywxggVWrL11BWJHMN0]:prompt "Prompt"':
           data:
             enableFunctionCall: false
@@ -163,12 +252,22 @@ data:
             useTypeInput: false
           outgoingConnections:
             - output->"Chat" ckceKV9IKaqaCj-54W_JW/systemPrompt
-          visualData: 2011.962950303136/395.13669442393945/280/198//
+          visualData: 2005.401668260734/239.18649986940028/280/305//
+        '[OPAI0ED_u-AX1nAN6-kCH]:subGraph "Subgraph"':
+          data:
+            graphId: HlMyI9tkQP87aMUlSMx3e
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          isSplitRun: true
+          outgoingConnections:
+            - tool_call_response->"Assemble Prompt"
+              Ms6A_mARvyU-N3plJDVrx/message2
+          visualData: 3326.77258751512/512.122522467979/330/304//
         '[ZEbraXmwEx05Y7UYZJhYP]:graphOutput "Graph Output"':
           data:
-            dataType: string
+            dataType: boolean
             id: finished
-          visualData: 3938.3130238209733/819.6129089508175/330/233//
+          visualData: 3763.5305767642703/820.558404147169/330/302//
         '[ckceKV9IKaqaCj-54W_JW]:chat "Chat"':
           data:
             additionalParameters: []
@@ -203,21 +302,9 @@ data:
             useUseTopPInput: false
             useUserInput: false
           outgoingConnections:
-            - function-call->"Destructure" App2Nwuhjya9e4KlvcgLq/object
-            - function-call->"Extract Object Path" 5M2NJ82s30kLsDW_UtY-s/object
-            - response->"Assemble Prompt" Ms6A_mARvyU-N3plJDVrx/message2
+            - all-messages->"Assemble Prompt" Ms6A_mARvyU-N3plJDVrx/message1
+            - function-call->"Array" 7K055jlvlYZ3frlZB1VoZ/input1
           visualData: 2498.03008196774/451.66979594245254/230/227//
-        '[e0TnRMMNF1TJrNs2cA6Vq]:text "Text"':
-          data:
-            text: You did not run a function. If you meant to reply to the user, use the
-              `replyToUser` function.
-          outgoingConnections:
-            - output->"Coalesce" eIfYE5mplq1mZ1TXTpgy9/input2
-          visualData: 3221.8949855389374/744.7901802721087/330/222//
-        '[eIfYE5mplq1mZ1TXTpgy9]:coalesce "Coalesce"':
-          outgoingConnections:
-            - output->"Assemble Prompt" Ms6A_mARvyU-N3plJDVrx/message1
-          visualData: 3624.434520346372/538.9027539212575/180/218//
         '[odID-xUbMifkUMk2E1cM2]:gptFunction "Tool"':
           data:
             description: Use this tool to give a reply to the user. This should ideally be
@@ -242,35 +329,7 @@ data:
               }
           outgoingConnections:
             - function->"Array" AjDUwWKH3Fs-kfdIUO6HP/input2
-          visualData: 1655.9587338656836/898.7158767776477/280/204//
-        '[qF6l1YWAAs789uHIz3bkR]:mcpToolCall "MCP Tool Call"':
-          data:
-            name: mcp-tool-call-client
-            serverId: ""
-            serverUrl: http://localhost:8080/mcp
-            toolArguments: |-
-              {
-                "key": "value"
-              }
-            toolCallId: ""
-            toolName: ""
-            transportType: stdio
-            useNameInput: false
-            useToolArgumentsInput: true
-            useToolCallIdInput: true
-            useToolNameInput: true
-            useVersionInput: false
-            version: 1.0.0
-          outgoingConnections:
-            - response->"Coalesce" eIfYE5mplq1mZ1TXTpgy9/input1
-          visualData: 3254.4250294646226/513.8602212824221/280/224//
-        '[qIk63o_Pj-HX_CaEY8J8Q]:if "If"':
-          data:
-            unconnectedControlFlowExcluded: true
-          outgoingConnections:
-            - falseOutput->"Coalesce" 9B7IkbsNuMNNfbhDP5GCO/input2
-            - output->"Coalesce" 9B7IkbsNuMNNfbhDP5GCO/input1
-          visualData: 3353.554400756828/894.5286044323449/155/230//
+          visualData: 1655.9587338656836/1071.8514562172506/280/306//
     iSjs9OgpMuYZ2-8_aN2l3:
       metadata:
         description: ""
@@ -298,13 +357,20 @@ data:
         '[bJBuUUiDV5PAKFx0nLDFg]:text "Text"':
           data:
             text: >-
-              Use tool1 to execute the first task. Use the following values as
-              arguments: argument1: "value1"; argument2: "2".
+              Use MCP Tool1 to get the value needed from the server.
 
-              Then use the reply tool to finish your reply.
+              Then use the reply tool to finish your reply and summarize the results of the tool calls.
           outgoingConnections:
-            - output->"Assemble Message" ORCVZ5XApZCbCJ4TUBmGH/part1
-          visualData: 585.2967332903963/81.41017925187346/330/17//
+            - output->"Graph Input" l9m1IBV5TQ4jbY9GGy23k/default
+          visualData: 74.79366327528123/81.41017925187346/330/20//
+        '[l9m1IBV5TQ4jbY9GGy23k]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: query
+            useDefaultValueInput: true
+          outgoingConnections:
+            - data->"Assemble Message" ORCVZ5XApZCbCJ4TUBmGH/part1
+          visualData: 523.0693819686448/80.13759770994777/330/22//
         '[x3zvcCIKX4ZVOCFBPNu6y]:graphOutput "Graph Output"':
           data:
             dataType: string
@@ -316,9 +382,9 @@ data:
     mainGraphId: iSjs9OgpMuYZ2-8_aN2l3
     mcpServer:
       mcpServers:
-        weather:
+        server-name:
           args:
-            - /absolute-path-for-server/index.js
+            - /absolute-path-to-mcp-server/
           command: node
     title: MCP AI Agent
   plugins: []

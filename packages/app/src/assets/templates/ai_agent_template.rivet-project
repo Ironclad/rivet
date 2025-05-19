@@ -94,21 +94,26 @@ data:
         id: 74ffrsTA7BWR6UVhD5PaP
         name: Run Command
       nodes:
-        '[0qGLk26zUTHG9Q2bq8gLi]:coalesce "Coalesce"':
-          outgoingConnections:
-            - output->"Graph Output" kzZvpwzbpCYdZu-LaNPhH/value
-          visualData: 3427.0681367327597/973.1690160965247/180/211//
         '[60fRBVjvr4UAAxyw-_HW8]:if "If"':
           data:
             unconnectedControlFlowExcluded: true
           outgoingConnections:
             - output->"Delegate Function Call"
               tkvf1Nmv9TDC7-pIajiC1/function-call
-          visualData: 2575.3749703136455/496.36666262260684/155/216//
+          visualData: 2832.8112862410994/235.70552675959965/155/244//
         '[9YwRHHLkJilTMM3l1U7_W]:coalesce "Coalesce"':
           outgoingConnections:
-            - output->"Assemble Prompt" JkdWbrWpPCRphgvOWCNpY/message1
-          visualData: 3280.939792365612/588.4726649383865/180/193//
+            - output->"Assemble Prompt" JkdWbrWpPCRphgvOWCNpY/message2
+          visualData: 3521.38780593822/347.631215156033/180/244//
+        '[DXGJOHFIht1x8aZ-RytUb]:array "Array"':
+          data:
+            flatten: true
+            flattenDeep: false
+          outgoingConnections:
+            - output->"Extract Object Path" W_GBg_M-YQUQkFpMzvxQV/object
+            - output->"If" 60fRBVjvr4UAAxyw-_HW8/if
+            - output->"If" 60fRBVjvr4UAAxyw-_HW8/value
+          visualData: 2434.9752309594296/531.1631694243137/230/249//
         '[J_GzXgB5rGIP59YyiTz4m]:subGraph "Subgraph"':
           data:
             graphId: Fmi9-DvqI78afZj-y20YC
@@ -120,24 +125,17 @@ data:
         '[JkdWbrWpPCRphgvOWCNpY]:assemblePrompt "Assemble Prompt"':
           outgoingConnections:
             - prompt->"Graph Output" k-msrWxxT3ruDKNKigtZm/value
-          visualData: 3581.172374397319/635.7947676893316/280/195//
+          visualData: 3869.7539113086573/612.969864794169/280/248//
         '[Ma82PksiXTMY3XhgZDAHk]:text "Text"':
           data:
             text: You did not run a function. If you meant to reply to the user, use the
               `replyToUser` function.
           outgoingConnections:
-            - output->"Coalesce" 9YwRHHLkJilTMM3l1U7_W/input3
-          visualData: 2852.3510179966024/750.8791065568971/330/194//
-        '[QS6L-Ar0A8pQyk7KudmLu]:if "If"':
-          data:
-            unconnectedControlFlowExcluded: true
-          outgoingConnections:
-            - falseOutput->"Coalesce" 0qGLk26zUTHG9Q2bq8gLi/input2
-            - output->"Coalesce" 0qGLk26zUTHG9Q2bq8gLi/input1
-          visualData: 3030.7828108892127/1006.59067008333/155/215//
+            - output->"Coalesce" 9YwRHHLkJilTMM3l1U7_W/input2
+          visualData: 3043.249816367576/476.06105206485154/330/245//
         '[W2rqpFzsqZf0jWZ2f_1WX]:graphInput "Graph Input"':
           data:
-            dataType: chat-message
+            dataType: chat-message[]
             id: messages
             useDefaultValueInput: false
           outgoingConnections:
@@ -145,22 +143,21 @@ data:
           visualData: 1525.5885151229386/652.7464343604103/330/187//
         '[W_GBg_M-YQUQkFpMzvxQV]:extractObjectPath "Extract Object Path"':
           data:
-            path: $.arguments.finished
+            path: $[?(@.arguments.finished == true)].arguments.finished
             usePathInput: false
           outgoingConnections:
-            - match->"If" QS6L-Ar0A8pQyk7KudmLu/if
-            - match->"If" QS6L-Ar0A8pQyk7KudmLu/value
-          visualData: 2449.2460315188014/907.2806125225372/280/223//
+            - match->"Graph Output" kzZvpwzbpCYdZu-LaNPhH/value
+          visualData: 3010.162649787002/1012.2508958585333/280/240//
         '[k-msrWxxT3ruDKNKigtZm]:graphOutput "Graph Output"':
           data:
-            dataType: string
+            dataType: chat-message[]
             id: messages
-          visualData: 3993.988329939178/631.0221848942572/330/196//
+          visualData: 4201.875430664999/620.9385087652291/330/247//
         '[kzZvpwzbpCYdZu-LaNPhH]:graphOutput "Graph Output"':
           data:
             dataType: boolean
             id: finished
-          visualData: 3998.1009677073175/909.1904213217832/330/224//
+          visualData: 3474.88796951604/1003.8125134740769/330/239//
         '[msOx_1r4aareJiXtqm6R5]:prompt "Prompt"':
           data:
             enableFunctionCall: false
@@ -183,7 +180,7 @@ data:
             model: gpt-4o-mini-2024-07-18
             outputUsage: false
             overrideMaxTokens: 128000
-            parallelFunctionCalling: false
+            parallelFunctionCalling: true
             reasoningEffort: ""
             stop: ""
             temperature: 0.5
@@ -205,10 +202,8 @@ data:
             useUseTopPInput: false
             useUserInput: false
           outgoingConnections:
-            - function-call->"Extract Object Path" W_GBg_M-YQUQkFpMzvxQV/object
-            - function-call->"If" 60fRBVjvr4UAAxyw-_HW8/if
-            - function-call->"If" 60fRBVjvr4UAAxyw-_HW8/value
-            - response->"Assemble Prompt" JkdWbrWpPCRphgvOWCNpY/message2
+            - all-messages->"Assemble Prompt" JkdWbrWpPCRphgvOWCNpY/message1
+            - function-calls->"Array" DXGJOHFIht1x8aZ-RytUb/input1
           visualData: 2057.646417054688/573.8834865489143/230/218//
         '[tkvf1Nmv9TDC7-pIajiC1]:delegateFunctionCall "Delegate Function Call"':
           data:
@@ -220,10 +215,11 @@ data:
                 value: eyZzZ5eqKdlo6m4-z6xi_
               - key: tool2
                 value: a5a5G7vWgBDXHsQvqrtAa
+          isSplitRun: true
           outgoingConnections:
-            - message->"Coalesce" 9YwRHHLkJilTMM3l1U7_W/input2
-            - output->"Coalesce" 9YwRHHLkJilTMM3l1U7_W/input1
-          visualData: 2846.0277644584444/439.63365402973244/355/191//
+            - message->"Coalesce" 9YwRHHLkJilTMM3l1U7_W/input1
+          splitRunMax: 10
+          visualData: 3036.9265628294183/225.6903496425519/355/244//
     D_uj8Jh1Xtba4RE1cnE7o:
       metadata:
         description: ""
@@ -248,16 +244,24 @@ data:
           outgoingConnections:
             - messages->"Graph Output" rj_ZqwkM-MY2LHrCcNtkG/value
           visualData: 979.4832967030976/425.679516027786/230/28//
+        '[BgQTgVvne0mpvtoDHUmH5]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: query
+            useDefaultValueInput: true
+          outgoingConnections:
+            - data->"Assemble Message" 1SMNJX5gxZobvviaRTrdK/part1
+          visualData: 76.66535213479978/453.2855816223413/330/30//
         '[HvK-GeiC4sv1RUs9h6vMv]:text "Text"':
           data:
             text: >-
               Use tool1 to execute the first task. Use the following values as
               arguments: argument1: "value1"; argument2: "2".
 
-              Then use the reply tool to finish your reply
+              Then use the reply tool to finish your reply and summarize the results of the tool calls.
           outgoingConnections:
-            - output->"Assemble Message" 1SMNJX5gxZobvviaRTrdK/part1
-          visualData: 87.79297122083875/459.1248505321852/330/21//
+            - output->"Graph Input" BgQTgVvne0mpvtoDHUmH5/default
+          visualData: -422.7100987942764/447.6785933569584/330/31//
         '[rj_ZqwkM-MY2LHrCcNtkG]:graphOutput "Graph Output"':
           data:
             dataType: string[]
