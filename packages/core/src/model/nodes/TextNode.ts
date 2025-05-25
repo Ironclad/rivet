@@ -18,6 +18,7 @@ export type TextNode = ChartNode<'text', TextNodeData>;
 
 export type TextNodeData = {
   text: string;
+  normalizeLineEndings?: boolean;
 };
 
 export class TextNodeImpl extends NodeImpl<TextNode> {
@@ -33,6 +34,7 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
       },
       data: {
         text: '{{input}}',
+        normalizeLineEndings: true, // Default to true for better compatibility
       },
     };
 
@@ -80,6 +82,12 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
         language: 'prompt-interpolation-markdown',
         theme: 'prompt-interpolation',
       },
+      {
+        type: 'toggle',
+        label: 'Normalize Line Endings',
+        dataKey: 'normalizeLineEndings',
+        helperMessage: 'Normalize line endings to use only LF (\\n) instead of CRLF (\\r\\n).',
+      },
     ];
   }
 
@@ -105,7 +113,11 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
       {} as Record<string, string>,
     );
 
-    const outputValue = interpolate(this.chartNode.data.text, inputMap);
+    let outputValue = interpolate(this.chartNode.data.text, inputMap);
+
+    if (this.chartNode.data.normalizeLineEndings) {
+      outputValue = outputValue.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    }
 
     return {
       output: {
