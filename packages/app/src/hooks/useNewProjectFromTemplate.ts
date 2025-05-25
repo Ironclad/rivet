@@ -6,12 +6,14 @@ import {
   deserializeProject,
   emptyNodeGraph,
   type BuiltInNodes,
+  type ProjectId,
 } from '@ironclad/rivet-core';
 import { graphState } from '../state/graph.js';
 import { trivetState } from '../state/trivet';
 import { orderBy } from 'lodash-es';
 import { duplicateGraph } from '../utils/duplicateGraph';
 import { produce } from 'immer';
+import { nanoid } from 'nanoid';
 
 export function useNewProjectFromTemplate() {
   const setProject = useSetAtom(projectState);
@@ -33,13 +35,18 @@ export function useNewProjectFromTemplate() {
         oldNewGraphIdMapping[graph.metadata!.id!] = duplicated.metadata!.id!;
       }
 
-      // Subgraph node is the only node that maintains a reference to another graph,
-      // so we need to update the graphId for all subgraph nodes
+      // Subgraph node and Loop Until node are the only nodes that maintain a reference to another graph,
+      // so we need to update the graphId for them
       for (const graph of newGraphs) {
         for (const node of graph.nodes) {
           const builtInNode = node as BuiltInNodes;
           if (builtInNode.type === 'subGraph') {
             builtInNode.data.graphId = oldNewGraphIdMapping[builtInNode.data.graphId]!;
+          }
+          if (builtInNode.type === 'loopUntil') {
+            builtInNode.data.targetGraph = builtInNode.data.targetGraph
+              ? oldNewGraphIdMapping[builtInNode.data.targetGraph]
+              : undefined;
           }
         }
       }
@@ -59,7 +66,13 @@ export function useNewProjectFromTemplate() {
     });
 
     setLoadedProject({ loaded: false, path: '' });
-    setProject(project);
+    setProject({
+      ...project,
+      metadata: {
+        ...project.metadata,
+        id: nanoid() as ProjectId,
+      },
+    });
 
     const firstGraph = orderBy(Object.values(project.graphs), (g) => g.metadata!.name!)[0];
 
