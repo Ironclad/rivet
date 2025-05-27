@@ -232,6 +232,7 @@ export const VisualNode = memo(
               zoomedOut: isZoomedOut,
               isComment,
               isPinned,
+              isSplit: node.isSplitRun,
               disabled: node.disabled,
               conditional: !!node.isConditional,
             },

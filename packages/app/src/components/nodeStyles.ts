@@ -85,6 +85,24 @@ export const nodeStyles = css`
     padding-left: 30px;
   }
 
+  .node.isSplit .node-title .grab-area svg {
+    transform: rotate(90deg);
+  }
+
+  .node.isSplit::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 10px;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--node-border);
+    border-radius: inherit;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, calc(100% - 12px) 100%, calc(100% - 12px) 10px, 0 10px);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black calc(100% - 71px), transparent calc(100% - 30px));
+  }
+
+
   .node.node.isComment .node-title {
     padding: 4px;
     background-color: var(--grey-darkish-seethrough);
@@ -179,6 +197,8 @@ export const nodeStyles = css`
   .node.isPinned .title-controls .pin-button {
     color: var(--primary-text);
   }
+
+
 
   .title-controls .tooltip {
     display: flex;
