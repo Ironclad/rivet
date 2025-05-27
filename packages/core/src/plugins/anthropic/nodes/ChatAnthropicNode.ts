@@ -43,7 +43,7 @@ import type { TokenizerCallInfo } from '../../../integrations/Tokenizer.js';
 import { assertNever } from '../../../utils/assertNever.js';
 import { isNotNull } from '../../../utils/genericUtilFunctions.js';
 import { uint8ArrayToBase64 } from '../../../utils/base64.js';
-import { getInputOrData } from '../../../utils/inputs.js';
+import { getInputOrData, cleanHeaders } from '../../../utils/inputs.js';
 
 export type ChatAnthropicNode = ChartNode<'chatAnthropic', ChatAnthropicNodeData>;
 
@@ -59,6 +59,7 @@ export type ChatAnthropicNodeConfigData = {
   endpoint?: string;
   overrideModel?: string;
   enableCitations?: boolean;
+  headers?: { key: string; value: string }[];
 };
 
 export type ChatAnthropicNodeData = ChatAnthropicNodeConfigData & {
@@ -72,6 +73,7 @@ export type ChatAnthropicNodeData = ChatAnthropicNodeConfigData & {
   useStopInput: boolean;
   useEndpointInput: boolean;
   useOverrideModelInput: boolean;
+  useHeadersInput?: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
@@ -207,6 +209,15 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
         title: 'Tools',
         description: 'Tools to use in the model. To connect multiple tools, use an Array node.',
         coerced: false,
+      });
+    }
+
+    if (data.useHeadersInput) {
+      inputs.push({
+        dataType: 'object',
+        id: 'headers' as PortId,
+        title: 'Headers',
+        description: 'Additional headers to send to the API.',
       });
     }
 
@@ -369,6 +380,14 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
             useInputToggleDataKey: 'useOverrideModelInput',
             helperMessage: 'Overrides the AI model used for the chat node to this value.',
           },
+          {
+            type: 'keyValuePair',
+            label: 'Headers',
+            dataKey: 'headers',
+            useInputToggleDataKey: 'useHeadersInput',
+            keyPlaceholder: 'Header',
+            helperMessage: 'Additional headers to send to the API.',
+          },
         ],
       },
     ];
@@ -463,6 +482,23 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
       maxTokens = Math.floor((modelInfo.maxTokens - tokenCountEstimate) * 0.95); // reduce max tokens by 5% to be safe, calculation is a little wrong.
     }
 
+    const headersFromData = (data.headers ?? []).reduce(
+      (acc, header) => {
+        acc[header.key] = header.value;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+    const additionalHeaders = data.useHeadersInput
+      ? (coerceTypeOptional(inputs['headers' as PortId], 'object') as Record<string, string> | undefined) ??
+        headersFromData
+      : headersFromData;
+
+    const allAdditionalHeaders = cleanHeaders({
+      ...context.settings.chatNodeHeaders,
+      ...additionalHeaders,
+    });
+
     try {
       return await retry(
         async () => {
@@ -510,6 +546,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
               apiKey: apiKey ?? '',
               signal: context.signal,
               beta: 'prompt-caching-2024-07-31',
+              additionalHeaders: allAdditionalHeaders,
               ...messageOptions,
             });
 
@@ -652,6 +689,7 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
               apiEndpoint,
               apiKey: apiKey ?? '',
               signal: context.signal,
+              additionalHeaders: allAdditionalHeaders,
               ...completionOptions,
             });
 
