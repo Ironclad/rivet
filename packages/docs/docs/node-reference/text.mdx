@@ -11,7 +11,12 @@ import TabItem from '@theme/TabItem';
 
 ## Overview
 
-The Text Node is used to output a string of text. It can also interpolate values using `{{tags}}` within the text. The inputs are dynamically generated based on the interpolation tags used in the text.
+The Text Node is used to output a string of text. It can also interpolate:
+- Values using `{{tags}}` within the text. The inputs are dynamically generated based on the interpolation tags used in the text.
+- Current graph inputs using `{{@graphInputs.<id>}}`. It won't generate any node inputs.
+- Context inputs using `{{@context.<id>}}`. It won't generate any node inputs either.
+
+Both `@graphInputs` and `@context` support property access expressions like `{{@graphInputs.foo.bar[0]}}`.
 
 This node is particularly useful for creating dynamic text based on the inputs to the node. The Text Node supports markdown, so you can use it to create richly formatted text.
 

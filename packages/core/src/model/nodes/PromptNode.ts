@@ -227,7 +227,12 @@ export class PromptNodeImpl extends NodeImpl<PromptNode> {
   async process(inputs: Inputs, context: InternalProcessContext<PromptNode>): Promise<Outputs> {
     const inputMap = mapValues(inputs, (input) => coerceType(input, 'string')) as Record<PortId, string>;
 
-    const outputValue = interpolate(this.chartNode.data.promptText, inputMap);
+    const outputValue = interpolate(
+      this.chartNode.data.promptText,
+      inputMap,
+      context.graphInputNodeValues,
+      context.contextValues
+    );
 
     const type = getInputOrData(this.data, inputs, 'type', 'string');
     const isCacheBreakpoint = getInputOrData(this.data, inputs, 'isCacheBreakpoint', 'boolean');

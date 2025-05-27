@@ -102,7 +102,7 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
     };
   }
 
-  async process(inputs: Record<string, DataValue>): Promise<Record<string, DataValue>> {
+  async process(inputs: Record<string, DataValue>, context: any): Promise<Record<string, DataValue>> {
     const inputMap = Object.keys(inputs).reduce(
       (acc, key) => {
         const stringValue = coerceTypeOptional(inputs[key], 'string') ?? '';
@@ -113,7 +113,12 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
       {} as Record<string, string>,
     );
 
-    let outputValue = interpolate(this.chartNode.data.text, inputMap);
+    let outputValue = interpolate(
+      this.chartNode.data.text,
+      inputMap,
+      context.graphInputNodeValues, // Pass graph inputs
+      context.contextValues, // Pass context values
+    );
 
     if (this.chartNode.data.normalizeLineEndings) {
       outputValue = outputValue.replace(/\r\n/g, '\n').replace(/\r/g, '\n');

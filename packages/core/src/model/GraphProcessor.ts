@@ -251,6 +251,8 @@ export class GraphProcessor {
 
   #nodeAbortControllers = new Map<`${NodeId}-${ProcessId}`, AbortController>();
 
+  #graphInputNodeValues: Record<string, DataValue> = {};
+
   /** User input nodes that are pending user input. */
   #pendingUserInputs: Record<
     NodeId,
@@ -762,6 +764,7 @@ export class GraphProcessor {
     this.#abortSuccessfully = false;
     this.#nodeAbortControllers = new Map();
     this.#loadedProjects = {};
+    this.#graphInputNodeValues = {};
   }
 
   /** Main function for running a graph. Runs a graph and returns the outputs from the output nodes of the graph. */
@@ -1233,7 +1236,7 @@ export class GraphProcessor {
       for (const [key, value] of propagatedAttachedData) {
         outputNodeAttachedData[key] = value;
       }
-    }
+    }    
 
     // Node is finished, check if we can run any more nodes that depend on this one
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -1664,6 +1667,7 @@ export class GraphProcessor {
 
         return results;
       },
+      graphInputNodeValues: this.#graphInputNodeValues,
     };
 
     await this.#waitUntilUnpaused();

@@ -55,6 +55,16 @@ return {
 };
 ```
 
+### Accessing current graph and context inputs
+
+You can access all the current graph and the context inputs through variables `graphInputs` and `context`.
+
+For example, if you have a graph input named `myString` that is a string, you can access it in the code node like this:
+
+```js
+const foo = graphInputs.myString.value; // graphInputs.myString.type === 'string'
+```
+
 <Tabs
   defaultValue="inputs"
   values={[
