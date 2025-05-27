@@ -90,6 +90,22 @@ export const anthropicModels = {
     },
     displayName: 'Claude 3.7 Sonnet',
   },
+  'claude-sonnet-4-20250514': {
+    maxTokens: 200_000,
+    cost: {
+      prompt: 3e-6,
+      completion: 3.75e-6,
+    },
+    displayName: 'Claude Sonnet 4',
+  },
+  'claude-opus-4-20250514': {
+    maxTokens: 200_000,
+    cost: {
+      prompt: 15e-6,
+      completion: 18.75e-6,
+    },
+    displayName: 'Claude Opus 4',
+  },
 } satisfies Record<string, AnthropicModel>;
 
 export type AnthropicModels = keyof typeof anthropicModels;
