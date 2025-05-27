@@ -34,7 +34,7 @@ import { uint8ArrayToBase64 } from '../../../utils/base64.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
 import { getScalarTypeOf, isArrayDataValue } from '../../../model/DataValue.js';
 import type { TokenizerCallInfo } from '../../../integrations/Tokenizer.js';
-import { getInputOrData } from '../../../utils/inputs.js';
+import { getInputOrData, cleanHeaders } from '../../../utils/inputs.js';
 import { type Content, type FunctionDeclaration, type Part, type Tool, type FunctionCall, Type } from '@google/genai';
 import { mapValues } from 'lodash-es';
 
@@ -48,6 +48,7 @@ export type ChatGoogleNodeConfigData = {
   top_k?: number;
   maxTokens: number;
   thinkingBudget: number | undefined;
+  headers?: { key: string; value: string }[];
 };
 
 export type ChatGoogleNodeData = ChatGoogleNodeConfigData & {
@@ -59,6 +60,7 @@ export type ChatGoogleNodeData = ChatGoogleNodeConfigData & {
   useMaxTokensInput: boolean;
   useToolCalling: boolean;
   useThinkingBudgetInput: boolean;
+  useHeadersInput?: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
@@ -188,6 +190,15 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
       title: 'Prompt',
     });
 
+    if (data.useHeadersInput) {
+      inputs.push({
+        dataType: 'object',
+        id: 'headers' as PortId,
+        title: 'Headers',
+        description: 'Additional headers to send to the API.',
+      });
+    }
+
     return inputs;
   },
 
@@ -306,6 +317,14 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
         type: 'toggle',
         label: 'Use for subgraph partial output',
         dataKey: 'useAsGraphPartialOutput',
+      },
+      {
+        type: 'keyValuePair',
+        label: 'Headers',
+        dataKey: 'headers',
+        useInputToggleDataKey: 'useHeadersInput',
+        keyPlaceholder: 'Header',
+        helperMessage: 'Additional headers to send to the API.',
       },
     ];
   },
@@ -495,6 +514,23 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
       }
     }
 
+    const headersFromData = (data.headers ?? []).reduce(
+      (acc, header) => {
+        acc[header.key] = header.value;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+    const additionalHeaders = data.useHeadersInput
+      ? (coerceTypeOptional(inputs['headers' as PortId], 'object') as Record<string, string> | undefined) ??
+        headersFromData
+      : headersFromData;
+
+    const allAdditionalHeaders = cleanHeaders({
+      ...context.settings.chatNodeHeaders,
+      ...additionalHeaders,
+    });
+
     try {
       return await retry(
         async () => {
@@ -508,6 +544,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
             topK: undefined,
             tools,
             thinkingBudget,
+            additionalHeaders: allAdditionalHeaders,
           };
           const cacheKey = JSON.stringify(options);
 
@@ -539,6 +576,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
               systemPrompt,
               tools,
               thinkingBudget,
+              additionalHeaders: allAdditionalHeaders,
             });
           } else {
             chunks = streamChatCompletions({

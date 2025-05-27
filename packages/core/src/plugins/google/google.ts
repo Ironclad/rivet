@@ -164,6 +164,7 @@ export type StreamGenerativeAiOptions = {
   signal?: AbortSignal;
   tools: Tool[] | undefined;
   thinkingBudget?: number;
+  additionalHeaders?: Record<string, string>;
 };
 
 export async function* streamGenerativeAi({
@@ -178,6 +179,7 @@ export async function* streamGenerativeAi({
   signal,
   tools,
   thinkingBudget,
+  additionalHeaders,
 }: StreamGenerativeAiOptions): AsyncGenerator<ChatCompletionChunk> {
   const { GoogleGenAI } = await import('@google/genai');
   const genAi = new GoogleGenAI({ apiKey });
@@ -195,6 +197,11 @@ export async function* streamGenerativeAi({
       abortSignal: signal,
       thinkingConfig: {
         thinkingBudget,
+      },
+      httpOptions: {
+        headers: {
+          ...additionalHeaders,
+        },
       },
     },
   });
