@@ -446,6 +446,15 @@
         "code",
         "ideas"
       ]
+    },
+    {
+      "login": "valerypopoff",
+      "name": "Valera Popov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5064630?v=4",
+      "profile": "http://valerypopoff.ru",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
