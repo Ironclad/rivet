@@ -1,6 +1,8 @@
-import { it, describe, mock } from 'node:test';
+import { it, describe } from 'node:test';
 import { strict as assert } from 'node:assert';
-import { DataValue, ObjectNode, ObjectNodeImpl } from '../../../src/index.js';
+import { type DataValue, type InternalProcessContext, type ObjectNode, ObjectNodeImpl } from '../../../src/index.js';
+
+/* eslint-disable @typescript-eslint/no-floating-promises */
 
 const createNode = (data: Partial<ObjectNode['data']>) => {
   return new ObjectNodeImpl({
@@ -13,6 +15,8 @@ const createNode = (data: Partial<ObjectNode['data']>) => {
 };
 
 describe('ObjectNodeImpl', () => {
+  const ctx = {} as InternalProcessContext;
+
   it('can create node', () => {
     const node = ObjectNodeImpl.create();
     assert.strictEqual(node.type, 'object');
@@ -23,7 +27,7 @@ describe('ObjectNodeImpl', () => {
     const inputs: Record<string, DataValue> = {
       input: { type: 'string', value: 'You say "goodbye," I say "hello."' },
     };
-    const result = await node.process(inputs);
+    const result = await node.process(inputs, ctx);
     assert.deepStrictEqual(result['output'].value, { key: 'You say "goodbye," I say "hello."' });
   });
 
@@ -33,7 +37,7 @@ describe('ObjectNodeImpl', () => {
     const inputs: Record<string, DataValue> = {
       input: { type: 'string', value: 'You say "goodbye," I say "hello."' },
     };
-    const result = await node.process(inputs);
+    const result = await node.process(inputs, ctx);
     assert.deepStrictEqual(result['output'].value, { key: 'You say "goodbye," I say "hello."' });
   });
 
@@ -42,7 +46,7 @@ describe('ObjectNodeImpl', () => {
     const inputs: Record<string, DataValue> = {
       input: { type: 'object', value: { you: 'goodbye', me: 'hello' } },
     };
-    const result = await node.process(inputs);
+    const result = await node.process(inputs, ctx);
 
     const keyValue = (result['output'].value as any)['key'];
     assert.strictEqual(typeof keyValue, 'string');
@@ -54,7 +58,7 @@ describe('ObjectNodeImpl', () => {
     const inputs: Record<string, DataValue> = {
       input: { type: 'object', value: { you: 'goodbye', me: 'hello' } },
     };
-    const result = await node.process(inputs);
+    const result = await node.process(inputs, ctx);
 
     assert.deepEqual(result['output'].value, { key: { you: 'goodbye', me: 'hello' } });
   });
@@ -65,7 +69,7 @@ describe('ObjectNodeImpl', () => {
       input: { type: 'boolean', value: false },
       anotherInput: { type: 'boolean', value: true },
     };
-    const result = await node.process(inputs);
+    const result = await node.process(inputs, ctx);
 
     assert.deepStrictEqual(result['output'].value, { key: false, anotherKey: true });
   });
@@ -76,7 +80,7 @@ describe('ObjectNodeImpl', () => {
       input: { type: 'number', value: 0 },
       anotherInput: { type: 'number', value: 2 },
     };
-    const result = await node.process(inputs);
+    const result = await node.process(inputs, ctx);
 
     assert.deepStrictEqual(result['output'].value, { key: 0, anotherKey: 2 });
   });
@@ -91,7 +95,7 @@ describe('ObjectNodeImpl', () => {
       anyArray: { type: 'any[]', value: ['world'] },
       objArray: { type: 'object[]', value: [] },
     };
-    const result = await node.process(inputs);
+    const result = await node.process(inputs, ctx);
 
     assert.deepEqual(result['output'].value, {
       numArray: [1, 2, 3],
@@ -114,7 +118,7 @@ describe('ObjectNodeImpl', () => {
     const inputs: Record<string, DataValue> = {
       obj: { type: 'object', value: { hello: 'world' } },
     };
-    const result = await node.process(inputs);
+    const result = await node.process(inputs, ctx);
 
     assert.deepStrictEqual(result['output'].value, {
       obj: { hello: 'world' },
@@ -130,7 +134,7 @@ describe('ObjectNodeImpl', () => {
     const inputs: Record<string, DataValue> = {
       input: undefined as any, // I believe this can happen when a split node has arrays of different lengths.
     };
-    const result = await node.process(inputs);
+    const result = await node.process(inputs, ctx);
     assert.deepStrictEqual(result['output'].value, { key: null });
   });
 });
