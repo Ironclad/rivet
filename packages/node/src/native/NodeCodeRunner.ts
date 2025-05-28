@@ -8,7 +8,7 @@ export class NodeCodeRunner implements CodeRunner {
     inputs: Inputs,
     options: CodeRunnerOptions,
     graphInputs?: Record<string, DataValue>,
-    contextValues?: Record<string, DataValue>
+    contextValues?: Record<string, DataValue>,
   ): Promise<Outputs> {
     const argNames = ['inputs'];
     const args: any[] = [inputs];
@@ -20,7 +20,7 @@ export class NodeCodeRunner implements CodeRunner {
 
     if (options.includeRequire) {
       argNames.push('require');
-      const require = createRequire(import.meta.url);
+      const require = import.meta ? createRequire(import.meta.url) : module.require;
       args.push(require);
     }
 
