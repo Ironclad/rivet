@@ -11,6 +11,6 @@ export const modelSelectorOptions = [
 
 export type ModelSelectorValue = (typeof modelSelectorOptions)[number]['value'];
 
-export const defaultModelSelectorOption = modelSelectorOptions[0];
+export const defaultModelSelectorOption = modelSelectorOptions[4]; // Default to Claude Sonnet 4
 
 export const defaultModelSelectorValue = defaultModelSelectorOption.value;
