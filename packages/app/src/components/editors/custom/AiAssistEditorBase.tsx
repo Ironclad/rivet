@@ -7,6 +7,9 @@ import {
   coreCreateProcessor,
   deserializeProject,
   ExecutionRecorder,
+  registerBuiltInNodes,
+  NodeRegistration,
+  plugins as corePlugins,
 } from '@ironclad/rivet-core';
 import { Field } from '@atlaskit/form';
 import Button from '@atlaskit/button';
@@ -87,6 +90,9 @@ export const AiAssistEditorBase = <TNodeData, TOutputs>({
 
       const recorder = new ExecutionRecorder();
 
+      const registry = registerBuiltInNodes(new NodeRegistration());
+      registry.registerPlugin(corePlugins.anthropic);
+
       const processor = coreCreateProcessor(project, {
         graph: graphName,
         inputs: {
@@ -94,6 +100,7 @@ export const AiAssistEditorBase = <TNodeData, TOutputs>({
           model: model!,
           api: api!,
         },
+        registry,
         ...(await fillMissingSettingsFromEnvironmentVariables(settings, plugins)),
       });
 

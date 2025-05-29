@@ -11,6 +11,9 @@ import {
   getError,
   type ExternalFunction,
   type DataValue,
+  registerBuiltInNodes,
+  NodeRegistration,
+  plugins as corePlugins,
 } from '@ironclad/rivet-core';
 import { createDir, BaseDirectory, writeFile } from '@tauri-apps/api/fs';
 import { appLogDir } from '@tauri-apps/api/path';
@@ -470,6 +473,9 @@ export function useAiGraphBuilder({ record, onFeedback }: { record: boolean; onF
 
       const [api, model] = modelAndApi.split(':');
 
+      const registry = registerBuiltInNodes(new NodeRegistration());
+      registry.registerPlugin(corePlugins.anthropic);
+
       const processor = coreCreateProcessor(project, {
         graph: 'Main',
         inputs: {
@@ -489,6 +495,7 @@ export function useAiGraphBuilder({ record, onFeedback }: { record: boolean; onF
         onUserEvent,
         nativeApi: new TauriNativeApi(),
         datasetProvider: new InMemoryDatasetProvider(data),
+        registry,
         ...(await fillMissingSettingsFromEnvironmentVariables(settings, plugins)),
       });
 

@@ -103,7 +103,7 @@ export async function runGraph(project: Project, options: NodeRunGraphOptions): 
   return processorInfo.run();
 }
 
-function getPluginEnvFromProcessEnv(registry?: NodeRegistration) {
+function getPluginEnvFromProcessEnv(registry?: NodeRegistration<any, any>) {
   const pluginEnv: Record<string, string> = {};
   for (const plugin of (registry ?? globalRivetNodeRegistry).getPlugins() ?? []) {
     const configs = Object.entries(plugin.configSpec ?? {}).filter(([, c]) => c.type === 'string') as [

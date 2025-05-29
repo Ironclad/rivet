@@ -191,7 +191,7 @@ export class GraphProcessor {
   slowMode = false;
   #isPaused = false;
   #parent: GraphProcessor | undefined;
-  readonly #registry: NodeRegistration;
+  readonly #registry: NodeRegistration<any, any>;
   id = nanoid();
 
   readonly #includeTrace?: boolean = true;
@@ -263,7 +263,7 @@ export class GraphProcessor {
     return this.#running;
   }
 
-  constructor(project: Project, graphId?: GraphId, registry?: NodeRegistration, includeTrace?: boolean) {
+  constructor(project: Project, graphId?: GraphId, registry?: NodeRegistration<any, any>, includeTrace?: boolean) {
     this.#project = project;
     const graph = graphId
       ? project.graphs[graphId]
@@ -1236,7 +1236,7 @@ export class GraphProcessor {
       for (const [key, value] of propagatedAttachedData) {
         outputNodeAttachedData[key] = value;
       }
-    }    
+    }
 
     // Node is finished, check if we can run any more nodes that depend on this one
     // eslint-disable-next-line @typescript-eslint/no-floating-promises

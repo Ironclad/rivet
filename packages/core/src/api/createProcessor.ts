@@ -16,6 +16,7 @@ import {
   type Settings,
 } from '../index.js';
 import { getProcessorEvents, getProcessorSSEStream, getSingleNodeStream } from './streaming.js';
+// eslint-disable-next-line import/no-cycle -- Necessary cycle
 import { GraphProcessor } from '../model/GraphProcessor.js';
 import { deserializeProject } from '../utils/serialization/serialization.js';
 import { DEFAULT_CHAT_NODE_TIMEOUT } from '../utils/defaults.js';
@@ -39,7 +40,7 @@ export type RunGraphOptions = {
     [key: string]: (data: DataValue | undefined) => void;
   };
   abortSignal?: AbortSignal;
-  registry?: NodeRegistration;
+  registry?: NodeRegistration<any, any>;
   includeTrace?: boolean;
   getChatNodeEndpoint?: ProcessContext['getChatNodeEndpoint'];
   tokenizer?: Tokenizer;

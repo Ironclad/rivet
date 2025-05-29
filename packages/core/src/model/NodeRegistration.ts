@@ -153,7 +153,6 @@ export class NodeRegistration<NodeTypes extends string = never, Nodes extends Ch
       throw new Error(`Unknown node type: ${type}`);
     }
 
-    // eslint-disable-next-line new-cap
     const impl = new ImplClass.impl(node, ImplClass.pluginImpl) as unknown as NodeImpl<ChartNode>;
     if (!impl) {
       throw new Error(`Unknown node type: ${type}`);
