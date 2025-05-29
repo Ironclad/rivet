@@ -5,6 +5,7 @@ import { get as lodashGet } from 'lodash-es';
 // Simpler regex allowing spaces, relies on trim() later
 export const TOKEN_MATCH_REGEX = /\{\{([^}]+?)\}\}/g;
 export const ESCAPED_TOKEN_REGEX = /\{\{\{([^}]+?)\}\}\}/g;
+export const ESCAPED_ESCAPED_TOKEN_REGEX = /\\\{\\\{([^}]+?)\\\}\\\}/g;
 
 // Processing functions
 type ProcessingFunction = (input: string, param?: number) => string;
@@ -220,16 +221,18 @@ function applyProcessing(value: string, processingChain: string): string {
   }, value);
 }
 
-// Main interpolation function using the improved resolveExpression
 export function interpolate(
   template: string,
   variables: Record<string, DataValue | string | undefined>,
   graphInputValues?: Record<string, DataValue>,
   contextValues?: Record<string, DataValue>,
 ): string {
-  return template.replace(
-    /\{\{((?:@graphInputs|@context)\..*?|[^}]+?)\}\}/g,
-    (_match, expressionWithMaybeProcessing) => {
+  return template
+    .replace(ESCAPED_TOKEN_REGEX, (_match, expression) => {
+      // Replace with \{\{expression\}\} to escape
+      return `\\{\\{${expression}\\}\\}`; // Escaped token
+    })
+    .replace(/\{\{((?:@graphInputs|@context)\..*?|[^}]+?)\}\}/g, (_match, expressionWithMaybeProcessing) => {
       const parts = expressionWithMaybeProcessing.split('|').map((s: string) => s.trim());
       const expression = parts[0]!; // The variable name or path, e.g., @context.foo.bar or myVar
       const processingChain = parts.slice(1).join('|'); // e.g., indent 2 | quote
@@ -268,14 +271,22 @@ export function interpolate(
       }
 
       return resolvedValue;
-    },
-  );
+    })
+    .replace(ESCAPED_ESCAPED_TOKEN_REGEX, (_match, expression) => {
+      // Replace with {{expression}} to unescape
+      return `{{${expression}}}`; // Unescaped token
+    });
 }
 
 // Extract all unique variable names from a template string
 // Ignores variables starting with @graphInputs. or @context., as they are treated as special references.
 export function extractInterpolationVariables(template: string): string[] {
-  const matches = template.matchAll(TOKEN_MATCH_REGEX);
+  const matches = template
+    .replace(ESCAPED_TOKEN_REGEX, (_match, content) => {
+      // Replace escaped tokens with the escaped escaped version so they're not matched
+      return `\\{\\{${content}\\}\\}`;
+    })
+    .matchAll(TOKEN_MATCH_REGEX);
   const variables = new Set<string>();
 
   for (const match of matches) {
