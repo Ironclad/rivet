@@ -2079,7 +2079,7 @@ data:
           data:
             dataType: string
             id: output
-          visualData: 3707.0869479961875/804.8466763116959/330/57//
+          visualData: 3313.2033451414127/795.6253210609152/330/87//
         '[IZDH9R5O-n99UeIF7vxLq]:toTree "To Tree"':
           data:
             childrenProperty: children
@@ -2135,7 +2135,7 @@ data:
             cases:
               - COMPLETELY_FINISHED_VALUE
           outgoingConnections:
-            - case1->"If" hqyv1T4DHKLWrUGHU90Lq/if
+            - case1->"Graph Output" ITkxP4aiS91UqNdKSIMDD/value
           visualData: 2889.453888526921/795.6136239967695/280/57//
         '[Z5qy7nB76IVy2Zj_HU0D9]:if "If"':
           data:
@@ -2176,12 +2176,6 @@ data:
             dataType: chat-message[]
             id: messages
           visualData: 4667.62236965799/343.17930433872175/330/57//
-        '[hqyv1T4DHKLWrUGHU90Lq]:if "If"':
-          data:
-            unconnectedControlFlowExcluded: true
-          outgoingConnections:
-            - falseOutput->"Graph Output" ITkxP4aiS91UqNdKSIMDD/value
-          visualData: 3405.034236550739/829.9078183093532/155/57//
         '[luWgdxg_GaPTm94v20yFm]:graphInput "Graph Input"':
           data:
             dataType: string
@@ -2191,12 +2185,6 @@ data:
             - data->"Graph Output" 2ftwj8CDXUcLDz-t0l9ga/value
             - data->"Subgraph" T0nduuBs9Girl8YpbIK9Q/api
           visualData: -505.09911780773234/-307.26202531361776/330/83//
-        '[nTL6xJSmQZR05BXue76gH]:text "Text"':
-          data:
-            text: not finished
-          outgoingConnections:
-            - output->"If" hqyv1T4DHKLWrUGHU90Lq/value
-          visualData: 2900.929682736813/1014.7688989571346/330/87//
         '[nyTLkLu_jpPwz984FoDII]:graphInput "Graph Input"':
           data:
             dataType: chat-message[]
@@ -2304,3 +2292,4 @@ data:
     - id: anthropic
       name: Anthropic
       type: built-in
+  references: []
