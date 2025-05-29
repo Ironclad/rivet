@@ -937,7 +937,7 @@ export const ChatNodeBase = {
 
     const { messages } = getChatNodeMessages(inputs);
 
-    const isReasoningModel = finalModel.startsWith('o1') || finalModel.startsWith('o3');
+    const isReasoningModel = finalModel.startsWith('o1') || finalModel.startsWith('o3') || finalModel.startsWith('o4');
 
     const completionMessages = await Promise.all(
       messages.map((message) => chatMessageToOpenAIChatCompletionMessage(message, { isReasoningModel })),

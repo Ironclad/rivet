@@ -208,6 +208,30 @@ export const openaiModels = {
     },
     displayName: 'GPT-4o Audio (Preview)',
   },
+  'gpt-4.1': {
+    maxTokens: 1_047_576,
+    cost: {
+      prompt: 2e-6,
+      completion: 8e-6,
+    },
+    displayName: 'GPT-4.1',
+  },
+  o3: {
+    maxTokens: 200_000,
+    cost: {
+      prompt: 10e-6,
+      completion: 40e-6,
+    },
+    displayName: 'o3',
+  },
+  'o4-mini': {
+    maxTokens: 200_000,
+    cost: {
+      prompt: 1.1e-6,
+      completion: 4.4e-6,
+    },
+    displayName: 'o4-mini',
+  },
   'local-model': {
     maxTokens: Number.MAX_SAFE_INTEGER,
     cost: {
