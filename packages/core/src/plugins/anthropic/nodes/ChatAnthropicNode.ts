@@ -522,7 +522,8 @@ export const ChatAnthropicNodeImpl: PluginNodeImpl<ChatAnthropicNode> = {
               ? tools.map((tool) => ({ name: tool.name, description: tool.description, input_schema: tool.parameters }))
               : undefined,
           };
-          const useMessageApi = model.startsWith('claude-3');
+          const useMessageApi =
+            model.startsWith('claude-3') || model.startsWith('claude-sonnet') || model.startsWith('claude-opus');
           const cacheKey = JSON.stringify(useMessageApi ? messageOptions : completionOptions);
           if (data.cache) {
             const cached = cache.get(cacheKey);
