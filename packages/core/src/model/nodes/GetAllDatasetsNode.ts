@@ -8,6 +8,7 @@ import type {
   NodeUIData,
   Outputs,
   PortId,
+  Inputs,
 } from '../../index.js';
 import { NodeImpl } from '../NodeImpl.js';
 import { dedent, newId } from '../../utils/index.js';
@@ -57,7 +58,7 @@ export class GetAllDatasetsNodeImpl extends NodeImpl<GetAllDatasetsNode> {
     return [];
   }
 
-  async process(context: InternalProcessContext): Promise<Outputs> {
+  async process(_inputs: Inputs, context: InternalProcessContext): Promise<Outputs> {
     const { datasetProvider } = context;
 
     if (datasetProvider == null) {
