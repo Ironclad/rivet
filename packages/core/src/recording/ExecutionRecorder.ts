@@ -11,6 +11,7 @@ import {
 import Emittery from 'emittery';
 import { uint8ArrayToBase64Sync, base64ToUint8Array } from '../utils/base64.js';
 import { isPlainObject } from 'lodash-es';
+import { stringifyJsonStream, type SerializableJsonValue, parseJsonStream, streamToIterable } from 'json-stream-es';
 
 export type ExecutionRecorderEvents = {
   finish: { recording: Recording };
@@ -144,6 +145,53 @@ function mapValuesDeep(obj: any, fn: (value: any) => any): any {
   return fn(obj);
 }
 
+function serializeToObject(recording: Recording) {
+  const serialized: SerializedRecording = {
+    version: 1,
+    recording,
+    assets: {},
+  };
+
+  serialized.recording = mapValuesDeep(serialized.recording, (val) => {
+    if (val instanceof Uint8Array) {
+      const asString = uint8ArrayToBase64Sync(val);
+      const existingAsset = Object.entries(serialized.assets).find(([, asset]) => asset === asString);
+
+      if (!existingAsset) {
+        const id = nanoid();
+        serialized.assets[id] = asString;
+        return `$ASSET:${id}`;
+      } else {
+        const [id] = existingAsset;
+        return `$ASSET:${id}`;
+      }
+    }
+
+    return val;
+  }) as SerializedRecording['recording'];
+
+  return serialized as SerializableJsonValue;
+}
+
+function deserializeFromObject(serializedRecording: SerializedRecording) {
+  if (serializedRecording.version !== 1) {
+    throw new Error('Unsupported serialized events version');
+  }
+
+  return mapValuesDeep(serializedRecording.recording, (val) => {
+    if (typeof val === 'string' && val.startsWith('$ASSET:')) {
+      const id = val.slice('$ASSET:'.length);
+      const asset = serializedRecording.assets?.[id];
+      if (asset) {
+        return new Uint8Array(base64ToUint8Array(asset));
+      } else {
+        return val;
+      }
+    }
+    return val;
+  }) as Recording;
+}
+
 export class ExecutionRecorder {
   #events: RecordedEvents[] = [];
   recordingId: RecordingId | undefined;
@@ -233,25 +281,23 @@ export class ExecutionRecorder {
 
   static deserializeFromString(serialized: string) {
     const recorder = new ExecutionRecorder();
+    const recording = deserializeFromObject(JSON.parse(serialized) as SerializedRecording);
 
-    const serializedRecording = JSON.parse(serialized) as SerializedRecording;
+    recorder.recordingId = recording.recordingId;
+    recorder.#events = recording.events;
+    return recorder;
+  }
 
-    if (serializedRecording.version !== 1) {
-      throw new Error('Unsupported serialized events version');
+  static async deserializeFromStream(serialized: ReadableStream) {
+    const recorder = new ExecutionRecorder();
+
+    let serializedRecording!: SerializedRecording;
+    for await (const value of streamToIterable(serialized.pipeThrough(parseJsonStream(undefined)))) {
+      serializedRecording = value as SerializedRecording;
+      break;
     }
 
-    const recording = mapValuesDeep(serializedRecording.recording, (val) => {
-      if (typeof val === 'string' && val.startsWith('$ASSET:')) {
-        const id = val.slice('$ASSET:'.length);
-        const asset = serializedRecording.assets?.[id];
-        if (asset) {
-          return new Uint8Array(base64ToUint8Array(asset));
-        } else {
-          return val;
-        }
-      }
-      return val;
-    });
+    const recording = deserializeFromObject(serializedRecording);
 
     recorder.recordingId = recording.recordingId;
     recorder.#events = recording.events;
@@ -259,30 +305,10 @@ export class ExecutionRecorder {
   }
 
   serialize() {
-    const serialized: SerializedRecording = {
-      version: 1,
-      recording: this.getRecording(),
-      assets: {},
-    };
+    return JSON.stringify(serializeToObject(this.getRecording()));
+  }
 
-    serialized.recording = mapValuesDeep(serialized.recording, (val) => {
-      if (val instanceof Uint8Array) {
-        const asString = uint8ArrayToBase64Sync(val);
-        const existingAsset = Object.entries(serialized.assets).find(([, asset]) => asset === asString);
-
-        if (!existingAsset) {
-          const id = nanoid();
-          serialized.assets[id] = asString;
-          return `$ASSET:${id}`;
-        } else {
-          const [id] = existingAsset;
-          return `$ASSET:${id}`;
-        }
-      }
-
-      return val;
-    }) as SerializedRecording['recording'];
-
-    return JSON.stringify(serialized);
+  serializeStream() {
+    return stringifyJsonStream(serializeToObject(this.getRecording()));
   }
 }
