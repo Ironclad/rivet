@@ -46,13 +46,13 @@ The system prompt is connected to the `System Prompt` port of all the [Chat Node
 
 After each of the chats has (in parallel) generated its output (the first being an introduction, and asking the user what contract to generate, and the 2nd being a list of contracts it can generate), the two outputs are fed into a [Text Node](../node-reference/text.mdx) that combines the two outputs into one string:
 
-> {{introduction}}
+> \{\{introduction}}
 >
 > Here are some contract types I can generate templates for:
 >
-> {{templates}}
+> \{\{templates}}
 
-The text inside {{curly_braces}} is marked as a replacement for one of the input ports of the text node. The inputs to the text node are dynamic based on the text prompt inside the text node. In this case, we get two inputs, `introduction` and `templates`, corresponding to the two {{curly_braces}} in the text prompt and the two previous chat nodes.
+The text inside `{{curly_braces}}` is marked as a replacement for one of the input ports of the text node. The inputs to the text node are dynamic based on the text prompt inside the text node. In this case, we get two inputs, `introduction` and `templates`, corresponding to the two `{{curly_braces}}` in the text prompt and the two previous chat nodes.
 
 ## User Input
 
@@ -68,7 +68,7 @@ The next thing we do is combine all these messages together using an [Assemble P
 
 The prompt is a [Prompt Node](../node-reference/prompt.mdx) set to type System with the following text:
 
-> The user has indicated that they want to generate this contract type: {{type}}. You must now output a template for this contract type. Only reply with a template.
+> The user has indicated that they want to generate this contract type: \{\{type}}. You must now output a template for this contract type. Only reply with a template.
 
 We pass the text the user entered for the user input node into the `type` port of the system prompt.
 
