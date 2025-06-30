@@ -32,7 +32,7 @@ For more information on datasets, see the [Data Studio](../user-guide/features/d
 
 | Title      | Data Type  | Description                                                                                                                                                                                                      | Default Value                                               | Notes                                                                        |
 | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Data       | `object[]` | The new data of the dataset. If empty, the dataset will be cleared. May be an array of array of strings, or an array of DatasetRow objects with { id, data } properties. If a string[][], IDs will be generated. | (empty)                                                     | The input will be coerced into an object array if it is not an object array. |
+| Data       | `object[]` | The new data of the dataset. If empty, the dataset will be cleared. May be an array of array of strings, or an array of DatasetRow objects with `{ id, data }` properties. If a string[][], IDs will be generated. | (empty)                                                     | The input will be coerced into an object array if it is not an object array. |
 | Dataset ID | `string`   | The ID of the dataset to replace. This input is only available if `Use Dataset ID Input` is enabled.                                                                                                             | (required if if the input toggle for Dataset ID is enabled) | The input will be coerced into a string if it is not a string.               |
 
 </TabItem>
@@ -43,7 +43,7 @@ For more information on datasets, see the [Data Studio](../user-guide/features/d
 
 | Title   | Data Type  | Description                                                                               | Notes                                                                               |
 | ------- | ---------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Dataset | `object[]` | The new data of the dataset. An array of DatasetRow objects with { id, data } properties. | The output will be an object containing the ID, data, and embedding of the new row. |
+| Dataset | `object[]` | The new data of the dataset. An array of DatasetRow objects with `{ id, data }` properties. | The output will be an object containing the ID, data, and embedding of the new row. |
 
 </TabItem>
 
