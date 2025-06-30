@@ -1,4 +1,5 @@
 import { nanoid } from 'nanoid/non-secure';
+import fnv1a from '@sindresorhus/fnv1a';
 import {
   type GraphProcessor,
   type ProcessEvents,
@@ -150,6 +151,7 @@ function serializeToObject(recording: Recording) {
     version: 1,
     recording,
     assets: {},
+    strings: {},
   };
 
   serialized.recording = mapValuesDeep(serialized.recording, (val) => {
@@ -165,6 +167,12 @@ function serializeToObject(recording: Recording) {
         const [id] = existingAsset;
         return `$ASSET:${id}`;
       }
+    }
+
+    if (typeof val === 'string' && !val.startsWith('$ASSET:') && val.length > 30) {
+      const hash = fnv1a(val, { size: 32 });
+      serialized.strings[`${hash}`] = val;
+      return `$STRING:${hash}`;
     }
 
     return val;
@@ -188,6 +196,15 @@ function deserializeFromObject(serializedRecording: SerializedRecording) {
         return val;
       }
     }
+
+    if (typeof val === 'string' && val.startsWith('$STRING:')) {
+      const hash = val.slice('$STRING:'.length);
+      const string = serializedRecording.strings?.[hash];
+      if (string) {
+        return string;
+      }
+    }
+
     return val;
   }) as Recording;
 }

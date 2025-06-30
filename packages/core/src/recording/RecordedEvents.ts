@@ -93,4 +93,5 @@ export type SerializedRecording = {
   version: number;
   recording: Recording;
   assets: Record<string, string>;
+  strings: Record<string, string>;
 };

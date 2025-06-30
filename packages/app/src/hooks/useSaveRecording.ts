@@ -12,7 +12,7 @@ export function useSaveRecording() {
     }
 
     try {
-      await ioProvider.saveString(recording, 'recording.rivet-recording');
+      await ioProvider.saveString(recording, `recording-${Date.now()}.rivet-recording`);
     } catch (err) {
       console.error(err);
     }
