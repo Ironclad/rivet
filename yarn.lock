@@ -4229,6 +4229,7 @@ __metadata:
     eslint-plugin-n: "npm:^16.2.0"
     eslint-plugin-promise: "npm:^6.1.1"
     gpt-tokenizer: "npm:^2.1.2"
+    json-stream-es: "npm:^1.2.1"
     jsonpath-plus: "npm:^10.2.0"
     lodash: "npm:^4.17.21"
     lodash-es: "npm:^4.17.21"
@@ -13674,6 +13675,13 @@ __metadata:
   version: 1.0.1
   resolution: "json-stable-stringify-without-jsonify@npm:1.0.1"
   checksum: 10/12786c2e2f22c27439e6db0532ba321f1d0617c27ad8cb1c352a0e9249a50182fd1ba8b52a18899291604b0c32eafa8afd09e51203f19109a0537f68db2b652d
+  languageName: node
+  linkType: hard
+
+"json-stream-es@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "json-stream-es@npm:1.2.1"
+  checksum: 10/aad455d5971021d8a4a999043200629a3ac652c82652c8e82cf086e90ed3501b57c5d680196e1dea7e3ac943d4f95690bb15ef60b8270ed6ce59b684be5779c2
   languageName: node
   linkType: hard
 

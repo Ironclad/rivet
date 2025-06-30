@@ -55,6 +55,7 @@
     "emittery": "^1.0.1",
     "emittery-0-13": "npm:emittery@^0.13.1",
     "gpt-tokenizer": "^2.1.2",
+    "json-stream-es": "^1.2.1",
     "jsonpath-plus": "^10.2.0",
     "lodash-es": "^4.17.21",
     "mdast-util-gfm-table": "^2.0.0",
