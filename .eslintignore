@@ -1,7 +1,0 @@
-node_modules
-build
-coverage
-vendor
-.eslintrc.cjs
-app-executor/bin/executor-bundle.js
-app-executor/bin/executor-bundle.cjs
