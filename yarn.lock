@@ -4207,7 +4207,6 @@ __metadata:
     "@google-cloud/vertexai": "npm:^0.1.3"
     "@google/genai": "npm:^0.12.0"
     "@huggingface/inference": "npm:^2.6.4"
-    "@sindresorhus/fnv1a": "npm:^3.1.0"
     "@swc/core": "npm:^1.3.94"
     "@types/crypto-js": "npm:^4.1.3"
     "@types/eslint": "npm:^8.44.6"
@@ -5335,13 +5334,6 @@ __metadata:
   version: 0.27.8
   resolution: "@sinclair/typebox@npm:0.27.8"
   checksum: 10/297f95ff77c82c54de8c9907f186076e715ff2621c5222ba50b8d40a170661c0c5242c763cba2a4791f0f91cb1d8ffa53ea1d7294570cf8cd4694c0e383e484d
-  languageName: node
-  linkType: hard
-
-"@sindresorhus/fnv1a@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "@sindresorhus/fnv1a@npm:3.1.0"
-  checksum: 10/9816f4382da21df562e9049bd40dca95bc952afbc5f2257750b1b537af0810850749ee113c8b97f0b4c49a2d82c225fc8e0e14fda191333de9e1f73730a428e3
   languageName: node
   linkType: hard
 
