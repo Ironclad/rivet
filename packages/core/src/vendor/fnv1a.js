@@ -5,7 +5,7 @@
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * \the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
  * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
@@ -75,7 +75,7 @@ function fnv1aEncodeInto(string, size, utf8Buffer) {
 
 /**
  * @param {string} value
- * @param {{ size?: number, utf8Buffer?: Uint8Array }} options
+ * @param {{ size?: 32 | 64 | 128 | 256 | 512 | 1024, utf8Buffer?: Uint8Array }} options
  * @returns {string}
  */
 export default function fnv1a(value, { size = 32, utf8Buffer } = {}) {
