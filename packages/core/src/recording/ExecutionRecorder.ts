@@ -12,7 +12,7 @@ import Emittery from 'emittery';
 import { uint8ArrayToBase64Sync, base64ToUint8Array } from '../utils/base64.js';
 import { isPlainObject } from 'lodash-es';
 import { stringifyJsonStream, type SerializableJsonValue, parseJsonStream, streamToIterable } from 'json-stream-es';
-import fnv1a from '../utils/fnv1a.js';
+import fnv1a from '../vendor/fnv1a.js';
 
 export type ExecutionRecorderEvents = {
   finish: { recording: Recording };

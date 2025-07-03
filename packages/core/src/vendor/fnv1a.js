@@ -20,8 +20,6 @@
 // Copied straight from https://github.com/sindresorhus/fnv1a/blob/main/index.js
 // with types added
 
-/* eslint-disable */
-
 const FNV_PRIMES = {
   32: 16_777_619n,
   64: 1_099_511_628_211n,
