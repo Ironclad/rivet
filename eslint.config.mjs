@@ -4,6 +4,7 @@ import tsParser from '@typescript-eslint/parser';
 import importPlugin from 'eslint-plugin-import';
 
 export default [
+  { ignores: ['**/vendor/*'] },
   {
     files: ['**/*.{js,jsx,ts,tsx,mts,cts}'],
     languageOptions: {
