@@ -171,6 +171,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/suhail-ak-s"><img src="https://avatars.githubusercontent.com/u/157091287?v=4?s=100" width="100px;" alt="Suhail AK"/><br /><sub><b>Suhail AK</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=suhail-ak-s" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://getenter.ai"><img src="https://avatars.githubusercontent.com/u/65794514?v=4?s=100" width="100px;" alt="Juliano Amadeu"/><br /><sub><b>Juliano Amadeu</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=julianolm" title="Code">💻</a> <a href="#ideas-julianolm" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://valerypopoff.ru"><img src="https://avatars.githubusercontent.com/u/5064630?v=4?s=100" width="100px;" alt="Valera Popov"/><br /><sub><b>Valera Popov</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=valerypopoff" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/mariankassovic"><img src="https://avatars.githubusercontent.com/u/13512633?v=4?s=100" width="100px;" alt="Majo"/><br /><sub><b>Majo</b></sub></a><br /><a href="https://github.com/Ironclad/rivet/commits?author=mariankassovic" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
