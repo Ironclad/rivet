@@ -273,7 +273,7 @@ export class MCPGetPromptNodeImpl extends NodeImpl<MCPGetPromptNode> {
 
       const output: Outputs = {};
 
-      output['response' as PortId] = {
+      output['prompt' as PortId] = {
         type: 'object',
         value: getPromptResponse as unknown as Record<string, unknown>,
       };
