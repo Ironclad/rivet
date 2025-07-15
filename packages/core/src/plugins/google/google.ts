@@ -31,15 +31,31 @@ export const googleModelsDeprecated = {
 export type GoogleModelsDeprecated = keyof typeof googleModelsDeprecated;
 
 export const generativeAiGoogleModels = {
-  'gemini-2.5-flash-preview-04-17': {
+  'gemini-2.5-pro': {
     maxTokens: 1048576,
     cost: {
-      prompt: 0.15 / 1000,
-      completion: 0.6 / 1000,
+      prompt: 1.25 / 1000, // <= 200k tokens, > 200k tokens is 2.5 / 1000
+      completion: 10 / 1000, // <= 200k tokens, > 200k tokens is 15 / 1000
     },
-    displayName: 'Gemini 2.5 Flash Preview',
+    displayName: 'Gemini 2.5 Pro',
   },
-  'gemini-2.0-flash-001': {
+  'gemini-2.5-flash': {
+    maxTokens: 1048576,
+    cost: {
+      prompt: 0.3 / 1000,
+      completion: 2.5 / 1000,
+    },
+    displayName: 'Gemini 2.5 Flash',
+  },
+  'gemini-2.5-flash-lite-preview-06-17': {
+    maxTokens: 1000000,
+    cost: {
+      prompt: 0.1 / 1000,
+      completion: 0.4 / 1000,
+    },
+    displayName: 'Gemini 2.5 Flash Lite Preview',
+  },
+  'gemini-2.0-flash': {
     maxTokens: 1048576,
     cost: {
       prompt: 0.1 / 1000,
@@ -47,45 +63,13 @@ export const generativeAiGoogleModels = {
     },
     displayName: 'Gemini 2.0 Flash',
   },
-  'gemini-2.0-pro-exp-02-05': {
-    maxTokens: 2097152,
-    cost: {
-      prompt: 0, // Unknown
-      completion: 0, // Unknown
-    },
-    displayName: 'Gemini 2.0 Pro',
-  },
-  'gemini-2.5-pro-exp-03-25': {
-    maxTokens: 1000000,
-    cost: {
-      prompt: 0, // Unknown
-      completion: 0, // Unknown
-    },
-    displayName: 'Gemini 2.5 Pro Experimental',
-  },
-  'gemini-2.0-flash-lite-preview-02-05': {
+  'gemini-2.0-flash-lite': {
     maxTokens: 1048576,
     cost: {
       prompt: 0.075 / 1000,
       completion: 0.3 / 1000,
     },
     displayName: 'Gemini 2.0 Flash Lite',
-  },
-  'gemini-2.0-flash-thinking-exp-01-21': {
-    maxTokens: 1048576,
-    cost: {
-      prompt: 0, // Unknown
-      completion: 0, // Unknown
-    },
-    displayName: 'Gemini 2.0 Flash Thinking',
-  },
-  'gemini-1.5-flash': {
-    maxTokens: 1048576,
-    cost: {
-      prompt: 0, // It's per-character wtf
-      completion: 0, // It's per-character
-    },
-    displayName: 'Gemini 1.5 Flash',
   },
   'gemini-1.5-pro': {
     maxTokens: 2097152,
@@ -95,22 +79,14 @@ export const generativeAiGoogleModels = {
     },
     displayName: 'Gemini 1.5 Pro',
   },
-  'gemini-1.0-pro': {
-    maxTokens: 32760,
-    cost: {
-      prompt: 0, // It's per-character wtf
-      completion: 0, // 1It's per-character
-    },
-    displayName: 'Gemini 1.0 Pro',
-  },
-  'gemini-1.0-pro-vision': {
-    maxTokens: 16384,
+  'gemini-1.5-flash': {
+    maxTokens: 1048576,
     cost: {
       prompt: 0, // It's per-character wtf
       completion: 0, // It's per-character
     },
-    displayName: 'Gemini 1.0 Pro Vision',
-  },
+    displayName: 'Gemini 1.5 Flash',
+  }
 };
 
 export type GenerativeAiGoogleModel = keyof typeof generativeAiGoogleModels;
