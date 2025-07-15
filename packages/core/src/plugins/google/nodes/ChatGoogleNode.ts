@@ -83,7 +83,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
         width: 275,
       },
       data: {
-        model: 'gemini-2.5-flash-preview-04-17',
+        model: 'gemini-2.5-flash',
         useModelInput: false,
 
         temperature: 0.5,
@@ -363,6 +363,13 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
               if (typeof part === 'string') {
                 return { text: part };
               } else if (part.type === 'image') {
+                return {
+                  inlineData: {
+                    mimeType: part.mediaType,
+                    data: (await uint8ArrayToBase64(part.data))!,
+                  },
+                };
+              } else if (part.type === 'document') {
                 return {
                   inlineData: {
                     mimeType: part.mediaType,
