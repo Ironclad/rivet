@@ -1,4 +1,5 @@
-import { defineConfig } from 'vite';
+import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import type { PluginOption } from 'vite';
 import react from '@vitejs/plugin-react';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
@@ -6,7 +7,27 @@ import monacoEditorPlugin from 'vite-plugin-monaco-editor';
 import topLevelAwait from 'vite-plugin-top-level-await';
 import { resolve } from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { splitVendorChunkPlugin } from 'vite';
+
+const reactDevTools = (): PluginOption => {
+  return {
+    name: 'react-devtools',
+    apply: 'serve', // Only apply this plugin during development
+    transformIndexHtml(html) {
+      return {
+        html,
+        tags: [
+          {
+            tag: 'script',
+            attrs: {
+              src: 'http://localhost:8097',
+            },
+            injectTo: 'head',
+          },
+        ],
+      };
+    },
+  };
+};
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -35,6 +56,7 @@ export default defineConfig({
     },
   },
   plugins: [
+    reactDevTools(),
     react(),
     viteTsconfigPaths(),
     svgr({
