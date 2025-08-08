@@ -5,7 +5,7 @@ import type { ChatCompletionRequestMessage, ChatCompletionRequestUserMessageCont
 
 export async function chatMessageToOpenAIChatCompletionMessage(
   message: ChatMessage,
-  options: { isReasoningModel: boolean },
+  options: { useDeveloperPrompts: boolean },
 ): Promise<ChatCompletionRequestMessage> {
   const onlyStringContent = (message: ChatMessage): string => {
     const parts = Array.isArray(message.message) ? message.message : [message.message];
@@ -23,7 +23,7 @@ export async function chatMessageToOpenAIChatCompletionMessage(
 
   return match(message)
     .with({ type: 'system' }, (m): ChatCompletionRequestMessage => {
-      if (options.isReasoningModel) {
+      if (options.useDeveloperPrompts) {
         return {
           role: 'developer',
           content: onlyStringContent(m),

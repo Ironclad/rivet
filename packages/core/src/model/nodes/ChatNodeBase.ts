@@ -61,6 +61,9 @@ export type ChatNodeConfigData = {
 
   audioVoice?: string;
   audioFormat?: 'wav' | 'mp3' | 'flac' | 'opus' | 'pcm16';
+
+  systemPromptMode?: 'developer' | 'system';
+  reasoningMode?: 'non-reasoning' | 'reasoning';
 };
 
 export type ChatNodeData = ChatNodeConfigData & {
@@ -87,7 +90,6 @@ export type ChatNodeData = ChatNodeConfigData & {
   useAudioVoiceInput?: boolean;
   useAudioFormatInput?: boolean;
   useReasoningEffortInput?: boolean;
-
   /** Given the same set of inputs, return the same output without hitting GPT */
   cache: boolean;
 
@@ -99,7 +101,7 @@ const cache = new Map<string, Outputs>();
 
 export const ChatNodeBase = {
   defaultData: (): ChatNodeData => ({
-    model: 'gpt-4o-mini',
+    model: 'gpt-5',
     useModelInput: false,
     temperature: 0.5,
     useTemperatureInput: false,
@@ -759,6 +761,31 @@ export const ChatNodeBase = {
               'Overrides the max number of tokens a model can support. Leave blank for preconfigured token limits.',
           },
           {
+            type: 'dropdown',
+            label: 'System Prompt Mode',
+            dataKey: 'systemPromptMode',
+            options: [
+              { value: '', label: 'Auto' },
+              { value: 'developer', label: 'Developer Mode' },
+              { value: 'system', label: 'System Mode' },
+            ],
+            defaultValue: '',
+            helperMessage: 'Should system prompt messages be sent as `developer` messages or `system` messages?',
+          },
+          {
+            type: 'dropdown',
+            label: 'Reasoning Mode',
+            dataKey: 'reasoningMode',
+            options: [
+              { value: '', label: 'Auto' },
+              { value: 'non-reasoning', label: 'Non-Reasoning Mode' },
+              { value: 'reasoning', label: 'Reasoning Mode' },
+            ],
+            defaultValue: '',
+            helperMessage:
+              'Use a reasoning model with max_completion_tokens and max_reasoning_tokens instead of max_tokens.',
+          },
+          {
             type: 'keyValuePair',
             label: 'Headers',
             dataKey: 'headers',
@@ -937,10 +964,28 @@ export const ChatNodeBase = {
 
     const { messages } = getChatNodeMessages(inputs);
 
-    const isReasoningModel = finalModel.startsWith('o1') || finalModel.startsWith('o3') || finalModel.startsWith('o4');
+    const isModernModel =
+      finalModel.startsWith('o1') ||
+      finalModel.startsWith('o3') ||
+      finalModel.startsWith('o4') ||
+      finalModel.startsWith('gpt-5');
+
+    let isReasoningModel = false;
+    if (data.reasoningMode === 'reasoning') {
+      isReasoningModel = true;
+    } else if (!data.reasoningMode && isModernModel) {
+      isReasoningModel = true;
+    }
+
+    let useDeveloperPrompts = false;
+    if (data.systemPromptMode === 'developer') {
+      useDeveloperPrompts = true;
+    } else if (!data.systemPromptMode && isModernModel) {
+      useDeveloperPrompts = true;
+    }
 
     const completionMessages = await Promise.all(
-      messages.map((message) => chatMessageToOpenAIChatCompletionMessage(message, { isReasoningModel })),
+      messages.map((message) => chatMessageToOpenAIChatCompletionMessage(message, { useDeveloperPrompts })),
     );
 
     let { maxTokens } = data;

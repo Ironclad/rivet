@@ -25,77 +25,38 @@ export const defaultOpenaiSupported: NonNullable<OpenAIModel['supported']> = {
 };
 
 export const openaiModels = {
-  'gpt-4': {
-    maxTokens: 8192,
+  'gpt-5': {
+    maxTokens: 400000,
     cost: {
-      prompt: 0.03,
-      completion: 0.06,
+      prompt: 1.25e-6,
+      completion: 10e-6,
     },
-    displayName: 'GPT-4',
+    displayName: 'GPT-5',
+    supported: {
+      parallelFunctionCalls: true,
+    },
   },
-  'gpt-4-32k': {
-    maxTokens: 32768,
+  'gpt-5-mini': {
+    maxTokens: 400000,
     cost: {
-      prompt: 0.06,
-      completion: 0.12,
+      prompt: 0.25 - 6,
+      completion: 2e-6,
     },
-    displayName: 'GPT-4 32k',
+    displayName: 'GPT-5 mini',
+    supported: {
+      parallelFunctionCalls: true,
+    },
   },
-  'gpt-4-0613': {
-    maxTokens: 8192,
+  'gpt-5-nano': {
+    maxTokens: 400000,
     cost: {
-      prompt: 0.03,
-      completion: 0.06,
+      prompt: 0.05e-6,
+      completion: 0.4e-6,
     },
-    displayName: 'GPT-4 (v0613)',
-  },
-  'gpt-4-32k-0613': {
-    maxTokens: 32768,
-    cost: {
-      prompt: 0.06,
-      completion: 0.12,
+    displayName: 'GPT-5 nano',
+    supported: {
+      parallelFunctionCalls: true,
     },
-    displayName: 'GPT-4 32k (v0613)',
-  },
-  'gpt-4-0314': {
-    maxTokens: 8192,
-    cost: {
-      prompt: 0.03,
-      completion: 0.06,
-    },
-    displayName: 'GPT-4 (v0314)',
-  },
-  'gpt-4-32k-0314': {
-    maxTokens: 32768,
-    cost: {
-      prompt: 0.06,
-      completion: 0.12,
-    },
-    displayName: 'GPT-4 32k (v0314)',
-  },
-  'gpt-4-1106-preview': {
-    maxTokens: 128000,
-    cost: {
-      prompt: 0.01,
-      completion: 0.03,
-    },
-    displayName: 'GPT-4 Turbo 128K (1106 Preview)',
-  },
-  'gpt-4-turbo': {
-    maxTokens: 128000,
-    cost: {
-      prompt: 0.01,
-      completion: 0.03,
-    },
-    displayName: 'GPT-4 Turbo 128K with Vision',
-  },
-  'gpt-4-vision-preview': {
-    maxTokens: 128000,
-    cost: {
-      prompt: 0.01,
-      completion: 0.03,
-    },
-    displayName: 'GPT-4 Vision (Preview)',
   },
   'gpt-4o': {
     maxTokens: 128000,
@@ -113,14 +74,6 @@ export const openaiModels = {
     },
     displayName: 'GPT-4o mini',
   },
-  'gpt-4o-mini-2024-07-18': {
-    maxTokens: 128000,
-    cost: {
-      prompt: 0.00015,
-      completion: 0.00075,
-    },
-    displayName: 'GPT-4o mini (2024-07-18)',
-  },
   o1: {
     maxTokens: 128000,
     cost: {
@@ -128,28 +81,6 @@ export const openaiModels = {
       completion: 0.6,
     },
     displayName: 'o1',
-    supported: {
-      parallelFunctionCalls: false,
-    },
-  },
-  'o1-preview': {
-    maxTokens: 128000,
-    cost: {
-      prompt: 0.015,
-      completion: 0.06,
-    },
-    displayName: 'o1-preview',
-    supported: {
-      parallelFunctionCalls: false,
-    },
-  },
-  'o1-preview-2024-09-12': {
-    maxTokens: 128000,
-    cost: {
-      prompt: 0.015,
-      completion: 0.06,
-    },
-    displayName: 'o1-preview (2024-09-12)',
     supported: {
       parallelFunctionCalls: false,
     },
@@ -165,17 +96,6 @@ export const openaiModels = {
       parallelFunctionCalls: false,
     },
   },
-  'o1-mini-2024-09-12': {
-    maxTokens: 128000,
-    cost: {
-      prompt: 0.0011,
-      completion: 0.0044,
-    },
-    displayName: 'o1-mini (2024-09-12)',
-    supported: {
-      parallelFunctionCalls: false,
-    },
-  },
   'o3-mini': {
     maxTokens: 200000,
     cost: {
@@ -183,17 +103,6 @@ export const openaiModels = {
       completion: 0.0044,
     },
     displayName: 'o3-mini',
-    supported: {
-      parallelFunctionCalls: false,
-    },
-  },
-  'o3-mini-2025-01-31': {
-    maxTokens: 200000,
-    cost: {
-      prompt: 0.0011,
-      completion: 0.0044,
-    },
-    displayName: 'o3-mini (2025-01-31)',
     supported: {
       parallelFunctionCalls: false,
     },
