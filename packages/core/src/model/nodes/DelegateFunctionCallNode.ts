@@ -10,6 +10,8 @@ import { nodeDefinition } from '../NodeDefinition.js';
 import type { InternalProcessContext } from '../ProcessContext.js';
 import type { Inputs, Outputs } from '../GraphProcessor.js';
 import { coerceType, coerceTypeOptional } from '../../utils/coerceType.js';
+import { getError } from '../../utils/errors.js';
+import { omit } from 'lodash-es';
 
 export type DelegateFunctionCallNode = ChartNode<'delegateFunctionCall', DelegateFunctionCallNodeData>;
 
@@ -17,6 +19,8 @@ export type DelegateFunctionCallNodeData = {
   handlers: { key: string; value: GraphId }[];
   unknownHandler: GraphId | undefined;
   autoDelegate: boolean;
+  fallBackToExternalCall?: boolean;
+  passthroughErrors?: boolean;
 };
 
 export class DelegateFunctionCallNodeImpl extends NodeImpl<DelegateFunctionCallNode> {
@@ -34,6 +38,8 @@ export class DelegateFunctionCallNodeImpl extends NodeImpl<DelegateFunctionCallN
         handlers: [],
         unknownHandler: undefined,
         autoDelegate: true,
+        fallBackToExternalCall: true,
+        passthroughErrors: true,
       },
     };
 
@@ -95,6 +101,21 @@ export class DelegateFunctionCallNodeImpl extends NodeImpl<DelegateFunctionCallN
         helperMessage: 'Automatically delegates tool calls to the subgraph containing the same name as the tool.',
       },
       {
+        type: 'toggle',
+        label: 'Fall Back To External Call',
+        dataKey: 'fallBackToExternalCall',
+        helperMessage:
+          'If no matching subgraph is found, try calling external functions before falling back to the unknown handler.',
+        hideIf: (data) => !data.autoDelegate,
+      },
+      {
+        type: 'toggle',
+        label: 'Passthrough Errors',
+        dataKey: 'passthroughErrors',
+        helperMessage: 'Return external function errors as string outputs instead of aborting the node.',
+        hideIf: (data) => !data.autoDelegate || !data.fallBackToExternalCall,
+      },
+      {
         type: 'custom',
         customEditorId: 'ToolCallHandlers',
         label: 'Handlers',
@@ -112,7 +133,15 @@ export class DelegateFunctionCallNodeImpl extends NodeImpl<DelegateFunctionCallN
 
   getBody(context: RivetUIContext): NodeBody {
     if (this.data.autoDelegate) {
-      return 'Auto Delegate To Subgraphs';
+      let body = 'Auto Delegate To Subgraphs';
+      if (this.data.fallBackToExternalCall) {
+        body += '\n(+ External Call Fallback';
+        if (this.data.passthroughErrors) {
+          body += ', Passthrough Errors';
+        }
+        body += ')';
+      }
+      return body;
     }
 
     if (this.data.handlers.length === 0) {
@@ -149,13 +178,64 @@ export class DelegateFunctionCallNodeImpl extends NodeImpl<DelegateFunctionCallN
     }
 
     if (!handler) {
+      // Try external function call first (if enabled)
+      if (this.data.autoDelegate && this.data.fallBackToExternalCall) {
+        const externalFunction = context.externalFunctions[functionCall.name];
+        if (externalFunction) {
+          try {
+            const externalContext = omit(context, ['setGlobal']);
+            const result = await externalFunction(externalContext, functionCall.arguments ?? {});
+
+            const outputString = typeof result === 'string' ? result : JSON.stringify(result);
+
+            return {
+              ['output' as PortId]: {
+                type: 'string',
+                value: outputString,
+              },
+              ['message' as PortId]: {
+                type: 'chat-message',
+                value: {
+                  type: 'function',
+                  message: outputString,
+                  name: functionCall.id ?? '',
+                },
+              },
+            };
+          } catch (error) {
+            if (this.data.passthroughErrors) {
+              // Return error as string output instead of throwing
+              const errorMessage = `Error: ${getError(error).message}`;
+              return {
+                ['output' as PortId]: {
+                  type: 'string',
+                  value: errorMessage,
+                },
+                ['message' as PortId]: {
+                  type: 'chat-message',
+                  value: {
+                    type: 'function',
+                    message: errorMessage,
+                    name: functionCall.id ?? '',
+                  },
+                },
+              };
+            } else {
+              throw new Error(`External function call failed for ${functionCall.name}: ${getError(error).message}`);
+            }
+          }
+        }
+      }
+
+      // Fall back to unknown handler if external function wasn't found/enabled
       if (this.data.unknownHandler) {
         handler = { key: undefined!, value: this.data.unknownHandler };
       } else {
         if (this.data.autoDelegate) {
-          throw new Error(
-            `No handler found for tool call: ${functionCall.name}, no graph containing the name "${functionCall.name}" was found.`,
-          );
+          const errorMessage = this.data.fallBackToExternalCall
+            ? `No handler found for tool call: ${functionCall.name}, no graph containing the name "${functionCall.name}" was found, and no external function with that name was registered.`
+            : `No handler found for tool call: ${functionCall.name}, no graph containing the name "${functionCall.name}" was found.`;
+          throw new Error(errorMessage);
         } else {
           throw new Error(`No handler found for tool call: ${functionCall.name}`);
         }
