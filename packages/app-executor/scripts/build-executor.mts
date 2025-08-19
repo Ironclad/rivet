@@ -38,11 +38,15 @@ if (platform !== 'darwin' && platform !== 'linux' && platform !== 'win32') {
   process.exit(1);
 }
 
-const target = {
+let target = {
   darwin: 'node18-macos-x64',
   linux: 'node18-linux-x64',
   win32: 'node18-win-x64',
 }[platform];
+
+if (platform === 'linux' && process.arch === 'arm64') {
+  target = 'node18-linux-arm64';
+}
 
 await execaCommand(
   `yarn pkg . --out-path dist --no-bytecode --options experimental-network-imports --targets ${target}`,
