@@ -1,5 +1,6 @@
 import type { Inputs, Outputs } from '../index.js';
 import type { DataValue } from '../model/DataValue.js';
+import type { InternalProcessContext } from '../model/ProcessContext.js';
 
 // eslint-disable-next-line import/no-cycle -- There has to be a cycle if we're to import the entirety of Rivet here.
 import * as Rivet from '../exports.js';
@@ -8,6 +9,7 @@ export interface CodeRunnerOptions {
   includeRequire: boolean;
   includeFetch: boolean;
   includeRivet: boolean;
+  includeInternalProcessContext: boolean;
   includeProcess: boolean;
   includeConsole: boolean;
 }
@@ -18,6 +20,7 @@ export interface CodeRunner {
     code: string,
     inputs: Inputs,
     options: CodeRunnerOptions,
+    context: InternalProcessContext,
     graphInputs?: Record<string, DataValue>,
     contextValues?: Record<string, DataValue>
   ) => Promise<Outputs>;
@@ -28,6 +31,7 @@ export class IsomorphicCodeRunner implements CodeRunner {
     code: string,
     inputs: Inputs,
     options: CodeRunnerOptions,
+    context: InternalProcessContext,
     graphInputs?: Record<string, DataValue>,
     contextValues?: Record<string, DataValue>
   ): Promise<Outputs> {
@@ -57,6 +61,11 @@ export class IsomorphicCodeRunner implements CodeRunner {
       args.push(Rivet);
     }
 
+    if (options.includeInternalProcessContext) {
+      argNames.push('internalProcessContext');
+      args.push(context);
+    }
+
     if (graphInputs) {
       argNames.push('graphInputs');
       args.push(graphInputs);
@@ -82,6 +91,7 @@ export class NotAllowedCodeRunner implements CodeRunner {
     _code: string,
     _inputs: Inputs,
     _options: CodeRunnerOptions,
+    _context: InternalProcessContext,
     _graphInputs?: Record<string, DataValue>,
     _contextValues?: Record<string, DataValue>
   ): Promise<Outputs> {
