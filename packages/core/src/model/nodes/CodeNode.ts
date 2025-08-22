@@ -26,6 +26,7 @@ export type CodeNodeData = {
   allowFetch?: boolean;
   allowRequire?: boolean;
   allowRivet?: boolean;
+  allowInternalProcessContext?: boolean;
   allowProcess?: boolean;
   allowConsole?: boolean;
 };
@@ -58,6 +59,7 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
         allowFetch: false,
         allowRequire: false,
         allowRivet: false,
+        allowInternalProcessContext: false,
         allowProcess: false,
         allowConsole: false,
       },
@@ -141,6 +143,11 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
       },
       {
         type: 'toggle',
+        label: 'Allow using `internalProcessContext`',
+        dataKey: 'allowInternalProcessContext',
+      },
+      {
+        type: 'toggle',
         label: 'Allow using `process`',
         dataKey: 'allowProcess',
         helperMessage: 'This is only available when using the Node executor.',
@@ -189,9 +196,11 @@ export class CodeNodeImpl extends NodeImpl<CodeNode> {
         includeFetch: this.data.allowFetch ?? false,
         includeRequire: this.data.allowRequire ?? false,
         includeRivet: this.data.allowRivet ?? false,
+        includeInternalProcessContext: this.data.allowInternalProcessContext ?? false,
         includeProcess: this.data.allowProcess ?? false,
         includeConsole: this.data.allowConsole ?? false,
       },
+      context,
       context.graphInputNodeValues,
       context.contextValues
     );

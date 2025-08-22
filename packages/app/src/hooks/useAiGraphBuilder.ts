@@ -495,7 +495,7 @@ export function useAiGraphBuilder({ record, onFeedback }: { record: boolean; onF
         onUserEvent,
         nativeApi: new TauriNativeApi(),
         datasetProvider: new InMemoryDatasetProvider(data),
-        registry,
+        registry: registry as unknown as NodeRegistration,
         ...(await fillMissingSettingsFromEnvironmentVariables(settings, plugins)),
       });
 

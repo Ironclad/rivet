@@ -1530,7 +1530,7 @@ export class GraphProcessor {
         this.getRootProcessor().raiseEvent(event, data as DataValue);
       },
       contextValues: this.#contextValues,
-      externalFunctions: { ...this.#externalFunctions },
+      externalFunctions: this.#externalFunctions,
       onPartialOutputs: (partialOutputs) => {
         partialOutput?.(node, partialOutputs, index);
 
