@@ -195,8 +195,9 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
           );
         }
 
-        tools = await context.mcpProvider.getHTTPTools({ name, version }, serverUrl);
-        prompts = await context.mcpProvider.getHTTPrompts({ name, version }, serverUrl);
+        tools = this.data.useToolsOutput ? await context.mcpProvider.getHTTPTools({ name, version }, serverUrl) : [];
+        prompts = this.data.usePromptsOutput ? await context.mcpProvider.getHTTPPrompts({ name, version }, serverUrl) : [];
+        
       } else if (transportType === 'stdio') {
         const serverId = this.data.serverId ?? '';
 
@@ -210,8 +211,8 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
           serverId,
         };
 
-        tools = await context.mcpProvider.getStdioTools({ name, version }, serverConfig);
-        prompts = await context.mcpProvider.getStdioPrompts({ name, version }, serverConfig);
+        tools = this.data.useToolsOutput ? await context.mcpProvider.getStdioTools({ name, version }, serverConfig) : [];
+        prompts = this.data.usePromptsOutput ? await context.mcpProvider.getStdioPrompts({ name, version }, serverConfig) : [];
       }
 
       const output: Outputs = {};
