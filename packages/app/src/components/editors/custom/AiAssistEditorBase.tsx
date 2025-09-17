@@ -100,7 +100,7 @@ export const AiAssistEditorBase = <TNodeData, TOutputs>({
           model: model!,
           api: api!,
         },
-        registry,
+        registry: registry as unknown as NodeRegistration,
         ...(await fillMissingSettingsFromEnvironmentVariables(settings, plugins)),
       });
 

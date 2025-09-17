@@ -1,10 +1,12 @@
 import { type NodeConnection, type NodeId, type PortId } from '@ironclad/rivet-core';
 import { useCommand } from './Command';
 import { useSetAtom } from 'jotai';
-import { connectionsState } from '../state/graph';
+import { connectionsState, nodesState } from '../state/graph';
+import { toast } from 'react-toastify';
 
 export function useMakeConnectionCommand() {
   const setConnections = useSetAtom(connectionsState);
+  const setNodes = useSetAtom(nodesState);
 
   return useCommand<
     {
@@ -36,6 +38,16 @@ export function useMakeConnectionCommand() {
         outputNodeId: params.outputNodeId,
         outputId: params.outputId,
       };
+
+      // If the output node was marked async, turn async off because it now has an outgoing connection
+      const outputNode = currentState.nodes.find((n) => n.id === params.outputNodeId);
+      if (outputNode?.isAsync) {
+        setNodes((prev) =>
+          prev.map((n) => (n.id === outputNode.id ? ({ ...n, isAsync: false } as typeof n) : n)),
+        );
+
+        toast.info(`Async was turned off for "${outputNode.title}" node because you added an outgoing connection.`);
+      }
 
       setConnections([...connections, newConnection]);
 

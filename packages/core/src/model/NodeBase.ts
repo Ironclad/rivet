@@ -62,6 +62,13 @@ export interface NodeBase {
 
   /** If true, the node exposes an `if` port that lets it run conditionally. */
   isConditional?: boolean;
+
+  /**
+   * If true, the node will be executed asynchronously.
+   * The graph runner will not wait for this node to complete before finishing the graph
+   * Only works for terminal (no outgoing connections) nodes.
+   */
+  isAsync?: boolean;
 }
 
 /** Base type for a typed node. */

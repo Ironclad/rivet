@@ -1,6 +1,6 @@
 import { type FC, useMemo, useState, type MouseEvent } from 'react';
 import { editingNodeState } from '../state/graphBuilder.js';
-import { nodesByIdState } from '../state/graph.js';
+import { nodesByIdState, connectionsForNodeState } from '../state/graph.js';
 import styled from '@emotion/styled';
 import MultiplyIcon from 'majesticons/line/multiply-line.svg?react';
 import {
@@ -31,6 +31,27 @@ import { NodeColorPicker } from './NodeColorPicker';
 import { Tooltip } from './Tooltip';
 import { useAtomValue, useAtom, useSetAtom } from 'jotai';
 import { useEditNodeCommand } from '../commands/editNodeCommand';
+import { toast } from 'react-toastify';
+
+// Node types that should NOT expose the "Async" option in the editor
+const ASYNC_UNSUPPORTED_NODE_TYPES = new Set<string>([
+  'graphInput',
+  'graphOutput',
+  'context',
+  'raiseEvent',
+  'waitForEvent',
+  'passthrough',
+  'raceInputs',
+  'setGlobal',
+  'coalesce',
+  'compare',
+  'delay',
+  'if',
+  'ifElse',
+  'loopController',
+  'loopUntil',
+  'match',
+]);
 
 export const NodeEditorRenderer: FC = () => {
   const nodesById = useAtomValue(nodesByIdState);
@@ -334,6 +355,12 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
   const selectedVariantOption =
     selectedVariant === undefined ? variantOptions[0] : variantOptions.find(({ value }) => value === selectedVariant);
 
+  // Check if this node currently has outgoing connections
+  const connectionsByNode = useAtomValue(connectionsForNodeState);
+  const hasOutgoingConnections = (connectionsByNode[selectedNode.id] ?? []).some(
+    (conn) => conn.outputNodeId === selectedNode.id,
+  );
+
   function handleSaveAsVariant(id: string) {
     const node = { ...selectedNode, variants: [...(selectedNode.variants ?? []), { id, data: selectedNode.data }] };
     updateNode(node);
@@ -555,6 +582,32 @@ export const NodeEditor: FC<NodeEditorProps> = ({ selectedNode, onDeselect }) =>
                         </section>
                       )}
                     </Field>
+                    {!ASYNC_UNSUPPORTED_NODE_TYPES.has(selectedNode.type) && (
+                      <Field name="async" label="Async Node">
+                        {({ fieldProps }) => (
+                          <section className="split-controls">
+                            <div className="split-controls-toggle">
+                              <Tooltip content="The graph will not wait for this node to finish. Only works for nodes with no outgoing connections.">
+                                <Toggle
+                                  {...fieldProps}
+                                  isChecked={!!selectedNode.isAsync}
+                                  onChange={(e) => {
+                                    const isNewStateChecked = e.target.checked;
+                                    if (isNewStateChecked && hasOutgoingConnections) {
+                                      toast.info(
+                                        'Cannot enable Async on a node with outgoing connections.',
+                                      );
+                                      return;
+                                    }
+                                    updateNode({ ...selectedNode, isAsync: isNewStateChecked });
+                                  }}
+                                />
+                              </Tooltip>
+                            </div>
+                          </section>
+                        )}
+                      </Field>
+                    )}
                   </div>
                 )}
 

@@ -1,14 +1,16 @@
 import type { CodeRunner, CodeRunnerOptions, DataValue, Inputs, Outputs } from '@ironclad/rivet-core';
 import { createRequire } from 'node:module';
 import * as process from 'node:process';
+import type { InternalProcessContext } from '../../../core/src/model/ProcessContext.js';
 
 export class NodeCodeRunner implements CodeRunner {
   async runCode(
     code: string,
     inputs: Inputs,
     options: CodeRunnerOptions,
+    context: InternalProcessContext,
     graphInputs?: Record<string, DataValue>,
-    contextValues?: Record<string, DataValue>,
+    contextValues?: Record<string, DataValue>
   ): Promise<Outputs> {
     const argNames = ['inputs'];
     const args: any[] = [inputs];
@@ -40,6 +42,11 @@ export class NodeCodeRunner implements CodeRunner {
       argNames.push('Rivet');
       args.push(Rivet);
     }
+
+    if (options.includeInternalProcessContext) {
+      argNames.push('internalProcessContext');
+      args.push(context);
+    }    
 
     if (graphInputs) {
       argNames.push('graphInputs');

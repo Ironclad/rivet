@@ -19,7 +19,7 @@ import { runGraphInFile } from '@ironclad/rivet-node';
 await runGraphInFile({
   ...etc,
   externalFunctions: {
-    sum: (...args) => {
+    sum: (context, ...args) => {
       return {
         type: 'number',
         value: args.reduce((acc, curr) => acc + curr, 0);
@@ -38,7 +38,7 @@ External functions are useful for many use-cases, they can do things like:
 - Get user information about who is running the graph
 - Anything else you can think of!
 
-External functions are extremely powerful. They can only be used when running Rivet from a host application, and are not available when running Rivet in the Rivet applicaton. The external function nodes will error when running in the Rivet application. Use [Remote Debugging](../user-guide/remote-debugging.md) to run External Call nodes in the Rivet application.
+External functions are extremely powerful. They can be used when running Rivet from a host application, and are not normally available when running Rivet in the Rivet applicaton (see "FAQ"). Use [Remote Debugging](../user-guide/remote-debugging.md) to run External Call nodes in the Rivet application.
 
 <Tabs
   defaultValue="inputs"
@@ -126,7 +126,9 @@ If the external function errors, then the External Call node will error. If you 
 
 **Q: Can I use external functions when running Rivet in the Rivet application?**
 
-No, external functions are only available when running Rivet from a host application. Connect the [Remote Debugger](../user-guide/remote-debugging.md) to your host application to run external functions in the Rivet application.
+Only if you manually add external functions into the `internalProcessContext.externalFunctions` object using the [Code Node](./code.mdx). Make sure you enable "Allow using internalProcessContext" in the Code Node properties first. It can be helpful when debugging graphs in the Rivet application.
+
+You can also connect the [Remote Debugger](../user-guide/remote-debugging.md) to your host application to run external functions in the Rivet application.
 
 **Q: What do I return from an external function?**
 
