@@ -161,7 +161,7 @@ export const CreateThreadNodeImpl: PluginNodeImpl<CreateThreadNode> = {
       return message as CreateMessageBody;
     });
 
-    const baseUrl = context.settings.openAiEndpoint || 'https://api.openai.com/v1';
+    const baseUrl = context.settings.openAiEndpoint ?? 'https://api.openai.com/v1';
     const url = threadId.trim() ? `${baseUrl}/threads/${threadId}` : `${baseUrl}/threads`;
 
     if (threadId && messages.length > 0) {

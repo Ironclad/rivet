@@ -124,7 +124,7 @@ export const UploadFileNodeImpl: PluginNodeImpl<UploadFileNode> = {
     formData.append('purpose', purpose);
     formData.append('file', file);
 
-    const baseUrl = context.settings.openAiEndpoint || 'https://api.openai.com/v1';
+    const baseUrl = context.settings.openAiEndpoint ?? 'https://api.openai.com/v1';
     const response = await fetch(`${baseUrl}/files`, {
       method: 'POST',
       headers: {

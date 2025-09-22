@@ -380,7 +380,7 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
   async process(data, inputData, context) {
     const threadId = getInputOrData(data, inputData, 'threadId');
     const assistantId = getInputOrData(data, inputData, 'assistantId');
-    const baseUrl = context.settings.openAiEndpoint || 'https://api.openai.com/v1';
+    const baseUrl = context.settings.openAiEndpoint ?? 'https://api.openai.com/v1';
 
     let metadata = data.metadata.reduce(
       (acc, { key, value }) => {

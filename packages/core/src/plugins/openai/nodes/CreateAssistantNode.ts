@@ -323,7 +323,7 @@ export const CreateAssistantNodeImpl: PluginNodeImpl<CreateAssistantNode> = {
       throw new Error('OpenAI key is not set.');
     }
 
-    const baseUrl = context.settings.openAiEndpoint || 'https://api.openai.com/v1';
+    const baseUrl = context.settings.openAiEndpoint ?? 'https://api.openai.com/v1';
     const url = assistantId.trim()
       ? `${baseUrl}/assistants/${assistantId}`
       : `${baseUrl}/assistants`;

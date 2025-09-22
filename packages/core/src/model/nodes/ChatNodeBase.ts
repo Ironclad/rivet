@@ -1007,7 +1007,7 @@ export const ChatNodeBase = {
     const isMultiResponse = data.useNumberOfChoicesInput || (data.numberOfChoices ?? 1) > 1;
 
     // Resolve to final endpoint if configured in ProcessContext
-    const baseUrl = context.settings.openAiEndpoint || 'https://api.openai.com/v1';
+    const baseUrl = context.settings.openAiEndpoint ?? 'https://api.openai.com/v1';
     const configuredEndpoint = endpoint || `${baseUrl}/chat/completions`;
     const resolvedEndpointAndHeaders = context.getChatNodeEndpoint
       ? await context.getChatNodeEndpoint(configuredEndpoint, finalModel)

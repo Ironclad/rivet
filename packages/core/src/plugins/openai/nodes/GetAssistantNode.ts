@@ -106,7 +106,7 @@ export const GetAssistantNodeImpl: PluginNodeImpl<GetAssistantNode> = {
       throw new Error('OpenAI key is not set.');
     }
 
-    const baseUrl = context.settings.openAiEndpoint || 'https://api.openai.com/v1';
+    const baseUrl = context.settings.openAiEndpoint ?? 'https://api.openai.com/v1';
     const response = await fetch(`${baseUrl}/assistants/${assistantId}`, {
       method: 'GET',
       headers: {
