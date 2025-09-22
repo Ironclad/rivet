@@ -22,7 +22,6 @@ import type { Inputs, Outputs } from '../GraphProcessor.js';
 import { cleanHeaders, getInputOrData } from '../../utils/inputs.js';
 import type { InternalProcessContext } from '../ProcessContext.js';
 import { chatMessageToOpenAIChatCompletionMessage } from '../../utils/chatMessageToOpenAIChatCompletionMessage.js';
-import { DEFAULT_CHAT_ENDPOINT } from '../../utils/defaults.js';
 import type { TokenizerCallInfo } from '../../integrations/Tokenizer.js';
 import { addWarning } from '../../utils/outputs.js';
 import retry from 'p-retry';
