@@ -96,7 +96,8 @@ export const GetOpenAIFileNodeImpl: PluginNodeImpl<GetOpenAIFileNode> = {
       throw new Error('OpenAI key is not set.');
     }
 
-    const url = `https://api.openai.com/v1/files/${fileId}`;
+    const baseUrl = context.settings.openAiEndpoint || 'https://api.openai.com/v1';
+    const url = `${baseUrl}/files/${fileId}`;
 
     const response = await fetch(url, {
       method: 'GET',

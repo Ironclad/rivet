@@ -194,7 +194,8 @@ export const CreateThreadMessageNodeImpl: PluginNodeImpl<CreateThreadMessageNode
       throw new Error('OpenAI key is not set.');
     }
 
-    const url = `https://api.openai.com/v1/threads/${threadId}/messages`;
+    const baseUrl = context.settings.openAiEndpoint || 'https://api.openai.com/v1';
+    const url = `${baseUrl}/threads/${threadId}/messages`;
 
     const response = await fetch(url, {
       method: 'POST',

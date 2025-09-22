@@ -380,6 +380,7 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
   async process(data, inputData, context) {
     const threadId = getInputOrData(data, inputData, 'threadId');
     const assistantId = getInputOrData(data, inputData, 'assistantId');
+    const baseUrl = context.settings.openAiEndpoint || 'https://api.openai.com/v1';
 
     let metadata = data.metadata.reduce(
       (acc, { key, value }) => {
@@ -448,7 +449,7 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
         ? arrayizeDataValue(unwrapDataValue(messagesInput)).map((message) => coerceToThreadMessage(message))
         : [];
 
-      response = await fetch('https://api.openai.com/v1/threads/runs', {
+      response = await fetch(`${baseUrl}/threads/runs`, {
         method: 'POST',
         headers: {
           'OpenAI-Beta': 'assistants=v1',
@@ -465,7 +466,7 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
         }),
       });
     } else {
-      response = await fetch(`https://api.openai.com/v1/threads/${threadId}/runs`, {
+      response = await fetch(`${baseUrl}/threads/${threadId}/runs`, {
         method: 'POST',
         headers: {
           'OpenAI-Beta': 'assistants=v1',
@@ -509,7 +510,7 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
           order: 'desc',
         } satisfies OpenAIPaginationQuery);
 
-        const url = `https://api.openai.com/v1/threads/${body.thread_id}/runs/${body.id}/steps?${query.toString()}`;
+        const url = `${baseUrl}/threads/${body.thread_id}/runs/${body.id}/steps?${query.toString()}`;
         const response = await fetch(url, {
           method: 'GET',
           headers: {
@@ -547,7 +548,7 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
           const messageId = step.step_details.message_creation.message_id;
 
           const messageResponse = await fetch(
-            `https://api.openai.com/v1/threads/${body.thread_id}/messages/${messageId}`,
+            `${baseUrl}/threads/${body.thread_id}/messages/${messageId}`,
             {
               method: 'GET',
               headers: {
@@ -598,7 +599,7 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
         latestBody.status === 'queued' ||
         latestBody.status === 'requires_action'
       ) {
-        const runResponse = await fetch(`https://api.openai.com/v1/threads/${body.thread_id}/runs/${body.id}`, {
+        const runResponse = await fetch(`${baseUrl}/threads/${body.thread_id}/runs/${body.id}`, {
           method: 'GET',
           headers: {
             'OpenAI-Beta': 'assistants=v1',
@@ -681,7 +682,7 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
           }));
 
           const submitResponse = await fetch(
-            `https://api.openai.com/v1/threads/${body.thread_id}/runs/${body.id}/submit_tool_outputs`,
+            `${baseUrl}/threads/${body.thread_id}/runs/${body.id}/submit_tool_outputs`,
             {
               method: 'POST',
               headers: {
@@ -720,7 +721,7 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
       });
 
       const listStepsResponsePromise = await fetch(
-        `https://api.openai.com/v1/threads/${body.thread_id}/runs/${body.id}/steps?${listStepsQuery.toString()}`,
+        `${baseUrl}/threads/${body.thread_id}/runs/${body.id}/steps?${listStepsQuery.toString()}`,
         {
           method: 'GET',
           headers: {
@@ -738,7 +739,7 @@ export const RunThreadNodeImpl: PluginNodeImpl<RunThreadNode> = {
       } satisfies OpenAIPaginationQuery);
 
       const messagesResponsePromise = await fetch(
-        `https://api.openai.com/v1/threads/${body.thread_id}/messages?${getMessagesQuery.toString()}`,
+        `${baseUrl}/threads/${body.thread_id}/messages?${getMessagesQuery.toString()}`,
         {
           method: 'GET',
           headers: {

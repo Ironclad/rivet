@@ -90,7 +90,8 @@ export const DeleteThreadNodeImpl: PluginNodeImpl<DeleteThreadNode> = {
       throw new Error('OpenAI key is not set.');
     }
 
-    const response = await fetch(`https://api.openai.com/v1/threads/${threadId}`, {
+    const baseUrl = context.settings.openAiEndpoint || 'https://api.openai.com/v1';
+    const response = await fetch(`${baseUrl}/threads/${threadId}`, {
       method: 'DELETE',
       headers: {
         'OpenAI-Beta': 'assistants=v1',

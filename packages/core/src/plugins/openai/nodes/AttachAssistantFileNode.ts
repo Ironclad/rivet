@@ -120,7 +120,8 @@ export const AttachAssistantFileNodeImpl: PluginNodeImpl<AttachAssistantFileNode
       throw new Error('OpenAI key is not set.');
     }
 
-    const url = `https://api.openai.com/v1/assistants/${assistantId}/files`;
+    const baseUrl = context.settings.openAiEndpoint || 'https://api.openai.com/v1';
+    const url = `${baseUrl}/assistants/${assistantId}/files`;
 
     const response = await fetch(url, {
       method: 'POST',

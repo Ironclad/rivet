@@ -99,7 +99,8 @@ export const DeleteAssistantNodeImpl: PluginNodeImpl<DeleteAssistantNode> = {
       throw new Error('OpenAI key is not set.');
     }
 
-    const response = await fetch(`https://api.openai.com/v1/assistants/${assistantId}`, {
+    const baseUrl = context.settings.openAiEndpoint || 'https://api.openai.com/v1';
+    const response = await fetch(`${baseUrl}/assistants/${assistantId}`, {
       method: 'DELETE',
       headers: {
         'OpenAI-Beta': 'assistants=v1',
