@@ -15,6 +15,7 @@ export class OpenAIEmbeddingGenerator implements EmbeddingGenerator {
     const api = new OpenAI({
       apiKey: this.#settings.openAiKey,
       organization: this.#settings.openAiOrganization,
+      baseURL: this.#settings.openAiEndpoint,
       dangerouslyAllowBrowser: true, // It's fine in Rivet
     });
 

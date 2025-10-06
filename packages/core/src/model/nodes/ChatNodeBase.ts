@@ -22,7 +22,6 @@ import type { Inputs, Outputs } from '../GraphProcessor.js';
 import { cleanHeaders, getInputOrData } from '../../utils/inputs.js';
 import type { InternalProcessContext } from '../ProcessContext.js';
 import { chatMessageToOpenAIChatCompletionMessage } from '../../utils/chatMessageToOpenAIChatCompletionMessage.js';
-import { DEFAULT_CHAT_ENDPOINT } from '../../utils/defaults.js';
 import type { TokenizerCallInfo } from '../../integrations/Tokenizer.js';
 import { addWarning } from '../../utils/outputs.js';
 import retry from 'p-retry';
@@ -1008,7 +1007,8 @@ export const ChatNodeBase = {
     const isMultiResponse = data.useNumberOfChoicesInput || (data.numberOfChoices ?? 1) > 1;
 
     // Resolve to final endpoint if configured in ProcessContext
-    const configuredEndpoint = endpoint || context.settings.openAiEndpoint || DEFAULT_CHAT_ENDPOINT;
+    const baseUrl = context.settings.openAiEndpoint ?? 'https://api.openai.com/v1';
+    const configuredEndpoint = endpoint || `${baseUrl}/chat/completions`;
     const resolvedEndpointAndHeaders = context.getChatNodeEndpoint
       ? await context.getChatNodeEndpoint(configuredEndpoint, finalModel)
       : {

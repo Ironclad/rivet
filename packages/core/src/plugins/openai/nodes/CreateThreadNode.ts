@@ -161,7 +161,8 @@ export const CreateThreadNodeImpl: PluginNodeImpl<CreateThreadNode> = {
       return message as CreateMessageBody;
     });
 
-    const url = threadId.trim() ? `https://api.openai.com/v1/threads/${threadId}` : 'https://api.openai.com/v1/threads';
+    const baseUrl = context.settings.openAiEndpoint ?? 'https://api.openai.com/v1';
+    const url = threadId.trim() ? `${baseUrl}/threads/${threadId}` : `${baseUrl}/threads`;
 
     if (threadId && messages.length > 0) {
       throw new Error('Cannot provide messages when modifying an existing thread.');
