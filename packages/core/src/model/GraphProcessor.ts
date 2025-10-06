@@ -1015,8 +1015,11 @@ export class GraphProcessor {
     await this.#processNodeIfAllInputsAvailable(node);
   }
 
-  /** If all inputs are present, all conditions met, processes the node. */
-  async #processNodeIfAllInputsAvailable(node: ChartNode): Promise<void> {
+  /** If all inputs are present, all conditions met, processes the node. For "Async" mode, set detached to true. */
+  async #processNodeIfAllInputsAvailable(node: ChartNode, detached: boolean = false): Promise<void> {
+    this.#emitTraceEvent(
+      `Entering #processNodeIfAllInputsAvailable for ${node.title} (${node.id}), detached=${detached}`,
+    );
     const builtInNode = node as BuiltInNodes;
 
     if (this.#ignoreNodes.has(node.id)) {
@@ -1110,6 +1113,41 @@ export class GraphProcessor {
     if (waitingForInputNode) {
       this.#emitTraceEvent(`Node ${node.title} is waiting for input node ${waitingForInputNode}`);
       return;
+    }
+
+    // If this node is marked as async, run it as a fire-and-forget task and do not
+    // block the processing queue or propagate to downstream nodes. Only applicable
+    // to terminal nodes (no output connections) that are not graphOutput nodes. 
+    // Do not re-trigger if already running in a detached mode.
+    if (node.isAsync && !detached) {
+      const hasOutgoing = this.#outputNodesFrom(node).nodes.length > 0;
+      const isGraphOutput = node.type === ('graphOutput' as BuiltInNodeType);
+      this.#emitTraceEvent(
+        `Async candidate ${node.title} (${node.id}): hasOutgoing=${hasOutgoing}, isGraphOutput=${isGraphOutput}`,
+      );
+
+      if (!hasOutgoing && !isGraphOutput) {
+        this.#emitTraceEvent(
+          `Starting async (fire-and-forget) node ${node.title} (${node.id}). Downstream nodes will not be scheduled from this node.`,
+        );
+
+        // Kick off processing without awaiting and without adding to the processing queue.
+        // Use the detached pathway to process the node and avoid scheduling downstream nodes.
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        (async () => {
+          try {
+            await this.#processNodeIfAllInputsAvailable(node, true);
+          } catch {
+            // Errors are handled in #processNode via #nodeErrored
+          }
+        })();
+
+        return;
+      } else {
+        this.#emitTraceEvent(
+          `Node ${node.title} (${node.id}) is marked async but has downstream connections or is a graph output. Running normally.`,
+        );
+      }
     }
 
     this.#currentlyProcessing.add(node.id);
@@ -1239,14 +1277,16 @@ export class GraphProcessor {
     }
 
     // Node is finished, check if we can run any more nodes that depend on this one
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    this.#processingQueue.addAll(
-      outputNodes.nodes.map((outputNode) => async () => {
-        this.#emitTraceEvent(`Trying to run output node from ${node.title}: ${outputNode.title} (${outputNode.id})`);
+    if (!detached) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      this.#processingQueue.addAll(
+        outputNodes.nodes.map((outputNode) => async () => {
+          this.#emitTraceEvent(`Trying to run output node from ${node.title}: ${outputNode.title} (${outputNode.id})`);
 
-        await this.#processNodeIfAllInputsAvailable(outputNode);
-      }),
-    );
+          await this.#processNodeIfAllInputsAvailable(outputNode);
+        }),
+      );
+    }
   }
 
   #getAttachedDataTo(node: ChartNode | NodeId): AttachedNodeData {
@@ -1530,7 +1570,7 @@ export class GraphProcessor {
         this.getRootProcessor().raiseEvent(event, data as DataValue);
       },
       contextValues: this.#contextValues,
-      externalFunctions: { ...this.#externalFunctions },
+      externalFunctions: this.#externalFunctions,
       onPartialOutputs: (partialOutputs) => {
         partialOutput?.(node, partialOutputs, index);
 

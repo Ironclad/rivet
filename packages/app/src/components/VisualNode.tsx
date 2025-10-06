@@ -235,6 +235,7 @@ export const VisualNode = memo(
               isSplit: node.isSplitRun,
               disabled: node.disabled,
               conditional: !!node.isConditional,
+              async: !!node.isAsync,
             },
             changedClass,
           )}
@@ -389,6 +390,7 @@ const ZoomedOutVisualNodeContent: FC<{
           {!isReallyZoomedOut && (
             <div className="grab-area" {...handleAttributes} onClick={handleGrabClick}>
               {node.isSplitRun ? <GitForkLine /> : <></>}
+              {node.isAsync ? <span>ASYNC</span> : <></>}
               <div className="title-text">{node.title}</div>
             </div>
           )}
@@ -682,6 +684,7 @@ const NormalVisualNodeContent: FC<{
             onClick={handleGrabClick}
           >
             {node.isSplitRun ? <GitForkLine /> : <></>}
+            {node.isAsync ? <span>ASYNC</span> : <></>}
             <div className="title-text">{node.title}</div>
           </div>
           <div className="title-controls">
