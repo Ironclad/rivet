@@ -3,7 +3,7 @@ import type { PluginOption } from 'vite';
 import react from '@vitejs/plugin-react';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
-import monacoEditorPlugin from 'vite-plugin-monaco-editor';
+import monacoEditorPlugin from 'vite-plugin-monaco-editor-esm';
 import topLevelAwait from 'vite-plugin-top-level-await';
 import { resolve } from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -65,7 +65,7 @@ export default defineConfig({
       },
     }),
     // Bad ESM
-    (monacoEditorPlugin as any).default({}),
+    monacoEditorPlugin({}),
     topLevelAwait(),
     splitVendorChunkPlugin(),
   ],

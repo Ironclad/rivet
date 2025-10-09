@@ -49,7 +49,7 @@ if (platform === 'linux' && process.arch === 'arm64') {
 }
 
 await execaCommand(
-  `yarn pkg . --out-path dist --no-bytecode --options experimental-network-imports --targets ${target}`,
+  `yarn run pkg . --out-path dist --no-bytecode --options experimental-network-imports --targets ${target}`,
   {
     stdio: 'inherit',
   },

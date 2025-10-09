@@ -44,18 +44,11 @@
     "yaml": "^2.3.3"
   },
   "devDependencies": {
-    "@types/eslint": "^8.44.6",
     "@types/lodash-es": "^4.17.10",
     "@types/node": "^20.8.7",
     "@types/yaml": "^1.9.7",
-    "@typescript-eslint/eslint-plugin": "^8.24.0",
     "eslint": "^9.20.1",
-    "eslint-config-standard-with-typescript": "^39.1.1",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-n": "^16.2.0",
-    "eslint-plugin-promise": "^6.1.1",
     "rimraf": "^5.0.5",
-    "ts-node": "^10.9.1",
     "tsx": "^4.6.2",
     "typescript": "^5.7.3"
   },

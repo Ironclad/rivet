@@ -19,9 +19,6 @@
     "nanoid": "^5.0.2",
     "next": "^15.1.7",
     "next-auth": "^5.0.0-beta.3",
-    "next-connect": "1.0.0-next.4",
-    "octokit": "^3.1.2",
-    "passport-local": "^1.0.0",
     "react": "^18",
     "react-dom": "^18",
     "semver": "^7.6.3"
@@ -32,8 +29,6 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/semver": "^7.5.4",
-    "eslint": "^9.20.1",
-    "eslint-config-next": "14.0.1",
     "type-fest": "^4.34.1",
     "typescript": "^5.7.3"
   }

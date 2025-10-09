@@ -11,6 +11,7 @@ import {
   type ProjectId,
   type ChartNode,
   type DataValue,
+  type PluginLoadSpec,
 } from '@ironclad/rivet-core';
 import { blankProject } from '../utils/blankProject.js';
 import { entries, values } from '../../../core/src/utils/typeSafety';

@@ -7,6 +7,7 @@ export * from './model/NodeImpl.js';
 export * from './model/NodeDefinition.js';
 export * from './model/Nodes.js';
 export * from './model/Project.js';
+export * from './model/PluginLoadSpec.js';
 export * from './native/BaseDir.js';
 export * from './native/NativeApi.js';
 export * from './native/BrowserNativeApi.js';
