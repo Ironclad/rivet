@@ -202,7 +202,7 @@ export type JsonSchemaFormEditorData = {
 
 export type JsonSchemaFormCustomEditorDefinition<T extends ChartNode> = SharedEditorDefinitionProps<T> & {
   type: 'custom';
-  customEditorId: strint;
+  customEditorId: string;
   dataKey: DataOfType<T, Record<string, unknown>>;
   useInputToggleDataKey?: DataOfType<T, boolean>;
   data: JsonSchemaFormEditorData;
