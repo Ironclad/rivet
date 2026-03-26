@@ -77,10 +77,7 @@ export const CodeEditor: FC<{
       editorRef.current = editor;
     }
 
-    const latestBeforeDispose = onChangeLatest.current;
-
     return () => {
-      latestBeforeDispose?.(editor.getValue());
       editor.dispose();
       window.removeEventListener('resize', onResize);
     };
