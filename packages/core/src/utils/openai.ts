@@ -39,7 +39,7 @@ export const openaiModels = {
   'gpt-5-mini': {
     maxTokens: 400000,
     cost: {
-      prompt: 0.25 - 6,
+      prompt: 0.25e-6,
       completion: 2e-6,
     },
     displayName: 'GPT-5 mini',
