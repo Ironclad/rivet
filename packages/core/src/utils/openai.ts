@@ -18,6 +18,9 @@ export type OpenAIModel = {
   supported?: {
     parallelFunctionCalls: boolean;
   };
+
+  /** If true, this model is deprecated/legacy and will be sorted to the bottom of dropdowns. */
+  legacy?: boolean;
 };
 
 export const defaultOpenaiSupported: NonNullable<OpenAIModel['supported']> = {
@@ -39,7 +42,7 @@ export const openaiModels = {
   'gpt-5-mini': {
     maxTokens: 400000,
     cost: {
-      prompt: 0.25 - 6,
+      prompt: 0.25e-6,
       completion: 2e-6,
     },
     displayName: 'GPT-5 mini',
@@ -65,6 +68,7 @@ export const openaiModels = {
       completion: 0.015,
     },
     displayName: 'GPT-4o',
+    legacy: true,
   },
   'gpt-4o-mini': {
     maxTokens: 128000,
@@ -73,6 +77,7 @@ export const openaiModels = {
       completion: 0.00075,
     },
     displayName: 'GPT-4o mini',
+    legacy: true,
   },
   o1: {
     maxTokens: 128000,
@@ -84,6 +89,7 @@ export const openaiModels = {
     supported: {
       parallelFunctionCalls: false,
     },
+    legacy: true,
   },
   'o1-mini': {
     maxTokens: 128000,
@@ -95,6 +101,7 @@ export const openaiModels = {
     supported: {
       parallelFunctionCalls: false,
     },
+    legacy: true,
   },
   'o3-mini': {
     maxTokens: 200000,
@@ -116,6 +123,7 @@ export const openaiModels = {
       audioCompletion: 0.08,
     },
     displayName: 'GPT-4o Audio (Preview)',
+    legacy: true,
   },
   'gpt-4.1': {
     maxTokens: 1_047_576,
@@ -141,6 +149,66 @@ export const openaiModels = {
     },
     displayName: 'o4-mini',
   },
+  'gpt-5.1': {
+    maxTokens: 400000,
+    cost: {
+      prompt: 1.25e-6,
+      completion: 10e-6,
+    },
+    displayName: 'GPT-5.1',
+    supported: {
+      parallelFunctionCalls: true,
+    },
+  },
+  'gpt-5.2': {
+    maxTokens: 400000,
+    cost: {
+      prompt: 1.75e-6,
+      completion: 14e-6,
+    },
+    displayName: 'GPT-5.2',
+    supported: {
+      parallelFunctionCalls: true,
+    },
+  },
+  'gpt-5.5': {
+    maxTokens: 400000,
+    cost: {
+      prompt: 2e-6,
+      completion: 16e-6,
+    },
+    displayName: 'GPT-5.5',
+    supported: {
+      parallelFunctionCalls: true,
+    },
+  },
+  'gpt-4.1-mini': {
+    maxTokens: 1_047_576,
+    cost: {
+      prompt: 0.4e-6,
+      completion: 1.6e-6,
+    },
+    displayName: 'GPT-4.1 mini',
+  },
+  'gpt-4.1-nano': {
+    maxTokens: 1_047_576,
+    cost: {
+      prompt: 0.1e-6,
+      completion: 0.4e-6,
+    },
+    displayName: 'GPT-4.1 nano',
+  },
+  'o3-pro': {
+    maxTokens: 200_000,
+    cost: {
+      prompt: 20e-6,
+      completion: 80e-6,
+    },
+    displayName: 'o3-pro',
+    supported: {
+      parallelFunctionCalls: false,
+    },
+  },
   'local-model': {
     maxTokens: Number.MAX_SAFE_INTEGER,
     cost: {
@@ -152,11 +220,12 @@ export const openaiModels = {
 } satisfies Record<string, OpenAIModel>;
 
 export const openAiModelOptions = orderBy(
-  Object.entries(openaiModels).map(([id, { displayName }]) => ({
+  Object.entries(openaiModels).map(([id, model]) => ({
     value: id,
-    label: displayName,
+    label: model.displayName,
+    legacy: 'legacy' in model ? model.legacy : false,
   })),
-  'label',
+  ['legacy', 'label'],
 );
 
 export class OpenAIError extends Error {

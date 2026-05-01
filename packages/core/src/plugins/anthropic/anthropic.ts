@@ -7,6 +7,9 @@ export type AnthropicModel = {
     completion: number;
   };
   displayName: string;
+
+  /** If true, this model is deprecated/legacy and will be sorted to the bottom of dropdowns. */
+  legacy?: boolean;
 };
 
 export const anthropicModels = {
@@ -17,6 +20,7 @@ export const anthropicModels = {
       completion: 0.00551,
     },
     displayName: 'Claude Instant',
+    legacy: true,
   },
   'claude-instant-1.2': {
     maxTokens: 100_000,
@@ -25,6 +29,7 @@ export const anthropicModels = {
       completion: 2.4e-6,
     },
     displayName: 'Claude Instant 1.2',
+    legacy: true,
   },
   'claude-2': {
     maxTokens: 100_000,
@@ -33,6 +38,7 @@ export const anthropicModels = {
       completion: 24e-6,
     },
     displayName: 'Claude 2',
+    legacy: true,
   },
   'claude-2.1': {
     maxTokens: 200_000,
@@ -41,6 +47,7 @@ export const anthropicModels = {
       completion: 24e-6,
     },
     displayName: 'Claude 2.1',
+    legacy: true,
   },
   'claude-3-haiku-20240307': {
     maxTokens: 200_000,
@@ -49,6 +56,7 @@ export const anthropicModels = {
       completion: 1.25e-6,
     },
     displayName: 'Claude 3 Haiku',
+    legacy: true,
   },
   'claude-3-sonnet-20240229': {
     maxTokens: 200_000,
@@ -57,6 +65,7 @@ export const anthropicModels = {
       completion: 15e-6,
     },
     displayName: 'Claude 3 Sonnet',
+    legacy: true,
   },
   'claude-3-opus-20240229': {
     maxTokens: 200_000,
@@ -65,6 +74,7 @@ export const anthropicModels = {
       completion: 75e-6,
     },
     displayName: 'Claude 3 Opus',
+    legacy: true,
   },
   'claude-3-5-sonnet-latest': {
     maxTokens: 200_000,
@@ -106,14 +116,41 @@ export const anthropicModels = {
     },
     displayName: 'Claude Opus 4',
   },
+  'claude-haiku-4-5-20251001': {
+    maxTokens: 200_000,
+    cost: {
+      prompt: 0.25e-6,
+      completion: 1.25e-6,
+    },
+    displayName: 'Claude Haiku 4.5',
+  },
+  'claude-sonnet-4-6-20260414': {
+    maxTokens: 200_000,
+    cost: {
+      prompt: 3e-6,
+      completion: 15e-6,
+    },
+    displayName: 'Claude Sonnet 4.6',
+  },
+  'claude-opus-4-6-20260414': {
+    maxTokens: 200_000,
+    cost: {
+      prompt: 5e-6,
+      completion: 25e-6,
+    },
+    displayName: 'Claude Opus 4.6',
+  },
 } satisfies Record<string, AnthropicModel>;
 
 export type AnthropicModels = keyof typeof anthropicModels;
 
-export const anthropicModelOptions = Object.entries(anthropicModels).map(([id, { displayName }]) => ({
-  value: id,
-  label: displayName,
-}));
+export const anthropicModelOptions = Object.entries(anthropicModels)
+  .map(([id, model]) => ({
+    value: id,
+    label: model.displayName,
+    legacy: 'legacy' in model ? model.legacy : false,
+  }))
+  .sort((a, b) => Number(a.legacy) - Number(b.legacy) || a.label.localeCompare(b.label));
 
 export type Claude3ChatMessage = {
   role: 'user' | 'assistant';

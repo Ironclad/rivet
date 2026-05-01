@@ -7,6 +7,9 @@ export type GoogleModelDeprecated = {
     completion: number;
   };
   displayName: string;
+
+  /** If true, this model is deprecated/legacy and will be sorted to the bottom of dropdowns. */
+  legacy?: boolean;
 };
 
 export const googleModelsDeprecated = {
@@ -17,6 +20,7 @@ export const googleModelsDeprecated = {
       completion: NaN,
     },
     displayName: 'Gemini Pro',
+    legacy: true,
   },
   'gemini-pro-vision': {
     maxTokens: 16384,
@@ -25,10 +29,23 @@ export const googleModelsDeprecated = {
       completion: NaN,
     },
     displayName: 'Gemini Pro Vision',
+    legacy: true,
   },
 } satisfies Record<string, GoogleModelDeprecated>;
 
 export type GoogleModelsDeprecated = keyof typeof googleModelsDeprecated;
+
+export type GenerativeAiGoogleModelDef = {
+  maxTokens: number;
+  cost: {
+    prompt: number;
+    completion: number;
+  };
+  displayName: string;
+
+  /** If true, this model is deprecated/legacy and will be sorted to the bottom of dropdowns. */
+  legacy?: boolean;
+};
 
 export const generativeAiGoogleModels = {
   'gemini-2.5-pro': {
@@ -71,6 +88,30 @@ export const generativeAiGoogleModels = {
     },
     displayName: 'Gemini 2.0 Flash Lite',
   },
+  'gemini-3-1-pro-preview': {
+    maxTokens: 1048576,
+    cost: {
+      prompt: 2.5 / 1000,
+      completion: 15 / 1000,
+    },
+    displayName: 'Gemini 3.1 Pro (Preview)',
+  },
+  'gemini-3-pro-preview': {
+    maxTokens: 1048576,
+    cost: {
+      prompt: 2.0 / 1000,
+      completion: 12 / 1000,
+    },
+    displayName: 'Gemini 3 Pro (Preview)',
+  },
+  'gemini-3-flash-preview': {
+    maxTokens: 1048576,
+    cost: {
+      prompt: 0.5 / 1000,
+      completion: 3 / 1000,
+    },
+    displayName: 'Gemini 3 Flash (Preview)',
+  },
   'gemini-1.5-pro': {
     maxTokens: 2097152,
     cost: {
@@ -78,6 +119,7 @@ export const generativeAiGoogleModels = {
       completion: 0, // It's per-character
     },
     displayName: 'Gemini 1.5 Pro',
+    legacy: true,
   },
   'gemini-1.5-flash': {
     maxTokens: 1048576,
@@ -86,8 +128,9 @@ export const generativeAiGoogleModels = {
       completion: 0, // It's per-character
     },
     displayName: 'Gemini 1.5 Flash',
-  }
-};
+    legacy: true,
+  },
+} satisfies Record<string, GenerativeAiGoogleModelDef>;
 
 export type GenerativeAiGoogleModel = keyof typeof generativeAiGoogleModels;
 
@@ -96,10 +139,13 @@ export const googleModelOptionsDeprecated = Object.entries(googleModelsDeprecate
   label: displayName,
 }));
 
-export const generativeAiOptions = Object.entries(generativeAiGoogleModels).map(([id, { displayName }]) => ({
-  value: id,
-  label: displayName,
-}));
+export const generativeAiOptions = Object.entries(generativeAiGoogleModels)
+  .map(([id, model]) => ({
+    value: id,
+    label: model.displayName,
+    legacy: 'legacy' in model ? model.legacy : false,
+  }))
+  .sort((a, b) => Number(a.legacy) - Number(b.legacy) || a.label.localeCompare(b.label));
 
 export type ChatCompletionOptions = {
   project: string;
