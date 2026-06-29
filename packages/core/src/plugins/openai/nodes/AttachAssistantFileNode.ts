@@ -9,7 +9,7 @@ import {
 import type { OpenAIAssistantFile } from '../../../utils/openai.js';
 import { dedent, newId, getInputOrData } from '../../../utils/index.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
-import { handleOpenAIError } from '../handleOpenaiError.js';
+import { handleOpenAIError } from '../handleOpenAIError.js';
 
 export type AttachAssistantFileNode = ChartNode<'openaiAttachAssistantFile', AttachAssistantFileNodeData>;
 

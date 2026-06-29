@@ -73,7 +73,7 @@ export const ChatHuggingFaceNodeImpl: PluginNodeImpl<ChatHuggingFaceNode> = {
       group: ['AI', 'Hugging Face'],
       contextMenuTitle: 'Chat (Hugging Face)',
       infoBoxTitle: 'Chat (Hugging Face) Node',
-      infoBoxBody: 'Chat, using the hugging face inference API',
+      infoBoxBody: 'Chat, using the Hugging Face inference API',
     };
   },
 

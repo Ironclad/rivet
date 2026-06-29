@@ -23,7 +23,7 @@ import {
 import { dedent, newId, coerceTypeOptional, getInputOrData } from '../../../utils/index.js';
 import { arrayizeDataValue, unwrapDataValue } from '../../../model/DataValue.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
-import { handleOpenAIError } from '../handleOpenaiError.js';
+import { handleOpenAIError } from '../handleOpenAIError.js';
 import { type DataValue } from '../../../model/DataValue.js';
 
 export type RunThreadNode = ChartNode<'openaiRunThread', RunThreadNodeData>;

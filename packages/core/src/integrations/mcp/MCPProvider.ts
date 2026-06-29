@@ -140,7 +140,7 @@ export interface MCPProvider {
     serverConfig: MCP.ServerConfigWithId,
   ): Promise<MCP.Tool[]>;
 
-  getHTTPrompts(clientConfig: { name: string; version: string }, serverUrl: string): Promise<MCP.Prompt[]>;
+  getHTTPPrompts(clientConfig: { name: string; version: string }, serverUrl: string): Promise<MCP.Prompt[]>;
 
   getStdioPrompts(
     clientConfig: { name: string; version: string },

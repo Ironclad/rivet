@@ -65,7 +65,7 @@ export class NodeMCPProvider implements MCPProvider {
     }
   }
 
-  async getHTTPrompts(clientConfig: { name: string; version: string }, serverUrl: string): Promise<MCP.Prompt[]> {
+  async getHTTPPrompts(clientConfig: { name: string; version: string }, serverUrl: string): Promise<MCP.Prompt[]> {
     try {
       const client = await this.#getHTTPClient(clientConfig, serverUrl);
 

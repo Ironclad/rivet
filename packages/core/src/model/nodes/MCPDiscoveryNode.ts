@@ -196,7 +196,7 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
         }
 
         tools = await context.mcpProvider.getHTTPTools({ name, version }, serverUrl);
-        prompts = await context.mcpProvider.getHTTPrompts({ name, version }, serverUrl);
+        prompts = await context.mcpProvider.getHTTPPrompts({ name, version }, serverUrl);
       } else if (transportType === 'stdio') {
         const serverId = this.data.serverId ?? '';
 
@@ -236,7 +236,7 @@ class MCPDiscoveryNodeImpl extends NodeImpl<MCPDiscoveryNode> {
           value: prompts.map((prompt) => ({
             name: prompt.name,
             description: prompt.description,
-            arguments: prompt.arugments,
+            arguments: prompt.arguments,
           })),
         };
       }
