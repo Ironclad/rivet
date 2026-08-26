@@ -1119,6 +1119,12 @@ export const ChatNodeBase = {
 
           if (isReasoningModel) {
             options.max_completion_tokens = maxTokens;
+            // Reasoning models (o1, o3, o4, gpt-5) don't support sampling parameters
+            options.top_p = undefined;
+            options.frequency_penalty = undefined;
+            options.presence_penalty = undefined;
+            options.stop = undefined;
+            options.n = undefined;
           } else {
             options.temperature = useTopP ? undefined : temperature; // Not supported in o1-preview
             options.max_tokens = maxTokens;
