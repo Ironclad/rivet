@@ -8,7 +8,7 @@ import {
 } from '../../../index.js';
 import { newId, getInputOrData, dedent } from '../../../utils/index.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
-import { handleOpenAIError } from '../handleOpenaiError.js';
+import { handleOpenAIError } from '../handleOpenAIError.js';
 import type { OpenAIAssistant, OpenAIListResponse, OpenAIPaginationQuery } from '../../../utils/openai.js';
 
 export type ListAssistantsNode = ChartNode<'openaiListAssistants', ListAssistantsNodeData>;

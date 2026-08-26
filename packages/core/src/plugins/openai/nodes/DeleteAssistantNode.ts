@@ -7,7 +7,7 @@ import {
 } from '../../../index.js';
 import { newId, dedent, getInputOrData } from '../../../utils/index.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
-import { handleOpenAIError } from '../handleOpenaiError.js';
+import { handleOpenAIError } from '../handleOpenAIError.js';
 
 export type DeleteAssistantNode = ChartNode<'openaiDeleteAssistant', DeleteAssistantNodeData>;
 

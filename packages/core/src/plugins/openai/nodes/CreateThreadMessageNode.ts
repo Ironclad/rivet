@@ -9,7 +9,7 @@ import {
 import type { CreateMessageBody, OpenAIThreadMessage } from '../../../utils/openai.js';
 import { dedent, newId, coerceTypeOptional, getInputOrData } from '../../../utils/index.js';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
-import { handleOpenAIError } from '../handleOpenaiError.js';
+import { handleOpenAIError } from '../handleOpenAIError.js';
 
 export type CreateThreadMessageNode = ChartNode<'openaiCreateThreadMessage', CreateThreadMessageNodeData>;
 
