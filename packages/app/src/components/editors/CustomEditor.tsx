@@ -1,4 +1,8 @@
-import { type CustomEditorDefinition, type ChartNode } from '@ironclad/rivet-core';
+import {
+  type CustomEditorDefinition,
+  type ChartNode,
+  type JsonSchemaFormCustomEditorDefinition,
+} from '@ironclad/rivet-core';
 import { type FC } from 'react';
 import { type SharedEditorProps } from './SharedEditorProps';
 import { match } from 'ts-pattern';
@@ -9,6 +13,7 @@ import { ObjectNodeAiAssistEditor } from './custom/ObjectNodeAiAssistEditor';
 import { GptFunctionNodeJsonSchemaAiAssistEditor } from './custom/GptFunctionJsonSchemaAiAssistEditor';
 import { PromptNodeAiAssistEditor } from './custom/PromptNodeAiAssistEditor';
 import { TextNodeAiAssistEditor } from './custom/TextNodeAiAssistEditor';
+import { JsonSchemaFormEditor } from './custom/JsonSchemaFormEditor';
 
 export const CustomEditor: FC<
   SharedEditorProps & {
@@ -25,5 +30,8 @@ export const CustomEditor: FC<
     ))
     .with('PromptNodeAiAssist', () => <PromptNodeAiAssistEditor {...props} editor={editor} />)
     .with('TextNodeAiAssist', () => <TextNodeAiAssistEditor {...props} editor={editor} />)
+    .with('JsonSchemaForm', () => (
+      <JsonSchemaFormEditor {...props} editor={editor as JsonSchemaFormCustomEditorDefinition<ChartNode>} />
+    ))
     .otherwise(() => null);
 };

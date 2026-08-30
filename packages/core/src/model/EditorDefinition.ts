@@ -188,6 +188,26 @@ export type CustomEditorDefinition<T extends ChartNode> = SharedEditorDefinition
   data?: any;
 };
 
+export type JsonSchemaFormEditorSchema = Record<string, unknown>;
+
+export type JsonSchemaFormEditorUiSchema = Record<string, unknown>;
+
+export type JsonSchemaFormEditorData = {
+  schema: JsonSchemaFormEditorSchema;
+  uiSchema?: JsonSchemaFormEditorUiSchema;
+  liveValidate?: boolean;
+  noHtml5Validate?: boolean;
+  showErrorList?: false | 'top' | 'bottom';
+};
+
+export type JsonSchemaFormCustomEditorDefinition<T extends ChartNode> = SharedEditorDefinitionProps<T> & {
+  type: 'custom';
+  customEditorId: string;
+  dataKey: DataOfType<T, Record<string, unknown>>;
+  useInputToggleDataKey?: DataOfType<T, boolean>;
+  data: JsonSchemaFormEditorData;
+};
+
 export type DynamicEditorEditor = EditorDefinition<any>['type'] | 'none' | 'auto';
 
 export type DynamicEditorDefinition<T extends ChartNode> = SharedEditorDefinitionProps<T> & {

@@ -17,6 +17,12 @@ export const DefaultCodeEditor: FC<
 
   const debouncedOnChange = useDebounceFn<(node: ChartNode) => void>(onChange, { wait: 100 });
 
+  useEffect(() => {
+    return () => {
+      debouncedOnChange.flush();
+    };
+  }, [debouncedOnChange]);
+
   const onEditorChange = (newText: string) => {
     debouncedOnChange.run({
       ...nodeLatest.current,
@@ -38,6 +44,9 @@ export const DefaultCodeEditor: FC<
       name={editorDef.dataKey}
       helperMessage={helperMessage}
       onClose={onClose}
+      onBlur={() => {
+        debouncedOnChange.flush();
+      }}
       language={editorDef.language}
       theme={editorDef.theme}
       id={node.id}
@@ -55,6 +64,7 @@ export const CodeEditor: FC<{
   name?: string;
   helperMessage?: string;
   onClose?: () => void;
+  onBlur?: () => void;
   theme?: string;
   language?: string;
   id?: string;
@@ -68,6 +78,7 @@ export const CodeEditor: FC<{
   name,
   helperMessage,
   onClose,
+  onBlur,
   theme,
   language,
   id,
@@ -118,6 +129,7 @@ export const CodeEditor: FC<{
             onChange={(newValue) => {
               onChangeLatest.current?.(newValue);
             }}
+            onBlur={onBlur}
             theme={theme}
             language={language}
             isReadonly={isReadonly || isDisabled}
