@@ -1,5 +1,11 @@
-import { useSetAtom } from 'jotai';
-import { loadedProjectState, projectState } from '../state/savedGraphs.js';
+import { useSetAtom, useAtomValue } from 'jotai';
+import {
+  loadedProjectState,
+  projectState,
+  openedProjectsState,
+  openedProjectsSortedIdsState,
+  type OpenedProjectInfo,
+} from '../state/savedGraphs.js';
 import {
   type GraphId,
   type NodeGraph,
@@ -18,6 +24,9 @@ import { nanoid } from 'nanoid';
 export function useNewProjectFromTemplate() {
   const setProject = useSetAtom(projectState);
   const setLoadedProject = useSetAtom(loadedProjectState);
+  const currentIds = useAtomValue(openedProjectsSortedIdsState);
+  const setOpenedProjectsSortedIds = useSetAtom(openedProjectsSortedIdsState);
+  const setOpenedProjects = useSetAtom(openedProjectsState);
   const setGraphData = useSetAtom(graphState);
   const setTrivetData = useSetAtom(trivetState);
 
@@ -66,13 +75,23 @@ export function useNewProjectFromTemplate() {
     });
 
     setLoadedProject({ loaded: false, path: '' });
-    setProject({
+    const projectWithNewId = {
       ...project,
       metadata: {
         ...project.metadata,
         id: nanoid() as ProjectId,
       },
-    });
+    };
+    setProject(projectWithNewId);
+
+    const newOpenedProjects: Record<ProjectId, OpenedProjectInfo> = {
+      [projectWithNewId.metadata.id]: {
+        project: projectWithNewId,
+        fsPath: null,
+      },
+    };
+    setOpenedProjects(newOpenedProjects);
+    setOpenedProjectsSortedIds([...currentIds, projectWithNewId.metadata.id]);
 
     const firstGraph = orderBy(Object.values(project.graphs), (g) => g.metadata!.name!)[0];
 
