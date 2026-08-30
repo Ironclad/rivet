@@ -21,7 +21,7 @@ import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins';
 import { entries } from '../../../core/src/utils/typeSafety';
 import { P, match } from 'ts-pattern';
 import Select from '@atlaskit/select';
-import { type SecretPluginConfigurationSpec, type StringPluginConfigurationSpec } from '../../../core/src/index.js';
+import { type SecretPluginConfigurationSpec, type SelectPluginConfigurationSpec, type StringPluginConfigurationSpec } from '../../../core/src/index.js';
 import { SideNavigation, NavigationHeader, ButtonItem, Header, NavigationContent } from '@atlaskit/side-navigation';
 import CrossIcon from '@atlaskit/icon/glyph/cross';
 import { css } from '@emotion/react';
@@ -532,8 +532,8 @@ export const PluginsSettingsPage: FC = () => {
                       (config: StringPluginConfigurationSpec | SecretPluginConfigurationSpec) => (
                         <>
                           <TextField
-                            value={(settings.pluginSettings?.[plugin.id]?.[key] as string | undefined) ?? ''}
                             type={config.type === 'secret' ? 'password' : 'text'}
+                            value={(settings.pluginSettings?.[plugin.id]?.[key] as string | undefined) ?? config.default ?? ''}
                             onChange={(e) =>
                               setSettings((s) => ({
                                 ...s,
@@ -551,6 +551,30 @@ export const PluginsSettingsPage: FC = () => {
                         </>
                       ),
                     )
+                    .with({ type: 'select' }, (config: SelectPluginConfigurationSpec) => {
+                      const currentValue = (settings.pluginSettings?.[plugin.id]?.[key] as string | undefined) ?? config.default ?? '';
+                      return (
+                        <>
+                          <Select
+                            value={config.options.find((o) => o.value === currentValue) ?? null}
+                            options={config.options}
+                            onChange={(option) =>
+                              setSettings((s) => ({
+                                ...s,
+                                pluginSettings: {
+                                  ...s.pluginSettings,
+                                  [plugin.id]: {
+                                    ...s.pluginSettings?.[plugin.id],
+                                    [key]: option?.value ?? '',
+                                  },
+                                },
+                              }))
+                            }
+                          />
+                          {config.helperText && <HelperMessage>{config.helperText}</HelperMessage>}
+                        </>
+                      );
+                    })
                     .otherwise(() => null)
                 }
               </Field>
@@ -592,8 +616,8 @@ export const CustomPluginsSettingsPage: FC<{ pluginId: string }> = ({ pluginId }
                   (config: StringPluginConfigurationSpec | SecretPluginConfigurationSpec) => (
                     <>
                       <TextField
-                        value={(settings.pluginSettings?.[plugin.id]?.[key] as string | undefined) ?? ''}
                         type={config.type === 'secret' ? 'password' : 'text'}
+                        value={(settings.pluginSettings?.[plugin.id]?.[key] as string | undefined) ?? config.default ?? ''}
                         onChange={(e) =>
                           setSettings((s) => ({
                             ...s,
@@ -611,6 +635,30 @@ export const CustomPluginsSettingsPage: FC<{ pluginId: string }> = ({ pluginId }
                     </>
                   ),
                 )
+                .with({ type: 'select' }, (config: SelectPluginConfigurationSpec) => {
+                  const currentValue = (settings.pluginSettings?.[plugin.id]?.[key] as string | undefined) ?? config.default ?? '';
+                  return (
+                    <>
+                      <Select
+                        value={config.options.find((o) => o.value === currentValue) ?? null}
+                        options={config.options}
+                        onChange={(option) =>
+                          setSettings((s) => ({
+                            ...s,
+                            pluginSettings: {
+                              ...s.pluginSettings,
+                              [plugin.id]: {
+                                ...s.pluginSettings?.[plugin.id],
+                                [key]: option?.value ?? '',
+                              },
+                            },
+                          }))
+                        }
+                      />
+                      {config.helperText && <HelperMessage>{config.helperText}</HelperMessage>}
+                    </>
+                  );
+                })
                 .otherwise(() => null)
             }
           </Field>
