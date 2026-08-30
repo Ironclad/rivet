@@ -11,7 +11,7 @@ import {
   type PluginNodeImpl,
   type PortId,
 } from '../../../index.js';
-import { HfInference, HfInferenceEndpoint } from '@huggingface/inference';
+import { InferenceClient } from '@huggingface/inference';
 import { getInputOrData } from '../../../utils/inputs.js';
 import { coerceType } from '../../../utils/coerceType.js';
 import { dedent } from '../../../utils/misc.js';
@@ -273,7 +273,9 @@ export const ChatHuggingFaceNodeImpl: PluginNodeImpl<ChatHuggingFaceNode> = {
     const topP = getInputOrData(data, inputData, 'topP', 'number');
     const topK = getInputOrData(data, inputData, 'topK', 'number');
 
-    const hf = endpoint ? new HfInferenceEndpoint(endpoint, accessToken) : new HfInference(accessToken);
+    const hf = endpoint
+			? new InferenceClient(accessToken, {endpointUrl: endpoint} )
+			: new InferenceClient(accessToken);
 
     const generationStream = hf.textGenerationStream({
       inputs: prompt,

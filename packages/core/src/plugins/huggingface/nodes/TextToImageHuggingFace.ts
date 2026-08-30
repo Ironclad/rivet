@@ -11,7 +11,7 @@ import {
   type PluginNodeImpl,
   type PortId,
 } from '../../../index.js';
-import { HfInference, HfInferenceEndpoint } from '@huggingface/inference';
+import { InferenceClient } from '@huggingface/inference';
 import { dedent } from 'ts-dedent';
 import { pluginNodeDefinition } from '../../../model/NodeDefinition.js';
 import { getInputOrData } from '../../../utils/inputs.js';
@@ -218,19 +218,24 @@ export const TextToImageHuggingFaceNodeImpl: PluginNodeImpl<TextToImageHuggingFa
     const guidanceScale = getInputOrData(data, inputData, 'guidanceScale', 'number');
     const numInferenceSteps = getInputOrData(data, inputData, 'numInferenceSteps', 'number');
 
-    const hf = endpoint ? new HfInferenceEndpoint(endpoint, accessToken) : new HfInference(accessToken);
+    const hf = endpoint
+			? new InferenceClient(accessToken, {endpointUrl: endpoint} )
+			: new InferenceClient(accessToken);
 
-    const image = await hf.textToImage({
-      inputs: prompt,
-      model,
-      parameters: {
-        width,
-        height,
-        negative_prompt: negativePrompt,
-        guidance_scale: guidanceScale,
-        num_inference_steps: numInferenceSteps,
-      },
-    });
+    const image: Blob = await hf.textToImage(
+			{
+				inputs: prompt,
+				model,
+				parameters: {
+					width,
+					height,
+					negative_prompt: negativePrompt,
+					guidance_scale: guidanceScale,
+					num_inference_steps: numInferenceSteps,
+				},
+			},
+			{ outputType: "blob" }
+		);
 
     return {
       ['output' as PortId]: {
