@@ -6,7 +6,7 @@ import pineconePlugin from './plugins/pinecone/index.js';
 import gentracePlugin from './plugins/gentrace/index.js';
 import { openAIPlugin } from './plugins/openai/plugin.js';
 import { googlePlugin } from './plugins/google/plugin.js';
-
+import { governancePlugin } from './plugins/governance/index.js';
 export {
   anthropicPlugin,
   autoevalsPlugin,
@@ -15,6 +15,7 @@ export {
   huggingFacePlugin,
   gentracePlugin,
   googlePlugin,
+  governancePlugin,
 };
 
 export const plugins = {
@@ -26,4 +27,5 @@ export const plugins = {
   gentrace: gentracePlugin,
   openai: openAIPlugin,
   google: googlePlugin,
+  governance: governancePlugin,
 };

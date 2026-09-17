@@ -54,7 +54,8 @@
   },
   "dependencies": {
     "@ironclad/rivet-core": "workspace:^",
-    "@ironclad/rivet-node": "workspace:^"
+    "@ironclad/rivet-node": "workspace:^",
+    "ai": "^7.0.84"
   },
   "dependenciesMeta": {
     "@pnpm/exe@8.8.0": {

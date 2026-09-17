@@ -1,0 +1,95 @@
+version: 4
+data:
+  attachedData:
+    trivet:
+      testSuites: []
+      version: 1
+  graphs:
+    NGfKBJJz5IUANP6SrKwLA:
+      metadata:
+        description: ""
+        id: NGfKBJJz5IUANP6SrKwLA
+        name: Untitled Graph
+      nodes:
+        '[6MWWRxB1KvvafNBac0Hv3]:governancePIIScan "Governance: PII Scan"':
+          data:
+            costBudgetUsd: 10
+            mode: enforce
+            outputAuthZ: true
+            piiAction: redact
+            piiCategories:
+              - SSN
+              - Email
+              - Phone
+              - APIKey
+          outgoingConnections:
+            - output->"Chat (Google)" qt-SkMxGFDnZIHWaBGYZg/prompt
+          visualData: 561/146/330/3//
+        '[CyANsbUV-uHk82Ka6YUTO]:governancePIIScan "Governance: PII Scan"':
+          data:
+            costBudgetUsd: 10
+            mode: monitor
+            outputAuthZ: true
+            piiAction: detect
+            piiCategories:
+              - APIKey
+              - Email
+          outgoingConnections:
+            - output->"Graph Output" j_rSfh4cJIyhqFdFCAEI3/value
+          visualData: 1593.5681675822198/160.27404246458426/330/5//
+        '[SpHcVws_j_c93RR5Mo0Qp]:text "Text"':
+          data:
+            normalizeLineEndings: true
+            text: |-
+              Service Agreement between Acme Corp and John Smith.
+              Client SSN: 123-45-6789
+              Email: john.smith@acme.com
+              Phone: (415) 555-1234
+              Creadit_card_no: 1234 5678 9012s
+          outgoingConnections:
+            - 'output->"Governance: PII Scan" 6MWWRxB1KvvafNBac0Hv3/text'
+          visualData: 34.35699429509458/14.173056304167329/404.8129529557128/9//
+        '[Z9IwaRfnMZ3vTWdWnEnB6]:text "Text"':
+          data:
+            normalizeLineEndings: true
+            text: Summarize the following document in one sentence.
+          outgoingConnections:
+            - output->"Chat (Google)" qt-SkMxGFDnZIHWaBGYZg/systemPrompt
+          visualData: 107/310/330/1//
+        '[j_rSfh4cJIyhqFdFCAEI3]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 2079.674378767082/166.073136682685/330/6//
+        '[qt-SkMxGFDnZIHWaBGYZg]:chatGoogle "Chat (Google)"':
+          data:
+            cache: false
+            maxTokens: 1024
+            model: gemini-2.5-flash
+            temperature: 0.5
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useMaxTokensInput: false
+            useModelInput: false
+            useTemperatureInput: false
+            useThinkingBudgetInput: false
+            useToolCalling: false
+            useTopKInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+          outgoingConnections:
+            - 'response->"Governance: PII Scan" CyANsbUV-uHk82Ka6YUTO/text'
+          visualData: 1055/146.34288526799693/305/7//
+  metadata:
+    description: ""
+    id: svT_lzb2nPzYRcx827wLL
+    title: Test
+  plugins:
+    - id: google
+      name: Google
+      type: built-in
+    - id: governance
+      name: Governance
+      type: built-in
+  references: []

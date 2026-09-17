@@ -301,4 +301,15 @@ export const pluginInfos: PluginInfo[] = [
     tag: 'latest',
     logoImage: QdrantLogo,
   },
+  {
+    type: 'built-in',
+    id: 'governance',
+    name: 'Governance',
+    description: dedent`
+      Adds a Governance node that evaluates deterministic policy between nodes: PII detection
+      (SSN, Credit Card, Email, Phone, API keys) with detect/redact/block actions, per-execution
+      cost budget fields, and output authorization. No LLM in the governance path.
+    `,
+    author: 'Rivet Team',
+  },
 ];

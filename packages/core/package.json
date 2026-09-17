@@ -68,6 +68,7 @@
     "p-retry": "^6.1.0",
     "p-retry-4": "npm:p-retry@^4.0.0",
     "safe-stable-stringify": "^2.4.3",
+    "tealtiger": "^1.5.0",
     "ts-dedent": "^2.2.0",
     "ts-pattern": "^5.6.2",
     "type-fest": "^4.34.1",
