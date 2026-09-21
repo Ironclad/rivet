@@ -1,0 +1,39 @@
+# Solomon v4.0 - Production dependencies
+
+# Core
+Flask==3.0.0
+Flask-SQLAlchemy==3.1.1
+Flask-Migrate==4.0.5
+Flask-Cors==4.0.0
+Flask-Limiter==3.5.0
+Flask-SocketIO==5.3.6
+python-dotenv==1.0.0
+gunicorn==21.2.0
+
+# Database
+SQLAlchemy==2.0.23
+
+# Data
+pandas==2.1.4
+numpy==1.26.2
+requests==2.31.0
+Pillow>=10.0.0
+openpyxl>=3.1.0
+
+# ML
+scikit-learn==1.3.2
+
+# Auth & Security
+PyJWT==2.8.0
+bcrypt==4.1.2
+cryptography==41.0.7
+pyotp==2.9.0
+qrcode==7.4.2
+
+# Payments
+stripe==7.0.0
+
+# Communication
+twilio==8.10.0
+python-telegram-bot==20.7
+APScheduler==3.10.4

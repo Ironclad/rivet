@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Solomon v4.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; line-height: 1.6; color: #0f172a; background: #f8fafc; }
+nav { background: white; border-bottom: 1px solid #e2e8f0; padding: 15px 0; position: sticky; top: 0; z-index: 100; }
+.nav-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: 1.5rem; font-weight: 800; color: #6366f1; text-decoration: none; }
+.nav-links { display: flex; gap: 30px; align-items: center; }
+.nav-links a { color: #0f172a; text-decoration: none; font-weight: 500; }
+.btn { display: inline-block; padding: 10px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; }
+.btn-primary { background: #6366f1; color: white; }
+.page-header { text-align: center; padding: 80px 20px 40px; background: white; }
+.page-header h1 { font-size: 3rem; margin-bottom: 15px; }
+.page-header p { color: #64748b; font-size: 1.2rem; max-width: 600px; margin: 0 auto; }
+.contact-grid { max-width: 1100px; margin: 60px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.contact-form { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-weight: 600; margin-bottom: 8px; }
+.form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem; font-family: inherit; }
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+.form-group textarea { min-height: 120px; resize: vertical; }
+.contact-info { padding: 40px 0; }
+.contact-info h2 { font-size: 1.8rem; margin-bottom: 20px; }
+.contact-method { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 25px; padding: 20px; background: white; border-radius: 12px; }
+.contact-icon { width: 50px; height: 50px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+.contact-method h3 { font-size: 1.1rem; margin-bottom: 5px; }
+.contact-method p { color: #64748b; font-size: 0.95rem; }
+.contact-method a { color: #6366f1; text-decoration: none; font-weight: 600; }
+.btn-submit { background: #6366f1; color: white; border: none; padding: 14px 30px; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; width: 100%; }
+.btn-submit:hover { background: #4f46e5; }
+.success-msg { background: #d1fae5; color: #065f46; padding: 15px; border-radius: 8px; margin-top: 20px; display: none; }
+@media (max-width: 768px) {
+  .contact-grid { grid-template-columns: 1fr; }
+  .page-header h1 { font-size: 2rem; }
+}
+footer { background: #0f172a; color: #94a3b8; padding: 40px 20px; text-align: center; margin-top: 80px; }
+</style>
+</head>
+<body>
+
+<nav>
+<div class="nav-container">
+<a href="index.html" class="logo">💎 Solomon</a>
+<div class="nav-links">
+<a href="index.html">Home</a>
+<a href="features.html">Features</a>
+<a href="pricing.html">Pricing</a>
+<a href="contact.html">Contact</a>
+<a href="https://github.com/Namak7678/rivet" target="_blank">GitHub</a>
+<a href="pricing.html" class="btn btn-primary">Buy Now</a>
+</div>
+</div>
+</nav>
+
+<div class="page-header">
+<h1>Get in Touch</h1>
+<p>Questions about Solomon v4.0? Want a custom demo? Need help deploying? Drop us a line.</p>
+</div>
+
+<div class="contact-grid">
+<div class="contact-form">
+<h2 style="margin-bottom: 25px;">Send us a message</h2>
+<form id="contactForm">
+<div class="form-group">
+<label for="name">Your Name</label>
+<input type="text" id="name" name="name" required>
+</div>
+<div class="form-group">
+<label for="email">Email Address</label>
+<input type="email" id="email" name="email" required>
+</div>
+<div class="form-group">
+<label for="subject">Subject</label>
+<select id="subject" name="subject">
+<option value="general">General Question</option>
+<option value="sales">Sales Inquiry</option>
+<option value="support">Technical Support</option>
+<option value="partnership">Partnership</option>
+<option value="custom">Custom Development</option>
+</select>
+</div>
+<div class="form-group">
+<label for="message">Message</label>
+<textarea id="message" name="message" placeholder="Tell us what you need..." required></textarea>
+</div>
+<button type="submit" class="btn-submit">Send Message →</button>
+<div class="success-msg" id="successMsg">
+✓ Thanks! We'll get back to you within 24 hours.
+</div>
+</form>
+</div>
+
+<div class="contact-info">
+<h2>Other ways to reach us</h2>
+
+<div class="contact-method">
+<div class="contact-icon">📧</div>
+<div>
+<h3>Email</h3>
+<p><a href="mailto:hello@solomon.ai">hello@solomon.ai</a></p>
+<p style="font-size: 0.85rem; margin-top: 5px;">Response within 24 hours</p>
+</div>
+</div>
+
+<div class="contact-method">
+<div class="contact-icon">💬</div>
+<div>
+<h3>Discord Community</h3>
+<p><a href="#">Join our Discord</a></p>
+<p style="font-size: 0.85rem; margin-top: 5px;">Get help, share tips, request features</p>
+</div>
+</div>
+
+<div class="contact-method">
+<div class="contact-icon">🐦</div>
+<div>
+<h3>Twitter / X</h3>
+<p><a href="https://twitter.com/solomon_ai" target="_blank">@solomon_ai</a></p>
+<p style="font-size: 0.85rem; margin-top: 5px;">Follow for updates + tips</p>
+</div>
+</div>
+
+<div class="contact-method">
+<div class="contact-icon">💻</div>
+<div>
+<h3>GitHub Issues</h3>
+<p><a href="https://github.com/Namak7678/rivet/issues" target="_blank">Open an issue</a></p>
+<p style="font-size: 0.85rem; margin-top: 5px;">Bug reports + feature requests</p>
+</div>
+</div>
+
+<div class="contact-method">
+<div class="contact-icon">📅</div>
+<div>
+<h3>Book a Call</h3>
+<p><a href="https://calendly.com/solomon-demo" target="_blank">Schedule a demo</a></p>
+<p style="font-size: 0.85rem; margin-top: 5px;">30-min demo for teams 5+</p>
+</div>
+</div>
+</div>
+</div>
+
+<footer>
+<p>© 2026 Solomon Engineering · <a href="index.html" style="color: #6366f1;">Home</a> · <a href="pricing.html" style="color: #6366f1;">Pricing</a></p>
+</footer>
+
+<script>
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  document.getElementById('successMsg').style.display = 'block';
+  this.reset();
+  setTimeout(() => {
+    document.getElementById('successMsg').style.display = 'none';
+  }, 5000);
+});
+</script>
+
+</body>
+</html>
