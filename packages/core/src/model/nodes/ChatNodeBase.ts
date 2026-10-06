@@ -45,7 +45,7 @@ export type ChatNodeConfigData = {
   overrideMaxTokens?: number;
   headers?: { key: string; value: string }[];
   seed?: number;
-  toolChoice?: 'none' | 'auto' | 'function';
+  toolChoice?: 'none' | 'auto' | 'function' | 'required';
   toolChoiceFunction?: string;
   responseFormat?: '' | 'text' | 'json' | 'json_schema';
   parallelFunctionCalling?: boolean;
@@ -878,7 +878,7 @@ export const ChatNodeBase = {
     const overrideModel = getInputOrData(data, inputs, 'overrideModel');
     const seed = getInputOrData(data, inputs, 'seed', 'number');
     const responseFormat = getInputOrData(data, inputs, 'responseFormat') as 'text' | 'json' | 'json_schema' | '';
-    const toolChoiceMode = getInputOrData(data, inputs, 'toolChoice', 'string') as 'none' | 'auto' | 'function';
+    const toolChoiceMode = getInputOrData(data, inputs, 'toolChoice', 'string') as ChatNodeData['toolChoice'];
     const parallelFunctionCalling = getInputOrData(data, inputs, 'parallelFunctionCalling', 'boolean');
 
     const predictedOutput = data.usePredictedOutput
