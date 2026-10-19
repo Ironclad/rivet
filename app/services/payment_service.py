@@ -113,10 +113,10 @@ class CryptoProvider(PaymentProvider):
 
     def __init__(self, addresses: Dict[str, str] = None):
         self.addresses = addresses or {
-            "BTC": os.getenv("CRYPTO_BTC_ADDRESS", "bc1qdemo0000000000000000000000000000000demo"),
-            "ETH": os.getenv("CRYPTO_ETH_ADDRESS", "0xdemo0000000000000000000000000000000000"),
-            "USDT": os.getenv("CRYPTO_USDT_ADDRESS", "Tdemo0000000000000000000000000000000"),
-            "USDC": os.getenv("CRYPTO_USDC_ADDRESS", "0xdemo0000000000000000000000000000000000"),
+            "BTC": os.getenv("CRYPTO_BTC_ADDRESS") or "bc1qdemo0000000000000000000000000000000demo",
+            "ETH": os.getenv("CRYPTO_ETH_ADDRESS") or "0xdemo0000000000000000000000000000000000",
+            "USDT": os.getenv("CRYPTO_USDT_ADDRESS") or "Tdemo0000000000000000000000000000000",
+            "USDC": os.getenv("CRYPTO_USDC_ADDRESS") or "0xdemo0000000000000000000000000000000000",
         }
         self.session = requests.Session()
 
