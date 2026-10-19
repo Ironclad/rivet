@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solomon Dashboard — Live Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #0f172a; font-size: 14px; }
+.sidebar { position: fixed; left: 0; top: 0; width: 240px; height: 100vh; background: #0f172a; color: white; padding: 20px 0; }
+.logo { padding: 0 20px 30px; font-size: 1.4rem; font-weight: 800; border-bottom: 1px solid #1e293b; }
+.logo span { color: #818cf8; }
+.nav-section { padding: 20px 0; }
+.nav-title { padding: 0 20px 10px; font-size: 0.7rem; text-transform: uppercase; color: #64748b; letter-spacing: 1px; }
+.nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 20px; color: #cbd5e1; text-decoration: none; transition: all 0.2s; }
+.nav-item:hover, .nav-item.active { background: #1e293b; color: white; }
+.nav-icon { font-size: 1.1rem; }
+.main { margin-left: 240px; padding: 20px 30px; }
+.topbar { background: white; padding: 15px 25px; border-radius: 12px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.topbar h1 { font-size: 1.5rem; }
+.user-info { display: flex; align-items: center; gap: 10px; }
+.avatar { width: 36px; height: 36px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 25px; }
+.stat-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.stat-label { color: #64748b; font-size: 0.85rem; margin-bottom: 8px; }
+.stat-value { font-size: 2rem; font-weight: 800; color: #0f172a; }
+.stat-change { font-size: 0.8rem; margin-top: 5px; }
+.stat-change.up { color: #16a34a; }
+.stat-change.down { color: #dc2626; }
+.card { background: white; border-radius: 12px; padding: 25px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
+.card-title { font-size: 1.1rem; font-weight: 700; }
+.card-action { color: #6366f1; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+.two-col { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; padding: 12px 8px; font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #f1f5f9; }
+td { padding: 14px 8px; border-bottom: 1px solid #f1f5f9; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+.badge-green { background: #dcfce7; color: #16a34a; }
+.badge-yellow { background: #fef3c7; color: #d97706; }
+.badge-blue { background: #dbeafe; color: #2563eb; }
+.badge-purple { background: #ede9fe; color: #6366f1; }
+.ai-briefing { background: linear-gradient(135deg, #0f172a, #1e293b); color: white; border-radius: 12px; padding: 25px; margin-bottom: 20px; }
+.ai-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.ai-icon { font-size: 1.5rem; }
+.ai-title { font-weight: 700; }
+.ai-time { margin-left: auto; font-size: 0.8rem; opacity: 0.7; }
+.ai-summary { font-size: 1.1rem; line-height: 1.6; margin-bottom: 15px; }
+.ai-insights { list-style: none; }
+.ai-insights li { padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.1); }
+.ai-insights li:first-child { border: none; }
+@media (max-width: 1024px) {
+  .two-col { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+<div class="logo">💎 <span>Solomon</span></div>
+<div class="nav-section">
+<div class="nav-title">Overview</div>
+<a href="#" class="nav-item active"><span class="nav-icon">📊</span> Dashboard</a>
+<a href="#" class="nav-item"><span class="nav-icon">💎</span> Treasures</a>
+<a href="#" class="nav-item"><span class="nav-icon">💰</span> Sales</a>
+<a href="#" class="nav-item"><span class="nav-icon">👥</span> Customers</a>
+</div>
+<div class="nav-section">
+<div class="nav-title">AI</div>
+<a href="#" class="nav-item"><span class="nav-icon">🤖</span> AI Agent</a>
+<a href="#" class="nav-item"><span class="nav-icon">📈</span> Insights</a>
+<a href="#" class="nav-item"><span class="nav-icon">⚙️</span> ML Models</a>
+</div>
+<div class="nav-section">
+<div class="nav-title">Payments</div>
+<a href="#" class="nav-item"><span class="nav-icon">💳</span> Transactions</a>
+<a href="#" class="nav-item"><span class="nav-icon">📥</span> Webhooks</a>
+</div>
+<div class="nav-section">
+<div class="nav-title">System</div>
+<a href="#" class="nav-item"><span class="nav-icon">🔐</span> Security</a>
+<a href="#" class="nav-item"><span class="nav-icon">📋</span> Audit Logs</a>
+<a href="#" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
+</div>
+</aside>
+
+<main class="main">
+
+<div class="topbar">
+<h1>Dashboard</h1>
+<div class="user-info">
+<span>admin@solomon.ai</span>
+<div class="avatar">A</div>
+</div>
+</div>
+
+<div class="ai-briefing">
+<div class="ai-header">
+<span class="ai-icon">🤖</span>
+<span class="ai-title">AI Daily Briefing</span>
+<span class="ai-time">Today, 9:00 AM</span>
+</div>
+<div class="ai-summary">تم اكتشاف 12 كنز، 3 منها بربح 300%+، و 4 مبيعات اليوم — momentum جيد</div>
+<ul class="ai-insights">
+<li>🔥 3 كنوز بربح 300%+ اليوم — فرصة استثنائية</li>
+<li>💰 4 مبيعات اليوم — momentum جيد</li>
+<li>🎯 أفضل فرصة: Lot of 50 x Dell OptiPlex 7060 i7 (ربح 543%)</li>
+</ul>
+</div>
+
+<div class="stats-grid">
+<div class="stat-card">
+<div class="stat-label">Total Revenue</div>
+<div class="stat-value">$92,759</div>
+<div class="stat-change up">↑ 12.5% vs last month</div>
+</div>
+<div class="stat-card">
+<div class="stat-label">Net Profit</div>
+<div class="stat-value">$24,445</div>
+<div class="stat-change up">↑ 8.3% vs last month</div>
+</div>
+<div class="stat-card">
+<div class="stat-label">Active Treasures</div>
+<div class="stat-value">12</div>
+<div class="stat-change up">↑ 3 new today</div>
+</div>
+<div class="stat-card">
+<div class="stat-label">Customers</div>
+<div class="stat-value">5</div>
+<div class="stat-change up">↑ 1 this week</div>
+</div>
+</div>
+
+<div class="two-col">
+
+<div class="card">
+<div class="card-header">
+<div class="card-title">Recent Treasures</div>
+<a href="#" class="card-action">View all →</a>
+</div>
+<table>
+<thead>
+<tr>
+<th>Title</th>
+<th>Category</th>
+<th>Cost</th>
+<th>Est. Value</th>
+<th>Profit</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lot of 50 x Dell OptiPlex 7060 i7</td>
+<td>Electronics</td>
+<td>$3,500</td>
+<td>$18,000</td>
+<td><span class="badge badge-green">+414%</span></td>
+<td><span class="badge badge-blue">Analyzed</span></td>
+</tr>
+<tr>
+<td>Lot of 100 x iPhone 12</td>
+<td>Electronics</td>
+<td>$18,000</td>
+<td>$52,000</td>
+<td><span class="badge badge-green">+189%</span></td>
+<td><span class="badge badge-blue">Analyzed</span></td>
+</tr>
+<tr>
+<td>Lab Microscope Olympus CX23</td>
+<td>Medical</td>
+<td>$3,800</td>
+<td>$12,500</td>
+<td><span class="badge badge-green">+229%</span></td>
+<td><span class="badge badge-yellow">Pending</span></td>
+</tr>
+<tr>
+<td>2018 Caterpillar 320 GC Excavator</td>
+<td>Heavy</td>
+<td>$78,000</td>
+<td>$95,000</td>
+<td><span class="badge badge-yellow">+22%</span></td>
+<td><span class="badge badge-blue">Analyzed</span></td>
+</tr>
+<tr>
+<td>Lot of 200 x Dell Latitude E7470</td>
+<td>Electronics</td>
+<td>$12,000</td>
+<td>$85,000</td>
+<td><span class="badge badge-green">+608%</span></td>
+<td><span class="badge badge-purple">🔥 Hot</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="card">
+<div class="card-header">
+<div class="card-title">Top Customers</div>
+<a href="#" class="card-action">View all →</a>
+</div>
+<table>
+<thead>
+<tr><th>Name</th><th>Spent</th></tr>
+</thead>
+<tbody>
+<tr><td>Mike Chen</td><td>$92,109</td></tr>
+<tr><td>Sarah Johnson</td><td>$67,234</td></tr>
+<tr><td>Hans Mueller</td><td>$45,891</td></tr>
+<tr><td>أحمد المحمد</td><td>$38,221</td></tr>
+<tr><td>Priya Patel</td><td>$29,445</td></tr>
+</tbody>
+</table>
+</div>
+
+</div>
+
+<div class="card">
+<div class="card-header">
+<div class="card-title">Recent Sales</div>
+<a href="#" class="card-action">View all →</a>
+</div>
+<table>
+<thead>
+<tr>
+<th>Invoice</th>
+<th>Customer</th>
+<th>Item</th>
+<th>Amount</th>
+<th>Method</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>INV-202609-001</td>
+<td>Mike Chen</td>
+<td>Lot of 50 x Dell OptiPlex</td>
+<td>$12,223</td>
+<td><span class="badge badge-purple">Crypto</span></td>
+<td><span class="badge badge-green">Delivered</span></td>
+</tr>
+<tr>
+<td>INV-202609-002</td>
+<td>Sarah Johnson</td>
+<td>Lot of 100 x iPhone 12</td>
+<td>$48,500</td>
+<td><span class="badge badge-blue">Stripe</span></td>
+<td><span class="badge badge-green">Delivered</span></td>
+</tr>
+<tr>
+<td>INV-202609-003</td>
+<td>Hans Mueller</td>
+<td>Caterpillar 320 GC</td>
+<td>$85,000</td>
+<td><span class="badge badge-yellow">Wire</span></td>
+<td><span class="badge badge-blue">Shipped</span></td>
+</tr>
+<tr>
+<td>INV-202609-004</td>
+<td>أحمد المحمد</td>
+<td>Pallet Medical Supplies</td>
+<td>$18,900</td>
+<td><span class="badge badge-purple">Crypto</span></td>
+<td><span class="badge badge-green">Delivered</span></td>
+</tr>
+<tr>
+<td>INV-202609-005</td>
+<td>Priya Patel</td>
+<td>Lab Microscopes</td>
+<td>$10,500</td>
+<td><span class="badge badge-blue">Stripe</span></td>
+<td><span class="badge badge-yellow">Paid</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</main>
+
+</body>
+</html>

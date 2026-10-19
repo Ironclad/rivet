@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  solomon:
+    build: .
+<<<<<<< HEAD
+=======
+    container_name: solomon-app
+>>>>>>> 7df27e1 (feat: Complete production setup with website + deployment)
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+<<<<<<< HEAD
+      - SECRET_KEY=${SECRET_KEY:-change-me}
+      - JWT_SECRET=${JWT_SECRET:-change-me-too}
+      - DATABASE_URL=sqlite:///instance/solomon.db
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - STRIPE_API_KEY=${STRIPE_API_KEY:-}
+=======
+      - SECRET_KEY=${SECRET_KEY:-change-me-to-a-32-byte-random-string}
+      - JWT_SECRET=${JWT_SECRET:-change-me-to-another-32-byte-secret}
+      - DATABASE_URL=sqlite:///instance/solomon.db
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini}
+      - STRIPE_API_KEY=${STRIPE_API_KEY:-}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID:-}
+      - ENABLE_SCHEDULER=${ENABLE_SCHEDULER:-true}
+      - ENABLE_WEBSOCKET=${ENABLE_WEBSOCKET:-false}
+>>>>>>> 7df27e1 (feat: Complete production setup with website + deployment)
+    volumes:
+      - ./instance:/app/instance
+    restart: unless-stopped
+    healthcheck:
+<<<<<<< HEAD
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/api/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+=======
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - solomon-network
+
+networks:
+  solomon-network:
+    driver: bridge
+>>>>>>> 7df27e1 (feat: Complete production setup with website + deployment)

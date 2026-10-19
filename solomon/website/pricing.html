@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — Solomon v4.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; line-height: 1.6; color: #0f172a; background: #f8fafc; }
+nav { background: white; border-bottom: 1px solid #e2e8f0; padding: 15px 0; position: sticky; top: 0; z-index: 100; }
+.nav-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: 1.5rem; font-weight: 800; color: #6366f1; text-decoration: none; }
+.nav-links { display: flex; gap: 30px; align-items: center; }
+.nav-links a { color: #0f172a; text-decoration: none; font-weight: 500; }
+.btn { display: inline-block; padding: 10px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; }
+.btn-primary { background: #6366f1; color: white; }
+.page-header { text-align: center; padding: 80px 20px 40px; }
+.page-header h1 { font-size: 3rem; margin-bottom: 15px; }
+.page-header p { color: #64748b; font-size: 1.2rem; max-width: 600px; margin: 0 auto; }
+.pricing-grid { max-width: 1100px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+.price-card { background: white; padding: 40px 30px; border-radius: 16px; border: 2px solid #e2e8f0; text-align: center; position: relative; transition: transform 0.2s; }
+.price-card:hover { transform: translateY(-5px); }
+.price-card.popular { border-color: #6366f1; transform: scale(1.05); }
+.price-card.popular:hover { transform: scale(1.05) translateY(-5px); }
+.popular-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #6366f1; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+.price-card h3 { font-size: 1.5rem; margin-bottom: 10px; }
+.price { font-size: 3.5rem; font-weight: 800; margin: 20px 0; color: #6366f1; }
+.price span { font-size: 1rem; color: #64748b; font-weight: 400; }
+.price-desc { color: #64748b; margin-bottom: 25px; }
+.price-features { list-style: none; margin: 25px 0; text-align: left; }
+.price-features li { padding: 10px 0; border-bottom: 1px solid #f1f5f9; color: #475569; }
+.price-features li:last-child { border: none; }
+.price-features li::before { content: "✓ "; color: #6366f1; font-weight: bold; }
+.faq { max-width: 800px; margin: 80px auto; padding: 0 20px; }
+.faq h2 { text-align: center; font-size: 2rem; margin-bottom: 40px; }
+.faq-item { background: white; border-radius: 12px; padding: 25px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
+.faq-item h3 { font-size: 1.1rem; margin-bottom: 10px; color: #6366f1; }
+.faq-item p { color: #475569; }
+.cta-section { background: #0f172a; color: white; padding: 80px 20px; text-align: center; margin-top: 80px; }
+.cta-section h2 { font-size: 2.5rem; margin-bottom: 20px; }
+.cta-section p { opacity: 0.8; max-width: 600px; margin: 0 auto 30px; }
+.btn-large { padding: 18px 40px; font-size: 1.1rem; }
+footer { text-align: center; padding: 40px 20px; color: #94a3b8; }
+</style>
+</head>
+<body>
+
+<nav>
+<div class="nav-container">
+<a href="index.html" class="logo">💎 Solomon</a>
+<div class="nav-links">
+<a href="index.html">Home</a>
+<a href="features.html">Features</a>
+<a href="pricing.html">Pricing</a>
+<a href="contact.html">Contact</a>
+<a href="https://github.com/Namak7678/rivet" target="_blank">GitHub</a>
+<a href="#buy" class="btn btn-primary">Buy Now</a>
+</div>
+</div>
+</nav>
+
+<div class="page-header">
+<h1>Simple, Transparent Pricing</h1>
+<p>One-time payment. Lifetime access. No subscriptions, no hidden fees.</p>
+</div>
+
+<div class="pricing-grid">
+<div class="price-card">
+<h3>Indie</h3>
+<div class="price">$49</div>
+<p class="price-desc">For individual resellers</p>
+<ul class="price-features">
+<li>Complete source bundle (5,273 LOC)</li>
+<li>All 38 modules + tests</li>
+<li>Lifetime updates</li>
+<li>Docker + Render deployment</li>
+<li>Documentation + API reference</li>
+<li>Community support (Discord)</li>
+<li>Single project use</li>
+</ul>
+<a href="#buy" class="btn btn-primary" style="width: 100%;">Buy Indie</a>
+</div>
+
+<div class="price-card popular">
+<div class="popular-badge">MOST POPULAR</div>
+<h3>Pro</h3>
+<div class="price">$149</div>
+<p class="price-desc">For serious operators</p>
+<ul class="price-features">
+<li>Everything in Indie</li>
+<li>1-hour setup call (Zoom)</li>
+<li>Email support (24h response)</li>
+<li>Custom feature priority</li>
+<li>Multiple projects (up to 3)</li>
+<li>White-label option</li>
+<li>30-day money-back guarantee</li>
+</ul>
+<a href="#buy" class="btn btn-primary" style="width: 100%;">Buy Pro</a>
+</div>
+
+<div class="price-card">
+<h3>Agency</h3>
+<div class="price">$499</div>
+<p class="price-desc">For agencies & resellers</p>
+<ul class="price-features">
+<li>Everything in Pro</li>
+<li>10 client licenses</li>
+<li>White-label rights (full)</li>
+<li>Priority support (4h response)</li>
+<li>Co-marketing opportunity</li>
+<li>Custom branding</li>
+<li>Quarterly strategy call</li>
+</ul>
+<a href="#buy" class="btn btn-primary" style="width: 100%;">Buy Agency</a>
+</div>
+</div>
+
+<section class="faq">
+<h2>Frequently Asked Questions</h2>
+
+<div class="faq-item">
+<h3>Can I try before I buy?</h3>
+<p>Yes! Deploy the open-source version from GitHub and test it. The $49 bundle includes pre-configured deployment files and priority support.</p>
+</div>
+
+<div class="faq-item">
+<h3>What payment methods do you accept?</h3>
+<p>Gumroad accepts all major credit cards, PayPal, Apple Pay, and Google Pay. Wire transfer available for orders over $500.</p>
+</div>
+
+<div class="faq-item">
+<h3>Do you offer refunds?</h3>
+<p>30-day money-back guarantee, no questions asked. If Solomon doesn't work for your use case, get a full refund within 30 days.</p>
+</div>
+
+<div class="faq-item">
+<h3>What if I need a custom feature?</h3>
+<p>Pro and Agency tiers include custom feature priority. We'll build features you need and include them in future updates for everyone.</p>
+</div>
+
+<div class="faq-item">
+<h3>Can I use this commercially?</h3>
+<p>Yes. Indie license = single commercial project. Pro = up to 3. Agency = unlimited + white-label rights to resell.</p>
+</div>
+
+<div class="faq-item">
+<h3>How do I get support?</h3>
+<p>Community Discord (all tiers) + Email (Pro+) + Priority phone support (Agency). Average response time: 24h for Pro, 4h for Agency.</p>
+</div>
+
+<div class="faq-item">
+<h3>What if I want to host it myself?</h3>
+<p>That's the whole point. You get the source code, you run it on your infrastructure. No vendor lock-in, no monthly fees.</p>
+</div>
+
+<div class="faq-item">
+<h3>Do you offer team training?</h3>
+<p>Yes, Agency tier includes a quarterly strategy call. We also offer custom training packages for $200/hour.</p>
+</div>
+</section>
+
+<section class="cta-section" id="buy">
+<h2>Ready to Get Started?</h2>
+<p>Join hundreds of resellers automating their business with Solomon v4.0.</p>
+<a href="https://gumroad.com/l/solomon-v4" class="btn btn-primary btn-large">Buy Solomon v4.0 →</a>
+<p style="margin-top: 20px; opacity: 0.7; font-size: 0.9rem;">Instant download · Lifetime updates · 30-day refund</p>
+</section>
+
+<footer>
+<p>© 2026 Solomon Engineering. <a href="index.html" style="color: #6366f1;">Home</a> · <a href="https://github.com/Namak7678/rivet" style="color: #6366f1;">GitHub</a></p>
+</footer>
+
+</body>
+</html>

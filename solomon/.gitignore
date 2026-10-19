@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual env
+venv/
+.venv/
+
+# Instance
+instance/
+*.db
+*.sqlite3
+
+# Environment
+.env
+.env.local
+
+# ML model cache
+ml_model.pkl

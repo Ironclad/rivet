@@ -1,1 +1,0 @@
-../../../dist/node/bundle.js
