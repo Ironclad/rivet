@@ -86,3 +86,43 @@ class TestWhatsAppIntegration:
         r = client.post("/api/v3/whatsapp/webhook", json={"message": "1", "from": "+966500000001"})
         assert r.status_code == 200
         assert r.get_json()["ok"] is True
+
+
+class TestMobileAppAPI:
+    def test_mobile_summary(self, client):
+        token = _get_token(client)
+        r = client.get("/api/v3/mobile/summary", headers={"Authorization": f"Bearer {token}"})
+        assert r.status_code == 200
+        data = r.get_json()
+        assert data["ok"] is True
+        assert "deals" in data
+
+    def test_instant_calculator(self, client):
+        token = _get_token(client)
+        r = client.post(
+            "/api/v3/mobile/instant-calculator",
+            headers={"Authorization": f"Bearer {token}"},
+            json={"title": "Rolex Submariner", "category": "Watches", "asking_price": 7500},
+        )
+        assert r.status_code == 200
+        data = r.get_json()
+        assert data["ok"] is True
+        assert data["roi_pct"] > 0
+
+    def test_generate_contract(self, client):
+        token = _get_token(client)
+        r = client.post(
+            "/api/v3/mobile/generate-contract",
+            headers={"Authorization": f"Bearer {token}"},
+            json={"commission_pct": 10},
+        )
+        assert r.status_code == 200
+        data = r.get_json()
+        assert data["ok"] is True
+        assert "SLM-CNTR-" in data["contract_ref"]
+
+    def test_mobile_qr(self, client):
+        r = client.get("/api/v3/mobile/qr?url=https://example.com/mobile.html")
+        assert r.status_code == 200
+        assert r.get_json()["qr_base64"].startswith("data:image/png;base64,")
+

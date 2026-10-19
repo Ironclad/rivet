@@ -17,6 +17,7 @@ def register_blueprints(app: Flask):
     from app.api.stripe_integration import stripe_bp
     from app.api.openai_integration import openai_bp
     from app.api.whatsapp_integration import whatsapp_bp
+    from app.api.mobile_app import mobile_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/v3/auth")
     app.register_blueprint(treasures_bp, url_prefix="/api/v3/treasures")
@@ -32,3 +33,4 @@ def register_blueprints(app: Flask):
     app.register_blueprint(stripe_bp, url_prefix="/api/v3/stripe")
     app.register_blueprint(openai_bp, url_prefix="/api/v3/openai")
     app.register_blueprint(whatsapp_bp, url_prefix="/api/v3/whatsapp")
+    app.register_blueprint(mobile_bp, url_prefix="/api/v3/mobile")
