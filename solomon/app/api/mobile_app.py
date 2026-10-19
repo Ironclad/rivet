@@ -28,7 +28,7 @@ def mobile_summary():
     sales = Sale.query.order_by(Sale.sold_at.desc()).limit(6).all()
 
     total_rev = sum(s.sold_price or 0 for s in Sale.query.all())
-    total_profit = sum(s.profit or 0 for s in Sale.query.all())
+    total_profit = sum(s.net_profit or 0 for s in Sale.query.all())
 
     return jsonify({
         "ok": True,
@@ -68,7 +68,7 @@ def mobile_summary():
                 "id": s.id,
                 "invoice": s.invoice_number,
                 "amount": s.sold_price,
-                "profit": s.profit,
+                "profit": s.net_profit,
                 "status": s.status,
                 "method": s.payment_method,
             }
