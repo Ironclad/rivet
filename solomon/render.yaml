@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: solomon
+    runtime: python
+    rootDir: solomon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FLASK_ENV
+        value: production
+      - key: ENABLE_SCHEDULER
+        value: "true"
+      - key: ENABLE_WEBSOCKET
+        value: "false"
+      - key: PYTHON_VERSION
+        value: "3.11.0"

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Features — Solomon v4.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; line-height: 1.6; color: #0f172a; background: white; }
+nav { background: white; border-bottom: 1px solid #e2e8f0; padding: 15px 0; position: sticky; top: 0; z-index: 100; }
+.nav-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: 1.5rem; font-weight: 800; color: #6366f1; text-decoration: none; }
+.nav-links { display: flex; gap: 30px; align-items: center; }
+.nav-links a { color: #0f172a; text-decoration: none; font-weight: 500; }
+.btn { display: inline-block; padding: 10px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; }
+.btn-primary { background: #6366f1; color: white; }
+.page-header { text-align: center; padding: 80px 20px 40px; background: linear-gradient(180deg, #f8fafc 0%, white 100%); }
+.page-header h1 { font-size: 3rem; margin-bottom: 15px; }
+.page-header p { color: #64748b; font-size: 1.2rem; max-width: 700px; margin: 0 auto; }
+.feature-section { max-width: 1200px; margin: 80px auto; padding: 0 20px; }
+.feature-block { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-bottom: 80px; }
+.feature-block.reverse { direction: rtl; }
+.feature-block.reverse > * { direction: ltr; }
+.feature-content h2 { font-size: 2.2rem; margin-bottom: 20px; }
+.feature-content .tag { display: inline-block; background: #ede9fe; color: #6366f1; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; }
+.feature-content p { color: #475569; font-size: 1.1rem; margin-bottom: 20px; }
+.feature-content ul { list-style: none; }
+.feature-content li { padding: 8px 0; color: #475569; }
+.feature-content li::before { content: "→ "; color: #6366f1; font-weight: bold; }
+.feature-visual { background: linear-gradient(135deg, #f8fafc, #ede9fe); border-radius: 16px; padding: 40px; min-height: 300px; display: flex; align-items: center; justify-content: center; font-size: 8rem; }
+.code-snippet { background: #0f172a; color: #94a3b8; padding: 25px; border-radius: 12px; font-family: monospace; font-size: 0.9rem; margin-top: 20px; overflow-x: auto; }
+.code-snippet .comment { color: #64748b; }
+.code-snippet .keyword { color: #a5b4fc; }
+.code-snippet .string { color: #86efac; }
+@media (max-width: 768px) {
+  .feature-block { grid-template-columns: 1fr; gap: 30px; }
+  .feature-block.reverse { direction: ltr; }
+  .page-header h1 { font-size: 2rem; }
+}
+footer { background: #0f172a; color: #94a3b8; padding: 40px 20px; text-align: center; margin-top: 80px; }
+</style>
+</head>
+<body>
+
+<nav>
+<div class="nav-container">
+<a href="index.html" class="logo">💎 Solomon</a>
+<div class="nav-links">
+<a href="index.html">Home</a>
+<a href="features.html">Features</a>
+<a href="pricing.html">Pricing</a>
+<a href="contact.html">Contact</a>
+<a href="https://github.com/Namak7678/rivet" target="_blank">GitHub</a>
+<a href="pricing.html" class="btn btn-primary">Buy Now</a>
+</div>
+</div>
+</nav>
+
+<div class="page-header">
+<h1>Features Built for Scale</h1>
+<p>Everything you need to automate treasure discovery, sales, and payments — in one Python bundle.</p>
+</div>
+
+<div class="feature-section">
+
+<div class="feature-block">
+<div class="feature-content">
+<span class="tag">🤖 AI AGENT</span>
+<h2>Daily Arabic briefings</h2>
+<p>The Solomon AI agent posts a morning briefing in Arabic with insights on top opportunities, customer recommendations, and pricing suggestions.</p>
+<ul>
+<li>Daily summary with stats</li>
+<li>Top 3 opportunities ranked</li>
+<li>Action items for the day</li>
+<li>Works without OpenAI API (heuristic fallback)</li>
+</ul>
+<div class="code-snippet">
+<span class="comment"># Get today's briefing</span><br>
+<span class="keyword">GET</span> /api/v3/ai/briefing<br>
+<span class="keyword">Authorization:</span> Bearer &lt;token&gt;<br><br>
+<span class="comment"># Response</span><br>
+{<br>
+&nbsp;&nbsp;<span class="string">"summary"</span>: <span class="string">"تم اكتشاف 12 كنز، 3 منها بربح 300%+"</span>,<br>
+&nbsp;&nbsp;<span class="string">"top_opportunities"</span>: [...]<br>
+}
+</div>
+</div>
+<div class="feature-visual">🤖</div>
+</div>
+
+<div class="feature-block reverse">
+<div class="feature-content">
+<span class="tag">💰 PAYMENTS</span>
+<h2>3 Payment Rails, 1 API</h2>
+<p>Accept credit cards via Stripe, cryptocurrency (BTC, ETH, USDT, USDC) with live CoinGecko prices, or wire transfers for big B2B deals. Webhooks auto-mark sales as paid.</p>
+<ul>
+<li>Stripe PaymentIntents + HMAC webhooks</li>
+<li>Crypto with QR-ready payment intents</li>
+<li>Wire with bank instructions</li>
+<li>Unified PaymentManager interface</li>
+</ul>
+</div>
+<div class="feature-visual">💰</div>
+</div>
+
+<div class="feature-block">
+<div class="feature-content">
+<span class="tag">🔐 SECURITY</span>
+<h2>Enterprise-grade protection</h2>
+<p>2FA with Google Authenticator, field-level encryption with Fernet, bcrypt password hashing, brute-force lockout, and full audit trail.</p>
+<ul>
+<li>TOTP 2FA setup with QR codes</li>
+<li>AES-128 encryption (PBKDF2 key derivation)</li>
+<li>Account lockout after 5 failed logins</li>
+<li>Every action logged with IP + timestamp</li>
+</ul>
+</div>
+<div class="feature-visual">🔐</div>
+</div>
+
+<div class="feature-block reverse">
+<div class="feature-content">
+<span class="tag">🧠 MACHINE LEARNING</span>
+<h2>ML-powered value estimation</h2>
+<p>scikit-learn GradientBoosting estimates true resale value with confidence intervals. Bootstrap training for cold-start. Retrains daily on new sales data.</p>
+<ul>
+<li>GradientBoosting regression</li>
+<li>Feature engineering (category, condition, source)</li>
+<li>87% confidence on estimates</li>
+<li>Auto-retrain via APScheduler</li>
+</ul>
+</div>
+<div class="feature-visual">🧠</div>
+</div>
+
+<div class="feature-block">
+<div class="feature-content">
+<span class="tag">📊 ANALYTICS</span>
+<h2>Real-time dashboards</h2>
+<p>Track revenue, profit margins, customer LTV, sales velocity — all from REST APIs you can plug into any frontend.</p>
+<ul>
+<li>Dashboard with KPIs</li>
+<li>Sales by source / category</li>
+<li>Top customers by LTV</li>
+<li>Recent sales timeline</li>
+<li>CSV + Excel export</li>
+</ul>
+</div>
+<div class="feature-visual">📊</div>
+</div>
+
+<div class="feature-block reverse">
+<div class="feature-content">
+<span class="tag">🚀 DEPLOYMENT</span>
+<h2>Production-ready from day one</h2>
+<p>Docker, docker-compose, Render.com config, GitHub Actions CI. Deploy in 5 minutes. 37 tests passing.</p>
+<ul>
+<li>Docker + gunicorn production server</li>
+<li>One-click Render.com deployment</li>
+<li>GitHub Actions CI on every push</li>
+<li>Health check endpoint</li>
+<li>Rate limiting + CORS configured</li>
+</ul>
+</div>
+<div class="feature-visual">🚀</div>
+</div>
+
+</div>
+
+<footer>
+<p>© 2026 Solomon Engineering · <a href="index.html" style="color: #6366f1;">Home</a> · <a href="pricing.html" style="color: #6366f1;">Pricing</a></p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solomon v4.0 — AI-Powered Asset Discovery & Sales Automation</title>
+<meta name="description" content="Discover hidden treasures, automate sales, accept crypto payments. The all-in-one platform built for resellers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --secondary: #8b5cf6;
+  --dark: #0f172a;
+  --gray: #64748b;
+  --light: #f8fafc;
+  --border: #e2e8f0;
+}
+body { font-family: 'Inter', -apple-system, sans-serif; line-height: 1.6; color: var(--dark); background: white; }
+nav { position: fixed; top: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); z-index: 100; padding: 15px 0; }
+.nav-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+.nav-links { display: flex; gap: 30px; align-items: center; }
+.nav-links a { color: var(--dark); text-decoration: none; font-weight: 500; }
+.nav-links a:hover { color: var(--primary); }
+.btn { display: inline-block; padding: 10px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; transition: all 0.2s; cursor: pointer; border: none; font-size: 1rem; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+.btn-secondary { background: white; color: var(--primary); border: 1px solid var(--primary); }
+.btn-secondary:hover { background: var(--light); }
+.hero { padding: 150px 20px 80px; text-align: center; background: linear-gradient(180deg, var(--light) 0%, white 100%); }
+.hero h1 { font-size: 4rem; font-weight: 800; margin-bottom: 20px; line-height: 1.1; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { font-size: 1.3rem; color: var(--gray); max-width: 700px; margin: 0 auto 40px; }
+.hero-cta { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+.section { max-width: 1200px; margin: 80px auto; padding: 0 20px; }
+.section-title { text-align: center; font-size: 2.5rem; font-weight: 800; margin-bottom: 15px; }
+.section-subtitle { text-align: center; color: var(--gray); font-size: 1.1rem; margin-bottom: 50px; }
+.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+.feature { background: white; padding: 40px 30px; border-radius: 16px; border: 1px solid var(--border); transition: all 0.3s; }
+.feature:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); border-color: var(--primary); }
+.feature-icon { width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px; }
+.feature h3 { font-size: 1.3rem; margin-bottom: 12px; }
+.feature p { color: var(--gray); }
+.stats { background: var(--dark); color: white; padding: 80px 20px; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 40px; max-width: 1000px; margin: 0 auto; text-align: center; }
+.stat-number { font-size: 3.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.stat-label { color: #94a3b8; margin-top: 5px; }
+.pricing { background: var(--light); padding: 100px 20px; }
+.pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto; }
+.price-card { background: white; padding: 40px 30px; border-radius: 16px; border: 2px solid var(--border); text-align: center; position: relative; }
+.price-card.popular { border-color: var(--primary); transform: scale(1.05); }
+.popular-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+.price { font-size: 3.5rem; font-weight: 800; margin: 20px 0; }
+.price span { font-size: 1rem; color: var(--gray); font-weight: 400; }
+.price-features { list-style: none; margin: 25px 0; text-align: left; }
+.price-features li { padding: 8px 0; color: var(--gray); }
+.price-features li::before { content: "✓ "; color: var(--primary); font-weight: bold; }
+.demo { padding: 100px 20px; text-align: center; }
+.code-block { background: var(--dark); color: #94a3b8; padding: 30px; border-radius: 12px; max-width: 700px; margin: 30px auto; text-align: left; font-family: 'Courier New', monospace; overflow-x: auto; }
+.code-block .comment { color: #64748b; }
+.code-block .command { color: #a5b4fc; }
+footer { background: var(--dark); color: #94a3b8; padding: 60px 20px 30px; text-align: center; }
+.footer-links { display: flex; gap: 30px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
+.footer-links a { color: #94a3b8; text-decoration: none; }
+.footer-links a:hover { color: white; }
+@media (max-width: 768px) {
+  .hero h1 { font-size: 2.5rem; }
+  .nav-links { display: none; }
+  .price-card.popular { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="nav-container">
+<a href="/index.html" class="logo">💎 Solomon v4.0</a>
+<div class="nav-links">
+<a href="/features.html">Features</a>
+<a href="/pricing.html">Pricing</a>
+<a href="/pitch-deck.html">📊 Pitch Deck</a>
+<a href="/contact.html">Contact</a>
+<a href="/admin.html" class="btn btn-primary">⚡ غرفة الأرباح المباشرة (Live Dashboard)</a>
+</div>
+</div>
+</nav>
+
+<section class="hero">
+<h1>Turn Hidden Assets<br>Into Automated Profits</h1>
+<p>Solomon v4.0 is the AI-powered platform that finds undervalued treasures, estimates true value with ML, and sells them automatically via WhatsApp, Stripe, crypto, or wire.</p>
+<div class="hero-cta">
+<a href="/admin.html" class="btn btn-primary">⚡ افتح غرفة الأرباح المباشرة (Live Demo) →</a>
+<a href="/mobile.html" class="btn btn-primary" style="background:#10b981;">📱 افتح تطبيق الآيفون والأندرويد (Mobile App)</a>
+<a href="/pitch-deck.html" class="btn btn-secondary">📊 عرض المستثمرين (Pitch Deck)</a>
+</div>
+</section>
+
+<section class="section" id="features">
+<h2 class="section-title">Everything You Need</h2>
+<p class="section-subtitle">Built for resellers, treasure hunters, and asset recovery specialists.</p>
+
+<div class="features">
+<div class="feature">
+<div class="feature-icon">🤖</div>
+<h3>AI Agent</h3>
+<p>Daily Arabic briefings, customer recommendations, treasure analysis, marketing copy generation, and price optimization. LLM-powered with graceful fallback.</p>
+</div>
+<div class="feature">
+<div class="feature-icon">💰</div>
+<h3>Multi-Rail Payments</h3>
+<p>Stripe for cards, BTC/ETH/USDT/USDC for crypto, wire transfer for B2B. Webhooks auto-update sale status.</p>
+</div>
+<div class="feature">
+<div class="feature-icon">🔐</div>
+<h3>Enterprise Security</h3>
+<p>TOTP 2FA, Fernet field encryption, bcrypt password hashing, brute-force lockout, full audit trail.</p>
+</div>
+<div class="feature">
+<div class="feature-icon">🧠</div>
+<h3>ML Estimation</h3>
+<p>scikit-learn GradientBoosting estimates true resale value with confidence intervals. 87% accuracy.</p>
+</div>
+<div class="feature">
+<div class="feature-icon">📊</div>
+<h3>Sales Pipeline</h3>
+<p>Auto-generated invoices, commission tracking, customer LTV, multi-currency, CSV/Excel export.</p>
+</div>
+<div class="feature">
+<div class="feature-icon">🚀</div>
+<h3>Production Ready</h3>
+<p>Docker + Render + GitHub Actions. Deploy in 5 minutes. 37 tests passing. 51 API routes.</p>
+</div>
+</div>
+</section>
+
+<section class="stats">
+<div class="stats-grid">
+<div class="stat"><div class="stat-number">51</div><div class="stat-label">API Routes</div></div>
+<div class="stat"><div class="stat-number">11</div><div class="stat-label">Blueprints</div></div>
+<div class="stat"><div class="stat-number">37</div><div class="stat-label">Tests Passing</div></div>
+<div class="stat"><div class="stat-number">5,273</div><div class="stat-label">Lines of Code</div></div>
+</div>
+</section>
+
+<section class="demo" id="demo">
+<h2 class="section-title">Get Started in 5 Minutes</h2>
+<p class="section-subtitle">Clone, install, run. That's it.</p>
+
+<div class="code-block">
+<span class="comment"># Clone the repository</span><br>
+<span class="command">git clone</span> https://github.com/Namak7678/rivet.git<br>
+<span class="command">cd</span> rivet/solomon<br>
+<br>
+<span class="comment"># Install dependencies</span><br>
+<span class="command">pip install</span> -r requirements.txt<br>
+<br>
+<span class="comment"># Run the app</span><br>
+<span class="command">python3</span> wsgi.py<br>
+<br>
+<span class="comment"># Open http://localhost:5000</span><br>
+<span class="comment"># Login: admin / changeme</span>
+</div>
+</section>
+
+<section class="pricing" id="pricing">
+<h2 class="section-title">Simple, One-Time Pricing</h2>
+<p class="section-subtitle">No subscriptions. No monthly fees. Yours forever.</p>
+
+<div class="pricing-grid">
+<div class="price-card">
+<h3>Indie</h3>
+<div class="price">$49</div>
+<ul class="price-features">
+<li>Complete source bundle</li>
+<li>Lifetime updates</li>
+<li>Community support</li>
+<li>Single project use</li>
+</ul>
+<a href="#buy" class="btn btn-secondary">Buy Now</a>
+</div>
+
+<div class="price-card popular">
+<div class="popular-badge">MOST POPULAR</div>
+<h3>Pro</h3>
+<div class="price">$149</div>
+<ul class="price-features">
+<li>Everything in Indie</li>
+<li>1-hour setup call</li>
+<li>Email support</li>
+<li>Multiple projects</li>
+<li>Custom feature priority</li>
+</ul>
+<a href="#buy" class="btn btn-primary">Buy Now</a>
+</div>
+
+<div class="price-card">
+<h3>Agency</h3>
+<div class="price">$499</div>
+<ul class="price-features">
+<li>Everything in Pro</li>
+<li>White-label rights</li>
+<li>10 client licenses</li>
+<li>Priority support</li>
+<li>Co-marketing opportunity</li>
+</ul>
+<a href="#buy" class="btn btn-secondary">Buy Now</a>
+</div>
+</div>
+</section>
+
+<section class="section" id="buy" style="text-align: center;">
+<h2 class="section-title">Ready to Automate Your Reselling Business?</h2>
+<p class="section-subtitle">Get the complete bundle + lifetime updates for $49.</p>
+<a href="https://gumroad.com/l/solomon-v4" class="btn btn-primary" style="font-size: 1.2rem; padding: 18px 40px;">Buy on Gumroad →</a>
+<p style="margin-top: 20px; color: var(--gray);">30-day money-back guarantee · Secure checkout · Instant download</p>
+</section>
+
+<footer>
+<div style="font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 10px;">💎 Solomon v4.0</div>
+<p>Built for treasure hunters, resellers, and automation enthusiasts.</p>
+<div class="footer-links">
+<a href="https://github.com/Namak7678/rivet" target="_blank">GitHub</a>
+<a href="#features">Features</a>
+<a href="#pricing">Pricing</a>
+<a href="mailto:hello@solomon.ai">Contact</a>
+<a href="#">Docs</a>
+</div>
+<p style="margin-top: 30px; opacity: 0.6;">© 2026 Solomon Engineering. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

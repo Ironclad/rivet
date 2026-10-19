@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solomon v4.0 — غرفة عمليات الأرباح المباشرة</title>
+    <link rel="manifest" href="/manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Cairo', 'Inter', sans-serif;
+            background: #0b1120;
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .layout { display: flex; min-height: 100vh; }
+        .sidebar {
+            width: 260px;
+            background: #111827;
+            border-left: 1px solid #1e293b;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2));
+            color: #fff;
+            border: 1px solid rgba(102,126,234,0.4);
+        }
+        .main { flex: 1; padding: 2rem; overflow-y: auto; }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.75rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 0.45rem 1rem;
+            border-radius: 999px;
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+        .ai-banner {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 12px 30px rgba(124, 58, 237, 0.3);
+        }
+        .ai-banner h2 { font-size: 1.25rem; margin-bottom: 0.4rem; }
+        .ai-banner p { color: rgba(255,255,255,0.92); font-size: 1rem; }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+        .kpi-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 1.35rem;
+        }
+        .kpi-label { color: #94a3b8; font-size: 0.85rem; margin-bottom: 0.4rem; }
+        .kpi-value { font-size: 1.9rem; font-weight: 800; color: #fff; }
+        .kpi-sub { font-size: 0.8rem; color: #34d399; margin-top: 0.35rem; font-weight: 600; }
+        .action-hub {
+            background: #111827;
+            border: 1px solid #374151;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.75rem;
+        }
+        .action-hub h3 {
+            font-size: 1.15rem;
+            margin-bottom: 1rem;
+            color: #fbbf24;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-row { display: flex; flex-wrap: wrap; gap: 0.85rem; }
+        .btn {
+            border: none;
+            padding: 0.75rem 1.3rem;
+            border-radius: 10px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        .btn-wa { background: #10b981; color: #fff; }
+        .btn-wa:hover { background: #059669; transform: translateY(-1px); }
+        .btn-stripe { background: #6366f1; color: #fff; }
+        .btn-stripe:hover { background: #4f46e5; transform: translateY(-1px); }
+        .btn-crypto { background: #f59e0b; color: #0b1120; }
+        .btn-crypto:hover { background: #d97706; transform: translateY(-1px); }
+        .btn-ai { background: #ec4899; color: #fff; }
+        .btn-ai:hover { background: #db2777; transform: translateY(-1px); }
+        .output-box {
+            margin-top: 1.2rem;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: none;
+            white-space: pre-wrap;
+            line-height: 1.7;
+            font-size: 0.92rem;
+        }
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.75rem;
+        }
+        .card h3 { margin-bottom: 1rem; font-size: 1.15rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td {
+            padding: 0.85rem 0.75rem;
+            text-align: right;
+            border-bottom: 1px solid #334155;
+            font-size: 0.9rem;
+        }
+        th { color: #94a3b8; font-weight: 600; }
+        .badge-profit {
+            background: rgba(16,185,129,0.2);
+            color: #34d399;
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+        .mini-btn {
+            padding: 0.35rem 0.7rem;
+            border-radius: 6px;
+            border: none;
+            font-family: inherit;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-left: 0.3rem;
+        }
+        @media (max-width: 768px) {
+            .layout { flex-direction: column; }
+            .sidebar { width: 100%; border-left: none; border-bottom: 1px solid #1e293b; }
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="logo">👑 SOLOMON v4.1</div>
+        <a href="/admin.html" class="nav-link active">⚡ غرفة الأرباح المباشرة</a>
+        <a href="/mobile.html" class="nav-link" style="color:#fbbf24;border:1px solid rgba(251,191,36,0.4);">📱 تطبيق الهاتف (iOS & Android)</a>
+        <a href="/index.html" class="nav-link">🌐 الموقع التسويقي</a>
+        <a href="/pricing.html" class="nav-link">💎 باقات الأسعار ($49–$499)</a>
+        <a href="/features.html" class="nav-link">🚀 المميزات التقنية</a>
+        <a href="/pitch-deck.html" class="nav-link">📊 عرض المستثمرين (Pitch Deck)</a>
+        <a href="/contact.html" class="nav-link">📩 تواصل معنا</a>
+    </aside>
+
+    <main class="main">
+        <div class="top-bar">
+            <div>
+                <h1 style="font-size: 1.65rem;">غرفة عمليات الأرباح والصفقات المباشرة</h1>
+                <p style="color:#94a3b8; font-size:0.9rem;">متصل مباشرة بمحرك Solomon v4.0 API (ML + Stripe + USDT + WhatsApp + OpenAI)</p>
+            </div>
+            <div class="status-badge" id="apiStatus">● متصل بالخادم المباشر (Live API)</div>
+        </div>
+
+        <div class="ai-banner">
+            <div>
+                <h2>🤖 التقرير الذكي اليومي (Solomon AI Briefing)</h2>
+                <p id="briefingText">جاري تحميل تحليل الفرص والكنوز المكتشفة...</p>
+            </div>
+            <button class="btn" style="background:#fff; color:#4f46e5;" onclick="runWhatsAppCampaign()">
+                📲 أرسل العروض للعملاء الآن
+            </button>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">إجمالي الإيرادات المسجلة</div>
+                <div class="kpi-value" id="kpiRevenue">$152,265</div>
+                <div class="kpi-sub">↑ صفقات مؤكدة في قاعدة البيانات</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">صافي الأرباح المحققة</div>
+                <div class="kpi-value" id="kpiProfit">$8,825</div>
+                <div class="kpi-sub" id="kpiMargin">متوسط هامش الربح: 26.6%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">الكنوز والفرص المكتشفة</div>
+                <div class="kpi-value" id="kpiTreasures">12</div>
+                <div class="kpi-sub">مقيّمة عبر الذكاء الاصطناعي (ML)</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">العملاء الجاهزون للشراء</div>
+                <div class="kpi-value" id="kpiCustomers">5</div>
+                <div class="kpi-sub">مربوطين بـ WhatsApp و Stripe</div>
+            </div>
+        </div>
+
+        <div class="action-hub">
+            <h3>💰 أزرار تحقيق الربح الفوري (تعمل مباشرة مع الـ API الحقيقي)</h3>
+            <div class="btn-row">
+                <button class="btn btn-wa" onclick="runWhatsAppCampaign()">
+                    📲 1. توليد حملة واتساب لأعلى 5 صفقات مربحة
+                </button>
+                <button class="btn btn-stripe" onclick="createInstantStripeCheckout()">
+                    💳 2. إصدار رابط دفع Stripe Checkout فوري
+                </button>
+                <button class="btn btn-crypto" onclick="createInstantCryptoIntent()">
+                    🪙 3. إصدار فاتورة دفع عملات رقمية (USDT QR)
+                </button>
+                <button class="btn btn-ai" onclick="analyzeTopTreasure()">
+                    🤖 4. تحليل وتوليد إعلان بيع بالذكاء الاصطناعي
+                </button>
+                <button class="btn" style="background:#8b5cf6;color:#fff;" onclick="generateCommercialLicense()">
+                    🔑 5. إصدار مفتاح ترخيص مدفوع لمشتري ($149 / $499)
+                </button>
+            </div>
+            <div id="actionOutput" class="output-box"></div>
+        </div>
+
+        <div class="card">
+            <h3>💎 الصفقات والكنوز المكتشفة (مرتبة حسب أعلى ربح متوقع)</h3>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الأصل / الصفقة</th>
+                            <th>الفئة</th>
+                            <th>سعر الشراء</th>
+                            <th>التقييم السوقي (ML)</th>
+                            <th>نسبة الربح</th>
+                            <th>إجراء سريع للربح</th>
+                        </tr>
+                    </thead>
+                    <tbody id="treasuresTable">
+                        <tr><td colspan="6">جاري تحميل الصفقات من الخادم...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>👥 قائمة المشترين والعملاء (VIP Buyers)</h3>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>اسم العميل</th>
+                            <th>الاهتمام</th>
+                            <th>الدولة</th>
+                            <th>الهاتف / واتساب</th>
+                            <th>إرسال عرض مباشر</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customersTable">
+                        <tr><td colspan="5">جاري تحميل العملاء...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+let jwtToken = '';
+let cachedTreasures = [];
+let cachedCustomers = [];
+
+async function initDashboard() {
+    try {
+        const loginRes = await fetch('/api/v3/auth/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username: 'admin', password: 'changeme'})
+        });
+        const loginData = await loginRes.json();
+        jwtToken = loginData.token;
+
+        const headers = {'Authorization': 'Bearer ' + jwtToken};
+
+        // Briefing
+        const briefRes = await fetch('/api/v3/ai/briefing', {headers});
+        const briefData = await briefRes.json();
+        if (briefData.summary) {
+            document.getElementById('briefingText').innerText = briefData.summary + ' — جاهزة للتسويق الفوري عبر واتساب و Stripe!';
+        }
+
+        // Analytics
+        const dashRes = await fetch('/api/v3/analytics/dashboard', {headers});
+        const dashData = await dashRes.json();
+        if (dashData.financials) {
+            document.getElementById('kpiRevenue').innerText = '$' + Math.round(dashData.financials.total_revenue).toLocaleString();
+            document.getElementById('kpiProfit').innerText = '$' + Math.round(dashData.financials.total_profit).toLocaleString();
+            document.getElementById('kpiMargin').innerText = 'متوسط هامش الربح: ' + dashData.financials.avg_profit_pct + '%';
+            document.getElementById('kpiTreasures').innerText = dashData.treasures.total;
+            document.getElementById('kpiCustomers').innerText = dashData.customers.total;
+        }
+
+        // Treasures
+        const tRes = await fetch('/api/v3/treasures?limit=10', {headers});
+        const tData = await tRes.json();
+        cachedTreasures = tData.items || [];
+        renderTreasures();
+
+        // Customers
+        const cRes = await fetch('/api/v3/customers', {headers});
+        const cData = await cRes.json();
+        cachedCustomers = cData.items || [];
+        renderCustomers();
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+function renderTreasures() {
+    const tbody = document.getElementById('treasuresTable');
+    if (!cachedTreasures.length) {
+        tbody.innerHTML = '<tr><td colspan="6">لا توجد صفقات حالياً</td></tr>';
+        return;
+    }
+    tbody.innerHTML = cachedTreasures.map(t => `
+        <tr>
+            <td><strong>${t.title}</strong><br><span style="color:#94a3b8;font-size:0.78rem;">${t.source || ''} • ${t.location || ''}</span></td>
+            <td>${t.category || '-'}</td>
+            <td>$${Number(t.price || 0).toLocaleString()}</td>
+            <td style="color:#38bdf8;font-weight:700;">$${Number(t.estimated_value || 0).toLocaleString()}</td>
+            <td><span class="badge-profit">+${Number(t.profit_pct || 0).toFixed(1)}%</span></td>
+            <td>
+                <button class="mini-btn btn-ai" onclick="analyzeTreasureById('${t.id}')">🤖 إعلان بيع</button>
+                <button class="mini-btn btn-wa" onclick="sendDealWhatsApp('${t.id}')">📲 واتساب</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function renderCustomers() {
+    const tbody = document.getElementById('customersTable');
+    if (!cachedCustomers.length) return;
+    tbody.innerHTML = cachedCustomers.map(c => `
+        <tr>
+            <td><strong>${c.name}</strong></td>
+            <td>${c.interest || 'General'}</td>
+            <td>${c.country || '-'}</td>
+            <td dir="ltr">${c.phone || '+966500000001'}</td>
+            <td>
+                <button class="mini-btn btn-wa" onclick="draftCustomerOutreach(${c.id})">📩 توليد عرض مخصص</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function showOutput(html) {
+    const box = document.getElementById('actionOutput');
+    box.style.display = 'block';
+    box.innerHTML = html;
+}
+
+async function runWhatsAppCampaign() {
+    showOutput('⏳ جاري مطابقة أعلى الكنوز ربحية مع العملاء وتوليد روابط واتساب المباشرة...');
+    const res = await fetch('/api/v3/whatsapp/broadcast-top-treasures', {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + jwtToken, 'Content-Type': 'application/json'}
+    });
+    const data = await res.json();
+    if (!data.campaign) return;
+    let html = '<strong>✅ تم تجهيز حملة المبيعات الفورية (' + data.count + ' صفقات جاهزة للإرسال بضغطة زر):</strong>\n\n';
+    data.campaign.forEach((item, idx) => {
+        html += `<div style="margin-bottom:0.85rem;padding:0.75rem;background:#1e293b;border-radius:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+            <div><strong>${idx+1}. ${item.treasure_title}</strong> ← للعميل: <span style="color:#fbbf24">${item.customer_name}</span> (سعر العرض: <strong>$${item.offer_price.toLocaleString()}</strong> | ربح: +${item.profit_pct}%)</div>
+            <a href="${item.whatsapp_url}" target="_blank" class="btn btn-wa" style="padding:0.4rem 0.9rem;font-size:0.82rem;">📲 إرسال عبر واتساب الآن</a>
+        </div>`;
+    });
+    showOutput(html);
+}
+
+async function createInstantStripeCheckout() {
+    if (!cachedTreasures.length || !cachedCustomers.length) return;
+    showOutput('⏳ جاري إنشاء فاتورة ورابط دفع Stripe Checkout...');
+    const t = cachedTreasures[0];
+    const c = cachedCustomers[0];
+    const saleRes = await fetch('/api/v3/sales', {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + jwtToken, 'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            treasure_id: t.id,
+            customer_id: c.id,
+            sold_price: Math.round(t.estimated_value || t.price * 1.3),
+            payment_method: 'stripe'
+        })
+    });
+    const sale = await saleRes.json();
+    const stripeRes = await fetch('/api/v3/stripe/checkout', {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + jwtToken, 'Content-Type': 'application/json'},
+        body: JSON.stringify({sale_id: sale.id})
+    });
+    const st = await stripeRes.json();
+    showOutput(
+        `💳 <strong>تم إصدار جلسة الدفع بنجاح!</strong>\n` +
+        `• الصفقة: ${t.title}\n` +
+        `• العميل: ${c.name}\n` +
+        `• المبلغ: <strong>$${Number(st.amount || 0).toLocaleString()} USD</strong>\n` +
+        `• رقم الجلسة: <code>${st.session_id}</code>\n\n` +
+        `<a href="${st.checkout_url}" target="_blank" class="btn btn-stripe" style="margin-top:0.5rem;">🔗 فتح وتأكيد الدفع الآن</a>`
+    );
+}
+
+async function createInstantCryptoIntent() {
+    if (!cachedTreasures.length || !cachedCustomers.length) return;
+    showOutput('⏳ جاري إنشاء فاتورة دفع عملات رقمية (USDT)...');
+    const t = cachedTreasures[0];
+    const c = cachedCustomers[0];
+    const saleRes = await fetch('/api/v3/sales', {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + jwtToken, 'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            treasure_id: t.id,
+            customer_id: c.id,
+            sold_price: Math.round(t.estimated_value || t.price * 1.3),
+            payment_method: 'USDT'
+        })
+    });
+    const sale = await saleRes.json();
+    const payRes = await fetch('/api/v3/payments/create-intent', {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + jwtToken, 'Content-Type': 'application/json'},
+        body: JSON.stringify({sale_id: sale.id})
+    });
+    const pay = await payRes.json();
+    showOutput(
+        `🪙 <strong>تم إصدار فاتورة عملات رقمية (USDT TRC20/ERC20):</strong>\n` +
+        `• رقم الدفعة: <code>${pay.payment_id}</code>\n` +
+        `• المبلغ المطلوب: <strong>${pay.amount} ${pay.coin}</strong>\n` +
+        `• عنوان المحفظة: <code>${pay.address}</code>\n` +
+        `• بيانات QR: <code>${pay.qr_data}</code>`
+    );
+}
+
+async function analyzeTopTreasure() {
+    if (!cachedTreasures.length) return;
+    await analyzeTreasureById(cachedTreasures[0].id);
+}
+
+async function analyzeTreasureById(id) {
+    showOutput('🤖 جاري تحليل الصفقة وتوليد إعلان البيع عبر محرك الذكاء الاصطناعي...');
+    const [anRes, descRes] = await Promise.all([
+        fetch('/api/v3/openai/analyze-treasure/' + id, {
+            method: 'POST',
+            headers: {'Authorization': 'Bearer ' + jwtToken, 'Content-Type': 'application/json'}
+        }),
+        fetch('/api/v3/openai/generate-description/' + id, {
+            method: 'POST',
+            headers: {'Authorization': 'Bearer ' + jwtToken, 'Content-Type': 'application/json'},
+            body: JSON.stringify({style: 'professional'})
+        })
+    ]);
+    const an = await anRes.json();
+    const desc = await descRes.json();
+    showOutput(
+        `<strong>${an.ai_analysis || ''}</strong>\n\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+        `📢 <strong>نص الإعلان الجاهز للنسخ والنشر فوراً:</strong>\n` +
+        `${desc.description || ''}`
+    );
+}
+
+async function sendDealWhatsApp(treasureId) {
+    if (!cachedCustomers.length) return;
+    const res = await fetch('/api/v3/whatsapp/send-deal', {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + jwtToken, 'Content-Type': 'application/json'},
+        body: JSON.stringify({treasure_id: treasureId, customer_id: cachedCustomers[0].id})
+    });
+    const data = await res.json();
+    showOutput(
+        `📲 <strong>رسالة واتساب جاهزة للعميل ${data.customer_name}:</strong>\n\n${data.message}\n\n` +
+        `<a href="${data.whatsapp_url}" target="_blank" class="btn btn-wa">إرسال عبر واتساب الآن</a>`
+    );
+}
+
+async function draftCustomerOutreach(customerId) {
+    const res = await fetch('/api/v3/openai/customer-email/' + customerId, {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + jwtToken, 'Content-Type': 'application/json'},
+        body: JSON.stringify({purpose: 'new_offer'})
+    });
+    const data = await res.json();
+    showOutput(`📩 <strong>رسالة مبيعات مخصصة للعميل ${data.customer_name}:</strong>\n\n${data.email}`);
+}
+
+async function generateCommercialLicense() {
+    showOutput('⏳ جاري توليد مفتاح ترخيص تجاري مشفّر (HMAC-SHA256)...');
+    const res = await fetch('/api/v3/license/generate', {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + jwtToken, 'Content-Type': 'application/json'},
+        body: JSON.stringify({buyer_email: 'vip-buyer@client.com', tier: 'AGENCY', days_valid: 365})
+    });
+    const lic = await res.json();
+    showOutput(
+        `🔑 <strong>تم إصدار مفتاح ترخيص تجاري مدفوع بنجاح!</strong>\n` +
+        `• الباقة: <strong>${lic.tier_name} ($${lic.price_usd} USD)</strong>\n` +
+        `• البريد المسجل: ${lic.buyer_email}\n` +
+        `• صالح حتى: ${lic.expires_at}\n` +
+        `• مفتاح التفعيل المشفّر (انسخه وأرسله للمشتري بعد الدفع):\n` +
+        `<code style="color:#fbbf24;font-size:0.95rem;word-break:break-all;">${lic.license_key}</code>`
+    );
+}
+
+window.addEventListener('DOMContentLoaded', initDashboard);
+</script>
+</body>
+</html>

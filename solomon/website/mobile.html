@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Solomon AI Mobile (iOS & Android)</title>
+    <!-- iOS Native Web App Meta -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Solomon AI">
+    <link rel="apple-touch-icon" href="/assets/dashboard-preview.png">
+    <link rel="manifest" href="/manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Cairo', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #060913;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .phone-shell {
+            width: 100%;
+            max-width: 440px;
+            min-height: 100vh;
+            background: #0f172a;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 0 60px rgba(99, 102, 241, 0.25);
+            border-left: 1px solid #1e293b;
+            border-right: 1px solid #1e293b;
+        }
+        .ios-header {
+            padding: 1rem 1.2rem;
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid #1e293b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .ios-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fbbf24, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .live-pill {
+            font-size: 0.72rem;
+            background: rgba(16, 185, 129, 0.18);
+            color: #34d399;
+            padding: 0.2rem 0.65rem;
+            border-radius: 999px;
+            font-weight: 700;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+        .screen {
+            flex: 1;
+            padding: 1rem 1rem 5.8rem;
+            display: none;
+            overflow-y: auto;
+        }
+        .screen.active { display: block; }
+        .kpi-strip {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .kpi-mini {
+            background: linear-gradient(145deg, #1e293b, #111827);
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 0.9rem;
+        }
+        .kpi-mini span { font-size: 0.75rem; color: #94a3b8; display: block; }
+        .kpi-mini strong { font-size: 1.35rem; color: #fff; font-weight: 800; }
+        .deal-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 18px;
+            padding: 1rem;
+            margin-bottom: 0.9rem;
+        }
+        .deal-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+        .roi-tag {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            background: #0f172a;
+            padding: 0.65rem 0.85rem;
+            border-radius: 12px;
+            margin: 0.65rem 0;
+            font-size: 0.85rem;
+        }
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+        .m-btn {
+            border: none;
+            padding: 0.6rem;
+            border-radius: 10px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.82rem;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .m-btn-wa { background: #10b981; color: #fff; }
+        .m-btn-pay { background: #6366f1; color: #fff; }
+        .m-btn-gold { background: #f59e0b; color: #0f172a; width: 100%; padding: 0.8rem; font-size: 0.95rem; margin-top: 0.5rem; }
+        .form-group { margin-bottom: 0.85rem; }
+        .form-group label { display: block; font-size: 0.82rem; color: #cbd5e1; margin-bottom: 0.3rem; }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            background: #0b1120;
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.92rem;
+        }
+        .result-card {
+            background: #111827;
+            border: 1px solid #4f46e5;
+            border-radius: 14px;
+            padding: 1rem;
+            margin-top: 1rem;
+            white-space: pre-wrap;
+            font-size: 0.86rem;
+            line-height: 1.65;
+            display: none;
+        }
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 440px;
+            background: rgba(15, 23, 42, 0.96);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid #1e293b;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            padding: 0.45rem 0.25rem 0.65rem;
+            z-index: 100;
+        }
+        .tab-item {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-family: inherit;
+            font-size: 0.72rem;
+            font-weight: 700;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+            cursor: pointer;
+        }
+        .tab-item.active { color: #fbbf24; }
+        .tab-icon { font-size: 1.25rem; }
+    </style>
+</head>
+<body>
+<div class="phone-shell">
+    <header class="ios-header" style="flex-direction:column;gap:0.55rem;align-items:stretch;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="ios-title">📱 Solomon Mobile v4.1</div>
+            <span class="live-pill">● شغّال مباشر (iOS & Android)</span>
+        </div>
+        <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+            <a href="/mobile.html" style="flex:1;text-align:center;background:#f59e0b;color:#0f172a;padding:0.35rem 0.5rem;border-radius:8px;font-size:0.75rem;font-weight:800;text-decoration:none;">📱 تطبيق الهاتف</a>
+            <a href="/admin.html" style="flex:1;text-align:center;background:#1e293b;color:#f8fafc;border:1px solid #334155;padding:0.35rem 0.5rem;border-radius:8px;font-size:0.75rem;font-weight:700;text-decoration:none;">💻 لوحة الأرباح</a>
+            <a href="/index.html" style="flex:1;text-align:center;background:#1e293b;color:#f8fafc;border:1px solid #334155;padding:0.35rem 0.5rem;border-radius:8px;font-size:0.75rem;font-weight:700;text-decoration:none;">🌐 الموقع</a>
+            <a href="/pitch-deck.html" style="flex:1;text-align:center;background:#1e293b;color:#f8fafc;border:1px solid #334155;padding:0.35rem 0.5rem;border-radius:8px;font-size:0.75rem;font-weight:700;text-decoration:none;">📊 المستثمرين</a>
+        </div>
+    </header>
+
+    <!-- TAB 1: DEALS RADAR -->
+    <section id="tab-deals" class="screen active">
+        <div class="kpi-strip">
+            <div class="kpi-mini">
+                <span>إجمالي الإيرادات</span>
+                <strong id="mRev">$152,265</strong>
+            </div>
+            <div class="kpi-mini">
+                <span>صافي الأرباح</span>
+                <strong id="mProf" style="color:#34d399;">$8,825</strong>
+            </div>
+        </div>
+
+        <button class="m-btn m-btn-gold" style="margin-bottom:1rem;" onclick="triggerMobileBroadcast()">
+            📲 إرسال أفضل 5 صفقات للعملاء عبر واتساب الآن
+        </button>
+        <div id="broadcastBox" class="result-card"></div>
+
+        <h3 style="font-size:0.95rem;margin-bottom:0.65rem;color:#cbd5e1;">🔥 رادار الصفقات المربحة الآن:</h3>
+        <div id="mobileDealsList">جاري تحميل الصفقات...</div>
+    </section>
+
+    <!-- TAB 2: INSTANT FLIP CALCULATOR -->
+    <section id="tab-calc" class="screen">
+        <h3 style="font-size:1.05rem;margin-bottom:0.35rem;color:#fbbf24;">🧮 حاسبة الصفقات والتفاوض الذكية</h3>
+        <p style="font-size:0.8rem;color:#94a3b8;margin-bottom:1rem;">أدخل أي سلعة أمامك في السوق ليحسب الذكاء الاصطناعي ربحك الصافي ويكتب لك رسالة تخفيض السعر للبائع فوراً:</p>
+
+        <div class="form-group">
+            <label>اسم السلعة / الأصل</label>
+            <input id="calcTitle" class="form-control" value="Rolex Submariner Date 2022" />
+        </div>
+        <div class="form-group">
+            <label>الفئة</label>
+            <select id="calcCat" class="form-control">
+                <option value="Watches">ساعات فاخرة (Watches)</option>
+                <option value="Vehicles">سيارات ومعدات (Vehicles)</option>
+                <option value="Electronics">إلكترونيات وأجهزة (Electronics)</option>
+                <option value="Real Estate">عقارات وأراضي (Real Estate)</option>
+                <option value="Industrial">معدات صناعية (Industrial)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>السعر المعروض من البائع ($ USD)</label>
+            <input id="calcPrice" type="number" class="form-control" value="7500" />
+        </div>
+        <button class="m-btn m-btn-gold" onclick="runFlipCalc()">⚡ احسب الربح الصافي ورسالة التفاوض</button>
+
+        <div id="calcOutput" class="result-card"></div>
+    </section>
+
+    <!-- TAB 3: BROKERAGE CONTRACT -->
+    <section id="tab-contract" class="screen">
+        <h3 style="font-size:1.05rem;margin-bottom:0.35rem;color:#fbbf24;">📜 مولّد عقود الوساطة وحفظ العمولة</h3>
+        <p style="font-size:0.8rem;color:#94a3b8;margin-bottom:1rem;">احمِ عمولتك في أي صفقة عبر إصدار وثيقة وساطة رقمية فورية قبل كشف تفاصيل البائع للمشتري:</p>
+
+        <div class="form-group">
+            <label>نسبة عمولتك المتفق عليها (%)</label>
+            <input id="commPct" type="number" class="form-control" value="10" />
+        </div>
+        <button class="m-btn m-btn-gold" onclick="generateBrokerContract()">📜 إصدار عقد حفظ العمولة الآن</button>
+
+        <div id="contractOutput" class="result-card"></div>
+    </section>
+
+    <!-- TAB 4: INSTALL ON iOS & ANDROID -->
+    <section id="tab-install" class="screen">
+        <h3 style="font-size:1.05rem;margin-bottom:0.5rem;color:#fbbf24;">📲 فتح وتثبيت التطبيق على iPhone & Android</h3>
+        <div class="deal-card" style="text-align:center;">
+            <p style="font-size:0.85rem;margin-bottom:0.75rem;">امسح كود QR بكاميرا هاتفك لفتح تطبيق الجوال مباشرة:</p>
+            <img id="qrImg" src="" alt="QR Code" style="width:190px;height:190px;border-radius:14px;background:#fff;padding:8px;margin:0 auto;display:block;" />
+            <p id="qrUrlText" style="font-size:0.72rem;color:#94a3b8;margin-top:0.5rem;word-break:break-all;" dir="ltr"></p>
+        </div>
+
+        <div class="deal-card">
+            <h4 style="color:#38bdf8;margin-bottom:0.4rem;">🍏 خطوات التثبيت على الآيفون (iOS):</h4>
+            <ol style="padding-right:1.2rem;font-size:0.83rem;color:#cbd5e1;line-height:1.8;">
+                <li>افتح هذا الرابط في متصفح <strong>Safari</strong> على الآيفون.</li>
+                <li>اضغط زر <strong>المشاركة (Share ⬆️)</strong> أسفل الشاشة.</li>
+                <li>اختر <strong>"إضافة إلى الشاشة الرئيسية" (Add to Home Screen)</strong>.</li>
+                <li>سيظهر شعار <strong>Solomon AI</strong> كتطبيق مستقل بملء الشاشة على هاتفك!</li>
+            </ol>
+        </div>
+
+        <div class="deal-card">
+            <h4 style="color:#34d399;margin-bottom:0.4rem;">🤖 خطوات التثبيت على أندرويد + كود React Native:</h4>
+            <p style="font-size:0.82rem;color:#cbd5e1;line-height:1.7;">
+                • من متصفح Chrome اضغط <strong>"تثبيت التطبيق (Install App)"</strong>.<br>
+                • كما تم تجهيز الكود المصدري الكامل لتطبيق <strong>React Native / Expo (iOS & Android)</strong> داخل المجلد <code>solomon/mobile-app/</code> لرفعه على App Store و Google Play.
+            </p>
+        </div>
+    </section>
+
+    <nav class="tab-bar">
+        <button class="tab-item active" onclick="switchTab('deals', this)">
+            <span class="tab-icon">🔥</span>
+            <span>الصفقات</span>
+        </button>
+        <button class="tab-item" onclick="switchTab('calc', this)">
+            <span class="tab-icon">🧮</span>
+            <span>حاسبة الربح</span>
+        </button>
+        <button class="tab-item" onclick="switchTab('contract', this)">
+            <span class="tab-icon">📜</span>
+            <span>عقد عمولة</span>
+        </button>
+        <button class="tab-item" onclick="switchTab('install', this)">
+            <span class="tab-icon">📲</span>
+            <span>تثبيت بآيفون</span>
+        </button>
+    </nav>
+</div>
+
+<script>
+let token = '';
+let mobileDeals = [];
+let mobileBuyers = [];
+
+function switchTab(name, btn) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+async function initMobile() {
+    const r = await fetch('/api/v3/auth/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username: 'admin', password: 'changeme'})
+    });
+    const d = await r.json();
+    token = d.token;
+
+    const sumRes = await fetch('/api/v3/mobile/summary', {
+        headers: {'Authorization': 'Bearer ' + token}
+    });
+    const sum = await sumRes.json();
+    if (sum.kpis) {
+        document.getElementById('mRev').innerText = '$' + Math.round(sum.kpis.total_revenue).toLocaleString();
+        document.getElementById('mProf').innerText = '$' + Math.round(sum.kpis.total_profit).toLocaleString();
+    }
+    mobileDeals = sum.deals || [];
+    mobileBuyers = sum.buyers || [];
+    renderMobileDeals();
+
+    // Load QR code with current browser origin
+    const appUrl = window.location.origin + '/mobile.html';
+    const qrRes = await fetch('/api/v3/mobile/qr?url=' + encodeURIComponent(appUrl));
+    const qrData = await qrRes.json();
+    if (qrData.qr_base64) {
+        document.getElementById('qrImg').src = qrData.qr_base64;
+        document.getElementById('qrUrlText').innerText = qrData.url;
+    }
+}
+
+function renderMobileDeals() {
+    const container = document.getElementById('mobileDealsList');
+    container.innerHTML = mobileDeals.map(t => `
+        <div class="deal-card">
+            <div class="deal-top">
+                <div>
+                    <strong style="font-size:0.95rem;">${t.title}</strong>
+                    <div style="font-size:0.75rem;color:#94a3b8;">${t.category} • ${t.source}</div>
+                </div>
+                <span class="roi-tag">+${t.profit_pct}%</span>
+            </div>
+            <div class="price-row">
+                <div>الشراء: <strong>$${Number(t.price).toLocaleString()}</strong></div>
+                <div>التقييم: <strong style="color:#38bdf8;">$${Number(t.estimated_value).toLocaleString()}</strong></div>
+                <div>الربح: <strong style="color:#34d399;">+$${Number(t.net_profit).toLocaleString()}</strong></div>
+            </div>
+            <div class="action-grid">
+                <button class="m-btn m-btn-wa" onclick="mobileSendWa('${t.id}')">📲 بيع واتساب</button>
+                <button class="m-btn m-btn-pay" onclick="mobileCreateStripe('${t.id}', ${t.estimated_value})">💳 رابط Stripe</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function triggerMobileBroadcast() {
+    const box = document.getElementById('broadcastBox');
+    box.style.display = 'block';
+    box.innerHTML = '⏳ جاري تجهيز روابط واتساب...';
+    const res = await fetch('/api/v3/whatsapp/broadcast-top-treasures', {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + token}
+    });
+    const data = await res.json();
+    box.innerHTML = '<strong>✅ اضغط لإرسال العرض للعميل مباشرة من هاتفك:</strong>\n\n' +
+        data.campaign.map(c =>
+            `• <strong>${c.treasure_title}</strong> (${c.customer_name})\n  <a href="${c.whatsapp_url}" target="_blank" style="color:#34d399;font-weight:700;">[📲 إرسال عبر واتساب - $${c.offer_price.toLocaleString()}]</a>`
+        ).join('\n\n');
+}
+
+async function mobileSendWa(treasureId) {
+    if (!mobileBuyers.length) return;
+    const res = await fetch('/api/v3/whatsapp/send-deal', {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
+        body: JSON.stringify({treasure_id: treasureId, customer_id: mobileBuyers[0].id})
+    });
+    const d = await res.json();
+    window.open(d.whatsapp_url, '_blank');
+}
+
+async function mobileCreateStripe(treasureId, amount) {
+    if (!mobileBuyers.length) return;
+    const box = document.getElementById('broadcastBox');
+    box.style.display = 'block';
+    box.innerHTML = '⏳ جاري توليد رابط الدفع...';
+    const sRes = await fetch('/api/v3/sales', {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
+        body: JSON.stringify({treasure_id: treasureId, customer_id: mobileBuyers[0].id, sold_price: amount, payment_method: 'stripe'})
+    });
+    const sale = await sRes.json();
+    const coRes = await fetch('/api/v3/stripe/checkout', {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
+        body: JSON.stringify({sale_id: sale.id})
+    });
+    const co = await coRes.json();
+    box.innerHTML = `💳 <strong>تم توليد رابط الدفع ($${Number(co.amount).toLocaleString()}):</strong>\n<a href="${co.checkout_url}" target="_blank" style="color:#38bdf8;font-weight:700;">🔗 اضغط هنا لفتح صفحة الدفع</a>`;
+}
+
+async function runFlipCalc() {
+    const out = document.getElementById('calcOutput');
+    out.style.display = 'block';
+    out.innerText = '⏳ جاري الحساب...';
+    const res = await fetch('/api/v3/mobile/instant-calculator', {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            title: document.getElementById('calcTitle').value,
+            category: document.getElementById('calcCat').value,
+            asking_price: Number(document.getElementById('calcPrice').value)
+        })
+    });
+    const d = await res.json();
+    out.innerHTML =
+        `<strong>${d.verdict}</strong>\n` +
+        `• السعر العادل في السوق: <strong>$${d.estimated_market_value.toLocaleString()}</strong>\n` +
+        `• السعر المستهدف بعد التفاوض (-15%): <strong style="color:#fbbf24;">$${d.target_negotiated_buy.toLocaleString()}</strong>\n` +
+        `• صافي ربحك المتوقع: <strong style="color:#34d399;">$${d.net_profit_if_negotiated.toLocaleString()} (+${d.roi_pct}%)</strong>\n\n` +
+        `📩 <strong>رسالة التفاوض الجاهزة للبائع (انسخها وأرسلها):</strong>\n${d.seller_negotiation_message}`;
+}
+
+async function generateBrokerContract() {
+    const out = document.getElementById('contractOutput');
+    out.style.display = 'block';
+    out.innerText = '⏳ جاري إصدار العقد...';
+    const res = await fetch('/api/v3/mobile/generate-contract', {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            commission_pct: Number(document.getElementById('commPct').value)
+        })
+    });
+    const d = await res.json();
+    out.innerHTML = `<strong>✅ تم توثيق العقد (${d.contract_ref}) — عمولتك: $${d.commission_usd.toLocaleString()}</strong>\n\n${d.contract_text}`;
+}
+
+window.addEventListener('DOMContentLoaded', initMobile);
+</script>
+</body>
+</html>

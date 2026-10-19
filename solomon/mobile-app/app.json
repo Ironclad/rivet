@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "Solomon AI",
+    "slug": "solomon-ai-mobile",
+    "version": "4.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0f172a"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "ai.solomon.mobile",
+      "buildNumber": "1"
+    },
+    "android": {
+      "package": "ai.solomon.mobile",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#0f172a"
+      }
+    }
+  }
+}

@@ -1,0 +1,52 @@
+# Files to exclude from Docker image
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Instance and database
+instance/
+*.db
+*.sqlite3
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Tests (not needed in production)
+tests/
+
+# Documentation (not needed in production)
+*.md
+landing.html
+
+# Git
+.git/
+.gitignore
+
+# ML model cache
+ml_model.pkl

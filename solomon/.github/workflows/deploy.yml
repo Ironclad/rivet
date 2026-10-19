@@ -1,0 +1,90 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches: [ arena/01a07482-rivet, main ]
+  pull_request:
+    branches: [ arena/01a07482-rivet, main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          ${{ runner.os }}-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run tests
+      env:
+        FLASK_ENV: testing
+        ENABLE_SCHEDULER: false
+        TELEGRAM_BOT_TOKEN: ""
+        SECRET_KEY: "test-secret-key-32-bytes-aaaaaaaaaaaaaaaaa"
+        JWT_SECRET: "test-jwt-secret-32-bytes-aaaaaaaaaaaaaaaa"
+      run: |
+        cd solomon
+        pytest tests/ -v --tb=short --cov=app --cov-report=term-missing
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+    - name: Install linters
+      run: |
+        pip install flake8 pylint
+    - name: Run flake8
+      run: |
+        cd solomon
+        flake8 app/ --max-line-length=120 --statistics
+
+  build:
+    needs: [test, lint]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build Docker image
+      run: |
+        cd solomon
+        docker build -t solomon:${{ github.sha }} .
+    - name: Test Docker image
+      run: |
+        cd solomon
+        docker run -d --name solomon-test -p 5000:5000 \
+          -e SECRET_KEY=test -e JWT_SECRET=test -e ENABLE_SCHEDULER=false \
+          solomon:${{ github.sha }}
+        sleep 10
+        curl -f http://localhost:5000/api/health || exit 1
+        docker stop solomon-test
+
+  deploy:
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/arena/01a07482-rivet' || github.ref == 'refs/heads/main'
+    steps:
+    - name: Trigger Render Deploy
+      run: |
+        curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"

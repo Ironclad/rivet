@@ -1,0 +1,17 @@
+{
+  "name": "Solomon v4.0 — AI Asset Discovery & Sales",
+  "short_name": "Solomon AI",
+  "description": "AI-powered treasure discovery, ML valuation, WhatsApp outreach, and multi-rail payments.",
+  "start_url": "/admin.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/dashboard-preview.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
