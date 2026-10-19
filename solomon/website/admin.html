@@ -258,6 +258,9 @@
                 <button class="btn btn-ai" onclick="analyzeTopTreasure()">
                     🤖 4. تحليل وتوليد إعلان بيع بالذكاء الاصطناعي
                 </button>
+                <button class="btn" style="background:#8b5cf6;color:#fff;" onclick="generateCommercialLicense()">
+                    🔑 5. إصدار مفتاح ترخيص مدفوع لمشتري ($149 / $499)
+                </button>
             </div>
             <div id="actionOutput" class="output-box"></div>
         </div>
@@ -530,6 +533,24 @@ async function draftCustomerOutreach(customerId) {
     });
     const data = await res.json();
     showOutput(`📩 <strong>رسالة مبيعات مخصصة للعميل ${data.customer_name}:</strong>\n\n${data.email}`);
+}
+
+async function generateCommercialLicense() {
+    showOutput('⏳ جاري توليد مفتاح ترخيص تجاري مشفّر (HMAC-SHA256)...');
+    const res = await fetch('/api/v3/license/generate', {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + jwtToken, 'Content-Type': 'application/json'},
+        body: JSON.stringify({buyer_email: 'vip-buyer@client.com', tier: 'AGENCY', days_valid: 365})
+    });
+    const lic = await res.json();
+    showOutput(
+        `🔑 <strong>تم إصدار مفتاح ترخيص تجاري مدفوع بنجاح!</strong>\n` +
+        `• الباقة: <strong>${lic.tier_name} ($${lic.price_usd} USD)</strong>\n` +
+        `• البريد المسجل: ${lic.buyer_email}\n` +
+        `• صالح حتى: ${lic.expires_at}\n` +
+        `• مفتاح التفعيل المشفّر (انسخه وأرسله للمشتري بعد الدفع):\n` +
+        `<code style="color:#fbbf24;font-size:0.95rem;word-break:break-all;">${lic.license_key}</code>`
+    );
 }
 
 window.addEventListener('DOMContentLoaded', initDashboard);

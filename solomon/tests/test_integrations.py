@@ -126,3 +126,32 @@ class TestMobileAppAPI:
         assert r.status_code == 200
         assert r.get_json()["qr_base64"].startswith("data:image/png;base64,")
 
+
+class TestCommercialLicensing:
+    def test_license_tiers(self, client):
+        r = client.get("/api/v3/license/tiers")
+        assert r.status_code == 200
+        data = r.get_json()
+        assert data["commercial_only"] is True
+        assert "PRO" in data["tiers"]
+
+    def test_generate_and_verify_license(self, client):
+        token = _get_token(client)
+        gen_r = client.post(
+            "/api/v3/license/generate",
+            headers={"Authorization": f"Bearer {token}"},
+            json={"buyer_email": "buyer@company.com", "tier": "AGENCY"},
+        )
+        assert gen_r.status_code == 200
+        key = gen_r.get_json()["license_key"]
+        assert key.startswith("SLM-AGENCY-")
+
+        ver_r = client.post("/api/v3/license/verify", json={"license_key": key})
+        assert ver_r.status_code == 200
+        assert ver_r.get_json()["valid"] is True
+
+        bad_r = client.post("/api/v3/license/verify", json={"license_key": "SLM-AGENCY-FAKE-0000-0000.e30"})
+        assert bad_r.status_code == 402
+        assert bad_r.get_json()["valid"] is False
+
+
