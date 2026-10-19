@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solomon v4.0 — عرض المستثمرين والشركاء (Investor Pitch Deck)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #090d16;
+            color: #f8fafc;
+            line-height: 1.7;
+        }
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #1e293b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .topbar a {
+            color: #fbbf24;
+            text-decoration: none;
+            font-weight: 700;
+            margin-left: 1.25rem;
+        }
+        .deck {
+            max-width: 1050px;
+            margin: 2rem auto;
+            padding: 0 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+        .slide {
+            background: linear-gradient(145deg, #111827 0%, #1e293b 100%);
+            border: 1px solid #334155;
+            border-radius: 22px;
+            padding: 3rem;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+        }
+        .slide-num {
+            position: absolute;
+            top: 1.5rem;
+            left: 2rem;
+            background: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.35);
+            padding: 0.25rem 0.85rem;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+        .slide h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #93c5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+        .box {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 1.4rem;
+        }
+        .box h4 { color: #fbbf24; margin-bottom: 0.5rem; font-size: 1.1rem; }
+        .stat-big { font-size: 2.3rem; font-weight: 800; color: #34d399; }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div><strong>👑 SOLOMON v4.0 — Investor & Partner Pitch Deck</strong></div>
+        <div>
+            <a href="/admin.html">⚡ غرفة الأرباح المباشرة</a>
+            <a href="/pricing.html">💎 الأسعار والترخيص</a>
+            <a href="/index.html">🌐 الرئيسية</a>
+        </div>
+    </div>
+
+    <div class="deck">
+        <section class="slide">
+            <span class="slide-num">Slide 01 / 07</span>
+            <h2>👑 Solomon v4.0: محرك اكتشاف الأصول والمبيعات الذكي</h2>
+            <p style="font-size:1.15rem;color:#cbd5e1;">منصة متكاملة تعمل بالذكاء الاصطناعي وتعلّم الآلة (Machine Learning) لرصد الأصول المسعّرة بأقل من قيمتها الحقيقية في المزادات والأسواق العالمية، تقييمها بدقة، وبيعها تلقائياً للعملاء عبر واتساب و Stripe والعملات الرقمية.</p>
+            <div class="grid-3">
+                <div class="box"><div class="stat-big">+26.6%</div><p>متوسط هامش الربح المحقق لكل صفقة</p></div>
+                <div class="box"><div class="stat-big">60+ APIs</div><p>بنية برمجية متكاملة جاهزة للإنتاج</p></div>
+                <div class="box"><div class="stat-big">3 قنوات دفع</div><p>Stripe + Crypto (USDT/BTC) + تحويل بنكي</p></div>
+            </div>
+        </section>
+
+        <section class="slide">
+            <span class="slide-num">Slide 02 / 07</span>
+            <h2>🔥 المشكلة في السوق اليوم</h2>
+            <div class="grid-3">
+                <div class="box">
+                    <h4>1. ضياع الفرص السريعة</h4>
+                    <p>آلاف الصفقات في المزادات الحكومية والعقارات والعملات تُباع بأقل من سعرها بـ 40% لأن المستثمرين لا يملكون نظام رصد لحظي.</p>
+                </div>
+                <div class="box">
+                    <h4>2. التقييم اليدوي البطيء</h4>
+                    <p>التاجر التقليدي يستغرق ساعات لتقدير سعر الأصل، بينما تُغلق الصفقة في دقائق.</p>
+                </div>
+                <div class="box">
+                    <h4>3. بطء إغلاق المبيعات</h4>
+                    <p>غياب الربط المباشر بين اكتشاف الصفقة وإرسالها للمشتري المهتم مع رابط دفع فوري.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide">
+            <span class="slide-num">Slide 03 / 07</span>
+            <h2>💡 الحل: منظومة Solomon v4.0</h2>
+            <div class="grid-3">
+                <div class="box">
+                    <h4>🔍 رصد وتقييم آلي (ML)</h4>
+                    <p>نموذج RandomForest مدرّب يقيّم السعر العادل ويحسب هامش الربح الصافي في أجزاء من الثانية.</p>
+                </div>
+                <div class="box">
+                    <h4>🤖 وكيل مبيعات ذكي (OpenAI)</h4>
+                    <p>يكتب إعلان البيع، يحلل المخاطر، ويصيغ رسائل مخصصة لكل عميل بالعربية والإنجليزية.</p>
+                </div>
+                <div class="box">
+                    <h4>📲 إغلاق فوري عبر واتساب</h4>
+                    <p>مطابقة الكنوز مع قائمة المشترين وإرسال العرض مع رابط دفع Stripe أو USDT بضغطة زر.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide">
+            <span class="slide-num">Slide 04 / 07</span>
+            <h2>💰 نموذج الربح المزدوج (Dual Revenue Model)</h2>
+            <div class="grid-3">
+                <div class="box">
+                    <h4>المسار الأول: بيع التراخيص (SaaS / Code)</h4>
+                    <p>• باقة Indie: <strong>$49</strong><br>• باقة Pro: <strong>$149</strong><br>• باقة Agency White-Label: <strong>$499</strong><br>ربح صافي 100% من اليوم الأول عبر Gumroad و Stripe.</p>
+                </div>
+                <div class="box">
+                    <h4>المسار الثاني: عمولات الصفقات (Deal Flipping)</h4>
+                    <p>تشغيل النظام لاقتناص الصفقات وإعادة بيعها للعملاء بعمولة وساطة من <strong>10% إلى 35%</strong> في كل صفقة.</p>
+                </div>
+                <div class="box">
+                    <h4>المسار الثالث: إعداد للشركات (Done-For-You)</h4>
+                    <p>تركيب النظام وتخصيصه لمكاتب العقارات وتجار السيارات والمزادات مقابل <strong>$1,500 – $3,000</strong>.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide">
+            <span class="slide-num">Slide 05 / 07</span>
+            <h2>🛡️ البنية التقنية والأمان المؤسسي</h2>
+            <div class="grid-3">
+                <div class="box"><h4>🔐 أمان بمستوى البنوك</h4><p>تشفير Fernet AES، مصادقة ثنائية 2FA TOTP، JWT، وسجل تدقيق كامل (Audit Log).</p></div>
+                <div class="box"><h4>⚙️ جاهزية النشر الفوري</h4><p>Docker + Gunicorn + Render.com + GitHub Actions CI/CD مع 37 اختبار آلي ناجح.</p></div>
+                <div class="box"><h4>📱 تطبيق ويب تقدمي (PWA)</h4><p>يعمل على الجوال والكمبيوتر مع لوحة تحكم عربية/إنجليزية مباشرة.</p></div>
+            </div>
+        </section>
+
+        <section class="slide">
+            <span class="slide-num">Slide 06 / 07</span>
+            <h2>📈 التوقعات المالية (أول 90 يوماً)</h2>
+            <div class="grid-3">
+                <div class="box"><div class="stat-big">$2,980</div><p>الشهر الأول: بيع 20 نسخة Pro ($149) أو 6 نسخ Agency</p></div>
+                <div class="box"><div class="stat-big">$9,500</div><p>الشهر الثاني: تراخيص البرمجيات + 3 صفقات وساطة</p></div>
+                <div class="box"><div class="stat-big">$25,000+</div><p>الشهر الثالث: التوسع في عقود الـ White-Label للشركات</p></div>
+            </div>
+        </section>
+
+        <section class="slide" style="text-align:center;">
+            <span class="slide-num">Slide 07 / 07</span>
+            <h2>🚀 ابدأ جني الأرباح اليوم</h2>
+            <p style="font-size:1.15rem;margin-bottom:1.5rem;">النظام يعمل أمامك بالكامل — جرّب غرفة العمليات المباشرة أو احصل على الترخيص الكامل الآن.</p>
+            <a href="/admin.html" style="display:inline-block;background:#10b981;color:#fff;padding:0.9rem 2.2rem;border-radius:12px;text-decoration:none;font-weight:800;font-size:1.1rem;">⚡ افتح غرفة الأرباح المباشرة</a>
+        </section>
+    </div>
+</body>
+</html>
