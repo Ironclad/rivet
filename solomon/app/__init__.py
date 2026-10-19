@@ -63,17 +63,13 @@ def create_app(config_class=None):
         if request.args.get("format") == "json":
             return jsonify({
                 "name": "Solomon API",
-                "version": "4.0.0",
+                "version": "4.1.0",
                 "docs": "/api/v3",
             })
-        index_file = os.path.join(website_dir, "index.html")
-        if os.path.exists(index_file):
-            return send_from_directory(website_dir, "index.html")
-        return jsonify({
-            "name": "Solomon API",
-            "version": "4.0.0",
-            "docs": "/api/v3",
-        })
+        mobile_file = os.path.join(website_dir, "mobile.html")
+        if os.path.exists(mobile_file):
+            return send_from_directory(website_dir, "mobile.html")
+        return send_from_directory(website_dir, "index.html")
 
     @app.route("/website/<path:filename>")
     def serve_website_subpath(filename):
