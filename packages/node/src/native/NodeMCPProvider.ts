@@ -1,7 +1,7 @@
 import { type MCP, type MCPProvider } from '@ironclad/rivet-core';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { getDefaultEnvironment, StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 
 export type MCPClient = Client;
@@ -102,11 +102,12 @@ export class NodeMCPProvider implements MCPProvider {
   async #getStdioClient(clientConfig: { name: string; version: string }, serverConfig: MCP.ServerConfigWithId) {
     try {
       const client = new Client(clientConfig);
-      console.log(serverConfig);
 
       const transport = new StdioClientTransport({
         command: serverConfig.config.command,
         args: serverConfig.config.args || [],
+        // The SDK uses `env` as the whole environment, so merge it over the default one to keep PATH etc.
+        env: serverConfig.config.env ? { ...getDefaultEnvironment(), ...serverConfig.config.env } : undefined,
       });
 
       await client.connect(transport);
