@@ -49,13 +49,13 @@ export class TauriNativeApi implements NativeApi {
 
     if (filterGlobs.length > 0) {
       for (const glob of filterGlobs) {
-        filteredResults = filteredResults.filter((result) => minimatch(result, glob, { dot: true }));
+        filteredResults = filteredResults.filter((result) => minimatch(result.replace(/\\/g, '/'), glob, { dot: true }));
       }
     }
 
     if (ignores.length > 0) {
       for (const ignore of ignores) {
-        filteredResults = filteredResults.filter((result) => !minimatch(result, ignore, { dot: true }));
+        filteredResults = filteredResults.filter((result) => !minimatch(result.replace(/\\/g, '/'), ignore, { dot: true }));
       }
     }
 
