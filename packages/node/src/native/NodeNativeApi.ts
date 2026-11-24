@@ -1,8 +1,11 @@
 import { opendir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { lstatSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative, sep } from 'node:path';
 import { type BaseDir, type NativeApi, type ReadDirOptions } from '@ironclad/rivet-core';
 import { minimatch } from 'minimatch';
+
+export const matchesGlob = (filePath: string, glob: string, pathSep: string = sep): boolean =>
+  minimatch(pathSep === '\\' ? filePath.replace(/\\/g, '/') : filePath, glob, { dot: true });
 
 async function* walk(dir: string): AsyncGenerator<string> {
   for await (const d of await opendir(dir)) {
@@ -38,13 +41,13 @@ export class NodeNativeApi implements NativeApi {
 
     if (filterGlobs.length > 0) {
       for (const glob of filterGlobs) {
-        results = results.filter((result) => minimatch(result, glob, { dot: true }));
+        results = results.filter((result) => matchesGlob(result, glob));
       }
     }
 
     if (ignores.length > 0) {
       for (const ignore of ignores) {
-        results = results.filter((result) => !minimatch(result, ignore, { dot: true }));
+        results = results.filter((result) => !matchesGlob(result, ignore));
       }
     }
 

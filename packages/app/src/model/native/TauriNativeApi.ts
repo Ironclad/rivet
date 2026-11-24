@@ -1,6 +1,7 @@
 import { readDir, BaseDirectory, readTextFile, readBinaryFile, writeFile, type FileEntry } from '@tauri-apps/api/fs';
 import { type BaseDir, type NativeApi, type ReadDirOptions } from '@ironclad/rivet-core';
 
+import { sep } from '@tauri-apps/api/path';
 import { minimatch } from 'minimatch';
 
 const baseDirToBaseDirectoryMap: Record<BaseDir, BaseDirectory> = {
@@ -49,13 +50,17 @@ export class TauriNativeApi implements NativeApi {
 
     if (filterGlobs.length > 0) {
       for (const glob of filterGlobs) {
-        filteredResults = filteredResults.filter((result) => minimatch(result, glob, { dot: true }));
+        filteredResults = filteredResults.filter((result) =>
+          minimatch(sep === '\\' ? result.replace(/\\/g, '/') : result, glob, { dot: true }),
+        );
       }
     }
 
     if (ignores.length > 0) {
       for (const ignore of ignores) {
-        filteredResults = filteredResults.filter((result) => !minimatch(result, ignore, { dot: true }));
+        filteredResults = filteredResults.filter(
+          (result) => !minimatch(sep === '\\' ? result.replace(/\\/g, '/') : result, ignore, { dot: true }),
+        );
       }
     }
 
