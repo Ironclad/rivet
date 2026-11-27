@@ -628,6 +628,10 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
             throw new Error('Tool calling is only supported when using a generative API key.');
           }
 
+          if (responseJsonSchema && !apiKey) {
+            throw new Error('Response JSON Schema is only supported when using a generative API key.');
+          }
+
           if (apiKey) {
             chunks = streamGenerativeAi({
               signal: context.signal,
