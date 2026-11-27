@@ -48,6 +48,7 @@ export type ChatGoogleNodeConfigData = {
   top_k?: number;
   maxTokens: number;
   thinkingBudget: number | undefined;
+  responseJsonSchema?: string;
   headers?: { key: string; value: string }[];
 };
 
@@ -60,6 +61,7 @@ export type ChatGoogleNodeData = ChatGoogleNodeConfigData & {
   useMaxTokensInput: boolean;
   useToolCalling: boolean;
   useThinkingBudgetInput: boolean;
+  useResponseJsonSchemaInput?: boolean;
   useHeadersInput?: boolean;
 
   /** Given the same set of inputs, return the same output without hitting GPT */
@@ -108,6 +110,9 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
 
         thinkingBudget: undefined,
         useThinkingBudgetInput: false,
+
+        responseJsonSchema: undefined,
+        useResponseJsonSchemaInput: false,
       },
     };
 
@@ -189,6 +194,15 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
       id: 'prompt' as PortId,
       title: 'Prompt',
     });
+
+    if (data.useResponseJsonSchemaInput) {
+      inputs.push({
+        dataType: ['object', 'string'],
+        id: 'responseJsonSchema' as PortId,
+        title: 'Response JSON Schema',
+        description: 'Optional JSON Schema to constrain the model output to structured JSON.',
+      });
+    }
 
     if (data.useHeadersInput) {
       inputs.push({
@@ -317,6 +331,15 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
         type: 'toggle',
         label: 'Use for subgraph partial output',
         dataKey: 'useAsGraphPartialOutput',
+      },
+      {
+        type: 'code',
+        label: 'Response JSON Schema',
+        dataKey: 'responseJsonSchema',
+        useInputToggleDataKey: 'useResponseJsonSchemaInput',
+        language: 'json',
+        helperMessage:
+          'Optional JSON Schema to constrain the model output to structured JSON (sets responseMimeType to application/json).',
       },
       {
         type: 'keyValuePair',
@@ -538,6 +561,40 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
       ...additionalHeaders,
     });
 
+    let responseJsonSchema: Record<string, unknown> | undefined;
+    const rawSchemaInput = data.useResponseJsonSchemaInput
+      ? inputs['responseJsonSchema' as PortId]
+      : undefined;
+    if (rawSchemaInput) {
+      const schemaObject = coerceTypeOptional(rawSchemaInput, 'object');
+      if (schemaObject && typeof schemaObject === 'object' && !Array.isArray(schemaObject)) {
+        responseJsonSchema = schemaObject as Record<string, unknown>;
+      } else {
+        const schemaString = coerceTypeOptional(rawSchemaInput, 'string')?.trim();
+        if (schemaString) {
+          try {
+            const parsed = JSON.parse(schemaString);
+            if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+              throw new Error('Response JSON Schema must be a JSON object.');
+            }
+            responseJsonSchema = parsed as Record<string, unknown>;
+          } catch (err) {
+            throw new Error(`Invalid Response JSON Schema: ${(err as Error).message}`);
+          }
+        }
+      }
+    } else if (data.responseJsonSchema?.trim()) {
+      try {
+        const parsed = JSON.parse(data.responseJsonSchema.trim());
+        if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+          throw new Error('Response JSON Schema must be a JSON object.');
+        }
+        responseJsonSchema = parsed as Record<string, unknown>;
+      } catch (err) {
+        throw new Error(`Invalid Response JSON Schema: ${(err as Error).message}`);
+      }
+    }
+
     try {
       return await retry(
         async () => {
@@ -551,6 +608,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
             topK: undefined,
             tools,
             thinkingBudget,
+            responseJsonSchema,
             additionalHeaders: allAdditionalHeaders,
           };
           const cacheKey = JSON.stringify(options);
@@ -583,6 +641,7 @@ export const ChatGoogleNodeImpl: PluginNodeImpl<ChatGoogleNode> = {
               systemPrompt,
               tools,
               thinkingBudget,
+              responseJsonSchema,
               additionalHeaders: allAdditionalHeaders,
             });
           } else {
