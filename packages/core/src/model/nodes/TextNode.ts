@@ -120,7 +120,7 @@ export class TextNodeImpl extends NodeImpl<TextNode> {
       context.contextValues, // Pass context values
     );
 
-    if (this.chartNode.data.normalizeLineEndings) {
+    if (this.chartNode.data.normalizeLineEndings ?? true) {
       outputValue = outputValue.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
     }
 

@@ -23,6 +23,8 @@ type ReadFileNodeData = {
   asBinary?: boolean;
 
   errorOnMissingFile?: boolean;
+
+  normalizeLineEndings?: boolean;
 };
 
 export class ReadFileNodeImpl extends NodeImpl<ReadFileNode> {
@@ -37,6 +39,7 @@ export class ReadFileNodeImpl extends NodeImpl<ReadFileNode> {
         asBinary: false,
         usePathInput: true,
         errorOnMissingFile: false,
+        normalizeLineEndings: true,
       },
     };
   }
@@ -95,6 +98,12 @@ export class ReadFileNodeImpl extends NodeImpl<ReadFileNode> {
         label: 'Read as Binary',
         dataKey: 'asBinary',
       },
+      {
+        type: 'toggle',
+        label: 'Normalize Line Endings',
+        dataKey: 'normalizeLineEndings',
+        helperMessage: 'Normalize line endings to use only LF (\\n) instead of CRLF (\\r\\n).',
+      },
     ];
   }
 
@@ -125,7 +134,10 @@ export class ReadFileNodeImpl extends NodeImpl<ReadFileNode> {
           ['content' as PortId]: { type: 'binary', value: new Uint8Array(buffer) },
         };
       } else {
-        const content = await nativeApi.readTextFile(path, undefined);
+        let content = await nativeApi.readTextFile(path, undefined);
+        if (this.data.normalizeLineEndings ?? true) {
+          content = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        }
         return {
           ['content' as PortId]: { type: 'string', value: content },
         };
